@@ -33,7 +33,6 @@
 #include <wtf/Vector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
-#include <wtf/StrHash.h>
 
 namespace KJS {
 

@@ -1,3 +1,11 @@
+2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix JSClassCreate to work with old JSCore API threading model.
+
+        * ForwardingHeaders/wtf/StrHash.h: Removed (moved into ustring.h).
+
 2008-06-03  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Darin.

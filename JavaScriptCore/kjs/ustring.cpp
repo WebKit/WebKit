@@ -1315,6 +1315,19 @@ int compare(const UString& s1, const UString& s2)
   return (l1 > l2) ? 1 : -1;
 }
 
+bool equal(const UString::Rep* r, const UString::Rep* b)
+{
+    int length = r->len;
+    if (length != b->len)
+        return false;
+    const UChar* d = r->data();
+    const UChar* s = b->data();
+    for (int i = 0; i != length; ++i)
+        if (d[i] != s[i])
+            return false;
+    return true;
+}
+
 CString UString::UTF8String(bool strict) const
 {
   // Allocate a buffer big enough to hold all the characters.

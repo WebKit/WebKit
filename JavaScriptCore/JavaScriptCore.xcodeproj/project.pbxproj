@@ -213,7 +213,6 @@
 		93F0B3AC09BB4DC00068FCE3 /* Parser.h in Headers */ = {isa = PBXBuildFile; fileRef = 93F0B3AA09BB4DC00068FCE3 /* Parser.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
 		95742F660DD11F5A000917FB /* Profile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95742F640DD11F5A000917FB /* Profile.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		958D85830DC93230008ABF27 /* StrHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 958D85820DC93230008ABF27 /* StrHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83480DA432EB00BC83F3 /* Profiler.h in Headers */ = {isa = PBXBuildFile; fileRef = 95AB832F0DA42CAD00BC83F3 /* Profiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
@@ -559,7 +558,6 @@
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
 		95742F630DD11F5A000917FB /* Profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profile.cpp; path = profiler/Profile.cpp; sourceTree = "<group>"; };
 		95742F640DD11F5A000917FB /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profile.h; path = profiler/Profile.h; sourceTree = "<group>"; };
-		958D85820DC93230008ABF27 /* StrHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StrHash.h; sourceTree = "<group>"; };
 		95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profiler.cpp; path = profiler/Profiler.cpp; sourceTree = "<group>"; };
 		95AB832F0DA42CAD00BC83F3 /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profiler.h; path = profiler/Profiler.h; sourceTree = "<group>"; };
 		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
@@ -958,7 +956,6 @@
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
-				958D85820DC93230008ABF27 /* StrHash.h */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -1281,7 +1278,6 @@
 				95AB83570DA43C3000BC83F3 /* ProfileNode.h in Headers */,
 				E1B7C8BE0DA3A3360074B0DC /* ThreadSpecific.h in Headers */,
 				06D358B20DAADA93003B174E /* MainThread.h in Headers */,
-				958D85830DC93230008ABF27 /* StrHash.h in Headers */,
 				95742F660DD11F5A000917FB /* Profile.h in Headers */,
 				5DE3D0F50DD8DDFB00468714 /* WebKitAvailability.h in Headers */,
 				E1A596380DE3E1C300C17E37 /* AVLTree.h in Headers */,

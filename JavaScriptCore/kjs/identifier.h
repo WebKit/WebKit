@@ -65,7 +65,7 @@ namespace KJS {
 
         static bool equal(const UString::Rep*, const char*);
         static bool equal(const UString::Rep*, const UChar*, int length);
-        static bool equal(const UString::Rep*, const UString::Rep*);
+        static bool equal(const UString::Rep* a, const UString::Rep* b) { return KJS::equal(a, b); }
 
         static PassRefPtr<UString::Rep> add(const char*);
 

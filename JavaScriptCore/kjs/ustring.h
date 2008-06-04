@@ -381,6 +381,9 @@ namespace KJS {
   
   int compare(const UString &, const UString &);
 
+  bool equal(const UString::Rep*, const UString::Rep*);
+
+
 inline UString::UString()
   : m_rep(&Rep::null)
 {
@@ -429,6 +432,38 @@ inline size_t UString::cost() const
    return capacityDelta;
 }
 
-} // namespace
+} // namespace KJS
+
+
+namespace WTF {
+
+    template<typename T> struct DefaultHash;
+    template<typename T> struct StrHash;
+
+    template<> struct StrHash<KJS::UString::Rep*> {
+        static unsigned hash(const KJS::UString::Rep* key) { return key->hash(); }
+        static bool equal(const KJS::UString::Rep* a, const KJS::UString::Rep* b) { return KJS::equal(a, b); }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    template<> struct StrHash<RefPtr<KJS::UString::Rep> > : public StrHash<KJS::UString::Rep*> {
+        using StrHash<KJS::UString::Rep*>::hash;
+        static unsigned hash(const RefPtr<KJS::UString::Rep>& key) { return key->hash(); }
+        using StrHash<KJS::UString::Rep*>::equal;
+        static bool equal(const RefPtr<KJS::UString::Rep>& a, const RefPtr<KJS::UString::Rep>& b) { return KJS::equal(a.get(), b.get()); }
+        static bool equal(const KJS::UString::Rep* a, const RefPtr<KJS::UString::Rep>& b) { return KJS::equal(a, b.get()); }
+        static bool equal(const RefPtr<KJS::UString::Rep>& a, const KJS::UString::Rep* b) { return KJS::equal(a.get(), b); }
+
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
+
+    template<> struct DefaultHash<KJS::UString::Rep*> {
+        typedef StrHash<KJS::UString::Rep*> Hash;
+    };
+
+    template<> struct DefaultHash<RefPtr<KJS::UString::Rep> > {
+        typedef StrHash<RefPtr<KJS::UString::Rep> > Hash;
+    };
+} // namespace WTF
 
 #endif

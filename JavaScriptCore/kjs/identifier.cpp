@@ -28,7 +28,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-#include <wtf/StrHash.h>
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
 using namespace WTF;
@@ -111,19 +110,6 @@ bool Identifier::equal(const UString::Rep *r, const UChar *s, int length)
     if (r->len != length)
         return false;
     const UChar *d = r->data();
-    for (int i = 0; i != length; ++i)
-        if (d[i] != s[i])
-            return false;
-    return true;
-}
-
-bool Identifier::equal(const UString::Rep *r, const UString::Rep *b)
-{
-    int length = r->len;
-    if (length != b->len)
-        return false;
-    const UChar *d = r->data();
-    const UChar *s = b->data();
     for (int i = 0; i != length; ++i)
         if (d[i] != s[i])
             return false;

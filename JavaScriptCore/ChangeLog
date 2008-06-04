@@ -1,5 +1,37 @@
 2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Fix JSClassCreate to work with old JSCore API threading model.
+
+        No change on SunSpider.
+
+        * API/JSClassRef.cpp: (OpaqueJSClass::OpaqueJSClass): Since JSClass is constructed without
+        a context, there is no way for it to create Identifiers.
+        Also, added initializeThreading(), just for good measure.
+
+        * API/JSCallbackObjectFunctions.h: (KJS::::getPropertyNames): Make an Identifier out of the
+        string here, because propertyNames.add() needs that.
+
+        * kjs/identifier.cpp:
+        * kjs/identifier.h:
+        (KJS::Identifier::equal):
+        * kjs/ustring.cpp:
+        (KJS::equal):
+        Moved equal() from identifier.h to ustring.h, because it's not really about Identifiers,
+        and to make it possible to use it from StrHash.
+        Include StrHash.h from ustring.h to avoid having the behavior depend on headers that happen
+        to be included.
+
+        * wtf/StrHash.h: Removed.
+        * kjs/ustring.h: Made RefPtr<UString::Rep> use the same default hash as UString::Rep* (it
+        used to default to pointer equality). Moved the whole StrHash header into ustring.h.
+
+        * JavaScriptCore.exp: Export equal() for WebCore use (this StrHash is used in c_class.cpp,
+        jni_class.cpp, and npruntime.cpp).
+
+2008-06-04  Alexey Proskuryakov  <ap@webkit.org>
+
         Rubber-stamped by Darin.
 
         Fix spacing in collector.{h,cpp}.
