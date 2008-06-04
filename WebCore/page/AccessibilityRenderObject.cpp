@@ -1290,7 +1290,24 @@ bool AccessibilityRenderObject::isSelected() const
 
 bool AccessibilityRenderObject::isFocused() const
 {
-    return (m_renderer->element() && m_renderer->document()->focusedNode() == m_renderer->element());
+    if (!m_renderer)
+        return false;
+    
+    Document* document = m_renderer->document();
+    if (!document)
+        return false;
+    
+    Node* focusedNode = document->focusedNode();
+    if (!focusedNode)
+        return false;
+    
+    // A web area is represented by the Document node in the DOM tree, which isn't focusable.
+    // Check instead if the frame's selection controller is focused
+    if (focusedNode == m_renderer->element() || 
+        (roleValue() == WebAreaRole && document->frame()->selectionController()->isFocusedAndActive()))
+        return true;
+    
+    return false;
 }
 
 void AccessibilityRenderObject::setFocused(bool on)
