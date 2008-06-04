@@ -1286,11 +1286,6 @@ RegisterID* DebuggerStatementNode::emitCode(CodeGenerator& generator, RegisterID
     return dst;
 }
 
-JSValue* DebuggerStatementNode::execute(OldInterpreterExecState* exec)
-{
-    return exec->setNormalCompletion();
-}
-
 // ------------------------------ ExprStatementNode ----------------------------
 
 RegisterID* ExprStatementNode::emitCode(CodeGenerator& generator, RegisterID* dst)
