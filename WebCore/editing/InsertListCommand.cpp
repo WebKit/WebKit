@@ -84,6 +84,13 @@ bool InsertListCommand::modifyRange()
     startOfSelection = endingSelection().visibleStart();
     VisiblePosition startOfCurrentParagraph = startOfNextParagraph(startOfSelection);
     while (startOfCurrentParagraph != startOfLastParagraph) {
+        // doApply() may operate on and remove the last paragraph of the selection from the document 
+        // if it's in the same list item as startOfCurrentParagraph.  Return early to avoid an 
+        // infinite loop and because there is no more work to be done.
+        // FIXME(<rdar://problem/5983974>): The endingSelection() may be incorrect here.  Compute 
+        // the new location of endOfSelection and use it as the end of the new selection.
+        if (!startOfLastParagraph.deepEquivalent().node()->inDocument())
+            return true;
         setEndingSelection(startOfCurrentParagraph);
         doApply();
         startOfCurrentParagraph = startOfNextParagraph(endingSelection().visibleStart());

@@ -1,3 +1,18 @@
+2008-06-03  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5763082> GMail: Hang when removing indent from nested list
+        <rdar://problem/5775449> In Gmail and GoogleDocs, a hang occurs when I attempt to apply a list style to a large selection of text
+        <rdar://problem/5937624> 9D32: Hang in Safari. Using 100% of processor
+
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::modifyRange): doApply() may operate on and remove 
+        the last paragraph of the selection from the document if it's in the same list 
+        item as startOfCurrentParagraph.  Return early to avoid an infinite loop and 
+        because there is no more work to be done.  Added a FIXME (<rdar://problem/5983974>)
+        about the incorrect endingSelection()s.
+
 2008-06-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim.
