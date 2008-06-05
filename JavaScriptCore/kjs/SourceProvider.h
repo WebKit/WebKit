@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef SourceProvider_h
 #define SourceProvider_h
 
@@ -36,7 +36,7 @@ namespace KJS {
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
-        virtual ~SourceProvider() {}
+        virtual ~SourceProvider() { }
         virtual UString getRange(int start, int end) const = 0;
         virtual const UChar* data() const = 0;
         virtual int length() const = 0;
@@ -51,10 +51,14 @@ namespace KJS {
         int length() const { return m_source.size(); }
 
     private:
-        UStringSourceProvider(const UString& source) : m_source(source) {}
+        UStringSourceProvider(const UString& source)
+            : m_source(source)
+        {
+        }
+
         UString m_source;
     };
 
-}
+} // namespace KJS
 
 #endif // SourceProvider_h

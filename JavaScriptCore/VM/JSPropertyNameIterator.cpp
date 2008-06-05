@@ -33,10 +33,22 @@
 #include "object.h"
 #include "PropertyNameArray.h"
 
-namespace KJS{
+namespace KJS {
 
 COMPILE_ASSERT(sizeof(JSPropertyNameIterator) <= CellSize<sizeof(void*)>::m_value, JSPropertyNameIteratorSizeASSERT);
-    
+
+JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue* v)
+{
+    if (v->isUndefinedOrNull())
+        return new JSPropertyNameIterator(0, 0, 0);
+
+    JSObject* o = v->toObject(exec);
+    PropertyNameArray propertyNames;
+    o->getPropertyNames(exec, propertyNames);
+    size_t numProperties = propertyNames.size();
+    return new JSPropertyNameIterator(o, propertyNames.releaseIdentifiers(), numProperties);
+}
+
 JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, Identifier* propertyNames, size_t numProperties)
     : m_object(object)
     , m_propertyNames(propertyNames)
@@ -44,53 +56,62 @@ JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, Identifier* pro
     , m_end(propertyNames + numProperties)
 {
 }
-    
-JSType JSPropertyNameIterator::type() const { 
-    return UnspecifiedType; 
+
+JSPropertyNameIterator::~JSPropertyNameIterator()
+{
+    delete m_propertyNames;
 }
 
-JSValue *JSPropertyNameIterator::toPrimitive(ExecState *, JSType) const 
+JSType JSPropertyNameIterator::type() const
+{
+    return UnspecifiedType;
+}
+
+JSValue* JSPropertyNameIterator::toPrimitive(ExecState*, JSType) const
 {
     ASSERT_NOT_REACHED();
-    return 0; 
+    return 0;
 }
 
-bool JSPropertyNameIterator::getPrimitiveNumber(ExecState*, double&, JSValue*&) { 
-    ASSERT_NOT_REACHED(); 
+bool JSPropertyNameIterator::getPrimitiveNumber(ExecState*, double&, JSValue*&)
+{
+    ASSERT_NOT_REACHED();
     return false;
 }
 
-bool JSPropertyNameIterator::toBoolean(ExecState *) const { 
-    ASSERT_NOT_REACHED(); 
+bool JSPropertyNameIterator::toBoolean(ExecState*) const
+{
+    ASSERT_NOT_REACHED();
     return false;
 }
 
-double JSPropertyNameIterator::toNumber(ExecState *) const 
+double JSPropertyNameIterator::toNumber(ExecState*) const
 {
     ASSERT_NOT_REACHED();
-    return 0; 
+    return 0;
 }
 
-UString JSPropertyNameIterator::toString(ExecState *) const 
+UString JSPropertyNameIterator::toString(ExecState*) const
 {
     ASSERT_NOT_REACHED();
-    return ""; 
+    return "";
 }
 
-JSObject *JSPropertyNameIterator::toObject(ExecState *) const 
+JSObject* JSPropertyNameIterator::toObject(ExecState*) const
 {
     ASSERT_NOT_REACHED();
-    return 0; 
+    return 0;
 }
 
-void JSPropertyNameIterator::mark() { 
+void JSPropertyNameIterator::mark()
+{
     JSCell::mark();
     if (m_object && !m_object->marked())
         m_object->mark();
 }
 
 JSValue* JSPropertyNameIterator::next(ExecState* exec)
-{ 
+{
     while (m_position != m_end) {
         if (m_object->hasProperty(exec, *m_position))
             return jsOwnedString((*m_position++).ustring());;
@@ -100,29 +121,11 @@ JSValue* JSPropertyNameIterator::next(ExecState* exec)
     return 0;
 }
 
-void JSPropertyNameIterator::invalidate() 
-{ 
-    delete m_propertyNames; 
+void JSPropertyNameIterator::invalidate()
+{
+    delete m_propertyNames;
     m_object = 0;
     m_propertyNames = 0;
 }
 
-JSPropertyNameIterator::~JSPropertyNameIterator()
-{
-    delete m_propertyNames; 
-}
-
-
-JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue* v)
-{
-    if (v->isUndefinedOrNull())
-        return new JSPropertyNameIterator(0, 0, 0);
-
-    JSObject* o = v->toObject(exec);
-    PropertyNameArray propertyNames;
-    o->getPropertyNames(exec, propertyNames);    
-    size_t numProperties = propertyNames.size();
-    return new JSPropertyNameIterator(o, propertyNames.releaseIdentifiers(), numProperties);
-}
-
-}
+} // namespace KJS

@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef RegisterFile_h
 #define RegisterFile_h
 
@@ -39,7 +39,7 @@ namespace KJS {
     A register file is a stack of register frames. We represent a register
     frame by its offset from "base", the logical first entry in the register
     file. The bottom-most register frame's offset from base is 0.
-    
+
     In a program where function "a" calls function "b" (global code -> a -> b),
     the register file might look like this:
 
@@ -53,12 +53,12 @@ namespace KJS {
        ^              ^                   ^                                       ^
        |              |                   |                                       |
      buffer    base (frame 0)          frame 1                                 frame 2
-     
+
     Since all variables, including globals, are accessed by negative offsets
     from their register frame pointers, to keep old global offsets correct, new
     globals must appear at the beginning of the register file, shifting base
     to the right.
-    
+
     If we added one global variable to the register file depicted above, it
     would look like this:
 
@@ -69,24 +69,25 @@ namespace KJS {
     | -4 | -3 | -2 | -1 |  0 |  1 |<                                                                    > <-- index relative to base
     ------------------------------->                                                                    <
     |         <-globals | temps-> |
-       ^                   ^       
-       |                   |       
+       ^                   ^
+       |                   |
      buffer         base (frame 0)
 
     As you can see, global offsets relative to base have stayed constant,
     but base itself has moved. To keep up with possible changes to base,
     clients keep an indirect pointer, so their calculations update
     automatically when base changes.
-    
+
     For client simplicity, the RegisterFile measures size and capacity from
     "base", not "buffer".
 */
 
     class RegisterFileStack;
-    
+
     class RegisterFile : Noncopyable {
     public:
         enum { DefaultRegisterFileSize = 2 * 1024 * 1024 };
+
         RegisterFile(size_t maxSize, RegisterFileStack* m_baseObserver)
             : m_safeForReentry(true)
             , m_size(0)
@@ -97,15 +98,15 @@ namespace KJS {
             , m_baseObserver(m_baseObserver)
         {
         }
-        
+
         ~RegisterFile()
         {
             setBuffer(0);
         }
-        
+
         // Pointer to a value that holds the base of this register file.
         Register** basePointer() { return &m_base; }
-        
+
         void shrink(size_t size)
         {
             if (size < m_size)
@@ -127,7 +128,7 @@ namespace KJS {
 
         size_t size() { return m_size; }
         size_t maxSize() { return m_maxSize; }
-        
+
         void clear();
 
         void addGlobalSlots(size_t count);
@@ -144,6 +145,7 @@ namespace KJS {
 
         bool safeForReentry() { return m_safeForReentry; }
         void setSafeForReentry(bool safeForReentry) { m_safeForReentry = safeForReentry; }
+
     private:
         size_t newBuffer(size_t size, size_t capacity, size_t minCapacity, size_t maxSize, size_t offset);
         bool growBuffer(size_t minCapacity, size_t maxSize);
@@ -154,8 +156,9 @@ namespace KJS {
 
             m_buffer = buffer;
         }
-        
+
         void setBase(Register*);
+
         bool m_safeForReentry;
         size_t m_size;
         size_t m_capacity;
@@ -164,7 +167,7 @@ namespace KJS {
         Register* m_buffer;
         RegisterFileStack* m_baseObserver;
     };
-    
+
 } // namespace KJS
 
 #endif // RegisterFile_h

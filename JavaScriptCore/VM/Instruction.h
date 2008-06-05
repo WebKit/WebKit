@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef Instruction_h
 #define Instruction_h
 
@@ -36,13 +36,13 @@ namespace KJS {
     struct Instruction {
         Instruction(Opcode opcode) { u.opcode = opcode; }
         Instruction(int operand) { u.operand = operand; }
-            
+
         union {
             Opcode opcode;
             int operand;
         } u;
     };
-    
+
 } // namespace KJS
 
 #endif // Instruction_h

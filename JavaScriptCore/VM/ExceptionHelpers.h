@@ -32,12 +32,15 @@
 #include "object.h"
 
 namespace KJS {
+
     class Node;
+
     JSValue* createStackOverflowError(ExecState*);
     JSValue* createUndefinedVariableError(ExecState*, const Identifier&);
     JSValue* createInvalidParamError(ExecState*, const char* op, JSValue*);
-    JSValue* createNotAConstructorError(ExecState* exec, JSValue* value, Node* expr);
-    JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, Node* expr);
-}
+    JSValue* createNotAConstructorError(ExecState*, JSValue*, Node* expr);
+    JSValue* createNotAFunctionError(ExecState*, JSValue*, Node* expr);
 
-#endif
+} // namespace KJS
+
+#endif // ExceptionHelpers_h

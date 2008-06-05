@@ -80,7 +80,7 @@ extern const double Inf = NaNInf.doubles.Inf_Double;
 static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
 
-void *JSCell::operator new(size_t size)
+void* JSCell::operator new(size_t size)
 {
     return Collector::allocate(size);
 }
@@ -101,7 +101,7 @@ bool JSCell::getTruncatedUInt32(uint32_t&) const
 }
 
 // ECMA 9.4
-double JSValue::toInteger(ExecState *exec) const
+double JSValue::toInteger(ExecState* exec) const
 {
     int32_t i;
     if (getTruncatedInt32(i))
@@ -110,7 +110,7 @@ double JSValue::toInteger(ExecState *exec) const
     return isnan(d) ? 0.0 : trunc(d);
 }
 
-double JSValue::toIntegerPreserveNaN(ExecState *exec) const
+double JSValue::toIntegerPreserveNaN(ExecState* exec) const
 {
     int32_t i;
     if (getTruncatedInt32(i))
@@ -171,40 +171,40 @@ float JSValue::toFloat(ExecState* exec) const
     return static_cast<float>(toNumber(exec));
 }
 
-bool JSCell::getNumber(double &numericValue) const
+bool JSCell::getNumber(double& numericValue) const
 {
     if (!isNumber())
         return false;
-    numericValue = static_cast<const NumberImp *>(this)->value();
+    numericValue = static_cast<const NumberImp*>(this)->value();
     return true;
 }
 
 double JSCell::getNumber() const
 {
-    return isNumber() ? static_cast<const NumberImp *>(this)->value() : NaN;
+    return isNumber() ? static_cast<const NumberImp*>(this)->value() : NaN;
 }
 
-bool JSCell::getString(UString &stringValue) const
+bool JSCell::getString(UString&stringValue) const
 {
     if (!isString())
         return false;
-    stringValue = static_cast<const StringImp *>(this)->value();
+    stringValue = static_cast<const StringImp*>(this)->value();
     return true;
 }
 
 UString JSCell::getString() const
 {
-    return isString() ? static_cast<const StringImp *>(this)->value() : UString();
+    return isString() ? static_cast<const StringImp*>(this)->value() : UString();
 }
 
-JSObject *JSCell::getObject()
+JSObject*JSCell::getObject()
 {
-    return isObject() ? static_cast<JSObject *>(this) : 0;
+    return isObject() ? static_cast<JSObject*>(this) : 0;
 }
 
-const JSObject *JSCell::getObject() const
+const JSObject* JSCell::getObject() const
 {
-    return isObject() ? static_cast<const JSObject *>(this) : 0;
+    return isObject() ? static_cast<const JSObject*>(this) : 0;
 }
 
 CallType JSCell::getCallData(CallData&)

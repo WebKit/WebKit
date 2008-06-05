@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef LabelID_h
 #define LabelID_h
 
@@ -100,15 +100,15 @@ namespace KJS {
 
     private:
         typedef Vector<int, 8> JumpVector;
-        
+
         static const unsigned invalidLocation = UINT_MAX;
-        
+
         int m_refCount;
         unsigned m_location;
         CodeBlock* m_codeBlock;
         mutable JumpVector m_unresolvedJumps;
     };
-    
+
 } // namespace KJS
 
 #endif // LabelID_h

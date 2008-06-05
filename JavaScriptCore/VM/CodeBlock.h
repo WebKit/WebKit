@@ -26,7 +26,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef CodeBlock_h
 #define CodeBlock_h
 
@@ -89,7 +89,7 @@ namespace KJS {
         Vector<RefPtr<FuncDeclNode> > functions;
         Vector<RefPtr<FuncExprNode> > functionExpressions;
         Vector<JSValue*> jsValues;
-        Vector<RefPtr<RegExp> > regexps;        
+        Vector<RefPtr<RegExp> > regexps;
         Vector<HandlerInfo> exceptionHandlers;
         Vector<LineInfo> lineInfo;
 

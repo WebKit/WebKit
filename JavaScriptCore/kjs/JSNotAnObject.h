@@ -32,7 +32,7 @@
 #include "object.h"
 
 namespace KJS {
-    
+
     // This unholy class is used to allow us to avoid multiple exception checks
     // in certain SquirrelFish opcodes -- effectively it just silently consumes
     // any operations performed on the result of a failed toObject call.
@@ -44,37 +44,39 @@ namespace KJS {
         }
 
         // JSValue methods
-        virtual JSValue *toPrimitive(ExecState* exec, JSType preferredType = UnspecifiedType) const;
-        virtual bool getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value);
-        virtual bool toBoolean(ExecState* exec) const;
-        virtual double toNumber(ExecState* exec) const;
-        virtual UString toString(ExecState* exec) const;
-        virtual JSObject *toObject(ExecState* exec) const;
-        
-        // marking
+        virtual JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
+        virtual bool toBoolean(ExecState*) const;
+        virtual double toNumber(ExecState*) const;
+        virtual UString toString(ExecState*) const;
+        virtual JSObject* toObject(ExecState*) const;
+
+        // Marking
         virtual void mark();
 
-        virtual bool getOwnPropertySlot(ExecState* , const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertySlot(ExecState* , unsigned index, PropertySlot&);
+        // JSObject methods
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue* value);
-        virtual void put(ExecState*, unsigned propertyName, JSValue* value);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual void put(ExecState*, unsigned propertyName, JSValue*);
 
-        virtual bool deleteProperty(ExecState* exec, const Identifier &propertyName);
-        virtual bool deleteProperty(ExecState* exec, unsigned propertyName);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
-        virtual JSValue *defaultValue(ExecState* exec, JSType hint) const;
+        virtual JSValue* defaultValue(ExecState*, JSType hint) const;
 
-        virtual JSObject* construct(ExecState* exec, const List& args);
-        virtual JSObject* construct(ExecState* exec, const List& args, const Identifier& functionName, const UString& sourceURL, int lineNumber);
-        
-        virtual JSValue *callAsFunction(ExecState* exec, JSObject *thisObj, const List &args);
+        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const List&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
+
+        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List&);
 
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     private:
         JSObject* m_exception;
     };
-}
 
-#endif
+} // namespace KJS
+
+#endif // JSNotAnObject_h

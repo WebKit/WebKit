@@ -80,15 +80,15 @@ bool getCallerFunctionOffset(Register** registerBase, int callOffset, int& calle
 static int depth(ScopeChain& sc)
 {
     int scopeDepth = 0;
-    ScopeChainIterator iter = sc.begin(); 
-    ScopeChainIterator end = sc.end(); 
+    ScopeChainIterator iter = sc.begin();
+    ScopeChainIterator end = sc.end();
     while (!(*iter)->isVariableObject()) {
         ++iter;
         ++scopeDepth;
     }
     return scopeDepth;
 }
-    
+
 static inline bool jsLess(ExecState* exec, JSValue* v1, JSValue* v2)
 {
     if (JSImmediate::areBothImmediateNumbers(v1, v2))
@@ -218,13 +218,13 @@ static bool NEVER_INLINE resolve(ExecState* exec, Instruction* vPC, Register* r,
     exceptionValue = createUndefinedVariableError(exec, ident);
     return false;
 }
-    
+
 static bool NEVER_INLINE resolve_skip(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue*& exceptionValue)
 {
     int dst = (vPC + 1)->u.operand;
     int property = (vPC + 2)->u.operand;
     int skip = (vPC + 3)->u.operand + codeBlock->needsFullScopeChain;
-    
+
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
     ASSERT(iter != end);
@@ -279,14 +279,14 @@ static bool NEVER_INLINE resolveBaseAndProperty(ExecState* exec, Instruction* vP
     int baseDst = (vPC + 1)->u.operand;
     int propDst = (vPC + 2)->u.operand;
     int property = (vPC + 3)->u.operand;
-    
+
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
-    
+
     // FIXME: add scopeDepthIsZero optimization
-    
+
     ASSERT(iter != end);
-    
+
     Identifier& ident = codeBlock->identifiers[property];
     JSObject* base;
     do {
@@ -297,13 +297,13 @@ static bool NEVER_INLINE resolveBaseAndProperty(ExecState* exec, Instruction* vP
             exceptionValue = exec->exception();
             if (exceptionValue)
                 return false;
-            r[propDst].u.jsValue = result;   
+            r[propDst].u.jsValue = result;
             r[baseDst].u.jsValue = base;
             return true;
         }
         ++iter;
     } while (iter != end);
-    
+
     exceptionValue = createUndefinedVariableError(exec, ident);
     return false;
 }
@@ -316,11 +316,11 @@ static bool NEVER_INLINE resolveBaseAndFunc(ExecState* exec, Instruction* vPC, R
 
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator end = scopeChain->end();
-    
+
     // FIXME: add scopeDepthIsZero optimization
-    
+
     ASSERT(iter != end);
-    
+
     Identifier& ident = codeBlock->identifiers[property];
     JSObject* base;
     do {
@@ -339,7 +339,7 @@ static bool NEVER_INLINE resolveBaseAndFunc(ExecState* exec, Instruction* vPC, R
             exceptionValue = exec->exception();
             if (exceptionValue)
                 return false;
-            
+
             r[baseDst].u.jsValue = thisObj;
             r[funcDst].u.jsValue = result;
             return true;
@@ -384,7 +384,7 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
             return *registerBase + oldOffset;
         }
         r = (*registerBase) + registerOffset;
-        
+
         int omittedArgCount = newCodeBlock->numParameters - argc;
         Register* endOfParams = r - newCodeBlock->numVars;
         for (Register* it = endOfParams - omittedArgCount; it != endOfParams; ++it)
@@ -399,7 +399,7 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
             return *registerBase + oldOffset;
         }
         r = (*registerBase) + registerOffset;
-        
+
         Register* it = r - newCodeBlock->numLocals - Machine::CallFrameHeaderSize - shift;
         Register* end = it + Machine::CallFrameHeaderSize + newCodeBlock->numParameters;
         for ( ; it != end; ++it)
@@ -435,10 +435,10 @@ static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeC
         return jsUndefined();
 
     JSValue* program = r[argv + 1].u.jsValue;
-    
+
     if (!program->isString())
         return program;
-    
+
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
         (*profiler)->willExecute(exec, scopeChain->globalObject()->evalFunction());
@@ -447,7 +447,7 @@ static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeC
     int errLine;
     UString errMsg;
     RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(static_cast<StringImp*>(program)->value()), &sourceId, &errLine, &errMsg);
-    
+
     if (!evalNode) {
         exceptionValue = Error::create(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
         if (*profiler)
@@ -490,10 +490,10 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
     printf("----------------------------------------\n");
     printf("     use      |   address  |    value   \n");
     printf("----------------------------------------\n");
-    
+
     const Register* it;
     const Register* end;
-    
+
     if (isGlobalCallFrame(registerFile->basePointer(), r)) {
         it = r - registerFile->numGlobalSlots();
         end = r;
@@ -514,7 +514,7 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
             } while (it != end);
             printf("----------------------------------------\n");
         }
-        
+
         end = it + codeBlock->numParameters;
         if (it != end) {
             do {
@@ -558,7 +558,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
 {
     CodeBlock* oldCodeBlock = codeBlock;
     Register* callFrame = r - oldCodeBlock->numLocals - CallFrameHeaderSize;
-    
+
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
         DebuggerCallFrame debuggerCallFrame(this, exec->dynamicGlobalObject(), codeBlock, scopeChain, exceptionValue, registerBase, r - *registerBase);
         if (!isGlobalCallFrame(registerBase, r) && callFrame[Callee].u.jsObject) // Check for global and eval code
@@ -576,7 +576,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
 
     if (oldCodeBlock->needsFullScopeChain)
         scopeChain->deref();
-    
+
     if (isGlobalCallFrame(registerBase, r))
         return false;
 
@@ -619,15 +619,16 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue* exce
 
     // Calculate an exception handler vPC, unwinding call frames as necessary.
 
-    int scopeDepth;        
+    int scopeDepth;
     Instruction* handlerVPC;
 
-    while (!codeBlock->getHandlerForVPC(vPC, handlerVPC, scopeDepth))
+    while (!codeBlock->getHandlerForVPC(vPC, handlerVPC, scopeDepth)) {
         if (!unwindCallFrame(exec, exceptionValue, registerBase, vPC, codeBlock, k, scopeChain, r))
             return 0;
+    }
 
     // Now unwind the scope chain within the exception handler's call frame.
-    
+
     ScopeChain sc(scopeChain);
     int scopeDelta = depth(sc) - scopeDepth;
     ASSERT(scopeDelta >= 0);
@@ -658,7 +659,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     Register* r = (*registerFile->basePointer());
 
     r[ProgramCodeThisRegister].u.jsValue = thisObj;
-    
+
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
 
@@ -691,22 +692,22 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, F
 
     int argv = CallFrameHeaderSize;
     int argc = args.size() + 1; // implicit "this" parameter
-    
+
     size_t oldSize = registerFile->size();
     if (!registerFile->grow(oldSize + CallFrameHeaderSize + argc)) {
         *exception = createStackOverflowError(exec);
         return 0;
     }
-        
+
     Register** registerBase = registerFile->basePointer();
     int registerOffset = oldSize;
     int callFrameOffset = registerOffset;
     Register* callFrame = (*registerBase) + callFrameOffset;
-    
+
     // put args in place, including "this"
     Register* dst = callFrame + CallFrameHeaderSize;
     (*dst).u.jsValue = thisObj;
-    
+
     List::const_iterator end = args.end();
     for (List::const_iterator it = args.begin(); it != end; ++it)
         (*++dst).u.jsValue = *it;
@@ -721,10 +722,10 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, F
         return 0;
     }
 
-    scopeChain = scopeChainForCall(functionBodyNode, newCodeBlock, scopeChain, registerBase, r);            
+    scopeChain = scopeChainForCall(functionBodyNode, newCodeBlock, scopeChain, registerBase, r);
 
     ExecState newExec(exec, this, registerFile, scopeChain, callFrameOffset);
-    
+
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
         (*profiler)->willExecute(exec, function);
@@ -745,7 +746,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     }
 
     EvalCodeBlock* codeBlock = &evalNode->code(scopeChain);
-    
+
     JSVariableObject* variableObject;
     for (ScopeChainNode* node = scopeChain; ; node = node->next) {
         ASSERT(node);
@@ -754,7 +755,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
             break;
         }
     }
-    
+
     const Node::VarStack& varStack = codeBlock->ownerNode->varStack();
     Node::VarStack::const_iterator varStackEnd = varStack.end();
     for (Node::VarStack::const_iterator it = varStack.begin(); it != varStackEnd; ++it) {
@@ -762,12 +763,12 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
         if (!variableObject->hasProperty(exec, ident))
             variableObject->put(exec, ident, jsUndefined());
     }
-    
+
     const Node::FunctionStack& functionStack = codeBlock->ownerNode->functionStack();
     Node::FunctionStack::const_iterator functionStackEnd = functionStack.end();
     for (Node::FunctionStack::const_iterator it = functionStack.begin(); it != functionStackEnd; ++it)
         variableObject->put(exec, (*it)->m_ident, (*it)->makeFunction(exec, scopeChain));
-    
+
     size_t oldSize = registerFile->size();
     size_t newSize = registerOffset + codeBlock->numVars + codeBlock->numTemporaries + CallFrameHeaderSize;
     if (!registerFile->grow(newSize)) {
@@ -776,7 +777,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     }
 
     Register* callFrame = *registerFile->basePointer() + registerOffset;
-    
+
     // put call frame in place, using a 0 codeBlock to indicate a built-in caller
     initializeCallFrame(callFrame, 0, 0, 0, registerOffset, 0, 0, 0, 0, 0);
 
@@ -888,7 +889,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     Instruction* vPC = codeBlock->instructions.begin();
     JSValue** k = codeBlock->jsValues.data();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
-    
+
 #if HAVE(COMPUTED_GOTO)
     // Yet another hack around GCC's various foibles, in this case fetching the
     // profiler reference results in a regression.  Removing this indirection
@@ -921,7 +922,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 #else
     #define BEGIN_OPCODE(opcode) case opcode:
 #endif
-    while(1) // iterator loop begins
+    while (1) // iterator loop begins
     switch (vPC->u.opcode)
 #endif
     {
@@ -933,7 +934,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
         r[dst].u.jsValue = k[src];
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -945,7 +946,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         r[dst].u.jsValue = scopeChain->globalObject()->objectConstructor()->construct(exec, exec->emptyList());
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -957,7 +958,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         r[dst].u.jsValue = scopeChain->globalObject()->arrayConstructor()->construct(exec, exec->emptyList());
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1045,7 +1046,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             dst = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
         else
             dst = jsBoolean(strictEqual(src1, src2));
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1116,7 +1117,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             result = jsNumber(v->toNumber(exec) + 1);
         VM_CHECK_EXCEPTION();
         r[srcDst].u.jsValue = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1280,7 +1281,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     BEGIN_OPCODE(op_mod) {
         /* mod dst(r) dividend(r) divisor(r)
 
-           Divides register dividend (converted to number) by 
+           Divides register dividend (converted to number) by
            register divisor (converted to number), and puts the
            remainder in register dst.
         */
@@ -1333,7 +1334,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1355,7 +1356,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1377,7 +1378,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1399,7 +1400,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1421,7 +1422,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1443,7 +1444,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
         }
         dst = result;
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1482,7 +1483,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
            Tests whether register value is an instance of register
            constructor, and puts the boolean result in register dst.
-          
+
            Raises an exception if register constructor is not an
            object.
         */
@@ -1519,7 +1520,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
            Tests whether register base has a property named register
            property, and puts the boolean result in register dst.
-          
+
            Raises an exception if register constructor is not an
            object.
         */
@@ -1562,28 +1563,28 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_resolve_skip) {
         /* resolve_skip dst(r) property(id) skip(n)
-         
+
          Looks up the property named by identifier property in the
          scope chain skipping the top 'skip' levels, and writes the resulting
          value to register dst. If the property is not found, raises an exception.
          */
         if (UNLIKELY(!resolve_skip(exec, vPC, r, scopeChain, codeBlock, exceptionValue)))
             goto vm_throw;
-        
+
         vPC += 4;
-        
+
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_get_scoped_var) {
         /* get_scoped_var dst(r) index(n) skip(n)
-         
+
          Loads the contents of the index-th local from the scope skip nodes from
          the top of the scope chain, and places it in register dst
          */
         int dst = (++vPC)->u.operand;
         int index = (++vPC)->u.operand;
         int skip = (++vPC)->u.operand + codeBlock->needsFullScopeChain;
-        
+
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
         ASSERT(iter != end);
@@ -1591,7 +1592,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             ++iter;
             ASSERT(iter != end);
         }
-        
+
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         r[dst].u.jsValue = scope->valueAt(index);
@@ -1605,7 +1606,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int index = (++vPC)->u.operand;
         int skip = (++vPC)->u.operand + codeBlock->needsFullScopeChain;
         int value = (++vPC)->u.operand;
-        
+
         ScopeChainIterator iter = scopeChain->begin();
         ScopeChainIterator end = scopeChain->end();
         ASSERT(iter != end);
@@ -1613,7 +1614,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             ++iter;
             ASSERT(iter != end);
         }
-        
+
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
         scope->valueAt(index) = r[value].u.jsValue;
@@ -1699,7 +1700,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
            Sets register value on register base as the property named
            by identifier property. Base is converted to object first.
- 
+
            Unlike many opcodes, this one does not write any output to
            the register file.
         */
@@ -1709,11 +1710,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 #ifndef NDEBUG
         int registerOffset = r - (*registerBase);
 #endif
-        
+
         Identifier& ident = codeBlock->identifiers[property];
         r[base].u.jsValue->put(exec, ident, r[value].u.jsValue);
         ASSERT(registerOffset == (r - (*registerBase)));
-        
+
         VM_CHECK_EXCEPTION();
         ++vPC;
         NEXT_OPCODE;
@@ -1731,7 +1732,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
 
         JSObject* baseObj = r[base].u.jsValue->toObject(exec);
-        
+
         Identifier& ident = codeBlock->identifiers[property];
         JSValue* result = jsBoolean(baseObj->deleteProperty(exec, ident));
         VM_CHECK_EXCEPTION();
@@ -1752,7 +1753,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
 
         JSValue* baseValue = r[base].u.jsValue;
-        
+
         JSValue* subscript = r[property].u.jsValue;
         JSValue* result;
         uint32_t i;
@@ -1771,7 +1772,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION(); // This check is needed to prevent us from incorrectly calling a getter after an exception is thrown
             result = baseObj->get(exec, property);
         }
-        
+
         VM_CHECK_EXCEPTION();
         r[dst].u.jsValue = result;
         ++vPC;
@@ -1784,7 +1785,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            by register property. Base is converted to object
            first. register property is nominally converted to string
            but numbers are treated more efficiently.
- 
+
            Unlike many opcodes, this one does not write any output to
            the register file.
         */
@@ -1793,7 +1794,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int value = (++vPC)->u.operand;
 
         JSValue* baseValue = r[base].u.jsValue;
-        
+
         JSValue* subscript = r[property].u.jsValue;
 
         uint32_t i;
@@ -1812,7 +1813,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION(); // This check is needed to prevent us from incorrectly calling a setter after an exception is thrown
             baseObj->put(exec, property, r[value].u.jsValue);
         }
-        
+
         VM_CHECK_EXCEPTION();
         ++vPC;
         NEXT_OPCODE;
@@ -1842,7 +1843,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             VM_CHECK_EXCEPTION();
             result = jsBoolean(baseObj->deleteProperty(exec, property));
         }
-        
+
         VM_CHECK_EXCEPTION();
         r[dst].u.jsValue = result;
         ++vPC;
@@ -1855,7 +1856,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            by the immediate number property. Base is converted to
            object first. register property is nominally converted to
            string but numbers are treated more efficiently.
- 
+
            Unlike many opcodes, this one does not write any output to
            the register file.
 
@@ -1872,7 +1873,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_jmp) {
         /* jmp target(offset)
-         
+
            Jumps unconditionally to offset target from the current
            instruction.
         */
@@ -1883,7 +1884,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_jtrue) {
         /* jtrue cond(r) target(offset)
-         
+
            Jumps to offset target from the current instruction, if and
            only if register cond converts to boolean as true.
         */
@@ -1899,7 +1900,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_jfalse) {
         /* jfalse cond(r) target(offset)
-         
+
            Jumps to offset target from the current instruction, if and
            only if register cond converts to boolean as false.
         */
@@ -1965,7 +1966,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         JSValue* funcVal = r[func].u.jsValue;
         JSValue* baseVal = r[thisVal].u.jsValue;
-        
+
         if (baseVal == scopeChain->globalObject() && funcVal == scopeChain->globalObject()->evalFunction()) {
             int registerOffset = r - (*registerBase);
 
@@ -1982,11 +1983,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 goto vm_throw;
 
             r[dst].u.jsValue = result;
-            
+
             ++vPC;
             NEXT_OPCODE;
         }
-        
+
         // We didn't find the blessed version of eval, so reset vPC and process
         // this instruction as a normal function call, supplying the proper 'this'
         // value.
@@ -2043,12 +2044,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int thisVal = (++vPC)->u.operand;
         int firstArg = (++vPC)->u.operand;
         int argCount = (++vPC)->u.operand;
-        
+
         JSValue* v = r[func].u.jsValue;
-        
+
         CallData callData;
         CallType callType = v->getCallData(callData);
-        
+
         if (callType == CallTypeJS) {
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
@@ -2139,11 +2140,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             JSValue* thisObject = callFrame[CallFrameHeaderSize].u.jsValue;
             returnValue = thisObject;
         }
-         
+
         codeBlock = callFrame[CallerCodeBlock].u.codeBlock;
         if (!codeBlock)
             return returnValue;
-        
+
         k = codeBlock->jsValues.data();
         vPC = callFrame[ReturnVPC].u.vPC;
         setScopeChain(exec, scopeChain, callFrame[CallerScopeChain].u.scopeChain);
@@ -2253,7 +2254,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         JSValue* v = r[scope].u.jsValue;
         JSObject* o = v->toObject(exec);
         VM_CHECK_EXCEPTION();
-        
+
         setScopeChain(exec, scopeChain, scopeChain->push(o));
 
         ++vPC;
@@ -2317,12 +2318,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int count = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
-        
+
         ScopeChainNode* tmp = scopeChain;
         while (count--)
             tmp = tmp->pop();
         setScopeChain(exec, scopeChain, tmp);
-            
+
         vPC += target;
         NEXT_OPCODE;
     }
@@ -2384,9 +2385,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int type = (++vPC)->u.operand;
         int message = (++vPC)->u.operand;
-        
+
         r[dst].u.jsValue = Error::create(exec, (ErrorType)type, k[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
@@ -2406,19 +2407,19 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_put_getter) {
         /* put_getter base(r) property(id) function(r)
-         
+
            Sets register function on register base as the getter named
            by identifier property. Base and function are assumed to be
            objects as this op should only be used for getters defined
            in object literal form.
-         
+
            Unlike many opcodes, this one does not write any output to
            the register file.
         */
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
         int function = (++vPC)->u.operand;
-        
+
         ASSERT(r[base].u.jsValue->isObject());
         JSObject* baseObj = static_cast<JSObject*>(r[base].u.jsValue);
         Identifier& ident = codeBlock->identifiers[property];
@@ -2430,31 +2431,31 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_put_setter) {
         /* put_setter base(r) property(id) function(r)
-         
+
            Sets register function on register base as the setter named
            by identifier property. Base and function are assumed to be
            objects as this op should only be used for setters defined
            in object literal form.
-         
+
            Unlike many opcodes, this one does not write any output to
            the register file.
         */
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
         int function = (++vPC)->u.operand;
-        
+
         ASSERT(r[base].u.jsValue->isObject());
         JSObject* baseObj = static_cast<JSObject*>(r[base].u.jsValue);
         Identifier& ident = codeBlock->identifiers[property];
         ASSERT(r[function].u.jsValue->isObject());
         baseObj->defineSetter(exec, ident, static_cast<JSObject* >(r[function].u.jsValue));
-        
+
         ++vPC;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_jsr) {
         /* jsr retAddrDst(r) target(offset)
-         
+
            Places the address of the next instruction into the retAddrDst
            register and jumps to offset target from the current instruction.
         */
@@ -2467,7 +2468,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_sret) {
         /* sret retAddrSrc(r)
-         
+
          Jumps to the address stored in the retAddrSrc register. This
          differs from op_jmp because the target address is stored in a
          register, not as an immediate.
@@ -2478,7 +2479,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     BEGIN_OPCODE(op_debug) {
         /* debug debugHookID(n) firstLine(n) lastLine(n)
-         
+
          Notifies the debugger of the current state of execution. This opcode
          is only generated while the debugger is attached.
         */
@@ -2501,7 +2502,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         }
         vPC = handlerVPC;
         NEXT_OPCODE;
-    }          
+    }
     }
     #undef NEXT_OPCODE
     #undef BEGIN_OPCODE

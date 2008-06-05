@@ -32,10 +32,10 @@
 #include <wtf/Vector.h>
 
 namespace KJS {
-    
+
     template <typename T, size_t SegmentSize> class SegmentedVector {
     public:
-        SegmentedVector() 
+        SegmentedVector()
             : m_size(0)
         {
             m_segments.append(&m_inlineSegment);
@@ -47,7 +47,7 @@ namespace KJS {
                 delete m_segments[i];
         }
 
-        T& last() 
+        T& last()
         {
             ASSERT(m_size);
             return m_segments.last()->last();
@@ -60,7 +60,7 @@ namespace KJS {
             m_segments.last()->uncheckedAppend(value);
             m_size++;
         }
-        
+
         void removeLast()
         {
             ASSERT(m_size);
@@ -72,12 +72,12 @@ namespace KJS {
             }
         }
 
-        size_t size() const 
+        size_t size() const
         {
-            return m_size; 
+            return m_size;
         }
 
-        T& operator[](size_t index) 
+        T& operator[](size_t index)
         {
             ASSERT(index < m_size);
             if (index < SegmentSize)
@@ -132,7 +132,7 @@ namespace KJS {
             if (extra)
                 numSegments++;
             size_t oldSize = m_segments.size();
-            
+
             if (numSegments == oldSize) {
                 m_segments.last()->resize(extra);
                 m_size = size;
@@ -142,7 +142,7 @@ namespace KJS {
             m_segments.last()->resize(SegmentSize);
 
             m_segments.resize(numSegments);
-    
+
             ASSERT(oldSize < m_segments.size());
             for (size_t i = oldSize - 1; i < (numSegments - 1); i++) {
                 Segment* segment = new Segment;

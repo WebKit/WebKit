@@ -25,16 +25,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #include "config.h"
 #include "RegisterFile.h"
-#include "RegisterFileStack.h"
 
+#include "RegisterFileStack.h"
 #include "Register.h"
 
-namespace KJS {
-
 using namespace std;
+
+namespace KJS {
 
 size_t RegisterFile::newBuffer(size_t size, size_t capacity, size_t minCapacity, size_t maxSize, size_t offset)
 {
@@ -57,7 +57,7 @@ bool RegisterFile::growBuffer(size_t minCapacity, size_t maxSize)
     size_t size = m_size + numGlobalSlots;
     size_t capacity = m_capacity + numGlobalSlots;
     minCapacity += numGlobalSlots;
-    
+
     capacity = newBuffer(size, capacity, minCapacity, maxSize, 0);
 
     setBase(m_buffer + numGlobalSlots);
@@ -74,7 +74,7 @@ void RegisterFile::addGlobalSlots(size_t count)
     size_t size = m_size + numGlobalSlots;
     size_t capacity = m_capacity + numGlobalSlots;
     size_t minCapacity = size + count;
-    
+
     if (minCapacity < capacity)
         memmove(m_buffer + count, m_buffer, size * sizeof(Register));
     else

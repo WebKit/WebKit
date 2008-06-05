@@ -52,7 +52,6 @@ struct Instruction;
 class JSValue : Noncopyable {
     friend class JSCell; // so it can derive from this class
     friend class Collector; // so it can call asCell()
-
 private:
     JSValue();
     virtual ~JSValue();
@@ -67,7 +66,7 @@ public:
     bool isNumber() const;
     bool isString() const;
     bool isObject() const;
-    bool isObject(const ClassInfo *) const;
+    bool isObject(const ClassInfo*) const;
 
     // Extracting the value.
     bool getBoolean(bool&) const;
@@ -77,8 +76,8 @@ public:
     double uncheckedGetNumber() const;
     bool getString(UString&) const;
     UString getString() const; // null string if not a string
-    JSObject *getObject(); // NULL if not an object
-    const JSObject *getObject() const; // NULL if not an object
+    JSObject* getObject(); // NULL if not an object
+    const JSObject* getObject() const; // NULL if not an object
 
     CallType getCallData(CallData&);
     ConstructType getConstructData(ConstructData&);
@@ -89,17 +88,17 @@ public:
     bool getTruncatedUInt32(uint32_t&) const;
     
     // Basic conversions.
-    JSValue* toPrimitive(ExecState* exec, JSType preferredType = UnspecifiedType) const;
-    bool getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value);
+    JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+    bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
 
-    bool toBoolean(ExecState *exec) const;
+    bool toBoolean(ExecState*) const;
 
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the ExecState already.
-    double toNumber(ExecState *exec) const;
+    double toNumber(ExecState*) const;
     JSValue* toJSNumber(ExecState*) const; // Fast path for when you expect that the value is an immediate number.
-    UString toString(ExecState *exec) const;
-    JSObject* toObject(ExecState *exec) const;
+    UString toString(ExecState*) const;
+    JSObject* toObject(ExecState*) const;
 
     // Integer conversions.
     double toInteger(ExecState*) const;
@@ -137,8 +136,8 @@ private:
     uint32_t toUInt32SlowCase(ExecState*, bool& ok) const;
 
     // Implementation details.
-    JSCell *asCell();
-    const JSCell *asCell() const;
+    JSCell* asCell();
+    const JSCell* asCell() const;
 };
 
 class JSCell : public JSValue {
@@ -151,21 +150,22 @@ class JSCell : public JSValue {
 private:
     JSCell();
     virtual ~JSCell();
+
 public:
     // Querying the type.
     virtual JSType type() const = 0;
     bool isNumber() const;
     bool isString() const;
     bool isObject() const;
-    bool isObject(const ClassInfo *) const;
+    bool isObject(const ClassInfo*) const;
 
     // Extracting the value.
     bool getNumber(double&) const;
     double getNumber() const; // NaN if not a number
     bool getString(UString&) const;
     UString getString() const; // null string if not a string
-    JSObject *getObject(); // NULL if not an object
-    const JSObject *getObject() const; // NULL if not an object
+    JSObject* getObject(); // NULL if not an object
+    const JSObject* getObject() const; // NULL if not an object
     
     virtual CallType getCallData(CallData&);
     virtual ConstructType getConstructData(ConstructData&);
@@ -176,15 +176,15 @@ public:
     virtual bool getTruncatedUInt32(uint32_t&) const;
 
     // Basic conversions.
-    virtual JSValue *toPrimitive(ExecState *exec, JSType preferredType = UnspecifiedType) const = 0;
-    virtual bool getPrimitiveNumber(ExecState* exec, double& number, JSValue*& value) = 0;
-    virtual bool toBoolean(ExecState *exec) const = 0;
-    virtual double toNumber(ExecState *exec) const = 0;
-    virtual UString toString(ExecState *exec) const = 0;
-    virtual JSObject *toObject(ExecState *exec) const = 0;
+    virtual JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const = 0;
+    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&) = 0;
+    virtual bool toBoolean(ExecState*) const = 0;
+    virtual double toNumber(ExecState*) const = 0;
+    virtual UString toString(ExecState*) const = 0;
+    virtual JSObject* toObject(ExecState*) const = 0;
 
     // Garbage collection.
-    void *operator new(size_t);
+    void* operator new(size_t);
     virtual void mark();
     bool marked() const;
 
@@ -199,47 +199,49 @@ public:
 };
 
 class NumberImp : public JSCell {
-  friend JSValue* jsNumberCell(double);
-
+    friend JSValue* jsNumberCell(double);
 public:
-  double value() const { return val; }
+    double value() const { return val; }
 
-  virtual JSType type() const;
+    virtual JSType type() const;
 
-  virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
-  virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-  virtual bool toBoolean(ExecState* exec) const;
-  virtual double toNumber(ExecState* exec) const;
-  virtual UString toString(ExecState* exec) const;
-  virtual JSObject* toObject(ExecState* exec) const;
+    virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
+    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
+    virtual bool toBoolean(ExecState*) const;
+    virtual double toNumber(ExecState*) const;
+    virtual UString toString(ExecState*) const;
+    virtual JSObject* toObject(ExecState*) const;
     virtual JSObject* toThisObject(ExecState*) const;
 
-  void* operator new(size_t size)
-  {
+    void* operator new(size_t size)
+    {
 #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-      return Collector::inlineAllocateNumber(size);
+        return Collector::inlineAllocateNumber(size);
 #else
-      return Collector::allocateNumber(size);
+        return Collector::allocateNumber(size);
 #endif
-  }
+    }
 
 private:
-  NumberImp(double v) : val(v) { }
+    NumberImp(double v)
+        : val(v)
+    {
+    }
 
-  virtual bool getUInt32(uint32_t&) const;
-  virtual bool getTruncatedInt32(int32_t&) const;
-  virtual bool getTruncatedUInt32(uint32_t&) const;
+    virtual bool getUInt32(uint32_t&) const;
+    virtual bool getTruncatedInt32(int32_t&) const;
+    virtual bool getTruncatedUInt32(uint32_t&) const;
 
-  double val;
+    double val;
 };
 
-JSCell *jsString(const UString&); // returns empty string if passed null string
-JSCell *jsString(const char* = ""); // returns empty string if passed 0
+JSCell* jsString(const UString&); // returns empty string if passed null string
+JSCell* jsString(const char* = ""); // returns empty string if passed 0
 
 // should be used for strings that are owned by an object that will
 // likely outlive the JSValue this makes, such as the parse tree or a
 // DOM object that contains a UString
-JSCell *jsOwnedString(const UString&); 
+JSCell* jsOwnedString(const UString&); 
 
 extern const double NaN;
 extern const double Inf;
@@ -251,22 +253,22 @@ inline JSValue* jsNumberCell(double d)
     return new NumberImp(d);
 }
 
-ALWAYS_INLINE JSValue *jsUndefined()
+ALWAYS_INLINE JSValue* jsUndefined()
 {
     return JSImmediate::undefinedImmediate();
 }
 
-inline JSValue *jsNull()
+inline JSValue* jsNull()
 {
     return JSImmediate::nullImmediate();
 }
 
-inline JSValue *jsNaN()
+inline JSValue* jsNaN()
 {
     return jsNumberCell(NaN);
 }
 
-inline JSValue *jsBoolean(bool b)
+inline JSValue* jsBoolean(bool b)
 {
     return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
 }
@@ -607,6 +609,6 @@ inline JSObject* JSValue::toThisObject(ExecState* exec) const
     return asCell()->toThisObject(exec);
 }
 
-} // namespace
+} // namespace KJS
 
 #endif // KJS_VALUE_H

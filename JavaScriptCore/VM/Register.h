@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef Register_h
 #define Register_h
 
@@ -35,12 +35,12 @@ namespace KJS {
 
     class CodeBlock;
     class FunctionImp;
-    struct Instruction;
     class JSObject;
     class JSPropertyNameIterator;
     class JSValue;
     class ScopeChainNode;
-    
+    struct Instruction;
+
     struct Register {
         union {
             CodeBlock* codeBlock;
@@ -53,7 +53,7 @@ namespace KJS {
             int i;
         } u;
     };
-    
+
 } // namespace KJS
 
 namespace WTF {

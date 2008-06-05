@@ -39,16 +39,16 @@ namespace KJS {
 
 /*
     The layout of a register frame looks like this:
-    
-    For 
-    
+
+    For
+
     function f(x, y) {
         var v1;
         function g() { }
         var v2;
         return (x) * (y);
     }
-    
+
     assuming (x) and (y) generated temporaries t1 and t2, you would have
 
     ------------------------------------
@@ -57,39 +57,39 @@ namespace KJS {
     | -5 | -4 | -3 | -2 | -1 | +0 | +1 | <-- register index
     ------------------------------------
     | params->|<-locals      | temps->
-    
+
     Because temporary registers are allocated in a stack-like fashion, we
     can reclaim them with a simple popping algorithm. The same goes for labels.
     (We never reclaim parameter or local registers, because parameters and
     locals are DontDelete.)
-    
+
     The register layout before a function call looks like this:
-    
+
     For
-    
+
     function f(x, y)
     {
     }
-    
+
     f(1);
-    
+
     >                        <------------------------------
     <                        >  reserved: call frame  |  1 | <-- value held
     >         >snip<         <------------------------------
     <                        > +0 | +1 | +2 | +3 | +4 | +5 | <-- register index
     >                        <------------------------------
-    | params->|<-locals      | temps->    
-    
+    | params->|<-locals      | temps->
+
     The call instruction fills in the "call frame" registers. It also pads
     missing arguments at the end of the call:
-    
+
     >                        <-----------------------------------
     <                        >  reserved: call frame  |  1 |  ? | <-- value held ("?" stands for "undefined")
     >         >snip<         <-----------------------------------
     <                        > +0 | +1 | +2 | +3 | +4 | +5 | +6 | <-- register index
     >                        <-----------------------------------
     | params->|<-locals      | temps->
-    
+
     After filling in missing arguments, the call instruction sets up the new
     stack frame to overlap the end of the old stack frame:
 
@@ -99,9 +99,9 @@ namespace KJS {
                              | -7 | -6 | -5 | -4 | -3 | -2 | -1 <                        > <-- register index
                              |---------------------------------->                        <
                              |                        | params->|<-locals       | temps->
-    
+
     That way, arguments are "copied" into the callee's stack frame for free.
-    
+
     If the caller supplies too many arguments, this trick doesn't work. The
     extra arguments protrude into space reserved for locals and temporaries.
     In that case, the call instruction makes a real copy of the call frame header,
@@ -110,7 +110,6 @@ namespace KJS {
     extra arguments, because the "arguments" object may access them later.)
     This copying strategy ensures that all named values will be at the indices
     expected by the callee.
-
 */
 
 #ifndef NDEBUG
@@ -132,7 +131,7 @@ void CodeGenerator::generate()
     m_codeBlock->thisRegister = m_thisRegister.index();
     if (m_shouldEmitDebugHooks)
         m_codeBlock->needsFullScopeChain = true;
-    
+
     m_scopeNode->emitCode(*this);
 
 #ifndef NDEBUG
@@ -195,7 +194,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     m_nextVar -= size;
 
     JSGlobalObject* globalObject = scopeChain.globalObject();
-    
+
     ExecState* exec = globalObject->globalExec();
     
     // FIXME: Move the execution-related parts of this code to Machine::execute.
@@ -206,7 +205,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
             globalObject->removeDirect(funcDecl->m_ident); // Make sure our new function is not shadowed by an old property.
             emitNewFunction(addVar(funcDecl->m_ident, false), funcDecl);
         }
-        
+
         for (size_t i = 0; i < varStack.size(); ++i) {
             if (!globalObject->hasProperty(exec, varStack[i].first))
                 emitLoad(addVar(varStack[i].first, varStack[i].second & DeclarationStacks::IsConstant), jsUndefined());
@@ -244,7 +243,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
     for (size_t i = 0; i < functionStack.size(); ++i) {
         FuncDeclNode* funcDecl = functionStack[i].get();
         const Identifier& ident = funcDecl->m_ident;
-        
+
         m_functions.add(ident.ustring().rep());
         emitNewFunction(addVar(ident, false), funcDecl);
     }
@@ -254,7 +253,7 @@ CodeGenerator::CodeGenerator(FunctionBodyNode* functionBody, const Debugger* deb
         const Identifier& ident = varStack[i].first;
         if (ident == m_propertyNames->arguments)
             continue;
-        
+
         RegisterID* r0;
         if (addVar(ident, r0, varStack[i].second & DeclarationStacks::IsConstant))
             emitLoad(r0, jsUndefined());
@@ -305,7 +304,7 @@ RegisterID* CodeGenerator::addParameter(const Identifier& ident)
         m_locals[localsIndex(m_nextParameter)].setIndex(m_nextParameter);
         result = &(m_locals[localsIndex(m_nextParameter)]);
     }
-    
+
     // To maintain the calling convention, we have to allocate unique space for
     // each parameter, even if the parameter doesn't make it into the symbol table.
     ++m_nextParameter;
@@ -335,10 +334,10 @@ RegisterID* CodeGenerator::registerForLocalConstInit(const Identifier& ident)
 {
     if (m_codeType == EvalCode)
         return 0;
-    
+
     SymbolTableEntry entry = symbolTable().get(ident.ustring().rep());
     ASSERT(!entry.isEmpty());
-    
+
     return &m_locals[localsIndex(entry.getIndex())];
 }
 
@@ -429,7 +428,7 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
     pair<IdentifierMap::iterator, bool> result = m_identifierMap.add(rep, m_codeBlock->identifiers.size());
     if (result.second) // new entry
         m_codeBlock->identifiers.append(rep);
-    
+
     return result.first->second;
 }
 
@@ -438,7 +437,7 @@ unsigned CodeGenerator::addConstant(JSValue* v)
     pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_codeBlock->jsValues.size());
     if (result.second) // new entry
         m_codeBlock->jsValues.append(v);
-    
+
     return result.first->second;
 }
 
@@ -751,7 +750,7 @@ bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, s
 
     for (; iter != end; ++iter, ++depth) {
         JSObject* currentScope = *iter;
-        if (!currentScope->isVariableObject()) 
+        if (!currentScope->isVariableObject())
             break;
         JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
         SymbolTableEntry entry = currentVariableObject->symbolTable().get(property.ustring().rep());
@@ -797,7 +796,7 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
     // Directly index the property lookup across multiple scopes.  Yay!
     return emitGetScopedVar(dst, depth, index);
 }
-    
+
 RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index)
 {
     instructions().append(machine().getOpcode(op_get_scoped_var));
@@ -806,7 +805,7 @@ RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int i
     instructions().append(depth);
     return dst;
 }
-    
+
 RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value)
 {
     instructions().append(machine().getOpcode(op_put_scoped_var));
@@ -823,7 +822,7 @@ RegisterID* CodeGenerator::emitResolveBase(RegisterID* dst, const Identifier& pr
     instructions().append(addConstant(property));
     return dst;
 }
-    
+
 RegisterID* CodeGenerator::emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property)
 {
     instructions().append(machine().getOpcode(op_resolve_with_base));
@@ -964,7 +963,7 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
 
     RefPtr<RegisterID> refFunc = func;
     RefPtr<RegisterID> refBase = base;
-    
+
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, Machine::CallFrameHeaderSize> callFrame;
     for (int i = 0; i < Machine::CallFrameHeaderSize; ++i)
@@ -1106,7 +1105,7 @@ JumpContext* CodeGenerator::jumpContextForContinue(const Identifier& label)
         }
         return 0;
     }
-    
+
     for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
         JumpContext* scope = &m_jumpContextStack[i];
         if (scope->labels->contains(label))
@@ -1128,7 +1127,7 @@ JumpContext* CodeGenerator::jumpContextForBreak(const Identifier& label)
         }
         return 0;
     }
-    
+
     for (int i = m_jumpContextStack.size() - 1; i >= 0; i--) {
         JumpContext* scope = &m_jumpContextStack[i];
         if (scope->labels->contains(label))
@@ -1151,11 +1150,11 @@ PassRefPtr<LabelID> CodeGenerator::emitComplexJumpScopes(LabelID* target, Contro
         }
 
         if (nNormalScopes) {
-            // We need to remove a number of dynamic scopes to get to the next 
+            // We need to remove a number of dynamic scopes to get to the next
             // finally block
             instructions().append(machine().getOpcode(op_jmp_scopes));
             instructions().append(nNormalScopes);
-            
+
             // If topScope == bottomScope then there isn't actually a finally block
             // left to emit, so make the jmp_scopes jump directly to the target label
             if (topScope == bottomScope) {
@@ -1163,7 +1162,7 @@ PassRefPtr<LabelID> CodeGenerator::emitComplexJumpScopes(LabelID* target, Contro
                 return target;
             }
 
-            // Otherwise we just use jmp_scopes to pop a group of scopes and go 
+            // Otherwise we just use jmp_scopes to pop a group of scopes and go
             // to the next instruction
             RefPtr<LabelID> nextInsn = newLabel();
             instructions().append(nextInsn->offsetFrom(instructions().size()));
@@ -1225,7 +1224,7 @@ RegisterID* CodeGenerator::emitCatch(RegisterID* targetRegister, LabelID* start,
     instructions().append(targetRegister->index());
     return targetRegister;
 }
-    
+
 void CodeGenerator::emitThrow(RegisterID* exception)
 {
     instructions().append(machine().getOpcode(op_throw));

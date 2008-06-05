@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef RegisterFileStack_h
 #define RegisterFileStack_h
 
@@ -43,20 +43,19 @@ namespace KJS {
         }
 
         ~RegisterFileStack();
-        
+
         RegisterFile* pushGlobalRegisterFile();
         void popGlobalRegisterFile();
         RegisterFile* pushFunctionRegisterFile();
         void popFunctionRegisterFile();
 
         RegisterFile* current() { return m_stack.last(); }
-        
+
         void mark()
         {
             Stack::iterator end = m_stack.end();
-            for (Stack::iterator it = m_stack.begin(); it != end; ++it) {
+            for (Stack::iterator it = m_stack.begin(); it != end; ++it)
                 (*it)->mark();
-            }
         }
 
         // Pointer to a value that holds the base of the top-most global register file.
@@ -68,8 +67,9 @@ namespace KJS {
             m_globalBase = *registerFile->basePointer();
         }
 
-        bool inImplicitCall() {
-            for (size_t i = 0; i < m_stack.size(); ++i) { 
+        bool inImplicitCall()
+        {
+            for (size_t i = 0; i < m_stack.size(); ++i) {
                 if (!m_stack[i]->safeForReentry())
                     return true;
             }
@@ -79,7 +79,8 @@ namespace KJS {
     private:
         typedef Vector<RegisterFile*, 4> Stack;
 
-        RegisterFile* lastGlobal() {
+        RegisterFile* lastGlobal()
+        {
             ASSERT(m_stack.size());
             for (size_t i = m_stack.size() - 1; i > 0; --i) {
                 if (m_stack[i]->isGlobal())

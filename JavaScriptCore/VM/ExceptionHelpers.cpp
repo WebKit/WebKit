@@ -44,7 +44,7 @@ static void substitute(UString& string, const UString& substring)
     newString.append(string.substr(position + 2));
     string = newString;
 }
-    
+
 JSValue* createError(ExecState* exec, ErrorType e, const char* msg)
 {
     return Error::create(exec, e, msg, -1, -1, 0);
@@ -82,7 +82,7 @@ JSValue* createUndefinedVariableError(ExecState* exec, const Identifier& ident)
 {
     return createError(exec, ReferenceError, "Can't find variable: %s", ident);
 }
-    
+
 JSValue* createInvalidParamError(ExecState* exec, const char* op, JSValue* v)
 {
     UString message = "'%s' is not a valid argument for '%s'";
@@ -105,4 +105,4 @@ JSValue* createNotAFunctionError(ExecState* exec, JSValue* value, Node* expr)
     return createError(exec, TypeError, "Value %s does not allow function calls.", value);
 }
 
-}
+} // namespace KJS

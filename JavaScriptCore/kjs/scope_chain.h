@@ -44,7 +44,7 @@ namespace KJS {
         JSObject* object;
         JSObject* globalThis;
         int refCount;
-        
+
         void deref() { if (--refCount == 0) release(); }
         void ref() { ++refCount; }
         void release();
@@ -118,7 +118,10 @@ namespace KJS {
 
     class ScopeChainIterator {
     public:
-        ScopeChainIterator(const ScopeChainNode* node) : m_node(node) {}
+        ScopeChainIterator(const ScopeChainNode* node)
+            : m_node(node)
+        {
+        }
 
         JSObject* const & operator*() const { return m_node->object; }
         JSObject* const * operator->() const { return &(operator*()); }
@@ -187,7 +190,7 @@ namespace KJS {
 #ifndef NDEBUG        
         void print() const { _node->print(); }
 #endif
-        
+
     private:
         ScopeChainNode* _node;
     };

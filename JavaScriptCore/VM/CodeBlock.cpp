@@ -97,21 +97,21 @@ static CString regexpName(int re, RegExp* regexp)
 
 NEVER_INLINE static const char* debugHookName(int debugHookID)
 {
-    switch((DebugHookID)debugHookID) {
-    case DidEnterCallFrame:
-        return "didEnterCallFrame";
-    case WillLeaveCallFrame:
-        return "willLeaveCallFrame";
-    case WillExecuteStatement:
-        return "willExecuteStatement";
-    case WillExecuteProgram:
-        return "willExecuteProgram";
-    case DidExecuteProgram:
-        return "didExecuteProgram";
-    case DidReachBreakpoint:
-        return "didReachBreakpoint";
+    switch (static_cast<DebugHookID>(debugHookID)) {
+        case DidEnterCallFrame:
+            return "didEnterCallFrame";
+        case WillLeaveCallFrame:
+            return "willLeaveCallFrame";
+        case WillExecuteStatement:
+            return "willExecuteStatement";
+        case WillExecuteProgram:
+            return "willExecuteProgram";
+        case DidExecuteProgram:
+            return "didExecuteProgram";
+        case DidReachBreakpoint:
+            return "didReachBreakpoint";
     }
-    
+
     ASSERT_NOT_REACHED();
     return "";
 }

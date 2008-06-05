@@ -37,8 +37,8 @@
 #include "LabelID.h"
 #include "Machine.h"
 #include "RegisterID.h"
-#include "SymbolTable.h"
 #include "SegmentedVector.h"
+#include "SymbolTable.h"
 #include "debugger.h"
 #include "nodes.h"
 #include <wtf/PassRefPtr.h>
@@ -63,19 +63,19 @@ namespace KJS {
         LabelID* finallyAddr;
         RegisterID* retAddrDst;
     };
-    
+
     struct ControlFlowContext {
         bool isFinallyBlock;
         FinallyContext finallyContext;
     };
-    
+
     class CodeGenerator {
     public:
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
-        
+
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
-        
+
         CodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&, bool canCreateGlobals);
         CodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
         CodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
@@ -95,9 +95,9 @@ namespace KJS {
         RegisterID* registerForLocalConstInit(const Identifier&);
 
         // Searches the scope chain in an attempt to  statically locate the requested
-        // property.  Returns false if for any reason the property cannot be safely 
+        // property.  Returns false if for any reason the property cannot be safely
         // optimised at all.  Otherwise it will return the index and depth of the
-        // VariableObject that defines the property.  If the property cannot be found 
+        // VariableObject that defines the property.  If the property cannot be found
         // statically, depth will contain the depth of the scope chain where dynamic
         // lookup must begin.
         //
@@ -132,17 +132,18 @@ namespace KJS {
         RegisterID* tempDestination(RegisterID* dst) { return (dst && dst->isTemporary()) ? dst : newTemporary(); }
 
         // Returns the place to write the final output of an operation.
-        RegisterID* finalDestination(RegisterID* originalDst, RegisterID* tempDst = 0) 
-        { 
+        RegisterID* finalDestination(RegisterID* originalDst, RegisterID* tempDst = 0)
+        {
             if (originalDst)
                 return originalDst;
             if (tempDst && tempDst->isTemporary())
                 return tempDst;
-            return newTemporary(); 
+            return newTemporary();
         }
-        
-        RegisterID* destinationForAssignResult(RegisterID* dst) { 
-            if (dst && m_codeBlock->needsFullScopeChain) 
+
+        RegisterID* destinationForAssignResult(RegisterID* dst)
+        {
+            if (dst && m_codeBlock->needsFullScopeChain)
                 return dst->isTemporary() ? dst : newTemporary();
             return 0;
         }
@@ -150,12 +151,12 @@ namespace KJS {
         // moves src to dst if dst is not null and is different from src, otherwise just returns src
         RegisterID* moveToDestinationIfNeeded(RegisterID* dst, RegisterID* src) { return (dst && dst != src) ? emitMove(dst, src) : src; }
 
-
         PassRefPtr<LabelID> newLabel();
-        
+
         // The emitNode functions are just syntactic sugar for calling
         // Node::emitCode. They're the only functions that accept a NULL register.
-        RegisterID* emitNode(RegisterID* dst, Node* n) {
+        RegisterID* emitNode(RegisterID* dst, Node* n)
+        {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || !dst->isTemporary() || dst->refCount());
             if (!m_codeBlock->lineInfo.size() || m_codeBlock->lineInfo.last().lineNumber != n->lineNo()) {
@@ -182,14 +183,14 @@ namespace KJS {
                 emitNode(dst.get(), n);
                 return dst;
             }
-            
+
             return PassRefPtr<RegisterID>(emitNode(n));
         }
 
         RegisterID* emitLoad(RegisterID* dst, bool);
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, JSValue*);
-        
+
         RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst);
 
@@ -265,21 +266,21 @@ namespace KJS {
 
         PassRefPtr<LabelID> emitJumpSubroutine(RegisterID* retAddrDst, LabelID*);
         void emitSubroutineReturn(RegisterID* retAddrSrc);
-        
+
         RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base);
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* iter, LabelID* target);
 
         RegisterID* emitCatch(RegisterID*, LabelID* start, LabelID* end);
         void emitThrow(RegisterID*);
         RegisterID* emitNewError(RegisterID* dst, ErrorType type, JSValue* message);
-        
+
         RegisterID* emitPushScope(RegisterID* scope);
         void emitPopScope();
-        
+
         void emitDebugHook(DebugHookID, int firstLine, int lastLine);
 
         int scopeDepth() { return m_dynamicScopeDepth + m_finallyDepth; }
-        
+
         void pushFinallyContext(LabelID* target, RegisterID* returnAddrDst);
         void popFinallyContext();
         bool inContinueContext() { return m_continueDepth > 0; };
@@ -289,8 +290,8 @@ namespace KJS {
         JumpContext* jumpContextForContinue(const Identifier&);
         JumpContext* jumpContextForBreak(const Identifier&);
 
-
         CodeType codeType() const { return m_codeType; }
+
     private:
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
         struct JSValueHashTraits : HashTraits<JSValue*> {
@@ -299,7 +300,7 @@ namespace KJS {
         };
 
         typedef HashMap<JSValue*, unsigned, DefaultHash<JSValue*>::Hash, JSValueHashTraits> JSValueMap;
-        
+
         struct IdentifierMapIndexHashTraits {
             typedef int TraitType;
             typedef IdentifierMapIndexHashTraits StorageTraits;
@@ -315,7 +316,7 @@ namespace KJS {
 
         // Maps a register index in the symbol table to a RegisterID index in m_locals.
         int localsIndex(int registerIndex) { return -registerIndex - 1; }
-        
+
         // Returns the RegisterID corresponding to ident.
         RegisterID* addVar(const Identifier& ident, bool isConstant)
         {
@@ -334,22 +335,22 @@ namespace KJS {
         unsigned addConstant(const Identifier&);
         unsigned addConstant(JSValue*);
         unsigned addRegExp(RegExp* r);
-        
+
         Vector<Instruction>& instructions() { return m_codeBlock->instructions; }
         SymbolTable& symbolTable() { return *m_symbolTable; }
         Vector<HandlerInfo>& exceptionHandlers() { return m_codeBlock->exceptionHandlers; }
-        
+
         bool shouldOptimizeLocals() { return (m_codeType != EvalCode) && !m_dynamicScopeDepth; }
         bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval; }
 
         bool m_shouldEmitDebugHooks;
-        
+
         const ScopeChain* m_scopeChain;
         SymbolTable* m_symbolTable;
-        
+
         ScopeNode* m_scopeNode;
         CodeBlock* m_codeBlock;
-        
+
         HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
         SegmentedVector<RegisterID, 512> m_locals;
@@ -358,7 +359,7 @@ namespace KJS {
         int m_finallyDepth;
         int m_dynamicScopeDepth;
         CodeType m_codeType;
-        
+
         Vector<JumpContext> m_jumpContextStack;
         int m_continueDepth;
         Vector<ControlFlowContext> m_scopeContextStack;
@@ -372,7 +373,7 @@ namespace KJS {
 
         CommonIdentifiers* m_propertyNames;
 
-#ifndef NDEBUG        
+#ifndef NDEBUG
         static bool s_dumpsGeneratedCode;
 #endif
     };

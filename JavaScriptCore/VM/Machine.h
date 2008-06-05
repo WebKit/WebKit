@@ -25,14 +25,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef Machine_h
 #define Machine_h
 
 #include "Opcode.h"
 #include "RegisterFileStack.h"
-#include <wtf/HashMap.h>
 #include <kjs/list.h>
+#include <wtf/HashMap.h>
 
 namespace KJS {
 
@@ -45,7 +45,7 @@ namespace KJS {
     class RegisterFile;
     class RegisterFileStack;
     class ScopeChainNode;
-    
+
     enum DebugHookID {
         WillExecuteProgram,
         DidExecuteProgram,
@@ -59,31 +59,35 @@ namespace KJS {
 
     class Machine {
     public:
-        enum { CallerCodeBlock = 0, 
-               ReturnVPC, 
-               CallerScopeChain, 
-               CallerRegisterOffset, 
-               ReturnValueRegister,
-               ArgumentStartRegister,
-               ArgumentCount,
-               CalledAsConstructor,
-               Callee,
-               OptionalCalleeActivation,
-               CallFrameHeaderSize};
-        
+        enum {
+            CallerCodeBlock = 0,
+            ReturnVPC,
+            CallerScopeChain,
+            CallerRegisterOffset,
+            ReturnValueRegister,
+            ArgumentStartRegister,
+            ArgumentCount,
+            CalledAsConstructor,
+            Callee,
+            OptionalCalleeActivation,
+            CallFrameHeaderSize
+        };
+
         enum { ProgramCodeThisRegister = -1 };
 
         Machine();
-        
-        Opcode getOpcode(OpcodeID id) {
+
+        Opcode getOpcode(OpcodeID id)
+        {
             #if HAVE(COMPUTED_GOTO)
-                return m_opcodeTable[id]; 
+                return m_opcodeTable[id];
             #else
                 return id;
             #endif
         }
 
-        OpcodeID getOpcodeID(Opcode opcode) {
+        OpcodeID getOpcodeID(Opcode opcode)
+        {
             #if HAVE(COMPUTED_GOTO)
                 ASSERT(isOpcode(opcode));
                 return m_opcodeIDTable.get(opcode);
@@ -93,42 +97,42 @@ namespace KJS {
         }
 
         bool isOpcode(Opcode opcode);
-        
+
         JSValue* execute(ProgramNode*, ExecState*, ScopeChainNode*, JSObject* thisObj, RegisterFileStack*, JSValue** exception);
         JSValue* execute(FunctionBodyNode*, ExecState*, FunctionImp*, JSObject* thisObj, const List& args, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFile*, int registerOffset, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
-        
+
         JSValue* retrieveArguments(ExecState*, FunctionImp*) const;
         JSValue* retrieveCaller(ExecState*, FunctionImp*) const;
-        
+
         void getFunctionAndArguments(Register** registerBase, Register* callFrame, FunctionImp*&, Register*& argv, int& argc);
-        
+
     private:
-        typedef enum { Normal, InitializeAndReturn } ExecutionFlag;
+        enum ExecutionFlag { Normal, InitializeAndReturn };
 
         ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
         NEVER_INLINE void debug(ExecState*, const Instruction*, const CodeBlock*, ScopeChainNode*, Register**, Register*);
 
         NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, Register**, const Instruction*&, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
         NEVER_INLINE Instruction* throwException(ExecState*, JSValue*, Register**, const Instruction*, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
-        
+
         bool getCallFrame(ExecState*, FunctionImp*, Register**& registerBase, int& callFrameOffset) const;
 
         JSValue* privateExecute(ExecutionFlag, ExecState* = 0, RegisterFile* = 0, Register* = 0, ScopeChainNode* = 0, CodeBlock* = 0, JSValue** exception = 0);
 
         void dumpCallFrame(const CodeBlock*, ScopeChainNode*, RegisterFile*, const Register*);
         void dumpRegisters(const CodeBlock*, RegisterFile*, const Register*);
-        
+
         bool isGlobalCallFrame(Register** registerBase, const Register* r) const { return (*registerBase) == r; }
 
         int m_reentryDepth;
-#if HAVE(COMPUTED_GOTO)        
+#if HAVE(COMPUTED_GOTO)
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
     };
-    
+
     Machine& machine();
 
 } // namespace KJS

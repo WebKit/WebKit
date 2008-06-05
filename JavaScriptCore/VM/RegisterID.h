@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef RegisterID_h
 #define RegisterID_h
 
@@ -62,13 +62,13 @@ namespace KJS {
 #endif
             m_index = index;
         }
-        
+
         int index() const
         {
             ASSERT(m_didSetIndex);
             return m_index;
         }
-        
+
         bool isTemporary()
         {
             return m_index >= 0;
@@ -91,14 +91,14 @@ namespace KJS {
         }
 
     private:
-    
+
         int m_refCount;
         int m_index;
 #ifndef NDEBUG
         bool m_didSetIndex;
 #endif
     };
-    
+
 } // namespace KJS
 
 namespace WTF {
@@ -110,5 +110,5 @@ namespace WTF {
     };
 
 } // namespace WTF
-    
+
 #endif // RegisterID_h

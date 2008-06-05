@@ -25,7 +25,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
- 
+
 #ifndef SourceRange_h
 #define SourceRange_h
 
@@ -36,15 +36,23 @@ namespace KJS {
 
     class SourceRange {
     public:
-        SourceRange(PassRefPtr<SourceProvider> provider, int start, int end) 
+        SourceRange(PassRefPtr<SourceProvider> provider, int start, int end)
             : m_sourceProvider(provider)
             , m_startChar(start)
             , m_endChar(end)
         {
         }
-        SourceRange() {}
 
-        UString toString() const { if (!m_sourceProvider) return UString(); return m_sourceProvider->getRange(m_startChar, m_endChar); }
+        SourceRange()
+        {
+        }
+
+        UString toString() const
+        {
+            if (!m_sourceProvider)
+                return UString();
+            return m_sourceProvider->getRange(m_startChar, m_endChar);
+        }
 
     private:
         RefPtr<SourceProvider> m_sourceProvider;
@@ -52,6 +60,6 @@ namespace KJS {
         int m_endChar;
     };
 
-}
+} // namespace KJS
 
 #endif // SourceRange_h

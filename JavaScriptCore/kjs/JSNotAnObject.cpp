@@ -33,129 +33,131 @@
 #include <wtf/UnusedParam.h>
 
 namespace KJS {
-    // JSValue methods
-    JSValue *JSNotAnObject::toPrimitive(ExecState* exec, JSType) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    bool JSNotAnObject::getPrimitiveNumber(ExecState* exec, double&, JSValue*&)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    bool JSNotAnObject::toBoolean(ExecState* exec) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    double JSNotAnObject::toNumber(ExecState* exec) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return NaN;
-    }
 
-    UString JSNotAnObject::toString(ExecState* exec) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return "";
-    }
-    
-    JSObject *JSNotAnObject::toObject(ExecState* exec) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    // marking
-    void JSNotAnObject::mark()
-    {
-        JSCell::mark();
-        if (!m_exception->marked())
-            m_exception->mark();
-    }
-    
-    bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier&, PropertySlot&)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue*)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-    }
-    
-    void JSNotAnObject::put(ExecState* exec, unsigned, JSValue*)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-    }
-    
-    bool JSNotAnObject::deleteProperty(ExecState* exec, const Identifier &)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return false;
-    }
-    
-    JSValue *JSNotAnObject::defaultValue(ExecState* exec, JSType) const
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    JSObject* JSNotAnObject::construct(ExecState* exec, const List&)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    JSObject* JSNotAnObject::construct(ExecState* exec, const List&, const Identifier&, const UString&, int)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    JSValue* JSNotAnObject::callAsFunction(ExecState* exec, JSObject *, const List &)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);
-        return m_exception;
-    }
-    
-    void JSNotAnObject::getPropertyNames(ExecState* exec, PropertyNameArray&)
-    {
-        UNUSED_PARAM(exec);
-        ASSERT(exec->hadException() && exec->exception() == m_exception);        
-    }
-    
+// JSValue methods
+JSValue* JSNotAnObject::toPrimitive(ExecState* exec, JSType) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
 }
+
+bool JSNotAnObject::getPrimitiveNumber(ExecState* exec, double&, JSValue*&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+bool JSNotAnObject::toBoolean(ExecState* exec) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+double JSNotAnObject::toNumber(ExecState* exec) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return NaN;
+}
+
+UString JSNotAnObject::toString(ExecState* exec) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return "";
+}
+
+JSObject* JSNotAnObject::toObject(ExecState* exec) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
+}
+
+// Marking
+void JSNotAnObject::mark()
+{
+    JSCell::mark();
+    if (!m_exception->marked())
+        m_exception->mark();
+}
+
+// JSObject methods
+bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, const Identifier&, PropertySlot&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue*)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+}
+
+void JSNotAnObject::put(ExecState* exec, unsigned, JSValue*)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+}
+
+bool JSNotAnObject::deleteProperty(ExecState* exec, const Identifier&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return false;
+}
+
+JSValue* JSNotAnObject::defaultValue(ExecState* exec, JSType) const
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
+}
+
+JSObject* JSNotAnObject::construct(ExecState* exec, const List&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
+}
+
+JSObject* JSNotAnObject::construct(ExecState* exec, const List&, const Identifier&, const UString&, int)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
+}
+
+JSValue* JSNotAnObject::callAsFunction(ExecState* exec, JSObject*, const List&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+    return m_exception;
+}
+
+void JSNotAnObject::getPropertyNames(ExecState* exec, PropertyNameArray&)
+{
+    UNUSED_PARAM(exec);
+    ASSERT(exec->hadException() && exec->exception() == m_exception);
+}
+
+} // namespace KJS

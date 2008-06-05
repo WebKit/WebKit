@@ -121,7 +121,7 @@ namespace KJS {
         macro(op_debug) \
         \
         macro(op_end) // end must be the last opcode in the list
-        
+
     #define OPCODE_ID_ENUM(opcode) opcode,
         typedef enum { FOR_EACH_OPCODE_ID(OPCODE_ID_ENUM) } OpcodeID;
     #undef OPCODE_ID_ENUM
