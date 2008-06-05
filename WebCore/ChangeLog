@@ -1,3 +1,13 @@
+2008-06-05  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/5947396> AccessibilityListBoxOptions should return their string as AXValue, not AXTitle
+
+        * page/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::stringValue):
+        * page/AccessibilityListBoxOption.h:
+
 2008-06-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Harrison.

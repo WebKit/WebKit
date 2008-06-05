@@ -123,7 +123,7 @@ bool AccessibilityListBoxOption::canSetSelectedAttribute() const
     return true;
 }
     
-String AccessibilityListBoxOption::title() const
+String AccessibilityListBoxOption::stringValue() const
 {
     if (!m_optionElement)
         return String();
