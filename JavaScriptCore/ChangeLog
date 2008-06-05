@@ -1,3 +1,13 @@
+2008-06-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey and Oliver.
+        
+        - remove profiler fetch hack
+        I measure an 0.5% progression from this, others show a wash. It seems not needed any more.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-06-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

@@ -890,14 +890,6 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     JSValue** k = codeBlock->jsValues.data();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
 
-#if HAVE(COMPUTED_GOTO)
-    // Yet another hack around GCC's various foibles, in this case fetching the
-    // profiler reference results in a regression.  Removing this indirection
-    // results in a 0.8% regression.
-    goto *(&&profilerFetchHack);
-    profilerFetchHack:
-#endif
-
     registerFile->setSafeForReentry(false);
 #define VM_CHECK_EXCEPTION() \
      do { \
