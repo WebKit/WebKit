@@ -1,3 +1,12 @@
+2008-06-05  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14141
+        Please add a version to the Gtk port
+
+        * GNUmakefile.am:
+
 2008-06-02  Alp Toker  <alp@nuanti.com>
 
         GTK+/autotools Windows build system fixes.

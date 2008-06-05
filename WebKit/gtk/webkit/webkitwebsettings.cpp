@@ -252,6 +252,13 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                     0,
                                     flags));
 
+    /**
+    * WebKitWebSettings:zoom-step:
+    *
+    * The value by which the zoom level is changed when zooming in or out.
+    *
+    * Since: 1.0.1
+    */
     g_object_class_install_property(gobject_class,
                                     PROP_ZOOM_STEP,
                                     g_param_spec_float(

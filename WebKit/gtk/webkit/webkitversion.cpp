@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,16 +17,44 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __WEBKIT_H__
-#define __WEBKIT_H__
+#include "webkitversion.h"
 
-#include <webkit/webkitversion.h>
-#include <webkit/webkitdefines.h>
-#include <webkit/webkitnetworkrequest.h>
-#include <webkit/webkitwebframe.h>
-#include <webkit/webkitwebsettings.h>
-#include <webkit/webkitwebview.h>
-#include <webkit/webkitwebbackforwardlist.h>
-#include <webkit/webkitwebhistoryitem.h>
+extern "C" {
 
-#endif /* __WEBKIT_H__ */
+/**
+ * webkit_major_version:
+ *
+ * The major version number of the WebKit that is linked against.
+ *
+ * Return value: The major version
+ */
+guint webkit_major_version()
+{
+    return WEBKIT_MAJOR_VERSION;
+}
+
+/**
+ * webkit_minor_version:
+ *
+ * The minor version number of the WebKit that is linked against.
+ *
+ * Return value: The minor version
+ */
+guint webkit_minor_version()
+{
+    return WEBKIT_MINOR_VERSION;
+}
+
+/**
+ * webkit_micro_version:
+ *
+ * The micro version number of the WebKit that is linked against.
+ *
+ * Return value: The micro version
+ */
+guint webkit_micro_version()
+{
+    return WEBKIT_MICRO_VERSION;
+}
+
+}

@@ -1,11 +1,24 @@
-AC_INIT([WebKit],[0.1],[http://bugs.webkit.org/])
-
 AC_PREREQ(2.59)
 
+m4_define([webkit_major_version], [1])
+m4_define([webkit_minor_version], [0])
+m4_define([webkit_micro_version], [1])
+
+AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
+
 AC_CONFIG_HEADERS([aconfig.h])
+
+WEBKIT_MAJOR_VERSION=webkit_major_version
+WEBKIT_MINOR_VERSION=webkit_minor_version
+WEBKIT_MICRO_VERSION=webkit_micro_version
+AC_SUBST(WEBKIT_MAJOR_VERSION)
+AC_SUBST(WEBKIT_MINOR_VERSION)
+AC_SUBST(WEBKIT_MICRO_VERSION)
+
 AC_CONFIG_SRCDIR([WebCore/config.h])
 
-# see http://www.gnu.org/software/libtool/manual.html#Versioning
+dnl # Libtool library version, not to confuse with API version
+dnl # see http://www.gnu.org/software/libtool/manual.html#Versioning
 LIBWEBKITGTK_VERSION=1:0:0
 AC_SUBST([LIBWEBKITGTK_VERSION])
 
@@ -551,6 +564,7 @@ AM_CONDITIONAL([HTML_FLAGS],[test "$html_flags" = "yes"])
 AC_CONFIG_FILES([
 GNUmakefile
 WebKit/gtk/webkit-1.0.pc:WebKit/gtk/webkit.pc.in
+WebKit/gtk/webkit/webkitversion.h
 ]
 )
 

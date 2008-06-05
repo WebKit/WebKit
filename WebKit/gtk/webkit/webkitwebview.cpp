@@ -1220,6 +1220,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                          FALSE,
                                                          WEBKIT_PARAM_READWRITE));
 
+    /**
+    * WebKitWebView:zoom-level:
+    *
+    * The level of zoom of the content.
+    *
+    * Since: 1.0.1
+    */
     g_object_class_install_property(objectClass, PROP_ZOOM_LEVEL,
                                     g_param_spec_float("zoom-level",
                                                        "Zoom level",
@@ -1229,6 +1236,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                        1.0f,
                                                        WEBKIT_PARAM_READWRITE));
 
+    /**
+    * WebKitWebView:full-content-zoom:
+    *
+    * Whether the full content is scaled when zooming.
+    *
+    * Since: 1.0.1
+    */
     g_object_class_install_property(objectClass, PROP_FULL_CONTENT_ZOOM,
                                     g_param_spec_boolean("full-content-zoom",
                                                          "Full content zoom",
@@ -2065,6 +2079,8 @@ void webkit_web_view_set_transparent(WebKitWebView* webView, gboolean flag)
  * elements in the page.
  *
  * Return value: the zoom level of @web_view
+ *
+ * Since: 1.0.1
  */
 gfloat webkit_web_view_get_zoom_level(WebKitWebView* webView)
 {
@@ -2097,6 +2113,8 @@ static void webkit_web_view_apply_zoom_level(WebKitWebView* webView, gfloat zoom
  * If the "full-content-zoom" property is set to %FALSE (the default)
  * the zoom level changes the text size, or if %TRUE, scales all
  * elements in the page.
+ *
+ * Since: 1.0.1
  */
 void webkit_web_view_set_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
 {
@@ -2113,6 +2131,8 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gfloat zoomLevel)
  * Increases the zoom level of @web_view. The current zoom
  * level is incremented by the value of the "zoom-step"
  * property of the #WebKitWebSettings associated with @web_view.
+ *
+ * Since: 1.0.1
  */
 void webkit_web_view_zoom_in(WebKitWebView* webView)
 {
@@ -2132,6 +2152,8 @@ void webkit_web_view_zoom_in(WebKitWebView* webView)
  * Decreases the zoom level of @web_view. The current zoom
  * level is decremented by the value of the "zoom-step"
  * property of the #WebKitWebSettings associated with @web_view.
+ *
+ * Since: 1.0.1
  */
 void webkit_web_view_zoom_out(WebKitWebView* webView)
 {
@@ -2152,6 +2174,8 @@ void webkit_web_view_zoom_out(WebKitWebView* webView)
  *
  * Return value: %FALSE if only text should be scaled (the default),
  * %TRUE if the full content of the view should be scaled.
+ *
+ * Since: 1.0.1
  */
 gboolean webkit_web_view_get_full_content_zoom(WebKitWebView* webView)
 {
@@ -2168,6 +2192,8 @@ gboolean webkit_web_view_get_full_content_zoom(WebKitWebView* webView)
  * %TRUE if the full content of the view should be scaled.
  *
  * Sets whether the zoom level affects only text or all elements.
+ *
+ * Since: 1.0.1
  */
 void webkit_web_view_set_full_content_zoom(WebKitWebView* webView, gboolean zoomFullContent)
 {
