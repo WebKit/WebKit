@@ -1,3 +1,13 @@
+2008-06-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Prevent cycles when converting from DOM objects to
+        QVariant, due to cycles in the DOM tree.
+
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+
 2008-06-04  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
