@@ -1,3 +1,15 @@
+2008-06-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Stephanie Lewis (or maybe the other way around).
+        
+        Minor change to PCRE to help out certain compilers.
+        
+        SunSpider reports no change, maybe a small speedup.
+
+        * pcre/pcre_exec.cpp:
+        (match): Use instructionPtr++ a little less, to avoid confusing the
+        optimizer.
+
 2008-06-05  Alexey Proskuryakov  <ap@webkit.org>
 
         Re-landing an independent part of a previously rolled out threading patch.

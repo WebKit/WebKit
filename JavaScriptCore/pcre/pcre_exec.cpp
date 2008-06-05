@@ -1242,15 +1242,16 @@ RECURSE:
             BEGIN_OPCODE(NOT): {
                 if (stack.currentFrame->args.subjectPtr >= md.endSubject)
                     RRETURN_NO_MATCH;
-                stack.currentFrame->args.instructionPtr++;
+                int b = stack.currentFrame->args.instructionPtr[1];
                 int c = *stack.currentFrame->args.subjectPtr++;
+                stack.currentFrame->args.instructionPtr += 2;
                 if (md.ignoreCase) {
                     if (c < 128)
                         c = toLowerCase(c);
-                    if (toLowerCase(*stack.currentFrame->args.instructionPtr++) == c)
+                    if (toLowerCase(b) == c)
                         RRETURN_NO_MATCH;
                 } else {
-                    if (*stack.currentFrame->args.instructionPtr++ == c)
+                    if (b == c)
                         RRETURN_NO_MATCH;
                 }
                 NEXT_OPCODE;
