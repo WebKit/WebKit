@@ -123,7 +123,7 @@ public:
 
 private:
     RGBA32 m_color;
-    bool m_valid : 1;
+    bool m_valid;
 };
 
 inline bool operator==(const Color& a, const Color& b)

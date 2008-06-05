@@ -1,3 +1,11 @@
+2008-06-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        No functional changes, thus no tests.
+
+        * platform/graphics/Color.h: remove unnecessary bitfield use
+
 2008-06-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.
