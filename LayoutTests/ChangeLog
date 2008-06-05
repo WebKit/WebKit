@@ -1,3 +1,15 @@
+2008-06-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - pixel test for https://bugs.webkit.org/show_bug.cgi?id=19397
+          REGRESSION (3.1-TOT): Box-shadow renders weird when rotating a div with border radius
+
+        * fast/transforms/shadows.html: Added.
+        * platform/mac/fast/transforms/shadows-expected.checksum: Added.
+        * platform/mac/fast/transforms/shadows-expected.png: Added.
+        * platform/mac/fast/transforms/shadows-expected.txt: Added.
+
 2008-06-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon

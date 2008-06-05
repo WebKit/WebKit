@@ -1,3 +1,24 @@
+2008-06-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19397
+          REGRESSION (3.1-TOT): Box-shadow renders weird when rotating a div with border radius
+
+        Test: fast/transforms/shadows.html
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow): In Core Graphics, shadow
+        dimensions are always in device space. Account for that, and apply the
+        current context transform to shadow offset, and multiply the blur radius
+        by the inverse of the operator norm of the inverse transform (which is
+        the radius of the circle inscribed in the transformed unit circle). 
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintBoxShadow): Added 1px separation between
+        the edge of the filled shape and the edge of the clipped-out shape,
+        because in a transformed context, due to antialiasing, the fill can
+        bleed into the clip if they touch.
+
 2008-06-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
