@@ -103,7 +103,7 @@
 		14D797810DAC3307001A9F05 /* RegisterFileStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14D7977F0DAC3307001A9F05 /* RegisterFileStack.cpp */; };
 		14DA81900D99FD2000B0A4FB /* JSActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = 14DA818E0D99FD2000B0A4FB /* JSActivation.h */; };
 		14DE0D690D02431400AACCA2 /* JSGlobalObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */; };
-		14E0FF120DBAAED00007C0AB /* Machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B15E70D81F986009CB8C7 /* Machine.cpp */; };
+		14E0FF120DBAAED00007C0AB /* Machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B15E70D81F986009CB8C7 /* Machine.cpp */; settings = {COMPILER_FLAGS = "-fno-tree-pre"; }; };
 		14F252570D08DD8D004ECFFF /* JSVariableObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 14F252560D08DD8D004ECFFF /* JSVariableObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14F252610D08DF2F004ECFFF /* JSVariableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */; };
 		1CAA8B4C0D32C39A0041BCFF /* JavaScript.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4A0D32C39A0041BCFF /* JavaScript.h */; settings = {ATTRIBUTES = (Public, ); }; };

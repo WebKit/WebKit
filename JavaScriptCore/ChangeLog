@@ -1,5 +1,15 @@
 2008-06-05  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Stephanie Lewis.
+        
+        Added the -fno-tree-pre flag to the Machine.cpp build, to tell GCC not
+        to perform Partial Redundancy Elimination (PRE) on trees in Machine.cpp,
+        since GCC's PRE doesn't do very well with computed goto code.
+        
+        SunSpider reports a .7% speedup.
+        
+2008-06-05  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Stephanie Lewis (or maybe the other way around).
         
         Minor change to PCRE to help out certain compilers.
