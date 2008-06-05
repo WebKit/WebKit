@@ -1,5 +1,18 @@
 2008-06-05  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Hyatt.
+        
+        - force inlining of a template function that only has one call site per specialization
+        1.3% speedup on SunSpider
+
+        * kjs/collector.cpp:
+        (KJS::Collector::heapAllocate): This template function is only
+        called from allocate() and allocateNumber() (once per
+        specialization) and the extra call overhead for GC allocation
+        shows up, so force inlining.
+
+2008-06-05  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Alexey and Oliver.
         
         - remove profiler fetch hack

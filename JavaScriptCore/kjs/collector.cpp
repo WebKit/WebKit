@@ -178,7 +178,7 @@ template <> struct HeapConstants<Collector::NumberHeap> {
     typedef SmallCellCollectorBlock Block;
 };
 
-template <Collector::HeapType heapType> void* Collector::heapAllocate(size_t s)
+template <Collector::HeapType heapType> ALWAYS_INLINE void* Collector::heapAllocate(size_t s)
 {
     typedef typename HeapConstants<heapType>::Block Block;
     typedef typename HeapConstants<heapType>::Cell Cell;
