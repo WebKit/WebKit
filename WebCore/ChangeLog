@@ -1,3 +1,26 @@
+2008-06-04  David Hyatt  <hyatt@apple.com>
+
+        Fix for <rdar://problem/5957994> Height doesn't animate
+
+        Improve the behavior when transitions are dynamically changed.  Make sure to leave older transitions
+        running and let them obsolete themselves when they finish.
+
+        Reviewed by Dan Bernstein
+
+        Added WebCore/manual-tests/transitions2.html (must be tested manually)
+
+        * manual-tests/transitions.html:
+        * manual-tests/transitions2.html: Added.
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::property):
+        (WebCore::ImplicitAnimation::setFinished):
+        (WebCore::ImplicitAnimation::markedForDeath):
+        (WebCore::ImplicitAnimation::setMarkedForDeath):
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::CompositeImplicitAnimation::animate):
+
 2008-06-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

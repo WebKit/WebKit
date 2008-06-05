@@ -68,7 +68,13 @@ public:
     
     double progress() const;
 
+    int property() const { return m_property; }
+    
     bool finished() const { return m_finished; }
+    void setFinished(bool f) { m_finished = f; }
+    
+    bool stale() const { return m_stale; }
+    void setStale() { m_stale = true; }
 
 private:
     // The two styles that we are blending.
@@ -86,6 +92,8 @@ private:
     double m_startTime;
     bool m_paused;
     double m_pauseTime;
+    
+    bool m_stale;
 };
 
 class CompositeImplicitAnimation : public Noncopyable {
@@ -95,8 +103,6 @@ public:
     RenderStyle* animate(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
 
     bool animating() const;
-
-    bool hasAnimationForProperty(int prop) const { return m_animations.contains(prop); }
 
     void reset(RenderObject*);
 
@@ -116,6 +122,7 @@ ImplicitAnimation::ImplicitAnimation(const Transition* transition)
 , m_startTime(currentTime())
 , m_paused(false)
 , m_pauseTime(m_startTime)
+, m_stale(false)
 {
 }
 
@@ -126,6 +133,8 @@ ImplicitAnimation::~ImplicitAnimation()
 
 void ImplicitAnimation::reset(RenderObject* renderer, RenderStyle* from, RenderStyle* to)
 {
+    setFinished(false);
+
     if (m_fromStyle)
         m_fromStyle->deref(renderer->renderArena());
     if (m_toStyle)
@@ -136,9 +145,29 @@ void ImplicitAnimation::reset(RenderObject* renderer, RenderStyle* from, RenderS
     m_toStyle = to;
     if (m_toStyle)
         m_toStyle->ref();
-    m_finished = false;
     if (from || to)
         m_startTime = currentTime();
+        
+    // If we are stale, attempt to update to a new transition using the new |from| style.  If we are able to find a new transition,
+    // then we will unmark ourselves for death.
+    if (stale() && from && to) {
+         for (const Transition* transition = from->transitions(); transition; transition = transition->next()) {
+            if (m_property != transition->property())
+                continue;
+            int duration = transition->duration();
+            int repeatCount = transition->repeatCount();
+            if (duration && repeatCount) {
+                m_duration = duration / 1000.0;
+                m_repeatCount = repeatCount;
+                m_stale = false;
+                break;
+            }
+        }
+    }
+    
+    // If we did not find a new transition, then mark ourselves as being finished so that we can be removed.
+    if (stale())
+        setFinished(true);
 }
 
 double ImplicitAnimation::progress() const
@@ -226,12 +255,14 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
 }
 
 #define BLEND(prop, getter, setter) \
-    if (m_property == prop && m_toStyle->getter() != targetStyle->getter()) \
+    if (m_property == prop && m_toStyle->getter() != targetStyle->getter()) {\
         reset(renderer, currentStyle, targetStyle); \
-    \
-    if ((m_property == cAnimateAll && !animation->hasAnimationForProperty(prop)) || m_property == prop) { \
+        if (stale()) \
+            return; \
+    } \
+    if (m_property == cAnimateAll || m_property == prop) { \
         if (m_fromStyle->getter() != m_toStyle->getter()) {\
-            m_finished = false; \
+            setFinished(false); \
             if (!animatedStyle) \
                 animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
             animatedStyle->setter(blendFunc(m_fromStyle->getter(), m_toStyle->getter(), progress()));\
@@ -241,10 +272,12 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
     }\
 
 #define BLEND_MAYBE_INVALID_COLOR(prop, getter, setter) \
-    if (m_property == prop && m_toStyle->getter() != targetStyle->getter()) \
+    if (m_property == prop && m_toStyle->getter() != targetStyle->getter()) { \
         reset(renderer, currentStyle, targetStyle); \
-    \
-    if ((m_property == cAnimateAll && !animation->hasAnimationForProperty(prop)) || m_property == prop) { \
+        if (stale()) \
+            return; \
+    } \
+    if (m_property == cAnimateAll || m_property == prop) { \
         Color fromColor = m_fromStyle->getter(); \
         Color toColor = m_toStyle->getter(); \
         if (fromColor.isValid() || toColor.isValid()) { \
@@ -253,7 +286,7 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
             if (!toColor.isValid()) \
                 toColor = m_toStyle->color(); \
             if (fromColor != toColor) {\
-                m_finished = false; \
+                setFinished(false); \
                 if (!animatedStyle) \
                     animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
                 animatedStyle->setter(blendFunc(fromColor, toColor, progress()));\
@@ -264,12 +297,14 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
     }\
 
 #define BLEND_SHADOW(prop, getter, setter) \
-    if (m_property == prop && (!m_toStyle->getter() || !targetStyle->getter() || *m_toStyle->getter() != *targetStyle->getter())) \
+    if (m_property == prop && (!m_toStyle->getter() || !targetStyle->getter() || *m_toStyle->getter() != *targetStyle->getter())) { \
         reset(renderer, currentStyle, targetStyle); \
-    \
-    if ((m_property == cAnimateAll && !animation->hasAnimationForProperty(prop)) || m_property == prop) { \
+        if (stale()) \
+            return; \
+    } \
+    if (m_property == cAnimateAll || m_property == prop) { \
         if (m_fromStyle->getter() && m_toStyle->getter() && *m_fromStyle->getter() != *m_toStyle->getter()) {\
-            m_finished = false; \
+            setFinished(false); \
             if (!animatedStyle) \
                 animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle); \
             animatedStyle->setter(blendFunc(m_fromStyle->getter(), m_toStyle->getter(), progress()));\
@@ -283,11 +318,14 @@ void ImplicitAnimation::animate(CompositeImplicitAnimation* animation, RenderObj
     // FIXME: If we have no transition-property, then the only way to tell if our goal state changed is to check
     // every single animatable property.  For now we'll just diff the styles to ask that question,
     // but we should really exclude non-animatable properties.
-    if (!m_toStyle || (m_property == cAnimateAll && targetStyle->diff(m_toStyle)))
+    if (!m_toStyle || (m_property == cAnimateAll && targetStyle->diff(m_toStyle))) {
         reset(renderer, currentStyle, targetStyle);
+        if (stale())
+            return;
+    }
 
     // FIXME: Blow up shorthands so that they can be honored.
-    m_finished = true;
+    setFinished(true);
     BLEND(CSSPropertyLeft, left, setLeft);
     BLEND(CSSPropertyRight, right, setRight);
     BLEND(CSSPropertyTop, top, setTop);
@@ -346,16 +384,11 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
 {
     const Transition* currentTransitions = currentStyle->transitions();
     const Transition* targetTransitions = targetStyle->transitions();
-    if (currentTransitions != targetTransitions && !(currentTransitions && targetTransitions && *currentTransitions == *targetTransitions)) {
-        reset(renderer);
-        deleteAllValues(m_animations);
-        m_animations.clear();
-    }
+    bool transitionsChanged = currentTransitions != targetTransitions && !(currentTransitions && targetTransitions && *currentTransitions == *targetTransitions);
 
-    // Get the animation layers from the target style.
-    // For each one, we need to create a new animation unless one exists already (later occurrences of duplicate
-    // triggers in the layer list get ignored).
     if (m_animations.isEmpty()) {
+        // For each transition, we create a new animation unless one exists already (later occurrences of duplicate
+        // triggers in the layer list get ignored).
         for (const Transition* transition = currentTransitions; transition; transition = transition->next()) {
             int property = transition->property();
             int duration = transition->duration();
@@ -366,13 +399,68 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
             }
         }
     }
-
+        
     // Now that we have animation objects ready, let them know about the new goal state.  We want them
     // to fill in a RenderStyle*& only if needed.
     RenderStyle* result = 0;
     HashMap<int, ImplicitAnimation*>::iterator end = m_animations.end();
-    for (HashMap<int, ImplicitAnimation*>::iterator it = m_animations.begin(); it != end; ++it)
+    Vector<int> obsoleteTransitions;
+    
+    // Look at the "all" animation first.
+    ImplicitAnimation* allAnimation = m_animations.get(cAnimateAll);
+    if (allAnimation) {
+        allAnimation->animate(this, renderer, currentStyle, targetStyle, result);
+        if (transitionsChanged)
+            // Mark the "all" animation as stale if the set of transitions changed.  Stale animations continue
+            // to blend on a timer, and then remove themselves when finished.
+            allAnimation->setStale();
+        
+        // If the animation is done and we are marked as stale, then we can be removed after the
+        // iteration of the hashmap is finished.
+        if (allAnimation->finished() && allAnimation->stale())
+            obsoleteTransitions.append(cAnimateAll);
+    }
+    
+    // Now look at the specialized animations.
+    for (HashMap<int, ImplicitAnimation*>::iterator it = m_animations.begin(); it != end; ++it) {
+        // Skip over the "all" animation, since we animated it already.
+        if (it->second->property() == cAnimateAll)
+            continue;
+        
         it->second->animate(this, renderer, currentStyle, targetStyle, result);
+        if (transitionsChanged)
+            // Mark any running animations as stale if the set of transitions changed.  Stale animations continue
+            // to blend on a timer, and then remove themselves when finished.
+            it->second->setStale();
+        
+        // If the animation is done and we are marked as stale, then we can be removed after the
+        // iteration of the hashmap is finished.
+        if (it->second->finished() && it->second->stale())
+            obsoleteTransitions.append(it->second->property());
+
+    }
+    
+    // Now cull out any stale animations that are finished.
+    for (unsigned i = 0; i < obsoleteTransitions.size(); ++i) {
+        ImplicitAnimation* animation = m_animations.take(obsoleteTransitions[i]);
+        animation->reset(renderer, 0, 0);
+        delete animation;
+    }
+
+    if (transitionsChanged) {
+        // If our transitions changed we need to add new animations for any transitions that
+        // don't exist yet.  If a new transition conflicts with a currently running stale transition, then we will not add it.
+        // The stale transition is responsible for updating itself to the new transition if it ever gets reset or finishes.
+        for (const Transition* transition = targetTransitions; transition; transition = transition->next()) {
+            int property = transition->property();
+            int duration = transition->duration();
+            int repeatCount = transition->repeatCount();
+            if (property && duration && repeatCount && !m_animations.contains(property)) {
+                ImplicitAnimation* animation = new ImplicitAnimation(transition);
+                m_animations.set(property, animation);
+            }
+        }
+    }
 
     if (result)
         return result;
