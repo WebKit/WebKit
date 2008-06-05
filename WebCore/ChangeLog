@@ -23,6 +23,17 @@
 
 2008-06-05  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mjs.
+
+        Get rid of Uninitialized Memory Reads (UMRs) in the XPath::Value copy constructor.
+
+        No functional changes, thus no tests.
+
+        * xml/XPathValue.h:
+        (WebCore::XPath::Value::Value): initialize all values in each constructor
+
+2008-06-05  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         No functional changes, thus no tests.
