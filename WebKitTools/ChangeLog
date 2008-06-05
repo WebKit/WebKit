@@ -1,3 +1,12 @@
+2008-06-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add an exception for Opcode.o to the global initializers check so that
+        we can dump instruction statistics in the JavaScript virtual machine.
+
+        * Scripts/check-for-global-initializers:
+
 2008-05-30  Steve Falkenburg  <sfalken@apple.com>
 
         Generate an isolated COM manifest for registry free COM.

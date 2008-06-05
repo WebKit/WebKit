@@ -33,7 +33,9 @@
 #include <wtf/Assertions.h>
 
 namespace KJS {
-        
+
+#define DUMP_OPCODE_STATS 0
+
     #define FOR_EACH_OPCODE_ID(macro) \
         macro(op_load) \
         macro(op_new_object) \
@@ -134,6 +136,17 @@ namespace KJS {
     typedef void* Opcode;
 #else
     typedef OpcodeID Opcode;
+#endif
+
+#if DUMP_OPCODE_STATS
+
+    struct OpcodeStats {
+        OpcodeStats();
+        ~OpcodeStats();
+        static unsigned opcodeCounts[numOpcodeIDs];
+        static void recordInstruction(int opcode);
+    };
+
 #endif
 
 } // namespace KJS

@@ -1,3 +1,17 @@
+2008-06-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add an option to dump statistics on executed instructions.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.cpp:
+        (KJS::):
+        (KJS::OpcodeStats::~OpcodeStats):
+        (KJS::OpcodeStats::recordInstruction):
+        * VM/Opcode.h:
+
 2008-06-04  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
