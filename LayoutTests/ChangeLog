@@ -1,3 +1,11 @@
+2008-06-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Make hasFeature() return true for the animation stuff.
+
+        * svg/custom/svg-features-expected.txt:
+
 2008-06-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

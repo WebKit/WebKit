@@ -1,3 +1,12 @@
+2008-06-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        Make hasFeature() return true for the animation stuff.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::isSVG11Feature):
+
 2008-06-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
