@@ -1,3 +1,44 @@
+2008-06-05  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alice Liu.
+
+         <rdar://problem/5979998> AXList controls should have AXSelectedChildren and its children's AXSelected attribute writable
+
+        * page/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::canSetSelectedChildrenAttribute):
+        (WebCore::AccessibilityListBox::setSelectedChildren):
+        (WebCore::AccessibilityListBox::selectedChildren):
+        (WebCore::AccessibilityListBox::visibleChildren):
+        * page/AccessibilityListBox.h:
+        * page/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::canSetSelectedAttribute):
+        (WebCore::AccessibilityListBoxOption::setSelected):
+        * page/AccessibilityListBoxOption.h:
+        (WebCore::AccessibilityListBoxOption::selectedChildren):
+        (WebCore::AccessibilityListBoxOption::visibleChildren):
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::setSelected):
+        (WebCore::AccessibilityObject::getDocumentLinks):
+        * page/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::canSetSelectedAttribute):
+        (WebCore::AccessibilityObject::canSetSelectedChildrenAttribute):
+        (WebCore::AccessibilityObject::children):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::getDocumentLinks):
+        (WebCore::AccessibilityRenderObject::children):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxSelectedChildren):
+        (WebCore::AccessibilityRenderObject::selectedChildren):
+        (WebCore::AccessibilityRenderObject::ariaListboxVisibleChildren):
+        (WebCore::AccessibilityRenderObject::visibleChildren):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (convertToVector):
+        (convertToNSArray):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityIsAttributeSettable:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+
 2008-06-04  David Hyatt  <hyatt@apple.com>
 
         Fix for <rdar://problem/5957994> Height doesn't animate

@@ -57,13 +57,16 @@ public:
     virtual String title() const;
     virtual Element* actionElement() const;
     
+    virtual void setSelected(bool);
+    virtual bool canSetSelectedAttribute() const;
+
     virtual IntRect elementRect() const;
     virtual IntSize size() const;
     virtual AccessibilityObject* parentObject() const;
     bool isListBoxOption() const { return true; };
     
-    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&) { }
-    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&) { }
+    virtual void selectedChildren(AccessibilityChildrenVector&) { }
+    virtual void visibleChildren(AccessibilityChildrenVector&) { }
     
 private:
     HTMLElement* m_optionElement;

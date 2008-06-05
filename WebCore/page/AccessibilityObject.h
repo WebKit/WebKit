@@ -188,6 +188,8 @@ protected:
     AccessibilityObject();
 public:
     virtual ~AccessibilityObject();
+        
+    typedef Vector<RefPtr<AccessibilityObject> > AccessibilityChildrenVector;
     
     virtual bool isAccessibilityRenderObject() const { return false; };
     virtual bool isAnchor() const { return false; };
@@ -228,7 +230,9 @@ public:
     virtual bool canSetFocusAttribute() const { return false; };
     virtual bool canSetTextRangeAttributes() const { return false; };
     virtual bool canSetValueAttribute() const { return false; };
-
+    virtual bool canSetSelectedAttribute() const { return false; }
+    virtual bool canSetSelectedChildrenAttribute() const { return false; }
+    
     virtual bool hasIntValue() const { return false; };
 
     bool accessibilityShouldUseUniqueId() const { return true; };
@@ -299,6 +303,7 @@ public:
     virtual void setSelectedText(const String&);
     virtual void setSelectedTextRange(const PlainTextRange&);
     virtual void setValue(const String&);
+    virtual void setSelected(bool);
     
     virtual void detach();
     virtual void makeRangeVisible(const PlainTextRange&);
@@ -306,11 +311,11 @@ public:
     bool performDefaultAction() const { return press(); }
     
     virtual void childrenChanged();
-    virtual const Vector<RefPtr<AccessibilityObject> >& children() { return m_children; }
+    virtual const AccessibilityChildrenVector& children() { return m_children; }
     virtual void addChildren();
     virtual bool hasChildren() const { return m_haveChildren; };
-    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&) = 0;
-    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&) = 0;
+    virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
+    virtual void visibleChildren(AccessibilityChildrenVector&) = 0;
     virtual bool shouldFocusActiveDescendant() const { return false; }
     virtual AccessibilityObject* activeDescendant() const { return 0; }    
     virtual void handleActiveDescendantChanged() { }
@@ -379,7 +384,7 @@ public:
 
 protected:
     unsigned m_id;
-    Vector<RefPtr<AccessibilityObject> > m_children;
+    AccessibilityChildrenVector m_children;
     mutable bool m_haveChildren;
     
     virtual void clearChildren();

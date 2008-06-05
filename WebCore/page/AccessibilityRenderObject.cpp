@@ -1370,7 +1370,7 @@ AXObjectCache* AccessibilityRenderObject::axObjectCache() const
     return m_renderer->document()->axObjectCache();
 }
 
-void AccessibilityRenderObject::getDocumentLinks(Vector<RefPtr<AccessibilityObject> >& result) const
+void AccessibilityRenderObject::getDocumentLinks(AccessibilityChildrenVector& result) const
 {
     Document* document = m_renderer->document();
     RefPtr<HTMLCollection> coll = document->links();
@@ -2138,7 +2138,7 @@ void AccessibilityRenderObject::childrenChanged()
     }
 }
 
-const Vector<RefPtr<AccessibilityObject> >& AccessibilityRenderObject::children()
+const AccessibilityObject::AccessibilityChildrenVector& AccessibilityRenderObject::children()
 {
     if (!m_haveChildren)
         addChildren();
@@ -2162,7 +2162,7 @@ void AccessibilityRenderObject::addChildren()
         if (obj->accessibilityIsIgnored()) {
             if (!obj->hasChildren())
                 obj->addChildren();
-            Vector<RefPtr<AccessibilityObject> >children = obj->children();
+            AccessibilityChildrenVector children = obj->children();
             unsigned length = children.size();
             for (unsigned i = 0; i < length; ++i)
                 m_children.append(children[i]);
@@ -2188,7 +2188,7 @@ void AccessibilityRenderObject::addChildren()
     }
 }
 
-void AccessibilityRenderObject::ariaListboxSelectedChildren(Vector<RefPtr<AccessibilityObject> >& result)
+void AccessibilityRenderObject::ariaListboxSelectedChildren(AccessibilityChildrenVector& result)
 {
     AccessibilityObject* child = firstChild();
     bool isMultiselectable = false;
@@ -2221,7 +2221,7 @@ void AccessibilityRenderObject::ariaListboxSelectedChildren(Vector<RefPtr<Access
     }
 }
 
-void AccessibilityRenderObject::selectedChildren(Vector<RefPtr<AccessibilityObject> >& result)
+void AccessibilityRenderObject::selectedChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());
 
@@ -2233,7 +2233,7 @@ void AccessibilityRenderObject::selectedChildren(Vector<RefPtr<AccessibilityObje
     return ariaListboxSelectedChildren(result);
 }
 
-void AccessibilityRenderObject::ariaListboxVisibleChildren(Vector<RefPtr<AccessibilityObject> >& result)      
+void AccessibilityRenderObject::ariaListboxVisibleChildren(AccessibilityChildrenVector& result)      
 {
     if (!hasChildren())
         addChildren();
@@ -2245,7 +2245,7 @@ void AccessibilityRenderObject::ariaListboxVisibleChildren(Vector<RefPtr<Accessi
     }
 }
 
-void AccessibilityRenderObject::visibleChildren(Vector<RefPtr<AccessibilityObject> >& result)
+void AccessibilityRenderObject::visibleChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());
         

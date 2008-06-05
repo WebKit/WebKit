@@ -57,6 +57,15 @@ PassRefPtr<AccessibilityListBox> AccessibilityListBox::create(RenderObject* rend
     return adoptRef(new AccessibilityListBox(renderer));
 }
     
+bool AccessibilityListBox::canSetSelectedChildrenAttribute() const
+{
+    Node* selectNode = m_renderer->node();
+    if (!selectNode)
+        return false;
+    
+    return !static_cast<HTMLSelectElement*>(selectNode)->disabled();
+}
+
 void AccessibilityListBox::addChildren()
 {
     Node* selectNode = m_renderer->node();
@@ -74,7 +83,34 @@ void AccessibilityListBox::addChildren()
     }
 }
 
-void AccessibilityListBox::selectedChildren(Vector<RefPtr<AccessibilityObject> >&result)
+void AccessibilityListBox::setSelectedChildren(AccessibilityChildrenVector& children)
+{
+    if (!canSetSelectedChildrenAttribute())
+        return;
+    
+    Node* selectNode = m_renderer->node();
+    if (!selectNode)
+        return;
+    
+    // disable any selected options
+    unsigned length = m_children.size();
+    for (unsigned i = 0; i < length; i++) {
+        AccessibilityListBoxOption* listBoxOption = static_cast<AccessibilityListBoxOption*>(m_children[i].get());
+        if (listBoxOption->isSelected())
+            listBoxOption->setSelected(false);
+    }
+    
+    length = children.size();
+    for (unsigned i = 0; i < length; i++) {
+        AccessibilityObject* obj = children[i].get();
+        if (obj->roleValue() != ListBoxOptionRole)
+            continue;
+                
+        static_cast<AccessibilityListBoxOption*>(obj)->setSelected(true);
+    }
+}
+    
+void AccessibilityListBox::selectedChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());
 
@@ -88,7 +124,7 @@ void AccessibilityListBox::selectedChildren(Vector<RefPtr<AccessibilityObject> >
     }    
 }
 
-void AccessibilityListBox::visibleChildren(Vector<RefPtr<AccessibilityObject> >&result)
+void AccessibilityListBox::visibleChildren(AccessibilityChildrenVector& result)
 {
     ASSERT(result.isEmpty());
     

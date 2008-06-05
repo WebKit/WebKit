@@ -713,7 +713,18 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     return [(widget->getOuterView()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
 }
 
-static NSMutableArray* convertToNSArray(const Vector<RefPtr<AccessibilityObject> >& vector)
+static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityChildrenVector& vector)
+{
+    unsigned length = [array count];
+    vector.reserveCapacity(length);
+    for (unsigned i = 0; i < length; ++i) {
+        AccessibilityObject* obj = [[array objectAtIndex:i] accessibilityObject];
+        if (obj)
+            vector.append(obj);
+    }
+}
+
+static NSMutableArray* convertToNSArray(const AccessibilityObject::AccessibilityChildrenVector& vector)
 {
     unsigned length = vector.size();
     NSMutableArray* array = [NSMutableArray arrayWithCapacity: length];
@@ -957,13 +968,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute] && m_object->isListBox()) {
-        Vector<RefPtr<AccessibilityObject> > selectedChildrenCopy;
+        AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
         m_object->selectedChildren(selectedChildrenCopy);
         return convertToNSArray(selectedChildrenCopy);
     }
     
     if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute] && m_object->isListBox()) {
-        Vector<RefPtr<AccessibilityObject> > visibleChildrenCopy;
+        AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
         m_object->visibleChildren(visibleChildrenCopy);
         return convertToNSArray(visibleChildrenCopy);
     }
@@ -971,7 +982,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isWebArea()) {
         if ([attributeName isEqualToString: @"AXLinkUIElements"]) {
-            Vector<RefPtr<AccessibilityObject> > links;
+            AccessibilityObject::AccessibilityChildrenVector links;
             m_object->getDocumentLinks(links);
             return convertToNSArray(links);
         }
@@ -1154,6 +1165,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([attributeName isEqualToString: NSAccessibilityValueAttribute])
         return m_object->canSetValueAttribute();
 
+    if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])
+        return m_object->canSetSelectedAttribute();
+    
+    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute])
+        return m_object->canSetSelectedChildrenAttribute();
+
     if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute] ||
         [attributeName isEqualToString: NSAccessibilitySelectedTextRangeAttribute] ||
         [attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
@@ -1297,7 +1314,8 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     NSNumber*               number = nil;
     NSString*               string = nil;
     NSRange                 range = {0, 0};
-
+    NSArray*                array = nil;
+    
     // decode the parameter
     if ([[WebCoreViewFactory sharedFactory] objectIsTextMarkerRange:value])
         textMarkerRange = (WebCoreTextMarkerRange*) value;
@@ -1311,6 +1329,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     else if ([value isKindOfClass:[NSValue self]])
         range = [value rangeValue];
     
+    else if ([value isKindOfClass:[NSArray self]])
+        array = value;
+    
     // handle the command
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"]) {
         ASSERT(textMarkerRange);
@@ -1322,6 +1343,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if (!string)
             return;
         m_object->setValue(string);
+    } else if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute]) {
+        if (!number)
+            return;
+        m_object->setSelected([number boolValue]);
+    } else if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
+        if (!array || m_object->roleValue() != ListBoxRole)
+            return;
+        AccessibilityObject::AccessibilityChildrenVector selectedChildren;
+        convertToVector(array, selectedChildren);
+        static_cast<AccessibilityListBox*>(m_object)->setSelectedChildren(selectedChildren);
     } else if (m_object->isTextControl()) {
         if ([attributeName isEqualToString: NSAccessibilitySelectedTextAttribute]) {
             m_object->setSelectedText(string);

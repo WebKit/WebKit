@@ -105,6 +105,24 @@ IntRect AccessibilityListBoxOption::elementRect() const
     return rect;
 }
 
+bool AccessibilityListBoxOption::canSetSelectedAttribute() const
+{
+    if (!m_optionElement)
+        return false;
+    
+    if (!m_optionElement->hasTagName(optionTag))
+        return false;
+    
+    if (m_optionElement->disabled())
+        return false;
+    
+    HTMLSelectElement* selectElement = listBoxOptionParentNode();
+    if (selectElement && selectElement->disabled())
+        return false;
+    
+    return true;
+}
+    
 String AccessibilityListBoxOption::title() const
 {
     if (!m_optionElement)
@@ -138,6 +156,21 @@ AccessibilityObject* AccessibilityListBoxOption::parentObject() const
     return m_optionElement->document()->axObjectCache()->get(parentNode->renderer());
 }
 
+void AccessibilityListBoxOption::setSelected(bool selected)
+{
+    HTMLSelectElement* selectElement = listBoxOptionParentNode();
+    if (!selectElement)
+        return;
+    
+    if (!canSetSelectedAttribute())
+        return;
+    
+    bool isOptionSelected = isSelected();
+    if ((isOptionSelected && selected) || (!isOptionSelected && !selected))
+        return;
+    
+    selectElement->accessKeySetSelectedIndex(listBoxOptionIndex());
+}
 
 HTMLSelectElement* AccessibilityListBoxOption::listBoxOptionParentNode() const
 {

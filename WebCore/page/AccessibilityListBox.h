@@ -46,12 +46,14 @@ public:
     virtual bool isListBox() const { return true; };
     
     virtual bool canSetFocusAttribute() const { return true; }
+    virtual bool canSetSelectedChildrenAttribute() const;
+    void setSelectedChildren(AccessibilityChildrenVector&);
     virtual AccessibilityRole roleValue() const { return ListBoxRole; }
     
     virtual bool accessibilityIsIgnored() const { return false; }
     
-    virtual void selectedChildren(Vector<RefPtr<AccessibilityObject> >&);
-    virtual void visibleChildren(Vector<RefPtr<AccessibilityObject> >&);
+    virtual void selectedChildren(AccessibilityChildrenVector&);
+    virtual void visibleChildren(AccessibilityChildrenVector&);
     
     virtual void addChildren();
 

@@ -282,6 +282,10 @@ void AccessibilityObject::setValue(const String& string)
 {
 }
 
+void AccessibilityObject::setSelected(bool)
+{
+}
+
 bool AccessibilityObject::press() const
 {
     Element* actionElem = actionElement();
@@ -298,7 +302,7 @@ AXObjectCache* AccessibilityObject::axObjectCache() const
     return 0;
 }
 
-void AccessibilityObject::getDocumentLinks(Vector<RefPtr<AccessibilityObject> >& result) const
+void AccessibilityObject::getDocumentLinks(AccessibilityChildrenVector& result) const
 {
 }
 
