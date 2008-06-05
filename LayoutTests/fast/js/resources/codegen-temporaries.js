@@ -296,4 +296,58 @@ function assign_test31()
 
 shouldBe("assign_test31()", "'PASS'");
 
+function bracket_test1()
+{
+    var o = [-1];
+    var a = o[++o];
+    return a;
+}
+
+shouldBe("bracket_test1()", "-1");
+
+function bracket_test2()
+{
+    var o = [1];
+    var a = o[--o];
+    return a;
+}
+
+shouldBe("bracket_test2()", "1");
+
+function bracket_test3()
+{
+    var o = [0];
+    var a = o[o++];
+    return a;
+}
+
+shouldBe("bracket_test3()", "0");
+
+function bracket_test4()
+{
+    var o = [0];
+    var a = o[o--];
+    return a;
+}
+
+shouldBe("bracket_test4()", "0");
+
+function bracket_test5()
+{
+    var o = [1];
+    var a = o[o ^= 1];
+    return a;
+}
+
+shouldBe("bracket_test5()", "1");
+
+function bracket_test6()
+{
+    var o = { b: 1 }
+    var b = o[o = { b: 2 }, "b"];
+    return b;
+}
+
+shouldBe("bracket_test6()", "1");
+
 successfullyParsed = true;

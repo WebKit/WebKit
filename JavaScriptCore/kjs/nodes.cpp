@@ -409,7 +409,7 @@ RegisterID* PropertyListNode::emitCode(CodeGenerator& generator, RegisterID* dst
 
 RegisterID* BracketAccessorNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
+    RefPtr<RegisterID> base = generator.emitNodeForLeftHandSide(m_base.get(), m_subscriptHasAssignments);
     RegisterID* property = generator.emitNode(m_subscript.get());
 
     return generator.emitGetByVal(generator.finalDestination(dst), base.get(), property);

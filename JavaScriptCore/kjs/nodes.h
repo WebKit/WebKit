@@ -527,9 +527,10 @@ namespace KJS {
 
     class BracketAccessorNode : public ExpressionNode {
     public:
-        BracketAccessorNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+        BracketAccessorNode(ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments) KJS_FAST_CALL
             : m_base(base)
             , m_subscript(subscript)
+            , m_subscriptHasAssignments(subscriptHasAssignments)
         {
         }
 
@@ -546,6 +547,7 @@ namespace KJS {
     private:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
+        bool m_subscriptHasAssignments;
     };
 
     class DotAccessorNode : public ExpressionNode {

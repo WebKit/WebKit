@@ -1,3 +1,15 @@
+2008-06-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Tests for:
+
+        Bug 19400: subscript operator does not protect base when necessary
+        <https://bugs.webkit.org/show_bug.cgi?id=19400>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
 2008-06-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

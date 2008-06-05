@@ -361,14 +361,14 @@ Elision:
 MemberExpr:
     PrimaryExpr
   | FunctionExpr                        { $$ = createNodeFeatureInfo<ExpressionNode*>($1.m_node, $1.m_featureInfo); }
-  | MemberExpr '[' Expr ']'             { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MemberExpr '[' Expr ']'             { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | MemberExpr '.' IDENT                { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
   | NEW MemberExpr Arguments            { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node, $3.m_node), $2.m_featureInfo | $3.m_featureInfo); }
 ;
 
 MemberExprNoBF:
     PrimaryExprNoBrace
-  | MemberExprNoBF '[' Expr ']'         { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MemberExprNoBF '[' Expr ']'         { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | MemberExprNoBF '.' IDENT            { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
   | NEW MemberExpr Arguments            { $$ = createNodeFeatureInfo<ExpressionNode*>(new NewExprNode($2.m_node, $3.m_node), $2.m_featureInfo | $3.m_featureInfo); }
 ;
@@ -386,14 +386,14 @@ NewExprNoBF:
 CallExpr:
     MemberExpr Arguments                { $$ = makeFunctionCallNode($1, $2); }
   | CallExpr Arguments                  { $$ = makeFunctionCallNode($1, $2); }
-  | CallExpr '[' Expr ']'               { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | CallExpr '[' Expr ']'               { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | CallExpr '.' IDENT                  { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
 ;
 
 CallExprNoBF:
     MemberExprNoBF Arguments            { $$ = makeFunctionCallNode($1, $2); }
   | CallExprNoBF Arguments              { $$ = makeFunctionCallNode($1, $2); }
-  | CallExprNoBF '[' Expr ']'           { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | CallExprNoBF '[' Expr ']'           { $$ = createNodeFeatureInfo<ExpressionNode*>(new BracketAccessorNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | CallExprNoBF '.' IDENT              { $$ = createNodeFeatureInfo<ExpressionNode*>(new DotAccessorNode($1.m_node, *$3), $1.m_featureInfo); }
 ;
 
