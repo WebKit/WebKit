@@ -23,7 +23,7 @@
 
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
-#include "DeprecatedPtrList.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -31,6 +31,8 @@ class Document;
 class HTMLStyleElement;
 class StyleSheet;
 class String;
+
+typedef Vector<RefPtr<StyleSheet> > StyleSheetVector;
 
 class StyleSheetList : public RefCounted<StyleSheetList> {
 public:
@@ -42,17 +44,18 @@ public:
     unsigned length() const;
     StyleSheet* item(unsigned index);
 
-    void add(StyleSheet*);
-    void remove(StyleSheet*);
-
     HTMLStyleElement* getNamedItem(const String&) const;
 
-    DeprecatedPtrList<StyleSheet> styleSheets;
-
+    void swap(StyleSheetVector& sheets)
+    {
+        m_sheets.swap(sheets);
+    }
+    
 private:
     StyleSheetList(Document*);
 
     Document* m_doc;
+    StyleSheetVector m_sheets;
 };
 
 } // namespace WebCore

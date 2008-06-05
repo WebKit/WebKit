@@ -363,10 +363,12 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     if (mappedElementSheet)
         m_authorStyle->addRulesFromSheet(mappedElementSheet, *m_medium, this);
 
-    DeprecatedPtrListIterator<StyleSheet> it(styleSheets->styleSheets);
-    for (; it.current(); ++it)
-        if (it.current()->isCSSStyleSheet() && !it.current()->disabled())
-            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(it.current()), *m_medium, this);
+    unsigned length = styleSheets->length();
+    for (unsigned i = 0; i < length; i++) {
+        StyleSheet* sheet = styleSheets->item(i);
+        if (sheet->isCSSStyleSheet() && !sheet->disabled())
+            m_authorStyle->addRulesFromSheet(static_cast<CSSStyleSheet*>(sheet), *m_medium, this);
+    }
 }
 
 void CSSStyleSelector::init()

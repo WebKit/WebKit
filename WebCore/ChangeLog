@@ -1,5 +1,22 @@
 2008-06-04  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        Get rid of DeprecatedPtrList from StyleSheetList.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        * css/StyleSheetList.cpp:
+        (WebCore::StyleSheetList::~StyleSheetList):
+        (WebCore::StyleSheetList::length):
+        (WebCore::StyleSheetList::item):
+        * css/StyleSheetList.h:
+        (WebCore::StyleSheetList::swap):
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector):
+
+2008-06-04  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         Convert more classes over to start out with a ref count of 1.

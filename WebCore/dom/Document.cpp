@@ -2164,8 +2164,7 @@ void Document::recalcStyleSelector()
     if (!renderer() || !attached())
         return;
 
-    DeprecatedPtrList<StyleSheet> oldStyleSheets = m_styleSheets->styleSheets;
-    m_styleSheets->styleSheets.clear();
+    StyleSheetVector sheets;
 
     bool matchAuthorAndUserStyles = true;
     if (Settings* settings = this->settings())
@@ -2269,10 +2268,8 @@ void Document::recalcStyleSelector()
             }
         }
 
-        if (sheet) {
-            sheet->ref();
-            m_styleSheets->styleSheets.append(sheet);
-        }
+        if (sheet)
+            sheets.append(sheet);
 
         // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
         // can stop searching here.
@@ -2280,10 +2277,7 @@ void Document::recalcStyleSelector()
             break;
     }
 
-    // De-reference all the stylesheets in the old list
-    DeprecatedPtrListIterator<StyleSheet> it(oldStyleSheets);
-    for (; it.current(); ++it)
-        it.current()->deref();
+    m_styleSheets->swap(sheets);
 
     // Create a new style selector
     delete m_styleSelector;
