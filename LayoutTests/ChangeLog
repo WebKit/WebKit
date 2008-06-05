@@ -1,3 +1,16 @@
+2008-06-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+        
+        <rdar://problem/5658933> GoogleDocs: Crash indenting a particular selection twice
+
+        * editing/execCommand/5658933-1-expected.txt: Added.
+        * editing/execCommand/5658933-1.html: Added.
+        * editing/execCommand/5658933-2-expected.txt: Added.
+        * editing/execCommand/5658933-2.html: Added.
+        * editing/execCommand/5658933-3-expected.txt: Added.
+        * editing/execCommand/5658933-3.html: Added.
+
 2008-06-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -1,3 +1,31 @@
+2008-06-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Harrison.
+
+        <rdar://problem/5658933> GoogleDocs: Crash indenting a particular selection twice
+        <rdar://problem/5831310> CrashTracer: [USER] 4 crashes in Mail at WebCore::IndentOutdentCommand::prepareBlockquoteLevelForInsertion
+        <rdar://problem/5480141> GoogleDocs: Attempting to indent content in <td> closes <table> element
+        
+        A crash would occur when indenting a selection that started just before a table
+        and ended inside that table.  With a selection like this, we'd indent the entire
+        table, then try and indent paragraphs inside it, but the stored position for the
+        next paragraph to indent was inside content that had been removed from the document 
+        during the first Indent.
+        
+        Fixed the crash adjusting the selection to perform the indent on to prepare it
+        for paragraph iteration using selectionForParagraphIteration.  We do this adjustment
+        for paragraph iteration in InsertList as well.
+        
+        Also, indenting paragraphs inside table cells would break table structure because 
+        we were splitting the DOM all the way up to the root editable element to insert
+        a blockquote.  Fixed this by only splitting up to the enclosing table cell.  This 
+        matches FF.  Lastly, fixed a bug where indenting several paragraphs inside different 
+        table cells would move all the selected text into the same table cell. FF still has 
+        this bug.
+
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion):
+
 2008-06-05  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu.
