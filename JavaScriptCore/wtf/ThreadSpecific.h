@@ -115,6 +115,7 @@ inline void ThreadSpecific<T>::destroy(void* ptr)
 
 template<typename T>
 inline ThreadSpecific<T>::ThreadSpecific()
+    : m_data()
 {
 }
 
@@ -141,7 +142,7 @@ inline ThreadSpecific<T>::operator T*()
 {
     T* ptr = static_cast<T*>(get());
     if (!ptr) {
-        ptr = new T;
+        ptr = new T();
         set(ptr);
     }
     return ptr;
