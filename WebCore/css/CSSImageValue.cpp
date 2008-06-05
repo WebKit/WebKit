@@ -67,7 +67,7 @@ StyleCachedImage* CSSImageValue::cachedImage(DocLoader* loader, const String& ur
 
         if (cachedImage) {
             cachedImage->addClient(this);
-            m_image = new StyleCachedImage(cachedImage);
+            m_image = StyleCachedImage::create(cachedImage);
         }
     }
     

@@ -897,22 +897,22 @@ PassRefPtr<TimeRanges> HTMLMediaElement::buffered() const
 {
     // FIXME real ranges support
     if (!m_player || !m_player->maxTimeBuffered())
-        return new TimeRanges;
-    return new TimeRanges(0, m_player->maxTimeBuffered());
+        return TimeRanges::create();
+    return TimeRanges::create(0, m_player->maxTimeBuffered());
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::played() const
 {
     // FIXME track played
-    return new TimeRanges;
+    return TimeRanges::create();
 }
 
 PassRefPtr<TimeRanges> HTMLMediaElement::seekable() const
 {
     // FIXME real ranges support
     if (!m_player || !m_player->maxTimeSeekable())
-        return new TimeRanges;
-    return new TimeRanges(0, m_player->maxTimeSeekable());
+        return TimeRanges::create();
+    return TimeRanges::create(0, m_player->maxTimeSeekable());
 }
 
 float HTMLMediaElement::effectiveStart() const

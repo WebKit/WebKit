@@ -223,7 +223,7 @@ public:
         // merge sorting.
         Vector<CSSRuleData*> m_matchedRules;
 
-        CSSRuleList* m_ruleList;
+        RefPtr<CSSRuleList> m_ruleList;
 
         MediaQueryEvaluator* m_medium;
         RenderStyle* m_rootDefaultStyle;

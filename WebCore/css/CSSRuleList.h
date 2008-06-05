@@ -25,6 +25,7 @@
 #define CSSRuleList_h
 
 #include "DeprecatedPtrList.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -35,8 +36,14 @@ class StyleList;
 
 class CSSRuleList : public RefCounted<CSSRuleList> {
 public:
-    CSSRuleList();
-    CSSRuleList(StyleList*, bool omitCharsetRules = false);
+    static PassRefPtr<CSSRuleList> create(StyleList* list, bool omitCharsetRules = false)
+    {
+        return adoptRef(new CSSRuleList(list, omitCharsetRules));
+    }
+    static PassRefPtr<CSSRuleList> create()
+    {
+        return adoptRef(new CSSRuleList);
+    }
     ~CSSRuleList();
 
     unsigned length() const;
@@ -48,7 +55,10 @@ public:
     void deleteRule(unsigned index);
     void append(CSSRule*);
 
-protected:
+private:
+    CSSRuleList();
+    CSSRuleList(StyleList*, bool omitCharsetRules);
+
     RefPtr<StyleList> m_list;
     DeprecatedPtrList<CSSRule> m_lstCSSRules; // FIXME: Want to eliminate, but used by IE rules() extension and still used by media rules.
 };

@@ -21,6 +21,7 @@
 #ifndef CSSStyleSheet_h
 #define CSSStyleSheet_h
 
+#include "CSSRuleList.h"
 #include "StyleSheet.h"
 
 namespace WebCore {
@@ -28,7 +29,6 @@ namespace WebCore {
 class CSSNamespace;
 class CSSParser;
 class CSSRule;
-class CSSRuleList;
 class DocLoader;
 class Document;
 
@@ -47,12 +47,12 @@ public:
     virtual String type() const { return "text/css"; }
 
     CSSRule* ownerRule() const;
-    CSSRuleList* cssRules(bool omitCharsetRules = false);
+    PassRefPtr<CSSRuleList> cssRules(bool omitCharsetRules = false);
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
 
     // IE Extensions
-    CSSRuleList* rules() { return cssRules(true); }
+    PassRefPtr<CSSRuleList> rules() { return cssRules(true); }
     int addRule(const String& selector, const String& style, int index, ExceptionCode&);
     int addRule(const String& selector, const String& style, ExceptionCode&);
     void removeRule(unsigned index, ExceptionCode& ec) { deleteRule(index, ec); }

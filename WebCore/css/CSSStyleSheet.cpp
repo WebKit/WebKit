@@ -107,9 +107,9 @@ int CSSStyleSheet::addRule(const String& selector, const String& style, Exceptio
 }
 
 
-CSSRuleList* CSSStyleSheet::cssRules(bool omitCharsetRules)
+PassRefPtr<CSSRuleList> CSSStyleSheet::cssRules(bool omitCharsetRules)
 {
-    return new CSSRuleList(this, omitCharsetRules);
+    return CSSRuleList::create(this, omitCharsetRules);
 }
 
 void CSSStyleSheet::deleteRule(unsigned index, ExceptionCode& ec)
@@ -205,7 +205,7 @@ void CSSStyleSheet::styleSheetChanged()
 
 void CSSStyleSheet::addSubresourceURLStrings(HashSet<String>& urls, const String& base) const
 {        
-    OwnPtr<CSSRuleList> ruleList(const_cast<CSSStyleSheet*>(this)->cssRules());
+    RefPtr<CSSRuleList> ruleList = const_cast<CSSStyleSheet*>(this)->cssRules();
     
     // Add the URLs for each child import rule, and recurse for the stylesheet belonging to each of those rules.
     for (unsigned i = 0; i < ruleList->length(); ++i) {

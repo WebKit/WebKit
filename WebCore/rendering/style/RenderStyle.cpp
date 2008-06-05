@@ -1512,7 +1512,7 @@ void RenderStyle::addCursor(CachedImage* image, const IntPoint& hotSpot)
     data.cursorImage = image;
     data.hotSpot = hotSpot;
     if (!inherited.access()->cursorData)
-        inherited.access()->cursorData = new CursorList;
+        inherited.access()->cursorData = CursorList::create();
     inherited.access()->cursorData->append(data);
 }
 
@@ -1523,7 +1523,7 @@ void RenderStyle::setCursorList(PassRefPtr<CursorList> other)
 
 void RenderStyle::clearCursorList()
 {
-    inherited.access()->cursorData = new CursorList;
+    inherited.access()->cursorData = CursorList::create();
 }
 
 bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const

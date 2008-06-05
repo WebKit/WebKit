@@ -132,14 +132,8 @@ typedef void* WrappedImagePtr;
 class StyleImage : public RefCounted<StyleImage>
 {
 public:
-    StyleImage()
-    : RefCounted<StyleImage>(0)
-    {}
+    virtual ~StyleImage() { }
 
-    virtual ~StyleImage()
-    {}
-    
-    
     bool operator==(const StyleImage& other)
     {
         return data() == other.data();
@@ -161,15 +155,15 @@ public:
     virtual WrappedImagePtr data() const = 0;
     virtual bool isCachedImage() const { return false; }
     virtual bool isGeneratedImage() const { return false; }
+    
+protected:
+    StyleImage() { }
 };
 
 class StyleCachedImage : public StyleImage
 {
 public:
-    StyleCachedImage(CachedImage* image)
-    : m_image(image)
-    {}
-
+    static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
     virtual WrappedImagePtr data() const { return m_image; }
 
     virtual bool isCachedImage() const { return true; }
@@ -191,16 +185,22 @@ public:
     virtual Image* image(RenderObject*, const IntSize&) const;
     
 private:
+    StyleCachedImage(CachedImage* image)
+        : m_image(image)
+    {
+    }
+    
     CachedImage* m_image;
 };
 
 class StyleGeneratedImage : public StyleImage
 {
 public:
-    StyleGeneratedImage(CSSImageGeneratorValue* val, bool fixedSize)
-    : m_generator(val), m_fixedSize(fixedSize)
-    {}
-    
+    static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* val, bool fixedSize)
+    {
+        return adoptRef(new StyleGeneratedImage(val, fixedSize));
+    }
+
     virtual WrappedImagePtr data() const { return m_generator; }
 
     virtual bool isGeneratedImage() const { return true; }
@@ -217,6 +217,12 @@ public:
     virtual Image* image(RenderObject*, const IntSize&) const;
     
 private:
+    StyleGeneratedImage(CSSImageGeneratorValue* val, bool fixedSize)
+        : m_generator(val)
+        , m_fixedSize(fixedSize)
+    {
+    }
+    
     CSSImageGeneratorValue* m_generator; // The generator holds a reference to us.
     IntSize m_containerSize;
     bool m_fixedSize;
@@ -1508,8 +1514,11 @@ struct CursorData {
 
 class CursorList : public RefCounted<CursorList> {
 public:
-    CursorList() : RefCounted<CursorList>(0) { }
-
+    static PassRefPtr<CursorList> create()
+    {
+        return adoptRef(new CursorList);
+    }
+    
     const CursorData& operator[](int i) const {
         return m_vector[i];
     }
@@ -1521,6 +1530,8 @@ public:
     void append(const CursorData& cursorData) { m_vector.append(cursorData); }
 
 private:
+    CursorList() { }
+
     Vector<CursorData> m_vector;
 };
 

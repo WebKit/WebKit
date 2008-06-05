@@ -30,12 +30,10 @@
 namespace WebCore {
 
 CSSRuleList::CSSRuleList()
-    : RefCounted<CSSRuleList>(0)
 {
 }
 
 CSSRuleList::CSSRuleList(StyleList* list, bool omitCharsetRules)
-    : RefCounted<CSSRuleList>(0)
 {
     m_list = list;
     if (list && omitCharsetRules) {

@@ -1,3 +1,58 @@
+2008-06-04  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Convert more classes over to start out with a ref count of 1.
+        
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::generatedImage):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::CSSParser::createRuleList):
+        * css/CSSRuleList.cpp:
+        (WebCore::CSSRuleList::CSSRuleList):
+        * css/CSSRuleList.h:
+        (WebCore::CSSRuleList::create):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        * css/CSSStyleSelector.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::cssRules):
+        (WebCore::CSSStyleSheet::addSubresourceURLStrings):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::rules):
+        * css/Pair.h:
+        (WebCore::Pair::create):
+        (WebCore::Pair::Pair):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::buffered):
+        (WebCore::HTMLMediaElement::played):
+        (WebCore::HTMLMediaElement::seekable):
+        * html/TimeRanges.cpp:
+        (TimeRanges::TimeRanges):
+        * html/TimeRanges.h:
+        (WebCore::TimeRanges::create):
+        (WebCore::TimeRanges::TimeRanges):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::addCursor):
+        (WebCore::RenderStyle::clearCursorList):
+        * rendering/style/RenderStyle.h:
+        (WebCore::StyleImage::~StyleImage):
+        (WebCore::StyleImage::StyleImage):
+        (WebCore::StyleCachedImage::create):
+        (WebCore::StyleCachedImage::StyleCachedImage):
+        (WebCore::StyleGeneratedImage::create):
+        (WebCore::StyleGeneratedImage::StyleGeneratedImage):
+        (WebCore::CursorList::create):
+        (WebCore::CursorList::CursorList):
+
 2008-06-04  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Dave Hyatt, Alice, Liu

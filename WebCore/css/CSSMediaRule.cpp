@@ -43,7 +43,7 @@ CSSMediaRule::CSSMediaRule(StyleBase* parent, MediaList* mediaList, CSSRuleList*
 CSSMediaRule::CSSMediaRule(StyleBase* parent)
     : CSSRule(parent)
     , m_lstMedia(0)
-    , m_lstCSSRules(new CSSRuleList())
+    , m_lstCSSRules(CSSRuleList::create())
 
 {
 }
@@ -51,7 +51,7 @@ CSSMediaRule::CSSMediaRule(StyleBase* parent)
 CSSMediaRule::CSSMediaRule(StyleBase* parent, const String &media)
     : CSSRule(parent)
     , m_lstMedia(new MediaList(this, media))
-    , m_lstCSSRules(new CSSRuleList())
+    , m_lstCSSRules(CSSRuleList::create())
 {
 }
 

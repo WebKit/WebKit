@@ -27,6 +27,7 @@
 #define TimeRanges_h
 
 #include "ExceptionCode.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -34,9 +35,15 @@ namespace WebCore {
 
 class TimeRanges : public RefCounted<TimeRanges> {
 public:
-    TimeRanges() : RefCounted<TimeRanges>(0) { }
-    TimeRanges(float start, float end);
-    
+    static PassRefPtr<TimeRanges> create() 
+    {
+        return adoptRef(new TimeRanges);
+    }
+    static PassRefPtr<TimeRanges> create(float start, float end)
+    {
+        return adoptRef(new TimeRanges(start, end));
+    }
+
     unsigned length() const { return m_ranges.size(); }
     float start(unsigned index, ExceptionCode&) const;
     float end(unsigned index, ExceptionCode&) const;
@@ -46,6 +53,9 @@ public:
     bool contain(float time) const;
 
 private:
+    TimeRanges() { }
+    TimeRanges(float start, float end);
+    
     struct Range {
         Range() { }
         Range(float start, float end) {
