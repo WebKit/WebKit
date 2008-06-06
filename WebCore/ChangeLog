@@ -1,3 +1,23 @@
+2008-06-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19089> Editing ASSERT in Range::compareBoundaryPoints
+        
+        ApplyStyleCommand::applyInlineStyle does some work and then checks to see
+        if the start offset of the Range it's operating on is now past the caretMaxOffset
+        of the start container.  If it is, applyInlineStyle updates the position to 
+        [startContainer->traverseNextNode(), 0] and then operates on that new start
+        position.
+        
+        caretMaxOffset was incorrect for horizontal rules.  It should be 1 and it was 0.  So,
+        if the horizontal rule was the last node in the document, applyInlineStyle would update
+        its start position to [0, 0] and then try to operate on that position, assuming it was
+        non-null, leading to the ASSERT.
+        
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::caretMaxOffset):
+
 2008-06-05  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by John Sullivan.

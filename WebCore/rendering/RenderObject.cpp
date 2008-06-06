@@ -2995,7 +2995,11 @@ int RenderObject::caretMinOffset() const
 
 int RenderObject::caretMaxOffset() const
 {
-    return isReplaced() ? (element() ? max(1U, element()->childNodeCount()) : 1) : 0;
+    if (isReplaced())
+        return element() ? max(1U, element()->childNodeCount()) : 1;
+    if (isHR())
+        return 1;
+    return 0;
 }
 
 unsigned RenderObject::caretMaxRenderedOffset() const
