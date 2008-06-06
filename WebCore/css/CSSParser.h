@@ -117,7 +117,7 @@ namespace WebCore {
 
         void addProperty(int propId, PassRefPtr<CSSValue>, bool important);
         void rollbackLastProperties(int num);
-        bool hasProperties() const { return numParsedProperties > 0; }
+        bool hasProperties() const { return m_numParsedProperties > 0; }
 
         bool parseValue(int propId, bool important);
         bool parseShorthand(int propId, const int* properties, int numProperties, bool important);
@@ -223,8 +223,8 @@ namespace WebCore {
         MediaQuery* mediaQuery;
         ValueList* valueList;
         CSSProperty** m_parsedProperties;
-        int numParsedProperties;
-        int maxParsedProperties;
+        int m_numParsedProperties;
+        int m_maxParsedProperties;
 
         int m_inParseShorthand;
         int m_currentShorthand;
