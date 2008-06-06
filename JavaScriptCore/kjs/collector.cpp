@@ -599,6 +599,8 @@ typedef x86_thread_state64_t PlatformThreadRegisters;
 typedef ppc_thread_state_t PlatformThreadRegisters;
 #elif   PLATFORM(PPC64)
 typedef ppc_thread_state64_t PlatformThreadRegisters;
+#elif   PLATFORM(ARM)
+typedef arm_thread_state_t PlatformThreadRegisters;
 #else
 #error Unknown Architecture
 #endif
@@ -625,6 +627,9 @@ size_t getPlatformThreadRegisters(const PlatformThread& platformThread, Platform
 #elif   PLATFORM(PPC64)
     unsigned user_count = PPC_THREAD_STATE64_COUNT;
     thread_state_flavor_t flavor = PPC_THREAD_STATE64;
+#elif   PLATFORM(ARM)
+    unsigned user_count = ARM_THREAD_STATE_COUNT;
+    thread_state_flavor_t flavor = ARM_THREAD_STATE;
 #else
 #error Unknown Architecture
 #endif
@@ -659,6 +664,8 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
     return (void*)regs.__rsp;
 #elif PLATFORM(PPC) || PLATFORM(PPC64)
     return (void*)regs.__r1;
+#elif PLATFORM(ARM)
+    return (void*)regs.__sp;
 #else
 #error Unknown Architecture
 #endif
