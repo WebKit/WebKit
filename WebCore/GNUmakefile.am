@@ -48,7 +48,8 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/page/gtk \
 	-I$(srcdir)/WebKit/gtk \
 	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
-	-I$(srcdir)/WebKit/gtk/webkit
+	-I$(srcdir)/WebKit/gtk/webkit \
+	-I$(top_builddir)/WebKit/gtk/webkit
 
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \

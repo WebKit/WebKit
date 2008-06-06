@@ -1,3 +1,9 @@
+2008-06-05  Alp Toker  <alp@nuanti.com>
+
+        Build fix for r34387.
+
+        * GNUmakefile.am:
+
 2008-06-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

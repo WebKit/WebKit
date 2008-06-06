@@ -1,3 +1,9 @@
+2008-06-05  Alp Toker  <alp@nuanti.com>
+
+        Build fix for r34387.
+
+        * GNUmakefile.am:
+
 2008-06-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.
