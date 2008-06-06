@@ -1,6 +1,16 @@
 2008-06-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Stephanie Lewis.
+
+        Added the -fno-move-loop-invariants flag to the pcre_exec.cpp build, to
+        tell GCC not to perform loop invariant motion, since GCC's loop
+        invariant motion doesn't do very well with computed goto code.
+        
+        SunSpider reports no change.
+
+2008-06-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Stephanie Lewis.
         
         Added the -fno-tree-pre flag to the Machine.cpp build, to tell GCC not
         to perform Partial Redundancy Elimination (PRE) on trees in Machine.cpp,

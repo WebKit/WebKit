@@ -157,7 +157,7 @@
 		9303F5A509911A5800AD71B8 /* OwnArrayPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 9303F5A409911A5800AD71B8 /* OwnArrayPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.cpp */; };
 		930754D008B0F74600AB3056 /* pcre_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754CE08B0F74500AB3056 /* pcre_tables.cpp */; };
-		930754EB08B0F78500AB3056 /* pcre_exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754E908B0F78500AB3056 /* pcre_exec.cpp */; };
+		930754EB08B0F78500AB3056 /* pcre_exec.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754E908B0F78500AB3056 /* pcre_exec.cpp */; settings = {COMPILER_FLAGS = "-fno-move-loop-invariants"; }; };
 		932F5B400822A1C700736975 /* array_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A84E0255597D01FF60F7 /* array_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B420822A1C700736975 /* collector.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8530255597D01FF60F7 /* collector.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		932F5B430822A1C700736975 /* date_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8560255597D01FF60F7 /* date_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
