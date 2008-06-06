@@ -1,3 +1,24 @@
+2008-06-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler.
+        - Change the remaining functions that do not take arguments, from using
+        recursion to using iteration.
+
+        * JavaScriptCore.exp:
+        * profiler/Profile.cpp:
+        (KJS::stopProfiling):
+        (KJS::restoreAll):
+        (KJS::Profile::stopProfiling): Use foreach instead of recursion.
+        (KJS::Profile::restoreAll): Ditto.
+        * profiler/Profile.h:
+        * profiler/ProfileNode.cpp: Remove recursion.
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::restore):
+        * profiler/ProfileNode.h:
+
 2008-06-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey.

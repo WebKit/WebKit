@@ -103,10 +103,10 @@ namespace KJS {
         static void sortCallsAscending(ProfileNode* n) { n->sort(callsAscendingComparator); }
         static void sortFunctionNameDescending(ProfileNode* n) { n->sort(functionNameDescendingComparator); }
         static void sortFunctionNameAscending(ProfileNode* n) { n->sort(functionNameAscendingComparator); }
-
+        
         void focus(const CallIdentifier&, bool forceVisible = false);
         double exclude(const CallIdentifier&);
-        void restoreAll();
+        void restore();
 
         void endAndRecordCall();
         

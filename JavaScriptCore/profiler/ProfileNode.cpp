@@ -123,12 +123,9 @@ void ProfileNode::stopProfiling()
 
     ASSERT(m_actualSelfTime == 0.0 && m_startTime == 0.0);
 
-    // Calculate Self time and the percentages once we stop profiling.
-    StackIterator endOfChildren = m_children.end();
-    for (StackIterator currentChild = m_children.begin(); currentChild != endOfChildren; ++currentChild) {
-        (*currentChild)->stopProfiling();
-        m_actualSelfTime += (*currentChild)->totalTime();
-    }
+    // Because we iterate in post order all of our children have been stopped before us.
+    for (unsigned i = 0; i < m_children.size(); ++i)
+        m_actualSelfTime += m_children[i]->totalTime();
 
     ASSERT(m_actualSelfTime <= m_actualTotalTime);
     m_actualSelfTime = m_actualTotalTime - m_actualSelfTime;
@@ -209,14 +206,11 @@ double ProfileNode::exclude(const CallIdentifier& callIdentifier)
     return 0;
 }
 
-void ProfileNode::restoreAll()
+void ProfileNode::restore()
 {
     m_visibleTotalTime = m_actualTotalTime;
     m_visibleSelfTime = m_actualSelfTime;
     m_visible = true;
-
-    for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-        (*currentChild)->restoreAll();
 }
 
 void ProfileNode::endAndRecordCall()

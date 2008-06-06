@@ -37,6 +37,9 @@ namespace KJS {
 
 const unsigned DEPTH_LIMIT = 1000;
 
+static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
+static void restoreAll(ProfileNode* n) { n->restore(); }
+
 Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier)
     : m_title(title)
     , m_originatingGlobalExec(originatingGlobalExec)
@@ -53,7 +56,7 @@ void Profile::stopProfiling()
 {
     m_currentNode = 0;
     m_originatingGlobalExec = 0;
-    m_head->stopProfiling();
+    forEach(KJS::stopProfiling);
     m_depth = 0;
 }
 
@@ -86,7 +89,8 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
     --m_depth;
 }
 
-void Profile::forEach(UnaryFunction function) {
+void Profile::forEach(UnaryFunction function)
+{
 
     ProfileNode* currentNode = m_head->firstChild();
     for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
@@ -98,6 +102,12 @@ void Profile::forEach(UnaryFunction function) {
         currentNode = currentNode->traverseNextNode();
     } 
 }
+
+void Profile::restoreAll()
+{
+    forEach(KJS::restoreAll);
+}
+
 
 #ifndef NDEBUG
 void Profile::debugPrintData() const
