@@ -1,3 +1,26 @@
+2008-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey.
+
+        xmlhttprequest-onProgress-open-should-zero-length.html supposes that the onprogress event
+        is dispatched 3 times to test that the position is reset when XMLHttpRequest.open() is
+        called.
+        The test was failing because CoreFoundation keeps the data if they are not big enough
+        (which led to only 1 progress event dispatched).
+
+        We now generate a big response instead of a small one.
+
+        Warning: this test is not guaranteed to succeed as we cannot guarantee that the server
+                 will send responses' sizes that are close for 2 different requests to the same
+                 resource.
+
+        * http/tests/xmlhttprequest/resources/big-response.php: Added.
+        * http/tests/xmlhttprequest/resources/five-tiny-chunk-one-second-delay.php: Removed.
+
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length-expected.txt: Added a
+        warning about the possible failure of the test.
+        * http/tests/xmlhttprequest/xmlhttprequest-onProgress-open-should-zero-length.html: Ditto.
+
 2008-06-05  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey.
