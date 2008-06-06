@@ -1,3 +1,13 @@
+2008-06-06  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=19407 
+        CSS3 Selector Test: *= ~= ^= $= should all accept the empty string, but match nothing.
+
+        * fast/css/begin-end-contain-selector-empty-value.html: Added.
+        * platform/mac/fast/css/begin-end-contain-selector-empty-value-expected.txt: Added.
+
 2008-06-06  Anthony Ricaud  <rik24d@gmail.com>
 
         Reviewed by adele.  Landed by eseidel.
