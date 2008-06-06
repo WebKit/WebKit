@@ -1,3 +1,21 @@
+2008-06-06  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Darin.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19087>
+        Editing crash in IndentOutdentCommand::prepareBlockquoteLevelForInsertion, ASSERT in debug mode
+
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete): applyStyle
+        can destroy insertedPlaceholder if it needs to move it, but it will set an
+        endingSelection() at [movedPlaceholder, 0] if it does so.  Re-fetch insertedPlaceholder
+        if that happens.  The long term solution for these crashes is to make moveParagraphs
+        not copy/destroy/move content, and to make VisiblePositions update themselves on DOM 
+        mutations.
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion): Early return to avoid crashes like this
+        in the future, but ASSERT to catch them in debug builds.
+
 2008-06-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.

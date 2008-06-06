@@ -642,6 +642,10 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlace
 
         setEndingSelection(Selection(Position(insertedPlaceholder, 0), DOWNSTREAM));
         applyStyle(m_typingStyle.get(), EditActionUnspecified);
+        // applyStyle can destroy insertedPlaceholder if it needs to move it, but it 
+        // will set an endingSelection() at [movedPlaceholder, 0] if it does so.
+        if (!insertedPlaceholder->inDocument())
+            m_endingPosition = endingSelection().start();
         m_typingStyle = 0;
     }
     // Set m_typingStyle as the typing style.

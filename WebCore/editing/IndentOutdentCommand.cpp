@@ -176,6 +176,12 @@ void IndentOutdentCommand::indentRegion()
                 newBlockquote = 0;
         }
         moveParagraph(startOfParagraph(endOfCurrentParagraph), endOfCurrentParagraph, VisiblePosition(Position(insertionPoint, 0)), true);
+        // moveParagraph should not destroy content that contains endOfNextParagraph, but if it does, return here
+        // to avoid a crash.
+        if (endOfNextParagraph.isNotNull() && !endOfNextParagraph.deepEquivalent().node()->inDocument()) {
+            ASSERT_NOT_REACHED();
+            return;
+        }
         endOfCurrentParagraph = endOfNextParagraph;
     }
     
