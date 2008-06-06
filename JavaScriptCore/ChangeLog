@@ -1,3 +1,13 @@
+2008-06-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+        
+        Support compiling JavaScriptCore for ARM.
+
+        * kjs/collector.cpp:
+        (KJS::getPlatformThreadRegisters):
+        (KJS::otherThreadStackPointer):
+
 2008-06-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Jon.
