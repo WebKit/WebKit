@@ -535,8 +535,6 @@ void ReplaceSelectionCommand::handleStyleSpans()
     }
     
     RefPtr<CSSMutableStyleDeclaration> contextStyle = computedStyle(context)->copyInheritableProperties();
-    String contextStyleText = contextStyle->cssText();
-    String sourceDocumentStyleText = sourceDocumentStyle->cssText();
     contextStyle->diff(sourceDocumentStyle.get());
     
     // Remove block properties in the span's style. This prevents properties that probably have no effect 
@@ -585,6 +583,8 @@ void ReplaceSelectionCommand::handleStyleSpans()
     }
     
     // Clear the redundant styles from the span's style attribute.
+    // FIXME: If font-family:-webkit-monospace is non-redundant, then the font-size should stay, even if it
+    // appears redundant.
     setNodeAttribute(static_cast<Element*>(copiedRangeStyleSpan), styleAttr, copiedRangeStyle->cssText());
 }
 

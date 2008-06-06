@@ -1,5 +1,14 @@
 2008-06-06  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by John.
+
+        <rdar://problem/5890684> REGRESSION(r23969): Deleting a line break changes the style of text after the break
+        
+        * editing/deleting/5890684-expected.txt: Added.
+        * editing/deleting/5890684.html: Added.
+
+2008-06-06  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by Darin.
 
         <https://bugs.webkit.org/show_bug.cgi?id=19087>

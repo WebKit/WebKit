@@ -23,6 +23,7 @@
 
 namespace WebCore {
 
+// FIXME: This appears identical to isCSSTokenizerIdentifier from CSSPrimitiveValue.cpp, we should use a single function.
 static bool isValidCSSIdentifier(const String& string)
 {
     unsigned length = string.length();
@@ -31,7 +32,7 @@ static bool isValidCSSIdentifier(const String& string)
 
     const UChar* characters = string.characters();
     UChar c = characters[0];
-    if (!(c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c >= 0x80))
+    if (!(c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '-' || c >= 0x80))
         return false;
 
     for (unsigned i = 1; i < length; ++i) {

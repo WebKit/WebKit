@@ -1,3 +1,30 @@
+2008-06-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5890684> REGRESSION(r23969): Deleting a line break changes the style of text after the break
+        
+        Serialization of font-family:-webkit-monospace when it came from a 
+        CSSMutableStyleDeclaration would wrap the value in single quotes but 
+        serialization of the same property value pair from a CSSComputedStyleDeclaration 
+        wouldn't, which kept code that checked for and removed non-redundant styles from 
+        style spans from working correctly.
+
+        A redundant style left on a style span would not normally create a rendering 
+        difference, but it did in this case because an element with 
+        font-family:-webkit-monospace does not appear to inherit font-size.  
+        Added a FIXME about how we might need to keep font-size on a style span if its 
+        non-redundant styles include font-family:-webkit-monospace, although I couldn't 
+        create a test case to produce this scenario.
+
+        * css/FontFamilyValue.cpp:
+        (WebCore::isValidCSSIdentifier): Don't return false if the String starts
+        with a '-'.  This function now appears identical to isCSSTokenizerIdentifier,
+        so perhaps we should use a single function.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): Added FIXME.  Removed the
+        creation of two Strings that were never used.
+
 2008-06-06  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Darin.
