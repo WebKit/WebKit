@@ -1,3 +1,24 @@
+2008-06-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
+        Start the cleanup of CSSParser.
+        Rename CSSParser::styleElement to CSSParser::m_styleElement
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::document):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createStyleRule):
+        * css/CSSParser.h:
+
 2008-06-06  Anthony Ricaud  <rik24d@gmail.com>
 
         Reviewed by adele.  Landed by eseidel.
