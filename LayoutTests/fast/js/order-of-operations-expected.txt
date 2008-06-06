@@ -1,0 +1,21 @@
+PASS (function(){ leftRight = ""; left() > right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() >= right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() < right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() <= right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() + right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() - right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() / right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() * right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() % right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() << right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() >> right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() >>> right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() || right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() && right(); return leftRight; })() is "Left"
+PASS (function(){ leftRight = ""; left() & right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() | right(); return leftRight; })() is "LeftRight"
+PASS (function(){ leftRight = ""; left() ^ right(); return leftRight; })() is "LeftRight"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

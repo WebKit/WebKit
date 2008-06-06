@@ -1,3 +1,14 @@
+2008-06-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey.
+
+        Fix Greater and GreaterEq nodes to emit code for the left
+        and right sub-expressions in the correct order.
+
+        * kjs/nodes.cpp:
+        (KJS::GreaterNode::emitCode):
+        (KJS::GreaterEqNode::emitCode):
+
 2008-06-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Alp Toker.

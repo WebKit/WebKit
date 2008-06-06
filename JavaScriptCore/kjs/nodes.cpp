@@ -876,9 +876,9 @@ RegisterID* LessNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* GreaterNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr2.get());
-    RegisterID* src2 = generator.emitNode(m_expr1.get());
-    return generator.emitLess(generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
+    RegisterID* src2 = generator.emitNode(m_expr2.get());
+    return generator.emitLess(generator.finalDestination(dst, src1.get()), src2, src1.get());
 }
 
 RegisterID* LessEqNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -890,9 +890,9 @@ RegisterID* LessEqNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* GreaterEqNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr2.get());
-    RegisterID* src2 = generator.emitNode(m_expr1.get());
-    return generator.emitLessEq(generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
+    RegisterID* src2 = generator.emitNode(m_expr2.get());
+    return generator.emitLessEq(generator.finalDestination(dst, src1.get()), src2, src1.get());
 }
 
 RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)

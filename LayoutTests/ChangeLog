@@ -1,3 +1,13 @@
+2008-06-05  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey.
+
+        Tests to ensure we evaluate binary operators in the correct order.
+
+        * fast/js/order-of-operations-expected.txt: Added.
+        * fast/js/order-of-operations.html: Added.
+        * fast/js/resources/order-of-operations.js: Added.
+
 2008-06-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.
