@@ -66,6 +66,12 @@ void RemoveFormatCommand::doApply()
     while (breakOutOfEmptyListItem())
         ;
     
+    // If the selection was all formatting (like an empty list) the format-less text will 
+    // be empty. Early return since we don't need to do any of the work that follows and
+    // to avoid the ASSERT that fires if input(...) is called with an empty String.
+    if (string.isEmpty())
+        return;
+    
     // Normally, deleting a fully selected anchor and then inserting text will re-create
     // the removed anchor, but we don't want that behavior here. 
     frame->editor()->setRemovedAnchor(0);

@@ -2,6 +2,16 @@
 
         Reviewed by Eric.
         
+        <https://bugs.webkit.org/show_bug.cgi?id=19403>
+        ASSERT in InsertIntoTextNodeCommand::InsertIntoTextNodeCommand during RemoveFormat call
+        
+        * editing/execCommand/19403-expected.txt: Added.
+        * editing/execCommand/19403.html: Added.
+
+2008-06-05  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+        
         <https://bugs.webkit.org/show_bug.cgi?id=19089> Editing ASSERT in Range::compareBoundaryPoints
 
         * editing/execCommand/19089-expected.txt: Added.
