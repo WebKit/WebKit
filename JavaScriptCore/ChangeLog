@@ -1,3 +1,32 @@
+2008-06-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Jon.
+
+        - Name changes.
+
+        * JavaScriptCore.exp:
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile):
+        (KJS::Profile::stopProfiling):
+        (KJS::Profile::didExecute):
+        (KJS::Profile::forEach):
+        (KJS::Profile::debugPrintData):
+        (KJS::Profile::debugPrintDataSampleStyle):
+        * profiler/Profile.h:
+        (KJS::Profile::callTree):
+        (KJS::Profile::totalTime):
+        (KJS::Profile::sortTotalTimeDescending):
+        (KJS::Profile::sortTotalTimeAscending):
+        (KJS::Profile::sortSelfTimeDescending):
+        (KJS::Profile::sortSelfTimeAscending):
+        (KJS::Profile::sortCallsDescending):
+        (KJS::Profile::sortCallsAscending):
+        (KJS::Profile::sortFunctionNameDescending):
+        (KJS::Profile::sortFunctionNameAscending):
+        (KJS::Profile::focus):
+        (KJS::Profile::exclude):
+        (KJS::Profile::restoreAll):
+
 2008-06-05  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Stephanie Lewis.

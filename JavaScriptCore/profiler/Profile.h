@@ -33,7 +33,7 @@
 namespace KJS {
 
     class ExecState;
-    typedef void (*SortFunction)(ProfileNode*);
+    typedef void (*UnaryFunction)(ProfileNode*);
 
     class Profile : public RefCounted<Profile> {
     public:
@@ -44,26 +44,26 @@ namespace KJS {
         void stopProfiling();
 
         const UString& title() const { return m_title; };
-        ProfileNode* callTree() const { return m_headNode.get(); };
+        ProfileNode* callTree() const { return m_head.get(); };
 
-        double totalTime() const { return m_headNode->totalTime(); }
+        double totalTime() const { return m_head->totalTime(); }
 
         ExecState* originatingGlobalExec() const { return m_originatingGlobalExec; }
         unsigned pageGroupIdentifier() const { return m_pageGroupIdentifier; }
 
-        void sort(SortFunction);
-        void sortTotalTimeDescending() { sort(ProfileNode::sortTotalTimeDescending); }
-        void sortTotalTimeAscending() { sort(ProfileNode::sortTotalTimeAscending); }
-        void sortSelfTimeDescending() { sort(ProfileNode::sortSelfTimeDescending); }
-        void sortSelfTimeAscending() { sort(ProfileNode::sortSelfTimeAscending); }
-        void sortCallsDescending() { sort(ProfileNode::sortCallsDescending); }
-        void sortCallsAscending() { sort(ProfileNode::sortCallsAscending); }
-        void sortFunctionNameDescending() { sort(ProfileNode::sortFunctionNameDescending); }
-        void sortFunctionNameAscending() { sort(ProfileNode::sortFunctionNameAscending); }
+        void forEach(UnaryFunction);
+        void sortTotalTimeDescending() { forEach(ProfileNode::sortTotalTimeDescending); }
+        void sortTotalTimeAscending() { forEach(ProfileNode::sortTotalTimeAscending); }
+        void sortSelfTimeDescending() { forEach(ProfileNode::sortSelfTimeDescending); }
+        void sortSelfTimeAscending() { forEach(ProfileNode::sortSelfTimeAscending); }
+        void sortCallsDescending() { forEach(ProfileNode::sortCallsDescending); }
+        void sortCallsAscending() { forEach(ProfileNode::sortCallsAscending); }
+        void sortFunctionNameDescending() { forEach(ProfileNode::sortFunctionNameDescending); }
+        void sortFunctionNameAscending() { forEach(ProfileNode::sortFunctionNameAscending); }
 
-        void focus(const ProfileNode* profileNode) { if (!profileNode) return; m_headNode->focus(profileNode->callIdentifier()); }
-        void exclude(const ProfileNode* profileNode) { if (!profileNode) return; m_headNode->exclude(profileNode->callIdentifier()); }
-        void restoreAll() { m_headNode->restoreAll(); }
+        void focus(const ProfileNode* profileNode) { if (!profileNode) return; m_head->focus(profileNode->callIdentifier()); }
+        void exclude(const ProfileNode* profileNode) { if (!profileNode) return; m_head->exclude(profileNode->callIdentifier()); }
+        void restoreAll() { m_head->restoreAll(); }
 
 #ifndef NDEBUG
         void debugPrintData() const;
@@ -78,7 +78,7 @@ namespace KJS {
         UString m_title;
         ExecState* m_originatingGlobalExec;
         unsigned m_pageGroupIdentifier;
-        RefPtr<ProfileNode> m_headNode;
+        RefPtr<ProfileNode> m_head;
         RefPtr<ProfileNode> m_currentNode;
         
         unsigned m_depth;
