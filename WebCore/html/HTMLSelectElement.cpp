@@ -987,6 +987,8 @@ void HTMLSelectElement::typeAheadFind(KeyboardEvent* event)
 
         if (stripLeadingWhiteSpace(static_cast<HTMLOptionElement*>(items[index])->optionText()).startsWith(prefix, false)) {
             setSelectedIndex(listToOptionIndex(index));
+            if(!usesMenuList())
+                listBoxOnChange();
             setChanged();
             return;
         }

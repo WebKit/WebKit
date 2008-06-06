@@ -105,6 +105,17 @@
                 mouseUpOnSelect("sl1", 3, false, false);
                 checkSelection("3");
 
+                log("17) Make sure onChange fires when typing the name of an option");
+                option = document.createElement("option");
+                option.appendChild(document.createTextNode("keyboard test"));
+                document.getElementById("sl1").appendChild(option);
+                keyDownOnSelect("sl1", "K", false, false);
+                checkSelection("4");
+
+                log("18) Make sure onChange doesn't fire when leaving the select");
+                document.getElementById("sl1").blur();
+                checkSelection("4");
+
                 if (window.layoutTestController)
                     layoutTestController.notifyDone();
             }

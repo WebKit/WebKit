@@ -1,3 +1,14 @@
+2008-06-06  Anthony Ricaud  <rik24d@gmail.com>
+
+        Reviewed by adele.  Landed by eseidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18337
+        
+        Calls listBoxOnChange() in typeAheadFind() when the <select> tag is a listBox.
+        
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::typeAheadFind):
+
 2008-06-05  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

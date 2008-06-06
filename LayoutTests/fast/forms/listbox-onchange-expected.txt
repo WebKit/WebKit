@@ -22,3 +22,6 @@ onChange fired
 onChange fired
 15) Make sure onChange doesn't fire when removing a selected option
 16) Make sure onChange doesn't fire when clicking on the option that remains selected
+17) Make sure onChange fires when typing the name of an option
+onChange fired
+18) Make sure onChange doesn't fire when leaving the select
