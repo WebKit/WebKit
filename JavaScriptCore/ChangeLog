@@ -1,5 +1,14 @@
 2008-06-05  Antti Koivisto  <antti@apple.com>
 
+        Reviewed by Alp Toker.
+        
+        Fix whitespaces.
+
+        * kjs/collector.cpp:
+        (KJS::getPlatformThreadRegisters):
+
+2008-06-05  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
         
         Support compiling JavaScriptCore for ARM.

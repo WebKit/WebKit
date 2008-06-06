@@ -591,15 +591,15 @@ typedef unsigned long usword_t; // word size, assumed to be either 32 or 64 bit
 
 #if PLATFORM(DARWIN)
 
-#if     PLATFORM(X86)
+#if PLATFORM(X86)
 typedef i386_thread_state_t PlatformThreadRegisters;
-#elif   PLATFORM(X86_64)
+#elif PLATFORM(X86_64)
 typedef x86_thread_state64_t PlatformThreadRegisters;
-#elif   PLATFORM(PPC)
+#elif PLATFORM(PPC)
 typedef ppc_thread_state_t PlatformThreadRegisters;
-#elif   PLATFORM(PPC64)
+#elif PLATFORM(PPC64)
 typedef ppc_thread_state64_t PlatformThreadRegisters;
-#elif   PLATFORM(ARM)
+#elif PLATFORM(ARM)
 typedef arm_thread_state_t PlatformThreadRegisters;
 #else
 #error Unknown Architecture
@@ -615,19 +615,19 @@ size_t getPlatformThreadRegisters(const PlatformThread& platformThread, Platform
 {
 #if PLATFORM(DARWIN)
 
-#if     PLATFORM(X86)
+#if PLATFORM(X86)
     unsigned user_count = sizeof(regs)/sizeof(int);
     thread_state_flavor_t flavor = i386_THREAD_STATE;
-#elif   PLATFORM(X86_64)
+#elif PLATFORM(X86_64)
     unsigned user_count = x86_THREAD_STATE64_COUNT;
     thread_state_flavor_t flavor = x86_THREAD_STATE64;
-#elif   PLATFORM(PPC) 
+#elif PLATFORM(PPC) 
     unsigned user_count = PPC_THREAD_STATE_COUNT;
     thread_state_flavor_t flavor = PPC_THREAD_STATE;
-#elif   PLATFORM(PPC64)
+#elif PLATFORM(PPC64)
     unsigned user_count = PPC_THREAD_STATE64_COUNT;
     thread_state_flavor_t flavor = PPC_THREAD_STATE64;
-#elif   PLATFORM(ARM)
+#elif PLATFORM(ARM)
     unsigned user_count = ARM_THREAD_STATE_COUNT;
     thread_state_flavor_t flavor = ARM_THREAD_STATE;
 #else
