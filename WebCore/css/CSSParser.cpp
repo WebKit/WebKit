@@ -138,7 +138,7 @@ CSSParser::CSSParser(bool strictParsing)
 #endif
     strict = strictParsing;
 
-    parsedProperties = (CSSProperty **)fastMalloc(32 * sizeof(CSSProperty *));
+    m_parsedProperties = (CSSProperty **)fastMalloc(32 * sizeof(CSSProperty *));
     numParsedProperties = 0;
     maxParsedProperties = 32;
 
@@ -162,7 +162,7 @@ CSSParser::CSSParser(bool strictParsing)
 CSSParser::~CSSParser()
 {
     clearProperties();
-    fastFree(parsedProperties);
+    fastFree(m_parsedProperties);
 
     delete valueList;
 
@@ -271,7 +271,7 @@ bool CSSParser::parseValue(CSSMutableStyleDeclaration *declaration, int _id, con
     bool ok = false;
     if (numParsedProperties) {
         ok = true;
-        declaration->addParsedProperties(parsedProperties, numParsedProperties);
+        declaration->addParsedProperties(m_parsedProperties, numParsedProperties);
         clearProperties();
     }
 
@@ -291,7 +291,7 @@ bool CSSParser::parseColor(RGBA32& color, const String &string, bool strict)
 
         // Now try to create a color from the rgb() or rgba() syntax.
         if (parser.parseColor(dummyStyleDeclaration.get(), string)) {
-            CSSValue* value = parser.parsedProperties[0]->value();
+            CSSValue* value = parser.m_parsedProperties[0]->value();
             if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
                 CSSPrimitiveValue *primitiveValue = static_cast<CSSPrimitiveValue *>(value);
                 color = primitiveValue->getRGBColorValue();
@@ -317,7 +317,7 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration *declaration, const String
     rule = 0;
 
     bool ok = false;
-    if (numParsedProperties && parsedProperties[0]->m_id == CSSPropertyColor)
+    if (numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyColor)
         ok = true;
 
     return ok;
@@ -339,7 +339,7 @@ bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration *declaration, const 
     bool ok = false;
     if (numParsedProperties) {
         ok = true;
-        declaration->addParsedProperties(parsedProperties, numParsedProperties);
+        declaration->addParsedProperties(m_parsedProperties, numParsedProperties);
         clearProperties();
     }
 
@@ -378,10 +378,10 @@ void CSSParser::addProperty(int propId, PassRefPtr<CSSValue> value, bool importa
     CSSProperty *prop = new CSSProperty(propId, value, important, m_currentShorthand, m_implicitShorthand);
     if (numParsedProperties >= maxParsedProperties) {
         maxParsedProperties += 32;
-        parsedProperties = (CSSProperty **)fastRealloc(parsedProperties,
+        m_parsedProperties = (CSSProperty **)fastRealloc(m_parsedProperties,
                                                        maxParsedProperties*sizeof(CSSProperty *));
     }
-    parsedProperties[numParsedProperties++] = prop;
+    m_parsedProperties[numParsedProperties++] = prop;
 }
 
 void CSSParser::rollbackLastProperties(int num)
@@ -390,13 +390,13 @@ void CSSParser::rollbackLastProperties(int num)
     ASSERT(numParsedProperties >= num);
 
     for (int i = 0; i < num; ++i)
-        delete parsedProperties[--numParsedProperties];
+        delete m_parsedProperties[--numParsedProperties];
 }
 
 void CSSParser::clearProperties()
 {
     for (int i = 0; i < numParsedProperties; i++)
-        delete parsedProperties[i];
+        delete m_parsedProperties[i];
     numParsedProperties = 0;
 }
 
@@ -660,7 +660,7 @@ bool CSSParser::parseValue(int propId, bool important)
         ShorthandScope scope(this, propId);
         if (num != 1 || !parseValue(CSSPropertyOverflowX, important))
             return false;
-        CSSValue* value = parsedProperties[numParsedProperties - 1]->value();
+        CSSValue* value = m_parsedProperties[numParsedProperties - 1]->value();
         addProperty(CSSPropertyOverflowY, value, important);
         return true;
     }
@@ -759,7 +759,7 @@ bool CSSParser::parseValue(int propId, bool important)
             ShorthandScope scope(this, CSSPropertyBorderSpacing);
             if (!parseValue(properties[0], important))
                 return false;
-            CSSValue* value = parsedProperties[numParsedProperties-1]->value();
+            CSSValue* value = m_parsedProperties[numParsedProperties-1]->value();
             addProperty(properties[1], value, important);
             return true;
         }
@@ -1342,7 +1342,7 @@ bool CSSParser::parseValue(int propId, bool important)
             ShorthandScope scope(this, CSSPropertyWebkitMarginCollapse);
             if (!parseValue(properties[0], important))
                 return false;
-            CSSValue* value = parsedProperties[numParsedProperties-1]->value();
+            CSSValue* value = m_parsedProperties[numParsedProperties-1]->value();
             addProperty(properties[1], value, important);
             return true;
         }
@@ -1850,7 +1850,7 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
         case 1: {
             if (!parseValue(properties[0], important))
                 return false;
-            CSSValue *value = parsedProperties[numParsedProperties-1]->value();
+            CSSValue *value = m_parsedProperties[numParsedProperties-1]->value();
             m_implicitShorthand = true;
             addProperty(properties[1], value, important);
             addProperty(properties[2], value, important);
@@ -1861,10 +1861,10 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
         case 2: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
-            CSSValue *value = parsedProperties[numParsedProperties-2]->value();
+            CSSValue *value = m_parsedProperties[numParsedProperties-2]->value();
             m_implicitShorthand = true;
             addProperty(properties[2], value, important);
-            value = parsedProperties[numParsedProperties-2]->value();
+            value = m_parsedProperties[numParsedProperties-2]->value();
             addProperty(properties[3], value, important);
             m_implicitShorthand = false;
             break;
@@ -1872,7 +1872,7 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
         case 3: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important) || !parseValue(properties[2], important))
                 return false;
-            CSSValue *value = parsedProperties[numParsedProperties-2]->value();
+            CSSValue *value = m_parsedProperties[numParsedProperties-2]->value();
             m_implicitShorthand = true;
             addProperty(properties[3], value, important);
             m_implicitShorthand = false;
@@ -4264,7 +4264,7 @@ CSSRule* CSSParser::createStyleRule(CSSSelector* selector)
         rule = new CSSStyleRule(m_styleElement);
         m_parsedStyleObjects.append(rule);
         rule->setSelector(sinkFloatingSelector(selector));
-        rule->setDeclaration(new CSSMutableStyleDeclaration(rule, parsedProperties, numParsedProperties));
+        rule->setDeclaration(new CSSMutableStyleDeclaration(rule, m_parsedProperties, numParsedProperties));
     }
     clearProperties();
     return rule;
@@ -4274,7 +4274,7 @@ CSSRule* CSSParser::createFontFaceRule()
 {
     CSSFontFaceRule* rule = new CSSFontFaceRule(m_styleElement);
     m_parsedStyleObjects.append(rule);
-    rule->setDeclaration(new CSSMutableStyleDeclaration(rule, parsedProperties, numParsedProperties));
+    rule->setDeclaration(new CSSMutableStyleDeclaration(rule, m_parsedProperties, numParsedProperties));
     clearProperties();
     return rule;
 }

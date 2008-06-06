@@ -2,6 +2,29 @@
 
         Reviewed by mitz.
 
+        More cleanup of CSSParser.
+        Rename CSSParser::parsedProperties to m_parsedProperties.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::addProperty):
+        (WebCore::CSSParser::rollbackLastProperties):
+        (WebCore::CSSParser::clearProperties):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
+2008-06-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
         Start the cleanup of CSSParser.
         Rename CSSParser::styleElement to CSSParser::m_styleElement
 

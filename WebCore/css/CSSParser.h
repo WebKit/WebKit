@@ -222,7 +222,7 @@ namespace WebCore {
         RefPtr<CSSRule> rule;
         MediaQuery* mediaQuery;
         ValueList* valueList;
-        CSSProperty** parsedProperties;
+        CSSProperty** m_parsedProperties;
         int numParsedProperties;
         int maxParsedProperties;
 

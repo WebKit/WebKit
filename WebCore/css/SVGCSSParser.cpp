@@ -284,7 +284,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             rollbackLastProperties(1);
             return false;
         }
-        CSSValue *value = parsedProperties[numParsedProperties - 1]->value();
+        CSSValue* value = m_parsedProperties[numParsedProperties - 1]->value();
         addProperty(CSSPropertyMarkerMid, value, important);
         addProperty(CSSPropertyMarkerEnd, value, important);
         m_implicitShorthand = false;
