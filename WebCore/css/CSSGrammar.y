@@ -615,20 +615,20 @@ simple_selector:
     element_name {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        $$->m_tag = QualifiedName(nullAtom, $1, p->defaultNamespace);
+        $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
     }
     | element_name specifier_list {
         $$ = $2;
         if ($$) {
             CSSParser* p = static_cast<CSSParser*>(parser);
-            $$->m_tag = QualifiedName(nullAtom, $1, p->defaultNamespace);
+            $$->m_tag = QualifiedName(nullAtom, $1, p->m_defaultNamespace);
         }
     }
     | specifier_list {
         $$ = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
-        if ($$ && p->defaultNamespace != starAtom)
-            $$->m_tag = QualifiedName(nullAtom, starAtom, p->defaultNamespace);
+        if ($$ && p->m_defaultNamespace != starAtom)
+            $$->m_tag = QualifiedName(nullAtom, starAtom, p->m_defaultNamespace);
     }
     | namespace_selector element_name {
         AtomicString namespacePrefix = $1;
@@ -638,7 +638,7 @@ simple_selector:
             $$->m_tag = QualifiedName(namespacePrefix, $2,
                                       static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
         } else // FIXME: Shouldn't this case be an error?
-            $$->m_tag = QualifiedName(nullAtom, $2, p->defaultNamespace);
+            $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
     }
     | namespace_selector element_name specifier_list {
         $$ = $3;
@@ -649,7 +649,7 @@ simple_selector:
                 $$->m_tag = QualifiedName(namespacePrefix, $2,
                                           static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
             } else // FIXME: Shouldn't this case be an error?
-                $$->m_tag = QualifiedName(nullAtom, $2, p->defaultNamespace);
+                $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
         }
     }
     | namespace_selector specifier_list {

@@ -228,7 +228,7 @@ namespace WebCore {
         int m_currentShorthand;
         bool m_implicitShorthand;
 
-        AtomicString defaultNamespace;
+        AtomicString m_defaultNamespace;
 
         // tokenizer methods and data
     public:

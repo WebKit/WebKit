@@ -134,7 +134,7 @@ void CSSStyleSheet::addNamespace(CSSParser* p, const AtomicString& prefix, const
     if (prefix.isEmpty())
         // Set the default namespace on the parser so that selectors that omit namespace info will
         // be able to pick it up easily.
-        p->defaultNamespace = uri;
+        p->m_defaultNamespace = uri;
 }
 
 const AtomicString& CSSStyleSheet::determineNamespace(const AtomicString& prefix)

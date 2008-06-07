@@ -2,6 +2,20 @@
 
         Reviewed by ap.
 
+        Rename CSSParser::defaultNamespace to m_defaultNamespace
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSheet):
+        * css/CSSParser.h:
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::addNamespace):
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         Rename CSSParser::important to m_important
 
         * css/CSSGrammar.y:
