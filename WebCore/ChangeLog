@@ -2,6 +2,33 @@
 
         Reviewed by ap.
 
+        Still more CSSParser cleanup
+        - use c++ style member initializers in CSSParser()
+        - change m_styleElement to m_styleSheet and make it a CSSStyleSheet
+        - finally add my copyright to the files I've been cleaning
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createStyleRule):
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         More CSSParser cleanup
         - rename CSSParser::id to m_id
         - rename CSSParser::data to m_data

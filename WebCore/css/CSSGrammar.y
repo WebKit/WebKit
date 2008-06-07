@@ -4,6 +4,7 @@
  *  Copyright (C) 2002-2003 Lars Knoll (knoll@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
+ *  Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -287,8 +288,8 @@ charset:
   CHARSET_SYM maybe_space STRING maybe_space ';' {
      CSSParser* p = static_cast<CSSParser*>(parser);
      $$ = static_cast<CSSParser*>(parser)->createCharsetRule($3);
-     if ($$ && p->m_styleElement && p->m_styleElement->isCSSStyleSheet())
-         p->m_styleElement->append($$);
+     if ($$ && p->m_styleSheet)
+         p->m_styleSheet->append($$);
   }
   | CHARSET_SYM error invalid_block {
   }
@@ -300,8 +301,8 @@ import_list:
  /* empty */
  | import_list import maybe_sgml {
      CSSParser* p = static_cast<CSSParser*>(parser);
-     if ($2 && p->m_styleElement && p->m_styleElement->isCSSStyleSheet())
-         p->m_styleElement->append($2);
+     if ($2 && p->m_styleSheet)
+         p->m_styleSheet->append($2);
  }
  ;
 
@@ -314,8 +315,8 @@ rule_list:
    /* empty */
  | rule_list rule maybe_sgml {
      CSSParser* p = static_cast<CSSParser*>(parser);
-     if ($2 && p->m_styleElement && p->m_styleElement->isCSSStyleSheet())
-         p->m_styleElement->append($2);
+     if ($2 && p->m_styleSheet)
+         p->m_styleSheet->append($2);
  }
  ;
 
@@ -348,8 +349,8 @@ import:
 namespace:
 NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
     CSSParser* p = static_cast<CSSParser*>(parser);
-    if (p->m_styleElement && p->m_styleElement->isCSSStyleSheet())
-        static_cast<CSSStyleSheet*>(p->m_styleElement)->addNamespace(p, $3, $4);
+    if (p->m_styleSheet)
+        p->m_styleSheet->addNamespace(p, $3, $4);
 }
 | NAMESPACE_SYM error invalid_block
 | NAMESPACE_SYM error ';'
@@ -634,10 +635,10 @@ simple_selector:
         AtomicString namespacePrefix = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
-        if (p->m_styleElement && p->m_styleElement->isCSSStyleSheet()) {
+        if (p->m_styleSheet)
             $$->m_tag = QualifiedName(namespacePrefix, $2,
-                                      static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
-        } else // FIXME: Shouldn't this case be an error?
+                                      p->m_styleSheet->determineNamespace(namespacePrefix));
+        else // FIXME: Shouldn't this case be an error?
             $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
     }
     | namespace_selector element_name specifier_list {
@@ -645,10 +646,10 @@ simple_selector:
         if ($$) {
             AtomicString namespacePrefix = $1;
             CSSParser* p = static_cast<CSSParser*>(parser);
-            if (p->m_styleElement && p->m_styleElement->isCSSStyleSheet()) {
+            if (p->m_styleSheet)
                 $$->m_tag = QualifiedName(namespacePrefix, $2,
-                                          static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
-            } else // FIXME: Shouldn't this case be an error?
+                                          p->m_styleSheet->determineNamespace(namespacePrefix));
+            else // FIXME: Shouldn't this case be an error?
                 $$->m_tag = QualifiedName(nullAtom, $2, p->m_defaultNamespace);
         }
     }
@@ -657,10 +658,9 @@ simple_selector:
         if ($$) {
             AtomicString namespacePrefix = $1;
             CSSParser* p = static_cast<CSSParser*>(parser);
-            if (p->m_styleElement && p->m_styleElement->isCSSStyleSheet())
-                $$->m_tag = QualifiedName(namespacePrefix,
-                                          starAtom,
-                                          static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
+            if (p->m_styleSheet)
+                $$->m_tag = QualifiedName(namespacePrefix, starAtom,
+                                          p->m_styleSheet->determineNamespace(namespacePrefix));
         }
     }
   ;
@@ -771,7 +771,7 @@ attrib:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_attr = QualifiedName(namespacePrefix, $4,
-                                   static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
+                                   p->m_styleSheet->determineNamespace(namespacePrefix));
         $$->m_match = CSSSelector::Set;
     }
     | '[' maybe_space namespace_selector attr_name match maybe_space ident_or_string maybe_space ']' {
@@ -779,7 +779,7 @@ attrib:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_attr = QualifiedName(namespacePrefix, $4,
-                                   static_cast<CSSStyleSheet*>(p->m_styleElement)->determineNamespace(namespacePrefix));
+                                   p->m_styleSheet->determineNamespace(namespacePrefix));
         $$->m_match = (CSSSelector::Match)$5;
         $$->m_value = $7;
     }

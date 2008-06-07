@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,7 +40,6 @@ namespace WebCore {
     class CSSValue;
     class CSSValueList;
     class Document;
-    class MediaList;
     class MediaList;
     class MediaQueryExp;
     class StyleBase;
@@ -216,7 +216,7 @@ namespace WebCore {
         bool m_strict;
         bool m_important;
         int m_id;
-        StyleList* m_styleElement;
+        CSSStyleSheet* m_styleSheet;
         RefPtr<CSSRule> m_rule;
         MediaQuery* m_mediaQuery;
         ValueList* m_valueList;
