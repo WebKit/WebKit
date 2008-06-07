@@ -215,7 +215,7 @@ namespace WebCore {
     public:
         bool m_strict;
         bool m_important;
-        int id;
+        int m_id;
         StyleList* m_styleElement;
         RefPtr<CSSRule> m_rule;
         MediaQuery* m_mediaQuery;
@@ -246,7 +246,7 @@ namespace WebCore {
 
         void checkForOrphanedUnits();
         
-        UChar* data;
+        UChar* m_data;
         UChar* yytext;
         UChar* yy_c_buf_p;
         UChar yy_hold_char;

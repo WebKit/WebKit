@@ -2,6 +2,23 @@
 
         Reviewed by ap.
 
+        More CSSParser cleanup
+        - rename CSSParser::id to m_id
+        - rename CSSParser::data to m_data
+        - fix a few whitespace and argument name issues
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::setupParser):
+        (WebCore::CSSParser::parseValue):
+        * css/CSSParser.h:
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         Rename CSSParser::strict to m_strict
 
         * css/CSSGrammar.y:
