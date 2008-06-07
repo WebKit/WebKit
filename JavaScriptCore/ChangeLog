@@ -1,5 +1,14 @@
 2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
 
+        Build fix - actually adding JSGlobalData.cpp to non-Mac builds!
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCoreSources.bkl:
+
+2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
+
         Try to fix Gtk/gcc 4.3 build.
 
         * kjs/JSGlobalData.h: Include ustring.h instead of forward-declaring UString::Rep.

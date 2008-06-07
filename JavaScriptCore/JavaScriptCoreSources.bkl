@@ -62,6 +62,7 @@ Source files for JSCore.
         kjs/internal.cpp
         kjs/interpreter.cpp
         kjs/JSActivation.cpp
+        kjs/JSGlobalData.cpp
         kjs/JSGlobalObject.cpp
         kjs/JSVariableObject.cpp
         kjs/JSImmediate.cpp

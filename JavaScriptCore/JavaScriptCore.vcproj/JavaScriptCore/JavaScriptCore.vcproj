@@ -421,6 +421,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSGlobalData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSGlobalData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSGlobalObject.cpp"
 				>
 			</File>

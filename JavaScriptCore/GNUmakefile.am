@@ -40,6 +40,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/DebuggerCallFrame.cpp \
 	JavaScriptCore/kjs/ExecState.cpp \
 	JavaScriptCore/kjs/InitializeThreading.cpp \
+	JavaScriptCore/kjs/JSGlobalData.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/kjs/JSActivation.cpp \
