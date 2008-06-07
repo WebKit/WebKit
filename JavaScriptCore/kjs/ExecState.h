@@ -24,6 +24,7 @@
 #ifndef ExecState_h
 #define ExecState_h
 
+#include "JSGlobalData.h"
 #include "LabelStack.h"
 #include "LocalStorageEntry.h"
 #include "completion.h"
@@ -32,12 +33,10 @@
 
 namespace KJS  {
 
-    class CommonIdentifiers;
     class EvalNode;
     class FunctionBodyNode;
     class FunctionImp;
     class GlobalFuncImp;
-    struct HashTable;
     class Interpreter;
     class JSGlobalObject;
     class JSVariableObject;
@@ -48,19 +47,6 @@ namespace KJS  {
 
     struct Instruction;
     
-    struct PerThreadData {
-        const HashTable* arrayTable;
-        const HashTable* dateTable;
-        const HashTable* mathTable;
-        const HashTable* numberTable;
-        const HashTable* RegExpImpTable;
-        const HashTable* RegExpObjectImpTable;
-        const HashTable* stringTable;
-
-        CommonIdentifiers* propertyNames;
-        List emptyList;
-    };
-
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
     class ExecState : Noncopyable {
@@ -91,17 +77,20 @@ namespace KJS  {
         JSValue** exceptionSlot() { return &m_exception; }
         bool hadException() const { return !!m_exception; }
 
-        // These pointers are used to avoid accessing global variables for these,
-        // to avoid taking PIC branches in Mach-O binaries.
-        const CommonIdentifiers& propertyNames() const { return *m_perThreadData->propertyNames; }
-        const List& emptyList() const { return m_perThreadData->emptyList; }
-        static const HashTable* arrayTable(ExecState* exec) { return exec->m_perThreadData->arrayTable; }
-        static const HashTable* dateTable(ExecState* exec) { return exec->m_perThreadData->dateTable; }
-        static const HashTable* mathTable(ExecState* exec) { return exec->m_perThreadData->mathTable; }
-        static const HashTable* numberTable(ExecState* exec) { return exec->m_perThreadData->numberTable; }
-        static const HashTable* RegExpImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpImpTable; }
-        static const HashTable* RegExpObjectImpTable(ExecState* exec) { return exec->m_perThreadData->RegExpObjectImpTable; }
-        static const HashTable* stringTable(ExecState* exec) { return exec->m_perThreadData->stringTable; }
+        JSGlobalData& globalData() { return *m_globalData; }
+
+        IdentifierTable* identifierTable() { return m_globalData->identifierTable; }
+        const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
+        const List& emptyList() const { return m_globalData->emptyList; }
+        Lexer* lexer() { return m_globalData->lexer; }
+        Parser* parser() { return m_globalData->parser; }
+        static const HashTable* arrayTable(ExecState* exec) { return exec->m_globalData->arrayTable; }
+        static const HashTable* dateTable(ExecState* exec) { return exec->m_globalData->dateTable; }
+        static const HashTable* mathTable(ExecState* exec) { return exec->m_globalData->mathTable; }
+        static const HashTable* numberTable(ExecState* exec) { return exec->m_globalData->numberTable; }
+        static const HashTable* RegExpImpTable(ExecState* exec) { return exec->m_globalData->RegExpImpTable; }
+        static const HashTable* RegExpObjectImpTable(ExecState* exec) { return exec->m_globalData->RegExpObjectImpTable; }
+        static const HashTable* stringTable(ExecState* exec) { return exec->m_globalData->stringTable; }
 
     private:
         // Default constructor required for gcc 3.
@@ -116,7 +105,7 @@ namespace KJS  {
 
         JSValue* m_exception;
 
-        const PerThreadData* m_perThreadData;
+        JSGlobalData* m_globalData;
 
         // These values are controlled by the machine.
         ExecState* m_prev;

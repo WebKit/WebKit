@@ -28,12 +28,10 @@
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/HashSet.h>
-#if USE(MULTIPLE_THREADS)
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
-#endif
 
 namespace KJS {
+
+typedef HashMap<const char*, RefPtr<UString::Rep>, PtrHash<const char*> > LiteralIdentifierTable;
 
 class IdentifierTable {
 public:
@@ -61,38 +59,21 @@ public:
 
     void remove(UString::Rep* r) { m_table.remove(r); }
 
+    LiteralIdentifierTable& literalTable() { return m_literalTable; }
+
 private:
     HashSet<UString::Rep*> m_table;
+    LiteralIdentifierTable m_literalTable;
 };
 
-typedef HashMap<const char*, RefPtr<UString::Rep>, PtrHash<const char*> > LiteralIdentifierTable;
-
-static inline IdentifierTable& identifierTable()
+IdentifierTable* createIdentifierTable()
 {
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<IdentifierTable> table;
-    return *table;
-#else
-    static IdentifierTable table;
-    return table;
-#endif
+    return new IdentifierTable;
 }
 
-static inline LiteralIdentifierTable& literalIdentifierTable()
+void deleteIdentifierTable(IdentifierTable* table)
 {
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<LiteralIdentifierTable> table;
-    return *table;
-#else
-    static LiteralIdentifierTable table;
-    return table;
-#endif
-}
-
-void Identifier::initializeIdentifierThreading()
-{
-    identifierTable();
-    literalIdentifierTable();
+    delete table;
 }
 
 bool Identifier::equal(const UString::Rep *r, const char *s)
@@ -155,14 +136,40 @@ PassRefPtr<UString::Rep> Identifier::add(const char* c)
         return &UString::Rep::empty;
     }
 
-    LiteralIdentifierTable& literalTableLocalRef = literalIdentifierTable();
+    IdentifierTable& identifierTable = *JSGlobalData::threadInstance().identifierTable;
+    LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
 
-    const LiteralIdentifierTable::iterator& iter = literalTableLocalRef.find(c);
-    if (iter != literalTableLocalRef.end())
+    const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
+    if (iter != literalIdentifierTable.end())
         return iter->second;
 
-    UString::Rep* addedString = *identifierTable().add<const char*, CStringTranslator>(c).first;
-    literalTableLocalRef.add(c, addedString);
+    UString::Rep* addedString = *identifierTable.add<const char*, CStringTranslator>(c).first;
+    literalIdentifierTable.add(c, addedString);
+
+    return addedString;
+}
+
+PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c)
+{
+    if (!c) {
+        UString::Rep::null.hash();
+        return &UString::Rep::null;
+    }
+
+    if (!c[0]) {
+        UString::Rep::empty.hash();
+        return &UString::Rep::empty;
+    }
+
+    IdentifierTable& identifierTable = *globalData->identifierTable;
+    LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
+
+    const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
+    if (iter != literalIdentifierTable.end())
+        return iter->second;
+
+    UString::Rep* addedString = *identifierTable.add<const char*, CStringTranslator>(c).first;
+    literalIdentifierTable.add(c, addedString);
 
     return addedString;
 }
@@ -206,7 +213,7 @@ PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
     }
     
     UCharBuffer buf = {s, length}; 
-    return *identifierTable().add<UCharBuffer, UCharBufferTranslator>(buf).first;
+    return *JSGlobalData::threadInstance().identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
 PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
@@ -218,7 +225,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
         return &UString::Rep::empty;
     }
 
-    return *identifierTable().add(r).first;
+    return *JSGlobalData::threadInstance().identifierTable->add(r).first;
 }
 
 void Identifier::remove(UString::Rep *r)

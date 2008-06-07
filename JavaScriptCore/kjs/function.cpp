@@ -165,7 +165,7 @@ Identifier FunctionImp::getParameterName(int index)
     Vector<Identifier>& parameters = body->parameters();
 
     if (static_cast<size_t>(index) >= body->parameters().size())
-        return CommonIdentifiers::shared()->nullIdentifier;
+        return JSGlobalData::threadInstance().propertyNames->nullIdentifier;
   
     Identifier name = parameters[index];
 
@@ -173,7 +173,7 @@ Identifier FunctionImp::getParameterName(int index)
     size_t size = parameters.size();
     for (size_t i = index + 1; i < size; ++i)
         if (parameters[i] == name)
-            return CommonIdentifiers::shared()->nullIdentifier;
+            return JSGlobalData::threadInstance().propertyNames->nullIdentifier;
 
     return name;
 }
@@ -260,7 +260,7 @@ void IndexToNameMap::unMap(const Identifier& index)
 
   ASSERT(indexIsNumber && indexAsNumber < size);
   
-  _map[indexAsNumber] = CommonIdentifiers::shared()->nullIdentifier;
+  _map[indexAsNumber] = JSGlobalData::threadInstance().propertyNames->nullIdentifier;
 }
 
 Identifier& IndexToNameMap::operator[](const Identifier& index)
@@ -574,7 +574,7 @@ JSValue* globalFuncEval(ExecState* exec, PrototypeReflexiveFunction* function, J
     int errLine;
     UString errMsg;
 
-    RefPtr<EvalNode> evalNode = parser().parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(s), &sourceId, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(s), &sourceId, &errLine, &errMsg);
     
     if (!evalNode)
         return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);

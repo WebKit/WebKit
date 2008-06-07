@@ -44,11 +44,6 @@
 #include "scope_chain_mark.h"
 #include "string_object.h"
 
-#if USE(MULTIPLE_THREADS)
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
-#endif
-
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif
@@ -62,14 +57,6 @@ using namespace WTF;
 #endif
 
 namespace KJS {
-
-extern const HashTable arrayTable;
-extern const HashTable dateTable;
-extern const HashTable mathTable;
-extern const HashTable numberTable;
-extern const HashTable RegExpImpTable;
-extern const HashTable RegExpObjectImpTable;
-extern const HashTable stringTable;
 
 // Default number of ticks before a timeout check should be done.
 static const int initialTickCountThreshold = 255;
@@ -124,61 +111,6 @@ JSGlobalObject::~JSGlobalObject()
     delete d();
 }
 
-struct ThreadClassInfoHashTables {
-    ThreadClassInfoHashTables()
-        : arrayTable(KJS::arrayTable)
-        , dateTable(KJS::dateTable)
-        , mathTable(KJS::mathTable)
-        , numberTable(KJS::numberTable)
-        , RegExpImpTable(KJS::RegExpImpTable)
-        , RegExpObjectImpTable(KJS::RegExpObjectImpTable)
-        , stringTable(KJS::stringTable)
-    {
-    }
-
-    ~ThreadClassInfoHashTables()
-    {
-#if USE(MULTIPLE_THREADS)
-        delete[] arrayTable.table;
-        delete[] dateTable.table;
-        delete[] mathTable.table;
-        delete[] numberTable.table;
-        delete[] RegExpImpTable.table;
-        delete[] RegExpObjectImpTable.table;
-        delete[] stringTable.table;
-#endif
-    }
-
-#if USE(MULTIPLE_THREADS)
-    HashTable arrayTable;
-    HashTable dateTable;
-    HashTable mathTable;
-    HashTable numberTable;
-    HashTable RegExpImpTable;
-    HashTable RegExpObjectImpTable;
-    HashTable stringTable;
-#else
-    const HashTable& arrayTable;
-    const HashTable& dateTable;
-    const HashTable& mathTable;
-    const HashTable& numberTable;
-    const HashTable& RegExpImpTable;
-    const HashTable& RegExpObjectImpTable;
-    const HashTable& stringTable;
-#endif
-};
-
-ThreadClassInfoHashTables* JSGlobalObject::threadClassInfoHashTables()
-{
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<ThreadClassInfoHashTables> sharedInstance;
-    return sharedInstance;
-#else
-    static ThreadClassInfoHashTables sharedInstance;
-    return &sharedInstance;
-#endif
-}
-
 void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
@@ -198,14 +130,7 @@ void JSGlobalObject::init(JSObject* thisValue)
     d()->recursion = 0;
     d()->debugger = 0;
     
-    d()->perThreadData.arrayTable = &threadClassInfoHashTables()->arrayTable;
-    d()->perThreadData.dateTable = &threadClassInfoHashTables()->dateTable;
-    d()->perThreadData.mathTable = &threadClassInfoHashTables()->mathTable;
-    d()->perThreadData.numberTable = &threadClassInfoHashTables()->numberTable;
-    d()->perThreadData.RegExpImpTable = &threadClassInfoHashTables()->RegExpImpTable;
-    d()->perThreadData.RegExpObjectImpTable = &threadClassInfoHashTables()->RegExpObjectImpTable;
-    d()->perThreadData.stringTable = &threadClassInfoHashTables()->stringTable;
-    d()->perThreadData.propertyNames = CommonIdentifiers::shared();
+    d()->globalData = &JSGlobalData::threadInstance();
 
     d()->globalExec.set(new ExecState(this, thisValue, d()->globalScopeChain.node()));
 

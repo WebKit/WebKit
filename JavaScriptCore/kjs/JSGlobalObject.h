@@ -23,6 +23,7 @@
 #ifndef KJS_GlobalObject_h
 #define KJS_GlobalObject_h
 
+#include "JSGlobalData.h"
 #include "JSVariableObject.h"
 #include "RegisterFile.h"
 #include "RegisterFileStack.h"
@@ -71,7 +72,6 @@ namespace KJS {
     class UriError;
     class UriErrorPrototype;
     struct ActivationStackNode;
-    struct ThreadClassInfoHashTables;
 
     typedef Vector<ExecState*, 16> ExecStateStack;
 
@@ -83,7 +83,6 @@ namespace KJS {
             JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
                 : JSVariableObjectData(&symbolTable, registerFileStack.globalBasePointer(), 0)
                 , globalScopeChain(globalObject, thisValue)
-                , globalExec(new ExecState(globalObject, thisValue, globalScopeChain.node()))
             {
             }
 
@@ -142,7 +141,7 @@ namespace KJS {
             SymbolTable symbolTable;
             unsigned pageGroupIdentifier;
 
-            PerThreadData perThreadData;
+            JSGlobalData* globalData;
 
             HashSet<ProgramCodeBlock*> codeBlocks;
 
@@ -175,8 +174,8 @@ namespace KJS {
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
 
-        // Linked list of all global objects.
-        static JSGlobalObject* head() { return s_head; }
+        // Per-thread linked list of all global objects.
+        static JSGlobalObject*& head() { return JSGlobalData::threadInstance().head; }
         JSGlobalObject* next() { return d()->next; }
 
         // Resets the global object to contain only built-in properties, sets
@@ -259,10 +258,7 @@ namespace KJS {
         RegisterFileStack& registerFileStack() { return d()->registerFileStack; }
 
         // Per-thread hash tables, cached on the global object for faster access.
-        const PerThreadData* perThreadData() const { return &d()->perThreadData; }
-
-        // Initialize and/or retrieve per-thread hash tables - use perThreadData() for faster access instead.
-        static ThreadClassInfoHashTables* threadClassInfoHashTables();
+        JSGlobalData* globalData() { return d()->globalData; }
 
         void init(JSObject* thisValue);
         

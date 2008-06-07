@@ -29,10 +29,6 @@
 #include <wtf/Vector.h>
 #include "SourceRange.h"
 
-namespace WTF {
-    template<typename T> class ThreadSpecific;
-}
-
 namespace KJS {
 
   class Identifier;
@@ -94,8 +90,7 @@ namespace KJS {
     SourceRange sourceRange(int openBrace, int closeBrace) { return SourceRange(m_source, openBrace + 1, closeBrace); }
 
   private:
-    friend Lexer& lexer();
-    friend class WTF::ThreadSpecific<Lexer>;
+    friend struct JSGlobalData;
     Lexer();
     ~Lexer();
 
@@ -153,8 +148,6 @@ namespace KJS {
 
     const HashTable mainTable;
   };
-  
-  Lexer& lexer(); // Returns the singletone JavaScript lexer.
 
 } // namespace KJS
 

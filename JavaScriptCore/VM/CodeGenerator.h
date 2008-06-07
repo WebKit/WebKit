@@ -371,7 +371,7 @@ namespace KJS {
         IdentifierMap m_identifierMap;
         JSValueMap m_jsValueMap;
 
-        CommonIdentifiers* m_propertyNames;
+        const CommonIdentifiers* m_propertyNames;
 
 #ifndef NDEBUG
         static bool s_dumpsGeneratedCode;

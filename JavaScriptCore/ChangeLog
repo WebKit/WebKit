@@ -1,3 +1,100 @@
+2008-06-06  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Combine per-thread objects into one, to make it easier to support legacy clients (for
+        which they shouldn't be really per-thread).
+
+        No change on SunSpider total.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Added JSGlobalData.{h,cpp}
+
+        * kjs/JSGlobalData.cpp: Added.
+        (KJS::JSGlobalData::JSGlobalData):
+        (KJS::JSGlobalData::~JSGlobalData):
+        (KJS::JSGlobalData::threadInstance):
+        * kjs/JSGlobalData.h: Added.
+        This class encapsulates all data that should be per-thread (or shared between legacy clients).
+        It will also keep a Heap pointer, but right now, Heap (Collector) methods are all static.
+
+        * kjs/identifier.h:
+        (KJS::Identifier::Identifier):
+        Added a constructor explicitly taking JSGlobalData to access IdentifierTable. Actually,
+        all of them should, but this will be a separate patch.
+
+        * kjs/identifier.cpp:
+        (KJS::IdentifierTable::literalTable):
+        (KJS::createIdentifierTable):
+        (KJS::deleteIdentifierTable):
+        (KJS::Identifier::add):
+        (KJS::Identifier::addSlowCase):
+        Combined IdentifierTable and LiteralIdentifierTable into a single class for simplicity.
+
+        * kjs/grammar.y: kjsyyparse now takes JSGlobalData, not just a Lexer.
+
+        * kjs/nodes.cpp:
+        (KJS::Node::Node):
+        (KJS::EvalFunctionCallNode::emitCode):
+        (KJS::ScopeNode::ScopeNode):
+        Changed to access Lexer and Parser via JSGlobalData::threadInstance(). This is also a
+        temporary measure, they will need to use JSGlobalData explicitly.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::callEval):
+        * kjs/CommonIdentifiers.cpp:
+        (KJS::CommonIdentifiers::CommonIdentifiers):
+        * kjs/CommonIdentifiers.h:
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::evaluate):
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/ExecState.h:
+        (KJS::ExecState::globalData):
+        (KJS::ExecState::identifierTable):
+        (KJS::ExecState::propertyNames):
+        (KJS::ExecState::emptyList):
+        (KJS::ExecState::lexer):
+        (KJS::ExecState::parser):
+        (KJS::ExecState::arrayTable):
+        (KJS::ExecState::dateTable):
+        (KJS::ExecState::mathTable):
+        (KJS::ExecState::numberTable):
+        (KJS::ExecState::RegExpImpTable):
+        (KJS::ExecState::RegExpObjectImpTable):
+        (KJS::ExecState::stringTable):
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreadingOnce):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::init):
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::JSGlobalObjectData::JSGlobalObjectData):
+        (KJS::JSGlobalObject::head):
+        (KJS::JSGlobalObject::globalData):
+        * kjs/Parser.cpp:
+        (KJS::Parser::parse):
+        * kjs/Parser.h:
+        * kjs/function.cpp:
+        (KJS::FunctionImp::getParameterName):
+        (KJS::IndexToNameMap::unMap):
+        (KJS::globalFuncEval):
+        * kjs/function_object.cpp:
+        (KJS::FunctionObjectImp::construct):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+        * kjs/lexer.cpp:
+        (kjsyylex):
+        * kjs/lexer.h:
+        * kjs/testkjs.cpp:
+        (prettyPrintScript):
+        Updated for the above changes. Most of threadInstance uses here will need to be replaced with
+        explicitly passed pointers to support legacy JSC clients.
+
+        * JavaScriptCore.exp: Removed KJS::parser().
+
 2008-06-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

@@ -21,34 +21,18 @@
 #include "config.h"
 #include "CommonIdentifiers.h"
 
-#if USE(MULTIPLE_THREADS)
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
-#endif
-
 namespace KJS {
 
 const char* const nullCString = 0;
 
-#define INITIALIZE_PROPERTY_NAME(name) , name ( #name )
+#define INITIALIZE_PROPERTY_NAME(name) , name(globalData, #name)
 
-CommonIdentifiers::CommonIdentifiers()
-    : nullIdentifier(nullCString)
-    , underscoreProto("__proto__")
-    , thisIdentifier("this")
+CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
+    : nullIdentifier(globalData, nullCString)
+    , underscoreProto(globalData, "__proto__")
+    , thisIdentifier(globalData, "this")
     KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
 {
-}
-
-CommonIdentifiers* CommonIdentifiers::shared()
-{
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<CommonIdentifiers> sharedInstance;
-    return sharedInstance;
-#else
-    static CommonIdentifiers sharedInstance;
-    return &sharedInstance;
-#endif
 }
 
 } // namespace KJS

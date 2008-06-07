@@ -193,13 +193,13 @@ void ParserRefCounted::deleteNewObjects()
 Node::Node()
     : m_expectedReturnType(ObjectType)
 {
-    m_line = lexer().lineNo();
+    m_line = JSGlobalData::threadInstance().lexer->lineNo();
 }
 
 Node::Node(JSType expectedReturn)
     : m_expectedReturnType(expectedReturn)
 {
-    m_line = lexer().lineNo();
+    m_line = JSGlobalData::threadInstance().lexer->lineNo();
 }
 
 static void substitute(UString& string, const UString& substring) KJS_FAST_CALL;
@@ -443,7 +443,7 @@ RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID*
 {
     RefPtr<RegisterID> base = generator.tempDestination(dst);
     RegisterID* func = generator.newTemporary();
-    generator.emitResolveWithBase(base.get(), func, CommonIdentifiers::shared()->eval);
+    generator.emitResolveWithBase(base.get(), func, generator.propertyNames().eval);
     return generator.emitCallEval(generator.finalDestination(dst, base.get()), func, base.get(), m_args.get());
 }
 
@@ -1721,8 +1721,8 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 ScopeNode::ScopeNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
     : BlockNode(children)
-    , m_sourceURL(parser().sourceURL())
-    , m_sourceId(parser().sourceId())
+    , m_sourceURL(JSGlobalData::threadInstance().parser->sourceURL())
+    , m_sourceId(JSGlobalData::threadInstance().parser->sourceId())
     , m_usesEval(usesEval)
     , m_needsClosure(needsClosure)
 {

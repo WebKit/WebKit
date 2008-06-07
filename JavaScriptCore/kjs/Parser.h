@@ -32,10 +32,6 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WTF {
-    template<typename T> class ThreadSpecific;
-}
-
 namespace KJS {
 
     class FunctionBodyNode;
@@ -60,10 +56,9 @@ namespace KJS {
                               ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine);
 
     private:
-        friend Parser& parser();
-        friend class WTF::ThreadSpecific<Parser>;
+        friend struct JSGlobalData;
+        Parser();
 
-        Parser(); // Use parser() instead.
         void parse(ExecState*, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> source,
                    int* sourceId, int* errLine, UString* errMsg);
 
@@ -76,8 +71,6 @@ namespace KJS {
         bool m_needsClosure;
         int m_lastLine;
     };
-    
-    Parser& parser(); // Returns the singleton JavaScript parser.
 
     template <class ParsedNode>
     PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber,

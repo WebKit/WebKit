@@ -34,8 +34,6 @@
 #include "dtoa.h"
 #include "identifier.h"
 #include "JSGlobalObject.h"
-#include "lexer.h"
-#include "Parser.h"
 #include "ustring.h"
 #include <wtf/Threading.h>
 
@@ -53,13 +51,9 @@ static void initializeThreadingOnce()
 #if !PLATFORM(DARWIN) // Darwin has pthread_main_np(), and doesn't need registerAsMainThread() called.
     Collector::registerAsMainThread();
 #endif
+    JSGlobalData::threadInstance();
     UString::null();
-    Identifier::initializeIdentifierThreading();
-    CommonIdentifiers::shared();
-    lexer();
     initDateMath();
-    JSGlobalObject::threadClassInfoHashTables();
-    JSGlobalObject::head();
 #endif
 }
 

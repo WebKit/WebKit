@@ -28,10 +28,6 @@
 
 #include "lexer.h"
 #include <wtf/HashSet.h>
-#if USE(MULTIPLE_THREADS)
-#include <wtf/ThreadSpecific.h>
-using namespace WTF;
-#endif
 #include <wtf/Vector.h>
 
 extern int kjsyyparse(void*);
@@ -65,7 +61,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     *errLine = -1;
     *errMsg = 0;
         
-    Lexer& lexer = KJS::lexer();
+    Lexer& lexer = *JSGlobalData::threadInstance().lexer;
 
     ASSERT(startingLineNumber > 0);
     if (startingLineNumber <= 0)
@@ -74,7 +70,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     lexer.setCode(startingLineNumber, source);
     *sourceId = ++m_sourceId;
 
-    int parseError = kjsyyparse(&lexer);
+    int parseError = kjsyyparse(&JSGlobalData::threadInstance());
     bool lexError = lexer.sawError();
     lexer.clear();
 
@@ -99,17 +95,6 @@ void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedDa
     m_usesEval = usesEval;
     m_needsClosure = needsClosure;
     m_lastLine = lastLine;
-}
-
-Parser& parser()
-{
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<Parser> staticParser;
-    return *staticParser;
-#else
-    static Parser staticParser;
-    return staticParser;
-#endif
 }
 
 } // namespace KJS
