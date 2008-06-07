@@ -1,5 +1,12 @@
 2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
 
+        More build fixes.
+
+        * kjs/JSGlobalData.cpp: Fixed an included file name for case-sensitive file systems, fixed
+        JSGlobalData::threadInstance() for non-multithreaded builds.
+
+2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix - actually adding JSGlobalData.cpp to non-Mac builds!
 
         * GNUmakefile.am:

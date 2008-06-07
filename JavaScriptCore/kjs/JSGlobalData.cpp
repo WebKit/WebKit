@@ -35,7 +35,7 @@
 #include "list.h"
 #include "lookup.h"
 #include "nodes.h"
-#include "parser.h"
+#include "Parser.h"
 
 #if USE(MULTIPLE_THREADS)
 #include <wtf/ThreadSpecific.h>
@@ -113,7 +113,8 @@ JSGlobalData& JSGlobalData::threadInstance()
     static ThreadSpecific<JSGlobalData> sharedInstance;
     return *sharedInstance;
 #else
-    return globalSharedInstance();
+    static JSGlobalData sharedInstance;
+    return sharedInstance;
 #endif
 }
 
