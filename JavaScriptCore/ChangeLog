@@ -1,3 +1,9 @@
+2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
+
+        Try to fix Gtk/gcc 4.3 build.
+
+        * kjs/JSGlobalData.h: Include ustring.h instead of forward-declaring UString::Rep.
+
 2008-06-06  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

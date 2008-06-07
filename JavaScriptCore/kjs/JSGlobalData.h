@@ -30,6 +30,7 @@
 #define JSGlobalData_h
 
 #include "list.h"
+#include "ustring.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -49,7 +50,6 @@ namespace KJS {
     class ParserRefCounted;
     class UString;
     struct HashTable;
-    struct UString::Rep;
 
     // This serves as a bottleneck for accessing per-thread data structures.
     // Note that the effective instance may be different from the thread one in case of legacy
