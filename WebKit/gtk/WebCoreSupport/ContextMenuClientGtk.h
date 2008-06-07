@@ -28,6 +28,8 @@
 
 #include "ContextMenuClient.h"
 
+typedef struct _WebKitWebView WebKitWebView;
+
 namespace WebCore {
     class ContextMenu;
 }
@@ -37,6 +39,8 @@ namespace WebKit {
     class ContextMenuClient : public WebCore::ContextMenuClient
     {
     public:
+        ContextMenuClient(WebKitWebView*);
+
         virtual void contextMenuDestroyed();
 
         virtual WebCore::PlatformMenuDescription getCustomMenuFromDefaultItems(WebCore::ContextMenu*);
@@ -48,6 +52,9 @@ namespace WebKit {
         virtual void lookUpInDictionary(WebCore::Frame*);
         virtual void speak(const WebCore::String&);
         virtual void stopSpeaking();
+
+    private:
+        WebKitWebView* m_webView;
     };
 }
 

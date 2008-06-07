@@ -1,3 +1,13 @@
+2008-06-07  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17324
+        Remove PLATFORM ifdefs from ContextMenu.cpp
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2008-06-07  Eric Seidel  <eric@webkit.org>
 
         Reviewed by ap.
