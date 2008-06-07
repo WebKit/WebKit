@@ -2,6 +2,68 @@
 
         Reviewed by ap.
 
+        Rename CSSParser::rule to m_rule
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        * css/CSSParser.h:
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
+        Yet another cleanup patch for CSSParser
+        Rename CSSParser::valueList to m_valueList
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParser::checkForOrphanedUnits):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransitionProperty):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::CSSParser::parseGradient):
+        (WebCore::CSSParser::parseCanvas):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::parseTransformOrigin):
+        * css/CSSParser.h:
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         More cleanup to CSSParser, rename mediaQuery to m_mediaQuery
         Remove CSSParser::current and CSSParser::currentParser and use
         the magic of YYLEX_PARAM instead.

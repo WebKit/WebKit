@@ -217,9 +217,9 @@ namespace WebCore {
         bool important;
         int id;
         StyleList* m_styleElement;
-        RefPtr<CSSRule> rule;
+        RefPtr<CSSRule> m_rule;
         MediaQuery* m_mediaQuery;
-        ValueList* valueList;
+        ValueList* m_valueList;
         CSSProperty** m_parsedProperties;
         int m_numParsedProperties;
         int m_maxParsedProperties;

@@ -235,7 +235,7 @@ valid_rule_or_import:
 
 webkit_rule:
     WEBKIT_RULE_SYM '{' maybe_space valid_rule_or_import maybe_space '}' {
-        static_cast<CSSParser*>(parser)->rule = $4;
+        static_cast<CSSParser*>(parser)->m_rule = $4;
     }
 ;
 
@@ -249,12 +249,12 @@ webkit_value:
     WEBKIT_VALUE_SYM '{' maybe_space expr '}' {
         CSSParser* p = static_cast<CSSParser*>(parser);
         if ($4) {
-            p->valueList = p->sinkFloatingValueList($4);
+            p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_numParsedProperties;
             if (!p->parseValue(p->id, p->important))
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
-            delete p->valueList;
-            p->valueList = 0;
+            delete p->m_valueList;
+            p->m_valueList = 0;
         }
     }
 ;
@@ -975,13 +975,13 @@ declaration:
         $$ = false;
         CSSParser* p = static_cast<CSSParser*>(parser);
         if ($1 && $4) {
-            p->valueList = p->sinkFloatingValueList($4);
+            p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_numParsedProperties;
             $$ = p->parseValue($1, $5);
             if (!$$)
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
-            delete p->valueList;
-            p->valueList = 0;
+            delete p->m_valueList;
+            p->m_valueList = 0;
         }
     }
     |
