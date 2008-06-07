@@ -692,34 +692,27 @@ namespace WebCore {
 
 class ObjCNodeFilterCondition : public NodeFilterCondition {
 public:
-    ObjCNodeFilterCondition(id <DOMNodeFilter>);
-    virtual ~ObjCNodeFilterCondition();
+    static PassRefPtr<ObjCNodeFilterCondition> create(id <DOMNodeFilter> filter)
+    {
+        return adoptRef(new ObjCNodeFilterCondition(filter));
+    }
+
     virtual short acceptNode(Node*, JSValue*& exception) const;
 
 private:
-    ObjCNodeFilterCondition(const ObjCNodeFilterCondition&);
-    ObjCNodeFilterCondition &operator=(const ObjCNodeFilterCondition&);
+    ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
+        : m_filter(filter)
+    {
+    }
 
-    id <DOMNodeFilter> m_filter;
+    RetainPtr<id <DOMNodeFilter> > m_filter;
 };
-
-ObjCNodeFilterCondition::ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
-    : m_filter(filter)
-{
-    ASSERT(m_filter);
-    HardRetain(m_filter);
-}
-
-ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
-{
-    HardRelease(m_filter);
-}
 
 short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
 {
     if (!node)
         return NodeFilter::FILTER_REJECT;
-    return [m_filter acceptNode:[DOMNode _wrapNode:node]];
+    return [m_filter.get() acceptNode:[DOMNode _wrapNode:node]];
 }
 
 } // namespace WebCore
@@ -734,7 +727,7 @@ short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
 {
     RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
+        cppFilter = new NodeFilter(ObjCNodeFilterCondition::create(filter));
     ExceptionCode ec = 0;
     RefPtr<NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter.release(), expandEntityReferences, ec);
     raiseOnDOMError(ec);
@@ -745,7 +738,7 @@ short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
 {
     RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(new ObjCNodeFilterCondition(filter));
+        cppFilter = new NodeFilter(ObjCNodeFilterCondition::create(filter));
     ExceptionCode ec = 0;
     RefPtr<TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter.release(), expandEntityReferences, ec);
     raiseOnDOMError(ec);
@@ -781,12 +774,13 @@ ObjCEventListener* ObjCEventListener::find(id <DOMEventListener> listener)
     return 0;
 }
 
-ObjCEventListener *ObjCEventListener::create(id <DOMEventListener> listener)
+ObjCEventListener* ObjCEventListener::create(id <DOMEventListener> listener)
 {
     ObjCEventListener* wrapper = find(listener);
-    if (!wrapper)
+    if (wrapper)
+        wrapper->ref();
+    else
         wrapper = new ObjCEventListener(listener);
-    wrapper->ref();
     return wrapper;
 }
 

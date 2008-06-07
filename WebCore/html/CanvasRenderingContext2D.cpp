@@ -81,8 +81,8 @@ void CanvasRenderingContext2D::reset()
 }
 
 CanvasRenderingContext2D::State::State()
-    : m_strokeStyle(new CanvasStyle("black"))
-    , m_fillStyle(new CanvasStyle("black"))
+    : m_strokeStyle(CanvasStyle::create("black"))
+    , m_fillStyle(CanvasStyle::create("black"))
     , m_lineWidth(1)
     , m_lineCap(ButtCap)
     , m_lineJoin(MiterJoin)
@@ -367,62 +367,62 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color)
 {
-    setStrokeStyle(new CanvasStyle(color));
+    setStrokeStyle(CanvasStyle::create(color));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel)
 {
-    setStrokeStyle(new CanvasStyle(grayLevel, 1));
+    setStrokeStyle(CanvasStyle::create(grayLevel, 1));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(const String& color, float alpha)
 {
-    setStrokeStyle(new CanvasStyle(color, alpha));
+    setStrokeStyle(CanvasStyle::create(color, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float grayLevel, float alpha)
 {
-    setStrokeStyle(new CanvasStyle(grayLevel, alpha));
+    setStrokeStyle(CanvasStyle::create(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float r, float g, float b, float a)
 {
-    setStrokeStyle(new CanvasStyle(r, g, b, a));
+    setStrokeStyle(CanvasStyle::create(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setStrokeColor(float c, float m, float y, float k, float a)
 {
-    setStrokeStyle(new CanvasStyle(c, m, y, k, a));
+    setStrokeStyle(CanvasStyle::create(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color)
 {
-    setFillStyle(new CanvasStyle(color));
+    setFillStyle(CanvasStyle::create(color));
 }
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel)
 {
-    setFillStyle(new CanvasStyle(grayLevel, 1));
+    setFillStyle(CanvasStyle::create(grayLevel, 1));
 }
 
 void CanvasRenderingContext2D::setFillColor(const String& color, float alpha)
 {
-    setFillStyle(new CanvasStyle(color, 1));
+    setFillStyle(CanvasStyle::create(color, 1));
 }
 
 void CanvasRenderingContext2D::setFillColor(float grayLevel, float alpha)
 {
-    setFillStyle(new CanvasStyle(grayLevel, alpha));
+    setFillStyle(CanvasStyle::create(grayLevel, alpha));
 }
 
 void CanvasRenderingContext2D::setFillColor(float r, float g, float b, float a)
 {
-    setFillStyle(new CanvasStyle(r, g, b, a));
+    setFillStyle(CanvasStyle::create(r, g, b, a));
 }
 
 void CanvasRenderingContext2D::setFillColor(float c, float m, float y, float k, float a)
 {
-    setFillStyle(new CanvasStyle(c, m, y, k, a));
+    setFillStyle(CanvasStyle::create(c, m, y, k, a));
 }
 
 void CanvasRenderingContext2D::beginPath()
@@ -1119,7 +1119,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
         originClean = m_canvas->document()->securityOrigin()->canAccess(origin.get());
     }
-    return new CanvasPattern(image->cachedImage(), repeatX, repeatY, originClean);
+    return CanvasPattern::create(image->cachedImage(), repeatX, repeatY, originClean);
 }
 
 PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
@@ -1132,19 +1132,17 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
         return 0;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
-    CGImageRef image = canvas->createPlatformImage();
+    RetainPtr<CGImageRef> image = canvas->createPlatformImage();
     if (!image)
         return 0;
-    PassRefPtr<CanvasPattern> pattern = new CanvasPattern(image, repeatX, repeatY, canvas->originClean());
-    CGImageRelease(image);
-    return pattern;
+    return CanvasPattern::create(image.get(), repeatX, repeatY, canvas->originClean());
 #elif PLATFORM(CAIRO)
     cairo_surface_t* surface = canvas->createPlatformImage();
     if (!surface)
         return 0;
-    PassRefPtr<CanvasPattern> pattern = new CanvasPattern(surface, repeatX, repeatY, canvas->originClean());
+    RefPtr<CanvasPattern> pattern = CanvasPattern::create(surface, repeatX, repeatY, canvas->originClean());
     cairo_surface_destroy(surface);
-    return pattern;
+    return pattern.release();
 #else
     notImplemented();
     return 0;

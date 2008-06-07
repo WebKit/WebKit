@@ -125,7 +125,7 @@ void EventTarget::addEventListener(EventTargetNode* referenceNode, const AtomicS
     if (referenceNode->m_regdListeners->isEmpty() && !referenceNode->inDocument())
         referenceNode->document()->registerDisconnectedNodeWithEventListeners(referenceNode);
 
-    referenceNode->m_regdListeners->append(new RegisteredEventListener(eventType, listener.get(), useCapture));
+    referenceNode->m_regdListeners->append(RegisteredEventListener::create(eventType, listener, useCapture));
 }
 
 void EventTarget::removeEventListener(EventTargetNode* referenceNode, const AtomicString& eventType, EventListener* listener, bool useCapture)
@@ -134,11 +134,10 @@ void EventTarget::removeEventListener(EventTargetNode* referenceNode, const Atom
     if (!referenceNode->m_regdListeners)
         return;
 
-    RegisteredEventListener rl(eventType, listener, useCapture);
-
     RegisteredEventListenerList::Iterator end = referenceNode->m_regdListeners->end();
     for (RegisteredEventListenerList::Iterator it = referenceNode->m_regdListeners->begin(); it != end; ++it) {
-         if (*(*it).get() == rl) {
+        RegisteredEventListener& r = **it;
+        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
             (*it)->setRemoved(true);
             it = referenceNode->m_regdListeners->remove(it);
 

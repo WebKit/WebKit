@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,12 @@
 #define SelectorNodeList_h
 
 #include "StaticNodeList.h"
-#include <wtf/Forward.h>
 
 namespace WebCore {
 
-    class Node;
     class CSSSelector;
 
-    class SelectorNodeList : public StaticNodeList {
-    public:
-        SelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector*);
-    };
+    PassRefPtr<StaticNodeList> createSelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector*);
 
 } // namespace WebCore
 

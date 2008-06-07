@@ -269,9 +269,9 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceStr
     }
     result->open();
     
-    RefPtr<TextResourceDecoder> decoder = new TextResourceDecoder(sourceMIMEType);
+    RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create(sourceMIMEType);
     decoder->setEncoding(sourceEncoding.isEmpty() ? UTF8Encoding() : TextEncoding(sourceEncoding), TextResourceDecoder::EncodingFromXMLHeader);
-    result->setDecoder(decoder.get());
+    result->setDecoder(decoder.release());
     
     result->write(documentSource);
     result->finishParsing();

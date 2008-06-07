@@ -1,3 +1,18 @@
+2008-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - work on https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem init]):
+        (-[WebHistoryItem initWithURLString:title:lastVisitedTimeInterval:]):
+        (-[WebHistoryItem initWithURL:target:parent:title:]):
+        (-[WebHistoryItem initWithURLString:title:displayTitle:lastVisitedTimeInterval:]):
+        * WebView/WebView.mm:
+        (+[WebView _decodeData:]):
+
 2008-06-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Tim.

@@ -123,19 +123,19 @@ void KJSProxy::clear()
     gcController().garbageCollectSoon();
 }
 
-EventListener* KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSLazyEventListener(functionName, code, m_windowShell->window(), node, m_handlerLineno);
+    return JSLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 
 #if ENABLE(SVG)
-EventListener* KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
-    return new JSSVGLazyEventListener(functionName, code, m_windowShell->window(), node, m_handlerLineno);
+    return JSSVGLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 #endif
 

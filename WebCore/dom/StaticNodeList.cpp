@@ -29,8 +29,6 @@
 #include "config.h"
 #include "StaticNodeList.h"
 
-#include "AtomicString.h"
-#include "Node.h"
 #include "Element.h"
 
 namespace WebCore {

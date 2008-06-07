@@ -60,7 +60,7 @@ private:
 
 class CSSSegmentedFontFace : public RefCounted<CSSSegmentedFontFace> {
 public:
-    CSSSegmentedFontFace(CSSFontSelector*);
+    static PassRefPtr<CSSSegmentedFontFace> create(CSSFontSelector* selector) { return adoptRef(new CSSSegmentedFontFace(selector)); }
     ~CSSSegmentedFontFace();
 
     bool isLoaded() const;
@@ -75,6 +75,8 @@ public:
     FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
 private:
+    CSSSegmentedFontFace(CSSFontSelector*);
+
     void pruneTable();
 
     CSSFontSelector* m_fontSelector;

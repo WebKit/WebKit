@@ -210,7 +210,7 @@ PassRefPtr<NodeList> Node::childNodes()
         document()->addNodeListCache();
     }
 
-    return new ChildNodeList(this, &m_nodeLists->m_childNodeListCaches);
+    return ChildNodeList::create(this, &m_nodeLists->m_childNodeListCaches);
 }
 
 Node* Node::virtualFirstChild() const
@@ -1202,7 +1202,7 @@ PassRefPtr<NodeList> Node::getElementsByTagNameNS(const String& namespaceURI, co
     String name = localName;
     if (document()->isHTMLDocument())
         name = localName.lower();
-    return new TagNodeList(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name);
+    return TagNodeList::create(this, namespaceURI.isEmpty() ? nullAtom : AtomicString(namespaceURI), name);
 }
 
 PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
@@ -1216,7 +1216,7 @@ PassRefPtr<NodeList> Node::getElementsByName(const String& elementName)
     if (result.second)
         result.first->second = new DynamicNodeList::Caches;
     
-    return new NameNodeList(this, elementName, result.first->second);
+    return NameNodeList::create(this, elementName, result.first->second);
 }
 
 PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
@@ -1230,7 +1230,7 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     if (result.second)
         result.first->second = new DynamicNodeList::Caches;
     
-    return new ClassNodeList(this, classNames, result.first->second);
+    return ClassNodeList::create(this, classNames, result.first->second);
 }
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
@@ -1278,9 +1278,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         return 0;
     }
     
-    SelectorNodeList* resultList = new SelectorNodeList(this, static_cast<CSSStyleRule*>(rule.get())->selector());
-
-    return resultList;
+    return createSelectorNodeList(this, static_cast<CSSStyleRule*>(rule.get())->selector());
 }
 
 Document *Node::ownerDocument() const

@@ -52,10 +52,11 @@ using namespace HTMLNames;
 
 class ImageEventListener : public EventListener {
 public:
-    ImageEventListener(ImageDocument* doc) : m_doc(doc) { }
+    static PassRefPtr<ImageEventListener> create(ImageDocument* document) { return adoptRef(new ImageEventListener(document)); }
     virtual void handleEvent(Event*, bool isWindowEvent);
 
 private:
+    ImageEventListener(ImageDocument* document) : m_doc(document) { }
     ImageDocument* m_doc;
 };
     
@@ -173,7 +174,7 @@ void ImageDocument::createDocumentStructure()
     
     if (shouldShrinkToFit()) {
         // Add event listeners
-        RefPtr<EventListener> listener = new ImageEventListener(this);
+        RefPtr<EventListener> listener = ImageEventListener::create(this);
         addWindowEventListener("resize", listener, false);
         imageElement->addEventListener("click", listener.release(), false);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,7 @@
 #define CanvasPattern_h
 
 #include "CachedResourceClient.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 #if PLATFORM(CG)
@@ -48,12 +49,21 @@ namespace WebCore {
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 
 #if PLATFORM(CG)
-        CanvasPattern(CGImageRef, bool repeatX, bool repeatY, bool originClean);
+        static PassRefPtr<CanvasPattern> create(CGImageRef image, bool repeatX, bool repeatY, bool originClean)
+        {
+            return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
+        }
 #elif PLATFORM(CAIRO)
-        CanvasPattern(cairo_surface_t*, bool repeatX, bool repeatY, bool originClean);
+        static PassRefPtr<CanvasPattern> create(cairo_surface_t* surface, bool repeatX, bool repeatY, bool originClean)
+        {
+            return adoptRef(new CanvasPattern(surface, repeatX, repeatY, originClean));
+        }
 #endif
-        CanvasPattern(CachedImage*, bool repeatX, bool repeatY, bool originClean);
-        ~CanvasPattern();
+        static PassRefPtr<CanvasPattern> create(CachedImage* image, bool repeatX, bool repeatY, bool originClean)
+        {
+            return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
+        }
+        virtual ~CanvasPattern();
 
 #if PLATFORM(CG)
         CGImageRef platformImage() const { return m_platformImage.get(); }
@@ -71,6 +81,13 @@ namespace WebCore {
         bool originClean() const { return m_originClean; }
 
     private:
+#if PLATFORM(CG)
+        CanvasPattern(CGImageRef, bool repeatX, bool repeatY, bool originClean);
+#elif PLATFORM(CAIRO)
+        CanvasPattern(cairo_surface_t*, bool repeatX, bool repeatY, bool originClean);
+#endif
+        CanvasPattern(CachedImage*, bool repeatX, bool repeatY, bool originClean);
+
 #if PLATFORM(CG)
         const RetainPtr<CGImageRef> m_platformImage;
 #elif PLATFORM(CAIRO)

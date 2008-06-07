@@ -47,6 +47,11 @@ HTMLFormCollection::HTMLFormCollection(PassRefPtr<HTMLFormElement> form)
 {
 }
 
+PassRefPtr<HTMLFormCollection> HTMLFormCollection::create(PassRefPtr<HTMLFormElement> form)
+{
+    return adoptRef(new HTMLFormCollection(form));
+}
+
 HTMLFormCollection::~HTMLFormCollection()
 {
 }

@@ -60,9 +60,9 @@ public:
 
     KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
     void clear();
-    EventListener* createHTMLEventHandler(const String& functionName, const String& code, Node*);
+    PassRefPtr<EventListener> createHTMLEventHandler(const String& functionName, const String& code, Node*);
 #if ENABLE(SVG)
-    EventListener* createSVGEventHandler(const String& functionName, const String& code, Node*);
+    PassRefPtr<EventListener> createSVGEventHandler(const String& functionName, const String& code, Node*);
 #endif
     void finishedWithEvent(Event*);
     void setEventHandlerLineno(int lineno) { m_handlerLineno = lineno; }

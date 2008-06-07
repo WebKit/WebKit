@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,12 @@
 #include "CSSStyleSelector.h"
 #include "Document.h"
 #include "Element.h"
-#include "Node.h"
 
 namespace WebCore {
 
-SelectorNodeList::SelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector* querySelector)
+PassRefPtr<StaticNodeList> createSelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector* querySelector)
 {
+    Vector<RefPtr<Node> > nodes;
     Document* document = rootNode->document();
     CSSStyleSelector::SelectorChecker selectorChecker(document, !document->inCompatMode());
     for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode.get())) {
@@ -46,12 +46,13 @@ SelectorNodeList::SelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector* query
             Element* element = static_cast<Element*>(n);
             for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
                 if (selectorChecker.checkSelector(selector, element)) {
-                    m_nodes.append(n);
+                    nodes.append(n);
                     break;
                 }
             }
         }
     }
+    return StaticNodeList::adopt(nodes);
 }
 
 } // namespace WebCore

@@ -53,12 +53,9 @@ static const double invalidCachedTime = -1.;
     
 class ConditionEventListener : public EventListener {
 public:
-    ConditionEventListener(SVGSMILElement* animation, Element* eventBase, SVGSMILElement::Condition* condition) 
-        : m_animation(animation)
-        , m_condition(condition) 
-        , m_eventBase(eventBase)
+    static PassRefPtr<ConditionEventListener> create(SVGSMILElement* animation, Element* eventBase, SVGSMILElement::Condition* condition)
     {
-        m_eventBase->addEventListener(m_condition->m_name, this, false);
+        return adoptRef(new ConditionEventListener(animation, eventBase, condition));
     }
 
     void unregister()
@@ -72,7 +69,16 @@ public:
     {
         m_animation->handleConditionEvent(event, m_condition);
     }
+
 private:
+    ConditionEventListener(SVGSMILElement* animation, Element* eventBase, SVGSMILElement::Condition* condition) 
+        : m_animation(animation)
+        , m_condition(condition) 
+        , m_eventBase(eventBase)
+    {
+        m_eventBase->addEventListener(m_condition->m_name, this, false);
+    }
+
     SVGSMILElement* m_animation;
     SVGSMILElement::Condition* m_condition;
     Element* m_eventBase;
@@ -377,7 +383,7 @@ void SVGSMILElement::connectConditions()
             if (!eventBase)
                 continue;
             ASSERT(!condition.m_eventListener);
-            condition.m_eventListener = new ConditionEventListener(this, eventBase, &condition);
+            condition.m_eventListener = ConditionEventListener::create(this, eventBase, &condition);
         } else if (condition.m_type == Condition::Syncbase) {
             ASSERT(!condition.m_baseID.isEmpty());
             condition.m_syncbase = document()->getElementById(condition.m_baseID);

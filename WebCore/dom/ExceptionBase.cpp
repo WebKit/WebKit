@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,13 +32,12 @@
 namespace WebCore {
 
 ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
-    : RefCounted<ExceptionBase>(0)
+    : m_code(description.code)
+    , m_name(description.name)
 {
-    m_code = description.code;
-    if (description.name) {
-        m_name = description.name;
+    if (description.name)
         m_message = String::format("%s: %s Exception %d", description.name, description.typeName, description.code);
-    } else
+    else
         m_message = String::format("%s Exception %d", description.typeName, description.code);
 }
 

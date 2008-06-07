@@ -2625,54 +2625,57 @@ void Document::setHTMLWindowEventListener(const AtomicString &eventType, PassRef
         addWindowEventListener(eventType, listener, false);
 }
 
-EventListener *Document::getHTMLWindowEventListener(const AtomicString &eventType)
+EventListener *Document::getHTMLWindowEventListener(const AtomicString& eventType)
 {
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
-       for (; it != m_windowEventListeners.end(); ++it)
-        if ( (*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener())
+    for (; it != m_windowEventListeners.end(); ++it) {
+        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener())
             return (*it)->listener();
+    }
     return 0;
 }
 
-void Document::removeHTMLWindowEventListener(const AtomicString &eventType)
+void Document::removeHTMLWindowEventListener(const AtomicString& eventType)
 {
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
-    for (; it != m_windowEventListeners.end(); ++it)
-        if ( (*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
-            if (eventType == ((AtomicString)unloadEvent))
+    for (; it != m_windowEventListeners.end(); ++it) {
+        if ((*it)->eventType() == eventType && (*it)->listener()->isHTMLEventListener()) {
+            if (eventType == unloadEvent)
                 removePendingFrameUnloadEventCount();
-            else if (eventType == ((AtomicString)beforeunloadEvent))
+            else if (eventType == beforeunloadEvent)
                 removePendingFrameBeforeUnloadEventCount();
             m_windowEventListeners.remove(it);
             return;
         }
+    }
 }
 
 void Document::addWindowEventListener(const AtomicString &eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
-    if (eventType == ((AtomicString)unloadEvent))
+    if (eventType == unloadEvent)
         addPendingFrameUnloadEventCount();
-    else if (eventType == ((AtomicString)beforeunloadEvent))
+    else if (eventType == beforeunloadEvent)
         addPendingFrameBeforeUnloadEventCount();
     // Remove existing identical listener set with identical arguments.
     // The DOM 2 spec says that "duplicate instances are discarded" in this case.
     removeWindowEventListener(eventType, listener.get(), useCapture);
-    m_windowEventListeners.append(new RegisteredEventListener(eventType, listener, useCapture));
+    m_windowEventListeners.append(RegisteredEventListener::create(eventType, listener, useCapture));
 }
 
-void Document::removeWindowEventListener(const AtomicString &eventType, EventListener *listener, bool useCapture)
+void Document::removeWindowEventListener(const AtomicString& eventType, EventListener* listener, bool useCapture)
 {
-    RegisteredEventListener rl(eventType, listener, useCapture);
     RegisteredEventListenerList::iterator it = m_windowEventListeners.begin();
-    for (; it != m_windowEventListeners.end(); ++it)
-        if (*(*it) == rl) {
-            if (eventType == ((AtomicString)unloadEvent))
+    for (; it != m_windowEventListeners.end(); ++it) {
+        RegisteredEventListener& r = **it;
+        if (r.eventType() == eventType && r.listener() == listener && r.useCapture() == useCapture) {
+            if (eventType == unloadEvent)
                 removePendingFrameUnloadEventCount();
-            else if (eventType == ((AtomicString)beforeunloadEvent))
+            else if (eventType == beforeunloadEvent)
                 removePendingFrameBeforeUnloadEventCount();
             m_windowEventListeners.remove(it);
             return;
         }
+    }
 }
 
 bool Document::hasWindowEventListener(const AtomicString &eventType)
@@ -2986,7 +2989,7 @@ HTMLMapElement *Document::getImageMap(const String& url) const
     return m_imageMapsByName.get(mapName.impl());
 }
 
-void Document::setDecoder(TextResourceDecoder *decoder)
+void Document::setDecoder(PassRefPtr<TextResourceDecoder> decoder)
 {
     m_decoder = decoder;
 }
@@ -3641,63 +3644,63 @@ SVGDocumentExtensions* Document::accessSVGExtensions()
 
 PassRefPtr<HTMLCollection> Document::images()
 {
-    return new HTMLCollection(this, HTMLCollection::DocImages);
+    return HTMLCollection::create(this, HTMLCollection::DocImages);
 }
 
 PassRefPtr<HTMLCollection> Document::applets()
 {
-    return new HTMLCollection(this, HTMLCollection::DocApplets);
+    return HTMLCollection::create(this, HTMLCollection::DocApplets);
 }
 
 PassRefPtr<HTMLCollection> Document::embeds()
 {
-    return new HTMLCollection(this, HTMLCollection::DocEmbeds);
+    return HTMLCollection::create(this, HTMLCollection::DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::plugins()
 {
     // This is an alias for embeds() required for the JS DOM bindings.
-    return new HTMLCollection(this, HTMLCollection::DocEmbeds);
+    return HTMLCollection::create(this, HTMLCollection::DocEmbeds);
 }
 
 PassRefPtr<HTMLCollection> Document::objects()
 {
-    return new HTMLCollection(this, HTMLCollection::DocObjects);
+    return HTMLCollection::create(this, HTMLCollection::DocObjects);
 }
 
 PassRefPtr<HTMLCollection> Document::scripts()
 {
-    return new HTMLCollection(this, HTMLCollection::DocScripts);
+    return HTMLCollection::create(this, HTMLCollection::DocScripts);
 }
 
 PassRefPtr<HTMLCollection> Document::links()
 {
-    return new HTMLCollection(this, HTMLCollection::DocLinks);
+    return HTMLCollection::create(this, HTMLCollection::DocLinks);
 }
 
 PassRefPtr<HTMLCollection> Document::forms()
 {
-    return new HTMLCollection(this, HTMLCollection::DocForms);
+    return HTMLCollection::create(this, HTMLCollection::DocForms);
 }
 
 PassRefPtr<HTMLCollection> Document::anchors()
 {
-    return new HTMLCollection(this, HTMLCollection::DocAnchors);
+    return HTMLCollection::create(this, HTMLCollection::DocAnchors);
 }
 
 PassRefPtr<HTMLCollection> Document::all()
 {
-    return new HTMLCollection(this, HTMLCollection::DocAll);
+    return HTMLCollection::create(this, HTMLCollection::DocAll);
 }
 
 PassRefPtr<HTMLCollection> Document::windowNamedItems(const String &name)
 {
-    return new HTMLNameCollection(this, HTMLCollection::WindowNamedItems, name);
+    return HTMLNameCollection::create(this, HTMLCollection::WindowNamedItems, name);
 }
 
 PassRefPtr<HTMLCollection> Document::documentNamedItems(const String &name)
 {
-    return new HTMLNameCollection(this, HTMLCollection::DocumentNamedItems, name);
+    return HTMLNameCollection::create(this, HTMLCollection::DocumentNamedItems, name);
 }
 
 HTMLCollection::CollectionInfo* Document::nameCollectionInfo(HTMLCollection::Type type, const AtomicString& name)

@@ -1,3 +1,15 @@
+2008-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - work on https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * WebHistoryItem.cpp:
+        (WebHistoryItem::createInstance):
+        (WebHistoryItem::initFromDictionaryRepresentation):
+        (WebHistoryItem::initWithURLString):
+
 2008-05-30  Steve Falkenburg  <sfalken@apple.com>
 
         Registry-free COM.        

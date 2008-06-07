@@ -618,7 +618,7 @@ void HTMLFormElement::removeImgElement(HTMLImageElement* e)
 
 PassRefPtr<HTMLCollection> HTMLFormElement::elements()
 {
-    return new HTMLFormCollection(this);
+    return HTMLFormCollection::create(this);
 }
 
 String HTMLFormElement::name() const

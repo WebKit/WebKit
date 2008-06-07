@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,29 +24,17 @@
 #ifndef Clipboard_h
 #define Clipboard_h
 
-#include <wtf/HashSet.h>
-#include "AtomicString.h"
 #include "ClipboardAccessPolicy.h"
 #include "DragActions.h"
 #include "DragImage.h"
 #include "IntPoint.h"
 #include "Node.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
-
-    class CachedImage;
-    class Element;
-    class Frame;
-    class Image;
-    class KURL;
-    class Range;
-    class String;
 
     // State available during IE's events for drag and drop and copy/paste
     class Clipboard : public RefCounted<Clipboard> {
     public:
-        Clipboard(ClipboardAccessPolicy policy, bool isForDragging);
         virtual ~Clipboard() { }
 
         // Is this operation a drag-drop or a copy-paste?
@@ -73,8 +59,7 @@ namespace WebCore {
         Node* dragImageElement() { return m_dragImageElement.get(); }
         virtual void setDragImageElement(Node*, const IntPoint&) = 0;
         
-        //Provides the DOM specified 
-        virtual DragImageRef createDragImage(IntPoint& dragLoc) const = 0;
+        virtual DragImageRef createDragImage(IntPoint& dragLocation) const = 0;
         virtual void declareAndWriteDragImage(Element*, const KURL&, const String& title, Frame*) = 0;
         virtual void writeURL(const KURL&, const String&, Frame*) = 0;
         virtual void writeRange(Range*, Frame*) = 0;
@@ -91,6 +76,8 @@ namespace WebCore {
         void setDragHasStarted() { m_dragStarted = true; }
         
     protected:
+        Clipboard(ClipboardAccessPolicy, bool isForDragging);
+
         ClipboardAccessPolicy policy() const { return m_policy; }
         bool dragStarted() const { return m_dragStarted; }
         

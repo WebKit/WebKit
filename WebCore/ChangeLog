@@ -1,3 +1,260 @@
+2008-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - work on https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toHTMLCanvasStyle):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        * bindings/js/JSNodeFilterCondition.h:
+        (WebCore::JSNodeFilterCondition::create):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::toNodeFilter):
+        * bindings/js/JSSVGLazyEventListener.h:
+        (WebCore::JSSVGLazyEventListener::create):
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::JSSVGPODTypeWrapperCreatorReadWrite):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::JSSVGPODTypeWrapperCreatorReadOnly):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCache::lookupOrCreateWrapper):
+        (WebCore::JSSVGPODTypeWrapperCache::forgetWrapper):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::commonExit):
+        (WebCore::commonExitReadOnly):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/js/kjs_binding.cpp:
+        (WebCore::setDOMException):
+        * bindings/js/kjs_events.h:
+        (WebCore::JSUnprotectedEventListener::create):
+        (WebCore::JSEventListener::create):
+        (WebCore::JSLazyEventListener::create):
+        * bindings/js/kjs_proxy.cpp:
+        (WebCore::KJSProxy::createHTMLEventHandler):
+        (WebCore::KJSProxy::createSVGEventHandler):
+        * bindings/objc/DOM.mm:
+        (WebCore::ObjCNodeFilterCondition::create):
+        (WebCore::ObjCNodeFilterCondition::ObjCNodeFilterCondition):
+        (WebCore::ObjCNodeFilterCondition::acceptNode):
+        (-[DOMDocument createNodeIterator:whatToShow:filter:expandEntityReferences:]):
+        (-[DOMDocument createTreeWalker:whatToShow:filter:expandEntityReferences:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForNinePieceImage):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::create):
+        (WebCore::CSSFontFace::CSSFontFace):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::CSSSegmentedFontFace):
+        * css/CSSSegmentedFontFace.h:
+        (WebCore::CSSSegmentedFontFace::create):
+        * css/Counter.h:
+        (WebCore::Counter::create):
+        (WebCore::Counter::Counter):
+        * css/DashboardRegion.h:
+        (WebCore::DashboardRegion::create):
+        (WebCore::DashboardRegion::DashboardRegion):
+        * css/Rect.h:
+        (WebCore::Rect::create):
+        (WebCore::Rect::Rect):
+        * dom/ChildNodeList.h:
+        (WebCore::ChildNodeList::create):
+        * dom/ClassNodeList.h:
+        (WebCore::ClassNodeList::create):
+        * dom/Clipboard.h:
+        * dom/DOMCoreException.h:
+        (WebCore::DOMCoreException::create):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::instance):
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::DOMImplementation):
+        * dom/Document.cpp:
+        (WebCore::Document::addWindowEventListener):
+        (WebCore::Document::removeWindowEventListener):
+        (WebCore::Document::setDecoder):
+        (WebCore::Document::images):
+        (WebCore::Document::applets):
+        (WebCore::Document::embeds):
+        (WebCore::Document::plugins):
+        (WebCore::Document::objects):
+        (WebCore::Document::scripts):
+        (WebCore::Document::links):
+        (WebCore::Document::forms):
+        (WebCore::Document::anchors):
+        (WebCore::Document::all):
+        (WebCore::Document::windowNamedItems):
+        (WebCore::Document::documentNamedItems):
+        * dom/Document.h:
+        * dom/DynamicNodeList.h:
+        * dom/EventException.h:
+        (WebCore::EventException::create):
+        (WebCore::EventException::EventException):
+        * dom/EventListener.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::addEventListener):
+        (WebCore::EventTarget::removeEventListener):
+        * dom/ExceptionBase.cpp:
+        (WebCore::ExceptionBase::ExceptionBase):
+        * dom/ExceptionBase.h:
+        * dom/NameNodeList.h:
+        (WebCore::NameNodeList::create):
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        (WebCore::Node::querySelectorAll):
+        * dom/NodeFilterCondition.h:
+        * dom/NodeList.h:
+        * dom/RangeException.h:
+        (WebCore::RangeException::create):
+        (WebCore::RangeException::RangeException):
+        * dom/RegisteredEventListener.h:
+        (WebCore::RegisteredEventListener::create):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+        * dom/SelectorNodeList.h:
+        * dom/StaticNodeList.cpp:
+        (WebCore::StaticNodeList::StaticNodeList):
+        * dom/StaticNodeList.h:
+        (WebCore::StaticNodeList::adopt):
+        * dom/TagNodeList.h:
+        (WebCore::TagNodeList::create):
+        * history/HistoryItem.cpp:
+        (WebCore::defaultNotifyHistoryItemChanged):
+        (WebCore::HistoryItem::HistoryItem):
+        (WebCore::HistoryItem::copy):
+        * history/HistoryItem.h:
+        (WebCore::HistoryItem::create):
+        * html/CanvasGradient.h:
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+        * html/CanvasPattern.h:
+        (WebCore::CanvasPattern::create):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::setStrokeColor):
+        (WebCore::CanvasRenderingContext2D::setFillColor):
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        * html/CanvasStyle.h:
+        (WebCore::CanvasStyle::create):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::HTMLCollection):
+        (WebCore::HTMLCollection::create):
+        * html/HTMLCollection.h:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::children):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::create):
+        * html/HTMLFormCollection.h:
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::elements):
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::areas):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::mediaPlayerNetworkStateChanged):
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        * html/HTMLNameCollection.h:
+        (WebCore::HTMLNameCollection::create):
+        * html/HTMLOptionsCollection.cpp:
+        (WebCore::HTMLOptionsCollection::create):
+        * html/HTMLOptionsCollection.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::options):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::rows):
+        (WebCore::HTMLTableElement::tBodies):
+        * html/HTMLTableRowElement.cpp:
+        (WebCore::HTMLTableRowElement::cells):
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection):
+        (WebCore::HTMLTableRowsCollection::create):
+        * html/HTMLTableRowsCollection.h:
+        * html/HTMLTableSectionElement.cpp:
+        (WebCore::HTMLTableSectionElement::rows):
+        * html/MediaError.h:
+        (WebCore::MediaError::create):
+        (WebCore::MediaError::MediaError):
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData):
+        * loader/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::write):
+        (WebCore::FrameLoader::createHistoryItem):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageEventListener::create):
+        (WebCore::ImageEventListener::ImageEventListener):
+        (WebCore::ImageDocument::createDocumentStructure):
+        * loader/TextResourceDecoder.h:
+        (WebCore::TextResourceDecoder::create):
+        * page/Page.cpp:
+        (WebCore::Page::userStyleSheet):
+        * svg/SVGException.h:
+        (WebCore::SVGException::create):
+        (WebCore::SVGException::SVGException):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::ConditionEventListener::create):
+        (WebCore::ConditionEventListener::ConditionEventListener):
+        (WebCore::SVGSMILElement::connectConditions):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequestException.h:
+        (WebCore::XMLHttpRequestException::create):
+        (WebCore::XMLHttpRequestException::XMLHttpRequestException):
+        * xml/XPathException.h:
+        (WebCore::XPathException::create):
+        (WebCore::XPathException::XPathException):
+        * xml/XPathResult.cpp:
+        (WebCore::InvalidatingEventListener::create):
+        (WebCore::InvalidatingEventListener::InvalidatingEventListener):
+        (WebCore::XPathResult::XPathResult):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2008-06-07  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

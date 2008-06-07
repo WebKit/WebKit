@@ -58,11 +58,19 @@ class HistoryItem : public RefCounted<HistoryItem> {
     friend class PageCache;
 
 public: 
-    HistoryItem();
-    HistoryItem(const String& urlString, const String& title, double lastVisited);
-    HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double lastVisited);
-    HistoryItem(const KURL& url, const String& title);
-    HistoryItem(const KURL& url, const String& target, const String& parent, const String& title);
+    static PassRefPtr<HistoryItem> create() { return adoptRef(new HistoryItem); }
+    static PassRefPtr<HistoryItem> create(const String& urlString, const String& title, double lastVisited)
+    {
+        return adoptRef(new HistoryItem(urlString, title, lastVisited));
+    }
+    static PassRefPtr<HistoryItem> create(const String& urlString, const String& title, const String& alternateTitle, double lastVisited)
+    {
+        return adoptRef(new HistoryItem(urlString, title, alternateTitle, lastVisited));
+    }
+    static PassRefPtr<HistoryItem> create(const KURL& url, const String& target, const String& parent, const String& title)
+    {
+        return adoptRef(new HistoryItem(url, target, parent, title));
+    }
     
     ~HistoryItem();
     
@@ -146,6 +154,11 @@ public:
 #endif
 
 private:
+    HistoryItem();
+    HistoryItem(const String& urlString, const String& title, double lastVisited);
+    HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double lastVisited);
+    HistoryItem(const KURL& url, const String& target, const String& parent, const String& title);
+
     HistoryItem(const HistoryItem&);
     
     String m_urlString;

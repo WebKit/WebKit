@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,17 +22,17 @@
 #ifndef SVGException_h
 #define SVGException_h
 
-#if ENABLE(SVG)
-
 #include "ExceptionBase.h"
+
+#if ENABLE(SVG)
 
 namespace WebCore {
 
     class SVGException : public ExceptionBase {
     public:
-        SVGException(const ExceptionCodeDescription& description)
-            : ExceptionBase(description)
+        static PassRefPtr<SVGException> create(const ExceptionCodeDescription& description)
         {
+            return adoptRef(new SVGException(description));
         }
 
         static const int SVGExceptionOffset = 300;
@@ -43,6 +43,12 @@ namespace WebCore {
             SVG_INVALID_VALUE_ERR       = SVGExceptionOffset + 1,
             SVG_MATRIX_NOT_INVERTABLE   = SVGExceptionOffset + 2
         };
+
+    private:
+        SVGException(const ExceptionCodeDescription& description)
+            : ExceptionBase(description)
+        {
+        }
     };
 
 } // namespace WebCore

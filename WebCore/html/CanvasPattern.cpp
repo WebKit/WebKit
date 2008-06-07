@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,8 +66,7 @@ void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool&
 #if PLATFORM(CG)
 
 CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY, bool originClean)
-    : RefCounted<CanvasPattern>(0)
-    , m_platformImage(image)
+    : m_platformImage(image)
     , m_cachedImage(0)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
@@ -78,8 +77,7 @@ CanvasPattern::CanvasPattern(CGImageRef image, bool repeatX, bool repeatY, bool 
 #elif PLATFORM(CAIRO)
 
 CanvasPattern::CanvasPattern(cairo_surface_t* surface, bool repeatX, bool repeatY, bool originClean)
-    : RefCounted<CanvasPattern>(0)
-    , m_platformImage(cairo_surface_reference(surface))
+    : m_platformImage(cairo_surface_reference(surface))
     , m_cachedImage(0)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
@@ -90,15 +88,14 @@ CanvasPattern::CanvasPattern(cairo_surface_t* surface, bool repeatX, bool repeat
 #endif
 
 CanvasPattern::CanvasPattern(CachedImage* cachedImage, bool repeatX, bool repeatY, bool originClean)
-    : RefCounted<CanvasPattern>(0)
-#if PLATFORM(CG) || PLATFORM(CAIRO)
-    , m_platformImage(0)
-#endif
-    , m_cachedImage(cachedImage)
+    : m_cachedImage(cachedImage)
     , m_repeatX(repeatX)
     , m_repeatY(repeatY)
     , m_originClean(originClean)
 {
+#if PLATFORM(CAIRO)
+    m_platformImage = 0;
+#endif
     if (cachedImage)
         cachedImage->addClient(this);
 }

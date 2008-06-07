@@ -205,7 +205,7 @@ EventListener* XMLHttpRequest::onReadyStateChangeListener() const
     return m_onReadyStateChangeListener.get();
 }
 
-void XMLHttpRequest::setOnReadyStateChangeListener(EventListener* eventListener)
+void XMLHttpRequest::setOnReadyStateChangeListener(PassRefPtr<EventListener> eventListener)
 {
     m_onReadyStateChangeListener = eventListener;
 }
@@ -220,12 +220,12 @@ EventListener* XMLHttpRequest::onProgressListener() const
     return m_onProgressListener.get();
 }
 
-void XMLHttpRequest::setOnLoadListener(EventListener* eventListener)
+void XMLHttpRequest::setOnLoadListener(PassRefPtr<EventListener> eventListener)
 {
     m_onLoadListener = eventListener;
 }
 
-void XMLHttpRequest::setOnProgressListener(EventListener* eventListener)
+void XMLHttpRequest::setOnProgressListener(PassRefPtr<EventListener> eventListener)
 {
     m_onProgressListener = eventListener;
 }
@@ -933,14 +933,14 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
   
     if (!m_decoder) {
         if (!m_responseEncoding.isEmpty())
-            m_decoder = new TextResourceDecoder("text/plain", m_responseEncoding);
+            m_decoder = TextResourceDecoder::create("text/plain", m_responseEncoding);
         // allow TextResourceDecoder to look inside the m_response if it's XML or HTML
         else if (responseIsXML())
-            m_decoder = new TextResourceDecoder("application/xml");
+            m_decoder = TextResourceDecoder::create("application/xml");
         else if (responseMIMEType() == "text/html")
-            m_decoder = new TextResourceDecoder("text/html", "UTF-8");
+            m_decoder = TextResourceDecoder::create("text/html", "UTF-8");
         else
-            m_decoder = new TextResourceDecoder("text/plain", "UTF-8");
+            m_decoder = TextResourceDecoder::create("text/plain", "UTF-8");
     }
     if (len == 0)
         return;

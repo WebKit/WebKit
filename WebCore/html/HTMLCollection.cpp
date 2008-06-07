@@ -36,8 +36,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type)
-    : RefCounted<HTMLCollection>(0)
-    , m_idsDone(false)
+    : m_idsDone(false)
     , m_base(base)
     , m_type(type)
     , m_info(m_base->isDocumentNode() ? static_cast<Document*>(m_base.get())->collectionInfo(type) : 0)
@@ -46,13 +45,17 @@ HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type)
 }
 
 HTMLCollection::HTMLCollection(PassRefPtr<Node> base, Type type, CollectionInfo* info)
-    : RefCounted<HTMLCollection>(0)
-    , m_idsDone(false)
+    : m_idsDone(false)
     , m_base(base)
     , m_type(type)
     , m_info(info)
     , m_ownsInfo(false)
 {
+}
+
+PassRefPtr<HTMLCollection> HTMLCollection::create(PassRefPtr<Node> base, Type type)
+{
+    return adoptRef(new HTMLCollection(base, type));
 }
 
 HTMLCollection::~HTMLCollection()

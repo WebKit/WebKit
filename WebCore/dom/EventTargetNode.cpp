@@ -395,7 +395,7 @@ void EventTargetNode::setHTMLEventListener(const AtomicString &eventType, PassRe
     // In case we are the only one holding a reference to it, we don't want removeHTMLEventListener to destroy it.
     removeHTMLEventListener(eventType);
     if (listener)
-        addEventListener(eventType, listener.get(), false);
+        addEventListener(eventType, listener, false);
 }
 
 EventListener *EventTargetNode::getHTMLEventListener(const AtomicString &eventType)

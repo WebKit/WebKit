@@ -21,6 +21,7 @@
 #define JSNodeFilterCondition_h
 
 #include "NodeFilterCondition.h"
+#include <wtf/PassRefPtr.h>
 
 namespace KJS {
     class JSObject;
@@ -32,11 +33,16 @@ namespace WebCore {
 
     class JSNodeFilterCondition : public NodeFilterCondition {
     public:
-        JSNodeFilterCondition(KJS::JSObject* filter);
+        static PassRefPtr<JSNodeFilterCondition> create(KJS::JSObject* filter)
+        {
+            return adoptRef(new JSNodeFilterCondition(filter));
+        }
+
         virtual short acceptNode(Node*, KJS::JSValue*& exception) const;
         virtual void mark();
 
-    protected:
+    private:
+        JSNodeFilterCondition(KJS::JSObject* filter);
         KJS::JSObject* m_filter;
     };
 

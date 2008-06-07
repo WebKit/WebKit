@@ -38,7 +38,7 @@ namespace WebCore {
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(const String& url, const String& charset)
     : CachedResource(url, CSSStyleSheet)
-    , m_decoder(new TextResourceDecoder("text/css", charset))
+    , m_decoder(TextResourceDecoder::create("text/css", charset))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet
     // as text/html; see <http://bugs.webkit.org/show_bug.cgi?id=11451>).

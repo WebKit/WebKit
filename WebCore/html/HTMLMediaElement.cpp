@@ -277,7 +277,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
     // 2
     if (m_begun) {
         m_begun = false;
-        m_error = new MediaError(MediaError::MEDIA_ERR_ABORTED);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
         initAndDispatchProgressEvent(abortEvent);
         if (m_loadNestingLevel < m_terminateLoadBelowNestingLevel)
             goto end;
@@ -363,7 +363,7 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
         //delete m_player;
         //m_player = 0;
         // FIXME better error handling
-        m_error = new MediaError(MediaError::MEDIA_ERR_NETWORK);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_NETWORK);
         m_begun = false;
         m_progressEventTimer.stop();
         m_bufferingRate = 0;
@@ -1002,7 +1002,7 @@ void HTMLMediaElement::willSaveToCache()
         m_player.clear();
         m_progressEventTimer.stop();
 
-        m_error = new MediaError(MediaError::MEDIA_ERR_ABORTED);
+        m_error = MediaError::create(MediaError::MEDIA_ERR_ABORTED);
         m_begun = false;
         initAndDispatchProgressEvent(abortEvent);
         if (m_networkState >= LOADING) {

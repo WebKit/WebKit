@@ -60,7 +60,7 @@ NodeFilter* toNodeFilter(KJS::JSValue* val)
 
     KJS::JSObject* o = static_cast<KJS::JSObject*>(val);
     if (o->implementsCall())
-        return new NodeFilter(new JSNodeFilterCondition(o));
+        return new NodeFilter(JSNodeFilterCondition::create(o));
 
     return 0;
 }

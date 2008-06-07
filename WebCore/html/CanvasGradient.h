@@ -27,11 +27,9 @@
 #ifndef CanvasGradient_h
 #define CanvasGradient_h
 
-#include "FloatPoint.h"
 #include "Gradient.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 

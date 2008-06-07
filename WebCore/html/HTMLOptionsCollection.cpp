@@ -34,6 +34,11 @@ HTMLOptionsCollection::HTMLOptionsCollection(PassRefPtr<HTMLSelectElement> selec
 {
 }
 
+PassRefPtr<HTMLOptionsCollection> HTMLOptionsCollection::create(PassRefPtr<HTMLSelectElement> select)
+{
+    return adoptRef(new HTMLOptionsCollection(select));
+}
+
 void HTMLOptionsCollection::add(PassRefPtr<HTMLOptionElement> element, ExceptionCode &ec)
 {
     add(element, length(), ec);

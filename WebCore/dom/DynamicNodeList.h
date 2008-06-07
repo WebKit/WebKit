@@ -48,8 +48,6 @@ namespace WebCore {
             unsigned refCount;
         };
 
-        DynamicNodeList(PassRefPtr<Node> rootNode);
-        DynamicNodeList(PassRefPtr<Node> rootNode, Caches*);
         virtual ~DynamicNodeList();
 
         bool hasOwnCaches() const { return m_ownsCaches; }
@@ -63,6 +61,9 @@ namespace WebCore {
         void invalidateCache();
 
     protected:
+        DynamicNodeList(PassRefPtr<Node> rootNode);
+        DynamicNodeList(PassRefPtr<Node> rootNode, Caches*);
+
         virtual bool nodeMatches(Node*) const = 0;
 
         RefPtr<Node> m_rootNode;

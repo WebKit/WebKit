@@ -36,11 +36,13 @@ class MediaError : public RefCounted<MediaError> {
 public:
     enum Code { MEDIA_ERR_ABORTED = 1, MEDIA_ERR_NETWORK, MEDIA_ERR_DECODE };
 
-    MediaError(Code code) : RefCounted<MediaError>(0), m_code(code) { }
+    static PassRefPtr<MediaError> create(Code code) { return adoptRef(new MediaError(code)); }
 
     Code code() const { return m_code; }
 
 private:
+    MediaError(Code code) : m_code(code) { }
+
     Code m_code;
 };
 

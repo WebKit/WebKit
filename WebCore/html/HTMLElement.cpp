@@ -703,7 +703,7 @@ void HTMLElement::setTabIndex(int value)
 
 PassRefPtr<HTMLCollection> HTMLElement::children()
 {
-    return new HTMLCollection(this, HTMLCollection::NodeChildren);
+    return HTMLCollection::create(this, HTMLCollection::NodeChildren);
 }
 
 // DOM Section 1.1.1

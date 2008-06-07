@@ -492,7 +492,7 @@ int HTMLSelectElement::listToOptionIndex(int listIndex) const
 
 PassRefPtr<HTMLOptionsCollection> HTMLSelectElement::options()
 {
-    return new HTMLOptionsCollection(this);
+    return HTMLOptionsCollection::create(this);
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const

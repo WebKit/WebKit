@@ -275,8 +275,8 @@ PassRefPtr<HTMLDocument> DOMImplementation::createHTMLDocument(Frame* frame)
 
 DOMImplementation* DOMImplementation::instance()
 {
-    static RefPtr<DOMImplementation> i = new DOMImplementation;
-    return i.get();
+    static DOMImplementation* staticInstance = new DOMImplementation;
+    return staticInstance;
 }
 
 bool DOMImplementation::isXMLMIMEType(const String& mimeType)

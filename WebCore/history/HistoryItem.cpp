@@ -38,12 +38,14 @@
 
 namespace WebCore {
 
-static void defaultNotifyHistoryItemChanged() {}
+static void defaultNotifyHistoryItemChanged()
+{
+}
+
 void (*notifyHistoryItemChanged)() = defaultNotifyHistoryItemChanged;
 
 HistoryItem::HistoryItem()
-    : RefCounted<HistoryItem>(0)
-    , m_lastVisitedTime(0)
+    : m_lastVisitedTime(0)
     , m_isInPageCache(false)
     , m_isTargetItem(false)
     , m_visitCount(0)
@@ -51,8 +53,7 @@ HistoryItem::HistoryItem()
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, double time)
-    : RefCounted<HistoryItem>(0)
-    , m_urlString(urlString)
+    : m_urlString(urlString)
     , m_originalURLString(urlString)
     , m_title(title)
     , m_lastVisitedTime(time)
@@ -64,8 +65,7 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, double ti
 }
 
 HistoryItem::HistoryItem(const String& urlString, const String& title, const String& alternateTitle, double time)
-    : RefCounted<HistoryItem>(0)
-    , m_urlString(urlString)
+    : m_urlString(urlString)
     , m_originalURLString(urlString)
     , m_title(title)
     , m_displayTitle(alternateTitle)
@@ -77,22 +77,8 @@ HistoryItem::HistoryItem(const String& urlString, const String& title, const Str
     iconDatabase()->retainIconForPageURL(m_urlString);
 }
 
-HistoryItem::HistoryItem(const KURL& url, const String& title)
-    : RefCounted<HistoryItem>(0)
-    , m_urlString(url.string())
-    , m_originalURLString(url.string())
-    , m_title(title)
-    , m_lastVisitedTime(0)
-    , m_isInPageCache(false)
-    , m_isTargetItem(false)
-    , m_visitCount(0)
-{    
-    iconDatabase()->retainIconForPageURL(m_urlString);
-}
-
 HistoryItem::HistoryItem(const KURL& url, const String& target, const String& parent, const String& title)
-    : RefCounted<HistoryItem>(0)
-    , m_urlString(url.string())
+    : m_urlString(url.string())
     , m_originalURLString(url.string())
     , m_target(target)
     , m_parent(parent)
@@ -111,8 +97,8 @@ HistoryItem::~HistoryItem()
     iconDatabase()->releaseIconForPageURL(m_urlString);
 }
 
-HistoryItem::HistoryItem(const HistoryItem& item)
-    : RefCounted<HistoryItem>(0)
+inline HistoryItem::HistoryItem(const HistoryItem& item)
+    : RefCounted<HistoryItem>(1)
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
     , m_target(item.m_target)
@@ -139,7 +125,7 @@ HistoryItem::HistoryItem(const HistoryItem& item)
 
 PassRefPtr<HistoryItem> HistoryItem::copy() const
 {
-    return new HistoryItem(*this);
+    return adoptRef(new HistoryItem(*this));
 }
 
 const String& HistoryItem::urlString() const

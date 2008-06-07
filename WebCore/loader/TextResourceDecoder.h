@@ -1,9 +1,7 @@
 /*
-    This file is part of the KDE libraries
-
     Copyright (C) 1999 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
-    Copyright (C) 2006 Apple Computer, Inc.
+    Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -25,10 +23,7 @@
 #ifndef TextResourceDecoder_h
 #define TextResourceDecoder_h
 
-#include "PlatformString.h"
-#include <wtf/RefCounted.h>
 #include "TextDecoder.h"
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -44,7 +39,10 @@ public:
         UserChosenEncoding
     };
 
-    TextResourceDecoder(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding());
+    static PassRefPtr<TextResourceDecoder> create(const String& mimeType, const TextEncoding& defaultEncoding = TextEncoding())
+    {
+        return adoptRef(new TextResourceDecoder(mimeType, defaultEncoding));
+    }
     ~TextResourceDecoder();
 
     void setEncoding(const TextEncoding&, EncodingSource);
@@ -56,6 +54,8 @@ public:
     bool sawError() const { return m_sawError; }
 
 private:
+    TextResourceDecoder(const String& mimeType, const TextEncoding& defaultEncoding);
+
     enum ContentType { PlainText, HTML, XML, CSS }; // PlainText is equivalent to directly using TextDecoder.
     static ContentType determineContentType(const String& mimeType);
     static const TextEncoding& defaultEncoding(ContentType, const TextEncoding& defaultEncoding);

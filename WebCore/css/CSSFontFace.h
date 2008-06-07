@@ -26,6 +26,7 @@
 #ifndef CSSFontFace_h
 #define CSSFontFace_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -38,26 +39,26 @@ class SimpleFontData;
 
 class CSSFontFace : public RefCounted<CSSFontFace> {
 public:
-    CSSFontFace()
-        : RefCounted<CSSFontFace>(0)
-        , m_segmentedFontFace(0)
-    {
-    }
-
-    virtual ~CSSFontFace();
+    static PassRefPtr<CSSFontFace> create() { return adoptRef(new CSSFontFace); }
+    ~CSSFontFace();
 
     void setSegmentedFontFace(CSSSegmentedFontFace* segmentedFontFace) { m_segmentedFontFace = segmentedFontFace; }
 
     bool isLoaded() const;
-    virtual bool isValid() const;
+    bool isValid() const;
 
-    virtual void addSource(CSSFontFaceSource*);
+    void addSource(CSSFontFaceSource*);
 
     void fontLoaded(CSSFontFaceSource*);
 
-    virtual SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
 
 private:
+    CSSFontFace()
+        : m_segmentedFontFace(0)
+    {
+    }
+
     CSSSegmentedFontFace* m_segmentedFontFace;
     Vector<CSSFontFaceSource*> m_sources;
 };

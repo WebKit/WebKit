@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  *
@@ -47,53 +47,45 @@
 namespace WebCore {
 
 CanvasStyle::CanvasStyle(const String& color)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(ColorString)
+    : m_type(ColorString)
     , m_color(color)
 {
 }
 
 CanvasStyle::CanvasStyle(float grayLevel)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(GrayLevel)
+    : m_type(GrayLevel)
     , m_alpha(1)
     , m_grayLevel(grayLevel)
 {
 }
 
 CanvasStyle::CanvasStyle(const String& color, float alpha)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(ColorStringWithAlpha), m_color(color), m_alpha(alpha)
+    : m_type(ColorStringWithAlpha), m_color(color), m_alpha(alpha)
 {
 }
 
 CanvasStyle::CanvasStyle(float grayLevel, float alpha)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(GrayLevel), m_alpha(alpha), m_grayLevel(grayLevel)
+    : m_type(GrayLevel), m_alpha(alpha), m_grayLevel(grayLevel)
 {
 }
 
 CanvasStyle::CanvasStyle(float r, float g, float b, float a)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(RGBA), m_alpha(a), m_red(r), m_green(g), m_blue(b)
+    : m_type(RGBA), m_alpha(a), m_red(r), m_green(g), m_blue(b)
 {
 }
 
 CanvasStyle::CanvasStyle(float c, float m, float y, float k, float a)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(CMYKA), m_alpha(a), m_cyan(c), m_magenta(m), m_yellow(y), m_black(k)
+    : m_type(CMYKA), m_alpha(a), m_cyan(c), m_magenta(m), m_yellow(y), m_black(k)
 {
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasGradient> gradient)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(gradient ? Gradient : ColorString), m_gradient(gradient)
+    : m_type(gradient ? Gradient : ColorString), m_gradient(gradient)
 {
 }
 
 CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
-    : RefCounted<CanvasStyle>(0)
-    , m_type(pattern ? ImagePattern : ColorString), m_pattern(pattern)
+    : m_type(pattern ? ImagePattern : ColorString), m_pattern(pattern)
 {
 }
 

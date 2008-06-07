@@ -302,7 +302,7 @@ static PassRefPtr<CSSValue> valueForNinePieceImage(const NinePieceImage& image)
     else
         left = new CSSPrimitiveValue(image.m_slices.left.value(), CSSPrimitiveValue::CSS_NUMBER);
 
-    RefPtr<Rect> rect = new Rect();
+    RefPtr<Rect> rect = Rect::create();
     rect->setTop(top);
     rect->setRight(right);
     rect->setBottom(bottom);
@@ -948,7 +948,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             RefPtr<DashboardRegion> firstRegion;
             DashboardRegion* previousRegion = 0;
             for (unsigned i = 0; i < count; i++) {
-                RefPtr<DashboardRegion> region = new DashboardRegion;
+                RefPtr<DashboardRegion> region = DashboardRegion::create();
                 StyleDashboardRegion styleRegion = regions[i];
 
                 region->m_label = styleRegion.label;
@@ -1001,12 +1001,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyClip:
         {
             if (style->hasClip()) {
-                Rect* rect = new Rect();
+                RefPtr<Rect> rect = Rect::create();
                 rect->setTop(new CSSPrimitiveValue(style->clip().top.value(), CSSPrimitiveValue::CSS_PX));
                 rect->setRight(new CSSPrimitiveValue(style->clip().right.value(), CSSPrimitiveValue::CSS_PX));
                 rect->setBottom(new CSSPrimitiveValue(style->clip().bottom.value(), CSSPrimitiveValue::CSS_PX));
                 rect->setLeft(new CSSPrimitiveValue(style->clip().left.value(), CSSPrimitiveValue::CSS_PX));
-                return new CSSPrimitiveValue(rect);
+                return new CSSPrimitiveValue(rect.release());
             }
             return 0;
         }

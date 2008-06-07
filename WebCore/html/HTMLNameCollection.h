@@ -32,9 +32,14 @@ class Document;
 
 class HTMLNameCollection : public HTMLCollection {
 public:
-    HTMLNameCollection(PassRefPtr<Document>, Type, const String& name);
+    static PassRefPtr<HTMLNameCollection> create(PassRefPtr<Document> document, Type type, const String& name)
+    {
+        return adoptRef(new HTMLNameCollection(document, type, name));
+    }
     
 private:
+    HTMLNameCollection(PassRefPtr<Document>, Type, const String& name);
+
     virtual Element* itemAfter(Element*) const;
 
     String m_name;

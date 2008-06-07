@@ -278,25 +278,25 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
     JSValue* errorObject = 0;
     switch (description.type) {
         case DOMExceptionType:
-            errorObject = toJS(exec, new DOMCoreException(description));
+            errorObject = toJS(exec, DOMCoreException::create(description));
             break;
         case RangeExceptionType:
-            errorObject = toJS(exec, new RangeException(description));
+            errorObject = toJS(exec, RangeException::create(description));
             break;
         case EventExceptionType:
-            errorObject = toJS(exec, new EventException(description));
+            errorObject = toJS(exec, EventException::create(description));
             break;
         case XMLHttpRequestExceptionType:
-            errorObject = toJS(exec, new XMLHttpRequestException(description));
+            errorObject = toJS(exec, XMLHttpRequestException::create(description));
             break;
 #if ENABLE(SVG)
         case SVGExceptionType:
-            errorObject = toJS(exec, new SVGException(description), 0);
+            errorObject = toJS(exec, SVGException::create(description).get(), 0);
             break;
 #endif
 #if ENABLE(XPATH)
         case XPathExceptionType:
-            errorObject = toJS(exec, new XPathException(description));
+            errorObject = toJS(exec, XPathException::create(description));
             break;
 #endif
     }

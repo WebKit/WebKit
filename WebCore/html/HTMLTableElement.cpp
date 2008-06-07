@@ -658,12 +658,12 @@ bool HTMLTableElement::isURLAttribute(Attribute *attr) const
 
 PassRefPtr<HTMLCollection> HTMLTableElement::rows()
 {
-    return new HTMLTableRowsCollection(this);
+    return HTMLTableRowsCollection::create(this);
 }
 
 PassRefPtr<HTMLCollection> HTMLTableElement::tBodies()
 {
-    return new HTMLCollection(this, HTMLCollection::TableTBodies);
+    return HTMLCollection::create(this, HTMLCollection::TableTBodies);
 }
 
 String HTMLTableElement::align() const

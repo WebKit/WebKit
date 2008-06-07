@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +25,6 @@
 #define RegisteredEventListener_h
 
 #include "AtomicString.h"
-#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
@@ -35,7 +32,10 @@ namespace WebCore {
 
     class RegisteredEventListener : public RefCounted<RegisteredEventListener> {
     public:
-        RegisteredEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+        static PassRefPtr<RegisteredEventListener> create(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
+        {
+            return adoptRef(new RegisteredEventListener(eventType, listener, useCapture));
+        }
 
         const AtomicString& eventType() const { return m_eventType; }
         EventListener* listener() const { return m_listener.get(); }
@@ -45,6 +45,8 @@ namespace WebCore {
         void setRemoved(bool removed) { m_removed = removed; }
     
     private:
+        RegisteredEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
+
         AtomicString m_eventType;
         RefPtr<EventListener> m_listener;
         bool m_useCapture;

@@ -95,7 +95,7 @@ void HTMLMapElement::parseMappedAttribute(MappedAttribute* attr)
 
 PassRefPtr<HTMLCollection> HTMLMapElement::areas()
 {
-    return new HTMLCollection(this, HTMLCollection::MapAreas);
+    return HTMLCollection::create(this, HTMLCollection::MapAreas);
 }
 
 String HTMLMapElement::name() const

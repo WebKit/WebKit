@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2007m 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,8 +24,8 @@
 #ifndef NameNodeList_h
 #define NameNodeList_h
 
-#include "DynamicNodeList.h"
 #include "AtomicString.h"
+#include "DynamicNodeList.h"
 
 namespace WebCore {
 
@@ -34,9 +34,14 @@ namespace WebCore {
     // NodeList which lists all Nodes in a Element with a given "name" attribute
     class NameNodeList : public DynamicNodeList {
     public:
-        NameNodeList(PassRefPtr<Node> rootNode, const String& name, DynamicNodeList::Caches*);
+        static PassRefPtr<NameNodeList> create(PassRefPtr<Node> rootNode, const String& name, Caches* caches)
+        {
+            return adoptRef(new NameNodeList(rootNode, name, caches));
+        }
 
     private:
+        NameNodeList(PassRefPtr<Node> rootNode, const String& name, Caches*);
+
         virtual bool nodeMatches(Node*) const;
 
         AtomicString m_nodeName;

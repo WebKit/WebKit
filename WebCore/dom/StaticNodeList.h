@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #define StaticNodeList_h
 
 #include "NodeList.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -39,15 +40,21 @@ namespace WebCore {
 
     class StaticNodeList : public NodeList {
     public:
-        // Derived classes should build up the Vector in their constructor.
-        StaticNodeList() { }
-        virtual ~StaticNodeList() { }
+        // Adopts the contents of the nodes vector.
+        static PassRefPtr<StaticNodeList> adopt(Vector<RefPtr<Node> >& nodes)
+        {
+            return adoptRef(new StaticNodeList(nodes));
+        }
 
         virtual unsigned length() const;
         virtual Node* item(unsigned index) const;
         virtual Node* itemWithName(const AtomicString&) const;
 
-    protected:
+    private:
+        StaticNodeList(Vector<RefPtr<Node> >& nodes)
+        {
+            m_nodes.swap(nodes);
+        }
         Vector<RefPtr<Node> > m_nodes;
     };
 

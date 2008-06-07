@@ -91,13 +91,13 @@ void WKNotifyHistoryItemChanged()
 
 - (id)init
 {
-    return [self initWithWebCoreHistoryItem:(new HistoryItem)];
+    return [self initWithWebCoreHistoryItem:HistoryItem::create()];
 }
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title lastVisitedTimeInterval:(NSTimeInterval)time
 {
     WebCoreThreadViolationCheck();
-    return [self initWithWebCoreHistoryItem:(new HistoryItem(URLString, title, time))];
+    return [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, time)];
 }
 
 - (void)dealloc
@@ -276,12 +276,12 @@ static WebWindowWatcher *_windowWatcher = nil;
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
-    return [self initWithWebCoreHistoryItem:(new HistoryItem(URL, target, parent, title))];
+    return [self initWithWebCoreHistoryItem:HistoryItem::create(URL, target, parent, title)];
 }
 
 - (id)initWithURLString:(NSString *)URLString title:(NSString *)title displayTitle:(NSString *)displayTitle lastVisitedTimeInterval:(NSTimeInterval)time
 {
-    return [self initWithWebCoreHistoryItem:(new HistoryItem(URLString, title, displayTitle, time))];
+    return [self initWithWebCoreHistoryItem:HistoryItem::create(URLString, title, displayTitle, time)];
 }
 
 - (id)initWithWebCoreHistoryItem:(PassRefPtr<HistoryItem>)item

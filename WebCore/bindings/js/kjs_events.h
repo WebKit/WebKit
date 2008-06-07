@@ -32,20 +32,27 @@ namespace WebCore {
 
     class JSAbstractEventListener : public EventListener {
     public:
-        JSAbstractEventListener(bool html = false);
-
         virtual void handleEvent(Event*, bool isWindowEvent);
         virtual bool isHTMLEventListener() const;
         virtual KJS::JSObject* listenerObj() const = 0;
         virtual JSDOMWindow* window() const = 0;
 
+    protected:
+        JSAbstractEventListener(bool isHTML)
+            : m_isHTML(isHTML)
+        {
+        }
+
     private:
-        bool m_html;
+        bool m_isHTML;
     };
 
     class JSUnprotectedEventListener : public JSAbstractEventListener {
     public:
-        JSUnprotectedEventListener(KJS::JSObject* listener, JSDOMWindow*, bool html = false);
+        static PassRefPtr<JSUnprotectedEventListener> create(KJS::JSObject* listener, JSDOMWindow* window, bool isHTML)
+        {
+            return adoptRef(new JSUnprotectedEventListener(listener, window, isHTML));
+        }
         virtual ~JSUnprotectedEventListener();
 
         virtual KJS::JSObject* listenerObj() const;
@@ -54,13 +61,18 @@ namespace WebCore {
         void mark();
 
     private:
+        JSUnprotectedEventListener(KJS::JSObject* listener, JSDOMWindow*, bool isHTML);
+
         KJS::JSObject* m_listener;
         JSDOMWindow* m_window;
     };
 
     class JSEventListener : public JSAbstractEventListener {
     public:
-        JSEventListener(KJS::JSObject* listener, JSDOMWindow*, bool html = false);
+        static PassRefPtr<JSEventListener> create(KJS::JSObject* listener, JSDOMWindow* window, bool isHTML)
+        {
+            return adoptRef(new JSEventListener(listener, window, isHTML));
+        }
         virtual ~JSEventListener();
 
         virtual KJS::JSObject* listenerObj() const;
@@ -68,6 +80,8 @@ namespace WebCore {
         void clearWindow();
 
     protected:
+        JSEventListener(KJS::JSObject* listener, JSDOMWindow*, bool isHTML);
+
         mutable KJS::ProtectedPtr<KJS::JSObject> m_listener;
 
     private:
@@ -76,8 +90,14 @@ namespace WebCore {
 
     class JSLazyEventListener : public JSEventListener {
     public:
-        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
+        static PassRefPtr<JSLazyEventListener> create(const String& functionName, const String& code, JSDOMWindow* window, Node* node, int lineNumber)
+        {
+            return adoptRef(new JSLazyEventListener(functionName, code, window, node, lineNumber));
+        }
         virtual KJS::JSObject* listenerObj() const;
+
+    protected:
+        JSLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
 
     private:
         virtual KJS::JSValue* eventParameterName() const;

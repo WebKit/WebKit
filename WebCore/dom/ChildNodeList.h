@@ -25,17 +25,23 @@
 #define ChildNodeList_h
 
 #include "DynamicNodeList.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
     class ChildNodeList : public DynamicNodeList {
     public:
-        ChildNodeList(PassRefPtr<Node> rootNode, DynamicNodeList::Caches*);
+        static PassRefPtr<ChildNodeList> create(PassRefPtr<Node> rootNode, Caches* caches)
+        {
+            return adoptRef(new ChildNodeList(rootNode, caches));
+        }
 
         virtual unsigned length() const;
         virtual Node* item(unsigned index) const;
 
     protected:
+        ChildNodeList(PassRefPtr<Node> rootNode, Caches*);
+
         virtual bool nodeMatches(Node*) const;
     };
 

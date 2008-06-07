@@ -37,13 +37,14 @@ namespace WebCore {
 
     class ExceptionBase : public RefCounted<ExceptionBase> {
     public:
-        ExceptionBase(const ExceptionCodeDescription&);
-
         unsigned short code() const { return m_code; }
         String name() const { return m_name; }
         String message() const { return m_message; }
 
         String toString() const;
+
+    protected:
+        ExceptionBase(const ExceptionCodeDescription&);
 
     private:
         unsigned short m_code;

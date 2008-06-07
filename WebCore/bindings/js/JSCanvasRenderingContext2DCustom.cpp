@@ -52,14 +52,14 @@ static JSValue* toJS(ExecState* exec, CanvasStyle* style)
 static PassRefPtr<CanvasStyle> toHTMLCanvasStyle(ExecState* exec, JSValue* value)
 {
     if (value->isString())
-        return new CanvasStyle(value->toString(exec));
+        return CanvasStyle::create(value->toString(exec));
     if (!value->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(value);
     if (object->inherits(&JSCanvasGradient::s_info))
-        return new CanvasStyle(static_cast<JSCanvasGradient*>(object)->impl());
+        return CanvasStyle::create(static_cast<JSCanvasGradient*>(object)->impl());
     if (object->inherits(&JSCanvasPattern::s_info))
-        return new CanvasStyle(static_cast<JSCanvasPattern*>(object)->impl());
+        return CanvasStyle::create(static_cast<JSCanvasPattern*>(object)->impl());
     return 0;
 }
 
