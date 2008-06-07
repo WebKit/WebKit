@@ -1,7 +1,9 @@
-actuate
-arcrole
-href
-role
-show
-title
-type
+<attrs>
+<actuate/>
+<arcrole/>
+<href/>
+<role/>
+<show/>
+<title/>
+<type/>
+</attrs>

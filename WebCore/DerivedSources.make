@@ -508,19 +508,19 @@ endif
 ifdef HTML_FLAGS
 
 HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
-	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FLAGS)" \
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --extraDefines "$(HTML_FLAGS)" \
             --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output .
 
 else
 
 HTMLNames.cpp : dom/make_names.pl html/HTMLTagNames.in html/HTMLAttributeNames.in
-	perl $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in \
             --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xhtml" --wrapperFactory --attrsNullNamespace --output .
 
 endif
 
 XMLNames.cpp : dom/make_names.pl xml/xmlattrs.in
-	perl $< --attrs $(WebCore)/xml/xmlattrs.in \
+	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/xml/xmlattrs.in \
             --namespace XML --cppNamespace WebCore --namespaceURI "http://www.w3.org/XML/1998/namespace" --output .
 
 # --------
@@ -561,18 +561,18 @@ endif
 ifdef SVG_FLAGS
 
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
-	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --extraDefines "$(SVG_FLAGS)" \
             --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output .
 else
 
 SVGElementFactory.cpp SVGNames.cpp : dom/make_names.pl svg/svgtags.in svg/svgattrs.in
-	perl $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in \
+	perl -I $(WebCore)/bindings/scripts $< --tags $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in \
             --namespace SVG --guardFactoryWith "ENABLE(SVG)" --cppNamespace WebCore --namespaceURI "http://www.w3.org/2000/svg" --factory --wrapperFactory --attrsNullNamespace --output .
 
 endif
 
 XLinkNames.cpp : dom/make_names.pl svg/xlinkattrs.in
-	perl $< --attrs $(WebCore)/svg/xlinkattrs.in \
+	perl -I $(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in \
             --namespace XLink --cppNamespace WebCore --namespaceURI "http://www.w3.org/1999/xlink" --output .
 
 else

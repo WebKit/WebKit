@@ -27,9 +27,13 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 use strict;
+
+use Config;
 use Getopt::Long;
 use File::Path;
-use Config;
+use IO::File;
+use Switch;
+use XMLTiny qw(parsefile);
 
 my $printFactory = 0;
 my $printWrapperFactory = 0;
@@ -40,8 +44,8 @@ my $namespaceURI = "";
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
-my @tags = ();
-my @attrs = ();
+my %tags = ();
+my %attrs = ();
 my $tagsNullNamespace = 0;
 my $attrsNullNamespace = 0;
 my $extraDefines = 0;
@@ -73,8 +77,8 @@ die "You must specify at least one of --tags <file> or --attrs <file>" unless (l
 
 $namespacePrefix = $namespace unless $namespacePrefix;
 
-@tags = readNames($tagsFile) if length($tagsFile);
-@attrs = readNames($attrsFile) if length($attrsFile);
+readNames($tagsFile) if length($tagsFile);
+readNames($attrsFile) if length($attrsFile);
 
 mkpath($outputDir);
 my $namesBasePath = "$outputDir/${namespace}Names";
@@ -94,46 +98,87 @@ if ($printWrapperFactory) {
     printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
 }
 
+### Parsing handlers
+
+sub parseTags
+{
+    my $contentsRef = shift;
+    foreach my $contentRef (@$contentsRef) {
+        my $tag = $${contentRef}{'name'};
+        $tag =~ s/-/_/g;
+
+        # FIXME: we currently insert '' into the hash but it should be replaced by a description map
+        # taking into account the element's attributes.
+        $tags{$tag} = '';
+    }
+}
+
+sub parseAttrs
+{
+    my $contentsRef = shift;
+    foreach my $contentRef (@$contentsRef) {
+        my $attr = $${contentRef}{'name'};
+        $attr =~ s/-/_/g;
+
+        # FIXME: we currently insert '' into the hash but it should be replaced by a description map
+        # taking into account the element's attributes.
+        $attrs{$attr} = '';
+    }
+}
+
 ## Support routines
 
 sub readNames
 {
     my $namesFile = shift;
 
+    my $names = new IO::File;
     if ($extraDefines eq 0) {
-        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " " . $namesFile . "|" or die;
+        open($names, $preprocessor . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
     } else {
-        die "Failed to open file: $namesFile" unless open NAMES, $preprocessor . " -D" . join(" -D", split(" ", $extraDefines)) . " " . $namesFile . "|" or die;
+        open($names, $preprocessor . " -D" . join(" -D", split(" ", $extraDefines)) . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
     }
 
-    my @names = ();
-    while (<NAMES>) {
-        next if (m/#/);
-        next if (m/^[ \t]*$/);
-        s/-/_/g;
-        chomp $_;
-        push @names, $_;
-    }    
-    close(NAMES);
-    
-    die "Failed to read names from file: $namesFile" unless (scalar(@names));
-    
-    return @names
+    # Store hashes keys count to know if some insertion occured.
+    my $tagsCount = keys %tags;
+    my $attrsCount = keys %attrs;
+
+    my $documentRef = parsefile($names);
+
+    # XML::Tiny returns an array reference to a hash containing the different properties
+    my %document = %{@$documentRef[0]};
+    my $name = $document{'name'};
+
+    # Check root element to determine what we are parsing
+    switch($name) {
+        case "tags" {
+            parseTags(\@{$document{'content'}});
+        }
+        case "attrs" {
+            parseAttrs(\@{$document{'content'}});
+        }
+    }
+
+    # FIXME: we should process the attributes here to build a parameter map
+
+    close($names);
+
+    die "Failed to read names from file: $namesFile" if ((keys %tags == $tagsCount) && (keys %attrs == $attrsCount));
 }
 
 sub printMacros
 {
-    my ($F, $macro, $suffix, @names) = @_;
-    for my $name (@names) {
+    my ($F, $macro, $suffix, $namesRef) = @_;
+    for my $name (sort keys %$namesRef) {
         print F "    $macro $name","$suffix;\n";
     }
 }
 
 sub printConstructors
 {
-    my ($F, @names) = @_;
+    my ($F, $namesRef) = @_;
     print F "#if $guardFactoryWith\n" if $guardFactoryWith;
-    for my $name (@names) {
+    for my $name (sort keys %$namesRef) {
         my $ucName = upperCaseName($name);
     
         print F "${namespace}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
@@ -146,8 +191,8 @@ sub printConstructors
 
 sub printFunctionInits
 {
-    my ($F, @names) = @_;
-    for my $name (@names) {
+    my ($F, $namesRef) = @_;
+    for my $name (sort keys %$namesRef) {
         print F "    gFunctionMap->set(${name}Tag.localName().impl(), ${name}Constructor);\n";
     }
 }
@@ -271,15 +316,15 @@ sub printNamesHeaderFile
     print F "// Namespace\n";
     print F "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
-    if (scalar(@tags)) {
+    if (keys %tags) {
         print F "// Tags\n";
-        printMacros($F, "extern const WebCore::QualifiedName", "Tag", @tags);
+        printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%tags);
         print F "\n\nWebCore::QualifiedName** get${namespace}Tags(size_t* size);\n";
     }
     
-    if (scalar(@attrs)) {
+    if (keys %attrs) {
         print F "// Attributes\n";
-        printMacros($F, "extern const WebCore::QualifiedName", "Attr", @attrs);
+        printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%attrs);
         print F "\n\nWebCore::QualifiedName** get${namespace}Attr(size_t* size);\n";
     }
     print F "#endif\n\n";
@@ -319,36 +364,36 @@ using namespace WebCore;
 DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
 ";
 
-    if (scalar(@tags)) {
+    if (keys %tags) {
         print F "// Tags\n";
-        for my $name (@tags) {
+        for my $name (sort keys %tags) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
         
         print F "\n\nWebCore::QualifiedName** get${namespace}Tags(size_t* size)\n";
         print F "{\n    static WebCore::QualifiedName* ${namespace}Tags[] = {\n";
-        for my $name (@tags) {
+        for my $name (sort keys %tags) {
             print F "        (WebCore::QualifiedName*)&${name}Tag,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(@tags), ";\n";
+        print F "    *size = ", scalar(keys %tags), ";\n";
         print F "    return ${namespace}Tags;\n";
         print F "}\n";
         
     }
 
-    if (scalar(@attrs)) {
+    if (keys %attrs) {
         print F "\n// Attributes\n";
-        for my $name (@attrs) {
+        for my $name (sort keys %attrs) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
         print F "\n\nWebCore::QualifiedName** get${namespace}Attrs(size_t* size)\n";
         print F "{\n    static WebCore::QualifiedName* ${namespace}Attr[] = {\n";
-        for my $name (@attrs) {
+        for my $name (sort keys %attrs) {
             print F "        (WebCore::QualifiedName*)&${name}Attr,\n";
         }
         print F "    };\n";
-        print F "    *size = ", scalar(@attrs), ";\n";
+        print F "    *size = ", scalar(keys %attrs), ";\n";
         print F "    return ${namespace}Attr;\n";
         print F "}\n";
     }
@@ -369,13 +414,13 @@ print F "\nvoid init()
 
     print(F "    // Namespace\n");
     print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
-    if (scalar(@tags)) {
+    if (keys %tags) {
         my $tagsNamespace = $tagsNullNamespace ? "nullAtom" : "${lowerNamespace}NS";
-        printDefinitions($F, \@tags, "tags", $tagsNamespace);
+        printDefinitions($F, \%tags, "tags", $tagsNamespace);
     }
-    if (scalar(@attrs)) {
+    if (keys %attrs) {
         my $attrsNamespace = $attrsNullNamespace ? "nullAtom" : "${lowerNamespace}NS";
-        printDefinitions($F, \@attrs, "attributes", $attrsNamespace);
+        printDefinitions($F, \%attrs, "attributes", $attrsNamespace);
     }
 
     print F "}\n\n} }\n\n";
@@ -384,8 +429,8 @@ print F "\nvoid init()
 
 sub printJSElementIncludes
 {
-    my ($F, @names) = @_;
-    for my $name (@names) {
+    my ($F, $namesRef) = @_;
+    for my $name (sort keys %$namesRef) {
         next if (hasCustomMapping($name));
 
         my $ucName = upperCaseName($name);
@@ -396,7 +441,7 @@ sub printJSElementIncludes
 sub printElementIncludes
 {
     my ($F, $namesRef, $shouldSkipCustomMappings) = @_;
-    for my $name (@$namesRef) {
+    for my $name (sort keys %$namesRef) {
         next if ($shouldSkipCustomMappings && hasCustomMapping($name));
 
         my $ucName = upperCaseName($name);
@@ -414,11 +459,11 @@ sub printDefinitions
     
     print F "    // " . ucfirst($type) . "\n";
 
-    for my $name (@$namesRef) {
+    for my $name (sort keys %$namesRef) {
         print F "    const char *$name","${shortCamelType}String = \"$name\";\n";
     }
         
-    for my $name (@$namesRef) {
+    for my $name (sort keys %$namesRef) {
         if ($name =~ /_/) {
             my $realName = $name;
             $realName =~ s/_/-/g;
@@ -427,7 +472,7 @@ sub printDefinitions
     }
     print F "\n";
 
-    for my $name (@$namesRef) {
+    for my $name (sort keys %$namesRef) {
         print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
     }
 
@@ -452,7 +497,7 @@ print F <<END
 END
 ;
 
-printElementIncludes($F, \@tags, 0);
+printElementIncludes($F, \%tags, 0);
 
 print F <<END
 #include <wtf/HashMap.h>
@@ -470,7 +515,7 @@ namespace ${cppNamespace} {
 END
 ;
 
-printConstructors($F, @tags);
+printConstructors($F, \%tags);
 
 print F "#if $guardFactoryWith\n" if $guardFactoryWith;
 
@@ -486,7 +531,7 @@ static inline void createFunctionMapIfNecessary()
 END
 ;
 
-printFunctionInits($F, @tags);
+printFunctionInits($F, \%tags);
 
 print F "}\n";
 print F "#endif\n\n" if $guardFactoryWith;
@@ -660,8 +705,8 @@ sub hasCustomMapping
 
 sub printWrapperFunctions
 {
-    my ($F, @names) = @_;
-    for my $name (@names) {
+    my ($F, $namesRef) = @_;
+    for my $name (sort keys %$namesRef) {
         # Custom mapping do not need a JS wrapper
         next if (hasCustomMapping($name));
 
@@ -705,11 +750,11 @@ sub printWrapperFactoryCppFile
 
     print F "#include \"JS${namespace}ElementWrapperFactory.h\"\n";
 
-    printJSElementIncludes($F, @tags);
+    printJSElementIncludes($F, \%tags);
 
     print F "\n#include \"${namespace}Names.h\"\n\n";
 
-    printElementIncludes($F, \@tags, 1);
+    printElementIncludes($F, \%tags, 1);
 
     print F <<END
 using namespace KJS;
@@ -723,7 +768,7 @@ typedef JSNode* (*Create${namespace}ElementWrapperFunction)(ExecState*, PassRefP
 END
 ;
 
-    printWrapperFunctions($F, @tags);
+    printWrapperFunctions($F, \%tags);
 
     print F <<END
 JSNode* createJS${namespace}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
@@ -733,7 +778,7 @@ JSNode* createJS${namespace}Wrapper(ExecState* exec, PassRefPtr<${namespace}Elem
 END
 ;
 
-    for my $tag (@tags) {
+    for my $tag (sort keys %tags) {
         next if (hasCustomMapping($tag));
 
         my $ucTag = upperCaseName($tag);

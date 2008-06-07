@@ -1,3 +1,5 @@
-base
-lang
-space
+<attrs>
+<base/>
+<lang/>
+<space/>
+</attrs>
