@@ -159,7 +159,11 @@ GlobalObject::GlobalObject(Vector<UString>& arguments)
 
 JSValue* functionPrint(ExecState* exec, JSObject*, const List& args)
 {
-    printf("%s\n", args[0]->toString(exec).UTF8String().c_str());
+    if (!args.isEmpty())
+        printf("%s\n", args[0]->toString(exec).UTF8String().c_str());
+    else
+        putchar('\n');
+    
     fflush(stdout);
     return jsUndefined();
 }

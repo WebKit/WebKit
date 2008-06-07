@@ -1,3 +1,13 @@
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Sam.
+
+        Bug 17547: JavaScriptCore print() differs from Spidermonkey Behavior
+        <https://bugs.webkit.org/show_bug.cgi?id=17547>
+
+        * kjs/testkjs.cpp:
+        (functionPrint):
+
 2008-06-07  Alexey Proskuryakov  <ap@webkit.org>
 
         More build fixes.
