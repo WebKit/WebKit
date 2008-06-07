@@ -51,7 +51,6 @@ my $attrsNullNamespace = 0;
 my $extraDefines = 0;
 my $preprocessor = "/usr/bin/gcc -E -P -x c++";
 my $guardFactoryWith = 0;
-my %htmlCapitalizationHacks = ();
 my %svgCustomMappings = ();
 my %htmlCustomMappings = ();
 
@@ -98,7 +97,28 @@ if ($printWrapperFactory) {
     printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
 }
 
+### Hash initialization
+
+sub initializeTagPropertyHash
+{
+    return ('upperCase' => upperCaseName($_[0]),
+            'applyAudioHack' => 0);
+}
+
+sub initializeAttrPropertyHash
+{
+    return ('upperCase' => upperCaseName($_[0]));
+}
+
+
 ### Parsing handlers
+
+# Our files should have the following form :
+# <tags> or <attrs>
+# <'tag/attr name' 'property1' = 'value1' ... />
+# where the properties are defined in the initialize*PropertyHash methods.
+# (more tag/attr ...)
+# </tags> or </attrs>
 
 sub parseTags
 {
@@ -107,9 +127,15 @@ sub parseTags
         my $tag = $${contentRef}{'name'};
         $tag =~ s/-/_/g;
 
-        # FIXME: we currently insert '' into the hash but it should be replaced by a description map
-        # taking into account the element's attributes.
-        $tags{$tag} = '';
+        # Initialize default properties' values.
+        $tags{$tag} = { initializeTagPropertyHash($tag) } if !defined($tags{$tag});
+
+        # Parse the XML attributes.
+        my %properties = %{$$contentRef{'attrib'}};
+        foreach my $property (keys %properties) {
+            die "Unknown property $property for tag $tag\n" if !defined($tags{$tag}{$property});
+            $tags{$tag}{$property} = $properties{$property};
+        }
     }
 }
 
@@ -120,9 +146,15 @@ sub parseAttrs
         my $attr = $${contentRef}{'name'};
         $attr =~ s/-/_/g;
 
-        # FIXME: we currently insert '' into the hash but it should be replaced by a description map
-        # taking into account the element's attributes.
-        $attrs{$attr} = '';
+        # Initialize default properties' values.
+        $attrs{$attr} = { initializeAttrPropertyHash($attr) } if !defined($attrs{$attr});
+
+        # Parse the XML attributes.
+        my %properties = %{$$contentRef{'attrib'}};
+        foreach my $property (keys %properties) {
+            die "Unknown property $property for attribute $attr\n" if !defined($attrs{$attr}{$property});
+            $attrs{$attr}{$property} = $properties{$property};
+        }
     }
 }
 
@@ -177,10 +209,12 @@ sub printMacros
 sub printConstructors
 {
     my ($F, $namesRef) = @_;
+    my %names = %$namesRef;
+
     print F "#if $guardFactoryWith\n" if $guardFactoryWith;
-    for my $name (sort keys %$namesRef) {
-        my $ucName = upperCaseName($name);
-    
+    for my $name (sort keys %names) {
+        my $ucName = $names{$name}{"upperCase"};
+
         print F "${namespace}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
         print F "    return new ${namespace}${ucName}Element(${name}Tag, doc);\n";
@@ -197,50 +231,14 @@ sub printFunctionInits
     }
 }
 
-sub initializeHtmlHacks
-{
-    if (!keys %htmlCapitalizationHacks) {
-        %htmlCapitalizationHacks = ('a' => 'Anchor',
-                                    'basefont' => 'BaseFont',
-                                    'br' => 'BR',
-                                    'caption' => 'TableCaption',
-                                    'col' => 'TableCol',
-                                    'del' => 'Mod',
-                                    'dir' => 'Directory',
-                                    'dl' => 'DList',
-                                    'fieldset' => 'FieldSet',
-                                    'frameset' => 'FrameSet',
-                                    'h1' => 'Heading',
-                                    'hr' => 'HR',
-                                    'iframe' => 'IFrame',
-                                    'img' => 'Image',
-                                    'isindex' => 'IsIndex',
-                                    'li' => 'LI',
-                                    'ol' => 'OList',
-                                    'optgroup' => 'OptGroup',
-                                    'p' => 'Paragraph',
-                                    'q' => 'Quote',
-                                    'tbody' => 'TableSection',
-                                    'td' => 'TableCell',
-                                    'textarea' => 'TextArea',
-                                    'tr' => 'TableRow',
-                                    'ul' => 'UList');
-    }
-}
-
 sub svgCapitalizationHacks
 {
     my $name = shift;
-    
+
     if ($name =~ /^fe(.+)$/) {
         $name = "FE" . ucfirst $1;
     }
-    $name =~ s/kern/Kern/;
-    $name =~ s/mpath/MPath/;
-    $name =~ s/svg/SVG/;
-    $name =~ s/tref/TRef/;
-    $name =~ s/tspan/TSpan/;
-    
+
     return $name;
 }
 
@@ -249,12 +247,6 @@ sub upperCaseName
     my $name = shift;
     
     $name = svgCapitalizationHacks($name) if ($namespace eq "SVG");
-
-    # Process special mapping
-    if ($namespace eq "HTML") {
-        initializeHtmlHacks();
-        return $htmlCapitalizationHacks{$name} if exists $htmlCapitalizationHacks{$name};
-    }
 
     while ($name =~ /^(.*?)_(.*)/) {
         $name = $1 . ucfirst $2;
@@ -430,10 +422,11 @@ print F "\nvoid init()
 sub printJSElementIncludes
 {
     my ($F, $namesRef) = @_;
-    for my $name (sort keys %$namesRef) {
+    my %names = %$namesRef;
+    for my $name (sort keys %names) {
         next if (hasCustomMapping($name));
 
-        my $ucName = upperCaseName($name);
+        my $ucName = $names{$name}{"upperCase"};
         print F "#include \"JS${namespace}${ucName}Element.h\"\n";
     }
 }
@@ -441,10 +434,11 @@ sub printJSElementIncludes
 sub printElementIncludes
 {
     my ($F, $namesRef, $shouldSkipCustomMappings) = @_;
-    for my $name (sort keys %$namesRef) {
+    my %names = %$namesRef;
+    for my $name (sort keys %names) {
         next if ($shouldSkipCustomMappings && hasCustomMapping($name));
 
-        my $ucName = upperCaseName($name);
+        my $ucName = $names{$name}{"upperCase"};
         print F "#include \"${namespace}${ucName}Element.h\"\n";
     }
 }
@@ -628,12 +622,6 @@ namespace ${cppNamespace}
 
 ## Wrapper Factory routines
 
-sub isMediaTag
-{
-    my $name = shift;
-    return $name eq "audio" || $name eq "source" || $name eq "video" || 0;
-}
-
 sub initializeCustomMappings
 {
     if (!keys %svgCustomMappings) {
@@ -706,13 +694,14 @@ sub hasCustomMapping
 sub printWrapperFunctions
 {
     my ($F, $namesRef) = @_;
-    for my $name (sort keys %$namesRef) {
+    my %names = %$namesRef;
+    for my $name (sort keys %names) {
         # Custom mapping do not need a JS wrapper
         next if (hasCustomMapping($name));
 
-        my $ucName = upperCaseName($name);
+        my $ucName = $names{$name}{"upperCase"};
         # Hack for the media tags
-        if (isMediaTag($name)) {
+        if ($names{$name}{"applyAudioHack"}) {
             print F <<END
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
 {
@@ -781,14 +770,15 @@ END
     for my $tag (sort keys %tags) {
         next if (hasCustomMapping($tag));
 
-        my $ucTag = upperCaseName($tag);
+        my $ucTag = $tags{$tag}{"upperCase"};
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
     }
 
     if ($namespace eq "HTML") {
         for my $tag (sort keys %htmlCustomMappings) {
             next if !$htmlCustomMappings{$tag};
-            my $ucCustomTag = upperCaseName($htmlCustomMappings{$tag});
+
+            my $ucCustomTag = $tags{$htmlCustomMappings{$tag}}{"upperCase"};
             print F "       map.set(${tag}Tag.localName().impl(), create${ucCustomTag}Wrapper);\n";
         }
     }

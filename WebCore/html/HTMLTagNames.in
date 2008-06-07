@@ -1,65 +1,65 @@
 <tags>
-<a/>
+<a upperCase="Anchor"/>
 <abbr/>
 <acronym/>
 <address/>
 <applet/>
 <area/>
 #if ENABLE_VIDEO
-<audio/>
+<audio applyAudioHack="1"/>
 #endif
 <b/>
 <base/>
-<basefont/>
+<basefont upperCase="BaseFont"/>
 <bdo/>
 <big/>
 <blockquote/>
 <body/>
-<br/>
+<br upperCase="BR"/>
 <button/>
 <canvas/>
-<caption/>
+<caption upperCase="TableCaption"/>
 <center/>
 <cite/>
 <code/>
-<col/>
+<col upperCase="TableCol"/>
 <colgroup/>
 <dd/>
-<del/>
+<del upperCase="Mod"/>
 <dfn/>
-<dir/>
+<dir upperCase="Directory"/>
 <div/>
-<dl/>
+<dl upperCase="DList"/>
 <dt/>
 <em/>
 <embed/>
-<fieldset/>
+<fieldset upperCase="FieldSet"/>
 <font/>
 <form/>
 <frame/>
-<frameset/>
+<frameset upperCase="FrameSet"/>
 <head/>
-<h1/>
+<h1 upperCase="Heading"/>
 <h2/>
 <h3/>
 <h4/>
 <h5/>
 <h6/>
-<hr/>
+<hr upperCase="HR"/>
 <html/>
 <i/>
-<iframe/>
+<iframe upperCase="IFrame"/>
 <image/>
-<img/>
+<img upperCase="Image"/>
 <input/>
 <ins/>
-<isindex/>
+<isindex upperCase="IsIndex"/>
 <kbd/>
 <keygen/>
 <label/>
 <layer/>
 <legend/>
-<li/>
+<li upperCase="LI"/>
 <link/>
 <listing/>
 <map/>
@@ -72,21 +72,21 @@
 <nolayer/>
 <noscript/>
 <object/>
-<ol/>
-<optgroup/>
+<ol upperCase="OList"/>
+<optgroup upperCase="OptGroup"/>
 <option/>
-<p/>
+<p upperCase="Paragraph"/>
 <param/>
 <plaintext/>
 <pre/>
-<q/>
+<q upperCase="Quote"/>
 <s/>
 <samp/>
 <script/>
 <select/>
 <small/>
 #if ENABLE_VIDEO
-<source/>
+<source applyAudioHack="1"/>
 #endif
 <span/>
 <strike/>
@@ -95,20 +95,20 @@
 <sub/>
 <sup/>
 <table/>
-<tbody/>
-<td/>
-<textarea/>
+<tbody upperCase="TableSection"/>
+<td upperCase="TableCell"/>
+<textarea upperCase="TextArea"/>
 <tfoot/>
 <th/>
 <thead/>
 <title/>
-<tr/>
+<tr upperCase="TableRow"/>
 <tt/>
 <u/>
-<ul/>
+<ul upperCase="UList"/>
 <var/>
 #if ENABLE_VIDEO
-<video/>
+<video applyAudioHack="1"/>
 #endif
 <wbr/>
 <xmp/>

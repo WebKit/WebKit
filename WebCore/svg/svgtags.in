@@ -76,7 +76,7 @@
 <glyphRef/>
 #endif
 #ifdef ENABLE_SVG_FONTS
-<hkern/>
+<hkern upperCase="HKern"/>
 #endif
 <image/>
 <line/>
@@ -87,7 +87,7 @@
 #ifdef ENABLE_SVG_FONTS
 <missing_glyph/>
 #endif
-<mpath/>
+<mpath upperCase="MPath"/>
 <path/>
 <pattern/>
 <polygon/>
@@ -97,17 +97,17 @@
 <script/>
 <stop/>
 <style/>
-<svg/>
+<svg upperCase="SVG"/>
 <switch/>
 <symbol/>
 <text/>
 <textPath/>
 <title/>
-<tref/>
-<tspan/>
+<tref upperCase="TRef"/>
+<tspan upperCase="TSpan"/>
 <use/>
 <view/>
 #if 0
-<vkern/>
+<vkern upperCase="VKern"/>
 #endif
 </tags>
