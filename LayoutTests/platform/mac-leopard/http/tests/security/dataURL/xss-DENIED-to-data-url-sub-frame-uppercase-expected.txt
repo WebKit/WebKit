@@ -1,7 +1,7 @@
 This tests that the main frame can't access the contents of an iframe that contains a data: URL loaded page using the uppercased variant DATA:
 
 
-FAIL: Cross frame access to a DATA: URL was allowed.
+FAIL: Subframe did not finish loading.
 
 
 --------

@@ -7,7 +7,7 @@
     <iframe id="aFrame"></iframe>
     <pre id="console"></pre>
     <script>
-        var url = "data:text/html,<html><body><p id=\'accessMe\'></p><p>Inner iframe.</p></body></html>";
+        var url = "data:text/html,<html><scr" + "ipt>onload = function() { parent.postMessage(\'LOADED\', \'*\'); } </scr" + "ipt><body><p id=\'accessMe\'></p><p>Inner iframe.</p></body></html>";
         var iframeId ="aFrame";
         var passMessage = "PASS: Cross frame access to a data: URL was denied.";
         var failMessage = "FAIL: Cross frame access to a data: URL was allowed.";

@@ -95,12 +95,25 @@ function toString(expression, valueForException)
 
 // Frame Access Tests
 
-function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
+function canAccessFrame(iframeURL, iframeId, passMessage, failMessage)
+{
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.dumpChildFramesAsText();
         layoutTestController.waitUntilDone();
     }
+
+    window.addEventListener("message", function(event) {
+        if (event.data == "LOADED") {
+            test();
+        }
+    }, false);
+
+    var runawayTimer = setTimeout(function() {
+        log("FAIL: Subframe did not finish loading.");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 2000);
 
     var targetWindow = frames[0];
     if (!targetWindow.document.body)
@@ -109,44 +122,47 @@ function canAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     var iframe = document.getElementById(iframeId);
     iframe.src = iframeURL;
 
-    var testDone = false;
-
-    setTimeout(test, 1);
-
-    setTimeout(function() {
-        if (!testDone) {
-            log(failMessage);
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-    }, 2000);
-
-    function test() {
+    function test()
+    {
         try {
-            if (targetWindow.document.body) {
-                if (targetWindow.document.getElementById('accessMe')) {
-                    targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
-                    log(passMessage);
-                    testDone = true;
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
-                    return;
-                }
+            if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
+                targetWindow.document.getElementById('accessMe').innerHTML = passMessage;
+                log(passMessage);
+                clearTimeout(runawayTimer);
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+                return;
             }
         } catch (e) {
             log("In catch");
         }
 
-        setTimeout(test, 1);
+        log(failMessage);
+        clearTimeout(runawayTimer);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 }
 
-function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
+function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage)
+{
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
         layoutTestController.dumpChildFramesAsText();
         layoutTestController.waitUntilDone();
     }
+
+    window.addEventListener("message", function(event) {
+        if (event.data == "LOADED") {
+            test();
+        }
+    }, false);
+
+    var runawayTimer = setTimeout(function() {
+        log("FAIL: Subframe did not finish loading.");
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }, 2000);
 
     var targetWindow = frames[0];
     if (!targetWindow.document.body)
@@ -155,41 +171,22 @@ function cannotAccessFrame(iframeURL, iframeId, passMessage, failMessage) {
     var iframe = document.getElementById(iframeId);
     iframe.src = iframeURL;
 
-    var testDone = false;
-
-    setTimeout(test, 1);
-
-    setTimeout(function() {
-        if (!testDone) {
-            log(failMessage);
-            window.stop();
-            if (window.layoutTestController)
-                layoutTestController.notifyDone();
-        }
-    }, 2000);
-
-    function test() {
+    function test()
+    {
         try {
-            if (targetWindow.document.body) {
-                if (targetWindow.document.getElementById('accessMe')) {
-                    targetWindow.document.getElementById('accessMe').innerHTML = failMessage;
-                    log(failMessage);
-                    testDone = true;
-                    window.stop();
-                    if (window.layoutTestController)
-                        layoutTestController.notifyDone();
-                    return;
-                }
-
-                setTimeout(test, 1);
+            if (targetWindow.document && targetWindow.document.getElementById('accessMe')) {
+                targetWindow.document.getElementById('accessMe').innerHTML = failMessage;
+                log(failMessage);
+                clearTimeout(runawayTimer);
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
                 return;
             }
         } catch (e) {
         }
 
         log(passMessage);
-        testDone = true;
-        window.stop();
+        clearTimeout(runawayTimer);
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }

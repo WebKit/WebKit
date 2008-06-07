@@ -3,6 +3,7 @@
     <script>
         function fireSentinel()
         {
+            parent.postMessage("LOADED", "*");
             if (window.layoutTestController)
                 layoutTestController.globalFlag = true;
         }
