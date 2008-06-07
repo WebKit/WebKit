@@ -1,3 +1,21 @@
+2008-06-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19424: Add support for logging opcode pair counts
+        <https://bugs.webkit.org/show_bug.cgi?id=19424>
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.cpp:
+        (KJS::OpcodeStats::OpcodeStats):
+        (KJS::compareOpcodeIndices):
+        (KJS::compareOpcodePairIndices):
+        (KJS::OpcodeStats::~OpcodeStats):
+        (KJS::OpcodeStats::recordInstruction):
+        (KJS::OpcodeStats::resetLastInstruction):
+        * VM/Opcode.h:
+
 2008-06-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.

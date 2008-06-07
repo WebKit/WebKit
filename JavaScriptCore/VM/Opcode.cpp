@@ -27,13 +27,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "Opcode.h"
+
+#include <stdlib.h>
+
+using namespace std;
 
 namespace KJS {
 
 #if DUMP_OPCODE_STATS
 
-unsigned OpcodeStats::opcodeCounts[numOpcodeIDs];
+long long OpcodeStats::opcodeCounts[numOpcodeIDs];
+long long OpcodeStats::opcodePairCounts[numOpcodeIDs][numOpcodeIDs];
+int OpcodeStats::lastOpcode = -1;
 
 static OpcodeStats logger;
 
@@ -128,38 +135,82 @@ OpcodeStats::OpcodeStats()
 {
     for (int i = 0; i < numOpcodeIDs; ++i)
         opcodeCounts[i] = 0;
+    
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
+            opcodePairCounts[i][j] = 0;
+}
+
+static int compareOpcodeIndices(const void* left, const void* right)
+{
+    long long leftValue = OpcodeStats::opcodeCounts[*(int*) left];
+    long long rightValue = OpcodeStats::opcodeCounts[*(int*) right];
+    
+    if (leftValue < rightValue)
+        return 1;
+    else if (leftValue > rightValue)
+        return -1;
+    else
+        return 0;
+}
+
+static int compareOpcodePairIndices(const void* left, const void* right)
+{
+    pair<int, int> leftPair = *(pair<int, int>*) left;
+    long long leftValue = OpcodeStats::opcodePairCounts[leftPair.first][leftPair.second];
+    pair<int, int> rightPair = *(pair<int, int>*) right;
+    long long rightValue = OpcodeStats::opcodePairCounts[rightPair.first][rightPair.second];
+    
+    if (leftValue < rightValue)
+        return 1;
+    else if (leftValue > rightValue)
+        return -1;
+    else
+        return 0;
 }
 
 OpcodeStats::~OpcodeStats()
 {
-    int totalInstructions = 0;
-    int sortedIndices[numOpcodeIDs];
-    
-    for (int i = 0; i < numOpcodeIDs; ++i) {
+    long long totalInstructions = 0;
+    for (int i = 0; i < numOpcodeIDs; ++i)
         totalInstructions += opcodeCounts[i];
+    
+    long long totalInstructionPairs = 0;
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
+            totalInstructionPairs += opcodePairCounts[i][j];
+
+    int sortedIndices[numOpcodeIDs];    
+    for (int i = 0; i < numOpcodeIDs; ++i)
         sortedIndices[i] = i;
-    }
-        
-    for (int i = 0; i < numOpcodeIDs - 1; ++i) {
-        int max = i;
-        
-        for (int j = i + 1; j < numOpcodeIDs; ++j) {
-            if (opcodeCounts[sortedIndices[j]] > opcodeCounts[sortedIndices[max]])
-                max = j;
-        }
-        
-        int temp = sortedIndices[i];
-        sortedIndices[i] = sortedIndices[max];
-        sortedIndices[max] = temp;
-    }
- 
+    mergesort(sortedIndices, numOpcodeIDs, sizeof(int), compareOpcodeIndices);
+    
+    pair<int, int> sortedPairIndices[numOpcodeIDs * numOpcodeIDs];
+    pair<int, int>* currentPairIndex = sortedPairIndices;
+    for (int i = 0; i < numOpcodeIDs; ++i)
+        for (int j = 0; j < numOpcodeIDs; ++j)
+            *(currentPairIndex++) = make_pair(i, j);
+    mergesort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
+    
     printf("\nExecuted opcode statistics:\n\n"); 
     
-    printf("Total instructions executed: %d\n\n", totalInstructions);
-
+    printf("Total instructions executed: %lld\n\n", totalInstructions);
+    
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
         printf("%s: %.2f%%\n", opcodeNames[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
+    }
+    
+    printf("\n");
+    
+    for (int i = 0; i < numOpcodeIDs * numOpcodeIDs; ++i) {
+        pair<int, int> indexPair = sortedPairIndices[i];
+        long long count = opcodePairCounts[indexPair.first][indexPair.second];
+        
+        if (!count)
+            break;
+        
+        printf("(%s, %s): %.2f%%\n", opcodeNames[indexPair.first], opcodeNames[indexPair.second], ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
     printf("\n");
@@ -168,6 +219,16 @@ OpcodeStats::~OpcodeStats()
 void OpcodeStats::recordInstruction(int opcode)
 {
     opcodeCounts[opcode]++;
+    
+    if (lastOpcode != -1)
+        opcodePairCounts[lastOpcode][opcode]++;
+    
+    lastOpcode = opcode;
+}
+
+void OpcodeStats::resetLastInstruction()
+{
+    lastOpcode = -1;
 }
 
 #endif

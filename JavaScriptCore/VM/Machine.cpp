@@ -899,6 +899,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         } \
     } while (0)
 
+#if DUMP_OPCODE_STATS
+    OpcodeStats::resetLastInstruction();
+#endif
+
 #if HAVE(COMPUTED_GOTO)
     #define NEXT_OPCODE goto *vPC->u.opcode
 #if DUMP_OPCODE_STATS
@@ -1869,6 +1873,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            Jumps unconditionally to offset target from the current
            instruction.
         */
+#if DUMP_OPCODE_STATS
+        OpcodeStats::resetLastInstruction();
+#endif
         int target = (++vPC)->u.operand;
 
         vPC += target;
@@ -2066,6 +2073,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             k = codeBlock->jsValues.data();
             vPC = codeBlock->instructions.begin();
 
+#if DUMP_OPCODE_STATS
+            OpcodeStats::resetLastInstruction();
+#endif
+            
             NEXT_OPCODE;
         }
 
