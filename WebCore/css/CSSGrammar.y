@@ -44,6 +44,7 @@ using namespace HTMLNames;
 
 // FIXME: Replace with %parse-param { CSSParser* parser } once we can depend on bison 2.x
 #define YYPARSE_PARAM parser
+#define YYLEX_PARAM parser
 
 %}
 
@@ -71,8 +72,15 @@ using namespace HTMLNames;
 
 %{
 
-static inline int cssyyerror(const char*) { return 1; }
-static int cssyylex(YYSTYPE* yylval) { return CSSParser::current()->lex(yylval); }
+static inline int cssyyerror(const char*)
+{
+    return 1;
+}
+
+static int cssyylex(YYSTYPE* yylval, void* parser)
+{
+    return static_cast<CSSParser*>(parser)->lex(yylval);
+}
 
 %}
 
@@ -254,7 +262,7 @@ webkit_value:
 webkit_mediaquery:
      WEBKIT_MEDIAQUERY_SYM WHITESPACE maybe_space media_query '}' {
          CSSParser* p = static_cast<CSSParser*>(parser);
-         p->mediaQuery = p->sinkFloatingMediaQuery($4);
+         p->m_mediaQuery = p->sinkFloatingMediaQuery($4);
      }
 ;
 

@@ -1,3 +1,21 @@
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
+        More cleanup to CSSParser, rename mediaQuery to m_mediaQuery
+        Remove CSSParser::current and CSSParser::currentParser and use
+        the magic of YYLEX_PARAM instead.
+
+        * css/CSSParser.cpp:
+        (WebCore::enterGeneratedParser):
+        (WebCore::CSSParser::parseSheet):
+        (WebCore::CSSParser::parseRule):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseDeclaration):
+        (WebCore::CSSParser::parseMediaQuery):
+        * css/CSSParser.h:
+
 2008-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

@@ -111,8 +111,6 @@ namespace WebCore {
         bool parseDeclaration(CSSMutableStyleDeclaration*, const String&);
         bool parseMediaQuery(MediaList*, const String&);
 
-        static CSSParser* current() { return currentParser; }
-
         Document* document() const;
 
         void addProperty(int propId, PassRefPtr<CSSValue>, bool important);
@@ -220,7 +218,7 @@ namespace WebCore {
         int id;
         StyleList* m_styleElement;
         RefPtr<CSSRule> rule;
-        MediaQuery* mediaQuery;
+        MediaQuery* m_mediaQuery;
         ValueList* valueList;
         CSSProperty** m_parsedProperties;
         int m_numParsedProperties;
@@ -231,8 +229,6 @@ namespace WebCore {
         bool m_implicitShorthand;
 
         AtomicString defaultNamespace;
-
-        static CSSParser* currentParser;
 
         // tokenizer methods and data
     public:
