@@ -708,7 +708,7 @@ specifier:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::Id;
-        if (!p->strict)
+        if (!p->m_strict)
             $1.lower();
         $$->m_attr = idAttr;
         $$->m_value = $1;
@@ -720,7 +720,7 @@ specifier:
             CSSParser* p = static_cast<CSSParser*>(parser);
             $$ = p->createFloatingSelector();
             $$->m_match = CSSSelector::Id;
-            if (!p->strict)
+            if (!p->m_strict)
                 $1.lower();
             $$->m_attr = idAttr;
             $$->m_value = $1;
@@ -736,7 +736,7 @@ class:
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingSelector();
         $$->m_match = CSSSelector::Class;
-        if (!p->strict)
+        if (!p->m_strict)
             $2.lower();
         $$->m_attr = classAttr;
         $$->m_value = $2;

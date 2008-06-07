@@ -2,6 +2,32 @@
 
         Reviewed by ap.
 
+        Rename CSSParser::strict to m_strict
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseTransitionDuration):
+        (WebCore::CSSParser::parseTransitionRepeatCount):
+        (WebCore::CSSParser::parseTimingFunctionValue):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::CSSParser::parseBorderImage):
+        * css/CSSParser.h:
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         Rename CSSParser::defaultNamespace to m_defaultNamespace
 
         * css/CSSGrammar.y:
