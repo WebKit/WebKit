@@ -15,6 +15,7 @@ PASS (function(){ leftRight = ""; left() && right(); return leftRight; })() is "
 PASS (function(){ leftRight = ""; left() & right(); return leftRight; })() is "LeftRight"
 PASS (function(){ leftRight = ""; left() | right(); return leftRight; })() is "LeftRight"
 PASS (function(){ leftRight = ""; left() ^ right(); return leftRight; })() is "LeftRight"
+PASS testEvaluationOfArguments() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

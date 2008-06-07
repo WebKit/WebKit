@@ -1,3 +1,15 @@
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 17663: Wrong sequencing of argument list evaluation
+        <https://bugs.webkit.org/show_bug.cgi?id=17663>
+
+        SquirrelFish fixed this bug, but we should add a test.
+
+        * fast/js/order-of-operations-expected.txt:
+        * fast/js/resources/order-of-operations.js:
+
 2008-06-06  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Darin Adler.
