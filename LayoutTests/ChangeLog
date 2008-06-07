@@ -1,3 +1,13 @@
+2008-06-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=17911
+
+        * http/tests/security/resources/iframe-for-synchronous-form.html: Added.
+        * http/tests/security/xss-DENIED-synchronous-form-expected.txt: Added.
+        * http/tests/security/xss-DENIED-synchronous-form.html: Added.
+
 2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.
