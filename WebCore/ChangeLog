@@ -1,3 +1,16 @@
+2008-06-07  Pierre-Luc Beaudoin  <pierre-luc.beaudoin@collabora.co.uk>
+
+        With the help of Jonathon Jongsma.
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19279
+        REGRESSION (r32660): Text not redrawn correctly when selection changes
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        Add a condition for when ePos <= sPos 
+
 2008-06-06  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.
