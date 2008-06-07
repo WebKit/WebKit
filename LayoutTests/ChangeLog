@@ -1,3 +1,15 @@
+2008-06-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - pixel test for https://bugs.webkit.org/show_bug.cgi?id=19279
+          REGRESSION (r32660): Text not redrawn correctly when selection changes
+
+        * fast/text/selection-painted-separately.html: Added.
+        * platform/mac/fast/text/selection-painted-separately-expected.checksum: Added.
+        * platform/mac/fast/text/selection-painted-separately-expected.png: Added.
+        * platform/mac/fast/text/selection-painted-separately-expected.txt: Added.
+
 2008-06-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam.
