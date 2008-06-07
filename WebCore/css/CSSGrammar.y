@@ -251,7 +251,7 @@ webkit_value:
         if ($4) {
             p->m_valueList = p->sinkFloatingValueList($4);
             int oldParsedProperties = p->m_numParsedProperties;
-            if (!p->parseValue(p->id, p->important))
+            if (!p->parseValue(p->id, p->m_important))
                 p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
             delete p->m_valueList;
             p->m_valueList = 0;

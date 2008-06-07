@@ -2,6 +2,20 @@
 
         Reviewed by ap.
 
+        Rename CSSParser::important to m_important
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        * css/CSSParser.h:
+
+2008-06-07  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by ap.
+
         Rename CSSParser::rule to m_rule
 
         * css/CSSGrammar.y:
