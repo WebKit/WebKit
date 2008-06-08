@@ -1,3 +1,7 @@
+2008-06-08  Darin Adler  <darin@apple.com>
+
+        * Scripts/make-js-test-wrappers: Added another exception.
+
 2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Timothy.

@@ -100,6 +100,7 @@ for my $tfile (@templates) {
         next if $file =~ m:resources/select-options-remove\.js$:;
         next if $file =~ m:resources/tabindex-focus-blur-all\.js$:;
         next if $file =~ m:resources/wrapper-identity-base\.js$:;
+        next if $file =~ m:resources/xhtml-scripts\.js$:;
 
         my $html = $file;
         $html =~ s:resources/(.*)\.js:$1.html:;
