@@ -243,7 +243,8 @@ libwebkit_1_0_la_CFLAGS = \
 	$(libWebCore_la_CFLAGS)
 
 libwebkit_1_0_la_CPPFLAGS = \
-	$(libWebCore_la_CPPFLAGS)
+	$(libWebCore_la_CPPFLAGS) \
+	$(webkitgtk_cppflags)
 
 libwebkit_1_0_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
@@ -269,10 +270,6 @@ if TARGET_X11
 global_cppflags += -DXP_UNIX
 webcore_libadd += -lXt
 endif
-
-# Used for symbol exports on Windows
-webcoregtk_cppflags += \
-	-DBUILDING_WEBKIT
 
 if !ENABLE_DEBUG
 global_cppflags += -DNDEBUG
@@ -348,6 +345,13 @@ webkitgtk_sources += \
 	WebKit/gtk/WebCoreSupport/FrameLoaderClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/InspectorClientGtk.cpp \
 	WebKit/gtk/WebCoreSupport/PasteboardHelperGtk.cpp
+
+webkitgtk_cppflags += \
+	-DBUILDING_WEBKIT \
+	-I$(srcdir)/WebKit/gtk \
+	-I$(srcdir)/WebKit/gtk/WebCoreSupport \
+	-I$(srcdir)/WebKit/gtk/webkit \
+	-I$(top_builddir)/WebKit/gtk/webkit
 
 webkitgtk_cleanfiles += \
 	$(top_builddir)/Programs/GtkLauncher \

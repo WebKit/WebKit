@@ -1,3 +1,10 @@
+2008-06-08  Alp Toker  <alp@nuanti.com>
+
+        autotools/GTK+ build system cleanup. Don't include WebKit API in the
+        WebCore build as it's no longer needed since r34426.
+
+        * GNUmakefile.am:
+
 2008-06-08  Jonathan Haas <myrdred@gmail.com>
 
         Reviewed by Eric Seidel.
