@@ -1,3 +1,16 @@
+2008-06-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19431
+          <rdar://problem/5994060> REGRESSION (r32406): tabs retain hover color after mouse out
+
+        Covered by fast/css/remove-shorthand.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::initShorthandMap): Fixed a typo which mapped the background
+        shorthand to the mask properties.
+
 2008-06-07  Brent Fulgham  <bfulgham@gmail.com>
 
         Cairo build fix for r34432

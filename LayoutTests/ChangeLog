@@ -1,3 +1,13 @@
+2008-06-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - updated test for https://bugs.webkit.org/show_bug.cgi?id=19431
+          <rdar://problem/5994060> REGRESSION (r32406): tabs retain hover color after mouse out
+
+        * fast/css/remove-shorthand-expected.txt:
+        * fast/css/remove-shorthand.html:
+
 2008-06-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

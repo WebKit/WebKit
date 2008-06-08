@@ -5,28 +5,39 @@
         function log(message)
         {
             var console = document.getElementById("console");
-            console.appendChild(document.createTextNode(message + "\n"));
+            console.appendChild(document.createElement("li")).innerHTML = message;
         }
 
         function testShorthand(shorthand)
         {
             var element = document.createElement("div");
             element.setAttribute("style",
-                "border: thin dotted purple;\
-                 background: red url(/background.png) repeat-y scroll right bottom;\
-                 list-style: square outside url(/marker.png);\
-                 margin: 5%;\
-                 -webkit-margin-collapse: collapse;\
-                 -webkit-marquee: ahead small infinite slide slow;\
-                 padding: 2em;\
-                 -webkit-text-stroke: orange 1pt;\
-                 -webkit-columns: 100px 3;\
-                 -webkit-column-rule: thick dashed silver;\
-                 border-spacing: 10px 20px;\
-                 -webkit-border-radius: 6px 8px;\
-                 overflow: scroll;");
+                "border: thin dotted purple; \
+                 background: red url(/background.png) repeat-y scroll right bottom; \
+                 list-style: square outside url(/marker.png); \
+                 margin: 5%; \
+                 -webkit-margin-collapse: collapse; \
+                 -webkit-marquee: ahead small infinite slide slow; \
+                 padding: 2em; \
+                 -webkit-text-stroke: orange 1pt; \
+                 -webkit-columns: 100px 3; \
+                 -webkit-column-rule: thick dashed silver; \
+                 border-spacing: 10px 20px; \
+                 -webkit-border-radius: 6px 8px; \
+                 overflow: scroll; \
+                 -webkit-mask: url(/mask.png) repeat-x scroll center top;");
+            var allProperties = element.style.cssText.split("; ");
             element.style.removeProperty(shorthand);
-            log("Removing '" + shorthand + "' leaves '" + element.style.cssText +"'");
+            var remainingProperties = element.style.cssText.split("; ");
+            var removedProperties = [];
+            var p;
+            while (p = allProperties.shift()) {
+                if (remainingProperties[0] == p)
+                    remainingProperties.shift();
+                else
+                    removedProperties.push("<tt>" + p.replace(/\:.*/,"") + "</tt>");
+            }
+            log("Removing <tt>" + shorthand + "</tt> removes " + removedProperties.join(", ") +".");
         }
         
         function test()
@@ -35,22 +46,24 @@
                 layoutTestController.dumpAsText();
 
             var shorthands = [
-                "border",
-                "border-top", "border-right", "border-bottom", "border-left",
-                "border-width", "border-style", "border-color",
                 "background",
                 "background-position",
+                "border",
+                "border-top", "border-right", "border-bottom", "border-left",
+                "border-color", "border-style", "border-width",
+                "-webkit-border-radius",
+                "border-spacing",
+                "-webkit-columns",
+                "-webkit-column-rule",
                 "list-style",
                 "margin",
                 "-webkit-margin-collapse",
                 "-webkit-marquee",
+                "-webkit-mask",
+                "-webkit-mask-position",
+                "overflow",
                 "padding",
-                "-webkit-text-stroke",
-                "-webkit-columns",
-                "-webkit-column-rule",
-                "border-spacing",
-                "-webkit-border-radius",
-                "overflow"
+                "-webkit-text-stroke"
             ];
 
             for (i in shorthands)
@@ -64,9 +77,9 @@
         Quirksmode (CSS1): Removing inline border styles is impossible</i>.
     </p>
     <p>
-        Starting with a declaration containing all properties that are constituents of shortcuts, see what is left
+        Starting with a declaration containing all properties that are constituents of shortcuts, see what is removed
         when a shortcut property is removed. The shortcut&rsquo;s constituents and only them should be removed.
     </p>
-    <pre id="console"></pre>
+    <ul id="console"></ul>
 </body>
 </html>
