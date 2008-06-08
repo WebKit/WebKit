@@ -1,3 +1,13 @@
+2008-06-08  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18512
+          getPresentationAttribute returns a shared object
+
+        * svg/custom/getPresentationAttribute-modify-expected.txt: Added.
+        * svg/custom/getPresentationAttribute-modify.svg: Added.
+
 2008-06-08  Eric Roman  <minatoar@gmail.com>
 
         Reviewed by Adam Roben.

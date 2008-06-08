@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -281,6 +281,15 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
     MappedAttribute* cssSVGAttr = mappedAttributes()->getAttributeItem(name);
     if (!cssSVGAttr || !cssSVGAttr->style())
         return 0;
+
+    // FIXME: Is it possible that the style will not be shared at the time this
+    // is called, but a later addition to the DOM will make it shared?
+    if (!cssSVGAttr->style()->hasOneRef()) {
+        cssSVGAttr->setDecl(0);
+        int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(cssSVGAttr->name());
+        addCSSProperty(cssSVGAttr, propId, cssSVGAttr->value());
+    }
+
     return cssSVGAttr->style()->getPropertyCSSValue(name);
 }
 
