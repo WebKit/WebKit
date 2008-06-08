@@ -326,13 +326,17 @@ static bool runWithScripts(const Vector<UString>& fileNames, Vector<UString>& ar
 
 static void printUsageStatement()
 {
-    fprintf(stderr, "Usage: testkjs -f file1 [-f file2...][-p][-- arguments...]\n");
+    fprintf(stderr, "Usage: testkjs [options] [files] [-- arguments]\n");
+    fprintf(stderr, "  -f  Specifies a source file (deprecated)\n");
+    fprintf(stderr, "  -p  Prints formatted source code\n");
+    fprintf(stderr, "  -d  Dumps bytecode (debug builds only)\n");
+    fprintf(stderr, "  -s  Installs signal handlers that exit on a crash (Unix platforms only)\n");
     exit(-1);
 }
 
 static void parseArguments(int argc, char** argv, Vector<UString>& fileNames, Vector<UString>& arguments, bool& prettyPrint, bool& dump)
 {
-    if (argc < 3)
+    if (argc < 2)
         printUsageStatement();
 
     int i = 1;
@@ -365,9 +369,12 @@ static void parseArguments(int argc, char** argv, Vector<UString>& fileNames, Ve
             ++i;
             break;
         }
-        break;
+        fileNames.append(argv[i]);
     }
-
+    
+    if (fileNames.isEmpty())
+        printUsageStatement();
+    
     for (; i < argc; ++i)
         arguments.append(argv[i]);
 }

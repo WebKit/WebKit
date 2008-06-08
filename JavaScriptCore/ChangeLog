@@ -1,5 +1,16 @@
 2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Dan Bernstein.
+
+        Bug 17928: testkjs shouldn't require "-f"
+        <https://bugs.webkit.org/show_bug.cgi?id=17928>
+
+        * kjs/testkjs.cpp:
+        (printUsageStatement):
+        (parseArguments):
+
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Eric.
 
         Bug 17548: JavaScriptCore print(a, b) differs from Spidermonkey Behavior
