@@ -1,3 +1,11 @@
+2008-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - update trac URL in PrettyPatch
+
+        * PrettyPatch/PrettyPatch.rb:
+
 2008-05-29  Adam Roben  <aroben@apple.com>
 
         Update PrettyPatch directory list

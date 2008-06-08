@@ -44,7 +44,7 @@ private
 
     SMALLEST_EQUAL_OPERATION = 3
 
-    OPENSOURCE_TRAC_URL = "http://trac.webkit.org/projects/webkit/"
+    OPENSOURCE_TRAC_URL = "http://trac.webkit.org/"
 
     OPENSOURCE_DIRS = Set.new %w[
         BugsSite
