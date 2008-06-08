@@ -83,6 +83,16 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
     cairo_show_glyphs(cr, glyphs, numGlyphs);
 
+    if (context->textDrawingMode() & cTextStroke) {
+        Color strokeColor = context->strokeColor();
+        float red, green, blue, alpha;
+        strokeColor.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(cr, red, green, blue, alpha);       
+        cairo_glyph_path(cr, glyphs, numGlyphs);
+        cairo_set_line_width(cr, context->strokeThickness());
+        cairo_stroke(cr);
+    }
+
     // Re-enable the platform shadow we disabled earlier
     if (hasShadow)
         context->setShadow(shadowSize, shadowBlur, shadowColor);
