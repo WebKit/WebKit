@@ -191,6 +191,13 @@ public:
     virtual void finishParsingChildren();
     virtual void beginParsingChildren() { m_parsingChildrenFinished = false; }
 
+    // ElementTraversal API
+    Element* firstElementChild() const;
+    Element* lastElementChild() const;
+    Element* previousElementSibling() const;
+    Element* nextElementSibling() const;
+    unsigned childElementCount() const;
+
 private:
     ElementRareData* rareData();
     const ElementRareData* rareData() const;

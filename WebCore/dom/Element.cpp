@@ -1265,4 +1265,48 @@ void Element::normalizeAttributes()
     }
 }
 
+// ElementTraversal API
+Element* Element::firstElementChild() const
+{
+    Node* n = firstChild();
+    while (n && !n->isElementNode())
+        n = n->nextSibling();
+    return static_cast<Element*>(n);
+}
+
+Element* Element::lastElementChild() const
+{
+    Node* n = lastChild();
+    while (n && !n->isElementNode())
+        n = n->previousSibling();
+    return static_cast<Element*>(n);
+}
+
+Element* Element::previousElementSibling() const
+{
+    Node* n = previousSibling();
+    while (n && !n->isElementNode())
+        n = n->previousSibling();
+    return static_cast<Element*>(n);
+}
+
+Element* Element::nextElementSibling() const
+{
+    Node* n = nextSibling();
+    while (n && !n->isElementNode())
+        n = n->nextSibling();
+    return static_cast<Element*>(n);
+}
+
+unsigned Element::childElementCount() const
+{
+    unsigned count = 0;
+    Node* n = firstChild();
+    while (n) {
+        count += n->isElementNode();
+        n = n->nextSibling();
+    }
+    return count;
+}
+
 }

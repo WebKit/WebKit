@@ -112,6 +112,13 @@ module core {
         NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
 
+        // ElementTraversal API
+        readonly attribute Element firstElementChild;
+        readonly attribute Element lastElementChild;
+        readonly attribute Element previousElementSibling;
+        readonly attribute Element nextElementSibling;
+        readonly attribute unsigned long childElementCount;
+
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions
         readonly attribute DOMString innerText;

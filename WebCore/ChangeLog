@@ -1,3 +1,21 @@
+2008-06-08  Vincent Ricard  <magic@magicninja.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16489
+        WebKit does not support ElementTraversal specification
+
+        Tests: fast/dom/Element/element-traversal.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::firstElementChild):
+        (WebCore::Element::lastElementChild):
+        (WebCore::Element::previousElementSibling):
+        (WebCore::Element::nextElementSibling):
+        (WebCore::Element::childElementCount):
+        * dom/Element.h:
+        * dom/Element.idl:
+
 2008-06-08  Bradley Meck  <genisis329@gmail.com>
 
         Reviewed by Darin.
