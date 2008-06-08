@@ -1,3 +1,14 @@
+2008-06-08  Vincent Ricard  <magic@magicninja.org>
+
+        Reviewed by Darin.
+
+        Bug 18041: DOMNodeRemoved events are sent twice
+
+        Test: fast/dom/Node/DOMNodeRemovedEvent.html
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+
 2008-06-08  Tony Chang  <idealisms@gmail.com>
 
         Reviewed by Eric Seidel.

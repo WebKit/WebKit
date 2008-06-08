@@ -392,14 +392,6 @@ bool ContainerNode::removeChild(Node* oldChild, ExceptionCode& ec)
     }
 
     RefPtr<Node> child = oldChild;
-    
-    // dispatch pre-removal mutation events
-    if (document()->hasListenerType(Document::DOMNODEREMOVED_LISTENER)) {
-        EventTargetNodeCast(child.get())->dispatchEvent(new MutationEvent(DOMNodeRemovedEvent, true, false,
-            this, String(), String(), String(), 0), ec, true);
-        if (ec)
-            return false;
-    }
 
     ec = willRemoveChild(child.get());
     if (ec)
