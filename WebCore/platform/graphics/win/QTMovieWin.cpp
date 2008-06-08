@@ -30,6 +30,7 @@
 
 // Put Movies.h first so build failures here point clearly to QuickTime
 #include <Movies.h>
+#include <QuickTimeComponents.h>
 #include <GXMath.h>
 #include <QTML.h>
 
@@ -638,18 +639,84 @@ static void initializeSupportedTypes()
 {
     if (gSupportedTypes)
         return;
-    // FIXME: This list might not be complete. 
-    // There must be some way to get it out from QuickTime.
+
     gSupportedTypes = new Vector<CFStringRef>;
-    gSupportedTypes->append(CFSTR("video/3gpp"));
-    gSupportedTypes->append(CFSTR("video/3gpp2"));
-    gSupportedTypes->append(CFSTR("video/mp4"));
-    gSupportedTypes->append(CFSTR("video/mpeg"));
+
+    // QuickTime doesn't have an importer for video/quicktime. Add it manually.
     gSupportedTypes->append(CFSTR("video/quicktime"));
-    gSupportedTypes->append(CFSTR("audio/ac3"));
-    gSupportedTypes->append(CFSTR("audio/aiff"));
-    gSupportedTypes->append(CFSTR("audio/basic"));
-    gSupportedTypes->append(CFSTR("audio/mpeg"));
+
+    for (int index = 0; index < 2; index++) {
+        ComponentDescription findCD;
+
+        // look at all movie importers that can import in place and are installed. 
+        findCD.componentType = MovieImportType;
+        findCD.componentSubType = 0;
+        findCD.componentManufacturer = 0;
+        findCD.componentFlagsMask = cmpIsMissing | movieImportSubTypeIsFileExtension | canMovieImportInPlace | dontAutoFileMovieImport;
+
+        // look at those registered by HFS file types the first time through, by file extension the second time
+        findCD.componentFlags = canMovieImportInPlace | (index ? movieImportSubTypeIsFileExtension : 0);
+        
+        long componentCount = CountComponents(&findCD);
+        if (!componentCount)
+            continue;
+
+        while (Component comp = FindNextComponent(comp, &findCD)) {
+            // Does this component have a MIME type container?
+            ComponentDescription infoCD;
+            OSErr err = GetComponentInfo(comp, &infoCD, nil /*name*/, nil /*info*/, nil /*icon*/);
+            if (err)
+                continue;
+            if (!(infoCD.componentFlags & hasMovieImportMIMEList))
+                continue;
+            QTAtomContainer mimeList = NULL;
+            err = MovieImportGetMIMETypeList((ComponentInstance)comp, &mimeList);
+            if (err || !mimeList)
+                continue;
+
+            // Grab every type from the container.
+            QTLockContainer(mimeList);
+            int typeCount = QTCountChildrenOfType(mimeList, kParentAtomIsContainer, kMimeInfoMimeTypeTag);
+            for (int typeIndex = 1; typeIndex <= typeCount; typeIndex++) {
+                QTAtom mimeTag = QTFindChildByIndex(mimeList, 0, kMimeInfoMimeTypeTag, typeIndex, NULL);
+                if (!mimeTag)
+                    continue;
+                char* atomData;
+                long typeLength;
+                if (noErr != QTGetAtomDataPtr(mimeList, mimeTag, &typeLength, &atomData))
+                    continue;
+
+                char typeBuffer[256];
+                if (typeLength >= sizeof(typeBuffer))
+                    continue;
+                memcpy(typeBuffer, atomData, typeLength);
+                typeBuffer[typeLength] = 0;
+
+                // Only add "audio/..." and "video/..." types.
+                if (strncmp(typeBuffer, "audio/", 6) && strncmp(typeBuffer, "video/", 6))
+                    continue;
+
+                CFStringRef cfMimeType = CFStringCreateWithCString(NULL, typeBuffer, kCFStringEncodingUTF8);
+                if (!cfMimeType)
+                    continue;
+
+                // Only add each type once.
+                bool alreadyAdded = false;
+                for (int addedIndex = 0; addedIndex < gSupportedTypes->size(); addedIndex++) {
+                    CFStringRef type = gSupportedTypes->at(addedIndex);
+                    if (kCFCompareEqualTo == CFStringCompare(cfMimeType, type, kCFCompareCaseInsensitive)) {
+                        alreadyAdded = true;
+                        break;
+                    }
+                }
+                if (!alreadyAdded)
+                    gSupportedTypes->append(cfMimeType);
+                else
+                    CFRelease(cfMimeType);
+            }
+            DisposeHandle(mimeList);
+        }
+    }
 }
 
 unsigned QTMovieWin::countSupportedTypes()
