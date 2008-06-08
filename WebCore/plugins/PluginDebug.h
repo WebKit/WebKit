@@ -23,13 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PLUGIN_DEBUG_H__
-#define PLUGIN_DEBUG_H__
+#ifndef PluginDebug_h
+#define PluginDebug_h
 
 #include "Logging.h"
 #include "npruntime_internal.h"
 
-static const char* errorStrings[] = {
+#if !LOG_DISABLED
+
+static const char* const errorStrings[] = {
     "No errors occurred.", /* NPERR_NO_ERROR */
     "Error with no specific error code occurred.", /* NPERR_GENERIC_ERROR */
     "Invalid instance passed to the plug-in.", /* NPERR_INVALID_INSTANCE_ERROR */
@@ -46,6 +48,8 @@ static const char* errorStrings[] = {
     "Seekable stream expected.", /* NPERR_STREAM_NOT_SEEKABLE */
     "Unknown error code"
 };
+
+#endif
 
 #define LOG_NPERROR(err) if (err != NPERR_NO_ERROR) LOG_VERBOSE(Plugin, "%s\n", errorStrings[err])
 #define LOG_PLUGIN_NET_ERROR() LOG_VERBOSE(Plugin, "Stream failed due to problems with network, disk I/O, lack of memory, or other problems.\n")
