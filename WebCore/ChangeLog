@@ -1,3 +1,13 @@
+2008-06-08  Christian Persch  <chpe@gnome.org>
+
+        Reviewed by Darin.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19309
+          uninitialised variable in PluginView
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView): Initialise the NPP's pdata member to 0.
+
 2008-06-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

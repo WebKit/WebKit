@@ -552,6 +552,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
 
     m_instance = &m_instanceStruct;
     m_instance->ndata = this;
+    m_instance->pdata = 0;
 
     m_mimeType = mimeType.utf8();
 
