@@ -1,3 +1,20 @@
+2008-06-08  Bradley Meck  <genisis329@gmail.com>
+
+        Reviewed by Darin.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=17051
+          safari should treat "url()" as a valid CSS value
+
+        Test: fast/css/invalid-cursor-property-crash.html
+
+        Changed check for empty url() to be a check for null since url() is valid
+        CSS even if it is empty.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseBorderImage):
+
 2008-06-08  Vincent Ricard  <magic@magicninja.org>
 
         Reviewed by Darin.

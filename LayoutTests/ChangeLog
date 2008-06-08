@@ -1,3 +1,19 @@
+2008-06-08  Bradley Meck  <genisis329@gmail.com>
+
+        Reviewed and tweaked by Darin.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=17051
+          safari should treat "url()" as a valid CSS value
+
+        We should really add some more tests for this. One text-only test each for the
+        four different sites that handle URLs (cursor image, list style image, fill image,
+        border image) that were fixed. Currently this covers only the cursor image.
+
+        * fast/css/invalid-cursor-property-crash.html: Updated test to expect the
+        url() to be expanded into the URL of the document itself. The text of the test
+        is now a bit misleading, but it still tests that it's not a crash, and now it
+        also doubles as a check that url() is handled properly.
+
 2008-06-08  Vincent Ricard  <magic@magicninja.org>
 
         Reviewed by Darin.
