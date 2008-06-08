@@ -1,3 +1,10 @@
+2008-06-07  Brent Fulgham  <bfulgham@gmail.com>
+
+        Cairo build fix for r34432
+
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::CanvasPattern):
+
 2008-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
