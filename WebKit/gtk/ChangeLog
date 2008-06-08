@@ -1,3 +1,18 @@
+2008-06-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Confirmed by Christian Dywan.
+
+        Gtk build fix for r34432
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_history_item_add):
+        (_WebKitWebHistoryItemPrivate::webkit_history_item_remove):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_dispose):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_core_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data):
+        (WebKit::core):
+
 2008-06-07  Darin Adler  <darin@apple.com>
 
         - try to fix build after HistoryItem changes
