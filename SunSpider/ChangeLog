@@ -1,3 +1,12 @@
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Timothy.
+
+        Remove the --squirrelfish option from SunSpider, as it is no longer needed.
+
+        * sunspider:
+        * tests/LIST-SQUIRRELFISH: Removed.
+
 2008-06-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Mark Rowe.

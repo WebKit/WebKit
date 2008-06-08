@@ -1,3 +1,11 @@
+2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Timothy.
+
+        Remove the --squirrelfish option from SunSpider, as it is no longer needed.
+
+        * Scripts/run-sunspider:
+
 2008-06-05  Alp Toker  <alp@nuanti.com>
 
         Build fix for r34387.
