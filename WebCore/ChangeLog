@@ -1,3 +1,20 @@
+2008-06-08  Jonathan Haas <myrdred@gmail.com>
+
+        Reviewed by Eric Seidel.
+        Tweaked by Darin while landing to make it compile.
+
+        - fix http://bugs.webkit.org/show_bug.cgi?id=19128
+          SVG fonts don't work with medial Arabic characters
+
+        Haven't figured out a way to make an automated test for this.
+
+        * svg/SVGGlyphElement.h: Made arabicForm unsigned so it fits into
+        its 3-bit field. Did the same for orientation's 2-bit field.
+
+        * svg/SVGFont.cpp: Did a bit of minor tweaking.
+        (WebCore::isCompatibleArabicForm): Added a cast to avoid a warning
+        since the type is now different.
+
 2008-06-08  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Antti.
