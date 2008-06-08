@@ -1,3 +1,24 @@
+2008-06-08  Adam Roben  <aroben@apple.com>
+
+        Fix Bug 19438: Transaction errors are never displayed in database
+        query view
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19438>
+
+        Reviewed by Darin Adler.
+
+        Test: manual-tests/inspector/display-sql-transaction-error.html
+
+        * manual-tests/inspector/display-sql-transaction-error.html: Added.
+        * page/inspector/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView.prototype._enterKeyPressed): Use
+        _executeSqlError as the error callback for executeSql.
+        (WebInspector.DatabaseQueryView.prototype._queryError): Changed to
+        only take two parameters. This matches what we'll be passed if
+        db.transaction fails.
+        (WebInspector.DatabaseQueryView.prototype._executeSqlError): Added.
+        Calls through to _queryError.
+
 2008-06-08  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.

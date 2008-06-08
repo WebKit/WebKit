@@ -142,7 +142,7 @@ WebInspector.DatabaseQueryView.prototype = {
 
         function queryTransaction(tx)
         {
-            tx.executeSql(query, null, InspectorController.wrapCallback(this._queryFinished.bind(this, query)), InspectorController.wrapCallback(this._queryError.bind(this, query)));
+            tx.executeSql(query, null, InspectorController.wrapCallback(this._queryFinished.bind(this, query)), InspectorController.wrapCallback(this._executeSqlError.bind(this, query)));
         }
 
         this.database.database.transaction(InspectorController.wrapCallback(queryTransaction.bind(this)), InspectorController.wrapCallback(this._queryError.bind(this, query)));
@@ -158,7 +158,7 @@ WebInspector.DatabaseQueryView.prototype = {
             WebInspector.panels.databases.updateDatabaseTables(this.database);
     },
 
-    _queryError: function(query, tx, error)
+    _queryError: function(query, error)
     {
         if (error.code == 1)
             var message = error.message;
@@ -168,6 +168,11 @@ WebInspector.DatabaseQueryView.prototype = {
             var message = WebInspector.UIString("An unexpected error %s occured.", error.code);
 
         this._appendQueryResult(query, message, "error");
+    },
+
+    _executeSqlError: function(query, tx, error)
+    {
+        this._queryError(query, error);
     },
 
     _appendQueryResult: function(query, result, resultClassName)
