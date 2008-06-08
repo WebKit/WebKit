@@ -51,14 +51,14 @@ case "$host" in
        ;;
 esac
 
-# If CXXFLAGS and CFLAGS are unset, default to -O2
+# If CXXFLAGS and CFLAGS are unset, default to empty.
 # This is to tell automake not to include '-g' if CXXFLAGS is not set
 # For more info - http://www.gnu.org/software/automake/manual/autoconf.html#C_002b_002b-Compiler
 if test -z "$CXXFLAGS"; then
-   CXXFLAGS="-O2"
+   CXXFLAGS=""
 fi
 if test -z "$CFLAGS"; then
-   CFLAGS="-O2"
+   CFLAGS=""
 fi
 
 AM_PROG_CC_STDC

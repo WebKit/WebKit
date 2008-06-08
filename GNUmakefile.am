@@ -122,17 +122,19 @@ libJavaScriptCore_la_LIBADD = \
 	-lpthread
 
 libJavaScriptCore_la_CXXFLAGS = \
+	-fstrict-aliasing \
+	-O3 \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	-fno-strict-aliasing
+	$(UNICODE_CFLAGS)
 
 libJavaScriptCore_la_CFLAGS = \
+	-fstrict-aliasing \
+	-O3 \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
-	$(UNICODE_CFLAGS) \
-	-fno-strict-aliasing
+	$(UNICODE_CFLAGS)
 
 libJavaScriptCore_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -161,6 +163,7 @@ libWebCore_la_SOURCES = \
 
 libWebCore_la_CXXFLAGS = \
 	-fno-strict-aliasing \
+	-O2 \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
@@ -177,6 +180,7 @@ libWebCore_la_CXXFLAGS = \
 
 libWebCore_la_CFLAGS = \
 	-fno-strict-aliasing \
+	-O2 \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \

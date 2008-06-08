@@ -1,3 +1,15 @@
+2008-06-08  Alp Toker  <alp@nuanti.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        Bring back -fstrict-aliasing for JavaScriptCore which was removed in
+        r31821, since aliasing issues have now been fixed.
+
+        Use -O3, not -O2 for the JavaScriptCore build.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-06-05  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.
