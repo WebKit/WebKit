@@ -1,5 +1,21 @@
 2008-06-08  Adam Roben  <aroben@apple.com>
 
+        Fix Bug 18837: Database panel fails to display tables if any value is
+        NULL
+
+        <https://bugs.webkit.org/show_bug.cgi?id=18837>
+
+        Reviewed by Darin Adler.
+
+        Test: manual-tests/inspector/display-sql-null.html
+
+        * manual-tests/inspector/display-sql-null.html: Added.
+        * page/inspector/DatabasesPanel.js:
+        (WebInspector.DatabasesPanel.prototype.dataGridForResult): Convert all
+        objects to strings before operating on them.
+
+2008-06-08  Adam Roben  <aroben@apple.com>
+
         Fix Bug 19438: Transaction errors are never displayed in database
         query view
 

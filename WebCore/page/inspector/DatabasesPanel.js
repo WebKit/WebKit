@@ -185,7 +185,10 @@ WebInspector.DatabasesPanel.prototype = {
 
             var row = rows.item(i);
             for (var columnIdentifier in row) {
-                var text = row[columnIdentifier];
+                // FIXME: (Bug 19439) We should specially format SQL NULL here
+                // (which is represented by JavaScript null here, and turned
+                // into the string "null" by the String() function).
+                var text = String(row[columnIdentifier]);
                 data[columnIdentifier] = text;
                 if (text.length > columns[columnIdentifier].width)
                     columns[columnIdentifier].width = text.length;
