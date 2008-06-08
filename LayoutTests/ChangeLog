@@ -1,3 +1,14 @@
+2008-06-08  Eric Roman  <minatoar@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18550
+          cross-frame-access-call.html doesn't really test window.open(), since popups are blocked
+
+        * http/tests/security/cross-frame-access-call.html: Enable popups for this layout test.
+        The test checks that window.open is returns undefined (same-domain enforcement), however
+        unless popups are enabled it returns undefined regardless.
+
 2008-06-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
