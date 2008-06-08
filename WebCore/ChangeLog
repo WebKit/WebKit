@@ -2,6 +2,20 @@
 
         Reviewed by Eric Seidel.
 
+        https://bugs.webkit.org/show_bug.cgi?id=18840
+        [CAIRO] Clipping-support for SVG
+
+        Support for clipping in SVG/Cairo and fixes transformation of paths.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::transform):
+        * svg/graphics/cairo/SVGResourceClipperCairo.cpp:
+        (WebCore::SVGResourceClipper::applyClip):
+
+2008-06-08  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=18663
         Add text-stroke support to Cairo.
 

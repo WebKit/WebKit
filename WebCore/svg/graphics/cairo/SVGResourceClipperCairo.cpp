@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Dirk Schulze <vbs85@gmx.de>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGResourceClipper.h"
 #include "AffineTransform.h"
+#include "CairoPath.h"
 #include "GraphicsContext.h"
 
 #include <cairo.h>
@@ -30,33 +32,35 @@ namespace WebCore {
 
 void SVGResourceClipper::applyClip(GraphicsContext* context, const FloatRect& boundingBox) const
 {
-    Vector<ClipData> data = m_clipData.clipData();
-    unsigned int count = data.size();
-    if (!count)
+    cairo_t* cr = context->platformContext();
+    if (m_clipData.clipData().size() < 1)
         return;
 
-    cairo_t* cr = context->platformContext();
     cairo_reset_clip(cr);
+    context->beginPath();
 
-    for (unsigned int x = 0; x < count; x++) {
-        Path path = data[x].path;
+    for (unsigned int x = 0; x < m_clipData.clipData().size(); x++) {
+        ClipData data = m_clipData.clipData()[x];
+
+        Path path = data.path;
         if (path.isEmpty())
             continue;
         path.closeSubpath();
 
-        if (data[x].bboxUnits) {
+        if (data.bboxUnits) {
             // Make use of the clipping units
             AffineTransform transform;
             transform.translate(boundingBox.x(), boundingBox.y());
             transform.scale(boundingBox.width(), boundingBox.height());
             path.transform(transform);
         }
+        cairo_path_t* clipPath = cairo_copy_path(path.platformPath()->m_cr);
+        cairo_append_path(cr, clipPath);
 
-        cairo_set_fill_rule(cr, data[x].windRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
-
-        // TODO: review this code, clipping may not be having the desired effect
-        context->clip(path);
+        cairo_set_fill_rule(cr, data.windRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     }
+
+    cairo_clip(cr);
 }
 
 } // namespace WebCore
