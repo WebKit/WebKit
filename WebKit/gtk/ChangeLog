@@ -1,3 +1,12 @@
+2008-06-07  Darin Adler  <darin@apple.com>
+
+        - try to fix build after HistoryItem changes
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new): Use HistoryItem::create.
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data): Ditto. I also
+        believe this fixes a memory leak in the old version.
+
 2008-06-07  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.
