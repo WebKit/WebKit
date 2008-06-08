@@ -47,6 +47,8 @@ using namespace EventNames;
 
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::AltKey;
 
+const double EventHandler::TextDragDelay = 0.0;
+
 bool EventHandler::tabsToAllControls(KeyboardEvent* event) const
 {
     // We always allow tabs to all controls

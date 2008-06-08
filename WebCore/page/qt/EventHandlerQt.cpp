@@ -60,6 +60,8 @@ using namespace EventNames;
 
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey;
 
+const double EventHandler::TextDragDelay = 0.0;
+
 static bool isKeyboardOptionTab(KeyboardEvent* event)
 {
     return event

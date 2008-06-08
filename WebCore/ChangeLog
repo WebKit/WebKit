@@ -1,3 +1,22 @@
+2008-06-08  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18167
+          there should be no text-drag delay on any platform except for Mac
+
+        Move the drag text delay value into the platform specific files.
+
+        Test: editing/selection/drag-text-delay.html
+
+        * page/EventHandler.cpp:
+        * page/EventHandler.h:
+        * page/gtk/EventHandlerGtk.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * page/qt/EventHandlerQt.cpp:
+        * page/win/EventHandlerWin.cpp:
+        * page/wx/EventHandlerWx.cpp:
+
 2008-06-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

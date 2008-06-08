@@ -1,3 +1,20 @@
+2008-06-08  Tony Chang  <idealisms@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18167
+          there should be no text-drag delay on any platform except for Mac
+        
+        Also updated two tests which depend on the drag text delay to be greater
+        than 0 by making them no longer select text before the mouse down.
+
+        * editing/selection/drag-text-delay-expected.txt: Added.
+        * editing/selection/drag-text-delay.html: Added.
+        * platform/mac/editing/selection/drag-text-delay-expected.txt: Added.
+
+        * fast/events/autoscroll.html:
+        * fast/forms/input-readonly-autoscroll.html:
+
 2008-06-08  Rob Buis  <buis@kde.org>
 
         Reviewed by Darin.

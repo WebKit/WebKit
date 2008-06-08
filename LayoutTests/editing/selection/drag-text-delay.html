@@ -1,0 +1,27 @@
+<script>
+// On most platforms, if you click and move the mouse on selected text, it
+// will always initiate a drag.  On mac, there must be a delay between the
+// click and the mouse move before a drag starts.  Otherwise, it will just
+// change the selection.
+
+function runtest() {
+  if (!window.layoutTestController)
+    return;
+
+  var text = document.getElementById("text");
+  text.setSelectionRange(0, 5);
+
+  var start_x = text.offsetLeft + 5;
+  var start_y = text.offsetTop + text.offsetHeight / 2;
+  eventSender.mouseMoveTo(start_x, start_y);
+  eventSender.mouseDown();
+
+  var end_x = text.offsetLeft + text.offsetWidth - 5;
+  var end_y = start_y;
+  eventSender.mouseMoveTo(end_x, end_y);
+  eventSender.mouseUp();
+}
+</script>
+<body onload="runtest()">
+<input id="text" type="text" value="hello world" />
+</body>

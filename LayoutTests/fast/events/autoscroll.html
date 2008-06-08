@@ -12,7 +12,7 @@
             {
                 var ta = document.getElementById('ta');
                 if (window.eventSender) {
-                    ta.focus();
+                    ta.scrollIntoView();
                     var h = ta.offsetTop - document.body.scrollTop + 10;
                     eventSender.dragMode = false;
                     eventSender.mouseMoveTo(20, h);

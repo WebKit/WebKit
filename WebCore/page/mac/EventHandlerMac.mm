@@ -49,6 +49,8 @@ using namespace EventNames;
 
 unsigned EventHandler::s_accessKeyModifiers = PlatformKeyboardEvent::CtrlKey | PlatformKeyboardEvent::AltKey;
 
+const double EventHandler::TextDragDelay = 0.15;
+
 static RetainPtr<NSEvent>& currentEvent()
 {
     static RetainPtr<NSEvent> event;

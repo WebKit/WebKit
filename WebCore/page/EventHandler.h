@@ -76,7 +76,6 @@ extern const int LinkDragHysteresis;
 extern const int ImageDragHysteresis;
 extern const int TextDragHysteresis;
 extern const int GeneralDragHysteresis;
-extern const double TextDragDelay;
 
 class EventHandler : Noncopyable {
 public:
@@ -192,6 +191,7 @@ private:
         RefPtr<Clipboard> m_dragClipboard; // used on only the source side of dragging
     };
     static EventHandlerDragState& dragState();
+    static const double TextDragDelay;
     
     Clipboard* createDraggingClipboard() const;
     
