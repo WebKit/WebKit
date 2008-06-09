@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="resources/lib.js"></script>
+<script>
+navUtils.set_frame_count(1);
+
+navUtils.onready = function () {
+  navUtils.log('Navigating frame.');
+
+  navUtils.navigateByForm('window2_child0');
+};
+
+navUtils.ondone = function () {
+  navUtils.log('Navigation complete.');
+  navUtils.logWindowCount();
+  navUtils.log('popup2: ' + navUtils.canAccess(popup2.frames[0]));
+  navUtils.log('Done.');
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+};
+</script>
+</head>
+<body>
+<div id='console'></div>
+<script>
+var popup2 = window.open("http://localhost:8000/security/frameNavigation/resources/iframe.html#ready.html", "window2");
+</script>
+</body>
+</html>

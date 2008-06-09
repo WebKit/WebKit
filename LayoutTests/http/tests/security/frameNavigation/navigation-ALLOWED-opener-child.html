@@ -1,0 +1,42 @@
+<html>
+<head>
+<script src="resources/lib.js"></script>
+<script>
+navUtils.set_frame_count(10);
+
+navUtils.onready = function () {
+  navUtils.log('Navigating frames.');
+
+  navUtils.set_frame_count(5);
+
+  navUtils.doNavigate(popup0, 'location', 'window.opener.frames[0]');
+  navUtils.doNavigate(popup1, 'open', 'child1');
+  navUtils.doNavigate(popup2, 'form', 'child2');
+  navUtils.doNavigate(popup3, 'hyperlink', 'child3');
+  navUtils.doNavigate(popup4, 'plugin', 'child4');
+};
+
+navUtils.ondone = function () {
+  navUtils.logWindowCount();
+  navUtils.log('Done.');
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+};
+</script>
+</head>
+<body>
+<div id='console'></div>
+<script>
+var popup0 = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "window0");
+var popup1 = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "window1");
+var popup2 = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "window2");
+var popup3 = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "window3");
+var popup4 = window.open("http://localhost:8000/security/frameNavigation/resources/ready.html", "window4");
+</script>
+<iframe name="child0" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="child1" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="child2" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="child3" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="child4" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+</body>
+</html>

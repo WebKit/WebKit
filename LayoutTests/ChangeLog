@@ -2,6 +2,68 @@
 
         Reviewed by Darin Alder.
 
+        https://bugs.webkit.org/show_bug.cgi?id=16631
+
+        Improve coverage of our frame navigation test cases.  This revealed a
+        bug in plugin navigation (we aren't setting the opener properly), but
+        that's probably better addressed in a separate patch.
+
+        * http/tests/security/frameNavigation/navigation-ALLOWED-child-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-child.html: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-descendant-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-descendant.html: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-not-opener-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-not-opener.html: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-opener-child-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-opener-child.html: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-popup-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-popup.html: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-sibling-same-parent-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-ALLOWED-sibling-same-parent.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-form-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-form.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-hyperlink-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-hyperlink.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-location-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-location.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-open-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-open.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-plugin-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-popup-child-plugin.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-form-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-form.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-hyperlink-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-hyperlink.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-location-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-location.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-open-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-open.html: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-plugin-expected.txt: Added.
+        * http/tests/security/frameNavigation/navigation-DENIED-sibling-plugin.html: Added.
+        * http/tests/security/frameNavigation/resources/frame-with-link-to-navigate.html: Removed.
+        * http/tests/security/frameNavigation/resources/frame-with-plugin-to-navigate.html: Removed.
+        * http/tests/security/frameNavigation/resources/iframe-that-performs-parent-navigation.html: Removed.
+        * http/tests/security/frameNavigation/resources/iframe-with-inner-frame-on-foreign-domain.html: Removed.
+        * http/tests/security/frameNavigation/resources/iframe.html: Added.
+        * http/tests/security/frameNavigation/resources/lib.js: Added.
+        * http/tests/security/frameNavigation/resources/navigation-changed-iframe.html: Removed.
+        * http/tests/security/frameNavigation/resources/navigation-happened.html: Removed.
+        * http/tests/security/frameNavigation/resources/open.html: Added.
+        * http/tests/security/frameNavigation/resources/ready.html: Added.
+        * http/tests/security/frameNavigation/resources/target.html: Added.
+        * http/tests/security/frameNavigation/xss-ALLOWED-parent-navigation-change-expected.txt: Removed.
+        * http/tests/security/frameNavigation/xss-ALLOWED-parent-navigation-change.html: Removed.
+        * http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change-expected.txt: Removed.
+        * http/tests/security/frameNavigation/xss-ALLOWED-targeted-subframe-navigation-change.html: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation-expected.txt: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-plugin-navigation.html: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation-expected.txt: Removed.
+        * http/tests/security/frameNavigation/xss-DENIED-targeted-link-navigation.html: Removed.
+
+2008-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
         https://bugs.webkit.org/show_bug.cgi?id=16856
 
         Fix tests not to rely on broken javascript URL behavior.

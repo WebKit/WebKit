@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/lib.js"></script>
+<script>
+navUtils.set_frame_count(2);
+
+navUtils.onready = function () {
+  navUtils.log('Navigating frame.');
+  navUtils.set_frame_count(1);
+  navUtils.doNavigate(frames['active1'], 'open', 'child1');
+};
+
+navUtils.ondone = function () {
+  navUtils.logWindowCount();
+  navUtils.log('Done.');
+  if (window.layoutTestController)
+    layoutTestController.notifyDone();
+};
+</script>
+</head>
+<body>
+<div id='console'></div>
+<iframe name="child1" src="http://127.0.0.1:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="active1" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+</body>
+</html>

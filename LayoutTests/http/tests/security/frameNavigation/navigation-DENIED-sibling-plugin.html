@@ -1,0 +1,29 @@
+<html>
+<head>
+<script src="resources/lib.js"></script>
+<script>
+navUtils.set_frame_count(2);
+
+navUtils.onready = function () {
+  navUtils.log('Navigating frame.');
+  // TODO: Looks like plugins aren't correctly setting window.opener
+  navUtils.doNavigate(frames['active4'], 'plugin', 'child4');
+
+  if (window.layoutTestController) {
+    var interval = window.setInterval(function() {
+      if (layoutTestController.windowCount() > 1) {
+        // The navigation has occured.  We're done.
+        window.clearInterval(interval);
+        layoutTestController.notifyDone();
+      }
+    }, 15);
+  }
+};
+</script>
+</head>
+<body>
+<div id='console'></div>
+<iframe name="child4" src="http://127.0.0.1:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="active4" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+</body>
+</html>

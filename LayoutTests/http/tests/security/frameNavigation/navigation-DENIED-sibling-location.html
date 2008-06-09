@@ -1,0 +1,26 @@
+<html>
+<head>
+<script src="resources/lib.js"></script>
+<script>
+navUtils.set_frame_count(2);
+
+navUtils.onready = function () {
+  navUtils.log('Navigating frame.');
+  navUtils.doNavigate(frames['active0'], 'location', 'window.top.frames[0]');
+
+  // There doesn't seem to be a good way to tell that the asynchronous
+  // navigation has occurred in this case.  The best we can do is to
+  // hope it will happen in the next 50ms.
+  window.setTimeout(function() {
+    if (window.layoutTestController)
+      layoutTestController.notifyDone();
+  }, 50);
+};
+</script>
+</head>
+<body>
+<div id='console'></div>
+<iframe name="child0" src="http://127.0.0.1:8000/security/frameNavigation/resources/ready.html"></iframe>
+<iframe name="active0" src="http://localhost:8000/security/frameNavigation/resources/ready.html"></iframe>
+</body>
+</html>

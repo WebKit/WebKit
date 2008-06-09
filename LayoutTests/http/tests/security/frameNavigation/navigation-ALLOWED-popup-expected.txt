@@ -1,0 +1,10 @@
+Navigating frames.
+Navigation complete.
+Window count: 6
+popup0: true
+popup1: true
+popup2: true
+popup3: true
+popup4: true
+Done.
+

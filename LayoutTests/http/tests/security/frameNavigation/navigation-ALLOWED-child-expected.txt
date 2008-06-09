@@ -1,0 +1,40 @@
+Navigating frames.
+Window count: 1
+Done.
+    
+
+
+--------
+Frame: 'child0'
+--------
+127.0.0.1
+
+Navigation done.
+
+--------
+Frame: 'child1'
+--------
+127.0.0.1
+
+Navigation done.
+
+--------
+Frame: 'child2'
+--------
+127.0.0.1
+
+Navigation done.
+
+--------
+Frame: 'child3'
+--------
+127.0.0.1
+
+Navigation done.
+
+--------
+Frame: 'child4'
+--------
+127.0.0.1
+
+Navigation done.
