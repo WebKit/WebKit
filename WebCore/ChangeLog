@@ -23,6 +23,18 @@
 
 2008-06-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Reviewed by Simon
+
+        Use the text color from QStyle when styling form elements.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustButtonStyle):
+        (WebCore::RenderThemeQt::adjustTextFieldStyle):
+        (WebCore::RenderThemeQt::adjustMenuListStyle):
+        (WebCore::RenderThemeQt::adjustMenuListButtonStyle):
+
+2008-06-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Darin.
 
         Incorporated Darin's comments to bug 18965.

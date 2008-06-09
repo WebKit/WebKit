@@ -334,7 +334,6 @@ static void computeSizeBasedOnStyle(RenderStyle* renderStyle)
         renderStyle->setHeight(Length(size.height(), Fixed));
 }
 
-
 void RenderThemeQt::setCheckboxSize(RenderStyle* style) const
 {
     computeSizeBasedOnStyle(style);
@@ -344,7 +343,6 @@ bool RenderThemeQt::paintCheckbox(RenderObject* o, const RenderObject::PaintInfo
 {
     return paintButton(o, i, r);
 }
-
 
 void RenderThemeQt::setRadioSize(RenderStyle* style) const
 {
@@ -386,6 +384,8 @@ void RenderThemeQt::adjustButtonStyle(CSSStyleSelector* selector, RenderStyle* s
 
     setButtonSize(style);
     setButtonPadding(style);
+
+    style->setColor(QApplication::palette().text().color());
 }
 
 void RenderThemeQt::setButtonSize(RenderStyle* style) const
@@ -456,6 +456,12 @@ bool RenderThemeQt::paintButton(RenderObject* o, const RenderObject::PaintInfo& 
     return false;
 }
 
+void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+{
+    style->setBackgroundColor(Color::transparent);
+    style->setColor(QApplication::palette().text().color());
+}
+
 bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     StylePainter p(i);
@@ -485,19 +491,14 @@ bool RenderThemeQt::paintTextField(RenderObject* o, const RenderObject::PaintInf
     return false;
 }
 
-void RenderThemeQt::adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    style->setBackgroundColor(Color::transparent);
+    adjustTextFieldStyle(selector, style, element);
 }
 
 bool RenderThemeQt::paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
 {
     return paintTextField(o, i, r);
-}
-
-void RenderThemeQt::adjustTextAreaStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
-{
-    adjustTextFieldStyle(selector, style, element);
 }
 
 void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
@@ -514,6 +515,8 @@ void RenderThemeQt::adjustMenuListStyle(CSSStyleSelector*, RenderStyle* style, E
 
     // Add in the padding that we'd like to use.
     setPopupPadding(style);
+
+    style->setColor(QApplication::palette().text().color());
 }
 
 void RenderThemeQt::setPopupPadding(RenderStyle* style) const
@@ -553,6 +556,26 @@ bool RenderThemeQt::paintMenuList(RenderObject* o, const RenderObject::PaintInfo
     return false;
 }
 
+void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
+                                              Element* e) const
+{
+    // WORKAROUND because html4.css specifies -webkit-border-radius for <select> so we override it here
+    // see also http://bugs.webkit.org/show_bug.cgi?id=18399
+    style->resetBorderRadius();
+
+    // Height is locked to auto.
+    style->setHeight(Length(Auto));
+
+    // White-space is locked to pre
+    style->setWhiteSpace(PRE);
+
+    computeSizeBasedOnStyle(style);
+
+    // Add in the padding that we'd like to use.
+    setPopupPadding(style);
+
+    style->setColor(QApplication::palette().text().color());
+}
 
 bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::PaintInfo& i,
                                         const IntRect& r)
@@ -573,25 +596,6 @@ bool RenderThemeQt::paintMenuListButton(RenderObject* o, const RenderObject::Pai
     p.drawComplexControl(QStyle::CC_ComboBox, option);
 
     return false;
-}
-
-void RenderThemeQt::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style,
-                                              Element* e) const
-{
-    // WORKAROUND because html4.css specifies -webkit-border-radius for <select> so we override it here
-    // see also http://bugs.webkit.org/show_bug.cgi?id=18399
-    style->resetBorderRadius();
-
-    // Height is locked to auto.
-    style->setHeight(Length(Auto));
-
-    // White-space is locked to pre
-    style->setWhiteSpace(PRE);
-
-    computeSizeBasedOnStyle(style);
-
-    // Add in the padding that we'd like to use.
-    setPopupPadding(style);
 }
 
 bool RenderThemeQt::paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& pi,
