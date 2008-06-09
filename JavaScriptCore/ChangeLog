@@ -1,5 +1,16 @@
 2008-06-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Sam.
+
+        Add an include for readline/history.h to fix the build for Darwin users
+        with the GNU readline library installed. Also, clean up the style of
+        the HAVE(READLINE) check.
+
+        * kjs/testkjs.cpp:
+        (runInteractive):
+
+2008-06-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Darin.
 
         Bug 17531: Add interactive mode to testkjs
