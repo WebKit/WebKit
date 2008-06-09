@@ -1,3 +1,16 @@
+2008-06-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5961977> Crash in RenderBlock::layoutColumns()
+
+        Test: fast/multicol/content-height-zero-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutColumns): Changed to not keep creating
+        overflow columns that have zero height, because they do not help with
+        fitting content in.
+
 2008-06-08  Adam Roben  <aroben@apple.com>
 
         Fix Bug 18837: Database panel fails to display tables if any value is

@@ -1,3 +1,12 @@
+2008-06-08  Dan Bernstein  <mitz@apple.com>
+
+        - test for <rdar://problem/5961977> Crash in RenderBlock::layoutColumns()
+
+        Reviewed by Darin Adler.
+
+        * fast/multicol/content-height-zero-crash-expected.txt: Added.
+        * fast/multicol/content-height-zero-crash.html: Added.
+
 2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.
