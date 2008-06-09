@@ -5,7 +5,7 @@ first as a non-HTML and then as an HTML event listener could leave the "is HTML"
 
 <p id="result"></p>
 
-<a href="javascript:document.getElementById('result').innerHTML = 'FAILURE'" id="anchor">test anchor - script clicks this automatically</a>
+<a href="javascript:void(document.getElementById('result').innerHTML = 'FAILURE')" id="anchor">test anchor - script clicks this automatically</a>
 
 <script>
 

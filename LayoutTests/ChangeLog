@@ -1,3 +1,17 @@
+2008-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16856
+
+        Fix tests not to rely on broken javascript URL behavior.
+
+        * fast/events/event-listener-html-non-html-confusion.html:
+        * fast/replaced/image-map-bug16782-expected.txt: Added.
+        * fast/replaced/image-map-bug16782.html: Added.
+        * fast/replaced/image-map.html:
+        * svg/custom/prevent-default.svg:
+
 2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.
