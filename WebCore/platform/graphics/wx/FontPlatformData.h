@@ -90,7 +90,14 @@ public:
     
     unsigned computeHash() const {
         ASSERT(m_font.Ok());
-        return reinterpret_cast<unsigned>(&m_font);
+        
+        // make a hash that is unique for this font, but not globally unique - that is,
+        // a font whose properties are equal should generate the same hash
+        uintptr_t hashCodes[6] = { m_font.GetPointSize(), m_font.GetFamily(), m_font.GetStyle(), 
+                                    m_font.GetWeight(), m_font.GetUnderlined(), 
+                                    StringImpl::computeHash(m_font.GetFaceName().mb_str(wxConvUTF8)) };
+        
+        return StringImpl::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
     }
 
 private:

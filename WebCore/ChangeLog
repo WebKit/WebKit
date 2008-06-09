@@ -1,3 +1,15 @@
+2008-06-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Darin Adler.
+
+        Fix font asserts in wx port. Our computeHash function should generate the same hash
+        for two identical fonts which are different objects, which it wasn't doing before.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19310
+
+        * platform/graphics/wx/FontPlatformData.h:
+        (WebCore::FontPlatformData::computeHash):
+
 2008-06-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
