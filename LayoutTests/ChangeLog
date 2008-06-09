@@ -2,6 +2,18 @@
 
         Reviewed by Oliver.
 
+        Bug 17931: Incorrect decompilation with |new|
+        <https://bugs.webkit.org/show_bug.cgi?id=17931>
+
+        This bug was fixed by SquirrelFish, but we should add a test.
+
+        * fast/js/function-toString-parentheses-expected.txt:
+        * fast/js/resources/function-toString-parentheses.js:
+
+2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
         Bug 17932: "ASSERTION FAILED: type != Continue" with do/while and try/finally
         <https://bugs.webkit.org/show_bug.cgi?id=17932>
 

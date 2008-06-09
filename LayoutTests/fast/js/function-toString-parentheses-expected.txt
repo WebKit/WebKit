@@ -495,6 +495,7 @@ PASS compileAndSerializeLeftmostTest('const a = 1, b = 1') is 'const a = 1, b = 
 PASS compileAndSerializeLeftmostTest('const a = (1, 2), b = 1') is 'const a = (1, 2), b = 1'
 PASS compileAndSerializeLeftmostTest('const a = 1, b = (1, 2)') is 'const a = 1, b = (1, 2)'
 PASS compileAndSerializeLeftmostTest('const a = (1, 2), b = (1, 2)') is 'const a = (1, 2), b = (1, 2)'
+PASS compileAndSerialize('(function () { new (a.b()).c })') is '(function () { new (a.b()).c })'
 PASS successfullyParsed is true
 
 TEST COMPLETE
