@@ -1,3 +1,26 @@
+2008-06-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Bug 17531: Add interactive mode to testkjs
+        <https://bugs.webkit.org/show_bug.cgi?id=17531>
+
+        This is a cleaned up version of Sam's earlier patch to add an
+        interactive mode to testkjs.
+
+        Readline support is only enabled on Darwin platforms for now, but
+        other ports can enable it by defining HAVE_READLINE in kjs/config.h.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/config.h:
+        * kjs/testkjs.cpp:
+        (Options::Options):
+        (runWithScripts):
+        (runInteractive):
+        (printUsageStatement):
+        (parseArguments):
+        (kjsmain):
+
 2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.
