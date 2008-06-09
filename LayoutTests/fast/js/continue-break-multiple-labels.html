@@ -1,28 +1,13 @@
-<script>
-function print(msg) {
-    document.getElementById("log").innerHTML += msg;
-}
-function test() {
-    if (window.layoutTestController)
-        layoutTestController.dumpAsText();
-    print("Expected: 12356789<br>Actual: ");
-    a:
-    b:
-    for (var foo = 1; foo < 10; foo++) {
-       if (foo == 4)
-            continue a;
-       print(foo);
-    }
-    print("<br>Expected: 123<br>Actual: ");
-    c:
-    d:
-    for (var bar = 1; bar < 10; bar++) {
-       if (bar == 4)
-            break c;
-       print(bar);
-    }
-    print("<br>Test done<br>");
-}
-</script>
-<body onload="test()">
-<div id="log"></div>
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="resources/js-test-style.css">
+<script src="resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/continue-break-multiple-labels.js"></script>
+<script src="resources/js-test-post.js"></script>
+</body>
+</html>

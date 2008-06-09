@@ -1,3 +1,17 @@
+2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 17932: "ASSERTION FAILED: type != Continue" with do/while and try/finally
+        <https://bugs.webkit.org/show_bug.cgi?id=17932>
+
+        This bug was fixed by SquirrelFish, but we should add a test, as well
+        as tests for related issues found while developing SquirrelFish.
+
+        * fast/js/continue-break-multiple-labels-expected.txt:
+        * fast/js/continue-break-multiple-labels.html:
+        * fast/js/resources/continue-break-multiple-labels.js: Added.
+
 2008-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Alder.
