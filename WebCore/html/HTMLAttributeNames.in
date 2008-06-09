@@ -1,4 +1,4 @@
-<attrs>
+<attrs namespace="HTML" namespacePrefix="xhtml" cppNamespace="WebCore" namespaceURI="http://www.w3.org/1999/xhtml">
 <abbr/>
 <accept_charset/>
 <accept/>

@@ -1,4 +1,4 @@
-<tags>
+<tags namespace="HTML" namespacePrefix="xhtml" cppNamespace="WebCore" namespaceURI="http://www.w3.org/1999/xhtml">
 <a upperCase="Anchor"/>
 <abbr/>
 <acronym/>

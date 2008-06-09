@@ -1,4 +1,4 @@
-<attrs>
+<attrs namespace="SVG" cppNamespace="WebCore" namespaceURI="http://www.w3.org/2000/svg">
 <accent-height/>
 <accumulate/>
 <additive/>

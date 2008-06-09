@@ -37,15 +37,12 @@ use XMLTiny qw(parsefile);
 
 my $printFactory = 0;
 my $printWrapperFactory = 0;
-my $cppNamespace = "";
-my $namespace = "";
-my $namespacePrefix = "";
-my $namespaceURI = "";
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
 my %tags = ();
 my %attrs = ();
+my %parameters = ();
 my $tagsNullNamespace = 0;
 my $attrsNullNamespace = 0;
 my $extraDefines = 0;
@@ -57,10 +54,6 @@ my %htmlCustomMappings = ();
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
     'outputDir=s' => \$outputDir,
-    'namespace=s' => \$namespace,
-    'namespacePrefix=s' => \$namespacePrefix,
-    'namespaceURI=s' => \$namespaceURI,
-    'cppNamespace=s' => \$cppNamespace,
     'factory' => \$printFactory,
     'wrapperFactory' => \$printWrapperFactory,
     'tagsNullNamespace' => \$tagsNullNamespace,
@@ -69,20 +62,21 @@ GetOptions('tags=s' => \$tagsFile,
     'preprocessor=s' => \$preprocessor,
     'guardFactoryWith=s' => \$guardFactoryWith);
 
-die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $namespace;
-die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $namespaceURI;
-die "You must specify a cppNamespace (e.g. DOM) used for <cppNamespace>::<namespace>Names::fooTag" unless $cppNamespace;
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
-
-$namespacePrefix = $namespace unless $namespacePrefix;
 
 readNames($tagsFile) if length($tagsFile);
 readNames($attrsFile) if length($attrsFile);
 
+die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{'namespace'};
+die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{'namespaceURI'};
+die "You must specify a cppNamespace (e.g. DOM) used for <cppNamespace>::<namespace>Names::fooTag" unless $parameters{'cppNamespace'};
+
+$parameters{'namespacePrefix'} = $parameters{'namespace'} unless $parameters{'namespacePrefix'};
+
 mkpath($outputDir);
-my $namesBasePath = "$outputDir/${namespace}Names";
-my $factoryBasePath = "$outputDir/${namespace}ElementFactory";
-my $wrapperFactoryBasePath = "$outputDir/JS${namespace}ElementWrapperFactory";
+my $namesBasePath = "$outputDir/$parameters{'namespace'}Names";
+my $factoryBasePath = "$outputDir/$parameters{'namespace'}ElementFactory";
+my $wrapperFactoryBasePath = "$outputDir/JS$parameters{'namespace'}ElementWrapperFactory";
 
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
@@ -110,11 +104,18 @@ sub initializeAttrPropertyHash
     return ('upperCase' => upperCaseName($_[0]));
 }
 
+sub initializeParametersHash
+{
+    return ('namespace' => '',
+            'namespacePrefix' => '',
+            'namespaceURI' => '',
+            'cppNamespace' => '');
+}
 
 ### Parsing handlers
 
 # Our files should have the following form :
-# <tags> or <attrs>
+# <'tags' or 'attrs' globalProperty1 = 'value1' ... />
 # <'tag/attr name' 'property1' = 'value1' ... />
 # where the properties are defined in the initialize*PropertyHash methods.
 # (more tag/attr ...)
@@ -158,6 +159,21 @@ sub parseAttrs
     }
 }
 
+sub parseParameters
+{
+    my $propertiesRef = shift;
+    my %properties = %$propertiesRef;
+
+    # Initialize default properties' values.
+    %parameters = initializeParametersHash() if !(keys %parameters);
+
+    # Parse the XML attributes.
+    foreach my $property (keys %properties) {
+        die "Unknown parameter $property for tags/attrs\n" if !defined($parameters{$property});
+        $parameters{$property} = $properties{$property};
+    }
+}
+
 ## Support routines
 
 sub readNames
@@ -184,14 +200,16 @@ sub readNames
     # Check root element to determine what we are parsing
     switch($name) {
         case "tags" {
+            parseParameters(\%{$document{'attrib'}});
             parseTags(\@{$document{'content'}});
         }
         case "attrs" {
+            parseParameters(\%{$document{'attrib'}});
             parseAttrs(\@{$document{'content'}});
+        } else {
+            die "Do not know how to parse file starting with $name!\n";
         }
     }
-
-    # FIXME: we should process the attributes here to build a parameter map
 
     close($names);
 
@@ -215,9 +233,9 @@ sub printConstructors
     for my $name (sort keys %names) {
         my $ucName = $names{$name}{"upperCase"};
 
-        print F "${namespace}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
+        print F "$parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
-        print F "    return new ${namespace}${ucName}Element(${name}Tag, doc);\n";
+        print F "    return new $parameters{'namespace'}${ucName}Element(${name}Tag, doc);\n";
         print F "}\n\n";
     }
     print F "#endif\n" if $guardFactoryWith;
@@ -246,7 +264,7 @@ sub upperCaseName
 {
     my $name = shift;
     
-    $name = svgCapitalizationHacks($name) if ($namespace eq "SVG");
+    $name = svgCapitalizationHacks($name) if ($parameters{'namespace'} eq "SVG");
 
     while ($name =~ /^(.*?)_(.*)/) {
         $name = $1 . ucfirst $2;
@@ -297,27 +315,27 @@ sub printNamesHeaderFile
     open F, ">$headerPath";
     
     printLicenseHeader($F);
-    print F "#ifndef DOM_${namespace}NAMES_H\n";
-    print F "#define DOM_${namespace}NAMES_H\n\n";
+    print F "#ifndef DOM_$parameters{'namespace'}NAMES_H\n";
+    print F "#define DOM_$parameters{'namespace'}NAMES_H\n\n";
     print F "#include \"QualifiedName.h\"\n\n";
     
-    print F "namespace $cppNamespace { namespace ${namespace}Names {\n\n";
+    print F "namespace $parameters{'cppNamespace'} { namespace $parameters{'namespace'}Names {\n\n";
     
-    my $lowerNamespace = lc($namespacePrefix);
-    print F "#ifndef DOM_${namespace}NAMES_HIDE_GLOBALS\n";
+    my $lowerNamespace = lc($parameters{'namespacePrefix'});
+    print F "#ifndef DOM_$parameters{'namespace'}NAMES_HIDE_GLOBALS\n";
     print F "// Namespace\n";
     print F "extern const WebCore::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
     if (keys %tags) {
         print F "// Tags\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Tag", \%tags);
-        print F "\n\nWebCore::QualifiedName** get${namespace}Tags(size_t* size);\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Tags(size_t* size);\n";
     }
     
     if (keys %attrs) {
         print F "// Attributes\n";
         printMacros($F, "extern const WebCore::QualifiedName", "Attr", \%attrs);
-        print F "\n\nWebCore::QualifiedName** get${namespace}Attr(size_t* size);\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Attr(size_t* size);\n";
     }
     print F "#endif\n\n";
     print F "void init();\n\n";
@@ -335,25 +353,25 @@ sub printNamesCppFile
     
     printLicenseHeader($F);
     
-    my $lowerNamespace = lc($namespacePrefix);
+    my $lowerNamespace = lc($parameters{'namespacePrefix'});
 
 print F "#include \"config.h\"\n";
 
 print F "#ifdef AVOID_STATIC_CONSTRUCTORS\n";
-print F "#define DOM_${namespace}NAMES_HIDE_GLOBALS 1\n";
+print F "#define DOM_$parameters{'namespace'}NAMES_HIDE_GLOBALS 1\n";
 print F "#else\n";
 print F "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
 print F "#endif\n\n";
 
 
-print F "#include \"${namespace}Names.h\"\n\n";
+print F "#include \"$parameters{'namespace'}Names.h\"\n\n";
 print F "#include \"StaticConstructors.h\"\n";
 
-print F "namespace $cppNamespace { namespace ${namespace}Names {
+print F "namespace $parameters{'cppNamespace'} { namespace $parameters{'namespace'}Names {
 
 using namespace WebCore;
 
-DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
+DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{'namespaceURI'}\")
 ";
 
     if (keys %tags) {
@@ -362,14 +380,14 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Tag, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
         
-        print F "\n\nWebCore::QualifiedName** get${namespace}Tags(size_t* size)\n";
-        print F "{\n    static WebCore::QualifiedName* ${namespace}Tags[] = {\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Tags(size_t* size)\n";
+        print F "{\n    static WebCore::QualifiedName* $parameters{'namespace'}Tags[] = {\n";
         for my $name (sort keys %tags) {
             print F "        (WebCore::QualifiedName*)&${name}Tag,\n";
         }
         print F "    };\n";
         print F "    *size = ", scalar(keys %tags), ";\n";
-        print F "    return ${namespace}Tags;\n";
+        print F "    return $parameters{'namespace'}Tags;\n";
         print F "}\n";
         
     }
@@ -379,14 +397,14 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$namespaceURI\")
         for my $name (sort keys %attrs) {
             print F "DEFINE_GLOBAL(QualifiedName, ", $name, "Attr, nullAtom, \"$name\", ${lowerNamespace}NamespaceURI);\n";
         }
-        print F "\n\nWebCore::QualifiedName** get${namespace}Attrs(size_t* size)\n";
-        print F "{\n    static WebCore::QualifiedName* ${namespace}Attr[] = {\n";
+        print F "\n\nWebCore::QualifiedName** get$parameters{'namespace'}Attrs(size_t* size)\n";
+        print F "{\n    static WebCore::QualifiedName* $parameters{'namespace'}Attr[] = {\n";
         for my $name (sort keys %attrs) {
             print F "        (WebCore::QualifiedName*)&${name}Attr,\n";
         }
         print F "    };\n";
         print F "    *size = ", scalar(keys %attrs), ";\n";
-        print F "    return ${namespace}Attr;\n";
+        print F "    return $parameters{'namespace'}Attr;\n";
         print F "}\n";
     }
 
@@ -402,7 +420,7 @@ print F "\nvoid init()
     AtomicString::init();
 ";
     
-    print(F "    AtomicString ${lowerNamespace}NS(\"$namespaceURI\");\n\n");
+    print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{'namespaceURI'}\");\n\n");
 
     print(F "    // Namespace\n");
     print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
@@ -427,7 +445,7 @@ sub printJSElementIncludes
         next if (hasCustomMapping($name));
 
         my $ucName = $names{$name}{"upperCase"};
-        print F "#include \"JS${namespace}${ucName}Element.h\"\n";
+        print F "#include \"JS$parameters{'namespace'}${ucName}Element.h\"\n";
     }
 }
 
@@ -439,7 +457,7 @@ sub printElementIncludes
         next if ($shouldSkipCustomMappings && hasCustomMapping($name));
 
         my $ucName = $names{$name}{"upperCase"};
-        print F "#include \"${namespace}${ucName}Element.h\"\n";
+        print F "#include \"$parameters{'namespace'}${ucName}Element.h\"\n";
     }
 }
 
@@ -484,8 +502,8 @@ printLicenseHeader($F);
 
 print F <<END
 #include "config.h"
-#include "${namespace}ElementFactory.h"
-#include "${namespace}Names.h"
+#include "$parameters{'namespace'}ElementFactory.h"
+#include "$parameters{'namespace'}Names.h"
 #include "Page.h"
 #include "Settings.h"
 END
@@ -497,14 +515,14 @@ print F <<END
 #include <wtf/HashMap.h>
 
 using namespace WebCore;
-using namespace ${cppNamespace}::${namespace}Names;
+using namespace $parameters{'cppNamespace'}::$parameters{'namespace'}Names;
 
-typedef ${namespace}Element* (*ConstructorFunc)(Document* doc, bool createdByParser);
+typedef $parameters{'namespace'}Element* (*ConstructorFunc)(Document* doc, bool createdByParser);
 typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;
 
 static FunctionMap* gFunctionMap = 0;
 
-namespace ${cppNamespace} {
+namespace $parameters{'cppNamespace'} {
 
 END
 ;
@@ -531,7 +549,7 @@ print F "}\n";
 print F "#endif\n\n" if $guardFactoryWith;
 
 print F <<END
-${namespace}Element* ${namespace}ElementFactory::create${namespace}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
+$parameters{'namespace'}Element* $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
 {
 END
 ;
@@ -554,7 +572,7 @@ print F <<END
     if (func)
         return func(doc, createdByParser);
 
-    return new ${namespace}Element(qName, doc);
+    return new $parameters{'namespace'}Element(qName, doc);
 END
 ;
 
@@ -588,8 +606,8 @@ sub printFactoryHeaderFile
 
     printLicenseHeader($F);
 
-print F "#ifndef ${namespace}ELEMENTFACTORY_H\n";
-print F "#define ${namespace}ELEMENTFACTORY_H\n\n";
+print F "#ifndef $parameters{'namespace'}ELEMENTFACTORY_H\n";
+print F "#define $parameters{'namespace'}ELEMENTFACTORY_H\n\n";
 
 print F "
 namespace WebCore {
@@ -599,17 +617,17 @@ namespace WebCore {
     class AtomicString;
 }
 
-namespace ${cppNamespace}
+namespace $parameters{'cppNamespace'}
 {
-    class ${namespace}Element;
+    class $parameters{'namespace'}Element;
 
     // The idea behind this class is that there will eventually be a mapping from namespace URIs to ElementFactories that can dispense
     // elements.  In a compound document world, the generic createElement function (will end up being virtual) will be called.
-    class ${namespace}ElementFactory
+    class $parameters{'namespace'}ElementFactory
     {
     public:
         WebCore::Element* createElement(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
-        static ${namespace}Element* create${namespace}Element(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
+        static $parameters{'namespace'}Element* create$parameters{'namespace'}Element(const WebCore::QualifiedName& qName, WebCore::Document* doc, bool createdByParser = true);
     };
 }
 
@@ -686,8 +704,8 @@ sub hasCustomMapping
 {
     my $name = shift;
     initializeCustomMappings();
-    return 1 if $namespace eq "HTML" && exists($htmlCustomMappings{$name});
-    return 1 if $namespace eq "SVG" && exists($svgCustomMappings{$name});
+    return 1 if $parameters{'namespace'} eq "HTML" && exists($htmlCustomMappings{$name});
+    return 1 if $parameters{'namespace'} eq "SVG" && exists($svgCustomMappings{$name});
     return 0;
 }
 
@@ -703,20 +721,20 @@ sub printWrapperFunctions
         # Hack for the media tags
         if ($names{$name}{"applyAudioHack"}) {
             print F <<END
-static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
     if (!MediaPlayer::isAvailable())
-        return new JS${namespace}Element(JS${namespace}ElementPrototype::self(exec), element.get());
-    return new JS${namespace}${ucName}Element(JS${namespace}${ucName}ElementPrototype::self(exec), static_cast<${namespace}${ucName}Element*>(element.get()));
+        return new JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
+    return new JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
 }
 
 END
 ;
         } else {
             print F <<END
-static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {   
-    return new JS${namespace}${ucName}Element(JS${namespace}${ucName}ElementPrototype::self(exec), static_cast<${namespace}${ucName}Element*>(element.get()));
+    return new JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
 }
 
 END
@@ -737,11 +755,11 @@ sub printWrapperFactoryCppFile
 
     print F "#if $guardFactoryWith\n\n" if $guardFactoryWith;
 
-    print F "#include \"JS${namespace}ElementWrapperFactory.h\"\n";
+    print F "#include \"JS$parameters{'namespace'}ElementWrapperFactory.h\"\n";
 
     printJSElementIncludes($F, \%tags);
 
-    print F "\n#include \"${namespace}Names.h\"\n\n";
+    print F "\n#include \"$parameters{'namespace'}Names.h\"\n\n";
 
     printElementIncludes($F, \%tags, 1);
 
@@ -750,9 +768,9 @@ using namespace KJS;
 
 namespace WebCore {
 
-using namespace ${namespace}Names;
+using namespace $parameters{'namespace'}Names;
 
-typedef JSNode* (*Create${namespace}ElementWrapperFunction)(ExecState*, PassRefPtr<${namespace}Element>);
+typedef JSNode* (*Create$parameters{'namespace'}ElementWrapperFunction)(ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
 
 END
 ;
@@ -760,9 +778,9 @@ END
     printWrapperFunctions($F, \%tags);
 
     print F <<END
-JSNode* createJS${namespace}Wrapper(ExecState* exec, PassRefPtr<${namespace}Element> element)
+JSNode* createJS$parameters{'namespace'}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {   
-    static HashMap<WebCore::AtomicStringImpl*, Create${namespace}ElementWrapperFunction> map;
+    static HashMap<WebCore::AtomicStringImpl*, Create$parameters{'namespace'}ElementWrapperFunction> map;
     if (map.isEmpty()) {
 END
 ;
@@ -774,7 +792,7 @@ END
         print F "       map.set(${tag}Tag.localName().impl(), create${ucTag}Wrapper);\n";
     }
 
-    if ($namespace eq "HTML") {
+    if ($parameters{'namespace'} eq "HTML") {
         for my $tag (sort keys %htmlCustomMappings) {
             next if !$htmlCustomMappings{$tag};
 
@@ -787,10 +805,10 @@ END
 
     print F <<END
     }
-    Create${namespace}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
+    Create$parameters{'namespace'}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)
         return createWrapperFunction(exec, element);
-    return new JS${namespace}Element(JS${namespace}ElementPrototype::self(exec), element.get());
+    return new JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
 }
 
 }
@@ -811,8 +829,8 @@ sub printWrapperFactoryHeaderFile
 
     printLicenseHeader($F);
 
-    print F "#ifndef JS${namespace}ElementWrapperFactory_h\n";
-    print F "#define JS${namespace}ElementWrapperFactory_h\n\n";
+    print F "#ifndef JS$parameters{'namespace'}ElementWrapperFactory_h\n";
+    print F "#define JS$parameters{'namespace'}ElementWrapperFactory_h\n\n";
 
     print F "#if ${guardFactoryWith}\n" if $guardFactoryWith;
 
@@ -826,9 +844,9 @@ namespace KJS {
 namespace WebCore {
 
     class JSNode;
-    class ${namespace}Element;
+    class $parameters{'namespace'}Element;
 
-    JSNode* createJS${namespace}Wrapper(KJS::ExecState*, PassRefPtr<${namespace}Element>);
+    JSNode* createJS$parameters{'namespace'}Wrapper(KJS::ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
 
 }
  
@@ -837,7 +855,7 @@ END
 
     print F "#endif // $guardFactoryWith\n\n" if $guardFactoryWith;
 
-    print F "#endif // JS${namespace}ElementWrapperFactory_h\n";
+    print F "#endif // JS$parameters{'namespace'}ElementWrapperFactory_h\n";
 
     close F;
 }

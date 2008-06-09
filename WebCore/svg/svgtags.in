@@ -1,4 +1,4 @@
-<tags>
+<tags namespace="SVG" cppNamespace="WebCore" namespaceURI="http://www.w3.org/2000/svg">
 <a/>
 #if ENABLE_SVG_FONTS
 <altGlyph/>
