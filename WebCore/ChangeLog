@@ -1,3 +1,12 @@
+2008-06-07  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Maciej.
+
+        Windows build fix.
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (initializeSupportedTypes):
+
 2008-06-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

@@ -661,7 +661,8 @@ static void initializeSupportedTypes()
         if (!componentCount)
             continue;
 
-        while (Component comp = FindNextComponent(comp, &findCD)) {
+        Component comp = 0;
+        while (comp = FindNextComponent(comp, &findCD)) {
             // Does this component have a MIME type container?
             ComponentDescription infoCD;
             OSErr err = GetComponentInfo(comp, &infoCD, nil /*name*/, nil /*info*/, nil /*icon*/);
