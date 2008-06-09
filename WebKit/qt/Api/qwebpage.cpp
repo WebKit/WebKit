@@ -737,10 +737,11 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev)
     ScrollGranularity granularity;
 
     if (ev == QKeySequence::MoveToNextPage
-        || ev->key() == Qt::Key_Space) {
+        || (ev->key() == Qt::Key_Space && !(ev->modifiers() & Qt::ShiftModifier))) {
         granularity = ScrollByPage;
         direction = ScrollDown;
-    } else if (ev == QKeySequence::MoveToPreviousPage) {
+    } else if (ev == QKeySequence::MoveToPreviousPage
+               || (ev->key() == Qt::Key_Space) && (ev->modifiers() & Qt::ShiftModifier)) {
         granularity = ScrollByPage;
         direction = ScrollUp;
     } else if (ev->key() == Qt::Key_Up && ev->modifiers() & Qt::ControlModifier

@@ -1,3 +1,13 @@
+2008-06-09  Benjamin C Meyer  <ben@meyerhome.net>
+
+        Reviewed by Simon
+
+        Add Shift-Space shortcut to go up one screen, the opposite of Space
+        which goes down one screen.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::handleScrolling):
+
 2008-06-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
