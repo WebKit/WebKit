@@ -1,3 +1,24 @@
+2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Bug 19346: REGRESSION: Mootools 1.2 Class inheritance broken in post-SquirrelFish merge
+        <https://bugs.webkit.org/show_bug.cgi?id=19346>
+
+        A check for whether a function's caller is eval code accidentally included
+        the case where the caller's caller is native code. Add a CodeType field to
+        CodeBlock and use this for the eval caller test instead.
+
+        * VM/CodeBlock.h:
+        (KJS::CodeBlock::CodeBlock):
+        (KJS::ProgramCodeBlock::ProgramCodeBlock):
+        (KJS::EvalCodeBlock::EvalCodeBlock):
+        * VM/Machine.cpp:
+        (KJS::getCallerFunctionOffset):
+        * kjs/nodes.cpp:
+        (KJS::FunctionBodyNode::generateCode):
+        (KJS::ProgramNode::generateCode):
+
 2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Dan Bernstein.

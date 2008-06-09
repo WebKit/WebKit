@@ -64,13 +64,12 @@ bool getCallerFunctionOffset(Register** registerBase, int callOffset, int& calle
     CodeBlock* callerCodeBlock = callFrame[Machine::CallerCodeBlock].u.codeBlock;
     if (!callerCodeBlock) // test for top frame of re-entrant function call
         return false;
-
+    
+    if (callerCodeBlock->codeType == EvalCode)
+        return false;
+    
     callerOffset = callFrame[Machine::CallerRegisterOffset].u.i - callerCodeBlock->numLocals - Machine::CallFrameHeaderSize;
     if (callerOffset < 0) // test for global frame
-        return false;
-
-    Register* callerCallFrame = (*registerBase) + callerOffset;
-    if (!callerCallFrame[Machine::CallerCodeBlock].u.codeBlock) // test for eval frame
         return false;
 
     return true;

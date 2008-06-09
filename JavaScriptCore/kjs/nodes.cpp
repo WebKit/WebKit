@@ -1817,7 +1817,7 @@ void FunctionBodyNode::generateCode(ScopeChainNode* sc)
     ScopeChain scopeChain(sc);
     JSGlobalObject* globalObject = scopeChain.globalObject();
 
-    m_code.set(new CodeBlock(this));
+    m_code.set(new CodeBlock(this, FunctionCode));
 
     CodeGenerator generator(this, globalObject->debugger(), scopeChain, &m_symbolTable, m_code.get());
     generator.generate();
@@ -1853,7 +1853,7 @@ void ProgramNode::generateCode(ScopeChainNode* sc, bool canCreateGlobals)
     ScopeChain scopeChain(sc);
     JSGlobalObject* globalObject = scopeChain.globalObject();
     
-    m_code.set(new ProgramCodeBlock(this, globalObject));
+    m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject));
     
     CodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get(), m_varStack, m_functionStack, canCreateGlobals);
     generator.generate();

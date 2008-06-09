@@ -1,3 +1,15 @@
+2008-06-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Test for:
+
+        Bug 19346: REGRESSION: Mootools 1.2 Class inheritance broken in post-SquirrelFish merge
+        <https://bugs.webkit.org/show_bug.cgi?id=19346>
+
+        * fast/js/function-dot-arguments-and-caller-expected.txt:
+        * fast/js/function-dot-arguments-and-caller.html:
+
 2008-06-08  Vincent Ricard  <magic@magicninja.org>
 
         Reviewed by Darin.

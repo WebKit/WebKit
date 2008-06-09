@@ -81,6 +81,14 @@ eval('(function f() { return f.caller instanceof Object ? "FAIL" : "PASS"; })()'
 
 (function f() {
     return String({ toString: function g() { return g.caller instanceof Object ? "FAIL" : "PASS"; } });
+})(),
+
+(function f() {
+    function g() { return h.apply(this); }
+    function h() { return k(); }
+    function k() { return k.caller instanceof Object ? "PASS" : "FAIL"; }
+    
+    return g();
 })()
 ];
 
