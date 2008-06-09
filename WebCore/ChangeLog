@@ -1,3 +1,11 @@
+2008-06-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Darin.
+
+        Incorporated Darin's comments to bug 18965.
+
+        * rendering/RenderTheme.cpp:
+
 2008-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
