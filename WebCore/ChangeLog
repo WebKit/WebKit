@@ -1,3 +1,19 @@
+2008-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Inherit document.URL from parent's document.URL, not document.baseURI.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19257
+
+        Tests: http/tests/security/cookies/assign-document-url.html
+               http/tests/security/cookies/base-about-blank.html
+               http/tests/security/cookies/base-tag.html
+               http/tests/security/cookies/basic.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::open):
+
 2008-06-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Darin Adler.

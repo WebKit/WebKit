@@ -1,3 +1,23 @@
+2008-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Alder.
+
+        Add a number of tests for document.cookie access.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19257
+
+        * http/tests/security/cookies: Added.
+        * http/tests/security/cookies/assign-document-url-expected.txt: Added.
+        * http/tests/security/cookies/assign-document-url.html: Added.
+        * http/tests/security/cookies/base-about-blank-expected.txt: Added.
+        * http/tests/security/cookies/base-about-blank.html: Added.
+        * http/tests/security/cookies/base-tag-expected.txt: Added.
+        * http/tests/security/cookies/base-tag.html: Added.
+        * http/tests/security/cookies/basic-expected.txt: Added.
+        * http/tests/security/cookies/basic.html: Added.
+        * http/tests/security/cookies/resources: Added.
+        * http/tests/security/cookies/resources/set-a-cookie.html: Added.
+
 2008-06-08  Dan Bernstein  <mitz@apple.com>
 
         - test for <rdar://problem/5961977> Crash in RenderBlock::layoutColumns()

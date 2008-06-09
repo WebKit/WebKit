@@ -1395,7 +1395,7 @@ void Document::open()
     // happen when implicitOpen() is called unless we reorganize Frame code.
     if (Document* parent = parentDocument()) {
         if (m_url.isEmpty() || m_url == blankURL())
-            setURL(parent->baseURL());
+            setURL(parent->url());
         if (m_baseURL.isEmpty() || m_baseURL == blankURL())
             setBaseURL(parent->baseURL());
     }
