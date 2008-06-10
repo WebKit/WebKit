@@ -1,3 +1,15 @@
+2008-06-09  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Make sure web action in context menus have the right enablement,
+        while not messing up other web actions not included in the menu.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::createContextMenu):
+        (QWebPage::updatePositionDependentActions):
+        * Api/qwebpage_p.h:
+
 2008-06-09  Benjamin C Meyer  <ben@meyerhome.net>
 
         Reviewed by Simon
