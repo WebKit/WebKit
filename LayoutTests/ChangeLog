@@ -1,3 +1,9 @@
+2008-06-10  Dan Bernstein  <mitz@apple.com>
+
+        - fix the text encoding in this test
+
+        * editing/selection/move-left-right.html:
+
 2008-06-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.
