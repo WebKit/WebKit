@@ -693,20 +693,39 @@ sub buildVisualStudioProject
     return system $vcBuildPath, $winProjectPath, $command, $config;
 }
 
+sub retrieveQMakespecVar
+{
+    my $mkspec = $_[0];
+    my $varname = $_[1];
+
+    my $compiler = "unknown";
+    #print "retrieveMakespecVar " . $mkspec . ", " . $varname . "\n";
+
+    local *SPEC;
+    open SPEC, "<$mkspec" or return "make";
+    while (<SPEC>) {
+        if ($_ =~ /\s*include\((.+)\)/) {
+            # open the included mkspec
+            my $oldcwd = getcwd();
+            (my $volume, my $directories, my $file) = File::Spec->splitpath($mkspec);
+            chdir "$volume$directories";
+            $compiler = retrieveQMakespecVar($1, $varname);
+            chdir $oldcwd;
+        } elsif ($_ =~ /$varname\s*=\s*([^\s]+)/) {
+            $compiler = $1;
+            last;
+        }
+    }
+    close SPEC;
+    return $compiler;
+}
+
 sub qtMakeCommand($)
 {
     my ($qmakebin) = @_;
     chomp(my $mkspec = `$qmakebin -query QMAKE_MKSPECS`);
     $mkspec .= "/default";
-
-    my $compiler = "";
-    open SPEC, "<$mkspec/qmake.conf" or return "make";
-    while (<SPEC>) {
-        if ($_ =~ /QMAKE_CC\s*=\s*([^\s]+)/) {
-            $compiler = $1;
-        }
-    }
-    close SPEC;
+    my $compiler = retrieveQMakespecVar("$mkspec/qmake.conf", "QMAKE_CC");
 
     #print "default spec: " . $mkspec . "\n";
     #print "compiler found: " . $compiler . "\n";
