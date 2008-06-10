@@ -1,4 +1,4 @@
-<tags namespace="SVG" cppNamespace="WebCore" namespaceURI="http://www.w3.org/2000/svg">
+<tags namespace="SVG" cppNamespace="WebCore" namespaceURI="http://www.w3.org/2000/svg" generateFactory="1" generateWrapperFactory="1" guardFactoryWith="ENABLE(SVG)">
 <a/>
 #if ENABLE_SVG_FONTS
 <altGlyph/>

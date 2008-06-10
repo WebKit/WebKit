@@ -1,4 +1,4 @@
-<attrs namespace="HTML" namespacePrefix="xhtml" cppNamespace="WebCore" namespaceURI="http://www.w3.org/1999/xhtml">
+<attrs namespace="HTML" namespacePrefix="xhtml" cppNamespace="WebCore" namespaceURI="http://www.w3.org/1999/xhtml" generateFactory="1" generateWrapperFactory="1" nullNamespace="1">
 <abbr/>
 <accept_charset/>
 <accept/>

@@ -35,32 +35,22 @@ use IO::File;
 use Switch;
 use XMLTiny qw(parsefile);
 
-my $printFactory = 0;
-my $printWrapperFactory = 0;
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
 my %tags = ();
 my %attrs = ();
 my %parameters = ();
-my $tagsNullNamespace = 0;
-my $attrsNullNamespace = 0;
 my $extraDefines = 0;
 my $preprocessor = "/usr/bin/gcc -E -P -x c++";
-my $guardFactoryWith = 0;
 my %svgCustomMappings = ();
 my %htmlCustomMappings = ();
 
 GetOptions('tags=s' => \$tagsFile, 
     'attrs=s' => \$attrsFile,
     'outputDir=s' => \$outputDir,
-    'factory' => \$printFactory,
-    'wrapperFactory' => \$printWrapperFactory,
-    'tagsNullNamespace' => \$tagsNullNamespace,
-    'attrsNullNamespace' => \$attrsNullNamespace,
     'extraDefines=s' => \$extraDefines,
-    'preprocessor=s' => \$preprocessor,
-    'guardFactoryWith=s' => \$guardFactoryWith);
+    'preprocessor=s' => \$preprocessor);
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
 
@@ -81,12 +71,12 @@ my $wrapperFactoryBasePath = "$outputDir/JS$parameters{'namespace'}ElementWrappe
 printNamesHeaderFile("$namesBasePath.h");
 printNamesCppFile("$namesBasePath.cpp");
 
-if ($printFactory) {
+if ($parameters{'generateFactory'}) {
     printFactoryCppFile("$factoryBasePath.cpp");
     printFactoryHeaderFile("$factoryBasePath.h");
 }
 
-if ($printWrapperFactory) {
+if ($parameters{'generateWrapperFactory'}) {
     printWrapperFactoryCppFile("$wrapperFactoryBasePath.cpp");
     printWrapperFactoryHeaderFile("$wrapperFactoryBasePath.h");
 }
@@ -109,7 +99,13 @@ sub initializeParametersHash
     return ('namespace' => '',
             'namespacePrefix' => '',
             'namespaceURI' => '',
-            'cppNamespace' => '');
+            'cppNamespace' => '',
+            'generateFactory' => 0,
+            'guardFactoryWith' => '',
+            'generateWrapperFactory' => 0,
+            # The 2 nullNamespace properties are generated from the "nullNamespace" attribute with respect to the file parsed (attrs or tags).
+            'tagsNullNamespace' => 0,
+            'attrsNullNamespace' => 0);
 }
 
 ### Parsing handlers
@@ -161,7 +157,7 @@ sub parseAttrs
 
 sub parseParameters
 {
-    my $propertiesRef = shift;
+    my ($propertiesRef, $elementName) = @_;
     my %properties = %$propertiesRef;
 
     # Initialize default properties' values.
@@ -169,8 +165,17 @@ sub parseParameters
 
     # Parse the XML attributes.
     foreach my $property (keys %properties) {
-        die "Unknown parameter $property for tags/attrs\n" if !defined($parameters{$property});
-        $parameters{$property} = $properties{$property};
+        # This is used in case we want to change the parameter name depending
+        # on what is parsed.
+        my $parameter = $property;
+
+        # "nullNamespace" case
+        if ($property eq "nullNamespace") {
+            $parameter = $elementName.(ucfirst $property);
+        }
+
+        die "Unknown parameter $property for tags/attrs\n" if !defined($parameters{$parameter});
+        $parameters{$parameter} = $properties{$property};
     }
 }
 
@@ -200,11 +205,11 @@ sub readNames
     # Check root element to determine what we are parsing
     switch($name) {
         case "tags" {
-            parseParameters(\%{$document{'attrib'}});
+            parseParameters(\%{$document{'attrib'}}, $name);
             parseTags(\@{$document{'content'}});
         }
         case "attrs" {
-            parseParameters(\%{$document{'attrib'}});
+            parseParameters(\%{$document{'attrib'}}, $name);
             parseAttrs(\@{$document{'content'}});
         } else {
             die "Do not know how to parse file starting with $name!\n";
@@ -229,7 +234,7 @@ sub printConstructors
     my ($F, $namesRef) = @_;
     my %names = %$namesRef;
 
-    print F "#if $guardFactoryWith\n" if $guardFactoryWith;
+    print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
     for my $name (sort keys %names) {
         my $ucName = $names{$name}{"upperCase"};
 
@@ -238,7 +243,7 @@ sub printConstructors
         print F "    return new $parameters{'namespace'}${ucName}Element(${name}Tag, doc);\n";
         print F "}\n\n";
     }
-    print F "#endif\n" if $guardFactoryWith;
+    print F "#endif\n" if $parameters{'guardFactoryWith'};
 }
 
 sub printFunctionInits
@@ -425,11 +430,11 @@ print F "\nvoid init()
     print(F "    // Namespace\n");
     print(F "    new ((void*)&${lowerNamespace}NamespaceURI) AtomicString(${lowerNamespace}NS);\n\n");
     if (keys %tags) {
-        my $tagsNamespace = $tagsNullNamespace ? "nullAtom" : "${lowerNamespace}NS";
+        my $tagsNamespace = $parameters{'tagsNullNamespace'} ? "nullAtom" : "${lowerNamespace}NS";
         printDefinitions($F, \%tags, "tags", $tagsNamespace);
     }
     if (keys %attrs) {
-        my $attrsNamespace = $attrsNullNamespace ? "nullAtom" : "${lowerNamespace}NS";
+        my $attrsNamespace = $parameters{'attrsNullNamespace'} ? "nullAtom" : "${lowerNamespace}NS";
         printDefinitions($F, \%attrs, "attributes", $attrsNamespace);
     }
 
@@ -529,7 +534,7 @@ END
 
 printConstructors($F, \%tags);
 
-print F "#if $guardFactoryWith\n" if $guardFactoryWith;
+print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
 print F <<END
 static inline void createFunctionMapIfNecessary()
@@ -546,7 +551,7 @@ END
 printFunctionInits($F, \%tags);
 
 print F "}\n";
-print F "#endif\n\n" if $guardFactoryWith;
+print F "#endif\n\n" if $parameters{'guardFactoryWith'};
 
 print F <<END
 $parameters{'namespace'}Element* $parameters{'namespace'}ElementFactory::create$parameters{'namespace'}Element(const QualifiedName& qName, Document* doc, bool createdByParser)
@@ -554,7 +559,7 @@ $parameters{'namespace'}Element* $parameters{'namespace'}ElementFactory::create$
 END
 ;
 
-print F "#if $guardFactoryWith\n" if $guardFactoryWith;
+print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
 print F <<END
     // Don't make elements without a document
@@ -576,7 +581,7 @@ print F <<END
 END
 ;
 
-if ($guardFactoryWith) {
+if ($parameters{'guardFactoryWith'}) {
 
 print F <<END
 #else
@@ -753,7 +758,7 @@ sub printWrapperFactoryCppFile
 
     print F "#include \"config.h\"\n\n";
 
-    print F "#if $guardFactoryWith\n\n" if $guardFactoryWith;
+    print F "#if $parameters{'guardFactoryWith'}\n\n" if $parameters{'guardFactoryWith'};
 
     print F "#include \"JS$parameters{'namespace'}ElementWrapperFactory.h\"\n";
 
@@ -816,7 +821,7 @@ END
 END
 ;
 
-    print F "#endif\n" if $guardFactoryWith;
+    print F "#endif\n" if $parameters{'guardFactoryWith'};
 
     close F;
 }
@@ -832,7 +837,7 @@ sub printWrapperFactoryHeaderFile
     print F "#ifndef JS$parameters{'namespace'}ElementWrapperFactory_h\n";
     print F "#define JS$parameters{'namespace'}ElementWrapperFactory_h\n\n";
 
-    print F "#if ${guardFactoryWith}\n" if $guardFactoryWith;
+    print F "#if $parameters{'guardFactoryWith'}\n" if $parameters{'guardFactoryWith'};
 
     print F <<END
 #include <wtf/Forward.h>
@@ -853,7 +858,7 @@ namespace WebCore {
 END
 ;
 
-    print F "#endif // $guardFactoryWith\n\n" if $guardFactoryWith;
+    print F "#endif // $parameters{'guardFactoryWith'}\n\n" if $parameters{'guardFactoryWith'};
 
     print F "#endif // JS$parameters{'namespace'}ElementWrapperFactory_h\n";
 
