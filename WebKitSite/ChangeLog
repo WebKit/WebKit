@@ -1,3 +1,12 @@
+2008-06-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Adele.
+
+        - add short title and multisize icon
+        
+        * blog/wp-content/themes/webkit/header.php:
+        * images/surfin-safari.icns: Added.
+
 2008-06-04  Dean Jackson   <dino@apple.com>
 
         Put index pages into specs dirs to make it easier to
