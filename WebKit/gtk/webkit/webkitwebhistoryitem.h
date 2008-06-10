@@ -40,7 +40,7 @@ typedef struct _WebKitWebHistoryItemPrivate WebKitWebHistoryItemPrivate;
 struct _WebKitWebHistoryItem {
     GObject parent_instance;
 
-    WebKitWebHistoryItemPrivate* priv;
+    WebKitWebHistoryItemPrivate *priv;
 };
 
 struct _WebKitWebHistoryItemClass {
@@ -50,29 +50,31 @@ struct _WebKitWebHistoryItemClass {
 WEBKIT_API GType
 webkit_web_history_item_get_type (void);
 
-WEBKIT_API WebKitWebHistoryItem*
+WEBKIT_API WebKitWebHistoryItem *
 webkit_web_history_item_new (void);
 
-WEBKIT_API WebKitWebHistoryItem*
-webkit_web_history_item_new_with_data (const gchar* uri, const gchar* title);
+WEBKIT_API WebKitWebHistoryItem *
+webkit_web_history_item_new_with_data         (const gchar          *uri,
+                                               const gchar          *title);
 
-WEBKIT_API const gchar*
-webkit_web_history_item_get_title (WebKitWebHistoryItem* web_history_item);
+WEBKIT_API const gchar *
+webkit_web_history_item_get_title             (WebKitWebHistoryItem *web_history_item);
 
-WEBKIT_API const gchar*
-webkit_web_history_item_get_alternate_title (WebKitWebHistoryItem* web_history_item);
+WEBKIT_API const gchar *
+webkit_web_history_item_get_alternate_title   (WebKitWebHistoryItem *web_history_item);
 
 WEBKIT_API void
-webkit_web_history_item_set_alternate_title (WebKitWebHistoryItem* web_history_item, const gchar* title);
+webkit_web_history_item_set_alternate_title   (WebKitWebHistoryItem *web_history_item,
+                                               const gchar          *title);
 
-WEBKIT_API const gchar*
-webkit_web_history_item_get_uri (WebKitWebHistoryItem* web_history_item);
+WEBKIT_API const gchar *
+webkit_web_history_item_get_uri               (WebKitWebHistoryItem *web_history_item);
 
-WEBKIT_API const gchar*
-webkit_web_history_item_get_original_uri (WebKitWebHistoryItem* web_history_item);
+WEBKIT_API const gchar *
+webkit_web_history_item_get_original_uri      (WebKitWebHistoryItem *web_history_item);
 
 WEBKIT_API gdouble
-webkit_web_history_item_get_last_visited_time (WebKitWebHistoryItem* web_history_item);
+webkit_web_history_item_get_last_visited_time (WebKitWebHistoryItem *web_history_item);
 
 G_END_DECLS
 

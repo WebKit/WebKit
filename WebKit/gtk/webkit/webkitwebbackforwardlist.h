@@ -40,7 +40,7 @@ typedef struct _WebKitWebBackForwardListPrivate WebKitWebBackForwardListPrivate;
 struct _WebKitWebBackForwardList {
     GObject parent_instance;
 
-    WebKitWebBackForwardListPrivate* priv;
+    WebKitWebBackForwardListPrivate *priv;
 };
 
 struct _WebKitWebBackForwardListClass {
@@ -50,50 +50,56 @@ struct _WebKitWebBackForwardListClass {
 WEBKIT_API GType
 webkit_web_back_forward_list_get_type (void);
 
-WEBKIT_API WebKitWebBackForwardList*
-webkit_web_back_forward_list_new_with_web_view (WebKitWebView* web_view);
+WEBKIT_API WebKitWebBackForwardList *
+webkit_web_back_forward_list_new_with_web_view           (WebKitWebView *web_view);
 
 WEBKIT_API void
-webkit_web_back_forward_list_go_forward (WebKitWebBackForwardList* web_back_forward_list);
+webkit_web_back_forward_list_go_forward                  (WebKitWebBackForwardList *web_back_forward_list);
 
 WEBKIT_API void
-webkit_web_back_forward_list_go_back (WebKitWebBackForwardList* web_back_forward_list);
+webkit_web_back_forward_list_go_back                     (WebKitWebBackForwardList *web_back_forward_list);
 
 WEBKIT_API gboolean
-webkit_web_back_forward_list_contains_item (WebKitWebBackForwardList* web_back_forward_list, WebKitWebHistoryItem* history_item);
+webkit_web_back_forward_list_contains_item               (WebKitWebBackForwardList *web_back_forward_list,
+                                                          WebKitWebHistoryItem     *history_item);
 
 WEBKIT_API void
-webkit_web_back_forward_list_go_to_item (WebKitWebBackForwardList* web_back_forward_list, WebKitWebHistoryItem* history_item);
+webkit_web_back_forward_list_go_to_item                  (WebKitWebBackForwardList *web_back_forward_list,
+                                                          WebKitWebHistoryItem     *history_item);
 
-WEBKIT_API GList*
-webkit_web_back_forward_list_get_forward_list_with_limit (WebKitWebBackForwardList* web_back_forward_list, gint limit);
+WEBKIT_API GList *
+webkit_web_back_forward_list_get_forward_list_with_limit (WebKitWebBackForwardList *web_back_forward_list,
+                                                          gint                      limit);
 
-WEBKIT_API GList*
-webkit_web_back_forward_list_get_back_list_with_limit (WebKitWebBackForwardList* web_back_forward_list, gint limit);
+WEBKIT_API GList *
+webkit_web_back_forward_list_get_back_list_with_limit    (WebKitWebBackForwardList *web_back_forward_list,
+                                                          gint                      limit);
 
-WEBKIT_API WebKitWebHistoryItem*
-webkit_web_back_forward_list_get_back_item (WebKitWebBackForwardList* web_back_forward_list);
+WEBKIT_API WebKitWebHistoryItem *
+webkit_web_back_forward_list_get_back_item               (WebKitWebBackForwardList *web_back_forward_list);
 
-WEBKIT_API WebKitWebHistoryItem*
-webkit_web_back_forward_list_get_current_item (WebKitWebBackForwardList* web_back_forward_list);
+WEBKIT_API WebKitWebHistoryItem *
+webkit_web_back_forward_list_get_current_item            (WebKitWebBackForwardList *web_back_forward_list);
 
-WEBKIT_API WebKitWebHistoryItem*
-webkit_web_back_forward_list_get_forward_item (WebKitWebBackForwardList* web_back_forward_list);
+WEBKIT_API WebKitWebHistoryItem *
+webkit_web_back_forward_list_get_forward_item            (WebKitWebBackForwardList *web_back_forward_list);
 
-WEBKIT_API WebKitWebHistoryItem*
-webkit_web_back_forward_list_get_nth_item (WebKitWebBackForwardList* web_back_forward_list, gint index);
-
-WEBKIT_API gint
-webkit_web_back_forward_list_get_back_length (WebKitWebBackForwardList* web_back_forward_list);
-
-WEBKIT_API gint
-webkit_web_back_forward_list_get_forward_length (WebKitWebBackForwardList* web_back_forward_list);
+WEBKIT_API WebKitWebHistoryItem *
+webkit_web_back_forward_list_get_nth_item                (WebKitWebBackForwardList *web_back_forward_list,
+                                                          gint                      index);
 
 WEBKIT_API gint
-webkit_web_back_forward_list_get_limit (WebKitWebBackForwardList* web_back_forward_list);
+webkit_web_back_forward_list_get_back_length             (WebKitWebBackForwardList *web_back_forward_list);
+
+WEBKIT_API gint
+webkit_web_back_forward_list_get_forward_length          (WebKitWebBackForwardList *web_back_forward_list);
+
+WEBKIT_API gint
+webkit_web_back_forward_list_get_limit                   (WebKitWebBackForwardList *web_back_forward_list);
 
 WEBKIT_API void
-webkit_web_back_forward_list_set_limit (WebKitWebBackForwardList* web_back_forward_list, gint limit);
+webkit_web_back_forward_list_set_limit                   (WebKitWebBackForwardList *web_back_forward_list,
+                                                          gint                      limit);
 
 G_END_DECLS
 

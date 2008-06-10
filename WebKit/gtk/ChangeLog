@@ -1,3 +1,17 @@
+2008-06-10  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker and Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16676
+        Apply GTK coding style to WebKit Gtk public headers
+
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebsettings.h:
+        * webkit/webkitwebview.h:
+
 2008-06-07  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Confirmed by Christian Dywan.

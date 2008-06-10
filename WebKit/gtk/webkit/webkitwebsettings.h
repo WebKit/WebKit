@@ -38,7 +38,7 @@ typedef struct _WebKitWebSettingsPrivate WebKitWebSettingsPrivate;
 struct _WebKitWebSettings {
     GObject parent_instance;
 
-    WebKitWebSettingsPrivate* priv;
+    WebKitWebSettingsPrivate *priv;
 };
 
 struct _WebKitWebSettingsClass {
@@ -52,13 +52,13 @@ struct _WebKitWebSettingsClass {
 };
 
 WEBKIT_API GType
-webkit_web_settings_get_type(void);
+webkit_web_settings_get_type (void);
 
-WEBKIT_API WebKitWebSettings*
-webkit_web_settings_new(void);
+WEBKIT_API WebKitWebSettings *
+webkit_web_settings_new      (void);
 
-WEBKIT_API WebKitWebSettings*
-webkit_web_settings_copy(WebKitWebSettings* web_settings);
+WEBKIT_API WebKitWebSettings *
+webkit_web_settings_copy     (WebKitWebSettings *web_settings);
 
 G_END_DECLS
 

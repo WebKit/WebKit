@@ -41,7 +41,7 @@ typedef struct _WebKitWebFramePrivate WebKitWebFramePrivate;
 struct _WebKitWebFrame {
     GObject parent_instance;
 
-    WebKitWebFramePrivate* priv;
+    WebKitWebFramePrivate *priv;
 };
 
 struct _WebKitWebFrameClass {
@@ -56,40 +56,42 @@ struct _WebKitWebFrameClass {
 };
 
 WEBKIT_API GType
-webkit_web_frame_get_type (void);
+webkit_web_frame_get_type           (void);
+
+WEBKIT_API WebKitWebFrame *
+webkit_web_frame_new                (WebKitWebView        *web_view);
+
+WEBKIT_API WebKitWebView *
+webkit_web_frame_get_web_view       (WebKitWebFrame       *frame);
+
+WEBKIT_API const gchar *
+webkit_web_frame_get_name           (WebKitWebFrame       *frame);
+
+WEBKIT_API const gchar *
+webkit_web_frame_get_title          (WebKitWebFrame       *frame);
+
+WEBKIT_API const gchar *
+webkit_web_frame_get_uri            (WebKitWebFrame       *frame);
 
 WEBKIT_API WebKitWebFrame*
-webkit_web_frame_new (WebKitWebView* web_view);
-
-WEBKIT_API WebKitWebView*
-webkit_web_frame_get_web_view (WebKitWebFrame* frame);
-
-WEBKIT_API const gchar*
-webkit_web_frame_get_name (WebKitWebFrame* frame);
-
-WEBKIT_API const gchar*
-webkit_web_frame_get_title (WebKitWebFrame* frame);
-
-WEBKIT_API const gchar*
-webkit_web_frame_get_uri (WebKitWebFrame* frame);
-
-WEBKIT_API WebKitWebFrame*
-webkit_web_frame_get_parent (WebKitWebFrame* frame);
+webkit_web_frame_get_parent         (WebKitWebFrame       *frame);
 
 WEBKIT_API void
-webkit_web_frame_load_request (WebKitWebFrame* frame, WebKitNetworkRequest* request);
+webkit_web_frame_load_request       (WebKitWebFrame       *frame,
+                                     WebKitNetworkRequest *request);
 
 WEBKIT_API void
-webkit_web_frame_stop_loading (WebKitWebFrame* frame);
+webkit_web_frame_stop_loading       (WebKitWebFrame       *frame);
 
 WEBKIT_API void
-webkit_web_frame_reload (WebKitWebFrame* frame);
+webkit_web_frame_reload             (WebKitWebFrame       *frame);
 
-WEBKIT_API WebKitWebFrame*
-webkit_web_frame_find_frame (WebKitWebFrame* frame, const gchar* name);
+WEBKIT_API WebKitWebFrame *
+webkit_web_frame_find_frame         (WebKitWebFrame       *frame,
+                                     const gchar          *name);
 
 WEBKIT_API JSGlobalContextRef
-webkit_web_frame_get_global_context (WebKitWebFrame* frame);
+webkit_web_frame_get_global_context (WebKitWebFrame       *frame);
 
 G_END_DECLS
 

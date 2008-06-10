@@ -38,7 +38,7 @@ typedef struct _WebKitNetworkRequestPrivate WebKitNetworkRequestPrivate;
 struct _WebKitNetworkRequest {
     GObject parent_instance;
 
-    WebKitNetworkRequestPrivate* priv;
+    WebKitNetworkRequestPrivate *priv;
 };
 
 struct _WebKitNetworkRequestClass {
@@ -48,14 +48,15 @@ struct _WebKitNetworkRequestClass {
 WEBKIT_API GType
 webkit_network_request_get_type (void);
 
-WEBKIT_API WebKitNetworkRequest*
-webkit_network_request_new (const gchar* uri);
+WEBKIT_API WebKitNetworkRequest *
+webkit_network_request_new      (const gchar          *uri);
 
 WEBKIT_API void
-webkit_network_request_set_uri (WebKitNetworkRequest* request, const gchar* uri);
+webkit_network_request_set_uri  (WebKitNetworkRequest *request,
+                                 const gchar*          uri);
 
-WEBKIT_API const gchar*
-webkit_network_request_get_uri (WebKitNetworkRequest* request);
+WEBKIT_API const gchar *
+webkit_network_request_get_uri  (WebKitNetworkRequest *request);
 
 G_END_DECLS
 
