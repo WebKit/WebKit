@@ -1,5 +1,13 @@
 2008-06-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Not reviewed.
+        
+        - tweak newly added markup.
+
+        * blog/wp-content/themes/webkit/header.php:
+
+2008-06-10  Maciej Stachowiak  <mjs@apple.com>
+
         Rubber stamped by Adele.
 
         - add short title and multisize icon
