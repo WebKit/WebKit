@@ -244,8 +244,7 @@ bool EditorClientQt::selectWordBeforeMenuEvent()
 
 bool EditorClientQt::isEditable()
 { 
-    // FIXME: should be controllable by a setting in QWebPage
-    return false;
+    return m_page->isEditable();
 }
 
 void EditorClientQt::registerCommandForUndo(WTF::PassRefPtr<WebCore::EditCommand> cmd)

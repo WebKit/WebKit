@@ -159,6 +159,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     pluginFactory = 0;
     insideOpenCall = false;
     forwardUnsupportedContent = false;
+    editable = false;
     linkPolicy = QWebPage::DontDelegateLinks;
     currentContextMenu = 0;
 
@@ -1734,6 +1735,38 @@ bool QWebPage::focusNextPrevChild(bool next)
     }
     //qDebug() << "focusNextPrevChild(" << next << ") =" << ev.isAccepted() << "focusedNode?" << hasFocusedNode;
     return hasFocusedNode;
+}
+
+/*!
+    \property QWebPage::editable
+    \brief whether the content in this QWebPage is editable or not
+    \since 4.5
+
+    If this property is enabled the contents of the page can be edited by the user through a visible
+    cursor. If disabled (the default) only HTML elements in the web page with their
+    \c{contenteditable} attribute set are editable.
+*/
+void QWebPage::setEditable(bool editable)
+{
+    if (d->editable != editable) {
+        d->editable = editable;
+        d->page->setTabKeyCyclesThroughElements(!editable);
+        if (d->mainFrame) {
+            WebCore::Frame* frame = d->mainFrame->d->frame;
+            if (editable) {
+                frame->applyEditingStyleToBodyElement();
+                // FIXME: mac port calls this if there is no selectedDOMRange
+                //frame->setSelectionFromNone();
+            } else {
+                frame->removeEditingStyleFromBodyElement();
+            }
+        }
+    }
+}
+
+bool QWebPage::isEditable() const
+{
+    return d->editable;
 }
 
 /*!

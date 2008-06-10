@@ -66,6 +66,7 @@ class QWEBKIT_EXPORT QWebPage : public QObject
     Q_PROPERTY(bool forwardUnsupportedContent READ forwardUnsupportedContent WRITE setForwardUnsupportedContent)
     Q_PROPERTY(LinkDelegationPolicy linkDelegationPolicy READ linkDelegationPolicy WRITE setLinkDelegationPolicy)
     Q_PROPERTY(QPalette palette READ palette WRITE setPalette)
+    Q_PROPERTY(bool editable READ isEditable WRITE setEditable)
     Q_ENUMS(LinkDelegationPolicy NavigationType WebAction)
 public:
     enum NavigationType {
@@ -220,6 +221,9 @@ public:
 
     void setPalette(const QPalette &palette);
     QPalette palette() const;
+
+    void setEditable(bool editable);
+    bool isEditable() const;
 
     bool swallowContextMenuEvent(QContextMenuEvent *event);
     void updatePositionDependentActions(const QPoint &pos);
