@@ -86,6 +86,8 @@ namespace WebCore {
 
         void insertedIntoDocument(EventTargetNode* referenceNode);
         void removedFromDocument(EventTargetNode* referenceNode);
+        void willMoveToNewOwnerDocument(EventTargetNode* referenceNode);
+        void didMoveToNewOwnerDocument(EventTargetNode* referenceNode);
 
         void handleLocalEvents(EventTargetNode* referenceNode, Event*, bool useCapture);
 

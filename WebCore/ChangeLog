@@ -1,3 +1,22 @@
+2008-06-10  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mjs.
+
+        Fix disconnected event listener crasher
+        m_disconnectedNodesWithEventListeners not updated when nodes adopted
+        https://bugs.webkit.org/show_bug.cgi?id=19451
+
+        I failed to find a way to make this crash DRT, I can crash Debug Safari consistently.
+
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::willMoveToNewOwnerDocument):
+        (WebCore::EventTarget::didMoveToNewOwnerDocument):
+        * dom/EventTarget.h:
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::willMoveToNewOwnerDocument):
+        (WebCore::EventTargetNode::didMoveToNewOwnerDocument):
+        * dom/EventTargetNode.h:
+
 2008-06-10  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

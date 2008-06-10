@@ -299,6 +299,18 @@ void EventTarget::removedFromDocument(EventTargetNode* referenceNode)
         referenceNode->document()->registerDisconnectedNodeWithEventListeners(referenceNode);
 }
 
+void EventTarget::willMoveToNewOwnerDocument(EventTargetNode* referenceNode)
+{
+    if (referenceNode && referenceNode->m_regdListeners && !referenceNode->m_regdListeners->isEmpty())
+        referenceNode->document()->unregisterDisconnectedNodeWithEventListeners(referenceNode);
+}
+
+void EventTarget::didMoveToNewOwnerDocument(EventTargetNode* referenceNode)
+{
+    if (referenceNode && referenceNode->m_regdListeners && !referenceNode->m_regdListeners->isEmpty())
+        referenceNode->document()->registerDisconnectedNodeWithEventListeners(referenceNode);
+}
+
 void EventTarget::handleLocalEvents(EventTargetNode* referenceNode, Event* evt, bool useCapture)
 {
     ASSERT(referenceNode);

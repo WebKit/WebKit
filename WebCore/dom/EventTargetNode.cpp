@@ -82,6 +82,18 @@ void EventTargetNode::removedFromDocument()
     Node::removedFromDocument();
 }
 
+void EventTargetNode::willMoveToNewOwnerDocument()
+{
+    EventTarget::willMoveToNewOwnerDocument(this);
+    Node::willMoveToNewOwnerDocument();
+}
+
+void EventTargetNode::didMoveToNewOwnerDocument()
+{
+    EventTarget::didMoveToNewOwnerDocument(this);
+    Node::didMoveToNewOwnerDocument();
+}
+
 void EventTargetNode::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTarget::addEventListener(this, eventType, listener, useCapture);

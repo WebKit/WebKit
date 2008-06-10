@@ -75,6 +75,8 @@ public:
 
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
 
     /**
      * Perform the default action for an event e.g. submitting a form
