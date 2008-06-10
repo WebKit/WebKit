@@ -1,3 +1,17 @@
+2008-06-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16503
+        match limit takes at least 13% of the time on the SunSpider regexp-dna test
+
+        Make the limit test slightly more efficient. It is not clear how much of a win it is,
+        as the improvement on regexp-dna varies from 2.3% to 0.6% depending on what revision I
+        apply the patch to. Today, the win on regexp-dna was minimal, but the total win was whopping
+        0.5%, due to random code generation changes.
+
+        * pcre/pcre_exec.cpp: (match): Avoid loading a constant on each iteration.
+
 2008-06-09  Alp Toker  <alp@nuanti.com>
 
         gcc3/autotools build fix. Add explicit -O2 -fno-strict-aliasing to

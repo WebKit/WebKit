@@ -410,7 +410,7 @@ static int match(const UChar* subjectPtr, const unsigned char* instructionPtr, i
     bool isMatch = false;
     int min;
     bool minimize = false; /* Initialization not really needed, but some compilers think so. */
-    unsigned matchCount = 0;
+    unsigned remainingMatchCount = matchLimit;
     
     MatchStack stack;
 
@@ -443,7 +443,7 @@ static int match(const UChar* subjectPtr, const unsigned char* instructionPtr, i
     /* This is where control jumps back to to effect "recursion" */
     
 RECURSE:
-    if (++matchCount > matchLimit)
+    if (!--remainingMatchCount)
         return matchError(JSRegExpErrorHitLimit, stack);
 
     /* Now start processing the operations. */
