@@ -13,6 +13,8 @@ Programs_GtkLauncher_SOURCES = \
 	WebKitTools/GtkLauncher/main.c
 
 Programs_GtkLauncher_CFLAGS = \
+	-fno-strict-aliasing \
+	-O2 \
 	$(GLOBALDEPS_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
 	$(global_cflags)
@@ -39,6 +41,8 @@ Programs_DumpRenderTree_SOURCES = \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
 
 Programs_DumpRenderTree_CXXFLAGS = \
+	-fno-strict-aliasing \
+	-O2 \
 	$(GLOBALDEPS_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
 	$(global_cxxflags) \

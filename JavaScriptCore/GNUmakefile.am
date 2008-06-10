@@ -159,28 +159,43 @@ Programs_minidom_SOURCES = \
 	JavaScriptCore/API/Node.c \
 	JavaScriptCore/API/NodeList.c \
 	JavaScriptCore/API/minidom.c
-Programs_minidom_CPPFLAGS = $(global_cppflags) $(javascriptcore_cppflags)
+
+Programs_minidom_CPPFLAGS = \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
 Programs_minidom_CFLAGS = \
+	-fno-strict-aliasing \
+	-O2 \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)
+
 Programs_minidom_CXXFLAGS = \
+	-fno-strict-aliasing \
+	-O2 \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS)
+
 Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
 	 -lstdc++
 
 # testkjs
 Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
+
 Programs_testkjs_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
+
 Programs_testkjs_CXXFLAGS = \
+	-fno-strict-aliasing \
+	-O2 \
 	$(global_cxxflags) \
 	$(global_cflags) \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS)
+
 Programs_testkjs_LDADD = \
 	libJavaScriptCore.la
 

@@ -1,3 +1,10 @@
+2008-06-09  Alp Toker  <alp@nuanti.com>
+
+        gcc3/autotools build fix. Add explicit -O2 -fno-strict-aliasing to
+        each of the tools since these are no longer set globally.
+
+        * GNUmakefile.am:
+
 2008-06-08  Darin Adler  <darin@apple.com>
 
         * Scripts/make-js-test-wrappers: Added another exception.
