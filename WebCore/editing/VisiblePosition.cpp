@@ -122,13 +122,13 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
         int offset;
         p.getInlineBoxAndOffset(m_affinity, primaryDirection, box, offset);
         if (!box)
-            return primaryDirection == LTR ? previousVisuallyDistinctCandidate(p) : nextVisuallyDistinctCandidate(p);
+            return primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
         RenderObject* renderer = box->object();
 
         while (true) {
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretRightmostOffset())
-                return box->direction() == LTR ? previousVisuallyDistinctCandidate(p) : nextVisuallyDistinctCandidate(p);
+                return box->direction() == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
             offset = box->direction() == LTR ? renderer->previousOffset(offset) : renderer->nextOffset(offset);
 
@@ -142,7 +142,7 @@ Position VisiblePosition::leftVisuallyDistinctCandidate() const
                 // Overshot to the left.
                 InlineBox* prevBox = box->prevLeafChild();
                 if (!prevBox)
-                    return primaryDirection == LTR ? previousVisuallyDistinctCandidate(p) : nextVisuallyDistinctCandidate(p);;
+                    return primaryDirection == LTR ? previousVisuallyDistinctCandidate(m_deepPosition) : nextVisuallyDistinctCandidate(m_deepPosition);
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = prevBox;
@@ -263,13 +263,13 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
         int offset;
         p.getInlineBoxAndOffset(m_affinity, primaryDirection, box, offset);
         if (!box)
-            return primaryDirection == LTR ? nextVisuallyDistinctCandidate(p) : previousVisuallyDistinctCandidate(p);
+            return primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
         RenderObject* renderer = box->object();
 
         while (true) {
             if ((renderer->isReplaced() || renderer->isBR()) && offset == box->caretLeftmostOffset())
-                return box->direction() == LTR ? nextVisuallyDistinctCandidate(p) : previousVisuallyDistinctCandidate(p);
+                return box->direction() == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
             offset = box->direction() == LTR ? renderer->nextOffset(offset) : renderer->previousOffset(offset);
 
@@ -283,7 +283,7 @@ Position VisiblePosition::rightVisuallyDistinctCandidate() const
                 // Overshot to the right.
                 InlineBox* nextBox = box->nextLeafChild();
                 if (!nextBox)
-                    return primaryDirection == LTR ? nextVisuallyDistinctCandidate(p) : previousVisuallyDistinctCandidate(p);;
+                    return primaryDirection == LTR ? nextVisuallyDistinctCandidate(m_deepPosition) : previousVisuallyDistinctCandidate(m_deepPosition);
 
                 // Reposition at the other logical position corresponding to our edge's visual position and go for another round.
                 box = nextBox;

@@ -1,3 +1,14 @@
+2008-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - update test for https://bugs.webkit.org/show_bug.cgi?id=19443
+          <rdar://problem/5994544> REGRESSION (r32531-r32652): Moving the insertion point past a newline inserted in a text area skips the next character
+
+        * editing/selection/move-left-right-expected.txt:
+        * editing/selection/move-left-right.html:
+        * platform/mac/editing/selection/move-left-right-expected.txt:
+
 2008-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Alder.
