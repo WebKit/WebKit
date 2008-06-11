@@ -1,3 +1,26 @@
+2008-06-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19455>
+        Crash at RenderObject::childAt during JustifyCenter
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::surroundNodeRangeWithElement): Added a FIXME.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): If we're removing a line
+        break that consists of a single '\n' in a text node by itself, remove
+        the whole text node instead of just emptying it out.
+        * editing/Selection.cpp:
+        (WebCore::Selection::validate): Added a FIXME about canonicalizing
+        to positions that aren't candidates.
+        * editing/SelectionController.cpp:
+        (WebCore::SelectionController::nodeWillBeRemoved): When the base and/or
+        extent are about to be removed but the start and end aren't, change the 
+        base and extent to the start and end, but don't re-validate the selection, 
+        since doing so could move the start and end into the node that is about 
+        to be removed.
+
 2008-06-11  Gregory Hughes  <ghughes@apple.com>
 
         Reviewed by David Harrison.

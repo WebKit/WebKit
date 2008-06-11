@@ -1,3 +1,13 @@
+2008-06-11  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Eric.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19455>
+        Crash at RenderObject::childAt during JustifyCenter
+
+        * editing/execCommand/19455-expected.txt: Added.
+        * editing/execCommand/19455.html: Added.
+
 2008-06-10  Dan Bernstein  <mitz@apple.com>
 
         - fix the text encoding in this test

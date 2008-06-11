@@ -1230,6 +1230,9 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(Node *startNode, Node *endN
             break;
         node = next;
     }
+    // FIXME: We should probably call updateStartEnd if the start or end was in the node
+    // range so that the endingSelection() is canonicalized.  See the comments at the end of
+    // Selection::validate().
 }
 
 void ApplyStyleCommand::addBlockStyle(const StyleChange& styleChange, HTMLElement* block)

@@ -188,13 +188,14 @@ void SelectionController::nodeWillBeRemoved(Node *node)
         clearRenderTreeSelection = true;
         clearDOMTreeSelection = true;
     } else if (baseRemoved || extentRemoved) {
-        if (m_sel.isBaseFirst()) {
-            m_sel.setBase(m_sel.start());
-            m_sel.setExtent(m_sel.end());
-        } else {
-            m_sel.setBase(m_sel.start());
-            m_sel.setExtent(m_sel.end());
-        }
+        // The base and/or extent are about to be removed, but the start and end aren't.
+        // Change the base and extent to the start and end, but don't re-validate the
+        // selection, since doing so could move the start and end into the node
+        // that is about to be removed.
+        if (m_sel.isBaseFirst())
+            m_sel.setWithoutValidation(m_sel.start(), m_sel.end());
+        else
+            m_sel.setWithoutValidation(m_sel.end(), m_sel.start());
     // FIXME: This could be more efficient if we had an isNodeInRange function on Ranges.
     } else if (Range::compareBoundaryPoints(m_sel.start(), Position(node, 0)) == -1 &&
                Range::compareBoundaryPoints(m_sel.end(), Position(node, 0)) == 1) {

@@ -366,6 +366,8 @@ void Selection::validate()
         // purposes of comparing selections). This is an ideal point of the code
         // to do this operation, since all selection changes that result in a RANGE 
         // come through here before anyone uses it.
+        // FIXME: Canonicalizing is good, but haven't we already done it (when we
+        // set these two positions to VisiblePosition deepEquivalent()s above)?
         m_start = m_start.downstream();
         m_end = m_end.upstream();
     }

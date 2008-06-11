@@ -785,8 +785,14 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         // expects this behavior).
         else if (isBlock(node))
             removeNodeAndPruneAncestors(node);
-        else if (lineBreakExistsAtPosition(caretAfterDelete))
-            deleteTextFromNode(static_cast<Text*>(node), position.offset(), 1);
+        else if (lineBreakExistsAtPosition(caretAfterDelete)) {
+            // There is a preserved '\n' at caretAfterDelete.
+            Text* textNode = static_cast<Text*>(node);
+            if (textNode->length() == 1)
+                removeNodeAndPruneAncestors(node);
+            else 
+                deleteTextFromNode(textNode, position.offset(), 1);
+        }
     }
 
     // Add a br if pruning an empty block level element caused a collapse.  For example:
