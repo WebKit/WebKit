@@ -449,10 +449,12 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
         if (ev->button() == Qt::LeftButton) {
             if(focusFrame && (focusFrame->editor()->canCopy() || focusFrame->editor()->canDHTMLCopy())) {
                 focusFrame->editor()->copy();
+                ev->setAccepted(true);
             }
         } else if (ev->button() == Qt::MidButton) {
             if(focusFrame && (focusFrame->editor()->canPaste() || focusFrame->editor()->canDHTMLPaste())) {
                 focusFrame->editor()->paste();
+                ev->setAccepted(true);
             }
         }
         Pasteboard::generalPasteboard()->setSelectionMode(oldSelectionMode);

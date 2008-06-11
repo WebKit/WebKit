@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Fix left-click and middle-click mouse event are not properly accepted.
+        
+        When copying or pasting text using left or middle-click, the event must be
+        accepted so that it will not be potentially processed further by the parent
+        and/or sub-classed widget.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::mouseReleaseEvent):
+
+2008-06-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix input element does not accept character typed in using AltGr.
 
         EditorClient is modified to catch AltGr and Ctrl+Alt key combination.
