@@ -103,6 +103,7 @@ static const char* opcodeNames[] = {
     "jmp",
     "jtrue",
     "jfalse",
+    "jless",
     "jmp_scopes",
 
     "new_func",

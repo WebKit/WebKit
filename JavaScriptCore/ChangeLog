@@ -1,3 +1,98 @@
+2008-06-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Bug 19457: Create fused opcodes for tests and conditional jumps
+        <https://bugs.webkit.org/show_bug.cgi?id=19457>
+
+        Add a new jless instruction, and modify the code generator to emit it
+        instead of the pair (less, jtrue).
+
+        Gives a 3.6% improvement on SunSpider.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator):
+        (KJS::CodeGenerator::emitOpcode):
+        (KJS::CodeGenerator::retrieveLastBinaryOp):
+        (KJS::CodeGenerator::rewindBinaryOp):
+        (KJS::CodeGenerator::emitJump):
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        (KJS::CodeGenerator::emitJumpIfFalse):
+        (KJS::CodeGenerator::emitMove):
+        (KJS::CodeGenerator::emitNot):
+        (KJS::CodeGenerator::emitEqual):
+        (KJS::CodeGenerator::emitNotEqual):
+        (KJS::CodeGenerator::emitStrictEqual):
+        (KJS::CodeGenerator::emitNotStrictEqual):
+        (KJS::CodeGenerator::emitLess):
+        (KJS::CodeGenerator::emitLessEq):
+        (KJS::CodeGenerator::emitPreInc):
+        (KJS::CodeGenerator::emitPreDec):
+        (KJS::CodeGenerator::emitPostInc):
+        (KJS::CodeGenerator::emitPostDec):
+        (KJS::CodeGenerator::emitToJSNumber):
+        (KJS::CodeGenerator::emitNegate):
+        (KJS::CodeGenerator::emitAdd):
+        (KJS::CodeGenerator::emitMul):
+        (KJS::CodeGenerator::emitDiv):
+        (KJS::CodeGenerator::emitMod):
+        (KJS::CodeGenerator::emitSub):
+        (KJS::CodeGenerator::emitLeftShift):
+        (KJS::CodeGenerator::emitRightShift):
+        (KJS::CodeGenerator::emitUnsignedRightShift):
+        (KJS::CodeGenerator::emitBitAnd):
+        (KJS::CodeGenerator::emitBitXOr):
+        (KJS::CodeGenerator::emitBitOr):
+        (KJS::CodeGenerator::emitBitNot):
+        (KJS::CodeGenerator::emitInstanceOf):
+        (KJS::CodeGenerator::emitTypeOf):
+        (KJS::CodeGenerator::emitIn):
+        (KJS::CodeGenerator::emitLoad):
+        (KJS::CodeGenerator::emitNewObject):
+        (KJS::CodeGenerator::emitNewArray):
+        (KJS::CodeGenerator::emitResolve):
+        (KJS::CodeGenerator::emitGetScopedVar):
+        (KJS::CodeGenerator::emitPutScopedVar):
+        (KJS::CodeGenerator::emitResolveBase):
+        (KJS::CodeGenerator::emitResolveWithBase):
+        (KJS::CodeGenerator::emitResolveFunction):
+        (KJS::CodeGenerator::emitGetById):
+        (KJS::CodeGenerator::emitPutById):
+        (KJS::CodeGenerator::emitPutGetter):
+        (KJS::CodeGenerator::emitPutSetter):
+        (KJS::CodeGenerator::emitDeleteById):
+        (KJS::CodeGenerator::emitGetByVal):
+        (KJS::CodeGenerator::emitPutByVal):
+        (KJS::CodeGenerator::emitDeleteByVal):
+        (KJS::CodeGenerator::emitPutByIndex):
+        (KJS::CodeGenerator::emitNewFunction):
+        (KJS::CodeGenerator::emitNewRegExp):
+        (KJS::CodeGenerator::emitNewFunctionExpression):
+        (KJS::CodeGenerator::emitCall):
+        (KJS::CodeGenerator::emitReturn):
+        (KJS::CodeGenerator::emitEnd):
+        (KJS::CodeGenerator::emitConstruct):
+        (KJS::CodeGenerator::emitPushScope):
+        (KJS::CodeGenerator::emitPopScope):
+        (KJS::CodeGenerator::emitDebugHook):
+        (KJS::CodeGenerator::emitComplexJumpScopes):
+        (KJS::CodeGenerator::emitJumpScopes):
+        (KJS::CodeGenerator::emitNextPropertyName):
+        (KJS::CodeGenerator::emitGetPropertyNames):
+        (KJS::CodeGenerator::emitCatch):
+        (KJS::CodeGenerator::emitThrow):
+        (KJS::CodeGenerator::emitNewError):
+        (KJS::CodeGenerator::emitJumpSubroutine):
+        (KJS::CodeGenerator::emitSubroutineReturn):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.cpp:
+        (KJS::):
+        * VM/Opcode.h:
+
 2008-06-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Alexey.

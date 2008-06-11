@@ -95,6 +95,7 @@ namespace KJS {
         macro(op_jmp) \
         macro(op_jtrue) \
         macro(op_jfalse) \
+        macro(op_jless) \
         macro(op_jmp_scopes) \
         \
         macro(op_new_func) \

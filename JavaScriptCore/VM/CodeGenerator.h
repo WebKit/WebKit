@@ -293,6 +293,10 @@ namespace KJS {
         CodeType codeType() const { return m_codeType; }
 
     private:
+        void emitOpcode(OpcodeID);
+        void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
+        void rewindBinaryOp();
+
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
         struct JSValueHashTraits : HashTraits<JSValue*> {
             static void constructDeletedValue(JSValue** slot) { *slot = JSImmediate::impossibleValue(); }
@@ -372,6 +376,8 @@ namespace KJS {
         JSValueMap m_jsValueMap;
 
         const CommonIdentifiers* m_propertyNames;
+
+        OpcodeID m_lastOpcodeID;
 
 #ifndef NDEBUG
         static bool s_dumpsGeneratedCode;
