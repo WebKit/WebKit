@@ -519,49 +519,45 @@ void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue **location)
 
 // ------------------------------ Error ----------------------------------------
 
-const char * const errorNamesArr[] = {
-  I18N_NOOP("Error"), // GeneralError
-  I18N_NOOP("Evaluation error"), // EvalError
-  I18N_NOOP("Range error"), // RangeError
-  I18N_NOOP("Reference error"), // ReferenceError
-  I18N_NOOP("Syntax error"), // SyntaxError
-  I18N_NOOP("Type error"), // TypeError
-  I18N_NOOP("URI error"), // URIError
-};
-
-const char * const * const Error::errorNames = errorNamesArr;
-
-JSObject *Error::create(ExecState *exec, ErrorType errtype, const UString &message,
-                         int lineno, int sourceId, const UString &sourceURL)
+JSObject* Error::create(ExecState* exec, ErrorType errtype, const UString& message,
+    int lineno, int sourceId, const UString& sourceURL)
 {
-  JSObject *cons;
+  JSObject* cons;
+  const char* name;
   switch (errtype) {
   case EvalError:
     cons = exec->lexicalGlobalObject()->evalErrorConstructor();
+    name = "Evaluation error";
     break;
   case RangeError:
     cons = exec->lexicalGlobalObject()->rangeErrorConstructor();
+    name = "Range error";
     break;
   case ReferenceError:
     cons = exec->lexicalGlobalObject()->referenceErrorConstructor();
+    name = "Reference error";
     break;
   case SyntaxError:
     cons = exec->lexicalGlobalObject()->syntaxErrorConstructor();
+    name = "Syntax error";
     break;
   case TypeError:
     cons = exec->lexicalGlobalObject()->typeErrorConstructor();
+    name = "Type error";
     break;
   case URIError:
     cons = exec->lexicalGlobalObject()->URIErrorConstructor();
+    name = "URI error";
     break;
   default:
     cons = exec->lexicalGlobalObject()->errorConstructor();
+    name = "Error";
     break;
   }
 
   List args;
   if (message.isEmpty())
-    args.append(jsString(errorNames[errtype]));
+    args.append(jsString(name));
   else
     args.append(jsString(message));
   JSObject *err = static_cast<JSObject *>(cons->construct(exec,args));

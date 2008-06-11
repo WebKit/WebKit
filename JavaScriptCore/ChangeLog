@@ -1,3 +1,23 @@
+2008-06-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - a little bit of cleanup and prep for some upcoming optimizations
+
+        * JavaScriptCore.exp: Re-sorted this file (with sort command line tool).
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump): Fixed printf to avoid warnings -- to use %lu we
+        need to make sure the type is unsigned long.
+        * kjs/object.cpp:
+        (KJS::Error::create): Eliminated unused error names array, and also put
+        the strings into the code since there was already a switch statment.
+        This also avoids having to contemplate a hypothetical access past the
+        end of the array.
+        * kjs/object.h: Got rid of errorNames.
+        * kjs/property_slot.cpp: Deleted unused ungettableGetter.
+        * kjs/property_slot.h: Ditto.
+        * wtf/AlwaysInline.h: Added LIKELY alongside UNLIKELY.
+
 2008-06-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

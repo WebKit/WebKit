@@ -152,7 +152,6 @@ public:
 
 private:
     static JSValue* undefinedGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* ungettableGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* functionGetter(ExecState*, const Identifier&, const PropertySlot&);
     
     GetValueFunc m_getValue;

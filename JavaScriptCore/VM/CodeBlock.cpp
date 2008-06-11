@@ -154,7 +154,10 @@ void CodeBlock::dump(ExecState* exec) const
         if (machine().isOpcode(it->u.opcode))
             ++instructionCount;
 
-    printf("%lu instructions; %lu bytes at %p; %d locals (%d parameters); %d temporaries\n\n", instructionCount, instructions.size() * sizeof(Instruction), this, numLocals, numParameters, numTemporaries);
+    printf("%lu instructions; %lu bytes at %p; %d locals (%d parameters); %d temporaries\n\n",
+        static_cast<unsigned long>(instructionCount),
+        static_cast<unsigned long>(instructions.size() * sizeof(Instruction)),
+        this, numLocals, numParameters, numTemporaries);
     
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
         dump(exec, begin, it);

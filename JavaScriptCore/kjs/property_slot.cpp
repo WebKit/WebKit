@@ -34,12 +34,6 @@ JSValue* PropertySlot::undefinedGetter(ExecState*, const Identifier&, const Prop
     return jsUndefined();
 }
 
-JSValue* PropertySlot::ungettableGetter(ExecState*, const Identifier&, const PropertySlot&)
-{
-    ASSERT_NOT_REACHED();
-    return jsUndefined();
-}
-
 JSValue* PropertySlot::functionGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     CallData data;

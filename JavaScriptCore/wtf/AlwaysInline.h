@@ -45,3 +45,11 @@
 #define UNLIKELY(x) (x)
 #endif
 #endif
+
+#ifndef LIKELY
+#if COMPILER(GCC)
+#define LIKELY(x) __builtin_expect((x), 1)
+#else
+#define LIKELY(x) (x)
+#endif
+#endif
