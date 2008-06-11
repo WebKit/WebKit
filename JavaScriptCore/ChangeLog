@@ -1,3 +1,9 @@
+2008-06-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Link against libedit on Mac since HAVE(READLINE) is defined there.
+
+        * jscore.bkl:
+
 2008-06-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

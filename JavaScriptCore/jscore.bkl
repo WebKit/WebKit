@@ -94,6 +94,10 @@ JavaScriptCore Bakefile project file.
         <if cond="FORMAT=='gnu'">
             <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
         </if>
+        <set var="READLINE_LIB">
+            <if cond="WX_PORT=='mac'">edit</if>
+        </set>
+        <sys-lib>$(READLINE_LIB)</sys-lib>
         <if cond="FORMAT in ['msvc','msvs2005prj']">
             <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
             <sys-lib>jscore</sys-lib>
