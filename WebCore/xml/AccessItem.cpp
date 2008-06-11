@@ -46,14 +46,7 @@ AccessItem::AccessItem(const String& accessItemString)
     , m_string(accessItemString)
 #endif
 {
-    // FIXME: Remove this when parseAccessItem is implemented and instead parse the
-    // accessItemString.
-    KURL accessItemURL(accessItemString);
-    m_valid = accessItemURL.isValid();
-    if (m_valid) {
-        m_origin = SecurityOrigin::create(accessItemURL);
-        parseAccessItem(accessItemString);
-    }
+    parseAccessItem(accessItemString);
 }
 
 void AccessItem::parseAccessItem(const String& accessItemString)
@@ -67,10 +60,26 @@ void AccessItem::parseAccessItem(const String& accessItemString)
     //   port-pattern   = port | "*"
 
     // FIXME: Parse the AccessItem.
+
+    if (accessItemString == "*") {
+        m_wildcard = true;
+        m_valid = true;
+        return;
+    }
+
+    // FIXME: Remove this when parseAccessItem is fully implemented according to the
+    // specification.
+    KURL accessItemURL(accessItemString);
+    m_valid = accessItemURL.isValid();
+    if (m_valid)
+        m_origin = SecurityOrigin::create(accessItemURL);
 }
 
 bool AccessItem::matches(const SecurityOrigin* accessControlOrigin) const
 {
+    if (m_wildcard)
+        return true;
+
     // FIXME: Remove this when parseAccessItem is implemented and instead implement the
     // specified matching alogorithm.
     return m_origin->isSameSchemeHostPort(accessControlOrigin);

@@ -1,3 +1,13 @@
+2008-06-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add basic test for "*" wildcarding for Access-Control.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-star-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-star.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-star.cgi: Added.
+
 2008-06-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.

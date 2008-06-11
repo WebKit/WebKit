@@ -1,3 +1,16 @@
+2008-06-11  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        Add support for "*" wildcarding for Access-Control.
+
+        Test: http/tests/xmlhttprequest/access-control-basic-allow-star.html
+
+        * xml/AccessItem.cpp:
+        (WebCore::AccessItem::AccessItem):
+        (WebCore::AccessItem::parseAccessItem):
+        (WebCore::AccessItem::matches):
+
 2008-06-11  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Eric.
