@@ -398,11 +398,6 @@ static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
     return sheet;
 }
 
-template<typename T> CSSStyleSheet* parseUASheet(const T& array)
-{
-    return parseUASheet(array, sizeof(array));
-}
-
 static void loadDefaultStyle()
 {
     ASSERT(!defaultStyle);
@@ -413,16 +408,16 @@ static void loadDefaultStyle()
     defaultViewSourceStyle = new CSSRuleSet;
 
     // Strict-mode rules.
-    CSSStyleSheet* defaultSheet = parseUASheet(html4UserAgentStyleSheet);
+    CSSStyleSheet* defaultSheet = parseUASheet(html4UserAgentStyleSheet, sizeof(html4UserAgentStyleSheet));
     RenderTheme::adjustDefaultStyleSheet(defaultSheet);
     defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
     defaultPrintStyle->addRulesFromSheet(defaultSheet, printEval());
 
     // Quirks-mode rules.
-    defaultQuirksStyle->addRulesFromSheet(parseUASheet(quirksUserAgentStyleSheet), screenEval());
+    defaultQuirksStyle->addRulesFromSheet(parseUASheet(quirksUserAgentStyleSheet, sizeof(quirksUserAgentStyleSheet)), screenEval());
     
     // View source rules.
-    defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet), screenEval());
+    defaultViewSourceStyle->addRulesFromSheet(parseUASheet(sourceUserAgentStyleSheet, sizeof(sourceUserAgentStyleSheet)), screenEval());
 }
 
 void CSSStyleSelector::matchRules(CSSRuleSet* rules, int& firstRuleIndex, int& lastRuleIndex)
@@ -919,7 +914,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     if (e->isSVGElement() && !loadedSVGUserAgentSheet) {
         // SVG rules.
         loadedSVGUserAgentSheet = true;
-        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet);
+        CSSStyleSheet* svgSheet = parseUASheet(svgUserAgentStyleSheet, sizeof(svgUserAgentStyleSheet));
         defaultStyle->addRulesFromSheet(svgSheet, screenEval());
         defaultPrintStyle->addRulesFromSheet(svgSheet, printEval());
     }

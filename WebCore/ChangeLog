@@ -1,3 +1,17 @@
+2008-06-11  Adriaan de Groot  <groot@kde.org>
+
+        Reviewed by Simon.
+
+        Fix compilation with Sun Studio 12
+
+        It seems like the compiler instantiates a different template version. I.e.,
+        instead of parseUASheet<char [nnnn]>, it's probably instantiating
+        parseUASheet<char *>, which then passes 4 or 8 as the size value.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadDefaultStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2008-06-11  Benjamin Meyer  <bmeyer@trolltech.com>
 
         Reviewed by Simon.
