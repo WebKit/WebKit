@@ -1,3 +1,27 @@
+2008-06-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Alexey.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19442
+          JavaScript array implementation doesn't maintain m_numValuesInVector when sorting
+
+        * kjs/array_instance.cpp:
+        (KJS::ArrayInstance::checkConsistency): Added. Empty inline version for when
+        consistency checks are turned off.
+        (KJS::ArrayInstance::ArrayInstance): Check consistency after construction.
+        (KJS::ArrayInstance::~ArrayInstance): Check consistency before destruction.
+        (KJS::ArrayInstance::put): Check consistency before and after.
+        (KJS::ArrayInstance::deleteProperty): Ditto.
+        (KJS::ArrayInstance::setLength): Ditto.
+        (KJS::compareByStringPairForQSort): Use typedef for clarity.
+        (KJS::ArrayInstance::sort): Check consistency before and after. Also broke the loop
+        to set up sorting into two separate passes. Added FIXMEs about various exception
+        safety issues. Added code to set m_numValuesInVector after sorting.
+        (KJS::ArrayInstance::compactForSorting): Ditto.
+
+        * kjs/array_instance.h: Added a definition of an enum for the types of consistency
+        check and a declaration of the consistency checking function.
+
 2008-06-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Link against libedit on Mac since HAVE(READLINE) is defined there.

@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -64,7 +64,10 @@ namespace KJS {
     void setLength(unsigned);
     bool increaseVectorLength(unsigned newLength);
     
-    unsigned compactForSorting();    
+    unsigned compactForSorting();
+
+    enum ConsistencyCheckType { NormalConsistencyCheck, DestructorConsistencyCheck, SortConsistencyCheck };
+    void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);
 
     unsigned m_length;
     unsigned m_vectorLength;
