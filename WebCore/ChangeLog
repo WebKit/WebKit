@@ -1,3 +1,22 @@
+2008-06-11  Benjamin Meyer  <bmeyer@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fixed a crash when a slot connect to QWebPage::unsupportedContent would show a
+        modal dialog with an event loop.
+
+        We have a queued connection to various signals in the QNetworkReply, for which
+        it can happen that after releasing the QNetworkReply and disconnecting from it
+        a slot connected to one of the signals may still be called due to a posted
+        MetaCall event due to the queued connections. This patch removes the posted
+        events explicitly, fixes the coding style a bit and makes sure the same happens
+        when abort() is called.
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::abort):
+        (WebCore::QNetworkReplyHandler::release):
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2008-06-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Reorder include dirs so that WebCore/html/HTMLElementFactory.h

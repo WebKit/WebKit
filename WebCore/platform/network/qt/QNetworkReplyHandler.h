@@ -47,7 +47,7 @@ public:
 
     void abort();
 
-    QNetworkReply *release();
+    QNetworkReply* release();
 
 private slots:
     void finish();
