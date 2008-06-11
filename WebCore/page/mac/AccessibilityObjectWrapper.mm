@@ -126,6 +126,10 @@ static WebCoreTextMarker* textMarkerForVisiblePosition(const VisiblePosition& vi
 
     // create a text marker, adding an ID for the AccessibilityObject if needed
     TextMarkerData textMarkerData;
+    
+    // The compiler can add padding to this struct. 
+    // This memory must be bzero'd so instances of TextMarkerData can be tested for byte-equivalence.
+    bzero(&textMarkerData, sizeof(TextMarkerData));
     textMarkerData.axID = obj.get()->axObjectID();
     textMarkerData.node = domNode;
     textMarkerData.offset = deepPos.offset();

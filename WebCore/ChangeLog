@@ -1,3 +1,12 @@
+2008-06-11  Gregory Hughes  <ghughes@apple.com>
+
+        Reviewed by David Harrison.
+
+        <rdar://problem/5990049> AXTextMarker bytes getting messed up when getting AXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (textMarkerForVisiblePosition):
+
 2008-06-11  Adriaan de Groot  <groot@kde.org>
 
         Reviewed by Simon.
