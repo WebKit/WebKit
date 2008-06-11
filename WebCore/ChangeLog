@@ -1,3 +1,12 @@
+2008-06-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Reorder include dirs so that WebCore/html/HTMLElementFactory.h
+        appears before WebCore/DerivedSources/HTMLElementFactory.h. (See note in commit
+        for more details. This is probably not the right fix, but this will get us building
+        until the right fix is in place.)
+
+        * webcore-base.bkl:
+
 2008-06-10  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mjs.
