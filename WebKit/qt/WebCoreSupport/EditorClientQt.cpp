@@ -411,6 +411,11 @@ void EditorClientQt::handleKeyboardEvent(KeyboardEvent* event)
                             frame->editor()->command("Undo").execute();
                             break;
                         default:
+                            // catch combination AltGr+key or Ctrl+Alt+key
+                            if (!kevent->text().isEmpty()) {
+                                frame->editor()->insertText(kevent->text(), event);
+                                break;
+                            }
                             return;
                     }
                 } else return;

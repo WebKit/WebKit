@@ -1,3 +1,15 @@
+2008-06-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix input element does not accept character typed in using AltGr.
+
+        EditorClient is modified to catch AltGr and Ctrl+Alt key combination.
+        This fixes http://trolltech.com/developer/task-tracker/index_html?id=207050&method=entry
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2008-05-26  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Simon.
