@@ -1,3 +1,20 @@
+2008-06-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Bug 19498: REGRESSION (r34497): crash while loading GMail
+        <https://bugs.webkit.org/show_bug.cgi?id=19498>
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrueMayCombine):
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        * VM/CodeGenerator.h:
+        * kjs/nodes.cpp:
+        (KJS::DoWhileNode::emitCode):
+        (KJS::WhileNode::emitCode):
+        (KJS::ForNode::emitCode):
+        (KJS::CaseBlockNode::emitCodeForBlock):
+
 2008-06-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

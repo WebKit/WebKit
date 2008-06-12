@@ -1354,7 +1354,7 @@ RegisterID* DoWhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     
     generator.emitLabel(continueTarget.get());
     RegisterID* cond = generator.emitNode(m_expr.get());
-    generator.emitJumpIfTrue(cond, topOfLoop.get());
+    generator.emitJumpIfTrueMayCombine(cond, topOfLoop.get());
     generator.emitLabel(breakTarget.get());
     return result.get();
 }
@@ -1376,7 +1376,7 @@ RegisterID* WhileNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
     generator.emitLabel(continueTarget.get());
     RegisterID* cond = generator.emitNode(m_expr.get());
-    generator.emitJumpIfTrue(cond, topOfLoop.get());
+    generator.emitJumpIfTrueMayCombine(cond, topOfLoop.get());
 
     generator.emitLabel(breakTarget.get());
     
@@ -1408,7 +1408,7 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     generator.emitLabel(beforeCondition.get());
     if (m_expr2) {
         RegisterID* cond = generator.emitNode(m_expr2.get());
-        generator.emitJumpIfTrue(cond, topOfLoop.get());
+        generator.emitJumpIfTrueMayCombine(cond, topOfLoop.get());
     } else {
         generator.emitJump(topOfLoop.get());
     }
@@ -1576,14 +1576,14 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
         RegisterID* clauseVal = generator.emitNode(list->getClause()->expr());
         generator.emitStrictEqual(clauseVal, clauseVal, switchExpression);
         labelVector.append(generator.newLabel());
-        generator.emitJumpIfTrue(clauseVal, labelVector[labelVector.size() - 1].get());
+        generator.emitJumpIfTrueMayCombine(clauseVal, labelVector[labelVector.size() - 1].get());
     }
 
     for (ClauseListNode* list = m_list2.get(); list; list = list->getNext()) {
         RegisterID* clauseVal = generator.emitNode(list->getClause()->expr());
         generator.emitStrictEqual(clauseVal, clauseVal, switchExpression);
         labelVector.append(generator.newLabel());
-        generator.emitJumpIfTrue(clauseVal, labelVector[labelVector.size() - 1].get());
+        generator.emitJumpIfTrueMayCombine(clauseVal, labelVector[labelVector.size() - 1].get());
     }
 
     RefPtr<LabelID> defaultLabel;

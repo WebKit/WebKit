@@ -414,7 +414,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJump(LabelID* target)
     return target;
 }
 
-PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* target)
+PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrueMayCombine(RegisterID* cond, LabelID* target)
 {
     if (m_lastOpcodeID == op_less) {
         int dstIndex;
@@ -433,6 +433,11 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
         }
     }
     
+    return emitJumpIfTrue(cond, target);
+}
+
+PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* target)
+{
     emitOpcode(op_jtrue);
     instructions().append(cond->index());
     instructions().append(target->offsetFrom(instructions().size()));
