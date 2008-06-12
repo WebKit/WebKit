@@ -168,9 +168,6 @@ String SecurityOrigin::toString() const
     if (isEmpty())
         return String();
 
-    if (m_noAccess)
-        return String();
-
     if (m_protocol == "file")
         return String("file://");
 
