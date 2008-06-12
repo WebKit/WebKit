@@ -1,3 +1,47 @@
+2008-06-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5876370> Safari 3.1.1 bad rendering of pages from http://www.legifrance.gouv.fr/
+
+        Tests: fast/parser/p-in-scope-strict.html
+               fast/parser/p-in-scope.html
+
+        * html/HTMLParagraphElement.h:
+        (WebCore::HTMLParagraphElement::endTagRequirement): Changed to require
+        an end tag. The explicit closing of one P element by another is now
+        done in error checking, and therefore takes scope into account, allowing
+        for <p><button><p>, for example.
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::HTMLParser): Initialize m_hasPElementInScope.
+        (WebCore::isScopingTag): Added. Returns whether the given tag represents
+        a scoping element as defined in HTML 5 section 8.2.3.2.
+        (WebCore::HTMLParser::formCreateErrorCheck): Added a call to
+        pCloserCreateErrorCheck().
+        (WebCore::HTMLParser::ddCreateErrorCheck): Ditto.
+        (WebCore::HTMLParser::dtCreateErrorCheck): Ditto.
+        (WebCore::HTMLParser::nestedPCloserCreateErrorCheck): Added for use with
+        <li>, which both closes P elements in scope and any previous LI.
+        (WebCore::HTMLParser::pCloserCreateErrorCheck): Added. If there is a P
+        element in scope, acts as if a </p> tag was seen.
+        (WebCore::HTMLParser::pCloserStrictCreateErrorCheck): Ditto, but only
+        in strict mode. Used for <table>.
+        (WebCore::HTMLParser::getNode): Added entries for tags that close a P
+        element in scope.
+        (WebCore::HTMLParser::handleResidualStyleCloseTagAcrossBlocks): Added
+        code to reset m_hasPElementInScope.
+        (WebCore::HTMLParser::pushBlock): Added code to update
+        m_hasPElementInScope.
+        (WebCore::HTMLParser::popOneBlockCommon): Ditto.
+        (WebCore::HTMLParser::checkIfHasPElementInScope): Added. Updates
+        m_hasPElementInScope.
+
+        * html/HTMLParser.h:
+        (WebCore::HTMLParser::hasPElementInScope): Added. Calls
+        checkIfHasPElementInScope() if needed and returns whether there
+        is a P element in scope.
+
 2008-06-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

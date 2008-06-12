@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 314x18
           text run at (0,0) width 314: "The black outline box should stretch from the left "
@@ -16,7 +16,7 @@ layer at (0,0) size 800x600
             text run at (564,0) width 43: "orange"
         RenderText {#text} at (607,0) size 152x18
           text run at (607,0) width 152: " border on the third line."
-      RenderBlock {P} at (0,34) size 600x72
+      RenderBlock {DIV} at (0,34) size 600x72
         RenderText {#text} at (0,0) size 186x18
           text run at (0,0) width 186: "ILorem ipsum dolor sit amet, "
         RenderText {#text} at (504,36) size 593x36

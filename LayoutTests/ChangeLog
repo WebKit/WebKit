@@ -1,3 +1,43 @@
+2008-06-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - tests, updated tests and updated results for
+          <rdar://problem/5876370> Safari 3.1.1 bad rendering of pages from http://www.legifrance.gouv.fr/
+
+        * fast/block/basic/001.html:
+        * fast/block/positioning/absolute-in-inline-ltr-2.html:
+        * fast/block/positioning/absolute-in-inline-ltr-3.html:
+        * fast/block/positioning/absolute-in-inline-ltr.html:
+        * fast/block/positioning/absolute-in-inline-rtl-2.html:
+        * fast/block/positioning/absolute-in-inline-rtl-3.html:
+        * fast/block/positioning/absolute-in-inline-rtl.html:
+        * fast/block/positioning/absolute-in-inline-short-ltr.html:
+        * fast/block/positioning/absolute-in-inline-short-rtl.html:
+        * fast/block/positioning/auto/006.html:
+        * fast/inline/continuation-outlines-with-layers.html:
+        * fast/inline/continuation-outlines.html:
+        * fast/parser/p-in-scope-expected.txt: Added.
+        * fast/parser/p-in-scope-strict-expected.txt: Added.
+        * fast/parser/p-in-scope-strict.html: Added.
+        * fast/parser/p-in-scope.html: Added.
+        * fast/parser/resources/p-in-scope.css: Added.
+        * fast/parser/resources/p-in-scope.js: Added.
+        * fast/repaint/subtree-root-clip-2.html:
+        * platform/mac/fast/block/basic/001-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-ltr-2-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-ltr-3-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-ltr-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-rtl-2-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-rtl-3-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-rtl-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-short-ltr-expected.txt:
+        * platform/mac/fast/block/positioning/absolute-in-inline-short-rtl-expected.txt:
+        * platform/mac/fast/block/positioning/auto/006-expected.txt:
+        * platform/mac/fast/inline/continuation-outlines-expected.txt:
+        * platform/mac/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/mac/fast/repaint/subtree-root-clip-2-expected.txt:
+
 2008-06-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

@@ -32,7 +32,7 @@ class HTMLParagraphElement : public HTMLElement {
 public:
     HTMLParagraphElement(Document*);
 
-    virtual HTMLTagStatus endTagRequirement() const { return TagStatusOptional; }
+    virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 3; }
     virtual bool checkDTD(const Node* newChild);
 

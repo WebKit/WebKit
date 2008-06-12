@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x576
+    RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x36
         RenderText {#text} at (0,0) size 646x18
           text run at (0,0) width 646: "The black outline box should be a 50px by 50px square with its bottom left corner anchored to the left "
@@ -12,7 +12,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (689,0) size 777x36
           text run at (689,0) width 88: " border on the"
           text run at (0,18) width 60: "third line."
-      RenderBlock {P} at (0,52) size 600x72
+      RenderBlock {DIV} at (0,52) size 600x72
         RenderText {#text} at (414,0) size 186x18
           text run at (414,0) width 186 RTL override: "ILorem ipsum dolor sit amet, "
         RenderText {#text} at (7,36) size 593x36
