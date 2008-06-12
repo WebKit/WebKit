@@ -2,6 +2,7 @@
 use strict;
 
 print "Content-Type: text/plain\n";
+print "Cache-Control: no-cache\n";
 print "Access-Control: allow <*>\n\n";
 
 print "PASS: Cross-domain access allowed.\n";
