@@ -349,7 +349,7 @@ Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
     m_startTime = currentTime();
     m_overMinimumLayoutThreshold = false;
     
-    initSecurityOrigin();
+    initSecurityContext();
 
     static int docID = 0;
     m_docID = docID++;
@@ -2782,12 +2782,12 @@ Element* Document::ownerElement() const
 
 String Document::cookie() const
 {
-    return cookies(this, url());
+    return cookies(this, cookieURL());
 }
 
 void Document::setCookie(const String& value)
 {
-    setCookies(this, url(), policyBaseURL(), value);
+    setCookies(this, cookieURL(), policyBaseURL(), value);
 }
 
 String Document::referrer() const
@@ -3918,12 +3918,41 @@ bool Document::useSecureKeyboardEntryWhenActive() const
     return m_useSecureKeyboardEntryWhenActive;
 }
 
-void Document::initSecurityOrigin()
+void Document::initSecurityContext()
 {
     if (m_securityOrigin && !m_securityOrigin->isEmpty())
         return;  // m_securityOrigin has already been initialized.
 
-    m_securityOrigin = SecurityOrigin::createForFrame(m_frame);
+    if (!m_frame) {
+        // No source for a security context.
+        // This can occur via document.implementation.createDocument().
+        m_cookieURL = KURL("");
+        m_securityOrigin = SecurityOrigin::createEmpty();
+        return;
+    }
+
+    // In the common case, create the security context from the currently
+    // loading URL.
+    const KURL& url = m_frame->loader()->url();
+    m_cookieURL = url;
+    m_securityOrigin = SecurityOrigin::create(url);
+
+    if (!m_securityOrigin->isEmpty())
+        return;
+
+    // If we do not obtain a meaningful origin from the URL, then we try to
+    // find one via the frame hierarchy.
+
+    Frame* ownerFrame = m_frame->tree()->parent();
+    if (!ownerFrame)
+        ownerFrame = m_frame->loader()->opener();
+
+    if (ownerFrame && ownerFrame->document()) {
+        m_cookieURL = ownerFrame->document()->cookieURL();
+        // We alias the SecurityOrigins to match Firefox, see Bug 15313
+        // https://bugs.webkit.org/show_bug.cgi?id=15313
+        m_securityOrigin = ownerFrame->document()->securityOrigin();
+    }
 }
 
 void Document::setSecurityOrigin(SecurityOrigin* securityOrigin)

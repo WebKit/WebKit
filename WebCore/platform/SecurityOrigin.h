@@ -42,10 +42,10 @@ namespace WebCore {
     
     class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {
     public:
-        static PassRefPtr<SecurityOrigin> createForFrame(Frame*);
         static PassRefPtr<SecurityOrigin> createFromDatabaseIdentifier(const String&);
         static PassRefPtr<SecurityOrigin> createFromString(const String&);
         static PassRefPtr<SecurityOrigin> create(const KURL&);
+        static PassRefPtr<SecurityOrigin> createEmpty();
 
         PassRefPtr<SecurityOrigin> copy();
 

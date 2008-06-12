@@ -1,5 +1,19 @@
 2008-06-11  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19460
+
+        Test esoteric cookie contexts.
+
+        * http/tests/security/cookies/create-document-expected.txt: Added.
+        * http/tests/security/cookies/create-document.html: Added.
+        * http/tests/security/cookies/resources/simple.xml: Added.
+        * http/tests/security/cookies/xmlhttprequest-expected.txt: Added.
+        * http/tests/security/cookies/xmlhttprequest.html: Added.
+
+2008-06-11  Adam Barth  <abarth@webkit.org>
+
         Reviewed and tweaked by Sam Weinig.
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=19242

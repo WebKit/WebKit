@@ -1,0 +1,36 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+document.cookie = "secret=PASS";
+
+function log(msg) {
+    var line = document.createElement("div");
+    line.appendChild(document.createTextNode(msg));
+    document.getElementById("console").appendChild(line);
+}
+
+function runTest() {
+    log("Running test.");
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/simple.xml", false);
+    xhr.overrideMimeType("text/xml");
+    log("Sending XMLHttpRequest...");
+    xhr.send(null);
+    log("Response received.");
+    log("xhr.responseXML.cookie: " + xhr.responseXML.cookie);
+    log("Test complete.");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body onload="runTest()">
+<div id="console"></div>
+</body>
+</html>

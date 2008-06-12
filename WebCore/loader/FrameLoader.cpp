@@ -1783,7 +1783,7 @@ void FrameLoader::setOpener(Frame* opener)
     m_opener = opener;
 
     if (m_frame->document()) {
-        m_frame->document()->initSecurityOrigin();
+        m_frame->document()->initSecurityContext();
         m_frame->domWindow()->setSecurityOrigin(m_frame->document()->securityOrigin());
     }
 }

@@ -608,6 +608,8 @@ public:
 
     String lastModified() const;
 
+    const KURL& cookieURL() const { return m_cookieURL; }
+
     const KURL& policyBaseURL() const { return m_policyBaseURL; }
     void setPolicyBaseURL(const KURL& url) { m_policyBaseURL = url; }
     
@@ -858,7 +860,8 @@ private:
     typedef HashMap<AtomicStringImpl*, HTMLMapElement*> ImageMapsByName;
     ImageMapsByName m_imageMapsByName;
 
-    KURL m_policyBaseURL;
+    KURL m_cookieURL; // The URL to use for cookie access.
+    KURL m_policyBaseURL; // The policy URL for third-party cookie blocking.
 
     HashSet<Node*> m_disconnectedNodesWithEventListeners;
 
@@ -910,7 +913,7 @@ public:
     SVGDocumentExtensions* accessSVGExtensions();
 #endif
 
-    void initSecurityOrigin();
+    void initSecurityContext();
     SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
 
     // Explicitly override the security origin for this document.

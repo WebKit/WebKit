@@ -96,32 +96,9 @@ PassRefPtr<SecurityOrigin> SecurityOrigin::create(const KURL& url)
     return adoptRef(new SecurityOrigin(url));
 }
 
-PassRefPtr<SecurityOrigin> SecurityOrigin::createForFrame(Frame* frame)
+PassRefPtr<SecurityOrigin> SecurityOrigin::createEmpty()
 {
-    if (!frame)
-        return create(KURL());
-
-    FrameLoader* loader = frame->loader();
-    const KURL& url = loader->url();
-
-    Frame* ownerFrame = frame->tree()->parent();
-    if (!ownerFrame)
-        ownerFrame = loader->opener();
-
-    SecurityOrigin* ownerFrameOrigin = 0;
-    if (ownerFrame && ownerFrame->document())
-        ownerFrameOrigin = ownerFrame->document()->securityOrigin();
-
-    RefPtr<SecurityOrigin> origin = create(url);
-
-    // If we do not obtain a meaningful origin from the URL, then we try to find one
-    // via the frame hierarchy.
-    // We alias the SecurityOrigins to match Firefox, see Bug 15313
-    // http://bugs.webkit.org/show_bug.cgi?id=15313
-    if (origin->isEmpty() && ownerFrameOrigin)
-        return ownerFrameOrigin;
-
-    return origin.release();
+    return create(KURL());
 }
 
 PassRefPtr<SecurityOrigin> SecurityOrigin::copy()
