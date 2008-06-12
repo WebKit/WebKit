@@ -35,16 +35,10 @@ void List::getSlice(int startIndex, List& result) const
     result.m_bufferSlot = result.m_vector.dataSlot();
 }
 
-List::ListSet& List::markSet()
+void List::markLists(ListSet& markSet)
 {
-    static ListSet staticMarkSet;
-    return staticMarkSet;
-}
-
-void List::markProtectedListsSlowCase()
-{
-    ListSet::iterator end = markSet().end();
-    for (ListSet::iterator it = markSet().begin(); it != end; ++it) {
+    ListSet::iterator end = markSet.end();
+    for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
         List* list = *it;
 
         iterator end2 = list->end();
@@ -56,25 +50,34 @@ void List::markProtectedListsSlowCase()
     }
 }
 
-void List::expandAndAppend(JSValue* v)
+void List::slowAppend(JSValue* v)
 {
-    ASSERT(m_vector.size() == m_vector.capacity());
-    
-    // 4x growth would be excessive for a normal vector, but it's OK for Lists 
-    // because they're short-lived.
-    m_vector.reserveCapacity(m_vector.capacity() * 4);
-    
     // As long as our size stays within our Vector's inline 
     // capacity, all our values are allocated on the stack, and 
     // therefore don't need explicit marking. Once our size exceeds
     // our Vector's inline capacity, though, our values move to the 
     // heap, where they do need explicit marking.
-    if (!m_isInMarkSet) {
-        markSet().add(this);
-        m_isInMarkSet = true;
+    if (!m_markSet) {
+        // We can only register for explicit marking once we know which heap
+        // is the current one, i.e., when a non-immediate value is appended.
+        if (!JSImmediate::isImmediate(v)) { // Will be: if (Heap* heap = Heap::heap(v))
+            ListSet& markSet = Collector::markListSet();
+            markSet.add(this);
+            m_markSet = &markSet;
+        }
     }
 
+    if (m_vector.size() < m_vector.capacity()) {
+        m_vector.uncheckedAppend(v);
+        return;
+    }
+
+    // 4x growth would be excessive for a normal vector, but it's OK for Lists 
+    // because they're short-lived.
+    m_vector.reserveCapacity(m_vector.capacity() * 4);
+    
     m_vector.uncheckedAppend(v);
+    m_bufferSlot = m_vector.dataSlot();
 }
 
 } // namespace KJS

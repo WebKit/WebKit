@@ -87,9 +87,8 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 static CollectorHeap primaryHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 
-// FIXME: I don't think this needs to be a static data member of the Collector class.
-// Just a private global like "heap" above would be fine.
 size_t Collector::mainThreadOnlyObjectCount = 0;
+HashSet<List*>* Collector::m_markListSet;
 
 static CollectorBlock* allocateBlock()
 {
@@ -957,7 +956,8 @@ bool Collector::collect()
 
     markStackObjectsConservatively();
     markProtectedObjects();
-    List::markProtectedLists();
+    if (m_markListSet && m_markListSet->size())
+        List::markLists(*m_markListSet);
 #if USE(MULTIPLE_THREADS)
     if (!currentThreadIsMainThread)
         markMainThreadOnlyObjects();

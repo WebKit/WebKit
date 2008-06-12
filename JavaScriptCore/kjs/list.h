@@ -34,7 +34,8 @@ namespace KJS {
     
     class List : Noncopyable {
     private:
-        typedef Vector<JSValue*, 8> VectorType;
+        static const unsigned inlineCapacity = 8;
+        typedef Vector<JSValue*, inlineCapacity> VectorType;
         typedef HashSet<List*> ListSet;
 
     public:
@@ -44,14 +45,14 @@ namespace KJS {
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
         List()
-            : m_isInMarkSet(false)
+            : m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(false)
 #endif
         {
             m_bufferSlot = m_vector.dataSlot();
             m_offset = 0;
-            m_size = m_vector.size();
+            m_size = 0;
         }
 
         // Constructor for a read-only list whose data has already been allocated elsewhere.
@@ -59,7 +60,7 @@ namespace KJS {
             : m_bufferSlot(bufferSlot)
             , m_offset(offset)
             , m_size(size)
-            , m_isInMarkSet(false)
+            , m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(true)
 #endif
@@ -68,8 +69,8 @@ namespace KJS {
 
         ~List()
         {
-            if (m_isInMarkSet)
-                markSet().remove(this);
+            if (m_markSet)
+                m_markSet->remove(this);
         }
 
         size_t size() const { return m_size; }
@@ -94,15 +95,13 @@ namespace KJS {
         {
             ASSERT(!m_isReadOnly);
             
-            if (m_vector.size() < m_vector.capacity()) {
+            if (m_size < inlineCapacity) {
                 m_vector.uncheckedAppend(v);
                 ++m_size;
             } else {
-                // Putting the slow "expand and append" case all in one 
-                // function measurably improves the performance of the fast 
-                // "just append" case.
-                expandAndAppend(v);
-                m_bufferSlot = m_vector.dataSlot();
+                // Putting this case all in one function measurably improves
+                // the performance of the fast "just append to inline buffer" case.
+                slowAppend(v);
                 ++m_size;
             }
         }
@@ -115,18 +114,10 @@ namespace KJS {
         const_iterator begin() const { return buffer(); }
         const_iterator end() const { return buffer() + m_size; }
 
-        static void markProtectedLists()
-        {
-            if (!markSet().size())
-                return;
-            markProtectedListsSlowCase();
-        }
+        static void markLists(ListSet&);
 
     private:
-        static ListSet& markSet();
-        static void markProtectedListsSlowCase();
-
-        void expandAndAppend(JSValue*);
+        void slowAppend(JSValue*);
         
         JSValue** buffer() const { return *m_bufferSlot + m_offset; }
         
@@ -135,7 +126,7 @@ namespace KJS {
         size_t m_size;
 
         VectorType m_vector;
-        bool m_isInMarkSet;
+        ListSet* m_markSet;
 #ifndef NDEBUG
         bool m_isReadOnly;
 #endif

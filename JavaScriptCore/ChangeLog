@@ -1,3 +1,30 @@
+2008-06-12  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Preparation to making JavaScript heap per-thread.
+
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        (KJS::Collector::markListSet):
+        The collector now holds the list of protected lists itself, to be made per-instance.
+
+        * kjs/list.h: Changed to hold a pointer to a mark set this list is in, if any.
+        (KJS::List::List): Explicitly initialize m_size with zero, as m_vector.size() is
+        guaranteed to be such anyway.
+        (KJS::List::append): Changed the fast case to only be executed as long as inline buffer
+        is used, because otherwise, we now do more expensive checks.
+
+        * kjs/list.cpp:
+        (KJS::List::markLists): Renamed from markProtectedListsSlowCase, made it take the list set
+        as a parameter.
+        (KJS::List::slowAppend): If a non-immediate value is appended, the list needs to be added
+        to an appropriate Heap's protected list. For now, a static Collector::markListSet() is
+        used, but the code is layed out in preparation to making the switch to multiple heaps.
+
+        * JavaScriptCore.exp: Updated export list.
+
 2008-06-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
