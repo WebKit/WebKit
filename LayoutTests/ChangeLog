@@ -2,6 +2,35 @@
 
         Reviewed by Sam Weinig.
 
+        Tests for the security context of about:blank documents.  These test
+        results all match Firefox 3.
+
+        * fast/dom/resource-locations-in-created-html-document.html:
+        * http/tests/security/aboutBlank/resources/iframe-with-about-blank-children.html: Added.
+        * http/tests/security/aboutBlank/security-context-alias-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-alias.html: Added.
+        * http/tests/security/aboutBlank/security-context-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-alias-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-alias.html: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-grandchildren.html: Added.
+        * http/tests/security/aboutBlank/security-context-window-open-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-window-open.html: Added.
+        * http/tests/security/aboutBlank/security-context-with-base-tag-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-with-base-tag.html: Added.
+        * http/tests/security/aboutBlank/security-context-write-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-write.html: Added.
+        * http/tests/security/aboutBlank/security-context-writeln-expected.txt: Added.
+        * http/tests/security/aboutBlank/security-context-writeln.html: Added.
+        * http/tests/security/aboutBlank/security-context.html: Added.
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * http/tests/security/cookies/document-open-expected.txt: Added.
+        * http/tests/security/cookies/document-open.html: Added.
+
+2008-06-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=19460
 
         Test esoteric cookie contexts.

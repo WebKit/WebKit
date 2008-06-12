@@ -1389,15 +1389,13 @@ Tokenizer* Document::createTokenizer()
     return new XMLTokenizer(this, view());
 }
 
-void Document::open()
+void Document::open(Document* ownerDocument)
 {
-    // This is work that we should probably do in clear(), but we can't have it
-    // happen when implicitOpen() is called unless we reorganize Frame code.
-    if (Document* parent = parentDocument()) {
-        if (m_url.isEmpty() || m_url == blankURL())
-            setURL(parent->url());
-        if (m_baseURL.isEmpty() || m_baseURL == blankURL())
-            setBaseURL(parent->baseURL());
+    if (ownerDocument) {
+        setURL(ownerDocument->url());
+        setBaseURL(ownerDocument->url());
+        m_cookieURL = ownerDocument->cookieURL();
+        m_securityOrigin = ownerDocument->securityOrigin();
     }
 
     if (m_frame) {
@@ -1645,7 +1643,7 @@ int Document::elapsedTime() const
     return static_cast<int>((currentTime() - m_startTime) * 1000);
 }
 
-void Document::write(const String& text)
+void Document::write(const String& text, Document* ownerDocument)
 {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!ownerElement())
@@ -1653,11 +1651,11 @@ void Document::write(const String& text)
 #endif
     
     if (!m_tokenizer) {
-        open();
+        open(ownerDocument);
         ASSERT(m_tokenizer);
         if (!m_tokenizer)
             return;
-        write("<html>");
+        write("<html>", ownerDocument);
     }
     m_tokenizer->write(text, false);
     
@@ -1667,10 +1665,10 @@ void Document::write(const String& text)
 #endif    
 }
 
-void Document::writeln(const String& text)
+void Document::writeln(const String& text, Document* ownerDocument)
 {
-    write(text);
-    write("\n");
+    write(text, ownerDocument);
+    write("\n", ownerDocument);
 }
 
 void Document::finishParsing()

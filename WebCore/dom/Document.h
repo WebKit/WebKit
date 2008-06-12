@@ -379,14 +379,14 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
 
-    void open();
+    void open(Document* ownerDocument = 0);
     void implicitOpen();
     void close();
     void implicitClose();
     void cancelParsing();
 
-    void write(const String& text);
-    void writeln(const String& text);
+    void write(const String& text, Document* ownerDocument = 0);
+    void writeln(const String& text, Document* ownerDocument = 0);
     void finishParsing();
     void clear();
 

@@ -34,6 +34,7 @@
 #include "HTMLIFrameElement.h"
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
+#include "JSDOMWindowCustom.h"
 #include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
 #include "kjs_html.h"
@@ -111,8 +112,12 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
         return jsUndefined();
     }
 
+    // document.open clobbers the security context of the document and
+    // aliases it with the active security context.
+    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
+
     // In the case of two parameters or fewer, do a normal document open.
-    static_cast<HTMLDocument*>(impl())->open();
+    static_cast<HTMLDocument*>(impl())->open(activeDocument);
     return jsUndefined();
 }
 
@@ -133,13 +138,15 @@ static String writeHelper(ExecState* exec, const List& args)
 
 JSValue* JSHTMLDocument::write(ExecState* exec, const List& args)
 {
-    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args));
+    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
+    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args), activeDocument);
     return jsUndefined();
 }
 
 JSValue* JSHTMLDocument::writeln(ExecState* exec, const List& args)
 {
-    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n");
+    Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
+    static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n", activeDocument);
     return jsUndefined();
 }
 

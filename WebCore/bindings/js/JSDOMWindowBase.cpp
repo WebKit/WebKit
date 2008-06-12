@@ -308,11 +308,9 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
         KURL completedURL = url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
         bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
 
-        if (created) {
+        if (created)
             newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
-            if (Document* oldDoc = openerFrame->document())
-                newFrame->document()->setBaseURL(oldDoc->baseURL());
-        } else if (!url.isEmpty())
+        else if (!url.isEmpty())
             newFrame->loader()->scheduleLocationChange(completedURL.string(), activeFrame->loader()->outgoingReferrer(), false, userGesture);
     }
 

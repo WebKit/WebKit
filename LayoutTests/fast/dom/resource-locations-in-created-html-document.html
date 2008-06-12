@@ -10,7 +10,7 @@
         htmlDoc.open();
         htmlDoc.write('<html><img id="theImage" src="/test"></html>');
 
-        if (htmlDoc.getElementById('theImage').src == '/test')
+        if (htmlDoc.getElementById('theImage').src == 'file:///test')
             document.getElementById('result').innerHTML = 'SUCCESS';
     }
     </script>
