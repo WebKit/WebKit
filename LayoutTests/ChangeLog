@@ -1,3 +1,17 @@
+2008-06-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Tests for:
+
+        Bug 19510: CodeBlock::needsFullScopeChain not always set for global code
+        <https://bugs.webkit.org/show_bug.cgi?id=19510>
+
+        * fast/js/codegen-temporaries-multiple-global-blocks-expected.txt: Added.
+        * fast/js/codegen-temporaries-multiple-global-blocks.html: Added.
+        * fast/js/resources/codegen-temporaries-multiple-global-blocks-1.js: Added.
+        * fast/js/resources/codegen-temporaries-multiple-global-blocks-2.js: Added.
+
 2008-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Maciej.

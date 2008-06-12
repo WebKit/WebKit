@@ -1,3 +1,17 @@
+2008-06-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Bug 19510: CodeBlock::needsFullScopeChain not always set for global code
+        <https://bugs.webkit.org/show_bug.cgi?id=19510>
+
+        This fixes the symptoms by using CodeGenerator::m_codeType to determine
+        when to use temporaries instead of CodeBlock::needsFullScopeChain, but
+        it does not fix the problem itself.
+
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::leftHandSideNeedsCopy):
+
 2008-06-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
