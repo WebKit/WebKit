@@ -1,3 +1,14 @@
+2008-06-12  Adam Barth  <abarth@webkit.org>
+
+        Rubberstamped by Maciej.
+
+        Roll 34504 back in.
+
+        Test: http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-data-url.html
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toString):
+
 2008-06-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
