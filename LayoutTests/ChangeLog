@@ -1,3 +1,9 @@
+2008-06-11  Sam Weinig  <sam@webkit.org>
+
+        Update results on non-leopard platforms to fix the buildbot.
+
+        * http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt:
+
 2008-06-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
