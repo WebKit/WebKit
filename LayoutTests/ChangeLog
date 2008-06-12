@@ -1,3 +1,17 @@
+2008-06-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed and tweaked by Sam Weinig.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=19242
+        Data URLs should set an Access-Control-Origin of "null"
+
+        Test that we correctly generate "null" as the value for the
+        Access-Control-Origin header when making requests from a data URL.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-data-url-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-data-url.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi:
+
 2008-06-11  Sam Weinig  <sam@webkit.org>
 
         Update results on non-leopard platforms to fix the buildbot.

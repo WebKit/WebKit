@@ -1,3 +1,23 @@
+2008-06-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed and tweaked by Sam Weinig.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19242
+        Data URLs should set an Access-Control-Origin of "null"
+
+        Correctly generate "null" as the value of the Access-Control-Origin
+        header for cross-site XMLHttpRequests for data URLs.
+
+        Test: http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-data-url.html
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::toString):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::accessControlOrigin):
+        (WebCore::XMLHttpRequest::crossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::handleAsynchronousMethodCheckResult):
+        * xml/XMLHttpRequest.h:
+
 2008-06-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adam Roben.
