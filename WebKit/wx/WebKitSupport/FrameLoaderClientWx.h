@@ -184,8 +184,8 @@ namespace WebCore {
         virtual void dispatchDidFailLoad(const ResourceError&);
         virtual Frame* dispatchCreatePage();
         virtual void dispatchDecidePolicyForMIMEType(FramePolicyFunction function, const String&, const ResourceRequest&);
-        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, const String&);
-        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&);
+        virtual void dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&);
+        virtual void dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>);
         virtual void dispatchUnableToImplementPolicy(const ResourceError&);
 
         virtual void startDownload(const ResourceRequest&);

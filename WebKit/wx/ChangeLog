@@ -1,5 +1,11 @@
 2008-06-13  Darin Adler  <darin@apple.com>
 
+        - try to fix build
+
+        * WebKitSupport/FrameLoaderClientWx.h: Add missing argument.
+
+2008-06-13  Darin Adler  <darin@apple.com>
+
         Reviewed by John Sullivan.
 
         - updated for addition of FormState argument to action policy functions
