@@ -1,3 +1,19 @@
+2008-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated for addition of FormState argument to action policy functions
+        - added WebActionFormKey
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+        (WebFrameLoaderClient::actionDictionary):
+        * WebKit.exp:
+        * WebView/WebPolicyDelegate.mm:
+        * WebView/WebPolicyDelegatePrivate.h:
+
 2008-06-12  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan and Darin

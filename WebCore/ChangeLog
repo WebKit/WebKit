@@ -1,3 +1,17 @@
+2008-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - added FormState argument to action policy functions
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkNewWindowPolicy):
+        (WebCore::FrameLoader::checkNavigationPolicy):
+        * loader/FrameLoaderClient.h:
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::SVGEmptyFrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2008-06-13  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Jess.

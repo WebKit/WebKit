@@ -1,3 +1,13 @@
+2008-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated for addition of FormState argument to action policy functions
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNewWindowAction):
+        (WebKit::FrameLoaderClient::dispatchDecidePolicyForNavigationAction):
+
 2008-06-10  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker and Darin Adler.

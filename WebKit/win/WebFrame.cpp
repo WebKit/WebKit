@@ -1361,7 +1361,7 @@ void WebFrame::dispatchDecidePolicyForMIMEType(FramePolicyFunction function, con
     (coreFrame->loader()->*function)(PolicyUse);
 }
 
-void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, const String& frameName)
+void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, const String& frameName, PassRefPtr<FormState> formState)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
@@ -1371,7 +1371,7 @@ void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction functi
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
-    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, coreFrame));
+    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, coreFrame, formState));
 
     if (SUCCEEDED(policyDelegate->decidePolicyForNewWindowAction(d->webView, actionInformation.get(), urlRequest.get(), BString(frameName), setUpPolicyListener(function).get())))
         return;
@@ -1379,7 +1379,7 @@ void WebFrame::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction functi
     (coreFrame->loader()->*function)(PolicyUse);
 }
 
-void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request)
+void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState)
 {
     Frame* coreFrame = core(this);
     ASSERT(coreFrame);
@@ -1389,7 +1389,7 @@ void WebFrame::dispatchDecidePolicyForNavigationAction(FramePolicyFunction funct
         policyDelegate = DefaultPolicyDelegate::sharedInstance();
 
     COMPtr<IWebURLRequest> urlRequest(AdoptCOM, WebMutableURLRequest::createInstance(request));
-    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, coreFrame));
+    COMPtr<WebActionPropertyBag> actionInformation(AdoptCOM, WebActionPropertyBag::createInstance(action, coreFrame, formState));
 
     if (SUCCEEDED(policyDelegate->decidePolicyForNavigationAction(d->webView, actionInformation.get(), urlRequest.get(), this, setUpPolicyListener(function).get())))
         return;

@@ -710,7 +710,7 @@ void FrameLoaderClientWx::dispatchDecidePolicyForMIMEType(FramePolicyFunction fu
     (m_frame->loader()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, const String&)
+void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&)
 {
     if (!m_frame)
         return;
@@ -719,7 +719,7 @@ void FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction(FramePolicyFunc
     (m_frame->loader()->*function)(PolicyUse);
 }
 
-void FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request)
+void FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState>)
 {
     if (!m_frame)
         return;

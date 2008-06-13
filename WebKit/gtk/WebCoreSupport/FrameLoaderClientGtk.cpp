@@ -153,7 +153,7 @@ WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader
     return loader.release();
 }
 
-void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunction,  PassRefPtr<FormState>)
+void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunction, PassRefPtr<FormState>)
 {
     // FIXME: This is surely too simple
     ASSERT(policyFunction);
@@ -252,7 +252,7 @@ void FrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction poli
     (core(m_frame)->loader()->*policyFunction)(PolicyUse);
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&, const String&)
+void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction policyFunction, const NavigationAction&, const ResourceRequest&, PassRefPtr<FormState>, const String&)
 {
     ASSERT(policyFunction);
     if (!policyFunction)
@@ -262,7 +262,7 @@ void FrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFuncti
     (core(m_frame)->loader()->*policyFunction)(PolicyIgnore);
 }
 
-void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest)
+void FrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction policyFunction, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>)
 {
     ASSERT(policyFunction);
     if (!policyFunction)

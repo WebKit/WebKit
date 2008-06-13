@@ -585,22 +585,22 @@ void WebFrameLoaderClient::dispatchDecidePolicyForMIMEType(FramePolicyFunction f
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function,
-    const NavigationAction& action, const ResourceRequest& request, const String& frameName)
+    const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState, const String& frameName)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
-            decidePolicyForNewWindowAction:actionDictionary(action)
+            decidePolicyForNewWindowAction:actionDictionary(action, formState)
                                    request:request.nsURLRequest()
                               newFrameName:frameName
                           decisionListener:setUpPolicyListener(function).get()];
 }
 
 void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFunction function,
-    const NavigationAction& action, const ResourceRequest& request)
+    const NavigationAction& action, const ResourceRequest& request, PassRefPtr<FormState> formState)
 {
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
-                decidePolicyForNavigationAction:actionDictionary(action)
+                decidePolicyForNavigationAction:actionDictionary(action, formState)
                                         request:request.nsURLRequest()
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];
@@ -1014,7 +1014,7 @@ static const MouseEvent* findMouseEvent(const Event* event)
     return 0;
 }
 
-NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action) const
+NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& action, PassRefPtr<FormState> formState) const
 {
     unsigned modifierFlags = 0;
     const Event* event = action.event();
@@ -1028,26 +1028,31 @@ NSDictionary *WebFrameLoaderClient::actionDictionary(const NavigationAction& act
         if (keyStateEvent->metaKey())
             modifierFlags |= NSCommandKeyMask;
     }
+
     NSURL *originalURL = action.url();
-    if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
-        IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
-        WebElementDictionary *element = [[WebElementDictionary alloc]
-            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
-        NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
-            element, WebActionElementKey,
-            [NSNumber numberWithInt:mouseEvent->button()], WebActionButtonKey,
-            [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
-            originalURL, WebActionOriginalURLKey,
-            nil];
-        [element release];
-        return result;
-    }
-    return [NSDictionary dictionaryWithObjectsAndKeys:
+
+    NSMutableDictionary *result = [NSMutableDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithInt:action.type()], WebActionNavigationTypeKey,
         [NSNumber numberWithInt:modifierFlags], WebActionModifierFlagsKey,
         originalURL, WebActionOriginalURLKey,
         nil];
+
+    if (const MouseEvent* mouseEvent = findMouseEvent(event)) {
+        IntPoint point(mouseEvent->pageX(), mouseEvent->pageY());
+        WebElementDictionary *element = [[WebElementDictionary alloc]
+            initWithHitTestResult:core(m_webFrame.get())->eventHandler()->hitTestResultAtPoint(point, false)];
+        [result setObject:element forKey:WebActionElementKey];
+        [element release];
+
+        [result setObject:[NSNumber numberWithInt:mouseEvent->button()] forKey:WebActionButtonKey];
+    }
+
+    if (formState) {
+        ASSERT(formState->form());
+        [result setObject:kit(formState->form()) forKey:WebActionFormKey];
+    }
+
+    return result;
 }
 
 bool WebFrameLoaderClient::canCachePage() const

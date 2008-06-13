@@ -57,19 +57,12 @@ typedef enum WebNavigationType {
     WebNavigationTypeOther
 } WebNavigationType;
 
-cpp_quote("#define WebActionNavigationTypeKey TEXT(\"WebActionNavigationTypeKey\")")
-cpp_quote("#define WebActionElementKey TEXT(\"WebActionElementKey\")")
 cpp_quote("#define WebActionButtonKey TEXT(\"WebActionButtonKey\")")
+cpp_quote("#define WebActionElementKey TEXT(\"WebActionElementKey\")")
+cpp_quote("#define WebActionFormKey TEXT(\"WebActionFormKey\")")
 cpp_quote("#define WebActionModifierFlagsKey TEXT(\"WebActionModifierFlagsKey\")")
+cpp_quote("#define WebActionNavigationTypeKey TEXT(\"WebActionNavigationTypeKey\")")
 cpp_quote("#define WebActionOriginalURLKey TEXT(\"WebActionOriginalURLKey\")")
-
-/*
-extern NSString *WebActionNavigationTypeKey; // NSNumber (WebNavigationType)
-extern NSString *WebActionElementKey; // NSDictionary of element info
-extern NSString *WebActionButtonKey;  // NSEventType
-extern NSString *WebActionModifierFlagsKey; // NSNumber (unsigned)
-extern NSString *WebActionOriginalURLKey; // NSURL
-*/
 
 /*!
     @protocol WebPolicyDecisionListener

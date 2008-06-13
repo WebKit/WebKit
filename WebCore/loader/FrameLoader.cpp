@@ -3621,7 +3621,7 @@ void FrameLoader::checkNewWindowPolicy(const NavigationAction& action, const Res
     m_policyCheck.set(request, formState, frameName,
         callContinueLoadAfterNewWindowPolicy, this);
     m_client->dispatchDecidePolicyForNewWindowAction(&FrameLoader::continueAfterNewWindowPolicy,
-        action, request, frameName);
+        action, request, formState, frameName);
 }
 
 void FrameLoader::continueAfterNewWindowPolicy(PolicyAction policy)
@@ -3672,11 +3672,11 @@ void FrameLoader::checkNavigationPolicy(const ResourceRequest& request, Document
     
     loader->setLastCheckedRequest(request);
 
-    m_policyCheck.set(request, formState, function, argument);
+    m_policyCheck.set(request, formState.get(), function, argument);
 
     m_delegateIsDecidingNavigationPolicy = true;
     m_client->dispatchDecidePolicyForNavigationAction(&FrameLoader::continueAfterNavigationPolicy,
-        action, request);
+        action, request, formState);
     m_delegateIsDecidingNavigationPolicy = false;
 }
 

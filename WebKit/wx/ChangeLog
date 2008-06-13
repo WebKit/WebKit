@@ -1,3 +1,13 @@
+2008-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated for addition of FormState argument to action policy functions
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientWx::dispatchDecidePolicyForNavigationAction):
+
 2008-06-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx Linux build fix. Only use -undefined dynamic_lookup flag under Mac.

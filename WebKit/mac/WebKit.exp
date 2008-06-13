@@ -34,6 +34,7 @@ _HIWebViewCreate
 _HIWebViewGetWebView
 _WebActionButtonKey
 _WebActionElementKey
+_WebActionFormKey
 _WebActionModifierFlagsKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,9 +41,11 @@
 using namespace WebCore;
 
 // WebActionPropertyBag ------------------------------------------------
-WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, Frame* frame)
+
+WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, PassRefPtr<HTMLFormElement> form, PassRefPtr<Frame> frame)
     : m_refCount(0)
-    , m_action(action) 
+    , m_action(action)
+    , m_form(form)
     , m_frame(frame)
 {
     gClassCount++;
@@ -54,11 +56,10 @@ WebActionPropertyBag::~WebActionPropertyBag()
     gClassCount--;
 }
 
-WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, Frame* frame)
+WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, PassRefPtr<HTMLFormElement> form, PassRefPtr<Frame> frame)
 {
-    WebActionPropertyBag* instance = new WebActionPropertyBag(action, frame); 
+    WebActionPropertyBag* instance = new WebActionPropertyBag(action, form, frame); 
     instance->AddRef();
-
     return instance;
 }
 
@@ -78,12 +79,12 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::QueryInterface(REFIID riid, void
     return S_OK;
 }
 
-ULONG STDMETHODCALLTYPE WebActionPropertyBag::AddRef(void)
+ULONG STDMETHODCALLTYPE WebActionPropertyBag::AddRef()
 {
     return ++m_refCount;
 }
 
-ULONG STDMETHODCALLTYPE WebActionPropertyBag::Release(void)
+ULONG STDMETHODCALLTYPE WebActionPropertyBag::Release()
 {
     ULONG newRef = --m_refCount;
     if (!newRef)
@@ -116,24 +117,28 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
         V_VT(pVar) = VT_I4;
         V_I4(pVar) = m_action.type();
         return S_OK;
-    } else if (isEqual(pszPropName, WebActionElementKey)) {
+    }
+    if (isEqual(pszPropName, WebActionElementKey)) {
         if (const MouseEvent* mouseEvent = findMouseEvent(m_action.event())) {
             IntPoint point(mouseEvent->clientX(), mouseEvent->clientY());
             V_VT(pVar) = VT_UNKNOWN;
             V_UNKNOWN(pVar) = WebElementPropertyBag::createInstance(m_frame->eventHandler()->hitTestResultAtPoint(point, false));
             return S_OK;
         }
-    } else if (isEqual(pszPropName, WebActionButtonKey)) {
+    }
+    if (isEqual(pszPropName, WebActionButtonKey)) {
         if (const MouseEvent* mouseEvent = findMouseEvent(m_action.event())) {
             V_VT(pVar) = VT_I4;
             V_I4(pVar) = mouseEvent->button();
             return S_OK;
         }
-    } else if (isEqual(pszPropName, WebActionOriginalURLKey)) {
+    }
+    if (isEqual(pszPropName, WebActionOriginalURLKey)) {
         V_VT(pVar) = VT_BSTR;
         V_BSTR(pVar) = BString(m_action.url().string()).release();
         return S_OK;
-    } else if (isEqual(pszPropName, WebActionModifierFlagsKey)) {
+    }
+    if (isEqual(pszPropName, WebActionModifierFlagsKey)) {
         if (const UIEventWithKeyState* keyEvent = findEventWithKeyState(const_cast<Event*>(m_action.event()))) {
             int modifiers = 0;
 
@@ -148,6 +153,12 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
             V_I4(pVar) = modifiers;
             return S_OK;
         }
+    }
+    if (isEqual(pszPropName, WebActionFormKey)) {
+        IHTMLFormElement* form = HTMLFormElement::createInstance(m_form.get());
+        V_VT(pVar) = VT_UNKNOWN;
+        V_UNKNOWN(pVar) = form;
+        return S_OK;
     }
     return E_INVALIDARG;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,27 +27,26 @@
 #define WebActionPropertyBag_h
 
 #include "ocidl.h"
-#include <WTF/OwnPtr.h>
 
 #pragma warning(push, 0)
 #include <WebCore/Frame.h>
+#include <WebCore/HTMLFormElement.h>
 #include <WebCore/NavigationAction.h>
 #pragma warning(pop)
 
-class WebActionPropertyBag : public IPropertyBag
-{
+class WebActionPropertyBag : public IPropertyBag {
 public:
-    static WebActionPropertyBag* createInstance(const WebCore::NavigationAction&, WebCore::Frame*);
+    static WebActionPropertyBag* createInstance(const WebCore::NavigationAction&, PassRefPtr<WebCore::HTMLFormElement>, PassRefPtr<WebCore::Frame>);
 
-protected:
-    WebActionPropertyBag(const WebCore::NavigationAction&, WebCore::Frame*);
+private:
+    WebActionPropertyBag(const WebCore::NavigationAction&, PassRefPtr<WebCore::HTMLFormElement>, PassRefPtr<WebCore::Frame>);
     ~WebActionPropertyBag();
 
 public:
     // IUnknown
-    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
-    virtual ULONG STDMETHODCALLTYPE AddRef(void);
-    virtual ULONG STDMETHODCALLTYPE Release(void);
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef();
+    virtual ULONG STDMETHODCALLTYPE Release();
 
     // IPropertyBag
     virtual /* [local] */ HRESULT STDMETHODCALLTYPE Read( 
@@ -62,6 +61,7 @@ public:
 private:
     ULONG m_refCount;
     WebCore::NavigationAction m_action;
+    RefPtr<WebCore::HTMLFormElement> m_form;
     RefPtr<WebCore::Frame> m_frame;
 };
 

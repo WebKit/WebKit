@@ -109,9 +109,9 @@ private:
     virtual void dispatchDecidePolicyForMIMEType(WebCore::FramePolicyFunction,
         const WebCore::String& MIMEType, const WebCore::ResourceRequest&);
     virtual void dispatchDecidePolicyForNewWindowAction(WebCore::FramePolicyFunction,
-        const WebCore::NavigationAction&, const WebCore::ResourceRequest&, const WebCore::String& frameName);
+        const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>, const WebCore::String& frameName);
     virtual void dispatchDecidePolicyForNavigationAction(WebCore::FramePolicyFunction,
-        const WebCore::NavigationAction&, const WebCore::ResourceRequest&);
+        const WebCore::NavigationAction&, const WebCore::ResourceRequest&, PassRefPtr<WebCore::FormState>);
     virtual void cancelPolicyCheck();
 
     virtual void dispatchUnableToImplementPolicy(const WebCore::ResourceError&);
@@ -197,7 +197,7 @@ private:
 
     RetainPtr<WebFramePolicyListener> setUpPolicyListener(WebCore::FramePolicyFunction);
 
-    NSDictionary *actionDictionary(const WebCore::NavigationAction&) const;
+    NSDictionary *actionDictionary(const WebCore::NavigationAction&, PassRefPtr<WebCore::FormState>) const;
     
     virtual bool canCachePage() const;
 
