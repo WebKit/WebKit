@@ -1,3 +1,15 @@
+2008-06-13  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by Jess.
+
+        <rdar://problem/5702248> Crash on Copy Image from the contextual menu on a broken image in Mail
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage): Check to see the image loaded successfully
+        before trying to put data for it on the Pasteboard.  Mail shouldn't really
+        include the Copy Image menu item, but if it does and the user selects it,
+        we shouldn't crash.
+
 2008-06-11  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
         With help from Siraj Razick  <siraj.razick@collabora.co.uk>
 

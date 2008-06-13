@@ -276,14 +276,18 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     NSURL *cocoaURL = url;
     ASSERT(cocoaURL);
 
-    NSArray* types = writableTypesForImage();
-    [m_pasteboard.get() declareTypes:types owner:nil];
-    writeURL(m_pasteboard.get(), types, cocoaURL, nsStringNilIfEmpty(title), frame);
-
     ASSERT(node->renderer() && node->renderer()->isImage());
     RenderImage* renderer = static_cast<RenderImage*>(node->renderer());
     CachedImage* cachedImage = static_cast<CachedImage*>(renderer->cachedImage());
     ASSERT(cachedImage);
+    
+    if (cachedImage->errorOccurred())
+        return;
+
+    NSArray* types = writableTypesForImage();
+    [m_pasteboard.get() declareTypes:types owner:nil];
+    writeURL(m_pasteboard.get(), types, cocoaURL, nsStringNilIfEmpty(title), frame);
+    
     Image* image = cachedImage->image();
     ASSERT(image);
     
