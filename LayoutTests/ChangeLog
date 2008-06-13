@@ -1,3 +1,56 @@
+2008-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+        
+        - enable a bunch of disabled layout tests which now run ok
+        https://bugs.webkit.org/show_bug.cgi?id=19540
+        
+        I also made a minor change to selftxhtml.js to handle the case
+        where the body is a frameset properly, and to frame.xhtml to match
+        the HTML version of that file, and what the tests expect.
+
+        * dom/html/level2/html/HTMLFormElement10-expected.txt: Added.
+        * dom/html/level2/html/HTMLFormElement10.html: Copied from dom/html/level2/html/HTMLFormElement10.html-disabled.
+        * dom/html/level2/html/HTMLFormElement10.html-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFormElement10-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFormElement10.xhtml: Copied from dom/xhtml/level2/html/HTMLFormElement10.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFormElement10.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement01-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement01.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement01.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement01.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement02-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement02.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement02.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement02.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement03-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement03.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement03.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement03.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement04-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement04.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement04.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement04.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement05-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement05.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement05.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement05.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement06-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement06.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement06.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement06.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement07-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement07.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement07.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement07.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement08-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement08.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement08.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement08.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement09-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameElement09.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameSetElement01-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameSetElement01.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameSetElement01.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameSetElement01.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/HTMLFrameSetElement02-expected.txt: Added.
+        * dom/xhtml/level2/html/HTMLFrameSetElement02.xhtml: Copied from dom/xhtml/level2/html/HTMLFrameSetElement02.xhtml-disabled.
+        * dom/xhtml/level2/html/HTMLFrameSetElement02.xhtml-disabled: Removed.
+        * dom/xhtml/level2/html/resources/frame.xhtml:
+        * dom/xhtml/level2/html/selfxhtml.js:
+
 2008-06-12  Adam Barth  <abarth@webkit.org>
 
         Rubberstamped by Maciej.

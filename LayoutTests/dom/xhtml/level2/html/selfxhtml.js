@@ -17,15 +17,15 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
   }
 
   function assertEqualsAutoCase(context, descr, expected, actual) {
-  	if (builder.contentType == "text/html") {
-  	    if(context == "attribute") {
-  	    	assertEquals(descr, expected.toLowerCase(), actual.toLowerCase());
-  	    } else {
-  	        assertEquals(descr, expected.toUpperCase(), actual);
-  	    }
-  	} else {
-  		assertEquals(descr, expected, actual); 
-  	}
+      if (builder.contentType == "text/html") {
+          if(context == "attribute") {
+              assertEquals(descr, expected.toLowerCase(), actual.toLowerCase());
+          } else {
+              assertEquals(descr, expected.toUpperCase(), actual);
+          }
+      } else {
+          assertEquals(descr, expected, actual); 
+      }
   }
   
 
@@ -47,19 +47,19 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
         matches = 0;
         expectedValue = expected[i];
         for(j = 0; j < actualLen; j++) {
-        	if (builder.contentType == "text/html") {
-        		if (context == "attribute") {
-        			if (expectedValue.toLowerCase() == actual[j].toLowerCase()) {
-        				matches++;
-        			}
-        		} else {
-        			if (expectedValue.toUpperCase() == actual[j]) {
-        				matches++;
-        			}
-        		}
-        	} else {
-            	if(expectedValue == actual[j]) {
-                	matches++;
+            if (builder.contentType == "text/html") {
+                if (context == "attribute") {
+                    if (expectedValue.toLowerCase() == actual[j].toLowerCase()) {
+                        matches++;
+                    }
+                } else {
+                    if (expectedValue.toUpperCase() == actual[j]) {
+                        matches++;
+                    }
+                }
+            } else {
+                if(expectedValue == actual[j]) {
+                    matches++;
                 }
             }
         }
@@ -104,13 +104,13 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 
   function assertEqualsListAutoCase(context, descr, expected, actual) {
-	var minLength = expected.length;
-	if (actual.length < minLength) {
-	    minLength = actual.length;
-	}
+    var minLength = expected.length;
+    if (actual.length < minLength) {
+        minLength = actual.length;
+    }
     //
     for(var i = 0; i < minLength; i++) {
-		assertEqualsAutoCase(context, descr, expected[i], actual[i]);
+        assertEqualsAutoCase(context, descr, expected[i], actual[i]);
     }
     //
     //  if they aren't the same size, they aren't equal
@@ -119,14 +119,14 @@ the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 
   function assertEqualsList(descr, expected, actual) {
-	var minLength = expected.length;
-	if (actual.length < minLength) {
-	    minLength = actual.length;
-	}
+    var minLength = expected.length;
+    if (actual.length < minLength) {
+        minLength = actual.length;
+    }
     //
     for(var i = 0; i < minLength; i++) {
         if(expected[i] != actual[i]) {
-			assertEquals(descr, expected[i], actual[i]);
+            assertEquals(descr, expected[i], actual[i]);
         }
     }
     //
@@ -240,13 +240,13 @@ function same(expected, actual)
 }
 
 function equalsAutoCase(context, expected, actual) {
-	if (builder.contentType == "text/html") {
-		if (context == "attribute") {
-			return expected.toLowerCase() == actual;
-		}
-		return expected.toUpperCase() == actual;
-	}
-	return expected == actual;
+    if (builder.contentType == "text/html") {
+        if (context == "attribute") {
+            return expected.toLowerCase() == actual;
+        }
+        return expected.toUpperCase() == actual;
+    }
+    return expected == actual;
 }
 
 function toLowerArray(src) {
@@ -260,7 +260,7 @@ function toLowerArray(src) {
 
 function createTempURI(scheme) {
    if (scheme == "http") {
-   	  return "http://localhost:8080/webdav/tmp" + Math.floor(Math.random() * 100000) + ".xml";
+         return "http://localhost:8080/webdav/tmp" + Math.floor(Math.random() * 100000) + ".xml";
    }
    return "file:///tmp/domts" + Math.floor(Math.random() * 100000) + ".xml";
 }
@@ -328,7 +328,7 @@ function UserDataNotification(operation, key, data, src, dst) {
 }
 
 function UserDataMonitor() {
-	this.allNotifications = new Array();
+    this.allNotifications = new Array();
 }
 
 UserDataMonitor.prototype.handle = function(operation, key, data, src, dst) {
@@ -432,7 +432,7 @@ HTMLBuilder.prototype.cloneNode = function(srcNode, doc) {
 
 HTMLBuilder.prototype.load = function(frame, varname, url) {
   if (this.documentVarnames[0] == varname) {
-  	return document;
+      return document;
   }
   //
   //
@@ -470,7 +470,7 @@ HTMLBuilder.prototype.load = function(frame, varname, url) {
       var srcNode = document.firstChild;
       while(srcNode != null && srcNode.nodeType != 1) {
           if (srcNode.nodeType != 10) {
-          	 var cloneNode = this.cloneNode(srcNode, clone);
+               var cloneNode = this.cloneNode(srcNode, clone);
              clone.insertBefore(cloneNode, clone.documentElement);
            }
            srcNode = srcNode.nextSibling; 
@@ -559,24 +559,31 @@ function setResult(resultType, message) {
    var statusDiv2 = statusRow.insertCell(-1);
    var style = "color:green";
    if (resultType == null) {
-   		statusDiv2.appendChild(document.createTextNode("Success"));
+           statusDiv2.appendChild(document.createTextNode("Success"));
    } else {
-   		statusDiv2.appendChild(document.createTextNode(resultType));
-   		if (resultType == "skip") {
-   		    style = "color:blue";
-   		} else {
-   		    style = "color:red";
-   		}
+           statusDiv2.appendChild(document.createTextNode(resultType));
+           if (resultType == "skip") {
+               style = "color:blue";
+           } else {
+               style = "color:red";
+           }
    }
    newTable.setAttributeNS(null, "style", style);
    if (message != null) {
       var messageRow = newTable.insertRow(-1);
-   	  var messageDiv1 = messageRow.insertCell(-1);
+         var messageDiv1 = messageRow.insertCell(-1);
       messageDiv1.appendChild(document.createTextNode("Message"));
       var messageDiv2 = messageRow.insertCell(-1);
       messageDiv2.appendChild(document.createTextNode((message instanceof Error) ? ("Line " + message.line + ": " + message.name) : message));
    }
-   var oldBody = document.getElementsByTagName("body")[0];
+   //
+   //  WebKit modification: 18-August-2005
+   //
+   //  Use document.body instead of the line of code below, since this is wrong for a frameset.
+   //
+   // var oldBody = document.getElementsByTagName("body")[0];
+   var oldBody = document.body;
+
    oldBody.parentNode.replaceChild(newBody, oldBody);
    if (parent != window && typeof(parent.setResult) != 'undefined') {
        parent.setResult(testName, resultType, message);
@@ -686,7 +693,7 @@ function getResourceURI(name, scheme, contentType) {
     if (base == null) {
        base = "";
     } else {
-	   base = base.substring(0, base.lastIndexOf('/') + 1) + "files/";
+       base = base.substring(0, base.lastIndexOf('/') + 1) + "files/";
     }
     return base + name + getSuffix(contentType);
 }
@@ -709,19 +716,19 @@ if (window.layoutTestController) {
 //  End WebKit modification
 //
 
-	//
-	//   invoke test setup
-	//
-	setUpPage();
-	try {
-	    runTest();
-	    if (builder.initializationError == null) {
-	       setResult(null, null);
-	    } else {
-	       setResult("skip", builder.initializationError);
-	    }
-	} catch(ex) {
-	    if (typeof(ex.substring) != 'undefined' && ex.substring(0, 8) == "failure:") {
+    //
+    //   invoke test setup
+    //
+    setUpPage();
+    try {
+        runTest();
+        if (builder.initializationError == null) {
+           setResult(null, null);
+        } else {
+           setResult("skip", builder.initializationError);
+        }
+    } catch(ex) {
+        if (typeof(ex.substring) != 'undefined' && ex.substring(0, 8) == "failure:") {
             setResult("failure", ex.substring(8));
         } else {
             setResult("error", ex);
