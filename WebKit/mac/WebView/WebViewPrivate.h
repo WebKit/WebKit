@@ -229,6 +229,9 @@ Could be worth adding to the API.
 - (id<WebFormDelegate>)_formDelegate;
 
 - (BOOL)_isClosed;
+
+// _close is now replaced by public method -close. It remains here only for backward compatibility
+// until callers can be weaned off of it.
 - (void)_close;
 
 /*!

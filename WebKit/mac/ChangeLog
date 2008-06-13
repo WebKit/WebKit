@@ -1,3 +1,24 @@
+2008-06-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan and Darin
+
+        Clear up the confusion about _close (older private method) vs -close (newer public method).
+
+        * WebView/WebView.mm:
+        (-[WebView _isClosed]):
+        simplified style
+        (-[WebView _close]):
+        added a comment about how clients and subclasses should use -close instead
+        (-[WebView dealloc]):
+        call -close instead of _close, so subclasses that override the public method will have the intended behavior
+        (-[WebView close]):
+        added a comment
+        (-[WebView _windowWillClose:]):
+        call -close instead of _close, so subclasses that override the public method will have the intended behavior
+
+        * WebView/WebViewPrivate.h:
+        added a comment about how clients and subclasses should use -close instead
+
 2008-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.

@@ -682,9 +682,7 @@ static bool debugWidget = true;
 
 - (BOOL)_isClosed
 {
-    if (!_private || _private->closed)
-        return YES;
-    return NO;
+    return !_private || _private->closed;
 }
 
 - (void)_closePluginDatabases
@@ -720,6 +718,8 @@ static bool debugWidget = true;
     [self _closePluginDatabases];
 }
 
+// _close is here only for backward compatibility; clients and subclasses should use
+// public method -close instead.
 - (void)_close
 {
     if (!_private || _private->closed)
@@ -2076,7 +2076,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 {
     // call close to ensure we tear-down completely
     // this maintains our old behavior for existing applications
-    [self _close];
+    [self close];
 
     --WebViewCount;
     
@@ -2098,6 +2098,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)close
 {
+    // _close existed first, and some clients might be calling or overriding it, so call through.
     [self _close];
 }
 
@@ -2139,7 +2140,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 - (void)_windowWillClose:(NSNotification *)notification
 {
     if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
-        [self _close];
+        [self close];
 }
 
 - (void)setPreferences:(WebPreferences *)prefs
