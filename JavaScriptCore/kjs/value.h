@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -142,11 +142,12 @@ private:
 
 class JSCell : public JSValue {
     friend class Collector;
+    friend class GetterSetterImp;
+    friend class JSObject;
+    friend class JSPropertyNameIterator;
+    friend class JSValue;
     friend class NumberImp;
     friend class StringImp;
-    friend class JSObject;
-    friend class GetterSetterImp;
-    friend class JSPropertyNameIterator;
 private:
     JSCell();
     virtual ~JSCell();
@@ -193,6 +194,7 @@ public:
     virtual void put(ExecState*, unsigned propertyName, JSValue*);
     virtual JSObject* toThisObject(ExecState*) const;
 
+private:
     // Base implementation, but for non-object classes implements getPropertySlot.
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

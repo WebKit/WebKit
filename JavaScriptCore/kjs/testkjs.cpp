@@ -358,7 +358,7 @@ static void runInteractive(GlobalObject* globalObject)
         Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), interpreterName, 1, line);
         free(line);
 #else
-        printf(interactivePrompt);
+        puts(interactivePrompt);
         Vector<char, 256> line;
         int c;
         while ((c = getchar()) != EOF) {

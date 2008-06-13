@@ -701,14 +701,6 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue* value)
     asCell()->put(exec, propertyName, value);
 }
 
-inline JSObject* PropertySlot::slotBase() const
-{
-    ASSERT(m_slotBase);
-    // It's be nice to assert that m_slotBase is an object here, but that's a bit
-    // too slow, even for debug builds.
-    return static_cast<JSObject*>(m_slotBase);
-}
-
 } // namespace
 
 #endif // KJS_OBJECT_H

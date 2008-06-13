@@ -86,7 +86,8 @@ namespace KJS {
   inline JSValue* staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
   {
       // Look for cached value in dynamic map of properties (in JSObject)
-      JSObject* thisObj = slot.slotBase();
+      ASSERT(slot.slotBase()->isObject());
+      JSObject* thisObj = static_cast<JSObject*>(slot.slotBase());
       JSValue* cachedVal = thisObj->getDirect(propertyName);
       if (cachedVal)
         return cachedVal;

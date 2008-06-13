@@ -1,3 +1,73 @@
+2008-06-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19434
+          speed up SunSpider by avoiding some string boxing
+
+        Speeds up SunSpider by 1.1%.
+
+        Optimized code path for getting built-in properties from strings -- avoid
+        boxing with a string object in that case. We can make further changes to avoid
+        even more boxing, but this change alone is a win.
+
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::JSCallbackObject::staticValueGetter): Use isObject instead of inherits
+        in asssert, since the type of slotBase() is now JSValue, not JSObject.
+        (KJS::JSCallbackObject::staticFunctionGetter): Ditto.
+        (KJS::JSCallbackObject::callbackGetter): Ditto.
+
+        * kjs/internal.cpp:
+        (KJS::StringImp::getPrimitiveNumber): Updated for change of data member name.
+        (KJS::StringImp::toBoolean): Ditto.
+        (KJS::StringImp::toNumber): Ditto.
+        (KJS::StringImp::toString): Ditto.
+        (KJS::StringInstance::create): Added; avoids a bit of cut and paste code.
+        (KJS::StringImp::toObject): Use StringInstance::create.
+        (KJS::StringImp::toThisObject): Ditto.
+        (KJS::StringImp::lengthGetter): Added. Replaces the getter that used to live in
+        the StringInstance class.
+        (KJS::StringImp::indexGetter): Ditto.
+        (KJS::StringImp::indexNumericPropertyGetter): Ditto.
+        (KJS::StringImp::getOwnPropertySlot): Added. Deals with built in properties of
+        the string class without creating a StringInstance.
+
+        * kjs/internal.h:
+        (KJS::StringImp::getStringPropertySlot): Added. To be used by both the string
+        and string object getOwnPropertySlot function.
+
+        * kjs/lookup.h:
+        (KJS::staticFunctionGetter): Updated since slotBase() is now a JSValue rather
+        than a JSObject.
+
+        * kjs/object.h: Removed PropertySlot::slotBase() function, which can now move
+        back into property_slot.h where it belongs since it doesn't have to cast to
+        JSObject*.
+
+        * kjs/property_slot.cpp:
+        (KJS::PropertySlot::functionGetter): Updated since slot.slotBase() is now a JSValue*
+        instead of JSObject*. setGetterSlot still guarantees the base is a JSObject*.
+        * kjs/property_slot.h:
+        (KJS::PropertySlot::PropertySlot): Changed base to JSValue* intead of JSCell*.
+        (KJS::PropertySlot::setStaticEntry): Ditto.
+        (KJS::PropertySlot::setCustom): Ditto.
+        (KJS::PropertySlot::setCustomIndex): Ditto.
+        (KJS::PropertySlot::setCustomNumeric): Ditto.
+        (KJS::PropertySlot::slotBase): Moved inline here since it no longer involves a
+        downcast to JSObject*.
+        (KJS::PropertySlot::setBase): Changed to JSValue*.
+
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::getOwnPropertySlot): Changed to use getStringPropertySlot
+        instead of coding the properties here. This allows sharing the code with StringImp.
+
+        * kjs/string_object.h: Removed inlineGetOwnPropertySlot, lengthGetter, and indexGetter.
+        Made one of the constructors protected.
+
+        * kjs/value.h: Made getOwnPropertySlot private in the JSCell class -- this is better
+        since it's not the real JSObject getOwnPropertySlot semantic and most callers shouldn't
+        use it.
+
 2008-06-12  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

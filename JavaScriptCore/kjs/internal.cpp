@@ -59,33 +59,84 @@ JSValue* StringImp::toPrimitive(ExecState*, JSType) const
 bool StringImp::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
 {
     value = this;
-    number = val.toDouble();
+    number = m_value.toDouble();
     return false;
 }
 
-bool StringImp::toBoolean(ExecState *) const
+bool StringImp::toBoolean(ExecState*) const
 {
-  return (val.size() > 0);
+    return !m_value.isEmpty();
 }
 
-double StringImp::toNumber(ExecState *) const
+double StringImp::toNumber(ExecState*) const
 {
-  return val.toDouble();
+    return m_value.toDouble();
 }
 
-UString StringImp::toString(ExecState *) const
+UString StringImp::toString(ExecState*) const
 {
-  return val;
+    return m_value;
 }
 
-JSObject* StringImp::toObject(ExecState *exec) const
+inline StringInstance* StringInstance::create(ExecState* exec, StringImp* string)
 {
-    return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), const_cast<StringImp*>(this));
+    return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), string);
+}
+
+JSObject* StringImp::toObject(ExecState* exec) const
+{
+    return StringInstance::create(exec, const_cast<StringImp*>(this));
 }
 
 JSObject* StringImp::toThisObject(ExecState* exec) const
 {
-    return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), const_cast<StringImp*>(this));
+    return StringInstance::create(exec, const_cast<StringImp*>(this));
+}
+
+JSValue* StringImp::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+{
+    return jsNumber(static_cast<StringImp*>(slot.slotBase())->value().size());
+}
+
+JSValue* StringImp::indexGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+{
+    return jsString(static_cast<StringImp*>(slot.slotBase())->value().substr(slot.index(), 1));
+}
+
+JSValue* StringImp::indexNumericPropertyGetter(ExecState*, unsigned index, const PropertySlot& slot)
+{
+    return jsString(static_cast<StringImp*>(slot.slotBase())->value().substr(index, 1));
+}
+
+bool StringImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+{
+    // The semantics here are really getPropertySlot, not getOwnPropertySlot.
+    // This function should only be called by JSValue::get.
+    if (getStringPropertySlot(exec, propertyName, slot))
+        return true;
+    JSObject* object = StringInstance::create(exec, this);
+    slot.setBase(object);
+    if (object->JSObject::getOwnPropertySlot(exec, propertyName, slot))
+        return true;
+    while (true) {
+        JSValue* proto = object->prototype();
+        if (!proto->isObject()) {
+            slot.setUndefined();
+            return true;
+        }
+        object = static_cast<JSObject*>(proto);
+        if (object->getOwnPropertySlot(exec, propertyName, slot))
+            return true;
+    }
+}
+
+bool StringImp::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+{
+    // The semantics here are really getPropertySlot, not getOwnPropertySlot.
+    // This function should only be called by JSValue::get.
+    if (getStringPropertySlot(propertyName, slot))
+        return true;
+    return StringImp::getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
 }
 
 // ------------------------------ NumberImp ------------------------------------

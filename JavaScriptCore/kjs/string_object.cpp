@@ -58,47 +58,17 @@ StringInstance::StringInstance(JSObject *proto, const UString &string)
   setInternalValue(jsString(string));
 }
 
-JSValue *StringInstance::lengthGetter(ExecState*, const Identifier&, const PropertySlot &slot)
-{
-    return jsNumber(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().size());
-}
-
-JSValue* StringInstance::indexGetter(ExecState*, const Identifier&, const PropertySlot& slot)
-{
-    return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(slot.index(), 1));
-}
-
-static JSValue* stringInstanceNumericPropertyGetter(ExecState*, unsigned index, const PropertySlot& slot)
-{
-    return jsString(static_cast<StringInstance*>(slot.slotBase())->internalValue()->value().substr(index, 1));
-}
-
 bool StringInstance::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+    if (internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;
-    }
-
-    bool isStrictUInt32;
-    unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
-    unsigned length = internalValue()->value().size();
-    if (isStrictUInt32 && i < length) {
-        slot.setCustomIndex(this, i, indexGetter);
-        return true;
-    }
-    
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
     
 bool StringInstance::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    unsigned length = internalValue()->value().size();
-    if (propertyName < length) {
-        slot.setCustomNumeric(this, stringInstanceNumericPropertyGetter);
-        return true;
-    }
-    
+    if (internalValue()->getStringPropertySlot(propertyName, slot))
+        return true;    
     return JSObject::getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
 }
 
