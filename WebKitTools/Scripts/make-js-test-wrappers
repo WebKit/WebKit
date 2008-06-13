@@ -90,8 +90,11 @@ for my $tfile (@templates) {
         next if $file =~ /js-test-.*\.js$/;
         next if $file =~ /SVGTestCase\.js/;
         next if $file =~ m:resources/attr-case-sensitivity\.js$:;
+        next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-1\.js$:;
+        next if $file =~ m:resources/codegen-temporaries-multiple-global-blocks-2\.js$:;
         next if $file =~ m:resources/frame-loading-via-document-write\.js$:;
         next if $file =~ m:resources/intersectsNode\.js$:;
+        next if $file =~ m:resources/p-in-scope\.js$:;
         next if $file =~ m:resources/script-element-gc\.js$:;
         next if $file =~ m:resources/script-element-gc\.js$:;
         next if $file =~ m:resources/script3\.js$:;
