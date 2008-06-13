@@ -1,3 +1,10 @@
+2008-06-12  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build
+
+        * dom/Element.idl: Turn off ElementTraversal functions when generating COM.
+        Not sure why they're failing, but turning them off for now seems OK.
+
 2008-06-12  Adam Barth  <abarth@webkit.org>
 
         Rubberstamped by Maciej.

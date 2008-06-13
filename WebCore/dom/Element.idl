@@ -113,11 +113,13 @@ module core {
             raises(DOMException);
 
         // ElementTraversal API
+#if !defined(LANGUAGE_COM)
         readonly attribute Element firstElementChild;
         readonly attribute Element lastElementChild;
         readonly attribute Element previousElementSibling;
         readonly attribute Element nextElementSibling;
         readonly attribute unsigned long childElementCount;
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extensions
