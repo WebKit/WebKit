@@ -79,7 +79,9 @@ namespace KJS {
         double totalTime() const { return m_visibleTotalTime; }
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }
-        void setSelfTime(double time) { m_actualSelfTime = time; m_visibleSelfTime = time; }
+        void setSelfTime(double time) {m_actualSelfTime = time; m_visibleSelfTime = time; }
+        void setActualSelfTime(double time) { m_actualSelfTime = time; }
+        void setVisibleSelfTime(double time) { m_visibleSelfTime = time; }
         double totalPercent() const { return (m_visibleTotalTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
         double selfPercent() const { return (m_visibleSelfTime / (m_head ? m_head->totalTime() : totalTime())) * 100.0; }
         unsigned numberOfCalls() const { return m_numberOfCalls; }
@@ -91,9 +93,10 @@ namespace KJS {
         bool visible() const { return m_visible; }
         void setVisible(bool visible) { m_visible = visible; }
 
-        void setTreeVisible(bool visible);
+        static void setTreeVisible(ProfileNode*, bool visible);
 
-        ProfileNode* traverseNextNode() const;
+        ProfileNode* traverseNextNodePostOrder() const;
+        ProfileNode* traverseNextNodePreOrder() const;
         void sort(bool (*)(const RefPtr<ProfileNode>&, const RefPtr<ProfileNode>&));
         static void sortTotalTimeDescending(ProfileNode* n) { n->sort(totalTimeDescendingComparator); }
         static void sortTotalTimeAscending(ProfileNode* n) { n->sort(totalTimeAscendingComparator); }
@@ -105,7 +108,7 @@ namespace KJS {
         static void sortFunctionNameAscending(ProfileNode* n) { n->sort(functionNameAscendingComparator); }
         
         void focus(const CallIdentifier&, bool forceVisible = false);
-        double exclude(const CallIdentifier&);
+        void exclude(const CallIdentifier&);
         void restore();
 
         void endAndRecordCall();

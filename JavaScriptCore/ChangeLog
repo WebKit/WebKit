@@ -1,3 +1,36 @@
+2008-06-13  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler.
+        - Remove recursion from exclude().  This leaves only focus() to fix.
+
+        * JavaScriptCore.exp: Change the signatures of the exported functions.
+        * profiler/Profile.cpp:
+        (KJS::Profile::forEach): I added a traverseNextNodePreOrder() function
+        and so needed to distinguish the other function by labeling it
+        traverseNextNodePostOrder().
+        (KJS::Profile::exclude): All new exclude that iteratively walks the tree
+        * profiler/Profile.h:
+        (KJS::Profile::focus): Add a null check for m_head.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::traverseNextNodePostOrder): Renamed
+        (KJS::ProfileNode::traverseNextNodePreOrder): Walks the tree in pre-
+        order, where the parent is processed before the children.
+        (KJS::ProfileNode::setTreeVisible): Iterate over the sub-tree and set
+        all of the nodes visible value.  This changes another function that used
+        recursion.
+        (KJS::ProfileNode::exclude): Remove recursion from this function.
+        Because we now check for m_visible and we are walking the tree in pre-
+        order we do not need to check if an excluded node is in an excluded
+        sub-tree.
+        * profiler/ProfileNode.h: Added specific selfTime functions to
+        facilitate exclude().
+        (KJS::ProfileNode::setSelfTime):
+        (KJS::ProfileNode::setActualSelfTime):
+        (KJS::ProfileNode::setVisibleSelfTime):
+
 2008-06-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

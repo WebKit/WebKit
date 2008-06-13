@@ -61,8 +61,8 @@ namespace KJS {
         void sortFunctionNameDescending() { forEach(ProfileNode::sortFunctionNameDescending); }
         void sortFunctionNameAscending() { forEach(ProfileNode::sortFunctionNameAscending); }
 
-        void focus(const ProfileNode* profileNode) { if (!profileNode) return; m_head->focus(profileNode->callIdentifier()); }
-        void exclude(const ProfileNode* profileNode) { if (!profileNode) return; m_head->exclude(profileNode->callIdentifier()); }
+        void focus(const ProfileNode* profileNode) { if (!profileNode || !m_head) return; m_head->focus(profileNode->callIdentifier()); }
+        void exclude(const ProfileNode* profileNode);
         void restoreAll();
 
 #ifndef NDEBUG

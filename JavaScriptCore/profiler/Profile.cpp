@@ -91,23 +91,32 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
 
 void Profile::forEach(UnaryFunction function)
 {
-
     ProfileNode* currentNode = m_head->firstChild();
     for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
         currentNode = nextNode;
 
-    ProfileNode* endNode = m_head->traverseNextNode();
+    ProfileNode* endNode = m_head->traverseNextNodePostOrder();
     while (currentNode && currentNode != endNode) {
         function(currentNode);
-        currentNode = currentNode->traverseNextNode();
+        currentNode = currentNode->traverseNextNodePostOrder();
     } 
+}
+
+void Profile::exclude(const ProfileNode* profileNode)
+{
+    if (!profileNode || !m_head)
+        return;
+
+    const CallIdentifier& callIdentifier = profileNode->callIdentifier();
+
+    for (ProfileNode* currentNode = m_head.get(); currentNode; currentNode = currentNode->traverseNextNodePreOrder())
+        currentNode->exclude(callIdentifier);
 }
 
 void Profile::restoreAll()
 {
     forEach(KJS::restoreAll);
 }
-
 
 #ifndef NDEBUG
 void Profile::debugPrintData() const
