@@ -1,3 +1,17 @@
+2008-06-13  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Add a test for existing loader behaviour in preparation for:
+
+        Bug 19422: Distinct redirects from the same link do not create distinct history items
+        <https://bugs.webkit.org/show_bug.cgi?id=19422>
+
+        * http/tests/navigation/redirect-cycle-expected.txt: Added.
+        * http/tests/navigation/redirect-cycle.html: Added.
+        * http/tests/navigation/resources/redirect-cycle-1.pl: Added.
+        * http/tests/navigation/resources/redirect-cycle-2.pl: Added.
+
 2008-06-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
