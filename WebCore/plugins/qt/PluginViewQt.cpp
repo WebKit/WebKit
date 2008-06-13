@@ -96,6 +96,7 @@ void PluginView::updateWindow() const
     if (m_window) {
         m_window->move(m_windowRect.x(), m_windowRect.y());
         m_window->resize(m_windowRect.width(), m_windowRect.height());
+        m_window->setMask(QRegion(m_clipRect.x(), m_clipRect.y(), m_clipRect.width(), m_clipRect.height()));
     }
 }
 

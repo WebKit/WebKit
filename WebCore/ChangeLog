@@ -1,3 +1,15 @@
+2008-06-11  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+        With help from Siraj Razick  <siraj.razick@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19367
+        [Qt] Plugins are drawn over the scrollbars
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::updateWindow): Call setMask on the
+        QX11EmbedContainer to set the plugin clipping.
+
 2008-06-12  Darin Adler  <darin@apple.com>
 
         - try to fix no-SVG build
