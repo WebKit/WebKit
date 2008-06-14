@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-    class Frame;
     class KURL;
     
     class SecurityOrigin : public ThreadSafeShared<SecurityOrigin> {

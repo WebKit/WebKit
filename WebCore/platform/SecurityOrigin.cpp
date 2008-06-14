@@ -30,10 +30,7 @@
 #include "SecurityOrigin.h"
 
 #include "CString.h"
-#include "Document.h"
-#include "Frame.h"
 #include "FrameLoader.h"
-#include "FrameTree.h"
 #include "KURL.h"
 #include "PlatformString.h"
 
