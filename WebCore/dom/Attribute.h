@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,25 +34,17 @@ class CSSStyleDeclaration;
 class Element;
 class NamedAttrMap;
 
-// this has no counterpart in DOM, purely internal
-// representation of the nodevalue of an Attr.
-// the actual Attr (Attr) with its value as textchild
-// is only allocated on demand by the DOM bindings.
-// Any use of Attr inside khtml should be avoided.
+// This has no counterpart in DOM.
+// It is an internal representation of the node value of an Attr.
+// The actual Attr with its value as a Text child is allocated only if needed.
 class Attribute : public RefCounted<Attribute> {
     friend class Attr;
-    friend class Element;
     friend class NamedAttrMap;
 public:
-    // null value is forbidden !
-    Attribute(const QualifiedName& name, const AtomicString& value)
-        : RefCounted<Attribute>(0), m_name(name), m_value(value), m_impl(0)
-    {}
-    
-    Attribute(const AtomicString& name, const AtomicString& value)
-        : RefCounted<Attribute>(0), m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
-    {}
-
+    static PassRefPtr<Attribute> create(const QualifiedName& name, const AtomicString& value)
+    {
+        return adoptRef(new Attribute(name, value));
+    }
     virtual ~Attribute() { }
     
     const AtomicString& value() const { return m_value; }
@@ -70,13 +60,23 @@ public:
     bool isNull() const { return m_value.isNull(); }
     bool isEmpty() const { return m_value.isEmpty(); }
     
-    virtual Attribute* clone(bool preserveDecl = true) const;
+    virtual PassRefPtr<Attribute> clone() const;
 
     // An extension to get the style information for presentational attributes.
     virtual CSSStyleDeclaration* style() const { return 0; }
     
     void setValue(const AtomicString& value) { m_value = value; }
     void setPrefix(const AtomicString& prefix) { m_name.setPrefix(prefix); }
+
+protected:
+    Attribute(const QualifiedName& name, const AtomicString& value)
+        : m_name(name), m_value(value), m_impl(0)
+    {
+    }
+    Attribute(const AtomicString& name, const AtomicString& value)
+        : m_name(nullAtom, name, nullAtom), m_value(value), m_impl(0)
+    {
+    }
 
 private:
     QualifiedName m_name;

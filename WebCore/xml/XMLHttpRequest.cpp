@@ -293,7 +293,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (!m_doc || !m_doc->frame())
         return;
 
-    RefPtr<Event> evt = new Event(readystatechangeEvent, false, false);
+    RefPtr<Event> evt = Event::create(readystatechangeEvent, false, false);
     if (m_onReadyStateChangeListener) {
         evt->setTarget(this);
         evt->setCurrentTarget(this);
@@ -305,7 +305,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
     ASSERT(!ec);
     
     if (m_state == DONE) {
-        evt = new Event(loadEvent, false, false);
+        evt = Event::create(loadEvent, false, false);
         if (m_onLoadListener) {
             evt->setTarget(this);
             evt->setCurrentTarget(this);
@@ -971,10 +971,10 @@ void XMLHttpRequest::updateAndDispatchOnProgress(unsigned int len)
 
 void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
 {
-    RefPtr<XMLHttpRequestProgressEvent> evt;
-
     // If we do not have the information or it is odd, set lengthComputable to false.
-    evt = new XMLHttpRequestProgressEvent(progressEvent, expectedLength && m_receivedLength <= expectedLength, static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
+    RefPtr<XMLHttpRequestProgressEvent> evt = XMLHttpRequestProgressEvent::create(progressEvent,
+        expectedLength && m_receivedLength <= expectedLength,
+        static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
 
     if (m_onProgressListener) {
         evt->setTarget(this);

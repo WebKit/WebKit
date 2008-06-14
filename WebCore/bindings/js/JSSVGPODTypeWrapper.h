@@ -30,18 +30,13 @@
 #if ENABLE(SVG)
 
 #include "Frame.h"
-#include <wtf/RefCounted.h>
 #include "SVGElement.h"
-
-#include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
 template<typename PODType>
 class JSSVGPODTypeWrapper : public RefCounted<JSSVGPODTypeWrapper<PODType> > {
 public:
-    JSSVGPODTypeWrapper() : RefCounted<JSSVGPODTypeWrapper<PODType> >(0) { }
     virtual ~JSSVGPODTypeWrapper() { }
 
     // Getter wrapper
@@ -52,23 +47,15 @@ public:
 };
 
 template<typename PODType, typename PODTypeCreator>
-class JSSVGPODTypeWrapperCreatorReadWrite : public JSSVGPODTypeWrapper<PODType>
-{
+class JSSVGPODTypeWrapperCreatorReadWrite : public JSSVGPODTypeWrapper<PODType> {
 public:
     typedef PODType (PODTypeCreator::*GetterMethod)() const; 
     typedef void (PODTypeCreator::*SetterMethod)(PODType);
 
-    JSSVGPODTypeWrapperCreatorReadWrite(PODTypeCreator* creator, GetterMethod getter, SetterMethod setter)
-        : m_creator(creator)
-        , m_getter(getter)
-        , m_setter(setter)
+    static PassRefPtr<JSSVGPODTypeWrapperCreatorReadWrite> create(PassRefPtr<PODTypeCreator> creator, GetterMethod getter, SetterMethod setter)
     {
-        ASSERT(creator);
-        ASSERT(getter);
-        ASSERT(setter);
+        return adoptRef(new JSSVGPODTypeWrapperCreatorReadWrite(creator, getter, setter));
     }
-
-    virtual ~JSSVGPODTypeWrapperCreatorReadWrite() { }
 
     // Getter wrapper
     virtual operator PODType() { return (m_creator.get()->*m_getter)(); }
@@ -86,6 +73,16 @@ public:
     }
 
 private:
+    JSSVGPODTypeWrapperCreatorReadWrite(PassRefPtr<PODTypeCreator> creator, GetterMethod getter, SetterMethod setter)
+        : m_creator(creator)
+        , m_getter(getter)
+        , m_setter(setter)
+    {
+        ASSERT(m_creator);
+        ASSERT(m_getter);
+        ASSERT(m_setter);
+    }
+
     // Update callbacks
     RefPtr<PODTypeCreator> m_creator;
     GetterMethod m_getter;
@@ -93,14 +90,12 @@ private:
 };
 
 template<typename PODType>
-class JSSVGPODTypeWrapperCreatorReadOnly : public JSSVGPODTypeWrapper<PODType>
-{
+class JSSVGPODTypeWrapperCreatorReadOnly : public JSSVGPODTypeWrapper<PODType> {
 public:
-    JSSVGPODTypeWrapperCreatorReadOnly(PODType type)
-        : m_podType(type)
-    { }
-
-    virtual ~JSSVGPODTypeWrapperCreatorReadOnly() { }
+    static PassRefPtr<JSSVGPODTypeWrapperCreatorReadOnly> create(PODType type)
+    {
+        return adoptRef(new JSSVGPODTypeWrapperCreatorReadOnly(type));
+    }
 
     // Getter wrapper
     virtual operator PODType() { return m_podType; }
@@ -112,6 +107,11 @@ public:
     }
 
 private:
+    JSSVGPODTypeWrapperCreatorReadOnly(PODType type)
+        : m_podType(type)
+    {
+    }
+
     PODType m_podType;
 };
 
@@ -119,24 +119,15 @@ template<typename PODType>
 class SVGPODListItem;
 
 template<typename PODType>
-class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapper<PODType>
-{
+class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapper<PODType> {
 public:
     typedef PODType (SVGPODListItem<PODType>::*GetterMethod)() const; 
     typedef void (SVGPODListItem<PODType>::*SetterMethod)(PODType);
 
-    JSSVGPODTypeWrapperCreatorForList(SVGPODListItem<PODType>* creator, const QualifiedName& attributeName)
-        : m_creator(creator)
-        , m_getter(&SVGPODListItem<PODType>::value)
-        , m_setter(&SVGPODListItem<PODType>::setValue)
-        , m_associatedAttributeName(attributeName)
+    static PassRefPtr<JSSVGPODTypeWrapperCreatorForList> create(PassRefPtr<SVGPODListItem<PODType> > creator, const QualifiedName& attributeName)
     {
-        ASSERT(m_creator);
-        ASSERT(m_getter);
-        ASSERT(m_setter);
+        return adoptRef(new JSSVGPODTypeWrapperCreatorForList(creator, attributeName));
     }
-
-    virtual ~JSSVGPODTypeWrapperCreatorForList() { }
 
     // Getter wrapper
     virtual operator PODType() { return (m_creator.get()->*m_getter)(); }
@@ -154,6 +145,17 @@ public:
     }
 
 private:
+    JSSVGPODTypeWrapperCreatorForList(PassRefPtr<SVGPODListItem<PODType> > creator, const QualifiedName& attributeName)
+        : m_creator(creator)
+        , m_getter(&SVGPODListItem<PODType>::value)
+        , m_setter(&SVGPODListItem<PODType>::setValue)
+        , m_associatedAttributeName(attributeName)
+    {
+        ASSERT(m_creator);
+        ASSERT(m_getter);
+        ASSERT(m_setter);
+    }
+
     // Update callbacks
     RefPtr<SVGPODListItem<PODType> > m_creator;
     GetterMethod m_getter;
@@ -241,8 +243,7 @@ struct PODTypeReadWriteHashInfoTraits : WTF::GenericHashTraits<PODTypeReadWriteH
 };
 
 template<typename PODType, typename PODTypeCreator>
-class JSSVGPODTypeWrapperCache
-{
+class JSSVGPODTypeWrapperCache {
 public:
     typedef PODType (PODTypeCreator::*GetterMethod)() const; 
     typedef void (PODTypeCreator::*SetterMethod)(PODType);
@@ -257,7 +258,7 @@ public:
     }
 
     // Used for readwrite attributes only
-    static JSSVGPODTypeWrapper<PODType>* lookupOrCreateWrapper(PODTypeCreator* creator, GetterMethod getter, SetterMethod setter)
+    static PassRefPtr<JSSVGPODTypeWrapper<PODType> > lookupOrCreateWrapper(PODTypeCreator* creator, GetterMethod getter, SetterMethod setter)
     {
         ReadWriteHashMap& map(readWriteHashMap());
         PODTypeReadWriteHashInfo<PODType, PODTypeCreator> info(creator, getter, setter);
@@ -265,9 +266,9 @@ public:
         if (map.contains(info))
             return map.get(info);
 
-        JSSVGPODTypeWrapperCreatorReadWrite<PODType, PODTypeCreator>* wrapper = new JSSVGPODTypeWrapperCreatorReadWrite<PODType, PODTypeCreator>(creator, getter, setter);
-        map.set(info, wrapper);
-        return wrapper;
+        RefPtr<JSSVGPODTypeWrapperCreatorReadWrite<PODType, PODTypeCreator> > wrapper = JSSVGPODTypeWrapperCreatorReadWrite<PODType, PODTypeCreator>::create(creator, getter, setter);
+        map.set(info, wrapper.get());
+        return wrapper.release();
     }
 
     static void forgetWrapper(JSSVGPODTypeWrapper<PODType>* wrapper)
@@ -281,7 +282,7 @@ public:
             if (it->second != wrapper)
                 continue;
 
-            // It's guaruanteed that there's just one object we need to take care of.
+            // It's guaranteed that there's just one object we need to take care of.
             map.remove(it->first);
             break;
         }

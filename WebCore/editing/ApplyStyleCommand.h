@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,16 +37,29 @@ class ApplyStyleCommand : public CompositeEditCommand {
 public:
     enum EPropertyLevel { PropertyDefault, ForceBlockProperties };
 
-    ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
-    ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction = EditActionChangeAttributes, EPropertyLevel = PropertyDefault);
-    ApplyStyleCommand(Element*, bool = false, EditAction = EditActionChangeAttributes);
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    {
+        return adoptRef(new ApplyStyleCommand(document, style, action, level));
+    }
+    static PassRefPtr<ApplyStyleCommand> create(Document* document, CSSStyleDeclaration* style, const Position& start, const Position& end, EditAction action = EditActionChangeAttributes, EPropertyLevel level = PropertyDefault)
+    {
+        return adoptRef(new ApplyStyleCommand(document, style, start, end, action, level));
+    }
+    static PassRefPtr<ApplyStyleCommand> create(Element* element, bool removeOnly = false, EditAction action = EditActionChangeAttributes)
+    {
+        return adoptRef(new ApplyStyleCommand(element, removeOnly, action));
+    }
+
+private:
+    ApplyStyleCommand(Document*, CSSStyleDeclaration*, EditAction, EPropertyLevel);
+    ApplyStyleCommand(Document*, CSSStyleDeclaration*, const Position& start, const Position& end, EditAction, EPropertyLevel);
+    ApplyStyleCommand(Element*, bool removeOnly, EditAction);
 
     virtual void doApply();
     virtual EditAction editingAction() const;
 
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
 
-private:
     // style-removal helpers
     bool isHTMLStyleNode(CSSMutableStyleDeclaration*, HTMLElement*);
     void removeHTMLStyleNode(HTMLElement*);

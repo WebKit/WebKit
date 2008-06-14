@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,8 +42,6 @@ public:
         InsertParagraphSeparatorInQuotedContent
     };
 
-    TypingCommand(Document*, ETypingCommand, const String& text = "", bool selectInsertedText = false, TextGranularity = CharacterGranularity);
-
     static void deleteSelection(Document*, bool smartDelete = false);
     static void deleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity);
     static void forwardDeleteKeyPressed(Document*, bool smartDelete = false, TextGranularity = CharacterGranularity);
@@ -55,9 +53,6 @@ public:
     static bool isOpenForMoreTypingCommand(const EditCommand*);
     static void closeTyping(EditCommand*);
     
-    virtual void doApply();
-    virtual EditAction editingAction() const;
-
     bool isOpenForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
@@ -71,9 +66,18 @@ public:
     void deleteSelection(bool);
 
 private:
-    bool smartDelete() { return m_smartDelete; }
+    static PassRefPtr<TypingCommand> create(Document* document, ETypingCommand command, const String& text = "", bool selectInsertedText = false, TextGranularity granularity = CharacterGranularity)
+    {
+        return adoptRef(new TypingCommand(document, command, text, selectInsertedText, granularity));
+    }
+
+    TypingCommand(Document*, ETypingCommand, const String& text, bool selectInsertedText, TextGranularity);
+
+    bool smartDelete() const { return m_smartDelete; }
     void setSmartDelete(bool smartDelete) { m_smartDelete = smartDelete; }
     
+    virtual void doApply();
+    virtual EditAction editingAction() const;
     virtual bool isTypingCommand() const;
     virtual bool preservesTypingStyle() const;
 

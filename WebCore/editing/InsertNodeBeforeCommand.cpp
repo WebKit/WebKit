@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,13 +24,14 @@
  */
 
 #include "config.h"
-#include "htmlediting.h"
 #include "InsertNodeBeforeCommand.h"
+
+#include "htmlediting.h"
 
 namespace WebCore {
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, Node* refChild)
-    : EditCommand(refChild->document()), m_insertChild(insertChild), m_refChild(refChild)
+InsertNodeBeforeCommand::InsertNodeBeforeCommand(PassRefPtr<Node> insertChild, PassRefPtr<Node> refChild)
+    : SimpleEditCommand(refChild->document()), m_insertChild(insertChild), m_refChild(refChild)
 {
     ASSERT(m_insertChild);
     ASSERT(m_refChild);

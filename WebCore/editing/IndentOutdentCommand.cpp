@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -166,8 +166,8 @@ void IndentOutdentCommand::indentRegion()
             
             Node* enclosingCell = enclosingNodeOfType(start, &isTableCell);
             Node* nodeToSplitTo = enclosingCell ? enclosingCell : editableRootForPosition(start);
-            Node* startOfNewBlock = splitTreeToNode(start.node(), nodeToSplitTo);
-            insertNodeBefore(blockquote.get(), startOfNewBlock);
+            RefPtr<Node> startOfNewBlock = splitTreeToNode(start.node(), nodeToSplitTo);
+            insertNodeBefore(blockquote.get(), startOfNewBlock.get());
             newBlockquote = blockquote.get();
             insertionPoint = prepareBlockquoteLevelForInsertion(endOfCurrentParagraph, &newBlockquote);
             // Don't put the next paragraph in the blockquote we just created for this paragraph unless 
@@ -202,10 +202,11 @@ void IndentOutdentCommand::outdentParagraph()
 
     // Use InsertListCommand to remove the selection from the list
     if (enclosingNode->hasTagName(olTag)) {
-        applyCommandToComposite(new InsertListCommand(document(), InsertListCommand::OrderedList, ""));
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::OrderedList, ""));
         return;        
-    } else if (enclosingNode->hasTagName(ulTag)) {
-        applyCommandToComposite(new InsertListCommand(document(), InsertListCommand::UnorderedList, ""));
+    }
+    if (enclosingNode->hasTagName(ulTag)) {
+        applyCommandToComposite(InsertListCommand::create(document(), InsertListCommand::UnorderedList, ""));
         return;
     }
     
@@ -227,11 +228,11 @@ void IndentOutdentCommand::outdentParagraph()
         return;
     }
     Node* enclosingBlockFlow = enclosingBlockFlowElement(visibleStartOfParagraph);
-    Node* splitBlockquoteNode = enclosingNode;
+    RefPtr<Node> splitBlockquoteNode = enclosingNode;
     if (enclosingBlockFlow != enclosingNode)
         splitBlockquoteNode = splitTreeToNode(enclosingBlockFlowElement(visibleStartOfParagraph), enclosingNode, true);
     RefPtr<Node> placeholder = createBreakElement(document());
-    insertNodeBefore(placeholder.get(), splitBlockquoteNode);
+    insertNodeBefore(placeholder.get(), splitBlockquoteNode.get());
     moveParagraph(startOfParagraph(visibleStartOfParagraph), endOfParagraph(visibleEndOfParagraph), VisiblePosition(Position(placeholder.get(), 0)), true);
 }
 

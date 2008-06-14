@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  *
  * Redistribution and use in source and binary forms, with or without
@@ -165,7 +165,7 @@ static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source,
 
 static bool executeInsertFragment(Frame* frame, PassRefPtr<DocumentFragment> fragment)
 {
-    applyCommand(new ReplaceSelectionCommand(frame->document(), fragment,
+    applyCommand(ReplaceSelectionCommand::create(frame->document(), fragment,
         false, false, false, true, false, EditActionUnspecified));
     return true;
 }
@@ -256,7 +256,7 @@ static bool executeCreateLink(Frame* frame, Event*, EditorCommandSource, const S
     // FIXME: If userInterface is true, we should display a dialog box to let the user enter a URL.
     if (value.isEmpty())
         return false;
-    applyCommand(new CreateLinkCommand(frame->document(), value));
+    applyCommand(CreateLinkCommand::create(frame->document(), value));
     return true;
 }
 
@@ -393,7 +393,7 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
         tagName = tagName.substring(1, tagName.length() - 2);
     if (!validBlockTag(tagName))
         return false;
-    applyCommand(new FormatBlockCommand(frame->document(), tagName));
+    applyCommand(FormatBlockCommand::create(frame->document(), tagName));
     return true;
 }
 
@@ -417,7 +417,7 @@ static bool executeForwardDelete(Frame* frame, Event*, EditorCommandSource sourc
 
 static bool executeIndent(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Indent));
+    applyCommand(IndentOutdentCommand::create(frame->document(), IndentOutdentCommand::Indent));
     return true;
 }
 
@@ -478,7 +478,7 @@ static bool executeInsertNewlineInQuotedContent(Frame* frame, Event*, EditorComm
 
 static bool executeInsertOrderedList(Frame* frame, Event*, EditorCommandSource, const String& value)
 {
-    applyCommand(new InsertListCommand(frame->document(), InsertListCommand::OrderedList, value));
+    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::OrderedList, value));
     return true;
 }
 
@@ -501,7 +501,7 @@ static bool executeInsertText(Frame* frame, Event*, EditorCommandSource, const S
 
 static bool executeInsertUnorderedList(Frame* frame, Event*, EditorCommandSource, const String& value)
 {
-    applyCommand(new InsertListCommand(frame->document(), InsertListCommand::UnorderedList, value));
+    applyCommand(InsertListCommand::create(frame->document(), InsertListCommand::UnorderedList, value));
     return true;
 }
 
@@ -787,7 +787,7 @@ static bool executeMoveWordRightAndModifySelection(Frame* frame, Event*, EditorC
 
 static bool executeOutdent(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(new IndentOutdentCommand(frame->document(), IndentOutdentCommand::Outdent));
+    applyCommand(IndentOutdentCommand::create(frame->document(), IndentOutdentCommand::Outdent));
     return true;
 }
 
@@ -926,7 +926,7 @@ static bool executeUndo(Frame* frame, Event*, EditorCommandSource, const String&
 
 static bool executeUnlink(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    applyCommand(new UnlinkCommand(frame->document()));
+    applyCommand(UnlinkCommand::create(frame->document()));
     return true;
 }
 

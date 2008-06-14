@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,6 @@ class CSSMutableStyleDeclaration;
 
 class EditCommand : public RefCounted<EditCommand> {
 public:
-    EditCommand(Document*);
     virtual ~EditCommand();
 
     void setParent(CompositeEditCommand*);
@@ -61,6 +60,8 @@ public:
     virtual bool isTypingCommand() const;
 
 protected:
+    EditCommand(Document*);
+
     Document* document() const { return m_document.get(); }
 
     void setStartingSelection(const Selection&);
@@ -85,6 +86,11 @@ private:
     CompositeEditCommand* m_parent;
 
     friend void applyCommand(PassRefPtr<EditCommand>);
+};
+
+class SimpleEditCommand : public EditCommand {
+protected:
+    SimpleEditCommand(Document* document) : EditCommand(document) { }
 };
 
 void applyCommand(PassRefPtr<EditCommand>);

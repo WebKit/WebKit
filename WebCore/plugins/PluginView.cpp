@@ -226,7 +226,7 @@ void PluginView::performRequest(PluginRequest* request)
         // if this is not a targeted request, create a stream for it. otherwise,
         // just pass it off to the loader
         if (targetFrameName.isEmpty()) {
-            PluginStream* stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+            RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
             m_streams.add(stream);
             stream->start();
         } else {
@@ -260,7 +260,7 @@ void PluginView::performRequest(PluginRequest* request)
         if (getString(parentFrame->scriptProxy(), result, resultString))
             cstr = resultString.utf8();
 
-        RefPtr<PluginStream> stream = new PluginStream(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+        RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
         m_streams.add(stream);
         stream->sendJavaScriptStream(requestURL, cstr);
     }
@@ -572,7 +572,7 @@ void PluginView::didReceiveResponse(const ResourceResponse& response)
     ASSERT(m_loadManually);
     ASSERT(!m_manualStream);
 
-    m_manualStream = new PluginStream(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
+    m_manualStream = PluginStream::create(this, m_parentFrame, m_parentFrame->loader()->activeDocumentLoader()->request(), false, 0, plugin()->pluginFuncs(), instance(), m_plugin->quirks());
     m_manualStream->setLoadManually(true);
 
     m_manualStream->didReceiveResponse(0, response);

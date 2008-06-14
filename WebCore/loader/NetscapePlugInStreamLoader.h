@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,18 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
+
     class NetscapePlugInStreamLoader;
 
     class NetscapePlugInStreamLoaderClient {
     public:
-        virtual ~NetscapePlugInStreamLoaderClient() { }
         virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&) = 0;
         virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int) = 0;
         virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&) = 0;
         virtual void didFinishLoading(NetscapePlugInStreamLoader*) { }
+
+    protected:
+        virtual ~NetscapePlugInStreamLoaderClient() { }
     };
 
     class NetscapePlugInStreamLoader : public ResourceLoader {
@@ -48,6 +51,7 @@ namespace WebCore {
 
         bool isDone() const;
 
+    private:
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         virtual void didFinishLoading();
@@ -55,7 +59,6 @@ namespace WebCore {
 
         virtual void releaseResources();
 
-    private:
         NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
         virtual void didCancel(const ResourceError& error);

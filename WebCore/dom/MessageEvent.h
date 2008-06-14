@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Henry Mason (hmason@mac.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,8 +36,14 @@ namespace WebCore {
 
     class MessageEvent : public Event {
     public:
-        MessageEvent();
-        MessageEvent(const String& data, const String& origin, const String& lastEventId, DOMWindow* source);
+        static PassRefPtr<MessageEvent> create()
+        {
+            return adoptRef(new MessageEvent);
+        }
+        static PassRefPtr<MessageEvent> create(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source)
+        {
+            return adoptRef(new MessageEvent(data, origin, lastEventId, source));
+        }
         virtual ~MessageEvent();
 
         void initMessageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& data, const String& origin, const String& lastEventId, DOMWindow* source);
@@ -50,6 +56,9 @@ namespace WebCore {
         virtual bool isMessageEvent() const;
 
     private:    
+        MessageEvent();
+        MessageEvent(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source);
+
         String m_data;
         String m_origin;
         String m_lastEventId;

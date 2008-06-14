@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,33 +30,34 @@
 
 namespace WebCore {
 
-class Attr;
-class CSSStyleDeclaration;
-class CSSStyleSelector;
-class Element;
-class NamedAttrMap;
-
-class MappedAttribute : public Attribute
-{
+class MappedAttribute : public Attribute {
 public:
-    MappedAttribute(const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration* decl = 0)
-    : Attribute(name, value), m_styleDecl(decl)
+    static PassRefPtr<MappedAttribute> create(const QualifiedName& name, const AtomicString& value)
     {
+        return adoptRef(new MappedAttribute(name, value, 0));
+    }
+    static PassRefPtr<MappedAttribute> create(const AtomicString& name, const AtomicString& value)
+    {
+        return adoptRef(new MappedAttribute(name, value, 0));
     }
 
-    MappedAttribute(const AtomicString& name, const AtomicString& value, CSSMappedAttributeDeclaration* decl = 0)
-    : Attribute(name, value), m_styleDecl(decl)
-    {
-    }
-
-    virtual Attribute* clone(bool preserveDecl=true) const;
+    virtual PassRefPtr<Attribute> clone() const;
 
     virtual CSSStyleDeclaration* style() const { return m_styleDecl.get(); }
 
     CSSMappedAttributeDeclaration* decl() const { return m_styleDecl.get(); }
-    void setDecl(CSSMappedAttributeDeclaration* decl) { m_styleDecl = decl; }
+    void setDecl(PassRefPtr<CSSMappedAttributeDeclaration> decl) { m_styleDecl = decl; }
 
 private:
+    MappedAttribute(const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration* declaration)
+        : Attribute(name, value), m_styleDecl(declaration)
+    {
+    }
+    MappedAttribute(const AtomicString& name, const AtomicString& value, CSSMappedAttributeDeclaration* declaration)
+        : Attribute(name, value), m_styleDecl(declaration)
+    {
+    }
+
     RefPtr<CSSMappedAttributeDeclaration> m_styleDecl;
 };
 

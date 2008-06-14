@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,14 +30,19 @@
 
 namespace WebCore {
 
-class WrapContentsInDummySpanCommand : public EditCommand {
+class WrapContentsInDummySpanCommand : public SimpleEditCommand {
 public:
-    WrapContentsInDummySpanCommand(Element*);
+    static PassRefPtr<WrapContentsInDummySpanCommand> create(PassRefPtr<Element> element)
+    {
+        return adoptRef(new WrapContentsInDummySpanCommand(element));
+    }
+
+private:
+    WrapContentsInDummySpanCommand(PassRefPtr<Element>);
 
     virtual void doApply();
     virtual void doUnapply();
 
-private:
     RefPtr<Element> m_element;
     RefPtr<Element> m_dummySpan;
 };

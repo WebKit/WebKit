@@ -98,7 +98,7 @@ HistoryItem::~HistoryItem()
 }
 
 inline HistoryItem::HistoryItem(const HistoryItem& item)
-    : RefCounted<HistoryItem>(1)
+    : RefCounted<HistoryItem>()
     , m_urlString(item.m_urlString)
     , m_originalURLString(item.m_originalURLString)
     , m_target(item.m_target)

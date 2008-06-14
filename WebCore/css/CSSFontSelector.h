@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,6 @@
 #define CSSFontSelector_h
 
 #include "FontSelector.h"
-
 #include "StringHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>
@@ -44,7 +43,10 @@ class String;
 
 class CSSFontSelector : public FontSelector {
 public:
-    CSSFontSelector(Document* doc);
+    static PassRefPtr<CSSFontSelector> create(Document* document)
+    {
+        return adoptRef(new CSSFontSelector(document));
+    }
     virtual ~CSSFontSelector();
 
     virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName);
@@ -57,8 +59,10 @@ public:
 
     DocLoader* docLoader() const;
 
-protected:
-    Document* m_document; // No need to ref, since we will always get destroyed before the document does.
+private:
+    CSSFontSelector(Document*);
+
+    Document* m_document;
     HashMap<String, RefPtr<CSSSegmentedFontFace> > m_fonts;
 };
 

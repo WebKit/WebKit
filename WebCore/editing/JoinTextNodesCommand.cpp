@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-JoinTextNodesCommand::JoinTextNodesCommand(Text *text1, Text *text2)
-    : EditCommand(text1->document()), m_text1(text1), m_text2(text2)
+JoinTextNodesCommand::JoinTextNodesCommand(PassRefPtr<Text> text1, PassRefPtr<Text> text2)
+    : SimpleEditCommand(text1->document()), m_text1(text1), m_text2(text2)
 {
     ASSERT(m_text1);
     ASSERT(m_text2);

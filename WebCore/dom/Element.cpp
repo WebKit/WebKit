@@ -527,9 +527,9 @@ void Element::setAttribute(const QualifiedName& name, const AtomicString& value,
     }
 }
 
-Attribute* Element::createAttribute(const QualifiedName& name, const AtomicString& value)
+PassRefPtr<Attribute> Element::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    return new Attribute(name, value);
+    return Attribute::create(name, value);
 }
 
 void Element::attributeChanged(Attribute* attr, bool preserveDecls)

@@ -69,13 +69,13 @@
 #include "loader.h"
 #include <wtf/Vector.h>
 
+#if ENABLE(DASHBOARD_SUPPORT)
+#include "DashboardRegion.h"
+#endif
+
 #if ENABLE(SVG)
 #include "XLinkNames.h"
 #include "SVGNames.h"
-#endif
-
-#if ENABLE(DASHBOARD_SUPPORT)
-#include "DashboardRegion.h"
 #endif
 
 using namespace std;
@@ -313,10 +313,9 @@ static const MediaQueryEvaluator& printEval()
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
     , m_checker(doc, strictParsing, false)
+    , m_fontSelector(CSSFontSelector::create(doc))
 {
     init();
-
-    m_fontSelector = new CSSFontSelector(doc);
 
     m_matchAuthorAndUserStyles = matchAuthorAndUserStyles;
 
@@ -4086,7 +4085,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         }
         CSSReflectValue* reflectValue = static_cast<CSSReflectValue*>(value);
-        RefPtr<StyleReflection> reflection = new StyleReflection();
+        RefPtr<StyleReflection> reflection = StyleReflection::create();
         reflection->setDirection(reflectValue->direction());
         if (reflectValue->offset()) {
             int type = reflectValue->offset()->primitiveType();
@@ -4099,7 +4098,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         mapNinePieceImage(reflectValue->mask(), mask);
         reflection->setMask(mask);
         
-        m_style->setBoxReflect(reflection);
+        m_style->setBoxReflect(reflection.release());
         return;
     }
     case CSSPropertyOpacity:
@@ -4519,9 +4518,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                                     sy = sx;
                             }
                         }
-                        
-                        ScaleTransformOperation* scale = new ScaleTransformOperation(sx, sy);
-                        operations.append(scale);
+                        operations.append(ScaleTransformOperation::create(sx, sy));
                         break;
                     }
                     case CSSTransformValue::TranslateTransformOperation:
@@ -4541,9 +4538,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                                 }
                             }
                         }
-                        
-                        TranslateTransformOperation* translate = new TranslateTransformOperation(tx, ty);
-                        operations.append(translate);
+                        operations.append(TranslateTransformOperation::create(tx, ty));
                         break;
                     }
                     case CSSTransformValue::RotateTransformOperation: {
@@ -4552,8 +4547,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                             angle = rad2deg(angle);
                         else if (firstValue->primitiveType() == CSSPrimitiveValue::CSS_GRAD)
                             angle = grad2deg(angle);
-                        RotateTransformOperation* rotate = new RotateTransformOperation(angle);
-                        operations.append(rotate);
+                        operations.append(RotateTransformOperation::create(angle));
                         break;
                     }
                     case CSSTransformValue::SkewTransformOperation:
@@ -4582,28 +4576,21 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                                     angleY = angleX;
                             }
                         }
-                        
-                        SkewTransformOperation* skew = new SkewTransformOperation(angleX, angleY);
-                        operations.append(skew);
+                        operations.append(SkewTransformOperation::create(angleX, angleY));
                         break;
                     }
                     case CSSTransformValue::MatrixTransformOperation: {
-                        CSSPrimitiveValue* secondValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(1));
-                        CSSPrimitiveValue* thirdValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(2));
-                        CSSPrimitiveValue* fourthValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(3));
-                        CSSPrimitiveValue* fifthValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(4));
-                        CSSPrimitiveValue* sixthValue = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(5));
-                        MatrixTransformOperation* matrix = new MatrixTransformOperation(firstValue->getDoubleValue(),
-                                                                                        secondValue->getDoubleValue(),
-                                                                                        thirdValue->getDoubleValue(),
-                                                                                        fourthValue->getDoubleValue(),
-                                                                                        fifthValue->getDoubleValue(),
-                                                                                        sixthValue->getDoubleValue());
-                        operations.append(matrix);
+                        double a = firstValue->getDoubleValue();
+                        double b = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(1))->getDoubleValue();
+                        double c = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(2))->getDoubleValue();
+                        double d = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(3))->getDoubleValue();
+                        double e = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(4))->getDoubleValue();
+                        double f = static_cast<CSSPrimitiveValue*>(values->itemWithoutBoundsCheck(5))->getDoubleValue();
+                        operations.append(MatrixTransformOperation::create(a, b, c, d, e, f));
                         break;
                     }   
-                    
-                    default:
+                    case CSSTransformValue::UnknownTransformOperation:
+                        ASSERT_NOT_REACHED();
                         break;
                 }
             }

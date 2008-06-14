@@ -30,7 +30,6 @@
 
 #include "CachedPage.h"
 #include "DocumentLoader.h"
-#include "EditCommand.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"

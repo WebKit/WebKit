@@ -30,11 +30,7 @@
 
 namespace WebCore {
 
-StorageEvent::StorageEvent()
-{
-}
-
-StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, DOMWindow* source)
+StorageEvent::StorageEvent(const AtomicString& type, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source)
     : Event(type, false, true)
     , m_key(key)
     , m_oldValue(oldValue)
@@ -44,7 +40,7 @@ StorageEvent::StorageEvent(const AtomicString& type, const String& key, const St
 {
 }
 
-void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& uri, DOMWindow* source)
+void StorageEvent::initStorageEvent(const AtomicString& type, bool canBubble, bool cancelable, const String& key, const String& oldValue, const String& newValue, const String& uri, PassRefPtr<DOMWindow> source)
 {
     if (dispatched())
         return;

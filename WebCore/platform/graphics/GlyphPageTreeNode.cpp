@@ -183,7 +183,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 }
             }
             
-            m_page = new GlyphPage(this);
+            m_page = GlyphPage::create(this);
 
             // Now that we have a buffer full of characters, we want to get back an array
             // of glyph indices.  This part involves calling into the platform-specific 
@@ -245,7 +245,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 m_page = parentPage;
             } else {
                 // Combine the parent's glyphs and ours to form a new more complete page.
-                m_page = new GlyphPage(this);
+                m_page = GlyphPage::create(this);
 
                 // Overlay the parent page on the fallback page. Check if the fallback font
                 // has added anything.
@@ -268,7 +268,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             }
         }
     } else {
-        m_page = new GlyphPage(this);
+        m_page = GlyphPage::create(this);
         // System fallback. Initialized with the parent's page here, as individual
         // entries may use different fonts depending on character. If the Font
         // ever finds it needs a glyph out of the system fallback page, it will

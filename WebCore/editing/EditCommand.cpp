@@ -44,8 +44,7 @@ namespace WebCore {
 using namespace EventNames;
 
 EditCommand::EditCommand(Document* document) 
-    : RefCounted<EditCommand>(0)
-    , m_document(document)
+    : m_document(document)
     , m_parent(0)
 {
     ASSERT(m_document);

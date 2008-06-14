@@ -995,7 +995,7 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
         d->horizontalOverflow = horizontalOverflow;
         d->m_verticalOverflow = verticalOverflow;
         
-        scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow,
+        scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow,
             verticalOverflowChanged, verticalOverflow),
             EventTargetNodeCast(d->m_viewportRenderer->element()), true);
     }

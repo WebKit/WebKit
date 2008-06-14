@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,8 +30,8 @@
 
 namespace WebCore {
 
-DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(Text *node, int offset, int count)
-    : EditCommand(node->document()), m_node(node), m_offset(offset), m_count(count)
+DeleteFromTextNodeCommand::DeleteFromTextNodeCommand(PassRefPtr<Text> node, int offset, int count)
+    : SimpleEditCommand(node->document()), m_node(node), m_offset(offset), m_count(count)
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);

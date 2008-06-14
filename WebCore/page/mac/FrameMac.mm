@@ -42,7 +42,6 @@
 #import "DOMInternal.h"
 #import "DOMWindow.h"
 #import "DocumentLoader.h"
-#import "EditCommand.h"
 #import "EditorClient.h"
 #import "Event.h"
 #import "EventNames.h"

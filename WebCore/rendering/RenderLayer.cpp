@@ -51,8 +51,8 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "FrameTree.h"
+#include "FrameView.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "HTMLMarqueeElement.h"
@@ -757,9 +757,10 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 
     // Schedule the scroll DOM event.
-    if (view)
+    if (view) {
         if (FrameView* frameView = view->frameView())
-            frameView->scheduleEvent(new Event(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
+            frameView->scheduleEvent(Event::create(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
+    }
 }
 
 void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
@@ -1227,9 +1228,10 @@ void RenderLayer::updateOverflowStatus(bool horizontalOverflow, bool verticalOve
         m_horizontalOverflow = horizontalOverflow;
         m_verticalOverflow = verticalOverflow;
         
-        if (FrameView* frameView = m_object->document()->view())
-            frameView->scheduleEvent(new OverflowEvent(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
-            EventTargetNodeCast(m_object->element()), true);
+        if (FrameView* frameView = m_object->document()->view()) {
+            frameView->scheduleEvent(OverflowEvent::create(horizontalOverflowChanged, horizontalOverflow, verticalOverflowChanged, verticalOverflow),
+                EventTargetNodeCast(m_object->element()), true);
+        }
     }
 }
 
@@ -2342,24 +2344,24 @@ void RenderLayer::updateReflectionStyle()
     TransformOperations transform;
     switch (renderer()->style()->boxReflect()->direction()) {
         case ReflectionBelow:
-            transform.append(new TranslateTransformOperation(Length(0, Fixed), Length(100., Percent)));
-            transform.append(new TranslateTransformOperation(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
-            transform.append(new ScaleTransformOperation(1.0f, -1.0f));
+            transform.append(TranslateTransformOperation::create(Length(0, Fixed), Length(100., Percent)));
+            transform.append(TranslateTransformOperation::create(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
+            transform.append(ScaleTransformOperation::create(1.0, -1.0));
             break;
         case ReflectionAbove:
-            transform.append(new ScaleTransformOperation(1.0f, -1.0f));
-            transform.append(new TranslateTransformOperation(Length(0, Fixed), Length(100., Percent)));
-            transform.append(new TranslateTransformOperation(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
+            transform.append(ScaleTransformOperation::create(1.0, -1.0));
+            transform.append(TranslateTransformOperation::create(Length(0, Fixed), Length(100., Percent)));
+            transform.append(TranslateTransformOperation::create(Length(0, Fixed), renderer()->style()->boxReflect()->offset()));
             break;
         case ReflectionRight:
-            transform.append(new TranslateTransformOperation(Length(100., Percent), Length(0, Fixed)));
-            transform.append(new TranslateTransformOperation(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
-            transform.append(new ScaleTransformOperation(-1.0f, 1.0f));
+            transform.append(TranslateTransformOperation::create(Length(100., Percent), Length(0, Fixed)));
+            transform.append(TranslateTransformOperation::create(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
+            transform.append(ScaleTransformOperation::create(-1.0, 1.0));
             break;
         case ReflectionLeft:
-            transform.append(new ScaleTransformOperation(-1.0f, 1.0f));
-            transform.append(new TranslateTransformOperation(Length(100., Percent), Length(0, Fixed)));
-            transform.append(new TranslateTransformOperation(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
+            transform.append(ScaleTransformOperation::create(-1.0, 1.0));
+            transform.append(TranslateTransformOperation::create(Length(100., Percent), Length(0, Fixed)));
+            transform.append(TranslateTransformOperation::create(renderer()->style()->boxReflect()->offset(), Length(0, Fixed)));
             break;
     }
     newStyle->setTransform(transform);

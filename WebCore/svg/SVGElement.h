@@ -50,18 +50,19 @@ public: \
     virtual void stop##UpperProperty() { ForwardClass::stop##UpperProperty(); }
 
 #define ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(ClassType, ClassStorageType, BareType, StorageType, UpperProperty, LowerProperty) \
-class SVGAnimatedTemplate##UpperProperty \
-: public SVGAnimatedTemplate<BareType> \
-{ \
+class SVGAnimatedTemplate##UpperProperty : public SVGAnimatedTemplate<BareType> { \
 public: \
-    SVGAnimatedTemplate##UpperProperty(const ClassType*, const QualifiedName&); \
-    virtual ~SVGAnimatedTemplate##UpperProperty() { } \
+    static PassRefPtr<SVGAnimatedTemplate##UpperProperty> create(const ClassType* element, const QualifiedName& attributeName) \
+    { \
+        return adoptRef(new SVGAnimatedTemplate##UpperProperty(element, attributeName)); \
+    } \
     virtual BareType baseVal() const; \
     virtual void setBaseVal(BareType); \
     virtual BareType animVal() const; \
     virtual void setAnimVal(BareType); \
     \
-protected: \
+private: \
+    SVGAnimatedTemplate##UpperProperty(const ClassType*, const QualifiedName&); \
     ClassStorageType m_element; \
 }; \
 public: \

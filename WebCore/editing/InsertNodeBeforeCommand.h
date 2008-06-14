@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,19 @@
 
 namespace WebCore {
 
-class InsertNodeBeforeCommand : public EditCommand {
+class InsertNodeBeforeCommand : public SimpleEditCommand {
 public:
-    InsertNodeBeforeCommand(PassRefPtr<Node>, Node* refChild);
+    static PassRefPtr<InsertNodeBeforeCommand> create(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore)
+    {
+        return adoptRef(new InsertNodeBeforeCommand(childToInsert, childToInsertBefore));
+    }
+
+private:
+    InsertNodeBeforeCommand(PassRefPtr<Node> childToInsert, PassRefPtr<Node> childToInsertBefore);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Node* insertChild() const { return m_insertChild.get(); }
-    Node* refChild() const { return m_refChild.get(); }
-
-private:
     RefPtr<Node> m_insertChild;
     RefPtr<Node> m_refChild; 
 };

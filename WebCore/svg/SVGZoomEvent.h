@@ -3,8 +3,6 @@
     Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
                   
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -32,7 +30,7 @@ namespace WebCore {
 
     class SVGZoomEvent : public UIEvent {
     public:
-        SVGZoomEvent();
+        static PassRefPtr<SVGZoomEvent> create() { return adoptRef(new SVGZoomEvent); }
         virtual ~SVGZoomEvent();
 
         // 'SVGZoomEvent' functions
@@ -51,6 +49,8 @@ namespace WebCore {
         virtual bool isSVGZoomEvent() const;
 
     private:
+        SVGZoomEvent();
+
         float m_newScale;
         float m_previousScale;
         

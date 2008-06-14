@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +27,6 @@
 #include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "Node.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
 
@@ -76,14 +73,14 @@ static int contentsY(AbstractView* abstractView)
     return frameView->contentsY();
 }
 
-MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, AbstractView* view,
+MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> viewArg,
                                      int detail, int screenX, int screenY, int pageX, int pageY,
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
-    : UIEventWithKeyState(eventType, canBubble, cancelable, view, detail, ctrlKey, altKey, shiftKey, metaKey)
+    : UIEventWithKeyState(eventType, canBubble, cancelable, viewArg, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenX(screenX)
     , m_screenY(screenY)
-    , m_clientX(pageX - contentsX(view))
-    , m_clientY(pageY - contentsY(view))
+    , m_clientX(pageX - contentsX(view()))
+    , m_clientY(pageY - contentsY(view()))
     , m_pageX(pageX)
     , m_pageY(pageY)
     , m_isSimulated(isSimulated)

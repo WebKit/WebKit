@@ -1,3 +1,445 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more work on https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * WebCore.base.exp:
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadWrite::JSSVGPODTypeWrapperCreatorReadWrite):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorReadOnly::JSSVGPODTypeWrapperCreatorReadOnly):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::JSSVGPODTypeWrapperCache::lookupOrCreateWrapper):
+        (WebCore::JSSVGPODTypeWrapperCache::forgetWrapper):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGPointList::clear):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::getItem):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::removeItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGTransformList::clear):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector):
+        (WebCore::CSSFontSelector::~CSSFontSelector):
+        * css/CSSFontSelector.h:
+        (WebCore::CSSFontSelector::create):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Attribute.cpp:
+        (WebCore::Attribute::clone):
+        * dom/Attribute.h:
+        (WebCore::Attribute::create):
+        (WebCore::Attribute::Attribute):
+        * dom/BeforeTextInsertedEvent.h:
+        (WebCore::BeforeTextInsertedEvent::create):
+        * dom/BeforeUnloadEvent.h:
+        (WebCore::BeforeUnloadEvent::create):
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::dispatchModifiedEvent):
+        * dom/ClipboardEvent.cpp:
+        (WebCore::ClipboardEvent::ClipboardEvent):
+        * dom/ClipboardEvent.h:
+        (WebCore::ClipboardEvent::create):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::removeChild):
+        (WebCore::dispatchChildInsertionEvents):
+        (WebCore::dispatchChildRemovalEvents):
+        * dom/Document.cpp:
+        (WebCore::Document::createTextNode):
+        (WebCore::Document::createComment):
+        (WebCore::Document::createCDATASection):
+        (WebCore::Document::createProcessingInstruction):
+        (WebCore::Document::createEntityReference):
+        (WebCore::Document::createEditingTextNode):
+        (WebCore::Document::createEvent):
+        (WebCore::Document::createAttributeNS):
+        (WebCore::Document::finishedParsing):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::createAttribute):
+        * dom/Element.h:
+        * dom/Event.cpp:
+        (WebCore::Event::Event):
+        * dom/Event.h:
+        (WebCore::Event::create):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchSubtreeModifiedEvent):
+        (WebCore::EventTargetNode::dispatchWindowEvent):
+        (WebCore::EventTargetNode::dispatchUIEvent):
+        (WebCore::EventTargetNode::dispatchKeyEvent):
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        (WebCore::EventTargetNode::dispatchWheelEvent):
+        (WebCore::EventTargetNode::dispatchHTMLEvent):
+        (WebCore::EventTargetNode::dispatchProgressEvent):
+        (WebCore::EventTargetNode::dispatchStorageEvent):
+        * dom/KeyboardEvent.h:
+        (WebCore::KeyboardEvent::create):
+        * dom/MappedAttribute.cpp:
+        (WebCore::MappedAttribute::clone):
+        * dom/MappedAttribute.h:
+        (WebCore::MappedAttribute::create):
+        (WebCore::MappedAttribute::setDecl):
+        (WebCore::MappedAttribute::MappedAttribute):
+        * dom/MessageEvent.cpp:
+        (WebCore::MessageEvent::MessageEvent):
+        * dom/MessageEvent.h:
+        (WebCore::MessageEvent::create):
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        * dom/MouseEvent.h:
+        (WebCore::MouseEvent::create):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        * dom/MouseRelatedEvent.h:
+        * dom/MutationEvent.cpp:
+        (WebCore::MutationEvent::MutationEvent):
+        (WebCore::MutationEvent::initMutationEvent):
+        * dom/MutationEvent.h:
+        (WebCore::MutationEvent::create):
+        * dom/OverflowEvent.h:
+        (WebCore::OverflowEvent::create):
+        * dom/ProgressEvent.h:
+        (WebCore::ProgressEvent::create):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::getMappedAttributeDecl):
+        (WebCore::StyledElement::setMappedAttributeDecl):
+        (WebCore::StyledElement::removeMappedAttributeDecl):
+        (WebCore::StyledElement::createAttribute):
+        * dom/StyledElement.h:
+        * dom/TextEvent.cpp:
+        (WebCore::TextEvent::TextEvent):
+        (WebCore::TextEvent::initTextEvent):
+        * dom/TextEvent.h:
+        (WebCore::TextEvent::create):
+        * dom/UIEvent.cpp:
+        (WebCore::UIEvent::UIEvent):
+        (WebCore::UIEvent::initUIEvent):
+        * dom/UIEvent.h:
+        (WebCore::UIEvent::create):
+        * dom/UIEventWithKeyState.h:
+        (WebCore::UIEventWithKeyState::ctrlKey):
+        (WebCore::UIEventWithKeyState::shiftKey):
+        (WebCore::UIEventWithKeyState::altKey):
+        (WebCore::UIEventWithKeyState::metaKey):
+        (WebCore::UIEventWithKeyState::UIEventWithKeyState):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::create):
+        * editing/AppendNodeCommand.cpp:
+        (WebCore::AppendNodeCommand::AppendNodeCommand):
+        * editing/AppendNodeCommand.h:
+        (WebCore::AppendNodeCommand::create):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyBlockStyle):
+        * editing/ApplyStyleCommand.h:
+        (WebCore::ApplyStyleCommand::create):
+        * editing/BreakBlockquoteCommand.h:
+        (WebCore::BreakBlockquoteCommand::create):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::applyStyle):
+        (WebCore::CompositeEditCommand::applyStyledElement):
+        (WebCore::CompositeEditCommand::removeStyledElement):
+        (WebCore::CompositeEditCommand::insertParagraphSeparator):
+        (WebCore::CompositeEditCommand::insertLineBreak):
+        (WebCore::CompositeEditCommand::insertNodeBefore):
+        (WebCore::CompositeEditCommand::appendNode):
+        (WebCore::CompositeEditCommand::removeNode):
+        (WebCore::CompositeEditCommand::removeNodePreservingChildren):
+        (WebCore::CompositeEditCommand::splitTextNode):
+        (WebCore::CompositeEditCommand::splitElement):
+        (WebCore::CompositeEditCommand::mergeIdenticalElements):
+        (WebCore::CompositeEditCommand::wrapContentsInDummySpan):
+        (WebCore::CompositeEditCommand::splitTextNodeContainingElement):
+        (WebCore::CompositeEditCommand::joinTextNodes):
+        (WebCore::CompositeEditCommand::inputText):
+        (WebCore::CompositeEditCommand::insertTextIntoNode):
+        (WebCore::CompositeEditCommand::deleteTextFromNode):
+        (WebCore::CompositeEditCommand::replaceTextInNode):
+        (WebCore::CompositeEditCommand::deleteSelection):
+        (WebCore::CompositeEditCommand::removeCSSProperty):
+        (WebCore::CompositeEditCommand::removeNodeAttribute):
+        (WebCore::CompositeEditCommand::setNodeAttribute):
+        (WebCore::CompositeEditCommand::appendBlockPlaceholder):
+        (WebCore::CompositeEditCommand::insertBlockPlaceholder):
+        (WebCore::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (WebCore::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::splitTreeToNode):
+        * editing/CompositeEditCommand.h:
+        (WebCore::CompositeEditCommand::isFirstCommand):
+        * editing/CreateLinkCommand.h:
+        (WebCore::CreateLinkCommand::create):
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::deleteTarget):
+        * editing/DeleteFromTextNodeCommand.cpp:
+        (WebCore::DeleteFromTextNodeCommand::DeleteFromTextNodeCommand):
+        * editing/DeleteFromTextNodeCommand.h:
+        (WebCore::DeleteFromTextNodeCommand::create):
+        * editing/DeleteSelectionCommand.h:
+        (WebCore::DeleteSelectionCommand::create):
+        * editing/EditCommand.h:
+        (WebCore::SimpleEditCommand::SimpleEditCommand):
+        * editing/Editor.cpp:
+        (WebCore::Editor::deleteSelectionWithSmartDelete):
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::removeFormattingAndStyle):
+        (WebCore::Editor::clearLastEditCommand):
+        (WebCore::Editor::dispatchCPPEvent):
+        (WebCore::Editor::applyStyle):
+        (WebCore::Editor::applyParagraphStyle):
+        (WebCore::Editor::indent):
+        (WebCore::Editor::outdent):
+        (WebCore::dispatchEditableContentChangedEvents):
+        * editing/Editor.h:
+        * editing/EditorCommand.cpp:
+        (WebCore::executeInsertFragment):
+        (WebCore::executeCreateLink):
+        (WebCore::executeFormatBlock):
+        (WebCore::executeIndent):
+        (WebCore::executeInsertOrderedList):
+        (WebCore::executeInsertUnorderedList):
+        (WebCore::executeOutdent):
+        (WebCore::executeUnlink):
+        * editing/FormatBlockCommand.h:
+        (WebCore::FormatBlockCommand::create):
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::indentRegion):
+        (WebCore::IndentOutdentCommand::outdentParagraph):
+        * editing/IndentOutdentCommand.h:
+        (WebCore::IndentOutdentCommand::create):
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::InsertIntoTextNodeCommand):
+        * editing/InsertIntoTextNodeCommand.h:
+        (WebCore::InsertIntoTextNodeCommand::create):
+        * editing/InsertLineBreakCommand.h:
+        (WebCore::InsertLineBreakCommand::create):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertListCommand.h:
+        (WebCore::InsertListCommand::create):
+        * editing/InsertNodeBeforeCommand.cpp:
+        (WebCore::InsertNodeBeforeCommand::InsertNodeBeforeCommand):
+        * editing/InsertNodeBeforeCommand.h:
+        (WebCore::InsertNodeBeforeCommand::create):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.h:
+        (WebCore::InsertParagraphSeparatorCommand::create):
+        * editing/InsertTextCommand.h:
+        (WebCore::InsertTextCommand::create):
+        * editing/JoinTextNodesCommand.cpp:
+        (WebCore::JoinTextNodesCommand::JoinTextNodesCommand):
+        * editing/JoinTextNodesCommand.h:
+        (WebCore::JoinTextNodesCommand::create):
+        * editing/MergeIdenticalElementsCommand.cpp:
+        (WebCore::MergeIdenticalElementsCommand::MergeIdenticalElementsCommand):
+        * editing/MergeIdenticalElementsCommand.h:
+        (WebCore::MergeIdenticalElementsCommand::create):
+        * editing/ModifySelectionListLevel.cpp:
+        (WebCore::IncreaseSelectionListLevelCommand::increaseSelectionListLevelWithType):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/MoveSelectionCommand.h:
+        (WebCore::MoveSelectionCommand::create):
+        * editing/RemoveCSSPropertyCommand.cpp:
+        (WebCore::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand):
+        * editing/RemoveCSSPropertyCommand.h:
+        (WebCore::RemoveCSSPropertyCommand::create):
+        * editing/RemoveFormatCommand.h:
+        (WebCore::RemoveFormatCommand::create):
+        * editing/RemoveNodeAttributeCommand.cpp:
+        (WebCore::RemoveNodeAttributeCommand::RemoveNodeAttributeCommand):
+        * editing/RemoveNodeAttributeCommand.h:
+        (WebCore::RemoveNodeAttributeCommand::create):
+        * editing/RemoveNodeCommand.cpp:
+        (WebCore::RemoveNodeCommand::RemoveNodeCommand):
+        * editing/RemoveNodeCommand.h:
+        (WebCore::RemoveNodeCommand::create):
+        * editing/RemoveNodePreservingChildrenCommand.cpp:
+        (WebCore::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        (WebCore::RemoveNodePreservingChildrenCommand::doApply):
+        * editing/RemoveNodePreservingChildrenCommand.h:
+        (WebCore::RemoveNodePreservingChildrenCommand::create):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::):
+        (WebCore::ReplacementFragment::hasInterchangeNewlineAtStart):
+        (WebCore::ReplacementFragment::hasInterchangeNewlineAtEnd):
+        (WebCore::ReplacementFragment::ReplacementFragment):
+        * editing/ReplaceSelectionCommand.h:
+        (WebCore::ReplaceSelectionCommand::create):
+        * editing/SetNodeAttributeCommand.cpp:
+        (WebCore::SetNodeAttributeCommand::SetNodeAttributeCommand):
+        * editing/SetNodeAttributeCommand.h:
+        (WebCore::SetNodeAttributeCommand::create):
+        * editing/SplitElementCommand.cpp:
+        (WebCore::SplitElementCommand::SplitElementCommand):
+        * editing/SplitElementCommand.h:
+        (WebCore::SplitElementCommand::create):
+        * editing/SplitTextNodeCommand.cpp:
+        (WebCore::SplitTextNodeCommand::SplitTextNodeCommand):
+        * editing/SplitTextNodeCommand.h:
+        (WebCore::SplitTextNodeCommand::create):
+        * editing/SplitTextNodeContainingElementCommand.cpp:
+        (WebCore::SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand):
+        * editing/SplitTextNodeContainingElementCommand.h:
+        (WebCore::SplitTextNodeContainingElementCommand::create):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::deleteSelection):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        (WebCore::TypingCommand::insertText):
+        (WebCore::TypingCommand::insertLineBreak):
+        (WebCore::TypingCommand::insertParagraphSeparatorInQuotedContent):
+        (WebCore::TypingCommand::insertParagraphSeparator):
+        (WebCore::TypingCommand::insertTextRunWithoutNewlines):
+        * editing/TypingCommand.h:
+        (WebCore::TypingCommand::create):
+        (WebCore::TypingCommand::smartDelete):
+        * editing/UnlinkCommand.h:
+        (WebCore::UnlinkCommand::create):
+        * editing/WrapContentsInDummySpanCommand.cpp:
+        (WebCore::WrapContentsInDummySpanCommand::WrapContentsInDummySpanCommand):
+        * editing/WrapContentsInDummySpanCommand.h:
+        (WebCore::WrapContentsInDummySpanCommand::create):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * html/HTMLTokenizer.cpp:
+        (WebCore::Token::addAttribute):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::createContainingTable):
+        (WebCore::HTMLViewSourceDocument::addSpanWithClassName):
+        (WebCore::HTMLViewSourceDocument::addLine):
+        (WebCore::HTMLViewSourceDocument::addLink):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didOpenURL):
+        * loader/appcache/DOMApplicationCache.cpp:
+        (WebCore::DOMApplicationCache::callListener):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+        * page/DOMWindow.cpp:
+        (WebCore::PostMessageTimer::PostMessageTimer):
+        (WebCore::PostMessageTimer::fired):
+        (WebCore::DOMWindow::postMessage):
+        * page/DragController.cpp:
+        (WebCore::DragController::concludeDrag):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::dispatchDragEvent):
+        (WebCore::EventHandler::keyEvent):
+        (WebCore::EventHandler::handleTextInputEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::shouldClose):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateOverflowStatus):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::currentKeyboardEvent):
+        * page/mac/FrameMac.mm:
+        * platform/DeprecatedValueListImpl.cpp:
+        (WebCore::DeprecatedValueListImpl::Private::Private):
+        (WebCore::DeprecatedValueListImpl::DeprecatedValueListImpl):
+        (WebCore::DeprecatedValueListImpl::copyOnWrite):
+        * platform/graphics/FontSelector.h:
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage):
+        * platform/graphics/GlyphPageTreeNode.h:
+        (WebCore::GlyphPage::create):
+        (WebCore::GlyphPage::GlyphPage):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        (WebCore::RenderLayer::updateOverflowStatus):
+        (WebCore::RenderLayer::updateReflectionStyle):
+        * rendering/style/RenderStyle.h:
+        (WebCore::TransformOperation::~TransformOperation):
+        (WebCore::ScaleTransformOperation::create):
+        (WebCore::ScaleTransformOperation::ScaleTransformOperation):
+        (WebCore::RotateTransformOperation::create):
+        (WebCore::RotateTransformOperation::RotateTransformOperation):
+        (WebCore::SkewTransformOperation::create):
+        (WebCore::SkewTransformOperation::operator==):
+        (WebCore::SkewTransformOperation::SkewTransformOperation):
+        (WebCore::TranslateTransformOperation::create):
+        (WebCore::TranslateTransformOperation::operator==):
+        (WebCore::TranslateTransformOperation::TranslateTransformOperation):
+        (WebCore::MatrixTransformOperation::create):
+        (WebCore::MatrixTransformOperation::MatrixTransformOperation):
+        (WebCore::StyleReflection::create):
+        (WebCore::StyleReflection::StyleReflection):
+        * storage/StorageEvent.cpp:
+        (WebCore::StorageEvent::StorageEvent):
+        (WebCore::StorageEvent::initStorageEvent):
+        * storage/StorageEvent.h:
+        (WebCore::StorageEvent::create):
+        (WebCore::StorageEvent::StorageEvent):
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::SVGAngle):
+        * svg/SVGAngle.h:
+        (WebCore::SVGAngle::create):
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTemplate::SVGAnimatedTemplate):
+        (WebCore::lookupOrCreateWrapper):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::sendSVGLoadEventIfPossible):
+        * svg/SVGElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::createSVGAngle):
+        * svg/SVGSVGElement.h:
+        * svg/SVGZoomEvent.h:
+        (WebCore::SVGZoomEvent::create):
+        * svg/graphics/SVGImage.cpp:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+        * xml/XMLHttpRequestProgressEvent.cpp:
+        * xml/XMLHttpRequestProgressEvent.h:
+        (WebCore::XMLHttpRequestProgressEvent::create):
+        (WebCore::XMLHttpRequestProgressEvent::position):
+        (WebCore::XMLHttpRequestProgressEvent::totalSize):
+        (WebCore::XMLHttpRequestProgressEvent::XMLHttpRequestProgressEvent):
+
 2008-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

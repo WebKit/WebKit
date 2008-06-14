@@ -860,7 +860,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (_private->coreFrame->selectionController()->isNone() || !fragment)
         return;
     
-    applyCommand(new ReplaceSelectionCommand(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
+    applyCommand(ReplaceSelectionCommand::create(_private->coreFrame->document(), [fragment _documentFragment], selectReplacement, smartReplace, matchStyle));
     _private->coreFrame->revealSelection(RenderLayer::gAlignToEdgeIfNeeded);
 }
 

@@ -30,7 +30,6 @@
 #include "CString.h"
 #include "FileSystem.h"
 #include "KURL.h"
-#include "npruntime_internal.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PlatformString.h"
 #include "PluginQuirkSet.h"
@@ -38,10 +37,11 @@
 #include "ResourceResponse.h"
 #include "StringHash.h"
 #include "Timer.h"
+#include "npruntime_internal.h"
 #include <wtf/HashMap.h>
-#include <wtf/Vector.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
     class Frame;
@@ -57,8 +57,11 @@ namespace WebCore {
 
     class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
     public:
-        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
-        ~PluginStream();
+        static PassRefPtr<PluginStream> create(PluginStreamClient* client, Frame* frame, const ResourceRequest& request, bool sendNotification, void* notifyData, const NPPluginFuncs* functions, NPP instance, const PluginQuirkSet& quirks)
+        {
+            return adoptRef(new PluginStream(client, frame, request, sendNotification, notifyData, functions, instance, quirks));
+        }
+        virtual ~PluginStream();
         
         void start();
         void stop();
@@ -67,17 +70,20 @@ namespace WebCore {
 
         void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
 
+        void sendJavaScriptStream(const KURL& requestURL, const CString& resultString);
+        void cancelAndDestroyStream(NPReason);
+
+        static NPP ownerForStream(NPStream*);
+
+    private:
+        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
+
         // NetscapePlugInStreamLoaderClient
         virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&);
         virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
         virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
         virtual void didFinishLoading(NetscapePlugInStreamLoader*);
 
-        void sendJavaScriptStream(const KURL& requestURL, const CString& resultString);
-        void cancelAndDestroyStream(NPReason);
-
-        static NPP ownerForStream(NPStream*);
-    private:
         void deliverData();
         void destroyStream(NPReason);
         void destroyStream();

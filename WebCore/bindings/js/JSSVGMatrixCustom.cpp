@@ -35,13 +35,13 @@ JSValue* JSSVGMatrix::multiply(ExecState* exec, const List& args)
     AffineTransform imp(*impl());
 
     AffineTransform secondMatrix = toSVGMatrix(args[0]);    
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.multiply(secondMatrix)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.multiply(secondMatrix)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
 {
     AffineTransform imp(*impl());
-    KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.inverse()), m_context.get());
+    KJS::JSValue* result = toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.inverse()).get(), m_context.get());
 
     if (!imp.isInvertible())
         setDOMException(exec, SVGException::SVG_MATRIX_NOT_INVERTABLE);
@@ -56,7 +56,7 @@ JSValue* JSSVGMatrix::translate(ExecState* exec, const List& args)
     float x = args[0]->toFloat(exec);
     float y = args[1]->toFloat(exec);
 
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.translate(x, y)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.translate(x, y)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::scale(ExecState* exec, const List& args)
@@ -64,7 +64,7 @@ JSValue* JSSVGMatrix::scale(ExecState* exec, const List& args)
     AffineTransform imp(*impl());
 
     float scaleFactor = args[0]->toFloat(exec);
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.scale(scaleFactor)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.scale(scaleFactor)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const List& args)
@@ -74,7 +74,7 @@ JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const List& args)
     float scaleFactorX = args[0]->toFloat(exec);
     float scaleFactorY = args[1]->toFloat(exec);
 
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.scaleNonUniform(scaleFactorX, scaleFactorY)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.scaleNonUniform(scaleFactorX, scaleFactorY)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::rotate(ExecState* exec, const List& args)
@@ -82,7 +82,7 @@ JSValue* JSSVGMatrix::rotate(ExecState* exec, const List& args)
     AffineTransform imp(*impl());
 
     float angle = args[0]->toFloat(exec);
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.rotate(angle)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.rotate(angle)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
@@ -92,7 +92,7 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
     float x = args[0]->toFloat(exec);
     float y = args[1]->toFloat(exec);
 
-    KJS::JSValue* result = toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.rotateFromVector(x, y)), m_context.get());
+    KJS::JSValue* result = toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
 
     if (x == 0.0 || y == 0.0)
         setDOMException(exec, SVGException::SVG_INVALID_VALUE_ERR);
@@ -103,13 +103,13 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
 JSValue* JSSVGMatrix::flipX(ExecState* exec, const List&)
 {
     AffineTransform imp(*impl());
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.flipX()), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.flipX()).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::flipY(ExecState* exec, const List&)
 {
     AffineTransform imp(*impl());
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.flipY()), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.flipY()).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::skewX(ExecState* exec, const List& args)
@@ -117,7 +117,7 @@ JSValue* JSSVGMatrix::skewX(ExecState* exec, const List& args)
     AffineTransform imp(*impl());
 
     float angle = args[0]->toFloat(exec);
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.skewX(angle)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.skewX(angle)).get(), m_context.get());
 }
 
 JSValue* JSSVGMatrix::skewY(ExecState* exec, const List& args)
@@ -125,7 +125,7 @@ JSValue* JSSVGMatrix::skewY(ExecState* exec, const List& args)
     AffineTransform imp(*impl());
 
     float angle = args[0]->toFloat(exec);
-    return toJS(exec, new JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>(imp.skewY(angle)), m_context.get());
+    return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.skewY(angle)).get(), m_context.get());
 }
 
 }

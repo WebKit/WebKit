@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,6 +54,40 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
+enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
+
+// --- ReplacementFragment helper class
+
+class ReplacementFragment : Noncopyable {
+public:
+    ReplacementFragment(Document*, DocumentFragment*, bool matchStyle, const Selection&);
+
+    Node* firstChild() const;
+    Node* lastChild() const;
+
+    bool isEmpty() const;
+    
+    bool hasInterchangeNewlineAtStart() const { return m_hasInterchangeNewlineAtStart; }
+    bool hasInterchangeNewlineAtEnd() const { return m_hasInterchangeNewlineAtEnd; }
+    
+    void removeNode(PassRefPtr<Node>);
+    void removeNodePreservingChildren(Node*);
+
+private:
+    PassRefPtr<Node> insertFragmentForTestRendering(Node* context);
+    void removeUnrenderedNodes(Node*);
+    void restoreTestRenderingNodesToFragment(Node*);
+    void removeInterchangeNodes(Node*);
+    
+    void insertNodeBefore(Node* node, Node* refNode);
+
+    RefPtr<Document> m_document;
+    RefPtr<DocumentFragment> m_fragment;
+    bool m_matchStyle;
+    bool m_hasInterchangeNewlineAtStart;
+    bool m_hasInterchangeNewlineAtEnd;
+};
+
 static bool isInterchangeNewlineNode(const Node *node)
 {
     static String interchangeNewlineClassString(AppleInterchangeNewline);
@@ -104,7 +138,7 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
     RefPtr<Range> range = Selection::selectionFromContentsOfNode(holder.get()).toRange();
     String text = plainText(range.get());
     // Give the root a chance to change the text.
-    RefPtr<BeforeTextInsertedEvent> evt = new BeforeTextInsertedEvent(text);
+    RefPtr<BeforeTextInsertedEvent> evt = BeforeTextInsertedEvent::create(text);
     ExceptionCode ec = 0;
     editableRoot->dispatchEvent(evt, ec, true);
     ASSERT(ec == 0);

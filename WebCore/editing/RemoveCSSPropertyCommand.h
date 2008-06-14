@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,19 @@ namespace WebCore {
 
 class CSSStyleDeclaration;
 
-class RemoveCSSPropertyCommand : public EditCommand {
+class RemoveCSSPropertyCommand : public SimpleEditCommand {
 public:
+    static PassRefPtr<RemoveCSSPropertyCommand> create(Document* document, CSSStyleDeclaration* style, int property)
+    {
+        return adoptRef(new RemoveCSSPropertyCommand(document, style, property));
+    }
+
+private:
     RemoveCSSPropertyCommand(Document*, CSSStyleDeclaration*, int property);
-    virtual ~RemoveCSSPropertyCommand();
 
     virtual void doApply();
     virtual void doUnapply();
 
-    CSSMutableStyleDeclaration* styleDeclaration() const { return m_decl.get(); }
-    int property() const { return m_property; }
-    
-private:
     RefPtr<CSSMutableStyleDeclaration> m_decl;
     int m_property;
     String m_oldValue;
@@ -52,4 +53,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __remove_css_property_command_h__
+#endif // RemoveCSSPropertyCommand_h

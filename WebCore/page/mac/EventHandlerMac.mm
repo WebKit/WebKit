@@ -85,10 +85,10 @@ PassRefPtr<KeyboardEvent> EventHandler::currentKeyboardEvent() const
         case NSKeyDown: {
             PlatformKeyboardEvent platformEvent(event);
             platformEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
-            return new KeyboardEvent(platformEvent, m_frame->document() ? m_frame->document()->defaultView() : 0);
+            return KeyboardEvent::create(platformEvent, m_frame->document() ? m_frame->document()->defaultView() : 0);
         }
         case NSKeyUp:
-            return new KeyboardEvent(event, m_frame->document() ? m_frame->document()->defaultView() : 0);
+            return KeyboardEvent::create(event, m_frame->document() ? m_frame->document()->defaultView() : 0);
         default:
             return 0;
     }

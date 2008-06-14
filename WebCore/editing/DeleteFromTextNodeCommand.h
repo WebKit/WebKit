@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,19 @@ namespace WebCore {
 
 class Text;
 
-class DeleteFromTextNodeCommand : public EditCommand {
+class DeleteFromTextNodeCommand : public SimpleEditCommand {
 public:
-    DeleteFromTextNodeCommand(Text*, int offset, int count);
+    static PassRefPtr<DeleteFromTextNodeCommand> create(PassRefPtr<Text> node, int offset, int count)
+    {
+        return adoptRef(new DeleteFromTextNodeCommand(node, offset, count));
+    }
+
+private:
+    DeleteFromTextNodeCommand(PassRefPtr<Text>, int offset, int count);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Text* node() const { return m_node.get(); }
-    int offset() const { return m_offset; }
-    int count() const { return m_count; }
-
-private:
     RefPtr<Text> m_node;
     int m_offset;
     int m_count;

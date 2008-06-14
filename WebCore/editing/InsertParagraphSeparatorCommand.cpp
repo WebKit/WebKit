@@ -129,7 +129,7 @@ void InsertParagraphSeparatorCommand::doApply()
         startBlock->hasTagName(formTag) || 
         canonicalPos.node()->renderer() && canonicalPos.node()->renderer()->isTable() ||
         canonicalPos.node()->hasTagName(hrTag)) {
-        applyCommandToComposite(new InsertLineBreakCommand(document()));
+        applyCommandToComposite(InsertLineBreakCommand::create(document()));
         return;
     }
     

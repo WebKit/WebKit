@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +32,12 @@
 namespace WebCore {
 
 RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document* document, CSSStyleDeclaration* decl, int property)
-    : EditCommand(document)
+    : SimpleEditCommand(document)
     , m_decl(decl->makeMutable())
     , m_property(property)
     , m_important(false)
 {
     ASSERT(m_decl);
-}
-
-RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
-{
 }
 
 void RemoveCSSPropertyCommand::doApply()

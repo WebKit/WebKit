@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -24,10 +22,12 @@
 #define SVGMarkerElement_h
 
 #if ENABLE(SVG)
-#include "SVGResourceMarker.h"
+
+#include "SVGAngle.h"
 #include "SVGExternalResourcesRequired.h"
 #include "SVGFitToViewBox.h"
 #include "SVGLangSpace.h"
+#include "SVGResourceMarker.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {
@@ -56,7 +56,7 @@ namespace WebCore {
         virtual ~SVGMarkerElement();
 
         void setOrientToAuto();
-        void setOrientToAngle(SVGAngle*);
+        void setOrientToAngle(PassRefPtr<SVGAngle>);
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual void svgAttributeChanged(const QualifiedName&);
@@ -87,4 +87,5 @@ namespace WebCore {
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
+
 #endif

@@ -78,7 +78,7 @@ namespace WebCore {
 
 class PostMessageTimer : public TimerBase {
 public:
-    PostMessageTimer(DOMWindow* window, MessageEvent* event, SecurityOrigin* targetOrigin)
+    PostMessageTimer(DOMWindow* window, PassRefPtr<MessageEvent> event, SecurityOrigin* targetOrigin)
         : m_window(window)
         , m_event(event)
         , m_targetOrigin(targetOrigin)
@@ -89,7 +89,7 @@ public:
     SecurityOrigin* targetOrigin() const { return m_targetOrigin.get(); }
 
 private:
-    virtual void fired() 
+    virtual void fired()
     {
         m_window->postMessageTimerFired(this);
     }
@@ -371,7 +371,7 @@ void DOMWindow::postMessage(const String& message, const String& targetOrigin, D
     String sourceOrigin = sourceDocument->securityOrigin()->toString();
 
     // Schedule the message.
-    PostMessageTimer* timer = new PostMessageTimer(this, new MessageEvent(message, sourceOrigin, "", source), target.get());
+    PostMessageTimer* timer = new PostMessageTimer(this, MessageEvent::create(message, sourceOrigin, "", source), target.get());
     timer->startOneShot(0);
 }
 

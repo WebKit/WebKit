@@ -33,11 +33,6 @@ namespace WebCore {
     // Internal only: Helper class for what's common between mouse and wheel events.
     class MouseRelatedEvent : public UIEventWithKeyState {
     public:
-        MouseRelatedEvent();
-        MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
-                          int detail, int screenX, int screenY, int pageX, int pageY,
-                          bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
-
         int screenX() const { return m_screenX; }
         int screenY() const { return m_screenY; }
         int clientX() const { return m_clientX; }
@@ -53,6 +48,11 @@ namespace WebCore {
         int y() const;
     
     protected:
+        MouseRelatedEvent();
+        MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
+                          int detail, int screenX, int screenY, int pageX, int pageY,
+                          bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
+
         void initCoordinates();
         void initCoordinates(int clientX, int clientY);
         virtual void receivedTarget();

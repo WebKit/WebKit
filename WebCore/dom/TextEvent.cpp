@@ -39,7 +39,7 @@ TextEvent::TextEvent()
 {
 }
 
-TextEvent::TextEvent(AbstractView* view, const String& data)
+TextEvent::TextEvent(PassRefPtr<AbstractView> view, const String& data)
     : UIEvent(textInputEvent, true, true, view, 0)
     , m_data(data)
     , m_isLineBreak(false)
@@ -51,7 +51,7 @@ TextEvent::~TextEvent()
 {
 }
 
-void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view, const String& data)
+void TextEvent::initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, const String& data)
 {
     if (dispatched())
         return;

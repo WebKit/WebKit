@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007 Henry Mason (hmason@mac.com)
- * Copyright (C) 2003, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,10 @@
  */
 
 #include "config.h"
+#include "MessageEvent.h"
 
 #include "DOMWindow.h"
 #include "EventNames.h"
-#include "MessageEvent.h"
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ MessageEvent::MessageEvent()
 {
 }
 
-MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, DOMWindow* source)
+MessageEvent::MessageEvent(const String& data, const String& origin, const String& lastEventId, PassRefPtr<DOMWindow> source)
     : Event(messageEvent, false, true)
     , m_data(data)
     , m_origin(origin)

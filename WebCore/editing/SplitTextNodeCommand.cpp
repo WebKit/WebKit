@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,13 +28,12 @@
 
 #include "Document.h"
 #include "Text.h"
-
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-SplitTextNodeCommand::SplitTextNodeCommand(Text* text, int offset)
-    : EditCommand(text->document()), m_text2(text), m_offset(offset)
+SplitTextNodeCommand::SplitTextNodeCommand(PassRefPtr<Text> text, int offset)
+    : SimpleEditCommand(text->document()), m_text2(text), m_offset(offset)
 {
     ASSERT(m_text2);
     ASSERT(m_text2->length() > 0);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -301,8 +301,7 @@ void DeleteButtonController::deleteTarget()
     // within the target, we unconditionally update the selection to be
     // a caret where the target had been.
     Position pos = positionBeforeNode(element.get());
-    RefPtr<RemoveNodeCommand> command = new RemoveNodeCommand(element.get());
-    command->apply();
+    applyCommand(RemoveNodeCommand::create(element.release()));
     m_frame->selectionController()->setSelection(VisiblePosition(pos));
 }
 

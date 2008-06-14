@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,11 +33,17 @@ namespace WebCore {
 
     class TextEvent : public UIEvent {
     public:
-        TextEvent();
-        TextEvent(AbstractView*, const String& data);
+        static PassRefPtr<TextEvent> create()
+        {
+            return adoptRef(new TextEvent);
+        }
+        static PassRefPtr<TextEvent> create(PassRefPtr<AbstractView> view, const String& data)
+        {
+            return adoptRef(new TextEvent(view, data));
+        }
         virtual ~TextEvent();
     
-        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*, const String& data);
+        void initTextEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, const String& data);
     
         String data() const { return m_data; }
 
@@ -52,6 +58,9 @@ namespace WebCore {
         void setIsBackTab(bool isBackTab) { m_isBackTab = isBackTab; }
 
     private:
+        TextEvent();
+        TextEvent(PassRefPtr<AbstractView>, const String& data);
+
         String m_data;
         bool m_isLineBreak;
         bool m_isBackTab;

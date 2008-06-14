@@ -403,10 +403,10 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
             bool smartMove = innerFrame->selectionGranularity() == WordGranularity 
                           && innerFrame->editor()->smartInsertDeleteEnabled() 
                           && dragData->canSmartReplace();
-            applyCommand(new MoveSelectionCommand(fragment, dragCaret.base(), smartMove));
+            applyCommand(MoveSelectionCommand::create(fragment, dragCaret.base(), smartMove));
         } else {
             if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-                applyCommand(new ReplaceSelectionCommand(m_document, fragment, true, dragData->canSmartReplace(), chosePlainText)); 
+                applyCommand(ReplaceSelectionCommand::create(m_document, fragment, true, dragData->canSmartReplace(), chosePlainText)); 
         }    
     } else {
         String text = dragData->asPlainText();
@@ -417,7 +417,7 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
         if (setSelectionToDragCaret(innerFrame, dragCaret, range, point))
-            applyCommand(new ReplaceSelectionCommand(m_document, createFragmentFromText(range.get(), text), true, false, true)); 
+            applyCommand(ReplaceSelectionCommand::create(m_document, createFragmentFromText(range.get(), text), true, false, true)); 
     }
     loader->setAllowStaleResources(false);
 

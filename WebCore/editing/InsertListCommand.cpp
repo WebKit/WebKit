@@ -184,7 +184,7 @@ void InsertListCommand::doApply()
             // FIXME: We appear to split at nextListChild as opposed to listChildNode so that when we remove
             // listChildNode below in moveParagraphs, previousListChild will be removed along with it if it is 
             // unrendered. But we ought to remove nextListChild too, if it is unrendered.
-            splitElement(static_cast<Element *>(listNode), splitTreeToNode(nextListChild, listNode));
+            splitElement(static_cast<Element*>(listNode), splitTreeToNode(nextListChild, listNode).get());
             insertNodeBefore(nodeToInsert.get(), listNode);
         } else if (nextListChild || listChildNode->parentNode() != listNode) {
             // Just because listChildNode has no previousListChild doesn't mean there isn't any content
@@ -192,7 +192,7 @@ void InsertListCommand::doApply()
             // between it and listNode. So, we split up to listNode before inserting the placeholder
             // where we're about to move listChildNode to.
             if (listChildNode->parentNode() != listNode)
-                splitElement(static_cast<Element *>(listNode), splitTreeToNode(listChildNode, listNode));
+                splitElement(static_cast<Element *>(listNode), splitTreeToNode(listChildNode, listNode).get());
             insertNodeBefore(nodeToInsert.get(), listNode);
         } else
             insertNodeAfter(nodeToInsert.get(), listNode);
@@ -238,8 +238,8 @@ void InsertListCommand::doApply()
                 // Inserting the list into an empty paragraph that isn't held open 
                 // by a br or a '\n', will invalidate start and end.  Insert 
                 // a placeholder and then recompute start and end.
-                Node* placeholder = insertBlockPlaceholder(start.deepEquivalent());
-                start = VisiblePosition(Position(placeholder, 0));
+                RefPtr<Node> placeholder = insertBlockPlaceholder(start.deepEquivalent());
+                start = VisiblePosition(Position(placeholder.get(), 0));
                 end = start;
             }
             

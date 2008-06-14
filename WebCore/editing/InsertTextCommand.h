@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,16 +32,20 @@ namespace WebCore {
 
 class InsertTextCommand : public CompositeEditCommand {
 public:
-    InsertTextCommand(Document*);
+    static PassRefPtr<InsertTextCommand> create(Document* document)
+    {
+        return adoptRef(new InsertTextCommand(document));
+    }
 
-    virtual void doApply();
-
-    void deleteCharacter();
     void input(const String& text, bool selectInsertedText = false);
 
+private:
+    InsertTextCommand(Document*);
+
+    void deleteCharacter();
     unsigned charactersAdded() const { return m_charactersAdded; }
     
-private:
+    virtual void doApply();
     virtual bool isInsertTextCommand() const;
 
     Position prepareForTextInsertion(const Position&);

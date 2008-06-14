@@ -28,7 +28,6 @@
 #include "Attr.h"
 #include "Color.h"
 #include "DeprecatedPtrList.h"
-#include "DeprecatedValueList.h"
 #include "DocumentMarker.h"
 #include "HTMLCollection.h"
 #include "HTMLFormElement.h"

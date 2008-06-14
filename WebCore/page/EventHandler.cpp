@@ -1117,7 +1117,7 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
 {
     IntPoint contentsPos = m_frame->view()->windowToContents(event.pos());
     
-    RefPtr<MouseEvent> me = new MouseEvent(eventType,
+    RefPtr<MouseEvent> me = MouseEvent::create(eventType,
         true, true, m_frame->document()->defaultView(),
         0, event.globalX(), event.globalY(), contentsPos.x(), contentsPos.y(),
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(),
@@ -1524,7 +1524,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     PlatformKeyboardEvent keyDownEvent = initialKeyEvent;    
     if (keyDownEvent.type() != PlatformKeyboardEvent::RawKeyDown)
         keyDownEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown, backwardCompatibilityMode);
-    RefPtr<KeyboardEvent> keydown = new KeyboardEvent(keyDownEvent, m_frame->document()->defaultView());
+    RefPtr<KeyboardEvent> keydown = KeyboardEvent::create(keyDownEvent, m_frame->document()->defaultView());
     if (matchedAnAccessKey)
         keydown->setDefaultPrevented(true);
     keydown->setTarget(node);
@@ -1545,7 +1545,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     
     if (handledByInputMethod) {
         keyDownEvent.setWindowsVirtualKeyCode(CompositionEventKeyCode);
-        keydown = new KeyboardEvent(keyDownEvent, m_frame->document()->defaultView());
+        keydown = KeyboardEvent::create(keyDownEvent, m_frame->document()->defaultView());
         keydown->setTarget(node);
         keydown->setDefaultHandled();
     }
@@ -1567,7 +1567,7 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     keyPressEvent.disambiguateKeyDownEvent(PlatformKeyboardEvent::Char, backwardCompatibilityMode);
     if (keyPressEvent.text().isEmpty())
         return keydownResult;
-    RefPtr<KeyboardEvent> keypress = new KeyboardEvent(keyPressEvent, m_frame->document()->defaultView());
+    RefPtr<KeyboardEvent> keypress = KeyboardEvent::create(keyPressEvent, m_frame->document()->defaultView());
     keypress->setTarget(node);
     if (keydownResult)
         keypress->setDefaultPrevented(true);
@@ -1828,7 +1828,7 @@ bool EventHandler::handleTextInputEvent(const String& text, Event* underlyingEve
         target = eventTargetNodeForDocument(m_frame->document());
     if (!target)
         return false;
-    RefPtr<TextEvent> event = new TextEvent(m_frame->domWindow(), text);
+    RefPtr<TextEvent> event = TextEvent::create(m_frame->domWindow(), text);
     event->setUnderlyingEvent(underlyingEvent);
     event->setIsLineBreak(isLineBreak);
     event->setIsBackTab(isBackTab);

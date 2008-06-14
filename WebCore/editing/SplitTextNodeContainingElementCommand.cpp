@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(Text* text, int offset)
+SplitTextNodeContainingElementCommand::SplitTextNodeContainingElementCommand(PassRefPtr<Text> text, int offset)
     : CompositeEditCommand(text->document()), m_text(text), m_offset(offset)
 {
     ASSERT(m_text);

@@ -71,6 +71,13 @@ CSSMappedAttributeDeclaration* StyledElement::getMappedAttributeDecl(MappedAttri
     return mappedAttributeDecls->get(MappedAttributeKey(entryType, attr->name().localName().impl(), attr->value().impl()));
 }
 
+CSSMappedAttributeDeclaration* StyledElement::getMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& value)
+{
+    if (!mappedAttributeDecls)
+        return 0;
+    return mappedAttributeDecls->get(MappedAttributeKey(type, name.localName().impl(), value.impl()));
+}
+
 void StyledElement::setMappedAttributeDecl(MappedAttributeEntry entryType, Attribute* attr, CSSMappedAttributeDeclaration* decl)
 {
     if (!mappedAttributeDecls)
@@ -78,8 +85,14 @@ void StyledElement::setMappedAttributeDecl(MappedAttributeEntry entryType, Attri
     mappedAttributeDecls->set(MappedAttributeKey(entryType, attr->name().localName().impl(), attr->value().impl()), decl);
 }
 
-void StyledElement::removeMappedAttributeDecl(MappedAttributeEntry entryType,
-                                                  const QualifiedName& attrName, const AtomicString& attrValue)
+void StyledElement::setMappedAttributeDecl(MappedAttributeEntry entryType, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration* decl)
+{
+    if (!mappedAttributeDecls)
+        mappedAttributeDecls = new MappedAttributeDecls;
+    mappedAttributeDecls->set(MappedAttributeKey(entryType, name.localName().impl(), value.impl()), decl);
+}
+
+void StyledElement::removeMappedAttributeDecl(MappedAttributeEntry entryType, const QualifiedName& attrName, const AtomicString& attrValue)
 {
     if (!mappedAttributeDecls)
         return;
@@ -111,9 +124,9 @@ StyledElement::~StyledElement()
     destroyInlineStyleDecl();
 }
 
-Attribute* StyledElement::createAttribute(const QualifiedName& name, const AtomicString& value)
+PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, const AtomicString& value)
 {
-    return new MappedAttribute(name, value);
+    return MappedAttribute::create(name, value);
 }
 
 void StyledElement::createInlineStyleDecl()

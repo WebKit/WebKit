@@ -878,7 +878,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
     RefPtr<CSSMutableStyleDeclaration> blockStyle = mutableStyle->copyBlockProperties();
     blockStyle->diff(mutableStyle.get());
     if (document() && blockStyle->length() > 0)
-        applyCommand(new ApplyStyleCommand(document(), blockStyle.get(), editingAction));
+        applyCommand(ApplyStyleCommand::create(document(), blockStyle.get(), editingAction));
     
     // Set the remaining style as the typing style.
     d->m_typingStyle = mutableStyle.release();
@@ -1814,7 +1814,7 @@ bool Frame::shouldClose()
     if (!body)
         return true;
 
-    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = new BeforeUnloadEvent;
+    RefPtr<BeforeUnloadEvent> beforeUnloadEvent = BeforeUnloadEvent::create();
     beforeUnloadEvent->setTarget(doc);
     doc->handleWindowEvent(beforeUnloadEvent.get(), false);
 

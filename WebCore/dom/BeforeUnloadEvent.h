@@ -32,7 +32,10 @@ namespace WebCore {
 
     class BeforeUnloadEvent : public Event {
     public:
-        BeforeUnloadEvent();
+        static PassRefPtr<BeforeUnloadEvent> create()
+        {
+            return adoptRef(new BeforeUnloadEvent);
+        }
 
         virtual bool storesResultAsString() const;
         virtual void storeResult(const String&);
@@ -40,6 +43,8 @@ namespace WebCore {
         String result() const { return m_result; }
 
     private:
+        BeforeUnloadEvent();
+
         String m_result;
     };
 

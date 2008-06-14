@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +24,6 @@
 #include "WheelEvent.h"
 
 #include "EventNames.h"
-
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
@@ -39,7 +36,7 @@ WheelEvent::WheelEvent()
 {
 }
 
-WheelEvent::WheelEvent(float wheelDeltaX, float wheelDeltaY, AbstractView* view,
+WheelEvent::WheelEvent(float wheelDeltaX, float wheelDeltaY, PassRefPtr<AbstractView> view,
                        int screenX, int screenY, int pageX, int pageY,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     : MouseRelatedEvent(mousewheelEvent,
@@ -55,7 +52,7 @@ WheelEvent::WheelEvent(float wheelDeltaX, float wheelDeltaY, AbstractView* view,
         m_wheelDeltaY = (wheelDeltaY > 0) ? 120 : -120;
 }
 
-void WheelEvent::initWheelEvent(int wheelDeltaX, int wheelDeltaY, AbstractView* view,
+void WheelEvent::initWheelEvent(int wheelDeltaX, int wheelDeltaY, PassRefPtr<AbstractView> view,
                                 int screenX, int screenY, int pageX, int pageY,
                                 bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
 {

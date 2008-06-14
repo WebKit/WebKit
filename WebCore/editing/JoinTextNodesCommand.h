@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,18 +32,19 @@ namespace WebCore {
 
 class Text;
 
-class JoinTextNodesCommand : public EditCommand
-{
+class JoinTextNodesCommand : public SimpleEditCommand {
 public:
-    JoinTextNodesCommand(Text*, Text*);
+    static PassRefPtr<JoinTextNodesCommand> create(PassRefPtr<Text> text1, PassRefPtr<Text> text2)
+    {
+        return adoptRef(new JoinTextNodesCommand(text1, text2));
+    }
+
+private:
+    JoinTextNodesCommand(PassRefPtr<Text>, PassRefPtr<Text>);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Text* firstNode() const { return m_text1.get(); }
-    Text* secondNode() const { return m_text2.get(); }
-
-private:
     RefPtr<Text> m_text1;
     RefPtr<Text> m_text2;
     unsigned m_offset;

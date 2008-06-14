@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,22 +31,23 @@
 
 namespace WebCore {
 
-class SetNodeAttributeCommand : public EditCommand {
+class SetNodeAttributeCommand : public SimpleEditCommand {
 public:
-    SetNodeAttributeCommand(Element*, const QualifiedName& attribute, const String &value);
+    static PassRefPtr<SetNodeAttributeCommand> create(PassRefPtr<Element> element, const QualifiedName& attribute, const AtomicString& value)
+    {
+        return adoptRef(new SetNodeAttributeCommand(element, attribute, value));
+    }
+
+private:
+    SetNodeAttributeCommand(PassRefPtr<Element>, const QualifiedName& attribute, const String& value);
 
     virtual void doApply();
     virtual void doUnapply();
 
-    Element* element() const { return m_element.get(); }
-    const QualifiedName& attribute() const { return m_attribute; }
-    String value() const { return m_value; }
-    
-private:
     RefPtr<Element> m_element;
     QualifiedName m_attribute;
-    String m_value;
-    String m_oldValue;
+    AtomicString m_value;
+    AtomicString m_oldValue;
 };
 
 } // namespace WebCore

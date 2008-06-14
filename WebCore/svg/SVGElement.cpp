@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -184,7 +182,7 @@ void SVGElement::sendSVGLoadEventIfPossible(bool sendParentLoadEvents)
         if (sendParentLoadEvents)
             parent = currentTarget->parentNode(); // save the next parent to dispatch too incase dispatching the event changes the tree
         if (hasLoadListener(currentTarget.get())) {
-            RefPtr<Event> event = new Event(loadEvent, false, false);
+            RefPtr<Event> event = Event::create(loadEvent, false, false);
             event->setTarget(currentTarget);
             ExceptionCode ignored = 0;
             dispatchGenericEvent(currentTarget.get(), event.release(), ignored, false);

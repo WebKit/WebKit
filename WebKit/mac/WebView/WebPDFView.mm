@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -934,7 +934,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
         case NSKeyDown: {
             PlatformKeyboardEvent pe(nsEvent);
             pe.disambiguateKeyDownEvent(PlatformKeyboardEvent::RawKeyDown);
-            event = new KeyboardEvent(keydownEvent, true, true, 0,
+            event = KeyboardEvent::create(keydownEvent, true, true, 0,
                 pe.keyIdentifier(), pe.windowsVirtualKeyCode(),
                 pe.ctrlKey(), pe.altKey(), pe.shiftKey(), pe.metaKey(), false);
         }
@@ -942,7 +942,7 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
             break;
     }
     if (button != noButton)
-        event = new MouseEvent(clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
+        event = MouseEvent::create(clickEvent, true, true, 0, [nsEvent clickCount], 0, 0, 0, 0,
             [nsEvent modifierFlags] & NSControlKeyMask,
             [nsEvent modifierFlags] & NSAlternateKeyMask,
             [nsEvent modifierFlags] & NSShiftKeyMask,

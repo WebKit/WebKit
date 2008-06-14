@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,11 +36,11 @@ class Text;
 
 class CompositeEditCommand : public EditCommand {
 public:
-    CompositeEditCommand(Document*);
-
-    bool isFirstCommand(EditCommand* c) { return !m_commands.isEmpty() && m_commands.first() == c; }
+    bool isFirstCommand(EditCommand* command) { return !m_commands.isEmpty() && m_commands.first() == command; }
 
 protected:
+    CompositeEditCommand(Document*);
+
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
     //
@@ -85,12 +85,12 @@ protected:
     void deleteInsignificantText(const Position& start, const Position& end);
     void deleteInsignificantTextDownstream(const Position&);
 
-    Node *appendBlockPlaceholder(Node*);
-    Node *insertBlockPlaceholder(const Position&);
-    Node *addBlockPlaceholderIfNeeded(Node*);
+    PassRefPtr<Node> appendBlockPlaceholder(Node*);
+    PassRefPtr<Node> insertBlockPlaceholder(const Position&);
+    PassRefPtr<Node> addBlockPlaceholderIfNeeded(Node*);
     void removePlaceholderAt(const VisiblePosition&);
 
-    Node* moveParagraphContentsToNewBlockIfNecessary(const Position&);
+    PassRefPtr<Node> moveParagraphContentsToNewBlockIfNecessary(const Position&);
     
     void pushAnchorElementDown(Node*);
     void pushPartiallySelectedAnchorElementsDown();
@@ -102,7 +102,7 @@ protected:
     
     Position positionAvoidingSpecialElementBoundary(const Position&, bool alwaysAvoidAnchors = true);
     
-    Node* splitTreeToNode(Node*, Node*, bool splitAncestor = false);
+    PassRefPtr<Node> splitTreeToNode(Node*, Node*, bool splitAncestor = false);
 
     Vector<RefPtr<EditCommand> > m_commands;
 

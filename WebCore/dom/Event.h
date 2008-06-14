@@ -1,10 +1,8 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -64,8 +62,14 @@ namespace WebCore {
             CHANGE              = 32768
         };
 
-        Event();
-        Event(const AtomicString& type, bool canBubble, bool cancelable);
+        static PassRefPtr<Event> create()
+        {
+            return adoptRef(new Event);
+        }
+        static PassRefPtr<Event> create(const AtomicString& type, bool canBubble, bool cancelable)
+        {
+            return adoptRef(new Event(type, canBubble, cancelable));
+        }
         virtual ~Event();
 
         void initEvent(const AtomicString& type, bool canBubble, bool cancelable);
@@ -135,6 +139,9 @@ namespace WebCore {
         virtual Clipboard* clipboard() const { return 0; }
 
     protected:
+        Event();
+        Event(const AtomicString& type, bool canBubble, bool cancelable);
+
         virtual void receivedTarget();
         bool dispatched() const { return m_target; }
 

@@ -29,9 +29,9 @@
 
 namespace WebCore {
 
-Attribute* Attribute::clone(bool) const
+PassRefPtr<Attribute> Attribute::clone() const
 {
-    return new Attribute(m_name, m_value);
+    return adoptRef(new Attribute(m_name, m_value));
 }
 
 PassRefPtr<Attr> Attribute::createAttrIfNeeded(Element* e)

@@ -2,7 +2,7 @@
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -51,11 +51,21 @@ namespace WebCore {
             DOM_KEY_LOCATION_NUMPAD        = 0x03
         };
         
-        KeyboardEvent();
-        KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
-        KeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
-                      const String& keyIdentifier, unsigned keyLocation,
-                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
+        static PassRefPtr<KeyboardEvent> create()
+        {
+            return adoptRef(new KeyboardEvent);
+        }
+        static PassRefPtr<KeyboardEvent> create(const PlatformKeyboardEvent& platformEvent, AbstractView* view)
+        {
+            return adoptRef(new KeyboardEvent(platformEvent, view));
+        }
+        static PassRefPtr<KeyboardEvent> create(const AtomicString& type, bool canBubble, bool cancelable, AbstractView* view,
+            const String& keyIdentifier, unsigned keyLocation,
+            bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey)
+        {
+            return adoptRef(new KeyboardEvent(type, canBubble, cancelable, view, keyIdentifier, keyLocation,
+                ctrlKey, altKey, shiftKey, metaKey, altGraphKey));
+        }
         virtual ~KeyboardEvent();
     
         void initKeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
@@ -83,6 +93,12 @@ namespace WebCore {
 #endif
 
     private:
+        KeyboardEvent();
+        KeyboardEvent(const PlatformKeyboardEvent&, AbstractView*);
+        KeyboardEvent(const AtomicString& type, bool canBubble, bool cancelable, AbstractView*,
+                      const String& keyIdentifier, unsigned keyLocation,
+                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool altGraphKey);
+
         PlatformKeyboardEvent* m_keyEvent;
         String m_keyIdentifier;
         unsigned m_keyLocation;

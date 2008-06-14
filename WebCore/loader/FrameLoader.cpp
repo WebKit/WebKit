@@ -30,10 +30,6 @@
 #include "config.h"
 #include "FrameLoader.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "ApplicationCache.h"
-#include "ApplicationCacheResource.h"
-#endif
 #include "Archive.h"
 #include "ArchiveFactory.h"
 #include "CString.h"
@@ -45,7 +41,6 @@
 #include "DocLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
-#include "EditCommand.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"
@@ -93,6 +88,11 @@
 #include "kjs_proxy.h"
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+#include "ApplicationCache.h"
+#include "ApplicationCacheResource.h"
+#endif
 
 #if ENABLE(SVG)
 #include "SVGDocument.h"
@@ -702,7 +702,7 @@ bool FrameLoader::didOpenURL(const KURL& url)
         return false;
 
     cancelRedirection();
-    m_frame->editor()->setLastEditCommand(0);
+    m_frame->editor()->clearLastEditCommand();
     closeURL();
 
     m_isComplete = false;

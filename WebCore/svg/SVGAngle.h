@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -33,7 +31,10 @@ namespace WebCore {
 
     class SVGAngle : public RefCounted<SVGAngle> {
     public:
-        SVGAngle();
+        static PassRefPtr<SVGAngle> create()
+        {
+            return adoptRef(new SVGAngle);
+        }
         virtual ~SVGAngle();
         
         enum SVGAngleType {
@@ -58,17 +59,12 @@ namespace WebCore {
         void newValueSpecifiedUnits(unsigned short unitType, float valueInSpecifiedUnits);
         void convertToSpecifiedUnits(unsigned short unitType);
 
-        // Helpers
-        static double todeg(double rad);
-        static double torad(double deg);
-
-        // Returns the angle that divides the shortest arc between the two angles.
-        static double shortestArcBisector(double angle1, double angle2);
-
         // Throughout SVG 1.1 'SVGAngle' is only used for 'SVGMarkerElement' (orient-angle)
         const QualifiedName& associatedAttributeName() const { return SVGNames::orientAttr; }
 
     private:
+        SVGAngle();
+
         SVGAngleType m_unitType;
         float m_value;
         float m_valueInSpecifiedUnits;

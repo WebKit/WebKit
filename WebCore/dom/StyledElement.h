@@ -53,9 +53,12 @@ public:
     void addCSSColor(MappedAttribute* attr, int id, const String &c);
     void createMappedDecl(MappedAttribute* attr);
     
+    static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& value);
+    static void setMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& name, const AtomicString& value, CSSMappedAttributeDeclaration*);
+    static void removeMappedAttributeDecl(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& value);
+
     static CSSMappedAttributeDeclaration* getMappedAttributeDecl(MappedAttributeEntry, Attribute*);
     static void setMappedAttributeDecl(MappedAttributeEntry, Attribute*, CSSMappedAttributeDeclaration*);
-    static void removeMappedAttributeDecl(MappedAttributeEntry, const QualifiedName& attrName, const AtomicString& attrValue);
     
     CSSMutableStyleDeclaration* inlineStyleDecl() const { return m_inlineStyleDecl.get(); }
     virtual bool canHaveAdditionalAttributeStyleDecls() const { return false; }
@@ -73,7 +76,7 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void createAttributeMap() const;
-    virtual Attribute* createAttribute(const QualifiedName& name, const AtomicString& value);
+    virtual PassRefPtr<Attribute> createAttribute(const QualifiedName&, const AtomicString& value);
 
     virtual void copyNonAttributeProperties(const Element*);
 

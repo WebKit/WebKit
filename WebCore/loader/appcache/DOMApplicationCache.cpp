@@ -231,7 +231,7 @@ void DOMApplicationCache::callListener(const AtomicString& eventType, EventListe
 {
     ASSERT(m_frame);
     
-    RefPtr<Event> event = new Event(eventType, false, false);
+    RefPtr<Event> event = Event::create(eventType, false, false);
     if (listener) {
         event->setTarget(this);
         event->setCurrentTarget(this);

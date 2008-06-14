@@ -1,10 +1,8 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * Copyright (C) 2001 Peter Kelly (pmk@post.com)
  * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2003, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,6 +19,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "Event.h"
 
@@ -30,8 +29,7 @@
 namespace WebCore {
 
 Event::Event()
-    : RefCounted<Event>(0)
-    , m_canBubble(false)
+    : m_canBubble(false)
     , m_cancelable(false)
     , m_propagationStopped(false)
     , m_defaultPrevented(false)
@@ -44,8 +42,7 @@ Event::Event()
 }
 
 Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableArg)
-    : RefCounted<Event>(0)
-    , m_type(eventType)
+    : m_type(eventType)
     , m_canBubble(canBubbleArg)
     , m_cancelable(cancelableArg)
     , m_propagationStopped(false)

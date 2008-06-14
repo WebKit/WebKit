@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,14 +25,14 @@
 
 #include "config.h"
 #include "SplitElementCommand.h"
-#include "Element.h"
 
+#include "Element.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
 
-SplitElementCommand::SplitElementCommand(Element* element, Node* atChild)
-    : EditCommand(element->document()), m_element2(element), m_atChild(atChild)
+SplitElementCommand::SplitElementCommand(PassRefPtr<Element> element, PassRefPtr<Node> atChild)
+    : SimpleEditCommand(element->document()), m_element2(element), m_atChild(atChild)
 {
     ASSERT(m_element2);
     ASSERT(m_atChild);

@@ -3,8 +3,6 @@
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
                   2007 Apple Inc.  All rights reserved.
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -355,9 +353,9 @@ SVGLength SVGSVGElement::createSVGLength()
     return SVGLength();
 }
 
-SVGAngle* SVGSVGElement::createSVGAngle()
+PassRefPtr<SVGAngle> SVGSVGElement::createSVGAngle()
 {
-    return new SVGAngle();
+    return SVGAngle::create();
 }
 
 FloatPoint SVGSVGElement::createSVGPoint()

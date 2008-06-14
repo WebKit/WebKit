@@ -39,19 +39,19 @@
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSReflectionDirection.h"
+#include "CSSTransformValue.h"
 #include "CSSValueList.h"
 #include "Color.h"
-#include "CSSTransformValue.h"
 #include "DataRef.h"
-#include "Font.h"
 #include "FloatPoint.h"
+#include "Font.h"
 #include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "Length.h"
 #include "Pair.h"
-#include <wtf/RefCounted.h>
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(SVG)
@@ -789,8 +789,7 @@ private:
 
 class TransformOperation : public RefCounted<TransformOperation> {
 public:
-    TransformOperation() : RefCounted<TransformOperation>(0) { }
-    virtual ~TransformOperation() {}
+    virtual ~TransformOperation() { }
     
     virtual bool operator==(const TransformOperation&) const = 0;
     bool operator!=(const TransformOperation& o) const { return !(*this == o); }
@@ -806,13 +805,13 @@ public:
     virtual bool isMatrixOperation() const { return false; }
 };
 
-class ScaleTransformOperation : public TransformOperation
-{
+class ScaleTransformOperation : public TransformOperation {
 public:
-    ScaleTransformOperation(double sx, double sy)
-    : m_x(sx), m_y(sy)
-    {}
-        
+    static PassRefPtr<ScaleTransformOperation> create(double sx, double sy)
+    {
+        return adoptRef(new ScaleTransformOperation(sx, sy));
+    }
+
     virtual bool isScaleOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
@@ -832,16 +831,21 @@ public:
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
 private:
+    ScaleTransformOperation(double sx, double sy)
+        : m_x(sx), m_y(sy)
+    {
+    }
+        
     double m_x;
     double m_y;
 };
 
-class RotateTransformOperation : public TransformOperation
-{
+class RotateTransformOperation : public TransformOperation {
 public:
-    RotateTransformOperation(double angle)
-    : m_angle(angle)
-    {}
+    static PassRefPtr<RotateTransformOperation> create(double angle)
+    {
+        return adoptRef(new RotateTransformOperation(angle));
+    }
 
     virtual bool isRotateOperation() const { return true; }
 
@@ -862,25 +866,29 @@ public:
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
 private:
+    RotateTransformOperation(double angle)
+        : m_angle(angle)
+    {
+    }
+
     double m_angle;
 };
 
-class SkewTransformOperation : public TransformOperation
-{
+class SkewTransformOperation : public TransformOperation {
 public:
-    SkewTransformOperation(double angleX, double angleY)
-    : m_angleX(angleX), m_angleY(angleY)
-    {}
-    
+    static PassRefPtr<SkewTransformOperation> create(double angleX, double angleY)
+    {
+        return adoptRef(new SkewTransformOperation(angleX, angleY));
+    }
+
     virtual bool isSkewOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (o.isSkewOperation()) {
-            const SkewTransformOperation* s = static_cast<const SkewTransformOperation*>(&o);
-            return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
-        }
-        return false;
+        if (!o.isSkewOperation())
+            return false;
+        const SkewTransformOperation* s = static_cast<const SkewTransformOperation*>(&o);
+        return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
     }
 
     virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
@@ -891,26 +899,30 @@ public:
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
 private:
+    SkewTransformOperation(double angleX, double angleY)
+        : m_angleX(angleX), m_angleY(angleY)
+    {
+    }
+    
     double m_angleX;
     double m_angleY;
 };
 
-class TranslateTransformOperation : public TransformOperation
-{
+class TranslateTransformOperation : public TransformOperation {
 public:
-    TranslateTransformOperation(const Length& tx, const Length& ty)
-    : m_x(tx), m_y(ty)
-    {}
-    
+    static PassRefPtr<TranslateTransformOperation> create(const Length& tx, const Length& ty)
+    {
+        return adoptRef(new TranslateTransformOperation(tx, ty));
+    }
+
     virtual bool isTranslateOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (o.isTranslateOperation()) {
-            const TranslateTransformOperation* t = static_cast<const TranslateTransformOperation*>(&o);
-            return m_x == t->m_x && m_y == t->m_y;
-        }
-        return false;
+        if (!o.isTranslateOperation())
+            return false;
+        const TranslateTransformOperation* t = static_cast<const TranslateTransformOperation*>(&o);
+        return m_x == t->m_x && m_y == t->m_y;
     }
 
     virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
@@ -921,17 +933,22 @@ public:
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
 private:
+    TranslateTransformOperation(const Length& tx, const Length& ty)
+        : m_x(tx), m_y(ty)
+    {
+    }
+
     Length m_x;
     Length m_y;
 };
 
-class MatrixTransformOperation : public TransformOperation
-{
+class MatrixTransformOperation : public TransformOperation {
 public:
-    MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
-    : m_a(a), m_b(b), m_c(c), m_d(d), m_e(e), m_f(f)
-    {}
-    
+    static PassRefPtr<MatrixTransformOperation> create(double a, double b, double c, double d, double e, double f)
+    {
+        return adoptRef(new MatrixTransformOperation(a, b, c, d, e, f));
+    }
+
     virtual bool isMatrixOperation() const { return true; }
 
     virtual bool operator==(const TransformOperation& o) const
@@ -952,6 +969,11 @@ public:
     virtual TransformOperation* blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
 private:
+    MatrixTransformOperation(double a, double b, double c, double d, double e, double f)
+        : m_a(a), m_b(b), m_c(c), m_d(d), m_e(e), m_f(f)
+    {
+    }
+    
     double m_a;
     double m_b;
     double m_c;
@@ -960,8 +982,7 @@ private:
     double m_f;
 };
 
-class TransformOperations
-{
+class TransformOperations {
 public:
     bool operator==(const TransformOperations&) const;
     bool operator!=(const TransformOperations& o) const {
@@ -1291,15 +1312,13 @@ public:
     Transition* m_next;
 };
 
-class StyleReflection : public RefCounted<StyleReflection>
-{
+class StyleReflection : public RefCounted<StyleReflection> {
 public:
-    StyleReflection()
-    : RefCounted<StyleReflection>(0)
-    , m_direction(ReflectionBelow)
-    , m_offset(0, Fixed)
-    {}
-    
+    static PassRefPtr<StyleReflection> create()
+    {
+        return adoptRef(new StyleReflection);
+    }
+
     bool operator==(const StyleReflection& o) const
     {
         return m_direction == o.m_direction && m_offset == o.m_offset && m_mask == o.m_mask;
@@ -1315,6 +1334,12 @@ public:
     void setMask(const NinePieceImage& image) { m_mask = image; }
 
 private:
+    StyleReflection()
+        : m_direction(ReflectionBelow)
+        , m_offset(0, Fixed)
+    {
+    }
+    
     CSSReflectionDirection m_direction;
     Length m_offset;
     NinePieceImage m_mask;

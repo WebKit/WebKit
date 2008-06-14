@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,13 @@
 #include "config.h"
 #include "DeprecatedValueListImpl.h"
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <stdlib.h>
 
 namespace WebCore {
 
-class DeprecatedValueListImpl::Private : public RefCounted<DeprecatedValueListImpl::Private>
-{
+class DeprecatedValueListImpl::Private : public RefCounted<DeprecatedValueListImpl::Private> {
 public:
     Private(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *));
     Private(const Private &other);
@@ -52,8 +52,7 @@ public:
 
 inline DeprecatedValueListImpl::Private::Private(void (*deleteFunc)(DeprecatedValueListImplNode*),
         DeprecatedValueListImplNode* (*copyFunc)(DeprecatedValueListImplNode*))
-    : RefCounted<Private>(0)
-    , head(NULL)
+    : head(NULL)
     , tail(NULL)
     , deleteNode(deleteFunc)
     , copyNode(copyFunc)
@@ -62,7 +61,7 @@ inline DeprecatedValueListImpl::Private::Private(void (*deleteFunc)(DeprecatedVa
 }
 
 inline DeprecatedValueListImpl::Private::Private(const Private &other)
-    : RefCounted<Private>(0)
+    : RefCounted<Private>()
     , deleteNode(other.deleteNode)
     , copyNode(other.copyNode)
     , count(other.count)
@@ -112,7 +111,7 @@ void DeprecatedValueListImpl::Private::deleteList(DeprecatedValueListImplNode *l
 }
 
 DeprecatedValueListImpl::DeprecatedValueListImpl(void (*deleteFunc)(DeprecatedValueListImplNode *), DeprecatedValueListImplNode *(*copyFunc)(DeprecatedValueListImplNode *)) :
-    d(new Private(deleteFunc, copyFunc))
+    d(adoptRef(new Private(deleteFunc, copyFunc)))
 {
 }
 
@@ -391,7 +390,7 @@ DeprecatedValueListImpl& DeprecatedValueListImpl::operator=(const DeprecatedValu
 void DeprecatedValueListImpl::copyOnWrite()
 {
     if (!d->hasOneRef())
-        d = new Private(*d);
+        d = adoptRef(new Private(*d));
 }
 
 bool DeprecatedValueListImpl::isEqual(const DeprecatedValueListImpl &other, bool (*equalFunc)(const DeprecatedValueListImplNode *, const DeprecatedValueListImplNode *)) const

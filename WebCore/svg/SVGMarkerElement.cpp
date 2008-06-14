@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -47,7 +45,7 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , m_markerHeight(this, LengthModeHeight) 
     , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
     , m_orientType(0)
-    , m_orientAngle(new SVGAngle())
+    , m_orientAngle(SVGAngle::create())
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "3" were specified.
     setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, "3"));
@@ -83,9 +81,9 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
         if (attr->value() == "auto")
             setOrientToAuto();
         else {
-            SVGAngle* angle = new SVGAngle();
+            RefPtr<SVGAngle> angle = SVGAngle::create();
             angle->setValueAsString(attr->value());
-            setOrientToAngle(angle);
+            setOrientToAngle(angle.release());
         }
     } else {
         if (SVGLangSpace::parseMappedAttribute(attr))
@@ -136,10 +134,10 @@ void SVGMarkerElement::setOrientToAuto()
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
 }
 
-void SVGMarkerElement::setOrientToAngle(SVGAngle* angle)
+void SVGMarkerElement::setOrientToAngle(PassRefPtr<SVGAngle> angle)
 {
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
-    setOrientAngleBaseValue(angle);
+    setOrientAngleBaseValue(angle.get());
 }
 
 SVGResource* SVGMarkerElement::canvasResource()

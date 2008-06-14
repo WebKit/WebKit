@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,13 +34,17 @@ class DocumentFragment;
 
 class MoveSelectionCommand : public CompositeEditCommand {
 public:
-    MoveSelectionCommand(PassRefPtr<DocumentFragment>, const Position&, bool smartMove = false);
-    virtual ~MoveSelectionCommand();
-    
+    static PassRefPtr<MoveSelectionCommand> create(PassRefPtr<DocumentFragment> fragment, const Position& position, bool smartMove = false)
+    {
+        return adoptRef(new MoveSelectionCommand(fragment, position, smartMove));
+    }
+
+private:
+    MoveSelectionCommand(PassRefPtr<DocumentFragment>, const Position&, bool smartMove);
+
     virtual void doApply();
     virtual EditAction editingAction() const;
     
-private:
     RefPtr<DocumentFragment> m_fragment;
     Position m_position;
     bool m_smartMove;
@@ -48,4 +52,4 @@ private:
 
 } // namespace WebCore
 
-#endif // __MoveSelectionCommand_h
+#endif // MoveSelectionCommand_h

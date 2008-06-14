@@ -398,15 +398,15 @@ void ApplyStyleCommand::applyBlockStyle(CSSMutableStyleDeclaration *style)
     while (paragraphStart.isNotNull() && paragraphStart != beyondEnd) {
         StyleChange styleChange(style, paragraphStart.deepEquivalent(), StyleChange::styleModeForParseMode(document()->inCompatMode()));
         if (styleChange.cssStyle().length() > 0 || m_removeOnly) {
-            Node* block = enclosingBlock(paragraphStart.deepEquivalent().node());
-            Node* newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
+            RefPtr<Node> block = enclosingBlock(paragraphStart.deepEquivalent().node());
+            RefPtr<Node> newBlock = moveParagraphContentsToNewBlockIfNecessary(paragraphStart.deepEquivalent());
             if (newBlock)
                 block = newBlock;
             ASSERT(block->isHTMLElement());
             if (block->isHTMLElement()) {
-                removeCSSStyle(style, static_cast<HTMLElement*>(block));
+                removeCSSStyle(style, static_cast<HTMLElement*>(block.get()));
                 if (!m_removeOnly)
-                    addBlockStyle(styleChange, static_cast<HTMLElement*>(block));
+                    addBlockStyle(styleChange, static_cast<HTMLElement*>(block.get()));
             }
         }
         paragraphStart = nextParagraphStart;
