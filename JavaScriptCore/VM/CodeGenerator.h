@@ -171,14 +171,14 @@ namespace KJS {
             return emitNode(0, n);
         }
 
-        ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments)
+        ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsConstant)
         {
-            return m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments;
+            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments) && !rightIsConstant;
         }
 
-        ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments)
+        ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsConstant)
         {
-            if (leftHandSideNeedsCopy(rightHasAssignments)) {
+            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsConstant)) {
                 PassRefPtr<RegisterID> dst = newTemporary();
                 emitNode(dst.get(), n);
                 return dst;

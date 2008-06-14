@@ -208,6 +208,7 @@ namespace KJS {
         }
 
         virtual bool isNumber() const KJS_FAST_CALL { return false; }
+        virtual bool isConstant() const KJS_FAST_CALL { return false; }        
         virtual bool isLocation() const KJS_FAST_CALL { return false; }
         virtual bool isResolveNode() const KJS_FAST_CALL { return false; }
         virtual bool isBracketAccessorNode() const KJS_FAST_CALL { return false; }
@@ -259,6 +260,7 @@ namespace KJS {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
 
+        virtual bool isConstant() const KJS_FAST_CALL { return true; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
     };
@@ -272,6 +274,7 @@ namespace KJS {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
 
+        virtual bool isConstant() const KJS_FAST_CALL { return true; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
     };
@@ -301,6 +304,7 @@ namespace KJS {
         virtual Precedence precedence() const { return signbit(m_double) ? PrecUnary : PrecPrimary; }
 
         virtual bool isNumber() const KJS_FAST_CALL { return true; }
+        virtual bool isConstant() const KJS_FAST_CALL { return true; }
         double value() const KJS_FAST_CALL { return m_double; }
         virtual void setValue(double d) KJS_FAST_CALL { m_double = d; }
 
@@ -333,6 +337,7 @@ namespace KJS {
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
 
+        virtual bool isConstant() const KJS_FAST_CALL { return true; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
 
