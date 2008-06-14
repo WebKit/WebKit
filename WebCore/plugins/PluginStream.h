@@ -75,14 +75,14 @@ namespace WebCore {
 
         static NPP ownerForStream(NPStream*);
 
-    private:
-        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
-
         // NetscapePlugInStreamLoaderClient
         virtual void didReceiveResponse(NetscapePlugInStreamLoader*, const ResourceResponse&);
         virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
         virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
         virtual void didFinishLoading(NetscapePlugInStreamLoader*);
+
+    private:
+        PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
 
         void deliverData();
         void destroyStream(NPReason);
