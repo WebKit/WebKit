@@ -1,5 +1,16 @@
 2008-06-13  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Test that an XSL style sheet can't include an external entity from
+        another origin.
+
+        * http/tests/security/resources/xsl-using-external-entity.xsl: Added.
+        * http/tests/security/xss-DENIED-xsl-external-entity-expected.txt: Added.
+        * http/tests/security/xss-DENIED-xsl-external-entity.xml: Added.
+
+2008-06-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         Test that the XSL document() function doesn't load a document from a

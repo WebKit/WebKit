@@ -371,20 +371,45 @@ private:
     unsigned m_currentOffset;
 };
 
-static bool shouldAllowExternalLoad(const char* inURI)
+static bool shouldAllowExternalLoad(const KURL& url)
 {
-    if (strstr(inURI, "/etc/xml/catalog")
-            || strstr(inURI, "http://www.w3.org/Graphics/SVG") == inURI
-            || strstr(inURI, "http://www.w3.org/TR/xhtml") == inURI)
+    String urlString = url.string();
+
+    // On non-Windows platforms libxml asks for this URL, the
+    // "XML_XML_DEFAULT_CATALOG", on initialization.
+    if (urlString == "file:///etc/xml/catalog")
         return false;
-    return true;
+
+    // On Windows, libxml computes a URL relative to where its DLL resides.
+    if (urlString.startsWith("file:///", false) && urlString.endsWith("/etc/catalog", false))
+        return false;
+
+    // The most common DTD.  There isn't much point in hammering www.w3c.org
+    // by requesting this URL for every XHTML document.
+    if (urlString.startsWith("http://www.w3.org/TR/xhtml", false))
+        return false;
+
+    // Similarly, there isn't much point in requesting the SVG DTD.
+    if (urlString.startsWith("http://www.w3.org/Graphics/SVG", false))
+        return false;
+
+    // The libxml doesn't give us a lot of context for deciding whether to
+    // allow this request.  In the worst case, this load could be for an
+    // external entity and the resulting document could simply read the
+    // retrieved content.  If we had more context, we could potentially allow
+    // the parser to load a DTD.  As things stand, we take the conservate route
+    // and allow same-origin requests only.
+    return globalDocLoader->doc()->securityOrigin()->canRequest(url);
 }
+
 static void* openFunc(const char* uri)
 {
     ASSERT(globalDocLoader);
     ASSERT(currentThread() == libxmlLoaderThread);
 
-    if (!shouldAllowExternalLoad(uri))
+    KURL url(uri);
+
+    if (!shouldAllowExternalLoad(url))
         return &globalDescriptor;
 
     ResourceError error;
@@ -396,7 +421,7 @@ static void* openFunc(const char* uri)
     // FIXME: We should restore the original global error handler as well.
 
     if (docLoader->frame()) 
-        docLoader->frame()->loader()->loadResourceSynchronously(KURL(uri), error, response, data);
+        docLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
 
     globalDocLoader = docLoader;
 

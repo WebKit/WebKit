@@ -1,5 +1,19 @@
 2008-06-13  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19199
+
+        Prevent external entities from loading across origins.
+
+        Test: http/tests/security/xss-DENIED-xsl-external-entity.xml
+
+        * dom/XMLTokenizer.cpp:
+        (WebCore::shouldAllowExternalLoad):
+        (WebCore::openFunc):
+
+2008-06-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Darin Adler.
 
         https://bugs.webkit.org/show_bug.cgi?id=19450
