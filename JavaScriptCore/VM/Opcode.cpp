@@ -45,91 +45,91 @@ int OpcodeStats::lastOpcode = -1;
 static OpcodeStats logger;
 
 static const char* opcodeNames[] = {
-    "load",
-    "new_object",
-    "new_array",
-    "new_regexp",
-    "mov",
+    "load        ",
+    "new_object  ",
+    "new_array   ",
+    "new_regexp  ",
+    "mov         ",
     
-    "not",
-    "eq",
-    "neq",
-    "stricteq",
-    "nstricteq",
-    "less",
-    "lesseq",
+    "not         ",
+    "eq          ",
+    "neq         ",
+    "stricteq    ",
+    "nstricteq   ",
+    "less        ",
+    "lesseq      ",
     
-    "pre_inc",
-    "pre_dec",
-    "post_inc",
-    "post_dec",
-    "to_jsnumber",
-    "negate",
-    "add",
-    "mul",
-    "div",
-    "mod",
-    "sub",
+    "pre_inc     ",
+    "pre_dec     ",
+    "post_inc    ",
+    "post_dec    ",
+    "to_jsnumber ",
+    "negate      ",
+    "add         ",
+    "mul         ",
+    "div         ",
+    "mod         ",
+    "sub         ",
     
-    "lshift",
-    "rshift",
-    "urshift",
-    "bitand",
-    "bitxor",
-    "bitor",
-    "bitnot",
+    "lshift      ",
+    "rshift      ",
+    "urshift     ",
+    "bitand      ",
+    "bitxor      ",
+    "bitor       ",
+    "bitnot      ",
     
-    "instanceof",
-    "typeof",
-    "in",
+    "instanceof  ",
+    "typeof      ",
+    "in          ",
 
-    "resolve",
+    "resolve     ",
     "resolve_skip",
     "get_scoped_var",
     "put_scoped_var",
     "resolve_base",
     "resolve_with_base",
     "resolve_func",
-    "get_by_id",
-    "put_by_id",
-    "del_by_id",
-    "get_by_val",
-    "put_by_val",
-    "del_by_val",
+    "get_by_id   ",
+    "put_by_id   ",
+    "del_by_id   ",
+    "get_by_val  ",
+    "put_by_val  ",
+    "del_by_val  ",
     "put_by_index",
-    "put_getter",
-    "put_setter",
+    "put_getter  ",
+    "put_setter  ",
 
-    "jmp",
-    "jtrue",
-    "jfalse",
-    "jless",
-    "jmp_scopes",
+    "jmp         ",
+    "jtrue       ",
+    "jfalse      ",
+    "jless       ",
+    "jmp_scopes  ",
 
-    "new_func",
+    "new_func    ",
     "new_func_exp",
-    "call",
-    "call_eval",
-    "ret",
+    "call        ",
+    "call_eval   ",
+    "ret         ",
 
-    "construct",
+    "construct   ",
 
-    "get_pnames",
-    "next_pname",
+    "get_pnames  ",
+    "next_pname  ",
 
-    "push_scope",
-    "pop_scope",
+    "push_scope  ",
+    "pop_scope   ",
 
-    "catch",
-    "throw",
-    "new_error",
+    "catch       ",
+    "throw       ",
+    "new_error   ",
 
-    "jsr",
-    "sret",
+    "jsr         ",
+    "sret        ",
 
-    "debug",
+    "debug       ",
 
-    "end"    
+    "end         "
 };
 
 OpcodeStats::OpcodeStats()
@@ -193,16 +193,19 @@ OpcodeStats::~OpcodeStats()
             *(currentPairIndex++) = make_pair(i, j);
     mergesort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
     
-    printf("\nExecuted opcode statistics:\n\n"); 
+    printf("\nExecuted opcode statistics\n"); 
     
     printf("Total instructions executed: %lld\n\n", totalInstructions);
-    
+
+    printf("All opcodes by frequency:\n\n");
+
     for (int i = 0; i < numOpcodeIDs; ++i) {
         int index = sortedIndices[i];
-        printf("%s: %.2f%%\n", opcodeNames[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
+        printf("%s: %lld - %.2f%%\n", opcodeNames[index], opcodeCounts[index], ((double) opcodeCounts[index]) / ((double) totalInstructions) * 100.0);    
     }
     
     printf("\n");
+    printf("2-opcode sequences by frequency: %lld\n\n", totalInstructions);
     
     for (int i = 0; i < numOpcodeIDs * numOpcodeIDs; ++i) {
         pair<int, int> indexPair = sortedPairIndices[i];
@@ -211,9 +214,35 @@ OpcodeStats::~OpcodeStats()
         if (!count)
             break;
         
-        printf("(%s, %s): %.2f%%\n", opcodeNames[indexPair.first], opcodeNames[indexPair.second], ((double) count) / ((double) totalInstructionPairs) * 100.0);
+        printf("%s %s: %lld %.2f%%\n", opcodeNames[indexPair.first], opcodeNames[indexPair.second], count, ((double) count) / ((double) totalInstructionPairs) * 100.0);
     }
     
+    printf("\n");
+    printf("Most common opcodes and sequences:\n");
+
+    for (int i = 0; i < numOpcodeIDs; ++i) {
+        int index = sortedIndices[i];
+        long long opcodeCount = opcodeCounts[index];
+        double opcodeProportion = ((double) opcodeCount) / ((double) totalInstructions);
+        if (opcodeProportion < 0.0001)
+            break;
+        printf("\n%s: %lld - %.2f%%\n", opcodeNames[index], opcodeCount, opcodeProportion * 100.0);
+
+        for (int j = 0; j < numOpcodeIDs * numOpcodeIDs; ++j) {
+            pair<int, int> indexPair = sortedPairIndices[j];
+            long long pairCount = opcodePairCounts[indexPair.first][indexPair.second];
+            double pairProportion = ((double) pairCount) / ((double) totalInstructionPairs);
+        
+            if (!pairCount || pairProportion < 0.0001 || pairProportion < opcodeProportion / 100)
+                break;
+
+            if (indexPair.first != index && indexPair.second != index)
+                continue;
+
+            printf("    %s %s: %lld - %.2f%%\n", opcodeNames[indexPair.first], opcodeNames[indexPair.second], pairCount, pairProportion * 100.0);
+        }
+        
+    }
     printf("\n");
 }
 

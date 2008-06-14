@@ -1,3 +1,18 @@
+2008-06-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - prettify opcode stats output
+        
+        I changed things to be a bit more aligned, also there is a new
+        section listing most common opcodes and most common sequences that
+        include them.
+
+        * VM/Opcode.cpp:
+        (KJS::):
+        (KJS::OpcodeStats::~OpcodeStats):
+        * VM/Opcode.h:
+
 2008-06-13  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
