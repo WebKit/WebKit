@@ -397,8 +397,8 @@ static bool shouldAllowExternalLoad(const KURL& url)
     // allow this request.  In the worst case, this load could be for an
     // external entity and the resulting document could simply read the
     // retrieved content.  If we had more context, we could potentially allow
-    // the parser to load a DTD.  As things stand, we take the conservate route
-    // and allow same-origin requests only.
+    // the parser to load a DTD.  As things stand, we take the conservative
+    // route and allow same-origin requests only.
     return globalDocLoader->doc()->securityOrigin()->canRequest(url);
 }
 
