@@ -2,6 +2,14 @@
 
         Reviewed by Oliver.
 
+        Remove helper functions in the parser that are no longer needed.
+
+        * kjs/grammar.y:
+
+2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
         Bug 19484: More instructions needs to use temporary registers
         <https://bugs.webkit.org/show_bug.cgi?id=19484>
 

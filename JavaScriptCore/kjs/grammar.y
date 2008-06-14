@@ -63,8 +63,6 @@ static inline bool allowAutomaticSemicolon(KJS::Lexer&, int);
 using namespace KJS;
 using namespace std;
 
-static AddNode* makeAddNode(ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
-static LessNode* makeLessNode(ExpressionNode*, ExpressionNode*);
 static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments);
 static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator);
 static ExpressionNode* makePostfixNode(ExpressionNode* expr, Operator);
@@ -477,14 +475,14 @@ MultiplicativeExprNoBF:
 
 AdditiveExpr:
     MultiplicativeExpr
-  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new AddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AdditiveExprNoBF:
     MultiplicativeExprNoBF
   | AdditiveExprNoBF '+' MultiplicativeExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new AddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | AdditiveExprNoBF '-' MultiplicativeExpr
                                         { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
@@ -505,7 +503,7 @@ ShiftExprNoBF:
 
 RelationalExpr:
     ShiftExpr
-  | RelationalExpr '<' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr '<' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExpr '>' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExpr LE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExpr GE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
@@ -515,7 +513,7 @@ RelationalExpr:
 
 RelationalExprNoIn:
     ShiftExpr
-  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
@@ -525,7 +523,7 @@ RelationalExprNoIn:
 
 RelationalExprNoBF:
     ShiftExprNoBF
-  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(makeLessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
@@ -1093,16 +1091,6 @@ SourceElement:
 ;
  
 %%
-
-static AddNode* makeAddNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments)
-{
-    return new AddNode(left, right, rightHasAssignments);
-}
-
-static LessNode* makeLessNode(ExpressionNode* left, ExpressionNode* right)
-{
-    return new LessNode(left, right);
-}
 
 static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator op, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments)
 {
