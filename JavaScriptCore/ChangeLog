@@ -1,3 +1,21 @@
+2008-06-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - initialize local vars as side effect of call instead of in bytecode
+        1.004x speedup on SunSpider.
+
+        This removes just the dispatch overhead for these loads - in the
+        future, dead store elimination might be able to eliminate them
+        entirely.
+        
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator): For function blocks, don't
+        emit loads of undefined for var initialization.
+        * VM/Machine.cpp:
+        (KJS::slideRegisterWindowForCall): Instead, initialize locals
+        as part of the call.
+
 2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

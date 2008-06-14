@@ -404,6 +404,10 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
         for ( ; it != end; ++it)
             *(it + shift) = *it;
     }
+    
+    // initialize local variable slots
+    for (Register* it = r - newCodeBlock->numVars; it != r; ++it)
+        (*it).u.jsValue = jsUndefined();
 
     return r;
 }
