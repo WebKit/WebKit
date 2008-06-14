@@ -1,3 +1,15 @@
+2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Tests for:
+
+        Bug 19484: More instructions needs to use temporary registers
+        <https://bugs.webkit.org/show_bug.cgi?id=19484>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
 2008-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

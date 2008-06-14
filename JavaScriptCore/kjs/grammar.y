@@ -63,7 +63,7 @@ static inline bool allowAutomaticSemicolon(KJS::Lexer&, int);
 using namespace KJS;
 using namespace std;
 
-static AddNode* makeAddNode(ExpressionNode*, ExpressionNode*);
+static AddNode* makeAddNode(ExpressionNode*, ExpressionNode*, bool rightHasAssignments);
 static LessNode* makeLessNode(ExpressionNode*, ExpressionNode*);
 static ExpressionNode* makeAssignNode(ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments);
 static ExpressionNode* makePrefixNode(ExpressionNode* expr, Operator);
@@ -477,16 +477,16 @@ MultiplicativeExprNoBF:
 
 AdditiveExpr:
     MultiplicativeExpr
-  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | AdditiveExpr '+' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | AdditiveExpr '-' MultiplicativeExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AdditiveExprNoBF:
     MultiplicativeExprNoBF
   | AdditiveExprNoBF '+' MultiplicativeExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(makeAddNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | AdditiveExprNoBF '-' MultiplicativeExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new SubNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ShiftExpr:
@@ -1094,9 +1094,9 @@ SourceElement:
  
 %%
 
-static AddNode* makeAddNode(ExpressionNode* left, ExpressionNode* right)
+static AddNode* makeAddNode(ExpressionNode* left, ExpressionNode* right, bool rightHasAssignments)
 {
-    return new AddNode(left, right);
+    return new AddNode(left, right, rightHasAssignments);
 }
 
 static LessNode* makeLessNode(ExpressionNode* left, ExpressionNode* right)

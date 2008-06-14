@@ -823,14 +823,14 @@ RegisterID* ModNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* AddNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> src1 = generator.emitNode(m_term1.get());
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_term1.get(), m_rightHasAssignments, m_term2.get()->isConstant());
     RegisterID* src2 = generator.emitNode(m_term2.get());
     return generator.emitAdd(generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }
 
 RegisterID* SubNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> src1 = generator.emitNode(m_term1.get());
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_term1.get(), m_rightHasAssignments, m_term2.get()->isConstant());
     RegisterID* src2 = generator.emitNode(m_term2.get());
     return generator.emitSub(generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }

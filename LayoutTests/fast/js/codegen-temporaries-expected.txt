@@ -42,6 +42,12 @@ PASS bracket_test3() is 0
 PASS bracket_test4() is 0
 PASS bracket_test5() is 1
 PASS bracket_test6() is 1
+PASS add_test1() is 3
+PASS add_test2() is 3
+PASS add_test3() is 3
+PASS sub_test1() is -1
+PASS sub_test2() is -1
+PASS sub_test3() is -1
 PASS successfullyParsed is true
 
 TEST COMPLETE

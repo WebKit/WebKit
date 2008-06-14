@@ -1,3 +1,21 @@
+2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19484: More instructions needs to use temporary registers
+        <https://bugs.webkit.org/show_bug.cgi?id=19484>
+
+        Make code generation for AddNode and SubNode use temporaries when
+        necessary.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::AddNode::emitCode):
+        (KJS::SubNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::AddNode::):
+        (KJS::SubNode::):
+
 2008-06-13  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

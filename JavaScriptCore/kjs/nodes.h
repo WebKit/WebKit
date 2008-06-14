@@ -1250,9 +1250,10 @@ namespace KJS {
 
     class AddNode : public ExpressionNode {
     public:
-        AddNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
+        AddNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
             : m_term1(term1)
             , m_term2(term2)
+            , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
@@ -1261,23 +1262,26 @@ namespace KJS {
         virtual Precedence precedence() const { return PrecAdditive; }
 
     protected:
-        AddNode(ExpressionNode* term1, ExpressionNode* term2, JSType expectedReturn) KJS_FAST_CALL
+        AddNode(ExpressionNode* term1, ExpressionNode* term2, JSType expectedReturn, bool rightHasAssignments) KJS_FAST_CALL
             : ExpressionNode(expectedReturn)
             , m_term1(term1)
             , m_term2(term2)
+            , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
         RefPtr<ExpressionNode> m_term1;
         RefPtr<ExpressionNode> m_term2;
+        bool m_rightHasAssignments;
     };
 
     class SubNode : public ExpressionNode {
     public:
-        SubNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
+        SubNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
             : ExpressionNode(NumberType)
             , m_term1(term1)
             , m_term2(term2)
+            , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
@@ -1288,6 +1292,7 @@ namespace KJS {
     private:
         RefPtr<ExpressionNode> m_term1;
         RefPtr<ExpressionNode> m_term2;
+        bool m_rightHasAssignments;
     };
 
     class LeftShiftNode : public ExpressionNode {

@@ -350,4 +350,52 @@ function bracket_test6()
 
 shouldBe("bracket_test6()", "1");
 
+function add_test1()
+{
+    var a = 1;
+    return a + (a = 2);
+}
+
+shouldBe("add_test1()", "3");
+
+function add_test2()
+{
+    var a = 1;
+    return a + ++a;
+}
+
+shouldBe("add_test2()", "3");
+
+function add_test3()
+{
+    var a = 1;
+    return a + (a += 1);
+}
+
+shouldBe("add_test3()", "3");
+
+function sub_test1()
+{
+    var a = 1;
+    return a - (a = 2);
+}
+
+shouldBe("sub_test1()", "-1");
+
+function sub_test2()
+{
+    var a = 1;
+    return a - ++a;
+}
+
+shouldBe("sub_test2()", "-1");
+
+function sub_test3()
+{
+    var a = 1;
+    return a - (a += 1);
+}
+
+shouldBe("sub_test3()", "-1");
+
 successfullyParsed = true;
