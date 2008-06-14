@@ -282,8 +282,8 @@ static inline void appendToVarDeclarationList(ParserRefCountedData<DeclarationSt
 
 Literal:
     NULLTOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new NullNode, 0); }
-  | TRUETOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new TrueNode, 0); }
-  | FALSETOKEN                          { $$ = createNodeFeatureInfo<ExpressionNode*>(new FalseNode, 0); }
+  | TRUETOKEN                           { $$ = createNodeFeatureInfo<ExpressionNode*>(new BooleanNode(true), 0); }
+  | FALSETOKEN                          { $$ = createNodeFeatureInfo<ExpressionNode*>(new BooleanNode(false), 0); }
   | NUMBER                              { $$ = createNodeFeatureInfo<ExpressionNode*>(makeNumberNode($1), 0); }
   | STRING                              { $$ = createNodeFeatureInfo<ExpressionNode*>(new StringNode($1), 0); }
   | '/' /* regexp */                    {
