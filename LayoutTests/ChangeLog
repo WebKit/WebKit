@@ -2,6 +2,18 @@
 
         Reviewed by Darin Adler.
 
+        Test that the XSL document() function doesn't load a document from a
+        foreign origin.
+
+        * http/tests/security/resources/target.xml: Added.
+        * http/tests/security/resources/xsl-using-document.xsl: Added.
+        * http/tests/security/xss-DENIED-xsl-document-expected.txt: Added.
+        * http/tests/security/xss-DENIED-xsl-document.xml: Added.
+
+2008-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
         Test whether we permit XMLHttpRequest once document.domain is set.
 
         * http/tests/xmlhttprequest/document-domain-set-expected.txt: Added.

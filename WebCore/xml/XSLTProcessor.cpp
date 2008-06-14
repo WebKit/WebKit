@@ -127,7 +127,7 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
             Vector<char> data;
 
-            if (globalDocLoader->frame()) 
+            if (globalDocLoader->frame() && globalDocLoader->doc()->securityOrigin()->canRequest(url))
                 globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
 
             Console* console = 0;
