@@ -94,8 +94,6 @@ private:
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
 
-    bool urlMatchesDocumentDomain(const KURL&) const;
-
     virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
     virtual void didReceiveData(SubresourceLoader*, const char* data, int size);

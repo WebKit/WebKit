@@ -317,22 +317,6 @@ void XMLHttpRequest::callReadyStateChangeListener()
     }
 }
 
-bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& url) const
-{
-    // a local file can load anything
-    if (m_doc->isAllowedToLoadLocalResources())
-        return true;
-
-    // but a remote document can only load from the same port on the server
-    KURL documentURL(m_doc->url());
-    if (documentURL.protocol().lower() == url.protocol().lower()
-            && documentURL.host().lower() == url.host().lower()
-            && documentURL.port() == url.port())
-        return true;
-
-    return false;
-}
-
 void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
 {
     internalAbort();
@@ -410,7 +394,7 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
     m_error = false;
 
-    m_sameOriginRequest = urlMatchesDocumentDomain(m_url);
+    m_sameOriginRequest = m_doc->securityOrigin()->canRequest(m_url);
 
     ResourceRequest request;
     if (m_sameOriginRequest)
@@ -893,7 +877,7 @@ void XMLHttpRequest::didFinishLoadingMethodCheck(SubresourceLoader* loader)
 void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
     // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (!urlMatchesDocumentDomain(request.url()))
+    if (!m_doc->securityOrigin()->canRequest(request.url()))
         internalAbort();
 }
 

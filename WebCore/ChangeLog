@@ -1,5 +1,28 @@
 2008-06-13  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Fixes <https://bugs.webkit.org/show_bug.cgi?id=15100>:
+          XMLHttpRequest::urlMatchesDocumentDomain raises error if port
+          information does not match exactly
+
+        Refactor our security check for XMLHttpRequest into SecurityOrigin so
+        we can reuse it in other places.  This leverages our default port
+        technology in SecurityOrigin.
+
+        I wasn't sure how to write a test for this because the LayoutTests run
+        on non-default ports.
+
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::canRequest):
+        * platform/SecurityOrigin.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::willSendRequest):
+        * xml/XMLHttpRequest.h:
+
+2008-06-13  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Removed unnecessary dependencies.

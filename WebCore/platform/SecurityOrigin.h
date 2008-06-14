@@ -54,7 +54,15 @@ namespace WebCore {
         String domain() const { return m_domain; }
         unsigned short port() const { return m_port; }
 
+        // Returns true if this SecurityOrigin can script objects in the given
+        // SecurityOrigin.
         bool canAccess(const SecurityOrigin*) const;
+
+        // Returns true if this SecurityOrigin can read content retrieved from
+        // the given URL. For example, call this function before issuing
+        // XMLHttpRequests.
+        bool canRequest(const KURL&) const;
+
         bool isSecureTransitionTo(const KURL&) const;
 
         bool isEmpty() const;

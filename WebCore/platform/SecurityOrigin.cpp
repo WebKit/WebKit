@@ -150,6 +150,21 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
     return false;
 }
 
+bool SecurityOrigin::canRequest(const KURL& url) const
+{
+    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
+        return true;
+
+    if (m_noAccess)
+        return false;
+
+    RefPtr<SecurityOrigin> targetOrigin = SecurityOrigin::create(url);
+
+    // We call isSameSchemeHostPort here instead of canAccess because we want
+    // to ignore document.domain effects.
+    return isSameSchemeHostPort(targetOrigin.get());
+}
+
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
 { 
     // New window created by the application
