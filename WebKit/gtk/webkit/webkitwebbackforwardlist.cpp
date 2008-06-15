@@ -333,7 +333,7 @@ gint webkit_web_back_forward_list_get_forward_length(WebKitWebBackForwardList* w
 }
 
 /**
- * webkit_web_back_forward_list_get_capacity:
+ * webkit_web_back_forward_list_get_limit:
  * @webBackForwardList: a #WebKitWebBackForwardList
  *
  * Returns the maximum limit of the back forward list.

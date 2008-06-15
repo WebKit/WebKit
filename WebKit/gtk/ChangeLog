@@ -1,3 +1,11 @@
+2008-06-15  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
+        Tiny documentation fix, s/capacity/limit
+
+        * webkit/webkitwebbackforwardlist.cpp:
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Sam.
