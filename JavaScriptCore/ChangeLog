@@ -1,3 +1,31 @@
+2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Make code generation not use a temporary for the left-hand side of an
+        expression if the right-hand side is a local variable.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::isLocal):
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::leftHandSideNeedsCopy):
+        (KJS::CodeGenerator::emitNodeForLeftHandSide):
+        * kjs/nodes.cpp:
+        (KJS::ResolveNode::isPure):
+        (KJS::BracketAccessorNode::emitCode):
+        (KJS::AddNode::emitCode):
+        (KJS::SubNode::emitCode):
+        (KJS::ReadModifyResolveNode::emitCode):
+        (KJS::AssignDotNode::emitCode):
+        (KJS::ReadModifyDotNode::emitCode):
+        (KJS::AssignBracketNode::emitCode):
+        (KJS::ReadModifyBracketNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::ExpressionNode::):
+        (KJS::BooleanNode::):
+        (KJS::NumberNode::):
+        (KJS::StringNode::):
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

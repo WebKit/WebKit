@@ -343,6 +343,14 @@ RegisterID* CodeGenerator::registerForLocalConstInit(const Identifier& ident)
     return &m_locals[localsIndex(entry.getIndex())];
 }
 
+bool CodeGenerator::isLocal(const Identifier& ident)
+{
+    if (ident == m_propertyNames->thisIdentifier)
+        return true;
+    
+    return shouldOptimizeLocals() && symbolTable().contains(ident.ustring().rep());
+}
+
 bool CodeGenerator::isLocalConstant(const Identifier& ident)
 {
     return symbolTable().get(ident.ustring().rep()).isReadOnly();

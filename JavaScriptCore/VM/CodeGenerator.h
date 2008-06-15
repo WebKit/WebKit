@@ -108,6 +108,7 @@ namespace KJS {
         // Returns the register storing "this"
         RegisterID* thisRegister() { return &m_thisRegister; }
 
+        bool isLocal(const Identifier&);
         bool isLocalConstant(const Identifier&);
 
         // Returns the next available temporary register. Registers returned by
@@ -171,14 +172,14 @@ namespace KJS {
             return emitNode(0, n);
         }
 
-        ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsConstant)
+        ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
-            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments) && !rightIsConstant;
+            return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments) && !rightIsPure;
         }
 
-        ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsConstant)
+        ALWAYS_INLINE PassRefPtr<RegisterID> emitNodeForLeftHandSide(ExpressionNode* n, bool rightHasAssignments, bool rightIsPure)
         {
-            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsConstant)) {
+            if (leftHandSideNeedsCopy(rightHasAssignments, rightIsPure)) {
                 PassRefPtr<RegisterID> dst = newTemporary();
                 emitNode(dst.get(), n);
                 return dst;
