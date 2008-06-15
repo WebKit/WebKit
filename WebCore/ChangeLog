@@ -1,3 +1,21 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19538
+          <rdar://problem/5957595> Reading transition property from the style JS gives the wrong value
+
+        Test: fast/dom/CSSStyleDeclaration/transition-property-names.html
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::valueOrPropertyName): Added.
+        (WebCore::CSSPrimitiveValue::getStringValue): Use valueOrPropertyName since the ident can either
+        be a value or property ID.
+        (WebCore::CSSPrimitiveValue::cssText): Ditto.
+
+        * css/makeprop.pl: Assign property IDs starting at 1001 instead of 1 so they can be stored along
+        with value IDs with no ambiguity.
+
 2008-06-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Kilzer.

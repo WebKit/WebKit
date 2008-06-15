@@ -22,6 +22,7 @@
 #include "CSSPrimitiveValue.h"
 
 #include "CSSHelper.h"
+#include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "Counter.h"
@@ -38,6 +39,13 @@
 using namespace WTF;
 
 namespace WebCore {
+
+static const char* valueOrPropertyName(int valueOrPropertyID)
+{
+    if (const char* valueName = getValueName(valueOrPropertyID))
+        return valueName;
+    return getPropertyName(static_cast<CSSPropertyID>(valueOrPropertyID));
+}
 
 // "ident" from the CSS tokenizer, minus backslash-escape sequences
 static bool isCSSTokenizerIdentifier(const String& string)
@@ -504,7 +512,7 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_URI:
             return m_value.string;
         case CSS_IDENT:
-            return getValueName(m_value.ident);
+            return valueOrPropertyName(m_value.ident);
         default:
             ec = INVALID_ACCESS_ERR;
             break;
@@ -521,7 +529,7 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_URI:
             return m_value.string;
         case CSS_IDENT:
-            return getValueName(m_value.ident);
+            return valueOrPropertyName(m_value.ident);
         default:
             break;
     }
@@ -661,7 +669,7 @@ String CSSPrimitiveValue::cssText() const
             text = "url(" + quoteURLIfNeeded(m_value.string) + ")";
             break;
         case CSS_IDENT:
-            text = getValueName(m_value.ident);
+            text = valueOrPropertyName(m_value.ident);
             break;
         case CSS_ATTR:
             // FIXME

@@ -1,3 +1,14 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19538
+          <rdar://problem/5957595> Reading transition property from the style JS gives the wrong value
+
+        * fast/dom/CSSStyleDeclaration/resources/transition-property-names.js: Added.
+        * fast/dom/CSSStyleDeclaration/transition-property-names-expected.txt: Added.
+        * fast/dom/CSSStyleDeclaration/transition-property-names.html: Added.
+
 2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.
