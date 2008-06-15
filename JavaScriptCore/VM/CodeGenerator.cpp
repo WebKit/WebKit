@@ -509,9 +509,9 @@ RegisterID* CodeGenerator::emitMove(RegisterID* dst, RegisterID* src)
     return dst;
 }
 
-RegisterID* CodeGenerator::emitNot(RegisterID* dst, RegisterID* src)
+RegisterID* CodeGenerator::emitUnaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src)
 {
-    emitOpcode(op_not);
+    emitOpcode(opcode);
     instructions().append(dst->index());
     instructions().append(src->index());
     return dst;
@@ -547,62 +547,12 @@ RegisterID* CodeGenerator::emitPostDec(RegisterID* dst, RegisterID* srcDst)
     return dst;
 }
 
-RegisterID* CodeGenerator::emitToJSNumber(RegisterID* dst, RegisterID* src)
-{
-    emitOpcode(op_to_jsnumber);
-    instructions().append(dst->index());
-    instructions().append(src->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitNegate(RegisterID* dst, RegisterID* src)
-{
-    emitOpcode(op_negate);
-    instructions().append(dst->index());
-    instructions().append(src->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitBitNot(RegisterID* dst, RegisterID* src)
-{
-    emitOpcode(op_bitnot);
-    instructions().append(dst->index());
-    instructions().append(src->index());
-    return dst;
-}
-
 RegisterID* CodeGenerator::emitBinaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src1, RegisterID* src2)
 {
     emitOpcode(opcode);
     instructions().append(dst->index());
     instructions().append(src1->index());
     instructions().append(src2->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base)
-{
-    emitOpcode(op_instanceof);
-    instructions().append(dst->index());
-    instructions().append(value->index());
-    instructions().append(base->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitTypeOf(RegisterID* dst, RegisterID* src)
-{
-    emitOpcode(op_typeof);
-    instructions().append(dst->index());
-    instructions().append(src->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitIn(RegisterID* dst, RegisterID* property, RegisterID* base)
-{
-    emitOpcode(op_in);
-    instructions().append(dst->index());
-    instructions().append(property->index());
-    instructions().append(base->index());
     return dst;
 }
 
@@ -630,16 +580,9 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, JSValue* v)
     return dst;
 }
 
-RegisterID* CodeGenerator::emitNewObject(RegisterID* dst)
+RegisterID* CodeGenerator::emitNullaryOp(OpcodeID opcode, RegisterID* dst)
 {
-    emitOpcode(op_new_object);
-    instructions().append(dst->index());
-    return dst;
-}
-
-RegisterID* CodeGenerator::emitNewArray(RegisterID* dst)
-{
-    emitOpcode(op_new_array);
+    emitOpcode(opcode);
     instructions().append(dst->index());
     return dst;
 }
@@ -895,18 +838,11 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
     return dst;
 }
 
-RegisterID* CodeGenerator::emitReturn(RegisterID* r0)
+RegisterID* CodeGenerator::emitUnaryNoDstOp(OpcodeID opcode, RegisterID* src)
 {
-    emitOpcode(op_ret);
-    instructions().append(r0->index());
-    return r0;
-}
-
-RegisterID* CodeGenerator::emitEnd(RegisterID* dst)
-{
-    emitOpcode(op_end);
-    instructions().append(dst->index());
-    return dst;
+    emitOpcode(opcode);
+    instructions().append(src->index());
+    return src;
 }
 
 RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode* argumentsNode)
@@ -935,14 +871,12 @@ RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, Argu
 RegisterID* CodeGenerator::emitPushScope(RegisterID* scope)
 {
     m_codeBlock->needsFullScopeChain = true;
-    emitOpcode(op_push_scope);
-    instructions().append(scope->index());
-
     ControlFlowContext context;
     context.isFinallyBlock = false;
     m_scopeContextStack.append(context);
     m_dynamicScopeDepth++;
-    return scope;
+
+    return emitUnaryNoDstOp(op_push_scope, scope);
 }
 
 void CodeGenerator::emitPopScope()
@@ -1117,14 +1051,6 @@ RegisterID* CodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID* ite
     return dst;
 }
 
-RegisterID* CodeGenerator::emitGetPropertyNames(RegisterID* dst, RegisterID* base)
-{
-    emitOpcode(op_get_pnames);
-    instructions().append(dst->index());
-    instructions().append(base->index());
-    return dst;
-}
-
 RegisterID* CodeGenerator::emitCatch(RegisterID* targetRegister, LabelID* start, LabelID* end)
 {
     HandlerInfo info = { start->offsetFrom(0), end->offsetFrom(0), instructions().size(), m_dynamicScopeDepth };
@@ -1132,12 +1058,6 @@ RegisterID* CodeGenerator::emitCatch(RegisterID* targetRegister, LabelID* start,
     emitOpcode(op_catch);
     instructions().append(targetRegister->index());
     return targetRegister;
-}
-
-void CodeGenerator::emitThrow(RegisterID* exception)
-{
-    emitOpcode(op_throw);
-    instructions().append(exception->index());
 }
 
 RegisterID* CodeGenerator::emitNewError(RegisterID* dst, ErrorType type, JSValue* message)

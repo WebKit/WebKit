@@ -192,8 +192,14 @@ namespace KJS {
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, JSValue*);
 
-        RegisterID* emitNewObject(RegisterID* dst);
-        RegisterID* emitNewArray(RegisterID* dst);
+        RegisterID* emitNullaryOp(OpcodeID, RegisterID* dst);
+        RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
+        RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);
+        RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
+
+
+        RegisterID* emitNewObject(RegisterID* dst) { return emitNullaryOp(op_new_object, dst); }
+        RegisterID* emitNewArray(RegisterID* dst) { return emitNullaryOp(op_new_array, dst); }
 
         RegisterID* emitNewFunction(RegisterID* dst, FuncDeclNode* func);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
@@ -201,21 +207,20 @@ namespace KJS {
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
-        RegisterID* emitNot(RegisterID* dst, RegisterID* src);
-        RegisterID* emitBitNot(RegisterID* dst, RegisterID* src);
 
-        RegisterID* emitToJSNumber(RegisterID* dst, RegisterID* src);
-        RegisterID* emitNegate(RegisterID* dst, RegisterID* src);
+        RegisterID* emitNot(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_not, dst, src); }
+        RegisterID* emitBitNot(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_bitnot, dst, src); }
+
+        RegisterID* emitToJSNumber(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_to_jsnumber, dst, src); }
+        RegisterID* emitNegate(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_negate, dst, src); }
         RegisterID* emitPreInc(RegisterID* srcDst);
         RegisterID* emitPreDec(RegisterID* srcDst);
         RegisterID* emitPostInc(RegisterID* dst, RegisterID* srcDst);
         RegisterID* emitPostDec(RegisterID* dst, RegisterID* srcDst);
 
-        RegisterID* emitBinaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src1, RegisterID* src2);
-
-        RegisterID* emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base);
-        RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src);
-        RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base);
+        RegisterID* emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base) { return emitBinaryOp(op_instanceof, dst, value, base); }
+        RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src) { return emitUnaryOp(op_typeof, dst, src); }
+        RegisterID* emitIn(RegisterID* dst, RegisterID* property, RegisterID* base) { return emitBinaryOp(op_in, dst, property, base); }
 
         RegisterID* emitResolve(RegisterID* dst, const Identifier& property);
         RegisterID* emitGetScopedVar(RegisterID* dst, size_t skip, int index);
@@ -237,8 +242,9 @@ namespace KJS {
 
         RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
         RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
-        RegisterID* emitReturn(RegisterID*);
-        RegisterID* emitEnd(RegisterID* dst);
+
+        RegisterID* emitReturn(RegisterID* src) { return emitUnaryNoDstOp(op_ret, src); } 
+        RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
 
         RegisterID* emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode*);
 
@@ -252,11 +258,11 @@ namespace KJS {
         PassRefPtr<LabelID> emitJumpSubroutine(RegisterID* retAddrDst, LabelID*);
         void emitSubroutineReturn(RegisterID* retAddrSrc);
 
-        RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base);
+        RegisterID* emitGetPropertyNames(RegisterID* dst, RegisterID* base) { return emitUnaryOp(op_get_pnames, dst, base); }
         RegisterID* emitNextPropertyName(RegisterID* dst, RegisterID* iter, LabelID* target);
 
         RegisterID* emitCatch(RegisterID*, LabelID* start, LabelID* end);
-        void emitThrow(RegisterID*);
+        void emitThrow(RegisterID* exc) { emitUnaryNoDstOp(op_throw, exc); }
         RegisterID* emitNewError(RegisterID* dst, ErrorType type, JSValue* message);
 
         RegisterID* emitPushScope(RegisterID* scope);

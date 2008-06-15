@@ -1,3 +1,32 @@
+2008-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey.
+        
+        - add emitUnaryOp, emitNullaryOp and emitUnaryOpNoDst; use them
+        
+        This removes some boilerplate code and also reduces the number of
+        places that will need to be changed to do on-demand emit of
+        loads (and thus support k operands).
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitUnaryOp):
+        (KJS::CodeGenerator::emitNullaryOp):
+        (KJS::CodeGenerator::emitUnaryOpNoDst):
+        (KJS::CodeGenerator::emitPushScope):
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::emitNewObject):
+        (KJS::CodeGenerator::emitNewArray):
+        (KJS::CodeGenerator::emitNot):
+        (KJS::CodeGenerator::emitBitNot):
+        (KJS::CodeGenerator::emitToJSNumber):
+        (KJS::CodeGenerator::emitNegate):
+        (KJS::CodeGenerator::emitInstanceOf):
+        (KJS::CodeGenerator::emitTypeOf):
+        (KJS::CodeGenerator::emitIn):
+        (KJS::CodeGenerator::emitReturn):
+        (KJS::CodeGenerator::emitEnd):
+        (KJS::CodeGenerator::emitGetPropertyNames):
+
 2008-06-15  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Maciej.
