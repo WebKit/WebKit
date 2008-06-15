@@ -1,6 +1,5 @@
 <body>
    <pre id="error-log"></pre>
-
    <span id="container" style="color: green">
    </span>
    <div style="display: none">
@@ -22,6 +21,9 @@
    </span>
 </body>
 <script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
    // verify all standard cases
    document.getElementById("container").insertAdjacentElement("beforeBegin", document.getElementById("1"));
    document.getElementById("container").insertAdjacentElement("afterBegin", document.getElementById("2"));
@@ -54,6 +56,6 @@
    passes = passes & (elt.insertAdjacentElement("beforeBegin", document.createElement("p")) == null);
    if (passes) {
       document.getElementById("status").style.color = "green";
-      document.getElementById("status").innerHTML = "PASS";
+      document.getElementById("status").innerHTML = "<br><br>PASS";
    }
 </script>

@@ -49,6 +49,16 @@ module html {
                  attribute [ConvertNullToNullString] DOMString outerText
                      setter raises(DOMException);
 
+        Element insertAdjacentElement(in DOMString where,
+                                      in Element element)
+            raises(DOMException);
+        void insertAdjacentHTML(in DOMString where,
+                                in DOMString html)
+            raises(DOMException);
+        void insertAdjacentText(in DOMString where,
+                                in DOMString text)
+            raises(DOMException);
+
         readonly attribute HTMLCollection children;
 
                  attribute [ConvertNullToNullString] DOMString contentEditable;

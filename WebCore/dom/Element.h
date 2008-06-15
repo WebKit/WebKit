@@ -168,7 +168,6 @@ public:
     virtual void formatForDebugger(char* buffer, unsigned length) const;
 #endif
 
-    Node* insertAdjacentElement(const String& where, Node* newChild, ExceptionCode&);
     bool contains(const Node*) const;
 
     String innerText() const;

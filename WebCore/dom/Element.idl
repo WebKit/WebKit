@@ -92,9 +92,6 @@ module core {
 
         // IE extensions
 
-        Node insertAdjacentElement(in DOMString position, 
-                                   in Node element)
-            raises(DOMException);
         boolean contains(in Element element);
 
         // WebKit extensions

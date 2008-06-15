@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -490,6 +490,70 @@ void HTMLElement::setOuterText(const String &text, ExceptionCode& ec)
         if (ec)
             return;
     }
+}
+
+Node* HTMLElement::insertAdjacent(const String& where, Node* newChild, ExceptionCode& ec)
+{
+    // In Internet Explorer if the element has no parent and where is "beforeBegin" or "afterEnd",
+    // a document fragment is created and the elements appended in the correct order. This document
+    // fragment isn't returned anywhere.
+    //
+    // This is impossible for us to implement as the DOM tree does not allow for such structures,
+    // Opera also appears to disallow such usage.
+
+    if (equalIgnoringCase(where, "beforeBegin")) {
+        if (Node* p = parent())
+            return p->insertBefore(newChild, this, ec) ? newChild : 0;
+        return 0;
+    }
+
+    if (equalIgnoringCase(where, "afterBegin"))
+        return insertBefore(newChild, firstChild(), ec) ? newChild : 0;
+
+    if (equalIgnoringCase(where, "beforeEnd"))
+        return appendChild(newChild, ec) ? newChild : 0;
+
+    if (equalIgnoringCase(where, "afterEnd")) {
+        if (Node* p = parent())
+            return p->insertBefore(newChild, nextSibling(), ec) ? newChild : 0;
+        return 0;
+    }
+    
+    // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+    ec = NOT_SUPPORTED_ERR;
+    return 0;
+}
+
+Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChild, ExceptionCode& ec)
+{
+    if (!newChild) {
+        // IE throws COM Exception E_INVALIDARG; this is the best DOM exception alternative
+        ec = TYPE_MISMATCH_ERR;
+        return 0;
+    }
+
+    Node* returnValue = insertAdjacent(where, newChild, ec);
+    ASSERT(!returnValue || returnValue->isElementNode());
+    return static_cast<Element*>(returnValue); 
+}
+
+void HTMLElement::insertAdjacentHTML(const String& where, const String& html, ExceptionCode& ec)
+{
+    // FIXME: perhaps this should use createFragmentFromMarkup() instead as
+    // createContextualFragment() has all sorts of odd rules in it.
+    RefPtr<DocumentFragment> fragment = createContextualFragment(html);
+    if (!fragment) {
+        ec = NO_MODIFICATION_ALLOWED_ERR;
+        return;
+    }
+
+    insertAdjacent(where, fragment.get(), ec);
+}
+
+void HTMLElement::insertAdjacentText(const String& where, const String& text, ExceptionCode& ec)
+{
+    RefPtr<Text> textNode = document()->createTextNode(text);
+    insertAdjacent(where, textNode.get(), ec);
 }
 
 void HTMLElement::addHTMLAlignment(MappedAttribute* attr)

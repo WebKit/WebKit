@@ -1,3 +1,20 @@
+2008-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for <rdar://problem/5775192>
+        insertAdjacentHTML and insertAdjacentText are not implemented although insertAdjacentElement is.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/resources/domListEnumeration.js:
+        * fast/dynamic/insertAdjacentElement.html:
+        * fast/dynamic/insertAdjacentHTML-expected.txt: Added.
+        * fast/dynamic/insertAdjacentHTML.html: Copied from fast/dynamic/insertAdjacentElement.html.
+        * fast/dynamic/insertAdjacentText-expected.txt: Added.
+        * fast/dynamic/insertAdjacentText.html: Copied from fast/dynamic/insertAdjacentElement.html.
+        * platform/mac/fast/dynamic/insertAdjacentElement-expected.txt:
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

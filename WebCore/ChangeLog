@@ -1,3 +1,27 @@
+2008-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/5775192>
+        insertAdjacentHTML and insertAdjacentText are not implemented although insertAdjacentElement is.
+
+        - Implements insertAdjacentHTML and insertAdjacentText for HTMLElement.
+        - Moves the insertAdjacentElement implementation from Element to HTMLElement.
+
+        Tests: fast/dynamic/insertAdjacentHTML.html
+               fast/dynamic/insertAdjacentText.html
+
+        * dom/Element.cpp:
+        * dom/Element.h:
+        * dom/Element.idl:
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacent):
+        (WebCore::HTMLElement::insertAdjacentElement):
+        (WebCore::HTMLElement::insertAdjacentHTML):
+        (WebCore::HTMLElement::insertAdjacentText):
+        * html/HTMLElement.h:
+        * html/HTMLElement.idl:
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
