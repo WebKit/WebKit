@@ -17,6 +17,7 @@
 #include "config.h"
 #include "DragData.h"
 
+#include "Clipboard.h"
 #include "Document.h"
 #include "DocumentFragment.h"
 
