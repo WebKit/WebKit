@@ -1,3 +1,11 @@
+2008-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Rubber stamped by Oliver.
+        
+        - fix WebKit solution for testkjs --> jsc rename
+
+        * WebKit.vcproj/WebKit.sln:
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Sam.
