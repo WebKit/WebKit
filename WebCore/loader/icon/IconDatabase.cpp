@@ -532,6 +532,12 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
             MutexLocker locker(m_pendingSyncLock);
             m_iconsPendingSync.set(iconURL, icon->snapshot());
         }
+
+        if (icon->hasOneRef()) {
+            ASSERT(icon->retainingPageURLs().isEmpty());
+            LOG(IconDatabase, "Icon for icon url %s is about to be destroyed - removing mapping for it", urlForLogging(icon->iconURL()).ascii().data());
+            m_iconURLToRecordMap.remove(icon->iconURL());
+        }
     }
 
     // Send notification out regarding all PageURLs that retain this icon
@@ -605,7 +611,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
             MutexLocker locker(m_pendingSyncLock);
             m_pageURLsPendingSync.set(pageURL, pageRecord->snapshot());
             
-            // If the icon is on it's last ref, mark it for deletion
+            // If the icon is on its last ref, mark it for deletion
             if (iconRecord && iconRecord->hasOneRef())
                 m_iconsPendingSync.set(iconRecord->iconURL(), iconRecord->snapshot(true));
         }
@@ -1530,15 +1536,12 @@ bool IconDatabase::writeToDatabase()
     }
     
     for (unsigned i = 0; i < pageSnapshots.size(); ++i) {
-        String iconURL = pageSnapshots[i].iconURL;
-
         // If the icon URL is empty, this page is meant to be deleted
         // ASSERTs are sanity checks to make sure the mappings exist if they should and don't if they shouldn't
         if (pageSnapshots[i].iconURL.isEmpty())
             removePageURLFromSQLDatabase(pageSnapshots[i].pageURL);
-        else {
+        else
             setIconURLForPageURLInSQLDatabase(pageSnapshots[i].iconURL, pageSnapshots[i].pageURL);
-        }
         LOG(IconDatabase, "Committed IconURL for PageURL %s to database", urlForLogging(pageSnapshots[i].pageURL).ascii().data());
     }
 

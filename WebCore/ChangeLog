@@ -1,5 +1,22 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Mitz.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19556
+          REGRESSION (r34544): Crash while visiting bigglook.com
+
+        This fix eliminates the crash, but the logic remaining seems a little strange.
+        We create an IconRecord and then immediately destroy it. Worth taking another
+        look at this later.
+
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::setIconDataForIconURL): Added code to remove the icon
+        just as in the other cases where we might be holding the single reference to it.
+        (WebCore::IconDatabase::setIconURLForPageURL): Fixed comment typo.
+        (WebCore::IconDatabase::writeToDatabase): Removed unused local variable.
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         Reviewed and tweaked by Sam Weinig.
 
         Fix for <rdar://problem/5908591>
