@@ -45,7 +45,7 @@
 
     /* This test assumes that if version() exists, it can set the JavaScript 
      * interpreter to an arbitrary version. To prevent unhandled exceptions in
-     * other tests, testkjs implements version() as a stub function, but 
+     * other tests, jsc implements version() as a stub function, but 
      * JavaScriptCore doesn't support setting the JavaScript engine's version.
      
      * Commenting out the following lines forces the test to expect JavaScript

@@ -26,7 +26,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# This script runs a list of scripts through testkjs a specified number of times.
+# This script runs a list of scripts through jsc a specified number of times.
 
 use strict;
 use warnings;
@@ -35,7 +35,7 @@ use lib $FindBin::Bin;
 use Getopt::Long;
 use webkitdirs;
 
-my $usage = "Usage: run-testkjs [--count run_count] [--verbose] shell_file [file2...]";
+my $usage = "Usage: run-jsc [--count run_count] [--verbose] shell_file [file2...]";
 
 my $count = 1;
 my $verbose = 0;
@@ -43,15 +43,15 @@ GetOptions("count|c=i" => \$count,
            "verbose|v" => \$verbose);
 die "$usage\n" if (@ARGV < 1);
 
-my $testkjs = productDir() . "/testkjs @ARGV";
-$testkjs .= " 2> /dev/null" unless $verbose;
+my $jsc = productDir() . "/jsc @ARGV";
+$jsc .= " 2> /dev/null" unless $verbose;
 
 my $dyld = productDir();
 
 $ENV{"DYLD_FRAMEWORK_PATH"} = $dyld;
-print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $testkjs\n";
+print STDERR "Running $count time(s): DYLD_FRAMEWORK_PATH=$dyld $jsc\n";
 while ($count--) {
-    if (system("$testkjs") != 0) {
+    if (system("$jsc") != 0) {
         last;
     }
 }

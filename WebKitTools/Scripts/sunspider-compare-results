@@ -57,13 +57,13 @@ if ($showHelp) {
 
 @ARGV = map { File::Spec->rel2abs($_) } @ARGV;
 
-sub buildTestKJS
+sub buildJSC
 {
     if (!defined($root)){
         chdirWebKit();
-        my $buildResult = system "WebKitTools/Scripts/build-testkjs", "--" . $configuration;
+        my $buildResult = system "WebKitTools/Scripts/build-jsc", "--" . $configuration;
         if ($buildResult) {
-            print STDERR "Compiling testkjs failed!\n";
+            print STDERR "Compiling jsc failed!\n";
             exit WEXITSTATUS($buildResult);
         }
     }
@@ -77,15 +77,15 @@ sub setupEnvironmentForExecution($)
     # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
 }
 
-sub testKJSPath($)
+sub jscPath($)
 {
     my ($productDir) = @_;
-    my $testkjsName = "testkjs";
-    $testkjsName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$testkjsName";
+    my $jscName = "jsc";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$jscName";
 }
 
-buildTestKJS();
+buildJSC();
 
 chdirWebKit();
 chdir("SunSpider");
@@ -95,7 +95,7 @@ my $productDir = productDir();
 $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 
 setupEnvironmentForExecution($productDir);
-my @args = ("--shell", testKJSPath($productDir));
+my @args = ("--shell", jscPath($productDir));
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 
 exec "./sunspider-compare-results", @args, @ARGV;

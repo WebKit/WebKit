@@ -1,7 +1,7 @@
 TEMPLATE = app
-TARGET = testkjs
+TARGET = jsc
 DESTDIR = ..
-SOURCES = testkjs.cpp
+SOURCES = Shell.cpp
 QT -= gui
 DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
 INCLUDEPATH += $$PWD/.. \

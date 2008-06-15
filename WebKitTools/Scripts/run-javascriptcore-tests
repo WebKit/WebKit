@@ -84,9 +84,9 @@ if(!defined($root)){
     push(@xcodeArgs, "--gtk")  if isGtk();
     push(@xcodeArgs, "--wx")  if isWx();
 
-    my $buildResult = system "perl", "WebKitTools/Scripts/build-testkjs", @xcodeArgs;
+    my $buildResult = system "perl", "WebKitTools/Scripts/build-jsc", @xcodeArgs;
     if ($buildResult) {
-        print STDERR "Compiling testkjs failed!\n";
+        print STDERR "Compiling jsc failed!\n";
         exit exitStatus($buildResult);
     }
 }
@@ -102,15 +102,15 @@ $productDir .= "/Programs" if isGtk();
 $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
 setPathForRunningWebKitApp(\%ENV) if isCygwin();
 
-sub testKJSPath($)
+sub jscPath($)
 {
     my ($productDir) = @_;
-    my $testkjsName = "testkjs";
-    $testkjsName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$testkjsName";
+    my $jscName = "jsc";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$jscName";
 }
 
-my $result = system "perl", "jsDriver.pl", "-e", "kjs", "-s", testKJSPath($productDir), "-f", "actual.html", @jsArgs;
+my $result = system "perl", "jsDriver.pl", "-e", "squirrelfish", "-s", jscPath($productDir), "-f", "actual.html", @jsArgs;
 exit exitStatus($result)  if $result;
 
 my %failures;

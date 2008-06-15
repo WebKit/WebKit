@@ -269,7 +269,7 @@ JSValue* functionQuit(ExecState*, JSObject*, const List&)
 
 // Use SEH for Release builds only to get rid of the crash report dialog
 // (luckily the same tests fail in Release and Debug builds so far). Need to
-// be in a separate main function because the kjsmain function requires object
+// be in a separate main function because the jscmain function requires object
 // unwinding.
 
 #if PLATFORM(WIN_OS) && !defined(_DEBUG)
@@ -280,7 +280,7 @@ JSValue* functionQuit(ExecState*, JSObject*, const List&)
 #define EXCEPT(x)
 #endif
 
-int kjsmain(int argc, char** argv);
+int jscmain(int argc, char** argv);
 
 int main(int argc, char** argv)
 {
@@ -295,7 +295,7 @@ int main(int argc, char** argv)
 
     int res = 0;
     TRY
-        res = kjsmain(argc, argv);
+        res = jscmain(argc, argv);
     EXCEPT(res = 3)
     return res;
 }
@@ -377,7 +377,7 @@ static void runInteractive(GlobalObject* globalObject)
 
 static void printUsageStatement()
 {
-    fprintf(stderr, "Usage: testkjs [options] [files] [-- arguments]\n");
+    fprintf(stderr, "Usage: jsc [options] [files] [-- arguments]\n");
     fprintf(stderr, "  -d         Dumps bytecode (debug builds only)\n");
     fprintf(stderr, "  -f         Specifies a source file (deprecated)\n");
     fprintf(stderr, "  -h|--help  Prints this help message\n");
@@ -436,7 +436,7 @@ static void parseArguments(int argc, char** argv, Options& options)
         options.arguments.append(argv[i]);
 }
 
-int kjsmain(int argc, char** argv)
+int jscmain(int argc, char** argv)
 {
     initializeThreading();
 

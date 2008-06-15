@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
-	Name="testkjs"
+	Name="jsc"
 	ProjectGUID="{C59E5129-B453-49B7-A52B-1E104715F76E}"
-	RootNamespace="testkjs"
+	RootNamespace="jsc"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -228,7 +228,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\kjs\testkjs.cpp"
+			RelativePath="..\..\kjs\Shell.cpp"
 			>
 		</File>
 	</Files>

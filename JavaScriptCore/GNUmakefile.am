@@ -150,7 +150,7 @@ JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 
 noinst_PROGRAMS += \
 	Programs/minidom \
-	Programs/testkjs
+	Programs/jsc
 
 # minidom
 Programs_minidom_SOURCES = \
@@ -181,14 +181,14 @@ Programs_minidom_LDADD = \
 	 libJavaScriptCore.la \
 	 -lstdc++
 
-# testkjs
-Programs_testkjs_SOURCES = JavaScriptCore/kjs/testkjs.cpp
+# jsc
+Programs_jsc_SOURCES = JavaScriptCore/kjs/Shell.cpp
 
-Programs_testkjs_CPPFLAGS = \
+Programs_jsc_CPPFLAGS = \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags)
 
-Programs_testkjs_CXXFLAGS = \
+Programs_jsc_CXXFLAGS = \
 	-fno-strict-aliasing \
 	-O2 \
 	$(global_cxxflags) \
@@ -196,7 +196,7 @@ Programs_testkjs_CXXFLAGS = \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
-Programs_testkjs_LDADD = \
+Programs_jsc_LDADD = \
 	libJavaScriptCore.la
 
 # Clean rules for JavaScriptCore
@@ -208,5 +208,5 @@ CLEANFILES += \
 	JavaScriptCore/kjs/regexp_object.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
 	JavaScriptCore/pcre/chartables.c \
-	Programs/testkjs \
+	Programs/jsc \
 	Programs/minidom

@@ -1,3 +1,17 @@
+2008-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - rename testkjs to jsc
+
+        * Scripts/build-jsc: Copied from Scripts/build-testkjs.
+        * Scripts/build-testkjs: Removed.
+        * Scripts/run-javascriptcore-tests:
+        * Scripts/run-jsc: Copied from Scripts/run-testkjs.
+        * Scripts/run-sunspider:
+        * Scripts/run-testkjs: Removed.
+        * Scripts/sunspider-compare-results:
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Moved planned renames into a separate hash

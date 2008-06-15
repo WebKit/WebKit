@@ -1,3 +1,29 @@
+2008-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - rename testkjs to jsc
+
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/JavaScriptCore.sln:
+        * JavaScriptCore.vcproj/jsc: Added.
+        * JavaScriptCore.vcproj/jsc/jsc.vcproj: Copied from JavaScriptCore.vcproj/testkjs/testkjs.vcproj.
+        * JavaScriptCore.vcproj/testkjs: Removed.
+        * JavaScriptCore.vcproj/testkjs/testkjs.vcproj: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * jscore.bkl:
+        * kjs/Shell.cpp: Copied from kjs/testkjs.cpp.
+        (main):
+        (printUsageStatement):
+        (jscmain):
+        * kjs/jsc.pro: Copied from kjs/testkjs.pro.
+        * kjs/testkjs.cpp: Removed.
+        * kjs/testkjs.pro: Removed.
+        * tests/mozilla/expected.html:
+        * tests/mozilla/js1_2/Array/tostring_1.js:
+        * tests/mozilla/js1_2/Array/tostring_2.js:
+        * tests/mozilla/jsDriver.pl:
+
 2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

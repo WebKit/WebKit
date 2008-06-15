@@ -77,7 +77,7 @@ JavaScriptCore Bakefile project file.
 
     </template>
     
-    <exe id="testkjs" template="icu,jscore,pthreads">
+    <exe id="jsc" template="icu,jscore,pthreads">
         <cxx-rtti>off</cxx-rtti>
         <cxx-exceptions>off</cxx-exceptions>
         <debug-info>on</debug-info>
@@ -90,7 +90,7 @@ JavaScriptCore Bakefile project file.
         <include>$(WK_ROOT)/JavaScriptCore/VM</include>
         <include>$(WK_ROOT)/JavaScriptCore/wtf</include>
         <dirname>$(WKOUTPUTDIR)</dirname>
-        <sources>$(SRCDIR)/kjs/testkjs.cpp</sources>
+        <sources>$(SRCDIR)/kjs/Shell.cpp</sources>
         <if cond="FORMAT=='gnu'">
             <ldflags>$(WKOUTPUTDIR)/libjscore.a</ldflags>
         </if>

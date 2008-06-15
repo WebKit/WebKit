@@ -75,15 +75,15 @@ if ($showHelp) {
    exit 1;
 }
 
-sub buildTestKJS
+sub buildJSC
 {
     if (!defined($root)){
         push(@ARGV,  "--" . $configuration);
         
         chdirWebKit();
-        my $buildResult = system "WebKitTools/Scripts/build-testkjs", @ARGV;
+        my $buildResult = system "WebKitTools/Scripts/build-jsc", @ARGV;
         if ($buildResult) {
-            print STDERR "Compiling testkjs failed!\n";
+            print STDERR "Compiling jsc failed!\n";
             exit exitStatus($buildResult);
         }
     }
@@ -97,15 +97,15 @@ sub setupEnvironmentForExecution($)
     # FIXME: Other platforms may wish to augment this method to use LD_LIBRARY_PATH, etc.
 }
 
-sub testKJSPath($)
+sub jscPath($)
 {
     my ($productDir) = @_;
-    my $testkjsName = "testkjs";
-    $testkjsName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
-    return "$productDir/$testkjsName";
+    my $jscName = "jsc";
+    $jscName .= "_debug"  if (isCygwin() && ($configuration eq "Debug"));
+    return "$productDir/$jscName";
 }
 
-buildTestKJS();
+buildJSC();
 
 chdirWebKit();
 chdir("SunSpider");
@@ -115,7 +115,7 @@ my $productDir = productDir();
 $productDir .= "/JavaScriptCore" if (isQt() or isGtk());
 
 setupEnvironmentForExecution($productDir);
-my @args = ("--shell", testKJSPath($productDir), "--runs", $testRuns);
+my @args = ("--shell", jscPath($productDir), "--runs", $testRuns);
 # This code could be removed if we chose to pass extra args to sunspider instead of Xcode
 push @args, "--set-baseline" if $setBaseline;
 push @args, "--shark" if $runShark;
