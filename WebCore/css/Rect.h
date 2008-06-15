@@ -26,10 +26,8 @@
 
 namespace WebCore {
 
-    class Rect : public RefCounted<Rect> {
+    class RectBase {
     public:
-        static RefPtr<Rect> create() { return adoptRef(new Rect); }
-
         CSSPrimitiveValue* top() const { return m_top.get(); }
         CSSPrimitiveValue* right() const { return m_right.get(); }
         CSSPrimitiveValue* bottom() const { return m_bottom.get(); }
@@ -41,13 +39,22 @@ namespace WebCore {
         void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
 
     protected:
-        Rect() { }
+        RectBase() { }
+        ~RectBase() { }
 
     private:
         RefPtr<CSSPrimitiveValue> m_top;
         RefPtr<CSSPrimitiveValue> m_right;
         RefPtr<CSSPrimitiveValue> m_bottom;
         RefPtr<CSSPrimitiveValue> m_left;
+    };
+
+    class Rect : public RectBase, public RefCounted<Rect> {
+    public:
+        static PassRefPtr<Rect> create() { return adoptRef(new Rect); }
+
+    private:
+        Rect() { }
     };
 
 } // namespace WebCore

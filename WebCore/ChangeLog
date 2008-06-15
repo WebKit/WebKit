@@ -2,6 +2,22 @@
 
         Reviewed by Sam.
 
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19544
+          DashboardRegion pieces are leaking
+
+        My recent change introduced a leak of objects owned by each DashboardRegion,
+        because I made ~Rect non-virtual. By using a separate RefCounted class for
+        each of Rect and DashboardRegion, the leak is gone. It's not clear if the
+        DashboardRegion class should really exist -- it doesn't have a DOM binding,
+        so it could conceivably be removed some day.
+
+        * css/DashboardRegion.h: Derive from RectBase instead of from Rect.
+        * css/Rect.h: Added RectBase. Changed Rect to derive from RectBase.
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - https://bugs.webkit.org/show_bug.cgi?id=19545
           use PassRefPtr, not RefPtr, for return values
 

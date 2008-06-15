@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-class DashboardRegion : public Rect {
+class DashboardRegion : public RectBase, public RefCounted<DashboardRegion> {
 public:
     static PassRefPtr<DashboardRegion> create() { return adoptRef(new DashboardRegion); }
 
