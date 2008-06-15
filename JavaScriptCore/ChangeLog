@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        Mac build fix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/nodes.h:
+
+2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
         Change the spelling of PrecMultiplicitave to PrecMultiplicative.
 
         * kjs/nodes.h:

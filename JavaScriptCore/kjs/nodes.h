@@ -27,11 +27,11 @@
 #define NODES_H_
 
 #include "internal.h"
+#include "Opcode.h"
 #include "regexp.h"
 #include "RegisterID.h"
 #include "SourceRange.h"
 #include "SymbolTable.h"
-#include "VM/Opcode.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/ListRefPtr.h>
 #include <wtf/MathExtras.h>

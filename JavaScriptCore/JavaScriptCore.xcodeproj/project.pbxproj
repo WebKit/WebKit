@@ -73,7 +73,7 @@
 		148A1ECE0D10C23B0069A47C /* RefPtrHashMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14909A2D0DCAF6CD00B29EB3 /* ExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD53F40A3E12D800BAF59C /* ExecState.cpp */; };
 		149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */; };
-		149B15EA0D81F986009CB8C7 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B15E40D81F986009CB8C7 /* Opcode.h */; };
+		149B15EA0D81F986009CB8C7 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B15E40D81F986009CB8C7 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		149B15EB0D81F986009CB8C7 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B15E50D81F986009CB8C7 /* Opcode.cpp */; };
 		149B15EC0D81F986009CB8C7 /* Machine.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B15E60D81F986009CB8C7 /* Machine.h */; };
 		149B15EE0D81F986009CB8C7 /* CodeGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B15E80D81F986009CB8C7 /* CodeGenerator.h */; };
