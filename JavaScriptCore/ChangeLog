@@ -1,3 +1,29 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - rename a bunch of local symbols within the regular expression code to
+          follow our usual coding style, and do a few other name tweaks
+
+        * pcre/pcre_compile.cpp:
+        (CompileData::CompileData):
+        (checkEscape):
+        (readRepeatCounts):
+        (compileBranch):
+        (compileBracket):
+        (calculateCompiledPatternLength):
+        (returnError):
+        (jsRegExpCompile):
+        * pcre/pcre_exec.cpp:
+        (MatchStack::MatchStack):
+        (MatchStack::canUseStackBufferForNextFrame):
+        (MatchStack::popCurrentFrame):
+        (match):
+        (tryFirstByteOptimization):
+        (tryRequiredByteOptimization):
+        (jsRegExpExecute):
+        * pcre/pcre_internal.h:
+
 2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

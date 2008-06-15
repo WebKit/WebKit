@@ -135,15 +135,15 @@ doing the compiling. */
 
 struct CompileData {
     CompileData() {
-        top_backref = 0;
+        topBackref = 0;
         backrefMap = 0;
-        req_varyopt = 0;
+        reqVaryOpt = 0;
         needOuterBracket = false;
         numCapturingBrackets = 0;
     }
-    int top_backref;            /* Maximum back reference */
+    int topBackref;            /* Maximum back reference */
     unsigned backrefMap;       /* Bitmap of low back refs */
-    int req_varyopt;            /* "After variable item" flag for reqbyte */
+    int reqVaryOpt;            /* "After variable item" flag for reqByte */
     bool needOuterBracket;
     int numCapturingBrackets;
 };
@@ -166,25 +166,25 @@ a positive value greater than 255 may be returned. On entry, ptr is pointing at
 the \. On exit, it is on the final character of the escape sequence.
 
 Arguments:
-  ptrptr         points to the pattern position pointer
-  errorcodeptr   points to the errorcode variable
+  ptrPtr         points to the pattern position pointer
+  errorCodePtr   points to the errorcode variable
   bracount       number of previous extracting brackets
   options        the options bits
-  isclass        true if inside a character class
+  isClass        true if inside a character class
 
 Returns:         zero or positive => a data character
                  negative => a special escape sequence
-                 on error, errorptr is set
+                 on error, errorPtr is set
 */
 
-static int checkEscape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int bracount, bool isclass)
+static int checkEscape(const UChar** ptrPtr, const UChar* patternEnd, ErrorCode* errorCodePtr, int bracount, bool isClass)
 {
-    const UChar* ptr = *ptrptr + 1;
+    const UChar* ptr = *ptrPtr + 1;
 
     /* If backslash is at the end of the pattern, it's an error. */
     if (ptr == patternEnd) {
-        *errorcodeptr = ERR1;
-        *ptrptr = ptr;
+        *errorCodePtr = ERR1;
+        *ptrPtr = ptr;
         return 0;
     }
     
@@ -197,7 +197,7 @@ static int checkEscape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode*
     if (c < '0' || c > 'z') { /* Not alphameric */
     } else if (int escapeValue = escapes[c - '0']) {
         c = escapeValue;
-        if (isclass) {
+        if (isClass) {
             if (-c == ESC_b)
                 c = '\b'; /* \b is backslash in a class */
             else if (-c == ESC_B)
@@ -221,7 +221,7 @@ static int checkEscape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode*
                  escape sequences. Those sequences end on the first non-octal character
                  or when we overflow 0-255, whichever comes first. */
                 
-                if (!isclass) {
+                if (!isClass) {
                     const UChar* oldptr = ptr;
                     c -= '0';
                     while ((ptr + 1 < patternEnd) && isASCIIDigit(ptr[1]) && c <= bracount)
@@ -295,7 +295,7 @@ static int checkEscape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode*
 
             case 'c':
                 if (++ptr == patternEnd) {
-                    *errorcodeptr = ERR2;
+                    *errorCodePtr = ERR2;
                     return 0;
                 }
                 c = *ptr;
@@ -307,7 +307,7 @@ static int checkEscape(const UChar** ptrptr, const UChar* patternEnd, ErrorCode*
             }
     }
     
-    *ptrptr = ptr;
+    *ptrPtr = ptr;
     return c;
 }
 
@@ -363,13 +363,13 @@ Arguments:
   minp           pointer to int for min
   maxp           pointer to int for max
                  returned as -1 if no max
-  errorcodeptr   points to error code variable
+  errorCodePtr   points to error code variable
 
 Returns:         pointer to '}' on success;
-                 current ptr on error, with errorcodeptr set non-zero
+                 current ptr on error, with errorCodePtr set non-zero
 */
 
-static const UChar* readRepeatCounts(const UChar* p, int* minp, int* maxp, ErrorCode* errorcodeptr)
+static const UChar* readRepeatCounts(const UChar* p, int* minp, int* maxp, ErrorCode* errorCodePtr)
 {
     int min = 0;
     int max = -1;
@@ -380,7 +380,7 @@ static const UChar* readRepeatCounts(const UChar* p, int* minp, int* maxp, Error
     while (isASCIIDigit(*p))
         min = min * 10 + *p++ - '0';
     if (min < 0 || min > 65535) {
-        *errorcodeptr = ERR5;
+        *errorCodePtr = ERR5;
         return p;
     }
     
@@ -395,11 +395,11 @@ static const UChar* readRepeatCounts(const UChar* p, int* minp, int* maxp, Error
             while (isASCIIDigit(*p))
                 max = max * 10 + *p++ - '0';
             if (max < 0 || max > 65535) {
-                *errorcodeptr = ERR5;
+                *errorCodePtr = ERR5;
                 return p;
             }
             if (max < min) {
-                *errorcodeptr = ERR4;
+                *errorCodePtr = ERR4;
                 return p;
             }
         }
@@ -537,15 +537,15 @@ static int encodeUTF8(int cvalue, unsigned char *buffer)
 Arguments:
   options        the option bits
   brackets       points to number of extracting brackets used
-  codeptr        points to the pointer to the current code point
-  ptrptr         points to the current pattern pointer
-  errorcodeptr   points to error code variable
+  codePtr        points to the pointer to the current code point
+  ptrPtr         points to the current pattern pointer
+  errorCodePtr   points to error code variable
   firstbyteptr   set to initial literal character, or < 0 (REQ_UNSET, REQ_NONE)
   reqbyteptr     set to the last literal character required, else < 0
   cd             contains pointers to tables etc.
 
 Returns:         true on success
-                 false, with *errorcodeptr set non-zero on error
+                 false, with *errorCodePtr set non-zero on error
 */
 
 static inline bool safelyCheckNextChar(const UChar* ptr, const UChar* patternEnd, UChar expected)
@@ -554,19 +554,19 @@ static inline bool safelyCheckNextChar(const UChar* ptr, const UChar* patternEnd
 }
 
 static bool
-compileBranch(int options, int* brackets, unsigned char** codeptr,
-               const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int *firstbyteptr,
+compileBranch(int options, int* brackets, unsigned char** codePtr,
+               const UChar** ptrPtr, const UChar* patternEnd, ErrorCode* errorCodePtr, int *firstbyteptr,
                int* reqbyteptr, CompileData& cd)
 {
-    int repeat_type, op_type;
-    int repeat_min = 0, repeat_max = 0;      /* To please picky compilers */
+    int repeatType, opType;
+    int repeatMin = 0, repeat_max = 0;      /* To please picky compilers */
     int bravalue = 0;
     int reqvary, tempreqvary;
     int c;
-    unsigned char* code = *codeptr;
+    unsigned char* code = *codePtr;
     unsigned char* tempcode;
-    bool groupsetfirstbyte = false;
-    const UChar* ptr = *ptrptr;
+    bool didGroupSetFirstByte = false;
+    const UChar* ptr = *ptrPtr;
     const UChar* tempptr;
     unsigned char* previous = NULL;
     unsigned char classbits[32];
@@ -577,37 +577,37 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
     
     /* Initialize no first byte, no required byte. REQ_UNSET means "no char
      matching encountered yet". It gets changed to REQ_NONE if we hit something that
-     matches a non-fixed char first char; reqbyte just remains unset if we never
+     matches a non-fixed char first char; reqByte just remains unset if we never
      find one.
      
      When we hit a repeat whose minimum is zero, we may have to adjust these values
      to take the zero repeat into account. This is implemented by setting them to
-     zerofirstbyte and zeroreqbyte when such a repeat is encountered. The individual
+     zeroFirstByte and zeroReqByte when such a repeat is encountered. The individual
      item types that can be repeated set these backoff variables appropriately. */
     
-    int firstbyte = REQ_UNSET;
-    int reqbyte = REQ_UNSET;
-    int zeroreqbyte = REQ_UNSET;
-    int zerofirstbyte = REQ_UNSET;
+    int firstByte = REQ_UNSET;
+    int reqByte = REQ_UNSET;
+    int zeroReqByte = REQ_UNSET;
+    int zeroFirstByte = REQ_UNSET;
     
-    /* The variable req_caseopt contains either the REQ_IGNORE_CASE value or zero,
+    /* The variable reqCaseOpt contains either the REQ_IGNORE_CASE value or zero,
      according to the current setting of the ignores-case flag. REQ_IGNORE_CASE is a bit
-     value > 255. It is added into the firstbyte or reqbyte variables to record the
+     value > 255. It is added into the firstByte or reqByte variables to record the
      case status of the value. This is used only for ASCII characters. */
     
-    int req_caseopt = (options & IgnoreCaseOption) ? REQ_IGNORE_CASE : 0;
+    int reqCaseOpt = (options & IgnoreCaseOption) ? REQ_IGNORE_CASE : 0;
     
     /* Switch on next character until the end of the branch */
     
     for (;; ptr++) {
-        bool negate_class;
-        bool should_flip_negation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
-        int class_charcount;
-        int class_lastchar;
-        int skipbytes;
-        int subreqbyte;
-        int subfirstbyte;
-        int mclength;
+        bool negateClass;
+        bool shouldFlipNegation; /* If a negative special such as \S is used, we should negate the whole class to properly support Unicode. */
+        int classCharCount;
+        int classLastChar;
+        int skipBytes;
+        int subReqByte;
+        int subFirstByte;
+        int mcLength;
         unsigned char mcbuffer[8];
         
         /* Next byte in the pattern */
@@ -617,7 +617,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
         /* Fill in length of a previous callout, except when the next thing is
          a quantifier. */
         
-        bool is_quantifier = c == '*' || c == '+' || c == '?' || (c == '{' && isCountedRepeat(ptr + 1, patternEnd));
+        bool isQuantifier = c == '*' || c == '+' || c == '?' || (c == '{' && isCountedRepeat(ptr + 1, patternEnd));
         
         switch (c) {
             /* The branch terminates at end of string, |, or ). */
@@ -628,10 +628,10 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 // End of string; fall through
             case '|':
             case ')':
-                *firstbyteptr = firstbyte;
-                *reqbyteptr = reqbyte;
-                *codeptr = code;
-                *ptrptr = ptr;
+                *firstbyteptr = firstByte;
+                *reqbyteptr = reqByte;
+                *codePtr = code;
+                *ptrPtr = ptr;
                 return true;
                 
             /* Handle single-character metacharacters. In multiline mode, ^ disables
@@ -639,8 +639,8 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
 
             case '^':
                 if (options & MatchAcrossMultipleLinesOption) {
-                    if (firstbyte == REQ_UNSET)
-                        firstbyte = REQ_NONE;
+                    if (firstByte == REQ_UNSET)
+                        firstByte = REQ_NONE;
                     *code++ = OP_BOL;
                 } else
                     *code++ = OP_CIRC;
@@ -656,13 +656,13 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 break;
 
             /* There can never be a first char if '.' is first, whatever happens about
-             repeats. The value of reqbyte doesn't change either. */
+             repeats. The value of reqByte doesn't change either. */
 
             case '.':
-                if (firstbyte == REQ_UNSET)
-                    firstbyte = REQ_NONE;
-                zerofirstbyte = firstbyte;
-                zeroreqbyte = reqbyte;
+                if (firstByte == REQ_UNSET)
+                    firstByte = REQ_NONE;
+                zeroFirstByte = firstByte;
+                zeroReqByte = reqByte;
                 previous = code;
                 *code++ = OP_NOT_NEWLINE;
                 break;
@@ -681,7 +681,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 
             case '[': {
                 previous = code;
-                should_flip_negation = false;
+                shouldFlipNegation = false;
                 
                 /* PCRE supports POSIX class stuff inside a class. Perl gives an error if
                  they are encountered at the top level, so we'll do that too. */
@@ -689,22 +689,22 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 /* If the first character is '^', set the negation flag and skip it. */
 
                 if (ptr + 1 >= patternEnd) {
-                    *errorcodeptr = ERR6;
+                    *errorCodePtr = ERR6;
                     return false;
                 }
 
                 if (ptr[1] == '^') {
-                    negate_class = true;
+                    negateClass = true;
                     ++ptr;
                 } else
-                    negate_class = false;
+                    negateClass = false;
                 
                 /* Keep a count of chars with values < 256 so that we can optimize the case
                  of just a single character (as long as it's < 256). For higher valued UTF-8
                  characters, we don't yet do any optimization. */
                 
-                class_charcount = 0;
-                class_lastchar = -1;
+                classCharCount = 0;
+                classLastChar = -1;
                 
                 class_utf8 = false;                       /* No chars >= 256 */
                 class_utf8data = code + LINK_SIZE + 34;   /* For UTF-8 items */
@@ -728,12 +728,12 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      Inside a class (and only there) it is treated as backspace. Elsewhere
                      it marks a word boundary. Other escapes have preset maps ready to
                      or into the one we are building. We assume they have more than one
-                     character in them, so set class_charcount bigger than one. */
+                     character in them, so set classCharCount bigger than one. */
                     
                     if (c == '\\') {
-                        c = checkEscape(&ptr, patternEnd, errorcodeptr, cd.numCapturingBrackets, true);
+                        c = checkEscape(&ptr, patternEnd, errorCodePtr, cd.numCapturingBrackets, true);
                         if (c < 0) {
-                            class_charcount += 2;     /* Greater than 1 is what matters */
+                            classCharCount += 2;     /* Greater than 1 is what matters */
                             switch (-c) {
                                 case ESC_d:
                                     for (c = 0; c < 32; c++)
@@ -741,7 +741,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                     continue;
                                     
                                 case ESC_D:
-                                    should_flip_negation = true;
+                                    shouldFlipNegation = true;
                                     for (c = 0; c < 32; c++)
                                         classbits[c] |= ~classBitmapForChar(c + cbit_digit);
                                     continue;
@@ -752,7 +752,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                     continue;
                                     
                                 case ESC_W:
-                                    should_flip_negation = true;
+                                    shouldFlipNegation = true;
                                     for (c = 0; c < 32; c++)
                                         classbits[c] |= ~classBitmapForChar(c + cbit_word);
                                     continue;
@@ -763,7 +763,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                     continue;
                                     
                                 case ESC_S:
-                                    should_flip_negation = true;
+                                    shouldFlipNegation = true;
                                     for (c = 0; c < 32; c++)
                                          classbits[c] |= ~classBitmapForChar(c + cbit_space);
                                     continue;
@@ -774,7 +774,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                     
                                 default:
                                     c = *ptr;              /* The final character */
-                                    class_charcount -= 2;  /* Undo the default count from above */
+                                    classCharCount -= 2;  /* Undo the default count from above */
                             }
                         }
                         
@@ -798,7 +798,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                         
                         if (d == '\\') {
                             const UChar* oldptr = ptr;
-                            d = checkEscape(&ptr, patternEnd, errorcodeptr, cd.numCapturingBrackets, true);
+                            d = checkEscape(&ptr, patternEnd, errorCodePtr, cd.numCapturingBrackets, true);
                             
                             /* \X is literal X; any other special means the '-' was literal */
                             if (d < 0) {
@@ -878,8 +878,8 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                 int uc = flipCase(c);
                                 classbits[uc/8] |= (1 << (uc&7));
                             }
-                            class_charcount++;                /* in case a one-char range */
-                            class_lastchar = c;
+                            classCharCount++;                /* in case a one-char range */
+                            classLastChar = c;
                         }
                         
                         continue;   /* Go get the next char in the class */
@@ -912,12 +912,12 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                             c = flipCase(c);
                             classbits[c/8] |= (1 << (c&7));
                         }
-                        class_charcount++;
-                        class_lastchar = c;
+                        classCharCount++;
+                        classLastChar = c;
                     }
                 }
                 
-                /* If class_charcount is 1, we saw precisely one character whose value is
+                /* If classCharCount is 1, we saw precisely one character whose value is
                  less than 256. In non-UTF-8 mode we can always optimize. In UTF-8 mode, we
                  can optimize the negative case only if there were no characters >= 128
                  because OP_NOT and the related opcodes like OP_NOTSTAR operate on
@@ -927,54 +927,54 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                  The optimization throws away the bit map. We turn the item into a
                  1-character OP_CHAR[NC] if it's positive, or OP_NOT if it's negative. Note
                  that OP_NOT does not support multibyte characters. In the positive case, it
-                 can cause firstbyte to be set. Otherwise, there can be no first char if
+                 can cause firstByte to be set. Otherwise, there can be no first char if
                  this item is first, whatever repeat count may follow. In the case of
-                 reqbyte, save the previous value for reinstating. */
+                 reqByte, save the previous value for reinstating. */
                 
-                if (class_charcount == 1 && (!class_utf8 && (!negate_class || class_lastchar < 128))) {
-                    zeroreqbyte = reqbyte;
+                if (classCharCount == 1 && (!class_utf8 && (!negateClass || classLastChar < 128))) {
+                    zeroReqByte = reqByte;
                     
                     /* The OP_NOT opcode works on one-byte characters only. */
                     
-                    if (negate_class) {
-                        if (firstbyte == REQ_UNSET)
-                            firstbyte = REQ_NONE;
-                        zerofirstbyte = firstbyte;
+                    if (negateClass) {
+                        if (firstByte == REQ_UNSET)
+                            firstByte = REQ_NONE;
+                        zeroFirstByte = firstByte;
                         *code++ = OP_NOT;
-                        *code++ = class_lastchar;
+                        *code++ = classLastChar;
                         break;
                     }
                     
                     /* For a single, positive character, get the value into c, and
                      then we can handle this with the normal one-character code. */
                     
-                    c = class_lastchar;
+                    c = classLastChar;
                     goto NORMAL_CHAR;
                 }       /* End of 1-char optimization */
                 
                 /* The general case - not the one-char optimization. If this is the first
                  thing in the branch, there can be no first char setting, whatever the
-                 repeat count. Any reqbyte setting must remain unchanged after any kind of
+                 repeat count. Any reqByte setting must remain unchanged after any kind of
                  repeat. */
                 
-                if (firstbyte == REQ_UNSET) firstbyte = REQ_NONE;
-                zerofirstbyte = firstbyte;
-                zeroreqbyte = reqbyte;
+                if (firstByte == REQ_UNSET) firstByte = REQ_NONE;
+                zeroFirstByte = firstByte;
+                zeroReqByte = reqByte;
                 
                 /* If there are characters with values > 255, we have to compile an
                  extended class, with its own opcode. If there are no characters < 256,
                  we can omit the bitmap. */
                 
-                if (class_utf8 && !should_flip_negation) {
+                if (class_utf8 && !shouldFlipNegation) {
                     *class_utf8data++ = XCL_END;    /* Marks the end of extra data */
                     *code++ = OP_XCLASS;
                     code += LINK_SIZE;
-                    *code = negate_class? XCL_NOT : 0;
+                    *code = negateClass? XCL_NOT : 0;
                     
                     /* If the map is required, install it, and move on to the end of
                      the extra data */
                     
-                    if (class_charcount > 0) {
+                    if (classCharCount > 0) {
                         *code++ |= XCL_MAP;
                         memcpy(code, classbits, 32);
                         code = class_utf8data;
@@ -996,11 +996,11 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 
                 /* If there are no characters > 255, negate the 32-byte map if necessary,
                  and copy it into the code vector. If this is the first thing in the branch,
-                 there can be no first char setting, whatever the repeat count. Any reqbyte
+                 there can be no first char setting, whatever the repeat count. Any reqByte
                  setting must remain unchanged after any kind of repeat. */
                 
-                *code++ = (negate_class == should_flip_negation) ? OP_CLASS : OP_NCLASS;
-                if (negate_class)
+                *code++ = (negateClass == shouldFlipNegation) ? OP_CLASS : OP_NCLASS;
+                if (negateClass)
                     for (c = 0; c < 32; c++)
                         code[c] = ~classbits[c];
                 else
@@ -1013,43 +1013,43 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
              has been tested above. */
 
             case '{':
-                if (!is_quantifier)
+                if (!isQuantifier)
                     goto NORMAL_CHAR;
-                ptr = readRepeatCounts(ptr + 1, &repeat_min, &repeat_max, errorcodeptr);
-                if (*errorcodeptr)
+                ptr = readRepeatCounts(ptr + 1, &repeatMin, &repeat_max, errorCodePtr);
+                if (*errorCodePtr)
                     goto FAILED;
                 goto REPEAT;
                 
             case '*':
-                repeat_min = 0;
+                repeatMin = 0;
                 repeat_max = -1;
                 goto REPEAT;
                 
             case '+':
-                repeat_min = 1;
+                repeatMin = 1;
                 repeat_max = -1;
                 goto REPEAT;
                 
             case '?':
-                repeat_min = 0;
+                repeatMin = 0;
                 repeat_max = 1;
                 
             REPEAT:
                 if (!previous) {
-                    *errorcodeptr = ERR9;
+                    *errorCodePtr = ERR9;
                     goto FAILED;
                 }
                 
-                if (repeat_min == 0) {
-                    firstbyte = zerofirstbyte;    /* Adjust for zero repeat */
-                    reqbyte = zeroreqbyte;        /* Ditto */
+                if (repeatMin == 0) {
+                    firstByte = zeroFirstByte;    /* Adjust for zero repeat */
+                    reqByte = zeroReqByte;        /* Ditto */
                 }
                 
                 /* Remember whether this is a variable length repeat */
                 
-                reqvary = (repeat_min == repeat_max) ? 0 : REQ_VARY;
+                reqvary = (repeatMin == repeat_max) ? 0 : REQ_VARY;
                 
-                op_type = 0;                    /* Default single-char op codes */
+                opType = 0;                    /* Default single-char op codes */
                 
                 /* Save start of previous item, in case we have to move it up to make space
                  for an inserted OP_ONCE for the additional '+' extension. */
@@ -1064,15 +1064,15 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                  repeat type to the non-default. */
                 
                 if (safelyCheckNextChar(ptr, patternEnd, '?')) {
-                    repeat_type = 1;
+                    repeatType = 1;
                     ptr++;
                 } else
-                    repeat_type = 0;
+                    repeatType = 0;
                 
                 /* If previous was a character match, abolish the item and generate a
                  repeat item instead. If a char item has a minumum of more than one, ensure
-                 that it is set in reqbyte - it might not be if a sequence such as x{3} is
-                 the first thing in a branch because the x will have gone into firstbyte
+                 that it is set in reqByte - it might not be if a sequence such as x{3} is
+                 the first thing in a branch because the x will have gone into firstByte
                  instead.  */
                 
                 if (*previous == OP_CHAR || *previous == OP_CHAR_IGNORING_CASE) {
@@ -1091,8 +1091,8 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                     }
                     else {
                         c = code[-1];
-                        if (repeat_min > 1)
-                            reqbyte = c | req_caseopt | cd.req_varyopt;
+                        if (repeatMin > 1)
+                            reqByte = c | reqCaseOpt | cd.reqVaryOpt;
                     }
                     
                     goto OUTPUT_SINGLE_REPEAT;   /* Code shared with single character types */
@@ -1100,28 +1100,28 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 
                 else if (*previous == OP_ASCII_CHAR || *previous == OP_ASCII_LETTER_IGNORING_CASE) {
                     c = previous[1];
-                    if (repeat_min > 1)
-                        reqbyte = c | req_caseopt | cd.req_varyopt;
+                    if (repeatMin > 1)
+                        reqByte = c | reqCaseOpt | cd.reqVaryOpt;
                     goto OUTPUT_SINGLE_REPEAT;
                 }
                 
                 /* If previous was a single negated character ([^a] or similar), we use
                  one of the special opcodes, replacing it. The code is shared with single-
                  character repeats by setting opt_type to add a suitable offset into
-                 repeat_type. OP_NOT is currently used only for single-byte chars. */
+                 repeatType. OP_NOT is currently used only for single-byte chars. */
                 
                 else if (*previous == OP_NOT) {
-                    op_type = OP_NOTSTAR - OP_STAR;  /* Use "not" opcodes */
+                    opType = OP_NOTSTAR - OP_STAR;  /* Use "not" opcodes */
                     c = previous[1];
                     goto OUTPUT_SINGLE_REPEAT;
                 }
                 
                 /* If previous was a character type match (\d or similar), abolish it and
                  create a suitable repeat item. The code is shared with single-character
-                 repeats by setting op_type to add a suitable offset into repeat_type. */
+                 repeats by setting opType to add a suitable offset into repeatType. */
                 
                 else if (*previous <= OP_NOT_NEWLINE) {
-                    op_type = OP_TYPESTAR - OP_STAR;  /* Use type opcodes */
+                    opType = OP_TYPESTAR - OP_STAR;  /* Use type opcodes */
                     c = *previous;
                     
                 OUTPUT_SINGLE_REPEAT:
@@ -1137,20 +1137,20 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                     if (repeat_max == 0)
                         goto END_REPEAT;
                     
-                    /* Combine the op_type with the repeat_type */
+                    /* Combine the opType with the repeatType */
                     
-                    repeat_type += op_type;
+                    repeatType += opType;
                     
                     /* A minimum of zero is handled either as the special case * or ?, or as
                      an UPTO, with the maximum given. */
                     
-                    if (repeat_min == 0) {
+                    if (repeatMin == 0) {
                         if (repeat_max == -1)
-                            *code++ = OP_STAR + repeat_type;
+                            *code++ = OP_STAR + repeatType;
                         else if (repeat_max == 1)
-                            *code++ = OP_QUERY + repeat_type;
+                            *code++ = OP_QUERY + repeatType;
                         else {
-                            *code++ = OP_UPTO + repeat_type;
+                            *code++ = OP_UPTO + repeatType;
                             put2ByteValueAndAdvance(code, repeat_max);
                         }
                     }
@@ -1160,14 +1160,14 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      left in place and, if the maximum is greater than 1, we use OP_UPTO with
                      one less than the maximum. */
                     
-                    else if (repeat_min == 1) {
+                    else if (repeatMin == 1) {
                         if (repeat_max == -1)
-                            *code++ = OP_PLUS + repeat_type;
+                            *code++ = OP_PLUS + repeatType;
                         else {
                             code = oldcode;                 /* leave previous item in place */
                             if (repeat_max == 1)
                                 goto END_REPEAT;
-                            *code++ = OP_UPTO + repeat_type;
+                            *code++ = OP_UPTO + repeatType;
                             put2ByteValueAndAdvance(code, repeat_max - 1);
                         }
                     }
@@ -1176,8 +1176,8 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      handled as an EXACT followed by an UPTO. */
                     
                     else {
-                        *code++ = OP_EXACT + op_type;  /* NB EXACT doesn't have repeat_type */
-                        put2ByteValueAndAdvance(code, repeat_min);
+                        *code++ = OP_EXACT + opType;  /* NB EXACT doesn't have repeatType */
+                        put2ByteValueAndAdvance(code, repeatMin);
                         
                         /* If the maximum is unlimited, insert an OP_STAR. Before doing so,
                          we have to insert the character for the previous code. For a repeated
@@ -1196,13 +1196,13 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                     *code++ = prop_value;
                                 }
                             }
-                            *code++ = OP_STAR + repeat_type;
+                            *code++ = OP_STAR + repeatType;
                         }
                         
                         /* Else insert an UPTO if the max is greater than the min, again
                          preceded by the character, for the previously inserted code. */
                         
-                        else if (repeat_max != repeat_min) {
+                        else if (repeat_max != repeatMin) {
                             if (c >= 128) {
                                 memcpy(code, utf8_char, c & 7);
                                 code += c & 7;
@@ -1212,8 +1212,8 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                 *code++ = prop_type;
                                 *code++ = prop_value;
                             }
-                            repeat_max -= repeat_min;
-                            *code++ = OP_UPTO + repeat_type;
+                            repeat_max -= repeatMin;
+                            *code++ = OP_UPTO + repeatType;
                             put2ByteValueAndAdvance(code, repeat_max);
                         }
                     }
@@ -1248,15 +1248,15 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                         goto END_REPEAT;
                     }
                     
-                    if (repeat_min == 0 && repeat_max == -1)
-                        *code++ = OP_CRSTAR + repeat_type;
-                    else if (repeat_min == 1 && repeat_max == -1)
-                        *code++ = OP_CRPLUS + repeat_type;
-                    else if (repeat_min == 0 && repeat_max == 1)
-                        *code++ = OP_CRQUERY + repeat_type;
+                    if (repeatMin == 0 && repeat_max == -1)
+                        *code++ = OP_CRSTAR + repeatType;
+                    else if (repeatMin == 1 && repeat_max == -1)
+                        *code++ = OP_CRPLUS + repeatType;
+                    else if (repeatMin == 0 && repeat_max == 1)
+                        *code++ = OP_CRQUERY + repeatType;
                     else {
-                        *code++ = OP_CRRANGE + repeat_type;
-                        put2ByteValueAndAdvance(code, repeat_min);
+                        *code++ = OP_CRRANGE + repeatType;
+                        put2ByteValueAndAdvance(code, repeatMin);
                         if (repeat_max == -1)
                             repeat_max = 0;  /* 2-byte encoding for max */
                         put2ByteValueAndAdvance(code, repeat_max);
@@ -1290,7 +1290,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      the code gets far too messy. There are several special subcases when the
                      minimum is zero. */
                     
-                    if (repeat_min == 0) {
+                    if (repeatMin == 0) {
                         /* If the maximum is also zero, we just omit the group from the output
                          altogether. */
                         
@@ -1309,7 +1309,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                             *code = OP_END;
                             memmove(previous+1, previous, len);
                             code++;
-                            *previous++ = OP_BRAZERO + repeat_type;
+                            *previous++ = OP_BRAZERO + repeatType;
                         }
                         
                         /* If the maximum is greater than 1 and limited, we have to replicate
@@ -1323,7 +1323,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                             *code = OP_END;
                             memmove(previous + 2 + LINK_SIZE, previous, len);
                             code += 2 + LINK_SIZE;
-                            *previous++ = OP_BRAZERO + repeat_type;
+                            *previous++ = OP_BRAZERO + repeatType;
                             *previous++ = OP_BRA;
                             
                             /* We chain together the bracket offset fields that have to be
@@ -1343,16 +1343,16 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      set a required char, copy the latter from the former. */
                     
                     else {
-                        if (repeat_min > 1) {
-                            if (groupsetfirstbyte && reqbyte < 0)
-                                reqbyte = firstbyte;
-                            for (int i = 1; i < repeat_min; i++) {
+                        if (repeatMin > 1) {
+                            if (didGroupSetFirstByte && reqByte < 0)
+                                reqByte = firstByte;
+                            for (int i = 1; i < repeatMin; i++) {
                                 memcpy(code, previous, len);
                                 code += len;
                             }
                         }
                         if (repeat_max > 0)
-                            repeat_max -= repeat_min;
+                            repeat_max -= repeatMin;
                     }
                     
                     /* This code is common to both the zero and non-zero minimum cases. If
@@ -1363,7 +1363,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                     
                     if (repeat_max >= 0) {
                         for (int i = repeat_max - 1; i >= 0; i--) {
-                            *code++ = OP_BRAZERO + repeat_type;
+                            *code++ = OP_BRAZERO + repeatType;
                             
                             /* All but the final copy start a new nesting, maintaining the
                              chain of brackets outstanding. */
@@ -1399,13 +1399,13 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                      correct offset was computed above. */
                     
                     else
-                        code[-ketoffset] = OP_KETRMAX + repeat_type;
+                        code[-ketoffset] = OP_KETRMAX + repeatType;
                 }
                 
                 /* Else there's some kind of shambles */
                 
                 else {
-                    *errorcodeptr = ERR11;
+                    *errorCodePtr = ERR11;
                     goto FAILED;
                 }
                 
@@ -1415,7 +1415,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 
             END_REPEAT:
                 previous = NULL;
-                cd.req_varyopt |= reqvary;
+                cd.reqVaryOpt |= reqvary;
                 break;
                 
             /* Start of nested bracket sub-expression, or comment or lookahead or
@@ -1426,7 +1426,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
              check for syntax errors here.  */
                 
             case '(':
-                skipbytes = 0;
+                skipBytes = 0;
                 
                 if (*(++ptr) == '?') {
                     switch (*(++ptr)) {
@@ -1448,7 +1448,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                         /* Character after (? not specially recognized */
                             
                         default:
-                            *errorcodeptr = ERR12;
+                            *errorCodePtr = ERR12;
                             goto FAILED;
                         }
                 }
@@ -1462,7 +1462,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                         bravalue = OP_BRA + EXTRACT_BASIC_MAX + 1;
                         code[1 + LINK_SIZE] = OP_BRANUMBER;
                         put2ByteValue(code + 2 + LINK_SIZE, *brackets);
-                        skipbytes = 3;
+                        skipBytes = 3;
                     }
                     else
                         bravalue = OP_BRA + *brackets;
@@ -1476,7 +1476,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 previous = (bravalue >= OP_BRAZERO) ? code : 0;
                 *code = bravalue;
                 tempcode = code;
-                tempreqvary = cd.req_varyopt;     /* Save value before bracket */
+                tempreqvary = cd.reqVaryOpt;     /* Save value before bracket */
                 
                 if (!compileBracket(
                                    options,
@@ -1484,10 +1484,10 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                                    &tempcode,                    /* Where to put code (updated) */
                                    &ptr,                         /* Input pointer (updated) */
                                    patternEnd,
-                                   errorcodeptr,                 /* Where to put an error message */
-                                   skipbytes,                    /* Skip over OP_BRANUMBER */
-                                   &subfirstbyte,                /* For possible first char */
-                                   &subreqbyte,                  /* For possible last char */
+                                   errorCodePtr,                 /* Where to put an error message */
+                                   skipBytes,                    /* Skip over OP_BRANUMBER */
+                                   &subFirstByte,                /* For possible first char */
+                                   &subReqByte,                  /* For possible last char */
                                    cd))                          /* Tables block */
                     goto FAILED;
                 
@@ -1499,54 +1499,54 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 /* Handle updating of the required and first characters. Update for normal
                  brackets of all kinds, and conditions with two branches (see code above).
                  If the bracket is followed by a quantifier with zero repeat, we have to
-                 back off. Hence the definition of zeroreqbyte and zerofirstbyte outside the
+                 back off. Hence the definition of zeroReqByte and zeroFirstByte outside the
                  main loop so that they can be accessed for the back off. */
                 
-                zeroreqbyte = reqbyte;
-                zerofirstbyte = firstbyte;
-                groupsetfirstbyte = false;
+                zeroReqByte = reqByte;
+                zeroFirstByte = firstByte;
+                didGroupSetFirstByte = false;
                 
                 if (bravalue >= OP_BRA) {
-                    /* If we have not yet set a firstbyte in this branch, take it from the
+                    /* If we have not yet set a firstByte in this branch, take it from the
                      subpattern, remembering that it was set here so that a repeat of more
-                     than one can replicate it as reqbyte if necessary. If the subpattern has
-                     no firstbyte, set "none" for the whole branch. In both cases, a zero
-                     repeat forces firstbyte to "none". */
+                     than one can replicate it as reqByte if necessary. If the subpattern has
+                     no firstByte, set "none" for the whole branch. In both cases, a zero
+                     repeat forces firstByte to "none". */
                     
-                    if (firstbyte == REQ_UNSET) {
-                        if (subfirstbyte >= 0) {
-                            firstbyte = subfirstbyte;
-                            groupsetfirstbyte = true;
+                    if (firstByte == REQ_UNSET) {
+                        if (subFirstByte >= 0) {
+                            firstByte = subFirstByte;
+                            didGroupSetFirstByte = true;
                         }
                         else
-                            firstbyte = REQ_NONE;
-                        zerofirstbyte = REQ_NONE;
+                            firstByte = REQ_NONE;
+                        zeroFirstByte = REQ_NONE;
                     }
                     
-                    /* If firstbyte was previously set, convert the subpattern's firstbyte
-                     into reqbyte if there wasn't one, using the vary flag that was in
+                    /* If firstByte was previously set, convert the subpattern's firstByte
+                     into reqByte if there wasn't one, using the vary flag that was in
                      existence beforehand. */
                     
-                    else if (subfirstbyte >= 0 && subreqbyte < 0)
-                        subreqbyte = subfirstbyte | tempreqvary;
+                    else if (subFirstByte >= 0 && subReqByte < 0)
+                        subReqByte = subFirstByte | tempreqvary;
                     
                     /* If the subpattern set a required byte (or set a first byte that isn't
                      really the first byte - see above), set it. */
                     
-                    if (subreqbyte >= 0)
-                        reqbyte = subreqbyte;
+                    if (subReqByte >= 0)
+                        reqByte = subReqByte;
                 }
                 
-                /* For a forward assertion, we take the reqbyte, if set. This can be
+                /* For a forward assertion, we take the reqByte, if set. This can be
                  helpful if the pattern that follows the assertion doesn't set a different
-                 char. For example, it's useful for /(?=abcde).+/. We can't set firstbyte
+                 char. For example, it's useful for /(?=abcde).+/. We can't set firstByte
                  for an assertion, however because it leads to incorrect effect for patterns
-                 such as /(?=a)a.+/ when the "real" "a" would then become a reqbyte instead
-                 of a firstbyte. This is overcome by a scan at the end if there's no
-                 firstbyte, looking for an asserted first char. */
+                 such as /(?=a)a.+/ when the "real" "a" would then become a reqByte instead
+                 of a firstByte. This is overcome by a scan at the end if there's no
+                 firstByte, looking for an asserted first char. */
                 
-                else if (bravalue == OP_ASSERT && subreqbyte >= 0)
-                    reqbyte = subreqbyte;
+                else if (bravalue == OP_ASSERT && subReqByte >= 0)
+                    reqByte = subReqByte;
                 
                 /* Now update the main code pointer to the end of the group. */
                 
@@ -1555,7 +1555,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 /* Error if hit end of pattern */
                 
                 if (ptr >= patternEnd || *ptr != ')') {
-                    *errorcodeptr = ERR14;
+                    *errorCodePtr = ERR14;
                     goto FAILED;
                 }
                 break;
@@ -1566,7 +1566,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 
             case '\\':
                 tempptr = ptr;
-                c = checkEscape(&ptr, patternEnd, errorcodeptr, cd.numCapturingBrackets, false);
+                c = checkEscape(&ptr, patternEnd, errorCodePtr, cd.numCapturingBrackets, false);
                 
                 /* Handle metacharacters introduced by \. For ones like \d, the ESC_ values
                  are arranged to be the negation of the corresponding OP_values. For the
@@ -1579,13 +1579,13 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                     /* For metasequences that actually match a character, we disable the
                      setting of a first character if it hasn't already been set. */
                     
-                    if (firstbyte == REQ_UNSET && -c > ESC_b && -c <= ESC_w)
-                        firstbyte = REQ_NONE;
+                    if (firstByte == REQ_UNSET && -c > ESC_b && -c <= ESC_w)
+                        firstByte = REQ_NONE;
                     
                     /* Set values to reset to if this is followed by a zero repeat. */
                     
-                    zerofirstbyte = firstbyte;
-                    zeroreqbyte = reqbyte;
+                    zeroFirstByte = firstByte;
+                    zeroReqByte = reqByte;
                     
                     /* Back references are handled specially */
                     
@@ -1618,7 +1618,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                 previous = code;
                 
                 if (c < 128) {
-                    mclength = 1;
+                    mcLength = 1;
                     mcbuffer[0] = c;
                     
                     if ((options & IgnoreCaseOption) && (c | 0x20) >= 'a' && (c | 0x20) <= 'z') {
@@ -1629,42 +1629,42 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
                         *code++ = c;
                     }
                 } else {
-                    mclength = encodeUTF8(c, mcbuffer);
+                    mcLength = encodeUTF8(c, mcbuffer);
                     
                     *code++ = (options & IgnoreCaseOption) ? OP_CHAR_IGNORING_CASE : OP_CHAR;
-                    for (c = 0; c < mclength; c++)
+                    for (c = 0; c < mcLength; c++)
                         *code++ = mcbuffer[c];
                 }
                 
                 /* Set the first and required bytes appropriately. If no previous first
                  byte, set it from this character, but revert to none on a zero repeat.
-                 Otherwise, leave the firstbyte value alone, and don't change it on a zero
+                 Otherwise, leave the firstByte value alone, and don't change it on a zero
                  repeat. */
                 
-                if (firstbyte == REQ_UNSET) {
-                    zerofirstbyte = REQ_NONE;
-                    zeroreqbyte = reqbyte;
+                if (firstByte == REQ_UNSET) {
+                    zeroFirstByte = REQ_NONE;
+                    zeroReqByte = reqByte;
                     
-                    /* If the character is more than one byte long, we can set firstbyte
+                    /* If the character is more than one byte long, we can set firstByte
                      only if it is not to be matched caselessly. */
                     
-                    if (mclength == 1 || req_caseopt == 0) {
-                        firstbyte = mcbuffer[0] | req_caseopt;
-                        if (mclength != 1)
-                            reqbyte = code[-1] | cd.req_varyopt;
+                    if (mcLength == 1 || reqCaseOpt == 0) {
+                        firstByte = mcbuffer[0] | reqCaseOpt;
+                        if (mcLength != 1)
+                            reqByte = code[-1] | cd.reqVaryOpt;
                     }
                     else
-                        firstbyte = reqbyte = REQ_NONE;
+                        firstByte = reqByte = REQ_NONE;
                 }
                 
-                /* firstbyte was previously set; we can set reqbyte only the length is
+                /* firstByte was previously set; we can set reqByte only the length is
                  1 or the matching is caseful. */
                 
                 else {
-                    zerofirstbyte = firstbyte;
-                    zeroreqbyte = reqbyte;
-                    if (mclength == 1 || req_caseopt == 0)
-                        reqbyte = code[-1] | req_caseopt | cd.req_varyopt;
+                    zeroFirstByte = firstByte;
+                    zeroReqByte = reqByte;
+                    if (mcLength == 1 || reqCaseOpt == 0)
+                        reqByte = code[-1] | reqCaseOpt | cd.reqVaryOpt;
                 }
                 
                 break;            /* End of literal character handling */
@@ -1676,7 +1676,7 @@ compileBranch(int options, int* brackets, unsigned char** codeptr,
      to the user for diagnosing the error. */
     
 FAILED:
-    *ptrptr = ptr;
+    *ptrPtr = ptr;
     return false;
 }
 
@@ -1695,10 +1695,10 @@ the new options into every subsequent branch compile.
 Argument:
   options        option bits, including any changes for this subpattern
   brackets       -> int containing the number of extracting brackets used
-  codeptr        -> the address of the current code pointer
-  ptrptr         -> the address of the current pattern pointer
-  errorcodeptr   -> pointer to error code variable
-  skipbytes      skip this many bytes at start (for OP_BRANUMBER)
+  codePtr        -> the address of the current code pointer
+  ptrPtr         -> the address of the current pattern pointer
+  errorCodePtr   -> pointer to error code variable
+  skipBytes      skip this many bytes at start (for OP_BRANUMBER)
   firstbyteptr   place to put the first required character, or a negative number
   reqbyteptr     place to put the last required character, or a negative number
   cd             points to the data block with tables pointers etc.
@@ -1707,71 +1707,71 @@ Returns:      true on success
 */
 
 static bool
-compileBracket(int options, int* brackets, unsigned char** codeptr,
-    const UChar** ptrptr, const UChar* patternEnd, ErrorCode* errorcodeptr, int skipbytes,
+compileBracket(int options, int* brackets, unsigned char** codePtr,
+    const UChar** ptrPtr, const UChar* patternEnd, ErrorCode* errorCodePtr, int skipBytes,
     int* firstbyteptr, int* reqbyteptr, CompileData& cd)
 {
-    const UChar* ptr = *ptrptr;
-    unsigned char* code = *codeptr;
-    unsigned char* last_branch = code;
+    const UChar* ptr = *ptrPtr;
+    unsigned char* code = *codePtr;
+    unsigned char* lastBranch = code;
     unsigned char* start_bracket = code;
-    int firstbyte = REQ_UNSET;
-    int reqbyte = REQ_UNSET;
+    int firstByte = REQ_UNSET;
+    int reqByte = REQ_UNSET;
     
     /* Offset is set zero to mark that this bracket is still open */
     
     putLinkValueAllowZero(code + 1, 0);
-    code += 1 + LINK_SIZE + skipbytes;
+    code += 1 + LINK_SIZE + skipBytes;
     
     /* Loop for each alternative branch */
     
     while (true) {
         /* Now compile the branch */
         
-        int branchfirstbyte;
-        int branchreqbyte;
-        if (!compileBranch(options, brackets, &code, &ptr, patternEnd, errorcodeptr,
-                            &branchfirstbyte, &branchreqbyte, cd)) {
-            *ptrptr = ptr;
+        int branchFirstByte;
+        int branchReqByte;
+        if (!compileBranch(options, brackets, &code, &ptr, patternEnd, errorCodePtr,
+                            &branchFirstByte, &branchReqByte, cd)) {
+            *ptrPtr = ptr;
             return false;
         }
         
-        /* If this is the first branch, the firstbyte and reqbyte values for the
+        /* If this is the first branch, the firstByte and reqByte values for the
          branch become the values for the regex. */
         
-        if (*last_branch != OP_ALT) {
-            firstbyte = branchfirstbyte;
-            reqbyte = branchreqbyte;
+        if (*lastBranch != OP_ALT) {
+            firstByte = branchFirstByte;
+            reqByte = branchReqByte;
         }
         
-        /* If this is not the first branch, the first char and reqbyte have to
+        /* If this is not the first branch, the first char and reqByte have to
          match the values from all the previous branches, except that if the previous
-         value for reqbyte didn't have REQ_VARY set, it can still match, and we set
+         value for reqByte didn't have REQ_VARY set, it can still match, and we set
          REQ_VARY for the regex. */
         
         else {
-            /* If we previously had a firstbyte, but it doesn't match the new branch,
-             we have to abandon the firstbyte for the regex, but if there was previously
-             no reqbyte, it takes on the value of the old firstbyte. */
+            /* If we previously had a firstByte, but it doesn't match the new branch,
+             we have to abandon the firstByte for the regex, but if there was previously
+             no reqByte, it takes on the value of the old firstByte. */
             
-            if (firstbyte >= 0 && firstbyte != branchfirstbyte) {
-                if (reqbyte < 0)
-                    reqbyte = firstbyte;
-                firstbyte = REQ_NONE;
+            if (firstByte >= 0 && firstByte != branchFirstByte) {
+                if (reqByte < 0)
+                    reqByte = firstByte;
+                firstByte = REQ_NONE;
             }
             
-            /* If we (now or from before) have no firstbyte, a firstbyte from the
-             branch becomes a reqbyte if there isn't a branch reqbyte. */
+            /* If we (now or from before) have no firstByte, a firstByte from the
+             branch becomes a reqByte if there isn't a branch reqByte. */
             
-            if (firstbyte < 0 && branchfirstbyte >= 0 && branchreqbyte < 0)
-                branchreqbyte = branchfirstbyte;
+            if (firstByte < 0 && branchFirstByte >= 0 && branchReqByte < 0)
+                branchReqByte = branchFirstByte;
             
             /* Now ensure that the reqbytes match */
             
-            if ((reqbyte & ~REQ_VARY) != (branchreqbyte & ~REQ_VARY))
-                reqbyte = REQ_NONE;
+            if ((reqByte & ~REQ_VARY) != (branchReqByte & ~REQ_VARY))
+                reqByte = REQ_NONE;
             else
-                reqbyte |= branchreqbyte;   /* To "or" REQ_VARY */
+                reqByte |= branchReqByte;   /* To "or" REQ_VARY */
         }
         
         /* Reached end of expression, either ')' or end of pattern. Go back through
@@ -1784,12 +1784,12 @@ compileBracket(int options, int* brackets, unsigned char** codeptr,
          at the terminating char. */
         
         if (ptr >= patternEnd || *ptr != '|') {
-            int length = code - last_branch;
+            int length = code - lastBranch;
             do {
-                int prev_length = getLinkValueAllowZero(last_branch + 1);
-                putLinkValue(last_branch + 1, length);
-                length = prev_length;
-                last_branch -= length;
+                int prevLength = getLinkValueAllowZero(lastBranch + 1);
+                putLinkValue(lastBranch + 1, length);
+                length = prevLength;
+                lastBranch -= length;
             } while (length > 0);
             
             /* Fill in the ket */
@@ -1800,10 +1800,10 @@ compileBracket(int options, int* brackets, unsigned char** codeptr,
             
             /* Set values to pass back */
             
-            *codeptr = code;
-            *ptrptr = ptr;
-            *firstbyteptr = firstbyte;
-            *reqbyteptr = reqbyte;
+            *codePtr = code;
+            *ptrPtr = ptr;
+            *firstbyteptr = firstByte;
+            *reqbyteptr = reqByte;
             return true;
         }
         
@@ -1813,8 +1813,8 @@ compileBracket(int options, int* brackets, unsigned char** codeptr,
          zero offset until it is closed, making it possible to detect recursion. */
         
         *code = OP_ALT;
-        putLinkValue(code + 1, code - last_branch);
-        last_branch = code;
+        putLinkValue(code + 1, code - lastBranch);
+        lastBranch = code;
         code += 1 + LINK_SIZE;
         ptr++;
     }
@@ -2061,8 +2061,8 @@ static int calculateCompiledPatternLength(const UChar* pattern, int patternLengt
                 if (c <= -ESC_REF) {
                     int refnum = -c - ESC_REF;
                     cd.backrefMap |= (refnum < 32) ? (1 << refnum) : 1;
-                    if (refnum > cd.top_backref)
-                        cd.top_backref = refnum;
+                    if (refnum > cd.topBackref)
+                        cd.topBackref = refnum;
                     length += 2;   /* For single back reference */
                     if (safelyCheckNextChar(ptr, patternEnd, '{') && isCountedRepeat(ptr + 2, patternEnd)) {
                         ptr = readRepeatCounts(ptr + 2, &minRepeats, &maxRepeats, &errorcode);
@@ -2524,31 +2524,31 @@ compatibility. The new function is given a new name.
 Arguments:
   pattern       the regular expression
   options       various option bits
-  errorcodeptr  pointer to error code variable (pcre_compile2() only)
+  errorCodePtr  pointer to error code variable (pcre_compile2() only)
                   can be NULL if you don't want a code value
-  errorptr      pointer to pointer to error text
+  errorPtr      pointer to pointer to error text
   erroroffset   ptr offset in pattern where error was detected
   tables        pointer to character tables or NULL
 
 Returns:        pointer to compiled data block, or NULL on error,
-                with errorptr and erroroffset set
+                with errorPtr and erroroffset set
 */
 
-static inline JSRegExp* returnError(ErrorCode errorcode, const char** errorptr)
+static inline JSRegExp* returnError(ErrorCode errorcode, const char** errorPtr)
 {
-    *errorptr = errorText(errorcode);
+    *errorPtr = errorText(errorcode);
     return 0;
 }
 
 JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
                 JSRegExpIgnoreCaseOption ignoreCase, JSRegExpMultilineOption multiline,
-                unsigned* numSubpatterns, const char** errorptr)
+                unsigned* numSubpatterns, const char** errorPtr)
 {
-    /* We can't pass back an error message if errorptr is NULL; I guess the best we
+    /* We can't pass back an error message if errorPtr is NULL; I guess the best we
      can do is just return NULL, but we can set a code value if there is a code pointer. */
-    if (!errorptr)
+    if (!errorPtr)
         return 0;
-    *errorptr = NULL;
+    *errorPtr = NULL;
     
     CompileData cd;
     
@@ -2558,16 +2558,16 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     /* Call it again to compute the length. */
     int length = calculateCompiledPatternLength(pattern, patternLength, ignoreCase, cd, errorcode);
     if (errorcode)
-        return returnError(errorcode, errorptr);
+        return returnError(errorcode, errorPtr);
     
     if (length > MAX_PATTERN_SIZE)
-        return returnError(ERR16, errorptr);
+        return returnError(ERR16, errorPtr);
     
     size_t size = length + sizeof(JSRegExp);
     JSRegExp* re = reinterpret_cast<JSRegExp*>(new char[size]);
     
     if (!re)
-        return returnError(ERR13, errorptr);
+        return returnError(ERR13, errorPtr);
     
     re->options = (ignoreCase ? IgnoreCaseOption : 0) | (multiline ? MatchAcrossMultipleLinesOption : 0);
     
@@ -2583,16 +2583,16 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     const UChar* ptr = (const UChar*)pattern;
     const UChar* patternEnd = pattern + patternLength;
     unsigned char* code = (unsigned char*)codeStart;
-    int firstbyte, reqbyte;
+    int firstByte, reqByte;
     int bracketCount = 0;
     if (!cd.needOuterBracket)
-        compileBranch(re->options, &bracketCount, &code, &ptr, patternEnd, &errorcode, &firstbyte, &reqbyte, cd);
+        compileBranch(re->options, &bracketCount, &code, &ptr, patternEnd, &errorcode, &firstByte, &reqByte, cd);
     else {
         *code = OP_BRA;
-        compileBracket(re->options, &bracketCount, &code, &ptr, patternEnd, &errorcode, 0, &firstbyte, &reqbyte, cd);
+        compileBracket(re->options, &bracketCount, &code, &ptr, patternEnd, &errorcode, 0, &firstByte, &reqByte, cd);
     }
-    re->top_bracket = bracketCount;
-    re->top_backref = cd.top_backref;
+    re->topBracket = bracketCount;
+    re->topBackref = cd.topBackref;
     
     /* If not reached end of pattern on success, there's an excess bracket. */
     
@@ -2611,14 +2611,14 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     /* Give an error if there's back reference to a non-existent capturing
      subpattern. */
     
-    if (re->top_backref > re->top_bracket)
+    if (re->topBackref > re->topBracket)
         errorcode = ERR15;
     
     /* Failed to compile, or error while post-processing */
     
     if (errorcode != ERR0) {
         delete [] reinterpret_cast<char*>(re);
-        return returnError(errorcode, errorptr);
+        return returnError(errorcode, errorPtr);
     }
     
     /* If the anchored option was not passed, set the flag if we can determine that
@@ -2634,16 +2634,16 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
     if (cd.needOuterBracket ? bracketIsAnchored(codeStart) : branchIsAnchored(codeStart))
         re->options |= IsAnchoredOption;
     else {
-        if (firstbyte < 0) {
-            firstbyte = (cd.needOuterBracket
+        if (firstByte < 0) {
+            firstByte = (cd.needOuterBracket
                     ? bracketFindFirstAssertedCharacter(codeStart, false)
                     : branchFindFirstAssertedCharacter(codeStart, false))
                 | ((re->options & IgnoreCaseOption) ? REQ_IGNORE_CASE : 0);
         }
-        if (firstbyte >= 0) {
-            int ch = firstbyte & 255;
+        if (firstByte >= 0) {
+            int ch = firstByte & 255;
             if (ch < 127) {
-                re->first_byte = ((firstbyte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? ch : firstbyte;
+                re->firstByte = ((firstByte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? ch : firstByte;
                 re->options |= UseFirstByteOptimizationOption;
             }
         } else {
@@ -2656,16 +2656,16 @@ JSRegExp* jsRegExpCompile(const UChar* pattern, int patternLength,
      variable length item in the regex. Remove the caseless flag for non-caseable
      bytes. */
     
-    if (reqbyte >= 0 && (!(re->options & IsAnchoredOption) || (reqbyte & REQ_VARY))) {
-        int ch = reqbyte & 255;
+    if (reqByte >= 0 && (!(re->options & IsAnchoredOption) || (reqByte & REQ_VARY))) {
+        int ch = reqByte & 255;
         if (ch < 127) {
-            re->req_byte = ((reqbyte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? (reqbyte & ~REQ_IGNORE_CASE) : reqbyte;
+            re->reqByte = ((reqByte & REQ_IGNORE_CASE) && flipCase(ch) == ch) ? (reqByte & ~REQ_IGNORE_CASE) : reqByte;
             re->options |= UseRequiredByteOptimizationOption;
         }
     }
     
     if (numSubpatterns)
-        *numSubpatterns = re->top_bracket;
+        *numSubpatterns = re->topBracket;
     return re;
 }
 

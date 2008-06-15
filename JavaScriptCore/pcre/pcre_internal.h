@@ -171,19 +171,19 @@ static inline void putLinkValueAllowZeroAndAdvance(unsigned char*& opcodePtr, in
 
 // FIXME: These are really more of a "compiled regexp state" than "regexp options"
 enum RegExpOptions {
-    UseFirstByteOptimizationOption = 0x40000000,  /* first_byte is set */
-    UseRequiredByteOptimizationOption = 0x20000000,  /* req_byte is set */
+    UseFirstByteOptimizationOption = 0x40000000,  /* firstByte is set */
+    UseRequiredByteOptimizationOption = 0x20000000,  /* reqByte is set */
     UseMultiLineFirstByteOptimizationOption = 0x10000000,  /* start after \n for multiline */
     IsAnchoredOption = 0x02000000,  /* can't use partial with this regex */
     IgnoreCaseOption = 0x00000001,
     MatchAcrossMultipleLinesOption = 0x00000002
 };
 
-/* Flags added to firstbyte or reqbyte; a "non-literal" item is either a
+/* Flags added to firstByte or reqByte; a "non-literal" item is either a
 variable-length repeat, or a anything other than literal characters. */
 
 #define REQ_IGNORE_CASE 0x0100    /* indicates should ignore case */
-#define REQ_VARY     0x0200    /* reqbyte followed non-literal item */
+#define REQ_VARY     0x0200    /* reqByte followed non-literal item */
 
 /* Miscellaneous definitions */
 
@@ -326,11 +326,11 @@ pointer that is always NULL.
 struct JSRegExp {
     unsigned options;
 
-    unsigned short top_bracket;
-    unsigned short top_backref;
+    unsigned short topBracket;
+    unsigned short topBackref;
     
-    unsigned short first_byte;
-    unsigned short req_byte;
+    unsigned short firstByte;
+    unsigned short reqByte;
 };
 
 /* Internal shared data tables. These are tables that are used by more than one
