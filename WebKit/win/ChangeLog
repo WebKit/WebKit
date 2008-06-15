@@ -1,5 +1,15 @@
 2008-06-14  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * WebActionPropertyBag.cpp:
+        (WebActionPropertyBag::Read): Use IDOMNode, not IHTMLFormElement.
+        * WebFrame.h: Added missing FormState arguments.
+        * WebScrollBar.cpp:
+        (WebScrollBar::init): Use create instead of new.
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Sam.
 
         - more of https://bugs.webkit.org/show_bug.cgi?id=17257

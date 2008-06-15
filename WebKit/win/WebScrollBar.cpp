@@ -98,7 +98,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::init(
     ScrollbarOrientation webCoreOrientation = (ScrollbarOrientation) orientation;
     ScrollbarControlSize webCoreControlSize = (ScrollbarControlSize) controlSize;
     m_delegate = delegate;
-    m_scrollBar = new PlatformScrollbar(this, webCoreOrientation, webCoreControlSize);
+    m_scrollBar = PlatformScrollbar::create(this, webCoreOrientation, webCoreControlSize);
     if (!m_scrollBar)
         return E_FAIL;
     m_scrollBar->setContainingWindow((HWND)(ULONG64)containingWindow);

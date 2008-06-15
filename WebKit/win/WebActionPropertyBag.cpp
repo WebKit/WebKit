@@ -25,11 +25,12 @@
 
 #include "config.h"
 #include "WebKitDLL.h"
-
-#include "WebKit.h"
 #include "WebActionPropertyBag.h"
-#include "WebElementPropertyBag.h"
+
 #include "COMPtr.h"
+#include "DOMCoreClasses.h"
+#include "WebElementPropertyBag.h"
+#include "WebKit.h"
 
 #pragma warning(push, 0)
 #include <WebCore/BString.h>
@@ -155,7 +156,7 @@ HRESULT STDMETHODCALLTYPE WebActionPropertyBag::Read(LPCOLESTR pszPropName, VARI
         }
     }
     if (isEqual(pszPropName, WebActionFormKey)) {
-        IHTMLFormElement* form = HTMLFormElement::createInstance(m_form.get());
+        IDOMNode* form = DOMNode::createInstance(m_form.get());
         V_VT(pVar) = VT_UNKNOWN;
         V_UNKNOWN(pVar) = form;
         return S_OK;
