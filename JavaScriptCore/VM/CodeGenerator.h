@@ -202,12 +202,7 @@ namespace KJS {
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
         RegisterID* emitNot(RegisterID* dst, RegisterID* src);
-        RegisterID* emitEqual(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitNotEqual(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitStrictEqual(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitNotStrictEqual(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitLess(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitLessEq(RegisterID* dst, RegisterID* src1, RegisterID* src2);
+        RegisterID* emitBitNot(RegisterID* dst, RegisterID* src);
 
         RegisterID* emitToJSNumber(RegisterID* dst, RegisterID* src);
         RegisterID* emitNegate(RegisterID* dst, RegisterID* src);
@@ -215,20 +210,8 @@ namespace KJS {
         RegisterID* emitPreDec(RegisterID* srcDst);
         RegisterID* emitPostInc(RegisterID* dst, RegisterID* srcDst);
         RegisterID* emitPostDec(RegisterID* dst, RegisterID* srcDst);
-        RegisterID* emitAdd(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitMul(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitDiv(RegisterID* dst, RegisterID* dividend, RegisterID* divisor);
-        RegisterID* emitMod(RegisterID* dst, RegisterID* dividend, RegisterID* divisor);
-        RegisterID* emitSub(RegisterID* dst, RegisterID* src1, RegisterID* src2);
 
-        RegisterID* emitLeftShift(RegisterID* dst, RegisterID* val, RegisterID* shift);
-        RegisterID* emitRightShift(RegisterID* dst, RegisterID* val, RegisterID* shift);
-        RegisterID* emitUnsignedRightShift(RegisterID* dst, RegisterID* val, RegisterID* shift);
-
-        RegisterID* emitBitAnd(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitBitXOr(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitBitOr(RegisterID* dst, RegisterID* src1, RegisterID* src2);
-        RegisterID* emitBitNot(RegisterID* dst, RegisterID* src);
+        RegisterID* emitBinaryOp(OpcodeID opcode, RegisterID* dst, RegisterID* src1, RegisterID* src2);
 
         RegisterID* emitInstanceOf(RegisterID* dst, RegisterID* value, RegisterID* base);
         RegisterID* emitTypeOf(RegisterID* dst, RegisterID* src);

@@ -350,6 +350,78 @@ function bracket_test6()
 
 shouldBe("bracket_test6()", "1");
 
+function mult_test1()
+{
+    var a = 1;
+    return a * (a = 2);
+}
+
+shouldBe("mult_test1()", "2");
+
+function mult_test2()
+{
+    var a = 1;
+    return a * ++a;
+}
+
+shouldBe("mult_test2()", "2");
+
+function mult_test3()
+{
+    var a = 1;
+    return a * (a += 1);
+}
+
+shouldBe("mult_test3()", "2");
+
+function div_test1()
+{
+    var a = 1;
+    return a / (a = 2);
+}
+
+shouldBe("div_test1()", "0.5");
+
+function div_test2()
+{
+    var a = 1;
+    return a / ++a;
+}
+
+shouldBe("div_test2()", "0.5");
+
+function div_test3()
+{
+    var a = 1;
+    return a / (a += 1);
+}
+
+shouldBe("div_test3()", "0.5");
+
+function mod_test1()
+{
+    var a = 1;
+    return a % (a = 2);
+}
+
+shouldBe("mod_test1()", "1");
+
+function mod_test2()
+{
+    var a = 1;
+    return a % ++a;
+}
+
+shouldBe("mod_test2()", "1");
+
+function mod_test3()
+{
+    var a = 1;
+    return a % (a += 1);
+}
+
+shouldBe("mod_test3()", "1");
+
 function add_test1()
 {
     var a = 1;
@@ -398,4 +470,388 @@ function sub_test3()
 
 shouldBe("sub_test3()", "-1");
 
-successfullyParsed = true;
+function lshift_test1()
+{
+    var a = 1;
+    return a << (a = 2);
+}
+
+shouldBe("lshift_test1()", "4");
+
+function lshift_test2()
+{
+    var a = 1;
+    return a << ++a;
+}
+
+shouldBe("lshift_test2()", "4");
+
+function lshift_test3()
+{
+    var a = 1;
+    return a << (a += 1);
+}
+
+shouldBe("lshift_test3()", "4");
+
+function rshift_test1()
+{
+    var a = 4;
+    return a >> (a = 2);
+}
+
+shouldBe("rshift_test1()", "1");
+
+function rshift_test2()
+{
+    var a = 2;
+    return a >> --a;
+}
+
+shouldBe("rshift_test2()", "1");
+
+function rshift_test3()
+{
+    var a = 2;
+    return a >> (a -= 1);
+}
+
+shouldBe("rshift_test3()", "1");
+
+function urshift_test1()
+{
+    var a = 4;
+    return a >>> (a = 2);
+}
+
+shouldBe("urshift_test1()", "1");
+
+function urshift_test2()
+{
+    var a = 2;
+    return a >>> --a;
+}
+
+shouldBe("urshift_test2()", "1");
+
+function urshift_test3()
+{
+    var a = 2;
+    return a >>> (a -= 1);
+}
+
+shouldBe("urshift_test3()", "1");
+
+function less_test1()
+{
+    var a = 1;
+    return a < (a = 2);
+}
+
+shouldBeTrue("less_test1()");
+
+function less_test2()
+{
+    var a = 1;
+    return a < ++a;
+}
+
+shouldBeTrue("less_test2()");
+
+function less_test3()
+{
+    var a = 1;
+    return a < (a += 1);
+}
+
+shouldBeTrue("less_test3()");
+
+function greater_test1()
+{
+    var a = 2;
+    return a > (a = 1);
+}
+
+shouldBeTrue("greater_test1()");
+
+function greater_test2()
+{
+    var a = 2;
+    return a > --a;
+}
+
+shouldBeTrue("greater_test2()");
+
+function greater_test3()
+{
+    var a = 2;
+    return a > (a -= 1);
+}
+
+shouldBeTrue("greater_test3()");
+
+function lesseq_test1()
+{
+    var a = 1;
+    return a <= (a = 3, 2);
+}
+
+shouldBeTrue("lesseq_test1()");
+
+function lesseq_test2()
+{
+    var a = 1;
+    return a <= (++a, 1);
+}
+
+shouldBeTrue("lesseq_test2()");
+
+function lesseq_test3()
+{
+    var a = 1;
+    return a <= (a += 1, 1);
+}
+
+shouldBeTrue("lesseq_test3()");
+
+function greatereq_test1()
+{
+    var a = 2;
+    return a >= (a = 1, 2);
+}
+
+shouldBeTrue("greatereq_test1()");
+
+function greatereq_test2()
+{
+    var a = 2;
+    return a >= (--a, 2);
+}
+
+shouldBeTrue("greatereq_test2()");
+
+function greatereq_test3()
+{
+    var a = 2;
+    return a >= (a -= 1, 2);
+}
+
+shouldBeTrue("greatereq_test3()");
+
+function instanceof_test1()
+{
+    var a = { };
+    return a instanceof (a = 1, Object);
+}
+
+shouldBeTrue("instanceof_test1()");
+
+function instanceof_test2()
+{
+    var a = { valueOf: function() { return 1; } };
+    return a instanceof (++a, Object);
+}
+
+shouldBeTrue("instanceof_test2()");
+
+function instanceof_test3()
+{
+    var a = { valueOf: function() { return 1; } };
+    return a instanceof (a += 1, Object);
+}
+
+shouldBeTrue("instanceof_test3()");
+
+function in_test1()
+{
+    var a = "a";
+    return a in (a = "b", { a: 1 });
+}
+
+shouldBeTrue("in_test1()");
+
+function in_test2()
+{
+    var a = { toString: function() { return "a"; }, valueOf: function() { return 1; } };
+    return a in (++a, { a: 1 });
+}
+
+shouldBeTrue("in_test2()");
+
+function in_test3()
+{
+    var a = { toString: function() { return "a"; }, valueOf: function() { return 1; } };
+    return a in (a += 1, { a: 1 });
+}
+
+shouldBeTrue("in_test3()");
+
+function eq_test1()
+{
+    var a = 1;
+    return a == (a = 2);
+}
+
+shouldBeFalse("eq_test1()");
+
+function eq_test2()
+{
+    var a = 1;
+    return a == ++a;
+}
+
+shouldBeFalse("eq_test2()");
+
+function eq_test3()
+{
+    var a = 1;
+    return a == (a += 1);
+}
+
+shouldBeFalse("eq_test3()");
+
+function neq_test1()
+{
+    var a = 1;
+    return a != (a = 2);
+}
+
+shouldBeTrue("neq_test1()");
+
+function neq_test2()
+{
+    var a = 1;
+    return a != ++a;
+}
+
+shouldBeTrue("neq_test2()");
+
+function neq_test3()
+{
+    var a = 1;
+    return a != (a += 1);
+}
+
+shouldBeTrue("neq_test3()");
+
+function stricteq_test1()
+{
+    var a = 1;
+    return a === (a = 2);
+}
+
+shouldBeFalse("stricteq_test1()");
+
+function stricteq_test2()
+{
+    var a = 1;
+    return a === ++a;
+}
+
+shouldBeFalse("stricteq_test2()");
+
+function stricteq_test3()
+{
+    var a = 1;
+    return a === (a += 1);
+}
+
+shouldBeFalse("stricteq_test3()");
+
+function nstricteq_test1()
+{
+    var a = 1;
+    return a !== (a = 2);
+}
+
+shouldBeTrue("nstricteq_test1()");
+
+function nstricteq_test2()
+{
+    var a = 1;
+    return a !== ++a;
+}
+
+shouldBeTrue("nstricteq_test2()");
+
+function nstricteq_test3()
+{
+    var a = 1;
+    return a !== (a += 1);
+}
+
+shouldBeTrue("nstricteq_test3()");
+
+function bitand_test1()
+{
+    var a = 1;
+    return a & (a = 2);
+}
+
+shouldBe("bitand_test1()", "0");
+
+function bitand_test2()
+{
+    var a = 1;
+    return a & ++a;
+}
+
+shouldBe("bitand_test2()", "0");
+
+function bitand_test3()
+{
+    var a = 1;
+    return a & (a += 1);
+}
+
+shouldBe("bitand_test3()", "0");
+
+function bitor_test1()
+{
+    var a = 1;
+    return a | (a = 2);
+}
+
+shouldBe("bitor_test1()", "3");
+
+function bitor_test2()
+{
+    var a = 1;
+    return a | ++a;
+}
+
+shouldBe("bitor_test2()", "3");
+
+function bitor_test3()
+{
+    var a = 1;
+    return a | (a += 1);
+}
+
+shouldBe("bitor_test3()", "3");
+
+function bitxor_test1()
+{
+    var a = 1;
+    return a ^ (a = 2);
+}
+
+shouldBe("bitxor_test1()", "3");
+
+function bitxor_test2()
+{
+    var a = 1;
+    return a ^ ++a;
+}
+
+shouldBe("bitxor_test2()", "3");
+
+function bitxor_test3()
+{
+    var a = 1;
+    return a ^ (a += 1);
+}
+
+shouldBe("bitxor_test3()", "3");
+
+var successfullyParsed = true;

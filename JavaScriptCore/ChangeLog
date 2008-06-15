@@ -1,3 +1,89 @@
+2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Bug 19484: More instructions needs to use temporary registers
+        <https://bugs.webkit.org/show_bug.cgi?id=19484>
+
+        Fix codegen for all binary operations so that temporaries are used if
+        necessary. This was done by making BinaryOpNode and ReverseBinaryOpNode
+        subclasses of ExpressionNode, and eliminating the custom emitCode()
+        methods for the individual node classes.
+
+        This only adds 3 new instructions to SunSpider code, and there is no
+        difference in SunSpider execution time.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitBitNot):
+        (KJS::CodeGenerator::emitBinaryOp):
+        * VM/CodeGenerator.h:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::PreIncResolveNode::emitCode):
+        (KJS::PreDecResolveNode::emitCode):
+        (KJS::BinaryOpNode::emitCode):
+        (KJS::ReverseBinaryOpNode::emitCode):
+        (KJS::emitReadModifyAssignment):
+        (KJS::CaseBlockNode::emitCodeForBlock):
+        * kjs/nodes.h:
+        (KJS::BinaryOpNode::BinaryOpNode):
+        (KJS::ReverseBinaryOpNode::ReverseBinaryOpNode):
+        (KJS::MultNode::):
+        (KJS::DivNode::):
+        (KJS::DivNode::precedence):
+        (KJS::ModNode::):
+        (KJS::ModNode::precedence):
+        (KJS::AddNode::):
+        (KJS::AddNode::precedence):
+        (KJS::SubNode::):
+        (KJS::SubNode::precedence):
+        (KJS::LeftShiftNode::):
+        (KJS::LeftShiftNode::precedence):
+        (KJS::RightShiftNode::):
+        (KJS::RightShiftNode::precedence):
+        (KJS::UnsignedRightShiftNode::):
+        (KJS::UnsignedRightShiftNode::precedence):
+        (KJS::LessNode::):
+        (KJS::LessNode::precedence):
+        (KJS::GreaterNode::):
+        (KJS::GreaterNode::precedence):
+        (KJS::LessEqNode::):
+        (KJS::LessEqNode::precedence):
+        (KJS::GreaterEqNode::):
+        (KJS::GreaterEqNode::precedence):
+        (KJS::InstanceOfNode::):
+        (KJS::InstanceOfNode::precedence):
+        (KJS::InNode::):
+        (KJS::InNode::precedence):
+        (KJS::EqualNode::):
+        (KJS::EqualNode::precedence):
+        (KJS::NotEqualNode::):
+        (KJS::NotEqualNode::precedence):
+        (KJS::StrictEqualNode::):
+        (KJS::StrictEqualNode::precedence):
+        (KJS::NotStrictEqualNode::):
+        (KJS::NotStrictEqualNode::precedence):
+        (KJS::BitAndNode::):
+        (KJS::BitAndNode::precedence):
+        (KJS::BitOrNode::):
+        (KJS::BitOrNode::precedence):
+        (KJS::BitXOrNode::):
+        (KJS::BitXOrNode::precedence):
+        * kjs/nodes2string.cpp:
+        (KJS::LessNode::streamTo):
+        (KJS::GreaterNode::streamTo):
+        (KJS::LessEqNode::streamTo):
+        (KJS::GreaterEqNode::streamTo):
+        (KJS::InstanceOfNode::streamTo):
+        (KJS::InNode::streamTo):
+        (KJS::EqualNode::streamTo):
+        (KJS::NotEqualNode::streamTo):
+        (KJS::StrictEqualNode::streamTo):
+        (KJS::NotStrictEqualNode::streamTo):
+        (KJS::BitAndNode::streamTo):
+        (KJS::BitXOrNode::streamTo):
+        (KJS::BitOrNode::streamTo):
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Sam.

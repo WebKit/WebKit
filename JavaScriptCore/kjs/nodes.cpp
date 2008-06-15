@@ -664,7 +664,7 @@ RegisterID* PreIncResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
     if (RegisterID* local = generator.registerForLocal(m_ident)) {
         if (generator.isLocalConstant(m_ident)) {
             RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), 1.0);
-            return generator.emitAdd(r0.get(), local, r0.get());
+            return generator.emitBinaryOp(op_add, r0.get(), local, r0.get());
         }
         
         generator.emitPreInc(local);
@@ -692,7 +692,7 @@ RegisterID* PreDecResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
     if (RegisterID* local = generator.registerForLocal(m_ident)) {
         if (generator.isLocalConstant(m_ident)) {
             RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), -1.0);
-            return generator.emitAdd(r0.get(), local, r0.get());
+            return generator.emitBinaryOp(op_add, r0.get(), local, r0.get());
         }
         
         generator.emitPreDec(local);
@@ -801,163 +801,20 @@ RegisterID* LogicalNotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return generator.emitNot(generator.finalDestination(dst), src);
 }
 
-// ------------------------------ Multiplicative Nodes -----------------------------------
+// ------------------------------ Binary Operation Nodes -----------------------------------
 
-RegisterID* MultNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_term1.get());
-    RegisterID* src2 = generator.emitNode(m_term2.get());
-    return generator.emitMul(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* DivNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> dividend = generator.emitNode(m_term1.get());
-    RegisterID* divisor = generator.emitNode(m_term2.get());
-    return generator.emitDiv(generator.finalDestination(dst, dividend.get()), dividend.get(), divisor);
-}
-
-RegisterID* ModNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> dividend = generator.emitNode(m_term1.get());
-    RegisterID* divisor = generator.emitNode(m_term2.get());
-    return generator.emitMod(generator.finalDestination(dst, dividend.get()), dividend.get(), divisor);
-}
-
-// ------------------------------ Additive Nodes --------------------------------------
-
-RegisterID* AddNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_term1.get(), m_rightHasAssignments, m_term2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_term2.get());
-    return generator.emitAdd(generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }
 
-RegisterID* SubNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* ReverseBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_term1.get(), m_rightHasAssignments, m_term2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_term2.get());
-    return generator.emitSub(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-// ------------------------------ Shift Nodes ------------------------------------
-
-RegisterID* LeftShiftNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> val = generator.emitNode(m_term1.get());
-    RegisterID* shift = generator.emitNode(m_term2.get());
-    return generator.emitLeftShift(generator.finalDestination(dst, val.get()), val.get(), shift);
-}
-
-RegisterID* RightShiftNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> val = generator.emitNode(m_term1.get());
-    RegisterID* shift = generator.emitNode(m_term2.get());
-    return generator.emitRightShift(generator.finalDestination(dst, val.get()), val.get(), shift);
-}
-
-RegisterID* UnsignedRightShiftNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> val = generator.emitNode(m_term1.get());
-    RegisterID* shift = generator.emitNode(m_term2.get());
-    return generator.emitUnsignedRightShift(generator.finalDestination(dst, val.get()), val.get(), shift);
-}
-
-// ------------------------------ Relational Nodes -------------------------------
-
-RegisterID* LessNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitLess(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* GreaterNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitLess(generator.finalDestination(dst, src1.get()), src2, src1.get());
-}
-
-RegisterID* LessEqNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitLessEq(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* GreaterEqNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitLessEq(generator.finalDestination(dst, src1.get()), src2, src1.get());
-}
-
-RegisterID* InstanceOfNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> value = generator.emitNode(m_expr1.get());
-    RegisterID* base = generator.emitNode(m_expr2.get());
-    return generator.emitInstanceOf(generator.finalDestination(dst, value.get()), value.get(), base);
-}
-
-RegisterID* InNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> property = generator.emitNode(m_expr1.get());
-    RegisterID* base = generator.emitNode(m_expr2.get());
-    return generator.emitIn(generator.finalDestination(dst, property.get()), property.get(), base);
-}
-
-// ------------------------------ Equality Nodes ------------------------------------
-
-RegisterID* EqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitEqual(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* NotEqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitNotEqual(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* StrictEqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitStrictEqual(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* NotStrictEqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitNotStrictEqual(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-// ------------------------------ Bit Operation Nodes ----------------------------------
-
-RegisterID* BitAndNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBitAnd(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* BitXOrNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBitXOr(generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* BitOrNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNode(m_expr1.get());
-    RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBitOr(generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src2, src1.get());
 }
 
 // ------------------------------ Binary Logical Nodes ----------------------------
@@ -1017,27 +874,27 @@ static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generat
 {
     switch (oper) {
         case OpMultEq:
-            return generator.emitMul(dst, src1, src2);
+            return generator.emitBinaryOp(op_mul, dst, src1, src2);
         case OpDivEq:
-            return generator.emitDiv(dst, src1, src2);
+            return generator.emitBinaryOp(op_div, dst, src1, src2);
         case OpPlusEq:
-            return generator.emitAdd(dst, src1, src2);
+            return generator.emitBinaryOp(op_add, dst, src1, src2);
         case OpMinusEq:
-            return generator.emitSub(dst, src1, src2);
+            return generator.emitBinaryOp(op_sub, dst, src1, src2);
         case OpLShift:
-            return generator.emitLeftShift(dst, src1, src2);
+            return generator.emitBinaryOp(op_lshift, dst, src1, src2);
         case OpRShift:
-            return generator.emitRightShift(dst, src1, src2);
+            return generator.emitBinaryOp(op_rshift, dst, src1, src2);
         case OpURShift:
-            return generator.emitUnsignedRightShift(dst, src1, src2);
+            return generator.emitBinaryOp(op_urshift, dst, src1, src2);
         case OpAndEq:
-            return generator.emitBitAnd(dst, src1, src2);
+            return generator.emitBinaryOp(op_bitand, dst, src1, src2);
         case OpXOrEq:
-            return generator.emitBitXOr(dst, src1, src2);
+            return generator.emitBinaryOp(op_bitxor, dst, src1, src2);
         case OpOrEq:
-            return generator.emitBitOr(dst, src1, src2);
+            return generator.emitBinaryOp(op_bitor, dst, src1, src2);
         case OpModEq:
-            return generator.emitMod(dst, src1, src2);
+            return generator.emitBinaryOp(op_mod, dst, src1, src2);
         default:
             ASSERT_NOT_REACHED();
     }
@@ -1572,14 +1429,14 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
     // Setup jumps
     for (ClauseListNode* list = m_list1.get(); list; list = list->getNext()) {
         RegisterID* clauseVal = generator.emitNode(list->getClause()->expr());
-        generator.emitStrictEqual(clauseVal, clauseVal, switchExpression);
+        generator.emitBinaryOp(op_stricteq, clauseVal, clauseVal, switchExpression);
         labelVector.append(generator.newLabel());
         generator.emitJumpIfTrueMayCombine(clauseVal, labelVector[labelVector.size() - 1].get());
     }
 
     for (ClauseListNode* list = m_list2.get(); list; list = list->getNext()) {
         RegisterID* clauseVal = generator.emitNode(list->getClause()->expr());
-        generator.emitStrictEqual(clauseVal, clauseVal, switchExpression);
+        generator.emitBinaryOp(op_stricteq, clauseVal, clauseVal, switchExpression);
         labelVector.append(generator.newLabel());
         generator.emitJumpIfTrueMayCombine(clauseVal, labelVector[labelVector.size() - 1].get());
     }

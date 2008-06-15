@@ -31,6 +31,7 @@
 #include "RegisterID.h"
 #include "SourceRange.h"
 #include "SymbolTable.h"
+#include "VM/Opcode.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/ListRefPtr.h>
 #include <wtf/MathExtras.h>
@@ -1195,390 +1196,308 @@ namespace KJS {
         RefPtr<ExpressionNode> m_expr;
     };
 
-    class MultNode : public ExpressionNode {
+    class BinaryOpNode : public ExpressionNode {
     public:
-        MultNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
-    };
-
-    class DivNode : public ExpressionNode {
-    public:
-        DivNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
-    };
-
-    class ModNode : public ExpressionNode {
-    public:
-        ModNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
-    };
-
-    class AddNode : public ExpressionNode {
-    public:
-        AddNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+        BinaryOpNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
             : m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecAdditive; }
-
-    protected:
-        AddNode(ExpressionNode* term1, ExpressionNode* term2, JSType expectedReturn, bool rightHasAssignments) KJS_FAST_CALL
-            : ExpressionNode(expectedReturn)
+        BinaryOpNode(JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(type)
             , m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL = 0;
+
+    protected:
         RefPtr<ExpressionNode> m_term1;
         RefPtr<ExpressionNode> m_term2;
         bool m_rightHasAssignments;
     };
 
-    class SubNode : public ExpressionNode {
+    class ReverseBinaryOpNode : public ExpressionNode {
+    public:
+        ReverseBinaryOpNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : m_term1(term1)
+            , m_term2(term2)
+            , m_rightHasAssignments(rightHasAssignments)
+        {
+        }
+
+        ReverseBinaryOpNode(JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(type)
+            , m_term1(term1)
+            , m_term2(term2)
+            , m_rightHasAssignments(rightHasAssignments)
+        {
+        }
+
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL = 0;
+
+    protected:
+        RefPtr<ExpressionNode> m_term1;
+        RefPtr<ExpressionNode> m_term2;
+        bool m_rightHasAssignments;
+    };
+
+    class MultNode : public BinaryOpNode {
+    public:
+        MultNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        {
+        }
+
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_mul; }
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual Precedence precedence() const { return PrecMultiplicitave; }
+    };
+
+    class DivNode : public BinaryOpNode {
+    public:
+        DivNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        {
+        }
+
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_div; }
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual Precedence precedence() const { return PrecMultiplicitave; }
+    };
+
+    class ModNode : public BinaryOpNode {
+    public:
+        ModNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        {
+        }
+
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_mod; }
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual Precedence precedence() const { return PrecMultiplicitave; }
+    };
+
+    class AddNode : public BinaryOpNode {
+    public:
+        AddNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(term1, term2, rightHasAssignments)
+        {
+        }
+
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_add; }
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        virtual Precedence precedence() const { return PrecAdditive; }
+    };
+
+    class SubNode : public BinaryOpNode {
     public:
         SubNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
-            , m_rightHasAssignments(rightHasAssignments)
+            : BinaryOpNode(term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_sub; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecAdditive; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
-        bool m_rightHasAssignments;
     };
 
-    class LeftShiftNode : public ExpressionNode {
+    class LeftShiftNode : public BinaryOpNode {
     public:
-        LeftShiftNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
+        LeftShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_lshift; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecShift; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
     };
 
-    class RightShiftNode : public ExpressionNode {
+    class RightShiftNode : public BinaryOpNode {
     public:
-        RightShiftNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
+        RightShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_rshift; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecShift; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
     };
 
-    class UnsignedRightShiftNode : public ExpressionNode {
+    class UnsignedRightShiftNode : public BinaryOpNode {
     public:
-        UnsignedRightShiftNode(ExpressionNode* term1, ExpressionNode* term2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_term1(term1)
-            , m_term2(term2)
+        UnsignedRightShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_urshift; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecShift; }
-
-    private:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
     };
 
-    class LessNode : public ExpressionNode {
+    class LessNode : public BinaryOpNode {
     public:
-        LessNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        LessNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_less; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    protected:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class GreaterNode : public ExpressionNode {
+    class GreaterNode : public ReverseBinaryOpNode {
     public:
-        GreaterNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_expr1(expr1)
-            , m_expr2(expr2)
+        GreaterNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_less; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class LessEqNode : public ExpressionNode {
+    class LessEqNode : public BinaryOpNode {
     public:
-        LessEqNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_expr1(expr1)
-            , m_expr2(expr2)
+        LessEqNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_lesseq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class GreaterEqNode : public ExpressionNode {
+    class GreaterEqNode : public ReverseBinaryOpNode {
     public:
-        GreaterEqNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_expr1(expr1)
-            , m_expr2(expr2)
+        GreaterEqNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_lesseq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class InstanceOfNode : public ExpressionNode {
+    class InstanceOfNode : public BinaryOpNode {
     public:
-        InstanceOfNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        InstanceOfNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_instanceof; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class InNode : public ExpressionNode {
+    class InNode : public BinaryOpNode {
     public:
-        InNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_expr1(expr1)
-            , m_expr2(expr2)
+        InNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_in; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecRelational; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class EqualNode : public ExpressionNode {
+    class EqualNode : public BinaryOpNode {
     public:
-        EqualNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        EqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_eq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecEquality; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class NotEqualNode : public ExpressionNode {
+    class NotEqualNode : public BinaryOpNode {
     public:
-        NotEqualNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        NotEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_neq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecEquality; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class StrictEqualNode : public ExpressionNode {
+    class StrictEqualNode : public BinaryOpNode {
     public:
-        StrictEqualNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        StrictEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_stricteq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecEquality; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class NotStrictEqualNode : public ExpressionNode {
+    class NotStrictEqualNode : public BinaryOpNode {
     public:
-        NotStrictEqualNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        NotStrictEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_nstricteq; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecEquality; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class BitAndNode : public ExpressionNode {
+    class BitAndNode : public BinaryOpNode {
     public:
-        BitAndNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        BitAndNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_bitand; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecBitwiseAnd; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class BitOrNode : public ExpressionNode {
+    class BitOrNode : public BinaryOpNode {
     public:
-        BitOrNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        BitOrNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_bitor; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecBitwiseOr; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
-    class BitXOrNode : public ExpressionNode {
+    class BitXOrNode : public BinaryOpNode {
     public:
-        BitXOrNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
+        BitXOrNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_bitxor; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecBitwiseXor; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
     };
 
     /**

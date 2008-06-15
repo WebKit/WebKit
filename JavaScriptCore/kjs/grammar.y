@@ -458,19 +458,19 @@ UnaryExprNoBF:
 
 MultiplicativeExpr:
     UnaryExpr
-  | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | MultiplicativeExpr '*' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | MultiplicativeExpr '/' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | MultiplicativeExpr '%' UnaryExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 MultiplicativeExprNoBF:
     UnaryExprNoBF
   | MultiplicativeExprNoBF '*' UnaryExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new MultNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | MultiplicativeExprNoBF '/' UnaryExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new DivNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | MultiplicativeExprNoBF '%' UnaryExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new ModNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 AdditiveExpr:
@@ -489,128 +489,128 @@ AdditiveExprNoBF:
 
 ShiftExpr:
     AdditiveExpr
-  | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExpr LSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExpr RSHIFT AdditiveExpr       { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExpr URSHIFT AdditiveExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ShiftExprNoBF:
     AdditiveExprNoBF
-  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExprNoBF LSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new LeftShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExprNoBF RSHIFT AdditiveExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new RightShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | ShiftExprNoBF URSHIFT AdditiveExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new UnsignedRightShiftNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExpr:
     ShiftExpr
-  | RelationalExpr '<' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExpr '>' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExpr LE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExpr GE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExpr INSTANCEOF ShiftExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExpr INTOKEN ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr '<' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr '>' ShiftExpr        { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr LE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr GE ShiftExpr         { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr INSTANCEOF ShiftExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExpr INTOKEN ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExprNoIn:
     ShiftExpr
-  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoIn GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoIn INSTANCEOF ShiftExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 RelationalExprNoBF:
     ShiftExprNoBF
-  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF '<' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF '>' ShiftExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF LE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LessEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF GE ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new GreaterEqNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | RelationalExprNoBF INSTANCEOF ShiftExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | RelationalExprNoBF INTOKEN ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new InstanceOfNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | RelationalExprNoBF INTOKEN ShiftExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new InNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExpr:
     RelationalExpr
-  | EqualityExpr EQEQ RelationalExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | EqualityExpr NE RelationalExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | EqualityExpr STREQ RelationalExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | EqualityExpr STRNEQ RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr EQEQ RelationalExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr NE RelationalExpr      { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr STREQ RelationalExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExpr STRNEQ RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExprNoIn:
     RelationalExprNoIn
   | EqualityExprNoIn EQEQ RelationalExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn NE RelationalExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn STREQ RelationalExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoIn STRNEQ RelationalExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 EqualityExprNoBF:
     RelationalExprNoBF
   | EqualityExprNoBF EQEQ RelationalExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
-  | EqualityExprNoBF NE RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new EqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
+  | EqualityExprNoBF NE RelationalExpr  { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoBF STREQ RelationalExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new StrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
   | EqualityExprNoBF STRNEQ RelationalExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new NotStrictEqualNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExpr:
     EqualityExpr
-  | BitwiseANDExpr '&' EqualityExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | BitwiseANDExpr '&' EqualityExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExprNoIn:
     EqualityExprNoIn
   | BitwiseANDExprNoIn '&' EqualityExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseANDExprNoBF:
     EqualityExprNoBF
-  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | BitwiseANDExprNoBF '&' EqualityExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitAndNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExpr:
     BitwiseANDExpr
-  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | BitwiseXORExpr '^' BitwiseANDExpr   { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExprNoIn:
     BitwiseANDExprNoIn
   | BitwiseXORExprNoIn '^' BitwiseANDExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseXORExprNoBF:
     BitwiseANDExprNoBF
   | BitwiseXORExprNoBF '^' BitwiseANDExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitXOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExpr:
     BitwiseXORExpr
-  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | BitwiseORExpr '|' BitwiseXORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExprNoIn:
     BitwiseXORExprNoIn
   | BitwiseORExprNoIn '|' BitwiseXORExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 BitwiseORExprNoBF:
     BitwiseXORExprNoBF
   | BitwiseORExprNoBF '|' BitwiseXORExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new BitOrNode($1.m_node, $3.m_node, $3.m_featureInfo & AssignFeature), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExpr:
