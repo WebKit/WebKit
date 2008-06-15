@@ -1,5 +1,21 @@
 2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Darin.
+
+        Remove redundant uses of get().
+
+        * kjs/nodes.cpp:
+        (KJS::BracketAccessorNode::emitCode):
+        (KJS::AddNode::emitCode):
+        (KJS::SubNode::emitCode):
+        (KJS::ReadModifyResolveNode::emitCode):
+        (KJS::AssignDotNode::emitCode):
+        (KJS::ReadModifyDotNode::emitCode):
+        (KJS::AssignBracketNode::emitCode):
+        (KJS::ReadModifyBracketNode::emitCode):
+
+2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej.
 
         Make code generation not use a temporary for the left-hand side of an
