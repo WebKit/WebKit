@@ -148,9 +148,11 @@ DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/ke
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables
 	$^ $@
 
-noinst_PROGRAMS += \
-	Programs/minidom \
+bin_PROGRAMS += \
 	Programs/jsc
+
+noinst_PROGRAMS += \
+	Programs/minidom
 
 # minidom
 Programs_minidom_SOURCES = \

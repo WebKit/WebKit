@@ -38,6 +38,8 @@ GENPROGRAMS := $(top_builddir)/Programs
 CREATE_HASH_TABLE = $(srcdir)/JavaScriptCore/kjs/create_hash_table
 
 # Libraries and support components
+bin_PROGRAMS :=
+
 noinst_PROGRAMS :=
 
 lib_LIBRARIES :=

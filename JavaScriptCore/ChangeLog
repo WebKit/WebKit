@@ -1,3 +1,11 @@
+2008-06-15  Alp Toker  <alp@nuanti.com>
+
+        Rubber-stamped by Maciej.
+
+        Install 'jsc' application by default.
+
+        * GNUmakefile.am:
+
 2008-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
