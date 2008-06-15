@@ -2,6 +2,15 @@
 
         Reviewed by Alp Toker.
 
+        [GTK] Property setters do not call g_object_notify()
+        https://bugs.webkit.org/show_bug.cgi?id=18405
+
+        * webkit/webkitwebview.cpp:
+
+2008-06-15  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp Toker.
+
         Tiny documentation fix, s/capacity/limit
 
         * webkit/webkitwebbackforwardlist.cpp:
