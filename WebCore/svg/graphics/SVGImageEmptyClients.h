@@ -31,6 +31,7 @@
 #include "ChromeClient.h"
 #include "ContextMenuClient.h"
 #include "DragClient.h"
+#include "EditCommand.h"
 #include "EditorClient.h"
 #include "FocusDirection.h"
 #include "FrameLoaderClient.h"

@@ -1,5 +1,11 @@
 2008-06-14  Darin Adler  <darin@apple.com>
 
+        - try to fix Windows build
+
+        * svg/graphics/SVGImageEmptyClients.h: Added missing include.
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
         - fix wx build
 
         * platform/wx/TemporaryLinkStubs.cpp: Removed unneeded Icon constructor.
