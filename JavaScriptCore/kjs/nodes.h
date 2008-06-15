@@ -81,7 +81,7 @@ namespace KJS {
         PrecLeftHandSide,
         PrecPostfix,
         PrecUnary,
-        PrecMultiplicitave,
+        PrecMultiplicative,
         PrecAdditive,
         PrecShift,
         PrecRelational,
@@ -1257,7 +1257,7 @@ namespace KJS {
 
         virtual OpcodeID opcode() const KJS_FAST_CALL { return op_mul; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
+        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class DivNode : public BinaryOpNode {
@@ -1269,7 +1269,7 @@ namespace KJS {
 
         virtual OpcodeID opcode() const KJS_FAST_CALL { return op_div; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
+        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class ModNode : public BinaryOpNode {
@@ -1281,7 +1281,7 @@ namespace KJS {
 
         virtual OpcodeID opcode() const KJS_FAST_CALL { return op_mod; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecMultiplicitave; }
+        virtual Precedence precedence() const { return PrecMultiplicative; }
     };
 
     class AddNode : public BinaryOpNode {

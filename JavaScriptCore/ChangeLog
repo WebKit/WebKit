@@ -2,6 +2,18 @@
 
         Reviewed by Maciej.
 
+        Change the spelling of PrecMultiplicitave to PrecMultiplicative.
+
+        * kjs/nodes.h:
+        (KJS::):
+        (KJS::MultNode::precedence):
+        (KJS::DivNode::precedence):
+        (KJS::ModNode::precedence):
+
+2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
         Remove unused preprocessor macros related to exceptions in the old
         interpreter.
 
