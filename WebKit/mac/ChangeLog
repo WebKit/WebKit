@@ -2,6 +2,34 @@
 
         Reviewed by Sam.
 
+        - more of https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createDocumentLoader): Use create instead of new.
+        (WebFrameLoaderClient::createFrame): Remove now-obsolete adoptRef that was balanced by
+        a ref call inside the Frame constructor. The lifetime rules for Frame are now the
+        conventional ones without a special case.
+
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _initWithDocumentLoader:]): Changed argument to be a PassRefPtr, since
+        this function takes ownership of the DocumentLoader.
+        (-[WebDataSource initWithRequest:]): Use create instead of new.
+        * WebView/WebDataSourceInternal.h: Changed _initWithDocumentLoader argument to be a
+        PassRefPtr and also cleaned up the header a bit.
+
+        * WebView/WebDocumentLoaderMac.h:
+        (WebDocumentLoaderMac::create): Added. Also made the constructor and a couple of virtual
+        functions private.
+
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]): Use create instead
+        of new.
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
         - more work on https://bugs.webkit.org/show_bug.cgi?id=17257
           start ref counts at 1 instead of 0 for speed
 

@@ -91,7 +91,7 @@ String DragData::asPlainText() const
 {
     return m_pasteboardHelper->plainTextFromPasteboard([m_platformDragData draggingPasteboard]);
 }
-    
+
 Color DragData::asColor() const
 {
     NSColor *color = [NSColor colorFromPasteboard:[m_platformDragData draggingPasteboard]];
@@ -99,14 +99,13 @@ Color DragData::asColor() const
                     (int)([color blueComponent] * 255.0 + 0.5), (int)([color alphaComponent] * 255.0 + 0.5));
 }
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
+PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return new ClipboardMac(true, [m_platformDragData draggingPasteboard], policy);
+    return ClipboardMac::create(true, [m_platformDragData draggingPasteboard], policy, 0);
 }
 
 bool DragData::containsCompatibleContent() const
 {
-    
     NSPasteboard *pasteboard = [m_platformDragData draggingPasteboard];
     NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
     [types intersectSet:[NSSet setWithArray:m_pasteboardHelper->insertablePasteboardTypes()]];
@@ -122,8 +121,7 @@ String DragData::asURL(String* title) const
 {
     return m_pasteboardHelper->urlFromPasteboard([m_platformDragData draggingPasteboard], title);
 }
-    
-    
+
 PassRefPtr<DocumentFragment> DragData::asFragment(Document* doc) const
 {
     return [m_pasteboardHelper->fragmentFromPasteboard([m_platformDragData draggingPasteboard]) _documentFragment];

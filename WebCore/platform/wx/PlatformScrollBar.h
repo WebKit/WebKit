@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,14 +26,18 @@
 #ifndef PlatformScrollbar_h
 #define PlatformScrollbar_h
 
-#include "Widget.h"
 #include "ScrollBar.h"
+#include "Widget.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class PlatformScrollbar : public Widget, public Scrollbar {
 public:
-    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+    {
+        return adoptRef(new PlatformScrollbar(client, orientation, size));
+    }
     virtual ~PlatformScrollbar();
 
     virtual bool isWidget() const { return true; }
@@ -50,6 +54,9 @@ public:
 protected:    
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
+
+private:
+    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 };
 
 }

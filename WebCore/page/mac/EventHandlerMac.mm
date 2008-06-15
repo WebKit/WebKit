@@ -362,13 +362,13 @@ bool EventHandler::eventLoopHandleMouseDragged(const MouseEventWithHitTestResult
     return true;
 }
     
-Clipboard* EventHandler::createDraggingClipboard() const 
+PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const 
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     // Must be done before ondragstart adds types and data to the pboard,
     // also done for security, as it erases data from the last drag
     [pasteboard declareTypes:[NSArray array] owner:nil];
-    return new ClipboardMac(true, pasteboard, ClipboardWritable, m_frame);
+    return ClipboardMac::create(true, pasteboard, ClipboardWritable, m_frame);
 }
     
 bool EventHandler::eventLoopHandleMouseUp(const MouseEventWithHitTestResults&)

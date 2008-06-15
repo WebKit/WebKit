@@ -1,5 +1,5 @@
 /*
-* Copyright (C) 2006, 2007 Apple Inc.
+* Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU Library General Public
@@ -27,22 +27,15 @@
 
 namespace WebCore {
 
-Icon::Icon()
-    : RefCounted<Icon>(0)
-    , m_hIcon(0)
-{
-}
-
 Icon::Icon(HICON icon)
-    : RefCounted<Icon>(0)
-    , m_hIcon(icon)
+    : m_hIcon(icon)
 {
+    ASSERT(icon);
 }
 
 Icon::~Icon()
 {
-    if (m_hIcon)
-        DestroyIcon(m_hIcon);
+    DestroyIcon(m_hIcon);
 }
 
 PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
@@ -54,9 +47,7 @@ PassRefPtr<Icon> Icon::newIconForFile(const String& filename)
     if (!SHGetFileInfo(tmpFilename.charactersWithNullTermination(), 0, &sfi, sizeof(sfi), SHGFI_ICON | SHGFI_SHELLICONSIZE | SHGFI_SMALLICON))
         return 0;
 
-    Icon* icon = new Icon();  
-    icon->m_hIcon = sfi.hIcon;
-    return icon;
+    return adoptRef(new Icon(sfi.hIcon));
 }
 
 void Icon::paint(GraphicsContext* context, const IntRect& r)

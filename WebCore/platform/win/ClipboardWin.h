@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,8 @@
 #ifndef ClipboardWin_h
 #define ClipboardWin_h
 
-#include "Clipboard.h"
-
 #include "CachedResourceClient.h"
-#include "IntPoint.h"
+#include "Clipboard.h"
 #include "COMPtr.h"
 
 struct IDataObject;
@@ -43,8 +41,14 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class ClipboardWin : public Clipboard, public CachedResourceClient {
     public:
-        ClipboardWin(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy);
-        ClipboardWin(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy);
+        static PassRefPtr<ClipboardWin> create(bool isForDragging, IDataObject* dataObject, ClipboardAccessPolicy policy)
+        {
+            return adoptRef(new ClipboardWin(isForDragging, dataObject, policy));
+        }
+        static PassRefPtr<ClipboardWin> create(bool isForDragging, WCDataObject* dataObject, ClipboardAccessPolicy policy)
+        {
+            return adoptRef(new ClipboardWin(isForDragging, dataObject, policy));
+        }
         ~ClipboardWin();
     
         void clearData(const String& type);
@@ -66,9 +70,14 @@ namespace WebCore {
         virtual bool hasData();
 
         COMPtr<IDataObject> dataObject() { return m_dataObject; }
+
     private:
+        ClipboardWin(bool isForDragging, IDataObject*, ClipboardAccessPolicy);
+        ClipboardWin(bool isForDragging, WCDataObject*, ClipboardAccessPolicy);
+
         void resetFromClipboard();
         void setDragImage(CachedImage*, Node*, const IntPoint&);
+
         COMPtr<IDataObject> m_dataObject;
         COMPtr<WCDataObject> m_writableDataObject;
         Frame* m_frame;

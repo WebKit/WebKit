@@ -41,8 +41,7 @@
 namespace WebCore {
 
 IconRecord::IconRecord(const String& url)
-    : RefCounted<IconRecord>(0)
-    , m_iconURL(url)
+    : m_iconURL(url)
     , m_stamp(0)
     , m_dataSet(false)
 {

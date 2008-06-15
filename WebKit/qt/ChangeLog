@@ -1,3 +1,15 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::init): Use create instead of new.
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createDocumentLoader): Ditto.
+
 2008-06-13  Darin Adler  <darin@apple.com>
 
         - try to fix build
@@ -4016,8 +4028,6 @@
 
 2007-11-07  Simon Hausmann  <hausmann@kde.org>
 
-        Build fix, reviewed by nobody.
-
         Fix the Qt build by setting up WindowFeatures before calling
         createWindow on the Chrome. This is similar to openNewWindow in
         page/ContextMenuController.cpp
@@ -7671,8 +7681,6 @@
         * WebCoreSupport/FrameLoaderClientQt.h:
 
 2007-02-18  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Buildfix).
 
         Build fix -- adding DragClientQt method stubs
 

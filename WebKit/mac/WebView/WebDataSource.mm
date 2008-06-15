@@ -331,7 +331,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     return _private->loader;
 }
 
-- (id)_initWithDocumentLoader:(WebDocumentLoaderMac *)loader
+- (id)_initWithDocumentLoader:(PassRefPtr<WebDocumentLoaderMac>)loader
 {
     self = [super init];
     if (!self)
@@ -339,8 +339,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     
     _private = [[WebDataSourcePrivate alloc] init];
     
-    _private->loader = loader;
-    loader->ref();
+    _private->loader = loader.releaseRef();
         
     LOG(Loading, "creating datasource for %@", static_cast<NSURL *>(_private->loader->request().url()));
     
@@ -355,7 +354,7 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (id)initWithRequest:(NSURLRequest *)request
 {
-    return [self _initWithDocumentLoader:new WebDocumentLoaderMac(request, SubstituteData())];
+    return [self _initWithDocumentLoader:WebDocumentLoaderMac::create(request, SubstituteData())];
 }
 
 - (void)dealloc

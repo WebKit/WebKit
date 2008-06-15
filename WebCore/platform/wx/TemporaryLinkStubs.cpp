@@ -146,9 +146,9 @@ void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 void FileChooser::openFileChooser(Document*) { notImplemented(); }
 String FileChooser::basenameForWidth(const Font&, int width) const { notImplemented(); return String(); }
 
-Icon::Icon() : RefCounted<Icon>(0) { notImplemented(); }
+Icon::Icon() { notImplemented(); }
 Icon::~Icon() { notImplemented(); }
-PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return PassRefPtr<Icon>(new Icon()); }
+PassRefPtr<Icon> Icon::newIconForFile(const String& filename) { notImplemented(); return 0; }
 void Icon::paint(GraphicsContext*, const IntRect&) { notImplemented(); }
 
 ContextMenu::ContextMenu(const HitTestResult& result) : m_hitTestResult(result) { notImplemented(); }

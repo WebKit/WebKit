@@ -220,7 +220,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
 
     priv->webView = webView;
     priv->client = new WebKit::FrameLoaderClient(frame);
-    priv->coreFrame = new Frame(viewPriv->corePage, 0, priv->client);
+    priv->coreFrame = Frame::create(viewPriv->corePage, 0, priv->client).get();
     priv->coreFrame->init();
 
     return frame;
@@ -234,7 +234,7 @@ WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTML
 
     priv->webView = webView;
     priv->client = new WebKit::FrameLoaderClient(frame);
-    priv->coreFrame = new Frame(viewPriv->corePage, element, priv->client);
+    priv->coreFrame = Frame::create(viewPriv->corePage, element, priv->client).release().releaseRef();
     priv->coreFrame->init();
 
     return frame;

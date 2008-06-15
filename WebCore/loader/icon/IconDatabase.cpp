@@ -375,7 +375,7 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
     static RefPtr<SharedBuffer> defaultIconBuffer(SharedBuffer::create(defaultIconData, sizeof(defaultIconData)));
     
     if (!m_defaultIconRecord) {
-        m_defaultIconRecord = new IconRecord("urlIcon");
+        m_defaultIconRecord = IconRecord::create("urlIcon");
         m_defaultIconRecord->setImageData(defaultIconBuffer);
     }
     
@@ -513,10 +513,10 @@ void IconDatabase::setIconDataForIconURL(PassRefPtr<SharedBuffer> dataOriginal, 
         MutexLocker locker(m_urlAndIconLock);
     
         // If this icon was pending a read, remove it from that set because this new data should override what is on disk
-        IconRecord* icon = m_iconURLToRecordMap.get(iconURL);
+        RefPtr<IconRecord> icon = m_iconURLToRecordMap.get(iconURL);
         if (icon) {
             MutexLocker locker(m_pendingReadingLock);
-            m_iconsPendingReading.remove(icon);
+            m_iconsPendingReading.remove(icon.get());
         } else
             icon = getOrCreateIconRecord(iconURL);
     
@@ -588,8 +588,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
         RefPtr<IconRecord> iconRecord = pageRecord->iconRecord();
 
         // Otherwise, set the new icon record for this page
-        IconRecord* newIconRecord = getOrCreateIconRecord(iconURL);
-        pageRecord->setIconRecord(newIconRecord);
+        pageRecord->setIconRecord(getOrCreateIconRecord(iconURL));
 
         // If the current icon has only a single ref left, it is about to get wiped out. 
         // Remove it from the in-memory records and don't bother reading it in from disk anymore
@@ -834,18 +833,18 @@ String IconDatabase::defaultDatabaseFilename()
 }
 
 // Unlike getOrCreatePageURLRecord(), getOrCreateIconRecord() does not mark the icon as "interested in import"
-IconRecord* IconDatabase::getOrCreateIconRecord(const String& iconURL)
+PassRefPtr<IconRecord> IconDatabase::getOrCreateIconRecord(const String& iconURL)
 {
     // Clients of getOrCreateIconRecord() are required to acquire the m_urlAndIconLock before calling this method
     ASSERT(!m_urlAndIconLock.tryLock());
 
     if (IconRecord* icon = m_iconURLToRecordMap.get(iconURL))
         return icon;
-        
-    IconRecord* newIcon = new IconRecord(iconURL);
-    m_iconURLToRecordMap.set(iconURL, newIcon);
-        
-    return newIcon;    
+
+    RefPtr<IconRecord> newIcon = IconRecord::create(iconURL);
+    m_iconURLToRecordMap.set(iconURL, newIcon.get());
+
+    return newIcon.release();
 }
 
 // This method retrieves the existing PageURLRecord, or creates a new one and marks it as "interested in the import" for later notification
@@ -1200,8 +1199,8 @@ void IconDatabase::performURLImport()
                 IconRecord* currentIcon = pageRecord->iconRecord();
 
                 if (!currentIcon || currentIcon->iconURL() != iconURL) {
-                    currentIcon = getOrCreateIconRecord(iconURL);
-                    pageRecord->setIconRecord(currentIcon);
+                    pageRecord->setIconRecord(getOrCreateIconRecord(iconURL));
+                    currentIcon = pageRecord->iconRecord();
                 }
             
                 // Regardless, the time stamp from disk still takes precedence.  Until we read this icon from disk, we didn't think we'd seen it before

@@ -2128,12 +2128,12 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     }
 
     WebFrame* webFrame = WebFrame::createInstance();
-    webFrame->initWithWebFrameView(0 /*FIXME*/, this, m_page, 0);
+    RefPtr<Frame> coreFrame = webFrame->init(this, m_page, 0);
     m_mainFrame = webFrame;
     webFrame->Release(); // The WebFrame is owned by the Frame, so release our reference to it.
 
-    m_page->mainFrame()->tree()->setName(String(frameName, SysStringLen(frameName)));
-    m_page->mainFrame()->init();
+    coreFrame->tree()->setName(String(frameName, SysStringLen(frameName)));
+    coreFrame->init();
     setGroupName(groupName);
 
     addToAllWebViewsSet();

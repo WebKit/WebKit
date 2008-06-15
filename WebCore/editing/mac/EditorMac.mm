@@ -48,7 +48,7 @@ void _NSSetKillRingToYankedState();
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    return new ClipboardMac(false, [NSPasteboard generalPasteboard], policy);
+    return ClipboardMac::create(false, [NSPasteboard generalPasteboard], policy, 0);
 }
 
 static void initializeKillRingIfNeeded()

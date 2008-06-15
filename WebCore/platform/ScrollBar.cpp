@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,7 @@ using std::min;
 namespace WebCore {
 
 Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
-    : RefCounted<Scrollbar>(0)
-    , m_client(client)
+    : m_client(client)
     , m_orientation(orientation)
     , m_controlSize(controlSize)
     , m_visibleSize(0)
@@ -114,4 +113,5 @@ bool Scrollbar::scroll(ScrollDirection direction, ScrollGranularity granularity,
     // return true even if the integer value did not change so that scroll event gets eaten
     return true;
 }
+
 }

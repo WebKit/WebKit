@@ -1,3 +1,22 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more of https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * kjs/nodes.cpp:
+        (KJS::ParserRefCounted::hasOneRef): Added. Replaces refcount.
+        * kjs/nodes.h: Replaced refcount with hasOneRef.
+
+        * wtf/ListRefPtr.h:
+        (WTF::ListRefPtr::~ListRefPtr): Changed to use hasOneRef instead of
+        refcount, so this class can be used with the RefCounted template.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCounted::hasOneRef): Made const, since there's no reason for
+        it to be non-const.
+
 2008-06-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.
@@ -2347,15 +2366,11 @@
 
 2008-05-21  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
-
         Yet more windows build fixes
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
 
 2008-05-21  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Yet more windows build fixes
 
@@ -2369,8 +2384,6 @@
         * GNUmakefile.am:
 
 2008-05-21  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Add DebuggerCallFrame.{h,cpp} to the project file
 
@@ -2530,8 +2543,6 @@
         * kjs/JSVariableObject.h:
 
 2008-05-20  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Fixerate the windows build.
 
@@ -3199,8 +3210,6 @@
         * kjs/lexer.h:
 
 2008-05-09  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by Nobody (build fix).
 
         Debug build fix
 
@@ -5318,8 +5327,6 @@
         (KJS::ScopeChain::clear):
 
 2008-04-21  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY(Build fix)
 
         Fix debug build
 
@@ -8171,8 +8178,6 @@
 
 2008-03-24  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by NOBODY.
-        
         SquirrelFish lives.
         
         Initial check-in of the code I've been carrying around. Lots of stuff
@@ -17392,8 +17397,6 @@
         * wtf/TCSpinLock.h: Add an Init method to the optimised spin lock.
 
 2007-12-04  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Build fix).
 
         Fix gtk build.
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,7 +41,7 @@ namespace WebCore {
 
 PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
 {
-    return new ClipboardQt(policy);
+    return ClipboardQt::create(policy);
 }
 
 } // namespace WebCore

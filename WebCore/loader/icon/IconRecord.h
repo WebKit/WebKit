@@ -67,7 +67,10 @@ public:
 class IconRecord : public RefCounted<IconRecord> {
     friend class PageURLRecord;
 public:
-    IconRecord(const String& url); 
+    static PassRefPtr<IconRecord> create(const String& url)
+    {
+        return adoptRef(new IconRecord(url));
+    }
     ~IconRecord();
     
     time_t getTimestamp() { return m_stamp; }
@@ -85,7 +88,10 @@ public:
     const HashSet<String>& retainingPageURLs() { return m_retainingPageURLs; }
     
     IconSnapshot snapshot(bool forDeletion = false) const;
+
 private:
+    IconRecord(const String& url); 
+
     String m_iconURL;
     time_t m_stamp;
     OwnPtr<Image> m_image;

@@ -55,7 +55,7 @@ public:
             --m_refCount;
     }
 
-    bool hasOneRef()
+    bool hasOneRef() const
     {
         ASSERT(!m_deletionHasBegun);
         return m_refCount == 1;

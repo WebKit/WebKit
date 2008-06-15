@@ -1,3 +1,163 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more work on https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * WebCore.base.exp: Added some new exports needed for functions that are now
+        non-virtual.
+
+        * WebCore.xcodeproj/project.pbxproj: Moved the "icon" group to the correct
+        location in the project. Before it was inside "appcache"!
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::Clipboard):
+        * editing/mac/EditorMac.mm:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/qt/EditorQt.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * editing/wx/EditorWx.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::DocumentLoader):
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::create):
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon):
+        (WebCore::IconDatabase::setIconDataForIconURL):
+        (WebCore::IconDatabase::setIconURLForPageURL):
+        (WebCore::IconDatabase::getOrCreateIconRecord):
+        (WebCore::IconDatabase::performURLImport):
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconRecord.cpp:
+        (WebCore::IconRecord::IconRecord):
+        * loader/icon/IconRecord.h:
+        (WebCore::IconRecord::create):
+        * page/EventHandler.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * page/Frame.h:
+        (WebCore::Frame::create):
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::createDraggingClipboard):
+        * platform/Cursor.h:
+        (WebCore::SharedCursor::create):
+        (WebCore::SharedCursor::~SharedCursor):
+        (WebCore::SharedCursor::SharedCursor):
+        * platform/DragData.h:
+        * platform/PopupMenu.h:
+        (WebCore::PopupMenu::create):
+        (WebCore::PopupMenu::isActive):
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/SearchPopupMenu.h:
+        (WebCore::SearchPopupMenu::create):
+        * platform/graphics/FontFamily.cpp:
+        (WebCore::FontFamily::FontFamily):
+        (WebCore::operator==):
+        * platform/graphics/FontFamily.h:
+        (WebCore::FontFamily::FontFamily):
+        (WebCore::SharedFontFamily::create):
+        (WebCore::SharedFontFamily::SharedFontFamily):
+        (WebCore::operator!=):
+        (WebCore::FontFamily::next):
+        (WebCore::FontFamily::appendFamily):
+        (WebCore::FontFamily::releaseNext):
+        * platform/graphics/Icon.h:
+        * platform/graphics/gtk/IconGtk.cpp:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        * platform/graphics/mac/IconMac.mm:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::newIconForFile):
+        * platform/graphics/qt/IconQt.cpp:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::newIconForFile):
+        * platform/graphics/win/IconWin.cpp:
+        (WebCore::Icon::Icon):
+        (WebCore::Icon::~Icon):
+        (WebCore::Icon::newIconForFile):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/gtk/ClipboardGtk.h:
+        (WebCore::ClipboardGtk::create):
+        * platform/gtk/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::create):
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollViewScrollbar::create):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        * platform/mac/ClipboardMac.h:
+        (WebCore::ClipboardMac::create):
+        * platform/mac/DragDataMac.mm:
+        (WebCore::DragData::createClipboard):
+        (WebCore::DragData::containsCompatibleContent):
+        * platform/mac/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::create):
+        (WebCore::PlatformScrollbar::horizontalScrollbarHeight):
+        (WebCore::PlatformScrollbar::verticalScrollbarWidth):
+        * platform/mac/PopupMenuMac.mm:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/qt/ClipboardQt.h:
+        (WebCore::ClipboardQt::create):
+        * platform/qt/DragDataQt.cpp:
+        (WebCore::DragData::createClipboard):
+        * platform/qt/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::create):
+        * platform/qt/PopupMenuQt.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        * platform/win/ClipboardWin.h:
+        (WebCore::ClipboardWin::create):
+        * platform/win/CursorWin.cpp:
+        (WebCore::Cursor::Cursor):
+        (WebCore::loadSharedCursor):
+        * platform/win/DragDataWin.cpp:
+        (WebCore::DragData::createClipboard):
+        * platform/win/EditorWin.cpp:
+        (WebCore::Editor::newGeneralClipboard):
+        * platform/win/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::create):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        (WebCore::PopupMenu::show):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        * platform/wx/ClipboardWx.h:
+        (WebCore::ClipboardWx::create):
+        * platform/wx/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::create):
+        * platform/wx/PopupMenuWx.cpp:
+        (WebCore::PopupMenu::PopupMenu):
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (Icon::Icon):
+        (Icon::newIconForFile):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::createScrollbar):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * svg/graphics/SVGImageEmptyClients.h:
+        (WebCore::SVGEmptyFrameLoaderClient::createDocumentLoader):
+
 2008-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
@@ -21949,8 +22109,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::RenderLayer::resize):
 
 2008-04-03  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Rollout).
 
         Rollout r31566 as there were a few issues i missed during review (thanks to antti for pointing them out)
 

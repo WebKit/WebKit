@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -94,11 +94,11 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent& event) const
     return event.activatedWebView();
 }
 
-Clipboard* EventHandler::createDraggingClipboard() const
+PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const
 {
     COMPtr<WCDataObject> dataObject;
     WCDataObject::createInstance(&dataObject);
-    return new ClipboardWin(true, dataObject.get(), ClipboardWritable);
+    return ClipboardWin::create(true, dataObject.get(), ClipboardWritable);
 }
 
 void EventHandler::focusDocumentView()

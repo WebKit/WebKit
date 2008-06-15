@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 #if PLATFORM(WIN)
 typedef struct HICON__* HICON;
 typedef HICON HCURSOR;
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #elif PLATFORM(GTK)
@@ -59,12 +60,11 @@ namespace WebCore {
 #if PLATFORM(WIN)
     class SharedCursor : public RefCounted<SharedCursor> {
     public:
-        SharedCursor(HCURSOR nativeCursor) : RefCounted<SharedCursor>(0), m_nativeCursor(nativeCursor) {}
-        ~SharedCursor() {
-            DestroyIcon(m_nativeCursor);
-        }
+        static PassRefPtr<SharedCursor> create(HCURSOR nativeCursor) { return adoptRef(new SharedCursor(nativeCursor)); }
+        ~SharedCursor() { DestroyIcon(m_nativeCursor); }
         HCURSOR nativeCursor() const { return m_nativeCursor; }
     private:
+        SharedCursor(HCURSOR nativeCursor) : m_nativeCursor(nativeCursor) { }
         HCURSOR m_nativeCursor;
     };
     typedef RefPtr<SharedCursor> PlatformCursor;

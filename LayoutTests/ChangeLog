@@ -1,3 +1,14 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19538
+          <rdar://problem/5957595> Reading transition property from the style JS gives the wrong value
+
+        * fast/dom/CSSStyleDeclaration/resources/transition-property-names.js: Added.
+        * fast/dom/CSSStyleDeclaration/transition-property-names-expected.txt: Added.
+        * fast/dom/CSSStyleDeclaration/transition-property-names.html: Added.
+
 2008-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
@@ -14,17 +25,6 @@
         * fast/dynamic/insertAdjacentText-expected.txt: Added.
         * fast/dynamic/insertAdjacentText.html: Copied from fast/dynamic/insertAdjacentElement.html.
         * platform/mac/fast/dynamic/insertAdjacentElement-expected.txt:
-
-2008-06-14  Darin Adler  <darin@apple.com>
-
-        Reviewed by Maciej.
-
-        - test for https://bugs.webkit.org/show_bug.cgi?id=19538
-          <rdar://problem/5957595> Reading transition property from the style JS gives the wrong value
-
-        * fast/dom/CSSStyleDeclaration/resources/transition-property-names.js: Added.
-        * fast/dom/CSSStyleDeclaration/transition-property-names-expected.txt: Added.
-        * fast/dom/CSSStyleDeclaration/transition-property-names.html: Added.
 
 2008-06-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
@@ -5292,8 +5292,6 @@ r2008-04-23  Dan Bernstein  <mitz@apple.com>
         * platform/mac/fast/repaint/table-two-pass-layout-overpaint-expected.txt: Added.
 
 2008-04-03  Oliver Hunt  <oliver@apple.com>
-
-        Reviewed by NOBODY (Rollout).
 
         Rollout layout test changes for r31566
 

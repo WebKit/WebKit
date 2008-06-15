@@ -193,7 +193,7 @@ private:
     static EventHandlerDragState& dragState();
     static const double TextDragDelay;
     
-    Clipboard* createDraggingClipboard() const;
+    PassRefPtr<Clipboard> createDraggingClipboard() const;
     
     bool eventActivatedView(const PlatformMouseEvent&) const;
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& event);

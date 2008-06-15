@@ -123,7 +123,7 @@ private:
     
     HashSet<RefPtr<DocumentLoader> > m_loadersPendingDecision;
 
-    IconRecord* m_defaultIconRecord;
+    RefPtr<IconRecord> m_defaultIconRecord;
 #endif // ENABLE(ICONDATABASE)
 
 // *** Any Thread ***
@@ -134,7 +134,7 @@ public:
 
 #if ENABLE(ICONDATABASE)
 private:
-    IconRecord* getOrCreateIconRecord(const String& iconURL);
+    PassRefPtr<IconRecord> getOrCreateIconRecord(const String& iconURL);
     PageURLRecord* getOrCreatePageURLRecord(const String& pageURL);
     
     bool m_isEnabled;

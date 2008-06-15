@@ -1,7 +1,7 @@
 /*
  * This file is part of the popup menu implementation for <select> elements in WebCore.
  *
- * Copyright (C) 2006, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2008 Collabora Ltd.
  *
@@ -34,8 +34,7 @@
 namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
-    : RefCounted<PopupMenu>(0)
-    , m_popupClient(client)
+    : m_popupClient(client)
     , m_popup(0)
 {
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,14 +28,15 @@
 
 #include "AtomicString.h"
 #include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/ListRefPtr.h>
 
 namespace WebCore {
 
-class FontFamily : public RefCounted<FontFamily> {
+class SharedFontFamily;
+
+class FontFamily {
 public:
-    FontFamily() : RefCounted<FontFamily>(0) { }
-    
+    FontFamily() { }
     FontFamily(const FontFamily&);    
     FontFamily& operator=(const FontFamily&);
 
@@ -43,18 +44,44 @@ public:
     const AtomicString& family() const { return m_family; }
     bool familyIsEmpty() const { return m_family.isEmpty(); }
 
-    FontFamily* next() { return m_next.get(); }
-    const FontFamily* next() const { return m_next.get(); }
+    const FontFamily* next() const;
 
-    void appendFamily(PassRefPtr<FontFamily> family) { m_next = family; }
+    void appendFamily(PassRefPtr<SharedFontFamily>);
+    PassRefPtr<SharedFontFamily> releaseNext();
 
-    bool operator==(const FontFamily&) const;
-    bool operator!=(const FontFamily& x) const { return !(*this == x); }
-    
 private:
     AtomicString m_family;
-    RefPtr<FontFamily> m_next;
+    ListRefPtr<SharedFontFamily> m_next;
 };
+
+class SharedFontFamily : public FontFamily, public RefCounted<SharedFontFamily> {
+public:
+    static PassRefPtr<SharedFontFamily> create()
+    {
+        return adoptRef(new SharedFontFamily);
+    }
+
+private:
+    SharedFontFamily() { }
+};
+
+bool operator==(const FontFamily&, const FontFamily&);
+inline bool operator!=(const FontFamily& a, const FontFamily& b) { return !(a == b); }
+
+inline const FontFamily* FontFamily::next() const
+{
+    return m_next.get();
+}
+
+inline void FontFamily::appendFamily(PassRefPtr<SharedFontFamily> family)
+{
+    m_next = family;
+}
+
+inline PassRefPtr<SharedFontFamily> FontFamily::releaseNext()
+{
+    return m_next.release();
+}
 
 }
 

@@ -556,10 +556,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const Strin
 
     COMPtr<WebFrame> webFrame(AdoptCOM, WebFrame::createInstance());
 
-    webFrame->initWithWebFrameView(0, m_webFrame->webView(), coreFrame->page(), ownerElement);
-
-    RefPtr<Frame> childFrame(adoptRef(core(webFrame.get()))); // We have to adopt, because Frames start out with a refcount of 1.
-    ASSERT(childFrame);
+    RefPtr<Frame> childFrame = webFrame->init(m_webFrame->webView(), coreFrame->page(), ownerElement);
 
     coreFrame->tree()->appendChild(childFrame);
     childFrame->tree()->setName(name);

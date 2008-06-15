@@ -1054,7 +1054,7 @@ bool RenderLayer::isActive() const
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
-        RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, orientation, RegularScrollbar);
+        RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, orientation, RegularScrollbar);
         m_object->document()->view()->addChild(widget.get());
         return widget.release();
     }

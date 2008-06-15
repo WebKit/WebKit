@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -47,28 +47,23 @@ class String;
     
 class Icon : public RefCounted<Icon> {
 public:
-    Icon();
-    ~Icon();
-    
     static PassRefPtr<Icon> newIconForFile(const String& filename);
+    ~Icon();
 
     void paint(GraphicsContext*, const IntRect&);
-
-#if PLATFORM(WIN)
-    Icon(HICON);
-#endif
 
 private:
 #if PLATFORM(MAC)
     Icon(NSImage*);
-#endif
-#if PLATFORM(MAC)
     RetainPtr<NSImage> m_nsImage;
 #elif PLATFORM(WIN)
+    Icon(HICON);
     HICON m_hIcon;
 #elif PLATFORM(QT)
+    Icon();
     QIcon m_icon;
 #elif PLATFORM(GTK)
+    Icon();
     GdkPixbuf* m_icon;
 #endif
 };

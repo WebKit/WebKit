@@ -628,8 +628,7 @@ bool FrameLoaderClientWx::shouldFallBack(const WebCore::ResourceError& error)
 
 WTF::PassRefPtr<DocumentLoader> FrameLoaderClientWx::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<DocumentLoader> loader = new DocumentLoader(request, substituteData);
-    return loader.release();
+    return DocumentLoader::create(request, substituteData);
 }
 
 void FrameLoaderClientWx::download(ResourceHandle*, const ResourceRequest&, const ResourceRequest&, const ResourceResponse&)

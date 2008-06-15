@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,7 @@
 namespace WebCore {
 
 FontFamily::FontFamily(const FontFamily& other)
-    : RefCounted<FontFamily>(0)
-    , m_family(other.m_family)
+    : m_family(other.m_family)
     , m_next(other.m_next)
 {
 }
@@ -42,14 +41,19 @@ FontFamily& FontFamily::operator=(const FontFamily& other)
     return *this;
 }
 
-bool FontFamily::operator==(const FontFamily &compareFontFamily) const
+bool operator==(const FontFamily& a, const FontFamily& b)
 {
-    if ((!m_next && compareFontFamily.m_next) || 
-        (m_next && !compareFontFamily.m_next) ||
-        ((m_next && compareFontFamily.m_next) && (*m_next != *(compareFontFamily.m_next))))
+    if (a.family() != b.family())
         return false;
-    
-    return m_family == compareFontFamily.m_family;
+    const FontFamily* ap;
+    const FontFamily* bp;
+    for (ap = a.next(), bp = b.next(); ap != bp; ap = ap->next(), bp = bp->next()) {
+        if (!ap || !bp)
+            return false;
+        if (ap->family() != bp->family())
+            return false;
+    }
+    return true;
 }
 
 }

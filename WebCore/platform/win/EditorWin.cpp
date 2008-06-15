@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,7 +45,7 @@ PassRefPtr<Clipboard> Editor::newGeneralClipboard(ClipboardAccessPolicy policy)
     if (!SUCCEEDED(OleGetClipboard(&clipboardData)))
         clipboardData = 0;
 
-    return new ClipboardWin(false, clipboardData.get(), policy);
+    return ClipboardWin::create(false, clipboardData.get(), policy);
 }
 
 } // namespace WebCore

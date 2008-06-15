@@ -8639,7 +8639,6 @@
 		1A8F6BB00DB55CDC001DB794 /* appcache */ = {
 			isa = PBXGroup;
 			children = (
-				5126E6B60A2E3AEF005C29FA /* icon */,
 				1A8F6BB10DB55CDC001DB794 /* ApplicationCache.cpp */,
 				1A8F6BB20DB55CDC001DB794 /* ApplicationCache.h */,
 				1A8F6BB30DB55CDC001DB794 /* ApplicationCacheGroup.cpp */,
@@ -8787,8 +8786,7 @@
 				51E1ECBC0C91C90400DC255B /* PageURLRecord.cpp */,
 				51E1ECBD0C91C90400DC255B /* PageURLRecord.h */,
 			);
-			name = icon;
-			path = ../icon;
+			path = icon;
 			sourceTree = "<group>";
 		};
 		512DD8E80D91E691000F89EE /* archive */ = {
@@ -12383,6 +12381,7 @@
 			children = (
 				1A8F6BB00DB55CDC001DB794 /* appcache */,
 				512DD8E80D91E691000F89EE /* archive */,
+				5126E6B60A2E3AEF005C29FA /* icon */,
 				93A1EAA20A5634D8006960A0 /* mac */,
 				BCB16BFE0979C3BD00467741 /* Cache.cpp */,
 				BCB16BFF0979C3BD00467741 /* Cache.h */,

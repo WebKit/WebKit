@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,9 +39,9 @@
 
 namespace WebCore {
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
+PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return new ClipboardWin(true, m_platformDragData, policy);
+    return ClipboardWin::create(true, m_platformDragData, policy);
 }
 
 bool DragData::containsURL() const

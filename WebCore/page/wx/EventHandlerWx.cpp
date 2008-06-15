@@ -24,9 +24,9 @@
  */
 
 #include "config.h"
+#include "EventHandler.h"
 
 #include "ClipboardWx.h"
-#include "EventHandler.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -91,9 +91,9 @@ bool EventHandler::eventActivatedView(const PlatformMouseEvent&) const
     return false;
 }
 
-Clipboard* EventHandler::createDraggingClipboard() const 
+PassRefPtr<Clipboard> EventHandler::createDraggingClipboard() const 
 {
-    return new ClipboardWx(ClipboardWritable, true);
+    return ClipboardWx::create(ClipboardWritable, true);
 }
 
 }

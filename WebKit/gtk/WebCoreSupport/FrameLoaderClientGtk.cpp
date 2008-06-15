@@ -149,8 +149,7 @@ String FrameLoaderClient::userAgent(const KURL&)
 
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClient::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<DocumentLoader> loader = new DocumentLoader(request, substituteData);
-    return loader.release();
+    return DocumentLoader::create(request, substituteData);
 }
 
 void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunction, PassRefPtr<FormState>)

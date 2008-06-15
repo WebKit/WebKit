@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
  * Copyright (C) 2006 Zack Rusin <zack@kde.org>
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
@@ -109,7 +109,7 @@ void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
         if (hasBar && !m_hBar) {
-            m_hBar = new PlatformScrollbar(this, HorizontalScrollbar, RegularScrollbar);
+            m_hBar = PlatformScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
             m_view->addChild(m_hBar.get());
         } else if (!hasBar && m_hBar) {
             m_view->removeChild(m_hBar.get());;
@@ -122,7 +122,7 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
         if (hasBar && !m_vBar) {
-            m_vBar = new PlatformScrollbar(this, VerticalScrollbar, RegularScrollbar);
+            m_vBar = PlatformScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
             m_view->addChild(m_vBar.get());
         } else if (!hasBar && m_vBar) {
             m_view->removeChild(m_vBar.get());

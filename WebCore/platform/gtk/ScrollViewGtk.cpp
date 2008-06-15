@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc. All rights reserved.
  * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
  * Copyright (C) 2007 Holger Hans Peter Freyther
  * Copyright (C) 2008 Collabora Ltd.
@@ -52,10 +52,15 @@ namespace WebCore {
 
 class ScrollViewScrollbar : public PlatformScrollbar {
 public:
+    static PassRefPtr<ScrollViewScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+    {
+        return adoptRef(new ScrollViewScrollbar(client, orientation, size));
+    }
+
+private:
     ScrollViewScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
-protected:
-    void geometryChanged() const;
+    virtual void geometryChanged() const;
 };
 
 class ScrollView::ScrollViewPrivate : public ScrollbarClient
@@ -142,7 +147,7 @@ void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
         if (hasBar && !hBar && !horizontalAdjustment) {
-            hBar = new ScrollViewScrollbar(this, HorizontalScrollbar, RegularScrollbar);
+            hBar = ScrollViewScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
             view->addChild(hBar.get());
         } else if (!hasBar && hBar) {
             view->removeChild(hBar.get());
@@ -155,7 +160,7 @@ void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
     if (Scrollbar::hasPlatformScrollbars()) {
         if (hasBar && !vBar && !verticalAdjustment) {
-            vBar = new ScrollViewScrollbar(this, VerticalScrollbar, RegularScrollbar);
+            vBar = ScrollViewScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
             view->addChild(vBar.get());
         } else if (!hasBar && vBar) {
             view->removeChild(vBar.get());

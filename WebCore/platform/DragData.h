@@ -84,7 +84,7 @@ namespace WebCore {
         const IntPoint& globalPosition() const { return m_globalPosition; }
         DragDataRef platformData() const { return m_platformDragData; }
         DragOperation draggingSourceOperationMask() const { return m_draggingSourceOperationMask; }
-        Clipboard* createClipboard(ClipboardAccessPolicy) const;
+        PassRefPtr<Clipboard> createClipboard(ClipboardAccessPolicy) const;
         bool containsURL() const;
         bool containsPlainText() const;
         bool containsCompatibleContent() const;

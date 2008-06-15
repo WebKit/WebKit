@@ -279,7 +279,7 @@ WebView *getWebView(WebFrame *webFrame)
     WebView *webView = kit(page);
 
     WebFrame *frame = [[self alloc] _initWithWebFrameView:frameView webView:webView];
-    RefPtr<Frame> coreFrame = new Frame(page, ownerElement, new WebFrameLoaderClient(frame));
+    RefPtr<Frame> coreFrame = Frame::create(page, ownerElement, new WebFrameLoaderClient(frame));
     [frame release];
     frame->_private->coreFrame = coreFrame.get();
 

@@ -1,3 +1,25 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more of https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createFrame): Remove now-obsolete adoptRef that was balanced by
+        a ref call inside the Frame constructor. The lifetime rules for Frame are now the
+        conventional ones without a special case.
+
+        * WebFrame.cpp:
+        (WebFrame::init): Renamed function from initWithWebFrameView and removed the unused
+        IWebFrameView argument (every caller was passing 0). Also changed this to return the
+        WebCore Frame object, which is needed to straighten out the lifetime and ownership
+        issues.
+        * WebFrame.h: Ditto.
+
+        * WebView.cpp:
+        (WebView::initWithFrame): Changed to call new init function and use the return value.
+
 2008-06-13  Darin Adler  <darin@apple.com>
 
         Reviewed by John Sullivan.
@@ -5645,8 +5667,6 @@
 
         Update WebKit.sln for the removal of Release dftables
 
-        Reviewed by NOBODY.
-
         * WebKit.vcproj/WebKit.sln:
 
 2007-10-25  Kevin McCullough  <kmccullough@apple.com>
@@ -5915,8 +5935,6 @@
 2007-10-17  Adam Roben  <aroben@apple.com>
 
         Fix for clean builds needed after r26683
-
-        Reviewed by NOBODY.
 
         * WebView.cpp: Remove #include of non-existant file.
 
@@ -13889,8 +13907,6 @@
 
 2007-01-11  Brady Eidson  <beidson@apple.com>
 
-        Reviewed by NOBODY.
-        
         Make it build again after my OpenSource http auth checkin
 
         * WebFrame.cpp:

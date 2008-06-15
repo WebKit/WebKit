@@ -874,7 +874,7 @@ void WebFrameLoaderClient::prepareForDataSourceReplacement()
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<WebDocumentLoaderMac> loader = new WebDocumentLoaderMac(request, substituteData);
+    RefPtr<WebDocumentLoaderMac> loader = WebDocumentLoaderMac::create(request, substituteData);
 
     WebDataSource *dataSource = [[WebDataSource alloc] _initWithDocumentLoader:loader.get()];
     loader->setDataSource(dataSource, getWebView(m_webFrame.get()));
@@ -1082,7 +1082,7 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 
     WebFrame *newFrame = kit(newCoreFrame.get());
 
-    core(m_webFrame.get())->tree()->appendChild(adoptRef(newCoreFrame.get()));
+    core(m_webFrame.get())->tree()->appendChild(newCoreFrame);
     if ([newFrame _dataSource])
         [[newFrame _dataSource] _documentLoader]->setOverrideEncoding([[m_webFrame.get() _dataSource] _documentLoader]->overrideEncoding());  
 

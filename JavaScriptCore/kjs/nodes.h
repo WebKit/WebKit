@@ -125,7 +125,7 @@ namespace KJS {
     public:
         void ref() KJS_FAST_CALL;
         void deref() KJS_FAST_CALL;
-        unsigned refcount() KJS_FAST_CALL;
+        bool hasOneRef() KJS_FAST_CALL;
 
         static void deleteNewObjects() KJS_FAST_CALL;
 

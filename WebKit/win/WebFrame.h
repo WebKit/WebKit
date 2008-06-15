@@ -278,7 +278,7 @@ public:
     virtual void registerForIconNotification(bool listen);
 
     // WebFrame
-    void initWithWebFrameView(IWebFrameView*, IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
+    PassRefPtr<WebCore::Frame> init(IWebView*, WebCore::Page*, WebCore::HTMLFrameOwnerElement*);
     WebCore::Frame* impl();
     void invalidate();
     void unmarkAllMisspellings();

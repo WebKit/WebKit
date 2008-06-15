@@ -40,8 +40,7 @@ static int s_menuStartId = wxNewId();
 namespace WebCore {
 
 PopupMenu::PopupMenu(PopupMenuClient* client)
-    : RefCounted<PopupMenu>(0)
-    , m_popupClient(client)
+    : m_popupClient(client)
     , m_menu(NULL)
 {
 }

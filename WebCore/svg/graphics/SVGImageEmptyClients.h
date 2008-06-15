@@ -229,7 +229,7 @@ public:
     virtual void didFinishLoad() { }
     virtual void prepareForDataSourceReplacement() { }
     
-    virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) { return new DocumentLoader(request, substituteData); }
+    virtual PassRefPtr<DocumentLoader> createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData) { return DocumentLoader::create(request, substituteData); }
     virtual void setTitle(const String& title, const KURL&) { }
     
     virtual String userAgent(const KURL&) { return ""; }

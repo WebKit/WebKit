@@ -1,7 +1,7 @@
 /*
  * This file is part of the select element renderer in WebCore.
  *
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,7 +128,7 @@ void RenderListBox::updateFromElement()
         
         if (!m_vBar && Scrollbar::hasPlatformScrollbars())
             if (FrameView* view = node()->document()->view()) {
-                RefPtr<PlatformScrollbar> widget = new PlatformScrollbar(this, VerticalScrollbar, SmallScrollbar);
+                RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, VerticalScrollbar, SmallScrollbar);
                 view->addChild(widget.get());
                 m_vBar = widget.release();
             }

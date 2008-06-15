@@ -27,25 +27,19 @@
  */
 
 #import "WebDataSourcePrivate.h"
+#import <wtf/Forward.h>
 
-#ifdef __cplusplus
 namespace WebCore {
     class DocumentLoader;
 }
-typedef WebCore::DocumentLoader WebCoreDocumentLoader;
+
 class WebDocumentLoaderMac;
-#else
-@class WebCoreDocumentLoader;
-@class WebDocumentLoaderMac;
-#endif
 
 @class DOMDocumentFragment;
 @class DOMElement;
 @class WebArchive;
 @class WebResource;
 @class WebView;
-
-@protocol WebDocumentRepresentation;
 
 @interface WebDataSource (WebInternal)
 - (void)_makeRepresentation;
@@ -57,10 +51,10 @@ class WebDocumentLoaderMac;
 - (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
 + (NSMutableDictionary *)_repTypesAllowImageTypeOmission:(BOOL)allowImageTypeOmission;
 - (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
-- (id)_initWithDocumentLoader:(WebDocumentLoaderMac*)loader;
+- (id)_initWithDocumentLoader:(PassRefPtr<WebDocumentLoaderMac>)loader;
 - (void)_finishedLoading;
 - (void)_receivedData:(NSData *)data;
 - (void)_revertToProvisionalState;
 - (void)_setMainDocumentError:(NSError *)error;
-- (WebCoreDocumentLoader*)_documentLoader;
+- (WebCore::DocumentLoader*)_documentLoader;
 @end

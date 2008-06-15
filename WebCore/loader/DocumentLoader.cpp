@@ -135,8 +135,7 @@ static void setAllDefersLoading(const ResourceLoaderSet& loaders, bool defers)
 }
 
 DocumentLoader::DocumentLoader(const ResourceRequest& req, const SubstituteData& substituteData)
-    : RefCounted<DocumentLoader>(0)
-    , m_deferMainResourceDataLoad(true)
+    : m_deferMainResourceDataLoad(true)
     , m_frame(0)
     , m_originalRequest(req)
     , m_substituteData(substituteData)

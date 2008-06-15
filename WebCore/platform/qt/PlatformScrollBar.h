@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -28,17 +28,20 @@
 #ifndef PlatformScrollbar_h
 #define PlatformScrollbar_h
 
-#include "Widget.h"
 #include "ScrollBar.h"
 #include "Timer.h"
-
+#include "Widget.h"
 #include <QStyleOptionSlider>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
 class PlatformScrollbar : public Widget, public Scrollbar {
 public:
-    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
+    {
+        return adoptRef(new PlatformScrollbar(client, orientation, size));
+    }
     virtual ~PlatformScrollbar();
 
     virtual bool isWidget() const { return true; }
@@ -73,6 +76,8 @@ protected:
     virtual void updateThumbProportion();
 
 private:
+    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+
     int thumbPosition() const;
     int thumbLength() const;
     int trackLength() const;

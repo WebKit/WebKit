@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -102,9 +102,9 @@ Color DragData::asColor() const
     return qvariant_cast<QColor>(m_platformDragData->colorData());
 }
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy policy) const
+PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy policy) const
 {
-    return new ClipboardQt(policy, m_platformDragData);
+    return ClipboardQt::create(policy, m_platformDragData);
 }
     
 bool DragData::containsCompatibleContent() const

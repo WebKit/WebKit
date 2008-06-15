@@ -160,19 +160,19 @@ void ParserRefCounted::deref()
         trackedObjectExtraRefCounts->remove(it);
 }
 
-unsigned ParserRefCounted::refcount()
+bool ParserRefCounted::hasOneRef()
 {
     if (newTrackedObjects && newTrackedObjects->contains(this)) {
         ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
-        return 0;
+        return false;
     }
 
     ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
 
     if (!trackedObjectExtraRefCounts)
-        return 1;
+        return true;
 
-    return 1 + trackedObjectExtraRefCounts->count(this);
+    return !trackedObjectExtraRefCounts->contains(this);
 }
 
 void ParserRefCounted::deleteNewObjects()

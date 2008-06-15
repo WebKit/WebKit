@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007, Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,9 +36,11 @@ namespace WebCore {
     // Created from the EventHandlerGtk to be used by the dom
     class ClipboardGtk : public Clipboard {
     public:
-        ClipboardGtk(ClipboardAccessPolicy, bool);
-        ~ClipboardGtk();
-
+        static PassRefPtr<ClipboardGtk> create(ClipboardAccessPolicy policy, bool isForDragging)
+        {
+            return adoptRef(new ClipboardGtk(policy, isForDragging));
+        }
+        virtual ~ClipboardGtk();
 
         void clearData(const String&);
         void clearAllData();
@@ -58,6 +60,9 @@ namespace WebCore {
         virtual void writeRange(Range*, Frame*);
 
         virtual bool hasData();
+
+    private:
+        ClipboardGtk(ClipboardAccessPolicy, bool);
     };
 }
 

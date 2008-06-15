@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         ii.hbmMask = hMask.get();
         ii.hbmColor = hCursor.get();
 
-        m_impl = new SharedCursor(CreateIconIndirect(&ii));
+        m_impl = SharedCursor::create(CreateIconIndirect(&ii));
     } else {
         // Platform doesn't support alpha blended cursors, so we need
         // to create the mask manually
@@ -118,7 +118,7 @@ Cursor::Cursor(Image* img, const IntPoint& hotspot)
         icon.yHotspot = hotspot.y();
         icon.hbmMask = andMask.get();
         icon.hbmColor = xorMask.get();
-        m_impl = new SharedCursor(CreateIconIndirect(&icon));
+        m_impl = SharedCursor::create(CreateIconIndirect(&icon));
 
         DeleteDC(xorMaskDC);
         DeleteDC(andMaskDC);
@@ -156,7 +156,7 @@ static Cursor loadCursorByName(char* name, int x, int y)
 
 static PassRefPtr<SharedCursor> loadSharedCursor(HINSTANCE hInstance, LPCTSTR lpCursorName)
 {
-    return new SharedCursor(LoadCursor(hInstance, lpCursorName));
+    return SharedCursor::create(LoadCursor(hInstance, lpCursorName));
 }
 
 const Cursor& pointerCursor()

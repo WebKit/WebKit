@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,7 +28,6 @@
 
 #include "Clipboard.h"
 #include "CachedResourceClient.h"
-#include "ClipboardAccessPolicy.h"
 
 QT_BEGIN_NAMESPACE
 class QMimeData;
@@ -41,11 +40,15 @@ namespace WebCore {
     // State available during IE's events for drag and drop and copy/paste
     class ClipboardQt : public Clipboard, public CachedResourceClient {
     public:
-        ClipboardQt(ClipboardAccessPolicy policy, const QMimeData* readableClipboard);
-        
-        // Clipboard is writable so it will create its own QMimeData object
-        ClipboardQt(ClipboardAccessPolicy policy, bool forDragging = false);
-        ~ClipboardQt();
+        static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, const QMimeData* readableClipboard)
+        {
+            return adoptRef(new ClipboardQt(policy, readableClipboard));
+        }
+        static PassRefPtr<ClipboardQt> create(ClipboardAccessPolicy policy, bool forDragging = false)
+        {
+            return adoptRef(new ClipboardQt(policy, forDragging));
+        }
+        virtual ~ClipboardQt();
     
         void clearData(const String& type);
         void clearAllData();
@@ -69,7 +72,12 @@ namespace WebCore {
         void invalidateWritableData() { m_writableData = 0; }
         
     private:
-        void setDragImage(CachedImage* image, Node *node, const IntPoint &loc);
+        ClipboardQt(ClipboardAccessPolicy, const QMimeData* readableClipboard);
+
+        // Clipboard is writable so it will create its own QMimeData object
+        ClipboardQt(ClipboardAccessPolicy, bool forDragging);
+
+        void setDragImage(CachedImage*, Node*, const IntPoint& loc);
         
         const QMimeData* m_readableData;
         QMimeData* m_writableData;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,8 +34,7 @@
 namespace WebCore {
 
 Clipboard::Clipboard(ClipboardAccessPolicy policy, bool isForDragging) 
-    : RefCounted<Clipboard>(0)
-    , m_policy(policy) 
+    : m_policy(policy) 
     , m_dragStarted(false)
     , m_forDragging(isForDragging)
     , m_dragImage(0)

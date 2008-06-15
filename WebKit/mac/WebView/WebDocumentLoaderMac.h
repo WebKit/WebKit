@@ -39,19 +39,24 @@ namespace WebCore {
 
 class WebDocumentLoaderMac : public WebCore::DocumentLoader {
 public:
-    WebDocumentLoaderMac(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+    static PassRefPtr<WebDocumentLoaderMac> create(const WebCore::ResourceRequest& request, const WebCore::SubstituteData& data)
+    {
+        return adoptRef(new WebDocumentLoaderMac(request, data));
+    }
 
     void setDataSource(WebDataSource *, WebView*);
     void detachDataSource();
     WebDataSource *dataSource() const;
 
-    virtual void attachToFrame();
-    virtual void detachFromFrame();
-
     void increaseLoadCount(unsigned long identifier);
     void decreaseLoadCount(unsigned long identifier);
 
 private:
+    WebDocumentLoaderMac(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+
+    virtual void attachToFrame();
+    virtual void detachFromFrame();
+
     void retainDataSource();
     void releaseDataSource();
 
