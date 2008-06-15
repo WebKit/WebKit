@@ -56,7 +56,7 @@ Color DragData::asColor() const
     return Color();
 }
 
-Clipboard* DragData::createClipboard(ClipboardAccessPolicy) const
+PassRefPtr<Clipboard> DragData::createClipboard(ClipboardAccessPolicy) const
 {
     return 0;
 }

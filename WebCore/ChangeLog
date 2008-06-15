@@ -1,5 +1,12 @@
 2008-06-14  Darin Adler  <darin@apple.com>
 
+        - try to fix the gtk build
+
+        * platform/gtk/DragDataGtk.cpp:
+        (WebCore::DragData::createClipboard): Changed return type to PassRefPtr.
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
         - another try at fixing the wx build
 
         * platform/wx/DragDataWx.cpp:
