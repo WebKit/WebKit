@@ -71,7 +71,7 @@
 #include "TextIterator.h"
 #include "TextResourceDecoder.h"
 #include "XMLNames.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "visible_units.h"
@@ -235,7 +235,7 @@ void Frame::setView(FrameView* view)
     loader()->resetMultipleFormSubmissionProtection();
 }
 
-KJSProxy* Frame::scriptProxy()
+ScriptController* Frame::scriptProxy()
 {
     return &d->m_jscript;
 }

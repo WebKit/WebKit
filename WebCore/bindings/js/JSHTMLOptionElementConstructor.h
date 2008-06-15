@@ -20,7 +20,7 @@
 #ifndef JSHTMLOptionElementConstructor_h
 #define JSHTMLOptionElementConstructor_h
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

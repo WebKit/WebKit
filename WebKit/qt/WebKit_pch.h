@@ -71,6 +71,6 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/GetPtr.h>
 
-#include "../../WebCore/bindings/js/kjs_binding.h"
+#include "../../WebCore/bindings/js/JSDOMBinding.h"
 #include "../../JavaScriptCore/kjs/math_object.h"
 #endif

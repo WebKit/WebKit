@@ -32,7 +32,7 @@
 
 #include "NotImplemented.h"
 #include "PluginView.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "runtime_root.h"
 #include "runtime.h"
 

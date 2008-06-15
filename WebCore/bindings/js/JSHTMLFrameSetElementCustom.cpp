@@ -32,7 +32,7 @@
 #include "HTMLNames.h"
 #include "JSDOMWindow.h"
 #include "JSDOMWindowShell.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 using namespace KJS;
 

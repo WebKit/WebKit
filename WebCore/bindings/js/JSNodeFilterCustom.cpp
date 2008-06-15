@@ -29,7 +29,7 @@
 #include "JSNode.h"
 #include "JSNodeFilterCondition.h"
 #include "NodeFilter.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 using namespace KJS;
 

@@ -20,7 +20,7 @@
 #ifndef kjs_html_h
 #define kjs_html_h
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 namespace WebCore {
 

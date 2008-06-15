@@ -37,7 +37,7 @@
 #include "SVGSVGElement.h"
 #include "SMILTimeContainer.h"
 #include "XMLTokenizer.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 namespace WebCore {
 

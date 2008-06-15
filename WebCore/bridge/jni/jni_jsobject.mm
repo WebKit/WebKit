@@ -32,7 +32,7 @@
 #include "WebCoreFrameView.h"
 #include "jni_runtime.h"
 #include "jni_utility.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
 #include <kjs/ExecState.h>

@@ -34,8 +34,8 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "JSDOMWindowCustom.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 
 namespace WebCore {
     

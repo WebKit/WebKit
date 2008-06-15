@@ -102,10 +102,10 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSXMLHttpRequestCustom.cpp
         bindings/js/JSXSLTProcessorConstructor.cpp
         bindings/js/JSXSLTProcessorCustom.cpp
-        bindings/js/kjs_binding.cpp
+        bindings/js/JSDOMBinding.cpp
         bindings/js/kjs_events.cpp
         bindings/js/kjs_html.cpp
-        bindings/js/kjs_proxy.cpp
+        bindings/js/ScriptController.cpp
         bindings/js/PausedTimeouts.cpp
         bindings/js/ScheduledAction.cpp
     </set>

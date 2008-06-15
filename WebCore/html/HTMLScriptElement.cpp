@@ -30,7 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLNames.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "MIMETypeRegistry.h"
 #include "Text.h"
 

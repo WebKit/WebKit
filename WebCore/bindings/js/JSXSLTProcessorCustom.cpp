@@ -40,7 +40,7 @@
 #include "Node.h"
 #include "PlatformString.h"
 #include "XSLTProcessor.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 using namespace KJS;
 

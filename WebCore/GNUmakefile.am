@@ -544,10 +544,10 @@ webcore_sources += \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
-	WebCore/bindings/js/kjs_binding.cpp \
+	WebCore/bindings/js/JSDOMBinding.cpp \
 	WebCore/bindings/js/kjs_events.cpp \
 	WebCore/bindings/js/kjs_html.cpp \
-	WebCore/bindings/js/kjs_proxy.cpp \
+	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/PausedTimeouts.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \
 	WebCore/bridge/NP_jsobject.cpp \

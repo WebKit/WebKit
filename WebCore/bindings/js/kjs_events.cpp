@@ -31,7 +31,7 @@
 #include "JSDOMWindow.h"
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/function_object.h>
 
 using namespace KJS;
@@ -54,7 +54,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return;
-    KJSProxy* scriptProxy = frame->scriptProxy();
+    ScriptController* scriptProxy = frame->scriptProxy();
     if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
         return;
 

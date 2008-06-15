@@ -42,7 +42,7 @@
 #include "EventNames.h"
 #include "Frame.h"
 #include "FrameView.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "RegisteredEventListener.h"
 
 namespace WebCore {

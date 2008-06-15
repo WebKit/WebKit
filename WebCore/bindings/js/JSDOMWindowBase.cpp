@@ -59,7 +59,7 @@
 #include "WindowFeatures.h"
 #include "htmlediting.h"
 #include "kjs_events.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
 

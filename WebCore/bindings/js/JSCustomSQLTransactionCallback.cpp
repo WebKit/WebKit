@@ -34,7 +34,7 @@
 #include "DOMWindow.h"
 #include "Frame.h"
 #include "Logging.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "JSSQLTransaction.h"
 #include "Page.h"
 #include <wtf/MainThread.h>

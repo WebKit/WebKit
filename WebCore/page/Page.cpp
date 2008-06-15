@@ -50,7 +50,7 @@
 #include "StringHash.h"
 #include "TextResourceDecoder.h"
 #include "Widget.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
 #include <wtf/HashMap.h>

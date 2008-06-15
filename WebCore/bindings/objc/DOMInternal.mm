@@ -37,7 +37,7 @@
 #import "SVGException.h"
 #import "WebScriptObjectPrivate.h"
 #import "XPathEvaluator.h"
-#import "kjs_proxy.h"
+#import "ScriptController.h"
 #import "runtime_root.h"
 
 //------------------------------------------------------------------------------------------

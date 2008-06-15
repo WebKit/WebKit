@@ -41,7 +41,7 @@
 #include "JSSVGPathSegMovetoAbs.h"
 #include "JSSVGPathSegMovetoRel.h"
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 #include "SVGPathSeg.h"
 #include "SVGPathSegArc.h"

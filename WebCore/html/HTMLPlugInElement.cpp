@@ -35,7 +35,7 @@
 #include "RenderWidget.h"
 #include "Settings.h"
 #include "Widget.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
 #include "runtime.h"

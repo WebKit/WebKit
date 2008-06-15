@@ -28,7 +28,7 @@
 #include "JSNamedNodesCollection.h"
 #include "JSNode.h"
 #include "Node.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include "kjs_html.h"
 #include <wtf/Vector.h>
 

@@ -32,7 +32,7 @@
 #include "Frame.h"
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/object.h>
 
 using namespace KJS;

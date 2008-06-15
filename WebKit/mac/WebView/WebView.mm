@@ -120,7 +120,7 @@
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreTextRenderer.h>
 #import <WebCore/WebCoreView.h>
-#import <WebCore/kjs_proxy.h>
+#import <WebCore/ScriptController.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>

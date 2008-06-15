@@ -25,7 +25,7 @@
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
 #include "JSHTMLElement.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "HTMLPlugInElement.h"
 
 #if USE(JAVASCRIPTCORE_BINDINGS)

@@ -30,7 +30,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 using namespace KJS;
 
@@ -54,7 +54,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
     if (!frame->scriptProxy()->isEnabled())
         return;
 
-    KJSProxy* scriptProxy = frame->scriptProxy();
+    ScriptController* scriptProxy = frame->scriptProxy();
     
 
     scriptProxy->setProcessingTimerCallback(true);

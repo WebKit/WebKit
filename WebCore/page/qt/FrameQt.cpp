@@ -62,7 +62,7 @@
 #include "PlatformWheelEvent.h"
 #include "MouseEventWithHitTestResults.h"
 #include "SelectionController.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "TypingCommand.h"
 #include "JSLock.h"
 #include "qt_instance.h"

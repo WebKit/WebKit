@@ -2,6 +2,14 @@
 
         Rubber stamped by Sam.
 
+        - new names for kjs_binding.h and kjs_proxy.h
+
+        * WebFrame.cpp:
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
         - renamed HTMLGenericFormElement to HTMLFormControlElement
 
         * WebFrame.cpp:

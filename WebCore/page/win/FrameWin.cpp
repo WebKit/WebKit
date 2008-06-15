@@ -54,7 +54,7 @@
 #include "RenderView.h"
 #include "ResourceHandle.h"
 #include "TextResourceDecoder.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "GraphicsContext.h"

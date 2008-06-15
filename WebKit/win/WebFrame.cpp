@@ -89,8 +89,8 @@
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/Settings.h>
 #include <WebCore/TextIterator.h>
-#include <WebCore/kjs_binding.h>
-#include <WebCore/kjs_proxy.h>
+#include <WebCore/JSDOMBinding.h>
+#include <WebCore/ScriptController.h>
 #include <JavaScriptCore/APICast.h>
 #include <wtf/MathExtras.h>
 #pragma warning(pop)

@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 #include "Console.h"
 #include "DOMWindow.h"
@@ -47,7 +47,7 @@ using namespace WebCore::EventNames;
 
 namespace WebCore {
 
-KJSProxy::KJSProxy(Frame* frame)
+ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_handlerLineno(0)
     , m_processingTimerCallback(0)
@@ -56,7 +56,7 @@ KJSProxy::KJSProxy(Frame* frame)
 {
 }
 
-KJSProxy::~KJSProxy()
+ScriptController::~ScriptController()
 {
     if (m_windowShell) {
         m_windowShell = 0;
@@ -66,7 +66,7 @@ KJSProxy::~KJSProxy()
     }
 }
 
-JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& str) 
+JSValue* ScriptController::evaluate(const String& filename, int baseLine, const String& str) 
 {
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occured or the type couldn't be converted.
@@ -105,7 +105,7 @@ JSValue* KJSProxy::evaluate(const String& filename, int baseLine, const String& 
     return 0;
 }
 
-void KJSProxy::clear()
+void ScriptController::clear()
 {
     if (!m_windowShell)
         return;
@@ -123,7 +123,7 @@ void KJSProxy::clear()
     gcController().garbageCollectSoon();
 }
 
-PassRefPtr<EventListener> KJSProxy::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> ScriptController::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
@@ -131,7 +131,7 @@ PassRefPtr<EventListener> KJSProxy::createHTMLEventHandler(const String& functio
 }
 
 #if ENABLE(SVG)
-PassRefPtr<EventListener> KJSProxy::createSVGEventHandler(const String& functionName, const String& code, Node* node)
+PassRefPtr<EventListener> ScriptController::createSVGEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
     JSLock lock;
@@ -139,7 +139,7 @@ PassRefPtr<EventListener> KJSProxy::createSVGEventHandler(const String& function
 }
 #endif
 
-void KJSProxy::finishedWithEvent(Event* event)
+void ScriptController::finishedWithEvent(Event* event)
 {
   // This is called when the DOM implementation has finished with a particular event. This
   // is the case in sitations where an event has been created just for temporary usage,
@@ -148,7 +148,7 @@ void KJSProxy::finishedWithEvent(Event* event)
   ScriptInterpreter::forgetDOMObject(event);
 }
 
-void KJSProxy::initScript()
+void ScriptController::initScript()
 {
     if (m_windowShell)
         return;
@@ -166,7 +166,7 @@ void KJSProxy::initScript()
     m_frame->loader()->dispatchWindowObjectAvailable();
 }
 
-bool KJSProxy::processingUserGesture() const
+bool ScriptController::processingUserGesture() const
 {
     if (!m_windowShell)
         return false;
@@ -194,13 +194,13 @@ bool KJSProxy::processingUserGesture() const
     return false;
 }
 
-bool KJSProxy::isEnabled()
+bool ScriptController::isEnabled()
 {
     Settings* settings = m_frame->settings();
     return (settings && settings->isJavaScriptEnabled());
 }
 
-void KJSProxy::attachDebugger(KJS::Debugger* debugger)
+void ScriptController::attachDebugger(KJS::Debugger* debugger)
 {
     if (!m_windowShell)
         return;
@@ -211,7 +211,7 @@ void KJSProxy::attachDebugger(KJS::Debugger* debugger)
         currentDebugger->detach(m_windowShell->window());
 }
 
-void KJSProxy::updateDocument()
+void ScriptController::updateDocument()
 {
     if (!m_frame->document())
         return;

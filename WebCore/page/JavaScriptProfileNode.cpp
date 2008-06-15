@@ -26,7 +26,7 @@
 #include "config.h"
 #include "JavaScriptProfileNode.h"
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include <profiler/ProfileNode.h>
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>

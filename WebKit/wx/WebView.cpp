@@ -56,8 +56,8 @@
 #include "FrameLoaderClientWx.h"
 #include "InspectorClientWx.h"
 
-#include "kjs_proxy.h"
-#include "kjs_binding.h"
+#include "ScriptController.h"
+#include "JSDOMBinding.h"
 #include <kjs/value.h>
 #include <kjs/ustring.h>
 

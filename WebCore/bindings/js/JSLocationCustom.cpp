@@ -29,8 +29,8 @@
 #include "JSDOMWindowCustom.h"
 #include "KURL.h"
 #include "Location.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 
 using namespace KJS;
 

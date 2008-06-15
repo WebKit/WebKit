@@ -41,7 +41,7 @@
 #include "HTMLScriptElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTokenizer.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
@@ -846,7 +846,7 @@ void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xm
         return;
     }
 
-    KJSProxy* jsProxy = m_doc->frame() ? m_doc->frame()->scriptProxy() : 0;
+    ScriptController* jsProxy = m_doc->frame() ? m_doc->frame()->scriptProxy() : 0;
     if (jsProxy && m_doc->frame()->scriptProxy()->isEnabled())
         jsProxy->setEventHandlerLineno(lineNumber());
 

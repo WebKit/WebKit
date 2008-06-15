@@ -39,7 +39,7 @@
 #import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>
-#import <WebCore/kjs_proxy.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/runtime_root.h>
 
 using namespace KJS;

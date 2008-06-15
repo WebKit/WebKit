@@ -28,7 +28,7 @@
 
 #if ENABLE(XSLT)
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 namespace WebCore {
 

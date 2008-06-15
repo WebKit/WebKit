@@ -108,8 +108,8 @@
 #include "XMLHttpRequest.h"
 #include "XMLNames.h"
 #include "XMLTokenizer.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 
 #if ENABLE(DATABASE)
 #include "Database.h"

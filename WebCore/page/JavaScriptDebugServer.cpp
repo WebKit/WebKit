@@ -42,7 +42,7 @@
 #include "PluginView.h"
 #include "ScrollView.h"
 #include "Widget.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/DebuggerCallFrame.h>
 #include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>

@@ -38,8 +38,8 @@
 #include "JSDOMWindow.h"
 #include "PrintContext.h"
 #include "RenderView.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 
 #include <JavaScriptCore/APICast.h>
 

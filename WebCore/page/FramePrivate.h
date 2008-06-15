@@ -34,7 +34,7 @@
 #include "Range.h"
 #include "SelectionController.h"
 #include "StringHash.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 namespace KJS {
     class Interpreter;
@@ -80,7 +80,7 @@ namespace WebCore {
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 
-        KJSProxy m_jscript;
+        ScriptController m_jscript;
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;

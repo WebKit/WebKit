@@ -33,7 +33,7 @@
 #include "Console.h"
 #include "DOMWindow.h"
 #include "Frame.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include "JSSQLError.h"
 #include "JSSQLTransaction.h"
 

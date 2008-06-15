@@ -39,8 +39,8 @@
 #include "runtime_root.h"
 #include <kjs/JSLock.h>
 #include <kjs/value.h>
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 
 #include "Document.h"
 #include "DocumentLoader.h"

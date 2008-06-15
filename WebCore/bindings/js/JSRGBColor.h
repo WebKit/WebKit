@@ -22,7 +22,7 @@
 #define JSRGBColor_h
 
 #include "Color.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 namespace WebCore {
 

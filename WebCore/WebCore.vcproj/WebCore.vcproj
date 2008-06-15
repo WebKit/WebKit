@@ -13919,11 +13919,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_binding.cpp"
+					RelativePath="..\bindings\js\JSDOMBinding.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_binding.h"
+					RelativePath="..\bindings\js\JSDOMBinding.h"
 					>
 				</File>
 				<File
@@ -13943,11 +13943,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_proxy.cpp"
+					RelativePath="..\bindings\js\ScriptController.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_proxy.h"
+					RelativePath="..\bindings\js\ScriptController.h"
 					>
 				</File>
 				<File

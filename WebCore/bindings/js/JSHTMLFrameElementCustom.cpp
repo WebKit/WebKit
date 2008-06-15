@@ -31,7 +31,7 @@
 
 #include "CSSHelper.h"
 #include "HTMLFrameElement.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 using namespace KJS;
 

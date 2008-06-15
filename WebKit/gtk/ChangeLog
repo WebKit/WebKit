@@ -1,5 +1,14 @@
 2008-06-14  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Sam.
+
+        - new names for kjs_binding.h and kjs_proxy.h
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        * webkit/webkitwebframe.cpp:
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
         - fix build
 
         * webkit/webkitwebframe.cpp: Remove a bogus release() call.

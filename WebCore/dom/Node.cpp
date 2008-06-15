@@ -52,7 +52,7 @@
 #include "Text.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 namespace WebCore {
 

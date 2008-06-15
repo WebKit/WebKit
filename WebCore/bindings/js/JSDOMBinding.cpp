@@ -24,7 +24,7 @@
 #endif
 
 #include "config.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 
 #include "DOMCoreException.h"
 #include "Document.h"

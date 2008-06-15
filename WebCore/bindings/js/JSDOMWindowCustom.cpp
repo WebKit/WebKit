@@ -29,7 +29,7 @@
 #include "FrameTree.h"
 #include "JSDOMWindowShell.h"
 #include "Settings.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/object.h>
 
 using namespace KJS;

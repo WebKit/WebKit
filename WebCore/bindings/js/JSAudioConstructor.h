@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO)
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include <wtf/RefPtr.h>
 
 namespace WebCore {

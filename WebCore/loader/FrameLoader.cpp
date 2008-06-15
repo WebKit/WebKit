@@ -84,8 +84,8 @@
 #include "WindowFeatures.h"
 #include "XMLHttpRequest.h"
 #include "XMLTokenizer.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 #include <kjs/JSLock.h>
 #include <kjs/object.h>
 
@@ -774,7 +774,7 @@ JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
 
 JSValue* FrameLoader::executeScript(const String& url, int baseLine, const String& script)
 {
-    KJSProxy* scriptProxy = m_frame->scriptProxy();
+    ScriptController* scriptProxy = m_frame->scriptProxy();
 
     if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
         return 0;

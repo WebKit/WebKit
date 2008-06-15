@@ -51,8 +51,8 @@
 #include "PluginMessageThrottlerWin.h"
 #endif
 #include "PluginPackage.h"
-#include "kjs_binding.h"
-#include "kjs_proxy.h"
+#include "JSDOMBinding.h"
+#include "ScriptController.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
 #include "PluginPackage.h"
@@ -196,7 +196,7 @@ static char* createUTF8String(const String& str)
     return result;
 }
 
-static bool getString(KJSProxy* proxy, JSValue* result, String& string)
+static bool getString(ScriptController* proxy, JSValue* result, String& string)
 {
     if (!proxy || !result || result->isUndefined())
         return false;

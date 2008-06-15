@@ -21,7 +21,7 @@
 #define JSHTMLInputElementBase_h
 
 #include "JSHTMLElement.h"
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include "kjs_html.h"
 
 namespace WebCore {

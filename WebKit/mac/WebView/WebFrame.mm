@@ -73,7 +73,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/TypingCommand.h>
 #import <WebCore/htmlediting.h>
-#import <WebCore/kjs_proxy.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
 

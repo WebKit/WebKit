@@ -28,7 +28,7 @@
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
 #include "Location.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 
 #if ENABLE(SVG)
 #include "JSSVGDocument.h"

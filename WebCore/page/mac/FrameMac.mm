@@ -85,7 +85,7 @@
 #import "UserStyleSheetLoader.h"
 #import "WebCoreViewFactory.h"
 #import "WebScriptObjectPrivate.h"
-#import "kjs_proxy.h"
+#import "ScriptController.h"
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>

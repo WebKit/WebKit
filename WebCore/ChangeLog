@@ -2,6 +2,98 @@
 
         Rubber stamped by Sam.
 
+        - new names for kjs_binding.h and kjs_proxy.h
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        * bindings/js/JSCustomVoidCallback.cpp:
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        * bindings/js/JSDOMBinding.cpp: Copied from WebCore/bindings/js/kjs_binding.cpp.
+        * bindings/js/JSDOMBinding.h: Copied from WebCore/bindings/js/kjs_binding.h.
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSHTMLFrameElementCustom.cpp:
+        * bindings/js/JSHTMLFrameSetElementCustom.cpp:
+        * bindings/js/JSHTMLIFrameElementCustom.cpp:
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSHTMLOptionElementConstructor.h:
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSLocationCustom.cpp:
+        * bindings/js/JSNamedNodeMapCustom.cpp:
+        * bindings/js/JSNamedNodesCollection.h:
+        * bindings/js/JSNodeFilterCondition.cpp:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSRGBColor.h:
+        * bindings/js/JSSVGPathSegCustom.cpp:
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        * bindings/js/JSXSLTProcessorConstructor.h:
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp: Copied from WebCore/bindings/js/kjs_proxy.cpp.
+        * bindings/js/ScriptController.h: Copied from WebCore/bindings/js/kjs_proxy.h.
+        * bindings/js/kjs_binding.cpp: Removed.
+        * bindings/js/kjs_binding.h: Removed.
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        * bindings/js/kjs_html.cpp:
+        * bindings/js/kjs_html.h:
+        * bindings/js/kjs_proxy.cpp: Removed.
+        * bindings/js/kjs_proxy.h: Removed.
+        * bindings/objc/DOMInternal.mm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/jni/jni_jsobject.mm:
+        * dom/Document.cpp:
+        * dom/EventTarget.cpp:
+        * dom/Node.cpp:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * html/HTMLPlugInElement.cpp:
+        * html/HTMLScriptElement.cpp:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::processToken):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::executeScript):
+        * page/Frame.cpp:
+        (WebCore::Frame::scriptProxy):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/InspectorController.cpp:
+        * page/JavaScriptDebugServer.cpp:
+        * page/JavaScriptProfileNode.cpp:
+        * page/Page.cpp:
+        * page/gtk/FrameGtk.cpp:
+        * page/mac/FrameMac.mm:
+        * page/qt/FrameQt.cpp:
+        * page/win/FrameWin.cpp:
+        * plugins/PluginView.cpp:
+        (WebCore::getString):
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        * svg/SVGDocumentExtensions.cpp:
+        * xml/XMLHttpRequest.cpp:
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
         - renamed HTMLGenericFormElement to HTMLFormControlElement
 
         * GNUmakefile.am:

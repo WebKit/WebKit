@@ -44,7 +44,7 @@
 #include "PageGroup.h"
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
-#include "kjs_proxy.h"
+#include "ScriptController.h"
 #include <kjs/JSLock.h>
 
 #if ENABLE(SVG)
@@ -93,7 +93,7 @@ CachedPage::CachedPage(Page* page)
 
     JSLock lock;
 
-    KJSProxy* proxy = mainFrame->scriptProxy();
+    ScriptController* proxy = mainFrame->scriptProxy();
     if (proxy->haveWindowShell()) {
         m_window = proxy->windowShell()->window();
         m_pausedTimeouts.set(m_window->pauseTimeouts());
@@ -119,7 +119,7 @@ void CachedPage::restore(Page* page)
 
     JSLock lock;
 
-    KJSProxy* proxy = mainFrame->scriptProxy();
+    ScriptController* proxy = mainFrame->scriptProxy();
     if (proxy->haveWindowShell()) {
         JSDOMWindowShell* windowShell = proxy->windowShell();
         if (m_window) {

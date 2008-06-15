@@ -26,7 +26,7 @@
 #ifndef JSNamedNodesCollection_h
 #define JSNamedNodesCollection_h
 
-#include "kjs_binding.h"
+#include "JSDOMBinding.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

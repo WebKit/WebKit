@@ -354,7 +354,7 @@ sub GenerateHeader
     if ($hasParent) {
         push(@headerContentHeader, "#include \"$parentClassName.h\"\n");
     } else {
-        push(@headerContentHeader, "#include \"kjs_binding.h\"\n");
+        push(@headerContentHeader, "#include \"JSDOMBinding.h\"\n");
         push(@headerContentHeader, "#include <kjs/JSGlobalObject.h>\n");
         push(@headerContentHeader, "#include <kjs/object_object.h>\n");
     }
@@ -997,12 +997,12 @@ sub GenerateImplementation
                 if ($attribute->signature->extendedAttributes->{"Custom"} || $attribute->signature->extendedAttributes->{"CustomGetter"}) {
                     push(@implContent, "        return $getterFunctionName(exec);\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckNodeSecurity"}) {
-                    $implIncludes{"kjs_binding.h"} = 1;
+                    $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
                     push(@implContent, "        return checkNodeSecurity(exec, imp->$getterFunctionName()) ? " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName()") . " : jsUndefined();\n");
                 } elsif ($attribute->signature->extendedAttributes->{"CheckFrameSecurity"}) {
                     $implIncludes{"Document.h"} = 1;
-                    $implIncludes{"kjs_binding.h"} = 1;
+                    $implIncludes{"JSDOMBinding.h"} = 1;
                     push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
                     push(@implContent, "        return checkNodeSecurity(exec, imp->contentDocument()) ? " . NativeToJSValue($attribute->signature,  0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName()") . " : jsUndefined();\n");
                 } elsif ($attribute->signature->type =~ /Constructor$/) {
@@ -1239,7 +1239,7 @@ sub GenerateImplementation
                 if ($function->signature->extendedAttributes->{"SVGCheckSecurityDocument"}) {
                     push(@implContent, "    if (!checkNodeSecurity(exec, imp->getSVGDocument(" . (@{$function->raisesExceptions} ? "ec" : "") .")))\n");
                     push(@implContent, "        return jsUndefined();\n");
-                    $implIncludes{"kjs_binding.h"} = 1;
+                    $implIncludes{"JSDOMBinding.h"} = 1;
                 }
 
                 my $paramIndex = 0;

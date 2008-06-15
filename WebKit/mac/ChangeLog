@@ -2,6 +2,16 @@
 
         Rubber stamped by Sam.
 
+        - new names for kjs_binding.h and kjs_proxy.h
+
+        * WebView/WebFrame.mm:
+        * WebView/WebScriptDebugDelegate.mm:
+        * WebView/WebView.mm:
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
         - renamed HTMLGenericFormElement to HTMLFormControlElement
 
         * WebView/WebHTMLRepresentation.mm:
