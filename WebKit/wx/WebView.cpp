@@ -256,8 +256,7 @@ bool wxWebView::Create(wxWindow* parent, int id, const wxPoint& position,
     
     WebCore::FrameLoaderClientWx* loaderClient = new WebCore::FrameLoaderClientWx();
     
-    m_impl->frame = new WebCore::Frame(m_impl->page, parentFrame, loaderClient);
-    m_impl->frame->deref();
+    m_impl->frame = WebCore::Frame::create(m_impl->page, parentFrame, loaderClient);
 
     loaderClient->setFrame(m_impl->frame.get());
     loaderClient->setWebView(this);
