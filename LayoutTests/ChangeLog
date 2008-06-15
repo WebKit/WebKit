@@ -1,5 +1,14 @@
 2008-06-15  Dan Bernstein  <mitz@apple.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        - copy generic test results from r34449 to platform/win, because the Mac
+          behavior is not shared by Windows.
+
+        * platform/win/editing/selection/drag-text-delay-expected.txt: Copied from LayoutTests/editing/selection/drag-text-delay-expected.txt.
+
+2008-06-15  Dan Bernstein  <mitz@apple.com>
+
         - update Windows copy of generic test results for r34475
 
         * platform/win/editing/selection/move-left-right-expected.txt: Replaced with LayoutTests/editing/selection/move-left-right-expected.txt.
