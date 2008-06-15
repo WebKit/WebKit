@@ -1,3 +1,9 @@
+2008-06-15  Dan Bernstein  <mitz@apple.com>
+
+        - update Windows copy of generic test results for r34475
+
+        * platform/win/editing/selection/move-left-right-expected.txt: Replaced with LayoutTests/editing/selection/move-left-right-expected.txt.
+
 2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
