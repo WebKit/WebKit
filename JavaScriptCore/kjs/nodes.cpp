@@ -45,34 +45,6 @@
 
 namespace KJS {
 
-#define KJS_CHECKEXCEPTION \
-if (UNLIKELY(exec->hadException())) \
-    return rethrowException(exec);
-
-#define KJS_CHECKEXCEPTIONVALUE \
-if (UNLIKELY(exec->hadException())) { \
-    handleException(exec); \
-    return jsUndefined(); \
-}
-
-#define KJS_CHECKEXCEPTIONNUMBER \
-if (UNLIKELY(exec->hadException())) { \
-    handleException(exec); \
-    return 0; \
-}
-
-#define KJS_CHECKEXCEPTIONBOOLEAN \
-if (UNLIKELY(exec->hadException())) { \
-    handleException(exec); \
-    return false; \
-}
-
-#define KJS_CHECKEXCEPTIONVOID \
-if (UNLIKELY(exec->hadException())) { \
-    handleException(exec); \
-    return; \
-}
-
 static inline bool isConstant(const LocalStorage& localStorage, size_t index)
 {
     ASSERT(index < localStorage.size());
