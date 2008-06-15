@@ -90,8 +90,8 @@ public:
 
     public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        RefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly);
-        RefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly);
+        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly);
+        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly);
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).

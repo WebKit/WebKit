@@ -1,7 +1,7 @@
 /*
  * This file is part of the XSL implementation.
  *
- * Copyright (C) 2004, 2007 Apple, Inc.
+ * Copyright (C) 2004, 2007, 2008 Apple, Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -42,21 +42,21 @@ class XSLTProcessor : public RefCounted<XSLTProcessor> {
 public:
     static PassRefPtr<XSLTProcessor> create() { return adoptRef(new XSLTProcessor); }
 
-    void setXSLStylesheet(XSLStyleSheet* styleSheet) { m_stylesheet = styleSheet; }
+    void setXSLStyleSheet(PassRefPtr<XSLStyleSheet> styleSheet) { m_stylesheet = styleSheet; }
     bool transformToString(Node* source, String& resultMIMEType, String& resultString, String& resultEncoding);
-    RefPtr<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
+    PassRefPtr<Document> createDocumentFromSource(const String& source, const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame);
     
     // DOM methods
-    void importStylesheet(Node* style) { m_stylesheetRootNode = style; }
-    RefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
-    RefPtr<Document> transformToDocument(Node* source);
+    void importStylesheet(PassRefPtr<Node> style) { m_stylesheetRootNode = style; }
+    PassRefPtr<DocumentFragment> transformToFragment(Node* source, Document* ouputDoc);
+    PassRefPtr<Document> transformToDocument(Node* source);
     
     void setParameter(const String& namespaceURI, const String& localName, const String& value);
     String getParameter(const String& namespaceURI, const String& localName) const;
     void removeParameter(const String& namespaceURI, const String& localName);
     void clearParameters() { m_parameters.clear(); }
 
-    void reset() { m_stylesheet = NULL; m_stylesheetRootNode = NULL;  m_parameters.clear(); }
+    void reset() { m_stylesheet.clear(); m_stylesheetRootNode.clear();  m_parameters.clear(); }
 
     static void parseErrorFunc(void* userData, xmlError*);
     static void genericErrorFunc(void* userData, const char* msg, ...);
@@ -64,18 +64,14 @@ public:
 public:
     // Only for libXSLT callbacks
     XSLStyleSheet* xslStylesheet() const { return m_stylesheet.get(); }
-    
+
     typedef HashMap<String, String> ParameterMap;
 
 private:
     XSLTProcessor() { }
 
-    // Convert a libxml doc ptr to a KHTML DOM Document
-    RefPtr<Document> documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet, Document* ownerDocument, bool sourceIsDocument);
-
     RefPtr<XSLStyleSheet> m_stylesheet;
     RefPtr<Node> m_stylesheetRootNode;
-
     ParameterMap m_parameters;
 };
 

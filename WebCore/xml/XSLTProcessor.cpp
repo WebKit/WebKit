@@ -240,7 +240,7 @@ static void freeXsltParamArray(const char** params)
 }
 
 
-RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
+PassRefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceString,
     const String& sourceEncoding, const String& sourceMIMEType, Node* sourceNode, Frame* frame)
 {
     RefPtr<Document> ownerDocument = sourceNode->document();
@@ -277,7 +277,7 @@ RefPtr<Document> XSLTProcessor::createDocumentFromSource(const String& sourceStr
     result->finishParsing();
     result->close();
 
-    return result;
+    return result.release();
 }
 
 static inline RefPtr<DocumentFragment> createFragmentFromSource(const String& sourceString, const String& sourceMIMEType, Node* sourceNode, Document* outputDoc)
@@ -407,7 +407,7 @@ bool XSLTProcessor::transformToString(Node* sourceNode, String& mimeType, String
     return success;
 }
 
-RefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
+PassRefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
 {
     String resultMIMEType;
     String resultString;
@@ -417,7 +417,7 @@ RefPtr<Document> XSLTProcessor::transformToDocument(Node* sourceNode)
     return createDocumentFromSource(resultString, resultEncoding, resultMIMEType, sourceNode, 0);
 }
 
-RefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
+PassRefPtr<DocumentFragment> XSLTProcessor::transformToFragment(Node* sourceNode, Document* outputDoc)
 {
     String resultMIMEType;
     String resultString;

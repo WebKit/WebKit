@@ -35,27 +35,23 @@ SVGElementInstanceList::~SVGElementInstanceList()
 {
 }
 
-unsigned int SVGElementInstanceList::length() const
+unsigned SVGElementInstanceList::length() const
 {
-    // NOTE: We could use the same caching facilities, "ChildNodeList" uses.
+    // NOTE: We could use the same caching facilities, like the ones "ChildNodeList" uses.
     unsigned length = 0;
-    SVGElementInstance* instance;
-    for (instance = m_rootInstance->firstChild(); instance; instance = instance->nextSibling())
+    for (SVGElementInstance* instance = m_rootInstance->firstChild(); instance; instance = instance->nextSibling())
         length++;
-
     return length;
 }
 
-RefPtr<SVGElementInstance> SVGElementInstanceList::item(unsigned int index)
+SVGElementInstance* SVGElementInstanceList::item(unsigned index)
 {
-    unsigned int pos = 0;
+    unsigned pos = 0;
     SVGElementInstance* instance = m_rootInstance->firstChild();
-
     while (instance && pos < index) {
         instance = instance->nextSibling();
         pos++;
     }
-
     return instance;
 }
 

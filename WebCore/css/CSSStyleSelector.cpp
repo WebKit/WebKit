@@ -1294,7 +1294,7 @@ void CSSStyleSelector::cacheBorderAndBackground()
     }
 }
 
-RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly)
 {
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
@@ -1327,7 +1327,7 @@ RefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool auth
     return m_ruleList.release();
 }
 
-RefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly)
+PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element*, const String& pseudoStyle, bool authorOnly)
 {
     // FIXME: Implement this.
     return 0;

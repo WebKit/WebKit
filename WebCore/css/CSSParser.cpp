@@ -3662,7 +3662,7 @@ bool CSSParser::parseGradient(RefPtr<CSSValue>& gradient)
         a = args->next();
     }
     
-    gradient = result;
+    gradient = result.release();
     return true;
 }
 

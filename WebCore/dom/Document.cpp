@@ -3541,8 +3541,7 @@ void Document::shiftMarkers(Node *node, unsigned startOffset, int delta, Documen
 void Document::applyXSLTransform(ProcessingInstruction* pi)
 {
     RefPtr<XSLTProcessor> processor = XSLTProcessor::create();
-    processor->setXSLStylesheet(static_cast<XSLStyleSheet*>(pi->sheet()));
-    
+    processor->setXSLStyleSheet(static_cast<XSLStyleSheet*>(pi->sheet()));
     String resultMIMEType;
     String newSource;
     String resultEncoding;
