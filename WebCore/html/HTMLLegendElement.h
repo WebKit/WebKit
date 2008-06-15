@@ -26,11 +26,11 @@
 #ifndef HTMLLegendElement_h
 #define HTMLLegendElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
-class HTMLLegendElement : public HTMLGenericFormElement {
+class HTMLLegendElement : public HTMLFormControlElement {
 public:
     HTMLLegendElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLLegendElement();

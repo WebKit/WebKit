@@ -24,13 +24,13 @@
 #ifndef HTMLOptGroupElement_h
 #define HTMLOptGroupElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
     
 class HTMLSelectElement;
 
-class HTMLOptGroupElement : public HTMLGenericFormElement {
+class HTMLOptGroupElement : public HTMLFormControlElement {
 public:
     HTMLOptGroupElement(Document*, HTMLFormElement* = 0);
 

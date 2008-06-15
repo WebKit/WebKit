@@ -26,7 +26,7 @@
 
 #include "Event.h"
 #include "HTMLCollection.h"
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

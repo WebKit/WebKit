@@ -24,11 +24,11 @@
 #ifndef HTMLButtonElement_h
 #define HTMLButtonElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
-class HTMLButtonElement : public HTMLGenericFormElement {
+class HTMLButtonElement : public HTMLFormControlElement {
 public:
     HTMLButtonElement(Document*, HTMLFormElement* = 0);
     virtual ~HTMLButtonElement();

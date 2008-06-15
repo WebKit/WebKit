@@ -756,7 +756,7 @@ webcore_sources += \
 	WebCore/html/HTMLFrameElement.cpp \
 	WebCore/html/HTMLFrameOwnerElement.cpp \
 	WebCore/html/HTMLFrameSetElement.cpp \
-	WebCore/html/HTMLGenericFormElement.cpp \
+	WebCore/html/HTMLFormControlElement.cpp \
 	WebCore/html/HTMLHeadElement.cpp \
 	WebCore/html/HTMLHeadingElement.cpp \
 	WebCore/html/HTMLHRElement.cpp \

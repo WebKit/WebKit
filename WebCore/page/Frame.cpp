@@ -48,7 +48,7 @@
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HitTestResult.h"
@@ -1254,7 +1254,7 @@ static HTMLFormElement *scanForForm(Node *start)
         if (n->hasTagName(formTag))
             return static_cast<HTMLFormElement*>(n);
         else if (n->isHTMLElement() && static_cast<HTMLElement*>(n)->isGenericFormElement())
-            return static_cast<HTMLGenericFormElement*>(n)->form();
+            return static_cast<HTMLFormControlElement*>(n)->form();
         else if (n->hasTagName(frameTag) || n->hasTagName(iframeTag)) {
             Node *childDoc = static_cast<HTMLFrameElementBase*>(n)->contentDocument();
             if (HTMLFormElement *frameResult = scanForForm(childDoc))
@@ -1279,7 +1279,7 @@ HTMLFormElement *Frame::currentForm() const
             return static_cast<HTMLFormElement*>(n);
         else if (n->isHTMLElement()
                    && static_cast<HTMLElement*>(n)->isGenericFormElement())
-            return static_cast<HTMLGenericFormElement*>(n)->form();
+            return static_cast<HTMLFormControlElement*>(n)->form();
     }
     
     // try walking forward in the node tree to find a form element

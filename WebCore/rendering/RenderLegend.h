@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-    class HTMLGenericFormElement;
+    class HTMLFormControlElement;
 
     class RenderLegend : public RenderBlock {
     public:
-        RenderLegend(HTMLGenericFormElement*);
+        RenderLegend(HTMLFormControlElement*);
 
         virtual const char* renderName() const { return "RenderLegend"; }
     };

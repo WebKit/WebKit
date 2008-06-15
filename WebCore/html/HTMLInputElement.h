@@ -24,7 +24,7 @@
 #ifndef HTMLInputElement_h
 #define HTMLInputElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {

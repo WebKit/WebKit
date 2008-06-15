@@ -26,7 +26,7 @@
 #include "config.h"
 #include "RenderFieldset.h"
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLNames.h"
 
 using std::min;
@@ -36,7 +36,7 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-RenderFieldset::RenderFieldset(HTMLGenericFormElement* element)
+RenderFieldset::RenderFieldset(HTMLFormControlElement* element)
     : RenderBlock(element)
 {
 }

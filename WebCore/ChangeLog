@@ -1,3 +1,89 @@
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - renamed HTMLGenericFormElement to HTMLFormControlElement
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLButtonElement.cpp:
+        (WebCore::HTMLButtonElement::HTMLButtonElement):
+        (WebCore::HTMLButtonElement::parseMappedAttribute):
+        (WebCore::HTMLButtonElement::defaultEventHandler):
+        * html/HTMLButtonElement.h:
+        * html/HTMLFieldSetElement.cpp:
+        (WebCore::HTMLFieldSetElement::HTMLFieldSetElement):
+        * html/HTMLFieldSetElement.h:
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::item):
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        (WebCore::HTMLFormCollection::updateNameCache):
+        * html/HTMLFormControlElement.cpp: Copied from WebCore/html/HTMLGenericFormElement.cpp.
+        * html/HTMLFormControlElement.h: Copied from WebCore/html/HTMLGenericFormElement.h.
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::formData):
+        (WebCore::HTMLFormElement::submit):
+        (WebCore::HTMLFormElement::formElementIndex):
+        (WebCore::HTMLFormElement::registerFormElement):
+        (WebCore::HTMLFormElement::removeFormElement):
+        (WebCore::HTMLFormElement::elementForAlias):
+        (WebCore::HTMLFormElement::addElementAlias):
+        (WebCore::HTMLFormElement::getNamedElements):
+        (WebCore::HTMLFormElement::CheckedRadioButtons::addButton):
+        (WebCore::HTMLFormElement::CheckedRadioButtons::removeButton):
+        * html/HTMLFormElement.h:
+        * html/HTMLGenericFormElement.cpp: Removed.
+        * html/HTMLGenericFormElement.h: Removed.
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::parseMappedAttribute):
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::HTMLKeygenElement::parseMappedAttribute):
+        * html/HTMLLegendElement.cpp:
+        (WebCore::HTMLLegendElement::HTMLLegendElement):
+        * html/HTMLLegendElement.h:
+        * html/HTMLOptGroupElement.cpp:
+        (WebCore::HTMLOptGroupElement::HTMLOptGroupElement):
+        (WebCore::HTMLOptGroupElement::insertBefore):
+        (WebCore::HTMLOptGroupElement::replaceChild):
+        (WebCore::HTMLOptGroupElement::removeChild):
+        (WebCore::HTMLOptGroupElement::appendChild):
+        (WebCore::HTMLOptGroupElement::removeChildren):
+        (WebCore::HTMLOptGroupElement::childrenChanged):
+        (WebCore::HTMLOptGroupElement::parseMappedAttribute):
+        (WebCore::HTMLOptGroupElement::attach):
+        (WebCore::HTMLOptGroupElement::detach):
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.cpp:
+        (WebCore::HTMLOptionElement::HTMLOptionElement):
+        (WebCore::HTMLOptionElement::attach):
+        (WebCore::HTMLOptionElement::detach):
+        (WebCore::HTMLOptionElement::parseMappedAttribute):
+        (WebCore::HTMLOptionElement::childrenChanged):
+        (WebCore::HTMLOptionElement::disabled):
+        (WebCore::HTMLOptionElement::insertedIntoDocument):
+        * html/HTMLOptionElement.h:
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextAreaElement.h:
+        * page/Frame.cpp:
+        (WebCore::scanForForm):
+        (WebCore::Frame::currentForm):
+        * page/mac/FrameMac.mm:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::RenderFieldset):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderLegend.cpp:
+        (WebCore::RenderLegend::RenderLegend):
+        * rendering/RenderLegend.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createInnerTextStyle):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::subtreeHasChanged):
+        (WebCore::RenderTextControl::selectionChanged):
+
 2008-06-14  Sam Weinig  <sam@webkit.org>
 
         Windows build fix.

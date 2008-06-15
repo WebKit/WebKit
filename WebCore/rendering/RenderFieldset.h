@@ -30,11 +30,11 @@
 
 namespace WebCore {
 
-class HTMLGenericFormElement;
+class HTMLFormControlElement;
 
 class RenderFieldset : public RenderBlock {
 public:
-    RenderFieldset(HTMLGenericFormElement*);
+    RenderFieldset(HTMLFormControlElement*);
 
     virtual const char* renderName() const { return "RenderFieldSet"; }
 

@@ -45,7 +45,7 @@ void HTMLIsIndexElement::parseMappedAttribute(MappedAttribute* attr)
     else
         // don't call HTMLInputElement::parseMappedAttribute here, as it would
         // accept attributes this element does not support
-        HTMLGenericFormElement::parseMappedAttribute(attr);
+        HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 String HTMLIsIndexElement::prompt() const

@@ -69,7 +69,7 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/HTMLFormElement.h>
-#include <WebCore/HTMLGenericFormElement.h>
+#include <WebCore/HTMLFormControlElement.h>
 #include <WebCore/HTMLInputElement.h>
 #include <WebCore/HTMLNames.h>
 #include <WebCore/JSDOMWindow.h>
@@ -932,10 +932,10 @@ HRESULT WebFrame::elementWithName(BSTR name, IDOMElement* form, IDOMElement** el
 
     HTMLFormElement *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+        Vector<HTMLFormControlElement*>& elements = formElement->formElements;
         AtomicString targetName((UChar*)name, SysStringLen(name));
         for (unsigned int i = 0; i < elements.size(); i++) {
-            HTMLGenericFormElement *elt = elements[i];
+            HTMLFormControlElement *elt = elements[i];
             // Skip option elements, other duds
             if (elt->name() == targetName) {
                 *element = DOMElement::createInstance(elt);
@@ -996,7 +996,7 @@ HRESULT WebFrame::controlsInForm(IDOMElement* form, IDOMElement** controls, int*
         return E_FAIL;
 
     *cControls = 0;
-    Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+    Vector<HTMLFormControlElement*>& elements = formElement->formElements;
     for (int i = 0; i < count; i++) {
         if (elements.at(i)->isEnumeratable()) { // Skip option elements, other duds
             controls[*cControls] = DOMElement::createInstance(elements.at(i));

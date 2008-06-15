@@ -25,7 +25,7 @@
 #ifndef HTMLOptionElement_h
 #define HTMLOptionElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 
@@ -33,8 +33,7 @@ class HTMLSelectElement;
 class HTMLFormElement;
 class MappedAttribute;
 
-class HTMLOptionElement : public HTMLGenericFormElement
-{
+class HTMLOptionElement : public HTMLFormControlElement {
     friend class HTMLSelectElement;
     friend class RenderMenuList;
 

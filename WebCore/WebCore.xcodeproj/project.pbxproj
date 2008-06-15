@@ -2082,8 +2082,8 @@
 		A81369CB097374F600D74463 /* HTMLIsIndexElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */; };
 		A81369CC097374F600D74463 /* HTMLInputElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B0097374F500D74463 /* HTMLInputElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369CD097374F600D74463 /* HTMLInputElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B1097374F500D74463 /* HTMLInputElement.cpp */; };
-		A81369CE097374F600D74463 /* HTMLGenericFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B2097374F500D74463 /* HTMLGenericFormElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		A81369CF097374F600D74463 /* HTMLGenericFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */; };
+		A81369CE097374F600D74463 /* HTMLFormControlElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B2097374F500D74463 /* HTMLFormControlElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A81369CF097374F600D74463 /* HTMLFormControlElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B3097374F500D74463 /* HTMLFormControlElement.cpp */; };
 		A81369D0097374F600D74463 /* HTMLFormElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B4097374F500D74463 /* HTMLFormElement.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A81369D1097374F600D74463 /* HTMLFormElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A81369B5097374F500D74463 /* HTMLFormElement.cpp */; };
 		A81369D2097374F600D74463 /* HTMLButtonElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A81369B6097374F500D74463 /* HTMLButtonElement.h */; };
@@ -6382,8 +6382,8 @@
 		A81369AF097374F500D74463 /* HTMLIsIndexElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLIsIndexElement.cpp; sourceTree = "<group>"; };
 		A81369B0097374F500D74463 /* HTMLInputElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLInputElement.h; sourceTree = "<group>"; };
 		A81369B1097374F500D74463 /* HTMLInputElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLInputElement.cpp; sourceTree = "<group>"; };
-		A81369B2097374F500D74463 /* HTMLGenericFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLGenericFormElement.h; sourceTree = "<group>"; };
-		A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLGenericFormElement.cpp; sourceTree = "<group>"; };
+		A81369B2097374F500D74463 /* HTMLFormControlElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlElement.h; sourceTree = "<group>"; };
+		A81369B3097374F500D74463 /* HTMLFormControlElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlElement.cpp; sourceTree = "<group>"; };
 		A81369B4097374F500D74463 /* HTMLFormElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormElement.h; sourceTree = "<group>"; };
 		A81369B5097374F500D74463 /* HTMLFormElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormElement.cpp; sourceTree = "<group>"; };
 		A81369B6097374F500D74463 /* HTMLButtonElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLButtonElement.h; sourceTree = "<group>"; };
@@ -10528,8 +10528,8 @@
 				A871DE220A152AC800B12A68 /* HTMLFrameSetElement.cpp */,
 				A871DE1C0A152AC800B12A68 /* HTMLFrameSetElement.h */,
 				855542960AA4938800BA89F2 /* HTMLFrameSetElement.idl */,
-				A81369B3097374F500D74463 /* HTMLGenericFormElement.cpp */,
-				A81369B2097374F500D74463 /* HTMLGenericFormElement.h */,
+				A81369B3097374F500D74463 /* HTMLFormControlElement.cpp */,
+				A81369B2097374F500D74463 /* HTMLFormControlElement.h */,
 				A871DE190A152AC800B12A68 /* HTMLHeadElement.cpp */,
 				A871DE210A152AC800B12A68 /* HTMLHeadElement.h */,
 				A80E7AB10A19D1F1007FB8C5 /* HTMLHeadElement.idl */,
@@ -14100,7 +14100,7 @@
 				14FFE31D0AE1963300136BF5 /* HTMLFrameElementBase.h in Headers */,
 				93E241FF0B2B4E4000C732A1 /* HTMLFrameOwnerElement.h in Headers */,
 				A871DE280A152AC800B12A68 /* HTMLFrameSetElement.h in Headers */,
-				A81369CE097374F600D74463 /* HTMLGenericFormElement.h in Headers */,
+				A81369CE097374F600D74463 /* HTMLFormControlElement.h in Headers */,
 				A8EA7CAF0A192B9C00A8EF5F /* HTMLHRElement.h in Headers */,
 				A871DE2D0A152AC800B12A68 /* HTMLHeadElement.h in Headers */,
 				A8EA7CB80A192B9C00A8EF5F /* HTMLHeadingElement.h in Headers */,
@@ -15808,7 +15808,7 @@
 				14FFE31E0AE1963300136BF5 /* HTMLFrameElementBase.cpp in Sources */,
 				93E2425F0B2B509500C732A1 /* HTMLFrameOwnerElement.cpp in Sources */,
 				A871DE2E0A152AC800B12A68 /* HTMLFrameSetElement.cpp in Sources */,
-				A81369CF097374F600D74463 /* HTMLGenericFormElement.cpp in Sources */,
+				A81369CF097374F600D74463 /* HTMLFormControlElement.cpp in Sources */,
 				A8EA7CB30A192B9C00A8EF5F /* HTMLHRElement.cpp in Sources */,
 				A871DE250A152AC800B12A68 /* HTMLHeadElement.cpp in Sources */,
 				A8EA7CAE0A192B9C00A8EF5F /* HTMLHeadingElement.cpp in Sources */,

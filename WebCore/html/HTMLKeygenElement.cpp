@@ -67,7 +67,7 @@ void HTMLKeygenElement::parseMappedAttribute(MappedAttribute* attr)
         m_keyType = attr->value();
     else
         // skip HTMLSelectElement parsing!
-        HTMLGenericFormElement::parseMappedAttribute(attr);
+        HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 bool HTMLKeygenElement::appendFormData(FormDataList& encoded_values, bool)

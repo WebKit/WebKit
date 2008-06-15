@@ -238,7 +238,7 @@ PassRefPtr<FormData> HTMLFormElement::formData(const char* boundary) const
     RefPtr<FormData> result = FormData::create();
     
     for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLGenericFormElement* control = formElements[i];
+        HTMLFormControlElement* control = formElements[i];
         FormDataList list(encoding);
 
         if (!control->disabled() && control->appendFormData(list, m_multipart)) {
@@ -436,12 +436,12 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
 
     m_insubmit = true;
 
-    HTMLGenericFormElement* firstSuccessfulSubmitButton = 0;
+    HTMLFormControlElement* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
     frame->loader()->clearRecordedFormValues();
     for (unsigned i = 0; i < formElements.size(); ++i) {
-        HTMLGenericFormElement* control = formElements[i];
+        HTMLFormControlElement* control = formElements[i];
         if (control->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
@@ -568,7 +568,7 @@ template<class T, size_t n> static void removeFromVector(Vector<T*, n> & vec, T*
         }
 }
 
-unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement* e)
+unsigned HTMLFormElement::formElementIndex(HTMLFormControlElement* e)
 {
     // Check for the special case where this element is the very last thing in
     // the form's tree of children; we don't want to walk the entire tree in that
@@ -581,21 +581,21 @@ unsigned HTMLFormElement::formElementIndex(HTMLGenericFormElement* e)
                 return i;
             if (node->isHTMLElement()
                     && static_cast<HTMLElement*>(node)->isGenericFormElement()
-                    && static_cast<HTMLGenericFormElement*>(node)->form() == this)
+                    && static_cast<HTMLFormControlElement*>(node)->form() == this)
                 ++i;
         }
     }
     return formElements.size();
 }
 
-void HTMLFormElement::registerFormElement(HTMLGenericFormElement* e)
+void HTMLFormElement::registerFormElement(HTMLFormControlElement* e)
 {
     document()->checkedRadioButtons().removeButton(e);
     m_checkedRadioButtons.addButton(e);
     formElements.insert(formElementIndex(e), e);
 }
 
-void HTMLFormElement::removeFormElement(HTMLGenericFormElement* e)
+void HTMLFormElement::removeFormElement(HTMLFormControlElement* e)
 {
     m_checkedRadioButtons.removeButton(e);
     removeFromVector(formElements, e);
@@ -676,14 +676,14 @@ void HTMLFormElement::setTarget(const String &value)
     setAttribute(targetAttr, value);
 }
 
-PassRefPtr<HTMLGenericFormElement> HTMLFormElement::elementForAlias(const AtomicString& alias)
+PassRefPtr<HTMLFormControlElement> HTMLFormElement::elementForAlias(const AtomicString& alias)
 {
     if (alias.isEmpty() || !m_elementAliases)
         return 0;
     return m_elementAliases->get(alias.impl());
 }
 
-void HTMLFormElement::addElementAlias(HTMLGenericFormElement* element, const AtomicString& alias)
+void HTMLFormElement::addElementAlias(HTMLFormControlElement* element, const AtomicString& alias)
 {
     if (alias.isEmpty())
         return;
@@ -697,7 +697,7 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
     elements()->namedItems(name, namedItems);
 
     // see if we have seen something with this name before
-    RefPtr<HTMLGenericFormElement> aliasElem;
+    RefPtr<HTMLFormControlElement> aliasElem;
     if (aliasElem = elementForAlias(name)) {
         bool found = false;
         for (unsigned n = 0; n < namedItems.size(); n++) {
@@ -712,10 +712,10 @@ void HTMLFormElement::getNamedElements(const AtomicString& name, Vector<RefPtr<N
     }
     // name has been accessed, remember it
     if (namedItems.size() && aliasElem != namedItems.first())
-        addElementAlias(static_cast<HTMLGenericFormElement*>(namedItems.first().get()), name);        
+        addElementAlias(static_cast<HTMLFormControlElement*>(namedItems.first().get()), name);        
 }
 
-void HTMLFormElement::CheckedRadioButtons::addButton(HTMLGenericFormElement* element)
+void HTMLFormElement::CheckedRadioButtons::addButton(HTMLFormControlElement* element)
 {
     // We only want to add radio buttons.
     if (!element->isRadioButton())
@@ -754,7 +754,7 @@ HTMLInputElement* HTMLFormElement::CheckedRadioButtons::checkedButtonForGroup(co
     return m_nameToCheckedRadioButtonMap->get(name.impl());
 }
 
-void HTMLFormElement::CheckedRadioButtons::removeButton(HTMLGenericFormElement* element)
+void HTMLFormElement::CheckedRadioButtons::removeButton(HTMLFormControlElement* element)
 {
     if (element->name().isEmpty() || !m_nameToCheckedRadioButtonMap)
         return;

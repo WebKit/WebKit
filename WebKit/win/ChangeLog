@@ -1,14 +1,5 @@
 2008-06-14  Darin Adler  <darin@apple.com>
 
-        - try to fix Windows build, again
-
-        * WebFrame.cpp:
-        (WebFrame::dispatchDecidePolicyForNewWindowAction): Fix arguments. Pass form.
-        (WebFrame::dispatchDecidePolicyForNavigationAction): Ditto.
-        * WebFrame.h: Fix arguments.
-
-2008-06-14  Darin Adler  <darin@apple.com>
-
         Rubber stamped by Sam.
 
         - renamed HTMLGenericFormElement to HTMLFormControlElement
@@ -16,6 +7,15 @@
         * WebFrame.cpp:
         (WebFrame::elementWithName):
         (WebFrame::controlsInForm):
+
+2008-06-14  Darin Adler  <darin@apple.com>
+
+        - try to fix Windows build, again
+
+        * WebFrame.cpp:
+        (WebFrame::dispatchDecidePolicyForNewWindowAction): Fix arguments. Pass form.
+        (WebFrame::dispatchDecidePolicyForNavigationAction): Ditto.
+        * WebFrame.h: Fix arguments.
 
 2008-06-14  Darin Adler  <darin@apple.com>
 

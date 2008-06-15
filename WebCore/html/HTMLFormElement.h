@@ -33,7 +33,7 @@ namespace WebCore {
 
 class Event;
 class FormData;
-class HTMLGenericFormElement;
+class HTMLFormControlElement;
 class HTMLImageElement;
 class HTMLInputElement;
 class HTMLFormCollection;
@@ -69,8 +69,8 @@ public:
 
     virtual void parseMappedAttribute(MappedAttribute*);
 
-    void registerFormElement(HTMLGenericFormElement*);
-    void removeFormElement(HTMLGenericFormElement*);
+    void registerFormElement(HTMLFormControlElement*);
+    void removeFormElement(HTMLFormControlElement*);
     void registerImgElement(HTMLImageElement*);
     void removeImgElement(HTMLImageElement*);
 
@@ -102,16 +102,16 @@ public:
     virtual String target() const;
     void setTarget(const String&);
     
-    PassRefPtr<HTMLGenericFormElement> elementForAlias(const AtomicString&);
-    void addElementAlias(HTMLGenericFormElement*, const AtomicString& alias);
+    PassRefPtr<HTMLFormControlElement> elementForAlias(const AtomicString&);
+    void addElementAlias(HTMLFormControlElement*, const AtomicString& alias);
 
     // FIXME: Change this to be private after getting rid of all the clients.
-    Vector<HTMLGenericFormElement*> formElements;
+    Vector<HTMLFormControlElement*> formElements;
 
     class CheckedRadioButtons {
     public:
-        void addButton(HTMLGenericFormElement*);
-        void removeButton(HTMLGenericFormElement*);
+        void addButton(HTMLFormControlElement*);
+        void removeButton(HTMLFormControlElement*);
         HTMLInputElement* checkedButtonForGroup(const AtomicString& name) const;
 
     private:
@@ -126,11 +126,11 @@ private:
     bool isMailtoForm() const;
     TextEncoding dataEncoding() const;
     PassRefPtr<FormData> formData(const char* boundary) const;
-    unsigned formElementIndex(HTMLGenericFormElement*);
+    unsigned formElementIndex(HTMLFormControlElement*);
 
     friend class HTMLFormCollection;
 
-    typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLGenericFormElement> > AliasMap;
+    typedef HashMap<RefPtr<AtomicStringImpl>, RefPtr<HTMLFormControlElement> > AliasMap;
     
     AliasMap* m_elementAliases;
     HTMLCollection::CollectionInfo* collectionInfo;

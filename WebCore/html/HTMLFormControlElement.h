@@ -21,8 +21,8 @@
  *
  */
 
-#ifndef HTMLGenericFormElement_h
-#define HTMLGenericFormElement_h
+#ifndef HTMLFormControlElement_h
+#define HTMLFormControlElement_h
 
 #include "HTMLElement.h"
 
@@ -31,11 +31,10 @@ namespace WebCore {
 class FormDataList;
 class HTMLFormElement;
 
-// FIXME: Rename this class to HTMLFormControlElement.
-class HTMLGenericFormElement : public HTMLElement {
+class HTMLFormControlElement : public HTMLElement {
 public:
-    HTMLGenericFormElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
-    virtual ~HTMLGenericFormElement();
+    HTMLFormControlElement(const QualifiedName& tagName, Document*, HTMLFormElement*);
+    virtual ~HTMLFormControlElement();
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -105,7 +104,7 @@ private:
     mutable bool m_valueMatchesRenderer;
 };
 
-class HTMLFormControlElementWithState : public HTMLGenericFormElement {
+class HTMLFormControlElementWithState : public HTMLFormControlElement {
 public:
     HTMLFormControlElementWithState(const QualifiedName& tagName, Document*, HTMLFormElement*);
     virtual ~HTMLFormControlElementWithState();

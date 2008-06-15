@@ -24,7 +24,7 @@
 #ifndef HTMLTextAreaElement_h
 #define HTMLTextAreaElement_h
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 
 namespace WebCore {
 

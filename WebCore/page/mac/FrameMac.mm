@@ -56,7 +56,7 @@
 #import "GraphicsContext.h"
 #import "HTMLDocument.h"
 #import "HTMLFormElement.h"
-#import "HTMLGenericFormElement.h"
+#import "HTMLFormControlElement.h"
 #import "HTMLInputElement.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"

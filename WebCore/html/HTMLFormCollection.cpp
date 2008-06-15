@@ -23,7 +23,7 @@
 #include "config.h"
 #include "HTMLFormCollection.h"
 
-#include "HTMLGenericFormElement.h"
+#include "HTMLFormControlElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -77,7 +77,7 @@ Node* HTMLFormCollection::item(unsigned index) const
         info()->elementsArrayPosition = 0;
     }
 
-    Vector<HTMLGenericFormElement*>& l = static_cast<HTMLFormElement*>(base())->formElements;
+    Vector<HTMLFormControlElement*>& l = static_cast<HTMLFormElement*>(base())->formElements;
     unsigned currentIndex = info()->position;
     
     for (unsigned i = info()->elementsArrayPosition; i < l.size(); i++) {
@@ -108,7 +108,7 @@ Element* HTMLFormCollection::getNamedFormItem(const QualifiedName& attrName, con
 
     bool foundInputElements = false;
     for (unsigned i = 0; i < form->formElements.size(); ++i) {
-        HTMLGenericFormElement* e = form->formElements[i];
+        HTMLFormControlElement* e = form->formElements[i];
         if (e->isEnumeratable()) {
             bool found;
             if (caseSensitive)
@@ -200,7 +200,7 @@ void HTMLFormCollection::updateNameCache() const
     HTMLFormElement* f = static_cast<HTMLFormElement*>(base());
 
     for (unsigned i = 0; i < f->formElements.size(); ++i) {
-        HTMLGenericFormElement* e = f->formElements[i];
+        HTMLFormControlElement* e = f->formElements[i];
         if (e->isEnumeratable()) {
             const AtomicString& idAttrVal = e->getAttribute(idAttr);
             const AtomicString& nameAttrVal = e->getAttribute(nameAttr);

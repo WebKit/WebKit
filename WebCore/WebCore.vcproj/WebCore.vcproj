@@ -12592,7 +12592,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\html\HTMLGenericFormElement.cpp"
+				RelativePath="..\html\HTMLFormControlElement.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -12604,7 +12604,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\html\HTMLGenericFormElement.h"
+				RelativePath="..\html\HTMLFormControlElement.h"
 				>
 			</File>
 			<File

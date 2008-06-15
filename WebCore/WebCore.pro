@@ -635,7 +635,7 @@ SOURCES += \
     html/HTMLFrameElement.cpp \
     html/HTMLFrameOwnerElement.cpp \
     html/HTMLFrameSetElement.cpp \
-    html/HTMLGenericFormElement.cpp \
+    html/HTMLFormControlElement.cpp \
     html/HTMLHeadElement.cpp \
     html/HTMLHeadingElement.cpp \
     html/HTMLHRElement.cpp \

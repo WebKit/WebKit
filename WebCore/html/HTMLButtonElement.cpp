@@ -39,7 +39,7 @@ using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLButtonElement::HTMLButtonElement(Document* doc, HTMLFormElement* form)
-    : HTMLGenericFormElement(buttonTag, doc, form)
+    : HTMLFormControlElement(buttonTag, doc, form)
     , m_type(SUBMIT)
     , m_activeSubmit(false)
 {
@@ -92,7 +92,7 @@ void HTMLButtonElement::parseMappedAttribute(MappedAttribute* attr)
     } else if (attr->name() == onblurAttr) {
         setHTMLEventListener(blurEvent, attr);
     } else
-        HTMLGenericFormElement::parseMappedAttribute(attr);
+        HTMLFormControlElement::parseMappedAttribute(attr);
 }
 
 void HTMLButtonElement::defaultEventHandler(Event* evt)
@@ -135,7 +135,7 @@ void HTMLButtonElement::defaultEventHandler(Event* evt)
         }
     }
 
-    HTMLGenericFormElement::defaultEventHandler(evt);
+    HTMLFormControlElement::defaultEventHandler(evt);
 }
 
 bool HTMLButtonElement::isSuccessfulSubmitButton() const

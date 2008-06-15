@@ -35,7 +35,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 HTMLLegendElement::HTMLLegendElement(Document *doc, HTMLFormElement *f)
-: HTMLGenericFormElement(legendTag, doc, f)
+    : HTMLFormControlElement(legendTag, doc, f)
 {
 }
 

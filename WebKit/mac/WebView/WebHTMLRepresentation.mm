@@ -47,7 +47,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
-#import <WebCore/HTMLGenericFormElement.h>
+#import <WebCore/HTMLFormControlElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/MIMETypeRegistry.h>
@@ -270,10 +270,10 @@ static HTMLFormElement* formElementFromDOMElement(DOMElement *element)
     HTMLFormElement* formElement = formElementFromDOMElement(form);
     if (!formElement)
         return nil;
-    Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+    Vector<HTMLFormControlElement*>& elements = formElement->formElements;
     AtomicString targetName = name;
     for (unsigned i = 0; i < elements.size(); i++) {
-        HTMLGenericFormElement* elt = elements[i];
+        HTMLFormControlElement* elt = elements[i];
         if (elt->name() == targetName)
             return kit(elt);
     }
@@ -318,7 +318,7 @@ static HTMLInputElement* inputElementFromDOMElement(DOMElement* element)
     if (!formElement)
         return nil;
     NSMutableArray *results = nil;
-    Vector<HTMLGenericFormElement*>& elements = formElement->formElements;
+    Vector<HTMLFormControlElement*>& elements = formElement->formElements;
     for (unsigned i = 0; i < elements.size(); i++) {
         if (elements[i]->isEnumeratable()) { // Skip option elements, other duds
             DOMElement* de = kit(elements[i]);

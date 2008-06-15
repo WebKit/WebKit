@@ -493,7 +493,7 @@ This file contains the list of files needed to build WebCore.
         html/HTMLFrameElementBase.cpp
         html/HTMLFrameOwnerElement.cpp
         html/HTMLFrameSetElement.cpp
-        html/HTMLGenericFormElement.cpp
+        html/HTMLFormControlElement.cpp
         html/HTMLHRElement.cpp
         html/HTMLHeadElement.cpp
         html/HTMLHeadingElement.cpp
