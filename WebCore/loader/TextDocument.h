@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,57 +21,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef TextDocument_h
 #define TextDocument_h
 
 #include "HTMLDocument.h"
-#include "Tokenizer.h"
 
 namespace WebCore {
 
-class DOMImplementation;
-class FrameView;
 class HTMLViewSourceDocument;
 
-class TextTokenizer : public Tokenizer {
+class TextDocument : public HTMLDocument {
 public:
-    TextTokenizer(Document* doc);
-    TextTokenizer(HTMLViewSourceDocument* doc);
-
-    virtual bool write(const SegmentedString&, bool appendData);
-    virtual void finish();
-    virtual bool isWaitingForScripts() const;
-    
-    inline void checkBuffer(int len = 10)
+    static PassRefPtr<TextDocument> create(Frame* frame)
     {
-        if ((m_dest - m_buffer) > m_size - len) {
-            // Enlarge buffer
-            int newSize = std::max(m_size * 2, m_size + len);
-            int oldOffset = m_dest - m_buffer;
-            m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
-            m_dest = m_buffer + oldOffset;
-            m_size = newSize;
-        }
+        return new TextDocument(frame);
     }
-        
+
 private:
-    Document* m_doc;
-    Element* m_preElement;
-
-    bool m_skipLF;
-    
-    int m_size;
-    UChar* m_buffer;
-    UChar* m_dest;
-};
-
-class TextDocument : public HTMLDocument
-{
-public:
-    TextDocument(DOMImplementation*, Frame*);
+    TextDocument(Frame*);
     
     virtual Tokenizer* createTokenizer();
 };
+
+Tokenizer* createTextTokenizer(HTMLViewSourceDocument*);
 
 }
 

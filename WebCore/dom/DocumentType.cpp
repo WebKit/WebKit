@@ -29,30 +29,11 @@
 
 namespace WebCore {
 
-DocumentType::DocumentType(DOMImplementation* i, Document* document, const String& n, const String& p, const String& s)
-    : Node(document)
-    , m_implementation(i)
-    , m_name(n)
-    , m_publicId(p)
-    , m_systemId(s)
-{
-}
-
 DocumentType::DocumentType(Document* document, const String& n, const String& p, const String& s)
     : Node(document)
     , m_name(n)
     , m_publicId(p)
     , m_systemId(s)
-{
-}
-
-DocumentType::DocumentType(Document* document, const DocumentType &t)
-    : Node(document)
-    , m_implementation(t.m_implementation)
-    , m_name(t.m_name)
-    , m_publicId(t.m_publicId)
-    , m_systemId(t.m_systemId)
-    , m_subset(t.m_subset)
 {
 }
 

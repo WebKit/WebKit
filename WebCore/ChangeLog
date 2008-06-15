@@ -1,3 +1,91 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        Reviewed and tweaked by Sam Weinig.
+
+        Fix for <rdar://problem/5908591>
+        https://bugs.webkit.org/show_bug.cgi?id=18743
+
+        Makes DOMImplementation per-document.
+
+        Test: http/tests/security/cross-frame-access-DOMImplementation.html
+
+        * bindings/objc/DOMImplementationFront.cpp:
+        (WebCore::DOMImplementationFront::getInterface):
+        * bindings/objc/DOMImplementationFront.h:
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::hasFeature):
+        (WebCore::DOMImplementation::createDocumentType):
+        (WebCore::DOMImplementation::getInterface):
+        (WebCore::DOMImplementation::createDocument):
+        (WebCore::DOMImplementation::createHTMLDocument):
+        * dom/DOMImplementation.h:
+        (WebCore::DOMImplementation::create):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::implementation):
+        * dom/Document.h:
+        (WebCore::Document::create):
+        (WebCore::Document::createXHTML):
+        * dom/DocumentType.cpp:
+        * dom/DocumentType.h:
+        (WebCore::DocumentType::create):
+        (WebCore::DocumentType::entities):
+        (WebCore::DocumentType::notations):
+        (WebCore::DocumentType::name):
+        (WebCore::DocumentType::publicId):
+        (WebCore::DocumentType::systemId):
+        (WebCore::DocumentType::internalSubset):
+        * dom/Node.cpp:
+        (WebCore::Node::isSupported):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::internalSubset):
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::HTMLDocument):
+        * html/HTMLDocument.h:
+        (WebCore::HTMLDocument::create):
+        (WebCore::HTMLDocument::isHTMLDocument):
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::parseDoctypeToken):
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        (WebCore::HTMLViewSourceDocument::createTokenizer):
+        * html/HTMLViewSourceDocument.h:
+        (WebCore::HTMLViewSourceDocument::create):
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::ensureSVGFontData):
+        * loader/FTPDirectoryDocument.cpp:
+        (WebCore::FTPDirectoryDocument::FTPDirectoryDocument):
+        * loader/FTPDirectoryDocument.h:
+        (WebCore::FTPDirectoryDocument::create):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        * loader/ImageDocument.cpp:
+        (WebCore::ImageDocument::ImageDocument):
+        * loader/ImageDocument.h:
+        (WebCore::ImageDocument::create):
+        (WebCore::ImageDocument::isImageDocument):
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginDocument::PluginDocument):
+        * loader/PluginDocument.h:
+        (WebCore::PluginDocument::create):
+        (WebCore::PluginDocument::isPluginDocument):
+        * loader/TextDocument.cpp:
+        (WebCore::TextTokenizer::checkBuffer):
+        (WebCore::TextDocument::TextDocument):
+        (WebCore::createTextTokenizer):
+        * loader/TextDocument.h:
+        (WebCore::TextDocument::create):
+        * svg/SVGDocument.cpp:
+        (WebCore::SVGDocument::SVGDocument):
+        * svg/SVGDocument.h:
+        (WebCore::SVGDocument::create):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::isSupported):
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::isValid):
+        * xml/DOMParser.cpp:
+        (WebCore::DOMParser::parseFromString):
+
 2008-06-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

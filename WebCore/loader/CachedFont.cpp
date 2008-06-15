@@ -132,7 +132,7 @@ bool CachedFont::ensureSVGFontData()
 {
     ASSERT(m_isSVGFont);
     if (!m_externalSVGDocument && !m_errorOccurred && !m_loading && m_data) {
-        m_externalSVGDocument = new SVGDocument(DOMImplementation::instance(), 0);
+        m_externalSVGDocument = SVGDocument::create(0);
         m_externalSVGDocument->open();
 
         RefPtr<TextResourceDecoder> decoder = TextResourceDecoder::create("application/xml");

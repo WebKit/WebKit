@@ -477,8 +477,8 @@ void FTPDirectoryTokenizer::finish()
     HTMLTokenizer::finish();
 }
 
-FTPDirectoryDocument::FTPDirectoryDocument(DOMImplementation* implementation, Frame* frame)
-    : HTMLDocument(implementation, frame)
+FTPDirectoryDocument::FTPDirectoryDocument(Frame* frame)
+    : HTMLDocument(frame)
 {
 #ifndef NDEBUG
     LogFTP.state = WTFLogChannelOn;

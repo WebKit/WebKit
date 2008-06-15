@@ -137,8 +137,8 @@ bool ImageTokenizer::isWaitingForScripts() const
     
 // --------
 
-ImageDocument::ImageDocument(DOMImplementation* implementation, Frame* frame)
-    : HTMLDocument(implementation, frame)
+ImageDocument::ImageDocument(Frame* frame)
+    : HTMLDocument(frame)
     , m_imageElement(0)
     , m_imageSizeIsKnown(false)
     , m_didShrinkImage(false)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,38 @@ using namespace std;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class TextTokenizer : public Tokenizer {
+public:
+    TextTokenizer(Document*);
+    TextTokenizer(HTMLViewSourceDocument*);
+
+    virtual bool write(const SegmentedString&, bool appendData);
+    virtual void finish();
+    virtual bool isWaitingForScripts() const;
+    
+    inline void checkBuffer(int len = 10)
+    {
+        if ((m_dest - m_buffer) > m_size - len) {
+            // Enlarge buffer
+            int newSize = std::max(m_size * 2, m_size + len);
+            int oldOffset = m_dest - m_buffer;
+            m_buffer = static_cast<UChar*>(fastRealloc(m_buffer, newSize * sizeof(UChar)));
+            m_dest = m_buffer + oldOffset;
+            m_size = newSize;
+        }
+    }
+        
+private:
+    Document* m_doc;
+    Element* m_preElement;
+
+    bool m_skipLF;
+    
+    int m_size;
+    UChar* m_buffer;
+    UChar* m_dest;
+};
 
 TextTokenizer::TextTokenizer(Document* doc)
     : m_doc(doc)
@@ -137,14 +169,19 @@ bool TextTokenizer::isWaitingForScripts() const
     return false;
 }
 
-TextDocument::TextDocument(DOMImplementation* implementation, Frame* frame)
-    : HTMLDocument(implementation, frame)
+TextDocument::TextDocument(Frame* frame)
+    : HTMLDocument(frame)
 {
 }
 
 Tokenizer* TextDocument::createTokenizer()
 {
     return new TextTokenizer(this);
+}
+
+Tokenizer* createTextTokenizer(HTMLViewSourceDocument* document)
+{
+    return new TextTokenizer(document);
 }
 
 }

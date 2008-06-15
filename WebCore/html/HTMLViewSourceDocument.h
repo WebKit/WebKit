@@ -34,7 +34,10 @@ class Token;
 
 class HTMLViewSourceDocument : public HTMLDocument {
 public:
-    HTMLViewSourceDocument(DOMImplementation*, Frame*, const String& mimeType);
+    static PassRefPtr<HTMLViewSourceDocument> create(Frame* frame, const String& mimeType)
+    {
+        return new HTMLViewSourceDocument(frame, mimeType);
+    }
     
     virtual Tokenizer* createTokenizer();
     
@@ -43,6 +46,8 @@ public:
     void addViewSourceDoctypeToken(DoctypeToken*);
 
 private:
+    HTMLViewSourceDocument(Frame*, const String& mimeType);
+
     void createContainingTable();
     PassRefPtr<Element> addSpanWithClassName(const String&);
     void addLine(const String& className);

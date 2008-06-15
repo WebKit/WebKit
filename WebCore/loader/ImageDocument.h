@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,12 +33,11 @@ class ImageDocumentElement;
 
 class ImageDocument : public HTMLDocument {
 public:
-    ImageDocument(DOMImplementation*, Frame*);
+    static PassRefPtr<ImageDocument> create(Frame* frame)
+    {
+        return new ImageDocument(frame);
+    }
 
-    virtual bool isImageDocument() const { return true; }
-    
-    virtual Tokenizer* createTokenizer();
-    
     CachedImage* cachedImage();
     ImageDocumentElement* imageElement() const { return m_imageElement; }
     void disconnectImageElement() { m_imageElement = 0; }
@@ -48,6 +47,11 @@ public:
     void imageClicked(int x, int y);
 
 private:
+    ImageDocument(Frame*);
+
+    virtual Tokenizer* createTokenizer();
+    virtual bool isImageDocument() const { return true; }
+    
     void createDocumentStructure();
     void resizeImageToFit();
     void restoreImageSize();

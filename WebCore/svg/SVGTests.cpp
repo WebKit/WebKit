@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -77,7 +75,7 @@ bool SVGTests::isValid() const
     if (m_features) {
         for (unsigned long i = 0; i < m_features->numberOfItems(); i++) {
             String value = m_features->getItem(i, ec);
-            if (value.isEmpty() || !DOMImplementation::instance()->hasFeature(value, String()))
+            if (value.isEmpty() || !DOMImplementation::hasFeature(value, String()))
                 return false;
         }
     }

@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -35,7 +33,11 @@ namespace WebCore {
 
     class SVGDocument : public Document {
     public:
-        SVGDocument(DOMImplementation*, Frame*);
+        static PassRefPtr<SVGDocument> create(Frame* frame)
+        {
+            return new SVGDocument(frame);
+        }
+
         virtual ~SVGDocument();
         
         virtual bool isSVGDocument() const { return true; }
@@ -51,6 +53,8 @@ namespace WebCore {
         void updatePan(const FloatPoint& pos) const;
 
     private:
+        SVGDocument(Frame*);
+
         FloatPoint m_translate;
     };
 

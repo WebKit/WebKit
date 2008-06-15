@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006, 2008 Rob Buis <buis@kde.org>
+    Copyright (C) 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -58,10 +59,7 @@ SVGElement::~SVGElement()
 
 bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 {
-    if (DOMImplementation::instance()->hasFeature(feature, version))
-        return true;
-
-    return DOMImplementation::instance()->hasFeature(feature, version);
+    return DOMImplementation::hasFeature(feature, version);
 }
 
 String SVGElement::id() const

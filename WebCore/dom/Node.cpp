@@ -83,7 +83,7 @@ struct NodeListsNodeData {
 
 bool Node::isSupported(const String& feature, const String& version)
 {
-    return DOMImplementation::instance()->hasFeature(feature, version);
+    return DOMImplementation::hasFeature(feature, version);
 }
 
 #ifndef NDEBUG

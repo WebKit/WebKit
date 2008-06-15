@@ -1,0 +1,13 @@
+<html>
+<head>
+    <script>
+        window.onload = function()
+        {
+            document.implementation.foo = "FAIL";
+            window.parent.postMessage("test", "*");
+        }
+    </script>
+</head>
+<body>
+</body>
+</html>

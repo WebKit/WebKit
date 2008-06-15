@@ -282,7 +282,7 @@ void HTMLParser::parseDoctypeToken(DoctypeToken* t)
         return;
         
     // Make a new doctype node and set it as our doctype.
-    document->addChild(new DocumentType(document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
+    document->addChild(DocumentType::create(document, String::adopt(t->m_name), String::adopt(t->m_publicID), String::adopt(t->m_systemID)));
 }
 
 static bool isTableSection(Node* n)

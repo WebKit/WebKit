@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -21,6 +21,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #ifndef PluginDocument_h
 #define PluginDocument_h
 
@@ -28,19 +29,20 @@
 
 namespace WebCore {
     
-class DOMImplementation;
-class FrameView;
-    
-class PluginDocument : public HTMLDocument
-{
+class PluginDocument : public HTMLDocument {
 public:
-    PluginDocument(DOMImplementation*, Frame*);
+    static PassRefPtr<PluginDocument> create(Frame* frame)
+    {
+        return new PluginDocument(frame);
+    }
+
+private:
+    PluginDocument(Frame*);
 
     virtual bool isPluginDocument() const { return true; }
-        
     virtual Tokenizer* createTokenizer();
 };
     
 }
 
-#endif // ImageDocument_h
+#endif // PluginDocument_h

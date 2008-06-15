@@ -258,10 +258,8 @@ static bool acceptsEditingFocus(Node *node)
 
 static DeprecatedPtrList<Document>* changedDocuments = 0;
 
-// FrameView might be 0
-Document::Document(DOMImplementation* impl, Frame* frame, bool isXHTML)
+Document::Document(Frame* frame, bool isXHTML)
     : ContainerNode(0)
-    , m_implementation(impl)
     , m_domtree_version(0)
     , m_styleSheets(StyleSheetList::create(this))
     , m_title("")
@@ -486,6 +484,8 @@ void Document::setDocType(PassRefPtr<DocumentType> docType)
 
 DOMImplementation* Document::implementation() const
 {
+    if (!m_implementation)
+        m_implementation = DOMImplementation::create();
     return m_implementation.get();
 }
 

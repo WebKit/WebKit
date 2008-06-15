@@ -1,6 +1,5 @@
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2003, 2006 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -30,7 +29,7 @@ PassRefPtr<Document> DOMParser::parseFromString(const String& str, const String&
     if (!DOMImplementation::isXMLMIMEType(contentType))
         return 0;
 
-    RefPtr<Document> doc = DOMImplementation::instance()->createDocument(contentType, 0, false);
+    RefPtr<Document> doc = DOMImplementation::createDocument(contentType, 0, false);
 
     doc->open();
     doc->write(str);

@@ -167,7 +167,14 @@ struct FormElementKeyHashTraits : WTF::GenericHashTraits<FormElementKey> {
 
 class Document : public ContainerNode {
 public:
-    Document(DOMImplementation*, Frame*, bool isXHTML = false);
+    static PassRefPtr<Document> create(Frame* frame)
+    {
+        return new Document(frame, false);
+    }
+    static PassRefPtr<Document> createXHTML(Frame* frame)
+    {
+        return new Document(frame, true);
+    }
     virtual ~Document();
 
     virtual void removedLastRef();
@@ -739,6 +746,9 @@ public:
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
 
+protected:
+    Document(Frame*, bool isXHTML);
+
 private:
     CSSStyleSelector* m_styleSelector;
     bool m_didCalculateStyleSelector;
@@ -752,7 +762,7 @@ private:
     String m_baseTarget;
 
     RefPtr<DocumentType> m_docType;
-    RefPtr<DOMImplementation> m_implementation;
+    mutable RefPtr<DOMImplementation> m_implementation;
 
     RefPtr<StyleSheet> m_sheet;
 #if FRAME_LOADS_USER_STYLESHEET

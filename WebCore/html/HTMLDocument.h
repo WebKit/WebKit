@@ -33,10 +33,11 @@ class HTMLElement;
 
 class HTMLDocument : public Document, public CachedResourceClient {
 public:
-    HTMLDocument(DOMImplementation*, Frame*);
+    static PassRefPtr<HTMLDocument> create(Frame* frame)
+    {
+        return new HTMLDocument(frame);
+    }
     virtual ~HTMLDocument();
-
-    virtual bool isHTMLDocument() const { return true; }
 
     int width();
     int height();
@@ -68,8 +69,6 @@ public:
     void captureEvents();
     void releaseEvents();
 
-    virtual Tokenizer* createTokenizer();
-
     virtual bool childAllowed(Node*);
 
     virtual PassRefPtr<Element> createElement(const AtomicString& tagName, ExceptionCode&);
@@ -84,10 +83,14 @@ public:
 
     typedef HashMap<AtomicStringImpl*, int> NameCountMap;
 
-private:
-    virtual void determineParseMode();
+protected:
+    HTMLDocument(Frame*);
 
 private:
+    virtual bool isHTMLDocument() const { return true; }
+    virtual Tokenizer* createTokenizer();
+    virtual void determineParseMode();
+
     NameCountMap m_namedItemCounts;
     NameCountMap m_extraNamedItemCounts;
 };
