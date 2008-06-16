@@ -1714,10 +1714,10 @@
 		93B6A0EA0B0BCA8400F5027A /* ContextMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */; };
 		93B70D6309EB0C7C009D8468 /* JSDOMBinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */; };
 		93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */; };
-		93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* kjs_events.h */; };
-		93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */; };
-		93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* kjs_html.h */; };
+		93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */; };
+		93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D4E09EB0C7C009D8468 /* JSEventListener.h */; };
+		93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */; };
+		93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */; };
 		93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93B70D5309EB0C7C009D8468 /* ScriptController.cpp */; };
 		93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B70D5409EB0C7C009D8468 /* ScriptController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93B77A380ADD792500EA4B81 /* FrameLoaderTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6178,10 +6178,10 @@
 		93B6A0E90B0BCA8400F5027A /* ContextMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = ContextMenuMac.mm; sourceTree = "<group>"; };
 		93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMBinding.cpp; sourceTree = "<group>"; };
 		93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSDOMBinding.h; sourceTree = "<group>"; };
-		93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_events.cpp; sourceTree = "<group>"; };
-		93B70D4E09EB0C7C009D8468 /* kjs_events.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_events.h; sourceTree = "<group>"; };
-		93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = kjs_html.cpp; sourceTree = "<group>"; };
-		93B70D5009EB0C7C009D8468 /* kjs_html.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = kjs_html.h; sourceTree = "<group>"; };
+		93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventListener.cpp; sourceTree = "<group>"; };
+		93B70D4E09EB0C7C009D8468 /* JSEventListener.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSEventListener.h; sourceTree = "<group>"; };
+		93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSPluginElementFunctions.cpp; sourceTree = "<group>"; };
+		93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSPluginElementFunctions.h; sourceTree = "<group>"; };
 		93B70D5309EB0C7C009D8468 /* ScriptController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptController.cpp; sourceTree = "<group>"; };
 		93B70D5409EB0C7C009D8468 /* ScriptController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ScriptController.h; sourceTree = "<group>"; };
 		93B77A370ADD792500EA4B81 /* FrameLoaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameLoaderTypes.h; sourceTree = "<group>"; };
@@ -12191,10 +12191,10 @@
 				BCE99EC20DCA624100182683 /* JSXSLTProcessorConstructor.h */,
 				93B70D4709EB0C7C009D8468 /* JSDOMBinding.cpp */,
 				93B70D4809EB0C7C009D8468 /* JSDOMBinding.h */,
-				93B70D4D09EB0C7C009D8468 /* kjs_events.cpp */,
-				93B70D4E09EB0C7C009D8468 /* kjs_events.h */,
-				93B70D4F09EB0C7C009D8468 /* kjs_html.cpp */,
-				93B70D5009EB0C7C009D8468 /* kjs_html.h */,
+				93B70D4D09EB0C7C009D8468 /* JSEventListener.cpp */,
+				93B70D4E09EB0C7C009D8468 /* JSEventListener.h */,
+				93B70D4F09EB0C7C009D8468 /* JSPluginElementFunctions.cpp */,
+				93B70D5009EB0C7C009D8468 /* JSPluginElementFunctions.h */,
 				93B70D5309EB0C7C009D8468 /* ScriptController.cpp */,
 				93B70D5409EB0C7C009D8468 /* ScriptController.h */,
 				BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */,
@@ -14953,8 +14953,8 @@
 				65C97AF308EA908800ACD273 /* config.h in Headers */,
 				93309DE8099E64920056E581 /* htmlediting.h in Headers */,
 				93B70D6409EB0C7C009D8468 /* JSDOMBinding.h in Headers */,
-				93B70D6A09EB0C7C009D8468 /* kjs_events.h in Headers */,
-				93B70D6C09EB0C7C009D8468 /* kjs_html.h in Headers */,
+				93B70D6A09EB0C7C009D8468 /* JSEventListener.h in Headers */,
+				93B70D6C09EB0C7C009D8468 /* JSPluginElementFunctions.h in Headers */,
 				656581F509D1508D000E61D7 /* kjs_navigator.lut.h in Headers */,
 				93B70D7009EB0C7C009D8468 /* ScriptController.h in Headers */,
 				BCB16C2D0979C3BD00467741 /* loader.h in Headers */,
@@ -16684,8 +16684,8 @@
 				BCEA4854097D93020094C9E4 /* break_lines.cpp in Sources */,
 				93309DE7099E64920056E581 /* htmlediting.cpp in Sources */,
 				93B70D6309EB0C7C009D8468 /* JSDOMBinding.cpp in Sources */,
-				93B70D6909EB0C7C009D8468 /* kjs_events.cpp in Sources */,
-				93B70D6B09EB0C7C009D8468 /* kjs_html.cpp in Sources */,
+				93B70D6909EB0C7C009D8468 /* JSEventListener.cpp in Sources */,
+				93B70D6B09EB0C7C009D8468 /* JSPluginElementFunctions.cpp in Sources */,
 				93B70D6F09EB0C7C009D8468 /* ScriptController.cpp in Sources */,
 				BCB16C2C0979C3BD00467741 /* loader.cpp in Sources */,
 				93309DF7099E64920056E581 /* markup.cpp in Sources */,

@@ -27,7 +27,7 @@
 #include "JSHTMLObjectElementCustom.h"
 
 #include "HTMLObjectElement.h"
-#include "kjs_html.h"
+#include "JSPluginElementFunctions.h"
 
 namespace WebCore {
 

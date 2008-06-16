@@ -545,8 +545,8 @@ webcore_sources += \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
 	WebCore/bindings/js/JSDOMBinding.cpp \
-	WebCore/bindings/js/kjs_events.cpp \
-	WebCore/bindings/js/kjs_html.cpp \
+	WebCore/bindings/js/JSEventListener.cpp \
+	WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	WebCore/bindings/js/ScriptController.cpp \
 	WebCore/bindings/js/PausedTimeouts.cpp \
 	WebCore/bindings/js/ScheduledAction.cpp \

@@ -20,7 +20,7 @@
 #ifndef JSSVGLazyEventListener_h
 #define JSSVGLazyEventListener_h
 
-#include "kjs_events.h"
+#include "JSEventListener.h"
 
 #if ENABLE(SVG)
 

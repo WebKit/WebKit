@@ -29,6 +29,7 @@
 
 #include "JSDOMWindow.h"
 #include "JSEventTargetNode.h"
+#include "JSEventListener.h"
 
 #if ENABLE(SVG)
 #include "JSSVGElementInstance.h"

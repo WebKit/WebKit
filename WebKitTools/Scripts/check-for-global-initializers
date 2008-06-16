@@ -92,23 +92,23 @@ for my $file (sort @files) {
         $shortName =~ s/.*\///;
 
         # Special cases for files that have initializers in debug builds.
-        if ($configuration eq "Debug" or $debugRoot ) {
+        if ($configuration eq "Debug" or $debugRoot) {
             if ($target eq "JavaScriptCore") {
-                next if $shortName eq "nodes.o";
                 next if $shortName eq "AllInOneFile.o";
                 next if $shortName eq "Opcode.o";
+                next if $shortName eq "nodes.o";
             }
             if ($target eq "WebCore") {
                 next if $shortName eq "CachedPage.o";
                 next if $shortName eq "Frame.o";
                 next if $shortName eq "JSCustomSQLTransactionCallback.o";
+                next if $shortName eq "JSEventListener.o";
                 next if $shortName eq "Node.o";
                 next if $shortName eq "Page.o";
                 next if $shortName eq "Range.o";
                 next if $shortName eq "RenderObject.o";
                 next if $shortName eq "SubresourceLoader.o";
                 next if $shortName eq "bidi.o";
-                next if $shortName eq "kjs_events.o";
             }
         }
 

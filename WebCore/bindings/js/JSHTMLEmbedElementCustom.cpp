@@ -27,7 +27,7 @@
 #include "JSHTMLEmbedElementCustom.h"
 
 #include "HTMLEmbedElement.h"
-#include "kjs_html.h"
+#include "JSPluginElementFunctions.h"
 
 namespace WebCore {
 

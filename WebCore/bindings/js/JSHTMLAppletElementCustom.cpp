@@ -27,7 +27,7 @@
 #include "JSHTMLAppletElementCustom.h"
 
 #include "HTMLAppletElement.h"
-#include "kjs_html.h"
+#include "JSPluginElementFunctions.h"
 
 namespace WebCore {
 

@@ -37,7 +37,6 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMWindowShell.h"
 #include "JSHTMLCollection.h"
-#include "kjs_html.h"
 
 using namespace KJS;
 

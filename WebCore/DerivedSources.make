@@ -353,7 +353,7 @@ DOM_CLASSES = \
 .PHONY : all
 
 all : \
-    $(filter-out JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
+    $(filter-out JSEventListener.h JSRGBColor.h,$(DOM_CLASSES:%=JS%.h)) \
     \
     JSDOMWindowBase.lut.h \
     JSEventTargetBase.lut.h \

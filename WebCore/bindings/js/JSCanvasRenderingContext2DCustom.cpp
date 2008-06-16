@@ -34,7 +34,6 @@
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
-#include "kjs_html.h"
 
 using namespace KJS;
 

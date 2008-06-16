@@ -17,8 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef kjs_events_h
-#define kjs_events_h
+#ifndef JSEventListener_h
+#define JSEventListener_h
 
 #include "EventListener.h"
 #include "PlatformString.h"
@@ -114,4 +114,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // kjs_events_h
+#endif // JSEventListener_h

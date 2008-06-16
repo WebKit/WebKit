@@ -13927,19 +13927,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_events.cpp"
+					RelativePath="..\bindings\js\JSEventListener.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_events.h"
+					RelativePath="..\bindings\js\JSEventListener.h"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_html.cpp"
+					RelativePath="..\bindings\js\JSPluginElementFunctions.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\bindings\js\kjs_html.h"
+					RelativePath="..\bindings\js\JSPluginElementFunctions.h"
 					>
 				</File>
 				<File

@@ -28,6 +28,7 @@
 #include "JSEventTargetNode.h"
 
 #include "JSDOMWindow.h"
+#include "JSEventListener.h"
 
 namespace WebCore {
 

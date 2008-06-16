@@ -29,7 +29,6 @@
 #include "JSNode.h"
 #include "Node.h"
 #include "JSDOMBinding.h"
-#include "kjs_html.h"
 #include <wtf/Vector.h>
 
 using namespace KJS;

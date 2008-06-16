@@ -39,7 +39,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDocument.h"
 #include "JSEvent.h"
-#include "kjs_events.h"
+#include "JSEventListener.h"
 #include "markup.h"
 
 using namespace KJS;

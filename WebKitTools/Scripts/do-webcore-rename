@@ -68,19 +68,13 @@ sub wanted
 }
 
 my %renames = (
-    "animationController" => "animation",
-    "scriptProxy" => "script",
-    "selectionController" => "selection",
-    "clearScriptProxy" => "clearScriptController",
-    "m_jscript" => "m_script",
-);
-
-my %renamesContemplatedForTheFuture = (
     "kjs_events" => "JSEventListener",
     "kjs_events_h" => "JSEventListener_h",
     "kjs_html" => "JSPluginElementFunctions",
     "kjs_html_h" => "JSPluginElementFunctions_h",
+);
 
+my %renamesContemplatedForTheFuture = (
     "runtimeObjectGetter" => "pluginElementGetter",
     "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
     "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",

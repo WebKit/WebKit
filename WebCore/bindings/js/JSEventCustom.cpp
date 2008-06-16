@@ -52,7 +52,6 @@
 #include "UIEvent.h"
 #include "WheelEvent.h"
 #include "XMLHttpRequestProgressEvent.h"
-#include "kjs_events.h"
 
 #if ENABLE(DOM_STORAGE)
 #include "JSStorageEvent.h"

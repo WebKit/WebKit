@@ -17,8 +17,8 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#ifndef kjs_html_h
-#define kjs_html_h
+#ifndef JSPluginElementFunctions_h
+#define JSPluginElementFunctions_h
 
 #include "JSDOMBinding.h"
 
@@ -40,4 +40,4 @@ namespace WebCore {
 
 } // namespace WebCore
 
-#endif // kjs_html_h
+#endif // JSPluginElementFunctions_h

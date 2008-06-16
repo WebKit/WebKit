@@ -425,8 +425,8 @@ SOURCES += \
     bindings/js/JSPluginArrayCustom.cpp \
     bindings/js/JSMimeTypeArrayCustom.cpp \
     bindings/js/JSDOMBinding.cpp \
-    bindings/js/kjs_events.cpp \
-    bindings/js/kjs_html.cpp \
+    bindings/js/JSEventListener.cpp \
+    bindings/js/JSPluginElementFunctions.cpp \
     bindings/js/ScriptController.cpp \
     bindings/js/PausedTimeouts.cpp \
     bindings/js/ScheduledAction.cpp \

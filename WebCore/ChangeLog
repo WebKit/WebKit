@@ -1,5 +1,41 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Sam.
+
+        - renamed kjs_html.h/cpp to JSPluginElementFunctions.h/cpp
+        - renamed kjs_events.h/cpp to JSEventListener.h/cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSEventCustom.cpp:
+        * bindings/js/JSEventListener.cpp: Copied from WebCore/bindings/js/kjs_events.cpp.
+        * bindings/js/JSEventListener.h: Copied from WebCore/bindings/js/kjs_events.h.
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        * bindings/js/JSHTMLSelectElementCustom.cpp:
+        * bindings/js/JSPluginElementFunctions.cpp: Copied from WebCore/bindings/js/kjs_html.cpp.
+        * bindings/js/JSPluginElementFunctions.h: Copied from WebCore/bindings/js/kjs_html.h.
+        * bindings/js/JSSVGLazyEventListener.h:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/js/ScriptController.cpp:
+        * bindings/js/kjs_events.cpp: Removed.
+        * bindings/js/kjs_events.h: Removed.
+        * bindings/js/kjs_html.cpp: Removed.
+        * bindings/js/kjs_html.h: Removed.
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - give Frame object functions shorter names: scriptProxy() -> script(),
           selectionController() -> selection(), animationController() -> animation()
 

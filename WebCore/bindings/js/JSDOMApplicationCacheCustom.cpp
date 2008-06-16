@@ -36,7 +36,7 @@
 #include "FrameLoader.h"
 #include "JSDOMWindowCustom.h"
 #include "JSEvent.h"
-#include "kjs_events.h"
+#include "JSEventListener.h"
 
 using namespace KJS;
 
