@@ -1,3 +1,17 @@
+2008-06-16  Adriaan de Groot  <groot@kde.org>
+
+        Reviewed by Simon.
+
+        Fix compilation on Solaris
+
+        On some systems, munmap takes a char* instead of a void* (contrary to POSIX and
+        Single Unix Specification). Since you can always convert from char* to void*
+        but not vice-versa, do the casting to char*.
+
+        * kjs/collector.cpp:
+        (KJS::allocateBlock):
+        (KJS::freeBlock):
+
 2008-06-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

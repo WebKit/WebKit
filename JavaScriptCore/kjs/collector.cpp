@@ -117,10 +117,10 @@ static CollectorBlock* allocateBlock()
         adjust = BLOCK_SIZE - (address & BLOCK_OFFSET_MASK);
 
     if (adjust > 0)
-        munmap(reinterpret_cast<void*>(address), adjust);
+        munmap(reinterpret_cast<char*>(address), adjust);
 
     if (adjust < extra)
-        munmap(reinterpret_cast<void*>(address + adjust + BLOCK_SIZE), extra - adjust);
+        munmap(reinterpret_cast<char*>(address + adjust + BLOCK_SIZE), extra - adjust);
 
     address += adjust;
     memset(reinterpret_cast<void*>(address), 0, BLOCK_SIZE);
@@ -138,7 +138,7 @@ static void freeBlock(CollectorBlock* block)
 #elif HAVE(POSIX_MEMALIGN)
     free(block);
 #else
-    munmap(block, BLOCK_SIZE);
+    munmap(reinterpret_cast<char *>(block), BLOCK_SIZE);
 #endif
 }
 
