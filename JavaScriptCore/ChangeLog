@@ -1,5 +1,20 @@
 2008-06-16  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by John.
+
+        <rdar://problem/6012509> JSProfiler: %s are incorrect if you exclude a
+        top level node like (idle)
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::focus):
+        (KJS::Profile::exclude): Subtract the selfTime from the totalTime of the
+        head since its self time will only be non-zero when one of its children
+        were excluded. Since the head's totalTime is used to calculate %s when
+        its totalTime is the same as the sum of all its visible childrens' times
+        their %s will sum to 100%.
+
+2008-06-16  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam Weinig.
 
         <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the profiler.

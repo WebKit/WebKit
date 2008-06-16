@@ -108,6 +108,7 @@ void Profile::focus(const ProfileNode* profileNode)
     for (ProfileNode* currentNode = m_head.get(); currentNode; currentNode = currentNode->traverseNextNodePreOrder(processChildren))
         processChildren = currentNode->focus(callIdentifier);
 
+    // Set the visible time of all nodes so that the %s display correctly.
     forEach(KJS::calculateVisibleTotalTime);
 }
 
@@ -120,6 +121,10 @@ void Profile::exclude(const ProfileNode* profileNode)
 
     for (ProfileNode* currentNode = m_head.get(); currentNode; currentNode = currentNode->traverseNextNodePreOrder())
         currentNode->exclude(callIdentifier);
+
+    // Set the visible time of the head so the %s display correctly.
+    m_head->setVisibleTotalTime(m_head->totalTime() - m_head->selfTime());
+    m_head->setVisibleSelfTime(0.0);
 }
 
 void Profile::restoreAll()
