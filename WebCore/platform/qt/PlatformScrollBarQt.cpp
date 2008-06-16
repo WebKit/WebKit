@@ -183,6 +183,10 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
 #else
     p->translate(topLeft);
     m_opt.rect.moveTo(QPoint(0, 0));
+
+    // The QStyle expects the background to be already filled
+    p->fillRect(m_opt.rect, m_opt.palette.background());
+
     QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
     m_opt.rect.moveTo(topLeft);
 #endif
