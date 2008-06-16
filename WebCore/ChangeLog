@@ -1,3 +1,14 @@
+2008-06-16  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        Reviewed by Dan Bernstein.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19592
+          Mismatched GraphicsContext::save()/restore() pairs in shadow painting code
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintTextDecorations): remove an extra context->save()
+        from the shadow painting code.
+
 2008-06-16  Adriaan de Groot  <groot@kde.org>
 
         Reviewed by Simon.
