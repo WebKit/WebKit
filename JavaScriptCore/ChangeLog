@@ -1,5 +1,14 @@
 2008-06-16  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the profiler.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::willExecute):
+
+2008-06-16  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Sam.
 
         <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the

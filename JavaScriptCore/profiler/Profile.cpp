@@ -35,8 +35,6 @@
 
 namespace KJS {
 
-const unsigned DEPTH_LIMIT = 1000;
-
 static void calculateVisibleTotalTime(ProfileNode* n) { n->calculateVisibleTotalTime(); }
 static void restoreAll(ProfileNode* n) { n->restore(); }
 static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
@@ -63,9 +61,6 @@ void Profile::stopProfiling()
 
 void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
-    if (++m_depth >= DEPTH_LIMIT)
-        return;
-        
     ASSERT(m_currentNode);
     m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
