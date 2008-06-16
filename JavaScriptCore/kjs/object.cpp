@@ -139,8 +139,8 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
     obj = this;
     while (true) {
       if (JSValue *gs = obj->_prop.get(propertyName, attributes)) {
-        if (attributes & GetterSetter) {
-          JSObject *setterFunc = static_cast<GetterSetterImp *>(gs)->getSetter();
+        if (attributes & IsGetterSetter) {
+          JSObject *setterFunc = static_cast<GetterSetter *>(gs)->getSetter();
         
           if (!setterFunc) {
             throwSetterError(exec);
@@ -205,7 +205,7 @@ bool JSObject::deleteProperty(ExecState* exec, const Identifier &propertyName)
     if ((attributes & DontDelete))
       return false;
     _prop.remove(propertyName);
-    if (attributes & GetterSetter) 
+    if (attributes & IsGetterSetter) 
         _prop.setHasGetterSetterProperties(_prop.containsGettersOrSetters());
     return true;
   }
@@ -296,13 +296,13 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
 void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc)
 {
     JSValue *o = getDirect(propertyName);
-    GetterSetterImp *gs;
+    GetterSetter *gs;
     
     if (o && o->type() == GetterSetterType) {
-        gs = static_cast<GetterSetterImp *>(o);
+        gs = static_cast<GetterSetter *>(o);
     } else {
-        gs = new GetterSetterImp;
-        putDirect(propertyName, gs, GetterSetter);
+        gs = new GetterSetter;
+        putDirect(propertyName, gs, IsGetterSetter);
     }
     
     _prop.setHasGetterSetterProperties(true);
@@ -312,13 +312,13 @@ void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject
 void JSObject::defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc)
 {
     JSValue *o = getDirect(propertyName);
-    GetterSetterImp *gs;
+    GetterSetter *gs;
     
     if (o && o->type() == GetterSetterType) {
-        gs = static_cast<GetterSetterImp *>(o);
+        gs = static_cast<GetterSetter *>(o);
     } else {
-        gs = new GetterSetterImp;
-        putDirect(propertyName, gs, GetterSetter);
+        gs = new GetterSetter;
+        putDirect(propertyName, gs, IsGetterSetter);
     }
     
     _prop.setHasGetterSetterProperties(true);
@@ -333,7 +333,7 @@ JSValue* JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
         if (v) {
             if (v->type() != GetterSetterType)
                 return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetterImp*>(v)->getGetter();
+            JSObject* funcObj = static_cast<GetterSetter*>(v)->getGetter();
             if (!funcObj)
                 return jsUndefined();
             return funcObj;
@@ -353,7 +353,7 @@ JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
         if (v) {
             if (v->type() != GetterSetterType)
                 return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetterImp*>(v)->getSetter();
+            JSObject* funcObj = static_cast<GetterSetter*>(v)->getSetter();
             if (!funcObj)
                 return jsUndefined();
             return funcObj;
@@ -509,7 +509,7 @@ void JSObject::putDirectFunction(InternalFunctionImp* func, int attr)
 
 void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue **location)
 {
-    GetterSetterImp *gs = static_cast<GetterSetterImp *>(*location);
+    GetterSetter *gs = static_cast<GetterSetter *>(*location);
     JSObject *getterFunc = gs->getGetter();
     if (getterFunc)
         slot.setGetterSlot(getterFunc);

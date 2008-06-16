@@ -1,5 +1,25 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        Rubber stamped by Sam.
+
+        - use JS prefix and simpler names for basic JavaScriptCore types,
+          to complement JSValue and JSObject
+
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::needsYouTubeQuirk):
+        * bindings/js/kjs_events.cpp:
+        (WebCore::JSLazyEventListener::parseCode):
+        * bridge/jni/jni_utility.cpp:
+        (KJS::Bindings::convertArrayInstanceToJavaArray):
+        (KJS::Bindings::convertValueToJValue):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::valueRealType):
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::QtConnectionObject::execute):
+        * bridge/runtime_array.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Mitz.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=19556

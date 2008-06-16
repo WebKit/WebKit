@@ -1707,9 +1707,9 @@ void FuncDeclNode::addParams()
         m_body->parameters().append(p->ident());
 }
 
-FunctionImp* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
+JSFunction* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
-    FunctionImp* func = new FunctionImp(exec, m_ident, m_body.get(), scopeChain);
+    JSFunction* func = new JSFunction(exec, m_ident, m_body.get(), scopeChain);
 
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
@@ -1730,9 +1730,9 @@ RegisterID* FuncExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     return generator.emitNewFunctionExpression(generator.finalDestination(dst), this);
 }
 
-FunctionImp* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
+JSFunction* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
-    FunctionImp* func = new FunctionImp(exec, m_ident, m_body.get(), scopeChain);
+    JSFunction* func = new JSFunction(exec, m_ident, m_body.get(), scopeChain);
     JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);

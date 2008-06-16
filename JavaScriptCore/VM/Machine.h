@@ -99,14 +99,14 @@ namespace KJS {
         bool isOpcode(Opcode opcode);
 
         JSValue* execute(ProgramNode*, ExecState*, ScopeChainNode*, JSObject* thisObj, RegisterFileStack*, JSValue** exception);
-        JSValue* execute(FunctionBodyNode*, ExecState*, FunctionImp*, JSObject* thisObj, const List& args, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
+        JSValue* execute(FunctionBodyNode*, ExecState*, JSFunction*, JSObject* thisObj, const List& args, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFile*, int registerOffset, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
 
-        JSValue* retrieveArguments(ExecState*, FunctionImp*) const;
-        JSValue* retrieveCaller(ExecState*, FunctionImp*) const;
+        JSValue* retrieveArguments(ExecState*, JSFunction*) const;
+        JSValue* retrieveCaller(ExecState*, JSFunction*) const;
 
-        void getFunctionAndArguments(Register** registerBase, Register* callFrame, FunctionImp*&, Register*& argv, int& argc);
+        void getFunctionAndArguments(Register** registerBase, Register* callFrame, JSFunction*&, Register*& argv, int& argc);
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
@@ -117,7 +117,7 @@ namespace KJS {
         NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, Register**, const Instruction*&, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
         NEVER_INLINE Instruction* throwException(ExecState*, JSValue*, Register**, const Instruction*, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
 
-        bool getCallFrame(ExecState*, FunctionImp*, Register**& registerBase, int& callFrameOffset) const;
+        bool getCallFrame(ExecState*, JSFunction*, Register**& registerBase, int& callFrameOffset) const;
 
         JSValue* privateExecute(ExecutionFlag, ExecState* = 0, RegisterFile* = 0, Register* = 0, ScopeChainNode* = 0, CodeBlock* = 0, JSValue** exception = 0);
 

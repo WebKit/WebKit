@@ -3229,12 +3229,12 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                         aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
                 }
             }
-            else if (object->inherits(&ArrayInstance::info)) {
+            else if (object->inherits(&JSArray::info)) {
                 static HashSet<JSObject*> visitedElems;
                 if (!visitedElems.contains(object)) {
                     visitedElems.add(object);
                     
-                    ArrayInstance* array = static_cast<ArrayInstance*>(object);
+                    JSArray* array = static_cast<JSArray*>(object);
                     aeDesc = [NSAppleEventDescriptor listDescriptor];
                     unsigned numItems = array->getLength();
                     for (unsigned i = 0; i < numItems; ++i)

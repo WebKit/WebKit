@@ -46,7 +46,7 @@ const UString* DebuggerCallFrame::functionName() const
         return 0;
 
     Register* callFrame = *m_registerBase + callFrameOffset;
-    FunctionImp* function = static_cast<FunctionImp*>(callFrame[Machine::Callee].u.jsValue);
+    JSFunction* function = static_cast<JSFunction*>(callFrame[Machine::Callee].u.jsValue);
     if (!function)
         return 0;
     return &function->functionName().ustring();

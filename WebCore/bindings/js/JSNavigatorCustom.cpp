@@ -51,7 +51,7 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
     // called isWindows returns true; thus the site malfunctions with Windows Safari.
 
     // Do the quirk only if the function's name is "isWindows".
-    FunctionImp* function = exec->function();
+    JSFunction* function = exec->function();
     if (!function)
         return false;
     static const Identifier& isWindowsFunctionName = *new Identifier("isWindows");
@@ -64,7 +64,7 @@ static bool needsYouTubeQuirk(ExecState* exec, Frame* frame)
     ExecState* callingExec = exec->callingExecState();
     if (!callingExec)
         return false;
-    FunctionImp* callingFunction = callingExec->function();
+    JSFunction* callingFunction = callingExec->function();
     if (!callingFunction)
         return false;
     JSObject* thisObject = callingExec->thisValue();

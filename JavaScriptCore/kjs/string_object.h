@@ -34,7 +34,7 @@ namespace KJS {
     StringInstance(JSObject* prototype);
     StringInstance(JSObject* prototype, const UString&);
 
-    static StringInstance* create(ExecState*, StringImp*);
+    static StringInstance* create(ExecState*, JSString*);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
@@ -46,10 +46,10 @@ namespace KJS {
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
-    StringImp* internalValue() const { return static_cast<StringImp*>(JSWrapperObject::internalValue());}
+    JSString* internalValue() const { return static_cast<JSString*>(JSWrapperObject::internalValue());}
 
   protected:
-    StringInstance(JSObject* prototype, StringImp*);
+    StringInstance(JSObject* prototype, JSString*);
   };
 
   // WebCore uses this to make style.filter undetectable

@@ -47,7 +47,7 @@ namespace KJS {
                    DontEnum     = 1 << 2, // property doesn't appear in (for .. in ..)
                    DontDelete   = 1 << 3, // property can't be deleted
                    Function     = 1 << 4, // property is a function - only used by static hashtables
-                   GetterSetter = 1 << 5 }; // property is a getter or setter
+                   IsGetterSetter = 1 << 5 }; // property is a getter or setter
 
   /**
    * Class Information
@@ -80,11 +80,11 @@ namespace KJS {
   
   // This is an internal value object which stores getter and setter functions
   // for a property.
-  class GetterSetterImp : public JSCell {
+  class GetterSetter : public JSCell {
   public:
     JSType type() const { return GetterSetterType; }
       
-    GetterSetterImp() : getter(0), setter(0) { }
+    GetterSetter() : getter(0), setter(0) { }
       
     virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
     virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);

@@ -89,7 +89,7 @@ bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
     }
     
     if (t1 == StringType)
-        return static_cast<StringImp*>(v1)->value() == static_cast<StringImp*>(v2)->value();
+        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
     
     if (t1 == BooleanType)
         return v1->toBoolean(exec) == v2->toBoolean(exec);
@@ -110,7 +110,7 @@ bool strictEqual(JSValue* v1, JSValue* v2)
         return v1->getNumber() == v2->getNumber();
     
     if (t1 == StringType)
-        return static_cast<StringImp*>(v1)->value() == static_cast<StringImp*>(v2)->value();
+        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
     
     return v1 == v2; // covers object, boolean, null, and undefined types
 }

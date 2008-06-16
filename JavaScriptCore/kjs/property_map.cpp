@@ -698,7 +698,7 @@ bool PropertyMap::containsGettersOrSetters() const
 {
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
-        return !!(m_singleEntryAttributes & GetterSetter);
+        return !!(m_singleEntryAttributes & IsGetterSetter);
 #else
         return false;
 #endif
@@ -706,7 +706,7 @@ bool PropertyMap::containsGettersOrSetters() const
 
     unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
     for (unsigned i = 1; i <= entryCount; i++) {
-        if (m_u.table->entries()[i].attributes & GetterSetter)
+        if (m_u.table->entries()[i].attributes & IsGetterSetter)
             return true;
     }
 

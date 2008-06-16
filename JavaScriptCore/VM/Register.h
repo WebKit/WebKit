@@ -34,7 +34,7 @@
 namespace KJS {
 
     class CodeBlock;
-    class FunctionImp;
+    class JSFunction;
     class JSObject;
     class JSPropertyNameIterator;
     class JSValue;

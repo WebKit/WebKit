@@ -1,3 +1,13 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - use JS prefix and simpler names for basic JavaScriptCore types,
+          to complement JSValue and JSObject
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::functionName):
+
 2008-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Rubber stamped by Oliver.

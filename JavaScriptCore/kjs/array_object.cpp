@@ -39,7 +39,7 @@ namespace KJS {
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, 0, ExecState::arrayTable};
+const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::arrayTable};
 
 /* Source for array_object.lut.h
 @begin arrayTable 16
@@ -67,13 +67,13 @@ const ClassInfo ArrayPrototype::info = {"Array", &ArrayInstance::info, 0, ExecSt
 
 // ECMA 15.4.4
 ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
-    : ArrayInstance(objProto, 0)
+    : JSArray(objProto, 0)
 {
 }
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<ArrayInstance>(exec, ExecState::arrayTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayTable(exec), this, propertyName, slot);
 }
 
 
@@ -90,7 +90,7 @@ static JSValue* getProperty(ExecState* exec, JSObject* obj, unsigned index)
 
 JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
 {
-    if (!thisObj->inherits(&ArrayInstance::info))
+    if (!thisObj->inherits(&JSArray::info))
         return throwError(exec, TypeError);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
@@ -133,7 +133,7 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
 
 JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const List&)
 {
-    if (!thisObj->inherits(&ArrayInstance::info))
+    if (!thisObj->inherits(&JSArray::info))
         return throwError(exec, TypeError);
 
     HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
@@ -232,7 +232,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const List& ar
     List::const_iterator it = args.begin();
     List::const_iterator end = args.end();
     while (1) {
-        if (curArg->isObject() && curObj->inherits(&ArrayInstance::info)) {
+        if (curArg->isObject() && curObj->inherits(&JSArray::info)) {
             unsigned k = 0;
             // Older versions tried to optimize out getting the length of thisObj
             // by checking for n != 0, but that doesn't work if thisObj is an empty array.
@@ -379,11 +379,11 @@ JSValue* arrayProtoFuncSort(ExecState* exec, JSObject* thisObj, const List& args
             sortFunction = 0;
     }
 
-    if (thisObj->classInfo() == &ArrayInstance::info) {
+    if (thisObj->classInfo() == &JSArray::info) {
         if (sortFunction)
-            static_cast<ArrayInstance*>(thisObj)->sort(exec, sortFunction);
+            static_cast<JSArray*>(thisObj)->sort(exec, sortFunction);
         else
-            static_cast<ArrayInstance*>(thisObj)->sort(exec);
+            static_cast<JSArray*>(thisObj)->sort(exec);
         return thisObj;
     }
 
@@ -748,11 +748,11 @@ JSObject* ArrayObjectImp::construct(ExecState* exec, const List& args)
         uint32_t n = args[0]->toUInt32(exec);
         if (n != args[0]->toNumber(exec))
             return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
-        return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), n);
+        return new JSArray(exec->lexicalGlobalObject()->arrayPrototype(), n);
     }
 
     // otherwise the array is constructed with the arguments in it
-    return new ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), args);
+    return new JSArray(exec->lexicalGlobalObject()->arrayPrototype(), args);
 }
 
 // ECMA 15.6.1

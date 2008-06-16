@@ -1,3 +1,169 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - use JS prefix and simpler names for basic JavaScriptCore types,
+          to complement JSValue and JSObject
+
+        * JavaScriptCore.exp:
+        * VM/Machine.cpp:
+        (KJS::jsLess):
+        (KJS::jsLessEq):
+        (KJS::jsAdd):
+        (KJS::callEval):
+        (KJS::Machine::execute):
+        (KJS::Machine::retrieveArguments):
+        (KJS::Machine::retrieveCaller):
+        (KJS::Machine::getCallFrame):
+        (KJS::Machine::getFunctionAndArguments):
+        * VM/Machine.h:
+        * VM/Register.h:
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::functionName):
+        * kjs/ExecState.h:
+        * kjs/JSActivation.cpp:
+        (KJS::JSActivation::createArgumentsObject):
+        * kjs/array_instance.cpp:
+        (KJS::):
+        (KJS::JSArray::checkConsistency):
+        (KJS::JSArray::JSArray):
+        (KJS::JSArray::~JSArray):
+        (KJS::JSArray::getItem):
+        (KJS::JSArray::lengthGetter):
+        (KJS::JSArray::inlineGetOwnPropertySlot):
+        (KJS::JSArray::getOwnPropertySlot):
+        (KJS::JSArray::put):
+        (KJS::JSArray::deleteProperty):
+        (KJS::JSArray::getPropertyNames):
+        (KJS::JSArray::increaseVectorLength):
+        (KJS::JSArray::setLength):
+        (KJS::JSArray::mark):
+        (KJS::JSArray::sort):
+        (KJS::JSArray::compactForSorting):
+        (KJS::JSArray::lazyCreationData):
+        (KJS::JSArray::setLazyCreationData):
+        * kjs/array_instance.h:
+        * kjs/array_object.cpp:
+        (KJS::):
+        (KJS::ArrayPrototype::ArrayPrototype):
+        (KJS::ArrayPrototype::getOwnPropertySlot):
+        (KJS::arrayProtoFuncToString):
+        (KJS::arrayProtoFuncToLocaleString):
+        (KJS::arrayProtoFuncConcat):
+        (KJS::arrayProtoFuncSort):
+        (KJS::ArrayObjectImp::construct):
+        * kjs/array_object.h:
+        * kjs/completion.h:
+        * kjs/function.cpp:
+        (KJS::):
+        (KJS::JSFunction::JSFunction):
+        (KJS::JSFunction::mark):
+        (KJS::JSFunction::getCallData):
+        (KJS::JSFunction::callAsFunction):
+        (KJS::JSFunction::argumentsGetter):
+        (KJS::JSFunction::callerGetter):
+        (KJS::JSFunction::lengthGetter):
+        (KJS::JSFunction::getOwnPropertySlot):
+        (KJS::JSFunction::put):
+        (KJS::JSFunction::deleteProperty):
+        (KJS::JSFunction::getParameterName):
+        (KJS::JSFunction::getConstructData):
+        (KJS::JSFunction::construct):
+        (KJS::IndexToNameMap::IndexToNameMap):
+        (KJS::Arguments::Arguments):
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        (KJS::functionProtoFuncToString):
+        (KJS::functionProtoFuncApply):
+        (KJS::FunctionObjectImp::construct):
+        * kjs/internal.cpp:
+        (KJS::JSString::toPrimitive):
+        (KJS::JSString::getPrimitiveNumber):
+        (KJS::JSString::toBoolean):
+        (KJS::JSString::toNumber):
+        (KJS::JSString::toString):
+        (KJS::StringInstance::create):
+        (KJS::JSString::toObject):
+        (KJS::JSString::toThisObject):
+        (KJS::JSString::lengthGetter):
+        (KJS::JSString::indexGetter):
+        (KJS::JSString::indexNumericPropertyGetter):
+        (KJS::JSString::getOwnPropertySlot):
+        (KJS::JSNumberCell::type):
+        (KJS::JSNumberCell::toPrimitive):
+        (KJS::JSNumberCell::getPrimitiveNumber):
+        (KJS::JSNumberCell::toBoolean):
+        (KJS::JSNumberCell::toNumber):
+        (KJS::JSNumberCell::toString):
+        (KJS::JSNumberCell::toObject):
+        (KJS::JSNumberCell::toThisObject):
+        (KJS::JSNumberCell::getUInt32):
+        (KJS::JSNumberCell::getTruncatedInt32):
+        (KJS::JSNumberCell::getTruncatedUInt32):
+        (KJS::GetterSetter::mark):
+        (KJS::GetterSetter::toPrimitive):
+        (KJS::GetterSetter::getPrimitiveNumber):
+        (KJS::GetterSetter::toBoolean):
+        (KJS::GetterSetter::toNumber):
+        (KJS::GetterSetter::toString):
+        (KJS::GetterSetter::toObject):
+        (KJS::GetterSetter::getOwnPropertySlot):
+        (KJS::GetterSetter::put):
+        (KJS::GetterSetter::toThisObject):
+        * kjs/internal.h:
+        (KJS::JSString::JSString):
+        (KJS::JSString::getStringPropertySlot):
+        * kjs/nodes.cpp:
+        (KJS::FuncDeclNode::makeFunction):
+        (KJS::FuncExprNode::makeFunction):
+        * kjs/nodes.h:
+        * kjs/object.cpp:
+        (KJS::JSObject::put):
+        (KJS::JSObject::deleteProperty):
+        (KJS::JSObject::defineGetter):
+        (KJS::JSObject::defineSetter):
+        (KJS::JSObject::lookupGetter):
+        (KJS::JSObject::lookupSetter):
+        (KJS::JSObject::fillGetterPropertySlot):
+        * kjs/object.h:
+        (KJS::):
+        (KJS::GetterSetter::GetterSetter):
+        * kjs/operations.cpp:
+        (KJS::equal):
+        (KJS::strictEqual):
+        * kjs/property_map.cpp:
+        (KJS::PropertyMap::containsGettersOrSetters):
+        * kjs/regexp_object.cpp:
+        (KJS::RegExpMatchesArray::getOwnPropertySlot):
+        (KJS::RegExpMatchesArray::put):
+        (KJS::RegExpMatchesArray::deleteProperty):
+        (KJS::RegExpMatchesArray::getPropertyNames):
+        (KJS::RegExpMatchesArray::RegExpMatchesArray):
+        (KJS::RegExpMatchesArray::fillArrayInstance):
+        * kjs/string_object.cpp:
+        (KJS::StringInstance::StringInstance):
+        (KJS::replace):
+        (KJS::stringProtoFuncReplace):
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        * kjs/string_object.h:
+        (KJS::StringInstance::internalValue):
+        * kjs/value.cpp:
+        (KJS::JSCell::getNumber):
+        (KJS::JSCell::getString):
+        (KJS::JSCell::getObject):
+        (KJS::jsString):
+        (KJS::jsOwnedString):
+        * kjs/value.h:
+        (KJS::JSNumberCell::JSNumberCell):
+        (KJS::jsNumberCell):
+        (KJS::JSValue::uncheckedGetNumber):
+        * profiler/Profiler.cpp:
+        (KJS::createCallIdentifier):
+        (KJS::createCallIdentifierFromFunctionImp):
+
 2008-06-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey.

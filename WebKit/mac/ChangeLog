@@ -1,3 +1,13 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - use JS prefix and simpler names for basic JavaScriptCore types,
+          to complement JSValue and JSObject
+
+        * WebView/WebView.mm:
+        (aeDescFromJSValue):
+
 2008-06-14  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Sam.

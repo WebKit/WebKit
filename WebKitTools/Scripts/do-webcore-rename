@@ -68,13 +68,18 @@ sub wanted
 }
 
 my %renames = (
+    "GetterSetter" => "IsGetterSetter",
+    "GetterSetterImp" => "GetterSetter",
+    "NumberImp" => "JSNumberCell",
+    "StringImp" => "JSString",
+    "ArrayInstance" => "JSArray",
+    "FunctionImp" => "JSFunction",
 );
 
 my %plannedRenames = (
     "ARRAY_INSTANCE_H" => "ArrayInstance_h",
     "ActivationImp" => "Activation",
     "ActivationImpData" => "ActivationData",
-    "ArrayInstance" => "JSArray",
     "ArrayObjectImp" => "ArrayConstructor",
     "BooleanInstance" => "BooleanObject",
     "BooleanObjectImp" => "BooleanConstructor",
@@ -88,10 +93,8 @@ my %plannedRenames = (
     "ErrorObjectImp" => "ErrorConstructor",
     "ErrorProtoFuncToString" => "ErrorFunction",
     "FTPDirectoryTokenizer" => "FTPDirectoryDocumentBuilder",
-    "FunctionImp" => "JSFunction",
     "FunctionObjectImp" => "FunctionConstructor",
     "FunctionProtoFunc" => "FunctionFunction",
-    "GetterSetterImp" => "JSGetterSetter",
     "GlobalFuncImp" => "GlobalFunction",
     "GlobalImp" => "TestGlobalObject",
     "HTMLTokenizer" => "HTMLDocumentBuilder",
@@ -109,7 +112,6 @@ my %plannedRenames = (
     "MathObjectImp" => "MathObject",
     "NativeErrorImp" => "NativeErrorConstructor",
     "Navigator" => "JSNavigator",
-    "NumberImp" => "JSNumberCell",
     "NumberInstance" => "NumberObject",
     "NumberObjectImp" => "NumberConstructor",
     "NumberProtoFunc" => "NumberFunction",
@@ -123,7 +125,6 @@ my %plannedRenames = (
     "RegExpProtoFunc" => "RegExpFunction",
     "RenderView" => "RenderViewport",
     "RuntimeObjectImp" => "ForeignObject",
-    "StringImp" => "JSString",
     "StringImpl" => "SharedString",
     "StringInstance" => "StringObject",
     "StringInstanceThatMasqueradesAsUndefined" => "StringObjectThatMasqueradesAsUndefined",

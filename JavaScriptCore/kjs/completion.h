@@ -34,9 +34,9 @@ namespace KJS {
    * Completion objects are used to convey the return status and value
    * from functions.
    *
-   * See FunctionImp::execute()
+   * See JSFunction::execute()
    *
-   * @see FunctionImp
+   * @see JSFunction
    *
    * @short Handle for a Completion type.
    */

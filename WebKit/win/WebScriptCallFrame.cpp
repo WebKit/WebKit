@@ -164,7 +164,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::functionName(
     if (!m_state->scopeNode())
         return S_OK;
 
-    FunctionImp* func = m_state->function();
+    JSFunction* func = m_state->function();
     if (!func)
         return E_FAIL;
 

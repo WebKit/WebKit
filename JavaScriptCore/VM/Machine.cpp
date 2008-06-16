@@ -103,7 +103,7 @@ static inline bool jsLess(ExecState* exec, JSValue* v1, JSValue* v2)
     if (wasNotString1 | wasNotString2)
         return n1 < n2;
 
-    return static_cast<const StringImp*>(p1)->value() < static_cast<const StringImp*>(p2)->value();
+    return static_cast<const JSString*>(p1)->value() < static_cast<const JSString*>(p2)->value();
 }
 
 static inline bool jsLessEq(ExecState* exec, JSValue* v1, JSValue* v2)
@@ -118,7 +118,7 @@ static inline bool jsLessEq(ExecState* exec, JSValue* v1, JSValue* v2)
     if (wasNotString1 | wasNotString2)
         return n1 <= n2;
 
-    return !(static_cast<const StringImp*>(p2)->value() < static_cast<const StringImp*>(p1)->value());
+    return !(static_cast<const JSString*>(p2)->value() < static_cast<const JSString*>(p1)->value());
 }
 
 static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
@@ -155,7 +155,7 @@ static inline JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
     if (bothTypes == ((NumberType << 3) | NumberType))
         return jsNumber(v1->uncheckedGetNumber() + v2->uncheckedGetNumber());
     if (bothTypes == ((StringType << 3) | StringType)) {
-        UString value = static_cast<StringImp*>(v1)->value() + static_cast<StringImp*>(v2)->value();
+        UString value = static_cast<JSString*>(v1)->value() + static_cast<JSString*>(v2)->value();
         if (value.isNull())
             return throwOutOfMemoryError(exec);
         return jsString(value);
@@ -449,7 +449,7 @@ static NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeC
     int sourceId;
     int errLine;
     UString errMsg;
-    RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(static_cast<StringImp*>(program)->value()), &sourceId, &errLine, &errMsg);
+    RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(static_cast<JSString*>(program)->value()), &sourceId, &errLine, &errMsg);
 
     if (!evalNode) {
         exceptionValue = Error::create(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
@@ -684,7 +684,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     return result;
 }
 
-JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, FunctionImp* function, JSObject* thisObj, const List& args, RegisterFileStack* registerFileStack, ScopeChainNode* scopeChain, JSValue** exception)
+JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, JSFunction* function, JSObject* thisObj, const List& args, RegisterFileStack* registerFileStack, ScopeChainNode* scopeChain, JSValue** exception)
 {
     if (m_reentryDepth >= MaxReentryDepth) {
         *exception = createStackOverflowError(exec);
@@ -2538,7 +2538,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     #undef VM_CHECK_EXCEPTION
 }
 
-JSValue* Machine::retrieveArguments(ExecState* exec, FunctionImp* function) const
+JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
 {
     Register** registerBase;
     int callFrameOffset;
@@ -2557,7 +2557,7 @@ JSValue* Machine::retrieveArguments(ExecState* exec, FunctionImp* function) cons
     return activation->get(exec, exec->propertyNames().arguments);
 }
 
-JSValue* Machine::retrieveCaller(ExecState* exec, FunctionImp* function) const
+JSValue* Machine::retrieveCaller(ExecState* exec, JSFunction* function) const
 {
     Register** registerBase;
     int callFrameOffset;
@@ -2574,7 +2574,7 @@ JSValue* Machine::retrieveCaller(ExecState* exec, FunctionImp* function) const
     return callerFrame[Callee].u.jsValue;
 }
 
-bool Machine::getCallFrame(ExecState* exec, FunctionImp* function, Register**& registerBase, int& callFrameOffset) const
+bool Machine::getCallFrame(ExecState* exec, JSFunction* function, Register**& registerBase, int& callFrameOffset) const
 {
     callFrameOffset = exec->m_callFrameOffset;
 
@@ -2596,10 +2596,10 @@ bool Machine::getCallFrame(ExecState* exec, FunctionImp* function, Register**& r
     }
 }
 
-void Machine::getFunctionAndArguments(Register** registerBase, Register* callFrame, FunctionImp*& function, Register*& argv, int& argc)
+void Machine::getFunctionAndArguments(Register** registerBase, Register* callFrame, JSFunction*& function, Register*& argv, int& argc)
 {
-    function = static_cast<FunctionImp*>(callFrame[Callee].u.jsValue);
-    ASSERT(function->inherits(&FunctionImp::info));
+    function = static_cast<JSFunction*>(callFrame[Callee].u.jsValue);
+    ASSERT(function->inherits(&JSFunction::info));
 
     argv = (*registerBase) + callFrame[CallerRegisterOffset].u.i + callFrame[ArgumentStartRegister].u.i + 1; // skip "this"
     argc = callFrame[ArgumentCount].u.i - 1; // skip "this"

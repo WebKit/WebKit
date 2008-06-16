@@ -175,29 +175,29 @@ bool JSCell::getNumber(double& numericValue) const
 {
     if (!isNumber())
         return false;
-    numericValue = static_cast<const NumberImp*>(this)->value();
+    numericValue = static_cast<const JSNumberCell*>(this)->value();
     return true;
 }
 
 double JSCell::getNumber() const
 {
-    return isNumber() ? static_cast<const NumberImp*>(this)->value() : NaN;
+    return isNumber() ? static_cast<const JSNumberCell*>(this)->value() : NaN;
 }
 
 bool JSCell::getString(UString&stringValue) const
 {
     if (!isString())
         return false;
-    stringValue = static_cast<const StringImp*>(this)->value();
+    stringValue = static_cast<const JSString*>(this)->value();
     return true;
 }
 
 UString JSCell::getString() const
 {
-    return isString() ? static_cast<const StringImp*>(this)->value() : UString();
+    return isString() ? static_cast<const JSString*>(this)->value() : UString();
 }
 
-JSObject*JSCell::getObject()
+JSObject* JSCell::getObject()
 {
     return isObject() ? static_cast<JSObject*>(this) : 0;
 }
@@ -258,17 +258,17 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
 
 JSCell* jsString(const char* s)
 {
-    return new StringImp(s ? s : "");
+    return new JSString(s ? s : "");
 }
 
 JSCell* jsString(const UString& s)
 {
-    return s.isNull() ? new StringImp("") : new StringImp(s);
+    return s.isNull() ? new JSString("") : new JSString(s);
 }
 
 JSCell* jsOwnedString(const UString& s)
 {
-    return s.isNull() ? new StringImp("", StringImp::HasOtherOwner) : new StringImp(s, StringImp::HasOtherOwner);
+    return s.isNull() ? new JSString("", JSString::HasOtherOwner) : new JSString(s, JSString::HasOtherOwner);
 }
 
 } // namespace KJS

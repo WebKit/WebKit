@@ -55,32 +55,32 @@ using namespace Unicode;
 
 namespace KJS {
 
-// ----------------------------- FunctionImp ----------------------------------
+// ----------------------------- JSFunction ----------------------------------
 
-const ClassInfo FunctionImp::info = { "Function", &InternalFunctionImp::info, 0, 0 };
+const ClassInfo JSFunction::info = { "Function", &InternalFunctionImp::info, 0, 0 };
 
-FunctionImp::FunctionImp(ExecState* exec, const Identifier& name, FunctionBodyNode* b, ScopeChainNode* scopeChain)
+JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* b, ScopeChainNode* scopeChain)
   : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
   , body(b)
   , _scope(scopeChain)
 {
 }
 
-void FunctionImp::mark()
+void JSFunction::mark()
 {
     InternalFunctionImp::mark();
     body->mark();
     _scope.mark();
 }
 
-CallType FunctionImp::getCallData(CallData& callData)
+CallType JSFunction::getCallData(CallData& callData)
 {
     callData.js.functionBody = body.get();
     callData.js.scopeChain = _scope.node();
     return CallTypeJS;
 }
 
-JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
 {
     JSValue* exception = 0;
     RegisterFileStack* stack = &exec->dynamicGlobalObject()->registerFileStack();
@@ -99,27 +99,27 @@ JSValue* FunctionImp::callAsFunction(ExecState* exec, JSObject* thisObj, const L
     }
 }
 
-JSValue* FunctionImp::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
+    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
     ASSERT(exec->machine());
     return exec->machine()->retrieveArguments(exec, thisObj);
 }
 
-JSValue* FunctionImp::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
+    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
     ASSERT(exec->machine());
     return exec->machine()->retrieveCaller(exec, thisObj);
 }
 
-JSValue* FunctionImp::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValue* JSFunction::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    FunctionImp* thisObj = static_cast<FunctionImp*>(slot.slotBase());
+    JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
     return jsNumber(thisObj->body->parameters().size());
 }
 
-bool FunctionImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().arguments) {
         slot.setCustom(this, argumentsGetter);
@@ -139,14 +139,14 @@ bool FunctionImp::getOwnPropertySlot(ExecState* exec, const Identifier& property
     return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-void FunctionImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void JSFunction::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return;
     InternalFunctionImp::put(exec, propertyName, value);
 }
 
-bool FunctionImp::deleteProperty(ExecState* exec, const Identifier& propertyName)
+bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     if (propertyName == exec->propertyNames().arguments || propertyName == exec->propertyNames().length)
         return false;
@@ -160,7 +160,7 @@ bool FunctionImp::deleteProperty(ExecState* exec, const Identifier& propertyName
  * it appears associates with it. eg:
  * function f2(x, x): getParameterName(0) --> null
  */
-Identifier FunctionImp::getParameterName(int index)
+Identifier JSFunction::getParameterName(int index)
 {
     Vector<Identifier>& parameters = body->parameters();
 
@@ -179,14 +179,14 @@ Identifier FunctionImp::getParameterName(int index)
 }
 
 // ECMA 13.2.2 [[Construct]]
-ConstructType FunctionImp::getConstructData(ConstructData& constructData)
+ConstructType JSFunction::getConstructData(ConstructData& constructData)
 {
     constructData.js.functionBody = body.get();
     constructData.js.scopeChain = _scope.node();
     return ConstructTypeJS;
 }
 
-JSObject* FunctionImp::construct(ExecState* exec, const List& args)
+JSObject* JSFunction::construct(ExecState* exec, const List& args)
 {
     JSObject* proto;
     JSValue* p = get(exec, exec->propertyNames().prototype);
@@ -220,7 +220,7 @@ JSObject* FunctionImp::construct(ExecState* exec, const List& args)
 // We use Identifier::null to indicate that a given argument's value
 // isn't stored in the activation object.
 
-IndexToNameMap::IndexToNameMap(FunctionImp* func, const List& args)
+IndexToNameMap::IndexToNameMap(JSFunction* func, const List& args)
 {
   _map = new Identifier[args.size()];
   this->size = args.size();
@@ -278,7 +278,7 @@ Identifier& IndexToNameMap::operator[](const Identifier& index)
 const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
 // ECMA 10.1.8
-Arguments::Arguments(ExecState* exec, FunctionImp* func, const List& args, JSActivation* act)
+Arguments::Arguments(ExecState* exec, JSFunction* func, const List& args, JSActivation* act)
     : JSObject(exec->lexicalGlobalObject()->objectPrototype())
     , _activationObject(act)
     , indexToNameMap(func, args)

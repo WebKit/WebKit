@@ -285,7 +285,7 @@ void JSLazyEventListener::parseCode() const
         // have been added with setAttribute from a script, and we should pass String() in that case.
         m_listener = constr->construct(exec, args, m_functionName, sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
 
-        FunctionImp* listenerAsFunction = static_cast<FunctionImp*>(m_listener.get());
+        JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
 
         if (exec->hadException()) {
             exec->clearException();

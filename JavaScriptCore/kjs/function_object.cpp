@@ -68,8 +68,8 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Lis
         return throwError(exec, TypeError);
     }
 
-    if (thisObj->inherits(&FunctionImp::info)) {
-        FunctionImp* fi = static_cast<FunctionImp*>(thisObj);
+    if (thisObj->inherits(&JSFunction::info)) {
+        JSFunction* fi = static_cast<JSFunction*>(thisObj);
         return jsString("function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toSourceString());
     }
 
@@ -93,7 +93,7 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& 
     List applyArgs;
     if (!argArray->isUndefinedOrNull()) {
         if (argArray->isObject() &&
-            (static_cast<JSObject*>(argArray)->inherits(&ArrayInstance::info) ||
+            (static_cast<JSObject*>(argArray)->inherits(&JSArray::info) ||
              static_cast<JSObject*>(argArray)->inherits(&Arguments::info))) {
 
             JSObject* argArrayObj = static_cast<JSObject*>(argArray);
@@ -174,7 +174,7 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
     functionBody->setSource(SourceRange(source, 0, source->length()));
     ScopeChain scopeChain(exec->lexicalGlobalObject(), exec->globalThisValue());
 
-    FunctionImp* fimp = new FunctionImp(exec, functionName, functionBody.get(), scopeChain.node());
+    JSFunction* fimp = new JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
 
     // parse parameter list. throw syntax error on illegal identifiers
     int len = p.size();

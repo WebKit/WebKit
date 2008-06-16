@@ -44,7 +44,7 @@ static const char* AnonymousFunction = "(anonymous function)";
 
 static CallIdentifier createCallIdentifier(JSObject*);
 static CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber);
-static CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp*);
+static CallIdentifier createCallIdentifierFromFunctionImp(JSFunction*);
 
 Profiler* Profiler::s_sharedProfiler = 0;
 Profiler* Profiler::s_sharedEnabledProfilerReference = 0;
@@ -137,8 +137,8 @@ void Profiler::didExecute(ExecState* exec, const UString& sourceURL, int startin
 
 CallIdentifier createCallIdentifier(JSObject* calledFunction)
 {
-    if (calledFunction->inherits(&FunctionImp::info))
-        return createCallIdentifierFromFunctionImp(static_cast<FunctionImp*>(calledFunction));
+    if (calledFunction->inherits(&JSFunction::info))
+        return createCallIdentifierFromFunctionImp(static_cast<JSFunction*>(calledFunction));
     if (calledFunction->inherits(&InternalFunctionImp::info))
         return CallIdentifier(static_cast<InternalFunctionImp*>(calledFunction)->functionName().ustring(), "", 0);
 
@@ -151,7 +151,7 @@ CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNu
     return CallIdentifier(GlobalCodeExecution, sourceURL, startingLineNumber);
 }
 
-CallIdentifier createCallIdentifierFromFunctionImp(FunctionImp* functionImp)
+CallIdentifier createCallIdentifierFromFunctionImp(JSFunction* functionImp)
 {
     UString name = functionImp->functionName().ustring();
     if (name.isEmpty())

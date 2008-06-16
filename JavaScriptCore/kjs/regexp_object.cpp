@@ -314,26 +314,26 @@ void RegExpObjectImp::performMatch(RegExp* r, const UString& s, int startOffset,
   }
 }
 
-class RegExpMatchesArray : public ArrayInstance {
+class RegExpMatchesArray : public JSArray {
 public:
     RegExpMatchesArray(ExecState*, RegExpObjectImpPrivate*);
 
     virtual ~RegExpMatchesArray();
 
-    virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
-    virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::getOwnPropertySlot(exec, propertyName, slot); }
-    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
-    virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::put(exec, propertyName, v); }
-    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
-    virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return ArrayInstance::deleteProperty(exec, propertyName); }
-    virtual void getPropertyNames(ExecState* exec, PropertyNameArray& arr) { if (lazyCreationData()) fillArrayInstance(exec); ArrayInstance::getPropertyNames(exec, arr); }
+    virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::getOwnPropertySlot(exec, propertyName, slot); }
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::put(exec, propertyName, v); }
+    virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::put(exec, propertyName, v); }
+    virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::deleteProperty(exec, propertyName); }
+    virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::deleteProperty(exec, propertyName); }
+    virtual void getPropertyNames(ExecState* exec, PropertyNameArray& arr) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::getPropertyNames(exec, arr); }
 
 private:
     void fillArrayInstance(ExecState*);
 };
 
 RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpObjectImpPrivate* data)
-    : ArrayInstance(exec->lexicalGlobalObject()->arrayPrototype(), data->lastNumSubPatterns + 1)
+    : JSArray(exec->lexicalGlobalObject()->arrayPrototype(), data->lastNumSubPatterns + 1)
 {
     RegExpObjectImpPrivate* d = new RegExpObjectImpPrivate;
     d->lastInput = data->lastInput;
@@ -361,10 +361,10 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
         int start = d->lastOvector[2 * i];
         if (start >= 0)
-            ArrayInstance::put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
+            JSArray::put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
     }
-    ArrayInstance::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
-    ArrayInstance::put(exec, exec->propertyNames().input, jsString(d->lastInput));
+    JSArray::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
+    JSArray::put(exec, exec->propertyNames().input, jsString(d->lastInput));
 
     delete d;
     setLazyCreationData(0);

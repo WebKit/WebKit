@@ -46,7 +46,7 @@ StringInstance::StringInstance(JSObject *proto)
   setInternalValue(jsString(""));
 }
 
-StringInstance::StringInstance(JSObject *proto, StringImp* string)
+StringInstance::StringInstance(JSObject *proto, JSString* string)
   : JSWrapperObject(proto)
 {
   setInternalValue(string);
@@ -264,7 +264,7 @@ static inline int localeCompare(const UString& a, const UString& b)
     return Collator::userDefault()->collate(reinterpret_cast<const ::UChar*>(a.data()), a.size(), reinterpret_cast<const ::UChar*>(b.data()), b.size());
 }
 
-static JSValue *replace(ExecState *exec, StringImp* sourceVal, JSValue *pattern, JSValue *replacement)
+static JSValue *replace(ExecState *exec, JSString* sourceVal, JSValue *pattern, JSValue *replacement)
 {
   UString source = sourceVal->value();
   JSObject *replacementFunction = 0;
@@ -557,9 +557,9 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject* thisObj, const List& 
     // This optimizes the common case that thisObj is a StringInstance
     UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
 
-    StringImp* sVal = thisObj->inherits(&StringInstance::info) ?
+    JSString* sVal = thisObj->inherits(&StringInstance::info) ?
       static_cast<StringInstance*>(thisObj)->internalValue() :
-      static_cast<StringImp*>(jsString(s));
+      static_cast<JSString*>(jsString(s));
 
     JSValue* a0 = args[0];
     JSValue* a1 = args[1];
@@ -725,9 +725,9 @@ JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject* thisObj, const Li
     // This optimizes the common case that thisObj is a StringInstance
     UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     
-    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+    JSString* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
-        : static_cast<StringImp*>(jsString(s));
+        : static_cast<JSString*>(jsString(s));
     int ssize = s.size();
     if (!ssize)
         return sVal;
@@ -750,9 +750,9 @@ JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const Li
     // This optimizes the common case that thisObj is a StringInstance
     UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
 
-    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+    JSString* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
-        : static_cast<StringImp*>(jsString(s));
+        : static_cast<JSString*>(jsString(s));
     int ssize = s.size();
     if (!ssize)
         return sVal;
@@ -776,9 +776,9 @@ JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, co
     UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     
     // FIXME: See http://www.unicode.org/Public/UNIDATA/SpecialCasing.txt for locale-sensitive mappings that aren't implemented.
-    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+    JSString* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
-        : static_cast<StringImp*>(jsString(s));
+        : static_cast<JSString*>(jsString(s));
     int ssize = s.size();
     if (!ssize)
         return sVal;
@@ -801,9 +801,9 @@ JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, co
     // This optimizes the common case that thisObj is a StringInstance
     UString s = thisObj->inherits(&StringInstance::info) ? static_cast<StringInstance*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
 
-    StringImp* sVal = thisObj->inherits(&StringInstance::info)
+    JSString* sVal = thisObj->inherits(&StringInstance::info)
         ? static_cast<StringInstance*>(thisObj)->internalValue()
-        : static_cast<StringImp*>(jsString(s));
+        : static_cast<JSString*>(jsString(s));
     int ssize = s.size();
     if (!ssize)
         return sVal;

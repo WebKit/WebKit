@@ -181,7 +181,7 @@ JSObject* JSActivation::createArgumentsObject(ExecState* exec)
 {
     Register* callFrame = registers() - d()->functionBody->generatedCode().numLocals - Machine::CallFrameHeaderSize;
 
-    FunctionImp* function;
+    JSFunction* function;
     Register* argv;
     int argc;
     exec->machine()->getFunctionAndArguments(registerBase(), callFrame, function, argv, argc);

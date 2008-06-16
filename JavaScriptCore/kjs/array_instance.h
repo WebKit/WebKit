@@ -28,11 +28,11 @@ namespace KJS {
 
   struct ArrayStorage;
 
-  class ArrayInstance : public JSObject {
+  class JSArray : public JSObject {
   public:
-    ArrayInstance(JSObject* prototype, unsigned initialLength);
-    ArrayInstance(JSObject* prototype, const List& initialValues);
-    ~ArrayInstance();
+    JSArray(JSObject* prototype, unsigned initialLength);
+    JSArray(JSObject* prototype, const List& initialValues);
+    ~JSArray();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

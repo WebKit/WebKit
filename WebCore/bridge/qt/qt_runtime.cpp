@@ -114,7 +114,7 @@ static JSRealType valueRealType(ExecState* exec, JSValue* val)
         JSObject *object = val->toObject(exec);
         if (object->inherits(&RuntimeArray::s_info))  // RuntimeArray 'inherits' from Array, but not in C++
             return RTArray;
-        else if (object->inherits(&ArrayInstance::info))
+        else if (object->inherits(&JSArray::info))
             return Array;
         else if (object->inherits(&DateInstance::info))
             return Date;
@@ -320,7 +320,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     ret = QVariant(result);
                 }
             } else if (type == Array) {
-                ArrayInstance* array = static_cast<ArrayInstance*>(object);
+                JSArray* array = static_cast<JSArray*>(object);
 
                 QVariantList result;
                 int len = array->getLength();
@@ -370,7 +370,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 dist = 5;
                 ret = QVariant(result);
             } else if (type == Array) {
-                ArrayInstance* array = static_cast<ArrayInstance*>(object);
+                JSArray* array = static_cast<JSArray*>(object);
 
                 QStringList result;
                 int len = array->getLength();
@@ -593,7 +593,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     }
                 } else if (type == Array) {
                     JSObject* object = value->toObject(exec);
-                    ArrayInstance* array = static_cast<ArrayInstance *>(object);
+                    JSArray* array = static_cast<JSArray *>(object);
                     QObjectList result;
                     int len = array->getLength();
                     for (int i = 0; i < len; ++i) {
@@ -643,7 +643,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                         ret = QVariant::fromValue(result);
                     }
                 } else if (type == Array) {
-                    ArrayInstance* array = static_cast<ArrayInstance *>(object);
+                    JSArray* array = static_cast<JSArray *>(object);
 
                     QList<int> result;
                     int len = array->getLength();
@@ -1616,8 +1616,8 @@ void QtConnectionObject::execute(void **argv)
                         }
                     }
                     // Stuff in the __qt_sender property, if we can
-                    if (m_funcObject->inherits(&FunctionImp::info)) {
-                        FunctionImp* fimp = static_cast<FunctionImp*>(m_funcObject.get());
+                    if (m_funcObject->inherits(&JSFunction::info)) {
+                        JSFunction* fimp = static_cast<JSFunction*>(m_funcObject.get());
 
                         JSObject* qt_sender = Instance::createRuntimeObject(QtInstance::create(sender(), ro));
                         JSObject* wrapper = new JSObject();

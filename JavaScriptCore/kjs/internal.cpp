@@ -49,66 +49,66 @@
 
 namespace KJS {
 
-// ------------------------------ StringImp ------------------------------------
+// ------------------------------ JSString ------------------------------------
 
-JSValue* StringImp::toPrimitive(ExecState*, JSType) const
+JSValue* JSString::toPrimitive(ExecState*, JSType) const
 {
-  return const_cast<StringImp*>(this);
+  return const_cast<JSString*>(this);
 }
 
-bool StringImp::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
+bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
 {
     value = this;
     number = m_value.toDouble();
     return false;
 }
 
-bool StringImp::toBoolean(ExecState*) const
+bool JSString::toBoolean(ExecState*) const
 {
     return !m_value.isEmpty();
 }
 
-double StringImp::toNumber(ExecState*) const
+double JSString::toNumber(ExecState*) const
 {
     return m_value.toDouble();
 }
 
-UString StringImp::toString(ExecState*) const
+UString JSString::toString(ExecState*) const
 {
     return m_value;
 }
 
-inline StringInstance* StringInstance::create(ExecState* exec, StringImp* string)
+inline StringInstance* StringInstance::create(ExecState* exec, JSString* string)
 {
     return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), string);
 }
 
-JSObject* StringImp::toObject(ExecState* exec) const
+JSObject* JSString::toObject(ExecState* exec) const
 {
-    return StringInstance::create(exec, const_cast<StringImp*>(this));
+    return StringInstance::create(exec, const_cast<JSString*>(this));
 }
 
-JSObject* StringImp::toThisObject(ExecState* exec) const
+JSObject* JSString::toThisObject(ExecState* exec) const
 {
-    return StringInstance::create(exec, const_cast<StringImp*>(this));
+    return StringInstance::create(exec, const_cast<JSString*>(this));
 }
 
-JSValue* StringImp::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValue* JSString::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    return jsNumber(static_cast<StringImp*>(slot.slotBase())->value().size());
+    return jsNumber(static_cast<JSString*>(slot.slotBase())->value().size());
 }
 
-JSValue* StringImp::indexGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValue* JSString::indexGetter(ExecState*, const Identifier&, const PropertySlot& slot)
 {
-    return jsString(static_cast<StringImp*>(slot.slotBase())->value().substr(slot.index(), 1));
+    return jsString(static_cast<JSString*>(slot.slotBase())->value().substr(slot.index(), 1));
 }
 
-JSValue* StringImp::indexNumericPropertyGetter(ExecState*, unsigned index, const PropertySlot& slot)
+JSValue* JSString::indexNumericPropertyGetter(ExecState*, unsigned index, const PropertySlot& slot)
 {
-    return jsString(static_cast<StringImp*>(slot.slotBase())->value().substr(index, 1));
+    return jsString(static_cast<JSString*>(slot.slotBase())->value().substr(index, 1));
 }
 
-bool StringImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
+bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
     // This function should only be called by JSValue::get.
@@ -130,72 +130,72 @@ bool StringImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
     }
 }
 
-bool StringImp::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
+bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
     // This function should only be called by JSValue::get.
     if (getStringPropertySlot(propertyName, slot))
         return true;
-    return StringImp::getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
+    return JSString::getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
 }
 
-// ------------------------------ NumberImp ------------------------------------
+// ------------------------------ JSNumberCell ------------------------------------
 
-JSType NumberImp::type() const
+JSType JSNumberCell::type() const
 {
     return NumberType;
 }
 
-JSValue* NumberImp::toPrimitive(ExecState*, JSType) const
+JSValue* JSNumberCell::toPrimitive(ExecState*, JSType) const
 {
-    return const_cast<NumberImp*>(this);
+    return const_cast<JSNumberCell*>(this);
 }
 
-bool NumberImp::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
+bool JSNumberCell::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
 {
     number = val;
     value = this;
     return true;
 }
 
-bool NumberImp::toBoolean(ExecState *) const
+bool JSNumberCell::toBoolean(ExecState *) const
 {
   return val < 0.0 || val > 0.0; // false for NaN
 }
 
-double NumberImp::toNumber(ExecState *) const
+double JSNumberCell::toNumber(ExecState *) const
 {
   return val;
 }
 
-UString NumberImp::toString(ExecState *) const
+UString JSNumberCell::toString(ExecState *) const
 {
   if (val == 0.0) // +0.0 or -0.0
     return "0";
   return UString::from(val);
 }
 
-JSObject *NumberImp::toObject(ExecState *exec) const
+JSObject *JSNumberCell::toObject(ExecState *exec) const
 {
   List args;
-  args.append(const_cast<NumberImp*>(this));
+  args.append(const_cast<JSNumberCell*>(this));
   return static_cast<JSObject *>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec,args));
 }
 
-JSObject* NumberImp::toThisObject(ExecState* exec) const
+JSObject* JSNumberCell::toThisObject(ExecState* exec) const
 {
     List args;
-    args.append(const_cast<NumberImp*>(this));
+    args.append(const_cast<JSNumberCell*>(this));
     return static_cast<JSObject*>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args));
 }
 
-bool NumberImp::getUInt32(uint32_t& uint32) const
+bool JSNumberCell::getUInt32(uint32_t& uint32) const
 {
     uint32 = static_cast<uint32_t>(val);
     return uint32 == val;
 }
 
-bool NumberImp::getTruncatedInt32(int32_t& int32) const
+bool JSNumberCell::getTruncatedInt32(int32_t& int32) const
 {
     if (!(val >= -2147483648.0 && val < 2147483648.0))
         return false;
@@ -203,7 +203,7 @@ bool NumberImp::getTruncatedInt32(int32_t& int32) const
     return true;
 }
 
-bool NumberImp::getTruncatedUInt32(uint32_t& uint32) const
+bool JSNumberCell::getTruncatedUInt32(uint32_t& uint32) const
 {
     if (!(val >= 0.0 && val < 4294967296.0))
         return false;
@@ -211,8 +211,8 @@ bool NumberImp::getTruncatedUInt32(uint32_t& uint32) const
     return true;
 }
 
-// --------------------------- GetterSetterImp ---------------------------------
-void GetterSetterImp::mark()
+// --------------------------- GetterSetter ---------------------------------
+void GetterSetter::mark()
 {
     JSCell::mark();
     
@@ -222,13 +222,13 @@ void GetterSetterImp::mark()
         setter->mark();
 }
 
-JSValue* GetterSetterImp::toPrimitive(ExecState*, JSType) const
+JSValue* GetterSetter::toPrimitive(ExecState*, JSType) const
 {
     ASSERT(false);
     return jsNull();
 }
 
-bool GetterSetterImp::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
+bool GetterSetter::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
 {
     ASSERT_NOT_REACHED();
     number = 0;
@@ -236,53 +236,53 @@ bool GetterSetterImp::getPrimitiveNumber(ExecState*, double& number, JSValue*& v
     return true;
 }
 
-bool GetterSetterImp::toBoolean(ExecState*) const
+bool GetterSetter::toBoolean(ExecState*) const
 {
     ASSERT(false);
     return false;
 }
 
-double GetterSetterImp::toNumber(ExecState *) const
+double GetterSetter::toNumber(ExecState *) const
 {
     ASSERT(false);
     return 0.0;
 }
 
-UString GetterSetterImp::toString(ExecState *) const
+UString GetterSetter::toString(ExecState *) const
 {
     ASSERT(false);
     return UString::null();
 }
 
-JSObject *GetterSetterImp::toObject(ExecState *exec) const
+JSObject *GetterSetter::toObject(ExecState *exec) const
 {
     ASSERT(false);
     return jsNull()->toObject(exec);
 }
 
-bool GetterSetterImp::getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&)
+bool GetterSetter::getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
-bool GetterSetterImp::getOwnPropertySlot(ExecState*, unsigned, PropertySlot&)
+bool GetterSetter::getOwnPropertySlot(ExecState*, unsigned, PropertySlot&)
 {
     ASSERT_NOT_REACHED();
     return false;
 }
 
-void GetterSetterImp::put(ExecState*, const Identifier&, JSValue*)
+void GetterSetter::put(ExecState*, const Identifier&, JSValue*)
 {
     ASSERT_NOT_REACHED();
 }
 
-void GetterSetterImp::put(ExecState*, unsigned, JSValue*)
+void GetterSetter::put(ExecState*, unsigned, JSValue*)
 {
     ASSERT_NOT_REACHED();
 }
 
-JSObject* GetterSetterImp::toThisObject(ExecState*) const
+JSObject* GetterSetter::toThisObject(ExecState*) const
 {
     ASSERT_NOT_REACHED();
     return 0;
