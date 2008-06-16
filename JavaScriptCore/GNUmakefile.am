@@ -142,7 +142,7 @@ DerivedSources/grammar.cpp: $(srcdir)/JavaScriptCore/kjs/grammar.y
 DerivedSources/lexer.lut.h: $(CREATE_HASH_TABLE) $(srcdir)/JavaScriptCore/kjs/keywords.table
 	$(PERL) $^ > $@
 
-%_object.lut.h: $(CREATE_HASH_TABLE) %_object.cpp
+%.lut.h: $(CREATE_HASH_TABLE) %.cpp
 	$^ -i > $@
 
 JavaScriptCore/pcre/chartables.c: $(srcdir)/JavaScriptCore/pcre/dftables

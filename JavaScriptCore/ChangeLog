@@ -1,3 +1,9 @@
+2008-06-16  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix
+
+        * GNUmakefile.am:
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - rename KJS::List to KJS::ArgList
