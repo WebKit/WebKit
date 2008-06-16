@@ -1,0 +1,14 @@
+<html>
+<body>
+<pre>
+<script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+document.documentURI = 'junk';
+document.writeln('Now that document.documentURI is junk, document.baseURI should be null');
+document.writeln('document.baseURI = ' + document.baseURI);
+</script>
+</pre>
+</body>
+</html>

@@ -1,0 +1,13 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+</script>
+<base href="http://fail.example.com/">
+</head>
+<body>
+<div>The document.documentURI property should not be affected by the &lt;base&gt; tag.</div>
+<script>document.write(document.documentURI);</script>
+</body>
+</html>

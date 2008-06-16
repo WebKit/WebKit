@@ -864,16 +864,10 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
     m_xmlStandalone = standalone;
 }
 
-KURL Document::documentURI() const
-{
-    // FIXME: This is wrong.
-    return m_baseURL;
-}
-
 void Document::setDocumentURI(const String& uri)
 {
-    // FIXME: This is wrong.
-    m_baseURL = KURL(uri);
+    m_documentURI = uri;
+    updateBaseURL();
 }
 
 KURL Document::baseURI() const
@@ -1705,6 +1699,7 @@ void Document::setURL(const KURL& url)
         return;
 
     m_url = newURL;
+    m_documentURI = m_url.string();
     m_isAllowedToLoadLocalResources = shouldBeAllowedToLoadLocalResources();
     updateBaseURL();
 }
@@ -1736,7 +1731,9 @@ void Document::setBaseElementURL(const KURL& baseElementURL)
 
 void Document::updateBaseURL()
 {
-    m_baseURL = m_baseElementURL.isEmpty() ? url() : m_baseElementURL;
+    m_baseURL = m_baseElementURL.isEmpty() ? KURL(documentURI()) : m_baseElementURL;
+    if (!m_baseURL.isValid())
+        m_baseURL = KURL();
 
     if (m_elemSheet)
         m_elemSheet->setHref(m_baseURL.string());

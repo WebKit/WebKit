@@ -1,0 +1,18 @@
+<html>
+<head>
+<body>
+<script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+document.documentURI = 'junk';
+</script>
+<a href="foo.html">Hyperlink to foo.html</a>
+<pre>
+<script>
+var a = document.getElementsByTagName('a')[0];
+document.writeln('a.href = ' + a.href);
+</script>
+</pre>
+</body>
+</html>

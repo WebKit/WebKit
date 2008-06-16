@@ -1,0 +1,15 @@
+<html>
+<body>
+<pre>
+<script>
+if (window.layoutTestController)
+  layoutTestController.dumpAsText();
+
+document.writeln('document.documentURI = ' + document.documentURI);
+document.writeln('Assigning to documentURI');
+document.documentURI = 'PASS: documentURI can hold an arbitrary string.';
+document.writeln('document.documentURI = ' + document.documentURI);
+</script>
+</pre>
+</body>
+</html>

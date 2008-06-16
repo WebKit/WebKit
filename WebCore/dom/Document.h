@@ -245,7 +245,7 @@ public:
     void setXMLVersion(const String&, ExceptionCode&);
     void setXMLStandalone(bool, ExceptionCode&);
 
-    KURL documentURI() const;
+    String documentURI() const { return m_documentURI; }
     void setDocumentURI(const String&);
 
     virtual KURL baseURI() const;
@@ -766,6 +766,13 @@ private:
     KURL m_baseElementURL;  // The URL set by the <base> element.
     KURL m_cookieURL;  // The URL to use for cookie access.
     KURL m_policyBaseURL;  // The policy URL for third-party cookie blocking.
+
+    // Document.documentURI:
+    // Although URL-like, Document.documentURI can actually be set to any
+    // string by content.  Document.documentURI affects m_baseURL unless the
+    // document contains a <base> element, in which case the <base> element
+    // takes precedence.
+    String m_documentURI;
 
     String m_baseTarget;
 

@@ -1,3 +1,24 @@
+2008-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Test Document.documentURI (DOM Core Level 3).  There don't appear to be
+        other browser implementations of this feature to compare against, but
+        these tests test my interpretation of the spec.
+
+        * fast/dom/documenturi-affects-relative-paths-expected.txt: Added.
+        * fast/dom/documenturi-affects-relative-paths.html: Added.
+        * fast/dom/documenturi-assigned-junk-implies-baseuri-null-expected.txt: Added.
+        * fast/dom/documenturi-assigned-junk-implies-baseuri-null.html: Added.
+        * fast/dom/documenturi-assigned-junk-implies-relative-urls-do-not-resolve-expected.txt: Added.
+        * fast/dom/documenturi-assigned-junk-implies-relative-urls-do-not-resolve.html: Added.
+        * fast/dom/documenturi-can-hold-arbitrary-string-expected.txt: Added.
+        * fast/dom/documenturi-can-hold-arbitrary-string.html: Added.
+        * fast/dom/documenturi-loses-to-base-tag-expected.txt: Added.
+        * fast/dom/documenturi-loses-to-base-tag.html: Added.
+        * fast/dom/documenturi-not-affected-by-base-tag-expected.txt: Added.
+        * fast/dom/documenturi-not-affected-by-base-tag.html: Added.
+
 2008-06-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

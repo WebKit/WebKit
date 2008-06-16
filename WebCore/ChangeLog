@@ -2,6 +2,27 @@
 
         Reviewed by Sam Weinig.
 
+        Fix our implementation of Document.documentURI (DOM Core Level 3).
+
+        Tests: fast/dom/documenturi-affects-relative-paths.html
+               fast/dom/documenturi-assigned-junk-implies-baseuri-null.html
+               fast/dom/documenturi-assigned-junk-implies-relative-urls-do-not-resolve.html
+               fast/dom/documenturi-can-hold-arbitrary-string.html
+               fast/dom/documenturi-loses-to-base-tag.html
+               fast/dom/documenturi-not-affected-by-base-tag.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDocumentURI):
+        (WebCore::Document::setURL):
+        (WebCore::Document::updateBaseURL):
+        * dom/Document.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::url):
+
+2008-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
         Refactor our handling of Document::m_baseURL in preparation for
         correcting our implementation of Document.documentURI.
 
