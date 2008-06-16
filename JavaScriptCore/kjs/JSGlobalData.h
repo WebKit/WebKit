@@ -63,8 +63,8 @@ namespace KJS {
         const HashTable* dateTable;
         const HashTable* mathTable;
         const HashTable* numberTable;
-        const HashTable* RegExpImpTable;
-        const HashTable* RegExpObjectImpTable;
+        const HashTable* regExpTable;
+        const HashTable* regExpConstructorTable;
         const HashTable* stringTable;
 
         IdentifierTable* identifierTable;

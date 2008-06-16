@@ -82,9 +82,9 @@ inline int gmtoffset(const GregorianDateTime& t)
  * Class to implement all methods that are properties of the
  * Date object
  */
-class DateObjectFuncImp : public InternalFunctionImp {
+class DateFunction : public InternalFunction {
 public:
-    DateObjectFuncImp(ExecState *, FunctionPrototype *, int i, int len, const Identifier& );
+    DateFunction(ExecState *, FunctionPrototype *, int i, int len, const Identifier& );
 
     virtual JSValue *callAsFunction(ExecState *, JSObject *thisObj, const List &args);
 
@@ -473,7 +473,7 @@ DatePrototype::DatePrototype(ExecState *, ObjectPrototype *objectProto)
   : DateInstance(objectProto)
 {
     setInternalValue(jsNaN());
-    // The constructor will be added later, after DateObjectImp has been built.
+    // The constructor will be added later, after DateConstructor has been built.
 }
 
 bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -481,27 +481,27 @@ bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     return getStaticFunctionSlot<JSObject>(exec, ExecState::dateTable(exec), this, propertyName, slot);
 }
 
-// ------------------------------ DateObjectImp --------------------------------
+// ------------------------------ DateConstructor --------------------------------
 
 // TODO: MakeTime (15.9.11.1) etc. ?
 
-DateObjectImp::DateObjectImp(ExecState* exec, FunctionPrototype* funcProto, DatePrototype* dateProto)
-  : InternalFunctionImp(funcProto, dateProto->classInfo()->className)
+DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* funcProto, DatePrototype* dateProto)
+  : InternalFunction(funcProto, dateProto->classInfo()->className)
 {
   putDirect(exec->propertyNames().prototype, dateProto, DontEnum|DontDelete|ReadOnly);
-  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Parse, 1, exec->propertyNames().parse), DontEnum);
-  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::UTC, 7, exec->propertyNames().UTC), DontEnum);
-  putDirectFunction(new DateObjectFuncImp(exec, funcProto, DateObjectFuncImp::Now, 0, exec->propertyNames().now), DontEnum);
+  putDirectFunction(new DateFunction(exec, funcProto, DateFunction::Parse, 1, exec->propertyNames().parse), DontEnum);
+  putDirectFunction(new DateFunction(exec, funcProto, DateFunction::UTC, 7, exec->propertyNames().UTC), DontEnum);
+  putDirectFunction(new DateFunction(exec, funcProto, DateFunction::Now, 0, exec->propertyNames().now), DontEnum);
   putDirect(exec->propertyNames().length, 7, ReadOnly|DontDelete|DontEnum);
 }
 
-ConstructType DateObjectImp::getConstructData(ConstructData&)
+ConstructType DateConstructor::getConstructData(ConstructData&)
 {
     return ConstructTypeNative;
 }
 
 // ECMA 15.9.3
-JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
+JSObject *DateConstructor::construct(ExecState *exec, const List &args)
 {
   int numArgs = args.size();
 
@@ -549,7 +549,7 @@ JSObject *DateObjectImp::construct(ExecState *exec, const List &args)
 }
 
 // ECMA 15.9.2
-JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
+JSValue *DateConstructor::callAsFunction(ExecState * /*exec*/, JSObject * /*thisObj*/, const List &/*args*/)
 {
     time_t localTime = time(0);
     tm localTM;
@@ -558,16 +558,16 @@ JSValue *DateObjectImp::callAsFunction(ExecState * /*exec*/, JSObject * /*thisOb
     return jsString(formatDate(ts) + " " + formatTime(ts, false));
 }
 
-// ------------------------------ DateObjectFuncImp ----------------------------
+// ------------------------------ DateFunction ----------------------------
 
-DateObjectFuncImp::DateObjectFuncImp(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
-    : InternalFunctionImp(funcProto, name), id(i)
+DateFunction::DateFunction(ExecState* exec, FunctionPrototype* funcProto, int i, int len, const Identifier& name)
+    : InternalFunction(funcProto, name), id(i)
 {
     putDirect(exec->propertyNames().length, len, DontDelete|ReadOnly|DontEnum);
 }
 
 // ECMA 15.9.4.2 - 3
-JSValue *DateObjectFuncImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue *DateFunction::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
   if (id == Parse)
     return jsNumber(parseDate(args[0]->toString(exec)));

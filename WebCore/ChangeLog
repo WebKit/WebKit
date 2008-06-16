@@ -1,3 +1,23 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Sam.
+
+        - cut down on confusing uses of "Object" and "Imp" in
+          JavaScriptCore class names
+
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::valueRealType):
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMethod::QtRuntimeMethod):
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_method.cpp:
+        (RuntimeMethod::RuntimeMethod):
+        (RuntimeMethod::getOwnPropertySlot):
+        * bridge/runtime_method.h:
+
 2008-06-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
@@ -929,7 +949,6 @@
         * editing/RemoveNodePreservingChildrenCommand.h:
         (WebCore::RemoveNodePreservingChildrenCommand::create):
         * editing/ReplaceSelectionCommand.cpp:
-        (WebCore::):
         (WebCore::ReplacementFragment::hasInterchangeNewlineAtStart):
         (WebCore::ReplacementFragment::hasInterchangeNewlineAtEnd):
         (WebCore::ReplacementFragment::ReplacementFragment):
@@ -6604,7 +6623,6 @@
         (WebCore::AXObjectCache::postNotificationToElement):
         (WebCore::AXObjectCache::handleFocusedUIElementChanged):
         * page/gtk/AccessibilityObjectWrapperAtk.cpp: Added.
-        (WebCore::):
         (WebCore::AccessibilityObject::wrapper):
         (WebCore::AccessibilityObject::setWrapper):
         * page/gtk/AccessibilityObjectWrapperAtk.h: Added.
@@ -9633,7 +9651,6 @@
         (WebCore::XMLHttpRequest::didFinishLoading):
         (WebCore::XMLHttpRequest::didReceiveData):
         * xml/XMLHttpRequest.h:
-        (WebCore::):
 
 2008-05-08  Dan Bernstein  <mitz@apple.com>
 
@@ -10643,7 +10660,6 @@
         (WebCore::AccessibilityObject::addChildren):
         (WebCore::AccessibilityObject::removeAXObjectID):
         * page/AccessibilityObject.h:
-        (WebCore::):
         (WebCore::PlainTextRange::PlainTextRange):
         (WebCore::PlainTextRange::isNull):
         (WebCore::AccessibilityObject::isAccessibilityRenderObject):
@@ -11022,7 +11038,6 @@
         (WebCore::RenderButton::timerFired):
         * rendering/RenderButton.h:
         * rendering/RenderStyle.h:
-        (WebCore::):
         * rendering/RenderTheme.cpp:
         (WebCore::RenderTheme::adjustStyle):
         (WebCore::RenderTheme::paint):
@@ -11031,7 +11046,6 @@
         (WebCore::RenderTheme::isControlStyled):
         (WebCore::RenderTheme::isDefault):
         * rendering/RenderTheme.h:
-        (WebCore::):
         * rendering/RenderThemeSafari.cpp:
         (WebCore::RenderThemeSafari::determineState):
         (WebCore::RenderThemeSafari::adjustRepaintRect):
@@ -12440,7 +12454,6 @@
         * bindings/js/JSDOMWindowCustom.cpp:
         (WebCore::JSDOMWindow::setLocation):
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
         * css/CSSParser.cpp:
         (WebCore::CSSParser::parseValue):
@@ -12522,7 +12535,6 @@
         * WebCore.xcodeproj/project.pbxproj:
         * WebCoreSources.bkl:
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::valueForReflection):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
         * css/CSSParser.cpp:
@@ -12537,7 +12549,6 @@
         * css/CSSReflectValue.cpp: Added.
         (WebCore::CSSReflectValue::cssText):
         * css/CSSReflectValue.h: Added.
-        (WebCore::):
         (WebCore::CSSReflectValue::CSSReflectValue):
         (WebCore::CSSReflectValue::direction):
         (WebCore::CSSReflectValue::offset):
@@ -13201,44 +13212,31 @@ element is when the element reports itself to the screen reader. So all of these
         ClassInfo::propHashTable into a function, made getPropertyAttributes() take an ExecState pointer.
 
         * bindings/js/JSAudioConstructor.cpp:
-        (WebCore::):
         * bindings/js/JSDOMWindowBase.cpp:
-        (WebCore::):
         * bindings/js/JSDOMWindowCustom.cpp:
         (WebCore::JSDOMWindow::customGetOwnPropertySlot):
         * bindings/js/JSDOMWindowWrapper.cpp:
-        (WebCore::):
         (WebCore::JSDOMWindowWrapper::getPropertyAttributes):
         * bindings/js/JSDOMWindowWrapper.h:
         * bindings/js/JSEventTargetBase.h:
         (WebCore::JSEventTargetPrototype::classInfo):
         * bindings/js/JSHTMLInputElementBase.cpp:
-        (WebCore::):
         * bindings/js/JSHTMLOptionElementConstructor.cpp:
-        (WebCore::):
         * bindings/js/JSHistoryCustom.cpp:
         (WebCore::JSHistory::customGetOwnPropertySlot):
         * bindings/js/JSImageConstructor.cpp:
-        (WebCore::):
         * bindings/js/JSInspectedObjectWrapper.cpp:
-        (WebCore::):
         * bindings/js/JSInspectorCallbackWrapper.cpp:
-        (WebCore::):
         * bindings/js/JSLocationCustom.cpp:
         (WebCore::JSLocation::customGetOwnPropertySlot):
         (WebCore::JSLocation::customPut):
         * bindings/js/JSNamedNodesCollection.cpp:
-        (WebCore::):
         * bindings/js/JSQuarantinedObjectWrapper.cpp:
-        (WebCore::):
         * bindings/js/JSRGBColor.cpp:
-        (WebCore::):
         * bindings/js/JSStorageCustom.cpp:
         (WebCore::JSStorage::customPut):
         * bindings/js/JSXMLHttpRequestConstructor.cpp:
-        (WebCore::):
         * bindings/js/JSXSLTProcessor.cpp:
-        (WebCore::):
         * bindings/scripts/CodeGeneratorJS.pm:
         * bridge/objc/objc_runtime.mm:
         * bridge/runtime_array.cpp:
@@ -13687,7 +13685,6 @@ element is when the element reports itself to the screen reader. So all of these
         Initialize the extra member of the xmlEntity struct when using libxml2 >= 2.6.27.
 
         * dom/XMLTokenizer.cpp:
-        (WebCore::):
 
 2008-04-27  Dan Bernstein  <mitz@apple.com>
 
@@ -14643,7 +14640,6 @@ element is when the element reports itself to the screen reader. So all of these
         (KJS::Bindings::QtField::valueFromInstance):
         (KJS::Bindings::QtField::setValueToInstance):
         * dom/XMLTokenizer.cpp:
-        (WebCore::):
         * platform/graphics/qt/PathQt.cpp:
         (WebCore::Path::debugString):
 
@@ -14883,7 +14879,6 @@ element is when the element reports itself to the screen reader. So all of these
         Added fast/css/getComputedStyle-border-image.html
 
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::valueForRepeatRule):
         (WebCore::valueForNinePieceImage):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
@@ -14943,7 +14938,6 @@ element is when the element reports itself to the screen reader. So all of these
         * rendering/RenderStyle.cpp:
         (WebCore::NinePieceImage::operator==):
         * rendering/RenderStyle.h:
-        (WebCore::):
         (WebCore::NinePieceImage::m_verticalRule):
         (WebCore::NinePieceImage::horizontalRule):
         (WebCore::NinePieceImage::verticalRule):
@@ -15105,7 +15099,6 @@ element is when the element reports itself to the screen reader. So all of these
         Added fast/backgrounds/mask-composite.html
 
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
         * css/CSSParser.cpp:
         (WebCore::CSSParser::parseValue):
@@ -15241,7 +15234,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::RenderObject::setStyle):
         (WebCore::RenderObject::updateFillImages):
         * rendering/RenderObject.h:
-        (WebCore::):
         (WebCore::RenderObject::hasMask):
         (WebCore::RenderObject::paintMask):
         (WebCore::RenderObject::paintFillExtended):
@@ -15677,7 +15669,6 @@ element is when the element reports itself to the screen reader. So all of these
         Reviewed by Dan
 
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
         * css/CSSParser.cpp:
         (WebCore::CSSParser::parseValue):
@@ -15712,7 +15703,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::RenderStyle::diff):
         * rendering/RenderStyle.h:
         (WebCore::LengthSize::LengthSize):
-        (WebCore::):
         (WebCore::FillLayer::type):
         (WebCore::FillLayer::initialFillAttachment):
         (WebCore::FillLayer::initialFillClip):
@@ -15964,7 +15954,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::FillLayer::cullEmptyLayers):
         (WebCore::Transition::fillUnsetProperties):
         * rendering/RenderStyle.h:
-        (WebCore::):
         (WebCore::FillLayer::image):
         (WebCore::FillLayer::xPosition):
         (WebCore::FillLayer::yPosition):
@@ -17834,7 +17823,6 @@ element is when the element reports itself to the screen reader. So all of these
         Add manifest parser.
 
         * loader/appcache/ManifestParser.cpp:
-        (WebCore::):
         (WebCore::parseManifest):
         * loader/appcache/ManifestParser.h:
         * platform/text/CharacterNames.h:
@@ -18252,7 +18240,6 @@ element is when the element reports itself to the screen reader. So all of these
         Reviewed by Brady.
 
         * platform/win/SharedTimerWin.cpp:
-        (WebCore::):
         (WebCore::TimerWindowWndProc):
         (WebCore::queueTimerProc):
         (WebCore::setSharedTimerFireTime):
@@ -18554,7 +18541,6 @@ element is when the element reports itself to the screen reader. So all of these
         * page/AccessibilityObject.cpp:
         (WebCore::AccessibilityObject::canSetFocusAttribute): Remove SortButtonRole as it is unused.
         * page/AccessibilityObject.h: Ditto.
-        (WebCore::):
         * page/mac/AccessibilityObjectWrapper.mm:
         (RoleEntry::):
 
@@ -19066,7 +19052,6 @@ element is when the element reports itself to the screen reader. So all of these
         Added new files to the projects.
 
         * bindings/js/JSQuarantinedObjectWrapper.cpp: Added.
-        (WebCore::):
         (WebCore::JSQuarantinedObjectWrapper::asWrapper): Converts a JSValue
         into a JSQuarantinedObjectWrapper, if the JSValue is in fact a
         JSQuarantinedObjectWrapper.
@@ -19125,7 +19110,6 @@ element is when the element reports itself to the screen reader. So all of these
         JSQuarantinedObjectWrapper is used to wrap objects from the inspected
         page being passed to the Inspector.
         (WebCore::wrappers):
-        (WebCore::):
         (WebCore::JSInspectedObjectWrapper::wrap): Wraps the passed-in object
         if needed and returns the wrapper. If this object has been wrapped
         previously we'll return the old wrapper rather than make a new one.
@@ -19157,7 +19141,6 @@ element is when the element reports itself to the screen reader. So all of these
         Inspector passes to the inspected page (e.g., for event listeners or
         client-side storage callbacks).
         (WebCore::wrappers):
-        (WebCore::):
         (WebCore::JSInspectorCallbackWrapper::wrap): Wraps the passed-in
         object if needed and returns the wrapper. If this object has been
         wrapped previously we'll return the old wrapper rather than make a new
@@ -19932,7 +19915,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::CSSGradientValue::resolvePoint):
         (WebCore::CSSGradientValue::resolveRadius):
         * css/CSSGradientValue.h: Added.
-        (WebCore::):
         (WebCore::CSSGradientColorStop::CSSGradientColorStop):
         (WebCore::CSSGradientValue::CSSGradientValue):
         (WebCore::CSSGradientValue::type):
@@ -20881,7 +20863,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::JSDOMWindow::postMessage):
         (WebCore::toDOMWindow):
         * bindings/js/JSDOMWindowWrapper.cpp: Added.
-        (WebCore::):
         (WebCore::JSDOMWindowWrapper::JSDOMWindowWrapper):
         (WebCore::JSDOMWindowWrapper::~JSDOMWindowWrapper):
         (WebCore::JSDOMWindowWrapper::mark):
@@ -21708,9 +21689,7 @@ element is when the element reports itself to the screen reader. So all of these
         the right MIMEType when loaded from disk.
 
         * platform/gtk/MIMETypeRegistryGtk.cpp:
-        (WebCore::):
         * platform/wx/MimeTypeRegistryWx.cpp:
-        (WebCore::):
 
 2008-04-05  Rob Buis  <buis@kde.org>
 
@@ -22704,7 +22683,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::IconDatabase::iconURLForPageURL):
         (WebCore::IconDatabase::defaultIcon):
         * loader/icon/IconDatabase.h:
-        (WebCore::):
 
 2008-04-03  Dan Bernstein  <mitz@apple.com>
 
@@ -23276,7 +23254,6 @@ element is when the element reports itself to the screen reader. So all of these
         * loader/CachedFont.h:
         * platform/graphics/FontDescription.h:
         * platform/graphics/FontRenderingMode.h: Added.
-        (WebCore::):
         * platform/graphics/gtk/FontCustomPlatformData.h:
         * platform/graphics/mac/FontCustomPlatformData.h:
         * platform/graphics/qt/FontCustomPlatformData.h:
@@ -23468,7 +23445,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::AccessibilityObject::setAXObjectID):
         (WebCore::AccessibilityObject::removeAXObjectID):
         * page/AccessibilityObject.h: Added.
-        (WebCore::):
         (WebCore::VisiblePositionRange::VisiblePositionRange):
         (WebCore::VisiblePositionRange::isNull):
         (WebCore::AccessibilityObject::detached):
@@ -26562,10 +26538,8 @@ element is when the element reports itself to the screen reader. So all of these
         * rendering/RenderFlow.cpp:
         (WebCore::RenderFlow::paintLines):
         * rendering/RenderObject.h:
-        (WebCore::):
         (WebCore::RenderObject::paintBackgroundExtended):
         * rendering/RenderStyle.h:
-        (WebCore::):
         * rendering/RenderTable.cpp:
         (WebCore::RenderTable::paintBoxDecorations):
         * rendering/RenderTableCell.cpp:
@@ -27047,7 +27021,6 @@ element is when the element reports itself to the screen reader. So all of these
         Reviewed by olliej
 
         * css/CSSComputedStyleDeclaration.cpp:
-        (WebCore::):
         (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
         Support the new 'zoom' property for getComputedStyle.
 
@@ -28001,7 +27974,6 @@ element is when the element reports itself to the screen reader. So all of these
         * platform/text/TextCodec.cpp:
         (WebCore::TextCodec::unencodableCharReplacement):
         * platform/text/TextCodec.h:
-        (WebCore::):
         * platform/text/TextCodecICU.cpp:
         (WebCore::urlEscapedEntityCallback):
         (WebCore::gbkUrlEscapedEntityCallack):
@@ -32009,7 +31981,6 @@ element is when the element reports itself to the screen reader. So all of these
 
         * bindings/js/JSHTMLInputElementBase.cpp: Rename HTMLInputElementBasePrototype 
         to JSHTMLInputElementBasePrototype as seen if toString'ed.
-        (WebCore::):
 
         * bindings/js/JSHTMLOptionElementConstructor.cpp:
         (WebCore::): Added ClassInfo definition.
@@ -32447,7 +32418,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::DOMWindowTimer::DOMWindowTimer):
         (WebCore::DOMWindowTimer::action):
         (WebCore::DOMWindowTimer::takeAction):
-        (WebCore::):
         (WebCore::JSDOMWindowBase::JSDOMWindowBase):
         (WebCore::JSDOMWindowBase::~JSDOMWindowBase):
         (WebCore::JSDOMWindowBase::location):
@@ -35527,7 +35497,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::StyledElement::attributeChanged):
         * dom/XMLTokenizer.cpp:
         (WebCore::XMLTokenizer::internalSubset):
-        (WebCore::):
         * editing/markup.cpp:
         (WebCore::appendStartMarkup):
         * html/HTMLAppletElement.cpp:
@@ -35552,7 +35521,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::HTMLTokenizer::finish):
         (WebCore::HTMLTokenizer::processDoctypeToken):
         * html/HTMLTokenizer.h:
-        (WebCore::):
         (WebCore::DoctypeToken::DoctypeToken):
         (WebCore::DoctypeToken::reset):
         (WebCore::DoctypeToken::state):
@@ -37840,7 +37808,6 @@ element is when the element reports itself to the screen reader. So all of these
 
         * plugins/PluginQuirkSet.h: Added new quirk
         PluginQuirkDontSetNullWindowHandleOnDestroy.
-        (WebCore::):
         * plugins/win/PluginViewWin.cpp:
         (WebCore::PluginView::stop): Selectively call NPP_SetWindow.
         (WebCore::PluginView::determineQuirks): Set new quirk for VLC plug-in.
@@ -39095,7 +39062,6 @@ element is when the element reports itself to the screen reader. So all of these
         * dom/XMLTokenizer.cpp:
         (WebCore::XMLTokenizer::startElementNs):
         (WebCore::XMLTokenizer::endElementNs):
-        (WebCore::):
         * html/HTMLAppletElement.cpp:
         (WebCore::HTMLAppletElement::HTMLAppletElement):
         (WebCore::HTMLAppletElement::finishParsingChildren):
@@ -40740,7 +40706,6 @@ element is when the element reports itself to the screen reader. So all of these
 
         * plugins/PluginQuirkSet.h: Added the DontClipToZeroRectWhenScrolling
         quirk
-        (WebCore::):
         * plugins/win/PluginViewWin.cpp:
         (WebCore::PluginViewWin::updateWindow): Readded the old behavior of
         clipping to the zero rect when updating the window during a scroll.
@@ -40960,7 +40925,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::fileButtonNoFileSelectedLabel):
         (WebCore::contextMenuItemTagOpenImageInNewWindow):
         * platform/gtk/MIMETypeRegistryGtk.cpp:
-        (WebCore::):
         * platform/gtk/MouseEventGtk.cpp:
         * platform/gtk/PasteboardGtk.cpp:
         (WebCore::PasteboardSelectionData::markup):
@@ -41023,13 +40987,11 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::ContextMenuController::contextMenuItemSelected):
         * platform/ContextMenu.cpp:
         (WebCore::createAndAppendInputMethodsSubMenu):
-        (WebCore::):
         (WebCore::insertControlCharacter):
         (WebCore::createAndAppendUnicodeSubMenu):
         (WebCore::ContextMenu::populate):
         (ContextMenu::checkOrEnableIfNeeded):
         * platform/ContextMenuItem.h:
-        (WebCore::):
         * platform/LocalizedStrings.h:
         * platform/gtk/ContextMenuItemGtk.cpp:
         (WebCore::gtkStockIDFromContextMenuAction):
@@ -43111,7 +43073,6 @@ element is when the element reports itself to the screen reader. So all of these
         * plugins/PluginQuirkSet.h: Added. Moved quirks out of PluginViewWin so
         PluginViewWin and PluginStream could share it. Created a class,
         PluginQuirkSet, to store plug-in quirks
-        (WebCore::):
         (WebCore::PluginQuirkSet::PluginQuirkSet):
         (WebCore::PluginQuirkSet::add):
         (WebCore::PluginQuirkSet::contains):
@@ -45151,7 +45112,6 @@ element is when the element reports itself to the screen reader. So all of these
         leak.
 
         * bindings/js/JSCustomSQLTransactionCallback.cpp:
-        (WebCore::):
         (WebCore::JSCustomSQLTransactionCallbackCounter::~JSCustomSQLTransactionCallbackCounter):
         (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
         (WebCore::JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback):
@@ -47881,7 +47841,6 @@ element is when the element reports itself to the screen reader. So all of these
         * rendering/RenderSlider.cpp: (WebCore::RenderSlider::createThumbStyle): Added case for MediaSliderAppearance.
 
         * rendering/RenderStyle.h: Added appearance constants and pseudo ids for new controls.
-        (WebCore::):
         (WebCore::RenderStyle::):
 
         * rendering/RenderTheme.cpp:
@@ -48296,7 +48255,6 @@ element is when the element reports itself to the screen reader. So all of these
         * rendering/SVGRootInlineBox.cpp:
         (WebCore::SVGRootInlineBoxPaintWalker::chunkPortionCallback):
         * svg/SVGFont.cpp:
-        (WebCore::):
         (WebCore::processArabicFormDetection):
         (WebCore::charactersWithArabicForm):
         (WebCore::isCompatibleArabicForm):
@@ -49760,7 +49718,6 @@ element is when the element reports itself to the screen reader. So all of these
         * dom/ExceptionCode.cpp:
         (WebCore::getExceptionCodeDescription):
         * dom/ExceptionCode.h:
-        (WebCore::):
         * dom/Range.cpp:
         (WebCore::Range::insertNode):
         (WebCore::Range::checkNodeWOffset):
@@ -51642,7 +51599,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::computeHash):
         (WebCore::FontCache::getCachedFontPlatformData):
         * platform/graphics/FontDescription.h:
-        (WebCore::):
         (WebCore::FontDescription::FontDescription):
         (WebCore::FontDescription::renderingMode):
         (WebCore::FontDescription::setRenderingMode):
@@ -52052,7 +52008,6 @@ element is when the element reports itself to the screen reader. So all of these
         * WebCoreSources.bkl:
         * bindings/js/JSDocumentCustom.cpp:
         * bindings/js/JSLocation.cpp: Copied from WebCore/bindings/js/kjs_window.cpp.
-        (WebCore::):
         (WebCore::JSLocation::JSLocation):
         (WebCore::JSLocation::getValueProperty):
         (WebCore::JSLocation::getOwnPropertySlot):
@@ -52271,7 +52226,6 @@ element is when the element reports itself to the screen reader. So all of these
         color and sample that to get a solid color.
 
         * css/CSSStyleSelector.cpp:
-        (WebCore::):
         (WebCore::colorForCSSValue):
         * rendering/RenderTheme.cpp:
         (WebCore::RenderTheme::systemColor):
@@ -52439,7 +52393,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::JSEventTargetProperties::):
         (WebCore::JSEventTargetPrototypeFunctionBase::JSEventTargetPrototypeFunctionBase):
         (WebCore::JSEventTargetPrototypeFunction::JSEventTargetPrototypeFunction):
-        (WebCore::):
         (WebCore::::create):
         (WebCore::JSEventTargetBase::JSEventTargetBase):
         (WebCore::JSEventTargetBase::getValueProperty):
@@ -53589,7 +53542,6 @@ element is when the element reports itself to the screen reader. So all of these
         * dom/XMLTokenizer.cpp:
         (WebCore::XMLTokenizer::endElementNs):
         (WebCore::XMLTokenizer::end):
-        (WebCore::):
         * dom/XMLTokenizer.h:
         * editing/Editor.cpp:
         (WebCore::Editor::copy):
@@ -56351,7 +56303,6 @@ element is when the element reports itself to the screen reader. So all of these
         * WebCore.pro:
         Disable video for now
         * platform/Logging.cpp:
-        (WebCore::):
         * platform/Logging.h:
         Added a logging level for Media stuff
         * platform/graphics/Movie.cpp:
@@ -61726,7 +61677,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::currentThread):
         * platform/gtk/ThreadingGtk.cpp:
         (WebCore::identifierByGthreadHandle):
-        (WebCore::):
         * platform/pthreads/ThreadingPthreads.cpp:
         (WebCore::identifierByPthreadHandle):
         (WebCore::currentThread):
@@ -63630,23 +63580,14 @@ element is when the element reports itself to the screen reader. So all of these
         else is there is no point in continuing to keep it around.
 
         * bindings/js/JSDOMExceptionConstructor.cpp:
-        (WebCore::):
         * bindings/js/JSHTMLInputElementBase.cpp:
-        (WebCore::):
         * bindings/js/JSNamedNodesCollection.cpp:
-        (WebCore::):
         * bindings/js/JSXMLHttpRequest.cpp:
-        (KJS::):
         * bindings/js/JSXSLTProcessor.cpp:
-        (KJS::):
         * bindings/js/kjs_css.cpp:
-        (WebCore::):
         * bindings/js/kjs_events.cpp:
-        (WebCore::):
         * bindings/js/kjs_navigator.cpp:
-        (KJS::):
         * bindings/js/kjs_window.cpp:
-        (KJS::):
         * bindings/scripts/CodeGeneratorJS.pm:
 
 2007-11-03  Kevin Ollivier  <kevino@theolliviers.com>
@@ -64476,7 +64417,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::XMLTokenizer::XMLTokenizer):
         (WebCore::XMLTokenizer::write):
         (WebCore::XMLTokenizer::startElementNs):
-        (WebCore::):
         * dom/XMLTokenizer.h:
 
 2007-10-31  Lars Knoll  <lars@trolltech.com>
@@ -65567,7 +65507,6 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::RenderStyle::accessTransitions):
         * rendering/RenderStyle.h:
         (WebCore::BackgroundLayer::next):
-        (WebCore::):
         (WebCore::TimingFunction::TimingFunction):
         (WebCore::TimingFunction::operator==):
         (WebCore::Transition::next):
@@ -69053,7 +68992,6 @@ element is when the element reports itself to the screen reader. So all of these
         Update for mutex changes.
         
         * platform/Threading.h:
-        (WebCore::):
         (WebCore::ThreadSafeShared::ThreadSafeShared):
         (WebCore::ThreadSafeShared::ref):
         (WebCore::ThreadSafeShared::deref):

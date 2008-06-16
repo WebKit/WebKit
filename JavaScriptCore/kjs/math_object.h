@@ -27,9 +27,9 @@
 
 namespace KJS {
 
-    class MathObjectImp : public JSObject {
+    class MathObject : public JSObject {
     public:
-        MathObjectImp(ExecState*, ObjectPrototype*);
+        MathObject(ExecState*, ObjectPrototype*);
 
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;

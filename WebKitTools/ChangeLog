@@ -1,5 +1,11 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        * Scripts/create-exports: Added.
+        * Scripts/do-file-rename: Added some planned renames.
+        * Scripts/do-webcore-rename: Updated for the latest round of renaming.
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         * Scripts/do-webcore-rename: Updated for the latest round of renaming.
 
 2008-06-15  Maciej Stachowiak  <mjs@apple.com>

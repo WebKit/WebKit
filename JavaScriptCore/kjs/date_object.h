@@ -125,9 +125,9 @@ namespace KJS {
      *
      * The initial value of the the global variable's "Date" property
      */
-    class DateObjectImp : public InternalFunctionImp {
+    class DateConstructor : public InternalFunction {
     public:
-        DateObjectImp(ExecState*, FunctionPrototype*, DatePrototype*);
+        DateConstructor(ExecState*, FunctionPrototype*, DatePrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual JSObject* construct(ExecState*, const List& args);

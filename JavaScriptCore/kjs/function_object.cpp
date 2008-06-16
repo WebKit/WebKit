@@ -61,7 +61,7 @@ JSValue* FunctionPrototype::callAsFunction(ExecState*, JSObject*, const List&)
 
 JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
 {
-    if (!thisObj || !thisObj->inherits(&InternalFunctionImp::info)) {
+    if (!thisObj || !thisObj->inherits(&InternalFunction::info)) {
 #ifndef NDEBUG
         fprintf(stderr,"attempted toString() call on null or non-function object\n");
 #endif
@@ -73,7 +73,7 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Lis
         return jsString("function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toSourceString());
     }
 
-    return jsString("function " + static_cast<InternalFunctionImp*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
+    return jsString("function " + static_cast<InternalFunction*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
 }
 
 JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& args)
@@ -125,10 +125,10 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& a
     return thisObj->callAsFunction(exec, callThis, argsTail);
 }
 
-// ------------------------------ FunctionObjectImp ----------------------------
+// ------------------------------ FunctionConstructor ----------------------------
 
-FunctionObjectImp::FunctionObjectImp(ExecState* exec, FunctionPrototype* functionPrototype)
-    : InternalFunctionImp(functionPrototype, functionPrototype->classInfo()->className)
+FunctionConstructor::FunctionConstructor(ExecState* exec, FunctionPrototype* functionPrototype)
+    : InternalFunction(functionPrototype, functionPrototype->classInfo()->className)
 {
     putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
@@ -136,13 +136,13 @@ FunctionObjectImp::FunctionObjectImp(ExecState* exec, FunctionPrototype* functio
     putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
 }
 
-ConstructType FunctionObjectImp::getConstructData(ConstructData&)
+ConstructType FunctionConstructor::getConstructData(ConstructData&)
 {
     return ConstructTypeNative;
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
+JSObject* FunctionConstructor::construct(ExecState* exec, const List& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
     UString p("");
     UString body;
@@ -215,13 +215,13 @@ JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args, const 
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* FunctionObjectImp::construct(ExecState* exec, const List& args)
+JSObject* FunctionConstructor::construct(ExecState* exec, const List& args)
 {
     return construct(exec, args, "anonymous", UString(), 1);
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
-JSValue* FunctionObjectImp::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* FunctionConstructor::callAsFunction(ExecState* exec, JSObject*, const List& args)
 {
     return construct(exec, args);
 }

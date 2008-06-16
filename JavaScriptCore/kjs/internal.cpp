@@ -78,19 +78,19 @@ UString JSString::toString(ExecState*) const
     return m_value;
 }
 
-inline StringInstance* StringInstance::create(ExecState* exec, JSString* string)
+inline StringObject* StringObject::create(ExecState* exec, JSString* string)
 {
-    return new StringInstance(exec->lexicalGlobalObject()->stringPrototype(), string);
+    return new StringObject(exec->lexicalGlobalObject()->stringPrototype(), string);
 }
 
 JSObject* JSString::toObject(ExecState* exec) const
 {
-    return StringInstance::create(exec, const_cast<JSString*>(this));
+    return StringObject::create(exec, const_cast<JSString*>(this));
 }
 
 JSObject* JSString::toThisObject(ExecState* exec) const
 {
-    return StringInstance::create(exec, const_cast<JSString*>(this));
+    return StringObject::create(exec, const_cast<JSString*>(this));
 }
 
 JSValue* JSString::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
@@ -114,7 +114,7 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
     // This function should only be called by JSValue::get.
     if (getStringPropertySlot(exec, propertyName, slot))
         return true;
-    JSObject* object = StringInstance::create(exec, this);
+    JSObject* object = StringObject::create(exec, this);
     slot.setBase(object);
     if (object->JSObject::getOwnPropertySlot(exec, propertyName, slot))
         return true;
@@ -314,26 +314,26 @@ bool LabelStack::contains(const Identifier &id) const
   return false;
 }
 
-// ------------------------------ InternalFunctionImp --------------------------
+// ------------------------------ InternalFunction --------------------------
 
-const ClassInfo InternalFunctionImp::info = { "Function", 0, 0, 0 };
+const ClassInfo InternalFunction::info = { "Function", 0, 0, 0 };
 
-InternalFunctionImp::InternalFunctionImp()
+InternalFunction::InternalFunction()
 {
 }
 
-InternalFunctionImp::InternalFunctionImp(FunctionPrototype* funcProto, const Identifier& name)
+InternalFunction::InternalFunction(FunctionPrototype* funcProto, const Identifier& name)
   : JSObject(funcProto)
   , m_name(name)
 {
 }
 
-CallType InternalFunctionImp::getCallData(CallData&)
+CallType InternalFunction::getCallData(CallData&)
 {
     return CallTypeNative;
 }
 
-bool InternalFunctionImp::implementsHasInstance() const
+bool InternalFunction::implementsHasInstance() const
 {
   return true;
 }

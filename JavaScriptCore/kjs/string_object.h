@@ -29,12 +29,12 @@
 
 namespace KJS {
 
-  class StringInstance : public JSWrapperObject {
+  class StringObject : public JSWrapperObject {
   public:
-    StringInstance(JSObject* prototype);
-    StringInstance(JSObject* prototype, const UString&);
+    StringObject(JSObject* prototype);
+    StringObject(JSObject* prototype, const UString&);
 
-    static StringInstance* create(ExecState*, JSString*);
+    static StringObject* create(ExecState*, JSString*);
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
@@ -49,14 +49,14 @@ namespace KJS {
     JSString* internalValue() const { return static_cast<JSString*>(JSWrapperObject::internalValue());}
 
   protected:
-    StringInstance(JSObject* prototype, JSString*);
+    StringObject(JSObject* prototype, JSString*);
   };
 
   // WebCore uses this to make style.filter undetectable
-  class StringInstanceThatMasqueradesAsUndefined : public StringInstance {
+  class StringObjectThatMasqueradesAsUndefined : public StringObject {
   public:
-      StringInstanceThatMasqueradesAsUndefined(JSObject* proto, const UString& string)
-          : StringInstance(proto, string) { }
+      StringObjectThatMasqueradesAsUndefined(JSObject* proto, const UString& string)
+          : StringObject(proto, string) { }
       virtual bool masqueradeAsUndefined() const { return true; }
       virtual bool toBoolean(ExecState*) const { return false; }
   };
@@ -67,7 +67,7 @@ namespace KJS {
    * The initial value of String.prototype (and thus all objects created
    * with the String constructor
    */
-  class StringPrototype : public StringInstance {
+  class StringPrototype : public StringObject {
   public:
     StringPrototype(ExecState *exec,
                        ObjectPrototype *objProto);
@@ -122,9 +122,9 @@ namespace KJS {
    *
    * The initial value of the the global variable's "String" property
    */
-  class StringObjectImp : public InternalFunctionImp {
+  class StringConstructor : public InternalFunction {
   public:
-    StringObjectImp(ExecState*, FunctionPrototype*, StringPrototype*);
+    StringConstructor(ExecState*, FunctionPrototype*, StringPrototype*);
 
     virtual ConstructType getConstructData(ConstructData&);
     virtual JSObject* construct(ExecState*, const List&);
@@ -138,9 +138,9 @@ namespace KJS {
    * Class to implement all methods that are properties of the
    * String object
    */
-  class StringObjectFuncImp : public InternalFunctionImp {
+  class StringConstructorFunction : public InternalFunction {
   public:
-    StringObjectFuncImp(ExecState*, FunctionPrototype*, const Identifier&);
+    StringConstructorFunction(ExecState*, FunctionPrototype*, const Identifier&);
     virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
   };
 

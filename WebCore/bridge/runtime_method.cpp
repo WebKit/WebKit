@@ -33,7 +33,7 @@ using namespace KJS::Bindings;
 using namespace KJS;
 
 RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings::MethodList &m) 
-    : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), ident)
+    : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), ident)
     , _methodList(new MethodList(m))
 {
 }
@@ -58,7 +58,7 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& proper
         return true;
     }
     
-    return InternalFunctionImp::getOwnPropertySlot(exec, propertyName, slot);
+    return InternalFunction::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)

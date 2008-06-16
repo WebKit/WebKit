@@ -502,7 +502,7 @@ void JSObject::removeDirect(const Identifier &propertyName)
     _prop.remove(propertyName);
 }
 
-void JSObject::putDirectFunction(InternalFunctionImp* func, int attr)
+void JSObject::putDirectFunction(InternalFunction* func, int attr)
 {
     putDirect(func->functionName(), func, attr); 
 }

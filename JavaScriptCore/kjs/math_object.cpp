@@ -29,20 +29,20 @@
 
 namespace KJS {
 
-// ------------------------------ MathObjectImp --------------------------------
+// ------------------------------ MathObject --------------------------------
 
-const ClassInfo MathObjectImp::info = { "Math", 0, 0, ExecState::mathTable };
+const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 
 /* Source for math_object.lut.h
 @begin mathTable 21
-  E             MathObjectImp::Euler           DontEnum|DontDelete|ReadOnly
-  LN2           MathObjectImp::Ln2             DontEnum|DontDelete|ReadOnly
-  LN10          MathObjectImp::Ln10            DontEnum|DontDelete|ReadOnly
-  LOG2E         MathObjectImp::Log2E           DontEnum|DontDelete|ReadOnly
-  LOG10E        MathObjectImp::Log10E          DontEnum|DontDelete|ReadOnly
-  PI            MathObjectImp::Pi              DontEnum|DontDelete|ReadOnly
-  SQRT1_2       MathObjectImp::Sqrt1_2         DontEnum|DontDelete|ReadOnly
-  SQRT2         MathObjectImp::Sqrt2           DontEnum|DontDelete|ReadOnly
+  E             MathObject::Euler           DontEnum|DontDelete|ReadOnly
+  LN2           MathObject::Ln2             DontEnum|DontDelete|ReadOnly
+  LN10          MathObject::Ln10            DontEnum|DontDelete|ReadOnly
+  LOG2E         MathObject::Log2E           DontEnum|DontDelete|ReadOnly
+  LOG10E        MathObject::Log10E          DontEnum|DontDelete|ReadOnly
+  PI            MathObject::Pi              DontEnum|DontDelete|ReadOnly
+  SQRT1_2       MathObject::Sqrt1_2         DontEnum|DontDelete|ReadOnly
+  SQRT2         MathObject::Sqrt2           DontEnum|DontDelete|ReadOnly
   abs           mathProtoFuncAbs               DontEnum|Function 1
   acos          mathProtoFuncACos              DontEnum|Function 1
   asin          mathProtoFuncASin              DontEnum|Function 1
@@ -64,19 +64,19 @@ const ClassInfo MathObjectImp::info = { "Math", 0, 0, ExecState::mathTable };
 @end
 */
 
-MathObjectImp::MathObjectImp(ExecState*, ObjectPrototype* objectPrototype)
+MathObject::MathObject(ExecState*, ObjectPrototype* objectPrototype)
     : JSObject(objectPrototype)
 {
 }
 
 // ECMA 15.8
 
-bool MathObjectImp::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticPropertySlot<MathObjectImp, JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
+    return getStaticPropertySlot<MathObject, JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
 }
 
-JSValue* MathObjectImp::getValueProperty(ExecState*, int token) const
+JSValue* MathObject::getValueProperty(ExecState*, int token) const
 {
     switch (token) {
     case Euler:

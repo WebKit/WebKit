@@ -27,9 +27,9 @@
 
 namespace KJS {
 
-    class NumberInstance : public JSWrapperObject {
+    class NumberObject : public JSWrapperObject {
     public:
-        NumberInstance(JSObject* prototype);
+        NumberObject(JSObject* prototype);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
@@ -41,7 +41,7 @@ namespace KJS {
      * The initial value of Number.prototype (and thus all objects created
      * with the Number constructor
      */
-    class NumberPrototype : public NumberInstance {
+    class NumberPrototype : public NumberObject {
     public:
         NumberPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
     };
@@ -51,9 +51,9 @@ namespace KJS {
      *
      * The initial value of the the global variable's "Number" property
      */
-    class NumberObjectImp : public InternalFunctionImp {
+    class NumberConstructor : public InternalFunction {
     public:
-        NumberObjectImp(ExecState*, FunctionPrototype*, NumberPrototype*);
+        NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual JSObject* construct(ExecState*, const List&);

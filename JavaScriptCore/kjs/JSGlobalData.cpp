@@ -49,8 +49,8 @@ extern const HashTable arrayTable;
 extern const HashTable dateTable;
 extern const HashTable mathTable;
 extern const HashTable numberTable;
-extern const HashTable RegExpImpTable;
-extern const HashTable RegExpObjectImpTable;
+extern const HashTable regExpTable;
+extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
 
@@ -61,16 +61,16 @@ JSGlobalData::JSGlobalData()
     , dateTable(new HashTable(KJS::dateTable))
     , mathTable(new HashTable(KJS::mathTable))
     , numberTable(new HashTable(KJS::numberTable))
-    , RegExpImpTable(new HashTable(KJS::RegExpImpTable))
-    , RegExpObjectImpTable(new HashTable(KJS::RegExpObjectImpTable))
+    , regExpTable(new HashTable(KJS::regExpTable))
+    , regExpConstructorTable(new HashTable(KJS::regExpConstructorTable))
     , stringTable(new HashTable(KJS::stringTable))
 #else
     : arrayTable(&KJS::arrayTable)
     , dateTable(&KJS::dateTable)
     , mathTable(&KJS::mathTable)
     , numberTable(&KJS::numberTable)
-    , RegExpImpTable(&KJS::RegExpImpTable)
-    , RegExpObjectImpTable(&KJS::RegExpObjectImpTable)
+    , regExpTable(&KJS::regExpTable)
+    , regExpConstructorTable(&KJS::regExpConstructorTable)
     , stringTable(&KJS::stringTable)
 #endif
     , identifierTable(createIdentifierTable())
@@ -88,15 +88,15 @@ JSGlobalData::~JSGlobalData()
     delete[] dateTable->table;
     delete[] mathTable->table;
     delete[] numberTable->table;
-    delete[] RegExpImpTable->table;
-    delete[] RegExpObjectImpTable->table;
+    delete[] regExpTable->table;
+    delete[] regExpConstructorTable->table;
     delete[] stringTable->table;
     delete arrayTable;
     delete dateTable;
     delete mathTable;
     delete numberTable;
-    delete RegExpImpTable;
-    delete RegExpObjectImpTable;
+    delete regExpTable;
+    delete regExpConstructorTable;
     delete stringTable;
 
     delete parser;

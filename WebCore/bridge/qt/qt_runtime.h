@@ -137,7 +137,7 @@ class QtRuntimeConnectionMethodData : public QtRuntimeMethodData {
 };
 
 // Common base class (doesn't really do anything interesting)
-class QtRuntimeMethod : public InternalFunctionImp
+class QtRuntimeMethod : public InternalFunction
 {
 public:
     virtual ~QtRuntimeMethod();

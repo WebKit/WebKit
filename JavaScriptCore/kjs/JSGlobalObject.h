@@ -32,26 +32,26 @@
 
 namespace KJS {
 
-    class ArrayObjectImp;
+    class ArrayConstructor;
     class ArrayPrototype;
-    class BooleanObjectImp;
+    class BooleanConstructor;
     class BooleanPrototype;
-    class DateObjectImp;
+    class DateConstructor;
     class DatePrototype;
     class Debugger;
-    class ErrorObjectImp;
+    class ErrorConstructor;
     class ErrorPrototype;
     class EvalError;
     class EvalErrorPrototype;
-    class FunctionObjectImp;
+    class FunctionConstructor;
     class FunctionPrototype;
     struct HashTable;
     class JSGlobalObject;
-    class NativeErrorImp;
+    class NativeErrorConstructor;
     class NativeErrorPrototype;
-    class NumberObjectImp;
+    class NumberConstructor;
     class NumberPrototype;
-    class ObjectObjectImp;
+    class ObjectConstructor;
     class ObjectPrototype;
     class ProgramCodeBlock;
     class PrototypeReflexiveFunction;
@@ -60,11 +60,11 @@ namespace KJS {
     class ReferenceError;
     class ReferenceError;
     class ReferenceErrorPrototype;
-    class RegExpObjectImp;
+    class RegExpConstructor;
     class RegExpPrototype;
     class RuntimeMethod;
     class ScopeChain;
-    class StringObjectImp;
+    class StringConstructor;
     class StringPrototype;
     class SyntaxErrorPrototype;
     class TypeError;
@@ -104,21 +104,21 @@ namespace KJS {
             unsigned tickCount;
             unsigned ticksUntilNextTimeoutCheck;
 
-            ObjectObjectImp* objectConstructor;
-            FunctionObjectImp* functionConstructor;
-            ArrayObjectImp* arrayConstructor;
-            BooleanObjectImp* booleanConstructor;
-            StringObjectImp* stringConstructor;
-            NumberObjectImp* numberConstructor;
-            DateObjectImp* dateConstructor;
-            RegExpObjectImp* regExpConstructor;
-            ErrorObjectImp* errorConstructor;
-            NativeErrorImp* evalErrorConstructor;
-            NativeErrorImp* rangeErrorConstructor;
-            NativeErrorImp* referenceErrorConstructor;
-            NativeErrorImp* syntaxErrorConstructor;
-            NativeErrorImp* typeErrorConstructor;
-            NativeErrorImp* URIErrorConstructor;
+            ObjectConstructor* objectConstructor;
+            FunctionConstructor* functionConstructor;
+            ArrayConstructor* arrayConstructor;
+            BooleanConstructor* booleanConstructor;
+            StringConstructor* stringConstructor;
+            NumberConstructor* numberConstructor;
+            DateConstructor* dateConstructor;
+            RegExpConstructor* regExpConstructor;
+            ErrorConstructor* errorConstructor;
+            NativeErrorConstructor* evalErrorConstructor;
+            NativeErrorConstructor* rangeErrorConstructor;
+            NativeErrorConstructor* referenceErrorConstructor;
+            NativeErrorConstructor* syntaxErrorConstructor;
+            NativeErrorConstructor* typeErrorConstructor;
+            NativeErrorConstructor* URIErrorConstructor;
 
             PrototypeReflexiveFunction* evalFunction;
 
@@ -187,21 +187,21 @@ namespace KJS {
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
 
-        ObjectObjectImp* objectConstructor() const { return d()->objectConstructor; }
-        FunctionObjectImp* functionConstructor() const { return d()->functionConstructor; }
-        ArrayObjectImp* arrayConstructor() const { return d()->arrayConstructor; }
-        BooleanObjectImp* booleanConstructor() const { return d()->booleanConstructor; }
-        StringObjectImp* stringConstructor() const{ return d()->stringConstructor; }
-        NumberObjectImp* numberConstructor() const{ return d()->numberConstructor; }
-        DateObjectImp* dateConstructor() const{ return d()->dateConstructor; }
-        RegExpObjectImp* regExpConstructor() const { return d()->regExpConstructor; }
-        ErrorObjectImp* errorConstructor() const { return d()->errorConstructor; }
-        NativeErrorImp* evalErrorConstructor() const { return d()->evalErrorConstructor; }
-        NativeErrorImp* rangeErrorConstructor() const { return d()->rangeErrorConstructor; }
-        NativeErrorImp* referenceErrorConstructor() const { return d()->referenceErrorConstructor; }
-        NativeErrorImp* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor; }
-        NativeErrorImp* typeErrorConstructor() const { return d()->typeErrorConstructor; }
-        NativeErrorImp* URIErrorConstructor() const { return d()->URIErrorConstructor; }
+        ObjectConstructor* objectConstructor() const { return d()->objectConstructor; }
+        FunctionConstructor* functionConstructor() const { return d()->functionConstructor; }
+        ArrayConstructor* arrayConstructor() const { return d()->arrayConstructor; }
+        BooleanConstructor* booleanConstructor() const { return d()->booleanConstructor; }
+        StringConstructor* stringConstructor() const{ return d()->stringConstructor; }
+        NumberConstructor* numberConstructor() const{ return d()->numberConstructor; }
+        DateConstructor* dateConstructor() const{ return d()->dateConstructor; }
+        RegExpConstructor* regExpConstructor() const { return d()->regExpConstructor; }
+        ErrorConstructor* errorConstructor() const { return d()->errorConstructor; }
+        NativeErrorConstructor* evalErrorConstructor() const { return d()->evalErrorConstructor; }
+        NativeErrorConstructor* rangeErrorConstructor() const { return d()->rangeErrorConstructor; }
+        NativeErrorConstructor* referenceErrorConstructor() const { return d()->referenceErrorConstructor; }
+        NativeErrorConstructor* syntaxErrorConstructor() const { return d()->syntaxErrorConstructor; }
+        NativeErrorConstructor* typeErrorConstructor() const { return d()->typeErrorConstructor; }
+        NativeErrorConstructor* URIErrorConstructor() const { return d()->URIErrorConstructor; }
 
         PrototypeReflexiveFunction* evalFunction() const { return d()->evalFunction; }
 

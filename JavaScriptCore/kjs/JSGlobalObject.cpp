@@ -254,22 +254,22 @@ void JSGlobalObject::reset(JSValue* prototype)
     d()->URIErrorPrototype = new NativeErrorPrototype(exec, d()->errorPrototype, "URIError", "URIError");
 
     // Constructors
-    d()->objectConstructor = new ObjectObjectImp(exec, d()->objectPrototype, d()->functionPrototype);
-    d()->functionConstructor = new FunctionObjectImp(exec, d()->functionPrototype);
-    d()->arrayConstructor = new ArrayObjectImp(exec, d()->functionPrototype, d()->arrayPrototype);
-    d()->stringConstructor = new StringObjectImp(exec, d()->functionPrototype, d()->stringPrototype);
-    d()->booleanConstructor = new BooleanObjectImp(exec, d()->functionPrototype, d()->booleanPrototype);
-    d()->numberConstructor = new NumberObjectImp(exec, d()->functionPrototype, d()->numberPrototype);
-    d()->dateConstructor = new DateObjectImp(exec, d()->functionPrototype, d()->datePrototype);
-    d()->regExpConstructor = new RegExpObjectImp(exec, d()->functionPrototype, d()->regExpPrototype);
-    d()->errorConstructor = new ErrorObjectImp(exec, d()->functionPrototype, d()->errorPrototype);
+    d()->objectConstructor = new ObjectConstructor(exec, d()->objectPrototype, d()->functionPrototype);
+    d()->functionConstructor = new FunctionConstructor(exec, d()->functionPrototype);
+    d()->arrayConstructor = new ArrayConstructor(exec, d()->functionPrototype, d()->arrayPrototype);
+    d()->stringConstructor = new StringConstructor(exec, d()->functionPrototype, d()->stringPrototype);
+    d()->booleanConstructor = new BooleanConstructor(exec, d()->functionPrototype, d()->booleanPrototype);
+    d()->numberConstructor = new NumberConstructor(exec, d()->functionPrototype, d()->numberPrototype);
+    d()->dateConstructor = new DateConstructor(exec, d()->functionPrototype, d()->datePrototype);
+    d()->regExpConstructor = new RegExpConstructor(exec, d()->functionPrototype, d()->regExpPrototype);
+    d()->errorConstructor = new ErrorConstructor(exec, d()->functionPrototype, d()->errorPrototype);
     
-    d()->evalErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->evalErrorPrototype);
-    d()->rangeErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->rangeErrorPrototype);
-    d()->referenceErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->referenceErrorPrototype);
-    d()->syntaxErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->syntaxErrorPrototype);
-    d()->typeErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->typeErrorPrototype);
-    d()->URIErrorConstructor = new NativeErrorImp(exec, d()->functionPrototype, d()->URIErrorPrototype);
+    d()->evalErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->evalErrorPrototype);
+    d()->rangeErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->rangeErrorPrototype);
+    d()->referenceErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->referenceErrorPrototype);
+    d()->syntaxErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->syntaxErrorPrototype);
+    d()->typeErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->typeErrorPrototype);
+    d()->URIErrorConstructor = new NativeErrorConstructor(exec, d()->functionPrototype, d()->URIErrorPrototype);
     
     d()->functionPrototype->putDirect(exec->propertyNames().constructor, d()->functionConstructor, DontEnum);
 
@@ -311,7 +311,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo("Math", new MathObjectImp(exec, d()->objectPrototype), DontEnum | DontDelete),
+        GlobalPropertyInfo("Math", new MathObject(exec, d()->objectPrototype), DontEnum | DontDelete),
         GlobalPropertyInfo("NaN", jsNaN(), DontEnum | DontDelete),
         GlobalPropertyInfo("Infinity", jsNumber(Inf), DontEnum | DontDelete),
         GlobalPropertyInfo("undefined", jsUndefined(), DontEnum | DontDelete)

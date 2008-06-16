@@ -34,7 +34,7 @@
 
 namespace KJS {
 
-  class InternalFunctionImp;
+  class InternalFunction;
   class PropertyNameArray;
 
   struct HashEntry;
@@ -424,7 +424,7 @@ namespace KJS {
     void removeDirect(const Identifier &propertyName);
     
     // convenience to add a function property under the function's own built-in name
-    void putDirectFunction(InternalFunctionImp*, int attr = 0);
+    void putDirectFunction(InternalFunction*, int attr = 0);
 
     void fillGetterPropertySlot(PropertySlot& slot, JSValue **location);
 

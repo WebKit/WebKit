@@ -34,7 +34,7 @@ namespace KJS {
      * The initial value of Function.prototype (and thus all objects created
      * with the Function constructor)
      */
-    class FunctionPrototype : public InternalFunctionImp {
+    class FunctionPrototype : public InternalFunction {
     public:
         FunctionPrototype(ExecState*);
 
@@ -46,9 +46,9 @@ namespace KJS {
      *
      * The initial value of the the global variable's "Function" property
      */
-    class FunctionObjectImp : public InternalFunctionImp {
+    class FunctionConstructor : public InternalFunction {
     public:
-        FunctionObjectImp(ExecState*, FunctionPrototype*);
+        FunctionConstructor(ExecState*, FunctionPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual JSObject* construct(ExecState*, const List&);

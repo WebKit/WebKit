@@ -37,10 +37,10 @@ namespace KJS {
   class JSActivation;
   class JSGlobalObject;
 
-  class InternalFunctionImp : public JSObject {
+  class InternalFunction : public JSObject {
   public:
-    InternalFunctionImp();
-    InternalFunctionImp(FunctionPrototype*, const Identifier&);
+    InternalFunction();
+    InternalFunction(FunctionPrototype*, const Identifier&);
 
     virtual CallType getCallData(CallData&);
 
@@ -55,7 +55,7 @@ namespace KJS {
     Identifier m_name;
   };
 
-  class JSFunction : public InternalFunctionImp {
+  class JSFunction : public InternalFunction {
   public:
     JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
 
@@ -121,7 +121,7 @@ namespace KJS {
     mutable IndexToNameMap indexToNameMap;
   };
 
-  class PrototypeFunction : public InternalFunctionImp {
+  class PrototypeFunction : public InternalFunction {
   public:
     typedef JSValue* (*JSMemberFunction)(ExecState*, JSObject* thisObj, const List&);
 
@@ -136,7 +136,7 @@ namespace KJS {
 
 
   // Just like PrototypeFunction, but callbacks also get passed the JS function object.
-  class PrototypeReflexiveFunction : public InternalFunctionImp {
+  class PrototypeReflexiveFunction : public InternalFunction {
   public:
     typedef JSValue* (*JSMemberFunction)(ExecState*, PrototypeReflexiveFunction*, JSObject* thisObj, const List&);
 

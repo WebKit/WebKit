@@ -88,8 +88,8 @@ namespace KJS  {
         static const HashTable* dateTable(ExecState* exec) { return exec->m_globalData->dateTable; }
         static const HashTable* mathTable(ExecState* exec) { return exec->m_globalData->mathTable; }
         static const HashTable* numberTable(ExecState* exec) { return exec->m_globalData->numberTable; }
-        static const HashTable* RegExpImpTable(ExecState* exec) { return exec->m_globalData->RegExpImpTable; }
-        static const HashTable* RegExpObjectImpTable(ExecState* exec) { return exec->m_globalData->RegExpObjectImpTable; }
+        static const HashTable* regExpTable(ExecState* exec) { return exec->m_globalData->regExpTable; }
+        static const HashTable* regExpConstructorTable(ExecState* exec) { return exec->m_globalData->regExpConstructorTable; }
         static const HashTable* stringTable(ExecState* exec) { return exec->m_globalData->stringTable; }
 
     private:

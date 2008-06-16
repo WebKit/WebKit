@@ -33,7 +33,7 @@
 
 namespace KJS {
 
-class JSCallbackFunction : public InternalFunctionImp
+class JSCallbackFunction : public InternalFunction
 {
 public:
     JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name);

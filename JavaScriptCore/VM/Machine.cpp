@@ -970,7 +970,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int regExp = (++vPC)->u.operand;
-        r[dst].u.jsValue = new RegExpImp(scopeChain->globalObject()->regExpPrototype(), codeBlock->regexps[regExp]);
+        r[dst].u.jsValue = new RegExpObject(scopeChain->globalObject()->regExpPrototype(), codeBlock->regexps[regExp]);
 
         ++vPC;
         NEXT_OPCODE;

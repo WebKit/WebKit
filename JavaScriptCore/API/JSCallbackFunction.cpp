@@ -36,15 +36,15 @@
 
 namespace KJS {
 
-const ClassInfo JSCallbackFunction::info = { "CallbackFunction", &InternalFunctionImp::info, 0, 0 };
+const ClassInfo JSCallbackFunction::info = { "CallbackFunction", &InternalFunction::info, 0, 0 };
 
 JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name)
-    : InternalFunctionImp(exec->lexicalGlobalObject()->functionPrototype(), name)
+    : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), name)
     , m_callback(callback)
 {
 }
 
-// InternalFunctionImp mish-mashes constructor and function behavior -- we should 
+// InternalFunction mish-mashes constructor and function behavior -- we should 
 // refactor the code so this override isn't necessary
 bool JSCallbackFunction::implementsHasInstance() const { 
     return false; 

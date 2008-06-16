@@ -55,7 +55,7 @@ inline RegExp::RegExp(const UString& pattern, const UString& flags)
   , m_numSubpatterns(0)
 {
     // NOTE: The global flag is handled on a case-by-case basis by functions like
-    // String::match and RegExpImp::match.
+    // String::match and RegExpObject::match.
     if (flags.find('g') != -1)
         m_flagBits |= Global;
 
