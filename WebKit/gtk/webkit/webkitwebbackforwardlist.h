@@ -21,7 +21,7 @@
 #define WEBKIT_WEB_BACK_FORWARD_LIST_H
 
 #include <glib.h>
-#include <glib-JSObject.h>
+#include <glib-object.h>
 
 #include <webkit/webkitdefines.h>
 #include <webkit/webkitwebhistoryitem.h>

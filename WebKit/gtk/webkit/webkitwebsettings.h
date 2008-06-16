@@ -20,7 +20,7 @@
 #ifndef __WEBKIT_WEB_SETTINGS_H__
 #define __WEBKIT_WEB_SETTINGS_H__
 
-#include <glib-JSObject.h>
+#include <glib-object.h>
 
 #include <webkit/webkitdefines.h>
 

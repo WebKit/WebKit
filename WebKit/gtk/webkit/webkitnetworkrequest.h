@@ -20,7 +20,7 @@
 #ifndef WEBKIT_NETWORK_REQUEST_H
 #define WEBKIT_NETWORK_REQUEST_H
 
-#include <glib-JSObject.h>
+#include <glib-object.h>
 
 #include <webkit/webkitdefines.h>
 

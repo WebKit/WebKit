@@ -21,7 +21,7 @@
 #define WEBKIT_WEB_HISTORY_ITEM_H
 
 #include <glib.h>
-#include <glib-JSObject.h>
+#include <glib-object.h>
 #include <gdk/gdk.h>
 
 #include <webkit/webkitdefines.h>
