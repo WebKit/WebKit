@@ -114,7 +114,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
     }
 }
 
-JSValue* JSDOMWindow::postMessage(ExecState* exec, const List& args)
+JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
 {
     DOMWindow* window = impl();
 

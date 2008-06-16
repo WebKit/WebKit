@@ -40,7 +40,7 @@ using namespace KJS;
 
 namespace WebCore {
     
-JSValue* JSSQLTransaction::executeSql(ExecState* exec, const List& args)
+JSValue* JSSQLTransaction::executeSql(ExecState* exec, const ArgList& args)
 {
     String sqlStatement = args[0]->toString(exec);
     if (exec->hadException())

@@ -195,12 +195,12 @@ KJS::ConstructType JSQuarantinedObjectWrapper::getConstructData(KJS::ConstructDa
     return m_unwrappedObject->getConstructData(data);
 }
 
-JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, const List& args)
+JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, const ArgList& args)
 {
     if (!allowsConstruct())
         return 0;
 
-    List argsCopy;
+    ArgList argsCopy;
     for (size_t i = 0; i < args.size(); ++i) {
         JSValue* preparedValue = prepareIncomingValue(exec, args[i]);
         if (!preparedValue)
@@ -244,7 +244,7 @@ CallType JSQuarantinedObjectWrapper::getCallData(CallData&)
     return m_unwrappedObject->getCallData(temp) != CallTypeNone ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* JSQuarantinedObjectWrapper::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSQuarantinedObjectWrapper::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!allowsCallAsFunction())
         return jsUndefined();
@@ -253,7 +253,7 @@ JSValue* JSQuarantinedObjectWrapper::callAsFunction(ExecState* exec, JSObject* t
     if (!preparedThisObj)
         return jsUndefined();
 
-    List preparedArgs;
+    ArgList preparedArgs;
     for (size_t i = 0; i < args.size(); ++i) {
         JSValue* preparedValue = prepareIncomingValue(exec, args[i]);
         if (!preparedValue)

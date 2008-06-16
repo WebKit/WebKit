@@ -105,7 +105,7 @@ public:
     bool windowVisible();
     void setWindowVisible(bool visible = true);
 
-    void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::List& arguments, unsigned lineNumber, const String& sourceID);
+    void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceID);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
 
     void addProfile(PassRefPtr<KJS::Profile>);

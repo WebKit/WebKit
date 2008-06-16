@@ -1,5 +1,11 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - rename KJS::List to KJS::ArgList
+
+        * WebView/WebScriptDebugger.h:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for more JavaScriptCore files
 
         * WebView/WebView.mm:

@@ -99,7 +99,7 @@ namespace KJS {
         bool isOpcode(Opcode opcode);
 
         JSValue* execute(ProgramNode*, ExecState*, ScopeChainNode*, JSObject* thisObj, RegisterFileStack*, JSValue** exception);
-        JSValue* execute(FunctionBodyNode*, ExecState*, JSFunction*, JSObject* thisObj, const List& args, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
+        JSValue* execute(FunctionBodyNode*, ExecState*, JSFunction*, JSObject* thisObj, const ArgList& args, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFile*, int registerOffset, ScopeChainNode*, JSValue** exception);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, RegisterFileStack*, ScopeChainNode*, JSValue** exception);
 

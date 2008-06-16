@@ -95,7 +95,7 @@ void JSHTMLDocument::setAll(ExecState*, JSValue* value)
 
 // Custom functions
 
-JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
+JSValue* JSHTMLDocument::open(ExecState* exec, const ArgList& args)
 {
     // For compatibility with other browsers, pass open calls with more than 2 parameters to the window.
     if (args.size() > 2) {
@@ -121,7 +121,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-static String writeHelper(ExecState* exec, const List& args)
+static String writeHelper(ExecState* exec, const ArgList& args)
 {
     // DOM only specifies single string argument, but NS & IE allow multiple
     // or no arguments.
@@ -136,14 +136,14 @@ static String writeHelper(ExecState* exec, const List& args)
     return String::adopt(result);
 }
 
-JSValue* JSHTMLDocument::write(ExecState* exec, const List& args)
+JSValue* JSHTMLDocument::write(ExecState* exec, const ArgList& args)
 {
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
     static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args), activeDocument);
     return jsUndefined();
 }
 
-JSValue* JSHTMLDocument::writeln(ExecState* exec, const List& args)
+JSValue* JSHTMLDocument::writeln(ExecState* exec, const ArgList& args)
 {
     Document* activeDocument = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->document();
     static_cast<HTMLDocument*>(impl())->write(writeHelper(exec, args) + "\n", activeDocument);

@@ -460,7 +460,7 @@ sub GenerateHeader
 
     # Custom call functions
     if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::List&);\n");
+        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);\n");
         push(@headerContent, "    virtual KJS::CallType getCallData(KJS::CallData&);\n\n");
     }
 
@@ -541,7 +541,7 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             if ($function->signature->extendedAttributes->{"Custom"}) {
                 my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
-                push(@headerContent, "    KJS::JSValue* " . $functionImplementationName . "(KJS::ExecState*, const KJS::List&);\n");
+                push(@headerContent, "    KJS::JSValue* " . $functionImplementationName . "(KJS::ExecState*, const KJS::ArgList&);\n");
             }
         }
     }
@@ -656,7 +656,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, const KJS::List&);\n");
+            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);\n");
         }
     }
 
@@ -1193,7 +1193,7 @@ sub GenerateImplementation
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const List& args)\n");
+            push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const ArgList& args)\n");
             push(@implContent, "{\n");
 
             if ($interfaceName eq "DOMWindow") {
@@ -1838,7 +1838,7 @@ EOF
     if ($canConstruct) {
 $implContent .= << "EOF";
     virtual ConstructType getConstructData(ConstructData&) { return ConstructTypeNative; }
-    virtual JSObject* construct(ExecState* exec, const List& args) { return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create())); }
+    virtual JSObject* construct(ExecState* exec, const ArgList& args) { return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create())); }
 EOF
     }
 

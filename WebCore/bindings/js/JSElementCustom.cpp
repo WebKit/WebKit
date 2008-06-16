@@ -58,7 +58,7 @@ static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* elem
     return true;
 } 
 
-JSValue* JSElement::setAttribute(ExecState* exec, const List& args)
+JSValue* JSElement::setAttribute(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     AtomicString name = args[0]->toString(exec);
@@ -73,7 +73,7 @@ JSValue* JSElement::setAttribute(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSElement::setAttributeNode(ExecState* exec, const List& args)
+JSValue* JSElement::setAttributeNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     Attr* newAttr = toAttr(args[0]);
@@ -91,7 +91,7 @@ JSValue* JSElement::setAttributeNode(ExecState* exec, const List& args)
     return result;
 }
 
-JSValue* JSElement::setAttributeNS(ExecState* exec, const List& args)
+JSValue* JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     AtomicString namespaceURI = valueToStringWithNullCheck(exec, args[0]);
@@ -107,7 +107,7 @@ JSValue* JSElement::setAttributeNS(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const List& args)
+JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     Attr* newAttr = toAttr(args[0]);

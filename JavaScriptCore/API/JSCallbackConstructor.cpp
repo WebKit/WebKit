@@ -61,7 +61,7 @@ ConstructType JSCallbackConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* JSCallbackConstructor::construct(ExecState* exec, const List &args)
+JSObject* JSCallbackConstructor::construct(ExecState* exec, const ArgList &args)
 {
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(this);

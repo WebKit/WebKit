@@ -161,7 +161,7 @@ struct ConsoleMessage {
     {
     }
 
-    ConsoleMessage(MessageSource s, MessageLevel l, ExecState* exec, const List& args, unsigned li, const String& u)
+    ConsoleMessage(MessageSource s, MessageLevel l, ExecState* exec, const ArgList& args, unsigned li, const String& u)
         : source(s)
         , level(l)
         , wrappedArguments(args.size())
@@ -1181,7 +1181,7 @@ void InspectorController::setWindowVisible(bool visible)
     m_showAfterVisible = CurrentPanel;
 }
 
-void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ExecState* exec, const List& arguments, unsigned lineNumber, const String& sourceURL)
+void InspectorController::addMessageToConsole(MessageSource source, MessageLevel level, ExecState* exec, const ArgList& arguments, unsigned lineNumber, const String& sourceURL)
 {
     if (!enabled())
         return;

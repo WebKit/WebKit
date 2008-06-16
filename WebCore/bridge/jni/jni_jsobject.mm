@@ -297,7 +297,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     // Call the function object.
     JSObject *funcImp = static_cast<JSObject*>(func);
     JSObject *thisObj = const_cast<JSObject*>(_imp);
-    List argList;
+    ArgList argList;
     getListFromJArray(args, argList);
     rootObject->globalObject()->startTimeoutCheck();
     JSValue *result = funcImp->callAsFunction(exec, thisObj, argList);
@@ -603,7 +603,7 @@ JSValue *JavaJSObject::convertJObjectToValue (jobject theObject) const
     return KJS::Bindings::Instance::createRuntimeObject(JavaInstance::create(theObject, _rootObject));
 }
 
-void JavaJSObject::getListFromJArray(jobjectArray jArray, List& list) const
+void JavaJSObject::getListFromJArray(jobjectArray jArray, ArgList& list) const
 {
     JNIEnv *env = getJNIEnv();
     int i, numObjects = jArray ? env->GetArrayLength (jArray) : 0;

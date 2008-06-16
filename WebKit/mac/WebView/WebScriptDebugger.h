@@ -39,7 +39,7 @@ namespace KJS {
     class JSGlobalObject;
     class JSObject;
     class JSValue;
-    class List;
+    class ArgList;
     class UString;
 }
 

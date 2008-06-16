@@ -124,7 +124,7 @@ static void printToStandardOut(MessageSource source, MessageLevel level, const S
     printf(" %s\n", message.utf8().data());
 }
 
-static void printToStandardOut(MessageLevel level, ExecState* exec, const List& arguments, const KURL& url)
+static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgList& arguments, const KURL& url)
 {
     if (!Interpreter::shouldPrintExceptions())
         return;
@@ -157,13 +157,13 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     printToStandardOut(source, level, message, sourceURL, lineNumber);
 }
 
-void Console::debug(ExecState* exec, const List& arguments)
+void Console::debug(ExecState* exec, const ArgList& arguments)
 {
     // In Firebug, console.debug has the same behavior as console.log. So we'll do the same.
     log(exec, arguments);
 }
 
-void Console::error(ExecState* exec, const List& arguments)
+void Console::error(ExecState* exec, const ArgList& arguments)
 {
     if (arguments.isEmpty())
         return;
@@ -185,7 +185,7 @@ void Console::error(ExecState* exec, const List& arguments)
     printToStandardOut(ErrorMessageLevel, exec, arguments, url);
 }
 
-void Console::info(ExecState* exec, const List& arguments)
+void Console::info(ExecState* exec, const ArgList& arguments)
 {
     if (arguments.isEmpty())
         return;
@@ -207,7 +207,7 @@ void Console::info(ExecState* exec, const List& arguments)
     printToStandardOut(LogMessageLevel, exec, arguments, url);
 }
 
-void Console::log(ExecState* exec, const List& arguments)
+void Console::log(ExecState* exec, const ArgList& arguments)
 {
     if (arguments.isEmpty())
         return;
@@ -229,7 +229,7 @@ void Console::log(ExecState* exec, const List& arguments)
     printToStandardOut(LogMessageLevel, exec, arguments, url);
 }
 
-void Console::assertCondition(bool condition, ExecState* exec, const List& arguments)
+void Console::assertCondition(bool condition, ExecState* exec, const ArgList& arguments)
 {
     if (condition)
         return;
@@ -251,7 +251,7 @@ void Console::assertCondition(bool condition, ExecState* exec, const List& argum
     printToStandardOut(ErrorMessageLevel, exec, arguments, url);
 }
 
-void Console::profile(ExecState* exec, const List& arguments) const
+void Console::profile(ExecState* exec, const ArgList& arguments) const
 {
     Page* page = m_frame->page();
     if (!page)
@@ -261,7 +261,7 @@ void Console::profile(ExecState* exec, const List& arguments) const
     Profiler::profiler()->startProfiling(exec, title);
 }
 
-void Console::profileEnd(ExecState* exec, const List& arguments) const
+void Console::profileEnd(ExecState* exec, const ArgList& arguments) const
 {
     Page* page = m_frame->page();
     if (!page)
@@ -276,7 +276,7 @@ void Console::profileEnd(ExecState* exec, const List& arguments) const
         page->inspectorController()->addProfile(profile);
 }
 
-void Console::warn(ExecState* exec, const List& arguments)
+void Console::warn(ExecState* exec, const ArgList& arguments)
 {
     if (arguments.isEmpty())
         return;

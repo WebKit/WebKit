@@ -73,7 +73,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     if (handleEventFunc || listener->implementsCall()) {
         ref();
 
-        List args;
+        ArgList args;
         args.append(toJS(exec, event));
 
         Event* savedEvent = window->currentEvent();
@@ -275,7 +275,7 @@ void JSLazyEventListener::parseCode() const
 
         JSLock lock;
         JSObject* constr = window()->functionConstructor();
-        List args;
+        ArgList args;
 
         UString sourceURL(frame->loader()->url().string());
         args.append(eventParameterName());

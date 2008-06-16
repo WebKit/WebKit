@@ -39,10 +39,10 @@ namespace KJS {
 
 // ------------------------------ RegExpPrototype ---------------------------
 
-static JSValue* regExpProtoFuncTest(ExecState*, JSObject*, const List&);
-static JSValue* regExpProtoFuncExec(ExecState*, JSObject*, const List&);
-static JSValue* regExpProtoFuncCompile(ExecState*, JSObject*, const List&);
-static JSValue* regExpProtoFuncToString(ExecState*, JSObject*, const List&);
+static JSValue* regExpProtoFuncTest(ExecState*, JSObject*, const ArgList&);
+static JSValue* regExpProtoFuncExec(ExecState*, JSObject*, const ArgList&);
+static JSValue* regExpProtoFuncCompile(ExecState*, JSObject*, const ArgList&);
+static JSValue* regExpProtoFuncToString(ExecState*, JSObject*, const ArgList&);
 
 // ECMA 15.10.5
 
@@ -59,7 +59,7 @@ RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototy
 
 // ------------------------------ Functions ---------------------------
     
-JSValue* regExpProtoFuncTest(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* regExpProtoFuncTest(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!thisObj->inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
@@ -67,7 +67,7 @@ JSValue* regExpProtoFuncTest(ExecState* exec, JSObject* thisObj, const List& arg
     return static_cast<RegExpObject*>(thisObj)->test(exec, args);
 }
 
-JSValue* regExpProtoFuncExec(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* regExpProtoFuncExec(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!thisObj->inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
@@ -75,7 +75,7 @@ JSValue* regExpProtoFuncExec(ExecState* exec, JSObject* thisObj, const List& arg
     return static_cast<RegExpObject*>(thisObj)->exec(exec, args);
 }
 
-JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!thisObj->inherits(&RegExpObject::info))
         return throwError(exec, TypeError);
@@ -102,7 +102,7 @@ JSValue* regExpProtoFuncCompile(ExecState* exec, JSObject* thisObj, const List& 
     return jsUndefined();
 }
 
-JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj->inherits(&RegExpObject::info)) {
         if (thisObj->inherits(&RegExpPrototype::info))
@@ -181,7 +181,7 @@ void RegExpObject::putValueProperty(ExecState* exec, int token, JSValue* value)
     m_lastIndex = value->toInteger(exec);
 }
 
-bool RegExpObject::match(ExecState* exec, const List& args)
+bool RegExpObject::match(ExecState* exec, const ArgList& args)
 {
     RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
 
@@ -218,12 +218,12 @@ bool RegExpObject::match(ExecState* exec, const List& args)
     return foundIndex >= 0;
 }
 
-JSValue* RegExpObject::test(ExecState* exec, const List& args)
+JSValue* RegExpObject::test(ExecState* exec, const ArgList& args)
 {
     return jsBoolean(match(exec, args));
 }
 
-JSValue* RegExpObject::exec(ExecState* exec, const List& args)
+JSValue* RegExpObject::exec(ExecState* exec, const ArgList& args)
 {
     return match(exec, args)
         ? exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec)
@@ -235,7 +235,7 @@ CallType RegExpObject::getCallData(CallData&)
     return CallTypeNative;
 }
 
-JSValue* RegExpObject::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* RegExpObject::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     return RegExpObject::exec(exec, args);
 }
@@ -478,7 +478,7 @@ ConstructType RegExpConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.10.4
-JSObject *RegExpConstructor::construct(ExecState *exec, const List &args)
+JSObject *RegExpConstructor::construct(ExecState *exec, const ArgList &args)
 {
   JSValue* arg0 = args[0];
   JSValue* arg1 = args[1];
@@ -499,7 +499,7 @@ JSObject *RegExpConstructor::construct(ExecState *exec, const List &args)
 }
 
 // ECMA 15.10.3
-JSValue *RegExpConstructor::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const List &args)
+JSValue *RegExpConstructor::callAsFunction(ExecState *exec, JSObject * /*thisObj*/, const ArgList &args)
 {
   return construct(exec, args);
 }

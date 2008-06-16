@@ -41,7 +41,7 @@ void JSNodeFilter::mark()
     DOMObject::mark();
 }
 
-JSValue* JSNodeFilter::acceptNode(ExecState* exec, const List& args)
+JSValue* JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
 {
     JSValue* exception = 0;
     short result = impl()->acceptNode(toNode(args[0]), exception);

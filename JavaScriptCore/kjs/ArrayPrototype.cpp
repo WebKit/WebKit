@@ -88,7 +88,7 @@ static JSValue* getProperty(ExecState* exec, JSObject* obj, unsigned index)
     return slot.getValue(exec, index);
 }
 
-JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj->inherits(&JSArray::info))
         return throwError(exec, TypeError);
@@ -131,7 +131,7 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
     return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj->inherits(&JSArray::info))
         return throwError(exec, TypeError);
@@ -180,7 +180,7 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const 
     return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     HashSet<JSObject*>& arrayVisitedElements = exec->dynamicGlobalObject()->arrayVisitedElements();
     if (arrayVisitedElements.size() > MaxReentryDepth)
@@ -223,14 +223,14 @@ JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const List& args
     return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
-JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* arr = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
     int n = 0;
     JSValue* curArg = thisObj;
     JSObject* curObj = static_cast<JSObject* >(thisObj);
-    List::const_iterator it = args.begin();
-    List::const_iterator end = args.end();
+    ArgList::const_iterator it = args.begin();
+    ArgList::const_iterator end = args.end();
     while (1) {
         if (curArg->isObject() && curObj->inherits(&JSArray::info)) {
             unsigned k = 0;
@@ -257,7 +257,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const List& ar
     return arr;
 }
 
-JSValue* arrayProtoFuncPop(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* arrayProtoFuncPop(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     JSValue* result = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
@@ -272,7 +272,7 @@ JSValue* arrayProtoFuncPop(ExecState* exec, JSObject* thisObj, const List&)
     return result;
 }
 
-JSValue* arrayProtoFuncPush(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncPush(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned n = 0; n < args.size(); n++)
@@ -282,7 +282,7 @@ JSValue* arrayProtoFuncPush(ExecState* exec, JSObject* thisObj, const List& args
     return jsNumber(length);
 }
 
-JSValue* arrayProtoFuncReverse(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* arrayProtoFuncReverse(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     unsigned middle = length / 2;
@@ -305,7 +305,7 @@ JSValue* arrayProtoFuncReverse(ExecState* exec, JSObject* thisObj, const List&)
     return thisObj;
 }
 
-JSValue* arrayProtoFuncShift(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* arrayProtoFuncShift(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     JSValue* result = 0;
 
@@ -327,7 +327,7 @@ JSValue* arrayProtoFuncShift(ExecState* exec, JSObject* thisObj, const List&)
     return result;
 }
 
-JSValue* arrayProtoFuncSlice(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncSlice(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // http://developer.netscape.com/docs/manuals/js/client/jsref/array.htm#1193713 or 15.4.4.10
 
@@ -370,7 +370,7 @@ JSValue* arrayProtoFuncSlice(ExecState* exec, JSObject* thisObj, const List& arg
     return result;
 }
 
-JSValue* arrayProtoFuncSort(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncSort(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* sortFunction = 0;
     if (!args[0]->isUndefined()) {
@@ -406,7 +406,7 @@ JSValue* arrayProtoFuncSort(ExecState* exec, JSObject* thisObj, const List& args
             else if (minObj->isUndefined())
                 compareResult = -1;
             else if (sortFunction) {
-                List l;
+                ArgList l;
                 l.append(jObj);
                 l.append(minObj);
                 compareResult = sortFunction->callAsFunction(exec, exec->globalThisValue(), l)->toNumber(exec);
@@ -427,7 +427,7 @@ JSValue* arrayProtoFuncSort(ExecState* exec, JSObject* thisObj, const List& args
     return thisObj;
 }
 
-JSValue* arrayProtoFuncSplice(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncSplice(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // 15.4.4.12
     JSObject* resObj = static_cast<JSObject* >(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, exec->emptyList()));
@@ -480,7 +480,7 @@ JSValue* arrayProtoFuncSplice(ExecState* exec, JSObject* thisObj, const List& ar
     return result;
 }
 
-JSValue* arrayProtoFuncUnShift(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncUnShift(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // 15.4.4.13
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
@@ -500,7 +500,7 @@ JSValue* arrayProtoFuncUnShift(ExecState* exec, JSObject* thisObj, const List& a
     return result;
 }
 
-JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
 
@@ -520,7 +520,7 @@ JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject* thisObj, const List& ar
 
         JSValue* v = slot.getValue(exec, k);
 
-        List eachArguments;
+        ArgList eachArguments;
 
         eachArguments.append(v);
         eachArguments.append(jsNumber(k));
@@ -534,7 +534,7 @@ JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject* thisObj, const List& ar
     return resultArray;
 }
 
-JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
     if (!eachFunction->implementsCall())
@@ -544,7 +544,7 @@ JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const List& args)
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
 
-    List mapArgs;
+    ArgList mapArgs;
     mapArgs.append(jsNumber(length));
     JSObject* resultArray = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, mapArgs));
 
@@ -555,7 +555,7 @@ JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const List& args)
 
         JSValue* v = slot.getValue(exec, k);
 
-        List eachArguments;
+        ArgList eachArguments;
 
         eachArguments.append(v);
         eachArguments.append(jsNumber(k));
@@ -573,7 +573,7 @@ JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const List& args)
 // http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:forEach
 // http://developer-test.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Objects:Array:some
 
-JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
 
@@ -591,7 +591,7 @@ JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject* thisObj, const List& arg
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        List eachArguments;
+        ArgList eachArguments;
 
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(k));
@@ -608,7 +608,7 @@ JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject* thisObj, const List& arg
     return result;
 }
 
-JSValue* arrayProtoFuncForEach(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncForEach(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
 
@@ -623,7 +623,7 @@ JSValue* arrayProtoFuncForEach(ExecState* exec, JSObject* thisObj, const List& a
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        List eachArguments;
+        ArgList eachArguments;
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
@@ -633,7 +633,7 @@ JSValue* arrayProtoFuncForEach(ExecState* exec, JSObject* thisObj, const List& a
     return jsUndefined();
 }
 
-JSValue* arrayProtoFuncSome(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncSome(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     JSObject* eachFunction = args[0]->toObject(exec);
 
@@ -650,7 +650,7 @@ JSValue* arrayProtoFuncSome(ExecState* exec, JSObject* thisObj, const List& args
         if (!thisObj->getPropertySlot(exec, k, slot))
             continue;
 
-        List eachArguments;
+        ArgList eachArguments;
         eachArguments.append(slot.getValue(exec, k));
         eachArguments.append(jsNumber(k));
         eachArguments.append(thisObj);
@@ -665,7 +665,7 @@ JSValue* arrayProtoFuncSome(ExecState* exec, JSObject* thisObj, const List& args
     return result;
 }
 
-JSValue* arrayProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // JavaScript 1.5 Extension by Mozilla
     // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:indexOf
@@ -694,7 +694,7 @@ JSValue* arrayProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const List& a
     return jsNumber(-1);
 }
 
-JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // JavaScript 1.6 Extension by Mozilla
     // Documentation: http://developer.mozilla.org/en/docs/Core_JavaScript_1.5_Reference:Global_Objects:Array:lastIndexOf
@@ -741,7 +741,7 @@ ConstructType ArrayConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.4.2
-JSObject* ArrayConstructor::construct(ExecState* exec, const List& args)
+JSObject* ArrayConstructor::construct(ExecState* exec, const ArgList& args)
 {
     // a single numeric argument denotes the array size (!)
     if (args.size() == 1 && args[0]->isNumber()) {
@@ -756,7 +756,7 @@ JSObject* ArrayConstructor::construct(ExecState* exec, const List& args)
 }
 
 // ECMA 15.6.1
-JSValue* ArrayConstructor::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* ArrayConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     // equivalent to 'new Array(....)'
     return construct(exec,args);

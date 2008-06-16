@@ -33,7 +33,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const List& args)
+JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const ArgList& args)
 {
     if (!impl()->isValid())
         return jsUndefined();
@@ -66,7 +66,7 @@ JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
     // we must always have something in the scope chain
     ASSERT(iter != end);
 
-    List list;
+    ArgList list;
     do {
         list.append(*iter);
         ++iter;

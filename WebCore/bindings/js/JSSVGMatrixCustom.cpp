@@ -30,7 +30,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSSVGMatrix::multiply(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -38,7 +38,7 @@ JSValue* JSSVGMatrix::multiply(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.multiply(secondMatrix)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
+JSValue* JSSVGMatrix::inverse(ExecState* exec, const ArgList&)
 {
     AffineTransform imp(*impl());
     KJS::JSValue* result = toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.inverse()).get(), m_context.get());
@@ -49,7 +49,7 @@ JSValue* JSSVGMatrix::inverse(ExecState* exec, const List&)
     return result;
 }
 
-JSValue* JSSVGMatrix::translate(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::translate(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -59,7 +59,7 @@ JSValue* JSSVGMatrix::translate(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.translate(x, y)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::scale(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::scale(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -67,7 +67,7 @@ JSValue* JSSVGMatrix::scale(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.scale(scaleFactor)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -77,7 +77,7 @@ JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.scaleNonUniform(scaleFactorX, scaleFactorY)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::rotate(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::rotate(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -85,7 +85,7 @@ JSValue* JSSVGMatrix::rotate(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.rotate(angle)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
  
@@ -100,19 +100,19 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const List& args)
     return result;
 }
 
-JSValue* JSSVGMatrix::flipX(ExecState* exec, const List&)
+JSValue* JSSVGMatrix::flipX(ExecState* exec, const ArgList&)
 {
     AffineTransform imp(*impl());
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.flipX()).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::flipY(ExecState* exec, const List&)
+JSValue* JSSVGMatrix::flipY(ExecState* exec, const ArgList&)
 {
     AffineTransform imp(*impl());
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.flipY()).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::skewX(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::skewX(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
@@ -120,7 +120,7 @@ JSValue* JSSVGMatrix::skewX(ExecState* exec, const List& args)
     return toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<AffineTransform>::create(imp.skewX(angle)).get(), m_context.get());
 }
 
-JSValue* JSSVGMatrix::skewY(ExecState* exec, const List& args)
+JSValue* JSSVGMatrix::skewY(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 

@@ -101,7 +101,7 @@ JSValue *JavaInstance::booleanValue() const
     return jsBoolean(booleanValue);
 }
 
-JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const List &args)
+JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodList, const ArgList &args)
 {
     int i, count = args.size();
     jvalue *jArgs;

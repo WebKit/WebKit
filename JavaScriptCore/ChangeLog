@@ -1,5 +1,289 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - rename KJS::List to KJS::ArgList
+
+        * API/JSCallbackConstructor.cpp:
+        (KJS::JSCallbackConstructor::construct):
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::callAsFunction):
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::construct):
+        (KJS::::callAsFunction):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        * JavaScriptCore.exp:
+        * VM/Machine.cpp:
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        * kjs/ArrayPrototype.cpp:
+        (KJS::arrayProtoFuncToString):
+        (KJS::arrayProtoFuncToLocaleString):
+        (KJS::arrayProtoFuncJoin):
+        (KJS::arrayProtoFuncConcat):
+        (KJS::arrayProtoFuncPop):
+        (KJS::arrayProtoFuncPush):
+        (KJS::arrayProtoFuncReverse):
+        (KJS::arrayProtoFuncShift):
+        (KJS::arrayProtoFuncSlice):
+        (KJS::arrayProtoFuncSort):
+        (KJS::arrayProtoFuncSplice):
+        (KJS::arrayProtoFuncUnShift):
+        (KJS::arrayProtoFuncFilter):
+        (KJS::arrayProtoFuncMap):
+        (KJS::arrayProtoFuncEvery):
+        (KJS::arrayProtoFuncForEach):
+        (KJS::arrayProtoFuncSome):
+        (KJS::arrayProtoFuncIndexOf):
+        (KJS::arrayProtoFuncLastIndexOf):
+        (KJS::ArrayConstructor::construct):
+        (KJS::ArrayConstructor::callAsFunction):
+        * kjs/ArrayPrototype.h:
+        * kjs/BooleanObject.cpp:
+        (KJS::booleanProtoFuncToString):
+        (KJS::booleanProtoFuncValueOf):
+        (KJS::BooleanConstructor::construct):
+        (KJS::BooleanConstructor::callAsFunction):
+        * kjs/BooleanObject.h:
+        * kjs/CommonIdentifiers.h:
+        * kjs/ExecState.h:
+        (KJS::ExecState::emptyList):
+        * kjs/FunctionPrototype.cpp:
+        (KJS::FunctionPrototype::callAsFunction):
+        (KJS::functionProtoFuncToString):
+        (KJS::functionProtoFuncApply):
+        (KJS::functionProtoFuncCall):
+        (KJS::FunctionConstructor::construct):
+        (KJS::FunctionConstructor::callAsFunction):
+        * kjs/FunctionPrototype.h:
+        * kjs/JSActivation.cpp:
+        (KJS::JSActivation::createArgumentsObject):
+        * kjs/JSArray.cpp:
+        (KJS::JSArray::JSArray):
+        (KJS::AVLTreeAbstractorForArrayCompare::compare_key_key):
+        * kjs/JSArray.h:
+        * kjs/JSFunction.cpp:
+        (KJS::JSFunction::callAsFunction):
+        (KJS::JSFunction::construct):
+        (KJS::IndexToNameMap::IndexToNameMap):
+        (KJS::Arguments::Arguments):
+        (KJS::encode):
+        (KJS::decode):
+        (KJS::globalFuncEval):
+        (KJS::globalFuncParseInt):
+        (KJS::globalFuncParseFloat):
+        (KJS::globalFuncIsNaN):
+        (KJS::globalFuncIsFinite):
+        (KJS::globalFuncDecodeURI):
+        (KJS::globalFuncDecodeURIComponent):
+        (KJS::globalFuncEncodeURI):
+        (KJS::globalFuncEncodeURIComponent):
+        (KJS::globalFuncEscape):
+        (KJS::globalFuncUnescape):
+        (KJS::globalFuncKJSPrint):
+        (KJS::PrototypeFunction::callAsFunction):
+        (KJS::PrototypeReflexiveFunction::callAsFunction):
+        * kjs/JSFunction.h:
+        * kjs/JSGlobalData.h:
+        * kjs/JSImmediate.cpp:
+        (KJS::JSImmediate::toObject):
+        * kjs/JSNotAnObject.cpp:
+        (KJS::JSNotAnObject::construct):
+        (KJS::JSNotAnObject::callAsFunction):
+        * kjs/JSNotAnObject.h:
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::put):
+        (KJS::JSObject::construct):
+        (KJS::JSObject::callAsFunction):
+        (KJS::Error::create):
+        * kjs/JSObject.h:
+        * kjs/MathObject.cpp:
+        (KJS::mathProtoFuncAbs):
+        (KJS::mathProtoFuncACos):
+        (KJS::mathProtoFuncASin):
+        (KJS::mathProtoFuncATan):
+        (KJS::mathProtoFuncATan2):
+        (KJS::mathProtoFuncCeil):
+        (KJS::mathProtoFuncCos):
+        (KJS::mathProtoFuncExp):
+        (KJS::mathProtoFuncFloor):
+        (KJS::mathProtoFuncLog):
+        (KJS::mathProtoFuncMax):
+        (KJS::mathProtoFuncMin):
+        (KJS::mathProtoFuncPow):
+        (KJS::mathProtoFuncRandom):
+        (KJS::mathProtoFuncRound):
+        (KJS::mathProtoFuncSin):
+        (KJS::mathProtoFuncSqrt):
+        (KJS::mathProtoFuncTan):
+        * kjs/MathObject.h:
+        * kjs/NumberObject.cpp:
+        (KJS::numberProtoFuncToString):
+        (KJS::numberProtoFuncToLocaleString):
+        (KJS::numberProtoFuncValueOf):
+        (KJS::numberProtoFuncToFixed):
+        (KJS::numberProtoFuncToExponential):
+        (KJS::numberProtoFuncToPrecision):
+        (KJS::NumberConstructor::construct):
+        (KJS::NumberConstructor::callAsFunction):
+        * kjs/NumberObject.h:
+        * kjs/RegExpObject.cpp:
+        (KJS::regExpProtoFuncTest):
+        (KJS::regExpProtoFuncExec):
+        (KJS::regExpProtoFuncCompile):
+        (KJS::regExpProtoFuncToString):
+        (KJS::RegExpObject::match):
+        (KJS::RegExpObject::test):
+        (KJS::RegExpObject::exec):
+        (KJS::RegExpObject::callAsFunction):
+        (KJS::RegExpConstructor::construct):
+        (KJS::RegExpConstructor::callAsFunction):
+        * kjs/RegExpObject.h:
+        * kjs/Shell.cpp:
+        (functionPrint):
+        (functionDebug):
+        (functionGC):
+        (functionVersion):
+        (functionRun):
+        (functionLoad):
+        (functionReadline):
+        (functionQuit):
+        * kjs/collector.cpp:
+        (KJS::Collector::collect):
+        * kjs/collector.h:
+        (KJS::Collector::markListSet):
+        * kjs/date_object.cpp:
+        (KJS::formatLocaleDate):
+        (KJS::fillStructuresUsingTimeArgs):
+        (KJS::fillStructuresUsingDateArgs):
+        (KJS::DateConstructor::construct):
+        (KJS::DateConstructor::callAsFunction):
+        (KJS::DateFunction::callAsFunction):
+        (KJS::dateProtoFuncToString):
+        (KJS::dateProtoFuncToUTCString):
+        (KJS::dateProtoFuncToDateString):
+        (KJS::dateProtoFuncToTimeString):
+        (KJS::dateProtoFuncToLocaleString):
+        (KJS::dateProtoFuncToLocaleDateString):
+        (KJS::dateProtoFuncToLocaleTimeString):
+        (KJS::dateProtoFuncValueOf):
+        (KJS::dateProtoFuncGetTime):
+        (KJS::dateProtoFuncGetFullYear):
+        (KJS::dateProtoFuncGetUTCFullYear):
+        (KJS::dateProtoFuncToGMTString):
+        (KJS::dateProtoFuncGetMonth):
+        (KJS::dateProtoFuncGetUTCMonth):
+        (KJS::dateProtoFuncGetDate):
+        (KJS::dateProtoFuncGetUTCDate):
+        (KJS::dateProtoFuncGetDay):
+        (KJS::dateProtoFuncGetUTCDay):
+        (KJS::dateProtoFuncGetHours):
+        (KJS::dateProtoFuncGetUTCHours):
+        (KJS::dateProtoFuncGetMinutes):
+        (KJS::dateProtoFuncGetUTCMinutes):
+        (KJS::dateProtoFuncGetSeconds):
+        (KJS::dateProtoFuncGetUTCSeconds):
+        (KJS::dateProtoFuncGetMilliSeconds):
+        (KJS::dateProtoFuncGetUTCMilliseconds):
+        (KJS::dateProtoFuncGetTimezoneOffset):
+        (KJS::dateProtoFuncSetTime):
+        (KJS::setNewValueFromTimeArgs):
+        (KJS::setNewValueFromDateArgs):
+        (KJS::dateProtoFuncSetMilliSeconds):
+        (KJS::dateProtoFuncSetUTCMilliseconds):
+        (KJS::dateProtoFuncSetSeconds):
+        (KJS::dateProtoFuncSetUTCSeconds):
+        (KJS::dateProtoFuncSetMinutes):
+        (KJS::dateProtoFuncSetUTCMinutes):
+        (KJS::dateProtoFuncSetHours):
+        (KJS::dateProtoFuncSetUTCHours):
+        (KJS::dateProtoFuncSetDate):
+        (KJS::dateProtoFuncSetUTCDate):
+        (KJS::dateProtoFuncSetMonth):
+        (KJS::dateProtoFuncSetUTCMonth):
+        (KJS::dateProtoFuncSetFullYear):
+        (KJS::dateProtoFuncSetUTCFullYear):
+        (KJS::dateProtoFuncSetYear):
+        (KJS::dateProtoFuncGetYear):
+        * kjs/date_object.h:
+        * kjs/debugger.h:
+        * kjs/error_object.cpp:
+        (KJS::errorProtoFuncToString):
+        (KJS::ErrorConstructor::construct):
+        (KJS::ErrorConstructor::callAsFunction):
+        (KJS::NativeErrorConstructor::construct):
+        (KJS::NativeErrorConstructor::callAsFunction):
+        * kjs/error_object.h:
+        * kjs/internal.cpp:
+        (KJS::JSNumberCell::toObject):
+        (KJS::JSNumberCell::toThisObject):
+        * kjs/list.cpp:
+        (KJS::ArgList::getSlice):
+        (KJS::ArgList::markLists):
+        (KJS::ArgList::slowAppend):
+        * kjs/list.h:
+        (KJS::ArgList::ArgList):
+        (KJS::ArgList::~ArgList):
+        * kjs/object_object.cpp:
+        (KJS::objectProtoFuncValueOf):
+        (KJS::objectProtoFuncHasOwnProperty):
+        (KJS::objectProtoFuncIsPrototypeOf):
+        (KJS::objectProtoFuncDefineGetter):
+        (KJS::objectProtoFuncDefineSetter):
+        (KJS::objectProtoFuncLookupGetter):
+        (KJS::objectProtoFuncLookupSetter):
+        (KJS::objectProtoFuncPropertyIsEnumerable):
+        (KJS::objectProtoFuncToLocaleString):
+        (KJS::objectProtoFuncToString):
+        (KJS::ObjectConstructor::construct):
+        (KJS::ObjectConstructor::callAsFunction):
+        * kjs/object_object.h:
+        * kjs/string_object.cpp:
+        (KJS::replace):
+        (KJS::stringProtoFuncToString):
+        (KJS::stringProtoFuncValueOf):
+        (KJS::stringProtoFuncCharAt):
+        (KJS::stringProtoFuncCharCodeAt):
+        (KJS::stringProtoFuncConcat):
+        (KJS::stringProtoFuncIndexOf):
+        (KJS::stringProtoFuncLastIndexOf):
+        (KJS::stringProtoFuncMatch):
+        (KJS::stringProtoFuncSearch):
+        (KJS::stringProtoFuncReplace):
+        (KJS::stringProtoFuncSlice):
+        (KJS::stringProtoFuncSplit):
+        (KJS::stringProtoFuncSubstr):
+        (KJS::stringProtoFuncSubstring):
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        (KJS::stringProtoFuncLocaleCompare):
+        (KJS::stringProtoFuncBig):
+        (KJS::stringProtoFuncSmall):
+        (KJS::stringProtoFuncBlink):
+        (KJS::stringProtoFuncBold):
+        (KJS::stringProtoFuncFixed):
+        (KJS::stringProtoFuncItalics):
+        (KJS::stringProtoFuncStrike):
+        (KJS::stringProtoFuncSub):
+        (KJS::stringProtoFuncSup):
+        (KJS::stringProtoFuncFontcolor):
+        (KJS::stringProtoFuncFontsize):
+        (KJS::stringProtoFuncAnchor):
+        (KJS::stringProtoFuncLink):
+        (KJS::StringConstructor::construct):
+        (KJS::StringConstructor::callAsFunction):
+        (KJS::StringConstructorFunction::callAsFunction):
+        * kjs/string_object.h:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for more JavaScriptCore files
 
         * API/JSCallbackFunction.cpp:

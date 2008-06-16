@@ -36,7 +36,7 @@ namespace KJS {
         ObjectPrototype(ExecState*, FunctionPrototype*);
     };
 
-    JSValue* objectProtoFuncToString(ExecState*, JSObject*, const List&);
+    JSValue* objectProtoFuncToString(ExecState*, JSObject*, const ArgList&);
 
     /**
      * @internal
@@ -48,9 +48,9 @@ namespace KJS {
         ObjectConstructor(ExecState*, ObjectPrototype*, FunctionPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const ArgList&);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
     };
 
 } // namespace KJS

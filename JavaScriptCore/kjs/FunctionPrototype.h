@@ -38,7 +38,7 @@ namespace KJS {
     public:
         FunctionPrototype(ExecState*);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
     };
 
     /**
@@ -51,10 +51,10 @@ namespace KJS {
         FunctionConstructor(ExecState*, FunctionPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
-        virtual JSObject* construct(ExecState*, const List&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
+        virtual JSObject* construct(ExecState*, const ArgList&);
+        virtual JSObject* construct(ExecState*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
     };
 
 } // namespace KJS

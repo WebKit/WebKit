@@ -223,7 +223,7 @@ void JSLocation::setHash(ExecState* exec, JSValue* value)
     navigateIfAllowed(exec, frame, url, false);
 }
 
-JSValue* JSLocation::replace(ExecState* exec, const List& args)
+JSValue* JSLocation::replace(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -239,7 +239,7 @@ JSValue* JSLocation::replace(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSLocation::reload(ExecState* exec, const List& args)
+JSValue* JSLocation::reload(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -256,7 +256,7 @@ JSValue* JSLocation::reload(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSLocation::assign(ExecState* exec, const List& args)
+JSValue* JSLocation::assign(ExecState* exec, const ArgList& args)
 {
     Frame* frame = impl()->frame();
     if (!frame)
@@ -273,7 +273,7 @@ JSValue* JSLocation::assign(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSLocation::toString(ExecState* exec, const List&)
+JSValue* JSLocation::toString(ExecState* exec, const ArgList&)
 {
     Frame* frame = impl()->frame();
     if (!frame)

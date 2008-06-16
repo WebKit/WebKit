@@ -231,7 +231,7 @@ CallType ObjcFallbackObjectImp::getCallData(CallData&)
     return [targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)] ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList &args)
 {
     if (thisObj->classInfo() != &KJS::RuntimeObjectImp::s_info)
         return throwError(exec, TypeError);

@@ -35,7 +35,7 @@
 
 namespace KJS {
     class ExecState;
-    class List;
+    class ArgList;
 }
 
 namespace WebCore {
@@ -66,14 +66,14 @@ namespace WebCore {
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
-        void debug(KJS::ExecState*, const KJS::List& arguments);
-        void error(KJS::ExecState*, const KJS::List& arguments);
-        void info(KJS::ExecState*, const KJS::List& arguments);
-        void log(KJS::ExecState*, const KJS::List& arguments);
-        void warn(KJS::ExecState*, const KJS::List& arguments);
-        void assertCondition(bool condition, KJS::ExecState*, const KJS::List& arguments);
-        void profile(KJS::ExecState*, const KJS::List& arguments) const;
-        void profileEnd(KJS::ExecState*, const KJS::List& arguments) const;
+        void debug(KJS::ExecState*, const KJS::ArgList& arguments);
+        void error(KJS::ExecState*, const KJS::ArgList& arguments);
+        void info(KJS::ExecState*, const KJS::ArgList& arguments);
+        void log(KJS::ExecState*, const KJS::ArgList& arguments);
+        void warn(KJS::ExecState*, const KJS::ArgList& arguments);
+        void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList& arguments);
+        void profile(KJS::ExecState*, const KJS::ArgList& arguments) const;
+        void profileEnd(KJS::ExecState*, const KJS::ArgList& arguments) const;
 
     private:
         Console(Frame*);

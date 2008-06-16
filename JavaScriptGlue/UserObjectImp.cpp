@@ -53,7 +53,7 @@ CallType UserObjectImp::getCallData(CallData& callData)
     return fJSUserObject ? fJSUserObject->getCallData(callData) : CallTypeNone;
 }
 
-JSValue *UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const List &args)
+JSValue *UserObjectImp::callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args)
 {
     JSValue *result = jsUndefined();
     JSUserObject* jsThisObj = KJSValueToJSObject(thisObj, exec);

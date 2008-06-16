@@ -83,39 +83,39 @@ namespace KJS {
    * String.prototype object
    */
 
-  JSValue* stringProtoFuncToString(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncValueOf(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncCharAt(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncCharCodeAt(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncConcat(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncIndexOf(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncLastIndexOf(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncMatch(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncReplace(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSearch(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSlice(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSplit(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSubstr(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSubstring(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncToLowerCase(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncToUpperCase(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncToLocaleLowerCase(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncToLocaleUpperCase(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncLocaleCompare(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncToString(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncCharAt(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncCharCodeAt(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncConcat(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncIndexOf(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncLastIndexOf(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncMatch(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncReplace(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSearch(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSlice(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSplit(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSubstr(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSubstring(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncToLowerCase(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncToUpperCase(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncToLocaleLowerCase(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncToLocaleUpperCase(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncLocaleCompare(ExecState*, JSObject*, const ArgList&);
 
-  JSValue* stringProtoFuncBig(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSmall(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncBlink(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncBold(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncFixed(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncItalics(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncStrike(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSub(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncSup(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncFontcolor(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncFontsize(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncAnchor(ExecState*, JSObject*, const List&);
-  JSValue* stringProtoFuncLink(ExecState*, JSObject*, const List&);
+  JSValue* stringProtoFuncBig(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSmall(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncBlink(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncBold(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncFixed(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncItalics(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncStrike(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSub(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncSup(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncFontcolor(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncFontsize(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncAnchor(ExecState*, JSObject*, const ArgList&);
+  JSValue* stringProtoFuncLink(ExecState*, JSObject*, const ArgList&);
 
   /**
    * @internal
@@ -127,9 +127,9 @@ namespace KJS {
     StringConstructor(ExecState*, FunctionPrototype*, StringPrototype*);
 
     virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const List&);
+    virtual JSObject* construct(ExecState*, const ArgList&);
 
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
   };
 
   /**
@@ -141,7 +141,7 @@ namespace KJS {
   class StringConstructorFunction : public InternalFunction {
   public:
     StringConstructorFunction(ExecState*, FunctionPrototype*, const Identifier&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
   };
 
 } // namespace

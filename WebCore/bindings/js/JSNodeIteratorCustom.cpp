@@ -37,7 +37,7 @@ void JSNodeIterator::mark()
     DOMObject::mark();
 }
 
-JSValue* JSNodeIterator::nextNode(ExecState* exec, const List& args)
+JSValue* JSNodeIterator::nextNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     JSValue* exception = 0;
@@ -53,7 +53,7 @@ JSValue* JSNodeIterator::nextNode(ExecState* exec, const List& args)
     return toJS(exec, node.get());
 }
 
-JSValue* JSNodeIterator::previousNode(ExecState* exec, const List& args)
+JSValue* JSNodeIterator::previousNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     JSValue* exception = 0;

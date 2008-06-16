@@ -735,7 +735,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 
         if (re.isValid()) {
             RegExpConstructor* regExpObj = static_cast<RegExpConstructor*>(exec->lexicalGlobalObject()->regExpConstructor());
-            List args;
+            ArgList args;
             UString uflags;
 
             if (re.caseSensitivity() == Qt::CaseInsensitive)
@@ -751,7 +751,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         type == QMetaType::QDate ||
         type == QMetaType::QTime) {
         DateConstructor *dateObj = static_cast<DateConstructor*>(exec->lexicalGlobalObject()->dateConstructor());
-        List args;
+        ArgList args;
 
         QDate date = QDate::currentDate();
         QTime time(0,0,0); // midnight
@@ -1010,7 +1010,7 @@ static int findMethodIndex(ExecState* exec,
                            const QMetaObject* meta,
                            const QByteArray& signature,
                            bool allowPrivate,
-                           const List& jsArgs,
+                           const ArgList& jsArgs,
                            QVarLengthArray<QVariant, 10> &vars,
                            void** vvars,
                            JSObject **pError)
@@ -1275,7 +1275,7 @@ void QtRuntimeMetaMethod::mark()
         d->m_disconnect->mark();
 }
 
-JSValue* QtRuntimeMetaMethod::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* QtRuntimeMetaMethod::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     QW_D(QtRuntimeMetaMethod);
 
@@ -1367,7 +1367,7 @@ QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Iden
     d->m_isConnect = isConnect;
 }
 
-JSValue *QtRuntimeConnectionMethod::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue *QtRuntimeConnectionMethod::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     QW_D(QtRuntimeConnectionMethod);
 
@@ -1603,7 +1603,7 @@ void QtConnectionObject::execute(void **argv)
                 ExecState* exec = globalobj->globalExec();
                 if (exec) {
                     // Build the argument list (up to the formal argument length of the slot)
-                    List l;
+                    ArgList l;
                     // ### DropAllLocks?
                     int funcArgC = m_funcObject->get(exec, exec->propertyNames().length)->toInt32(exec);
                     int argTotal = qMax(funcArgC, argc);

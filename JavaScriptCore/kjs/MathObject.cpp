@@ -103,33 +103,33 @@ JSValue* MathObject::getValueProperty(ExecState*, int token) const
 
 // ------------------------------ Functions --------------------------------
 
-JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     return signbit(arg) ? jsNumber(-arg) : jsNumber(arg);
 }
 
-JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(acos(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncASin(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncASin(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(asin(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncATan(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncATan(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(atan(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(atan2(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg > -1.0)
@@ -137,17 +137,17 @@ JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const List& args)
     return jsNumber(ceil(arg));
 }
 
-JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(cos(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(exp(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg == 0.0)
@@ -155,12 +155,12 @@ JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const List& args)
     return jsNumber(floor(arg));
 }
 
-JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(log(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const ArgList& args)
 {
     unsigned argsCount = args.size();
     double result = -Inf;
@@ -176,7 +176,7 @@ JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const List& args)
     return jsNumber(result);
 }
 
-JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const ArgList& args)
 {
     unsigned argsCount = args.size();
     double result = +Inf;
@@ -192,7 +192,7 @@ JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const List& args)
     return jsNumber(result);
 }
 
-JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const ArgList& args)
 {
     // ECMA 15.8.2.1.13
 
@@ -206,7 +206,7 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const List& args)
     return jsNumber(pow(arg, arg2));
 }
 
-JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const List&)
+JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const ArgList&)
 {
 #if !USE(MULTIPLE_THREADS)
     static bool didInitRandom;
@@ -219,7 +219,7 @@ JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const List&)
     return jsNumber(wtf_random());
 }
 
-JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg >= -0.5)
@@ -227,17 +227,17 @@ JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const List& args)
     return jsNumber(floor(arg + 0.5));
 }
 
-JSValue* mathProtoFuncSin(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncSin(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(sin(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncSqrt(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncSqrt(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(sqrt(args[0]->toNumber(exec)));
 }
 
-JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, const List& args)
+JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, const ArgList& args)
 {
     return jsNumber(tan(args[0]->toNumber(exec)));
 }

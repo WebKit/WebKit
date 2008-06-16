@@ -105,7 +105,7 @@ public:
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual CallType getCallData(CallData&);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual JSValue *defaultValue(ExecState *exec, JSType hint) const;
 

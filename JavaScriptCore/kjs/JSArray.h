@@ -31,7 +31,7 @@ namespace KJS {
   class JSArray : public JSObject {
   public:
     JSArray(JSObject* prototype, unsigned initialLength);
-    JSArray(JSObject* prototype, const List& initialValues);
+    JSArray(JSObject* prototype, const ArgList& initialValues);
     ~JSArray();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

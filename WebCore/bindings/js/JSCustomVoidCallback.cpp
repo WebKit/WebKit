@@ -75,7 +75,7 @@ void JSCustomVoidCallback::handleEvent()
         
     RefPtr<JSCustomVoidCallback> protect(this);
         
-    List args;
+    ArgList args;
     
     globalObject->startTimeoutCheck();
     if (handleEventFunc)

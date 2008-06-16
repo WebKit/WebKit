@@ -81,7 +81,7 @@ namespace KJS  {
 
         IdentifierTable* identifierTable() { return m_globalData->identifierTable; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
-        const List& emptyList() const { return m_globalData->emptyList; }
+        const ArgList& emptyList() const { return m_globalData->emptyList; }
         Lexer* lexer() { return m_globalData->lexer; }
         Parser* parser() { return m_globalData->parser; }
         static const HashTable* arrayTable(ExecState* exec) { return exec->m_globalData->arrayTable; }

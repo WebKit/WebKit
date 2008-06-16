@@ -83,7 +83,7 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue* value)
     impl()->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue* JSCanvasRenderingContext2D::setFillColor(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::setFillColor(ExecState* exec, const ArgList& args)
 {
     CanvasRenderingContext2D* context = impl();
 
@@ -120,7 +120,7 @@ JSValue* JSCanvasRenderingContext2D::setFillColor(ExecState* exec, const List& a
     return jsUndefined();
 }    
 
-JSValue* JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
 
@@ -158,7 +158,7 @@ JSValue* JSCanvasRenderingContext2D::setStrokeColor(ExecState* exec, const List&
     return jsUndefined();
 }
 
-JSValue* JSCanvasRenderingContext2D::strokeRect(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::strokeRect(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
     
@@ -172,7 +172,7 @@ JSValue* JSCanvasRenderingContext2D::strokeRect(ExecState* exec, const List& arg
     return jsUndefined();    
 }
 
-JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
 
@@ -238,7 +238,7 @@ JSValue* JSCanvasRenderingContext2D::drawImage(ExecState* exec, const List& args
     return jsUndefined();    
 }
 
-JSValue* JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
     
@@ -258,7 +258,7 @@ JSValue* JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec, const Li
     return jsUndefined();    
 }
 
-JSValue* JSCanvasRenderingContext2D::setShadow(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::setShadow(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
 
@@ -304,7 +304,7 @@ JSValue* JSCanvasRenderingContext2D::setShadow(ExecState* exec, const List& args
     return jsUndefined();    
 }
 
-JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const ArgList& args)
 { 
     CanvasRenderingContext2D* context = impl();
 
@@ -333,7 +333,7 @@ JSValue* JSCanvasRenderingContext2D::createPattern(ExecState* exec, const List& 
     return 0;
 }
 
-JSValue* JSCanvasRenderingContext2D::putImageData(ExecState* exec, const List& args)
+JSValue* JSCanvasRenderingContext2D::putImageData(ExecState* exec, const ArgList& args)
 {
     // putImageData has two variants
     // putImageData(ImageData, x, y)

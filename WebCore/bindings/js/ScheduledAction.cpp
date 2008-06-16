@@ -36,11 +36,11 @@ using namespace KJS;
 
 namespace WebCore {
 
-ScheduledAction::ScheduledAction(JSValue* func, const List& args)
+ScheduledAction::ScheduledAction(JSValue* func, const ArgList& args)
     : m_func(func)
 {
-    List::const_iterator end = args.end();
-    for (List::const_iterator it = args.begin(); it != end; ++it)
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         m_args.append(*it);
 }
 
@@ -65,7 +65,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
             JSDOMWindow* window = windowShell->window();
             ExecState* exec = window->globalExec();
 
-            List args;
+            ArgList args;
             size_t size = m_args.size();
             for (size_t i = 0; i < size; ++i)
                 args.append(m_args[i]);

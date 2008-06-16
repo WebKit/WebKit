@@ -37,7 +37,7 @@ namespace WebCore {
         JSXSLTProcessorConstructor(KJS::ExecState*);
 
         virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
-        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::List&);
+        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::ArgList&);
 
         virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
         static const KJS::ClassInfo s_info;

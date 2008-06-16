@@ -53,8 +53,8 @@ public:
     
     virtual CallType getCallData(CallData&);
     
-    virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const List &args);
-    virtual JSValue *invokeDefaultMethod(ExecState *exec, const List &args);
+    virtual JSValue *invokeMethod(ExecState *exec, const MethodList &method, const ArgList &args);
+    virtual JSValue *invokeDefaultMethod(ExecState *exec, const ArgList &args);
 
     virtual bool supportsSetValueOfUndefinedField();
     virtual void setValueOfUndefinedField(ExecState *exec, const Identifier &property, JSValue *aValue);

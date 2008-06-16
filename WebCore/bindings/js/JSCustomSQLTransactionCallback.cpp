@@ -129,7 +129,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         
     RefPtr<JSCustomSQLTransactionCallback> protect(this);
         
-    List args;
+    ArgList args;
     args.append(toJS(exec, transaction));
 
     globalObject->startTimeoutCheck();

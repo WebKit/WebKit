@@ -50,7 +50,7 @@ ConstructType JSXSLTProcessorConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* JSXSLTProcessorConstructor::construct(ExecState* exec, const List& args)
+JSObject* JSXSLTProcessorConstructor::construct(ExecState* exec, const ArgList& args)
 {
     RefPtr<XSLTProcessor> xsltProcessor = XSLTProcessor::create();
     return new JSXSLTProcessor(JSXSLTProcessorPrototype::self(exec), xsltProcessor.get());

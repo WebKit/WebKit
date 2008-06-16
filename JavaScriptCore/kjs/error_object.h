@@ -38,16 +38,16 @@ namespace KJS {
         ErrorPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
     };
 
-    JSValue* errorProtoFuncToString(ExecState*, JSObject*, const List&);
+    JSValue* errorProtoFuncToString(ExecState*, JSObject*, const ArgList&);
 
     class ErrorConstructor : public InternalFunction {
     public:
         ErrorConstructor(ExecState*, FunctionPrototype*, ErrorPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const ArgList&);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
     };
 
     class NativeErrorPrototype : public JSObject {
@@ -60,9 +60,9 @@ namespace KJS {
         NativeErrorConstructor(ExecState*, FunctionPrototype*, NativeErrorPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const ArgList&);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
 
         virtual void mark();
 

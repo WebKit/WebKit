@@ -48,7 +48,7 @@ CallType JSHTMLObjectElement::getCallData(CallData&)
     return runtimeObjectImplementsCall(static_cast<HTMLElement*>(impl())) ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* JSHTMLObjectElement::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSHTMLObjectElement::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return runtimeObjectCallAsFunction(exec, thisObj, args, static_cast<HTMLElement*>(impl()));
 }

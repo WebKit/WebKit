@@ -39,7 +39,7 @@ public:
     JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name);
 
     virtual bool implementsHasInstance() const;
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List &args);
+    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList &args);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

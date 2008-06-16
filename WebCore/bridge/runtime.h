@@ -36,7 +36,7 @@ namespace KJS  {
 
 class Identifier;
 class JSGlobalObject;
-class List;
+class ArgList;
 class PropertyNameArray;
 
 namespace Bindings {
@@ -123,8 +123,8 @@ public:
 
     virtual CallType getCallData(CallData&) { return CallTypeNone; }
     
-    virtual JSValue* invokeMethod(ExecState*, const MethodList&, const List& args) = 0;
-    virtual JSValue* invokeDefaultMethod(ExecState*, const List&) { return jsUndefined(); }
+    virtual JSValue* invokeMethod(ExecState*, const MethodList&, const ArgList& args) = 0;
+    virtual JSValue* invokeDefaultMethod(ExecState*, const ArgList&) { return jsUndefined(); }
     
     virtual void getPropertyNames(ExecState*, PropertyNameArray&) { }
 
@@ -158,7 +158,7 @@ protected:
     RefPtr<RootObject> _rootObject;
 };
 
-const char *signatureForParameters(const List&);
+const char *signatureForParameters(const ArgList&);
 
 typedef HashMap<RefPtr<UString::Rep>, MethodList*> MethodListMap;
 typedef HashMap<RefPtr<UString::Rep>, Method*> MethodMap; 

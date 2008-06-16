@@ -45,7 +45,7 @@ namespace WebCore {
 
 using namespace KJS;
 
-JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
+JSValue* JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
 {
     String oldVersion = args[0]->toString(exec);
     String newVersion = args[1]->toString(exec);
@@ -86,7 +86,7 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSDatabase::transaction(ExecState* exec, const List& args)
+JSValue* JSDatabase::transaction(ExecState* exec, const ArgList& args)
 {
     JSObject* object;
     

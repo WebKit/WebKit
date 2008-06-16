@@ -133,21 +133,21 @@ JSValue* JSNotAnObject::defaultValue(ExecState* exec, JSType) const
     return m_exception;
 }
 
-JSObject* JSNotAnObject::construct(ExecState* exec, const List&)
+JSObject* JSNotAnObject::construct(ExecState* exec, const ArgList&)
 {
     UNUSED_PARAM(exec);
     ASSERT(exec->hadException() && exec->exception() == m_exception);
     return m_exception;
 }
 
-JSObject* JSNotAnObject::construct(ExecState* exec, const List&, const Identifier&, const UString&, int)
+JSObject* JSNotAnObject::construct(ExecState* exec, const ArgList&, const Identifier&, const UString&, int)
 {
     UNUSED_PARAM(exec);
     ASSERT(exec->hadException() && exec->exception() == m_exception);
     return m_exception;
 }
 
-JSValue* JSNotAnObject::callAsFunction(ExecState* exec, JSObject*, const List&)
+JSValue* JSNotAnObject::callAsFunction(ExecState* exec, JSObject*, const ArgList&)
 {
     UNUSED_PARAM(exec);
     ASSERT(exec->hadException() && exec->exception() == m_exception);

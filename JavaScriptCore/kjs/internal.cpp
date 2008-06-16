@@ -177,14 +177,14 @@ UString JSNumberCell::toString(ExecState *) const
 
 JSObject *JSNumberCell::toObject(ExecState *exec) const
 {
-  List args;
+  ArgList args;
   args.append(const_cast<JSNumberCell*>(this));
   return static_cast<JSObject *>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec,args));
 }
 
 JSObject* JSNumberCell::toThisObject(ExecState* exec) const
 {
-    List args;
+    ArgList args;
     args.append(const_cast<JSNumberCell*>(this));
     return static_cast<JSObject*>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args));
 }

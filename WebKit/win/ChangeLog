@@ -1,5 +1,12 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - rename KJS::List to KJS::ArgList
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString):
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * WebView.cpp:

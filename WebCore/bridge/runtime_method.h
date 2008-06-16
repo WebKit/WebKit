@@ -37,7 +37,7 @@ public:
     
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
 
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const List &args);
+    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
 
 private:
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);

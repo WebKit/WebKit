@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace KJS;
 using namespace HTMLNames;
 
-JSValue* JSHTMLSelectElement::remove(ExecState* exec, const List& args)
+JSValue* JSHTMLSelectElement::remove(ExecState* exec, const ArgList& args)
 {
     HTMLSelectElement& select = *static_cast<HTMLSelectElement*>(impl());
 

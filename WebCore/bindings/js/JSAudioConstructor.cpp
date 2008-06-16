@@ -51,7 +51,7 @@ ConstructType JSAudioConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* JSAudioConstructor::construct(ExecState* exec, const List& args)
+JSObject* JSAudioConstructor::construct(ExecState* exec, const ArgList& args)
 {
     ExceptionCode exception = 0;
     RefPtr<Element> element = m_document->createElement("audio", exception);

@@ -75,50 +75,50 @@ namespace KJS {
     // Non-normative properties (Appendix B)
     // GetYear, SetYear, ToGMTString
 
-    JSValue* dateProtoFuncToString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToUTCString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToDateString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToTimeString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToLocaleDateString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToLocaleTimeString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncValueOf(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetTime(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetFullYear(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCFullYear(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncToGMTString(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetMonth(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCMonth(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetDate(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCDate(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetDay(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCDay(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetHours(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCHours(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetMinutes(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCMinutes(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetMilliSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetUTCMilliseconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetTimezoneOffset(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetTime(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetMilliSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCMilliseconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCSeconds(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetMinutes(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCMinutes(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetHours(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCHours(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetDate(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCDate(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetMonth(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCMonth(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetFullYear(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetUTCFullYear(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncSetYear(ExecState*, JSObject*, const List&);
-    JSValue* dateProtoFuncGetYear(ExecState*, JSObject*, const List&);
+    JSValue* dateProtoFuncToString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToUTCString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToDateString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToTimeString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToLocaleString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToLocaleDateString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToLocaleTimeString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetTime(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetFullYear(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCFullYear(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncToGMTString(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetMonth(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCMonth(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetDate(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCDate(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetDay(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCDay(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetHours(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCHours(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetMinutes(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCMinutes(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetMilliSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetUTCMilliseconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetTimezoneOffset(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetTime(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetMilliSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCMilliseconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCSeconds(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetMinutes(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCMinutes(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetHours(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCHours(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetDate(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCDate(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetMonth(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCMonth(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetFullYear(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetUTCFullYear(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncSetYear(ExecState*, JSObject*, const ArgList&);
+    JSValue* dateProtoFuncGetYear(ExecState*, JSObject*, const ArgList&);
 
     /**
      * @internal
@@ -130,11 +130,11 @@ namespace KJS {
         DateConstructor(ExecState*, FunctionPrototype*, DatePrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List& args);
+        virtual JSObject* construct(ExecState*, const ArgList& args);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List& args);
+        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
 
-        JSObject* construct(const List&);
+        JSObject* construct(const ArgList&);
     };
 
 } // namespace

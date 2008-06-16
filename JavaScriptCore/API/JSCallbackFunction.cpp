@@ -50,7 +50,7 @@ bool JSCallbackFunction::implementsHasInstance() const {
     return false; 
 }
 
-JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const List &args)
+JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList &args)
 {
     JSContextRef execRef = toRef(exec);
     JSObjectRef thisRef = toRef(this);

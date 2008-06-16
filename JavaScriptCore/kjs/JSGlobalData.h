@@ -69,7 +69,7 @@ namespace KJS {
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
-        const List emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
+        const ArgList emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
 
         HashSet<ParserRefCounted*> newTrackedObjects;
         HashCountedSet<ParserRefCounted*> trackedObjectExtraRefCounts;

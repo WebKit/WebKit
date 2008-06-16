@@ -2142,7 +2142,7 @@ void XMLTokenizer::parseDtd()
         setIsXHTMLDocument(true); // controls if we replace entities or not.
     }
     if (!m_parsingFragment)
-        m_doc->addChild(new DocumentType(m_doc, name, publicId, systemId));
+        m_doc->addChild(DocumentType::create(m_doc, name, publicId, systemId));
     
 }
 #endif

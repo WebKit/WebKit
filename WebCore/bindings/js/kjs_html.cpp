@@ -109,7 +109,7 @@ bool runtimeObjectImplementsCall(HTMLElement* thisImp)
     return runtimeObject->implementsCall();
 }
 
-JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const List& args, HTMLElement* thisImp)
+JSValue* runtimeObjectCallAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args, HTMLElement* thisImp)
 {
     JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
     if (!runtimeObject)

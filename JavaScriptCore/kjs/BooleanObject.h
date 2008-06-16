@@ -55,9 +55,9 @@ namespace KJS {
         BooleanConstructor(ExecState*, FunctionPrototype*, BooleanPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const ArgList&);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
     };
 
 } // namespace KJS

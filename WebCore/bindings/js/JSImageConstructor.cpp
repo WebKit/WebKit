@@ -41,7 +41,7 @@ ConstructType JSImageConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* JSImageConstructor::construct(ExecState* exec, const List& args)
+JSObject* JSImageConstructor::construct(ExecState* exec, const ArgList& args)
 {
     bool widthSet = false;
     bool heightSet = false;

@@ -52,7 +52,7 @@ static JSValue* getNamedItems(ExecState* exec, HTMLCollection* impl, const Ident
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();
@@ -108,7 +108,7 @@ JSValue* JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propert
     return getNamedItems(exec, thisObj->impl(), propertyName);
 }
 
-JSValue* JSHTMLCollection::item(ExecState* exec, const List& args)
+JSValue* JSHTMLCollection::item(ExecState* exec, const ArgList& args)
 {
     bool ok;
     uint32_t index = args[0]->toString(exec).toUInt32(&ok, false);
@@ -117,7 +117,7 @@ JSValue* JSHTMLCollection::item(ExecState* exec, const List& args)
     return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
 }
 
-JSValue* JSHTMLCollection::namedItem(ExecState* exec, const List& args)
+JSValue* JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
 {
     return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
 }

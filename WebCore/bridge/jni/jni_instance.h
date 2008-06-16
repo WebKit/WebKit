@@ -80,7 +80,7 @@ public:
     virtual JSValue *valueOf() const;
     virtual JSValue *defaultValue (JSType hint) const;
 
-    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const List &args);
+    virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const ArgList &args);
 
     jobject javaInstance() const { return _instance->_instance; }
     

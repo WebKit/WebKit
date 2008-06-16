@@ -684,7 +684,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     return result;
 }
 
-JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, JSFunction* function, JSObject* thisObj, const List& args, RegisterFileStack* registerFileStack, ScopeChainNode* scopeChain, JSValue** exception)
+JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, JSFunction* function, JSObject* thisObj, const ArgList& args, RegisterFileStack* registerFileStack, ScopeChainNode* scopeChain, JSValue** exception)
 {
     if (m_reentryDepth >= MaxReentryDepth) {
         *exception = createStackOverflowError(exec);
@@ -711,8 +711,8 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     Register* dst = callFrame + CallFrameHeaderSize;
     (*dst).u.jsValue = thisObj;
 
-    List::const_iterator end = args.end();
-    for (List::const_iterator it = args.begin(); it != end; ++it)
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         (*++dst).u.jsValue = *it;
 
     // put call frame in place, using a 0 codeBlock to indicate a built-in caller
@@ -2114,7 +2114,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[firstArg].u.jsValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : (r[thisVal].u.jsValue)->toObject(exec);
             JSObject* thisObj = static_cast<JSObject*>(r[firstArg].u.jsValue);
 
-            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
+            ArgList args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
 
             registerFile->setSafeForReentry(true);
             JSValue* returnValue = static_cast<JSObject*>(v)->callAsFunction(exec, thisObj, args);
@@ -2251,7 +2251,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             int registerOffset = r - (*registerBase);
 
-            List args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
+            ArgList args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
 
             registerFile->setSafeForReentry(true);
             JSValue* returnValue = constructor->construct(exec, args);

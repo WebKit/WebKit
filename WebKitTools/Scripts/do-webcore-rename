@@ -68,39 +68,15 @@ sub wanted
 }
 
 my %renames = (
-    "ARRAY_INSTANCE_H" => "JSArray_h",
-    "ARRAY_OBJECT_H_" => "ArrayObject_h",
-    "BOOL_OBJECT_H_" => "BooleanObject_h",
-    "FUNCTION_OBJECT_H_" => "FunctionPrototype_h",
-    "INTERNAL_H" => "JSString_h",
-    "KJS_FUNCTION_H" => "JSFunction_h",
-    "KJS_PROPERTY_MAP_H_" => "PropertyMap_h",
-    "KJS_PROPERTY_SLOT_H" => "PropertySlot_h",
-    "KJS_SCOPE_CHAIN_H" => "ScopeChain_h",
-    "KJS_VALUE_H" => "JSValue_h",
-    "MATH_OBJECT_H_" => "MathObject_h",
-    "NUMBER_OBJECT_H_" => "NumberObject_h",
-    "REGEXP_OBJECT_H_" => "RegExpObject_h",
-    "array_instance" => "JSArray",
-    "array_object" => "ArrayPrototype",
-    "bool_object" => "BooleanObject",
-    "function_object" => "FunctionPrototype",
-    "math_object" => "MathObject",
-    "number_object" => "NumberObject",
-    "property_map" => "PropertyMap",
-    "property_slot" => "PropertySlot",
-    "regexp_object" => "RegExpObject",
-    "scope_chain" => "ScopeChain",
-    "scope_chain_mark" => "ScopeChainMark",
-    "scope_chain_mark_h" => "ScopeChainMark_h",
+    "List" => "ArgList",
 );
 
 my %renamesContemplatedForTheFuture = (
-    "DateInstance" => "DateObject",
-    "ErrorInstance" => "ErrorObject",
+    "DateInstance" => "JSDate",
+    "ErrorInstance" => "JSError",
 
-    "date_object" => "DateObject",
-    "error_object" => "ErrorObject",
+    "date_object" => "JSDate",
+    "error_object" => "JSError",
     "string_object" => "StringObject",
 
     "CLONE_CONTENTS" => "Clone",
@@ -117,8 +93,6 @@ my %renamesContemplatedForTheFuture = (
     "KURLCFNet" => "URLCF",
     "KURLMac" => "URLMac",
     "KURL_H_" => "URL_h",
-
-    "List" => "JSArgumentList",
 
     "StringImpl" => "SharedString",
 

@@ -52,7 +52,7 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
     putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     UString s = "Error";
 
@@ -84,7 +84,7 @@ ConstructType ErrorConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.9.3
-JSObject* ErrorConstructor::construct(ExecState* exec, const List& args)
+JSObject* ErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
     JSObject* proto = static_cast<JSObject*>(exec->lexicalGlobalObject()->errorPrototype());
     JSObject* imp = new ErrorInstance(proto);
@@ -97,7 +97,7 @@ JSObject* ErrorConstructor::construct(ExecState* exec, const List& args)
 }
 
 // ECMA 15.9.2
-JSValue* ErrorConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const List& args)
+JSValue* ErrorConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const ArgList& args)
 {
     // "Error()" gives the sames result as "new Error()"
     return construct(exec, args);
@@ -129,7 +129,7 @@ ConstructType NativeErrorConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* NativeErrorConstructor::construct(ExecState* exec, const List& args)
+JSObject* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
     JSObject* imp = new ErrorInstance(proto);
     JSObject* obj(imp);
@@ -138,7 +138,7 @@ JSObject* NativeErrorConstructor::construct(ExecState* exec, const List& args)
     return obj;
 }
 
-JSValue* NativeErrorConstructor::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* NativeErrorConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     return construct(exec, args);
 }

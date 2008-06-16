@@ -66,10 +66,10 @@ namespace KJS {
 
         virtual JSValue* defaultValue(ExecState*, JSType hint) const;
 
-        virtual JSObject* construct(ExecState*, const List&);
-        virtual JSObject* construct(ExecState*, const List&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
+        virtual JSObject* construct(ExecState*, const ArgList&);
+        virtual JSObject* construct(ExecState*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList&);
 
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 

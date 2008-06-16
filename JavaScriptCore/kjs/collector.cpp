@@ -88,7 +88,7 @@ static CollectorHeap primaryHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 static CollectorHeap numberHeap = { 0, 0, 0, 0, 0, 0, 0, NoOperation };
 
 size_t Collector::mainThreadOnlyObjectCount = 0;
-HashSet<List*>* Collector::m_markListSet;
+HashSet<ArgList*>* Collector::m_markListSet;
 
 static CollectorBlock* allocateBlock()
 {
@@ -957,7 +957,7 @@ bool Collector::collect()
     markStackObjectsConservatively();
     markProtectedObjects();
     if (m_markListSet && m_markListSet->size())
-        List::markLists(*m_markListSet);
+        ArgList::markLists(*m_markListSet);
 #if USE(MULTIPLE_THREADS)
     if (!currentThreadIsMainThread)
         markMainThreadOnlyObjects();

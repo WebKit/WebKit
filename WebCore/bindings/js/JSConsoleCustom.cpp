@@ -32,52 +32,52 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSConsole::debug(ExecState* exec, const List& arguments)
+JSValue* JSConsole::debug(ExecState* exec, const ArgList& arguments)
 {
     impl()->debug(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::error(ExecState* exec, const List& arguments)
+JSValue* JSConsole::error(ExecState* exec, const ArgList& arguments)
 {
     impl()->error(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::info(ExecState* exec, const List& arguments)
+JSValue* JSConsole::info(ExecState* exec, const ArgList& arguments)
 {
     impl()->info(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::log(ExecState* exec, const List& arguments)
+JSValue* JSConsole::log(ExecState* exec, const ArgList& arguments)
 {
     impl()->log(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::warn(ExecState* exec, const List& arguments)
+JSValue* JSConsole::warn(ExecState* exec, const ArgList& arguments)
 {
     impl()->warn(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::assertCondition(ExecState* exec, const List& arguments)
+JSValue* JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
 {
-    List messageParameters;
+    ArgList messageParameters;
     arguments.getSlice(1, messageParameters);
 
     impl()->assertCondition(arguments[0]->toBoolean(exec), exec, messageParameters);
     return jsUndefined();
 }
 
-JSValue* JSConsole::profile(ExecState* exec, const List& arguments)
+JSValue* JSConsole::profile(ExecState* exec, const ArgList& arguments)
 {
     impl()->profile(exec, arguments);
     return jsUndefined();
 }
 
-JSValue* JSConsole::profileEnd(ExecState* exec, const List& arguments)
+JSValue* JSConsole::profileEnd(ExecState* exec, const ArgList& arguments)
 {
     impl()->profileEnd(exec, arguments);
     return jsUndefined();

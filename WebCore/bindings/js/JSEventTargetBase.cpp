@@ -93,7 +93,7 @@ dispatchEvent           WebCore::jsEventTargetDispatchEvent       DontDelete|Fun
 @end
 */
 
-JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     DOMExceptionTranslator exception(exec);
 
@@ -112,7 +112,7 @@ JSValue* jsEventTargetAddEventListener(ExecState* exec, JSObject* thisObj, const
     return jsUndefined();
 }
 
-JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     DOMExceptionTranslator exception(exec);
 
@@ -131,7 +131,7 @@ JSValue* jsEventTargetRemoveEventListener(ExecState* exec, JSObject* thisObj, co
     return jsUndefined();
 }
 
-JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* jsEventTargetDispatchEvent(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     Node* eventNode = 0;
     EventTarget* eventTarget = 0;

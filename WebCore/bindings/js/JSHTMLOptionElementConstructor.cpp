@@ -43,7 +43,7 @@ ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData&)
     return ConstructTypeNative;
 }
 
-JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const List& args)
+JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
 

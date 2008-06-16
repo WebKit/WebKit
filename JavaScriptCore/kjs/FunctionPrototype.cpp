@@ -38,9 +38,9 @@ namespace KJS {
 
 // ------------------------------ FunctionPrototype -------------------------
 
-static JSValue* functionProtoFuncToString(ExecState*, JSObject*, const List&);
-static JSValue* functionProtoFuncApply(ExecState*, JSObject*, const List&);
-static JSValue* functionProtoFuncCall(ExecState*, JSObject*, const List&);
+static JSValue* functionProtoFuncToString(ExecState*, JSObject*, const ArgList&);
+static JSValue* functionProtoFuncApply(ExecState*, JSObject*, const ArgList&);
+static JSValue* functionProtoFuncCall(ExecState*, JSObject*, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
 {
@@ -52,14 +52,14 @@ FunctionPrototype::FunctionPrototype(ExecState* exec)
 }
 
 // ECMA 15.3.4
-JSValue* FunctionPrototype::callAsFunction(ExecState*, JSObject*, const List&)
+JSValue* FunctionPrototype::callAsFunction(ExecState*, JSObject*, const ArgList&)
 {
     return jsUndefined();
 }
 
 // Functions
 
-JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj || !thisObj->inherits(&InternalFunction::info)) {
 #ifndef NDEBUG
@@ -76,7 +76,7 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Lis
     return jsString("function " + static_cast<InternalFunction*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
 }
 
-JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!thisObj->implementsCall())
         return throwError(exec, TypeError);
@@ -90,7 +90,7 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& 
     else
         applyThis = thisArg->toObject(exec);
 
-    List applyArgs;
+    ArgList applyArgs;
     if (!argArray->isUndefinedOrNull()) {
         if (argArray->isObject() &&
             (static_cast<JSObject*>(argArray)->inherits(&JSArray::info) ||
@@ -107,7 +107,7 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const List& 
     return thisObj->callAsFunction(exec, applyThis, applyArgs);
 }
 
-JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!thisObj->implementsCall())
         return throwError(exec, TypeError);
@@ -120,7 +120,7 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject* thisObj, const List& a
     else
         callThis = thisArg->toObject(exec);
 
-    List argsTail;
+    ArgList argsTail;
     args.getSlice(1, argsTail);
     return thisObj->callAsFunction(exec, callThis, argsTail);
 }
@@ -142,7 +142,7 @@ ConstructType FunctionConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* FunctionConstructor::construct(ExecState* exec, const List& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
+JSObject* FunctionConstructor::construct(ExecState* exec, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
     UString p("");
     UString body;
@@ -215,13 +215,13 @@ JSObject* FunctionConstructor::construct(ExecState* exec, const List& args, cons
 }
 
 // ECMA 15.3.2 The Function Constructor
-JSObject* FunctionConstructor::construct(ExecState* exec, const List& args)
+JSObject* FunctionConstructor::construct(ExecState* exec, const ArgList& args)
 {
     return construct(exec, args, "anonymous", UString(), 1);
 }
 
 // ECMA 15.3.1 The Function Constructor Called as a Function
-JSValue* FunctionConstructor::callAsFunction(ExecState* exec, JSObject*, const List& args)
+JSValue* FunctionConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     return construct(exec, args);
 }

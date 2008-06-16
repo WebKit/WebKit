@@ -67,7 +67,7 @@ CallType CInstance::getCallData(CallData&)
     return _object->_class->invokeDefault ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const List& args)
+JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, const ArgList& args)
 {
     // Overloading methods are not allowed by NPObjects.  Should only be one
     // name match for a particular method.
@@ -104,7 +104,7 @@ JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, 
 }
 
 
-JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const List& args)
+JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 {
     if (!_object->_class->invokeDefault)
         return jsUndefined();

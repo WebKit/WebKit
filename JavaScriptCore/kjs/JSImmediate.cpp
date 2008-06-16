@@ -37,12 +37,12 @@ JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
     else if (v == jsUndefined())
         return new JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
     else if (isBoolean(v)) {
-        List args;
+        ArgList args;
         args.append(const_cast<JSValue *>(v));
         return exec->lexicalGlobalObject()->booleanConstructor()->construct(exec, args);
     } else {
         ASSERT(isNumber(v));
-        List args;
+        ArgList args;
         args.append(const_cast<JSValue *>(v));
         return exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args);
     }

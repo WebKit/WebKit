@@ -24,7 +24,7 @@
 #include "identifier.h"
 #include <wtf/Noncopyable.h>
 
-// List of property names, passed to a macro so we can do set them up various
+// ArgList of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.
 #define KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(__defineGetter__) \

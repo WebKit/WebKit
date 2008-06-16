@@ -41,31 +41,31 @@ namespace KJS {
     ArrayConstructor(ExecState*, FunctionPrototype*, ArrayPrototype*);
 
     virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const List&);
+    virtual JSObject* construct(ExecState*, const ArgList&);
 
-    virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+    virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
 
   };
 
-  JSValue* arrayProtoFuncToString(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncConcat(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncJoin(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncPop(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncPush(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncReverse(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncShift(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncSlice(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncSort(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncSplice(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncUnShift(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncEvery(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncForEach(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncSome(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncIndexOf(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncFilter(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncMap(ExecState*, JSObject*, const List&);
-  JSValue* arrayProtoFuncLastIndexOf(ExecState*, JSObject*, const List&);
+  JSValue* arrayProtoFuncToString(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncToLocaleString(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncConcat(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncJoin(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncPop(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncPush(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncReverse(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncShift(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncSlice(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncSort(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncSplice(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncUnShift(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncEvery(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncForEach(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncSome(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncIndexOf(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncFilter(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncMap(ExecState*, JSObject*, const ArgList&);
+  JSValue* arrayProtoFuncLastIndexOf(ExecState*, JSObject*, const ArgList&);
 
 } // namespace KJS
 

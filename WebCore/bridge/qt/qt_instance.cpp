@@ -60,7 +60,7 @@ class QtRuntimeObjectImp : public RuntimeObjectImp {
 
         // Additions
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState* exec, const List& args);
+        virtual JSObject* construct(ExecState* exec, const ArgList& args);
     protected:
         void removeFromCache();
 };
@@ -108,7 +108,7 @@ ConstructType QtRuntimeObjectImp::getConstructData(ConstructData& constructData)
     return type;
 }
 
-JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const List& args)
+JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const ArgList& args)
 {
     // ECMA 15.2.2.1 (?)
     JSValue *val = callAsFunction(exec, this, args);
@@ -235,7 +235,7 @@ void QtInstance::getPropertyNames(ExecState* , PropertyNameArray& array)
     }
 }
 
-JSValue* QtInstance::invokeMethod(ExecState*, const MethodList&, const List&)
+JSValue* QtInstance::invokeMethod(ExecState*, const MethodList&, const ArgList&)
 {
     // Implemented via fallbackMethod & QtRuntimeMetaMethod::callAsFunction
     return jsUndefined();
@@ -270,7 +270,7 @@ CallType QtInstance::getCallData(CallData&)
     return (m_defaultMethodIndex >= 0 ? CallTypeNative : CallTypeNone);
 }
 
-JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const List& args)
+JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 {
     // QtScript tries to invoke a meta method qscript_call
     if (!getObject())

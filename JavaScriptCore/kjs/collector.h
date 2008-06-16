@@ -31,7 +31,7 @@ namespace KJS {
     class CollectorBlock;
     class JSCell;
     class JSValue;
-    class List;
+    class ArgList;
 
     class Collector {
     public:
@@ -78,7 +78,7 @@ namespace KJS {
 
         static void markStackObjectsConservatively(void* start, void* end);
 
-        static HashSet<List*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<List*>; return *m_markListSet; }
+        static HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
 
     private:
         template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
@@ -100,7 +100,7 @@ namespace KJS {
         static size_t mainThreadOnlyObjectCount;
         static bool memoryFull;
 
-        static HashSet<List*>* m_markListSet;
+        static HashSet<ArgList*>* m_markListSet;
     };
 
     // tunable parameters

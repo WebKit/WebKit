@@ -25,7 +25,7 @@ using std::min;
 
 namespace KJS {
 
-void List::getSlice(int startIndex, List& result) const
+void ArgList::getSlice(int startIndex, ArgList& result) const
 {
     ASSERT(!result.m_isReadOnly);
 
@@ -35,11 +35,11 @@ void List::getSlice(int startIndex, List& result) const
     result.m_bufferSlot = result.m_vector.dataSlot();
 }
 
-void List::markLists(ListSet& markSet)
+void ArgList::markLists(ListSet& markSet)
 {
     ListSet::iterator end = markSet.end();
     for (ListSet::iterator it = markSet.begin(); it != end; ++it) {
-        List* list = *it;
+        ArgList* list = *it;
 
         iterator end2 = list->end();
         for (iterator it2 = list->begin(); it2 != end2; ++it2) {
@@ -50,7 +50,7 @@ void List::markLists(ListSet& markSet)
     }
 }
 
-void List::slowAppend(JSValue* v)
+void ArgList::slowAppend(JSValue* v)
 {
     // As long as our size stays within our Vector's inline 
     // capacity, all our values are allocated on the stack, and 

@@ -37,7 +37,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSSQLResultSetRowList::item(ExecState* exec, const List& args)
+JSValue* JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
 {
     bool indexOk;
     int index = args[0]->toInt32(exec, indexOk);

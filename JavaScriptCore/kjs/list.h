@@ -30,13 +30,13 @@
 namespace KJS {
 
     class JSValue;
-    class List;
+    class ArgList;
     
-    class List : Noncopyable {
+    class ArgList : Noncopyable {
     private:
         static const unsigned inlineCapacity = 8;
         typedef Vector<JSValue*, inlineCapacity> VectorType;
-        typedef HashSet<List*> ListSet;
+        typedef HashSet<ArgList*> ListSet;
 
     public:
         typedef VectorType::iterator iterator;
@@ -44,7 +44,7 @@ namespace KJS {
 
         // Constructor for a read-write list, to which you may append values.
         // FIXME: Remove all clients of this API, then remove this API.
-        List()
+        ArgList()
             : m_markSet(0)
 #ifndef NDEBUG
             , m_isReadOnly(false)
@@ -56,7 +56,7 @@ namespace KJS {
         }
 
         // Constructor for a read-only list whose data has already been allocated elsewhere.
-        List(JSValue*** bufferSlot, size_t offset, size_t size)
+        ArgList(JSValue*** bufferSlot, size_t offset, size_t size)
             : m_bufferSlot(bufferSlot)
             , m_offset(offset)
             , m_size(size)
@@ -67,7 +67,7 @@ namespace KJS {
         {
         }
 
-        ~List()
+        ~ArgList()
         {
             if (m_markSet)
                 m_markSet->remove(this);
@@ -106,7 +106,7 @@ namespace KJS {
             }
         }
 
-        void getSlice(int startIndex, List& result) const;
+        void getSlice(int startIndex, ArgList& result) const;
 
         iterator begin() { return buffer(); }
         iterator end() { return buffer() + m_size; }

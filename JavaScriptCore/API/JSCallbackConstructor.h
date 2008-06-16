@@ -40,7 +40,7 @@ public:
     virtual bool implementsHasInstance() const;
     
     virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const List& args);
+    virtual JSObject* construct(ExecState*, const ArgList& args);
     
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

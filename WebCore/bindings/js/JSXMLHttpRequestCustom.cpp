@@ -119,7 +119,7 @@ void JSXMLHttpRequest::setOnprogress(ExecState*, JSValue* value)
 }
 
 // Custom functions
-JSValue* JSXMLHttpRequest::open(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::open(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -151,7 +151,7 @@ JSValue* JSXMLHttpRequest::open(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::setRequestHeader(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 2)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -162,7 +162,7 @@ JSValue* JSXMLHttpRequest::setRequestHeader(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::send(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
 {
     String body;
     if (args.size() >= 1) {
@@ -183,7 +183,7 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::getResponseHeader(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::getResponseHeader(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -194,7 +194,7 @@ JSValue* JSXMLHttpRequest::getResponseHeader(ExecState* exec, const List& args)
     return header;
 }
 
-JSValue* JSXMLHttpRequest::overrideMimeType(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::overrideMimeType(ExecState* exec, const ArgList& args)
 {
     if (args.size() < 1)
         return throwError(exec, SyntaxError, "Not enough arguments");
@@ -203,7 +203,7 @@ JSValue* JSXMLHttpRequest::overrideMimeType(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::addEventListener(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::addEventListener(ExecState* exec, const ArgList& args)
 {
     Document* document = impl()->document();
     if (!document)
@@ -218,7 +218,7 @@ JSValue* JSXMLHttpRequest::addEventListener(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::removeEventListener(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::removeEventListener(ExecState* exec, const ArgList& args)
 {
     Document* document = impl()->document();
     if (!document)
@@ -233,7 +233,7 @@ JSValue* JSXMLHttpRequest::removeEventListener(ExecState* exec, const List& args
     return jsUndefined();
 }
 
-JSValue* JSXMLHttpRequest::dispatchEvent(ExecState* exec, const List& args)
+JSValue* JSXMLHttpRequest::dispatchEvent(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool result = impl()->dispatchEvent(toEvent(args[0]), ec);

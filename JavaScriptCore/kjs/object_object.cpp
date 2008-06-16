@@ -30,15 +30,15 @@ namespace KJS {
 
 // ------------------------------ ObjectPrototype --------------------------------
 
-static JSValue* objectProtoFuncValueOf(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncHasOwnProperty(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncIsPrototypeOf(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncDefineGetter(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncDefineSetter(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncLookupGetter(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncLookupSetter(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, const List&);
-static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, const List&);
+static JSValue* objectProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncHasOwnProperty(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncIsPrototypeOf(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncDefineGetter(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncDefineSetter(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncLookupGetter(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncLookupSetter(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncPropertyIsEnumerable(ExecState*, JSObject*, const ArgList&);
+static JSValue* objectProtoFuncToLocaleString(ExecState*, JSObject*, const ArgList&);
 
 ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPrototype)
     : JSObject() // [[Prototype]] is null
@@ -62,17 +62,17 @@ ObjectPrototype::ObjectPrototype(ExecState* exec, FunctionPrototype* functionPro
 
 // ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
-JSValue* objectProtoFuncValueOf(ExecState*, JSObject* thisObj, const List&)
+JSValue* objectProtoFuncValueOf(ExecState*, JSObject* thisObj, const ArgList&)
 {
     return thisObj;
 }
 
-JSValue* objectProtoFuncHasOwnProperty(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncHasOwnProperty(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return jsBoolean(thisObj->hasOwnProperty(exec, Identifier(args[0]->toString(exec))));
 }
 
-JSValue* objectProtoFuncIsPrototypeOf(ExecState*, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncIsPrototypeOf(ExecState*, JSObject* thisObj, const ArgList& args)
 {
     if (!args[0]->isObject())
         return jsBoolean(false);
@@ -88,7 +88,7 @@ JSValue* objectProtoFuncIsPrototypeOf(ExecState*, JSObject* thisObj, const List&
     }
 }
 
-JSValue* objectProtoFuncDefineGetter(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncDefineGetter(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!args[1]->isObject() || !static_cast<JSObject*>(args[1])->implementsCall())
         return throwError(exec, SyntaxError, "invalid getter usage");
@@ -97,7 +97,7 @@ JSValue* objectProtoFuncDefineGetter(ExecState* exec, JSObject* thisObj, const L
     return jsUndefined();
 }
 
-JSValue* objectProtoFuncDefineSetter(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncDefineSetter(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (!args[1]->isObject() || !static_cast<JSObject*>(args[1])->implementsCall())
         return throwError(exec, SyntaxError, "invalid setter usage");
@@ -106,27 +106,27 @@ JSValue* objectProtoFuncDefineSetter(ExecState* exec, JSObject* thisObj, const L
     return jsUndefined();
 }
 
-JSValue* objectProtoFuncLookupGetter(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncLookupGetter(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return thisObj->lookupGetter(exec, Identifier(args[0]->toString(exec)));
 }
 
-JSValue* objectProtoFuncLookupSetter(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncLookupSetter(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return thisObj->lookupSetter(exec, Identifier(args[0]->toString(exec)));
 }
 
-JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return jsBoolean(thisObj->propertyIsEnumerable(exec, Identifier(args[0]->toString(exec))));
 }
 
-JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     return jsString(thisObj->toString(exec));
 }
 
-JSValue* objectProtoFuncToString(ExecState*, JSObject* thisObj, const List&)
+JSValue* objectProtoFuncToString(ExecState*, JSObject* thisObj, const ArgList&)
 {
     return jsString("[object " + thisObj->className() + "]");
 }
@@ -149,7 +149,7 @@ ConstructType ObjectConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.2.2
-JSObject* ObjectConstructor::construct(ExecState* exec, const List& args)
+JSObject* ObjectConstructor::construct(ExecState* exec, const ArgList& args)
 {
   JSValue* arg = args[0];
   switch (arg->type()) {
@@ -167,7 +167,7 @@ JSObject* ObjectConstructor::construct(ExecState* exec, const List& args)
   }
 }
 
-JSValue* ObjectConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const List &args)
+JSValue* ObjectConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const ArgList &args)
 {
     return construct(exec, args);
 }

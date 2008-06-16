@@ -93,7 +93,7 @@ JSArray::JSArray(JSObject* prototype, unsigned initialLength)
     checkConsistency();
 }
 
-JSArray::JSArray(JSObject* prototype, const List& list)
+JSArray::JSArray(JSObject* prototype, const ArgList& list)
     : JSObject(prototype)
 {
     unsigned length = list.size();
@@ -107,8 +107,8 @@ JSArray::JSArray(JSObject* prototype, const List& list)
     storage->m_sparseValueMap = 0;
 
     size_t i = 0;
-    List::const_iterator end = list.end();
-    for (List::const_iterator it = list.begin(); it != end; ++it, ++i)
+    ArgList::const_iterator end = list.end();
+    for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
         storage->m_vector[i] = *it;
 
     m_storage = storage;
@@ -592,7 +592,7 @@ struct AVLTreeAbstractorForArrayCompare {
         if (m_exec->hadException())
             return 1;
 
-        List arguments;
+        ArgList arguments;
         arguments.append(va);
         arguments.append(vb);
         double compareResult = m_compareFunction->callAsFunction(m_exec, m_globalThisValue, arguments)->toNumber(m_exec);

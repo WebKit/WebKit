@@ -46,7 +46,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSXSLTProcessor::importStylesheet(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::importStylesheet(ExecState* exec, const ArgList& args)
 {
     JSValue* nodeVal = args[0];
     if (nodeVal->isObject(&JSNode::s_info)) {
@@ -58,7 +58,7 @@ JSValue* JSXSLTProcessor::importStylesheet(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXSLTProcessor::transformToFragment(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::transformToFragment(ExecState* exec, const ArgList& args)
 {
     JSValue* nodeVal = args[0];
     JSValue* docVal = args[1];
@@ -71,7 +71,7 @@ JSValue* JSXSLTProcessor::transformToFragment(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXSLTProcessor::transformToDocument(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::transformToDocument(ExecState* exec, const ArgList& args)
 {
     JSValue* nodeVal = args[0];
     if (nodeVal->isObject(&JSNode::s_info)) {
@@ -85,7 +85,7 @@ JSValue* JSXSLTProcessor::transformToDocument(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXSLTProcessor::setParameter(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::setParameter(ExecState* exec, const ArgList& args)
 {
     if (args[1]->isUndefinedOrNull() || args[2]->isUndefinedOrNull())
         return jsUndefined(); // Throw exception?
@@ -96,7 +96,7 @@ JSValue* JSXSLTProcessor::setParameter(ExecState* exec, const List& args)
     return jsUndefined();
 }
 
-JSValue* JSXSLTProcessor::getParameter(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::getParameter(ExecState* exec, const ArgList& args)
 {
     if (args[1]->isUndefinedOrNull())
         return jsUndefined();
@@ -106,7 +106,7 @@ JSValue* JSXSLTProcessor::getParameter(ExecState* exec, const List& args)
     return jsStringOrUndefined(value);
 }
 
-JSValue* JSXSLTProcessor::removeParameter(ExecState* exec, const List& args)
+JSValue* JSXSLTProcessor::removeParameter(ExecState* exec, const ArgList& args)
 {
     if (args[1]->isUndefinedOrNull())
         return jsUndefined();

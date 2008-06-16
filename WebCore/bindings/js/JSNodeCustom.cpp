@@ -66,7 +66,7 @@ namespace WebCore {
 
 typedef int ExpectionCode;
 
-JSValue* JSNode::insertBefore(ExecState* exec, const List& args)
+JSValue* JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec, true);
@@ -76,7 +76,7 @@ JSValue* JSNode::insertBefore(ExecState* exec, const List& args)
     return jsNull();
 }
 
-JSValue* JSNode::replaceChild(ExecState* exec, const List& args)
+JSValue* JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec, true);
@@ -86,7 +86,7 @@ JSValue* JSNode::replaceChild(ExecState* exec, const List& args)
     return jsNull();
 }
 
-JSValue* JSNode::removeChild(ExecState* exec, const List& args)
+JSValue* JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->removeChild(toNode(args[0]), ec);
@@ -96,7 +96,7 @@ JSValue* JSNode::removeChild(ExecState* exec, const List& args)
     return jsNull();
 }
 
-JSValue* JSNode::appendChild(ExecState* exec, const List& args)
+JSValue* JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
     bool ok = impl()->appendChild(toNode(args[0]), ec, true);

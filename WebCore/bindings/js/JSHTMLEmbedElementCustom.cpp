@@ -48,7 +48,7 @@ CallType JSHTMLEmbedElement::getCallData(CallData&)
     return runtimeObjectImplementsCall(static_cast<HTMLElement*>(impl())) ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* JSHTMLEmbedElement::callAsFunction(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* JSHTMLEmbedElement::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     return runtimeObjectCallAsFunction(exec, thisObj, args, static_cast<HTMLElement*>(impl()));
 }

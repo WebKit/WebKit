@@ -56,9 +56,9 @@ namespace KJS {
         NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const List&);
+        virtual JSObject* construct(ExecState*, const ArgList&);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
 
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
@@ -68,7 +68,7 @@ namespace KJS {
 
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
-        JSObject* construct(const List&);
+        JSObject* construct(const ArgList&);
     };
 
 } // namespace KJS

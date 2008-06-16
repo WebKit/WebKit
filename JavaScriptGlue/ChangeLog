@@ -1,5 +1,15 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - rename KJS::List to KJS::ArgList
+
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCallFunction):
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        * UserObjectImp.h:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * ForwardingHeaders/kjs/JSValue.h: Copied from JavaScriptGlue/ForwardingHeaders/kjs/value.h.

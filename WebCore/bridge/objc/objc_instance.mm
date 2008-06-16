@@ -122,7 +122,7 @@ CallType ObjcInstance::getCallData(CallData&)
     return [_instance.get() respondsToSelector:@selector(invokeDefaultMethodWithArguments:)] ? CallTypeNative : CallTypeNone;
 }
 
-JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList, const List &args)
+JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodList, const ArgList &args)
 {
     JSValue* result = jsUndefined();
     
@@ -244,7 +244,7 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
     return result;
 }
 
-JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const List &args)
+JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &args)
 {
     JSValue* result = jsUndefined();
 

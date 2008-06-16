@@ -305,7 +305,7 @@ static JSValue *replace(ExecState *exec, JSString* sourceVal, JSValue *pattern, 
       UString substitutedReplacement;
       if (replacementFunction) {
           int completeMatchStart = ovector[0];
-          List args;
+          ArgList args;
 
           for (unsigned i = 0; i < reg->numSubpatterns() + 1; i++) {
               int matchStart = ovector[i * 2];
@@ -363,7 +363,7 @@ static JSValue *replace(ExecState *exec, JSString* sourceVal, JSValue *pattern, 
     return sourceVal;
   
   if (replacementFunction) {
-      List args;
+      ArgList args;
       
       args.append(jsString(source.substr(matchPos, matchLen)));
       args.append(jsNumber(matchPos));
@@ -375,7 +375,7 @@ static JSValue *replace(ExecState *exec, JSString* sourceVal, JSValue *pattern, 
   return jsString(source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));
 }
 
-JSValue* stringProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj->inherits(&StringObject::info))
         return throwError(exec, TypeError);
@@ -383,7 +383,7 @@ JSValue* stringProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&
     return static_cast<StringObject*>(thisObj)->internalValue();
 }
 
-JSValue* stringProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     if (!thisObj->inherits(&StringObject::info))
         return throwError(exec, TypeError);
@@ -391,7 +391,7 @@ JSValue* stringProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const List&)
     return static_cast<StringObject*>(thisObj)->internalValue();
 }
 
-JSValue* stringProtoFuncCharAt(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncCharAt(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -407,7 +407,7 @@ JSValue* stringProtoFuncCharAt(ExecState* exec, JSObject* thisObj, const List& a
     return jsString(u);
 }
 
-JSValue* stringProtoFuncCharCodeAt(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncCharCodeAt(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -424,19 +424,19 @@ JSValue* stringProtoFuncCharCodeAt(ExecState* exec, JSObject* thisObj, const Lis
     return result;
 }
 
-JSValue* stringProtoFuncConcat(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncConcat(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
 
-    List::const_iterator end = args.end();
-    for (List::const_iterator it = args.begin(); it != end; ++it) {
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it) {
         s += (*it)->toString(exec);
     }
     return jsString(s);
 }
 
-JSValue* stringProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -453,7 +453,7 @@ JSValue* stringProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const List& 
     return jsNumber(s.find(u2, static_cast<int>(dpos)));
 }
 
-JSValue* stringProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -471,7 +471,7 @@ JSValue* stringProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const Li
     return jsNumber(s.rfind(u2, static_cast<int>(dpos)));
 }
 
-JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -504,7 +504,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
         result = regExpObj->arrayOfMatches(exec);
     } else {
       // return array of matches
-      List list;
+      ArgList list;
       int lastIndex = 0;
       while (pos >= 0) {
         list.append(jsString(u.substr(pos, matchLength)));
@@ -526,7 +526,7 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject* thisObj, const List& ar
     return result;
 }
 
-JSValue* stringProtoFuncSearch(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncSearch(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -552,7 +552,7 @@ JSValue* stringProtoFuncSearch(ExecState* exec, JSObject* thisObj, const List& a
     return jsNumber(pos);
 }
 
-JSValue* stringProtoFuncReplace(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncReplace(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -567,7 +567,7 @@ JSValue* stringProtoFuncReplace(ExecState* exec, JSObject* thisObj, const List& 
     return replace(exec, sVal, a0, a1);
 }
 
-JSValue* stringProtoFuncSlice(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncSlice(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -592,7 +592,7 @@ JSValue* stringProtoFuncSlice(ExecState* exec, JSObject* thisObj, const List& ar
     return jsString("");
 }
 
-JSValue* stringProtoFuncSplit(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncSplit(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -662,7 +662,7 @@ JSValue* stringProtoFuncSplit(ExecState* exec, JSObject* thisObj, const List& ar
     return result;
 }
 
-JSValue* stringProtoFuncSubstr(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncSubstr(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -687,7 +687,7 @@ JSValue* stringProtoFuncSubstr(ExecState* exec, JSObject* thisObj, const List& a
     return jsString(s.substr(static_cast<int>(start), static_cast<int>(length)));
 }
 
-JSValue* stringProtoFuncSubstring(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncSubstring(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -720,7 +720,7 @@ JSValue* stringProtoFuncSubstring(ExecState* exec, JSObject* thisObj, const List
     return jsString(s.substr((int)start, (int)end-(int)start));
 }
 
-JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -745,7 +745,7 @@ JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject* thisObj, const Li
     return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
-JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -770,7 +770,7 @@ JSValue* stringProtoFuncToUpperCase(ExecState* exec, JSObject* thisObj, const Li
     return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
-JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -796,7 +796,7 @@ JSValue* stringProtoFuncToLocaleLowerCase(ExecState* exec, JSObject* thisObj, co
     return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
-JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -821,7 +821,7 @@ JSValue* stringProtoFuncToLocaleUpperCase(ExecState* exec, JSObject* thisObj, co
     return jsString(UString(buffer.releaseBuffer(), length, false));
 }
 
-JSValue* stringProtoFuncLocaleCompare(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncLocaleCompare(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     if (args.size() < 1)
       return jsNumber(0);
@@ -832,70 +832,70 @@ JSValue* stringProtoFuncLocaleCompare(ExecState* exec, JSObject* thisObj, const 
     return jsNumber(localeCompare(s, a0->toString(exec)));
 }
 
-JSValue* stringProtoFuncBig(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncBig(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<big>" + s + "</big>");
 }
 
-JSValue* stringProtoFuncSmall(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncSmall(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<small>" + s + "</small>");
 }
 
-JSValue* stringProtoFuncBlink(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncBlink(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<blink>" + s + "</blink>");
 }
 
-JSValue* stringProtoFuncBold(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncBold(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<b>" + s + "</b>");
 }
 
-JSValue* stringProtoFuncFixed(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncFixed(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<tt>" + s + "</tt>");
 }
 
-JSValue* stringProtoFuncItalics(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncItalics(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<i>" + s + "</i>");
 }
 
-JSValue* stringProtoFuncStrike(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncStrike(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<strike>" + s + "</strike>");
 }
 
-JSValue* stringProtoFuncSub(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncSub(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<sub>" + s + "</sub>");
 }
 
-JSValue* stringProtoFuncSup(ExecState* exec, JSObject* thisObj, const List&)
+JSValue* stringProtoFuncSup(ExecState* exec, JSObject* thisObj, const ArgList&)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
     return jsString("<sup>" + s + "</sup>");
 }
 
-JSValue* stringProtoFuncFontcolor(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncFontcolor(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -903,7 +903,7 @@ JSValue* stringProtoFuncFontcolor(ExecState* exec, JSObject* thisObj, const List
     return jsString("<font color=\"" + a0->toString(exec) + "\">" + s + "</font>");
 }
 
-JSValue* stringProtoFuncFontsize(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncFontsize(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -911,7 +911,7 @@ JSValue* stringProtoFuncFontsize(ExecState* exec, JSObject* thisObj, const List&
     return jsString("<font size=\"" + a0->toString(exec) + "\">" + s + "</font>");
 }
 
-JSValue* stringProtoFuncAnchor(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncAnchor(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -919,7 +919,7 @@ JSValue* stringProtoFuncAnchor(ExecState* exec, JSObject* thisObj, const List& a
     return jsString("<a name=\"" + a0->toString(exec) + "\">" + s + "</a>");
 }
 
-JSValue* stringProtoFuncLink(ExecState* exec, JSObject* thisObj, const List& args)
+JSValue* stringProtoFuncLink(ExecState* exec, JSObject* thisObj, const ArgList& args)
 {
     // This optimizes the common case that thisObj is a StringObject
     UString s = thisObj->inherits(&StringObject::info) ? static_cast<StringObject*>(thisObj)->internalValue()->value() : thisObj->toString(exec);
@@ -948,7 +948,7 @@ ConstructType StringConstructor::getConstructData(ConstructData&)
 }
 
 // ECMA 15.5.2
-JSObject *StringConstructor::construct(ExecState *exec, const List &args)
+JSObject *StringConstructor::construct(ExecState *exec, const ArgList &args)
 {
   JSObject *proto = exec->lexicalGlobalObject()->stringPrototype();
   if (args.size() == 0)
@@ -957,7 +957,7 @@ JSObject *StringConstructor::construct(ExecState *exec, const List &args)
 }
 
 // ECMA 15.5.1
-JSValue *StringConstructor::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)
+JSValue *StringConstructor::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const ArgList &args)
 {
   if (args.isEmpty())
     return jsString("");
@@ -976,14 +976,14 @@ StringConstructorFunction::StringConstructorFunction(ExecState* exec, FunctionPr
   putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum);
 }
 
-JSValue *StringConstructorFunction::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const List &args)
+JSValue *StringConstructorFunction::callAsFunction(ExecState *exec, JSObject* /*thisObj*/, const ArgList &args)
 {
   UString s;
   if (args.size()) {
     UChar *buf = static_cast<UChar *>(fastMalloc(args.size() * sizeof(UChar)));
     UChar *p = buf;
-    List::const_iterator end = args.end();
-    for (List::const_iterator it = args.begin(); it != end; ++it) {
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it) {
       unsigned short u = static_cast<unsigned short>((*it)->toUInt32(exec));
       *p++ = UChar(u);
     }
