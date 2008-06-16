@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
@@ -34,4 +33,4 @@
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
 
-#endif // JavaScript_h
+#endif /* JavaScript_h */

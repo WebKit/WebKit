@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
@@ -38,7 +37,7 @@
 extern "C" {
 #endif
 
-// COM convenience methods
+/* COM convenience methods */
 
 /*!
 @function
@@ -60,4 +59,4 @@ JS_EXPORT BSTR JSStringCopyBSTR(const JSStringRef string);
 }
 #endif
 
-#endif // JSStringRefBSTR_h
+#endif /* JSStringRefBSTR_h */

@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -127,7 +126,7 @@ JS_EXPORT bool JSValueIsObject(JSContextRef ctx, JSValueRef value);
 */
 JS_EXPORT bool JSValueIsObjectOfClass(JSContextRef ctx, JSValueRef value, JSClassRef jsClass);
 
-// Comparing values
+/* Comparing values */
 
 /*!
 @function
@@ -161,7 +160,7 @@ JS_EXPORT bool JSValueIsStrictEqual(JSContextRef ctx, JSValueRef a, JSValueRef b
 */
 JS_EXPORT bool JSValueIsInstanceOfConstructor(JSContextRef ctx, JSValueRef value, JSObjectRef constructor, JSValueRef* exception);
 
-// Creating values
+/* Creating values */
 
 /*!
 @function
@@ -207,7 +206,7 @@ JS_EXPORT JSValueRef JSValueMakeNumber(JSContextRef ctx, double number);
 */
 JS_EXPORT JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string);
 
-// Converting to primitive values
+/* Converting to primitive values */
 
 /*!
 @function
@@ -248,7 +247,7 @@ JS_EXPORT JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JS
 */
 JS_EXPORT JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception);
 
-// Garbage collection
+/* Garbage collection */
 /*!
 @function
 @abstract Protects a JavaScript value from garbage collection.
@@ -274,4 +273,4 @@ JS_EXPORT void JSValueUnprotect(JSContextRef ctx, JSValueRef value);
 }
 #endif
 
-#endif // JSValueRef_h
+#endif /* JSValueRef_h */

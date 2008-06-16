@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
@@ -30,4 +29,4 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <JavaScriptCore/JSStringRefCF.h>
 
-#endif // JavaScriptCore_h
+#endif /* JavaScriptCore_h */

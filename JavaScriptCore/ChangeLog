@@ -2,6 +2,27 @@
 
         Reviewed by Sam.
 
+        https://bugs.webkit.org/show_bug.cgi?id=19552
+        JavaScriptCore headers use C++ style comments
+
+        Replace all C++ style comments with C style multiline
+        comments and remove all "mode" lines.
+
+        * API/JSBase.h:
+        * API/JSClassRef.h:
+        * API/JSContextRef.h:
+        * API/JSObjectRef.h:
+        * API/JSStringRef.h:
+        * API/JSStringRefBSTR.h:
+        * API/JSStringRefCF.h:
+        * API/JSValueRef.h:
+        * API/JavaScript.h:
+        * API/JavaScriptCore.h:
+
+2008-06-16  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Sam.
+
         https://bugs.webkit.org/show_bug.cgi?id=19557
         (JavaScriptCore) minidom uses C++ style comments
 

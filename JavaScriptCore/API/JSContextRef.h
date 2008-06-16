@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -74,4 +73,4 @@ JS_EXPORT JSObjectRef JSContextGetGlobalObject(JSContextRef ctx);
 }
 #endif
 
-#endif // JSContextRef_h
+#endif /* JSContextRef_h */
