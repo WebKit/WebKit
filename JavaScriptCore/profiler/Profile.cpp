@@ -37,8 +37,9 @@ namespace KJS {
 
 const unsigned DEPTH_LIMIT = 1000;
 
-static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
+static void calculateVisibleTotalTime(ProfileNode* n) { n->calculateVisibleTotalTime(); }
 static void restoreAll(ProfileNode* n) { n->restore(); }
+static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
 
 Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier)
     : m_title(title)
@@ -100,6 +101,19 @@ void Profile::forEach(UnaryFunction function)
         function(currentNode);
         currentNode = currentNode->traverseNextNodePostOrder();
     } 
+}
+
+void Profile::focus(const ProfileNode* profileNode)
+{
+    if (!profileNode || !m_head)
+        return;
+
+    bool processChildren;
+    const CallIdentifier& callIdentifier = profileNode->callIdentifier();
+    for (ProfileNode* currentNode = m_head.get(); currentNode; currentNode = currentNode->traverseNextNodePreOrder(processChildren))
+        processChildren = currentNode->focus(callIdentifier);
+
+    forEach(KJS::calculateVisibleTotalTime);
 }
 
 void Profile::exclude(const ProfileNode* profileNode)

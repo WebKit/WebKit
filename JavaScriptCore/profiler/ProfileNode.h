@@ -46,10 +46,23 @@ namespace KJS {
         UString url;
         unsigned lineNumber;
         
-        CallIdentifier(UString name, UString url, int lineNumber) : name(name), url(url), lineNumber(lineNumber) {}
-        CallIdentifier(const CallIdentifier& ci) : name(ci.name), url(ci.url), lineNumber(ci.lineNumber) {}
+        CallIdentifier(UString name, UString url, int lineNumber)
+            : name(name)
+            , url(url)
+            , lineNumber(lineNumber)
+        {
+        }
 
-        inline bool operator== (const CallIdentifier& ci) const { return ci.lineNumber == lineNumber && ci.name == name && ci.url == url; }
+        CallIdentifier(const CallIdentifier& ci)
+            : name(ci.name)
+            , url(ci.url)
+            , lineNumber(ci.lineNumber)
+        {
+        }
+
+        inline bool operator==(const CallIdentifier& ci) const { return ci.lineNumber == lineNumber && ci.name == name && ci.url == url; }
+        inline bool operator!=(const CallIdentifier& ci) const { return !(*this == ci); }
+
 #ifndef NDEBUG
         const char* toString() const { return name.UTF8String().c_str(); }
 #endif
@@ -78,6 +91,8 @@ namespace KJS {
         void setStartTime(double startTime) { m_startTime = startTime; }
         double totalTime() const { return m_visibleTotalTime; }
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
+        void setActualTotalTime(double time) { m_actualTotalTime = time; }
+        void setVisibleTotalTime(double time) { m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }
         void setSelfTime(double time) {m_actualSelfTime = time; m_visibleSelfTime = time; }
         void setActualSelfTime(double time) { m_actualSelfTime = time; }
@@ -96,7 +111,8 @@ namespace KJS {
         static void setTreeVisible(ProfileNode*, bool visible);
 
         ProfileNode* traverseNextNodePostOrder() const;
-        ProfileNode* traverseNextNodePreOrder() const;
+        ProfileNode* traverseNextNodePreOrder(bool processChildren = true) const;
+        
         void sort(bool (*)(const RefPtr<ProfileNode>&, const RefPtr<ProfileNode>&));
         static void sortTotalTimeDescending(ProfileNode* n) { n->sort(totalTimeDescendingComparator); }
         static void sortTotalTimeAscending(ProfileNode* n) { n->sort(totalTimeAscendingComparator); }
@@ -106,8 +122,9 @@ namespace KJS {
         static void sortCallsAscending(ProfileNode* n) { n->sort(callsAscendingComparator); }
         static void sortFunctionNameDescending(ProfileNode* n) { n->sort(functionNameDescendingComparator); }
         static void sortFunctionNameAscending(ProfileNode* n) { n->sort(functionNameAscendingComparator); }
-        
-        void focus(const CallIdentifier&, bool forceVisible = false);
+
+        void calculateVisibleTotalTime();
+        bool focus(const CallIdentifier&);
         void exclude(const CallIdentifier&);
         void restore();
 

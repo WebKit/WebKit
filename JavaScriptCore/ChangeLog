@@ -1,3 +1,33 @@
+2008-06-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam.
+
+        <rdar://problem/5969992> JSProfiler: Remove the recursion limit in the
+        profiler.
+        - Remove the last of the uses of recursion in the profiler.
+
+        * JavaScriptCore.exp: Export the new function's signature.
+        * profiler/Profile.cpp: 
+        (KJS::calculateVisibleTotalTime): Added a new static method for
+        recalculating the visibleTotalTime of methods after focus has changed
+        which are visible.
+        (KJS::stopProfiling): 
+        (KJS::Profile::focus): Implemented focus without recursion.
+        * profiler/Profile.h: Moved implementation into the definition file.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::traverseNextNodePreOrder): Added an argument for
+        whether or not to process the children nodes, this allows focus to skip
+        sub trees which have been set as not visible.
+        (KJS::ProfileNode::calculateVisibleTotalTime): This function set's a
+        node's total visible time to the sum of its self time and its children's
+        total times.
+        (KJS::ProfileNode::focus): Implemented focus without recursion.
+        * profiler/ProfileNode.h:
+        (KJS::CallIdentifier::operator!= ):
+        (KJS::ProfileNode::setActualTotalTime): Expanded setting the total time
+        so that focus could modify only the visible total time.
+        (KJS::ProfileNode::setVisibleTotalTime):
+
 2008-06-16  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Sam.

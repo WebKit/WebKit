@@ -153,9 +153,9 @@ ProfileNode* ProfileNode::traverseNextNodePostOrder() const
     return next;
 }
 
-ProfileNode* ProfileNode::traverseNextNodePreOrder() const
+ProfileNode* ProfileNode::traverseNextNodePreOrder(bool processChildren) const
 {
-    if (m_children.size())
+    if (processChildren && m_children.size())
         return m_children[0].get();
 
     if (m_nextSibling)
@@ -195,26 +195,32 @@ void ProfileNode::setTreeVisible(ProfileNode* node, bool visible)
     node->setNextSibling(nodeSibling);
 }
 
-void ProfileNode::focus(const CallIdentifier& callIdentifier, bool forceVisible)
+void ProfileNode::calculateVisibleTotalTime()
 {
-    if (m_callIdentifier == callIdentifier) {
-        m_visible = true;
+    double sumOfVisibleChildrensTime = 0.0;
 
-        for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild)
-            (*currentChild)->focus(callIdentifier, true);
-    } else {
-        m_visible = forceVisible;
-        double totalChildrenTime = 0.0;
-
-        for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
-            (*currentChild)->focus(callIdentifier, forceVisible);
-            m_visible |= (*currentChild)->visible();
-            totalChildrenTime += (*currentChild)->totalTime();
-        }
-        
-        if (m_visible)
-            m_visibleTotalTime = m_visibleSelfTime + totalChildrenTime;
+    for (unsigned i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->visible())
+            sumOfVisibleChildrensTime += m_children[i]->totalTime();
     }
+
+    m_visibleTotalTime = m_visibleSelfTime + sumOfVisibleChildrensTime;
+}
+
+bool ProfileNode::focus(const CallIdentifier& callIdentifier)
+{
+    if (!m_visible)
+        return false;
+
+    if (m_callIdentifier != callIdentifier) {
+        m_visible = false;
+        return true;
+    }
+
+    for (ProfileNode* currentParent = m_parent; currentParent; currentParent = currentParent->parent())
+        currentParent->setVisible(true);
+
+    return false;
 }
 
 void ProfileNode::exclude(const CallIdentifier& callIdentifier)
