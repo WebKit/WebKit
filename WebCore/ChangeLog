@@ -1,3 +1,11 @@
+2008-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove outdated comment.
+
+        * bindings/js/ScriptController.h:
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - try to fix Qt build

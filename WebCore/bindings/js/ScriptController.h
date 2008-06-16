@@ -38,8 +38,6 @@ class Frame;
 class Node;
 class String;
 
-// FIXME: Rename this class to JSController and the Frame function to javaScript().
-
 class ScriptController {
 public:
     ScriptController(Frame*);
