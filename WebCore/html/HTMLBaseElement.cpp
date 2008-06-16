@@ -67,8 +67,8 @@ void HTMLBaseElement::removedFromDocument()
 
     // Since the document doesn't have a base element...
     // (This will break in the case of multiple base elements, but that's not valid anyway (?))
-    document()->setBaseURL(KURL());
-    document()->setBaseTarget(String());
+    document()->setBaseElementURL(KURL());
+    document()->setBaseElementTarget(String());
 }
 
 void HTMLBaseElement::process()
@@ -76,11 +76,11 @@ void HTMLBaseElement::process()
     if (!inDocument())
         return;
 
-    if (!m_href.isEmpty() && document()->frame())
-        document()->setBaseURL(KURL(document()->frame()->loader()->url(), m_href));
+    if (!m_href.isEmpty())
+        document()->setBaseElementURL(KURL(document()->url(), m_href));
 
     if (!m_target.isEmpty())
-        document()->setBaseTarget(m_target);
+        document()->setBaseElementTarget(m_target);
 
     // ### should changing a document's base URL dynamically automatically update all images, stylesheets etc?
 }

@@ -866,11 +866,13 @@ void Document::setXMLStandalone(bool standalone, ExceptionCode& ec)
 
 KURL Document::documentURI() const
 {
+    // FIXME: This is wrong.
     return m_baseURL;
 }
 
 void Document::setDocumentURI(const String& uri)
 {
+    // FIXME: This is wrong.
     m_baseURL = KURL(uri);
 }
 
@@ -1393,7 +1395,6 @@ void Document::open(Document* ownerDocument)
 {
     if (ownerDocument) {
         setURL(ownerDocument->url());
-        setBaseURL(ownerDocument->url());
         m_cookieURL = ownerDocument->cookieURL();
         m_securityOrigin = ownerDocument->securityOrigin();
     }
@@ -1699,12 +1700,14 @@ void Document::clear()
 
 void Document::setURL(const KURL& url)
 {
-    if (url == m_url)
+    const KURL& newURL = url.isEmpty() ? blankURL() : url;
+    if (newURL == m_url)
         return;
 
-    m_url = url;
+    m_url = newURL;
     m_isAllowedToLoadLocalResources = shouldBeAllowedToLoadLocalResources();
- }
+    updateBaseURL();
+}
  
 bool Document::shouldBeAllowedToLoadLocalResources() const
 {
@@ -1725,11 +1728,20 @@ bool Document::shouldBeAllowedToLoadLocalResources() const
     return documentLoader->substituteData().isValid();
 }
 
-void Document::setBaseURL(const KURL& baseURL) 
+void Document::setBaseElementURL(const KURL& baseElementURL)
 { 
-    m_baseURL = baseURL;
+    m_baseElementURL = baseElementURL;
+    updateBaseURL();
+}
+
+void Document::updateBaseURL()
+{
+    m_baseURL = m_baseElementURL.isEmpty() ? url() : m_baseElementURL;
+
     if (m_elemSheet)
-        m_elemSheet->setHref(baseURL.string());
+        m_elemSheet->setHref(m_baseURL.string());
+    if (m_mappedElementSheet)
+        m_mappedElementSheet->setHref(m_baseURL.string());
 }
 
 void Document::setCSSStyleSheet(const String &url, const String& charset, const CachedCSSStyleSheet* sheet)
@@ -1765,14 +1777,14 @@ String Document::userStyleSheet() const
 CSSStyleSheet* Document::elementSheet()
 {
     if (!m_elemSheet)
-        m_elemSheet = new CSSStyleSheet(this, baseURL().string());
+        m_elemSheet = new CSSStyleSheet(this, m_baseURL.string());
     return m_elemSheet.get();
 }
 
 CSSStyleSheet* Document::mappedElementSheet()
 {
     if (!m_mappedElementSheet)
-        m_mappedElementSheet = new CSSStyleSheet(this, baseURL().string());
+        m_mappedElementSheet = new CSSStyleSheet(this, m_baseURL.string());
     return m_mappedElementSheet.get();
 }
 
@@ -3005,12 +3017,9 @@ KURL Document::completeURL(const String& url) const
     // FIXME: Should we change the KURL constructor to have this behavior?
     if (url.isNull())
         return KURL();
-    const KURL* base = &m_baseURL;
-    if (base->isEmpty())
-        base = &m_url;
     if (!m_decoder)
-        return KURL(*base, url);
-    return KURL(*base, url, m_decoder->encoding());
+        return KURL(m_baseURL, url);
+    return KURL(m_baseURL, url, m_decoder->encoding());
 }
 
 bool Document::inPageCache()

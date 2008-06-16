@@ -929,17 +929,11 @@ void FrameLoader::begin(const KURL& url, bool dispatch, SecurityOrigin* origin)
     ref.setRef(String());
     m_outgoingReferrer = ref.string();
     m_URL = url;
-    KURL baseURL;
-    if (!m_URL.isEmpty())
-        baseURL = m_URL;
 
     RefPtr<Document> document = DOMImplementation::createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
     m_frame->setDocument(document);
 
     document->setURL(m_URL);
-    // We prefer m_baseURL over m_URL because m_URL changes when we are
-    // about to load a new page.
-    document->setBaseURL(baseURL);
     if (m_decoder)
         document->setDecoder(m_decoder.get());
     if (forcedSecurityOrigin)
@@ -5001,7 +4995,6 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
                 createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
             m_frame->setDocument(newDoc);
             newDoc->setURL(m_URL);
-            newDoc->setBaseURL(m_URL);
             if (m_decoder)
                 newDoc->setDecoder(m_decoder.get());
             restoreDocumentState();

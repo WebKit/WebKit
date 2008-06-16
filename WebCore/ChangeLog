@@ -1,3 +1,31 @@
+2008-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Refactor our handling of Document::m_baseURL in preparation for
+        correcting our implementation of Document.documentURI.
+
+        * dom/Document.cpp:
+        (WebCore::Document::documentURI):
+        (WebCore::Document::open):
+        (WebCore::Document::setURL):
+        (WebCore::Document::setBaseElementURL):
+        (WebCore::Document::updateBaseURL):
+        (WebCore::Document::elementSheet):
+        (WebCore::Document::mappedElementSheet):
+        (WebCore::Document::completeURL):
+        * dom/Document.h:
+        (WebCore::Document::url):
+        (WebCore::Document::baseURL):
+        * html/HTMLBaseElement.cpp:
+        (WebCore::HTMLBaseElement::removedFromDocument):
+        (WebCore::HTMLBaseElement::process):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::begin):
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::XSLTProcessor::createDocumentFromSource):
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - new names for more JavaScriptCore files
