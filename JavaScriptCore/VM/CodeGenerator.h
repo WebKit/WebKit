@@ -82,7 +82,8 @@ namespace KJS {
 
         ~CodeGenerator();
 
-        const CommonIdentifiers& propertyNames() const { return *m_propertyNames; }
+        JSGlobalData* globalData() const { return m_globalData; }
+        const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
 
         void generate();
 
@@ -360,7 +361,7 @@ namespace KJS {
         IdentifierMap m_identifierMap;
         JSValueMap m_jsValueMap;
 
-        const CommonIdentifiers* m_propertyNames;
+        JSGlobalData* m_globalData;
 
         OpcodeID m_lastOpcodeID;
 

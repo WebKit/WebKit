@@ -1,3 +1,133 @@
+2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Make Identifier construction use an explicitly passed IdentifierTable.
+
+        No change on SunSpider total.
+
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::getPropertyNames):
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeFunction):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectDeleteProperty):
+        (OpaqueJSPropertyNameArray::OpaqueJSPropertyNameArray):
+        (JSObjectCopyPropertyNames):
+        * JavaScriptCore.exp:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator):
+        (KJS::CodeGenerator::registerForLocal):
+        (KJS::CodeGenerator::isLocal):
+        (KJS::CodeGenerator::addConstant):
+        (KJS::CodeGenerator::findScopedProperty):
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::globalData):
+        (KJS::CodeGenerator::propertyNames):
+        * VM/JSPropertyNameIterator.cpp:
+        (KJS::JSPropertyNameIterator::create):
+        * VM/Machine.cpp:
+        (KJS::Machine::throwException):
+        (KJS::Machine::privateExecute):
+        * kjs/ArrayPrototype.cpp:
+        (KJS::ArrayConstructor::ArrayConstructor):
+        * kjs/BooleanObject.cpp:
+        (KJS::BooleanConstructor::BooleanConstructor):
+        * kjs/FunctionPrototype.cpp:
+        (KJS::FunctionConstructor::FunctionConstructor):
+        (KJS::FunctionConstructor::construct):
+        * kjs/JSArray.cpp:
+        (KJS::JSArray::inlineGetOwnPropertySlot):
+        (KJS::JSArray::put):
+        (KJS::JSArray::deleteProperty):
+        (KJS::JSArray::getPropertyNames):
+        * kjs/JSFunction.cpp:
+        (KJS::Arguments::Arguments):
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::reset):
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::getOwnPropertySlot):
+        (KJS::JSObject::put):
+        (KJS::JSObject::putWithAttributes):
+        (KJS::JSObject::deleteProperty):
+        (KJS::JSObject::findPropertyHashEntry):
+        (KJS::JSObject::getPropertyNames):
+        (KJS::Error::create):
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::getPropertyNames):
+        * kjs/NumberObject.cpp:
+        (KJS::NumberConstructor::NumberConstructor):
+        * kjs/PropertyNameArray.cpp:
+        (KJS::PropertyNameArray::add):
+        * kjs/PropertyNameArray.h:
+        (KJS::PropertyNameArray::PropertyNameArray):
+        (KJS::PropertyNameArray::addKnownUnique):
+        * kjs/PropertySlot.h:
+        (KJS::PropertySlot::getValue):
+        * kjs/RegExpObject.cpp:
+        (KJS::RegExpConstructor::RegExpConstructor):
+        * kjs/ScopeChain.cpp:
+        (KJS::ScopeChainNode::print):
+        * kjs/Shell.cpp:
+        (GlobalObject::GlobalObject):
+        * kjs/date_object.cpp:
+        (KJS::DateConstructor::DateConstructor):
+        * kjs/error_object.cpp:
+        (KJS::ErrorConstructor::ErrorConstructor):
+        (KJS::NativeErrorConstructor::NativeErrorConstructor):
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add):
+        (KJS::Identifier::addSlowCase):
+        * kjs/identifier.h:
+        (KJS::Identifier::Identifier):
+        (KJS::Identifier::from):
+        (KJS::Identifier::equal):
+        (KJS::Identifier::add):
+        (KJS::operator==):
+        (KJS::operator!=):
+        * kjs/internal.cpp:
+        (KJS::JSString::getOwnPropertySlot):
+        * kjs/lexer.cpp:
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::lex):
+        (KJS::Lexer::makeIdentifier):
+        * kjs/lexer.h:
+        * kjs/lookup.cpp:
+        (KJS::HashTable::createTable):
+        * kjs/lookup.h:
+        (KJS::HashTable::initializeIfNeeded):
+        (KJS::HashTable::entry):
+        (KJS::getStaticPropertySlot):
+        (KJS::getStaticFunctionSlot):
+        (KJS::getStaticValueSlot):
+        (KJS::lookupPut):
+        * kjs/object_object.cpp:
+        (KJS::objectProtoFuncHasOwnProperty):
+        (KJS::objectProtoFuncDefineGetter):
+        (KJS::objectProtoFuncDefineSetter):
+        (KJS::objectProtoFuncLookupGetter):
+        (KJS::objectProtoFuncLookupSetter):
+        (KJS::objectProtoFuncPropertyIsEnumerable):
+        (KJS::ObjectConstructor::ObjectConstructor):
+        * kjs/string_object.cpp:
+        (KJS::StringObject::getOwnPropertySlot):
+        (KJS::StringObject::getPropertyNames):
+        (KJS::StringConstructor::StringConstructor):
+        Just pass ExecState or JSGlobalData everywhere. Identifier construction is now always
+        explicit.
+
+        * kjs/nodes.cpp: (KJS::RegExpNode::emitCode): Here, Identifier was created from a non-literal
+        char*, which was incorrect, as that uses the pointer value as a key.
+
 2008-06-16  Thiago Macieira  <tjmaciei@trolltech.com>
 
         Reviewed by Darin.

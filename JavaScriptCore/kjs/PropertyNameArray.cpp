@@ -45,7 +45,7 @@ void PropertyNameArray::add(UString::Rep* identifier)
             return;
     }
 
-    m_vector.append(identifier);
+    m_vector.append(Identifier(m_globalData, identifier));
 }
 
 } // namespace KJS

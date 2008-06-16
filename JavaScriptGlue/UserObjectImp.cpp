@@ -101,7 +101,7 @@ void UserObjectImp::getPropertyNames(ExecState *exec, PropertyNameArray& propert
             CFIndex i;
             for (i = 0; i < count; i++) {
                 CFStringRef propertyName = (CFStringRef)CFArrayGetValueAtIndex(cfPropertyNames, i);
-                propertyNames.add(CFStringToIdentifier(propertyName));
+                propertyNames.add(CFStringToIdentifier(propertyName, exec));
             }
             CFRelease(cfPropertyNames);
         }

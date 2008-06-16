@@ -604,13 +604,6 @@ String::String(const UString& str)
     m_impl = StringImpl::create(str.data(), str.size());
 }
 
-String::operator Identifier() const
-{
-    if (!m_impl)
-        return Identifier();
-    return Identifier(m_impl->characters(), m_impl->length());
-}
-
 String::operator UString() const
 {
     if (!m_impl)

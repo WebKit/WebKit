@@ -96,8 +96,8 @@ JSValue* ScriptController::evaluate(const String& filename, int baseLine, const 
 
     if (comp.complType() == Throw) {
         UString errorMessage = comp.value()->toString(exec);
-        int lineNumber = comp.value()->toObject(exec)->get(exec, "line")->toInt32(exec);
-        UString sourceURL = comp.value()->toObject(exec)->get(exec, "sourceURL")->toString(exec);
+        int lineNumber = comp.value()->toObject(exec)->get(exec, Identifier(exec, "line"))->toInt32(exec);
+        UString sourceURL = comp.value()->toObject(exec)->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
         m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, sourceURL);
     }
 

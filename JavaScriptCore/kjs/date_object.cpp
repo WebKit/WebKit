@@ -486,7 +486,7 @@ bool DatePrototype::getOwnPropertySlot(ExecState* exec, const Identifier& proper
 // TODO: MakeTime (15.9.11.1) etc. ?
 
 DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* funcProto, DatePrototype* dateProto)
-  : InternalFunction(funcProto, dateProto->classInfo()->className)
+  : InternalFunction(funcProto, Identifier(exec, dateProto->classInfo()->className))
 {
   putDirect(exec->propertyNames().prototype, dateProto, DontEnum|DontDelete|ReadOnly);
   putDirectFunction(new DateFunction(exec, funcProto, DateFunction::Parse, 1, exec->propertyNames().parse), DontEnum);

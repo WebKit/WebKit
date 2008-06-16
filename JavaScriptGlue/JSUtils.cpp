@@ -80,9 +80,9 @@ CFStringRef UStringToCFString(const UString& inUString)
 // CFStringToIdentifier
 //--------------------------------------------------------------------------
 
-Identifier CFStringToIdentifier(CFStringRef inCFString)
+Identifier CFStringToIdentifier(CFStringRef inCFString, ExecState* exec)
 {
-    return Identifier(CFStringToUString(inCFString));
+    return Identifier(exec, CFStringToUString(inCFString));
 }
 
 
@@ -275,7 +275,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                         isArray = true;
                         JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(exec->dynamicGlobalObject());
                         if (globalObject && (globalObject->Flags() & kJSFlagConvertAssociativeArray)) {
-                            PropertyNameArray propNames;
+                            PropertyNameArray propNames(exec);
                             object->getPropertyNames(exec, propNames);
                             PropertyNameArray::const_iterator iter = propNames.begin();
                             PropertyNameArray::const_iterator end = propNames.end();
@@ -299,7 +299,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                     if (isArray)
                     {
                         // This is an KJS array
-                        unsigned int length = object->get(exec, "length")->toUInt32(exec);
+                        unsigned int length = object->get(exec, Identifier(exec, "length"))->toUInt32(exec);
                         result = CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks);
                         if (result)
                         {
@@ -314,7 +314,7 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                     else
                     {
                         // Not an array, just treat it like a dictionary which contains (property name, property value) pairs
-                        PropertyNameArray propNames;
+                        PropertyNameArray propNames(exec);
                         object->getPropertyNames(exec, propNames);
                         {
                             result = CFDictionaryCreateMutable(0,

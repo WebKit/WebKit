@@ -124,31 +124,6 @@ struct CStringTranslator
     }
 };
 
-PassRefPtr<UString::Rep> Identifier::add(const char* c)
-{
-    if (!c) {
-        UString::Rep::null.hash();
-        return &UString::Rep::null;
-    }
-
-    if (!c[0]) {
-        UString::Rep::empty.hash();
-        return &UString::Rep::empty;
-    }
-
-    IdentifierTable& identifierTable = *JSGlobalData::threadInstance().identifierTable;
-    LiteralIdentifierTable& literalIdentifierTable = identifierTable.literalTable();
-
-    const LiteralIdentifierTable::iterator& iter = literalIdentifierTable.find(c);
-    if (iter != literalIdentifierTable.end())
-        return iter->second;
-
-    UString::Rep* addedString = *identifierTable.add<const char*, CStringTranslator>(c).first;
-    literalIdentifierTable.add(c, addedString);
-
-    return addedString;
-}
-
 PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c)
 {
     if (!c) {
@@ -172,6 +147,11 @@ PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const char* c
     literalIdentifierTable.add(c, addedString);
 
     return addedString;
+}
+
+PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const char* c)
+{
+    return add(&exec->globalData(), c);
 }
 
 struct UCharBuffer {
@@ -205,7 +185,7 @@ struct UCharBufferTranslator
     }
 };
 
-PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
+PassRefPtr<UString::Rep> Identifier::add(JSGlobalData* globalData, const UChar* s, int length)
 {
     if (!length) {
         UString::Rep::empty.hash();
@@ -213,10 +193,15 @@ PassRefPtr<UString::Rep> Identifier::add(const UChar *s, int length)
     }
     
     UCharBuffer buf = {s, length}; 
-    return *JSGlobalData::threadInstance().identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
+    return *globalData->identifierTable->add<UCharBuffer, UCharBufferTranslator>(buf).first;
 }
 
-PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
+PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const UChar* s, int length)
+{
+    return add(&exec->globalData(), s, length);
+}
+
+PassRefPtr<UString::Rep> Identifier::addSlowCase(JSGlobalData* globalData, UString::Rep* r)
 {
     ASSERT(!r->identifierTable);
 
@@ -225,7 +210,12 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(UString::Rep *r)
         return &UString::Rep::empty;
     }
 
-    return *JSGlobalData::threadInstance().identifierTable->add(r).first;
+    return *globalData->identifierTable->add(r).first;
+}
+
+PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* r)
+{
+    return addSlowCase(&exec->globalData(), r);
 }
 
 void Identifier::remove(UString::Rep *r)

@@ -293,28 +293,28 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     // FIXME: These properties could be handled by a static hash table.
 
-    putDirect("Object", d()->objectConstructor, DontEnum);
-    putDirect("Function", d()->functionConstructor, DontEnum);
-    putDirect("Array", d()->arrayConstructor, DontEnum);
-    putDirect("Boolean", d()->booleanConstructor, DontEnum);
-    putDirect("String", d()->stringConstructor, DontEnum);
-    putDirect("Number", d()->numberConstructor, DontEnum);
-    putDirect("Date", d()->dateConstructor, DontEnum);
-    putDirect("RegExp", d()->regExpConstructor, DontEnum);
-    putDirect("Error", d()->errorConstructor, DontEnum);
-    putDirect("EvalError", d()->evalErrorConstructor);
-    putDirect("RangeError", d()->rangeErrorConstructor);
-    putDirect("ReferenceError", d()->referenceErrorConstructor);
-    putDirect("SyntaxError", d()->syntaxErrorConstructor);
-    putDirect("TypeError", d()->typeErrorConstructor);
-    putDirect("URIError", d()->URIErrorConstructor);
+    putDirect(Identifier(exec, "Object"), d()->objectConstructor, DontEnum);
+    putDirect(Identifier(exec, "Function"), d()->functionConstructor, DontEnum);
+    putDirect(Identifier(exec, "Array"), d()->arrayConstructor, DontEnum);
+    putDirect(Identifier(exec, "Boolean"), d()->booleanConstructor, DontEnum);
+    putDirect(Identifier(exec, "String"), d()->stringConstructor, DontEnum);
+    putDirect(Identifier(exec, "Number"), d()->numberConstructor, DontEnum);
+    putDirect(Identifier(exec, "Date"), d()->dateConstructor, DontEnum);
+    putDirect(Identifier(exec, "RegExp"), d()->regExpConstructor, DontEnum);
+    putDirect(Identifier(exec, "Error"), d()->errorConstructor, DontEnum);
+    putDirect(Identifier(exec, "EvalError"), d()->evalErrorConstructor);
+    putDirect(Identifier(exec, "RangeError"), d()->rangeErrorConstructor);
+    putDirect(Identifier(exec, "ReferenceError"), d()->referenceErrorConstructor);
+    putDirect(Identifier(exec, "SyntaxError"), d()->syntaxErrorConstructor);
+    putDirect(Identifier(exec, "TypeError"), d()->typeErrorConstructor);
+    putDirect(Identifier(exec, "URIError"), d()->URIErrorConstructor);
 
     // Set global values.
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo("Math", new MathObject(exec, d()->objectPrototype), DontEnum | DontDelete),
-        GlobalPropertyInfo("NaN", jsNaN(), DontEnum | DontDelete),
-        GlobalPropertyInfo("Infinity", jsNumber(Inf), DontEnum | DontDelete),
-        GlobalPropertyInfo("undefined", jsUndefined(), DontEnum | DontDelete)
+        GlobalPropertyInfo(Identifier(exec, "Math"), new MathObject(exec, d()->objectPrototype), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(Inf), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete)
     };
 
     addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
@@ -323,18 +323,18 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     d()->evalFunction = new PrototypeReflexiveFunction(exec, d()->functionPrototype, 1, exec->propertyNames().eval, globalFuncEval, this);
     putDirectFunction(d()->evalFunction, DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 2, "parseInt", globalFuncParseInt), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "parseFloat", globalFuncParseFloat), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "isNaN", globalFuncIsNaN), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "isFinite", globalFuncIsFinite), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "escape", globalFuncEscape), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "unescape", globalFuncUnescape), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "decodeURI", globalFuncDecodeURI), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "decodeURIComponent", globalFuncDecodeURIComponent), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "encodeURI", globalFuncEncodeURI), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "encodeURIComponent", globalFuncEncodeURIComponent), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, "kjsprint", globalFuncKJSPrint), DontEnum);
+    putDirectFunction(new PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
 #endif
 
     // Set prototype, and also insert the object prototype at the end of the chain.

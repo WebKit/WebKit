@@ -47,7 +47,7 @@ void JSVariableObject::getPropertyNames(ExecState* exec, PropertyNameArray& prop
     SymbolTable::const_iterator end = symbolTable().end();
     for (SymbolTable::const_iterator it = symbolTable().begin(); it != end; ++it) {
         if (!(it->second.getAttributes() & DontEnum))
-            propertyNames.add(Identifier(it->first.get()));
+            propertyNames.add(Identifier(exec, it->first.get()));
     }
     
     JSObject::getPropertyNames(exec, propertyNames);

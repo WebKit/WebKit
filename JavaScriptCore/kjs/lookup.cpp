@@ -22,14 +22,14 @@
 
 namespace KJS {
 
-void HashTable::createTable() const
+void HashTable::createTable(JSGlobalData* globalData) const
 {
     ASSERT(!table);
     HashEntry* entries = new HashEntry[hashSizeMask + 1];
     for (int i = 0; i <= hashSizeMask; ++i)
         entries[i].key = 0;
     for (int i = 0; values[i].key; ++i) {
-        UString::Rep* identifier = Identifier::add(values[i].key).releaseRef();
+        UString::Rep* identifier = Identifier::add(globalData, values[i].key).releaseRef();
         int hashIndex = identifier->computedHash() & hashSizeMask;
         ASSERT(!entries[hashIndex].key);
         entries[hashIndex].key = identifier;

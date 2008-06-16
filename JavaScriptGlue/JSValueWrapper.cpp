@@ -121,7 +121,7 @@ CFArrayRef JSValueWrapper::JSObjectCopyPropertyNames(void *data)
     {
         ExecState* exec = getThreadGlobalExecState();
         JSObject *object = ptr->GetValue()->toObject(exec);
-        PropertyNameArray propNames;
+        PropertyNameArray propNames(exec);
         object->getPropertyNames(exec, propNames);
         PropertyNameArray::const_iterator iterator = propNames.begin();
 
@@ -155,7 +155,7 @@ JSObjectRef JSValueWrapper::JSObjectCopyProperty(void *data, CFStringRef propert
     if (ptr)
     {
         ExecState* exec = getThreadGlobalExecState();
-        JSValue *propValue = ptr->GetValue()->toObject(exec)->get(exec, CFStringToIdentifier(propertyName));
+        JSValue *propValue = ptr->GetValue()->toObject(exec)->get(exec, CFStringToIdentifier(propertyName, exec));
         JSValueWrapper* wrapperValue = new JSValueWrapper(propValue);
 
         JSObjectCallBacks callBacks;
@@ -180,7 +180,7 @@ void JSValueWrapper::JSObjectSetProperty(void *data, CFStringRef propertyName, J
         ExecState* exec = getThreadGlobalExecState();
         JSValue *value = JSObjectKJSValue((JSUserObject*)jsValue);
         JSObject *objValue = ptr->GetValue()->toObject(exec);
-        objValue->put(exec, CFStringToIdentifier(propertyName), value);
+        objValue->put(exec, CFStringToIdentifier(propertyName, exec), value);
     }
 }
 

@@ -98,7 +98,7 @@ void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
     if (Settings* settings = activeFrame->settings()) {
         if (settings->usesDashboardBackwardCompatibilityMode() && !activeFrame->tree()->parent()) {
             if (allowsAccessFrom(exec))
-                putDirect("location", value);
+                putDirect(Identifier(exec, "location"), value);
             return;
         }
     }

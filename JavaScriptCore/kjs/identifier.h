@@ -30,12 +30,16 @@ namespace KJS {
         friend class PropertyMap;
     public:
         Identifier() { }
-        Identifier(const char* s) : _ustring(add(s)) { } // Only to be used with string literals.
-        Identifier(const UChar* s, int length) : _ustring(add(s, length)) { }
-        explicit Identifier(UString::Rep* rep) : _ustring(add(rep)) { } 
-        explicit Identifier(const UString& s) : _ustring(add(s.rep())) { }
+
+        Identifier(ExecState* exec, const char* s) : _ustring(add(exec, s)) { } // Only to be used with string literals.
+        Identifier(ExecState* exec, const UChar* s, int length) : _ustring(add(exec, s, length)) { }
+        Identifier(ExecState* exec, UString::Rep* rep) : _ustring(add(exec, rep)) { } 
+        Identifier(ExecState* exec, const UString& s) : _ustring(add(exec, s.rep())) { }
 
         Identifier(JSGlobalData* globalData, const char* s) : _ustring(add(globalData, s)) { } // Only to be used with string literals.
+        Identifier(JSGlobalData* globalData, const UChar* s, int length) : _ustring(add(globalData, s, length)) { }
+        Identifier(JSGlobalData* globalData, UString::Rep* rep) : _ustring(add(globalData, rep)) { } 
+        Identifier(JSGlobalData* globalData, const UString& s) : _ustring(add(globalData, s.rep())) { }
 
         // Special constructor for cases where we overwrite an object in place.
         Identifier(PlacementNewAdoptType) : _ustring(PlacementNewAdopt) { }
@@ -48,7 +52,7 @@ namespace KJS {
         
         const char* ascii() const { return _ustring.ascii(); }
         
-        static Identifier from(unsigned y) { return Identifier(UString::from(y)); }
+        static Identifier from(ExecState* exec, unsigned y) { return Identifier(exec, UString::from(y)); }
         
         bool isNull() const { return _ustring.isNull(); }
         bool isEmpty() const { return _ustring.isEmpty(); }
@@ -70,37 +74,51 @@ namespace KJS {
         static bool equal(const UString::Rep*, const UChar*, int length);
         static bool equal(const UString::Rep* a, const UString::Rep* b) { return KJS::equal(a, b); }
 
-        static PassRefPtr<UString::Rep> add(const char*);
+        static PassRefPtr<UString::Rep> add(ExecState*, const char*); // Only to be used with string literals.
+        static PassRefPtr<UString::Rep> add(JSGlobalData*, const char*); // Only to be used with string literals.
 
         static void initializeIdentifierThreading();
 
     private:
         UString _ustring;
         
-        static bool equal(const Identifier& a, const Identifier& b)
-            { return a._ustring.rep() == b._ustring.rep(); }
-        static bool equal(const Identifier& a, const char* b)
-            { return equal(a._ustring.rep(), b); }
-        
-        static PassRefPtr<UString::Rep> add(JSGlobalData*, const char*);
-        static PassRefPtr<UString::Rep> add(const UChar*, int length);
-        static PassRefPtr<UString::Rep> add(UString::Rep* r)
+        static bool equal(const Identifier& a, const Identifier& b) { return a._ustring.rep() == b._ustring.rep(); }
+        static bool equal(const Identifier& a, const char* b) { return equal(a._ustring.rep(), b); }
+
+        static PassRefPtr<UString::Rep> add(ExecState*, const UChar*, int length);
+        static PassRefPtr<UString::Rep> add(JSGlobalData*, const UChar*, int length);
+
+        static PassRefPtr<UString::Rep> add(ExecState* exec, UString::Rep* r)
         {
             if (r->identifierTable)
                 return r;
-            return addSlowCase(r);
+            return addSlowCase(exec, r);
         }
-        static PassRefPtr<UString::Rep> addSlowCase(UString::Rep *r);
+        static PassRefPtr<UString::Rep> add(JSGlobalData* globalData, UString::Rep* r)
+        {
+            if (r->identifierTable)
+                return r;
+            return addSlowCase(globalData, r);
+        }
+
+        static PassRefPtr<UString::Rep> addSlowCase(ExecState*, UString::Rep* r);
+        static PassRefPtr<UString::Rep> addSlowCase(JSGlobalData*, UString::Rep* r);
     };
     
     inline bool operator==(const Identifier& a, const Identifier& b)
-        { return Identifier::equal(a, b); }
+    {
+        return Identifier::equal(a, b);
+    }
 
     inline bool operator!=(const Identifier& a, const Identifier& b)
-        { return !Identifier::equal(a, b); }
+    {
+        return !Identifier::equal(a, b);
+    }
 
     inline bool operator==(const Identifier& a, const char* b)
-        { return Identifier::equal(a, b); }
+    {
+        return Identifier::equal(a, b);
+    }
 
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);

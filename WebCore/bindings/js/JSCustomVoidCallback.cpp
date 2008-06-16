@@ -60,7 +60,7 @@ void JSCustomVoidCallback::handleEvent()
         
     KJS::JSLock lock;
         
-    JSValue* handleEventFuncValue = m_callback->get(exec, "handleEvent");
+    JSValue* handleEventFuncValue = m_callback->get(exec, Identifier(exec, "handleEvent"));
     JSObject* handleEventFunc = 0;
     if (handleEventFuncValue->isObject()) {
         handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
@@ -87,8 +87,8 @@ void JSCustomVoidCallback::handleEvent()
     if (exec->hadException()) {
         JSObject* exception = exec->exception()->toObject(exec);
         String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-        int lineNumber = exception->get(exec, "line")->toInt32(exec);
-        String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
+        int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
+        String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
         m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
         exec->clearException();            
     }

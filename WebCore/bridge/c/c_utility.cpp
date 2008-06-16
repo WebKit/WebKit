@@ -146,7 +146,7 @@ String convertNPStringToUTF16(const NPString* string)
 
 Identifier identifierFromNPIdentifier(const NPUTF8* name)
 {
-    return convertUTF8ToUTF16WithLatin1Fallback(name, -1);
+    return Identifier(&JSGlobalData::threadInstance(), convertUTF8ToUTF16WithLatin1Fallback(name, -1));
 }
 
 } }

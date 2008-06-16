@@ -71,7 +71,7 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLis
 // ------------------------------ ErrorConstructor -------------------------------
 
 ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* funcProto, ErrorPrototype* errorProto)
-    : InternalFunction(funcProto, errorProto->classInfo()->className)
+    : InternalFunction(funcProto, Identifier(exec, errorProto->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirect(exec->propertyNames().prototype, errorProto, DontEnum|DontDelete|ReadOnly);
@@ -117,7 +117,7 @@ NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* erro
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
 NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototype* funcProto, NativeErrorPrototype* prot)
-    : InternalFunction(funcProto, Identifier(prot->getDirect(exec->propertyNames().name)->getString()))
+    : InternalFunction(funcProto, Identifier(exec, prot->getDirect(exec->propertyNames().name)->getString()))
     , proto(prot)
 {
     putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5

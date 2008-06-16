@@ -65,7 +65,7 @@ bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifie
         return JSHTMLElement::getOwnPropertySlot(exec, propertyName, slot);
     
     // otherwise, do our own function lookup on our function table
-    const HashEntry* entry = JSHTMLInputElementBaseFunctionTable.entry(propertyName);
+    const HashEntry* entry = JSHTMLInputElementBaseFunctionTable.entry(exec, propertyName);
     if (entry && (entry->attributes & KJS::Function) && entry->functionValue == jsHTMLInputElementBaseFunctionSetSelectionRange) {
         slot.setStaticEntry(this, entry, staticFunctionGetter);
         return true;

@@ -289,7 +289,7 @@ Arguments::Arguments(ExecState* exec, JSFunction* func, const ArgList& args, JSA
     int i = 0;
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it, ++i) {
-        Identifier name = Identifier::from(i);
+        Identifier name = Identifier::from(exec, i);
         if (!indexToNameMap.isMapped(name))
             putDirect(name, *it, DontEnum);
     }

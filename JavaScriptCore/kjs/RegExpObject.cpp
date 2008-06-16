@@ -280,7 +280,7 @@ struct RegExpConstructorPrivate {
 };
 
 RegExpConstructor::RegExpConstructor(ExecState* exec, FunctionPrototype* funcProto, RegExpPrototype* regProto)
-  : InternalFunction(funcProto, "RegExp")
+  : InternalFunction(funcProto, Identifier(exec, "RegExp"))
   , d(new RegExpConstructorPrivate)
 {
   // ECMA 15.10.5.1 RegExp.prototype

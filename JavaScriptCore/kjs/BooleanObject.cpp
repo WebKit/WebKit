@@ -85,7 +85,7 @@ JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const ArgLi
 
 
 BooleanConstructor::BooleanConstructor(ExecState* exec, FunctionPrototype* functionPrototype, BooleanPrototype* booleanPrototype)
-    : InternalFunction(functionPrototype, booleanPrototype->classInfo()->className)
+    : InternalFunction(functionPrototype, Identifier(exec, booleanPrototype->classInfo()->className))
 {
     putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 

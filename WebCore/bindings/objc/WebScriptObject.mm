@@ -91,8 +91,8 @@ static void addExceptionToConsole(ExecState* exec)
     if (!window || !exception)
         return;
     String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-    int lineNumber = exception->get(exec, "line")->toInt32(exec);
-    String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
+    int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
+    String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
     window->impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
 }
 
@@ -286,7 +286,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
     JSLock lock;
     
-    JSValue* func = [self _imp]->get(exec, String(name));
+    JSValue* func = [self _imp]->get(exec, Identifier(exec, String(name)));
 
     if (!func || !func->isObject())
         // Maybe throw an exception here?
@@ -366,7 +366,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    [self _imp]->put(exec, String(key), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
+    [self _imp]->put(exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -391,7 +391,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // leaving the lock permanently held
         JSLock lock;
         
-        JSValue *result = [self _imp]->get(exec, String(key));
+        JSValue *result = [self _imp]->get(exec, Identifier(exec, String(key)));
         
         if (exec->hadException()) {
             addExceptionToConsole(exec);
@@ -420,7 +420,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock;
-    [self _imp]->deleteProperty(exec, String(key));
+    [self _imp]->deleteProperty(exec, Identifier(exec, String(key)));
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);
@@ -514,7 +514,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         JSLock lock;
         
         if (object->classInfo() != &RuntimeObjectImp::s_info) {
-            JSValue* runtimeObject = object->get(exec, "__apple_runtime_object");
+            JSValue* runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));
             if (runtimeObject && runtimeObject->isObject())
                 object = static_cast<RuntimeObjectImp*>(runtimeObject);
         }

@@ -69,7 +69,6 @@ public:
     static String adopt(StringBuffer& buffer) { return StringImpl::adopt(buffer); }
     static String adopt(Vector<UChar>& vector) { return StringImpl::adopt(vector); }
 
-    operator KJS::Identifier() const;
     operator KJS::UString() const;
 
     unsigned length() const;

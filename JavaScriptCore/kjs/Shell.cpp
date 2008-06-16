@@ -163,19 +163,19 @@ COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false
 
 GlobalObject::GlobalObject(Vector<UString>& arguments)
 {
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "debug", functionDebug));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "print", functionPrint));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "quit", functionQuit));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "gc", functionGC));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "version", functionVersion));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "run", functionRun));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, "load", functionLoad));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, "readline", functionReadline));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "debug"), functionDebug));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "print"), functionPrint));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "quit"), functionQuit));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "gc"), functionGC));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "version"), functionVersion));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "run"), functionRun));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
+    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
     JSObject* array = arrayConstructor()->construct(globalExec(), globalExec()->emptyList());
     for (size_t i = 0; i < arguments.size(); ++i)
         array->put(globalExec(), i, jsString(arguments[i]));
-    putDirect("arguments", array);
+    putDirect(Identifier(globalExec(), "arguments"), array);
 
     Interpreter::setShouldPrintExceptions(true);
 }

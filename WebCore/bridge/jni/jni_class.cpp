@@ -50,6 +50,8 @@ JavaClass::JavaClass(jobject anInstance)
 
     int i;
     JNIEnv *env = getJNIEnv();
+
+    JSGlobalData* globalData = &JSGlobalData::threadInstance();
     
     // Get the fields
     jarray fields = (jarray)callJNIMethod<jobject>(aClass, "getFields", "()[Ljava/lang/reflect/Field;");
@@ -59,11 +61,11 @@ JavaClass::JavaClass(jobject anInstance)
         Field *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
         {
             JSLock lock;
-            _fields.set(Identifier(aField->name()).ustring().rep(), aField);
+            _fields.set(Identifier(globalData, UString(aField->name())).ustring().rep(), aField);
         }
         env->DeleteLocalRef(aJField);
     }
-    
+
     // Get the methods
     jarray methods = (jarray)callJNIMethod<jobject>(aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
     int numMethods = env->GetArrayLength(methods);
@@ -74,10 +76,10 @@ JavaClass::JavaClass(jobject anInstance)
         {
             JSLock lock;
 
-            methodList = _methods.get(Identifier(aMethod->name()).ustring().rep());
+            methodList = _methods.get(Identifier(globalData, UString(aMethod->name())).ustring().rep());
             if (!methodList) {
                 methodList = new MethodList();
-                _methods.set(Identifier(aMethod->name()).ustring().rep(), methodList);
+                _methods.set(Identifier(globalData, UString(aMethod->name())).ustring().rep(), methodList);
             }
         }
         methodList->append(aMethod);

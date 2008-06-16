@@ -1,3 +1,21 @@
+2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Make Identifier construction use an explicitly passed IdentifierTable.
+
+        * JSUtils.cpp:
+        (CFStringToIdentifier):
+        (KJSValueToCFTypeInternal):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        * UserObjectImp.cpp:
+        (UserObjectImp::getPropertyNames):
+        Pass ExecState or JSGlobalData everywhere.
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - rename KJS::List to KJS::ArgList

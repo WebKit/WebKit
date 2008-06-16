@@ -75,7 +75,7 @@ JSGlobalData::JSGlobalData()
 #endif
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
-    , lexer(new Lexer)
+    , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
 {

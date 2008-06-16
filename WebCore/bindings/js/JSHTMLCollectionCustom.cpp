@@ -70,7 +70,7 @@ JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const ArgL
             return toJS(exec, collection->item(index));
 
         // Support for document.images('<name>') etc.
-        return getNamedItems(exec, collection, Identifier(string));
+        return getNamedItems(exec, collection, Identifier(exec, string));
     }
 
     // The second arg, if set, is the index of the item we want
@@ -113,12 +113,12 @@ JSValue* JSHTMLCollection::item(ExecState* exec, const ArgList& args)
     uint32_t index = args[0]->toString(exec).toUInt32(&ok, false);
     if (ok)
         return toJS(exec, impl()->item(index));
-    return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(exec, args[0]->toString(exec)));
 }
 
 JSValue* JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
 {
-    return getNamedItems(exec, impl(), Identifier(args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(exec, args[0]->toString(exec)));
 }
 
 JSValue* toJS(ExecState* exec, HTMLCollection* collection)

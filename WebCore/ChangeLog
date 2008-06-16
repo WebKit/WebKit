@@ -1,3 +1,96 @@
+2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Make Identifier construction use an explicitly passed IdentifierTable.
+
+        * platform/text/AtomicString.cpp:
+        * platform/text/AtomicString.h:
+        * platform/text/PlatformString.h:
+        * platform/text/String.cpp:
+        Removed "operator KJS::Identifier".
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::updateDocument):
+        (WebCore::createWindow):
+        (WebCore::showModalDialog):
+        (WebCore::JSDOMWindowBase::getOwnPropertySlot):
+        (WebCore::JSDOMWindowBase::put):
+        (WebCore::JSDOMWindowBase::clear):
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::setLocation):
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::customGetOwnPropertySlot):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetPrototype::self):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::JSHTMLCollection::callAsFunction):
+        (WebCore::JSHTMLCollection::item):
+        (WebCore::JSHTMLCollection::namedItem):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::all):
+        (WebCore::JSHTMLDocument::setAll):
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::getOwnPropertySlot):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customGetOwnPropertySlot):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::customGetOwnPropertySlot):
+        (WebCore::JSLocation::customPut):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::needsYouTubeQuirk):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::customGetPropertyNames):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_Enumerate):
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::identifierFromNPIdentifier):
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        * bridge/runtime_method.cpp:
+        (RuntimeMethod::callAsFunction):
+        Adapted to JavaScriptCore changes by explicitly constructing Identifiers, and always passing
+        an ExecState or JSGlobalData pointer. Since WebCore is not a legacy client, this can use
+        JSGlobalData::threadInstance(), as performance permits.
+
 2008-06-16  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Dan Bernstein.

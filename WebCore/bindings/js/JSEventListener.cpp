@@ -62,7 +62,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     ExecState* exec = window->globalExec();
 
-    JSValue* handleEventFuncValue = listener->get(exec, "handleEvent");
+    JSValue* handleEventFuncValue = listener->get(exec, Identifier(exec, "handleEvent"));
     JSObject* handleEventFunc = 0;
     if (handleEventFuncValue->isObject()) {
         handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
@@ -99,8 +99,8 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         if (exec->hadException()) {
             JSObject* exception = exec->exception()->toObject(exec);
             String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-            int lineNumber = exception->get(exec, "line")->toInt32(exec);
-            String sourceURL = exception->get(exec, "sourceURL")->toString(exec);
+            int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
+            String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
             frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
             exec->clearException();
         } else {
@@ -283,7 +283,7 @@ void JSLazyEventListener::parseCode() const
 
         // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
         // have been added with setAttribute from a script, and we should pass String() in that case.
-        m_listener = constr->construct(exec, args, m_functionName, sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
+        m_listener = constr->construct(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
 
         JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
 

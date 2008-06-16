@@ -286,7 +286,7 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 RegisterID* RegExpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (!m_regExp->isValid())
-        return emitThrowError(generator, SyntaxError, "Invalid regular expression: %s", m_regExp->errorMessage());
+        return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(m_regExp->errorMessage())).UTF8String().c_str());
     return generator.emitNewRegExp(generator.finalDestination(dst), m_regExp.get());
 }
 

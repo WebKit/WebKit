@@ -136,7 +136,7 @@ bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Proper
     // This function should only be called by JSValue::get.
     if (getStringPropertySlot(propertyName, slot))
         return true;
-    return JSString::getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
+    return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
 // ------------------------------ JSNumberCell ------------------------------------

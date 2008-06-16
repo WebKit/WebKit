@@ -157,7 +157,7 @@ ALWAYS_INLINE bool JSArray::inlineGetOwnPropertySlot(ExecState* exec, unsigned i
 
     if (UNLIKELY(i >= m_length)) {
         if (i > maxArrayIndex)
-            return getOwnPropertySlot(exec, Identifier::from(i), slot);
+            return getOwnPropertySlot(exec, Identifier::from(exec, i), slot);
         return false;
     }
 
@@ -230,7 +230,7 @@ void JSArray::put(ExecState* exec, unsigned i, JSValue* value)
     unsigned length = m_length;
     if (i >= length) {
         if (i > maxArrayIndex) {
-            put(exec, Identifier::from(i), value);
+            put(exec, Identifier::from(exec, i), value);
             return;
         }
         length = i + 1;
@@ -360,7 +360,7 @@ bool JSArray::deleteProperty(ExecState* exec, unsigned i)
     checkConsistency();
 
     if (i > maxArrayIndex)
-        return deleteProperty(exec, Identifier::from(i));
+        return deleteProperty(exec, Identifier::from(exec, i));
 
     return false;
 }
@@ -376,13 +376,13 @@ void JSArray::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames
     unsigned usedVectorLength = min(m_length, m_vectorLength);
     for (unsigned i = 0; i < usedVectorLength; ++i) {
         if (storage->m_vector[i])
-            propertyNames.add(Identifier::from(i));
+            propertyNames.add(Identifier::from(exec, i));
     }
 
     if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
         SparseArrayValueMap::iterator end = map->end();
         for (SparseArrayValueMap::iterator it = map->begin(); it != end; ++it)
-            propertyNames.add(Identifier::from(it->first));
+            propertyNames.add(Identifier::from(exec, it->first));
     }
 
     JSObject::getPropertyNames(exec, propertyNames);

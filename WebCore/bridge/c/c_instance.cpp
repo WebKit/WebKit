@@ -168,7 +168,7 @@ JSValue* CInstance::valueOf() const
     return stringValue();
 }
 
-void CInstance::getPropertyNames(ExecState*, PropertyNameArray& nameArray) 
+void CInstance::getPropertyNames(ExecState* exec, PropertyNameArray& nameArray) 
 {
     if (!NP_CLASS_STRUCT_VERSION_HAS_ENUM(_object->_class) ||
         !_object->_class->enumerate)
@@ -189,7 +189,7 @@ void CInstance::getPropertyNames(ExecState*, PropertyNameArray& nameArray)
         if (identifier->isString)
             nameArray.add(identifierFromNPIdentifier(identifier->value.string));
         else
-            nameArray.add(Identifier::from(identifier->value.number));
+            nameArray.add(Identifier::from(exec, identifier->value.number));
     }
          
     // FIXME: This should really call NPN_MemFree but that's in WebKit

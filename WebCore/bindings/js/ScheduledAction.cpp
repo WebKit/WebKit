@@ -77,7 +77,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
                 JSObject* exception = exec->exception()->toObject(exec);
                 exec->clearException();
                 String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-                int lineNumber = exception->get(exec, "line")->toInt32(exec);
+                int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
                 frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, String());
             }
         }

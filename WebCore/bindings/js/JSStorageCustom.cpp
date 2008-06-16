@@ -69,7 +69,7 @@ bool JSStorage::customGetPropertyNames(ExecState* exec, PropertyNameArray& prope
     ExceptionCode ec;
     unsigned length = m_impl->length();
     for (unsigned i = 0; i < length; ++i)
-        propertyNames.add(m_impl->key(i, ec));
+        propertyNames.add(Identifier(exec, m_impl->key(i, ec)));
         
     return false;
 }

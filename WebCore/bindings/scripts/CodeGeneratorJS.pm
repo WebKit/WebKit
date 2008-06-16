@@ -279,7 +279,7 @@ sub GenerateGetOwnPropertySlotBody
 
     my $requiresManualLookup = $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"};
     if ($requiresManualLookup) {
-        push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(propertyName);\n");
+        push(@getOwnPropertySlotImpl, "    const ${namespaceMaybe}HashEntry* entry = ${className}Table.entry(exec, propertyName);\n");
         push(@getOwnPropertySlotImpl, "    if (entry) {\n");
         push(@getOwnPropertySlotImpl, "        slot.setStaticEntry(this, entry, staticValueGetter<$className>);\n");
         push(@getOwnPropertySlotImpl, "        return true;\n");
@@ -846,7 +846,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(\"[[${className}.prototype]]\");\n");
+        push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(exec, \"[[${className}.prototype]]\");\n");
         push(@implContent, "    return KJS::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
         push(@implContent, "}\n\n");
     }
@@ -965,7 +965,7 @@ sub GenerateImplementation
             push(@implContent, "        slot.setCustomIndex(this, propertyName, indexGetter);\n");
             push(@implContent, "        return true;\n");
             push(@implContent, "    }\n");
-            push(@implContent, "    return getOwnPropertySlot(exec, Identifier::from(propertyName), slot);\n");
+            push(@implContent, "    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);\n");
             push(@implContent, "}\n\n");
         }
         
@@ -1127,9 +1127,9 @@ sub GenerateImplementation
                             $constructorType =~ s/Constructor$//;
                             $implIncludes{"JS" . $constructorType . ".h"} = 1;
                             push(@implContent, "        // Shadowing a built-in constructor\n");
-                            push(@implContent, "        putDirect(\"$name\", value);\n");
+                            push(@implContent, "        putDirect(Identifier(exec, \"$name\"), value);\n");
                         } elsif ($attribute->signature->extendedAttributes->{"Replaceable"}) {
-                            push(@implContent, "        putDirect(\"$name\", value);\n");
+                            push(@implContent, "        putDirect(Identifier(exec, \"$name\"), value);\n");
                         } else {
                             if ($podType) {
                                 push(@implContent, "        $podType imp(*impl());\n");
@@ -1172,7 +1172,7 @@ sub GenerateImplementation
         }
         if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
             push(@implContent, "    for (unsigned i = 0; i < static_cast<${implClassName}*>(impl())->length(); ++i)\n");
-            push(@implContent, "        propertyNames.add(Identifier::from(i));\n");
+            push(@implContent, "        propertyNames.add(Identifier::from(exec, i));\n");
         }
         push(@implContent, "     Base::getPropertyNames(exec, propertyNames);\n");
         push(@implContent, "}\n\n");
@@ -1180,7 +1180,7 @@ sub GenerateImplementation
 
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
-        push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(\"[[${interfaceName}.constructor]]\");\n");
+        push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(exec, \"[[${interfaceName}.constructor]]\");\n");
         push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
         push(@implContent, "}\n\n");
     }

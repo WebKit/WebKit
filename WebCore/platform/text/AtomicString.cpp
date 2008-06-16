@@ -265,11 +265,6 @@ AtomicStringImpl* AtomicString::find(const KJS::Identifier& identifier)
     return static_cast<AtomicStringImpl*>(*iterator);
 }
 
-AtomicString::operator Identifier() const
-{
-    return m_string;
-}
-
 AtomicString::operator UString() const
 {
     return m_string;

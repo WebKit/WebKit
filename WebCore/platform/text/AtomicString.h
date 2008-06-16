@@ -45,7 +45,6 @@ public:
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };
 
-    operator KJS::Identifier() const;
     operator KJS::UString() const;
 
     AtomicStringImpl* impl() const { return static_cast<AtomicStringImpl *>(m_string.impl()); }

@@ -80,16 +80,16 @@ JSValue* JSHTMLDocument::nameGetter(ExecState* exec, const Identifier& propertyN
 JSValue* JSHTMLDocument::all(ExecState* exec) const
 {
     // If "all" has been overwritten, return the overwritten value
-    if (JSValue* v = getDirect("all"))
+    if (JSValue* v = getDirect(Identifier(exec, "all")))
         return v;
 
     return toJS(exec, static_cast<HTMLDocument*>(impl())->all().get());
 }
 
-void JSHTMLDocument::setAll(ExecState*, JSValue* value)
+void JSHTMLDocument::setAll(ExecState* exec, JSValue* value)
 {
     // Add "all" to the property map.
-    putDirect("all", value);
+    putDirect(Identifier(exec, "all"), value);
 }
 
 // Custom functions
@@ -102,7 +102,7 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const ArgList& args)
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame);
             if (wrapper) {
-                JSObject* functionObject = wrapper->get(exec, "open")->getObject();
+                JSObject* functionObject = wrapper->get(exec, Identifier(exec, "open"))->getObject();
                 if (!functionObject || !functionObject->implementsCall())
                     return throwError(exec, TypeError);
                 return functionObject->callAsFunction(exec, wrapper, args);

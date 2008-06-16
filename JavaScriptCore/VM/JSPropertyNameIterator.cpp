@@ -43,7 +43,7 @@ JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue*
         return new JSPropertyNameIterator(0, 0, 0);
 
     JSObject* o = v->toObject(exec);
-    PropertyNameArray propertyNames;
+    PropertyNameArray propertyNames(exec);
     o->getPropertyNames(exec, propertyNames);
     size_t numProperties = propertyNames.size();
     return new JSPropertyNameIterator(o, propertyNames.releaseIdentifiers(), numProperties);

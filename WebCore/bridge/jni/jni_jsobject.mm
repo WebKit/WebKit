@@ -289,8 +289,8 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock;
     
-    Identifier identifier(JavaString(methodName).ustring());
-    JSValue *func = _imp->get (exec, identifier);
+    Identifier identifier(exec, JavaString(methodName).ustring());
+    JSValue* func = _imp->get(exec, identifier);
     if (func->isUndefinedOrNull())
         return 0;
 
@@ -344,7 +344,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
     ExecState* exec = rootObject->globalObject()->globalExec();
     
     JSLock lock;
-    JSValue *result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
+    JSValue* result = _imp->get(exec, Identifier(exec, JavaString(memberName).ustring()));
 
     return convertValueToJObject(result);
 }
@@ -359,7 +359,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock;
-    _imp->put(exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
+    _imp->put(exec, Identifier(exec, JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
 
 
@@ -373,7 +373,7 @@ void JavaJSObject::removeMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     JSLock lock;
-    _imp->deleteProperty(exec, Identifier (JavaString(memberName).ustring()));
+    _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName).ustring()));
 }
 
 

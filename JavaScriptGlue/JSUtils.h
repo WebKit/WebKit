@@ -52,7 +52,7 @@ class JSUserObjectImp;
 
 UString CFStringToUString(CFStringRef inCFString);
 CFStringRef UStringToCFString(const UString& inUString);
-Identifier CFStringToIdentifier(CFStringRef inCFString);
+Identifier CFStringToIdentifier(CFStringRef inCFString, ExecState*);
 CFStringRef IdentifierToCFString(const Identifier& inIdentifier);
 JSUserObject *KJSValueToJSObject(JSValue *inValue, ExecState *exec);
 CFTypeRef KJSValueToCFType(JSValue *inValue, ExecState *exec);

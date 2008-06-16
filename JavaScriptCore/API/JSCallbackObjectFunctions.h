@@ -146,7 +146,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
 template <class Base>
 bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    return getOwnPropertySlot(exec, Identifier::from(propertyName), slot);
+    return getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
 template <class Base>
@@ -193,7 +193,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
 template <class Base>
 void JSCallbackObject<Base>::put(ExecState* exec, unsigned propertyName, JSValue* value)
 {
-    return put(exec, Identifier::from(propertyName), value);
+    return put(exec, Identifier::from(exec, propertyName), value);
 }
 
 template <class Base>
@@ -233,7 +233,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
 template <class Base>
 bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, unsigned propertyName)
 {
-    return deleteProperty(exec, Identifier::from(propertyName));
+    return deleteProperty(exec, Identifier::from(exec, propertyName));
 }
 
 template <class Base>
@@ -344,7 +344,7 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
                 UString::Rep* name = it->first.get();
                 StaticValueEntry* entry = it->second;
                 if (entry->getProperty && !(entry->attributes & kJSPropertyAttributeDontEnum))
-                    propertyNames.add(Identifier(name));
+                    propertyNames.add(Identifier(exec, name));
             }
         }
         
@@ -355,7 +355,7 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
                 UString::Rep* name = it->first.get();
                 StaticFunctionEntry* entry = it->second;
                 if (!(entry->attributes & kJSPropertyAttributeDontEnum))
-                    propertyNames.add(Identifier(name));
+                    propertyNames.add(Identifier(exec, name));
             }
         }
     }

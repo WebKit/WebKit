@@ -65,7 +65,7 @@ public:
             return *m_data.valueSlot;
         if (m_getValue == KJS_NUMERIC_PROPERTY_NAME_SLOT_MARKER)
             return m_data.numericFunc(exec, propertyName, *this);
-        return m_getValue(exec, Identifier::from(propertyName), *this);
+        return m_getValue(exec, Identifier::from(exec, propertyName), *this);
     }
 
     void putValue(JSValue* value)

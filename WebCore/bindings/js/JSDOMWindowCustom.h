@@ -67,12 +67,12 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, c
     if (!impl()->frame()) {
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
-        entry = s_info.propHashTable(exec)->entry(propertyName);
+        entry = s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && !(entry->attributes & KJS::Function) && entry->integerValue == ClosedAttrNum) {
             slot.setStaticEntry(this, entry, KJS::staticValueGetter<JSDOMWindow>);
             return true;
         }
-        entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(propertyName);
+        entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
         if (entry && (entry->attributes & KJS::Function) && entry->functionValue == jsDOMWindowPrototypeFunctionClose) {
             slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
             return true;
@@ -100,7 +100,7 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, c
     // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
-    entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(propertyName);
+    entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
         if ((entry->attributes & KJS::Function)
                 && (entry->functionValue == jsDOMWindowPrototypeFunctionBlur

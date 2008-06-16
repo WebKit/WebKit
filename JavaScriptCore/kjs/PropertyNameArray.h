@@ -33,9 +33,12 @@ namespace KJS {
         typedef Identifier ValueType;
         typedef Vector<Identifier>::const_iterator const_iterator;
 
+        PropertyNameArray(JSGlobalData* globalData) : m_globalData(globalData) {}
+        PropertyNameArray(ExecState* exec) : m_globalData(&exec->globalData()) {}
+
         void add(const Identifier& identifier) { add(identifier.ustring().rep()); }
         void add(UString::Rep*);
-        void addKnownUnique(UString::Rep* identifier) { m_vector.append(identifier); }
+        void addKnownUnique(UString::Rep* identifier) { m_vector.append(Identifier(m_globalData, identifier)); }
 
         const_iterator begin() const { return m_vector.begin(); }
         const_iterator end() const { return m_vector.end(); }
@@ -52,6 +55,7 @@ namespace KJS {
 
         Vector<Identifier, 20> m_vector;
         IdentifierSet m_set;
+        JSGlobalData* m_globalData;
     };
 
 } // namespace KJS
