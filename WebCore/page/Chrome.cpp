@@ -415,7 +415,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 if (JSDOMWindow* window = toJSDOMWindow(frame)) {
                     PausedTimeouts* timeouts = window->pauseTimeouts();
 
-                    m_pausedTimeouts.append(make_pair(frame, timeouts));
+                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts));
                 }
             }
 #endif

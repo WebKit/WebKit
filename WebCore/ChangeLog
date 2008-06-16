@@ -1,3 +1,17 @@
+2008-06-16  Adriaan de Groot  <groot@kde.org>
+
+        Reviewed by Simon.
+
+        Fix compilation on Sun Studio 12
+
+        make_pair is a function template with two template arguments. This is to force
+        it to have the correct type according to the pair<> structure.
+
+        * editing/TextIterator.cpp:
+        (WebCore::plainTextToMallocAllocatedBuffer):
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+
 2008-06-10  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon
