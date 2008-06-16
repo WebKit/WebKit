@@ -23,8 +23,8 @@
 #include "config.h"
 #include "operations.h"
 
-#include "internal.h"
-#include "object.h"
+#include "JSString.h"
+#include "JSObject.h"
 #include <math.h>
 #include <stdio.h>
 #include <wtf/MathExtras.h>

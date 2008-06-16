@@ -28,7 +28,7 @@
 
 #include <wtf/OwnPtr.h>
 
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 #include "runtime.h"
 
 namespace KJS {

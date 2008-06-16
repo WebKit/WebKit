@@ -29,7 +29,7 @@
 #ifndef JSPropertyNameIterator_h
 #define JSPropertyNameIterator_h
 
-#include "value.h"
+#include "JSValue.h"
 
 namespace KJS {
 

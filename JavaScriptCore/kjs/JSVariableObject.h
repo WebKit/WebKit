@@ -32,7 +32,7 @@
 #include "Register.h"
 #include "SymbolTable.h"
 #include "UnusedParam.h"
-#include "object.h"
+#include "JSObject.h"
 #include <wtf/UnusedParam.h>
 
 namespace KJS {

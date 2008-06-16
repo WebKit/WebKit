@@ -62,7 +62,7 @@
 #include "Settings.h"
 #include "runtime.h"
 #include <kjs/JSLock.h>
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 #include <wtf/ASCIICType.h>
 
 using KJS::ExecState;

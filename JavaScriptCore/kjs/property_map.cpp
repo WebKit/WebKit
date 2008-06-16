@@ -21,7 +21,7 @@
 #include "config.h"
 #include "property_map.h"
 
-#include "object.h"
+#include "JSObject.h"
 #include "protect.h"
 #include "PropertyNameArray.h"
 #include <algorithm>

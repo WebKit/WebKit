@@ -30,7 +30,7 @@
 #include "JSPropertyNameIterator.h"
 
 #include "identifier.h"
-#include "object.h"
+#include "JSObject.h"
 #include "PropertyNameArray.h"
 
 namespace KJS {

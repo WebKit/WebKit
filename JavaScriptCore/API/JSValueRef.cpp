@@ -33,11 +33,11 @@
 
 #include <kjs/JSType.h>
 #include <kjs/JSGlobalObject.h>
-#include <kjs/internal.h>
+#include <kjs/JSString.h>
 #include <kjs/operations.h>
 #include <kjs/protect.h>
 #include <kjs/ustring.h>
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 
 #include <wtf/Assertions.h>
 

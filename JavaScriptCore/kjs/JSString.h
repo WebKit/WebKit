@@ -24,7 +24,7 @@
 #ifndef INTERNAL_H
 #define INTERNAL_H
 
-#include "object.h"
+#include "JSObject.h"
 #include "ustring.h"
 
 namespace KJS {

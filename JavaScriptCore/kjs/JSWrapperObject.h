@@ -23,7 +23,7 @@
 #ifndef KJS_JSWrapperObject_h
 #define KJS_JSWrapperObject_h
 
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
     

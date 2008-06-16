@@ -29,7 +29,7 @@
 #ifndef JSNotAnObject_h
 #define JSNotAnObject_h
 
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 

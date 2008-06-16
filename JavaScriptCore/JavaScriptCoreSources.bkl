@@ -55,7 +55,7 @@ Source files for JSCore.
         kjs/dtoa.cpp
         kjs/error_object.cpp
         kjs/ExecState.cpp
-        kjs/function.cpp
+        kjs/JSFunction.cpp
         kjs/function_object.cpp
         kjs/identifier.cpp
         kjs/InitializeThreading.cpp
@@ -76,7 +76,7 @@ Source files for JSCore.
         kjs/nodes.cpp
         kjs/nodes2string.cpp
         kjs/number_object.cpp
-        kjs/object.cpp
+        kjs/JSObject.cpp
         kjs/object_object.cpp
         kjs/operations.cpp
         kjs/Parser.cpp
@@ -88,7 +88,7 @@ Source files for JSCore.
         kjs/scope_chain.cpp
         kjs/string_object.cpp
         kjs/ustring.cpp
-        kjs/value.cpp
+        kjs/JSValue.cpp
 
     </set>
     <set append="1" var="JSCORE_SOURCES_PCRE">

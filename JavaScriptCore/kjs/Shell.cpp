@@ -28,11 +28,11 @@
 #include "Parser.h"
 #include "array_object.h"
 #include "collector.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "InitializeThreading.h"
 #include "interpreter.h"
 #include "nodes.h"
-#include "object.h"
+#include "JSObject.h"
 #include "protect.h"
 #include <math.h>
 #include <stdio.h>

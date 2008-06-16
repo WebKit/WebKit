@@ -32,7 +32,7 @@
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
-#include "object.h"
+#include "JSObject.h"
 #include <wtf/Platform.h>
 
 using namespace KJS;

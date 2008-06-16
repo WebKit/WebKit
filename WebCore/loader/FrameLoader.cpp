@@ -87,7 +87,7 @@
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include <kjs/JSLock.h>
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
 #include "ApplicationCache.h"

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "DebuggerCallFrame.h"
 
-#include "function.h"
+#include "JSFunction.h"
 #include "CodeBlock.h"
 #include "Machine.h"
 #include "Parser.h"

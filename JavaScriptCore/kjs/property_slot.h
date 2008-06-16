@@ -23,7 +23,7 @@
 #define KJS_PROPERTY_SLOT_H
 
 #include "identifier.h"
-#include "value.h"
+#include "JSValue.h"
 #include <wtf/Assertions.h>
 
 namespace KJS {

@@ -24,7 +24,7 @@
 
 #include "function_object.h"
 #include "JSWrapperObject.h"
-#include "internal.h"
+#include "JSString.h"
 #include "lookup.h"
 
 namespace KJS {

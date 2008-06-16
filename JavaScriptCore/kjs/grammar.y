@@ -27,12 +27,12 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "value.h"
-#include "object.h"
+#include "JSValue.h"
+#include "JSObject.h"
 #include "types.h"
 #include "nodes.h"
 #include "lexer.h"
-#include "internal.h"
+#include "JSString.h"
 #include "JSGlobalData.h"
 #include "CommonIdentifiers.h"
 #include "NodeInfo.h"

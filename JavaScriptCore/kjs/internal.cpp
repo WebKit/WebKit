@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "internal.h"
+#include "JSString.h"
 
 #include "ExecState.h"
 #include "array_object.h"
@@ -35,7 +35,7 @@
 #include "math_object.h"
 #include "nodes.h"
 #include "number_object.h"
-#include "object.h"
+#include "JSObject.h"
 #include "object_object.h"
 #include "operations.h"
 #include "regexp_object.h"

@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "object.h"
+#include "JSObject.h"
 
 #include "date_object.h"
 #include "error_object.h"

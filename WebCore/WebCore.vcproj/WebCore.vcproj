@@ -16147,7 +16147,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\internal.h"
+					RelativePath="..\ForwardingHeaders\kjs\JSString.h"
 					>
 				</File>
 				<File
@@ -16167,7 +16167,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\object.h"
+					RelativePath="..\ForwardingHeaders\kjs\JSObject.h"
 					>
 				</File>
 				<File
@@ -16195,7 +16195,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\ForwardingHeaders\kjs\value.h"
+					RelativePath="..\ForwardingHeaders\kjs\JSValue.h"
 					>
 				</File>
 			</Filter>

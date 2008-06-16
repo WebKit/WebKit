@@ -22,10 +22,10 @@
 #include "error_object.h"
 
 #include "JSGlobalObject.h"
-#include "object.h"
+#include "JSObject.h"
 #include "operations.h"
 #include "types.h"
-#include "value.h"
+#include "JSValue.h"
 
 namespace KJS {
 

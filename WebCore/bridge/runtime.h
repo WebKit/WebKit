@@ -26,7 +26,7 @@
 #ifndef JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 #define JAVASCRIPTCORE_BINDINGS_RUNTIME_H
 
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

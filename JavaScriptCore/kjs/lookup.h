@@ -23,10 +23,10 @@
 #define KJS_lookup_h
 
 #include "ExecState.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "identifier.h"
 #include "JSGlobalObject.h"
-#include "object.h"
+#include "JSObject.h"
 #include <stdio.h>
 #include <wtf/Assertions.h>
 

@@ -25,12 +25,12 @@
 #include "array_instance.h"
 #include "array_object.h"
 #include "error_object.h"
-#include "internal.h"
-#include "object.h"
+#include "JSString.h"
+#include "JSObject.h"
 #include "operations.h"
 #include "regexp.h"
 #include "types.h"
-#include "value.h"
+#include "JSValue.h"
 #include "UnusedParam.h"
 
 #include <stdio.h>

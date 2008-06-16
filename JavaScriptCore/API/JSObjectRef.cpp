@@ -35,11 +35,11 @@
 #include "JSGlobalObject.h"
 #include "JSValueRef.h"
 #include "PropertyNameArray.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "function_object.h"
 #include "identifier.h"
-#include "internal.h"
-#include "object.h"
+#include "JSString.h"
+#include "JSObject.h"
 #include "object_object.h"
 #include <wtf/Platform.h>
 

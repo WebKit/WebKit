@@ -33,7 +33,7 @@
 #include <kjs/interpreter.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/JSLock.h>
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 
 using namespace KJS;
 

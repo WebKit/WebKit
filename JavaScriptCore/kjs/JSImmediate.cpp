@@ -25,7 +25,7 @@
 #include "bool_object.h"
 #include "JSNotAnObject.h"
 #include "number_object.h"
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 

@@ -65,7 +65,7 @@ SOURCES += \
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time
 SOURCES += \
-    kjs/function.cpp \
+    kjs/JSFunction.cpp \
     kjs/debugger.cpp \
     kjs/array_instance.cpp \
     kjs/array_object.cpp \
@@ -92,7 +92,7 @@ SOURCES += \
     kjs/nodes.cpp \
     kjs/nodes2string.cpp \
     kjs/number_object.cpp \
-    kjs/object.cpp \
+    kjs/JSObject.cpp \
     kjs/object_object.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
@@ -104,7 +104,7 @@ SOURCES += \
     kjs/scope_chain.cpp \
     kjs/string_object.cpp \
     kjs/ustring.cpp \
-    kjs/value.cpp \
+    kjs/JSValue.cpp \
     profiler/ProfileNode.cpp \
     profiler/Profile.cpp \
     profiler/Profiler.cpp \

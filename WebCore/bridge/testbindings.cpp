@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "value.h"
-#include "object.h"
+#include "JSValue.h"
+#include "JSObject.h"
 #include "types.h"
 #include "interpreter.h"
 

@@ -30,7 +30,7 @@
 
 #include "JSObjectRef.h"
 #include "JSValueRef.h"
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 

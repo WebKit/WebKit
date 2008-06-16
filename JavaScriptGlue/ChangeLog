@@ -1,3 +1,11 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        - new names for a few key JavaScriptCore files
+
+        * ForwardingHeaders/kjs/JSValue.h: Copied from JavaScriptGlue/ForwardingHeaders/kjs/value.h.
+        * ForwardingHeaders/kjs/value.h: Removed.
+        * JSUtils.h:
+
 2008-06-03  Darin Adler  <darin@apple.com>
 
         - update for JavaScriptCore changes for https://bugs.webkit.org/show_bug.cgi?id=19269

@@ -30,7 +30,7 @@
 #include "Profiler.h"
 
 #include "ExecState.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "ProfileNode.h"
 #include "JSGlobalObject.h"
 #include "Profile.h"

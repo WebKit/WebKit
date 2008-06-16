@@ -24,7 +24,7 @@
 #ifndef _KJS_PROTECT_H_
 #define _KJS_PROTECT_H_
 
-#include "value.h"
+#include "JSValue.h"
 #include "collector.h"
 #include "JSLock.h"
 

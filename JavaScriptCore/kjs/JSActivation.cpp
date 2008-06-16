@@ -32,7 +32,7 @@
 #include "CodeBlock.h"
 #include "Machine.h"
 #include "Register.h"
-#include "function.h"
+#include "JSFunction.h"
 
 namespace KJS {
 

@@ -365,11 +365,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\function.cpp"
+				RelativePath="..\..\kjs\JSFunction.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\function.h"
+				RelativePath="..\..\kjs\JSFunction.h"
 				>
 			</File>
 			<File
@@ -401,7 +401,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\internal.h"
+				RelativePath="..\..\kjs\JSString.h"
 				>
 			</File>
 			<File
@@ -525,11 +525,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\object.cpp"
+				RelativePath="..\..\kjs\JSObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\object.h"
+				RelativePath="..\..\kjs\JSObject.h"
 				>
 			</File>
 			<File
@@ -641,11 +641,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\value.cpp"
+				RelativePath="..\..\kjs\JSValue.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\value.h"
+				RelativePath="..\..\kjs\JSValue.h"
 				>
 			</File>
 			<Filter

@@ -97,7 +97,7 @@
 #include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
 #include <kjs/InitializeThreading.h>
-#include <JavaScriptCore/value.h>
+#include <JavaScriptCore/JSValue.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
 #include <CoreFoundation/CoreFoundation.h>

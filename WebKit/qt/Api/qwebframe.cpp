@@ -59,7 +59,7 @@
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
 #include "ExecState.h"
-#include "object.h"
+#include "JSObject.h"
 #include "qt_runtime.h"
 
 #include "wtf/HashMap.h"

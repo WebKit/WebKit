@@ -1,5 +1,84 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for a few key JavaScriptCore files
+
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSClassRef.h:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSStringRef.cpp:
+        * API/JSStringRefCF.cpp:
+        * API/JSValueRef.cpp:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/CodeBlock.cpp:
+        * VM/CodeGenerator.cpp:
+        * VM/ExceptionHelpers.cpp:
+        * VM/ExceptionHelpers.h:
+        * VM/JSPropertyNameIterator.cpp:
+        * VM/JSPropertyNameIterator.h:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/DateMath.cpp:
+        * kjs/DebuggerCallFrame.cpp:
+        * kjs/ExecState.cpp:
+        * kjs/JSActivation.cpp:
+        * kjs/JSFunction.cpp: Copied from JavaScriptCore/kjs/function.cpp.
+        * kjs/JSFunction.h: Copied from JavaScriptCore/kjs/function.h.
+        * kjs/JSImmediate.cpp:
+        * kjs/JSNotAnObject.h:
+        * kjs/JSObject.cpp: Copied from JavaScriptCore/kjs/object.cpp.
+        * kjs/JSObject.h: Copied from JavaScriptCore/kjs/object.h.
+        * kjs/JSString.h: Copied from JavaScriptCore/kjs/internal.h.
+        * kjs/JSValue.cpp: Copied from JavaScriptCore/kjs/value.cpp.
+        * kjs/JSValue.h: Copied from JavaScriptCore/kjs/value.h.
+        * kjs/JSVariableObject.h:
+        * kjs/JSWrapperObject.h:
+        * kjs/Shell.cpp:
+        * kjs/SymbolTable.h:
+        * kjs/array_instance.h:
+        * kjs/collector.cpp:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/error_object.cpp:
+        * kjs/function.cpp: Removed.
+        * kjs/function.h: Removed.
+        * kjs/function_object.cpp:
+        * kjs/function_object.h:
+        * kjs/grammar.y:
+        * kjs/internal.cpp:
+        * kjs/internal.h: Removed.
+        * kjs/lexer.cpp:
+        * kjs/list.h:
+        * kjs/lookup.h:
+        * kjs/nodes.h:
+        * kjs/object.cpp: Removed.
+        * kjs/object.h: Removed.
+        * kjs/object_object.h:
+        * kjs/operations.cpp:
+        * kjs/property_map.cpp:
+        * kjs/property_slot.cpp:
+        * kjs/property_slot.h:
+        * kjs/protect.h:
+        * kjs/regexp_object.cpp:
+        * kjs/scope_chain.cpp:
+        * kjs/string_object.h:
+        * kjs/ustring.cpp:
+        * kjs/value.cpp: Removed.
+        * kjs/value.h: Removed.
+        * profiler/Profile.cpp:
+        * profiler/Profiler.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Sam.
 
         - cut down on confusing uses of "Object" and "Imp" in

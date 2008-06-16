@@ -22,7 +22,7 @@
 #include "config.h"
 #include "date_object.h"
 #include "date_object.lut.h"
-#include "internal.h"
+#include "JSString.h"
 
 #if HAVE(ERRNO_H)
 #include <errno.h>

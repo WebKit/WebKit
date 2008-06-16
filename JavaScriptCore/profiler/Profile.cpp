@@ -29,7 +29,7 @@
 #include "ProfileNode.h"
 #include "JSGlobalObject.h"
 #include "ExecState.h"
-#include "function.h"
+#include "JSFunction.h"
 
 #include <stdio.h>
 

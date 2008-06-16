@@ -23,7 +23,7 @@
 #include "scope_chain.h"
 
 #include "PropertyNameArray.h"
-#include "object.h"
+#include "JSObject.h"
 #include <stdio.h>
 
 namespace KJS {

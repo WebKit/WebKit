@@ -94,7 +94,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
 	JavaScriptCore/kjs/error_object.cpp \
-	JavaScriptCore/kjs/function.cpp \
+	JavaScriptCore/kjs/JSFunction.cpp \
 	JavaScriptCore/kjs/function_object.cpp \
 	JavaScriptCore/kjs/identifier.cpp \
 	JavaScriptCore/kjs/internal.cpp \
@@ -106,7 +106,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/nodes.cpp \
 	JavaScriptCore/kjs/nodes2string.cpp \
 	JavaScriptCore/kjs/number_object.cpp \
-	JavaScriptCore/kjs/object.cpp \
+	JavaScriptCore/kjs/JSObject.cpp \
 	JavaScriptCore/kjs/object_object.cpp \
 	JavaScriptCore/kjs/operations.cpp \
 	JavaScriptCore/kjs/property_map.cpp \
@@ -116,7 +116,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/scope_chain.cpp \
 	JavaScriptCore/kjs/string_object.cpp \
 	JavaScriptCore/kjs/ustring.cpp \
-	JavaScriptCore/kjs/value.cpp \
+	JavaScriptCore/kjs/JSValue.cpp \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/TCSystemAlloc.cpp \
 	JavaScriptCore/VM/CodeGenerator.cpp \

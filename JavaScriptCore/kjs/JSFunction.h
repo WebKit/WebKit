@@ -28,7 +28,7 @@
 #include "JSVariableObject.h"
 #include "SymbolTable.h"
 #include "nodes.h"
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 

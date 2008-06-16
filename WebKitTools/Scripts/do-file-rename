@@ -68,14 +68,16 @@ sub wanted
 }
 
 my %renames = (
+    "function.cpp" => "JSFunction.cpp",
+    "function.h" => "JSFunction.h",
+    "internal.h" => "JSString.h",
+    "object.cpp" => "JSObject.cpp",
+    "object.h" => "JSObject.h",
+    "value.cpp" => "JSValue.cpp",
+    "value.h" => "JSValue.h",
 );
 
-my %plannedRenames = (
-    "internal.h" => "JSString.h",
-    "object.h" => "JSObject.h",
-    "object.cpp" => "JSObject.cpp",
-    "function.h" => "JSFunction.h",
-    "function.cpp" => "JSFunction.cpp",
+my %renamesContemplatedForTheFuture = (
 );
 
 # rename files
@@ -109,7 +111,7 @@ for my $file (sort @paths) {
     my $newContents = $contents;
 
     for my $from (keys %renames) {
-        $newContents =~ s/\b\Q$from\E(?!["\w])/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
+        $newContents =~ s/\b\Q$from\E(?!\w)/$renames{$from}/g; # this " unconfuses Xcode syntax highlighting
     }
 
     if ($newContents ne $contents) {

@@ -21,7 +21,7 @@
 #ifndef DATE_OBJECT_H
 #define DATE_OBJECT_H
 
-#include "function.h"
+#include "JSFunction.h"
 #include "JSWrapperObject.h"
 #include "lookup.h"
 

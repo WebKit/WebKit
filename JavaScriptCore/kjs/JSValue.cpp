@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "value.h"
+#include "JSValue.h"
 
 #include "error_object.h"
 #include "nodes.h"

@@ -29,7 +29,7 @@
 #include "JSCallbackFunction.h"
 
 #include "APICast.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "function_object.h"
 #include <kjs/JSGlobalObject.h>
 #include <wtf/Vector.h>

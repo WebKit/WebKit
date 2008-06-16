@@ -44,7 +44,7 @@
 
 #include <math.h>
 #include <stdint.h>
-#include <value.h>
+#include <JSValue.h>
 
 #include <wtf/Assertions.h>
 

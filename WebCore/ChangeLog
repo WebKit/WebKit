@@ -1,5 +1,46 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for a few key JavaScriptCore files
+
+        * ForwardingHeaders/kjs/JSFunction.h: Copied from WebCore/ForwardingHeaders/kjs/function.h.
+        * ForwardingHeaders/kjs/JSObject.h: Copied from WebCore/ForwardingHeaders/kjs/object.h.
+        * ForwardingHeaders/kjs/JSString.h: Copied from WebCore/ForwardingHeaders/kjs/internal.h.
+        * ForwardingHeaders/kjs/JSValue.h: Copied from WebCore/ForwardingHeaders/kjs/value.h.
+        * ForwardingHeaders/kjs/function.h: Removed.
+        * ForwardingHeaders/kjs/internal.h: Removed.
+        * ForwardingHeaders/kjs/object.h: Removed.
+        * ForwardingHeaders/kjs/value.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSCustomSQLStatementCallback.h:
+        * bindings/js/JSCustomSQLStatementErrorCallback.h:
+        * bindings/js/JSCustomSQLTransactionErrorCallback.h:
+        * bindings/js/JSCustomVoidCallback.h:
+        * bindings/js/JSDOMBinding.h:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSDOMWindowShell.cpp:
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_utility.h:
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * bridge/testbindings.cpp:
+        * bridge/testbindings.mm:
+        * bridge/testqtbindings.cpp:
+        * loader/FrameLoader.cpp:
+        * page/JavaScriptCallFrame.cpp:
+        * page/JavaScriptProfile.cpp:
+        * page/JavaScriptProfileNode.cpp:
+        * platform/graphics/gtk/VideoSinkGStreamer.h:
+        * plugins/PluginView.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        * plugins/win/PluginViewWin.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Sam.
 
         - cut down on confusing uses of "Object" and "Imp" in

@@ -28,7 +28,7 @@
 #define JSCallbackConstructor_h
 
 #include "JSObjectRef.h"
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 
 namespace KJS {
 

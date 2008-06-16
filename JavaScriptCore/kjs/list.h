@@ -22,7 +22,7 @@
 #ifndef KJS_LIST_H
 #define KJS_LIST_H
 
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>

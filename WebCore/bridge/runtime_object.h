@@ -26,7 +26,7 @@
 #ifndef KJS_RUNTIME_OBJECT_H
 #define KJS_RUNTIME_OBJECT_H
 
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 
 #include "runtime.h"
 

@@ -21,7 +21,7 @@
 #ifndef _OBJECT_OBJECT_H_
 #define _OBJECT_OBJECT_H_
 
-#include "function.h"
+#include "JSFunction.h"
 
 namespace KJS {
 

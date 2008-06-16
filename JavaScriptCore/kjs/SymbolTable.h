@@ -29,7 +29,7 @@
 #ifndef SymbolTable_h
 #define SymbolTable_h
 
-#include "object.h"
+#include "JSObject.h"
 #include "ustring.h"
 #include <wtf/AlwaysInline.h>
 

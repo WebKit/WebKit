@@ -26,7 +26,7 @@
 #ifndef NODES_H_
 #define NODES_H_
 
-#include "internal.h"
+#include "JSString.h"
 #include "Opcode.h"
 #include "regexp.h"
 #include "RegisterID.h"

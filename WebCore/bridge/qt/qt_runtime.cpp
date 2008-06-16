@@ -20,7 +20,7 @@
 #include "config.h"
 #include "qt_runtime.h"
 #include "qt_instance.h"
-#include "object.h"
+#include "JSObject.h"
 #include "array_instance.h"
 #include "date_object.h"
 #include "DateMath.h"
@@ -28,7 +28,7 @@
 #include <runtime.h>
 #include <runtime_object.h>
 #include <runtime_array.h>
-#include <function.h>
+#include <JSFunction.h>
 #include "PropertyNameArray.h"
 #include "qmetatype.h"
 #include "qmetaobject.h"

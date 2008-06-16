@@ -33,7 +33,7 @@
 #include "JSGlobalObject.h"
 #include "JSStringRef.h"
 #include "PropertyNameArray.h"
-#include "internal.h"
+#include "JSString.h"
 #include <wtf/Vector.h>
 
 namespace KJS {

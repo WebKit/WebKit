@@ -33,7 +33,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 
 using namespace KJS;
 

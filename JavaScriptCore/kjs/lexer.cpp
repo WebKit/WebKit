@@ -24,7 +24,7 @@
 #include "lexer.h"
 
 #include "dtoa.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "nodes.h"
 #include "NodeInfo.h"
 #include <ctype.h>

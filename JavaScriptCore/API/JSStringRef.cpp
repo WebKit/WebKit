@@ -32,10 +32,10 @@
 #include "APICast.h"
 #include <kjs/JSLock.h>
 #include <kjs/JSType.h>
-#include <kjs/internal.h>
+#include <kjs/JSString.h>
 #include <kjs/operations.h>
 #include <kjs/ustring.h>
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 #include <wtf/unicode/UTF8.h>
 
 using namespace KJS;

@@ -1,3 +1,14 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        - new names for a few key JavaScriptCore files
+
+        * WebCoreSupport/ContextMenuClientGtk.cpp:
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitwebbackforwardlist.h:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.h:
+        * webkit/webkitwebsettings.h:
+
 2008-06-15  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Alp Toker.

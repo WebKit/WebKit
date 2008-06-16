@@ -25,8 +25,8 @@
 #include "ExecState.h"
 
 #include "JSGlobalObject.h"
-#include "function.h"
-#include "internal.h"
+#include "JSFunction.h"
+#include "JSString.h"
 #include "scope_chain_mark.h"
 
 namespace KJS {

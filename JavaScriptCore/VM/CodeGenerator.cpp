@@ -31,7 +31,7 @@
 #include "CodeGenerator.h"
 
 #include "Machine.h"
-#include "function.h"
+#include "JSFunction.h"
 
 using namespace std;
 

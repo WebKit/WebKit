@@ -1,5 +1,11 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for a few key JavaScriptCore files
+
+        * WebView.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         Rubber stamped by Sam.
 
         - use JS prefix and simpler names for basic JavaScriptCore types,

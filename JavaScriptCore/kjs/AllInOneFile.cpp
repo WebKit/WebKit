@@ -26,7 +26,7 @@
 #define JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE 1
 #include "config.h"
 
-#include "function.cpp"
+#include "JSFunction.cpp"
 #include "debugger.cpp"
 #include "array_instance.cpp"
 #include "array_object.cpp"
@@ -55,7 +55,7 @@
 #include "nodes.cpp"
 #include "nodes2string.cpp"
 #include "number_object.cpp"
-#include "object.cpp"
+#include "JSObject.cpp"
 #include "object_object.cpp"
 #include "operations.cpp"
 #include "Parser.cpp"
@@ -67,7 +67,7 @@
 #include "scope_chain.cpp"
 #include "string_object.cpp"
 #include "ustring.cpp"
-#include "value.cpp"
+#include "JSValue.cpp"
 #include "wtf/FastMalloc.cpp"
 #include "wtf/TCSystemAlloc.cpp"
 #include "VM/CodeGenerator.cpp"

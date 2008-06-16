@@ -25,11 +25,11 @@
 #include "Parser.h"
 #include "array_object.h"
 #include "debugger.h"
-#include "function.h"
-#include "internal.h"
+#include "JSFunction.h"
+#include "JSString.h"
 #include "lexer.h"
 #include "nodes.h"
-#include "object.h"
+#include "JSObject.h"
 #include <stdio.h>
 #include <string.h>
 #include <wtf/Assertions.h>

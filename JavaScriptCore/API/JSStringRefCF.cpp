@@ -31,7 +31,7 @@
 #include "JSStringRef.h"
 #include <kjs/JSLock.h>
 #include <kjs/ustring.h>
-#include <kjs/value.h>
+#include <kjs/JSValue.h>
 
 using namespace KJS;
 

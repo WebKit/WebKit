@@ -21,7 +21,7 @@
 #ifndef WEBKIT_WEB_FRAME_H
 #define WEBKIT_WEB_FRAME_H
 
-#include <glib-object.h>
+#include <glib-JSObject.h>
 #include <JavaScriptCore/JSBase.h>
 
 #include <webkit/webkitdefines.h>

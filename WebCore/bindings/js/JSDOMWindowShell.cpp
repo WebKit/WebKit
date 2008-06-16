@@ -33,7 +33,7 @@
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
 #include "ScriptController.h"
-#include <kjs/object.h>
+#include <kjs/JSObject.h>
 
 using namespace KJS;
 

@@ -35,7 +35,7 @@
 #import <JavaScriptCore/DebuggerCallFrame.h>
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/JSGlobalObject.h>
-#import <JavaScriptCore/function.h>
+#import <JavaScriptCore/JSFunction.h>
 #import <JavaScriptCore/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>

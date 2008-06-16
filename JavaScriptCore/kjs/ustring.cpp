@@ -27,7 +27,7 @@
 #include "JSLock.h"
 #include "collector.h"
 #include "dtoa.h"
-#include "function.h"
+#include "JSFunction.h"
 #include "identifier.h"
 #include "operations.h"
 #include <ctype.h>

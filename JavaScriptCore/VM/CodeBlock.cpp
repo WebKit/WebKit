@@ -32,7 +32,7 @@
 
 #include "Machine.h"
 #include "debugger.h"
-#include "value.h"
+#include "JSValue.h"
 #include <stdio.h>
 
 namespace KJS {

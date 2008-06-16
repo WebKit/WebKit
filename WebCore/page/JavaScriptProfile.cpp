@@ -31,8 +31,8 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <kjs/object.h>
-#include <kjs/value.h>
+#include <kjs/JSObject.h>
+#include <kjs/JSValue.h>
 
 using namespace KJS;
 

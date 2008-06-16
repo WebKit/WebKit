@@ -29,7 +29,7 @@
 #ifndef ExceptionHelpers_h
 #define ExceptionHelpers_h
 
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 

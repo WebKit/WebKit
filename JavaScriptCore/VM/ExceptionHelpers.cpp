@@ -31,7 +31,7 @@
 
 #include "ExecState.h"
 #include "nodes.h"
-#include "object.h"
+#include "JSObject.h"
 
 namespace KJS {
 
