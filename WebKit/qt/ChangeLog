@@ -1,5 +1,11 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for more JavaScriptCore files
+
+        * WebKit_pch.h:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * Api/qwebframe.cpp:

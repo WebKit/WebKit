@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "bool_object.h"
+#include "BooleanObject.h"
 
 #include "JSGlobalObject.h"
 #include "error_object.h"

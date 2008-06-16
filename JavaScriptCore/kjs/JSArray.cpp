@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "array_instance.h"
+#include "JSArray.h"
 
 #include "PropertyNameArray.h"
 #include <wtf/Assertions.h>

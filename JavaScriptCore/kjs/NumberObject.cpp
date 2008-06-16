@@ -20,8 +20,8 @@
  */
 
 #include "config.h"
-#include "number_object.h"
-#include "number_object.lut.h"
+#include "NumberObject.h"
+#include "NumberObject.lut.h"
 
 #include "dtoa.h"
 #include "error_object.h"
@@ -452,7 +452,7 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject* thisObj, const Li
 
 const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
 
-/* Source for number_object.lut.h
+/* Source for NumberObject.lut.h
 @begin numberTable 5
   NaN                   NumberConstructor::NaNValue       DontEnum|DontDelete|ReadOnly
   NEGATIVE_INFINITY     NumberConstructor::NegInfinity    DontEnum|DontDelete|ReadOnly

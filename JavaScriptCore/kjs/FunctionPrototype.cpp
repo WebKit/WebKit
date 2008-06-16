@@ -19,11 +19,11 @@
  */
 
 #include "config.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 
 #include "JSGlobalObject.h"
 #include "Parser.h"
-#include "array_object.h"
+#include "ArrayPrototype.h"
 #include "debugger.h"
 #include "JSFunction.h"
 #include "JSString.h"

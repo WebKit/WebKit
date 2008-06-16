@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "scope_chain.h"
+#include "ScopeChain.h"
 
 #include "PropertyNameArray.h"
 #include "JSObject.h"

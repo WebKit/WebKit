@@ -21,7 +21,7 @@
 #ifndef ERROR_OBJECT_H_
 #define ERROR_OBJECT_H_
 
-#include "function_object.h"
+#include "FunctionPrototype.h"
 
 namespace KJS {
 

@@ -19,8 +19,8 @@
  */
 
 #include "config.h"
-#include "math_object.h"
-#include "math_object.lut.h"
+#include "MathObject.h"
+#include "MathObject.lut.h"
 
 #include "operations.h"
 #include <time.h>
@@ -33,7 +33,7 @@ namespace KJS {
 
 const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 
-/* Source for math_object.lut.h
+/* Source for MathObject.lut.h
 @begin mathTable 21
   E             MathObject::Euler           DontEnum|DontDelete|ReadOnly
   LN2           MathObject::Ln2             DontEnum|DontDelete|ReadOnly

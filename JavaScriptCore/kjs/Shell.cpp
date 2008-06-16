@@ -26,7 +26,7 @@
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "Parser.h"
-#include "array_object.h"
+#include "ArrayPrototype.h"
 #include "collector.h"
 #include "JSFunction.h"
 #include "InitializeThreading.h"

@@ -19,11 +19,11 @@
  */
 
 #include "config.h"
-#include "regexp_object.h"
-#include "regexp_object.lut.h"
+#include "RegExpObject.h"
+#include "RegExpObject.lut.h"
 
-#include "array_instance.h"
-#include "array_object.h"
+#include "JSArray.h"
+#include "ArrayPrototype.h"
 #include "error_object.h"
 #include "JSString.h"
 #include "JSObject.h"
@@ -124,7 +124,7 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const List&
 
 const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 
-/* Source for regexp_object.lut.h
+/* Source for RegExpObject.lut.h
 @begin regExpTable 5
     global        RegExpObject::Global       DontDelete|ReadOnly|DontEnum
     ignoreCase    RegExpObject::IgnoreCase   DontDelete|ReadOnly|DontEnum
@@ -244,7 +244,7 @@ JSValue* RegExpObject::callAsFunction(ExecState* exec, JSObject*, const List& ar
 
 const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::regExpConstructorTable };
 
-/* Source for regexp_object.lut.h
+/* Source for RegExpObject.lut.h
 @begin regExpConstructorTable 21
   input           RegExpConstructor::Input          None
   $_              RegExpConstructor::Input          DontEnum

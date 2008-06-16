@@ -33,14 +33,14 @@ VPATH = \
 
 .PHONY : all
 all : \
-    array_object.lut.h \
+    ArrayPrototype.lut.h \
     chartables.c \
     date_object.lut.h \
     grammar.cpp \
     lexer.lut.h \
-    math_object.lut.h \
-    number_object.lut.h \
-    regexp_object.lut.h \
+    MathObject.lut.h \
+    NumberObject.lut.h \
+    RegExpObject.lut.h \
     string_object.lut.h \
     $(JavaScriptCore)/docs/bytecode.html \
 #

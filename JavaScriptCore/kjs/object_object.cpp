@@ -23,7 +23,7 @@
 
 #include "JSGlobalObject.h"
 #include "operations.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include <stdio.h>
 
 namespace KJS {

@@ -26,7 +26,7 @@
 #include "config.h"
 #include "runtime_array.h"
 
-#include <kjs/array_object.h>
+#include <kjs/ArrayPrototype.h>
 
 using namespace KJS;
 

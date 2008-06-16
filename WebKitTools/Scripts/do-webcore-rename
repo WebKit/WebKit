@@ -68,9 +68,6 @@ sub wanted
 }
 
 my %renames = (
-);
-
-my %renamesContemplatedForTheFuture = (
     "ARRAY_INSTANCE_H" => "JSArray_h",
     "ARRAY_OBJECT_H_" => "ArrayObject_h",
     "BOOL_OBJECT_H_" => "BooleanObject_h",
@@ -96,7 +93,9 @@ my %renamesContemplatedForTheFuture = (
     "scope_chain" => "ScopeChain",
     "scope_chain_mark" => "ScopeChainMark",
     "scope_chain_mark_h" => "ScopeChainMark_h",
+);
 
+my %renamesContemplatedForTheFuture = (
     "DateInstance" => "DateObject",
     "ErrorInstance" => "ErrorObject",
 

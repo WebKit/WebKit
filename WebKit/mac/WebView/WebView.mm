@@ -90,7 +90,7 @@
 #import <JavaScriptCore/Assertions.h>
 #import <JavaScriptCore/HashTraits.h>
 #import <JavaScriptCore/RefPtr.h>
-#import <JavaScriptCore/array_object.h>
+#import <JavaScriptCore/ArrayPrototype.h>
 #import <JavaScriptCore/date_object.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>

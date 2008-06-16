@@ -34,12 +34,12 @@
 #include "PropertyNameArray.h"
 #include "debugger.h"
 #include "dtoa.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include "JSString.h"
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"
-#include "scope_chain_mark.h"
+#include "ScopeChainMark.h"
 #include <errno.h>
 #include <profiler/Profiler.h>
 #include <stdio.h>

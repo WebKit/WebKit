@@ -43,9 +43,9 @@ Source files for JSCore.
     
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
-        kjs/array_instance.cpp
-        kjs/array_object.cpp
-        kjs/bool_object.cpp
+        kjs/JSArray.cpp
+        kjs/ArrayPrototype.cpp
+        kjs/BooleanObject.cpp
         kjs/collector.cpp
         kjs/CommonIdentifiers.cpp
         kjs/date_object.cpp
@@ -56,7 +56,7 @@ Source files for JSCore.
         kjs/error_object.cpp
         kjs/ExecState.cpp
         kjs/JSFunction.cpp
-        kjs/function_object.cpp
+        kjs/FunctionPrototype.cpp
         kjs/identifier.cpp
         kjs/InitializeThreading.cpp
         kjs/internal.cpp
@@ -72,20 +72,20 @@ Source files for JSCore.
         kjs/lexer.cpp
         kjs/list.cpp
         kjs/lookup.cpp
-        kjs/math_object.cpp
+        kjs/MathObject.cpp
         kjs/nodes.cpp
         kjs/nodes2string.cpp
-        kjs/number_object.cpp
+        kjs/NumberObject.cpp
         kjs/JSObject.cpp
         kjs/object_object.cpp
         kjs/operations.cpp
         kjs/Parser.cpp
-        kjs/property_map.cpp
-        kjs/property_slot.cpp
+        kjs/PropertyMap.cpp
+        kjs/PropertySlot.cpp
         kjs/PropertyNameArray.cpp
         kjs/regexp.cpp
-        kjs/regexp_object.cpp
-        kjs/scope_chain.cpp
+        kjs/RegExpObject.cpp
+        kjs/ScopeChain.cpp
         kjs/string_object.cpp
         kjs/ustring.cpp
         kjs/JSValue.cpp

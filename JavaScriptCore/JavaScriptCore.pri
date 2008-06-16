@@ -15,11 +15,11 @@ include(pcre/pcre.pri)
 
 LUT_FILES += \
     kjs/date_object.cpp \
-    kjs/number_object.cpp \
+    kjs/NumberObject.cpp \
     kjs/string_object.cpp \
-    kjs/array_object.cpp \
-    kjs/math_object.cpp \
-    kjs/regexp_object.cpp
+    kjs/ArrayPrototype.cpp \
+    kjs/MathObject.cpp \
+    kjs/RegExpObject.cpp
 
 KEYWORDLUT_FILES += \
     kjs/keywords.table
@@ -67,9 +67,9 @@ SOURCES += \
 SOURCES += \
     kjs/JSFunction.cpp \
     kjs/debugger.cpp \
-    kjs/array_instance.cpp \
-    kjs/array_object.cpp \
-    kjs/bool_object.cpp \
+    kjs/JSArray.cpp \
+    kjs/ArrayPrototype.cpp \
+    kjs/BooleanObject.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
     kjs/date_object.cpp \
@@ -78,7 +78,7 @@ SOURCES += \
     kjs/dtoa.cpp \
     kjs/error_object.cpp \
     kjs/ExecState.cpp \
-    kjs/function_object.cpp \
+    kjs/FunctionPrototype.cpp \
     kjs/identifier.cpp \
     kjs/internal.cpp \
     kjs/interpreter.cpp \
@@ -88,20 +88,20 @@ SOURCES += \
     kjs/lexer.cpp \
     kjs/list.cpp \
     kjs/lookup.cpp \
-    kjs/math_object.cpp \
+    kjs/MathObject.cpp \
     kjs/nodes.cpp \
     kjs/nodes2string.cpp \
-    kjs/number_object.cpp \
+    kjs/NumberObject.cpp \
     kjs/JSObject.cpp \
     kjs/object_object.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
-    kjs/property_map.cpp \
-    kjs/property_slot.cpp \
+    kjs/PropertyMap.cpp \
+    kjs/PropertySlot.cpp \
     kjs/PropertyNameArray.cpp \
     kjs/regexp.cpp \
-    kjs/regexp_object.cpp \
-    kjs/scope_chain.cpp \
+    kjs/RegExpObject.cpp \
+    kjs/ScopeChain.cpp \
     kjs/string_object.cpp \
     kjs/ustring.cpp \
     kjs/JSValue.cpp \

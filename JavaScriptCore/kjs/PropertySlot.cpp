@@ -21,7 +21,7 @@
 
 
 #include "config.h"
-#include "property_slot.h"
+#include "PropertySlot.h"
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"

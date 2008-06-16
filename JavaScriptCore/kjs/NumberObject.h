@@ -2,7 +2,6 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,43 +19,58 @@
  *
  */
 
-#ifndef FUNCTION_OBJECT_H_
-#define FUNCTION_OBJECT_H_
+#ifndef NumberObject_h
+#define NumberObject_h
 
-#include "object_object.h"
-#include "JSFunction.h"
+#include "FunctionPrototype.h"
+#include "JSWrapperObject.h"
 
 namespace KJS {
 
-    /**
-     * @internal
-     *
-     * The initial value of Function.prototype (and thus all objects created
-     * with the Function constructor)
-     */
-    class FunctionPrototype : public InternalFunction {
+    class NumberObject : public JSWrapperObject {
     public:
-        FunctionPrototype(ExecState*);
+        NumberObject(JSObject* prototype);
 
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
     };
 
     /**
      * @internal
      *
-     * The initial value of the the global variable's "Function" property
+     * The initial value of Number.prototype (and thus all objects created
+     * with the Number constructor
      */
-    class FunctionConstructor : public InternalFunction {
+    class NumberPrototype : public NumberObject {
     public:
-        FunctionConstructor(ExecState*, FunctionPrototype*);
+        NumberPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+    };
+
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Number" property
+     */
+    class NumberConstructor : public InternalFunction {
+    public:
+        NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual JSObject* construct(ExecState*, const List&);
-        virtual JSObject* construct(ExecState*, const List&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
 
         virtual JSValue* callAsFunction(ExecState*, JSObject*, const List&);
+
+        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        JSValue* getValueProperty(ExecState*, int token) const;
+
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+
+        enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
+
+        JSObject* construct(const List&);
     };
 
 } // namespace KJS
 
-#endif // _FUNCTION_OBJECT_H_
+#endif // NumberObject_h

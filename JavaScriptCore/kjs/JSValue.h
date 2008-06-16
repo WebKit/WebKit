@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef KJS_VALUE_H
-#define KJS_VALUE_H
+#ifndef JSValue_h
+#define JSValue_h
 
 #include "CallData.h"
 #include "ConstructData.h"
@@ -613,4 +613,4 @@ inline JSObject* JSValue::toThisObject(ExecState* exec) const
 
 } // namespace KJS
 
-#endif // KJS_VALUE_H
+#endif // JSValue_h

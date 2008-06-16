@@ -18,11 +18,11 @@
  *
  */
 
-#ifndef ARRAY_OBJECT_H_
-#define ARRAY_OBJECT_H_
+#ifndef ArrayPrototype_h
+#define ArrayPrototype_h
 
-#include "array_instance.h"
-#include "function_object.h"
+#include "JSArray.h"
+#include "FunctionPrototype.h"
 #include "lookup.h"
 
 namespace KJS {
@@ -69,4 +69,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif // ARRAY_OBJECT_H_
+#endif // ArrayPrototype_h

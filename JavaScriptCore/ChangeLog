@@ -1,5 +1,80 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for more JavaScriptCore files
+
+        * API/JSCallbackFunction.cpp:
+        * API/JSObjectRef.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArrayPrototype.cpp: Copied from JavaScriptCore/kjs/array_object.cpp.
+        * kjs/ArrayPrototype.h: Copied from JavaScriptCore/kjs/array_object.h.
+        * kjs/BooleanObject.cpp: Copied from JavaScriptCore/kjs/bool_object.cpp.
+        * kjs/BooleanObject.h: Copied from JavaScriptCore/kjs/bool_object.h.
+        * kjs/ExecState.cpp:
+        * kjs/ExecState.h:
+        * kjs/FunctionPrototype.cpp: Copied from JavaScriptCore/kjs/function_object.cpp.
+        * kjs/FunctionPrototype.h: Copied from JavaScriptCore/kjs/function_object.h.
+        * kjs/JSArray.cpp: Copied from JavaScriptCore/kjs/array_instance.cpp.
+        * kjs/JSArray.h: Copied from JavaScriptCore/kjs/array_instance.h.
+        * kjs/JSFunction.cpp:
+        * kjs/JSFunction.h:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSImmediate.cpp:
+        * kjs/JSObject.h:
+        * kjs/JSString.h:
+        * kjs/JSValue.h:
+        * kjs/JSVariableObject.cpp:
+        * kjs/MathObject.cpp: Copied from JavaScriptCore/kjs/math_object.cpp.
+        * kjs/MathObject.h: Copied from JavaScriptCore/kjs/math_object.h.
+        * kjs/NumberObject.cpp: Copied from JavaScriptCore/kjs/number_object.cpp.
+        * kjs/NumberObject.h: Copied from JavaScriptCore/kjs/number_object.h.
+        * kjs/PropertyMap.cpp: Copied from JavaScriptCore/kjs/property_map.cpp.
+        * kjs/PropertyMap.h: Copied from JavaScriptCore/kjs/property_map.h.
+        * kjs/PropertySlot.cpp: Copied from JavaScriptCore/kjs/property_slot.cpp.
+        * kjs/PropertySlot.h: Copied from JavaScriptCore/kjs/property_slot.h.
+        * kjs/RegExpObject.cpp: Copied from JavaScriptCore/kjs/regexp_object.cpp.
+        * kjs/RegExpObject.h: Copied from JavaScriptCore/kjs/regexp_object.h.
+        * kjs/ScopeChain.cpp: Copied from JavaScriptCore/kjs/scope_chain.cpp.
+        * kjs/ScopeChain.h: Copied from JavaScriptCore/kjs/scope_chain.h.
+        * kjs/ScopeChainMark.h: Copied from JavaScriptCore/kjs/scope_chain_mark.h.
+        * kjs/Shell.cpp:
+        * kjs/array_instance.cpp: Removed.
+        * kjs/array_instance.h: Removed.
+        * kjs/array_object.cpp: Removed.
+        * kjs/array_object.h: Removed.
+        * kjs/bool_object.cpp: Removed.
+        * kjs/bool_object.h: Removed.
+        * kjs/error_object.h:
+        * kjs/function_object.cpp: Removed.
+        * kjs/function_object.h: Removed.
+        * kjs/internal.cpp:
+        * kjs/math_object.cpp: Removed.
+        * kjs/math_object.h: Removed.
+        * kjs/nodes.cpp:
+        * kjs/number_object.cpp: Removed.
+        * kjs/number_object.h: Removed.
+        * kjs/object_object.cpp:
+        * kjs/property_map.cpp: Removed.
+        * kjs/property_map.h: Removed.
+        * kjs/property_slot.cpp: Removed.
+        * kjs/property_slot.h: Removed.
+        * kjs/regexp_object.cpp: Removed.
+        * kjs/regexp_object.h: Removed.
+        * kjs/scope_chain.cpp: Removed.
+        * kjs/scope_chain.h: Removed.
+        * kjs/scope_chain_mark.h: Removed.
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * API/JSBase.cpp:

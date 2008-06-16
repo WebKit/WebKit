@@ -68,13 +68,6 @@ sub wanted
 }
 
 my %renames = (
-    "function.cpp" => "JSFunction.cpp",
-    "function.h" => "JSFunction.h",
-    "internal.h" => "JSString.h",
-    "object.cpp" => "JSObject.cpp",
-    "object.h" => "JSObject.h",
-    "value.cpp" => "JSValue.cpp",
-    "value.h" => "JSValue.h",
 );
 
 my %renamesContemplatedForTheFuture = (

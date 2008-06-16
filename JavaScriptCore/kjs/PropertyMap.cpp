@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "property_map.h"
+#include "PropertyMap.h"
 
 #include "JSObject.h"
 #include "protect.h"

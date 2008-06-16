@@ -273,27 +273,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\array_instance.cpp"
+				RelativePath="..\..\kjs\JSArray.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\array_instance.h"
+				RelativePath="..\..\kjs\JSArray.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\array_object.cpp"
+				RelativePath="..\..\kjs\ArrayPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\array_object.h"
+				RelativePath="..\..\kjs\ArrayPrototype.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\bool_object.cpp"
+				RelativePath="..\..\kjs\BooleanObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\bool_object.h"
+				RelativePath="..\..\kjs\BooleanObject.h"
 				>
 			</File>
 			<File
@@ -373,11 +373,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\function_object.cpp"
+				RelativePath="..\..\kjs\FunctionPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\function_object.h"
+				RelativePath="..\..\kjs\FunctionPrototype.h"
 				>
 			</File>
 			<File
@@ -505,11 +505,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\math_object.cpp"
+				RelativePath="..\..\kjs\MathObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\math_object.h"
+				RelativePath="..\..\kjs\MathObject.h"
 				>
 			</File>
 			<File
@@ -517,11 +517,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\number_object.cpp"
+				RelativePath="..\..\kjs\NumberObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\number_object.h"
+				RelativePath="..\..\kjs\NumberObject.h"
 				>
 			</File>
 			<File
@@ -549,19 +549,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\property_map.cpp"
+				RelativePath="..\..\kjs\PropertyMap.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\property_map.h"
+				RelativePath="..\..\kjs\PropertyMap.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\property_slot.cpp"
+				RelativePath="..\..\kjs\PropertySlot.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\property_slot.h"
+				RelativePath="..\..\kjs\PropertySlot.h"
 				>
 			</File>
 			<File
@@ -585,23 +585,23 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\regexp_object.cpp"
+				RelativePath="..\..\kjs\RegExpObject.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\regexp_object.h"
+				RelativePath="..\..\kjs\RegExpObject.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\scope_chain.cpp"
+				RelativePath="..\..\kjs\ScopeChain.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\scope_chain.h"
+				RelativePath="..\..\kjs\ScopeChain.h"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\scope_chain_mark.h"
+				RelativePath="..\..\kjs\ScopeChainMark.h"
 				>
 			</File>
 			<File
@@ -652,7 +652,7 @@
 				Name="DerivedSources"
 				>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\array_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\ArrayPrototype.lut.h"
 					>
 				</File>
 				<File
@@ -705,15 +705,15 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\math_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\MathObject.lut.h"
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\number_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\NumberObject.lut.h"
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\regexp_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RegExpObject.lut.h"
 					>
 				</File>
 				<File

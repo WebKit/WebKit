@@ -27,7 +27,7 @@
 #include "JSJavaScriptCallFrame.h"
 
 #include "JavaScriptCallFrame.h"
-#include <kjs/array_object.h>
+#include <kjs/ArrayPrototype.h>
 
 using namespace KJS;
 

@@ -21,10 +21,10 @@
 #include "qt_runtime.h"
 #include "qt_instance.h"
 #include "JSObject.h"
-#include "array_instance.h"
+#include "JSArray.h"
 #include "date_object.h"
 #include "DateMath.h"
-#include "regexp_object.h"
+#include "RegExpObject.h"
 #include <runtime.h>
 #include <runtime_object.h>
 #include <runtime_array.h>

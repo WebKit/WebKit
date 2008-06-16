@@ -40,14 +40,14 @@
 #include "Parser.h"
 #include "Profiler.h"
 #include "Register.h"
-#include "array_object.h"
+#include "ArrayPrototype.h"
 #include "debugger.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "object_object.h"
 #include "operations.h"
 #include "operations.h"
-#include "regexp_object.h"
+#include "RegExpObject.h"
 
 namespace KJS {
 

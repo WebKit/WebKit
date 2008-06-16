@@ -27,7 +27,7 @@
 #include "JSGlobalObject.h"
 #include "JSFunction.h"
 #include "JSString.h"
-#include "scope_chain_mark.h"
+#include "ScopeChainMark.h"
 
 namespace KJS {
 

@@ -28,9 +28,9 @@
 #include "ExecState.h"
 #include "JSType.h"
 #include "list.h"
-#include "property_map.h"
-#include "property_slot.h"
-#include "scope_chain.h"
+#include "PropertyMap.h"
+#include "PropertySlot.h"
+#include "ScopeChain.h"
 
 namespace KJS {
 

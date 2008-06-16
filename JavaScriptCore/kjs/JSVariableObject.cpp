@@ -30,7 +30,7 @@
 #include "JSVariableObject.h"
 
 #include "PropertyNameArray.h"
-#include "property_map.h"
+#include "PropertyMap.h"
 
 namespace KJS {
 

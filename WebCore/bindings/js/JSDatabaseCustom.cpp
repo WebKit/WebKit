@@ -39,7 +39,7 @@
 #include "JSDOMWindowCustom.h"
 #include "PlatformString.h"
 #include "SQLValue.h"
-#include <kjs/array_instance.h>
+#include <kjs/JSArray.h>
 
 namespace WebCore {
 

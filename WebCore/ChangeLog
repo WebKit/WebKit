@@ -1,5 +1,28 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for more JavaScriptCore files
+
+        * ForwardingHeaders/kjs/ArrayPrototype.h: Copied from WebCore/ForwardingHeaders/kjs/array_object.h.
+        * ForwardingHeaders/kjs/BooleanObject.h: Copied from WebCore/ForwardingHeaders/kjs/bool_object.h.
+        * ForwardingHeaders/kjs/FunctionPrototype.h: Copied from WebCore/ForwardingHeaders/kjs/function_object.h.
+        * ForwardingHeaders/kjs/JSArray.h: Copied from WebCore/ForwardingHeaders/kjs/array_instance.h.
+        * ForwardingHeaders/kjs/PropertyMap.h: Copied from WebCore/ForwardingHeaders/kjs/property_map.h.
+        * ForwardingHeaders/kjs/array_instance.h: Removed.
+        * ForwardingHeaders/kjs/array_object.h: Removed.
+        * ForwardingHeaders/kjs/bool_object.h: Removed.
+        * ForwardingHeaders/kjs/function_object.h: Removed.
+        * ForwardingHeaders/kjs/property_map.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/JSClipboardCustom.cpp:
+        * bindings/js/JSDatabaseCustom.cpp:
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        * bindings/js/kjs_events.cpp:
+        * bridge/jni/jni_utility.cpp:
+        * bridge/qt/qt_runtime.cpp:
+        * bridge/runtime_array.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * ForwardingHeaders/kjs/JSFunction.h: Copied from WebCore/ForwardingHeaders/kjs/function.h.

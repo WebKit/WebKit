@@ -22,9 +22,9 @@
 #include "JSImmediate.h"
 
 #include "JSGlobalObject.h"
-#include "bool_object.h"
+#include "BooleanObject.h"
 #include "JSNotAnObject.h"
-#include "number_object.h"
+#include "NumberObject.h"
 #include "JSObject.h"
 
 namespace KJS {

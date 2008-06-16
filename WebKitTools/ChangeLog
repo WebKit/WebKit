@@ -1,5 +1,10 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        * Scripts/do-file-rename: Updated.
+        * Scripts/do-webcore-rename: Updated for the latest round of renaming.
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         * Scripts/do-file-rename: Updated for the latest round of renaming.
         * Scripts/do-webcore-rename: Tweaked and reorganized a bit.
 

@@ -25,10 +25,10 @@
 
 #include "JSWrapperObject.h"
 #include "PropertyNameArray.h"
-#include "array_object.h"
+#include "ArrayPrototype.h"
 #include "error_object.h"
 #include "operations.h"
-#include "regexp_object.h"
+#include "RegExpObject.h"
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Collator.h>
 

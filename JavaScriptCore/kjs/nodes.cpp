@@ -31,12 +31,12 @@
 #include "JSGlobalObject.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
-#include "array_object.h"
+#include "ArrayPrototype.h"
 #include "debugger.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include "lexer.h"
 #include "operations.h"
-#include "regexp_object.h"
+#include "RegExpObject.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashCountedSet.h>

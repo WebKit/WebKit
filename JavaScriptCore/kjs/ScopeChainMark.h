@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef scope_chain_mark_h
-#define scope_chain_mark_h
+#ifndef ScopeChainMark_h
+#define ScopeChainMark_h
 
-#include "scope_chain.h"
+#include "ScopeChain.h"
 
 namespace KJS {
 

@@ -72,5 +72,5 @@
 #include <wtf/GetPtr.h>
 
 #include "../../WebCore/bindings/js/JSDOMBinding.h"
-#include "../../JavaScriptCore/kjs/math_object.h"
+#include "../../JavaScriptCore/kjs/MathObject.h"
 #endif

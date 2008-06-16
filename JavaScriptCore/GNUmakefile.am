@@ -18,11 +18,11 @@ javascriptcore_h_api += \
 	JavaScriptCore/API/JSValueRef.h
 
 javascriptcore_built_nosources += \
-	JavaScriptCore/kjs/array_object.lut.h \
+	JavaScriptCore/kjs/ArrayPrototype.lut.h \
 	JavaScriptCore/kjs/date_object.lut.h \
-	JavaScriptCore/kjs/math_object.lut.h \
-	JavaScriptCore/kjs/number_object.lut.h \
-	JavaScriptCore/kjs/regexp_object.lut.h \
+	JavaScriptCore/kjs/MathObject.lut.h \
+	JavaScriptCore/kjs/NumberObject.lut.h \
+	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
 	JavaScriptCore/pcre/chartables.c \
 	DerivedSources/lexer.lut.h
@@ -86,34 +86,34 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSWrapperObject.cpp \
 	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/kjs/PropertyNameArray.cpp \
-	JavaScriptCore/kjs/array_instance.cpp \
-	JavaScriptCore/kjs/array_object.cpp \
-	JavaScriptCore/kjs/bool_object.cpp \
+	JavaScriptCore/kjs/JSArray.cpp \
+	JavaScriptCore/kjs/ArrayPrototype.cpp \
+	JavaScriptCore/kjs/BooleanObject.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/kjs/date_object.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
 	JavaScriptCore/kjs/error_object.cpp \
 	JavaScriptCore/kjs/JSFunction.cpp \
-	JavaScriptCore/kjs/function_object.cpp \
+	JavaScriptCore/kjs/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/identifier.cpp \
 	JavaScriptCore/kjs/internal.cpp \
 	JavaScriptCore/kjs/interpreter.cpp \
 	JavaScriptCore/kjs/lexer.cpp \
 	JavaScriptCore/kjs/list.cpp \
 	JavaScriptCore/kjs/lookup.cpp \
-	JavaScriptCore/kjs/math_object.cpp \
+	JavaScriptCore/kjs/MathObject.cpp \
 	JavaScriptCore/kjs/nodes.cpp \
 	JavaScriptCore/kjs/nodes2string.cpp \
-	JavaScriptCore/kjs/number_object.cpp \
+	JavaScriptCore/kjs/NumberObject.cpp \
 	JavaScriptCore/kjs/JSObject.cpp \
 	JavaScriptCore/kjs/object_object.cpp \
 	JavaScriptCore/kjs/operations.cpp \
-	JavaScriptCore/kjs/property_map.cpp \
-	JavaScriptCore/kjs/property_slot.cpp \
+	JavaScriptCore/kjs/PropertyMap.cpp \
+	JavaScriptCore/kjs/PropertySlot.cpp \
 	JavaScriptCore/kjs/regexp.cpp \
-	JavaScriptCore/kjs/regexp_object.cpp \
-	JavaScriptCore/kjs/scope_chain.cpp \
+	JavaScriptCore/kjs/RegExpObject.cpp \
+	JavaScriptCore/kjs/ScopeChain.cpp \
 	JavaScriptCore/kjs/string_object.cpp \
 	JavaScriptCore/kjs/ustring.cpp \
 	JavaScriptCore/kjs/JSValue.cpp \
@@ -203,11 +203,11 @@ Programs_jsc_LDADD = \
 
 # Clean rules for JavaScriptCore
 CLEANFILES += \
-	JavaScriptCore/kjs/array_object.lut.h \
+	JavaScriptCore/kjs/ArrayPrototype.lut.h \
 	JavaScriptCore/kjs/date_object.lut.h \
-	JavaScriptCore/kjs/math_object.lut.h \
-	JavaScriptCore/kjs/number_object.lut.h \
-	JavaScriptCore/kjs/regexp_object.lut.h \
+	JavaScriptCore/kjs/MathObject.lut.h \
+	JavaScriptCore/kjs/NumberObject.lut.h \
+	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
 	JavaScriptCore/pcre/chartables.c \
 	Programs/jsc \

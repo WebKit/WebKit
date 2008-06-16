@@ -36,7 +36,7 @@
 #include "JSValueRef.h"
 #include "PropertyNameArray.h"
 #include "JSFunction.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include "identifier.h"
 #include "JSString.h"
 #include "JSObject.h"

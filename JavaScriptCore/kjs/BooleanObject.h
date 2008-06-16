@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef BOOL_OBJECT_H_
-#define BOOL_OBJECT_H_
+#ifndef BooleanObject_h
+#define BooleanObject_h
 
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include "JSWrapperObject.h"
 
 namespace KJS {
@@ -62,4 +62,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif // BOOL_OBJECT_H_
+#endif // BooleanObject_h

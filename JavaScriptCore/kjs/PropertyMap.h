@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef KJS_PROPERTY_MAP_H_
-#define KJS_PROPERTY_MAP_H_
+#ifndef PropertyMap_h
+#define PropertyMap_h
 
 #include "identifier.h"
 #include "protect.h"

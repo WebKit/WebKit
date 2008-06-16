@@ -38,7 +38,7 @@
 #include "Node.h"
 #include "PlatformString.h"
 #include "StringHash.h"
-#include <kjs/array_object.h>
+#include <kjs/ArrayPrototype.h>
 #include <wtf/HashSet.h>
 
 using namespace KJS;

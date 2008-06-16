@@ -18,10 +18,10 @@
  *
  */
 
-#ifndef REGEXP_OBJECT_H_
-#define REGEXP_OBJECT_H_
+#ifndef RegExpObject_h
+#define RegExpObject_h
 
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include "regexp.h"
 
 namespace KJS {

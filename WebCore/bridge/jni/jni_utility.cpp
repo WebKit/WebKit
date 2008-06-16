@@ -31,7 +31,7 @@
 #include "jni_runtime.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include <kjs/array_instance.h>
+#include <kjs/JSArray.h>
 #include <dlfcn.h>
 
 namespace KJS {

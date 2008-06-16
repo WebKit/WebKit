@@ -29,7 +29,7 @@
 #include "LocalStorageEntry.h"
 #include "completion.h"
 #include "list.h"
-#include "scope_chain.h"
+#include "ScopeChain.h"
 
 namespace KJS  {
 

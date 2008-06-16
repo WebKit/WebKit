@@ -1,5 +1,11 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - new names for more JavaScriptCore files
+
+        * WebView/WebView.mm:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * ForwardingHeaders/kjs/JSFunction.h: Copied from WebKit/mac/ForwardingHeaders/kjs/function.h.

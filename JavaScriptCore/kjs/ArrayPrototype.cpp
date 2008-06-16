@@ -22,8 +22,8 @@
  */
 
 #include "config.h"
-#include "array_object.h"
-#include "array_object.lut.h"
+#include "ArrayPrototype.h"
+#include "ArrayPrototype.lut.h"
 
 #include "Machine.h"
 #include "error_object.h"
@@ -41,7 +41,7 @@ namespace KJS {
 
 const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::arrayTable};
 
-/* Source for array_object.lut.h
+/* Source for ArrayPrototype.lut.h
 @begin arrayTable 16
   toString       arrayProtoFuncToString       DontEnum|Function 0
   toLocaleString arrayProtoFuncToLocaleString DontEnum|Function 0

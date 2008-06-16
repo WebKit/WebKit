@@ -22,8 +22,8 @@
  *
  */
 
-#ifndef KJS_FUNCTION_H
-#define KJS_FUNCTION_H
+#ifndef JSFunction_h
+#define JSFunction_h
 
 #include "JSVariableObject.h"
 #include "SymbolTable.h"

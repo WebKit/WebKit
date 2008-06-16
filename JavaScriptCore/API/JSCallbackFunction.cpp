@@ -30,7 +30,7 @@
 
 #include "APICast.h"
 #include "JSFunction.h"
-#include "function_object.h"
+#include "FunctionPrototype.h"
 #include <kjs/JSGlobalObject.h>
 #include <wtf/Vector.h>
 
