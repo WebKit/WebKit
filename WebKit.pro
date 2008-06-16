@@ -3,7 +3,7 @@ CONFIG += ordered
 
 SUBDIRS += \
         WebCore \
-        JavaScriptCore/kjs/testkjs.pro \
+        JavaScriptCore/kjs/jsc.pro \
         WebKit/qt/QtLauncher
 
 !win32-*: SUBDIRS += WebKitTools/DumpRenderTree/qt/DumpRenderTree.pro
