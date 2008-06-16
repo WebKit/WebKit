@@ -1,3 +1,24 @@
+2008-06-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5825683> Three slash URLs are modified by WebKit
+
+        Test: fast/loader/url-parse-1.html
+
+        URIs in which the scheme is followed by "://" are ambiguous, because
+        "//" can be either the beginning of a net_path or the beginning of an
+        abs_path whose first path segment is empty. In the case of ":///", the
+        net_path interpretation is invalid, because the authority (the part
+        between the second and third slashes) cannot be empty. However, for
+        historical reasons, this is allowed in http:, https: and file: URLs,
+        in which an empty authority means the local host.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::parse): Changed to interpret URLs in which the scheme
+        is followed by ":///" as abs_path-only URLs, unless the scheme is http,
+        https or file.
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Sam.
