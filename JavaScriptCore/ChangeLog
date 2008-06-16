@@ -1,3 +1,24 @@
+2008-06-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Make a UnaryOpNode class to reduce boilerplate code for UnaryPlusNode,
+        NegateNode, BitwiseNotNode, and LogicalNotNode.
+
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::emitToJSNumber):
+        * kjs/nodes.cpp:
+        (KJS::UnaryOpNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::UnaryOpNode::UnaryOpNode):
+        (KJS::UnaryPlusNode::):
+        (KJS::NegateNode::):
+        (KJS::NegateNode::precedence):
+        (KJS::BitwiseNotNode::):
+        (KJS::BitwiseNotNode::precedence):
+        (KJS::LogicalNotNode::):
+        (KJS::LogicalNotNode::precedence):
+
 2008-06-16  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix

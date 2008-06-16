@@ -741,36 +741,12 @@ RegisterID* PrefixErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
     return emitThrowError(generator, ReferenceError, m_operator == OpPlusPlus ? "Prefix ++ operator applied to value that is not a reference." : "Prefix -- operator applied to value that is not a reference.");
 }
 
-// ------------------------------ UnaryPlusNode --------------------------------
+// ------------------------------ Unary Operation Nodes -----------------------------------
 
-RegisterID* UnaryPlusNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitToJSNumber(generator.finalDestination(dst), src);
-}
-
-// ------------------------------ NegateNode -----------------------------------
-
-RegisterID* NegateNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitNegate(generator.finalDestination(dst), src);
-}
-
-// ------------------------------ BitwiseNotNode -------------------------------
-
-RegisterID* BitwiseNotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitBitNot(generator.finalDestination(dst), src);
-}
-
-// ------------------------------ LogicalNotNode -------------------------------
-
-RegisterID* LogicalNotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RegisterID* src = generator.emitNode(m_expr.get());
-    return generator.emitNot(generator.finalDestination(dst), src);
+    return generator.emitUnaryOp(opcode(), generator.finalDestination(dst), src);
 }
 
 // ------------------------------ Binary Operation Nodes -----------------------------------

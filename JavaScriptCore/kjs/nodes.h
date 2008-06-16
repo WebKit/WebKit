@@ -1132,68 +1132,72 @@ namespace KJS {
         Operator m_operator;
     };
 
-    class UnaryPlusNode : public ExpressionNode {
+    class UnaryOpNode : public ExpressionNode {
+    public:
+        UnaryOpNode(ExpressionNode* expr)
+            : m_expr(expr)
+        {
+        }
+
+        UnaryOpNode(JSType type, ExpressionNode* expr)
+            : ExpressionNode(type)
+            , m_expr(expr)
+        {
+        }
+
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL = 0;
+
+    protected:
+        RefPtr<ExpressionNode> m_expr;
+    };
+
+    class UnaryPlusNode : public UnaryOpNode {
     public:
         UnaryPlusNode(ExpressionNode* expr) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr(expr)
+            : UnaryOpNode(NumberType, expr)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_to_jsnumber; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr;
     };
 
-    class NegateNode : public ExpressionNode {
+    class NegateNode : public UnaryOpNode {
     public:
         NegateNode(ExpressionNode* expr) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr(expr)
+            : UnaryOpNode(NumberType, expr)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_negate; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr;
     };
 
-    class BitwiseNotNode : public ExpressionNode {
+    class BitwiseNotNode : public UnaryOpNode {
     public:
         BitwiseNotNode(ExpressionNode* expr) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
-            , m_expr(expr)
+            : UnaryOpNode(NumberType, expr)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_bitnot; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr;
     };
 
-    class LogicalNotNode : public ExpressionNode {
+    class LogicalNotNode : public UnaryOpNode {
     public:
         LogicalNotNode(ExpressionNode* expr) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
-            , m_expr(expr)
+            : UnaryOpNode(BooleanType, expr)
         {
         }
 
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual OpcodeID opcode() const KJS_FAST_CALL { return op_not; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr;
     };
 
     class BinaryOpNode : public ExpressionNode {
