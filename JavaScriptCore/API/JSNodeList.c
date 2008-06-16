@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -72,7 +72,7 @@ static JSValueRef JSNodeList_getProperty(JSContextRef context, JSObjectRef thisO
     ASSERT(nodeList);
     double index = JSValueToNumber(context, JSValueMakeString(context, propertyName), exception);
     unsigned uindex = (unsigned)index;
-    if (uindex == index) { // false for NaN
+    if (uindex == index) { /* false for NaN */
         Node* node = NodeList_item(nodeList, uindex);
         if (node)
             return JSNode_new(context, node);

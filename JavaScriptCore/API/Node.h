@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c++; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -48,4 +48,4 @@ extern void Node_appendChild(Node* node, Node* child);
 extern void Node_removeChild(Node* node, Node* child);
 extern void Node_replaceChild(Node* node, Node* newChild, Node* oldChild);
 
-#endif // Node_h
+#endif /* Node_h */

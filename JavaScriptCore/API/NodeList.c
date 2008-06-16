@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c++; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -31,7 +31,7 @@
 extern NodeList* NodeList_new(Node* parentNode)
 {
     Node_ref(parentNode);
-    
+
     NodeList* nodeList = (NodeList*)malloc(sizeof(NodeList));
     nodeList->parentNode = parentNode;
     nodeList->refCount = 0;
@@ -40,7 +40,7 @@ extern NodeList* NodeList_new(Node* parentNode)
 
 extern unsigned NodeList_length(NodeList* nodeList)
 {
-    // Linear count from tail -- good enough for our purposes here
+    /* Linear count from tail -- good enough for our purposes here */
     unsigned i = 0;
     NodeLink* n = nodeList->parentNode->childNodesTail;
     while (n) {
@@ -56,8 +56,8 @@ extern Node* NodeList_item(NodeList* nodeList, unsigned index)
     unsigned length = NodeList_length(nodeList);
     if (index >= length)
         return NULL;
-    
-    // Linear search from tail -- good enough for our purposes here
+
+    /* Linear search from tail -- good enough for our purposes here */
     NodeLink* n = nodeList->parentNode->childNodesTail;
     unsigned i = 0;
     unsigned count = length - 1 - index;

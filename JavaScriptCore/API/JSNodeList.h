@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -32,4 +32,4 @@
 
 extern JSObjectRef JSNodeList_new(JSContextRef, NodeList*);
 
-#endif // JSNodeList_h
+#endif /* JSNodeList_h */

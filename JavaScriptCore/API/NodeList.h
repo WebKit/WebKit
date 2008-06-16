@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c++; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -40,4 +40,4 @@ extern Node* NodeList_item(NodeList*, unsigned);
 extern void NodeList_ref(NodeList*);
 extern void NodeList_deref(NodeList*);
 
-#endif // NodeList_h
+#endif /* NodeList_h */

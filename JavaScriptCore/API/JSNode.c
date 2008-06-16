@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -38,7 +38,7 @@ static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function,
 {
     UNUSED_PARAM(function);
 
-    // Example of throwing a type error for invalid values
+    /* Example of throwing a type error for invalid values */
     if (!JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
         JSStringRef message = JSStringCreateWithUTF8CString("TypeError: appendChild can only be called on nodes");
         *exception = JSValueMakeString(context, message);
@@ -60,8 +60,8 @@ static JSValueRef JSNode_appendChild(JSContextRef context, JSObjectRef function,
 static JSValueRef JSNode_removeChild(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     UNUSED_PARAM(function);
-    
-    // Example of ignoring invalid values
+
+    /* Example of ignoring invalid values */
     if (argumentCount > 0) {
         if (JSValueIsObjectOfClass(context, thisObject, JSNode_class(context))) {
             if (JSValueIsObjectOfClass(context, arguments[0], JSNode_class(context))) {

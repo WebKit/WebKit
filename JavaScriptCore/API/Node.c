@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  *
@@ -49,7 +49,7 @@ void Node_appendChild(Node* node, Node* child)
 
 void Node_removeChild(Node* node, Node* child)
 {
-    // Linear search from tail -- good enough for our purposes here
+    /* Linear search from tail -- good enough for our purposes here */
     NodeLink* current;
     NodeLink** currentHandle;
     for (currentHandle = &node->childNodesTail, current = *currentHandle; current; currentHandle = &current->prev, current = *currentHandle) {
@@ -64,7 +64,7 @@ void Node_removeChild(Node* node, Node* child)
 
 void Node_replaceChild(Node* node, Node* newChild, Node* oldChild)
 {
-    // Linear search from tail -- good enough for our purposes here
+    /* Linear search from tail -- good enough for our purposes here */
     NodeLink* current;
     for (current = node->childNodesTail; current; current = current->prev) {
         if (current->node == oldChild) {

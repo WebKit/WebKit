@@ -1,4 +1,4 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
+/* -*- mode: c; c-basic-offset: 4 -*- */
 /*
  * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
@@ -113,7 +113,7 @@ static char* createStringWithContentsOfFile(const char* fileName)
     
     while (!feof(f) && !ferror(f)) {
         buffer_size += fread(buffer + buffer_size, 1, buffer_capacity - buffer_size, f);
-        if (buffer_size == buffer_capacity) { // guarantees space for trailing '\0'
+        if (buffer_size == buffer_capacity) { /* guarantees space for trailing '\0' */
             buffer_capacity *= 2;
             buffer = (char*)realloc(buffer, buffer_capacity);
             ASSERT(buffer);
