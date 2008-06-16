@@ -28,7 +28,9 @@
 
 #include <JavaScriptCore/JSBase.h>
 
+#ifndef __cplusplus
 #include <stdbool.h>
+#endif
 
 /*!
 @enum JSType

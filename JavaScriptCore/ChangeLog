@@ -1,3 +1,21 @@
+2008-06-16  Thiago Macieira  <tjmaciei@trolltech.com>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19577
+
+        Fix compilation in C++ environments where C99 headers are not present
+
+        The stdbool.h header is a C99 feature, defining the "_Bool" type as well as the
+        "true" and "false" constants. But it's completely unnecessary in C++ as the
+        language already defines the "bool" type and its two values.
+
+        * API/JSBase.h:
+        * API/JSContextRef.h:
+        * API/JSObjectRef.h:
+        * API/JSStringRef.h:
+        * API/JSValueRef.h:
+
 2008-06-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by John.

@@ -28,7 +28,9 @@
 
 #include <JavaScriptCore/JSValueRef.h>
 
+#ifndef __cplusplus
 #include <stdbool.h>
+#endif
 #include <stddef.h> /* for size_t */
 
 #ifdef __cplusplus
