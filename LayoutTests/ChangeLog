@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Remove my name from the expected test results.
+
+        * fast/dom/documenturi-can-hold-arbitrary-string-expected.txt:
+        * fast/dom/documenturi-can-hold-arbitrary-string.html:
+        * fast/dom/documenturi-not-affected-by-base-tag-expected.txt:
+        * fast/dom/documenturi-not-affected-by-base-tag.html:
+
+2008-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
         Test Document.documentURI (DOM Core Level 3).  There don't appear to be
         other browser implementations of this feature to compare against, but
         these tests test my interpretation of the spec.
