@@ -1572,14 +1572,14 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderBlock::paintCaret(PaintInfo& paintInfo, CaretType type)
 {
-    SelectionController* selectionController = type == CursorCaret ? document()->frame()->selectionController() : document()->frame()->dragCaretController();
-    Node* caretNode = selectionController->start().node();
+    SelectionController* selection = type == CursorCaret ? document()->frame()->selection() : document()->frame()->dragCaretController();
+    Node* caretNode = selection->start().node();
     RenderObject* renderer = caretNode ? caretNode->renderer() : 0;
     if (!renderer)
         return;
     // if caretNode is a block and caret is inside it then caret should be painted by that block
-    bool cursorInsideBlockCaretNode = renderer->isBlockFlow() && selectionController->isInsideNode();
-    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && selectionController->isContentEditable()) {
+    bool cursorInsideBlockCaretNode = renderer->isBlockFlow() && selection->isInsideNode();
+    if ((cursorInsideBlockCaretNode ? renderer : renderer->containingBlock()) == this && selection->isContentEditable()) {
         if (type == CursorCaret)
             document()->frame()->paintCaret(paintInfo.context, paintInfo.rect);
         else

@@ -72,7 +72,7 @@ void RenderWidget::destroy()
     // So the code below includes copied and pasted contents of
     // both RenderBox::destroy() and RenderObject::destroy().
     // Fix originally made for <rdar://problem/4228818>.
-    animationController()->cancelImplicitAnimations(this);
+    animation()->cancelImplicitAnimations(this);
 
     if (RenderView* v = view())
         v->removeWidget(this);

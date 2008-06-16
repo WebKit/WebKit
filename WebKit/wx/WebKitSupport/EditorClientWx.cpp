@@ -247,7 +247,7 @@ void EditorClientWx::handleKeyboardEvent(KeyboardEvent* event)
 
     const PlatformKeyboardEvent* kevent = event->keyEvent();
     if (kevent->type() != PlatformKeyboardEvent::KeyUp) {
-        Node* start = frame->selectionController()->start().node();
+        Node* start = frame->selection()->start().node();
         if (!start || !start->isContentEditable())
             return; 
         

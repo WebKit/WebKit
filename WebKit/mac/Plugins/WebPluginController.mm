@@ -366,7 +366,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
 {
     bool primary = true;
     if (Frame* frame = core([self webFrame]))
-        primary = frame->selectionController()->isFocusedAndActive();
+        primary = frame->selection()->isFocusedAndActive();
     return primary ? [NSColor selectedTextBackgroundColor] : [NSColor secondarySelectedControlColor];
 }
 

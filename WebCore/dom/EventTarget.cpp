@@ -275,8 +275,8 @@ bool EventTarget::dispatchGenericEvent(EventTargetNode* referenceNode, PassRefPt
     // have a reference to it in a variable.  So there is no need for
     // the interpreter to keep the event in it's cache
     Frame* frame = referenceNode->document()->frame();
-    if (tempEvent && frame && frame->scriptProxy()->isEnabled())
-        frame->scriptProxy()->finishedWithEvent(evt.get());
+    if (tempEvent && frame && frame->script()->isEnabled())
+        frame->script()->finishedWithEvent(evt.get());
 
     return !evt->defaultPrevented(); // ### what if defaultPrevented was called before dispatchEvent?
 }

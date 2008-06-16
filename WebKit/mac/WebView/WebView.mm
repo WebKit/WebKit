@@ -3280,7 +3280,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
     if (!result) // FIXME: pass errors
         return 0;
     JSLock lock;
-    return aeDescFromJSValue(coreFrame->scriptProxy()->globalObject()->globalExec(), result);
+    return aeDescFromJSValue(coreFrame->script()->globalObject()->globalExec(), result);
 }
 
 - (BOOL)canMarkAllTextMatches
@@ -3597,7 +3597,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
         return;
 
     if (range == nil)
-        coreFrame->selectionController()->clear();
+        coreFrame->selection()->clear();
     else {
         // Derive the frame to use from the range passed in.
         // Using _selectedOrMainFrame could give us a different document than
@@ -3606,7 +3606,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
         if (!coreFrame)
             return;
 
-        coreFrame->selectionController()->setSelectedRange([range _range], core(selectionAffinity), true);
+        coreFrame->selection()->setSelectedRange([range _range], core(selectionAffinity), true);
     }
 }
 
@@ -3615,7 +3615,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return nil;
-    return kit(coreFrame->selectionController()->toRange().get());
+    return kit(coreFrame->selection()->toRange().get());
 }
 
 - (NSSelectionAffinity)selectionAffinity
@@ -3623,7 +3623,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
     Frame* coreFrame = core([self _selectedOrMainFrame]);
     if (!coreFrame)
         return NSSelectionAffinityDownstream;
-    return kit(coreFrame->selectionController()->affinity());
+    return kit(coreFrame->selection()->affinity());
 }
 
 - (void)setEditable:(BOOL)flag

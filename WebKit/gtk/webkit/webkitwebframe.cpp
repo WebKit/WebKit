@@ -435,7 +435,7 @@ JSGlobalContextRef webkit_web_frame_get_global_context(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     ASSERT(coreFrame);
 
-    return toGlobalRef(coreFrame->scriptProxy()->globalObject()->globalExec());
+    return toGlobalRef(coreFrame->script()->globalObject()->globalExec());
 }
 
 /**

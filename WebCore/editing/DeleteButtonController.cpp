@@ -129,7 +129,7 @@ void DeleteButtonController::respondToChangedSelection(const Selection& oldSelec
         return;
 
     HTMLElement* oldElement = enclosingDeletableElement(oldSelection);
-    HTMLElement* newElement = enclosingDeletableElement(m_frame->selectionController()->selection());
+    HTMLElement* newElement = enclosingDeletableElement(m_frame->selection()->selection());
     if (oldElement == newElement)
         return;
 
@@ -279,7 +279,7 @@ void DeleteButtonController::enable()
     if (m_disableStack > 0)
         m_disableStack--;
     if (enabled())
-        show(enclosingDeletableElement(m_frame->selectionController()->selection()));
+        show(enclosingDeletableElement(m_frame->selection()->selection()));
 }
 
 void DeleteButtonController::disable()
@@ -302,7 +302,7 @@ void DeleteButtonController::deleteTarget()
     // a caret where the target had been.
     Position pos = positionBeforeNode(element.get());
     applyCommand(RemoveNodeCommand::create(element.release()));
-    m_frame->selectionController()->setSelection(VisiblePosition(pos));
+    m_frame->selection()->setSelection(VisiblePosition(pos));
 }
 
 } // namespace WebCore

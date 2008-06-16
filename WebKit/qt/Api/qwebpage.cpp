@@ -588,7 +588,7 @@ void QWebPagePrivate::focusInEvent(QFocusEvent *ev)
     Frame *frame = focusController->focusedFrame();
     focusController->setActive(true);
     if (frame) {
-        frame->selectionController()->setFocused(true);
+        frame->selection()->setFocused(true);
     } else {
         focusController->setFocusedFrame(QWebFramePrivate::core(mainFrame));
     }
@@ -606,7 +606,7 @@ void QWebPagePrivate::focusOutEvent(QFocusEvent *ev)
     focusController->setActive(false);
     Frame *frame = focusController->focusedFrame();
     if (frame) {
-        frame->selectionController()->setFocused(false);
+        frame->selection()->setFocused(false);
     }
 }
 
@@ -802,7 +802,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImMicroFocus: {
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
-            return QVariant(frame->selectionController()->caretRect());
+            return QVariant(frame->selection()->caretRect());
         }
         return QVariant();
     }
@@ -815,7 +815,7 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     case Qt::ImCursorPosition: {
         Frame *frame = d->page->focusController()->focusedFrame();
         if (frame) {
-            Selection selection = frame->selectionController()->selection();
+            Selection selection = frame->selection()->selection();
             if (selection.isCaret()) {
                 return QVariant(selection.start().offset());
             }

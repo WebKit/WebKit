@@ -49,11 +49,11 @@ void RemoveFormatCommand::doApply()
     Frame* frame = document()->frame();
     
     // Make a plain text string from the selection to remove formatting like tables and lists.
-    String string = plainText(frame->selectionController()->selection().toRange().get());
+    String string = plainText(frame->selection()->selection().toRange().get());
 
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
-    Node* root = frame->selectionController()->rootEditableElement();
+    Node* root = frame->selection()->rootEditableElement();
     RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(root);
     RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
     

@@ -54,8 +54,8 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     Frame* frame = window->impl()->frame();
     if (!frame)
         return;
-    ScriptController* scriptProxy = frame->scriptProxy();
-    if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
+    ScriptController* script = frame->script();
+    if (!script->isEnabled() || script->isPaused())
         return;
 
     JSLock lock;
@@ -270,7 +270,7 @@ void JSLazyEventListener::parseCode() const
     m_parsed = true;
 
     Frame* frame = window()->impl()->frame();
-    if (frame && frame->scriptProxy()->isEnabled()) {
+    if (frame && frame->script()->isEnabled()) {
         ExecState* exec = window()->globalExec();
 
         JSLock lock;

@@ -350,10 +350,10 @@ void JavaScriptDebugServer::setJavaScriptPaused(Frame* frame, bool paused)
 {
     ASSERT_ARG(frame, frame);
 
-    if (!frame->scriptProxy()->isEnabled())
+    if (!frame->script()->isEnabled())
         return;
 
-    frame->scriptProxy()->setPaused(paused);
+    frame->script()->setPaused(paused);
 
     if (JSDOMWindow* window = toJSDOMWindow(frame)) {
         if (paused)

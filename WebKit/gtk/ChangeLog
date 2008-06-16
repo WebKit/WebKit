@@ -1,5 +1,17 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - give Frame object functions shorter names: scriptProxy() -> script(),
+          selectionController() -> selection(), animationController() -> animation()
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::handleKeyboardEvent):
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::windowObjectCleared):
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebview.cpp:
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - undo bogus renaming done by the script
 
         * WebCoreSupport/ContextMenuClientGtk.cpp:

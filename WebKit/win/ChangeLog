@@ -1,5 +1,24 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - give Frame object functions shorter names: scriptProxy() -> script(),
+          selectionController() -> selection(), animationController() -> animation()
+
+        * WebFrame.cpp:
+        (WebFrame::globalContext):
+        (WebFrame::windowObjectCleared):
+        * WebView.cpp:
+        (WebView::handleContextMenuEvent):
+        (WebViewWndProc):
+        (WebView::updateFocusedAndActiveState):
+        (WebView::hasSelectedRange):
+        (WebView::replaceSelectionWithText):
+        (WebView::clearSelection):
+        (WebView::prepareCandidateWindow):
+        (WebView::onIMERequestCharPosition):
+        (WebView::onIMERequestReconvertString):
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - rename KJS::List to KJS::ArgList
 
         * WebScriptCallFrame.cpp:

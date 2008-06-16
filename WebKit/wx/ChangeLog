@@ -1,5 +1,17 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - give Frame object functions shorter names: scriptProxy() -> script(),
+          selectionController() -> selection(), animationController() -> animation()
+
+        * WebKitSupport/EditorClientWx.cpp:
+        (WebCore::EditorClientWx::handleKeyboardEvent):
+        * WebView.cpp:
+        (wxWebView::RunScript):
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for a few key JavaScriptCore files
 
         * WebView.cpp:

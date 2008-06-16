@@ -63,7 +63,7 @@ void TypingCommand::deleteSelection(Document* document, bool smartDelete)
     Frame* frame = document->frame();
     ASSERT(frame);
     
-    if (!frame->selectionController()->isRange())
+    if (!frame->selection()->isRange())
         return;
     
     EditCommand* lastEditCommand = frame->editor()->lastEditCommand();
@@ -121,7 +121,7 @@ void TypingCommand::insertText(Document* document, const String& text, bool sele
     Frame* frame = document->frame();
     ASSERT(frame);
 
-    insertText(document, text, frame->selectionController()->selection(), selectInsertedText, insertedTextIsComposition);
+    insertText(document, text, frame->selection()->selection(), selectInsertedText, insertedTextIsComposition);
 }
 
 void TypingCommand::insertText(Document* document, const String& text, const Selection& selectionForInsertion, bool selectInsertedText, bool insertedTextIsComposition)
@@ -131,7 +131,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Sel
     RefPtr<Frame> frame = document->frame();
     ASSERT(frame);
     
-    Selection currentSelection = frame->selectionController()->selection();
+    Selection currentSelection = frame->selection()->selection();
     bool changeSelection = currentSelection != selectionForInsertion;
     
     String newText = text;
@@ -161,7 +161,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Sel
         lastTypingCommand->insertText(newText, selectInsertedText);
         if (changeSelection) {
             lastTypingCommand->setEndingSelection(currentSelection);
-            frame->selectionController()->setSelection(currentSelection);
+            frame->selection()->setSelection(currentSelection);
         }
         return;
     }
@@ -174,7 +174,7 @@ void TypingCommand::insertText(Document* document, const String& text, const Sel
     applyCommand(cmd);
     if (changeSelection) {
         cmd->setEndingSelection(currentSelection);
-        frame->selectionController()->setSelection(currentSelection);
+        frame->selection()->setSelection(currentSelection);
     }
 }
 
@@ -380,9 +380,9 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
         case Selection::CARET: {
             m_smartDelete = false;
 
-            SelectionController selectionController;
-            selectionController.setSelection(endingSelection());
-            selectionController.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+            SelectionController selection;
+            selection.setSelection(endingSelection());
+            selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
             
             // When the caret is at the start of the editable area in an empty list item, break out of the list item.
             if (endingSelection().visibleStart().previous(true).isNull()) {
@@ -399,7 +399,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
                 if (isLastPositionBeforeTable(visibleStart))
                     return;
                 // Extend the selection backward into the last cell, then deletion will handle the move.
-                selectionController.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
+                selection.modify(SelectionController::EXTEND, SelectionController::BACKWARD, granularity);
             // If the caret is just after a table, select the table and don't delete anything.
             } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
                 setEndingSelection(Selection(Position(table, 0), endingSelection().start(), DOWNSTREAM));
@@ -407,7 +407,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity)
                 return;
             }
 
-            selectionToDelete = selectionController.selection();
+            selectionToDelete = selection.selection();
             if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
                 selectionAfterUndo = selectionToDelete;
             else
@@ -450,9 +450,9 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity)
             // Handle delete at beginning-of-block case.
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
-            SelectionController selectionController;
-            selectionController.setSelection(endingSelection());
-            selectionController.modify(SelectionController::EXTEND, SelectionController::FORWARD, granularity);
+            SelectionController selection;
+            selection.setSelection(endingSelection());
+            selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, granularity);
             Position downstreamEnd = endingSelection().end().downstream();
             VisiblePosition visibleEnd = endingSelection().visibleEnd();
             if (visibleEnd == endOfParagraph(visibleEnd))
@@ -465,10 +465,10 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity)
             }
 
             // deleting to end of paragraph when at end of paragraph needs to merge the next paragraph (if any)
-            if (granularity == ParagraphBoundary && selectionController.selection().isCaret() && isEndOfParagraph(selectionController.selection().visibleEnd()))
-                selectionController.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
+            if (granularity == ParagraphBoundary && selection.selection().isCaret() && isEndOfParagraph(selection.selection().visibleEnd()))
+                selection.modify(SelectionController::EXTEND, SelectionController::FORWARD, CharacterGranularity);
 
-            selectionToDelete = selectionController.selection();
+            selectionToDelete = selection.selection();
             if (!startingSelection().isRange() || selectionToDelete.base() != startingSelection().start())
                 selectionAfterUndo = selectionToDelete;
             else {

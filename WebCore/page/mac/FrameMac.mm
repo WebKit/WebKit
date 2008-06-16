@@ -462,7 +462,7 @@ NSWritingDirection Frame::baseWritingDirectionForSelectionStart() const
 {
     NSWritingDirection result = NSWritingDirectionLeftToRight;
 
-    Position pos = selectionController()->selection().visibleStart().deepEquivalent();
+    Position pos = selection()->selection().visibleStart().deepEquivalent();
     Node* node = pos.node();
     if (!node || !node->renderer() || !node->renderer()->containingBlock())
         return result;
@@ -548,7 +548,7 @@ NSMutableDictionary* Frame::dashboardRegionsDictionary()
 
 DragImageRef Frame::dragImageForSelection() 
 {
-    if (!selectionController()->isRange())
+    if (!selection()->isRange())
         return nil;
     return selectionImage();
 }
@@ -559,7 +559,7 @@ PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget*
     if (!widgetView)
         return 0;
 
-    RefPtr<RootObject> rootObject = createRootObject(widgetView, scriptProxy()->globalObject());
+    RefPtr<RootObject> rootObject = createRootObject(widgetView, script()->globalObject());
 
     if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
         id objectForWebScript = [widgetView objectForWebScript];
@@ -594,7 +594,7 @@ PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget*
 
 WebScriptObject* Frame::windowScriptObject()
 {
-    if (!scriptProxy()->isEnabled())
+    if (!script()->isEnabled())
         return 0;
 
     if (!d->m_windowScriptObject) {

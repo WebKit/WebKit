@@ -93,7 +93,7 @@ CachedPage::CachedPage(Page* page)
 
     JSLock lock;
 
-    ScriptController* proxy = mainFrame->scriptProxy();
+    ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
         m_window = proxy->windowShell()->window();
         m_pausedTimeouts.set(m_window->pauseTimeouts());
@@ -119,7 +119,7 @@ void CachedPage::restore(Page* page)
 
     JSLock lock;
 
-    ScriptController* proxy = mainFrame->scriptProxy();
+    ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
         JSDOMWindowShell* windowShell = proxy->windowShell();
         if (m_window) {
@@ -137,7 +137,7 @@ void CachedPage::restore(Page* page)
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
 
-    mainFrame->animationController()->resumeAnimations();
+    mainFrame->animation()->resumeAnimations();
 
     mainFrame->eventHandler()->setMousePressNode(mousePressNode());
         

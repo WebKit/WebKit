@@ -305,7 +305,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
     do {
         if (frame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, false, true)) {
             if (frame != startFrame)
-                startFrame->selectionController()->clear();
+                startFrame->selection()->clear();
             focusController()->setFocusedFrame(frame);
             return true;
         }
@@ -314,7 +314,7 @@ bool Page::findString(const String& target, TextCaseSensitivity caseSensitivity,
 
     // Search contents of startFrame, on the other side of the selection that we did earlier.
     // We cheat a bit and just research with wrap on
-    if (shouldWrap && !startFrame->selectionController()->isNone()) {
+    if (shouldWrap && !startFrame->selection()->isNone()) {
         bool found = startFrame->findString(target, direction == FindDirectionForward, caseSensitivity == TextCaseSensitive, true, true);
         focusController()->setFocusedFrame(frame);
         return found;
@@ -355,7 +355,7 @@ void Page::unmarkAllTextMatches()
 
 const Selection& Page::selection() const
 {
-    return focusController()->focusedOrMainFrame()->selectionController()->selection();
+    return focusController()->focusedOrMainFrame()->selection()->selection();
 }
 
 void Page::setDefersLoading(bool defers)
@@ -504,7 +504,7 @@ void Page::setDebugger(KJS::Debugger* debugger)
     m_debugger = debugger;
 
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
-        frame->scriptProxy()->attachDebugger(m_debugger);
+        frame->script()->attachDebugger(m_debugger);
 }
 
 #if ENABLE(DOM_STORAGE)

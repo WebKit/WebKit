@@ -52,10 +52,10 @@ void JSCustomSQLStatementCallback::handleEvent(SQLTransaction* transaction, SQLR
     ASSERT(m_callback);
     ASSERT(m_frame);
         
-    if (!m_frame->scriptProxy()->isEnabled())
+    if (!m_frame->script()->isEnabled())
         return;
 
-    JSGlobalObject* globalObject = m_frame->scriptProxy()->globalObject();
+    JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
         
     KJS::JSLock lock;

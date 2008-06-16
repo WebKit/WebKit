@@ -777,7 +777,7 @@ static NSURL* uniqueURLWithRelativePart(NSString *relativePart)
 - (DOMRange *)_selectedRange
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame ? kit(coreFrame->selectionController()->toRange().get()) : nil;
+    return coreFrame ? kit(coreFrame->selection()->toRange().get()) : nil;
 }
 
 - (BOOL)_shouldDeleteRange:(DOMRange *)range
@@ -1663,25 +1663,25 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 - (BOOL)_hasSelection
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selectionController()->isRange();
+    return coreFrame && coreFrame->selection()->isRange();
 }
 
 - (BOOL)_hasSelectionOrInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selectionController()->isCaretOrRange();
+    return coreFrame && coreFrame->selection()->isCaretOrRange();
 }
 
 - (BOOL)_hasInsertionPoint
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selectionController()->isCaret();
+    return coreFrame && coreFrame->selection()->isCaret();
 }
 
 - (BOOL)_isEditable
 {
     Frame* coreFrame = core([self _frame]);
-    return coreFrame && coreFrame->selectionController()->isContentEditable();
+    return coreFrame && coreFrame->selection()->isContentEditable();
 }
 
 - (BOOL)_transparentBackground
@@ -1806,7 +1806,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
         page->focusController()->setActive(!_private->resigningFirstResponder && windowIsKey);
 
     Frame* focusedFrame = page->focusController()->focusedOrMainFrame();
-    frame->selectionController()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
+    frame->selection()->setFocused(frame == focusedFrame && windowOrSheetIsKey);
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -2280,7 +2280,7 @@ WEBCORE_COMMAND(yankAndSelect)
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return NO;
-    if (coreFrame->selectionController()->isContentRichlyEditable())
+    if (coreFrame->selection()->isContentRichlyEditable())
         [self _pasteWithPasteboard:pasteboard allowPlainText:YES];
     else
         [self _pasteAsPlainTextWithPasteboard:pasteboard];
@@ -2412,7 +2412,7 @@ WEBCORE_COMMAND(yankAndSelect)
     
     if (action == @selector(pasteAsRichText:))
         return frame && (frame->editor()->canDHTMLPaste()
-            || (frame->editor()->canPaste() && frame->selectionController()->isContentRichlyEditable()));
+            || (frame->editor()->canPaste() && frame->selection()->isContentRichlyEditable()));
     
     if (action == @selector(performFindPanelAction:))
         return NO;
@@ -2499,7 +2499,7 @@ WEBCORE_COMMAND(yankAndSelect)
         return YES;
 
     Frame* coreFrame = core([self _frame]);
-    bool selectionIsEditable = coreFrame && coreFrame->selectionController()->isContentEditable();
+    bool selectionIsEditable = coreFrame && coreFrame->selection()->isContentEditable();
     bool nextResponderIsInWebView = [nextResponder isKindOfClass:[NSView class]]
         && [nextResponder isDescendantOf:[[[self _webView] mainFrame] frameView]];
 
@@ -4648,7 +4648,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
         return; // DHTML did the whole operation
     if (!coreFrame->editor()->canPaste())
         return;
-    if (coreFrame->selectionController()->isContentRichlyEditable())
+    if (coreFrame->selection()->isContentRichlyEditable())
         [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
     else
         coreFrame->editor()->pasteAsPlainText();
@@ -4927,7 +4927,7 @@ static CGPoint coreGraphicsScreenPointForAppKitScreenPoint(NSPoint point)
 // API when an editable region is not currently focused.
 static BOOL isTextInput(Frame* coreFrame)
 {
-    return coreFrame && !coreFrame->selectionController()->isNone() && coreFrame->selectionController()->isContentEditable();
+    return coreFrame && !coreFrame->selection()->isNone() && coreFrame->selection()->isContentEditable();
 }
 
 // Work around for <rdar://problem/5522011>
@@ -4937,7 +4937,7 @@ static BOOL isTextInput(Frame* coreFrame)
 - (NSInputContext *)inputContext 
 {
     Frame* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->selectionController()->isInPasswordField())
+    if (coreFrame && coreFrame->selection()->isInPasswordField())
         return nil;
     return [super inputContext];
 }
@@ -5429,7 +5429,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 
         // Get preceeding word stem
         WebFrame *frame = [_view _frame];
-        DOMRange *selection = kit(core(frame)->selectionController()->toRange().get());
+        DOMRange *selection = kit(core(frame)->selection()->toRange().get());
         DOMRange *wholeWord = [frame _rangeByAlteringCurrentSelection:SelectionController::EXTEND
             direction:SelectionController::BACKWARD granularity:WordGranularity];
         DOMRange *prefix = [wholeWord cloneRange];
@@ -5647,7 +5647,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
 {
     Frame* coreFrame = core([self _frame]);
     if (coreFrame)
-        coreFrame->selectionController()->selectAll();
+        coreFrame->selection()->selectAll();
 }
 
 - (void)deselectAll
@@ -5655,7 +5655,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     Frame* coreFrame = core([self _frame]);
     if (!coreFrame)
         return;
-    coreFrame->selectionController()->clear();
+    coreFrame->selection()->clear();
 }
 
 - (NSString *)string
@@ -5699,7 +5699,7 @@ static void extractUnderlines(NSAttributedString *string, Vector<CompositionUnde
     if (!attributedString) {
         Frame* coreFrame = core([self _frame]);
         if (coreFrame) {
-            RefPtr<Range> range = coreFrame->selectionController()->selection().toRange();
+            RefPtr<Range> range = coreFrame->selection()->selection().toRange();
             attributedString = [NSAttributedString _web_attributedStringFromRange:range.get()];
         }
     }

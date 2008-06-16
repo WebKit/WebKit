@@ -1469,7 +1469,7 @@ HTMLTokenizer::State HTMLTokenizer::parseTag(SegmentedString &src, State state)
                 scriptSrc = String();
                 scriptSrcCharset = String();
                 if (currToken.attrs && !m_fragment) {
-                    if (m_doc->frame() && m_doc->frame()->scriptProxy()->isEnabled()) {
+                    if (m_doc->frame() && m_doc->frame()->script()->isEnabled()) {
                         if ((a = currToken.attrs->getAttributeItem(srcAttr)))
                             scriptSrc = m_doc->completeURL(parseURL(a->value())).string();
                     }
@@ -1872,8 +1872,8 @@ void HTMLTokenizer::finish()
 
 PassRefPtr<Node> HTMLTokenizer::processToken()
 {
-    ScriptController* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->scriptProxy() : 0;
-    if (jsProxy && m_doc->frame()->scriptProxy()->isEnabled())
+    ScriptController* jsProxy = (!m_fragment && m_doc->frame()) ? m_doc->frame()->script() : 0;
+    if (jsProxy && m_doc->frame()->script()->isEnabled())
         jsProxy->setEventHandlerLineno(tagStartLineno + 1); // Script line numbers are 1 based.
     if (dest > buffer) {
         currToken.text = StringImpl::createStrippingNullCharacters(buffer, dest - buffer);

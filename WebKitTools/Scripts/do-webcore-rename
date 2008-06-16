@@ -68,20 +68,36 @@ sub wanted
 }
 
 my %renames = (
-    "List" => "ArgList",
+    "animationController" => "animation",
+    "scriptProxy" => "script",
+    "selectionController" => "selection",
+    "clearScriptProxy" => "clearScriptController",
+    "m_jscript" => "m_script",
 );
 
 my %renamesContemplatedForTheFuture = (
+    "kjs_events" => "JSEventListener",
+    "kjs_events_h" => "JSEventListener_h",
+    "kjs_html" => "JSPluginElementFunctions",
+    "kjs_html_h" => "JSPluginElementFunctions_h",
+
+    "runtimeObjectGetter" => "pluginElementGetter",
+    "runtimeObjectPropertyGetter" => "pluginElementPropertyGetter",
+    "runtimeObjectCustomGetOwnPropertySlot" => "pluginElementCustomGetOwnPropertySlot",
+    "runtimeObjectCustomPut" => "pluginElementCustomPut",
+    "runtimeObjectImplementsCall" => "pluginElementImplementsCall",
+    "runtimeObjectCallAsFunction" => "pluginElementCallAsFunction",
+
+    "CLONE_CONTENTS" => "Clone",
+    "DELETE_CONTENTS" => "Delete",
+    "EXTRACT_CONTENTS" => "Extract",
+
     "DateInstance" => "JSDate",
     "ErrorInstance" => "JSError",
 
     "date_object" => "JSDate",
     "error_object" => "JSError",
     "string_object" => "StringObject",
-
-    "CLONE_CONTENTS" => "Clone",
-    "DELETE_CONTENTS" => "Delete",
-    "EXTRACT_CONTENTS" => "Extract",
 
     "ImageConstructorImp" => "JSImageConstructor",
     "Navigator" => "JSNavigator",
@@ -94,18 +110,15 @@ my %renamesContemplatedForTheFuture = (
     "KURLMac" => "URLMac",
     "KURL_H_" => "URL_h",
 
+    "ThreadSafeShared" => "ThreadSafeRefCounted",
+    "TreeShared" => "TreeRefCounted",
+
     "StringImpl" => "SharedString",
 
     "RenderView" => "RenderViewport",
 
     "ObjcFallbackObjectImp" => "ObjCFallbackObject",
     "RuntimeObjectImp" => "ForeignObject",
-
-    "ThreadSafeShared" => "ThreadSafeRefCounted",
-
-    "animationController" => "animation",
-    "scriptProxy" => "script",
-    "selectionController" => "selection",
 
     "equalIgnoringCase" => "equalFoldingCase",
 

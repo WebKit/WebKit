@@ -2512,7 +2512,7 @@ void Document::nodeWillBeRemoved(Node* n)
     }
 
     if (Frame* frame = this->frame()) {
-        frame->selectionController()->nodeWillBeRemoved(n);
+        frame->selection()->nodeWillBeRemoved(n);
         frame->dragCaretController()->nodeWillBeRemoved(n);
     }
 }
@@ -2722,8 +2722,8 @@ void Document::addPendingFrameBeforeUnloadEventCount()
 PassRefPtr<EventListener> Document::createHTMLEventListener(const String& functionName, const String& code, Node *node)
 {
     if (Frame* frm = frame())
-        if (frm->scriptProxy()->isEnabled())
-            return frm->scriptProxy()->createHTMLEventHandler(functionName, code, node);
+        if (frm->script()->isEnabled())
+            return frm->script()->createHTMLEventHandler(functionName, code, node);
     return 0;
 }
 

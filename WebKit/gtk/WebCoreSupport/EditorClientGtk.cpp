@@ -275,7 +275,7 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
     if (!kevent || kevent->type() == PlatformKeyboardEvent::KeyUp)
         return;
 
-    Node* start = frame->selectionController()->start().node();
+    Node* start = frame->selection()->start().node();
     if (!start)
         return;
 
@@ -293,25 +293,25 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
                         kevent->ctrlKey() ? WordGranularity : CharacterGranularity, false, true);
                 break;
             case VK_LEFT:
-                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::LEFT,
                         kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                         true);
                 break;
             case VK_RIGHT:
-                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::RIGHT,
                         kevent->ctrlKey() ? WordGranularity : CharacterGranularity,
                         true);
                 break;
             case VK_UP:
-                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::BACKWARD,
                         kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                         true);
                 break;
             case VK_DOWN:
-                frame->selectionController()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
+                frame->selection()->modify(kevent->shiftKey() ? SelectionController::EXTEND : SelectionController::MOVE,
                         SelectionController::FORWARD,
                         kevent->ctrlKey() ? ParagraphGranularity : LineGranularity,
                         true);

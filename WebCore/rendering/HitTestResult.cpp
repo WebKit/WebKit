@@ -134,7 +134,7 @@ bool HitTestResult::isSelected() const
     if (!frame)
         return false;
 
-    return frame->selectionController()->contains(m_point);
+    return frame->selection()->contains(m_point);
 }
 
 String HitTestResult::spellingToolTip() const

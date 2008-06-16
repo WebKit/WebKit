@@ -184,12 +184,12 @@ NPObject* HTMLPlugInElement::createNPObject()
     }
 
     // Can't create NPObjects when JavaScript is disabled
-    if (!frame->scriptProxy()->isEnabled())
+    if (!frame->script()->isEnabled())
         return _NPN_CreateNoScriptObject();
     
     // Create a JSObject bound to this element
     JSLock lock;
-    ExecState *exec = frame->scriptProxy()->globalObject()->globalExec();
+    ExecState *exec = frame->script()->globalObject()->globalExec();
     JSValue* jsElementValue = toJS(exec, this);
     if (!jsElementValue || !jsElementValue->isObject())
         return _NPN_CreateNoScriptObject();

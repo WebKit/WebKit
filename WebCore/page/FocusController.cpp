@@ -66,12 +66,12 @@ void FocusController::setFocusedFrame(PassRefPtr<Frame> frame)
         return;
 
     if (m_focusedFrame)
-        m_focusedFrame->selectionController()->setFocused(false);
+        m_focusedFrame->selection()->setFocused(false);
 
     m_focusedFrame = frame;
 
     if (m_focusedFrame)
-        m_focusedFrame->selectionController()->setFocused(true);
+        m_focusedFrame->selection()->setFocused(true);
 }
 
 Frame* FocusController::focusedOrMainFrame()
@@ -228,7 +228,7 @@ static void clearSelectionIfNeeded(Frame* oldFocusedFrame, Frame* newFocusedFram
     if (oldFocusedFrame->document() != newFocusedFrame->document())
         return;
     
-    SelectionController* s = oldFocusedFrame->selectionController();
+    SelectionController* s = oldFocusedFrame->selection();
     if (s->isNone())
         return;
     
@@ -304,7 +304,7 @@ void FocusController::setActive(bool active)
         view->updateControlTints();
 #endif
 
-    focusedOrMainFrame()->selectionController()->pageActivationChanged();
+    focusedOrMainFrame()->selection()->pageActivationChanged();
 }
 
 } // namespace WebCore

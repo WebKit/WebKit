@@ -55,8 +55,8 @@ SVGDocumentExtensions::~SVGDocumentExtensions()
 PassRefPtr<EventListener> SVGDocumentExtensions::createSVGEventListener(const String& functionName, const String& code, Node *node)
 {
     if (Frame* frame = m_doc->frame())
-        if (frame->scriptProxy()->isEnabled())
-            return frame->scriptProxy()->createSVGEventHandler(functionName, code, node);
+        if (frame->script()->isEnabled())
+            return frame->script()->createSVGEventHandler(functionName, code, node);
     return 0;
 }
 

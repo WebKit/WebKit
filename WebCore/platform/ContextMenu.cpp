@@ -174,7 +174,7 @@ static void createAndAppendWritingDirectionSubMenu(const HitTestResult& result, 
 static bool selectionContainsPossibleWord(Frame* frame)
 {
     // Current algorithm: look for a character that's not just a separator.
-    for (TextIterator it(frame->selectionController()->toRange().get()); !it.atEnd(); it.advance()) {
+    for (TextIterator it(frame->selection()->toRange().get()); !it.atEnd(); it.advance()) {
         int length = it.length();
         const UChar* characters = it.characters();
         for (int i = 0; i < length; ++i)
@@ -304,8 +304,8 @@ void ContextMenu::populate()
             }
         }
     } else { // Make an editing context menu
-        SelectionController* selectionController = frame->selectionController();
-        bool inPasswordField = selectionController->isInPasswordField();
+        SelectionController* selection = frame->selection();
+        bool inPasswordField = selection->isInPasswordField();
         
         if (!inPasswordField) {
             // Consider adding spelling-related or grammar-related context menu items (never both, since a single selected range
@@ -469,7 +469,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         case ContextMenuItemTagIgnoreSpelling:
         case ContextMenuItemTagLearnSpelling:
-            shouldEnable = frame->selectionController()->isRange();
+            shouldEnable = frame->selection()->isRange();
             break;
         case ContextMenuItemTagPaste:
             shouldEnable = frame->editor()->canDHTMLPaste() || frame->editor()->canPaste();
@@ -493,7 +493,7 @@ void ContextMenu::checkOrEnableIfNeeded(ContextMenuItem& item) const
             break;
         }
         case ContextMenuItemTagLookUpInDictionary:
-            shouldEnable = frame->selectionController()->isRange();
+            shouldEnable = frame->selection()->isRange();
             break;
         case ContextMenuItemTagCheckGrammarWithSpelling:
 #ifndef BUILDING_ON_TIGER

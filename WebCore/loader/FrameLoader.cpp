@@ -774,15 +774,13 @@ JSValue* FrameLoader::executeScript(const String& script, bool forceUserGesture)
 
 JSValue* FrameLoader::executeScript(const String& url, int baseLine, const String& script)
 {
-    ScriptController* scriptProxy = m_frame->scriptProxy();
-
-    if (!scriptProxy->isEnabled() || scriptProxy->isPaused())
+    if (!m_frame->script()->isEnabled() || m_frame->script()->isPaused())
         return 0;
 
     bool wasRunningScript = m_isRunningScript;
     m_isRunningScript = true;
 
-    JSValue* result = m_frame->scriptProxy()->evaluate(url, baseLine, script);
+    JSValue* result = m_frame->script()->evaluate(url, baseLine, script);
 
     if (!wasRunningScript) {
         m_isRunningScript = false;
@@ -828,10 +826,10 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
         m_frame->clearDOMWindow();
-        m_frame->clearScriptProxy();
+        m_frame->clearScriptController();
     }
 
-    m_frame->selectionController()->clear();
+    m_frame->selection()->clear();
     m_frame->eventHandler()->clear();
     if (m_frame->view())
         m_frame->view()->clear();
@@ -1823,8 +1821,8 @@ bool FrameLoader::userGestureHint()
     while (rootFrame->tree()->parent())
         rootFrame = rootFrame->tree()->parent();
 
-    if (rootFrame->scriptProxy()->isEnabled())
-        return rootFrame->scriptProxy()->processingUserGesture();
+    if (rootFrame->script()->isEnabled())
+        return rootFrame->script()->processingUserGesture();
 
     return true; // If JavaScript is disabled, a user gesture must have initiated the navigation
 }
@@ -2846,7 +2844,7 @@ void FrameLoader::open(CachedPage& cachedPage)
     m_didCallImplicitClose = true;
     
     // Delete old status bar messages (if it _was_ activated on last URL).
-    if (m_frame->scriptProxy()->isEnabled()) {
+    if (m_frame->script()->isEnabled()) {
         m_frame->setJSStatusBarText(String());
         m_frame->setJSDefaultStatusBarText(String());
     }
@@ -4754,7 +4752,7 @@ String FrameLoader::referrer() const
 
 void FrameLoader::dispatchWindowObjectAvailable()
 {
-    if (!m_frame->scriptProxy()->isEnabled() || !m_frame->scriptProxy()->haveWindowShell())
+    if (!m_frame->script()->isEnabled() || !m_frame->script()->haveWindowShell())
         return;
 
     m_client->windowObjectCleared();
@@ -4985,8 +4983,8 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             // similar to clear(), should be refactored to share more code
             oldDoc->cancelParsing();
             oldDoc->detach();
-            if (m_frame->scriptProxy()->isEnabled())
-                m_frame->scriptProxy()->clear();
+            if (m_frame->script()->isEnabled())
+                m_frame->script()->clear();
             if (m_frame->view())
                 m_frame->view()->clear();
             

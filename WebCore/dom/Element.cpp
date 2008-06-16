@@ -1133,7 +1133,7 @@ void Element::updateFocusAppearance(bool restorePreviousSelection)
         Selection newSelection = hasTagName(htmlTag) || hasTagName(bodyTag) ? Selection(Position(this, 0), DOWNSTREAM) : Selection::selectionFromContentsOfNode(this);
         
         if (frame->shouldChangeSelection(newSelection)) {
-            frame->selectionController()->setSelection(newSelection);
+            frame->selection()->setSelection(newSelection);
             frame->revealSelection();
         }
     } else if (renderer() && !renderer()->isWidget())

@@ -807,7 +807,7 @@ void QWebFrame::print(QPrinter *printer) const
 */
 QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
 {
-    ScriptController *proxy = d->frame->scriptProxy();
+    ScriptController *proxy = d->frame->script();
     QVariant rc;
     if (proxy) {
         KJS::JSValue *v = proxy->evaluate(String(), 1, scriptSource);

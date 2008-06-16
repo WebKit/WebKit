@@ -1,5 +1,48 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - give Frame object functions shorter names: scriptProxy() -> script(),
+          selectionController() -> selection(), animationController() -> animation()
+
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController webPlugInContainerSelectionColor]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _attachScriptDebugger]):
+        (-[WebFrame _hasSelection]):
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        (-[WebFrame _rangeByAlteringCurrentSelection:SelectionController::direction:SelectionController::granularity:]):
+        (-[WebFrame _convertToNSRange:]):
+        (-[WebFrame _convertToDOMRange:]):
+        (-[WebFrame _replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]):
+        (-[WebFrame _replaceSelectionWithText:selectReplacement:smartReplace:]):
+        (-[WebFrame _insertParagraphSeparatorInQuotedContent]):
+        (-[WebFrame _selectedNSRange]):
+        (-[WebFrame _selectNSRange:]):
+        (-[WebFrame globalContext]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _selectedRange]):
+        (-[WebHTMLView _hasSelection]):
+        (-[WebHTMLView _hasSelectionOrInsertionPoint]):
+        (-[WebHTMLView _hasInsertionPoint]):
+        (-[WebHTMLView _isEditable]):
+        (-[WebHTMLView _updateFocusedAndActiveState]):
+        (-[WebHTMLView readSelectionFromPasteboard:]):
+        (-[WebHTMLView validateUserInterfaceItemWithoutDelegate:]):
+        (-[WebHTMLView maintainsInactiveSelection]):
+        (-[WebHTMLView paste:]):
+        (isTextInput):
+        (-[WebHTMLView inputContext]):
+        (-[WebTextCompleteController doCompletion]):
+        (-[WebHTMLView selectAll]):
+        (-[WebHTMLView deselectAll]):
+        (-[WebHTMLView selectedAttributedString]):
+        * WebView/WebView.mm:
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+        (-[WebView setSelectedDOMRange:affinity:]):
+        (-[WebView selectedDOMRange]):
+        (-[WebView selectionAffinity]):
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - rename KJS::List to KJS::ArgList
 
         * WebView/WebScriptDebugger.h:

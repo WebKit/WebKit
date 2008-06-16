@@ -1,5 +1,19 @@
 2008-06-15  Darin Adler  <darin@apple.com>
 
+        - give Frame object functions shorter names: scriptProxy() -> script(),
+          selectionController() -> selection(), animationController() -> animation()
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::evaluateJavaScript):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::focusInEvent):
+        (QWebPagePrivate::focusOutEvent):
+        (QWebPage::inputMethodQuery):
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
+2008-06-15  Darin Adler  <darin@apple.com>
+
         - new names for more JavaScriptCore files
 
         * WebKit_pch.h:

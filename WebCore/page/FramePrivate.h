@@ -80,7 +80,7 @@ namespace WebCore {
         RefPtr<FrameView> m_view;
         RefPtr<Document> m_doc;
 
-        ScriptController m_jscript;
+        ScriptController m_script;
 
         String m_kjsStatusBarText;
         String m_kjsDefaultStatusBarText;

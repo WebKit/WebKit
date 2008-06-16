@@ -164,8 +164,8 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     if (!view)
         return FALSE;    
 
-    Position start = page->mainFrame()->selectionController()->selection().start();
-    Position end = page->mainFrame()->selectionController()->selection().end();
+    Position start = page->mainFrame()->selection()->selection().start();
+    Position end = page->mainFrame()->selection()->selection().end();
 
     int rightAligned = FALSE;
     IntPoint location;
@@ -337,10 +337,10 @@ static gboolean webkit_web_view_key_press_event(GtkWidget* widget, GdkEventKey* 
         view->scrollBy(-LINE_STEP, 0);
         return TRUE;
     case GDK_Home:
-        frame->selectionController()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
+        frame->selection()->modify(alteration, SelectionController::BACKWARD, DocumentBoundary, true);
         return TRUE;
     case GDK_End:
-        frame->selectionController()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
+        frame->selection()->modify(alteration, SelectionController::FORWARD, DocumentBoundary, true);
         return TRUE;
     }
 

@@ -323,7 +323,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     
     Color textColor = element->renderStyle() ? element->renderStyle()->color() : style()->color();
     if (element->hasTagName(optionTag) && static_cast<HTMLOptionElement*>(element)->selected()) {
-        if (document()->frame()->selectionController()->isFocusedAndActive() && document()->focusedNode() == node())
+        if (document()->frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             textColor = theme()->activeListBoxSelectionForegroundColor();
         // Honor the foreground color for disabled items
         else if (!element->disabled())
@@ -358,7 +358,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
 
     Color backColor;
     if (element->hasTagName(optionTag) && static_cast<HTMLOptionElement*>(element)->selected()) {
-        if (document()->frame()->selectionController()->isFocusedAndActive() && document()->focusedNode() == node())
+        if (document()->frame()->selection()->isFocusedAndActive() && document()->focusedNode() == node())
             backColor = theme()->activeListBoxSelectionBackgroundColor();
         else
             backColor = theme()->inactiveListBoxSelectionBackgroundColor();

@@ -900,7 +900,7 @@ public:
     
     virtual void capsLockStateMayHaveChanged() { }
 
-    AnimationController* animationController() const;
+    AnimationController* animation() const;
 
 protected:
     virtual void printBoxDecorations(GraphicsContext*, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int /*tx*/, int /*ty*/) { }

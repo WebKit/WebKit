@@ -170,8 +170,8 @@ Frame::~Frame()
     --FrameCounter::count;
 #endif
 
-    if (d->m_jscript.haveWindowShell())
-        d->m_jscript.windowShell()->disconnectFrame();
+    if (d->m_script.haveWindowShell())
+        d->m_script.windowShell()->disconnectFrame();
 
     disconnectOwnerElement();
     
@@ -235,9 +235,9 @@ void Frame::setView(FrameView* view)
     loader()->resetMultipleFormSubmissionProtection();
 }
 
-ScriptController* Frame::scriptProxy()
+ScriptController* Frame::script()
 {
-    return &d->m_jscript;
+    return &d->m_script;
 }
 
 Document* Frame::document() const
@@ -253,14 +253,14 @@ void Frame::setDocument(PassRefPtr<Document> newDoc)
     }
 
     d->m_doc = newDoc;
-    if (d->m_doc && selectionController()->isFocusedAndActive())
+    if (d->m_doc && selection()->isFocusedAndActive())
         setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
         
     if (d->m_doc && !d->m_doc->attached())
         d->m_doc->attach();
 
     // Update the cached 'document' property, which is now stale.
-    d->m_jscript.updateDocument();
+    d->m_script.updateDocument();
 }
 
 Settings* Frame::settings() const
@@ -270,7 +270,7 @@ Settings* Frame::settings() const
 
 String Frame::selectedText() const
 {
-    return plainText(selectionController()->toRange().get());
+    return plainText(selection()->toRange().get());
 }
 
 IntRect Frame::firstRectForRange(Range* range) const
@@ -304,7 +304,7 @@ IntRect Frame::firstRectForRange(Range* range) const
                    startCaretRect.height());
 }
 
-SelectionController* Frame::selectionController() const
+SelectionController* Frame::selection() const
 {
     return &d->m_selectionController;
 }
@@ -330,7 +330,7 @@ SelectionController* Frame::dragCaretController() const
 }
 
 
-AnimationController* Frame::animationController() const
+AnimationController* Frame::animation() const
 {
     return &d->m_animationController;
 }
@@ -505,8 +505,8 @@ void Frame::setMark(const Selection& s)
 void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 {
     RenderObject* renderer = 0;
-    if (selectionController()->rootEditableElement())
-        renderer = selectionController()->rootEditableElement()->shadowAncestorNode()->renderer();
+    if (selection()->rootEditableElement())
+        renderer = selection()->rootEditableElement()->shadowAncestorNode()->renderer();
 
     // If the current selection is in a textfield or textarea, notify the renderer that the selection has changed
     if (renderer && (renderer->isTextArea() || renderer->isTextField()))
@@ -515,7 +515,7 @@ void Frame::notifyRendererOfSelectionChange(bool userTriggered)
 
 void Frame::invalidateSelection()
 {
-    selectionController()->setNeedsLayout();
+    selection()->setNeedsLayout();
     selectionLayoutChanged();
 }
 
@@ -532,7 +532,7 @@ void Frame::clearCaretRectIfNeeded()
 {
     if (d->m_caretPaint) {
         d->m_caretPaint = false;
-        selectionController()->invalidateCaretRect();
+        selection()->invalidateCaretRect();
     }
 }
 
@@ -551,10 +551,10 @@ static bool isFrameElement(const Node *n)
 
 void Frame::setFocusedNodeIfNeeded()
 {
-    if (!document() || selectionController()->isNone() || !selectionController()->isFocusedAndActive())
+    if (!document() || selection()->isNone() || !selection()->isFocusedAndActive())
         return;
 
-    Node* target = selectionController()->rootEditableElement();
+    Node* target = selection()->rootEditableElement();
     if (target) {
         RenderObject* renderer = target->renderer();
 
@@ -578,10 +578,10 @@ void Frame::setFocusedNodeIfNeeded()
 
 void Frame::selectionLayoutChanged()
 {
-    bool caretRectChanged = selectionController()->recomputeCaretRect();
+    bool caretRectChanged = selection()->recomputeCaretRect();
 
     bool shouldBlink = d->m_caretVisible
-        && selectionController()->isCaret() && selectionController()->isContentEditable();
+        && selection()->isCaret() && selection()->isContentEditable();
 
     // If the caret moved, stop the blink timer so we can restart with a
     // black caret in the new location.
@@ -594,7 +594,7 @@ void Frame::selectionLayoutChanged()
         d->m_caretBlinkTimer.startRepeating(theme()->caretBlinkFrequency());
         if (!d->m_caretPaint) {
             d->m_caretPaint = true;
-            selectionController()->invalidateCaretRect();
+            selection()->invalidateCaretRect();
         }
     }
 
@@ -602,7 +602,7 @@ void Frame::selectionLayoutChanged()
     if (!canvas)
         return;
 
-    Selection selection = selectionController()->selection();
+    Selection selection = this->selection()->selection();
         
     if (!selection.isRange())
         canvas->clearSelection();
@@ -631,18 +631,18 @@ void Frame::selectionLayoutChanged()
 void Frame::caretBlinkTimerFired(Timer<Frame>*)
 {
     ASSERT(d->m_caretVisible);
-    ASSERT(selectionController()->isCaret());
+    ASSERT(selection()->isCaret());
     bool caretPaint = d->m_caretPaint;
-    if (selectionController()->isCaretBlinkingSuspended() && caretPaint)
+    if (selection()->isCaretBlinkingSuspended() && caretPaint)
         return;
     d->m_caretPaint = !caretPaint;
-    selectionController()->invalidateCaretRect();
+    selection()->invalidateCaretRect();
 }
 
 void Frame::paintCaret(GraphicsContext* p, const IntRect& rect) const
 {
     if (d->m_caretPaint && d->m_caretVisible)
-        selectionController()->paintCaret(p, rect);
+        selection()->paintCaret(p, rect);
 }
 
 void Frame::paintDragCaret(GraphicsContext* p, const IntRect& rect) const
@@ -800,7 +800,7 @@ void Frame::reapplyStyles()
 
 bool Frame::shouldChangeSelection(const Selection& newSelection) const
 {
-    return shouldChangeSelection(selectionController()->selection(), newSelection, newSelection.affinity(), false);
+    return shouldChangeSelection(selection()->selection(), newSelection, newSelection.affinity(), false);
 }
 
 bool Frame::shouldChangeSelection(const Selection& oldSelection, const Selection& newSelection, EAffinity affinity, bool stillSelecting) const
@@ -833,7 +833,7 @@ void Frame::setUseSecureKeyboardEntry(bool)
 
 void Frame::updateSecureKeyboardEntryIfActive()
 {
-    if (selectionController()->isFocusedAndActive())
+    if (selection()->isFocusedAndActive())
         setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
 }
 
@@ -866,7 +866,7 @@ void Frame::computeAndSetTypingStyle(CSSStyleDeclaration *style, EditAction edit
         mutableStyle = typingStyle();
     }
 
-    Node *node = selectionController()->selection().visibleStart().deepEquivalent().node();
+    Node *node = selection()->selection().visibleStart().deepEquivalent().node();
     CSSComputedStyleDeclaration computedStyle(node);
     computedStyle.diff(mutableStyle.get());
     
@@ -905,10 +905,10 @@ CSSComputedStyleDeclaration *Frame::selectionComputedStyle(Node *&nodeToRemove) 
     if (!document())
         return 0;
 
-    if (selectionController()->isNone())
+    if (selection()->isNone())
         return 0;
 
-    RefPtr<Range> range(selectionController()->toRange());
+    RefPtr<Range> range(selection()->toRange());
     Position pos = range->editingStartPosition();
 
     Element *elem = pos.element();
@@ -1073,12 +1073,12 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
 
 KJS::Bindings::RootObject* Frame::bindingRootObject()
 {
-    if (!scriptProxy()->isEnabled())
+    if (!script()->isEnabled())
         return 0;
 
     if (!d->m_bindingRootObject) {
         JSLock lock;
-        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, scriptProxy()->globalObject());
+        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, script()->globalObject());
     }
     return d->m_bindingRootObject.get();
 }
@@ -1099,7 +1099,7 @@ PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle
 NPObject* Frame::windowScriptNPObject()
 {
     if (!d->m_windowScriptNPObject) {
-        if (scriptProxy()->isEnabled()) {
+        if (script()->isEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
             // object.
             KJS::JSLock lock;
@@ -1118,9 +1118,9 @@ NPObject* Frame::windowScriptNPObject()
 }
 #endif
     
-void Frame::clearScriptProxy()
+void Frame::clearScriptController()
 {
-    d->m_jscript.clear();
+    d->m_script.clear();
 }
 
 void Frame::clearDOMWindow()
@@ -1222,7 +1222,7 @@ void Frame::selectionTextRects(Vector<FloatRect>& rects, bool clipToVisibleConte
     if (!root)
         return;
 
-    RefPtr<Range> selectedRange = selectionController()->toRange();
+    RefPtr<Range> selectedRange = selection()->toRange();
 
     Vector<IntRect> intRects;
     selectedRange->addLineBoxRects(intRects, true);
@@ -1270,7 +1270,7 @@ HTMLFormElement *Frame::currentForm() const
     // start looking either at the active (first responder) node, or where the selection is
     Node *start = d->m_doc ? d->m_doc->focusedNode() : 0;
     if (!start)
-        start = selectionController()->start().node();
+        start = selection()->start().node();
     
     // try walking up the node tree to find a form element
     Node *n;
@@ -1291,12 +1291,12 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
 {
     IntRect rect;
     
-    switch (selectionController()->state()) {
+    switch (selection()->state()) {
         case Selection::NONE:
             return;
             
         case Selection::CARET:
-            rect = selectionController()->caretRect();
+            rect = selection()->caretRect();
             break;
             
         case Selection::RANGE:
@@ -1304,7 +1304,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
             break;
     }
 
-    Position start = selectionController()->start();
+    Position start = selection()->start();
 
     ASSERT(start.node());
     if (start.node() && start.node()->renderer()) {
@@ -1318,10 +1318,10 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
 
 void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
 {
-    if (selectionController()->isNone())
+    if (selection()->isNone())
         return;
 
-    Position extent = selectionController()->extent();
+    Position extent = selection()->extent();
     if (extent.node() && extent.node()->renderer()) {
         IntRect extentRect = VisiblePosition(extent).caretRect();
         RenderLayer* layer = extent.node()->renderer()->enclosingLayer();
@@ -1490,7 +1490,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
         if (view->frame()) {
             if (document && document->renderer() && document->renderer()->hasLayer())
                 document->renderer()->layer()->suspendMarquees();
-            view->frame()->animationController()->suspendAnimations();
+            view->frame()->animation()->suspendAnimations();
         }
     }
 }
@@ -1506,10 +1506,10 @@ RenderStyle *Frame::styleForSelectionStart(Node *&nodeToRemove) const
     
     if (!document())
         return 0;
-    if (selectionController()->isNone())
+    if (selection()->isNone())
         return 0;
     
-    Position pos = selectionController()->selection().visibleStart().deepEquivalent();
+    Position pos = selection()->selection().visibleStart().deepEquivalent();
     if (!pos.isCandidate())
         return 0;
     Node *node = pos.node();
@@ -1542,14 +1542,14 @@ void Frame::setSelectionFromNone()
     // Put a caret inside the body if the entire frame is editable (either the 
     // entire WebView is editable or designMode is on for this document).
     Document *doc = document();
-    if (!doc || !selectionController()->isNone() || !isContentEditable())
+    if (!doc || !selection()->isNone() || !isContentEditable())
         return;
         
     Node* node = doc->documentElement();
     while (node && !node->hasTagName(bodyTag))
         node = node->traverseNextNode();
     if (node)
-        selectionController()->setSelection(Selection(Position(node, 0), DOWNSTREAM));
+        selection()->setSelection(Selection(Position(node, 0), DOWNSTREAM));
 }
 
 bool Frame::inViewSourceMode() const
@@ -1591,7 +1591,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     // Start from an edge of the selection, if there's a selection that's not in shadow content. Which edge
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(document()));
-    Selection selection(selectionController()->selection());
+    Selection selection = this->selection()->selection();
     Node* selectionBaseNode = selection.base().node();
     
     // FIXME 3099526: We don't search in the shadow trees (e.g. text fields and textareas), though we'd like to
@@ -1632,7 +1632,7 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     if (resultRange->collapsed(exception))
         return false;
 
-    selectionController()->setSelection(Selection(resultRange.get(), DOWNSTREAM));
+    this->selection()->setSelection(Selection(resultRange.get(), DOWNSTREAM));
     revealSelection();
     return true;
 }
@@ -1733,7 +1733,7 @@ void Frame::pageDestroyed()
         d->m_page->focusController()->setFocusedFrame(0);
 
     // This will stop any JS timers
-    if (d->m_jscript.haveWindowShell()) {
+    if (d->m_script.haveWindowShell()) {
         if (JSDOMWindowShell* windowShell = toJSDOMWindowShell(this))
             windowShell->disconnectFrame();
     }
@@ -1843,8 +1843,8 @@ void Frame::respondToChangedSelection(const Selection& oldSelection, bool closeT
         if (isContinuousSpellCheckingEnabled) {
             Selection newAdjacentWords;
             Selection newSelectedSentence;
-            if (selectionController()->selection().isContentEditable()) {
-                VisiblePosition newStart(selectionController()->selection().visibleStart());
+            if (selection()->selection().isContentEditable()) {
+                VisiblePosition newStart(selection()->selection().visibleStart());
                 newAdjacentWords = Selection(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
                 if (isContinuousGrammarCheckingEnabled)
                     newSelectedSentence = Selection(startOfSentence(newStart), endOfSentence(newStart));
@@ -1918,7 +1918,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_treeNode(thisFrame, parent)
     , m_loader(thisFrame, frameLoaderClient)
     , m_ownerElement(ownerElement)
-    , m_jscript(thisFrame)
+    , m_script(thisFrame)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 1.0f)
     , m_zoomFactorIsTextOnly(parent ? parent->d->m_zoomFactorIsTextOnly : true)
     , m_selectionGranularity(CharacterGranularity)

@@ -125,10 +125,10 @@ static PassRefPtr<DocumentFragment> documentFragmentFromDragData(DragData* dragD
     return 0;
 }
 
-bool DragController::dragIsMove(SelectionController* selectionController, DragData* dragData) 
+bool DragController::dragIsMove(SelectionController* selection, DragData* dragData) 
 {
     return m_document == m_dragInitiator
-        && selectionController->isContentEditable()
+        && selection->isContentEditable()
         && !isCopyKeyDown();
 }
 
@@ -287,7 +287,7 @@ DragOperation DragController::tryDocumentDrag(DragData* dragData, DragDestinatio
             m_page->dragCaretController()->setSelection(dragCaret);
         }
         
-        return dragIsMove(innerFrame->selectionController(), dragData) ? DragOperationMove : DragOperationCopy;
+        return dragIsMove(innerFrame->selection(), dragData) ? DragOperationMove : DragOperationCopy;
     } 
     
     m_page->dragCaretController()->clear();
@@ -312,13 +312,13 @@ DragOperation DragController::operationForLoad(DragData* dragData)
 
 static bool setSelectionToDragCaret(Frame* frame, Selection& dragCaret, RefPtr<Range>& range, const IntPoint& point)
 {
-    frame->selectionController()->setSelection(dragCaret);
-    if (frame->selectionController()->isNone()) {
+    frame->selection()->setSelection(dragCaret);
+    if (frame->selection()->isNone()) {
         dragCaret = frame->visiblePositionForPoint(point);
-        frame->selectionController()->setSelection(dragCaret);
+        frame->selection()->setSelection(dragCaret);
         range = dragCaret.toRange();
     }
-    return !frame->selectionController()->isNone() && frame->selectionController()->isContentEditable();
+    return !frame->selection()->isNone() && frame->selection()->isContentEditable();
 }
 
 bool DragController::concludeDrag(DragData* dragData, DragDestinationAction actionMask)
@@ -342,7 +342,7 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
             return false;
         if (!innerFrame)
             return false;
-        RefPtr<Range> innerRange = innerFrame->selectionController()->toRange();
+        RefPtr<Range> innerRange = innerFrame->selection()->toRange();
         RefPtr<CSSStyleDeclaration> style = m_document->createCSSStyleDeclaration();
         ExceptionCode ec;
         style->setProperty("color", color.name(), ec);
@@ -390,7 +390,7 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         return false;
     DocLoader* loader = range->ownerDocument()->docLoader();
     loader->setAllowStaleResources(true);
-    if (dragIsMove(innerFrame->selectionController(), dragData) || dragCaret.isContentRichlyEditable()) { 
+    if (dragIsMove(innerFrame->selection(), dragData) || dragCaret.isContentRichlyEditable()) { 
         bool chosePlainText = false;
         RefPtr<DocumentFragment> fragment = documentFragmentFromDragData(dragData, range, true, chosePlainText);
         if (!fragment || !innerFrame->editor()->shouldInsertFragment(fragment, range, EditorInsertActionDropped)) {
@@ -399,7 +399,7 @@ bool DragController::concludeDrag(DragData* dragData, DragDestinationAction acti
         }
         
         m_client->willPerformDragDestinationAction(DragDestinationActionEdit, dragData);
-        if (dragIsMove(innerFrame->selectionController(), dragData)) {
+        if (dragIsMove(innerFrame->selection(), dragData)) {
             bool smartMove = innerFrame->selectionGranularity() == WordGranularity 
                           && innerFrame->editor()->smartInsertDeleteEnabled() 
                           && dragData->canSmartReplace();
@@ -553,7 +553,7 @@ static void prepareClipboardForImageDrag(Frame* src, Clipboard* clipboard, Eleme
     ExceptionCode ec = 0;
     range->selectNode(node, ec);
     ASSERT(ec == 0);
-    src->selectionController()->setSelection(Selection(range.get(), DOWNSTREAM));           
+    src->selection()->setSelection(Selection(range.get(), DOWNSTREAM));           
     clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, src);
 }
     
@@ -659,7 +659,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
         } 
         doSystemDrag(dragImage, dragLoc, mouseDraggedPoint, clipboard, src, true);
     } else if (isSelected && (m_dragSourceAction & DragSourceActionSelection)) {
-        RefPtr<Range> selectionRange = src->selectionController()->toRange();
+        RefPtr<Range> selectionRange = src->selection()->toRange();
         ASSERT(selectionRange);
         if (!clipboard->hasData()) 
             clipboard->writeRange(selectionRange.get(), src);

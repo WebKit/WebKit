@@ -102,7 +102,7 @@ bool runtimeObjectImplementsCall(HTMLElement* thisImp)
     Frame* frame = thisImp->document()->frame();
     if (!frame)
         return false;
-    ExecState* exec = frame->scriptProxy()->globalObject()->globalExec();
+    ExecState* exec = frame->script()->globalObject()->globalExec();
     JSObject* runtimeObject = getRuntimeObject(exec, thisImp);
     if (!runtimeObject)
         return false;

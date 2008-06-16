@@ -51,13 +51,13 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
     if (!frame)
         return;
 
-    if (!frame->scriptProxy()->isEnabled())
+    if (!frame->script()->isEnabled())
         return;
 
-    ScriptController* scriptProxy = frame->scriptProxy();
+    ScriptController* script = frame->script();
     
 
-    scriptProxy->setProcessingTimerCallback(true);
+    script->setProcessingTimerCallback(true);
 
     if (JSValue* func = m_func.get()) {
         JSLock lock;
@@ -92,7 +92,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
     if (Document* doc = frame->document())
         doc->updateRendering();
 
-    scriptProxy->setProcessingTimerCallback(false);
+    script->setProcessingTimerCallback(false);
 }
 
 } // namespace WebCore

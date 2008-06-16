@@ -257,7 +257,7 @@ void PluginView::performRequest(PluginRequest* request)
         String resultString;
 
         CString cstr;
-        if (getString(parentFrame->scriptProxy(), result, resultString))
+        if (getString(parentFrame->script(), result, resultString))
             cstr = resultString.utf8();
 
         RefPtr<PluginStream> stream = PluginStream::create(this, m_parentFrame, request->frameLoadRequest().resourceRequest(), request->sendNotification(), request->notifyData(), plugin()->pluginFuncs(), instance(), m_plugin->quirks());
@@ -473,7 +473,7 @@ PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
     if (npErr != NPERR_NO_ERROR || !object)
         return 0;
 
-    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->scriptProxy()->globalObject());
+    RefPtr<KJS::Bindings::RootObject> root = m_parentFrame->createRootObject(this, m_parentFrame->script()->globalObject());
     RefPtr<KJS::Bindings::Instance> instance = KJS::Bindings::CInstance::create(object, root.release());
 
     _NPN_ReleaseObject(object);

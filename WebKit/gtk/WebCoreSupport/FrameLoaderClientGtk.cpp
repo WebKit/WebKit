@@ -371,8 +371,8 @@ void FrameLoaderClient::windowObjectCleared()
 
     // TODO: Consider using g_signal_has_handler_pending() to avoid the overhead
     // when there are no handlers.
-    JSGlobalContextRef context = toGlobalRef(coreFrame->scriptProxy()->globalObject()->globalExec());
-    JSObjectRef windowObject = toRef(coreFrame->scriptProxy()->globalObject());
+    JSGlobalContextRef context = toGlobalRef(coreFrame->script()->globalObject()->globalExec());
+    JSObjectRef windowObject = toRef(coreFrame->script()->globalObject());
     ASSERT(windowObject);
 
     WebKitWebView* webView = getViewFromFrame(m_frame);

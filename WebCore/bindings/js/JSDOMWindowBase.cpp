@@ -203,7 +203,7 @@ void JSDOMWindowBase::updateDocument()
 JSDOMWindowBase::~JSDOMWindowBase()
 {
     if (m_impl->frame())
-        m_impl->frame()->scriptProxy()->clearFormerWindow(asJSDOMWindow(this));
+        m_impl->frame()->script()->clearFormerWindow(asJSDOMWindow(this));
 
     clearAllTimeouts();
 
@@ -233,7 +233,7 @@ static bool allowPopUp(ExecState* exec)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
 
     ASSERT(frame);
-    if (frame->scriptProxy()->processingUserGesture())
+    if (frame->script()->processingUserGesture())
         return true;
     Settings* settings = frame->settings();
     return settings && settings->JavaScriptCanOpenWindowsAutomatically();
@@ -306,7 +306,7 @@ static Frame* createWindow(ExecState* exec, Frame* openerFrame, const String& ur
 
     if (!protocolIs(url, "javascript") || newWindow->allowsAccessFrom(exec)) {
         KURL completedURL = url.isEmpty() ? KURL("") : activeFrame->document()->completeURL(url);
-        bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
+        bool userGesture = activeFrame->script()->processingUserGesture();
 
         if (created)
             newFrame->loader()->changeLocation(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
@@ -999,7 +999,7 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject* thisObj, const ArgList& 
 
         const JSDOMWindow* targetedWindow = toJSDOMWindow(frame);
         if (!completedURL.isEmpty() && (!protocolIs(completedURL, "javascript") || (targetedWindow && targetedWindow->allowsAccessFrom(exec)))) {
-            bool userGesture = activeFrame->scriptProxy()->processingUserGesture();
+            bool userGesture = activeFrame->script()->processingUserGesture();
             frame->loader()->scheduleLocationChange(completedURL, activeFrame->loader()->outgoingReferrer(), false, userGesture);
         }
         return toJS(exec, frame->domWindow());
@@ -1320,14 +1320,14 @@ JSValue* toJS(ExecState*, DOMWindow* domWindow)
     Frame* frame = domWindow->frame();
     if (!frame)
         return jsNull();
-    return frame->scriptProxy()->windowShell();
+    return frame->script()->windowShell();
 }
 
 JSDOMWindow* toJSDOMWindow(Frame* frame)
 {
     if (!frame)
         return 0;
-    return frame->scriptProxy()->windowShell()->window();
+    return frame->script()->windowShell()->window();
 }
 
 } // namespace WebCore

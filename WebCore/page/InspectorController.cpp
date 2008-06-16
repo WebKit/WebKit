@@ -1085,7 +1085,7 @@ static bool canPassNodeToJavaScript(Node* node)
     if (!node)
         return false;
     Frame* frame = node->document()->frame();
-    return frame && frame->scriptProxy()->isEnabled();
+    return frame && frame->script()->isEnabled();
 }
 
 void InspectorController::inspect(Node* node)
@@ -1239,7 +1239,7 @@ void InspectorController::windowScriptObjectAvailable()
     if (!m_page || !enabled())
         return;
 
-    m_scriptContext = toRef(m_page->mainFrame()->scriptProxy()->globalObject()->globalExec());
+    m_scriptContext = toRef(m_page->mainFrame()->script()->globalObject()->globalExec());
 
     JSObjectRef global = JSContextGetGlobalObject(m_scriptContext);
     ASSERT(global);
