@@ -1,3 +1,9 @@
+2008-06-16  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebScriptCallFrame.cpp: Fixed a header name.
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - give Frame object functions shorter names: scriptProxy() -> script(),

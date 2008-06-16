@@ -30,10 +30,10 @@
 #include "WebScriptCallFrame.h"
 
 #include "COMEnumVariant.h"
-#include "Function.h"
 #include "WebKitDLL.h"
 
 #include <JavaScriptCore/Interpreter.h>
+#include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSValueRef.h>
