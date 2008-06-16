@@ -1,3 +1,7 @@
+2008-06-15  Darin Adler  <darin@apple.com>
+
+        * platform/graphics/gtk/VideoSinkGStreamer.h: Undo a bogus rename done by the script.
+
 2008-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

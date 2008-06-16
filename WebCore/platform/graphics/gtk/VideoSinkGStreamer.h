@@ -21,7 +21,7 @@
 #define _HAVE_WEBKIT_VIDEO_SINK_H
 
 #include <cairo.h>
-#include <glib-JSObject.h>
+#include <glib-object.h>
 #include <gst/base/gstbasesink.h>
 
 G_BEGIN_DECLS
