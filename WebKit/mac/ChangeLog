@@ -1,3 +1,20 @@
+2008-06-16  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5951874> WebHTMLHighlighter mistakenly gained two new methods, causing compile warnings
+
+        _pauseNullEventsForAllNetscapePlugins and _resumeNullEventsForAllNetscapePlugins ended up being declared both in
+        WebHTMLViewInternal.h and as members of the WebHTMLHighlighter protocol in WebHTMLViewPrivate.h.  They don't belong
+        in the protocol, but they do need to be available outside of WebKit so they're being moved to the correct location
+        in WebHTMLViewPrivate.h and removed from WebHTMLViewInternal.h.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _pauseNullEventsForAllNetscapePlugins]):
+        (-[WebHTMLView _resumeNullEventsForAllNetscapePlugins]):
+        * WebView/WebHTMLViewInternal.h:
+        * WebView/WebHTMLViewPrivate.h:
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - give Frame object functions shorter names: scriptProxy() -> script(),

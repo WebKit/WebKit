@@ -1984,6 +1984,36 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     return nil;
 }
 
+#if ENABLE(NETSCAPE_PLUGIN_API) 
+- (void)_pauseNullEventsForAllNetscapePlugins 
+{ 
+    NSArray *subviews = [self subviews]; 
+    unsigned int subviewCount = [subviews count]; 
+    unsigned int subviewIndex; 
+    
+    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
+        NSView *subview = [subviews objectAtIndex:subviewIndex]; 
+        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
+            [(WebBaseNetscapePluginView *)subview stopTimers];
+    } 
+} 
+#endif 
+
+#if ENABLE(NETSCAPE_PLUGIN_API) 
+- (void)_resumeNullEventsForAllNetscapePlugins 
+{ 
+    NSArray *subviews = [self subviews]; 
+    unsigned int subviewCount = [subviews count]; 
+    unsigned int subviewIndex; 
+    
+    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
+        NSView *subview = [subviews objectAtIndex:subviewIndex]; 
+        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
+            [(WebBaseNetscapePluginView *)subview restartTimers]; 
+    } 
+} 
+#endif 
+
 @end
 
 @implementation NSView (WebHTMLViewFileInternal)
@@ -4595,36 +4625,6 @@ static BOOL writingDirectionKeyBindingsEnabled()
 {
     return _private->mouseDownEvent;
 }
-
-#if ENABLE(NETSCAPE_PLUGIN_API) 
-- (void)_pauseNullEventsForAllNetscapePlugins 
-{ 
-    NSArray *subviews = [self subviews]; 
-    unsigned int subviewCount = [subviews count]; 
-    unsigned int subviewIndex; 
-    
-    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
-        NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
-            [(WebBaseNetscapePluginView *)subview stopTimers];
-    } 
-} 
-#endif 
-
-#if ENABLE(NETSCAPE_PLUGIN_API) 
-- (void)_resumeNullEventsForAllNetscapePlugins 
-{ 
-    NSArray *subviews = [self subviews]; 
-    unsigned int subviewCount = [subviews count]; 
-    unsigned int subviewIndex; 
-    
-    for (subviewIndex = 0; subviewIndex < subviewCount; subviewIndex++) { 
-        NSView *subview = [subviews objectAtIndex:subviewIndex]; 
-        if ([subview isKindOfClass:[WebBaseNetscapePluginView class]]) 
-            [(WebBaseNetscapePluginView *)subview restartTimers]; 
-    } 
-} 
-#endif 
 
 - (id<WebHTMLHighlighter>)_highlighterForType:(NSString*)type
 {
