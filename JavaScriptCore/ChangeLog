@@ -1,6 +1,6 @@
 2008-06-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
-        Rubber stamped by Adam Robben.
+        Rubber stamped by Adam Roben.
 
         Include JSGlobalObject.h to fix the build.
 
