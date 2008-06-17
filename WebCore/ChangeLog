@@ -1,3 +1,19 @@
+2008-06-17  David Hyatt  <hyatt@apple.com>
+
+        Fix for slow performance on CSS selector tests at:
+
+        http://jpsykes.com/153/more-css-performance-testing-pt-2
+
+        Fix <style> element processing so that we don't reparse the entire stylesheet as chunks come in from
+        the network (since this is O(n^2)).   Wait for the parser to deliver all of the data before we
+        process the sheet for the first time.
+
+        Reviewed by olliej
+
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::finishParsingChildren):
+        (WebCore::HTMLStyleElement::childrenChanged):
+
 2008-06-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.
