@@ -46,6 +46,11 @@ var WebInspector = {
     searchResultsHeight: 100,
     missingLocalizedStrings: {},
 
+    get previousFocusElement()
+    {
+        return this._previousFocusElement;
+    },
+
     get currentFocusElement()
     {
         return this._currentFocusElement;
@@ -56,25 +61,11 @@ var WebInspector = {
         if (!x || this._currentFocusElement === x)
             return;
 
-        if (this._currentFocusElement) {
-            this._currentFocusElement.removeStyleClass("focused");
-            this._currentFocusElement.addStyleClass("blurred");
-            if (this._currentFocusElement.blur)
-                this._currentFocusElement.blur();
-            if (this._currentFocusElement.blurred)
-                this._currentFocusElement.blurred(x);
-        }
-
-        var previousFocusElement = this._currentFocusElement;
+        this._previousFocusElement = this._currentFocusElement;
         this._currentFocusElement = x;
 
-        if (x) {
-            x.addStyleClass("focused");
-            x.removeStyleClass("blurred");
-            if (this._currentFocusElement.focus)
-                this._currentFocusElement.focus();
-            if (this._currentFocusElement.focused)
-                this._currentFocusElement.focused(previousFocusElement);
+        if (this._currentFocusElement) {
+            this._currentFocusElement.focus();
 
             // Make a caret selection inside the new element if there isn't a range selection and
             // there isn't already a caret selection inside.
@@ -87,7 +78,8 @@ var WebInspector = {
                 selection.removeAllRanges();
                 selection.addRange(selectionRange);
             }
-        }
+        } else if (this._previousFocusElement)
+            this._previousFocusElement.blur();
     },
 
     get currentPanel()
@@ -317,8 +309,7 @@ WebInspector.loaded = function()
     window.addEventListener("unload", this.windowUnload.bind(this), true);
     window.addEventListener("resize", this.windowResize.bind(this), true);
 
-    document.addEventListener("mousedown", this.changeFocus.bind(this), true);
-    document.addEventListener("focus", this.changeFocus.bind(this), true);
+    document.addEventListener("focus", this.focusChanged.bind(this), true);
     document.addEventListener("keydown", this.documentKeyDown.bind(this), true);
     document.addEventListener("keyup", this.documentKeyUp.bind(this), true);
     document.addEventListener("beforecopy", this.documentCanCopy.bind(this), true);
@@ -394,21 +385,9 @@ WebInspector.windowBlured = function(event)
         document.body.addStyleClass("inactive");
 }
 
-WebInspector.changeFocus = function(event)
+WebInspector.focusChanged = function(event)
 {
-    var nextFocusElement;
-
-    var current = event.target;
-    while (current) {
-        if (current.nodeName.toLowerCase() === "input")
-            nextFocusElement = current;
-        current = current.parentNode;
-    }
-
-    if (!nextFocusElement)
-        nextFocusElement = event.target.enclosingNodeOrSelfWithClass("focusable");
-
-    this.currentFocusElement = nextFocusElement;
+    this.currentFocusElement = event.target;
 }
 
 WebInspector.documentClick = function(event)
@@ -1133,23 +1112,28 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
 
     var oldText = element.textContent;
     var handleKeyEvent = element.handleKeyEvent;
-    var blurred = element.blurred;
 
     element.addStyleClass("editing");
-    element.addStyleClass("focusable");
 
-    var previousFocusElement = WebInspector.currentFocusElement;
+    var oldTabIndex = element.tabIndex;
+    if (element.tabIndex < 0)
+        element.tabIndex = 0;
+
+    function blurEventListener() {
+        editingCancelled.call(element);
+    }
 
     function cleanUpAfterEditing() {
         delete this.__editing;
 
         this.removeStyleClass("editing");
-        this.removeStyleClass("focusable");
+        this.tabIndex = oldTabIndex;
 
         this.handleKeyEvent = handleKeyEvent;
-        this.blurred = blurred;
+        element.removeEventListener("blur", blurEventListener, false);
 
-        WebInspector.currentFocusElement = previousFocusElement;
+        if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
+            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
     }
 
     function editingCancelled() {
@@ -1177,7 +1161,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         }
     }
 
-    element.blurred = function() { editingCancelled.call(element); }
+    element.addEventListener("blur", blurEventListener, false);
 
     WebInspector.currentFocusElement = element;
 }

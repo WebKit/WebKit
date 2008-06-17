@@ -36,12 +36,8 @@ WebInspector.Console = function()
     this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), false);
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
 
-    // The messagesElement is the focusable element so clicking anywhere in the
-    // console area will focus the prompt.
-    this.messagesElement.focused = this._messagesFocused.bind(this);
-    this.messagesElement.handleKeyEvent = this._promptKeyDown.bind(this);
-
     this.promptElement = document.getElementById("console-prompt");
+    this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " .=:[({;");
 
     this.toggleButton = document.getElementById("console-status-bar-item");
@@ -85,7 +81,7 @@ WebInspector.Console.prototype = {
         {
             if ("updateStatusBarItems" in WebInspector.currentPanel)
                 WebInspector.currentPanel.updateStatusBarItems();
-            WebInspector.currentFocusElement = this.messagesElement;
+            WebInspector.currentFocusElement = this.promptElement;
             delete this._animating;
         }
 
@@ -107,9 +103,8 @@ WebInspector.Console.prototype = {
         this.toggleButton.removeStyleClass("toggled-on");
         this.toggleButton.title = WebInspector.UIString("Show console.");
 
-        if (WebInspector.currentFocusElement === this.messagesElement)
-            WebInspector.currentFocusElement = this._previousFocusElement;
-        delete this._previousFocusElement;
+        if (this.element === WebInspector.currentFocusElement || this.element.isAncestor(WebInspector.currentFocusElement))
+            WebInspector.currentFocusElement = WebInspector.previousFocusElement;
 
         var anchoredItems = document.getElementById("anchored-status-bar-items");
 
@@ -262,13 +257,6 @@ WebInspector.Console.prototype = {
         }
 
         this.prompt.handleKeyEvent(event);
-    },
-
-    _messagesFocused: function(previousFocusElement)
-    {
-        this._previousFocusElement = previousFocusElement;
-        if (!this.prompt.isCaretInsidePrompt())
-            this.prompt.moveCaretToEndOfPrompt();
     },
 
     _startStatusBarDragging: function(event)

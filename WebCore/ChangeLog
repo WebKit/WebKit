@@ -1,5 +1,44 @@
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
+        Use tabIndex in the Web Inspector for focusable areas.
+        https://bugs.webkit.org/show_bug.cgi?id=19583
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console): No longer make the messagesElement
+        focusable since the engine handles the case for us. The promptElement
+        now handles the key events.
+        (WebInspector.Console.prototype.show): Set the current focus element
+        to the prompt element.
+        (WebInspector.Console.prototype.hide): Set the current focus element
+        to WebInspector.previousFocusElement.
+        (WebInspector.Console.prototype._messagesFocused): Removed.
+        * page/inspector/DataGrid.js:
+        (WebInspector.DataGrid): Remove the focusable class.
+        * page/inspector/DatabaseQueryView.js:
+        (WebInspector.DatabaseQueryView): Remove the focusable class. Set
+        tabIndex to 0. The promptElement now handles the key events.
+        (WebInspector.DatabaseQueryView.prototype._focused): Removed.
+        * page/inspector/inspector.css: Updated selectors to use :focus
+        instead of .focused and .blurred.
+        * page/inspector/inspector.html: Removed focusable, focused and blurred
+        classes and added tabindex attributes.
+        * page/inspector/inspector.js:
+        (WebInspector.get previousFocusElement): Added. Returns _previousFocusElement.
+        (WebInspector.set currentFocusElement): Simplified. Stores the previous element
+        in _previousFocusElement for clients that need it. Calls focus on the passed
+        in element or blur on the previous element.
+        (WebInspector.loaded): Removed the event listener for mousedown. Renamed
+        changeFocus to focusChanged.
+        (WebInspector.focusChanged): Renamed from changeFocus. Just sets the
+        currentFocusElement to the event target.
+        (WebInspector.startEditing): Changed to use tabIndex and blur events.
+        Add a more robust check for restoring focus to the previous element
+        when editing finishes that catches focused descendants.
+
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
         Removed redundant if statements and early returns from
         AccessibilityRenderObject::ariaRoleAttribute.
 

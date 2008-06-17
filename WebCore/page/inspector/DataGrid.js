@@ -26,7 +26,7 @@
 WebInspector.DataGrid = function(columns)
 {
     this.element = document.createElement("div");
-    this.element.className = "data-grid focusable";
+    this.element.className = "data-grid";
     this.element.tabIndex = 0;
     this.element.addEventListener("keydown", this._keyDown.bind(this), false);
 

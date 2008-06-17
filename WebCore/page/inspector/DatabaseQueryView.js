@@ -31,15 +31,14 @@ WebInspector.DatabaseQueryView = function(database)
 
     this.element.addStyleClass("database-view");
     this.element.addStyleClass("query");
-    this.element.addStyleClass("focusable");
+    this.element.tabIndex = 0;
 
     this.element.addEventListener("selectstart", this._selectStart.bind(this), false);
-    this.element.focused = this._focused.bind(this);
-    this.element.handleKeyEvent = this._promptKeyDown.bind(this);
 
     this.promptElement = document.createElement("div");
     this.promptElement.className = "database-query-prompt";
     this.promptElement.appendChild(document.createElement("br"));
+    this.promptElement.handleKeyEvent = this._promptKeyDown.bind(this);
     this.element.appendChild(this.promptElement);
 
     this.prompt = new WebInspector.TextPrompt(this.promptElement, this.completions.bind(this), " ");
@@ -98,13 +97,6 @@ WebInspector.DatabaseQueryView.prototype = {
         }
 
         this.prompt.handleKeyEvent(event);
-    },
-
-    _focused: function(previousFocusElement)
-    {
-        this._previousFocusElement = previousFocusElement;
-        if (!this.prompt.isCaretInsidePrompt())
-            this.prompt.moveCaretToEndOfPrompt();
     },
 
     _selectStart: function(event)

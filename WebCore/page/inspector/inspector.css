@@ -42,6 +42,14 @@ body {
     -webkit-box-sizing: border-box;
 }
 
+:focus {
+    outline: none;
+}
+
+input[type="search"]:focus, input[type="text"]:focus {
+    outline: auto 5px -webkit-focus-ring-color;
+}
+
 iframe, a img {
     border: none;
 }
@@ -94,7 +102,6 @@ body.attached.inactive #toolbar {
     background-color: transparent;
     border-style: none;
     border-color: transparent;
-    outline: none;
     -webkit-box-orient: vertical;
     -webkit-box-align: center;
     -webkit-box-pack: end;
@@ -188,15 +195,11 @@ body.attached #search-toolbar-label {
     white-space: nowrap;
 }
 
-.selected .search-results-section {
+:focus .selected .search-results-section {
     color: rgba(255, 255, 255, 0.8);
 }
 
-body.inactive .focused .selected .search-results-section {
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.blurred .selected .search-results-section {
+.selected .search-results-section {
     color: rgba(0, 0, 0, 0.5);
 }
 
@@ -303,7 +306,6 @@ button.status-bar-item {
     width: 32px;
     background-image: url(Images/statusbarButtons.png);
     background-position: 0 0;
-    outline: none;
 }
 
 button.status-bar-item:active {
@@ -318,7 +320,6 @@ button.status-bar-item:disabled {
 select.status-bar-item {
     min-width: 48px;
     border-width: 0 17px 0 2px;
-    outline: none;
     padding: 0 2px 0 6px;
     font-weight: bold;
     color: rgb(48, 48, 48);
@@ -448,7 +449,6 @@ body.console-visible #console {
 
 #console-prompt {
     position: relative;
-    outline: none;
     padding: 1px 22px 1px 24px;
     min-height: 16px; 
     white-space: pre-wrap;
@@ -817,14 +817,11 @@ body.console-visible #console {
 
 .outline-disclosure li.selected .selection {
     display: block;
-}
-
-.focused .outline-disclosure li.selected .selection {
-    background-color: rgb(56, 121, 217);
-}
-
-.blurred .outline-disclosure li.selected .selection, body.inactive .outline-disclosure li.selected .selection {
     background-color: rgb(212, 212, 212);
+}
+
+:focus .outline-disclosure li.selected .selection {
+    background-color: rgb(56, 121, 217);
 }
 
 .outline-disclosure > ol {
@@ -851,12 +848,12 @@ body.console-visible #console {
     text-indent: -2px
 }
 
-.blurred .outline-disclosure li.selected, body.inactive .outline-disclosure li.selected {
-    color: black;
+:focus .outline-disclosure li.selected {
+    color: white;
 }
 
-.outline-disclosure li.selected {
-    color: white;
+:focus .outline-disclosure li.selected * {
+    color: inherit;
 }
 
 .outline-disclosure li.parent {
@@ -876,23 +873,19 @@ body.console-visible #console {
     padding-right: 2px;
 }
 
-.blurred .outline-disclosure li.parent.selected::before, body.inactive .outline-disclosure li.parent.selected::before {
+.outline-disclosure li.parent::before {
     content: url(Images/treeRightTriangleBlack.png);
 }
 
-.outline-disclosure li.parent.selected::before {
+:focus .outline-disclosure li.parent.selected::before {
     content: url(Images/treeRightTriangleWhite.png);
-}
-
-.blurred .outline-disclosure li.parent.expanded.selected::before, body.inactive .outline-disclosure li.parent.expanded.selected::before {
-    content: url(Images/treeDownTriangleBlack.png);
 }
 
 .outline-disclosure li.parent.expanded::before {
     content: url(Images/treeDownTriangleBlack.png);
 }
 
-.outline-disclosure li.parent.expanded.selected::before {
+:focus .outline-disclosure li.parent.expanded.selected::before {
     content: url(Images/treeDownTriangleWhite.png);
 }
 
@@ -944,10 +937,6 @@ body.console-visible #console {
     text-decoration: underline;
 }
 
-body:not(.inactive) .focused .outline-disclosure li.selected * {
-    color: inherit;
-}
-
 .placard {
     position: relative;
     margin-top: 1px;
@@ -967,7 +956,7 @@ body:not(.inactive) .focused .outline-disclosure li.selected * {
     -webkit-background-clip: padding;
 }
 
-.focused .placard.selected {
+:focus .placard.selected {
     border-top: 1px solid rgb(68, 128, 200);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
 }
@@ -1096,7 +1085,6 @@ body.inactive .placard.selected {
     overflow: hidden;
     -webkit-user-select: text;
     cursor: auto;
-    outline: none;
 }
 
 .section .properties li.parent {
@@ -1434,10 +1422,6 @@ body.inactive .sidebar {
     border: 1px solid #aaa;
 }
 
-.data-grid:focus {
-    outline: none;
-}
-
 .data-grid table {
     table-layout: fixed;
     border-spacing: 0;
@@ -1624,7 +1608,6 @@ body.inactive .data-grid th.sort-ascending, body.inactive .data-grid th.sort-des
 
 .database-query-prompt {
     position: relative;
-    outline: none;
     padding: 1px 22px 1px 24px;
     min-height: 16px; 
     white-space: pre-wrap;
@@ -2272,7 +2255,7 @@ body.inactive .sidebar-tree-item .disclosure-button:active {
     color: rgb(132, 154, 190) !important;
 }
 
-.focused .sidebar-tree-item.selected .status .bubble {
+:focus .sidebar-tree-item.selected .status .bubble {
     color: rgb(36, 98, 172) !important;
 }
 
@@ -2304,7 +2287,7 @@ body.inactive .sidebar-tree-item.selected .status .bubble {
     -webkit-background-clip: padding;
 }
 
-.focused .sidebar-tree-item.selected {
+:focus .sidebar-tree-item.selected {
     border-top: 1px solid rgb(68, 128, 200);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(92, 147, 213)), to(rgb(21, 83, 170)));
 }
