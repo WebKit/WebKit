@@ -322,7 +322,10 @@ WebInspector.loaded = function()
     mainPanelsElement.handleKeyUpEvent = this.mainKeyUp.bind(this);
     mainPanelsElement.handleCopyEvent = this.mainCopy.bind(this);
 
-    this.currentFocusElement = mainPanelsElement;
+    // Focus the mainPanelsElement in a timeout so it happens after the initial focus,
+    // so it doesn't get reset to the first toolbar button. This initial focus happens
+    // on Mac when the window is made key and the WebHTMLView becomes the first responder.
+    setTimeout(function() { WebInspector.currentFocusElement = mainPanelsElement }, 0);
 
     var dockToggleButton = document.getElementById("dock-status-bar-item");
     dockToggleButton.addEventListener("click", this.toggleAttach.bind(this), false);

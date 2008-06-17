@@ -1,5 +1,19 @@
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
+        Focus the mainPanelsElement in a timeout so it happens after the
+        initial focus, so it doesn't get reset to the first toolbar button.
+        This initial focus happens on Mac when the window is made key and
+        the WebHTMLView becomes the first responder.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19587
+
+        Reviewed by Adele Peterson.
+
+        * page/inspector/inspector.js:
+        (WebInspector.loaded): Focus the mainPanelsElement in a timeout.
+
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
         Use tabIndex in the Web Inspector for focusable areas.
         https://bugs.webkit.org/show_bug.cgi?id=19583
 
