@@ -276,7 +276,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
         case QMetaType::QVariantMap: 
             if (type == Object || type == Array || type == RTArray) {
                 // Enumerate the contents of the object
-                PropertyNameArray properties;
+                PropertyNameArray properties(exec);
                 object->getPropertyNames(exec, properties);
                 PropertyNameArray::const_iterator it = properties.begin();
 
@@ -797,7 +797,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
             QString s = i.key();
             JSValue* val = convertQVariantToValue(exec, root, i.value());
             if (val)
-                ret->put(exec, Identifier((const UChar *)s.constData(), s.length()), val);
+                ret->put(exec, Identifier(exec, (const UChar *)s.constData(), s.length()), val);
             // ### error case?
             ++i;
         }
@@ -1409,7 +1409,7 @@ JSValue *QtRuntimeConnectionMethod::callAsFunction(ExecState* exec, JSObject*, c
                     } else {
                         // Convert it to a string
                         UString funcName = args[1]->toString(exec);
-                        Identifier funcIdent(funcName);
+                        Identifier funcIdent(exec, funcName);
 
                         // ### DropAllLocks
                         // This is resolved at this point in QtScript
@@ -1621,7 +1621,7 @@ void QtConnectionObject::execute(void **argv)
 
                         JSObject* qt_sender = Instance::createRuntimeObject(QtInstance::create(sender(), ro));
                         JSObject* wrapper = new JSObject();
-                        wrapper->put(exec, "__qt_sender__", qt_sender);
+                        wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender);
                         ScopeChain oldsc = fimp->scope();
                         ScopeChain sc = oldsc;
                         sc.push(wrapper);

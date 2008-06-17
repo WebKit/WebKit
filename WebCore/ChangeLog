@@ -1,3 +1,18 @@
+2008-06-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the Qt port by adding ExecState when necessary.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::getPropertyNames):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeConnectionMethod::callAsFunction):
+        (KJS::Bindings::QtConnectionObject::execute):
+
 2008-06-17  David Hyatt  <hyatt@apple.com>
 
         Fix for slow performance on CSS selector tests at:

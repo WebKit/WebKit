@@ -203,7 +203,7 @@ void QtInstance::end()
     // Do nothing.
 }
 
-void QtInstance::getPropertyNames(ExecState* , PropertyNameArray& array)
+void QtInstance::getPropertyNames(ExecState* exec, PropertyNameArray& array)
 {
     // This is the enumerable properties, so put:
     // properties
@@ -217,19 +217,19 @@ void QtInstance::getPropertyNames(ExecState* , PropertyNameArray& array)
         for (i=0; i < meta->propertyCount(); i++) {
             QMetaProperty prop = meta->property(i);
             if (prop.isScriptable()) {
-                array.add(Identifier(prop.name()));
+                array.add(Identifier(exec, prop.name()));
             }
         }
 
         QList<QByteArray> dynProps = obj->dynamicPropertyNames();
         foreach(QByteArray ba, dynProps) {
-            array.add(Identifier(ba.constData()));
+            array.add(Identifier(exec, ba.constData()));
         }
 
         for (i=0; i < meta->methodCount(); i++) {
             QMetaMethod method = meta->method(i);
             if (method.access() != QMetaMethod::Private) {
-                array.add(Identifier(method.signature()));
+                array.add(Identifier(exec, method.signature()));
             }
         }
     }
@@ -280,7 +280,7 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
     CallData d;
     if (getCallData(d) != CallTypeNone) {
         if (!m_defaultMethod)
-            m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier("[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
+            m_defaultMethod = new QtRuntimeMetaMethod(exec, Identifier(exec, "[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
 
         return m_defaultMethod->callAsFunction(exec, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
     } else
