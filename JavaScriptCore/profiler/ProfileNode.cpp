@@ -40,8 +40,6 @@
 
 namespace KJS {
 
-static const char* NonJSExecution = "(idle)";
-
 static double getCount()
 {
 #if PLATFORM(WIN_OS)
@@ -129,17 +127,6 @@ void ProfileNode::stopProfiling()
 
     ASSERT(m_actualSelfTime <= m_actualTotalTime);
     m_actualSelfTime = m_actualTotalTime - m_actualSelfTime;
-
-    if (!m_head && m_actualSelfTime) {
-        ProfileNode* idleNode = willExecute(CallIdentifier(NonJSExecution, 0, 0));
-
-        idleNode->setTotalTime(m_actualSelfTime);
-        idleNode->setSelfTime(m_actualSelfTime);
-        idleNode->setNumberOfCalls(0);
-
-        m_actualSelfTime = 0.0;
-    }
-
     m_visibleSelfTime = m_actualSelfTime;
 }
 

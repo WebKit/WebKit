@@ -35,6 +35,8 @@
 
 namespace KJS {
 
+static const char* NonJSExecution = "(idle)";
+
 static void calculateVisibleTotalTime(ProfileNode* n) { n->calculateVisibleTotalTime(); }
 static void restoreAll(ProfileNode* n) { n->restore(); }
 static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
@@ -53,10 +55,51 @@ Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigne
 
 void Profile::stopProfiling()
 {
+    forEach(KJS::stopProfiling);
+    removeProfileStart();
+    removeProfileEnd();
+
+    double headSelfTime = m_head->selfTime();
+    if (headSelfTime) {
+        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), m_head.get(), m_head.get());
+
+        idleNode->setTotalTime(headSelfTime);
+        idleNode->setSelfTime(headSelfTime);
+        idleNode->setVisible(true);
+
+        m_head->setSelfTime(0.0);
+        m_head->addChild(idleNode.release());
+    }
+
+    m_depth = 0;
     m_currentNode = 0;
     m_originatingGlobalExec = 0;
-    forEach(KJS::stopProfiling);
-    m_depth = 0;
+}
+
+// The console.profile that started this profile will be the first child.
+void Profile::removeProfileStart() {
+    for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
+        m_currentNode = next;
+
+    ASSERT(m_currentNode->callIdentifier().name == "profile");
+
+    for (ProfileNode* currentParent = m_currentNode->parent(); currentParent; currentParent = currentParent->parent())
+        currentParent->setTotalTime(currentParent->totalTime() - m_currentNode->totalTime());
+
+    m_currentNode->parent()->removeChild(0);
+}
+
+// The console.profileEnd that stopped this profile will be the last child.
+void Profile::removeProfileEnd() {
+    for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
+        m_currentNode = next;
+
+    ASSERT(m_currentNode->callIdentifier().name == "profileEnd");
+
+    for (ProfileNode* currentParent = m_currentNode->parent(); currentParent; currentParent = currentParent->parent())
+        currentParent->setTotalTime(currentParent->totalTime() - m_currentNode->totalTime());
+
+    m_currentNode->parent()->removeChild(m_currentNode->parent()->children().size() - 1);
 }
 
 void Profile::willExecute(const CallIdentifier& callIdentifier)

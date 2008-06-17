@@ -1,3 +1,33 @@
+2008-06-17  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5951534> JSProfiler: Don't profile console.profile()
+        or console.profileEnd()
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::stopProfiling): Moved the creation of the (idle) node to
+        the Profile (not ProfileNode).  This makes sense since the Profile
+        should be the one to modify the profile tree.  Also each stopProfiling()
+        does not need to check if it's the head node anymore.  Also fixed an
+        oddity where I was using willExecute to create the node.
+        (KJS::Profile::removeProfileStart): Removes the call to console.profile
+        that started this profile.
+        (KJS::Profile::removeProfileEnd): Removes the call to console.profileEnd
+        that ended this profile.
+        * profiler/Profile.h:
+        * profiler/ProfileNode.cpp: Moved the creation of the (idle) node to
+        the Profile object.
+        (KJS::ProfileNode::stopProfiling):
+        * profiler/ProfileNode.h: Added some helper functions and whitespace to
+        facilitate readability and the removal of profile() and profileEnd()
+        from the Profile tree.
+        (KJS::CallIdentifier::operator const char* ):
+        (KJS::ProfileNode::firstChild):
+        (KJS::ProfileNode::lastChild):
+        (KJS::ProfileNode::removeChild):
+        (KJS::ProfileNode::toString):
+
 2008-06-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Rubber stamped by Adam Roben.
@@ -71,6 +101,7 @@
         * API/NodeList.h:
         * API/testapi.c:
 
+>>>>>>> .r34623
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Trying to fix Windows build.
