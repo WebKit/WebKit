@@ -35,9 +35,6 @@ namespace WebCore {
 
 JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const ArgList& args)
 {
-    if (!impl()->isValid())
-        return jsUndefined();
-
     JSValue* exception = 0;
     JSValue* result = impl()->evaluate(args[0]->toString(exec), exception);
 
@@ -49,14 +46,25 @@ JSValue* JSJavaScriptCallFrame::evaluate(ExecState* exec, const ArgList& args)
 
 JSValue* JSJavaScriptCallFrame::thisObject(ExecState* exec) const
 {
-    if (!impl()->isValid() || !impl()->thisObject())
-        return jsNull();
-    return impl()->thisObject();
+    return impl()->thisObject() ? impl()->thisObject() : jsNull();
+}
+
+JSValue* JSJavaScriptCallFrame::type(ExecState* exec) const
+{
+    switch (impl()->type()) {
+        case DebuggerCallFrame::FunctionType:
+            return jsString("function");
+        case DebuggerCallFrame::ProgramType:
+            return jsString("program");
+    }
+
+    ASSERT_NOT_REACHED();
+    return jsNull();
 }
 
 JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
 {
-    if (!impl()->isValid())
+    if (!impl()->scopeChain())
         return jsNull();
 
     const ScopeChainNode* scopeChain = impl()->scopeChain();

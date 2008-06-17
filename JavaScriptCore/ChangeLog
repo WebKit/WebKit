@@ -1,3 +1,17 @@
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
+        Added a type to DebuggerCallFrame so the under interface can
+        distinguish anonymous functions and program call frames.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19585
+
+        Reviewed by Geoff Garen.
+
+        * JavaScriptCore.exp: Export the DebuggerCallFrame::type symbol.
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::type): Added.
+        * kjs/DebuggerCallFrame.h:
+
 2008-06-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Tim H.

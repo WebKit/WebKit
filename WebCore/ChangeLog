@@ -1,5 +1,36 @@
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
+        Use accurate call frame title's based on the call frame type.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19585
+
+        Reviewed by Geoff Garen.
+
+        * English.lproj/localizedStrings.js: Updated strings.
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::evaluate): Removed the isValid()
+        check since the evaluate() functiondoes the check already.
+        (WebCore::JSJavaScriptCallFrame::thisObject): Removed the isValid()
+        check, since thisObject() does the check and returns null if invalid.
+        (WebCore::JSJavaScriptCallFrame::type): Return a string
+        based on the enum value of the type.
+        (WebCore::JSJavaScriptCallFrame::scopeChain): Removed the isValid()
+        check, since scopeChain() does the check and returns null if invalid.
+        So just null check scopeChain().
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::type): Return the DebuggerCallFrame::Type.
+        Return DebuggerCallFrame::UnknownType if the call frame is invalid.
+        * page/JavaScriptCallFrame.h:
+        * page/JavaScriptCallFrame.idl: Add the type property.
+        * page/inspector/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype.update): Check the type
+        of the call frame to create the correct title.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addScriptToFilesMenu): Use the
+        "(program)" title for the file menu to match the call frames.
+
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
         Remember the expanded state of objects in the Scope Variables pane when stepping.
         https://bugs.webkit.org/show_bug.cgi?id=19584
 

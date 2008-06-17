@@ -42,6 +42,11 @@ namespace KJS {
     
     class DebuggerCallFrame {
     public:
+        typedef enum {
+            ProgramType,
+            FunctionType
+        } Type;
+
         DebuggerCallFrame(Machine* machine, JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, JSValue* exception, Register** registerBase, int registerOffset)
             : m_machine(machine)
             , m_dynamicGlobalObject(dynamicGlobalObject)
@@ -56,6 +61,7 @@ namespace KJS {
         JSGlobalObject* dynamicGlobalObject() const { return m_dynamicGlobalObject; }
         const ScopeChainNode* scopeChain() const { return m_scopeChain; }
         const UString* functionName() const;
+        DebuggerCallFrame::Type type() const;
         JSObject* thisObject() const;
         JSValue* evaluate(const UString&, JSValue*& exception) const;
         JSValue* exception() const { return m_exception; }

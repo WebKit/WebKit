@@ -70,6 +70,14 @@ String JavaScriptCallFrame::functionName() const
     return *functionName;
 }
 
+DebuggerCallFrame::Type JavaScriptCallFrame::type() const
+{
+    ASSERT(m_isValid);
+    if (!m_isValid)
+        return DebuggerCallFrame::ProgramType;
+    return m_debuggerCallFrame.type();
+}
+
 JSObject* JavaScriptCallFrame::thisObject() const
 {
     ASSERT(m_isValid);

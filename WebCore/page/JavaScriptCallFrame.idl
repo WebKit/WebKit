@@ -34,6 +34,7 @@ module inspector {
         readonly attribute [CustomGetter] Array scopeChain;
         readonly attribute [CustomGetter] Object thisObject;
         readonly attribute DOMString functionName;
+        readonly attribute [CustomGetter] DOMString type;
     };
 
 }

@@ -44,12 +44,16 @@ WebInspector.CallStackSidebarPane.prototype = {
             return;
         }
 
+        var title;
         do {
-            var title = callFrame.functionName;
-            if (!title && callFrame.caller)
-                title = WebInspector.UIString("(anonymous function)");
-            else if (!title)
-                title = WebInspector.UIString("(global code)");
+            switch (callFrame.type) {
+            case "function":
+                title = callFrame.functionName || WebInspector.UIString("(anonymous function)");
+                break;
+            case "program":
+                title = WebInspector.UIString("(program)");
+                break;
+            }
 
             var placard = new WebInspector.Placard(title);
             placard.callFrame = callFrame;

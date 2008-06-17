@@ -52,6 +52,21 @@ const UString* DebuggerCallFrame::functionName() const
     return &function->functionName().ustring();
 }
 
+DebuggerCallFrame::Type DebuggerCallFrame::type() const
+{
+    if (m_registerOffset == 0)
+        return ProgramType;
+
+    int callFrameOffset = m_registerOffset - m_codeBlock->numLocals - Machine::CallFrameHeaderSize;
+    ASSERT(callFrameOffset >= 0);
+
+    Register* callFrame = *m_registerBase + callFrameOffset;
+    if (callFrame[Machine::Callee].u.jsObject)
+        return FunctionType;
+
+    return ProgramType;
+}
+
 JSObject* DebuggerCallFrame::thisObject() const
 {
     if (!m_codeBlock)
