@@ -1,3 +1,24 @@
+2008-06-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Bug 19596: LEAK: Gmail leaks SegmentedVector<RegisterID>
+        <https://bugs.webkit.org/show_bug.cgi?id=19596>
+
+        When growing SegmentedVector, we start adding segments at the position
+        of the last segment, overwriting it. The destructor frees allocated
+        segments starting at the segment of index 1, because the segment of
+        index 0 is assumed to be the initial inline segment. This causes a leak
+        of the segment that is referenced by index 0. Modifying grow() so that
+        it starts adding segments at the position after the last segment fixes
+        the leak.
+
+        Since the initial segment is a special case in the lookup code, this
+        bug never manifested itself via incorrect results.
+
+        * VM/SegmentedVector.h:
+        (KJS::SegmentedVector::grow):
+
 2008-06-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Alexey.
