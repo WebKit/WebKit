@@ -1,3 +1,17 @@
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
+        Removed duplicate implementations of setTabIndex. They all matched
+        the HTMLElement::setTabIndex implementation.
+
+        Reviewed by Sam Wenig.
+
+        * html/HTMLAnchorElement.cpp: Removed setTabIndex.
+        * html/HTMLAreaElement.cpp: Ditto.
+        * html/HTMLFormControlElement.cpp: Ditto.
+        * html/HTMLFormControlElement.h: Ditto.
+        * html/HTMLObjectElement.cpp: Ditto.
+        * html/HTMLObjectElement.h: Ditto.
+
 2008-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

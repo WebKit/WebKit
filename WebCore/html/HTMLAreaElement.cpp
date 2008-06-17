@@ -208,11 +208,6 @@ void HTMLAreaElement::setShape(const String& value)
     setAttribute(shapeAttr, value);
 }
 
-void HTMLAreaElement::setTabIndex(int tabIndex)
-{
-    setAttribute(tabindexAttr, String::number(tabIndex));
-}
-
 bool HTMLAreaElement::isFocusable() const
 {
     return HTMLElement::isFocusable();

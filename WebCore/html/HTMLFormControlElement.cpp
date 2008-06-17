@@ -219,11 +219,6 @@ bool HTMLFormControlElement::isMouseFocusable() const
     return false;
 }
 
-void HTMLFormControlElement::setTabIndex(int value)
-{
-    setAttribute(tabindexAttr, String::number(value));
-}
-
 short HTMLFormControlElement::tabIndex() const
 {
     return Element::tabIndex();
