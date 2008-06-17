@@ -56,7 +56,7 @@ void JSVariableObject::getPropertyNames(ExecState* exec, PropertyNameArray& prop
 bool JSVariableObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
     SymbolTableEntry entry = symbolTable().get(propertyName.ustring().rep());
-    if (!entry.isEmpty()) {
+    if (!entry.isNull()) {
         attributes = entry.getAttributes() | DontDelete;
         return true;
     }

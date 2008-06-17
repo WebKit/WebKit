@@ -42,6 +42,9 @@ namespace KJS {
 
     static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
+    // The bit twiddling in this class assumes that every register index is a
+    // reasonably small negative number, and therefore has its high two bits set.
+
     struct SymbolTableEntry {
         SymbolTableEntry()
             : rawValue(0)
@@ -50,11 +53,17 @@ namespace KJS {
         
         SymbolTableEntry(int index)
         {
+            ASSERT(index & 0x80000000);
+            ASSERT(index & 0x40000000);
+
             rawValue = index & ~0x80000000 & ~0x40000000;
         }
         
         SymbolTableEntry(int index, unsigned attributes)
         {
+            ASSERT(index & 0x80000000);
+            ASSERT(index & 0x40000000);
+
             rawValue = index;
             
             if (!(attributes & ReadOnly))
@@ -64,14 +73,14 @@ namespace KJS {
                 rawValue &= ~0x40000000;
         }
 
-        bool isEmpty() const
+        bool isNull() const
         {
-            return rawValue == 0;
+            return !rawValue;
         }
 
         int getIndex() const
         {
-            // Every register index we store is negative, so this bit twiddling works correctly
+            ASSERT(!isNull());
             return rawValue | 0x80000000 | 0x40000000;
         }
 

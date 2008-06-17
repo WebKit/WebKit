@@ -1,3 +1,18 @@
+2008-06-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Slight cleanup to the SymbolTableEntry class.
+        
+        Renamed isEmpty to isNull, since we usually use "empty" to mean "holds
+        the valid, empty value", and "null" to mean "holds no value".
+        
+        Changed an "== 0" to a "!", to match our style guidelines.
+        
+        Added some ASSERTs to verify the (possibly questionable) assumption that
+        all register indexes will have their high two bits set. Also clarified a
+        comment to make that assumption clear.
+
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
