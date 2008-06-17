@@ -24,6 +24,7 @@
 
 #include "PropertyNameArray.h"
 #include "JSObject.h"
+#include "JSGlobalObject.h"
 #include <stdio.h>
 
 namespace KJS {
