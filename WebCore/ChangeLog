@@ -1,3 +1,16 @@
+2008-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - fix <rdar://problem/5973313> REGRESSION (r32508): Down arrow doesn't change caret with non-user entered newlines in textareas
+
+        Test: editing/selection/after-line-break.html
+
+        * dom/Position.cpp:
+        (WebCore::Position::getInlineBoxAndOffset): Changed to not include the
+        position after a line break in its line box, because that position is
+        actually on the next line.
+
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

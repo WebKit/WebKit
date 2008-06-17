@@ -1,3 +1,13 @@
+2008-06-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - test and updated results for <rdar://problem/5973313> REGRESSION (r32508): Down arrow doesn't change caret with non-user entered newlines in textareas
+
+        * editing/selection/after-line-break-expected.txt: Added.
+        * editing/selection/after-line-break.html: Added.
+        * platform/mac/editing/selection/move-left-right-expected.txt: More bogus warnings.
+
 2008-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
