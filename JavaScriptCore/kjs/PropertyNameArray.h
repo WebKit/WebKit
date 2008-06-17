@@ -22,6 +22,7 @@
 #ifndef PropertyNameArray_h
 #define PropertyNameArray_h
 
+#include "ExecState.h"
 #include "identifier.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
