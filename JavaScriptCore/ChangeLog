@@ -1,3 +1,11 @@
+2008-06-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Sort includes alphabetically.
+
+        * kjs/nodes.cpp:
+
 2008-06-16  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

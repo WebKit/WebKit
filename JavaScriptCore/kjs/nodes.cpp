@@ -26,17 +26,17 @@
 #include "config.h"
 #include "nodes.h"
 
+#include "ArrayPrototype.h"
 #include "CodeGenerator.h"
 #include "ExecState.h"
+#include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
-#include "ArrayPrototype.h"
+#include "RegExpObject.h"
 #include "debugger.h"
-#include "FunctionPrototype.h"
 #include "lexer.h"
 #include "operations.h"
-#include "RegExpObject.h"
 #include <math.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashCountedSet.h>
