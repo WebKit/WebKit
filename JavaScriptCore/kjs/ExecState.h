@@ -26,7 +26,6 @@
 
 #include "JSGlobalData.h"
 #include "LabelStack.h"
-#include "LocalStorageEntry.h"
 #include "completion.h"
 #include "list.h"
 #include "ScopeChain.h"

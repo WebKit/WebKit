@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include "JSValue.h"
 #include "JSObject.h"
-#include "types.h"
 #include "nodes.h"
 #include "lexer.h"
 #include "JSString.h"

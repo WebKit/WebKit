@@ -45,12 +45,6 @@
 
 namespace KJS {
 
-static inline bool isConstant(const LocalStorage& localStorage, size_t index)
-{
-    ASSERT(index < localStorage.size());
-    return localStorage[index].attributes & ReadOnly;
-}
-
 static inline UString::Rep* rep(const Identifier& ident)
 {
     return ident.ustring().rep();

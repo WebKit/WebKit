@@ -1,3 +1,11 @@
+2008-06-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey.
+
+        - removed nearly unused types.h and LocalStorageEntry.h headers
+
+        * JSUtils.h:
+
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

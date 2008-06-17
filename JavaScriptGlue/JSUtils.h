@@ -34,7 +34,6 @@
 #include <JavaScriptCore/JSValue.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/types.h>
 #include <JavaScriptCore/interpreter.h>
 #include <JavaScriptCore/protect.h>
 #include <JavaScriptCore/collector.h>

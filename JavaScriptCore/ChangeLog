@@ -1,3 +1,19 @@
+2008-06-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Alexey.
+        
+        - removed nearly unused types.h and LocalStorageEntry.h headers
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/ExecState.h:
+        * kjs/LocalStorageEntry.h: Removed.
+        * kjs/RegExpObject.cpp:
+        * kjs/error_object.cpp:
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        * kjs/types.h: Removed.
+
 2008-06-16  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Geoff.

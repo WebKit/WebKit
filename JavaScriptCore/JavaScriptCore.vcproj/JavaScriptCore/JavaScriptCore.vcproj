@@ -493,10 +493,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\LocalStorageEntry.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\lookup.cpp"
 				>
 			</File>
@@ -626,10 +622,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\SymbolTable.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\types.h"
 				>
 			</File>
 			<File
