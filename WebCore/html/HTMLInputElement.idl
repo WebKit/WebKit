@@ -35,6 +35,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString alt;
                  attribute boolean         checked;
                  attribute boolean         disabled;
+                 attribute boolean         autofocus;
                  attribute long            maxLength;
                  attribute [ConvertNullToNullString] DOMString name;
                  attribute boolean         readOnly;

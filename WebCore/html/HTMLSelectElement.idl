@@ -46,6 +46,7 @@ module html {
         readonly attribute HTMLOptionsCollection options;
 
                  attribute boolean         disabled;
+                 attribute boolean         autofocus;
                  attribute boolean         multiple;
                  attribute [ConvertNullToNullString] DOMString       name;
                  attribute long            size;

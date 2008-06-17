@@ -482,6 +482,11 @@ public:
     bool setFocusedNode(PassRefPtr<Node>);
     Node* focusedNode() const { return m_focusedNode.get(); }
 
+    // The m_ignoreAutofocus flag specifies whether or not the document has been changed by the user enough 
+    // for WebCore to ignore the autofocus attribute on any form controls
+    bool ignoreAutofocus() const { return m_ignoreAutofocus; };
+    void setIgnoreAutofocus(bool shouldIgnore = true) { m_ignoreAutofocus = shouldIgnore; };
+
     void setHoverNode(PassRefPtr<Node>);
     Node* hoverNode() const { return m_hoverNode.get(); }
 
@@ -805,6 +810,8 @@ private:
     RefPtr<CSSStyleSheet> m_mappedElementSheet;
 
     bool m_printing;
+    
+    bool m_ignoreAutofocus;
 
     ParseMode m_parseMode;
 

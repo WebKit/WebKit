@@ -1,3 +1,39 @@
+2008-06-17  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele.
+        
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18887
+        Added support for autofocus controls.
+
+        When authors specify the "autofocus" attribute on form controls these 
+        acquire focus automatically as the document is rendered.
+
+        Tests: fast/forms/autofocus-attribute.html
+               fast/forms/autofocus-opera-001.html
+               fast/forms/autofocus-opera-002.html
+               fast/forms/autofocus-opera-003.html
+               fast/forms/autofocus-opera-004.html
+               fast/forms/autofocus-opera-005.html
+               fast/forms/autofocus-opera-006.html
+               fast/forms/autofocus-opera-007.html
+               fast/forms/autofocus-opera-008.html
+
+        * dom/Document.cpp: (WebCore::Document::Document): Initialize the flag to ignore autofocus.
+        * dom/Document.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLButtonElement.idl:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::attach): Sets focus onto the appropriate "autofocus" control
+        (WebCore::HTMLFormControlElement::autofocus): Autofocus attribute getter
+        (WebCore::HTMLFormControlElement::setAutofocus): Autofocus attribute setter
+        * html/HTMLFormControlElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLSelectElement.idl:
+        * html/HTMLTextAreaElement.idl:
+        * rendering/RenderTextControl.cpp: (WebCore::RenderTextControl::setUserEdited):
+          Sets the "ignore autofocus" flag on document if the user edited the control.
+        * rendering/RenderTextControl.h:
+
 2008-06-17  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Dave Hyatt and Mark Rowe.

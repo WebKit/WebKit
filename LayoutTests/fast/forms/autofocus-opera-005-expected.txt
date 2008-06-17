@@ -1,0 +1,3 @@
+The form control should have a green background: 
+
+SUCCESS

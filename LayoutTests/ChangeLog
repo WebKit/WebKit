@@ -1,3 +1,35 @@
+2008-06-17  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=18887
+        Added support for autofocus controls.
+
+        Test cases "autofocus-opera*" have been imported from the Opera test suite
+        originally located at:
+        http://tc.labs.opera.com/html/forms/input/common-attributes/autofocus/
+        
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/resources/domListEnumeration.js:
+        * fast/forms/autofocus-attribute-expected.txt: Added.
+        * fast/forms/autofocus-attribute.html: Added.
+        * fast/forms/autofocus-opera-001-expected.txt: Added.
+        * fast/forms/autofocus-opera-001.html: Added.
+        * fast/forms/autofocus-opera-002-expected.txt: Added.
+        * fast/forms/autofocus-opera-002.html: Added.
+        * fast/forms/autofocus-opera-003-expected.txt: Added.
+        * fast/forms/autofocus-opera-003.html: Added.
+        * fast/forms/autofocus-opera-004-expected.txt: Added.
+        * fast/forms/autofocus-opera-004.html: Added.
+        * fast/forms/autofocus-opera-005-expected.txt: Added.
+        * fast/forms/autofocus-opera-005.html: Added.
+        * fast/forms/autofocus-opera-006-expected.txt: Added.
+        * fast/forms/autofocus-opera-006.html: Added.
+        * fast/forms/autofocus-opera-007-expected.txt: Added.
+        * fast/forms/autofocus-opera-007.html: Added.
+        * fast/forms/autofocus-opera-008-expected.txt: Added.
+        * fast/forms/autofocus-opera-008.html: Added.
+
 2008-06-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.

@@ -30,6 +30,7 @@ module html {
                  attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  long                 cols;
                  attribute  boolean              disabled;
+                 attribute  boolean              autofocus;
                  attribute  [ConvertNullToNullString] DOMString            name;
                  attribute  boolean              readOnly;
                  attribute  long                 rows;

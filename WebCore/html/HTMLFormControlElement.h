@@ -70,6 +70,10 @@ public:
     virtual bool isReadOnlyControl() const { return m_readOnly; }
     void setReadOnly(bool);
 
+    // Determines whether or not a control will be automatically focused
+    virtual bool autofocus() const;
+    void setAutofocus(bool);
+
     virtual void recalcStyle(StyleChange);
 
     virtual const AtomicString& name() const;

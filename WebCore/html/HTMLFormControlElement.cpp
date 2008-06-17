@@ -96,6 +96,14 @@ void HTMLFormControlElement::attach()
     // on the renderer.
     if (renderer())
         renderer()->updateFromElement();
+        
+    // Focus the element if it should honour its autofocus attribute.
+    // We have to determine if the element is a TextArea/Input/Button/Select,
+    // if input type hidden ignore autofocus. So if disabled or readonly.
+    if (autofocus() && renderer() && !document()->ignoreAutofocus() && !isReadOnlyControl() &&
+            ((hasTagName(inputTag) && !isInputTypeHidden()) || hasTagName(selectTag) ||
+              hasTagName(buttonTag) || hasTagName(textareaTag)))
+         focus();
 }
 
 void HTMLFormControlElement::insertedIntoTree(bool deep)
@@ -169,6 +177,16 @@ void HTMLFormControlElement::setDisabled(bool b)
 void HTMLFormControlElement::setReadOnly(bool b)
 {
     setAttribute(readonlyAttr, b ? "" : 0);
+}
+
+bool HTMLFormControlElement::autofocus() const
+{
+    return hasAttribute(autofocusAttr);
+}
+
+void HTMLFormControlElement::setAutofocus(bool b)
+{
+    setAttribute(autofocusAttr, b ? "autofocus" : 0);
 }
 
 void HTMLFormControlElement::recalcStyle(StyleChange change)

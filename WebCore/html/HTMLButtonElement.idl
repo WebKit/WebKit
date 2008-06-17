@@ -28,6 +28,7 @@ module html {
         readonly attribute  HTMLFormElement      form;
                  attribute  [ConvertNullToNullString] DOMString            accessKey;
                  attribute  boolean              disabled;
+                 attribute  boolean              autofocus;
                  attribute  [ConvertNullToNullString] DOMString            name;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;

@@ -62,7 +62,7 @@ public:
     virtual bool isTextArea() const { return m_multiLine; }
     
     bool isUserEdited() const { return m_userEdited; }
-    void setUserEdited(bool isUserEdited) { m_userEdited = isUserEdited; }
+    void setUserEdited(bool isUserEdited);
 
     int selectionStart();
     int selectionEnd();
