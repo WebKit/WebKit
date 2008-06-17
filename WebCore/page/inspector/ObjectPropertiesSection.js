@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties)
+WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPlaceholder, ignoreHasOwnProperty, extraProperties, treeElementConstructor)
 {
     if (!title) {
         title = Object.describe(object);
@@ -38,6 +38,7 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     this.object = object;
     this.ignoreHasOwnProperty = ignoreHasOwnProperty;
     this.extraProperties = extraProperties;
+    this.treeElementConstructor = treeElementConstructor || WebInspector.ObjectPropertyTreeElement;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
 }
@@ -62,7 +63,7 @@ WebInspector.ObjectPropertiesSection.prototype = {
                 continue;
             if (!this.ignoreHasOwnProperty && "hasOwnProperty" in object && !object.hasOwnProperty(propertyName))
                 continue;
-            this.propertiesTreeOutline.appendChild(new WebInspector.ObjectPropertyTreeElement(object, propertyName));
+            this.propertiesTreeOutline.appendChild(new this.treeElementConstructor(object, propertyName));
         }
 
         if (!this.propertiesTreeOutline.children.length) {
@@ -123,7 +124,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             var propertyName = properties[i];
             if (propertyName === "__treeElementIdentifier")
                 continue;
-            this.appendChild(new WebInspector.ObjectPropertyTreeElement(childObject, propertyName));
+            this.appendChild(new this.treeOutline.section.treeElementConstructor(childObject, propertyName));
         }
     }
 }

@@ -34,6 +34,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
         this.bodyElement.removeChildren();
 
         this.sections = [];
+        this.callFrame = callFrame;
 
         if (!callFrame) {
             var infoElement = document.createElement("div");
@@ -41,6 +42,15 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             infoElement.textContent = WebInspector.UIString("Not Paused");
             this.bodyElement.appendChild(infoElement);
             return;
+        }
+
+        if (!callFrame._expandedProperties) {
+            // FIXME: fix this when https://bugs.webkit.org/show_bug.cgi?id=19410 is fixed.
+            // The callFrame is a JSInspectedObjectWrapper, so we are not allowed to assign
+            // an object created in the Inspector's context to that object. So create an
+            // Object from the inspectedWindow.
+            var inspectedWindow = InspectorController.inspectedWindow();
+            callFrame._expandedProperties = new inspectedWindow.Object;
         }
 
         var foundLocalScope = false;
@@ -75,7 +85,9 @@ WebInspector.ScopeChainSidebarPane.prototype = {
             if (!title || title === subtitle)
                 subtitle = null;
 
-            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder, true, extraProperties);
+            var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            section.pane = this;
+
             if (!foundLocalScope || localScope)
                 section.expanded = true;
 
@@ -86,3 +98,57 @@ WebInspector.ScopeChainSidebarPane.prototype = {
 }
 
 WebInspector.ScopeChainSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;
+
+WebInspector.ScopeVariableTreeElement = function(parentObject, propertyName)
+{
+    WebInspector.ObjectPropertyTreeElement.call(this, parentObject, propertyName);
+}
+
+WebInspector.ScopeVariableTreeElement.prototype = {
+    onattach: function()
+    {
+        if (this.hasChildren && this.propertyIdentifier in this.treeOutline.section.pane.callFrame._expandedProperties)
+            this.expand();
+    },
+
+    onexpand: function()
+    {
+        this.treeOutline.section.pane.callFrame._expandedProperties[this.propertyIdentifier] = true;
+    },
+
+    oncollapse: function()
+    {
+        delete this.treeOutline.section.pane.callFrame._expandedProperties[this.propertyIdentifier];
+    },
+
+    get propertyIdentifier()
+    {
+        if ("_propertyIdentifier" in this)
+            return this._propertyIdentifier;
+        var section = this.treeOutline.section;
+        this._propertyIdentifier = section.title + ":" + (section.subtitle ? section.subtitle + ":" : "") + this.propertyPath;
+        return this._propertyIdentifier;
+    },
+
+    get propertyPath()
+    {
+        if ("_propertyPath" in this)
+            return this._propertyPath;
+
+        var current = this;
+        var result;
+
+        do {
+            if (result)
+                result = current.propertyName + "." + result;
+            else
+                result = current.propertyName;
+            current = current.parent;
+        } while (current && !current.root);
+
+        this._propertyPath = result;
+        return result;
+    }
+}
+
+WebInspector.ScopeVariableTreeElement.prototype.__proto__ = WebInspector.ObjectPropertyTreeElement.prototype;

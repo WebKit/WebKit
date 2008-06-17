@@ -1,5 +1,36 @@
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
+        Remember the expanded state of objects in the Scope Variables pane when stepping.
+        https://bugs.webkit.org/show_bug.cgi?id=19584
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection): Add an optional argument
+        that is the treeElementConstructor to use when making TreeElements.
+        (WebInspector.ObjectPropertiesSection.prototype.onpopulate): Use
+        the treeElementConstructor to create TreeElements.
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate): Use
+        the treeElementConstructor to create TreeElements.
+        * page/inspector/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update): Create an
+        _expandedProperties object on the callframe if one doesn't exist yet.
+        Pass WebInspector.ScopeVariableTreeElement to the ObjectPropertiesSection
+        as the TreeElement constructor we want to use.
+        (WebInspector.ScopeVariableTreeElement): Added.
+        (WebInspector.ScopeVariableTreeElement.prototype.onattach): Expand if the
+        propertyIdentifier is in the pane's _expandedProperties.
+        (WebInspector.ScopeVariableTreeElement.prototype.onexpand): Add the
+        propertyIdentifier to the pane's _expandedProperties.
+        (WebInspector.ScopeVariableTreeElement.prototype.oncollapse): Remove the
+        propertyIdentifier from the pane's _expandedProperties.
+        (WebInspector.ScopeVariableTreeElement.prototype.get propertyIdentifier):
+        Return an identifier that has the section title, subtile and propertyPath concatenated.
+        (WebInspector.ScopeVariableTreeElement.prototype.get propertyPath): Return a string
+        that has the propertyNames up to the root ancestor concatenated with a period.
+
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
         Focus the mainPanelsElement in a timeout so it happens after the
         initial focus, so it doesn't get reset to the first toolbar button.
         This initial focus happens on Mac when the window is made key and
