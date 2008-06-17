@@ -1,5 +1,19 @@
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Darin.
+
+        Initialize functionQueueMutex in a safe manner.
+
+        * wtf/MainThread.cpp:
+        (WTF::functionQueueMutex): Made it an AtomicallyInitializedStatic.
+
+        (WTF::dispatchFunctionsFromMainThread):
+        (WTF::setMainThreadCallbacksPaused):
+        Assert that the current thread is main, meaning that the callbacksPaused static can be
+        accessed.
+
+2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoff Garen.
 
         Make Identifier construction use an explicitly passed IdentifierTable.

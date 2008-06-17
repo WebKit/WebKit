@@ -46,7 +46,7 @@ static bool callbacksPaused;
 
 static Mutex& functionQueueMutex()
 {
-    static Mutex staticFunctionQueueMutex;
+    AtomicallyInitializedStatic(Mutex, staticFunctionQueueMutex);
     return staticFunctionQueueMutex;
 }
 
@@ -58,6 +58,8 @@ static FunctionQueue& functionQueue()
 
 void dispatchFunctionsFromMainThread()
 {
+    ASSERT(isMainThread());
+
     if (callbacksPaused)
         return;
 
@@ -85,6 +87,8 @@ void callOnMainThread(MainThreadFunction* function, void* context)
 
 void setMainThreadCallbacksPaused(bool paused)
 {
+    ASSERT(isMainThread());
+
     if (callbacksPaused == paused)
         return;
 
