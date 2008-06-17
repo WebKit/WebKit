@@ -2,6 +2,15 @@
 
         Reviewed by Oliver.
 
+        Reduce code duplication in emitReadModifyAssignment().
+
+        * kjs/nodes.cpp:
+        (KJS::emitReadModifyAssignment):
+
+2008-06-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
         Sort includes alphabetically.
 
         * kjs/nodes.cpp:

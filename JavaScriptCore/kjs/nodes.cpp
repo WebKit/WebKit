@@ -814,34 +814,47 @@ RegisterID* ConditionalNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 // FIXME: should this be moved to be a method on CodeGenerator?
 static ALWAYS_INLINE RegisterID* emitReadModifyAssignment(CodeGenerator& generator, RegisterID* dst, RegisterID* src1, RegisterID* src2, Operator oper)
 {
+    OpcodeID opcode;
     switch (oper) {
         case OpMultEq:
-            return generator.emitBinaryOp(op_mul, dst, src1, src2);
+            opcode = op_mul;
+            break;
         case OpDivEq:
-            return generator.emitBinaryOp(op_div, dst, src1, src2);
+            opcode = op_div;
+            break;
         case OpPlusEq:
-            return generator.emitBinaryOp(op_add, dst, src1, src2);
+            opcode = op_add;
+            break;
         case OpMinusEq:
-            return generator.emitBinaryOp(op_sub, dst, src1, src2);
+            opcode = op_sub;
+            break;
         case OpLShift:
-            return generator.emitBinaryOp(op_lshift, dst, src1, src2);
+            opcode = op_lshift;
+            break;
         case OpRShift:
-            return generator.emitBinaryOp(op_rshift, dst, src1, src2);
+            opcode = op_rshift;
+            break;
         case OpURShift:
-            return generator.emitBinaryOp(op_urshift, dst, src1, src2);
+            opcode = op_urshift;
+            break;
         case OpAndEq:
-            return generator.emitBinaryOp(op_bitand, dst, src1, src2);
+            opcode = op_bitand;
+            break;
         case OpXOrEq:
-            return generator.emitBinaryOp(op_bitxor, dst, src1, src2);
+            opcode = op_bitxor;
+            break;
         case OpOrEq:
-            return generator.emitBinaryOp(op_bitor, dst, src1, src2);
+            opcode = op_bitor;
+            break;
         case OpModEq:
-            return generator.emitBinaryOp(op_mod, dst, src1, src2);
+            opcode = op_mod;
+            break;
         default:
             ASSERT_NOT_REACHED();
+            return dst;
     }
-
-    return dst;
+    
+    return generator.emitBinaryOp(opcode, dst, src1, src2);
 }
 
 RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
