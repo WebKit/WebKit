@@ -1,5 +1,16 @@
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
+        Removed redundant if statements and early returns from
+        AccessibilityRenderObject::ariaRoleAttribute.
+
+        Reviewed by Sam Wenig.
+
+        * page/AccessibilityRenderObject.cpp:
+        (AccessibilityRenderObject::ariaRoleAttribute): Removed redundant if
+        statements and early returns.
+
+2008-06-17  Timothy Hatcher  <timothy@apple.com>
+
         Removed duplicate implementations of setTabIndex. They all matched
         the HTMLElement::setTabIndex implementation.
 

@@ -1945,14 +1945,6 @@ void AccessibilityRenderObject::setAriaRole()
 
 AccessibilityRole AccessibilityRenderObject::ariaRoleAttribute() const
 {
-    if (m_ariaRole == MenuRole)
-        return m_ariaRole;
-    if (m_ariaRole == MenuBarRole)
-        return m_ariaRole;
-    if (m_ariaRole == MenuButtonRole)
-        return m_ariaRole;
-    if (m_ariaRole == MenuItemRole)
-        return m_ariaRole;
     return m_ariaRole;
 }
 
