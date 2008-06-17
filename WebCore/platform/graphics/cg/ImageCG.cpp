@@ -87,6 +87,7 @@ BitmapImage::BitmapImage(CGImageRef cgImage, ImageObserver* observer)
 
     m_frames.grow(1);
     m_frames[0].m_frame = cgImage;
+    m_frames[0].m_hasAlpha = true;
     checkForSolidColor();
 }
 

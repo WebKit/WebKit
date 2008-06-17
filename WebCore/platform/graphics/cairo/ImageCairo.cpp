@@ -76,6 +76,7 @@ BitmapImage::BitmapImage(cairo_surface_t* surface, ImageObserver* observer)
 
     m_frames.grow(1);
     m_frames[0].m_frame = surface;
+    m_frames[0].m_hasAlpha = cairo_surface_get_content(surface) != CAIRO_CONTENT_COLOR;
     checkForSolidColor();
 }
 

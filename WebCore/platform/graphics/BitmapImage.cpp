@@ -203,7 +203,7 @@ float BitmapImage::frameDurationAtIndex(size_t index)
 bool BitmapImage::frameHasAlphaAtIndex(size_t index)
 {
     if (index >= frameCount())
-        return 0;
+        return true;
 
     if (index >= m_frames.size() || !m_frames[index].m_frame)
         cacheFrame(index);
