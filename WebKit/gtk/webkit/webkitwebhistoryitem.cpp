@@ -44,8 +44,21 @@ struct _WebKitWebHistoryItemPrivate {
 
 #define WEBKIT_WEB_HISTORY_ITEM_GET_PRIVATE(obj)    (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_HISTORY_ITEM, WebKitWebHistoryItemPrivate))
 
+enum {
+    PROP_0,
+
+    PROP_TITLE,
+    PROP_ALTERNATE_TITLE,
+    PROP_URI,
+    PROP_ORIGINAL_URI,
+    PROP_LAST_VISITED_TIME
+};
+
 G_DEFINE_TYPE(WebKitWebHistoryItem, webkit_web_history_item, G_TYPE_OBJECT);
 
+static void webkit_web_history_item_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec);
+
+static void webkit_web_history_item_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec);
 
 static GHashTable* webkit_history_items()
 {
@@ -106,6 +119,90 @@ static void webkit_web_history_item_class_init(WebKitWebHistoryItemClass* klass)
 
     gobject_class->dispose = webkit_web_history_item_dispose;
     gobject_class->finalize = webkit_web_history_item_finalize;
+    gobject_class->set_property = webkit_web_history_item_set_property;
+    gobject_class->get_property = webkit_web_history_item_get_property;
+
+    GParamFlags flags = (GParamFlags)(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+
+    /**
+    * WebKitWebHistoryItem:title:
+    *
+    * The title of the history item.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_TITLE,
+                                    g_param_spec_string(
+                                    "title",
+                                    "Title",
+                                    "The title of the history item",
+                                    NULL,
+                                    G_PARAM_READABLE));
+
+    /**
+    * WebKitWebHistoryItem:alternate-title:
+    *
+    * The alternate title of the history item.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ALTERNATE_TITLE,
+                                    g_param_spec_string(
+                                    "alternate-title",
+                                    "Alternate Title",
+                                    "The alternate title of the history item",
+                                    NULL,
+                                    flags));
+
+    /**
+    * WebKitWebHistoryItem:uri:
+    *
+    * The URI of the history item.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_URI,
+                                    g_param_spec_string(
+                                    "uri",
+                                    "URI",
+                                    "The URI of the history item",
+                                    NULL,
+                                    G_PARAM_READABLE));
+
+    /**
+    * WebKitWebHistoryItem:original-uri:
+    *
+    * The original URI of the history item.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_ORIGINAL_URI,
+                                    g_param_spec_string(
+                                    "original-uri",
+                                    "Original URI",
+                                    "The original URI of the history item",
+                                    NULL,
+                                    G_PARAM_READABLE));
+
+   /**
+    * WebKitWebHistoryItem:last-visited-time:
+    *
+    * The time at which the history item was last visited.
+    *
+    * Since: 1.0.2
+    */
+    g_object_class_install_property(gobject_class,
+                                    PROP_LAST_VISITED_TIME,
+                                    g_param_spec_double(
+                                    "last-visited-time",
+                                    "Last visited Time",
+                                    "The time at which the history item was last visited",
+                                    0, G_MAXDOUBLE, 0,
+                                    G_PARAM_READABLE));
 
     g_type_class_add_private(gobject_class, sizeof(WebKitWebHistoryItemPrivate));
 }
@@ -113,6 +210,46 @@ static void webkit_web_history_item_class_init(WebKitWebHistoryItemClass* klass)
 static void webkit_web_history_item_init(WebKitWebHistoryItem* webHistoryItem)
 {
     webHistoryItem->priv = WEBKIT_WEB_HISTORY_ITEM_GET_PRIVATE(webHistoryItem);
+}
+
+static void webkit_web_history_item_set_property(GObject* object, guint prop_id, const GValue* value, GParamSpec* pspec)
+{
+    WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
+
+    switch(prop_id) {
+    case PROP_ALTERNATE_TITLE:
+        webkit_web_history_item_set_alternate_title(webHistoryItem, g_value_get_string(value));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
+}
+
+static void webkit_web_history_item_get_property(GObject* object, guint prop_id, GValue* value, GParamSpec* pspec)
+{
+    WebKitWebHistoryItem* webHistoryItem = WEBKIT_WEB_HISTORY_ITEM(object);
+
+    switch (prop_id) {
+    case PROP_TITLE:
+        g_value_set_string(value, webkit_web_history_item_get_title(webHistoryItem));
+        break;
+    case PROP_ALTERNATE_TITLE:
+        g_value_set_string(value, webkit_web_history_item_get_alternate_title(webHistoryItem));
+        break;
+    case PROP_URI:
+        g_value_set_string(value, webkit_web_history_item_get_uri(webHistoryItem));
+        break;
+    case PROP_ORIGINAL_URI:
+        g_value_set_string(value, webkit_web_history_item_get_original_uri(webHistoryItem));
+        break;
+    case PROP_LAST_VISITED_TIME:
+        g_value_set_double(value, webkit_web_history_item_get_last_visited_time(webHistoryItem));
+        break;
+    default:
+        G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
+        break;
+    }
 }
 
 /* Helper function to create a new WebHistoryItem instance when needed */
@@ -230,6 +367,7 @@ void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistor
     WebCore::HistoryItem* item = core(webHistoryItem);
 
     item->setAlternateTitle(WebCore::String::fromUTF8(title));
+    g_object_notify(G_OBJECT(webHistoryItem), "alternate-title");
 }
 
 /**

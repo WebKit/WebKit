@@ -1,3 +1,19 @@
+2008-06-17  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Alp.
+
+        [GTK] WebKitWebHistoryItem needs properties
+        https://bugs.webkit.org/show_bug.cgi?id=19558
+
+        Implement properties matching the existing accessors.
+
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_class_init):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_set_property):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_property):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_set_alternate_title):
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - give Frame object functions shorter names: scriptProxy() -> script(),
