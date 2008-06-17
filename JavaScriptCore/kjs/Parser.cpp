@@ -63,7 +63,6 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
         
     Lexer& lexer = *JSGlobalData::threadInstance().lexer;
 
-    ASSERT(startingLineNumber > 0);
     if (startingLineNumber <= 0)
         startingLineNumber = 1;
 
