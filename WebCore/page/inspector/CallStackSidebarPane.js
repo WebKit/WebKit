@@ -29,7 +29,7 @@ WebInspector.CallStackSidebarPane = function()
 }
 
 WebInspector.CallStackSidebarPane.prototype = {
-    update: function(callFrame)
+    update: function(callFrame, sourceIDMap)
     {
         this.bodyElement.removeChildren();
 
@@ -45,6 +45,9 @@ WebInspector.CallStackSidebarPane.prototype = {
         }
 
         var title;
+        var subtitle;
+        var scriptOrResource;
+
         do {
             switch (callFrame.type) {
             case "function":
@@ -55,7 +58,17 @@ WebInspector.CallStackSidebarPane.prototype = {
                 break;
             }
 
-            var placard = new WebInspector.Placard(title);
+            scriptOrResource = sourceIDMap[callFrame.sourceIdentifier];
+            subtitle = WebInspector.displayNameForURL(scriptOrResource.sourceURL || scriptOrResource.url);
+
+            if (callFrame.line > 0) {
+                if (subtitle)
+                    subtitle += ":" + callFrame.line;
+                else
+                    subtitle = WebInspector.UIString("line %d", callFrame.line);
+            }
+
+            var placard = new WebInspector.Placard(title, subtitle);
             placard.callFrame = callFrame;
 
             placard.element.addEventListener("click", this._placardSelected.bind(this), false);

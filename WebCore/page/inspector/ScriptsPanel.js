@@ -303,7 +303,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         var callStackPane = this.sidebarPanes.callstack;
         var currentFrame = InspectorController.currentCallFrame();
-        callStackPane.update(currentFrame);
+        callStackPane.update(currentFrame, this._sourceIDMap);
         callStackPane.selectedCallFrame = currentFrame;
 
         WebInspector.currentPanel = this;
