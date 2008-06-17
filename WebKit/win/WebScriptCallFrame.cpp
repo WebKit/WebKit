@@ -203,7 +203,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::variableNames(
 
     *variableNames = 0;
 
-    PropertyNameArray propertyNames;
+    PropertyNameArray propertyNames(m_state);
 #if 0
     m_state->scopeChain().top()->getPropertyNames(m_state, propertyNames);
     // FIXME: It would be more efficient to use ::adopt here, but PropertyNameArray doesn't have a swap function.
@@ -225,7 +225,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::valueForVariable(
 
     *value = 0;
 
-    Identifier identKey(reinterpret_cast<UChar*>(key), SysStringLen(key));
+    Identifier identKey(m_state, reinterpret_cast<UChar*>(key), SysStringLen(key));
 
     JSValue* jsvalue = 0;
 #if 0

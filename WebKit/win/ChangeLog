@@ -1,3 +1,12 @@
+2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Trying to fix Windows build.
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::variableNames):
+        (WebScriptCallFrame::valueForVariable):
+        Give ExecState to functions that now take it.
+
 2008-06-16  Adam Roben  <aroben@apple.com>
 
         Windows build fix
