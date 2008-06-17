@@ -56,7 +56,7 @@ HTMLBodyElement::~HTMLBodyElement()
 
 void HTMLBodyElement::createLinkDecl()
 {
-    m_linkDecl = new CSSMutableStyleDeclaration;
+    m_linkDecl = CSSMutableStyleDeclaration::create();
     m_linkDecl->setParent(document()->elementSheet());
     m_linkDecl->setNode(this);
     m_linkDecl->setStrictParsing(!document()->inCompatMode());

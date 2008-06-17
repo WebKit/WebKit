@@ -131,7 +131,7 @@ PassRefPtr<Attribute> StyledElement::createAttribute(const QualifiedName& name, 
 
 void StyledElement::createInlineStyleDecl()
 {
-    m_inlineStyleDecl = new CSSMutableStyleDeclaration;
+    m_inlineStyleDecl = CSSMutableStyleDeclaration::create();
     m_inlineStyleDecl->setParent(document()->elementSheet());
     m_inlineStyleDecl->setNode(this);
     m_inlineStyleDecl->setStrictParsing(isHTMLElement() && !document()->inCompatMode());
@@ -408,7 +408,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
 
 void StyledElement::createMappedDecl(MappedAttribute* attr)
 {
-    CSSMappedAttributeDeclaration* decl = new CSSMappedAttributeDeclaration(0);
+    RefPtr<CSSMappedAttributeDeclaration> decl = CSSMappedAttributeDeclaration::create();
     attr->setDecl(decl);
     decl->setParent(document()->elementSheet());
     decl->setNode(this);

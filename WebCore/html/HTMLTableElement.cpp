@@ -466,13 +466,11 @@ void HTMLTableElement::additionalAttributeStyleDecls(Vector<CSSMutableStyleDecla
     AtomicString borderValue = m_borderColorAttr ? "solid" : "outset";
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, tableborderAttr, borderValue);
     if (!decl) {
-        decl = new CSSMappedAttributeDeclaration(0);
+        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
         decl->setParent(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
         
-        decl->ref(); // This single ref pins us in the table until the document dies.
-
         int v = m_borderColorAttr ? CSSValueSolid : CSSValueOutset;
         decl->setProperty(CSSPropertyBorderTopStyle, v, false);
         decl->setProperty(CSSPropertyBorderBottomStyle, v, false);
@@ -526,12 +524,10 @@ void HTMLTableElement::addSharedCellBordersDecl(Vector<CSSMutableStyleDeclaratio
     const AtomicString& cellborderValue = cellBorderNames[borders];
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, cellborderAttr, cellborderValue);
     if (!decl) {
-        decl = new CSSMappedAttributeDeclaration(0);
+        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
         decl->setParent(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
-        
-        decl->ref(); // This single ref pins us in the table until the document dies.
         
         switch (borders) {
             case SolidBordersColsOnly:
@@ -587,7 +583,7 @@ void HTMLTableElement::addSharedCellPaddingDecl(Vector<CSSMutableStyleDeclaratio
         String paddingValue = String::number(m_padding);
         m_paddingDecl = getMappedAttributeDecl(eUniversal, cellpaddingAttr, paddingValue);
         if (!m_paddingDecl) {
-            m_paddingDecl = new CSSMappedAttributeDeclaration(0);
+            m_paddingDecl = CSSMappedAttributeDeclaration::create();
             m_paddingDecl->setParent(document()->elementSheet());
             m_paddingDecl->setNode(this);
             m_paddingDecl->setStrictParsing(false); // Mapped attributes are just always quirky.
@@ -614,12 +610,10 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
     AtomicString rulesValue = rows ? "rowgroups" : "colgroups";
     CSSMappedAttributeDeclaration* decl = getMappedAttributeDecl(ePersistent, rulesAttr, rulesValue);
     if (!decl) {
-        decl = new CSSMappedAttributeDeclaration(0);
+        decl = CSSMappedAttributeDeclaration::create().releaseRef(); // This single ref pins us in the table until the document dies.
         decl->setParent(document()->elementSheet());
         decl->setNode(this);
         decl->setStrictParsing(false); // Mapped attributes are just always quirky.
-        
-        decl->ref(); // This single ref pins us in the table until the document dies.
         
         if (rows) {
             decl->setProperty(CSSPropertyBorderTopWidth, CSSValueThin, false);

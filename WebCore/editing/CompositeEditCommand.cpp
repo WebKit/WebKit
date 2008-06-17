@@ -859,8 +859,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     appendBlockPlaceholder(newBlock.get());
     setEndingSelection(Selection(Position(newBlock.get(), 0), DOWNSTREAM));
     
-    CSSComputedStyleDeclaration endingStyle(endingSelection().start().node());
-    endingStyle.diff(style.get());
+    computedStyle(endingSelection().start().node())->diff(style.get());
     if (style->length() > 0)
         applyStyle(style.get());
     

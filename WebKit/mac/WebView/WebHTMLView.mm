@@ -2379,7 +2379,9 @@ WEBCORE_COMMAND(yankAndSelect)
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
             BOOL panelShowing = [[[NSSpellChecker sharedSpellChecker] spellingPanel] isVisible];
-            [menuItem setTitle:panelShowing ? UI_STRING("Hide Spelling and Grammar", "menu item title") : UI_STRING("Show Spelling and Grammar", "menu item title")];
+            [menuItem setTitle:panelShowing
+                ? UI_STRING("Hide Spelling and Grammar", "menu item title")
+                : UI_STRING("Show Spelling and Grammar", "menu item title")];
         }
 #endif
         return [self _canEdit];
@@ -2391,7 +2393,7 @@ WEBCORE_COMMAND(yankAndSelect)
             return NO;
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            RefPtr<CSSStyleDeclaration> style = new CSSMutableStyleDeclaration;
+            RefPtr<CSSStyleDeclaration> style = CSSMutableStyleDeclaration::create();
             ExceptionCode ec;
             style->setProperty("direction", writingDirection == NSWritingDirectionLeftToRight ? "LTR" : "RTL", ec);
             [menuItem setState:frame->editor()->selectionHasStyle(style.get())];
@@ -2402,11 +2404,11 @@ WEBCORE_COMMAND(yankAndSelect)
     if (action == @selector(toggleBaseWritingDirection:)) {
         NSMenuItem *menuItem = (NSMenuItem *)item;
         if ([menuItem isKindOfClass:[NSMenuItem class]]) {
-            RefPtr<CSSStyleDeclaration> style = new CSSMutableStyleDeclaration;
+            RefPtr<CSSStyleDeclaration> style = CSSMutableStyleDeclaration::create();
             ExceptionCode ec;
             style->setProperty("direction", "RTL", ec);
-            // Take control of the title of the menu item, instead of just checking/unchecking it because otherwise
-            // we don't know what the check would mean.
+            // Take control of the title of the menu item instead of just checking/unchecking it because
+            // a check would be ambiguous.
             [menuItem setTitle:frame->editor()->selectionHasStyle(style.get())
                 ? UI_STRING("Left to Right", "Left to Right context menu item")
                 : UI_STRING("Right to Left", "Right to Left context menu item")];

@@ -295,7 +295,7 @@ ApplyStyleCommand::ApplyStyleCommand(Document* document, CSSStyleDeclaration* st
 
 ApplyStyleCommand::ApplyStyleCommand(Element* element, bool removeOnly, EditAction editingAction)
     : CompositeEditCommand(element->document())
-    , m_style(new CSSMutableStyleDeclaration())
+    , m_style(CSSMutableStyleDeclaration::create())
     , m_editingAction(editingAction)
     , m_propertyLevel(PropertyDefault)
     , m_start(endingSelection().start().downstream())
@@ -799,9 +799,7 @@ static bool hasTextDecorationProperty(Node *node)
     if (!node->isElementNode())
         return false;
 
-    Element *element = static_cast<Element *>(node);
-    CSSComputedStyleDeclaration style(element);
-    RefPtr<CSSValue> value = style.getPropertyCSSValue(CSSPropertyTextDecoration, DoNotUpdateLayout);
+    RefPtr<CSSValue> value = computedStyle(node)->getPropertyCSSValue(CSSPropertyTextDecoration, DoNotUpdateLayout);
     return value && !equalIgnoringCase(value->cssText(), "none");
 }
 
@@ -841,7 +839,7 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractTextDecorationS
     return textDecorationStyle.release();
 }
 
-PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractAndNegateTextDecorationStyle(Node *node)
+PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractAndNegateTextDecorationStyle(Node* node)
 {
     ASSERT(node);
     ASSERT(node->isElementNode());
@@ -850,14 +848,13 @@ PassRefPtr<CSSMutableStyleDeclaration> ApplyStyleCommand::extractAndNegateTextDe
     if (!node->isHTMLElement())
         return 0;
 
-    HTMLElement *element = static_cast<HTMLElement *>(node);
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(element);
-    ASSERT(computedStyle);
+    RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
+    ASSERT(nodeStyle);
 
     int properties[1] = { CSSPropertyTextDecoration };
-    RefPtr<CSSMutableStyleDeclaration> textDecorationStyle = computedStyle->copyPropertiesInSet(properties, 1);
+    RefPtr<CSSMutableStyleDeclaration> textDecorationStyle = nodeStyle->copyPropertiesInSet(properties, 1);
 
-    RefPtr<CSSValue> property = computedStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
+    RefPtr<CSSValue> property = nodeStyle->getPropertyCSSValue(CSSPropertyTextDecoration);
     if (property && !equalIgnoringCase(property->cssText(), "none")) {
         RefPtr<CSSMutableStyleDeclaration> newStyle = textDecorationStyle->copy();
         newStyle->setProperty(CSSPropertyTextDecoration, "none");

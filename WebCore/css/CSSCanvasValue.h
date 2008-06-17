@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,22 +27,16 @@
 #define CSSCanvasValue_h
 
 #include "CSSImageGeneratorValue.h"
-
-#include "CSSPrimitiveValue.h"
 #include "HTMLCanvasElement.h"
-#include "PlatformString.h"
-
-#include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Document;
 
-class CSSCanvasValue : public CSSImageGeneratorValue, public CanvasObserver {
+class CSSCanvasValue : public CSSImageGeneratorValue, private CanvasObserver {
 public:
-    CSSCanvasValue() {};
-    ~CSSCanvasValue();
+    static PassRefPtr<CSSCanvasValue> create() { return adoptRef(new CSSCanvasValue); }
+    virtual ~CSSCanvasValue();
 
     virtual String cssText() const;
 
@@ -50,12 +44,14 @@ public:
     virtual bool isFixedSize() const { return true; }
     virtual IntSize fixedSize(const RenderObject*);
 
+    void setName(const String& name) { m_name = name; }
+
+private:
+    CSSCanvasValue() { }
+
     virtual void canvasChanged(HTMLCanvasElement* element, const FloatRect& changedRect);
     virtual void canvasResized(HTMLCanvasElement* element);
 
-    void setName(const String& name) { m_name = name; }
-
-protected:
     HTMLCanvasElement* element(Document*);
      
     // The name of the canvas.

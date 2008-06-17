@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-XSLImportRule::XSLImportRule(StyleBase* parent, const String& href)
+XSLImportRule::XSLImportRule(XSLStyleSheet* parent, const String& href)
     : StyleBase(parent)
     , m_strHref(href)
     , m_cachedSheet(0)
@@ -57,7 +57,7 @@ void XSLImportRule::setXSLStyleSheet(const String& url, const String& sheet)
     if (m_styleSheet)
         m_styleSheet->setParent(0);
     
-    m_styleSheet = new XSLStyleSheet(this, url);
+    m_styleSheet = XSLStyleSheet::create(this, url);
     
     XSLStyleSheet* parent = parentStyleSheet();
     if (parent)

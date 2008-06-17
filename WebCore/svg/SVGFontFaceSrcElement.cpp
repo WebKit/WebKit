@@ -40,7 +40,7 @@ SVGFontFaceSrcElement::SVGFontFaceSrcElement(const QualifiedName& tagName, Docum
 
 PassRefPtr<CSSValueList> SVGFontFaceSrcElement::srcValue() const
 {
-    RefPtr<CSSValueList> list = new CSSValueList;
+    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(font_face_uriTag))
             list->append(static_cast<SVGFontFaceUriElement*>(child)->srcValue());

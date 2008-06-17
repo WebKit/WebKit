@@ -1,6 +1,4 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2005, 2006, 2007 Apple Inc. All rights reserved.
@@ -25,6 +23,7 @@
 #include "CSSRule.h"
 
 #include "CSSStyleSheet.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
@@ -35,18 +34,14 @@ CSSStyleSheet* CSSRule::parentStyleSheet() const
 
 CSSRule* CSSRule::parentRule() const
 {
+    // FIXME: I believe this always returns 0.
+    // A correct implementation would have to look farther up than just the parent.
     return (parent() && parent()->isRule()) ? static_cast<CSSRule*>(parent()) : 0;
-}
-
-String CSSRule::cssText() const
-{
-    // FIXME: Implement!
-    return String();
 }
 
 void CSSRule::setCssText(const String& /*cssText*/, ExceptionCode& /*ec*/)
 {
-    // FIXME: Implement!
+    notImplemented();
 }
 
 } // namespace WebCore

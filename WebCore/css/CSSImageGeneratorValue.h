@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,39 +27,33 @@
 #define CSSImageGeneratorValue_h
 
 #include "CSSValue.h"
-
-#include "IntSize.h"
 #include "IntSizeHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashCountedSet.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class Image;
-class IntSize;
 class StyleGeneratedImage;
 class RenderObject;
 
 class CSSImageGeneratorValue : public CSSValue {
 public:
-    CSSImageGeneratorValue();
     virtual ~CSSImageGeneratorValue();
 
-    virtual bool isImageGeneratorValue() const { return true; }
-    
     void addClient(RenderObject*, const IntSize&);
     void removeClient(RenderObject*);
     virtual Image* image(RenderObject*, const IntSize&) = 0;
 
-    virtual StyleGeneratedImage* generatedImage();
+    StyleGeneratedImage* generatedImage();
     
     virtual bool isFixedSize() const { return false; }
     virtual IntSize fixedSize(const RenderObject*) { return IntSize(); }
     
 protected:
+    CSSImageGeneratorValue();
+    
     Image* getImage(RenderObject*, const IntSize&);
     void putImage(const IntSize&, Image*);
 
@@ -69,6 +63,9 @@ protected:
     
     RefPtr<StyleGeneratedImage> m_image;
     bool m_accessedImage;
+
+private:
+    virtual bool isImageGeneratorValue() const { return true; }
 };
 
 } // namespace WebCore

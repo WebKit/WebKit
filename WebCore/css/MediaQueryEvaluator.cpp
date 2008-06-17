@@ -128,14 +128,14 @@ bool MediaQueryEvaluator::eval(const MediaList* mediaList, CSSStyleSelector* sty
     if (!mediaList)
         return true;
 
-    const Vector<MediaQuery*>* queries = mediaList->mediaQueries();
-    if (!queries->size())
+    const Vector<MediaQuery*>& queries = mediaList->mediaQueries();
+    if (!queries.size())
         return true; // empty query list evaluates to true
 
     // iterate over queries, stop if any of them eval to true (OR semantics)
     bool result = false;
-    for (size_t i = 0; i < queries->size() && !result; ++i) {
-        MediaQuery* query = queries->at(i);
+    for (size_t i = 0; i < queries.size() && !result; ++i) {
+        MediaQuery* query = queries.at(i);
 
         if (mediaTypeMatch(query->mediaType())) {
             const Vector<MediaQueryExp*>* exps = query->expressions();

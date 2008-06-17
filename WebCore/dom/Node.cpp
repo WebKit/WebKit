@@ -1239,9 +1239,9 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSStyleSheet tempStyleSheet(document());
+    RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(true);
-    RefPtr<CSSRule> rule = p.parseRule(&tempStyleSheet, selectors + "{}");
+    RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;
         return 0;
@@ -1270,9 +1270,9 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSStyleSheet tempStyleSheet(document());
+    RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(true);
-    RefPtr<CSSRule> rule = p.parseRule(&tempStyleSheet, selectors + "{}");
+    RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;
         return 0;

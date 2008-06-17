@@ -1,6 +1,4 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * Copyright (C) 2004, 2006 Apple Computer, Inc.
  *
@@ -22,8 +20,8 @@
 #include "config.h"
 #include "MediaList.h"
 
+#include "CSSImportRule.h"
 #include "CSSParser.h"
-#include "CSSRule.h"
 #include "CSSStyleSheet.h"
 #include "ExceptionCode.h"
 #include "MediaQuery.h"
@@ -82,13 +80,12 @@ MediaList::MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallb
         setMediaText("invalid", ec);
 }
 
-MediaList::MediaList(CSSRule* parentRule, const String& media, bool fallbackToDescriptor)
+MediaList::MediaList(CSSImportRule* parentRule, const String& media)
     : StyleBase(parentRule)
-    , m_fallback(fallbackToDescriptor)
+    , m_fallback(false)
 {
     ExceptionCode ec = 0;
     setMediaText(media, ec);
-    //FIXME: parsing can fail.
     if (ec)
         setMediaText("invalid", ec);
 }
@@ -96,16 +93,6 @@ MediaList::MediaList(CSSRule* parentRule, const String& media, bool fallbackToDe
 MediaList::~MediaList()
 {
     deleteAllValues(m_queries);
-}
-
-CSSStyleSheet *MediaList::parentStyleSheet() const
-{
-    return parent()->isCSSStyleSheet() ? static_cast<CSSStyleSheet*>(parent()) : 0;
-}
-
-CSSRule *MediaList::parentRule() const
-{
-    return parent()->isRule() ? static_cast<CSSRule*>(parent()) : 0;
 }
 
 static String parseMediaDescriptor(const String& s)
@@ -131,15 +118,15 @@ static String parseMediaDescriptor(const String& s)
 
 void MediaList::deleteMedium(const String& oldMedium, ExceptionCode& ec)
 {
-    MediaList tempMediaList;
+    RefPtr<MediaList> tempMediaList = MediaList::create();
     CSSParser p(true);
 
     MediaQuery* oldQuery = 0;
     bool deleteOldQuery = false;
 
-    if (p.parseMediaQuery(&tempMediaList, oldMedium)) {
-        if (tempMediaList.m_queries.size() > 0)
-            oldQuery = tempMediaList.m_queries[0];
+    if (p.parseMediaQuery(tempMediaList.get(), oldMedium)) {
+        if (tempMediaList->m_queries.size() > 0)
+            oldQuery = tempMediaList->m_queries[0];
     } else if (m_fallback) {
         String medium = parseMediaDescriptor(oldMedium);
         if (!medium.isNull()) {
@@ -187,7 +174,7 @@ String MediaList::mediaText() const
 
 void MediaList::setMediaText(const String& value, ExceptionCode& ec)
 {
-    MediaList tempMediaList;
+    RefPtr<MediaList> tempMediaList = MediaList::create();
     CSSParser p(true);
 
     Vector<String> list;
@@ -196,11 +183,11 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
     for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
         String medium = (*it).stripWhiteSpace();
         if (!medium.isEmpty()) {
-            if (!p.parseMediaQuery(&tempMediaList, medium)) {
+            if (!p.parseMediaQuery(tempMediaList.get(), medium)) {
                 if (m_fallback) {
                     String mediaDescriptor = parseMediaDescriptor(medium);
                     if (!mediaDescriptor.isNull())
-                        tempMediaList.m_queries.append(new MediaQuery(MediaQuery::None, mediaDescriptor, 0));
+                        tempMediaList->m_queries.append(new MediaQuery(MediaQuery::None, mediaDescriptor, 0));
                 } else {
                     ec = SYNTAX_ERR;
                     return;
@@ -222,8 +209,8 @@ void MediaList::setMediaText(const String& value, ExceptionCode& ec)
     
     ec = 0;
     deleteAllValues(m_queries);
-    m_queries = tempMediaList.m_queries;
-    tempMediaList.m_queries.clear();
+    m_queries = tempMediaList->m_queries;
+    tempMediaList->m_queries.clear();
     notifyChanged();
 }
 

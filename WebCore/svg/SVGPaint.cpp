@@ -27,21 +27,18 @@
 namespace WebCore {
 
 SVGPaint::SVGPaint()
-    : SVGColor()
-    , m_paintType(SVG_PAINTTYPE_UNKNOWN)
+    : m_paintType(SVG_PAINTTYPE_UNKNOWN)
 {
 }
 
 SVGPaint::SVGPaint(const String& uri)
-    : SVGColor()
-    , m_paintType(SVG_PAINTTYPE_URI_RGBCOLOR)
+    : m_paintType(SVG_PAINTTYPE_URI_RGBCOLOR)
 {
     setUri(uri);
 }
 
 SVGPaint::SVGPaint(SVGPaintType paintType)
-    : SVGColor()
-    , m_paintType(paintType)
+    : m_paintType(paintType)
 {
 }
 

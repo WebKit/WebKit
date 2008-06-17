@@ -61,7 +61,7 @@ public:
 #if ENABLE(XSLT)
     virtual void setXSLStyleSheet(const String& url, const String& sheet);
 #endif
-    void setCSSStyleSheet(CSSStyleSheet*);
+    void setCSSStyleSheet(PassRefPtr<CSSStyleSheet>);
     bool isLoading() const;
     virtual bool sheetLoaded();
 

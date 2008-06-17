@@ -34,8 +34,6 @@ typedef int ExceptionCode;
 
 class CSSStyleDeclaration : public StyleBase {
 public:
-    virtual bool isStyleDeclaration();
-
     static bool isPropertyName(const String&);
 
     CSSRule* parentRule() const;

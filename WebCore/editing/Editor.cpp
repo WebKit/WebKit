@@ -717,9 +717,9 @@ TriState Editor::selectionHasStyle(CSSStyleDeclaration* style) const
         }
     } else {
         for (Node* node = m_frame->selection()->start().node(); node; node = node->traverseNextNode()) {
-            RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(node);
-            if (computedStyle)
-                updateState(mutableStyle.get(), computedStyle.get(), atStart, state);
+            RefPtr<CSSComputedStyleDeclaration> nodeStyle = computedStyle(node);
+            if (nodeStyle)
+                updateState(mutableStyle.get(), nodeStyle.get(), atStart, state);
             if (state == MixedTriState)
                 break;
             if (node == m_frame->selection()->end().node())
@@ -1100,9 +1100,9 @@ void Editor::toggleUnderline()
 
 void Editor::setBaseWritingDirection(const String& direction)
 {
-    ExceptionCode ec = 0;
 
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    ExceptionCode ec;
     style->setProperty(CSSPropertyDirection, direction, false, ec);
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }

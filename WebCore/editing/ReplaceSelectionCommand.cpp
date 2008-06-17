@@ -230,7 +230,7 @@ PassRefPtr<Node> ReplacementFragment::insertFragmentForTestRendering(Node* conte
     while (n && !n->isElementNode())
         n = n->parentNode();
     if (n) {
-        RefPtr<CSSComputedStyleDeclaration> conFontStyle = new CSSComputedStyleDeclaration(static_cast<Element*>(n));
+        RefPtr<CSSComputedStyleDeclaration> conFontStyle = computedStyle(n);
         CSSStyleDeclaration* style = holder->style();
         style->setProperty(CSSPropertyWhiteSpace, conFontStyle->getPropertyValue(CSSPropertyWhiteSpace), false, ec);
         ASSERT(ec == 0);

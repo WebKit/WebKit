@@ -38,11 +38,6 @@ CSSStyleDeclaration::CSSStyleDeclaration(CSSRule* parent)
 {
 }
 
-bool CSSStyleDeclaration::isStyleDeclaration()
-{
-    return true;
-}
-
 PassRefPtr<CSSValue> CSSStyleDeclaration::getPropertyCSSValue(const String& propertyName)
 {
     int propID = cssPropertyID(propertyName);
@@ -150,7 +145,7 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(
         if (value)
             list.append(CSSProperty(set[i], value.release(), false));
     }
-    return new CSSMutableStyleDeclaration(0, list);
+    return CSSMutableStyleDeclaration::create(list);
 }
 
 } // namespace WebCore

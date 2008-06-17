@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,7 +24,6 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSPrimitiveValue.h"
 #include "DeprecatedValueList.h"
-#include "Node.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -36,10 +33,18 @@ class Node;
 
 class CSSMutableStyleDeclaration : public CSSStyleDeclaration {
 public:
-    CSSMutableStyleDeclaration();
-    CSSMutableStyleDeclaration(CSSRule* parentRule);
-    CSSMutableStyleDeclaration(CSSRule* parentRule, const DeprecatedValueList<CSSProperty>&);
-    CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
+    static PassRefPtr<CSSMutableStyleDeclaration> create()
+    {
+        return adoptRef(new CSSMutableStyleDeclaration);
+    }
+    static PassRefPtr<CSSMutableStyleDeclaration> create(CSSRule* parentRule, const CSSProperty* const* properties, int numProperties)
+    {
+        return adoptRef(new CSSMutableStyleDeclaration(parentRule, properties, numProperties));
+    }
+    static PassRefPtr<CSSMutableStyleDeclaration> create(const DeprecatedValueList<CSSProperty>& properties)
+    {
+        return adoptRef(new CSSMutableStyleDeclaration(0, properties));
+    }
 
     CSSMutableStyleDeclaration& operator=(const CSSMutableStyleDeclaration&);
 
@@ -61,7 +66,6 @@ public:
     virtual String removeProperty(int propertyID, ExceptionCode&);
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> copy() const;
-    virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
 
     DeprecatedValueListConstIterator<CSSProperty> valuesIterator() const { return m_values.begin(); }
 
@@ -100,7 +104,16 @@ public:
 
     void merge(CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
 
+protected:
+    CSSMutableStyleDeclaration(CSSRule* parentRule);
+
 private:
+    CSSMutableStyleDeclaration();
+    CSSMutableStyleDeclaration(CSSRule* parentRule, const DeprecatedValueList<CSSProperty>&);
+    CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
+
+    virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
+
     void setChanged();
 
     String getShorthandValue(const int* properties, int number) const;

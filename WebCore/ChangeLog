@@ -1,3 +1,352 @@
+2008-06-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam.
+
+        - more of https://bugs.webkit.org/show_bug.cgi?id=17257
+          start ref counts at 1 instead of 0 for speed
+
+        Change StyleBase and all classes derived from it.
+
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::JSRGBColor::getValueProperty):
+        * bindings/objc/DOMRGBColor.mm:
+        (-[DOMRGBColor red]):
+        (-[DOMRGBColor green]):
+        (-[DOMRGBColor blue]):
+        (-[DOMRGBColor alpha]):
+        * css/CSSBorderImageValue.cpp:
+        (WebCore::CSSBorderImageValue::cssText):
+        * css/CSSBorderImageValue.h:
+        (WebCore::CSSBorderImageValue::create):
+        * css/CSSCanvasValue.h:
+        (WebCore::CSSCanvasValue::create):
+        (WebCore::CSSCanvasValue::setName):
+        (WebCore::CSSCanvasValue::CSSCanvasValue):
+        * css/CSSCharsetRule.cpp:
+        (WebCore::CSSCharsetRule::CSSCharsetRule):
+        * css/CSSCharsetRule.h:
+        (WebCore::CSSCharsetRule::create):
+        (WebCore::CSSCharsetRule::encoding):
+        (WebCore::CSSCharsetRule::isCharsetRule):
+        (WebCore::CSSCharsetRule::type):
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::valueForShadow):
+        (WebCore::valueForNinePieceImage):
+        (WebCore::valueForReflection):
+        (WebCore::getPositionOffsetValue):
+        (WebCore::currentColorOrValidColor):
+        (WebCore::getBorderRadiusCornerValue):
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSComputedStyleDeclaration.h:
+        (WebCore::computedStyle):
+        * css/CSSCursorImageValue.h:
+        (WebCore::CSSCursorImageValue::create):
+        * css/CSSFontFaceRule.cpp:
+        (WebCore::CSSFontFaceRule::CSSFontFaceRule):
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::create):
+        (WebCore::CSSFontFaceRule::isFontFaceRule):
+        (WebCore::CSSFontFaceRule::type):
+        * css/CSSFontFaceSrcValue.h:
+        (WebCore::CSSFontFaceSrcValue::create):
+        (WebCore::CSSFontFaceSrcValue::createLocal):
+        (WebCore::CSSFontFaceSrcValue::~CSSFontFaceSrcValue):
+        (WebCore::CSSFontFaceSrcValue::CSSFontFaceSrcValue):
+        * css/CSSGradientValue.h:
+        (WebCore::CSSGradientColorStop::CSSGradientColorStop):
+        (WebCore::CSSGradientValue::create):
+        (WebCore::CSSGradientValue::CSSGradientValue):
+        * css/CSSImageGeneratorValue.h:
+        (WebCore::CSSImageGeneratorValue::isImageGeneratorValue):
+        * css/CSSImageValue.h:
+        (WebCore::CSSImageValue::create):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::CSSImportRule):
+        (WebCore::CSSImportRule::setCSSStyleSheet):
+        * css/CSSImportRule.h:
+        (WebCore::CSSImportRule::create):
+        (WebCore::CSSImportRule::isImportRule):
+        (WebCore::CSSImportRule::type):
+        * css/CSSInheritedValue.h:
+        (WebCore::CSSInheritedValue::create):
+        (WebCore::CSSInheritedValue::CSSInheritedValue):
+        * css/CSSInitialValue.h:
+        (WebCore::CSSInitialValue::createExplicit):
+        (WebCore::CSSInitialValue::createImplicit):
+        (WebCore::CSSInitialValue::CSSInitialValue):
+        * css/CSSMediaRule.cpp:
+        (WebCore::CSSMediaRule::CSSMediaRule):
+        * css/CSSMediaRule.h:
+        (WebCore::CSSMediaRule::create):
+        (WebCore::CSSMediaRule::isMediaRule):
+        (WebCore::CSSMediaRule::type):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::setProperty):
+        (WebCore::CSSMutableStyleDeclaration::setStringProperty):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::create):
+        * css/CSSPageRule.cpp:
+        (WebCore::CSSPageRule::CSSPageRule):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::create):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::addFillValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::addTransitionValue):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseBackgroundColor):
+        (WebCore::CSSParser::parseFillPositionXY):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransitionDuration):
+        (WebCore::CSSParser::parseTransitionRepeatCount):
+        (WebCore::CSSParser::parseTransitionTimingFunction):
+        (WebCore::CSSParser::parseTransitionProperty):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        (WebCore::ShadowParseContext::commitValue):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::commitNumber):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseGradientPoint):
+        (WebCore::parseGradientColorStop):
+        (WebCore::CSSParser::parseGradient):
+        (WebCore::CSSParser::parseCanvas):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::createMediaList):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createMediaRule):
+        (WebCore::CSSParser::createStyleRule):
+        (WebCore::CSSParser::createFontFaceRule):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        (WebCore::CSSPrimitiveValue::createIdentifier):
+        (WebCore::CSSPrimitiveValue::createColor):
+        (WebCore::CSSPrimitiveValue::create):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::isPrimitiveValue):
+        * css/CSSQuirkPrimitiveValue.h:
+        (WebCore::CSSQuirkPrimitiveValue::create):
+        * css/CSSReflectValue.h:
+        (WebCore::CSSReflectValue::create):
+        * css/CSSRule.cpp:
+        (WebCore::CSSRule::parentRule):
+        (WebCore::CSSRule::setCssText):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::CSSRule):
+        (WebCore::CSSRule::isRule):
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet):
+        * css/CSSStyleDeclaration.h:
+        * css/CSSStyleRule.cpp:
+        (WebCore::CSSStyleRule::CSSStyleRule):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::create):
+        (WebCore::CSSStyleRule::isStyleRule):
+        (WebCore::CSSStyleRule::type):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::parseUASheet):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::checkLoaded):
+        * css/CSSStyleSheet.h:
+        (WebCore::CSSStyleSheet::create):
+        (WebCore::CSSStyleSheet::isCSSStyleSheet):
+        (WebCore::CSSStyleSheet::type):
+        * css/CSSTimingFunctionValue.h:
+        (WebCore::CSSTimingFunctionValue::create):
+        (WebCore::CSSTimingFunctionValue::CSSTimingFunctionValue):
+        (WebCore::CSSTimingFunctionValue::isTransitionTimingFunctionValue):
+        * css/CSSTransformValue.cpp:
+        (WebCore::CSSTransformValue::CSSTransformValue):
+        (WebCore::CSSTransformValue::~CSSTransformValue):
+        (WebCore::CSSTransformValue::addValue):
+        (WebCore::CSSTransformValue::cssText):
+        * css/CSSTransformValue.h:
+        (WebCore::CSSTransformValue::create):
+        * css/CSSUnicodeRangeValue.h:
+        (WebCore::CSSUnicodeRangeValue::create):
+        (WebCore::CSSUnicodeRangeValue::CSSUnicodeRangeValue):
+        * css/CSSUnknownRule.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isImageGeneratorValue):
+        (WebCore::CSSValue::isImageValue):
+        (WebCore::CSSValue::isPrimitiveValue):
+        (WebCore::CSSValue::isValueList):
+        (WebCore::CSSValue::isSVGColor):
+        (WebCore::CSSValue::isSVGPaint):
+        (WebCore::CSSValue::CSSValue):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::createCommaSeparated):
+        (WebCore::CSSValueList::createSpaceSeparated):
+        (WebCore::CSSValueList::isValueList):
+        * css/FontFamilyValue.h:
+        (WebCore::FontFamilyValue::create):
+        * css/FontValue.h:
+        (WebCore::FontValue::create):
+        (WebCore::FontValue::FontValue):
+        (WebCore::FontValue::isFontValue):
+        * css/MediaList.cpp:
+        (WebCore::MediaList::MediaList):
+        (WebCore::MediaList::deleteMedium):
+        (WebCore::MediaList::setMediaText):
+        * css/MediaList.h:
+        (WebCore::MediaList::create):
+        (WebCore::MediaList::createAllowingDescriptionSyntax):
+        (WebCore::MediaList::length):
+        (WebCore::MediaList::mediaQueries):
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::MediaQueryEvaluator::eval):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp):
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::glyphOrientationToCSSPrimitiveValue):
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        (WebCore::CSSParser::parseSVGPaint):
+        (WebCore::CSSParser::parseSVGColor):
+        * css/ShadowValue.h:
+        (WebCore::ShadowValue::create):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isCSSStyleSheet):
+        (WebCore::StyleBase::isFontFaceRule):
+        (WebCore::StyleBase::isRule):
+        (WebCore::StyleBase::isStyleRule):
+        (WebCore::StyleBase::isStyleSheet):
+        (WebCore::StyleBase::isXSLStyleSheet):
+        (WebCore::StyleBase::StyleBase):
+        * css/StyleList.cpp:
+        * css/StyleList.h:
+        (WebCore::StyleList::StyleList):
+        * css/StyleSheet.h:
+        (WebCore::StyleSheet::styleSheetChanged):
+        (WebCore::StyleSheet::isStyleSheet):
+        * dom/CSSMappedAttributeDeclaration.h:
+        (WebCore::CSSMappedAttributeDeclaration::create):
+        (WebCore::CSSMappedAttributeDeclaration::CSSMappedAttributeDeclaration):
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createCSSStyleSheet):
+        * dom/Document.cpp:
+        (WebCore::Document::createCSSStyleDeclaration):
+        (WebCore::Document::setCSSStyleSheet):
+        (WebCore::Document::elementSheet):
+        (WebCore::Document::mappedElementSheet):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        * dom/Position.cpp:
+        (WebCore::Position::computedStyle):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::setCSSStyleSheet):
+        (WebCore::ProcessingInstruction::setXSLStyleSheet):
+        * dom/ProcessingInstruction.h:
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::createSheet):
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::createInlineStyleDecl):
+        (WebCore::StyledElement::createMappedDecl):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::ApplyStyleCommand):
+        (WebCore::hasTextDecorationProperty):
+        (WebCore::ApplyStyleCommand::extractAndNegateTextDecorationStyle):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionHasStyle):
+        (WebCore::Editor::setBaseWritingDirection):
+        * editing/EditorCommand.cpp:
+        (WebCore::executeApplyStyle):
+        (WebCore::executeToggleStyle):
+        (WebCore::executeApplyParagraphStyle):
+        (WebCore::stateStyle):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::applyStyleAfterInsertion):
+        * editing/RemoveFormatCommand.cpp:
+        (WebCore::RemoveFormatCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::insertFragmentForTestRendering):
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesForElement):
+        (WebCore::appendStartMarkup):
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::createLinkDecl):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pickMedia):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::additionalAttributeStyleDecls):
+        (WebCore::HTMLTableElement::addSharedCellBordersDecl):
+        (WebCore::HTMLTableElement::addSharedCellPaddingDecl):
+        (WebCore::HTMLTableElement::addSharedGroupDecls):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getComputedStyle):
+        * page/Frame.cpp:
+        (WebCore::Frame::computeAndSetTypingStyle):
+        (WebCore::Frame::selectionComputedStyle):
+        * page/Frame.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::StyleCachedImage::cssValue):
+        * rendering/style/RenderStyle.h:
+        * svg/SVGColor.h:
+        (WebCore::SVGColor::create):
+        (WebCore::SVGColor::isSVGColor):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::SVGFontFaceElement):
+        (WebCore::SVGFontFaceElement::rebuildFontFace):
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::srcValue):
+        * svg/SVGFontFaceSrcElement.cpp:
+        (WebCore::SVGFontFaceSrcElement::srcValue):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::SVGPaint):
+        * svg/SVGPaint.h:
+        (WebCore::SVGPaint::create):
+        (WebCore::SVGPaint::isSVGPaint):
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::baseValueFor):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::XSLImportRule):
+        (WebCore::XSLImportRule::setXSLStyleSheet):
+        * xml/XSLImportRule.h:
+        (WebCore::XSLImportRule::create):
+        (WebCore::XSLImportRule::href):
+        (WebCore::XSLImportRule::isImportRule):
+        * xml/XSLStyleSheet.cpp:
+        (WebCore::XSLStyleSheet::checkLoaded):
+        (WebCore::XSLStyleSheet::loadChildSheet):
+        * xml/XSLStyleSheet.h:
+        (WebCore::XSLStyleSheet::create):
+        (WebCore::XSLStyleSheet::createEmbedded):
+        * xml/XSLTProcessor.cpp:
+        (WebCore::xsltStylesheetPointer):
+
 2008-06-17  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele.

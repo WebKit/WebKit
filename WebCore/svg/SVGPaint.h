@@ -3,8 +3,6 @@
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmial.com)
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -26,6 +24,7 @@
 #if ENABLE(SVG)
 
 #include "SVGColor.h"
+#include "PlatformString.h"
 
 namespace WebCore {
 
@@ -44,12 +43,27 @@ namespace WebCore {
             SVG_PAINTTYPE_URI                   = 107
         };
 
-        SVGPaint();
-        SVGPaint(const String& uri);
-        SVGPaint(SVGPaintType);
-        SVGPaint(SVGPaintType, const String& uri, const String& rgbPaint = String(), const String& iccPaint = String());
-        SVGPaint(const Color& c);
-        SVGPaint(const String& uri, const Color& c);
+        static PassRefPtr<SVGPaint> create()
+        {
+            return adoptRef(new SVGPaint);
+        }
+        static PassRefPtr<SVGPaint> create(SVGPaintType type)
+        {
+            return adoptRef(new SVGPaint(type));
+        }
+        static PassRefPtr<SVGPaint> create(const Color& color)
+        {
+            return adoptRef(new SVGPaint(color));
+        }
+        static PassRefPtr<SVGPaint> create(SVGPaintType type, const String& uri)
+        {
+            return adoptRef(new SVGPaint(type, uri, String(), String()));
+        }
+        static PassRefPtr<SVGPaint> create(const String& uri, const Color& color)
+        {
+            return adoptRef(new SVGPaint(uri, color));
+        }
+
         virtual ~SVGPaint();
 
         // 'SVGPaint' functions
@@ -64,8 +78,16 @@ namespace WebCore {
         static SVGPaint* defaultFill();
         static SVGPaint* defaultStroke();
 
-        virtual bool isSVGPaint() const { return true; }
     private:
+        SVGPaint();
+        SVGPaint(const String& uri);
+        SVGPaint(SVGPaintType);
+        SVGPaint(SVGPaintType, const String& uri, const String& rgbPaint, const String& iccPaint);
+        SVGPaint(const Color& c);
+        SVGPaint(const String& uri, const Color& c);
+
+        virtual bool isSVGPaint() const { return true; }
+
         SVGPaintType m_paintType;
         String m_uri;
     };

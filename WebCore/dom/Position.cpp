@@ -92,10 +92,10 @@ Element *Position::element() const
 
 PassRefPtr<CSSComputedStyleDeclaration> Position::computedStyle() const
 {
-    Element *elem = element();
+    Element* elem = element();
     if (!elem)
         return 0;
-    return new CSSComputedStyleDeclaration(elem);
+    return WebCore::computedStyle(elem);
 }
 
 Position Position::previous(EUsingComposedCharacters usingComposedCharacters) const

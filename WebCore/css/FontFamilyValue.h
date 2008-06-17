@@ -28,7 +28,11 @@ namespace WebCore {
 
 class FontFamilyValue : public CSSPrimitiveValue {
 public:
-    FontFamilyValue(const String& familyName);
+    static PassRefPtr<FontFamilyValue> create(const String& familyName)
+    {
+        return adoptRef(new FontFamilyValue(familyName));
+    }
+
     void appendSpaceSeparated(const UChar* characters, unsigned length);
 
     const String& familyName() const { return m_familyName; }
@@ -36,6 +40,8 @@ public:
     virtual String cssText() const;
 
 private:
+    FontFamilyValue(const String& familyName);
+
     String m_familyName;
 };
 

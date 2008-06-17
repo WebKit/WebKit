@@ -130,7 +130,7 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
 
 PassRefPtr<CSSValue> StyleCachedImage::cssValue()
 {
-    return new CSSPrimitiveValue(m_image->url(), CSSPrimitiveValue::CSS_URI);
+    return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
 }
 
 bool StyleCachedImage::canRender(float multiplier) const

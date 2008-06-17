@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,21 +32,31 @@ class CSSMutableStyleDeclaration;
 
 class CSSFontFaceRule : public CSSRule {
 public:
-    CSSFontFaceRule(StyleBase* parent);
+    static PassRefPtr<CSSFontFaceRule> create()
+    {
+        return adoptRef(new CSSFontFaceRule(0));
+    }
+    static PassRefPtr<CSSFontFaceRule> create(CSSStyleSheet* parent)
+    {
+        return adoptRef(new CSSFontFaceRule(parent));
+    }
+
     virtual ~CSSFontFaceRule();
 
-    virtual bool isFontFaceRule() { return true; }
-
     CSSMutableStyleDeclaration* style() const { return m_style.get(); }
-
-    // Inherited from CSSRule
-    virtual unsigned short type() const { return FONT_FACE_RULE; }
 
     virtual String cssText() const;
 
     void setDeclaration(PassRefPtr<CSSMutableStyleDeclaration>);
 
-protected:
+private:
+    CSSFontFaceRule(CSSStyleSheet* parent);
+
+    virtual bool isFontFaceRule() { return true; }
+
+    // Inherited from CSSRule
+    virtual unsigned short type() const { return FONT_FACE_RULE; }
+
     RefPtr<CSSMutableStyleDeclaration> m_style;
 };
 

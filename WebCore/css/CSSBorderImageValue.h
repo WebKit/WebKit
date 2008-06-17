@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,7 +22,6 @@
 #define CSSBorderImageValue_h
 
 #include "CSSValue.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -34,14 +31,15 @@ class Rect;
 
 class CSSBorderImageValue : public CSSValue {
 public:
-    CSSBorderImageValue();
-    CSSBorderImageValue(PassRefPtr<CSSValue>, PassRefPtr<Rect>, int horizontalRule, int verticalRule);
+    static PassRefPtr<CSSBorderImageValue> create(PassRefPtr<CSSValue> image, PassRefPtr<Rect> sliceRect, int horizontalRule, int verticalRule)
+    {
+        return adoptRef(new CSSBorderImageValue(image, sliceRect, horizontalRule, verticalRule));
+    }
 
     virtual String cssText() const;
 
     CSSValue* imageValue() const { return m_image.get(); }
  
-public:
     // The border image.
     RefPtr<CSSValue> m_image;
 
@@ -52,6 +50,9 @@ public:
     // Values for how to handle the scaling/stretching/tiling of the image slices.
     int m_horizontalSizeRule; // Rule for how to adjust the widths of the top/middle/bottom
     int m_verticalSizeRule; // Rule for how to adjust the heights of the left/middle/right
+
+private:
+    CSSBorderImageValue(PassRefPtr<CSSValue> image, PassRefPtr<Rect> sliceRect, int horizontalRule, int verticalRule);
 };
 
 } // namespace WebCore

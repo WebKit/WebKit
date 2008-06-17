@@ -751,8 +751,8 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const 
     if (!elt)
         return 0;
 
-    // FIXME: This needs to work with pseudo elements.
-    return new CSSComputedStyleDeclaration(elt);
+    // FIXME: This needs take pseudo elements into account.
+    return computedStyle(elt);
 }
 
 PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String& pseudoElt, bool authorOnly) const

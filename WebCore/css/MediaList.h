@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,29 +22,50 @@
 #define MediaList_h
 
 #include "StyleBase.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
-#include "PlatformString.h"
 
 namespace WebCore {
-typedef int ExceptionCode;
+
+class CSSImportRule;
 class CSSStyleSheet;
 class MediaQuery;
-class CSSRule;
+class String;
 
-class MediaList : public StyleBase
-{
+typedef int ExceptionCode;
+
+class MediaList : public StyleBase {
 public:
-    MediaList(bool fallbackToDescription = false) : StyleBase(0), m_fallback(fallbackToDescription) {}
-    MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription = false);
-    MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription = false);
-    MediaList(CSSRule* parentRule, const String& media, bool fallbackToDescription = false);
-    ~MediaList();
+    static PassRefPtr<MediaList> create()
+    {
+        return adoptRef(new MediaList(0, false));
+    }
+    static PassRefPtr<MediaList> create(CSSImportRule* parentRule, const String& media)
+    {
+        return adoptRef(new MediaList(parentRule, media));
+    }
+    static PassRefPtr<MediaList> create(CSSStyleSheet* parentSheet, const String& media)
+    {
+        return adoptRef(new MediaList(parentSheet, media, false));
+    }
 
-    virtual bool isMediaList() { return true; }
+    static PassRefPtr<MediaList> createAllowingDescriptionSyntax(const String& mediaQueryOrDescription)
+    {
+        return adoptRef(new MediaList(0, mediaQueryOrDescription, true));
+    }
+    static PassRefPtr<MediaList> createAllowingDescriptionSyntax(CSSStyleSheet* parentSheet, const String& mediaQueryOrDescription)
+    {
+        return adoptRef(new MediaList(parentSheet, mediaQueryOrDescription, true));
+    }
 
-    CSSStyleSheet* parentStyleSheet() const;
-    CSSRule* parentRule() const;
-    unsigned length() const { return (unsigned) m_queries.size(); }
+    static PassRefPtr<MediaList> create(const String& media, bool allowDescriptionSyntax)
+    {
+        return adoptRef(new MediaList(0, media, allowDescriptionSyntax));
+    }
+
+    virtual ~MediaList();
+
+    unsigned length() const { return m_queries.size(); }
     String item(unsigned index) const;
     void deleteMedium(const String& oldMedium, ExceptionCode&);
     void appendMedium(const String& newMedium, ExceptionCode&);
@@ -54,13 +73,16 @@ public:
     String mediaText() const;
     void setMediaText(const String&, ExceptionCode&xo);
 
-    void appendMediaQuery(MediaQuery* mediaQuery);
-    const Vector<MediaQuery*>* mediaQueries() const { return &m_queries; }
+    void appendMediaQuery(MediaQuery*);
+    const Vector<MediaQuery*>& mediaQueries() const { return m_queries; }
 
 private:
+    MediaList(CSSStyleSheet* parentSheet, bool fallbackToDescription);
+    MediaList(CSSStyleSheet* parentSheet, const String& media, bool fallbackToDescription);
+    MediaList(CSSImportRule* parentRule, const String& media);
+
     void notifyChanged();
 
-protected:
     Vector<MediaQuery*> m_queries;
     bool m_fallback; // true if failed media query parsing should fallback to media description parsing
 };

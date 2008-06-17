@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,11 +33,11 @@ namespace WebCore {
 
 class CSSMappedAttributeDeclaration : public CSSMutableStyleDeclaration {
 public:
-    CSSMappedAttributeDeclaration(CSSRule* parentRule)
-        : CSSMutableStyleDeclaration(parentRule)
-        , m_entryType(eNone)
-        , m_attrName(anyQName()) { }
-    
+    static PassRefPtr<CSSMappedAttributeDeclaration> create()
+    {
+        return adoptRef(new CSSMappedAttributeDeclaration(0));
+    }
+
     virtual ~CSSMappedAttributeDeclaration();
 
     void setMappedState(MappedAttributeEntry type, const QualifiedName& name, const AtomicString& val)
@@ -50,6 +48,13 @@ public:
     }
 
 private:
+    CSSMappedAttributeDeclaration(CSSRule* parentRule)
+        : CSSMutableStyleDeclaration(parentRule)
+        , m_entryType(eNone)
+        , m_attrName(anyQName())
+    {
+    }
+    
     MappedAttributeEntry m_entryType;
     QualifiedName m_attrName;
     AtomicString m_attrValue;

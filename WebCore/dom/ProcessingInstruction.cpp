@@ -143,7 +143,7 @@ bool ProcessingInstruction::checkStyleSheet()
                 // We need to make a synthetic XSLStyleSheet that is embedded.  It needs to be able
                 // to kick off import/include loads that can hang off some parent sheet.
                 if (m_isXSL) {
-                    m_sheet = new XSLStyleSheet(this, m_localHref, true);
+                    m_sheet = XSLStyleSheet::createEmbedded(this, m_localHref);
                     m_loading = false;
                 }
                 return !m_isXSL;
@@ -205,18 +205,19 @@ void ProcessingInstruction::setCSSStyleSheet(const String& url, const String& ch
 #if ENABLE(XSLT)
     ASSERT(!m_isXSL);
 #endif
-    m_sheet = new CSSStyleSheet(this, url, charset);
+    RefPtr<CSSStyleSheet> newSheet = CSSStyleSheet::create(this, url, charset);
+    m_sheet = newSheet;
     parseStyleSheet(sheet->sheetText());
-    m_sheet->setTitle(m_title);
-    m_sheet->setMedia(new MediaList((CSSStyleSheet*)m_sheet.get(), m_media, false));
-    m_sheet->setDisabled(m_alternate);
+    newSheet->setTitle(m_title);
+    newSheet->setMedia(MediaList::create(newSheet.get(), m_media));
+    newSheet->setDisabled(m_alternate);
 }
 
 #if ENABLE(XSLT)
 void ProcessingInstruction::setXSLStyleSheet(const String& url, const String& sheet)
 {
     ASSERT(m_isXSL);
-    m_sheet = new XSLStyleSheet(this, url);
+    m_sheet = XSLStyleSheet::create(this, url);
     parseStyleSheet(sheet);
 }
 #endif
@@ -232,7 +233,7 @@ void ProcessingInstruction::parseStyleSheet(const String& sheet)
     m_sheet->checkLoaded();
 }
 
-void ProcessingInstruction::setCSSStyleSheet(CSSStyleSheet* sheet)
+void ProcessingInstruction::setCSSStyleSheet(PassRefPtr<CSSStyleSheet> sheet)
 {
     ASSERT(!m_cachedSheet);
     ASSERT(!m_loading);

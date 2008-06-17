@@ -1,9 +1,7 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,7 +27,7 @@
 
 namespace WebCore {
 
-CSSStyleRule::CSSStyleRule(StyleBase* parent)
+CSSStyleRule::CSSStyleRule(CSSStyleSheet* parent)
     : CSSRule(parent)
     , m_selector(0)
 {

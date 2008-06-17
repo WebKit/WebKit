@@ -43,27 +43,27 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueL
             Value* value = valueList->current();
 
             if (value->id != 0)
-                m_value = new CSSPrimitiveValue(value->id);
+                m_value = CSSPrimitiveValue::createIdentifier(value->id);
             else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-                m_value = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
+                m_value = CSSPrimitiveValue::create(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
             else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER &&
                       value->unit <= CSSPrimitiveValue::CSS_KHZ)
-                m_value = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+                m_value = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
 
             valueList->next();
         } else if (valueList->size() > 1) {
             // create list of values
             // currently accepts only <integer>/<integer>
 
-            CSSValueList* list = new CSSValueList();
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
             Value* value = 0;
             bool isValid = true;
 
             while ((value = valueList->current()) && isValid) {
                 if (value->unit == Value::Operator && value->iValue == '/')
-                    list->append(new CSSPrimitiveValue("/", CSSPrimitiveValue::CSS_STRING));
+                    list->append(CSSPrimitiveValue::create("/", CSSPrimitiveValue::CSS_STRING));
                 else if (value->unit == CSSPrimitiveValue::CSS_NUMBER)
-                    list->append(new CSSPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_NUMBER));
+                    list->append(CSSPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_NUMBER));
                 else
                     isValid = false;
 
@@ -71,9 +71,7 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueL
             }
 
             if (isValid)
-                m_value = list;
-            else
-                delete list;
+                m_value = list.release();
         }
     }
 }

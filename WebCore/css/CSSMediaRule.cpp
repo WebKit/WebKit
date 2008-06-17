@@ -26,32 +26,14 @@
 #include "CSSMediaRule.h"
 
 #include "CSSParser.h"
-#include "CSSRuleList.h"
 #include "ExceptionCode.h"
-#include "MediaList.h"
-#include "StyleSheet.h"
 
 namespace WebCore {
 
-CSSMediaRule::CSSMediaRule(StyleBase* parent, MediaList* mediaList, CSSRuleList* ruleList)
+CSSMediaRule::CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList> media, PassRefPtr<CSSRuleList> rules)
     : CSSRule(parent)
-    , m_lstMedia(mediaList)
-    , m_lstCSSRules(ruleList)
-{
-}
-
-CSSMediaRule::CSSMediaRule(StyleBase* parent)
-    : CSSRule(parent)
-    , m_lstMedia(0)
-    , m_lstCSSRules(CSSRuleList::create())
-
-{
-}
-
-CSSMediaRule::CSSMediaRule(StyleBase* parent, const String &media)
-    : CSSRule(parent)
-    , m_lstMedia(new MediaList(this, media))
-    , m_lstCSSRules(CSSRuleList::create())
+    , m_lstMedia(media)
+    , m_lstCSSRules(rules)
 {
 }
 

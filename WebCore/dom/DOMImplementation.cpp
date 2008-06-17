@@ -248,13 +248,12 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& namespaceUR
     return doc.release();
 }
 
-PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media, ExceptionCode& ec)
+PassRefPtr<CSSStyleSheet> DOMImplementation::createCSSStyleSheet(const String&, const String& media, ExceptionCode&)
 {
-    // ### TODO : title should be set, and media could have wrong syntax, in which case we should generate an exception.
-    ec = 0;
-    CSSStyleSheet* const nullSheet = 0;
-    RefPtr<CSSStyleSheet> sheet = new CSSStyleSheet(nullSheet);
-    sheet->setMedia(new MediaList(sheet.get(), media, true));
+    // FIXME: Title should be set.
+    // FIXME: Media could have wrong syntax, in which case we should generate an exception.
+    RefPtr<CSSStyleSheet> sheet = CSSStyleSheet::create();
+    sheet->setMedia(MediaList::createAllowingDescriptionSyntax(sheet.get(), media));
     return sheet.release();
 }
 

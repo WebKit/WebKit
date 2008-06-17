@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,22 +29,33 @@ namespace WebCore {
 
 class CSSValueList : public CSSValue {
 public:
-    CSSValueList(bool isSpaceSeparated = false);
+    static PassRefPtr<CSSValueList> createCommaSeparated()
+    {
+        return adoptRef(new CSSValueList(false));
+    }
+    static PassRefPtr<CSSValueList> createSpaceSeparated()
+    {
+        return adoptRef(new CSSValueList(true));
+    }
+
     virtual ~CSSValueList();
 
     size_t length() const { return m_values.size(); }
     CSSValue* item(unsigned);
     CSSValue* itemWithoutBoundsCheck(unsigned index) { return m_values[index].get(); }
 
+    void append(PassRefPtr<CSSValue>);
+    void prepend(PassRefPtr<CSSValue>);
+
+    virtual String cssText() const;
+
+private:
+    CSSValueList(bool isSpaceSeparated);
+
     virtual bool isValueList() { return true; }
 
     virtual unsigned short cssValueType() const;
 
-    void append(PassRefPtr<CSSValue>);
-    void prepend(PassRefPtr<CSSValue>);
-    virtual String cssText() const;
-
-protected:
     Vector<RefPtr<CSSValue> > m_values;
     bool m_isSpaceSeparated;
 };

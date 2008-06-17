@@ -2,8 +2,6 @@
     Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
                   2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
 
-    This file is part of the KDE project
-
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
     License as published by the Free Software Foundation; either
@@ -26,18 +24,25 @@
 
 #include "CSSValue.h"
 #include "Color.h"
-#include "PlatformString.h"
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
-   
-    typedef int ExceptionCode;
- 
+
     class SVGColor : public CSSValue {
     public:
-        SVGColor();
-        SVGColor(const String& rgbColor);
-        SVGColor(const Color& c);
-        SVGColor(unsigned short colorType);
+        static PassRefPtr<SVGColor> create(const String& color)
+        {
+            return adoptRef(new SVGColor(color));
+        }
+        static PassRefPtr<SVGColor> create(const Color& color)
+        {
+            return adoptRef(new SVGColor(color));
+        }
+        static PassRefPtr<SVGColor> createCurrentColor()
+        {
+            return adoptRef(new SVGColor(SVG_COLORTYPE_CURRENTCOLOR));
+        }
+
         virtual ~SVGColor();
 
         enum SVGColorType {
@@ -64,9 +69,18 @@ namespace WebCore {
         // Helpers
         const Color& color() const;
 
-        virtual bool isSVGColor() const { return true; }
+    protected:
+        SVGColor();
+        SVGColor(const String& color);
+        SVGColor(const Color&);
 
     private:
+        SVGColor(SVGColorType);
+
+        static void create(int); // compile-time guard 
+
+        virtual bool isSVGColor() const { return true; }
+
         Color m_color;
         unsigned short m_colorType;
     };

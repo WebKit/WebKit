@@ -1,8 +1,6 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,20 +30,28 @@ namespace WebCore {
 class CSSPrimitiveValue;
 
 // Used for text-shadow and box-shadow
-class ShadowValue : public CSSValue
-{
+class ShadowValue : public CSSValue {
 public:
-    ShadowValue(PassRefPtr<CSSPrimitiveValue> x,
+    static PassRefPtr<ShadowValue> create(PassRefPtr<CSSPrimitiveValue> x,
         PassRefPtr<CSSPrimitiveValue> y,
         PassRefPtr<CSSPrimitiveValue> blur,
-        PassRefPtr<CSSPrimitiveValue> color);
-    
+        PassRefPtr<CSSPrimitiveValue> color)
+    {
+        return adoptRef(new ShadowValue(x, y, blur, color));
+    }
+
     virtual String cssText() const;
 
     RefPtr<CSSPrimitiveValue> x;
     RefPtr<CSSPrimitiveValue> y;
     RefPtr<CSSPrimitiveValue> blur;
     RefPtr<CSSPrimitiveValue> color;
+
+private:
+    ShadowValue(PassRefPtr<CSSPrimitiveValue> x,
+        PassRefPtr<CSSPrimitiveValue> y,
+        PassRefPtr<CSSPrimitiveValue> blur,
+        PassRefPtr<CSSPrimitiveValue> color);
 };
 
 } // namespace

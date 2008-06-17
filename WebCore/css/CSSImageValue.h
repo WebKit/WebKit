@@ -32,8 +32,8 @@ class StyleCachedImage;
 
 class CSSImageValue : public CSSPrimitiveValue, private CachedResourceClient {
 public:
-    static PassRefPtr<CSSImageValue> create() { return new CSSImageValue; }
-    static PassRefPtr<CSSImageValue> create(const String& url) { return new CSSImageValue(url); }
+    static PassRefPtr<CSSImageValue> create() { return adoptRef(new CSSImageValue); }
+    static PassRefPtr<CSSImageValue> create(const String& url) { return adoptRef(new CSSImageValue(url)); }
     virtual ~CSSImageValue();
 
     virtual StyleCachedImage* cachedImage(DocLoader*);

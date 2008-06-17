@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig (sam@webkit.org)
  *
  * This library is free software; you can redistribute it and/or
@@ -26,23 +24,22 @@
 #define CSSMediaRule_h
 
 #include "CSSRule.h"
-#include <wtf/RefPtr.h>
+#include "CSSRuleList.h"
+#include "MediaList.h"
+#include "PlatformString.h" // needed so bindings will compile
 
 namespace WebCore {
 
 class CSSRuleList;
 class MediaList;
 
-typedef int ExceptionCode;
-
 class CSSMediaRule : public CSSRule {
 public:
-    CSSMediaRule(StyleBase* parent);
-    CSSMediaRule(StyleBase* parent, const String& media);
-    CSSMediaRule(StyleBase* parent, MediaList* mediaList, CSSRuleList* ruleList);
+    static PassRefPtr<CSSMediaRule> create(CSSStyleSheet* parent, PassRefPtr<MediaList> media, PassRefPtr<CSSRuleList> rules)
+    {
+        return adoptRef(new CSSMediaRule(parent, media, rules));
+    }
     virtual ~CSSMediaRule();
-
-    virtual bool isMediaRule() { return true; }
 
     MediaList* media() const { return m_lstMedia.get(); }
     CSSRuleList* cssRules() { return m_lstCSSRules.get(); }
@@ -50,15 +47,19 @@ public:
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
     void deleteRule(unsigned index, ExceptionCode&);
 
-    // Inherited from CSSRule
-    virtual unsigned short type() const { return MEDIA_RULE; }
-
     virtual String cssText() const;
 
     // Not part of the CSSOM
     unsigned append(CSSRule*);
 
-protected:
+private:
+    CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList>, PassRefPtr<CSSRuleList>);
+
+    virtual bool isMediaRule() { return true; }
+
+    // Inherited from CSSRule
+    virtual unsigned short type() const { return MEDIA_RULE; }
+
     RefPtr<MediaList> m_lstMedia;
     RefPtr<CSSRuleList> m_lstCSSRules;
 };

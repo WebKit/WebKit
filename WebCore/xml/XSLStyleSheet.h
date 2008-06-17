@@ -28,6 +28,7 @@
 #include "StyleSheet.h"
 #include <libxml/parser.h>
 #include <libxslt/transform.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
@@ -37,9 +38,20 @@ class XSLImportRule;
     
 class XSLStyleSheet : public StyleSheet {
 public:
-    XSLStyleSheet(Node* parentNode, const String& href = String(), bool embedded = false);
-    XSLStyleSheet(XSLImportRule* parentImport, const String& href = String());
-    ~XSLStyleSheet();
+    static PassRefPtr<XSLStyleSheet> create(XSLImportRule* parentImport, const String& href)
+    {
+        return adoptRef(new XSLStyleSheet(parentImport, href));
+    }
+    static PassRefPtr<XSLStyleSheet> create(Node* parentNode, const String& href)
+    {
+        return adoptRef(new XSLStyleSheet(parentNode, href, false));
+    }
+    static PassRefPtr<XSLStyleSheet> createEmbedded(Node* parentNode, const String& href)
+    {
+        return adoptRef(new XSLStyleSheet(parentNode, href, true));
+    }
+
+    virtual ~XSLStyleSheet();
     
     virtual bool isXSLStyleSheet() const { return true; }
 
@@ -69,7 +81,10 @@ public:
     void markAsProcessed();
     bool processed() const { return m_processed; }
 
-protected:
+private:
+    XSLStyleSheet(Node* parentNode, const String& href, bool embedded);
+    XSLStyleSheet(XSLImportRule* parentImport, const String& href);
+
     Document* m_ownerDocument;
     xmlDocPtr m_stylesheetDoc;
     bool m_embedded;

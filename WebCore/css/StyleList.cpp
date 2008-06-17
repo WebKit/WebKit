@@ -1,11 +1,9 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
  *               2001 Andreas Schlapbach (schlpbch@iam.unibe.ch)
  *               2001-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,8 +20,11 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
+
 #include "config.h"
 #include "StyleList.h"
+
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

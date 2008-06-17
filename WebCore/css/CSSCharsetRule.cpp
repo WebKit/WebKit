@@ -1,7 +1,5 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
- * Copyright (C) 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Alexey Proskuryakov (ap@macrules.ru)
  *
  * This library is free software; you can redistribute it and/or
@@ -25,7 +23,7 @@
 
 namespace WebCore {
 
-CSSCharsetRule::CSSCharsetRule(StyleBase* parent, const String& encoding)
+CSSCharsetRule::CSSCharsetRule(CSSStyleSheet* parent, const String& encoding)
     : CSSRule(parent)
     , m_encoding(encoding)
 {

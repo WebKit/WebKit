@@ -1,8 +1,6 @@
-/**
- * This file is part of the DOM implementation for KDE.
- *
+/*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,9 +51,9 @@ String CSSBorderImageValue::cssText() const
 
     // Now the keywords.
     text += " ";
-    text += CSSPrimitiveValue(m_horizontalSizeRule).cssText();
+    text += CSSPrimitiveValue::createIdentifier(m_horizontalSizeRule)->cssText();
     text += " ";
-    text += CSSPrimitiveValue(m_verticalSizeRule).cssText();
+    text += CSSPrimitiveValue::createIdentifier(m_verticalSizeRule)->cssText();
 
     return text;
 }

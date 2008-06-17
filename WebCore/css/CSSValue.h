@@ -1,6 +1,6 @@
 /*
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@ typedef int ExceptionCode;
 
 class CSSValue : public StyleBase {
 public:
+    // FIXME: Change name to Type.
     enum UnitTypes {
         CSS_INHERIT = 0,
         CSS_PRIMITIVE_VALUE = 1,
@@ -37,19 +38,27 @@ public:
         CSS_INITIAL = 4
     };
 
-    CSSValue() : StyleBase(0) { }
-
+    // FIXME: Change this to return UnitTypes.
     virtual unsigned short cssValueType() const { return CSS_CUSTOM; }
 
     virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&) { } // FIXME: Not implemented.
 
-    virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
-    virtual bool isImplicitInitialValue() const { return false; }
-    virtual bool isTransitionTimingFunctionValue() { return false; }
-    virtual bool isImageValue() const { return false; }
     virtual bool isImageGeneratorValue() const { return false; }
+    virtual bool isImageValue() const { return false; }
+    virtual bool isImplicitInitialValue() const { return false; }
+    virtual bool isPrimitiveValue() const { return false; }
+    virtual bool isTransitionTimingFunctionValue() { return false; }
+    virtual bool isValueList() { return false; }
+
+#if ENABLE(SVG)
+    virtual bool isSVGColor() const { return false; }
+    virtual bool isSVGPaint() const { return false; }
+#endif
+
+protected:
+    CSSValue() : StyleBase(0) { }
 };
 
 } // namespace WebCore

@@ -68,7 +68,7 @@ JSValue* JSRGBColor::getValueProperty(ExecState* exec, int token) const
             color >>= 8;
             // fall through
         case Blue:
-            return toJS(exec, new CSSPrimitiveValue(color & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
+            return toJS(exec, CSSPrimitiveValue::create(color & 0xFF, CSSPrimitiveValue::CSS_NUMBER));
         default:
             return 0;
     }

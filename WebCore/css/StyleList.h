@@ -1,9 +1,7 @@
 /*
- * This file is part of the CSS implementation for KDE.
- *
  * Copyright (C) 1999-2003 Lars Knoll (knoll@kde.org)
  *               1999 Waldo Bastian (bastian@kde.org)
- * Copyright (C) 2004, 2006 Apple Computer, Inc.
+ * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +23,8 @@
 #define StyleList_h
 
 #include "StyleBase.h"
-#include <wtf/PassRefPtr.h>
+#include <wtf/Forward.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -33,8 +32,6 @@ namespace WebCore {
     // a style class which has a list of children (StyleSheets for example)
     class StyleList : public StyleBase {
     public:
-        StyleList(StyleBase* parent) : StyleBase(parent) { }
-
         unsigned length() { return m_children.size(); }
         StyleBase* item(unsigned num) { return num < length() ? m_children[num].get() : 0; }
 
@@ -43,6 +40,8 @@ namespace WebCore {
         void remove(unsigned position);
 
     protected:
+        StyleList(StyleBase* parent) : StyleBase(parent) { }
+
         Vector<RefPtr<StyleBase> > m_children;
     };
 }

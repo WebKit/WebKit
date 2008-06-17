@@ -92,7 +92,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id == CSSValueNone)
             valid_primitive = true;
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = new CSSPrimitiveValue(value->string, CSSPrimitiveValue::CSS_URI);
+            parsedValue = CSSPrimitiveValue::create(value->string, CSSPrimitiveValue::CSS_URI);
             if (parsedValue)
                 m_valueList->next();
         }
@@ -181,7 +181,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     /* fallthrough intentional */
     case CSSPropertyGlyphOrientationHorizontal: // <angle> (restricted to _deg_ per SVG 1.1 spec) | inherit
         if (value->unit == CSSPrimitiveValue::CSS_DEG || value->unit == CSSPrimitiveValue::CSS_NUMBER) {
-            parsedValue = new CSSPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_DEG);
+            parsedValue = CSSPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_DEG);
 
             if (parsedValue)
                 m_valueList->next();
@@ -192,15 +192,15 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyStroke:               // <paint> | inherit
         {
             if (id == CSSValueNone)
-                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_NONE);
+                parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_NONE);
             else if (id == CSSValueCurrentcolor)
-                parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
+                parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_CURRENTCOLOR);
             else if (value->unit == CSSPrimitiveValue::CSS_URI) {
                 RGBA32 c = Color::transparent;
                 if (m_valueList->next() && parseColorFromValue(m_valueList->current(), c, true)) {
-                    parsedValue = new SVGPaint(value->string, c);
+                    parsedValue = SVGPaint::create(value->string, c);
                 } else
-                    parsedValue = new SVGPaint(SVGPaint::SVG_PAINTTYPE_URI, value->string);
+                    parsedValue = SVGPaint::create(SVGPaint::SVG_PAINTTYPE_URI, value->string);
             } else
                 parsedValue = parseSVGPaint();
 
@@ -212,7 +212,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyColor:                // <color> | inherit
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
            (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
-            parsedValue = new SVGColor(value->string);
+            parsedValue = SVGColor::create(value->string);
         else
             parsedValue = parseSVGColor();
 
@@ -225,9 +225,9 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyLightingColor:
         if ((id >= CSSValueAqua && id <= CSSValueWindowtext) ||
            (id >= CSSValueAliceblue && id <= CSSValueYellowgreen))
-            parsedValue = new SVGColor(value->string);
+            parsedValue = SVGColor::create(value->string);
         else if (id == CSSValueCurrentcolor)
-            parsedValue = new SVGColor(SVGColor::SVG_COLORTYPE_CURRENTCOLOR);
+            parsedValue = SVGColor::createCurrentColor();
         else // TODO : svgcolor (iccColor)
             parsedValue = parseSVGColor();
 
@@ -266,7 +266,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
         if (id == CSSValueNone)
             valid_primitive = true;
         else if (value->unit == CSSPrimitiveValue::CSS_URI) {
-            parsedValue = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = CSSPrimitiveValue::create(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
             if (parsedValue)
                 m_valueList->next();
         }
@@ -298,13 +298,13 @@ bool CSSParser::parseSVGValue(int propId, bool important)
 
     if (valid_primitive) {
         if (id != 0)
-            parsedValue = new CSSPrimitiveValue(id);
+            parsedValue = CSSPrimitiveValue::createIdentifier(id);
         else if (value->unit == CSSPrimitiveValue::CSS_STRING)
-            parsedValue = new CSSPrimitiveValue(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = CSSPrimitiveValue::create(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-            parsedValue = new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
+            parsedValue = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= Value::Q_EMS)
-            parsedValue = new CSSQuirkPrimitiveValue(value->fValue, CSSPrimitiveValue::CSS_EMS);
+            parsedValue = CSSQuirkPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_EMS);
         m_valueList->next();
     }
     if (!parsedValue || (m_valueList->current() && !inShorthand()))
@@ -316,7 +316,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
 
 PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
 {
-    CSSValueList* ret = new CSSValueList;
+    RefPtr<CSSValueList> ret = CSSValueList::createCommaSeparated();
     Value* value = m_valueList->current();
     bool valid_primitive = true;
     while (value) {
@@ -324,27 +324,24 @@ PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
         if (!valid_primitive)
             break;
         if (value->id != 0)
-            ret->append(new CSSPrimitiveValue(value->id));
+            ret->append(CSSPrimitiveValue::createIdentifier(value->id));
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-            ret->append(new CSSPrimitiveValue(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
+            ret->append(CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
         value = m_valueList->next();
         if (value && value->unit == Value::Operator && value->iValue == ',')
             value = m_valueList->next();
     }
-    if (!valid_primitive) {
-        delete ret;
-        ret = 0;
-    }
-
-    return ret;
+    if (!valid_primitive)
+        return 0;
+    return ret.release();
 }
 
 PassRefPtr<CSSValue> CSSParser::parseSVGPaint()
 {
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(m_valueList->current(), c, true))
-        return new SVGPaint();
-    return new SVGPaint(Color(c));
+        return SVGPaint::create();
+    return SVGPaint::create(Color(c));
 }
 
 PassRefPtr<CSSValue> CSSParser::parseSVGColor()
@@ -352,7 +349,7 @@ PassRefPtr<CSSValue> CSSParser::parseSVGColor()
     RGBA32 c = Color::transparent;
     if (!parseColorFromValue(m_valueList->current(), c, true))
         return 0;
-    return new SVGColor(Color(c));
+    return SVGColor::create(Color(c));
 }
 
 }

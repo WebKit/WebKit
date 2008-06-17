@@ -34,7 +34,7 @@ class CSSCursorImageValue : public CSSImageValue {
 public:
     static PassRefPtr<CSSCursorImageValue> create(const String& url, const IntPoint& hotspot)
     {
-        return new CSSCursorImageValue(url, hotspot);
+        return adoptRef(new CSSCursorImageValue(url, hotspot));
     }
 
     virtual ~CSSCursorImageValue();

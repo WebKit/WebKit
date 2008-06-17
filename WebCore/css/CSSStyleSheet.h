@@ -36,16 +36,29 @@ typedef int ExceptionCode;
 
 class CSSStyleSheet : public StyleSheet {
 public:
-    CSSStyleSheet(Node* parentNode, const String& href = String(), const String& charset = String());
-    CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href = String(), const String& charset = String());
-    CSSStyleSheet(CSSRule* ownerRule, const String& href = String(), const String& charset = String());
-    
-    ~CSSStyleSheet();
-    
-    virtual bool isCSSStyleSheet() const { return true; }
+    static PassRefPtr<CSSStyleSheet> create()
+    {
+        return adoptRef(new CSSStyleSheet(static_cast<CSSStyleSheet*>(0), String(), String()));
+    }
+    static PassRefPtr<CSSStyleSheet> create(Node* ownerNode)
+    {
+        return adoptRef(new CSSStyleSheet(ownerNode, String(), String()));
+    }
+    static PassRefPtr<CSSStyleSheet> create(Node* ownerNode, const String& href)
+    {
+        return adoptRef(new CSSStyleSheet(ownerNode, href, String()));
+    }
+    static PassRefPtr<CSSStyleSheet> create(Node* ownerNode, const String& href, const String& charset)
+    {
+        return adoptRef(new CSSStyleSheet(ownerNode, href, charset));
+    }
+    static PassRefPtr<CSSStyleSheet> create(CSSRule* ownerRule, const String& href, const String& charset)
+    {
+        return adoptRef(new CSSStyleSheet(ownerRule, href, charset));
+    }
 
-    virtual String type() const { return "text/css"; }
-
+    virtual ~CSSStyleSheet();
+    
     CSSRule* ownerRule() const;
     PassRefPtr<CSSRuleList> cssRules(bool omitCharsetRules = false);
     unsigned insertRule(const String& rule, unsigned index, ExceptionCode&);
@@ -75,7 +88,14 @@ public:
     
     virtual void addSubresourceURLStrings(HashSet<String>&, const String& baseURL) const;
 
-protected:
+private:
+    CSSStyleSheet(Node* ownerNode, const String& href, const String& charset);
+    CSSStyleSheet(CSSStyleSheet* parentSheet, const String& href, const String& charset);
+    CSSStyleSheet(CSSRule* ownerRule, const String& href, const String& charset);
+    
+    virtual bool isCSSStyleSheet() const { return true; }
+    virtual String type() const { return "text/css"; }
+
     Document* m_doc;
     CSSNamespace* m_namespaces;
     String m_charset;

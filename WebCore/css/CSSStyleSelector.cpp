@@ -41,6 +41,7 @@
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransformValue.h"
 #include "CSSValueList.h"
 #include "CachedImage.h"
 #include "Counter.h"
@@ -348,7 +349,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
 
     // FIXME: This sucks! The user sheet is reparsed every time!
     if (!userStyleSheet.isEmpty()) {
-        m_userSheet = new CSSStyleSheet(doc);
+        m_userSheet = CSSStyleSheet::create(doc);
         m_userSheet->parseString(userStyleSheet, strictParsing);
 
         m_userStyle = new CSSRuleSet();
@@ -390,9 +391,7 @@ CSSStyleSelector::~CSSStyleSelector()
 
 static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
 {
-    CSSStyleSheet* const parent = 0;
-    CSSStyleSheet* sheet = new CSSStyleSheet(parent);
-    sheet->ref(); // leak the sheet on purpose
+    CSSStyleSheet* sheet = CSSStyleSheet::create().releaseRef(); // leak the sheet on purpose
     sheet->parseString(String(characters, size));
     return sheet;
 }
@@ -2175,7 +2174,7 @@ void CSSRuleSet::addRule(CSSStyleRule* rule, CSSSelector* sel)
 
 void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluator& medium, CSSStyleSelector* styleSelector)
 {
-    if (!sheet || !sheet->isCSSStyleSheet())
+    if (!sheet)
         return;
 
     // No media implies "all", but if a media list exists it must
@@ -4477,8 +4476,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     result *= 3;
                 else if (primitiveValue->getIdent() == CSSValueThick)
                     result *= 5;
-                CSSPrimitiveValue val(result, CSSPrimitiveValue::CSS_EMS);
-                width = val.computeLengthFloat(m_style, zoomFactor);
+                width = CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS)->computeLengthFloat(m_style, zoomFactor);
                 break;
             }
             default:

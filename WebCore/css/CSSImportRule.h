@@ -1,9 +1,7 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2002, 2006 Apple Computer, Inc.
+ * Copyright (C) 2002, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +24,7 @@
 
 #include "CSSRule.h"
 #include "CachedResourceClient.h"
+#include "MediaList.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -33,31 +32,36 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class MediaList;
 
-class CSSImportRule : public CSSRule, public CachedResourceClient {
+class CSSImportRule : public CSSRule, private CachedResourceClient {
 public:
-    CSSImportRule(StyleBase* parent, const String& href, MediaList*);
-    virtual ~CSSImportRule();
+    static PassRefPtr<CSSImportRule> create(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList> media)
+    {
+        return adoptRef(new CSSImportRule(parent, href, media));
+    }
 
-    virtual bool isImportRule() { return true; }
+    virtual ~CSSImportRule();
 
     String href() const { return m_strHref; }
     MediaList* media() const { return m_lstMedia.get(); }
     CSSStyleSheet* styleSheet() const { return m_styleSheet.get(); }
-
-    // Inherited from CSSRule
-    virtual unsigned short type() const { return IMPORT_RULE; }
 
     virtual String cssText() const;
 
     // Not part of the CSSOM
     bool isLoading() const;
 
+private:
+    CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
+
+    virtual bool isImportRule() { return true; }
+    virtual void insertedIntoParent();
+
+    // from CSSRule
+    virtual unsigned short type() const { return IMPORT_RULE; }
+
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
 
-    virtual void insertedIntoParent();
-
-protected:
     String m_strHref;
     RefPtr<MediaList> m_lstMedia;
     RefPtr<CSSStyleSheet> m_styleSheet;

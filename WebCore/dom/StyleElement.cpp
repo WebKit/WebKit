@@ -77,13 +77,13 @@ void StyleElement::createSheet(Element* e, const String& text)
     // If type is empty or CSS, this is a CSS style sheet.
     const AtomicString& type = this->type();
     if (type.isEmpty() || (e->isHTMLElement() ? equalIgnoringCase(type, "text/css") : (type == "text/css"))) {
-        RefPtr<MediaList> mediaList = new MediaList((CSSStyleSheet*)0, media(), e->isHTMLElement());
+        RefPtr<MediaList> mediaList = MediaList::create(media(), e->isHTMLElement());
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
         if (screenEval.eval(mediaList.get()) || printEval.eval(mediaList.get())) {
             document->addPendingSheet();
             setLoading(true);
-            m_sheet = new CSSStyleSheet(e, String(), document->inputEncoding());
+            m_sheet = CSSStyleSheet::create(e, String(), document->inputEncoding());
             m_sheet->parseString(text, !document->inCompatMode());
             m_sheet->setMedia(mediaList.get());
             m_sheet->setTitle(e->title());

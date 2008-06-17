@@ -300,7 +300,7 @@ static inline RefPtr<DocumentFragment> createFragmentFromSource(const String& so
 static xsltStylesheetPtr xsltStylesheetPointer(RefPtr<XSLStyleSheet>& cachedStylesheet, Node* stylesheetRootNode)
 {
     if (!cachedStylesheet && stylesheetRootNode) {
-        cachedStylesheet = new XSLStyleSheet(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode,
+        cachedStylesheet = XSLStyleSheet::create(stylesheetRootNode->parent() ? stylesheetRootNode->parent() : stylesheetRootNode,
             stylesheetRootNode->document()->url().string());
         cachedStylesheet->parseString(createMarkup(stylesheetRootNode));
     }

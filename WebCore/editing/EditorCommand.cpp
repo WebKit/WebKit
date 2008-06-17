@@ -87,7 +87,7 @@ static Frame* targetFrame(Frame* frame, Event* event)
 
 static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(propertyID, propertyValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
@@ -110,7 +110,7 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 
 static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, int propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(propertyID, propertyValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
@@ -128,7 +128,7 @@ static bool executeApplyStyle(Frame* frame, EditorCommandSource source, EditActi
 
 static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const char* offValue, const char* onValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(propertyID, onValue);
     style->setProperty(propertyID, frame->editor()->selectionStartHasStyle(style.get()) ? offValue : onValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
@@ -147,7 +147,7 @@ static bool executeToggleStyle(Frame* frame, EditorCommandSource source, EditAct
 
 static bool executeApplyParagraphStyle(Frame* frame, EditorCommandSource source, EditAction action, int propertyID, const String& propertyValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(propertyID, propertyValue);
     // FIXME: We don't call shouldApplyStyle when the source is DOM; is there a good reason for that?
     switch (source) {
@@ -200,7 +200,7 @@ static bool expandSelectionToGranularity(Frame* frame, TextGranularity granulari
 
 static TriState stateStyle(Frame* frame, int propertyID, const char* desiredValue)
 {
-    RefPtr<CSSMutableStyleDeclaration> style = new CSSMutableStyleDeclaration;
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
     style->setProperty(propertyID, desiredValue);
     return frame->editor()->selectionHasStyle(style.get());
 }

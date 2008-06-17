@@ -175,7 +175,7 @@ void HTMLLinkElement::process()
         MediaQueryEvaluator allEval(true);
         MediaQueryEvaluator screenEval("screen", true);
         MediaQueryEvaluator printEval("print", true);
-        RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
+        RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
         if (allEval.eval(media.get()) || screenEval.eval(media.get()) || printEval.eval(media.get())) {
 
             // Add ourselves as a pending sheet, but only if we aren't an alternate 
@@ -223,11 +223,11 @@ void HTMLLinkElement::removedFromDocument()
 void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
     bool strict = !document()->inCompatMode();
-    m_sheet = new CSSStyleSheet(this, url, charset);
+    m_sheet = CSSStyleSheet::create(this, url, charset);
     m_sheet->parseString(sheet->sheetText(strict), strict);
     m_sheet->setTitle(title());
 
-    RefPtr<MediaList> media = new MediaList((CSSStyleSheet*)0, m_media, true);
+    RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);
     m_sheet->setMedia(media.get());
 
     m_loading = false;

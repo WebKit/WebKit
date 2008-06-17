@@ -48,8 +48,8 @@ using namespace SVGNames;
 
 SVGFontFaceElement::SVGFontFaceElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_fontFaceRule(new CSSFontFaceRule(0))
-    , m_styleDeclaration(new CSSMutableStyleDeclaration)
+    , m_fontFaceRule(CSSFontFaceRule::create())
+    , m_styleDeclaration(CSSMutableStyleDeclaration::create())
 {
     m_styleDeclaration->setParent(document()->mappedElementSheet());
     m_styleDeclaration->setStrictParsing(true);
@@ -318,8 +318,8 @@ void SVGFontFaceElement::rebuildFontFace()
     if (describesParentFont) {
         m_fontElement = static_cast<SVGFontElement*>(parentNode());
 
-        list = new CSSValueList;
-        list->append(new CSSFontFaceSrcValue(fontFamily(), true));
+        list = CSSValueList::createCommaSeparated();
+        list->append(CSSFontFaceSrcValue::createLocal(fontFamily()));
     } else if (srcElement)
         list = srcElement->srcValue();
 

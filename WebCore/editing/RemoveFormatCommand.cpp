@@ -54,8 +54,7 @@ void RemoveFormatCommand::doApply()
     // Get the default style for this editable root, it's the style that we'll give the
     // content that we're operating on.
     Node* root = frame->selection()->rootEditableElement();
-    RefPtr<CSSComputedStyleDeclaration> computedStyle = new CSSComputedStyleDeclaration(root);
-    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle->copyInheritableProperties();
+    RefPtr<CSSMutableStyleDeclaration> defaultStyle = computedStyle(root)->copyInheritableProperties();
     
     // Delete the selected content.
     // FIXME: We should be able to leave this to insertText, but its delete operation

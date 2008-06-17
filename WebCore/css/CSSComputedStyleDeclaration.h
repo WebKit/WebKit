@@ -1,7 +1,6 @@
-/**
- *
- * Copyright (C)  2004  Zack Rusin <zack@kde.org>
- * Copyright (C) 2004, 2005, 2006 Apple Computer, Inc.
+/*
+ * Copyright (C) 2004 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2004, 2005, 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,15 +27,12 @@
 namespace WebCore {
 
 class CSSMutableStyleDeclaration;
-class CSSProperty;
-class RenderObject;
-class RenderStyle;
 
 enum EUpdateLayout { DoNotUpdateLayout = false, UpdateLayout = true };
 
 class CSSComputedStyleDeclaration : public CSSStyleDeclaration {
 public:
-    CSSComputedStyleDeclaration(PassRefPtr<Node>);
+    friend PassRefPtr<CSSComputedStyleDeclaration> computedStyle(PassRefPtr<Node>);
     virtual ~CSSComputedStyleDeclaration();
 
     virtual String cssText() const;
@@ -63,6 +59,8 @@ public:
     static void removeComputedInheritablePropertiesFrom(CSSMutableStyleDeclaration*);
 
 private:
+    CSSComputedStyleDeclaration(PassRefPtr<Node>);
+
     virtual void setCssText(const String&, ExceptionCode&);
 
     virtual String removeProperty(int propertyID, ExceptionCode&);
@@ -71,7 +69,10 @@ private:
     RefPtr<Node> m_node;
 };
 
-PassRefPtr<CSSComputedStyleDeclaration> computedStyle(Node*);
+inline PassRefPtr<CSSComputedStyleDeclaration> computedStyle(PassRefPtr<Node> node)
+{
+    return adoptRef(new CSSComputedStyleDeclaration(node));
+}
 
 } // namespace WebCore
 

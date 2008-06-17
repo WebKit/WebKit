@@ -1,6 +1,4 @@
 /*
- * This file is part of the DOM implementation for KDE.
- *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
  * (C) 2002-2003 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2002, 2006, 2007 Apple Inc. All rights reserved.
@@ -24,16 +22,15 @@
 #ifndef CSSRule_h
 #define CSSRule_h
 
-#include "StyleBase.h"
+#include "CSSStyleSheet.h"
 
 namespace WebCore {
-
-class CSSStyleSheet;
 
 typedef int ExceptionCode;
 
 class CSSRule : public StyleBase {
 public:
+    // FIXME: Change name to Type.
     enum CSSRuleType {
         UNKNOWN_RULE,
         STYLE_RULE,
@@ -44,20 +41,23 @@ public:
         PAGE_RULE
     };
 
-    CSSRule(StyleBase* parent)
-        : StyleBase(parent)
-    {
-    }
-
-    virtual bool isRule() { return true; }
-
+    // FIXME: Change to return CSSRuleType.
     virtual unsigned short type() const = 0;
 
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;
 
-    virtual String cssText() const;
+    virtual String cssText() const = 0;
     void setCssText(const String&, ExceptionCode&);
+
+protected:
+    CSSRule(CSSStyleSheet* parent)
+        : StyleBase(parent)
+    {
+    }
+
+private:
+    virtual bool isRule() { return true; }
 };
 
 } // namespace WebCore
