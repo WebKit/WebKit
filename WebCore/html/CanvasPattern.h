@@ -44,7 +44,7 @@ namespace WebCore {
 
     typedef int ExceptionCode;
 
-    class CanvasPattern : public RefCounted<CanvasPattern>, CachedResourceClient {
+    class CanvasPattern : public RefCounted<CanvasPattern>, private CachedResourceClient {
     public:
         static void parseRepetitionType(const String&, bool& repeatX, bool& repeatY, ExceptionCode&);
 

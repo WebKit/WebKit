@@ -612,14 +612,14 @@ sub GenerateHeader
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         if ($podType) {
             push(@headerContent, "$podType to${interfaceName}(KJS::JSValue*);\n");
+        } elsif ($interfaceName eq "NodeFilter") {
+            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(KJS::JSValue*);\n");
         } else {
             push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n");
         }
-        
         if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
             push(@headerContent, "KJS::JSValue* toJSNewlyCreated(KJS::ExecState*, $interfaceName*);\n");
         }
-        
     }
     push(@headerContent, "\n");
 
@@ -1273,17 +1273,9 @@ sub GenerateImplementation
                     } else {
                         push(@implContent, "    " . GetNativeTypeFromSignature($parameter) . " $name = " . JSValueToNative($parameter, "args[$paramIndex]") . ";\n");
 
-                        # FIXME: can this be pushed down into the implementation?
-                        if (TypeCanFailConversion($parameter)) {
-                            $implIncludes{"ExceptionCode.h"} = 1;
-                            push(@implContent, "    if (!${name}) {\n");
-                            push(@implContent, "        setDOMException(exec, TYPE_MISMATCH_ERR);\n");
-                            push(@implContent, "        return jsUndefined();\n");
-                            push(@implContent, "    }\n");
-                        }
-
-                        # If a parameter is "an index", it should throw an INDEX_SIZE_ERR
-                        # exception
+                        # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
+                        # But this needs to be done in the bindings, because the type is unsigned and the fact that it
+                        # was negative will be lost by the time we're inside the DOM.
                         if ($parameter->extendedAttributes->{"IsIndex"}) {
                             $implIncludes{"ExceptionCode.h"} = 1;
                             push(@implContent, "    if ($name < 0) {\n");
@@ -1294,7 +1286,12 @@ sub GenerateImplementation
                     }
 
                     $functionString .= ", " if $paramIndex;
-                    $functionString .= $name;
+
+                    if ($parameter->type eq "NodeFilter") {
+                        $functionString .= "$name.get()";
+                    } else {
+                        $functionString .= $name;
+                    }
 
                     $paramIndex++;
                 }
@@ -1418,6 +1415,7 @@ my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const UString&",
     "EventTarget" => "EventTargetNode*",
+    "NodeFilter" => "RefPtr<NodeFilter>",
     "SVGLength" => "SVGLength",
     "SVGMatrix" => "AffineTransform",
     "SVGNumber" => "float",
@@ -1441,55 +1439,6 @@ sub GetNativeType
 
     # For all other types, the native type is a pointer with same type name as the IDL type.
     return "${type}*";
-}
-
-my %typeCanFailConversion = (
-    "Attr" => 1,
-    "CompareHow" => 0,
-    "DOMString" => 0,
-    "DOMWindow" => 0,
-    "DocumentType" => 0,
-    "Element" => 0,
-    "Event" => 0,
-    "EventListener" => 0,
-    "EventTarget" => 0,
-    "HTMLElement" => 0,
-    "HTMLOptionElement" => 0,
-    "Node" => 0,
-    "NodeFilter" => 0,
-    "Range" => 0,
-    "SQLResultSet" => 0,
-    "SVGAngle" => 0,
-    "SVGElement" => 0,
-    "SVGLength" => 0,
-    "SVGMatrix" => 0,
-    "SVGNumber" => 0,
-    "SVGPaintType" => 0,
-    "SVGPathSeg" => 0,
-    "SVGPoint" => 0,
-    "SVGRect" => 0,
-    "SVGTransform" => 0,
-    "VoidCallback" => 1,
-    "XPathEvaluator" => 0,
-    "XPathNSResolver" => 0,
-    "XPathResult" => 0,
-    "boolean" => 0,
-    "double" => 0,
-    "float" => 0,
-    "long" => 0,
-    "unsigned long" => 0,
-    "unsigned short" => 0,
-);
-
-sub TypeCanFailConversion
-{
-    my $signature = shift;
-
-    my $type = $codeGenerator->StripModule($signature->type);
-
-    return $typeCanFailConversion{$type} if exists $typeCanFailConversion{$type};
-
-    die "Don't know whether a JS value can fail conversion to type $type.";
 }
 
 sub JSValueToNative

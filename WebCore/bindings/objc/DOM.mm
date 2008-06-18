@@ -727,7 +727,7 @@ short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
 {
     RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(ObjCNodeFilterCondition::create(filter));
+        cppFilter = NodeFilter::create(ObjCNodeFilterCondition::create(filter));
     ExceptionCode ec = 0;
     RefPtr<NodeIterator> impl = [self _document]->createNodeIterator([root _node], whatToShow, cppFilter.release(), expandEntityReferences, ec);
     raiseOnDOMError(ec);
@@ -738,7 +738,7 @@ short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
 {
     RefPtr<NodeFilter> cppFilter;
     if (filter)
-        cppFilter = new NodeFilter(ObjCNodeFilterCondition::create(filter));
+        cppFilter = NodeFilter::create(ObjCNodeFilterCondition::create(filter));
     ExceptionCode ec = 0;
     RefPtr<TreeWalker> impl = [self _document]->createTreeWalker([root _node], whatToShow, cppFilter.release(), expandEntityReferences, ec);
     raiseOnDOMError(ec);

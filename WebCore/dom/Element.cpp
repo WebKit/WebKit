@@ -1004,21 +1004,31 @@ void Element::formatForDebugger(char* buffer, unsigned length) const
 }
 #endif
 
-PassRefPtr<Attr> Element::setAttributeNode(Attr *attr, ExceptionCode& ec)
+PassRefPtr<Attr> Element::setAttributeNode(Attr* attr, ExceptionCode& ec)
 {
-    ASSERT(attr);
+    if (!attr) {
+        ec = TYPE_MISMATCH_ERR;
+        return 0;
+    }
     return static_pointer_cast<Attr>(attributes(false)->setNamedItem(attr, ec));
 }
 
 PassRefPtr<Attr> Element::setAttributeNodeNS(Attr* attr, ExceptionCode& ec)
 {
-    ASSERT(attr);
+    if (!attr) {
+        ec = TYPE_MISMATCH_ERR;
+        return 0;
+    }
     return static_pointer_cast<Attr>(attributes(false)->setNamedItem(attr, ec));
 }
 
-PassRefPtr<Attr> Element::removeAttributeNode(Attr *attr, ExceptionCode& ec)
+PassRefPtr<Attr> Element::removeAttributeNode(Attr* attr, ExceptionCode& ec)
 {
-    if (!attr || attr->ownerElement() != this) {
+    if (!attr) {
+        ec = TYPE_MISMATCH_ERR;
+        return 0;
+    }
+    if (attr->ownerElement() != this) {
         ec = NOT_FOUND_ERR;
         return 0;
     }

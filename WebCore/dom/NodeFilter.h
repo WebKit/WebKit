@@ -65,7 +65,11 @@ namespace WebCore {
             SHOW_NOTATION                  = 0x00000800
         };
 
-        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : RefCounted<NodeFilter>(0), m_condition(condition) { }
+        static PassRefPtr<NodeFilter> create(PassRefPtr<NodeFilterCondition> condition)
+        {
+            return adoptRef(new NodeFilter(condition));
+        }
+
         short acceptNode(Node*, KJS::JSValue*& exception) const;
         void mark() { m_condition->mark(); };
 
@@ -73,6 +77,7 @@ namespace WebCore {
         short acceptNode(Node* node) const { KJS::JSValue* exception; return acceptNode(node, exception); }
 
     private:
+        NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
         RefPtr<NodeFilterCondition> m_condition;
     };
 
