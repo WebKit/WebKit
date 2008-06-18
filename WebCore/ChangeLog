@@ -1,3 +1,61 @@
+2008-06-17  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Tim.
+
+        This patch removes all instances of the phrase "TextMarker" from 
+        function names in the C++ accessibility code. TextMarkers only 
+        exists in the Objective-C code.
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityObject::visiblePositionRangeForUnorderedPositions):
+        (WebCore::AccessibilityObject::positionOfLeftWord):
+        (WebCore::AccessibilityObject::positionOfRightWord):
+        (WebCore::AccessibilityObject::leftLineVisiblePositionRange):
+        (WebCore::AccessibilityObject::rightLineVisiblePositionRange):
+        (WebCore::AccessibilityObject::sentenceForPosition):
+        (WebCore::AccessibilityObject::paragraphForPosition):
+        (WebCore::AccessibilityObject::styleRangeForPosition):
+        (WebCore::AccessibilityObject::visiblePositionRangeForRange):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange):
+        (WebCore::AccessibilityObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityObject::visiblePositionForPoint):
+        (WebCore::AccessibilityObject::nextVisiblePosition):
+        (WebCore::AccessibilityObject::previousVisiblePosition):
+        (WebCore::AccessibilityObject::nextWordEnd):
+        (WebCore::AccessibilityObject::previousWordStart):
+        (WebCore::AccessibilityObject::nextLineEndPosition):
+        (WebCore::AccessibilityObject::previousLineStartPosition):
+        (WebCore::AccessibilityObject::nextSentenceEndPosition):
+        (WebCore::AccessibilityObject::previousSentenceStartPosition):
+        (WebCore::AccessibilityObject::nextParagraphEndPosition):
+        (WebCore::AccessibilityObject::previousParagraphStartPosition):
+        (WebCore::AccessibilityObject::visiblePositionForIndex):
+        (WebCore::AccessibilityObject::accessibilityObjectForPosition):
+        (WebCore::AccessibilityObject::lineForPosition):
+        (WebCore::AccessibilityObject::plainTextRangeForVisiblePositionRange):
+        (WebCore::AccessibilityObject::index):
+        (WebCore::AccessibilityObject::doAXRangeForPosition):
+        (WebCore::AccessibilityObject::doAXStyleRangeForIndex):
+        (WebCore::AccessibilityObject::doAXLineForIndex):
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionRangeForLine):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        (WebCore::AccessibilityRenderObject::index):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilitySetValue:forAttribute:]):
+        (-[AccessibilityObjectWrapper doAXAttributedStringForRange:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2008-06-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

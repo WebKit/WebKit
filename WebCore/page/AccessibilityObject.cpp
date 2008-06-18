@@ -327,13 +327,13 @@ Element* AccessibilityObject::actionElement() const
 }
 
 // This function is like a cross-platform version of - (WebCoreTextMarkerRange*)textMarkerRange. It returns
-// a Range that we can convert to a WebCoreTextMarkerRange in the Obj-C file
+// a Range that we can convert to a WebCoreRange in the Obj-C file
 VisiblePositionRange AccessibilityObject::visiblePositionRange() const
 {
     return VisiblePositionRange();
 }
 
-VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForLine(unsigned lineCount) const
+VisiblePositionRange AccessibilityObject::visiblePositionRangeForLine(unsigned lineCount) const
 {
     return VisiblePositionRange();
 }
@@ -348,7 +348,7 @@ int AccessibilityObject::indexForVisiblePosition(const VisiblePosition& pos) con
     return 0;
 }
     
-VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMarkers(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
+VisiblePositionRange AccessibilityObject::visiblePositionRangeForUnorderedPositions(const VisiblePosition& visiblePos1, const VisiblePosition& visiblePos2) const
 {
     if (visiblePos1.isNull() || visiblePos2.isNull())
         return VisiblePositionRange();
@@ -376,14 +376,14 @@ VisiblePositionRange AccessibilityObject::doAXTextMarkerRangeForUnorderedTextMar
     return VisiblePositionRange(startPos, endPos);
 }
 
-VisiblePositionRange AccessibilityObject::doAXLeftWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::positionOfLeftWord(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfWord(visiblePos, LeftWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXRightWordTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::positionOfRightWord(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfWord(visiblePos, RightWordIfOnBoundary);
     VisiblePosition endPosition = endOfWord(startPosition);
@@ -419,7 +419,7 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     return startPosition;
 }
 
-VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::leftLineVisiblePositionRange(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -432,7 +432,7 @@ VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMark
 
     VisiblePosition startPosition = startOfLine(prevVisiblePos);
 
-    // keep searching for a valid line start position.  Unless the textmarker is at the very beginning, there should
+    // keep searching for a valid line start position.  Unless the VisiblePosition is at the very beginning, there should
     // always be a valid line range.  However, startOfLine will return null for position next to a floating object,
     // since floating object doesn't really belong to any line.
     // This check will reposition the marker before the floating object, to ensure we get a line start.
@@ -448,7 +448,7 @@ VisiblePositionRange AccessibilityObject::doAXLeftLineTextMarkerRangeForTextMark
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::rightLineVisiblePositionRange(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -470,7 +470,7 @@ VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMar
     VisiblePosition endPosition = endOfLine(nextVisiblePos);
 
     // as long as the position hasn't reached the end of the doc,  keep searching for a valid line end position
-    // Unless the textmarker is at the very end, there should always be a valid line range.  However, endOfLine will
+    // Unless the VisiblePosition is at the very end, there should always be a valid line range.  However, endOfLine will
     // return null for position by a floating object, since floating object doesn't really belong to any line.
     // This check will reposition the marker after the floating object, to ensure we get a line end.
     while (endPosition.isNull() && nextVisiblePos.isNotNull()) {
@@ -481,7 +481,7 @@ VisiblePositionRange AccessibilityObject::doAXRightLineTextMarkerRangeForTextMar
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXSentenceTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::sentenceForPosition(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -490,7 +490,7 @@ VisiblePositionRange AccessibilityObject::doAXSentenceTextMarkerRangeForTextMark
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-VisiblePositionRange AccessibilityObject::doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::paragraphForPosition(const VisiblePosition& visiblePos) const
 {
     VisiblePosition startPosition = startOfParagraph(visiblePos);
     VisiblePosition endPosition = endOfParagraph(startPosition);
@@ -543,7 +543,7 @@ static VisiblePosition endOfStyleRange(const VisiblePosition visiblePos)
     return VisiblePosition(endRenderer->node(), maxDeepOffset(endRenderer->node()), VP_DEFAULT_AFFINITY);
 }
 
-VisiblePositionRange AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePositionRange AccessibilityObject::styleRangeForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePositionRange();
@@ -552,7 +552,7 @@ VisiblePositionRange AccessibilityObject::doAXStyleTextMarkerRangeForTextMarker(
 }
 
 // NOTE: Consider providing this utility method as AX API
-VisiblePositionRange AccessibilityObject::textMarkerRangeForRange(const PlainTextRange& range) const
+VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const PlainTextRange& range) const
 {
     if (range.start + range.length > text().length())
         return VisiblePositionRange();
@@ -579,7 +579,7 @@ static String stringForReplacedNode(Node* replacedNode)
     return String(&objectReplacementCharacter, 1);
 }
 
-String AccessibilityObject::doAXStringForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
+String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
         return String();
@@ -608,41 +608,41 @@ String AccessibilityObject::doAXStringForTextMarkerRange(const VisiblePositionRa
     return resultString.isEmpty() ? String() : resultString;
 }
 
-IntRect AccessibilityObject::doAXBoundsForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
+IntRect AccessibilityObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     return IntRect();
 }
 
-int AccessibilityObject::doAXLengthForTextMarkerRange(const VisiblePositionRange& visiblePositionRange) const
+int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     // FIXME: Multi-byte support
-    String string = doAXStringForTextMarkerRange(visiblePositionRange);
+    String string = stringForVisiblePositionRange(visiblePositionRange);
     if (string.isEmpty())
         return -1;
 
     return string.length();
 }
 
-void AccessibilityObject::doSetAXSelectedTextMarkerRange(const VisiblePositionRange& textMarkerRange) const
+void AccessibilityObject::setSelectedVisiblePositionRange(const VisiblePositionRange&) const
 {
 }
 
-VisiblePosition AccessibilityObject::doAXTextMarkerForPosition(const IntPoint& point) const
+VisiblePosition AccessibilityObject::visiblePositionForPoint(const IntPoint& point) const
 {
     return VisiblePosition();
 }
 
-VisiblePosition AccessibilityObject::doAXNextTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextVisiblePosition(const VisiblePosition& visiblePos) const
 {
     return visiblePos.next();
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousVisiblePosition(const VisiblePosition& visiblePos) const
 {
     return visiblePos.previous();
 }
 
-VisiblePosition AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextWordEnd(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -655,7 +655,7 @@ VisiblePosition AccessibilityObject::doAXNextWordEndTextMarkerForTextMarker(cons
     return endOfWord(nextVisiblePos, LeftWordIfOnBoundary);
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousWordStart(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -668,7 +668,7 @@ VisiblePosition AccessibilityObject::doAXPreviousWordStartTextMarkerForTextMarke
     return startOfWord(prevVisiblePos, RightWordIfOnBoundary);
 }
 
-VisiblePosition AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextLineEndPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -690,7 +690,7 @@ VisiblePosition AccessibilityObject::doAXNextLineEndTextMarkerForTextMarker(cons
     return endPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -715,7 +715,7 @@ VisiblePosition AccessibilityObject::doAXPreviousLineStartTextMarkerForTextMarke
     return startPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextSentenceEndPosition(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -739,7 +739,7 @@ VisiblePosition AccessibilityObject::doAXNextSentenceEndTextMarkerForTextMarker(
     return endPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousSentenceStartPosition(const VisiblePosition& visiblePos) const
 {
     // FIXME: FO 2 IMPLEMENT (currently returns incorrect answer)
     // Related? <rdar://problem/3927736> Text selection broken in 8A336
@@ -762,7 +762,7 @@ VisiblePosition AccessibilityObject::doAXPreviousSentenceStartTextMarkerForTextM
     return startPosition;
 }
 
-VisiblePosition AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::nextParagraphEndPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -775,7 +775,7 @@ VisiblePosition AccessibilityObject::doAXNextParagraphEndTextMarkerForTextMarker
     return endOfParagraph(nextPos);
 }
 
-VisiblePosition AccessibilityObject::doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition& visiblePos) const
+VisiblePosition AccessibilityObject::previousParagraphStartPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return VisiblePosition();
@@ -789,12 +789,12 @@ VisiblePosition AccessibilityObject::doAXPreviousParagraphStartTextMarkerForText
 }
 
 // NOTE: Consider providing this utility method as AX API
-VisiblePosition AccessibilityObject::textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const
+VisiblePosition AccessibilityObject::visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const
 {
     return VisiblePosition();
 }
 
-AccessibilityObject* AccessibilityObject::doAXUIElementForTextMarker(const VisiblePosition& visiblePos) const
+AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return 0;
@@ -806,7 +806,7 @@ AccessibilityObject* AccessibilityObject::doAXUIElementForTextMarker(const Visib
     return obj->document()->axObjectCache()->get(obj);
 }
 
-unsigned AccessibilityObject::doAXLineForTextMarker(const VisiblePosition& visiblePos) const
+unsigned AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return 0;
@@ -829,10 +829,10 @@ unsigned AccessibilityObject::doAXLineForTextMarker(const VisiblePosition& visib
 }
 
 // NOTE: Consider providing this utility method as AX API
-PlainTextRange AccessibilityObject::rangeForTextMarkerRange(const VisiblePositionRange& positionRange) const
+PlainTextRange AccessibilityObject::plainTextRangeForVisiblePositionRange(const VisiblePositionRange& positionRange) const
 {
-    int index1 = indexForTextMarker(positionRange.start);
-    int index2 = indexForTextMarker(positionRange.end);
+    int index1 = index(positionRange.start);
+    int index2 = index(positionRange.end);
     if (index1 < 0 || index2 < 0 || index1 > index2)
         return PlainTextRange();
 
@@ -840,7 +840,7 @@ PlainTextRange AccessibilityObject::rangeForTextMarkerRange(const VisiblePositio
 }
 
 // NOTE: Consider providing this utility method as AX API
-int AccessibilityObject::indexForTextMarker(const VisiblePosition& position) const
+int AccessibilityObject::index(const VisiblePosition& position) const
 {
     return -1;
 }
@@ -860,11 +860,11 @@ PlainTextRange AccessibilityObject::doAXRangeForLine(unsigned lineNumber) const
 // an error in that case. We return textControl->text().length(), 1. Does this matter?
 PlainTextRange AccessibilityObject::doAXRangeForPosition(const IntPoint& point) const
 {
-    int index = indexForTextMarker(doAXTextMarkerForPosition(point));
-    if (index < 0)
+    int i = index(visiblePositionForPoint(point));
+    if (i < 0)
         return PlainTextRange();
 
-    return PlainTextRange(index, 1);
+    return PlainTextRange(i, 1);
 }
 
 // The composed character range in the text associated with this accessibility object that
@@ -879,8 +879,8 @@ PlainTextRange AccessibilityObject::doAXRangeForIndex(unsigned index) const
 // over which the style in effect at that character index applies.
 PlainTextRange AccessibilityObject::doAXStyleRangeForIndex(unsigned index) const
 {
-    VisiblePositionRange textMarkerRange = doAXStyleTextMarkerRangeForTextMarker(textMarkerForIndex(index, false));
-    return rangeForTextMarkerRange(textMarkerRange);
+    VisiblePositionRange range = styleRangeForPosition(visiblePositionForIndex(index, false));
+    return plainTextRangeForVisiblePositionRange(range);
 }
 
 // A substring of the text associated with this accessibility object that is
@@ -902,7 +902,7 @@ IntRect AccessibilityObject::doAXBoundsForRange(const PlainTextRange& range) con
 // object that contains the character.
 unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
 {
-    return doAXLineForTextMarker(textMarkerForIndex(index, false));
+    return lineForPosition(visiblePositionForIndex(index, false));
 }
 
 FrameView* AccessibilityObject::documentFrameView() const 

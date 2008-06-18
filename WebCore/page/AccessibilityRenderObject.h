@@ -187,13 +187,13 @@ public:
     virtual void handleActiveDescendantChanged();
 
     virtual VisiblePositionRange visiblePositionRange() const;
-    virtual VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
-    virtual IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;
-    virtual void doSetAXSelectedTextMarkerRange(const VisiblePositionRange&) const;
+    virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const;
+    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const;
+    virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const;
     
-    virtual VisiblePosition doAXTextMarkerForPosition(const IntPoint&) const;
-    virtual VisiblePosition textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const;    
-    virtual int indexForTextMarker(const VisiblePosition&) const;
+    virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const;
+    virtual VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const;    
+    virtual int index(const VisiblePosition&) const;
 
     virtual VisiblePosition visiblePositionForIndex(int) const;
     virtual int indexForVisiblePosition(const VisiblePosition&) const;

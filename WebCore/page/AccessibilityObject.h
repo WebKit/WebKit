@@ -53,8 +53,6 @@ typedef struct _NSRange NSRange;
 @class NSString;
 @class NSValue;
 @class NSView;
-@class WebCoreTextMarker;
-@class WebCoreTextMarkerRange;
 #else
 class NSArray;
 class NSAttributedString;
@@ -63,8 +61,6 @@ class NSMutableAttributedString;
 class NSString;
 class NSValue;
 class NSView;
-class WebCoreTextMarker;
-class WebCoreTextMarkerRange;
 #if PLATFORM(GTK)
 typedef struct _AtkObject AtkObject;
 typedef struct _AtkObject AccessibilityObjectWrapper;
@@ -321,43 +317,43 @@ public:
     virtual void handleActiveDescendantChanged() { }
 
     virtual VisiblePositionRange visiblePositionRange() const;
-    virtual VisiblePositionRange doAXTextMarkerRangeForLine(unsigned) const;
+    virtual VisiblePositionRange visiblePositionRangeForLine(unsigned) const;
     
-    VisiblePositionRange doAXTextMarkerRangeForUnorderedTextMarkers(const VisiblePosition&, const VisiblePosition&) const;
-    VisiblePositionRange doAXLeftWordTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXRightWordTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXLeftLineTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXRightLineTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXSentenceTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXParagraphTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange doAXStyleTextMarkerRangeForTextMarker(const VisiblePosition&) const;
-    VisiblePositionRange textMarkerRangeForRange(const PlainTextRange&) const;
+    VisiblePositionRange visiblePositionRangeForUnorderedPositions(const VisiblePosition&, const VisiblePosition&) const;
+    VisiblePositionRange positionOfLeftWord(const VisiblePosition&) const;
+    VisiblePositionRange positionOfRightWord(const VisiblePosition&) const;
+    VisiblePositionRange leftLineVisiblePositionRange(const VisiblePosition&) const;
+    VisiblePositionRange rightLineVisiblePositionRange(const VisiblePosition&) const;
+    VisiblePositionRange sentenceForPosition(const VisiblePosition&) const;
+    VisiblePositionRange paragraphForPosition(const VisiblePosition&) const;
+    VisiblePositionRange styleRangeForPosition(const VisiblePosition&) const;
+    VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const;
 
-    String doAXStringForTextMarkerRange(const VisiblePositionRange&) const;
-    virtual IntRect doAXBoundsForTextMarkerRange(const VisiblePositionRange&) const;    
-    int doAXLengthForTextMarkerRange(const VisiblePositionRange&) const;
-    virtual void doSetAXSelectedTextMarkerRange(const VisiblePositionRange&) const;
-    PlainTextRange rangeForTextMarkerRange(const VisiblePositionRange&) const;
+    String stringForVisiblePositionRange(const VisiblePositionRange&) const;
+    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const;    
+    int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
+    virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const;
 
-    virtual VisiblePosition doAXTextMarkerForPosition(const IntPoint&) const;
-    VisiblePosition doAXNextTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXPreviousTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXNextWordEndTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXPreviousWordStartTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXNextLineEndTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXPreviousLineStartTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXNextSentenceEndTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXPreviousSentenceStartTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXNextParagraphEndTextMarkerForTextMarker(const VisiblePosition&) const;
-    VisiblePosition doAXPreviousParagraphStartTextMarkerForTextMarker(const VisiblePosition&) const;
-    virtual VisiblePosition textMarkerForIndex(unsigned indexValue, bool lastIndexOK) const;
+    virtual VisiblePosition visiblePositionForPoint(const IntPoint&) const;
+    VisiblePosition nextVisiblePosition(const VisiblePosition&) const;
+    VisiblePosition previousVisiblePosition(const VisiblePosition&) const;
+    VisiblePosition nextWordEnd(const VisiblePosition&) const;
+    VisiblePosition previousWordStart(const VisiblePosition&) const;
+    VisiblePosition nextLineEndPosition(const VisiblePosition&) const;
+    VisiblePosition previousLineStartPosition(const VisiblePosition&) const;
+    VisiblePosition nextSentenceEndPosition(const VisiblePosition&) const;
+    VisiblePosition previousSentenceStartPosition(const VisiblePosition&) const;
+    VisiblePosition nextParagraphEndPosition(const VisiblePosition&) const;
+    VisiblePosition previousParagraphStartPosition(const VisiblePosition&) const;
+    virtual VisiblePosition visiblePositionForIndex(unsigned indexValue, bool lastIndexOK) const;
     
     virtual VisiblePosition visiblePositionForIndex(int) const;
     virtual int indexForVisiblePosition(const VisiblePosition&) const;
 
-    AccessibilityObject* doAXUIElementForTextMarker(const VisiblePosition&) const;
-    unsigned doAXLineForTextMarker(const VisiblePosition&) const;
-    virtual int indexForTextMarker(const VisiblePosition&) const;
+    AccessibilityObject* accessibilityObjectForPosition(const VisiblePosition&) const;
+    unsigned lineForPosition(const VisiblePosition&) const;
+    PlainTextRange plainTextRangeForVisiblePositionRange(const VisiblePositionRange&) const;
+    virtual int index(const VisiblePosition&) const;
 
     virtual PlainTextRange doAXRangeForLine(unsigned) const;
     PlainTextRange doAXRangeForPosition(const IntPoint&) const;
