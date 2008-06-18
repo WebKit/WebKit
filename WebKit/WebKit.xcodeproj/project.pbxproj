@@ -298,25 +298,6 @@
 		EDE983810BCDF5FE00FDAE28 /* WebNSArrayExtras.m in Sources */ = {isa = PBXBuildFile; fileRef = EDE9837F0BCDF5FE00FDAE28 /* WebNSArrayExtras.m */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		1C8715500B0BA41000E3CB7B /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		1C8715510B0BA41000E3CB7B /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXFileReference section */
 		065AD5A10B0C32C7005A2B1D /* WebContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebContextMenuClient.h; sourceTree = "<group>"; };
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
@@ -1350,8 +1331,6 @@
 				1C395DE20C6BE8E0000D1E52 /* Generate 64-bit Export File */,
 			);
 			buildRules = (
-				1C8715500B0BA41000E3CB7B /* PBXBuildRule */,
-				1C8715510B0BA41000E3CB7B /* PBXBuildRule */,
 			);
 			dependencies = (
 			);

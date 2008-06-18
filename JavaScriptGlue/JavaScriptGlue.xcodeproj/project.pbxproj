@@ -43,41 +43,6 @@
 		DD66F3F608F7401B00C75FD7 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildRule section */
-		1C8715620B0BA46200E3CB7B /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		1C8715630B0BA46200E3CB7B /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5D89690E0BB521EE009477BE /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.c;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-		5D8969150BB52209009477BE /* PBXBuildRule */ = {
-			isa = PBXBuildRule;
-			compilerSpec = com.apple.compilers.gcc.4_0;
-			fileType = sourcecode.cpp;
-			isEditable = 1;
-			outputFiles = (
-			);
-		};
-/* End PBXBuildRule section */
-
 /* Begin PBXContainerItemProxy section */
 		1422E8C709DE3EAD00749B87 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -112,7 +77,7 @@
 		1C9051A00BA9F3050081E9D0 /* DebugRelease.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = DebugRelease.xcconfig; sourceTree = "<group>"; };
 		1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = JavaScriptGlue.xcconfig; sourceTree = "<group>"; };
 		1C9051A20BA9F3050081E9D0 /* Version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = Version.xcconfig; sourceTree = "<group>"; };
-		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		DD66F3D508F73ED700C75FD7 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		DD66F3D608F73ED700C75FD7 /* JavaScriptGlue.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptGlue.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD66F3F508F7401B00C75FD7 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F11798B20262465703CA149D /* JavaScriptGlue.cpp */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptGlue.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -283,8 +248,6 @@
 				1422E87509DE3BE800749B87 /* Frameworks */,
 			);
 			buildRules = (
-				5D8969150BB52209009477BE /* PBXBuildRule */,
-				5D89690E0BB521EE009477BE /* PBXBuildRule */,
 			);
 			dependencies = (
 				5D2F21E30BDFAB9D0082B294 /* PBXTargetDependency */,
@@ -307,8 +270,6 @@
 				5DA0F0C00DC2B48900EA22B4 /* Remove Headers If Needed */,
 			);
 			buildRules = (
-				1C8715620B0BA46200E3CB7B /* PBXBuildRule */,
-				1C8715630B0BA46200E3CB7B /* PBXBuildRule */,
 			);
 			dependencies = (
 			);

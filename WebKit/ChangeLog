@@ -1,3 +1,11 @@
+2008-06-17  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/5775802> WebKit should not force use of GCC 4.0.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-05-22  Timothy Hatcher  <timothy@apple.com>
 
         <rdar://problem/5956403> Update the Develop menu to match the new Inspector items
