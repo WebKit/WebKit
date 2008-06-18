@@ -1,5 +1,15 @@
 2008-06-18  Timothy Hatcher  <timothy@apple.com>
 
+        Add a script build phase to remove the WebKit.qrc file from
+        WebCore's resources. This file is used for the Qt port, but we
+        copy the whole inspector folder for connivence and get this file.
+
+        Reviewed by Adam Roben.
+
+        * WebCore.xcodeproj/project.pbxproj: New script phase.
+
+2008-06-18  Timothy Hatcher  <timothy@apple.com>
+
         Combine the Web Inspector's JavaScript resources into one large
         script file to speed up loading of the Inspector. This is only
         done for Release and Production builds.
