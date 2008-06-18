@@ -145,7 +145,7 @@ my $errorTag = "stderr";
 
 if (isTiger()) {
     $platform = "mac-tiger";
-} elsif (isLeopard()) {
+} elsif (isLeopard() || isSnowLeopard()) {
     $platform = "mac-leopard";
 } elsif (isOSX()) {
     $platform = "mac";

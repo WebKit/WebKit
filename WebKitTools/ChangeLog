@@ -1,3 +1,13 @@
+2008-06-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Justin Garcia.
+
+        - prefer Leopard results when running on Snow Leopard.
+
+        * Scripts/run-webkit-tests: Added a mapping of Snow Leopard to
+          mac-leopard.
+        * Scripts/webkitdirs.pm: Added isSnowLeopard().
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         * Scripts/do-webcore-rename: Updated for the latest round of renaming.

@@ -560,6 +560,11 @@ sub isLeopard()
     return isOSX() && osXVersion()->{"minor"} == 5;
 }
 
+sub isSnowLeopard()
+{
+    return isOSX() && osXVersion()->{"minor"} == 6;
+}
+
 sub relativeScriptsDir()
 {
     my $scriptDir = File::Spec->catpath("", File::Spec->abs2rel(dirname($0), getcwd()), "");
