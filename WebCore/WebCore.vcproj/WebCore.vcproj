@@ -3944,6 +3944,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\MediaDocument.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\MediaDocument.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\NavigationAction.cpp"
 				>
 			</File>

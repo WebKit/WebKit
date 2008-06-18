@@ -58,6 +58,7 @@ public:
     virtual ~MediaPlayer();
     
     static bool isAvailable();
+    static bool supportsType(const String&);
     static void getSupportedTypes(HashSet<String>&);
     
     IntSize naturalSize();

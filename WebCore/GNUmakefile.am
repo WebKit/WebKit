@@ -829,6 +829,7 @@ webcore_sources += \
 	WebCore/loader/ImageDocument.cpp \
 	WebCore/loader/loader.cpp \
 	WebCore/loader/MainResourceLoader.cpp \
+	WebCore/loader/MediaDocument.cpp \
 	WebCore/loader/NavigationAction.cpp \
 	WebCore/loader/NetscapePlugInStreamLoader.cpp \
 	WebCore/loader/PluginDocument.cpp \

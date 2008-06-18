@@ -35,7 +35,9 @@
 #include "HTMLViewSourceDocument.h"
 #include "Image.h"
 #include "ImageDocument.h"
+#include "MediaDocument.h"
 #include "MediaList.h"
+#include "MediaPlayer.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
 #include "PluginData.h"
@@ -312,6 +314,10 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
     if (type == "application/x-ftp-directory")
         return FTPDirectoryDocument::create(frame);
 #endif
+
+     // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
+     if (MediaPlayer::supportsType(type))
+         return MediaDocument::create(frame);
 
     PluginData* pluginData = 0;
     if (frame && frame->page())

@@ -1,3 +1,42 @@
+2008-06-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Brady.
+
+        Fix for <rdar://problem/5605768> Render full-page video/audio with <video>/<audio> instead of QuickTime plug-in
+
+        * WebCore.xcodeproj/project.pbxproj: Added MediaDocument class.
+        * GNUmakefile.am: ditto.
+        * WebCore.pro: ditto.
+        * WebCore.vcproj/WebCore.vcproj: ditto.
+        * WebCoreSources.bkl: ditto.
+
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::createDocument):
+          Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
+        * dom/Document.h: (WebCore::Document::isMediaDocument): Added.
+
+        * loader/MediaDocument.cpp: Added.
+        (WebCore::MediaTokenizer::MediaTokenizer):
+        (WebCore::MediaTokenizer::wantsRawData):
+        (WebCore::MediaTokenizer::write):
+        (WebCore::MediaTokenizer::createDocumentStructure):
+        (WebCore::MediaTokenizer::writeRawData):
+        (WebCore::MediaTokenizer::stopParsing):
+        (WebCore::MediaTokenizer::finish):
+        (WebCore::MediaTokenizer::isWaitingForScripts):
+        (WebCore::MediaDocument::MediaDocument):
+        (WebCore::MediaDocument::createTokenizer):
+        * loader/MediaDocument.h: Added.
+        (WebCore::MediaDocument::create):
+        (WebCore::MediaDocument::isMediaDocument):
+
+        * page/InspectorController.cpp: (WebCore::getResourceDocumentNode):
+          Added MediaDocument case so it is handled the same as a PluginDocument or ImageDocument.
+        * platform/graphics/MediaPlayer.cpp: (WebCore::MediaPlayer::supportsType): Added.
+        * platform/graphics/MediaPlayer.h:
+        * rendering/RenderMedia.cpp: (WebCore::RenderMedia::updateControlVisibility):
+          Instead of checking the html element to decide if the media is audio, check the player.
+          This means that if a video element actually only contains audio, then we will still avoid fading the controls in and out.
+
 2008-06-17  Timothy Hatcher  <timothy@apple.com>
 
         Adds the file name and line number for call frames next to

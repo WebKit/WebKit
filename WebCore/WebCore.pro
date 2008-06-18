@@ -708,6 +708,7 @@ SOURCES += \
     loader/ImageDocument.cpp \
     loader/loader.cpp \
     loader/MainResourceLoader.cpp \
+    loader/MediaDocument.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
     loader/PluginDocument.cpp \

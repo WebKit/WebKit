@@ -210,6 +210,13 @@ void MediaPlayer::paint(GraphicsContext* p, const IntRect& r)
     m_private->paint(p, r);
 }
 
+bool MediaPlayer::supportsType(const String& type)
+{
+    HashSet<String> types;
+    getSupportedTypes(types);
+    return MIMETypeRegistry::isSupportedMediaMIMEType(type) && types.contains(type);
+}
+
 void MediaPlayer::getSupportedTypes(HashSet<String>& types)
 {
     MediaPlayerPrivate::getSupportedTypes(types);

@@ -210,6 +210,7 @@ struct InspectorResource : public RefCounted<InspectorResource> {
         Font,
         Script,
         XHR,
+        Media,
         Other
     };
 
@@ -510,7 +511,7 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
     if (!document)
         return undefined;
 
-    if (document->isPluginDocument() || document->isImageDocument())
+    if (document->isPluginDocument() || document->isImageDocument() || document->isMediaDocument())
         return undefined;
 
     ExecState* exec = toJSDOMWindowShell(resource->frame.get())->window()->globalExec();

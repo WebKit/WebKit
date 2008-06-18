@@ -288,6 +288,7 @@ public:
     virtual bool isSVGDocument() const { return false; }
 #endif
     virtual bool isPluginDocument() const { return false; }
+    virtual bool isMediaDocument() const { return false; }
     
     CSSStyleSelector* styleSelector() const { return m_styleSelector; }
 
