@@ -4,6 +4,7 @@
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *           (C) 2006 Apple Computer Inc.
  *           (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
+ *           (C) 2008 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -157,6 +158,13 @@ VisiblePosition RenderSVGInlineText::positionForCoordinates(int x, int y)
     }
 
     return VisiblePosition(element(), offset, DOWNSTREAM);
+}
+
+void RenderSVGInlineText::destroy()
+{
+    setNeedsLayoutAndPrefWidthsRecalc();
+    repaint();
+    RenderText::destroy();
 }
 
 }

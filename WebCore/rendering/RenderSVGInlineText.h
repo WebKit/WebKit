@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ *           (C) 2008 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +42,8 @@ public:
 
     virtual IntRect caretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
     virtual VisiblePosition positionForCoordinates(int x, int y);
+
+    virtual void destroy();
 
 private:
     IntRect computeAbsoluteRectForRange(int startPos, int endPos);

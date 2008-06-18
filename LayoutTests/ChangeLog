@@ -1,3 +1,16 @@
+2008-06-18  Rob Buis  <buis@kde.org>
+
+        Reviewed by Darin.
+
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=18786
+        Once rendered, SVG text elements removed from DOM continue to be displayed
+
+        * platform/mac/svg/custom/text-dom-removal-expected.checksum: Added.
+        * platform/mac/svg/custom/text-dom-removal-expected.png: Added.
+        * svg/custom/text-dom-removal-expected.txt: Added.
+        * svg/custom/text-dom-removal.svg: Added.
+
 2008-06-17  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele.
