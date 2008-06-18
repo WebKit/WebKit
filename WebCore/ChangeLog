@@ -1,3 +1,21 @@
+2008-06-17  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://6016755> Assertion failure when WebView is child of
+        message-only window
+
+        Reviewed by Ada Chan.
+
+        No test possible.
+
+        * platform/win/WindowMessageBroadcaster.cpp:
+        (WebCore::WindowMessageBroadcaster::addListener): Only subclass the
+        window when we're adding our first listener. Removed an assertion that
+        an old WNDPROC was returned -- this will be 0 in the case of a
+        message-only window. Added an assertion to help catch cases where we
+        try to subclass the window twice.
+        (WebCore::WindowMessageBroadcaster::unsubclassWindow): Removed an
+        assertion that is not correct in the message-only window case.
+
 2008-06-17  Adele Peterson  <adele@apple.com>
 
         Attempt to fix builds by wrapping new code in #if ENABLE(VIDEO)
