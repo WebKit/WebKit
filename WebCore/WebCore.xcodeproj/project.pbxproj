@@ -15147,6 +15147,7 @@
 				1C11CCB40AA6093700DADB20 /* Copy Generated Headers */,
 				1CC93C640DAE929600E4BC3A /* Copy Forwarding and ICU Headers */,
 				93F199FD08245E59001E9ABC /* Resources */,
+				1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */,
 				93F19A0C08245E59001E9ABC /* Sources */,
 				939D050109D9FF6B00984996 /* Check For Global Initializers */,
 				93F19B1208245E59001E9ABC /* Frameworks */,
@@ -15249,6 +15250,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1C5F9D760E09A1B400E91D0A /* Streamline Inspector Source */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/inspector",
+				"$(SRCROOT)/combine-javascript-resources",
+			);
+			name = "Streamline Inspector Source";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/WebCore/inspector.html",
+				"$(DERIVED_FILE_DIR)/WebCore/inspector.js",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Don't do anything for Debug builds, so the Inspector is easier to debug.\nif [[ ${BUILD_STYLE:=Debug} == \"Debug\" ]]; then\n    exit\nfi\n\n# Combine all script resources in the inspector.html file.\n\"$SRCROOT/combine-javascript-resources\" --input-html \"${SRCROOT}/page/inspector/inspector.html\" --output-dir \"${DERIVED_FILE_DIR}/WebCore\" --output-script-name inspector.js\n\n# Remove any JavaScript files, since they will be replaced with the combined file.\ncd \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/inspector\"\nrm *.js\n\n# Copy the modified HTML file and the combined script.\ncp \"${DERIVED_FILE_DIR}/WebCore/inspector.html\" inspector.html\ncp \"${DERIVED_FILE_DIR}/WebCore/inspector.js\" inspector.js\n";
+		};
 		1CB71D4A0B02658D0061EA45 /* Generate 64-bit Export File */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
