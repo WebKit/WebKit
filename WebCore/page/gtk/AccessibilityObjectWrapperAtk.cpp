@@ -400,7 +400,7 @@ static gboolean webkit_accessible_text_set_caret_offset(AtkText* text, gint offs
     // TODO: Verify
     //core(text)->setSelectedTextRange(PlainTextRange(offset, 0));
     AccessibilityObject* coreObject = core(text);
-    coreObject->doSetAXSelectedTextMarkerRange(coreObject->textMarkerRangeForRange(PlainTextRange(offset, 0)));
+    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(offset, 0)));
     return TRUE;
 }
 
@@ -482,7 +482,7 @@ static void webkit_accessible_editable_text_insert_text(AtkEditableText* text, c
 
     if (!coreObject->document() || !coreObject->document()->frame())
         return;
-    coreObject->doSetAXSelectedTextMarkerRange(coreObject->textMarkerRangeForRange(PlainTextRange(*position, 0)));
+    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(*position, 0)));
     coreObject->setFocused(true);
     // FIXME: We should set position to the actual inserted text length, which may be less than that requested.
     if (coreObject->document()->frame()->editor()->insertTextWithoutSendingTextEvent(String::fromUTF8(string), false, 0))
@@ -508,7 +508,7 @@ static void webkit_accessible_editable_text_delete_text(AtkEditableText* text, g
 
     if (!coreObject->document() || !coreObject->document()->frame())
         return;
-    coreObject->doSetAXSelectedTextMarkerRange(coreObject->textMarkerRangeForRange(PlainTextRange(start_pos, end_pos - start_pos)));
+    coreObject->setSelectedVisiblePositionRange(coreObject->visiblePositionRangeForRange(PlainTextRange(start_pos, end_pos - start_pos)));
     coreObject->setFocused(true);
     coreObject->document()->frame()->editor()->performDelete();
 }
