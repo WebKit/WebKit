@@ -2,6 +2,13 @@
 
         Attempt to fix builds by wrapping new code in #if ENABLE(VIDEO)
 
+        * loader/MediaDocument.cpp:
+        * loader/MediaDocument.h:
+
+2008-06-17  Adele Peterson  <adele@apple.com>
+
+        Attempt to fix builds by wrapping new code in #if ENABLE(VIDEO)
+
         * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::createDocument):
 
 2008-06-17  Adele Peterson  <adele@apple.com>

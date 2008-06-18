@@ -26,6 +26,8 @@
 #ifndef MediaDocument_h
 #define MediaDocument_h
 
+#if ENABLE(VIDEO)
+
 #include "HTMLDocument.h"
 
 namespace WebCore {
@@ -46,4 +48,5 @@ private:
     
 }
 
-#endif // ImageDocument_h
+#endif
+#endif

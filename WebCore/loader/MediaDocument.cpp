@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE(VIDEO)
 #include "MediaDocument.h"
 
 #include "Element.h"
@@ -128,3 +130,4 @@ Tokenizer* MediaDocument::createTokenizer()
 }
     
 }
+#endif
