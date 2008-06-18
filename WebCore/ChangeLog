@@ -1,5 +1,11 @@
 2008-06-17  Adele Peterson  <adele@apple.com>
 
+        Attempt to fix builds by wrapping new code in #if ENABLE(VIDEO)
+
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::createDocument):
+
+2008-06-17  Adele Peterson  <adele@apple.com>
+
         Reviewed by Brady.
 
         Fix for <rdar://problem/5605768> Render full-page video/audio with <video>/<audio> instead of QuickTime plug-in
