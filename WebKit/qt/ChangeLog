@@ -1,3 +1,10 @@
+2008-06-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Qt Build fix after r34627.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2008-06-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
