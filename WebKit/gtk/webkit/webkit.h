@@ -28,6 +28,5 @@
 #include <webkit/webkitwebview.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebhistoryitem.h>
-#include <webkit/webkitenumtypes.h>
 
 #endif /* __WEBKIT_H__ */
