@@ -452,7 +452,7 @@ int jscmain(int argc, char** argv)
         runInteractive(globalObject);
 
 #ifndef NDEBUG
-    JSGlobalData::threadInstance().heap->collect();
+    globalObject->globalData()->heap->collect();
 #endif
 
     return success ? 0 : 3;

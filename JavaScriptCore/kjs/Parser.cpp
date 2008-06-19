@@ -61,7 +61,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     *errLine = -1;
     *errMsg = 0;
         
-    Lexer& lexer = *JSGlobalData::threadInstance().lexer;
+    Lexer& lexer = *exec->lexer();
 
     if (startingLineNumber <= 0)
         startingLineNumber = 1;
@@ -69,7 +69,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
     lexer.setCode(startingLineNumber, source);
     *sourceId = ++m_sourceId;
 
-    int parseError = kjsyyparse(&JSGlobalData::threadInstance());
+    int parseError = kjsyyparse(&exec->globalData());
     bool lexError = lexer.sawError();
     lexer.clear();
 
