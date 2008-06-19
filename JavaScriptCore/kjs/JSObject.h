@@ -420,7 +420,7 @@ namespace KJS {
    JSValue **getDirectLocation(const Identifier& propertyName, bool& isWriteable)
         { return _prop.getLocation(propertyName, isWriteable); }
     void putDirect(const Identifier &propertyName, JSValue *value, int attr = 0);
-    void putDirect(const Identifier &propertyName, int value, int attr = 0);
+    void putDirect(ExecState*, const Identifier& propertyName, int value, int attr = 0);
     void removeDirect(const Identifier &propertyName);
     
     // convenience to add a function property under the function's own built-in name
@@ -486,6 +486,7 @@ inline JSObject::JSObject(JSValue* proto)
     : _proto(proto)
 {
     ASSERT(proto);
+    ASSERT(Heap::heap(this) == Heap::heap(proto));
 }
 
 inline JSObject::JSObject()
@@ -629,9 +630,9 @@ inline void JSObject::putDirect(const Identifier &propertyName, JSValue *value, 
     _prop.put(propertyName, value, attr);
 }
 
-inline void JSObject::putDirect(const Identifier &propertyName, int value, int attr)
+inline void JSObject::putDirect(ExecState* exec, const Identifier &propertyName, int value, int attr)
 {
-    _prop.put(propertyName, jsNumber(value), attr);
+    _prop.put(propertyName, jsNumber(exec, value), attr);
 }
 
 inline JSValue* JSObject::toPrimitive(ExecState* exec, JSType preferredType) const

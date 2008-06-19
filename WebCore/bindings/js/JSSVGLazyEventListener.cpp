@@ -24,6 +24,8 @@
 
 #include "JSSVGLazyEventListener.h"
 
+#include "JSDOMWindow.h"
+
 using namespace KJS;
 
 namespace WebCore {
@@ -35,7 +37,7 @@ JSSVGLazyEventListener::JSSVGLazyEventListener(const String& functionName, const
 
 JSValue* JSSVGLazyEventListener::eventParameterName() const
 {
-    static ProtectedPtr<JSValue> eventString = jsString("evt");
+    static ProtectedPtr<JSValue> eventString = jsString(window()->globalExec(), "evt");
     return eventString.get();
 }
 

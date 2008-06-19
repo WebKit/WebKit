@@ -97,7 +97,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     RefPtr<JSCustomXPathNSResolver> selfProtector(this);
 
     ArgList args;
-    args.append(jsString(prefix));
+    args.append(jsString(exec, prefix));
 
     String result;
     JSValue* retval;

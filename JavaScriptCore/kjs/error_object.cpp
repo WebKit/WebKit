@@ -45,10 +45,10 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
-    putDirect(exec->propertyNames().name, jsString("Error"), DontEnum);
-    putDirect(exec->propertyNames().message, jsString("Unknown error"), DontEnum);
+    putDirect(exec->propertyNames().name, jsString(exec, "Error"), DontEnum);
+    putDirect(exec->propertyNames().message, jsString(exec, "Unknown error"), DontEnum);
 
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
 JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
@@ -64,7 +64,7 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLis
         // Mozilla compatible format
         s += ": " + v->toString(exec);
 
-    return jsString(s);
+    return jsString(exec, s);
 }
 
 // ------------------------------ ErrorConstructor -------------------------------
@@ -74,7 +74,7 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* funcProto
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirect(exec->propertyNames().prototype, errorProto, DontEnum|DontDelete|ReadOnly);
-    putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete|ReadOnly|DontEnum);
 }
 
 ConstructType ErrorConstructor::getConstructData(ConstructData&)
@@ -86,11 +86,11 @@ ConstructType ErrorConstructor::getConstructData(ConstructData&)
 JSObject* ErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
     JSObject* proto = static_cast<JSObject*>(exec->lexicalGlobalObject()->errorPrototype());
-    JSObject* imp = new ErrorInstance(proto);
+    JSObject* imp = new (exec) ErrorInstance(proto);
     JSObject* obj(imp);
 
     if (!args[0]->isUndefined())
-        imp->putDirect(exec->propertyNames().message, jsString(args[0]->toString(exec)));
+        imp->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
 
     return obj;
 }
@@ -107,8 +107,8 @@ JSValue* ErrorConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/
 NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorProto, const UString& name, const UString& message)
     : JSObject(errorProto)
 {
-    putDirect(exec->propertyNames().name, jsString(name), 0);
-    putDirect(exec->propertyNames().message, jsString(message), 0);
+    putDirect(exec->propertyNames().name, jsString(exec, name), 0);
+    putDirect(exec->propertyNames().message, jsString(exec, message), 0);
 }
 
 // ------------------------------ NativeErrorConstructor -------------------------------
@@ -119,7 +119,7 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototyp
     : InternalFunction(funcProto, Identifier(exec, prot->getDirect(exec->propertyNames().name)->getString()))
     , proto(prot)
 {
-    putDirect(exec->propertyNames().length, jsNumber(1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
     putDirect(exec->propertyNames().prototype, proto, DontDelete|ReadOnly|DontEnum);
 }
 
@@ -130,10 +130,10 @@ ConstructType NativeErrorConstructor::getConstructData(ConstructData&)
 
 JSObject* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
-    JSObject* imp = new ErrorInstance(proto);
+    JSObject* imp = new (exec) ErrorInstance(proto);
     JSObject* obj(imp);
     if (!args[0]->isUndefined())
-        imp->putDirect(exec->propertyNames().message, jsString(args[0]->toString(exec)));
+        imp->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
     return obj;
 }
 

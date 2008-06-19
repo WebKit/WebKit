@@ -170,7 +170,6 @@ namespace KJS {
         virtual void put(ExecState*, const Identifier&, JSValue*);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
 
-
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
 
@@ -260,6 +259,10 @@ namespace KJS {
         // Per-thread hash tables, cached on the global object for faster access.
         JSGlobalData* globalData() { return d()->globalData; }
 
+        enum SharedTag { Shared };
+        void* operator new(size_t);
+        void* operator new(size_t, SharedTag);
+
         void init(JSObject* thisValue);
         
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
@@ -282,8 +285,6 @@ namespace KJS {
     private:
         bool checkTimeout();
         void resetTimeoutCheck();
-
-        static JSGlobalObject* s_head;
     };
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)

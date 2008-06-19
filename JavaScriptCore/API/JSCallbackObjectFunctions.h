@@ -470,7 +470,7 @@ JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, const Ide
         if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
-                    JSObject* o = new JSCallbackFunction(exec, callAsFunction, propertyName);
+                    JSObject* o = new (exec) JSCallbackFunction(exec, callAsFunction, propertyName);
                     thisObj->putDirect(propertyName, o, entry->attributes);
                     return o;
                 }

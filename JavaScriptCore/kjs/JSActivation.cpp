@@ -186,7 +186,7 @@ JSObject* JSActivation::createArgumentsObject(ExecState* exec)
     int argc;
     exec->machine()->getFunctionAndArguments(registerBase(), callFrame, function, argv, argc);
     ArgList args(reinterpret_cast<JSValue***>(registerBase()), argv - *registerBase(), argc);
-    return new Arguments(exec, function, args, this);
+    return new (exec) Arguments(exec, function, args, this);
 }
 
 } // namespace KJS

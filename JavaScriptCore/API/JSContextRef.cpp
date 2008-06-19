@@ -44,11 +44,11 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     JSLock lock;
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = new JSGlobalObject;
+        JSGlobalObject* globalObject = new (JSGlobalObject::Shared) JSGlobalObject;
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = new JSCallbackObject<JSGlobalObject>(globalObjectClass);
+    JSGlobalObject* globalObject = new (JSGlobalObject::Shared) JSCallbackObject<JSGlobalObject>(globalObjectClass);
     JSGlobalContextRef ctx = toGlobalRef(globalObject->globalExec());
     JSValue* prototype = globalObjectClass->prototype(ctx);
     if (!prototype)

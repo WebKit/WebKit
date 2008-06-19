@@ -48,8 +48,8 @@ public:
     
     virtual Class *getClass() const;
         
-    virtual JSValue *valueOf() const;
-    virtual JSValue *defaultValue(JSType hint) const;
+    virtual JSValue* valueOf(ExecState*) const;
+    virtual JSValue* defaultValue(ExecState*, JSType hint) const;
     
     virtual CallType getCallData(CallData&);
     
@@ -63,9 +63,9 @@ public:
 
     ObjectStructPtr getObject() const { return _instance.get(); }
     
-    JSValue *stringValue() const;
-    JSValue *numberValue() const;
-    JSValue *booleanValue() const;
+    JSValue* stringValue(ExecState*) const;
+    JSValue* numberValue(ExecState*) const;
+    JSValue* booleanValue() const;
 
     virtual BindingLanguage getBindingLanguage() const { return ObjectiveCLanguage; }
 

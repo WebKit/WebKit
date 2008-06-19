@@ -44,7 +44,7 @@ using namespace KJS::Bindings;
        exceptionDescription:(NSString **)exceptionString;
 @end
 
-bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char*, JSValue *&exceptionDescription)
+bool KJS::Bindings::dispatchJNICall(ExecState* exec, const void* targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue* args, jvalue &result, const char*, JSValue*& exceptionDescription)
 {
     id view = (id)targetAppletView;
     
@@ -65,7 +65,7 @@ bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, 
         }
 
         if (_exceptionDescription != 0) {
-            exceptionDescription = convertNSStringToString(_exceptionDescription);
+            exceptionDescription = convertNSStringToString(exec, _exceptionDescription);
         }
         return true;
     }

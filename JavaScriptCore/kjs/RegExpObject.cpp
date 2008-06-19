@@ -50,10 +50,10 @@ const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0, 0 };
 RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
     : JSObject(objectPrototype)
 {
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------
@@ -105,7 +105,7 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLi
 {
     if (!thisObj->inherits(&RegExpObject::info)) {
         if (thisObj->inherits(&RegExpPrototype::info))
-            return jsString("//");
+            return jsString(exec, "//");
         return throwError(exec, TypeError);
     }
 
@@ -116,7 +116,7 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLi
         result += "i";
     if (thisObj->get(exec, exec->propertyNames().multiline)->toBoolean(exec))
         result += "m";
-    return jsString(result);
+    return jsString(exec, result);
 }
 
 // ------------------------------ RegExpObject ------------------------------------
@@ -149,7 +149,7 @@ bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propert
   return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, slot);
 }
 
-JSValue* RegExpObject::getValueProperty(ExecState*, int token) const
+JSValue* RegExpObject::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
         case Global:
@@ -159,9 +159,9 @@ JSValue* RegExpObject::getValueProperty(ExecState*, int token) const
         case Multiline:
             return jsBoolean(m_regExp->multiline());
         case Source:
-            return jsString(m_regExp->pattern());
+            return jsString(exec, m_regExp->pattern());
         case LastIndex:
-            return jsNumber(m_lastIndex);
+            return jsNumber(exec, m_lastIndex);
     }
     
     ASSERT_NOT_REACHED();
@@ -286,7 +286,7 @@ RegExpConstructor::RegExpConstructor(ExecState* exec, FunctionPrototype* funcPro
   putDirect(exec->propertyNames().prototype, regProto, DontEnum | DontDelete | ReadOnly);
 
   // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(2), ReadOnly | DontDelete | DontEnum);
+  putDirect(exec->propertyNames().length, jsNumber(exec, 2), ReadOnly | DontDelete | DontEnum);
 }
 
 /* 
@@ -360,10 +360,10 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
         int start = d->lastOvector[2 * i];
         if (start >= 0)
-            JSArray::put(exec, i, jsString(d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
+            JSArray::put(exec, i, jsString(exec, d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
     }
-    JSArray::put(exec, exec->propertyNames().index, jsNumber(d->lastOvector[0]));
-    JSArray::put(exec, exec->propertyNames().input, jsString(d->lastInput));
+    JSArray::put(exec, exec->propertyNames().index, jsNumber(exec, d->lastOvector[0]));
+    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->lastInput));
 
     delete d;
     setLazyCreationData(0);
@@ -371,40 +371,40 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
 
 JSObject* RegExpConstructor::arrayOfMatches(ExecState* exec) const
 {
-    return new RegExpMatchesArray(exec, d.get());
+    return new (exec) RegExpMatchesArray(exec, d.get());
 }
 
-JSValue* RegExpConstructor::getBackref(unsigned i) const
+JSValue* RegExpConstructor::getBackref(ExecState* exec, unsigned i) const
 {
   if (d->lastOvector && i <= d->lastNumSubPatterns)
-    return jsString(d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
-  return jsString("");
+    return jsString(exec, d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
+  return jsString(exec, "");
 }
 
-JSValue* RegExpConstructor::getLastParen() const
+JSValue* RegExpConstructor::getLastParen(ExecState* exec) const
 {
   unsigned i = d->lastNumSubPatterns;
   if (i > 0) {
     ASSERT(d->lastOvector);
-    return jsString(d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
+    return jsString(exec, d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
   }
-  return jsString("");
+  return jsString(exec, "");
 }
 
-JSValue *RegExpConstructor::getLeftContext() const
+JSValue* RegExpConstructor::getLeftContext(ExecState* exec) const
 {
   if (d->lastOvector)
-    return jsString(d->lastInput.substr(0, d->lastOvector[0]));
-  return jsString("");
+    return jsString(exec, d->lastInput.substr(0, d->lastOvector[0]));
+  return jsString(exec, "");
 }
 
-JSValue *RegExpConstructor::getRightContext() const
+JSValue* RegExpConstructor::getRightContext(ExecState* exec) const
 {
   if (d->lastOvector) {
     UString s = d->lastInput;
-    return jsString(s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]));
+    return jsString(exec, s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]));
   }
-  return jsString("");
+  return jsString(exec, "");
 }
 
 bool RegExpConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot& slot)
@@ -412,44 +412,44 @@ bool RegExpConstructor::getOwnPropertySlot(ExecState *exec, const Identifier& pr
   return getStaticValueSlot<RegExpConstructor, InternalFunction>(exec, ExecState::regExpConstructorTable(exec), this, propertyName, slot);
 }
 
-JSValue *RegExpConstructor::getValueProperty(ExecState*, int token) const
+JSValue *RegExpConstructor::getValueProperty(ExecState* exec, int token) const
 {
   switch (token) {
     case Dollar1:
-      return getBackref(1);
+      return getBackref(exec, 1);
     case Dollar2:
-      return getBackref(2);
+      return getBackref(exec, 2);
     case Dollar3:
-      return getBackref(3);
+      return getBackref(exec, 3);
     case Dollar4:
-      return getBackref(4);
+      return getBackref(exec, 4);
     case Dollar5:
-      return getBackref(5);
+      return getBackref(exec, 5);
     case Dollar6:
-      return getBackref(6);
+      return getBackref(exec, 6);
     case Dollar7:
-      return getBackref(7);
+      return getBackref(exec, 7);
     case Dollar8:
-      return getBackref(8);
+      return getBackref(exec, 8);
     case Dollar9:
-      return getBackref(9);
+      return getBackref(exec, 9);
     case Input:
-      return jsString(d->lastInput);
+      return jsString(exec, d->lastInput);
     case Multiline:
       return jsBoolean(d->multiline);
     case LastMatch:
-      return getBackref(0);
+      return getBackref(exec, 0);
     case LastParen:
-      return getLastParen();
+      return getLastParen(exec);
     case LeftContext:
-      return getLeftContext();
+      return getLeftContext(exec);
     case RightContext:
-      return getRightContext();
+      return getRightContext(exec);
     default:
-      ASSERT(0);
+      ASSERT_NOT_REACHED();
   }
 
-  return jsString("");
+  return jsString(exec, "");
 }
 
 void RegExpConstructor::put(ExecState *exec, const Identifier &propertyName, JSValue *value)
@@ -493,7 +493,7 @@ JSObject *RegExpConstructor::construct(ExecState *exec, const ArgList &args)
   
   RefPtr<RegExp> regExp = RegExp::create(pattern, flags);
   return regExp->isValid()
-    ? new RegExpObject(exec->lexicalGlobalObject()->regExpPrototype(), regExp.release())
+    ? new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpPrototype(), regExp.release())
     : throwError(exec, SyntaxError, UString("Invalid regular expression: ").append(regExp->errorMessage()));
 }
 

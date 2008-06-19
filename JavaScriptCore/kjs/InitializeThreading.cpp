@@ -49,7 +49,7 @@ static void initializeThreadingOnce()
 #if USE(MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
 #if !PLATFORM(DARWIN) // Darwin has pthread_main_np(), and doesn't need registerAsMainThread() called.
-    Collector::registerAsMainThread();
+    Heap::registerAsMainThread();
 #endif
     JSGlobalData::threadInstance();
     UString::null();
@@ -61,6 +61,10 @@ void initializeThreading()
 {
 #if PLATFORM(DARWIN)
     pthread_once(&initializeThreadingKeyOnce, initializeThreadingOnce);
+
+    // FIXME: do we want heap introspector to work on other threads?
+    if (pthread_main_np())
+       JSGlobalData::threadInstance().heap->initializeHeapIntrospector();
 #else
     static bool initializedThreading = false;
     if (!initializedThreading) {

@@ -1,3 +1,18 @@
+2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Prepare JavaScript heap for being per-thread.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        Use JSGlobalData::threadInstance()->heap instead of static Collector calls.
+
 2008-06-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam.

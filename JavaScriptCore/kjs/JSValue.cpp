@@ -80,9 +80,13 @@ extern const double Inf = NaNInf.doubles.Inf_Double;
 static const double D16 = 65536.0;
 static const double D32 = 4294967296.0;
 
-void* JSCell::operator new(size_t size)
+void* JSCell::operator new(size_t size, ExecState* exec)
 {
-    return Collector::allocate(size);
+#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
+    return exec->heap()->inlineAllocate(size);
+#else
+    return exec->heap()->allocate(size);
+#endif
 }
 
 bool JSCell::getUInt32(uint32_t&) const
@@ -256,19 +260,19 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec);
 }
 
-JSCell* jsString(const char* s)
+JSCell* jsString(ExecState* exec, const char* s)
 {
-    return new JSString(s ? s : "");
+    return new (exec) JSString(s ? s : "");
 }
 
-JSCell* jsString(const UString& s)
+JSCell* jsString(ExecState* exec, const UString& s)
 {
-    return s.isNull() ? new JSString("") : new JSString(s);
+    return s.isNull() ? new (exec) JSString("") : new (exec) JSString(s);
 }
 
-JSCell* jsOwnedString(const UString& s)
+JSCell* jsOwnedString(ExecState* exec, const UString& s)
 {
-    return s.isNull() ? new JSString("", JSString::HasOtherOwner) : new JSString(s, JSString::HasOtherOwner);
+    return s.isNull() ? new (exec) JSString("", JSString::HasOtherOwner) : new (exec) JSString(s, JSString::HasOtherOwner);
 }
 
 } // namespace KJS

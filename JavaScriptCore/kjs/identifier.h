@@ -26,6 +26,8 @@
 
 namespace KJS {
 
+    class ExecState;
+
     class Identifier {
         friend class PropertyMap;
     public:

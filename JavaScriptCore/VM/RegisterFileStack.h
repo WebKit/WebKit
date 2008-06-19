@@ -51,11 +51,11 @@ namespace KJS {
 
         RegisterFile* current() { return m_stack.last(); }
 
-        void mark()
+        void mark(Heap* heap)
         {
             Stack::iterator end = m_stack.end();
             for (Stack::iterator it = m_stack.begin(); it != end; ++it)
-                (*it)->mark();
+                (*it)->mark(heap);
         }
 
         // Pointer to a value that holds the base of the top-most global register file.

@@ -352,6 +352,21 @@ ALWAYS_INLINE JSType JSImmediate::type(const JSValue* v)
     return static_cast<JSType>(tag);
 }
 
+ALWAYS_INLINE JSValue* jsUndefined()
+{
+    return JSImmediate::undefinedImmediate();
+}
+
+inline JSValue* jsNull()
+{
+    return JSImmediate::nullImmediate();
+}
+
+inline JSValue* jsBoolean(bool b)
+{
+    return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
+}
+
 } // namespace KJS
 
 #endif

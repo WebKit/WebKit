@@ -30,7 +30,6 @@
 #define JSGlobalData_h
 
 #include "list.h"
-#include "ustring.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -42,7 +41,7 @@ namespace WTF {
 namespace KJS {
 
     class CommonIdentifiers;
-//    class Heap;
+    class Heap;
     class IdentifierTable;
     class JSGlobalObject;
     class Lexer;
@@ -56,8 +55,9 @@ namespace KJS {
     // JavaScriptCore clients, which all share a single JSGlobalData, and thus cannot run concurrently.
     struct JSGlobalData : Noncopyable {
         static JSGlobalData& threadInstance();
+        static JSGlobalData& sharedInstance();
 
-//        Heap* heap;
+        Heap* heap;
 
         const HashTable* arrayTable;
         const HashTable* dateTable;

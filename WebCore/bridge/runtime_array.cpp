@@ -38,10 +38,10 @@ RuntimeArray::RuntimeArray(ExecState *exec, Bindings::Array *a)
 {
 }
 
-JSValue *RuntimeArray::lengthGetter(ExecState*, const Identifier&, const PropertySlot& slot)
+JSValue *RuntimeArray::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     RuntimeArray *thisObj = static_cast<RuntimeArray *>(slot.slotBase());
-    return jsNumber(thisObj->getLength());
+    return jsNumber(exec, thisObj->getLength());
 }
 
 JSValue *RuntimeArray::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)

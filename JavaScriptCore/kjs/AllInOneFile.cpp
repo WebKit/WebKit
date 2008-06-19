@@ -56,6 +56,7 @@
 #include "nodes2string.cpp"
 #include "NumberObject.cpp"
 #include "JSObject.cpp"
+#include "JSGlobalObject.cpp"
 #include "object_object.cpp"
 #include "operations.cpp"
 #include "Parser.cpp"

@@ -49,7 +49,7 @@ JSNamedNodesCollection::JSNamedNodesCollection(KJS::JSObject* prototype, const V
 JSValue* JSNamedNodesCollection::lengthGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSNamedNodesCollection* thisObj = static_cast<JSNamedNodesCollection*>(slot.slotBase());
-    return jsNumber(thisObj->m_nodes.size());
+    return jsNumber(exec, thisObj->m_nodes.size());
 }
 
 JSValue* JSNamedNodesCollection::indexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)

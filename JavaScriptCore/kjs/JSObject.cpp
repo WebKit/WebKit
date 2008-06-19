@@ -96,6 +96,7 @@ static void throwSetterError(ExecState *exec)
 void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *value)
 {
   ASSERT(value);
+  ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
   if (propertyName == exec->propertyNames().underscoreProto) {
     JSObject* proto = value->getObject();
@@ -293,7 +294,7 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
     return 0;
 }
 
-void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc)
+void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunc)
 {
     JSValue *o = getDirect(propertyName);
     GetterSetter *gs;
@@ -301,7 +302,7 @@ void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject
     if (o && o->type() == GetterSetterType) {
         gs = static_cast<GetterSetter *>(o);
     } else {
-        gs = new GetterSetter;
+        gs = new (exec) GetterSetter;
         putDirect(propertyName, gs, IsGetterSetter);
     }
     
@@ -309,7 +310,7 @@ void JSObject::defineGetter(ExecState*, const Identifier& propertyName, JSObject
     gs->setGetter(getterFunc);
 }
 
-void JSObject::defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc)
+void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunc)
 {
     JSValue *o = getDirect(propertyName);
     GetterSetter *gs;
@@ -317,7 +318,7 @@ void JSObject::defineSetter(ExecState*, const Identifier& propertyName, JSObject
     if (o && o->type() == GetterSetterType) {
         gs = static_cast<GetterSetter *>(o);
     } else {
-        gs = new GetterSetter;
+        gs = new (exec) GetterSetter;
         putDirect(propertyName, gs, IsGetterSetter);
     }
     
@@ -556,18 +557,18 @@ JSObject* Error::create(ExecState* exec, ErrorType errtype, const UString& messa
 
   ArgList args;
   if (message.isEmpty())
-    args.append(jsString(name));
+    args.append(jsString(exec, name));
   else
-    args.append(jsString(message));
+    args.append(jsString(exec, message));
   JSObject *err = static_cast<JSObject *>(cons->construct(exec,args));
 
   if (lineno != -1)
-    err->put(exec, Identifier(exec, "line"), jsNumber(lineno));
+    err->put(exec, Identifier(exec, "line"), jsNumber(exec, lineno));
   if (sourceId != -1)
-    err->put(exec, Identifier(exec, "sourceId"), jsNumber(sourceId));
+    err->put(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId));
 
   if(!sourceURL.isNull())
-    err->put(exec, Identifier(exec, "sourceURL"), jsString(sourceURL));
+    err->put(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL));
  
   return err;
 }

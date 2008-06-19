@@ -50,7 +50,7 @@ JSValue* JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
         return jsUndefined();
     }
 
-    JSObject* object = new JSObject(exec->lexicalGlobalObject()->objectPrototype());
+    JSObject* object = new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
 
     unsigned numColumns = m_impl->columnNames().size();
     unsigned valuesIndex = index * numColumns;
@@ -60,13 +60,13 @@ JSValue* JSSQLResultSetRowList::item(ExecState* exec, const ArgList& args)
 
         switch (value.type()) {
             case SQLValue::StringValue:
-              jsValue = jsString(value.string());
+              jsValue = jsString(exec, value.string());
               break;
           case SQLValue::NullValue:
               jsValue = jsNull();
               break;
           case SQLValue::NumberValue:
-              jsValue = jsNumber(value.number());
+              jsValue = jsNumber(exec, value.number());
               break;
           default:
               ASSERT_NOT_REACHED();

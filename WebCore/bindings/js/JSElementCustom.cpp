@@ -143,7 +143,7 @@ JSValue* toJSNewlyCreated(ExecState* exec, Element* element)
         ret = createJSSVGWrapper(exec, static_cast<SVGElement*>(element));
 #endif
     else
-        ret = new JSElement(JSElementPrototype::self(exec), element);
+        ret = new (exec) JSElement(JSElementPrototype::self(exec), element);
 
     ScriptInterpreter::putDOMNodeForDocument(doc, element, ret);
 

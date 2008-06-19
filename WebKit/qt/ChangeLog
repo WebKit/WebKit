@@ -1,18 +1,18 @@
+2008-06-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Prepare JavaScript heap for being per-thread.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject): Trying not to break the build.
+
 2008-06-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Qt Build fix after r34627.
 
         * WebCoreSupport/FrameLoaderClientQt.cpp:
         (WebCore::FrameLoaderClientQt::createPlugin):
-
-2008-06-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
-
-        Reviewed by Simon.
-
-        Fix the Qt port by adding ExecState when necessary.
-
-        * Api/qwebframe.cpp:
-        (QWebFrame::addToJavaScriptWindowObject):
 
 2008-06-15  Darin Adler  <darin@apple.com>
 

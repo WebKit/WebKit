@@ -31,7 +31,7 @@ namespace KJS {
 
   class JSString : public JSCell {
   public:
-    JSString(const UString& value) : m_value(value) { Collector::reportExtraMemoryCost(value.cost()); }
+    JSString(const UString& value) : m_value(value) { Heap::heap(this)->reportExtraMemoryCost(value.cost()); }
     enum HasOtherOwnerType { HasOtherOwner };
     JSString(const UString& value, HasOtherOwnerType) : m_value(value) { }
 

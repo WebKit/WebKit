@@ -52,25 +52,25 @@ using namespace WebCore;
 + (size_t)javaScriptObjectsCount
 {
     JSLock lock;
-    return Collector::size();
+    return JSGlobalData::threadInstance().heap->size();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
     JSLock lock;
-    return Collector::globalObjectCount();
+    return JSGlobalData::threadInstance().heap->globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
     JSLock lock;
-    return Collector::protectedObjectCount();
+    return JSGlobalData::threadInstance().heap->protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
     JSLock lock;
-    return Collector::protectedGlobalObjectCount();
+    return JSGlobalData::threadInstance().heap->protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
@@ -79,7 +79,7 @@ using namespace WebCore;
     
     NSCountedSet *result = [NSCountedSet set];
 
-    OwnPtr<HashCountedSet<const char*> > counts(Collector::protectedObjectTypeCounts());
+    OwnPtr<HashCountedSet<const char*> > counts(JSGlobalData::threadInstance().heap->protectedObjectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->second; ++i)
@@ -179,7 +179,7 @@ using namespace WebCore;
 + (size_t)javaScriptReferencedObjectsCount
 {
     JSLock lock;
-    return Collector::protectedObjectCount();
+    return JSGlobalData::threadInstance().heap->protectedObjectCount();
 }
 
 + (NSSet *)javaScriptRootObjectClasses

@@ -37,7 +37,7 @@ JSValue* toJSNewlyCreated(ExecState* exec, Text* text)
     if (!text)
         return jsNull();
     
-    JSNode* ret = new JSText(JSTextPrototype::self(exec), text);
+    JSNode* ret = new (exec) JSText(JSTextPrototype::self(exec), text);
     ScriptInterpreter::putDOMNodeForDocument(text->document(), text, ret);
 
     return ret;

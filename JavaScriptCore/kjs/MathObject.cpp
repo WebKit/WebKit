@@ -76,25 +76,25 @@ bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     return getStaticPropertySlot<MathObject, JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
 }
 
-JSValue* MathObject::getValueProperty(ExecState*, int token) const
+JSValue* MathObject::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
     case Euler:
-        return jsNumber(exp(1.0));
+        return jsNumber(exec, exp(1.0));
     case Ln2:
-        return jsNumber(log(2.0));
+        return jsNumber(exec, log(2.0));
     case Ln10:
-        return jsNumber(log(10.0));
+        return jsNumber(exec, log(10.0));
     case Log2E:
-        return jsNumber(1.0 / log(2.0));
+        return jsNumber(exec, 1.0 / log(2.0));
     case Log10E:
-        return jsNumber(1.0 / log(10.0));
+        return jsNumber(exec, 1.0 / log(10.0));
     case Pi:
-        return jsNumber(piDouble);
+        return jsNumber(exec, piDouble);
     case Sqrt1_2:
-        return jsNumber(sqrt(0.5));
+        return jsNumber(exec, sqrt(0.5));
     case Sqrt2:
-        return jsNumber(sqrt(2.0));
+        return jsNumber(exec, sqrt(2.0));
     }
 
     ASSERT_NOT_REACHED();
@@ -106,58 +106,58 @@ JSValue* MathObject::getValueProperty(ExecState*, int token) const
 JSValue* mathProtoFuncAbs(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
-    return signbit(arg) ? jsNumber(-arg) : jsNumber(arg);
+    return signbit(arg) ? jsNumber(exec, -arg) : jsNumber(exec, arg);
 }
 
 JSValue* mathProtoFuncACos(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(acos(args[0]->toNumber(exec)));
+    return jsNumber(exec, acos(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncASin(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(asin(args[0]->toNumber(exec)));
+    return jsNumber(exec, asin(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncATan(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(atan(args[0]->toNumber(exec)));
+    return jsNumber(exec, atan(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncATan2(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(atan2(args[0]->toNumber(exec), args[1]->toNumber(exec)));
+    return jsNumber(exec, atan2(args[0]->toNumber(exec), args[1]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncCeil(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg > -1.0)
-        return jsNumber(-0.0);
-    return jsNumber(ceil(arg));
+        return jsNumber(exec, -0.0);
+    return jsNumber(exec, ceil(arg));
 }
 
 JSValue* mathProtoFuncCos(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(cos(args[0]->toNumber(exec)));
+    return jsNumber(exec, cos(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncExp(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(exp(args[0]->toNumber(exec)));
+    return jsNumber(exec, exp(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncFloor(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg == 0.0)
-        return jsNumber(-0.0);
-    return jsNumber(floor(arg));
+        return jsNumber(exec, -0.0);
+    return jsNumber(exec, floor(arg));
 }
 
 JSValue* mathProtoFuncLog(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(log(args[0]->toNumber(exec)));
+    return jsNumber(exec, log(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const ArgList& args)
@@ -173,7 +173,7 @@ JSValue* mathProtoFuncMax(ExecState* exec, JSObject*, const ArgList& args)
         if (val > result || (val == 0 && result == 0 && !signbit(val)))
             result = val;
     }
-    return jsNumber(result);
+    return jsNumber(exec, result);
 }
 
 JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const ArgList& args)
@@ -189,7 +189,7 @@ JSValue* mathProtoFuncMin(ExecState* exec, JSObject*, const ArgList& args)
         if (val < result || (val == 0 && result == 0 && signbit(val)))
             result = val;
     }
-    return jsNumber(result);
+    return jsNumber(exec, result);
 }
 
 JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const ArgList& args)
@@ -200,13 +200,13 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, const ArgList& args)
     double arg2 = args[1]->toNumber(exec);
 
     if (isnan(arg2))
-        return jsNaN();
+        return jsNaN(exec);
     if (isinf(arg2) && fabs(arg) == 1)
-        return jsNaN();
-    return jsNumber(pow(arg, arg2));
+        return jsNaN(exec);
+    return jsNumber(exec, pow(arg, arg2));
 }
 
-JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const ArgList&)
+JSValue* mathProtoFuncRandom(ExecState* exec, JSObject*, const ArgList&)
 {
 #if !USE(MULTIPLE_THREADS)
     static bool didInitRandom;
@@ -216,30 +216,30 @@ JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const ArgList&)
     }
 #endif
 
-    return jsNumber(wtf_random());
+    return jsNumber(exec, wtf_random());
 }
 
 JSValue* mathProtoFuncRound(ExecState* exec, JSObject*, const ArgList& args)
 {
     double arg = args[0]->toNumber(exec);
     if (signbit(arg) && arg >= -0.5)
-         return jsNumber(-0.0);
-    return jsNumber(floor(arg + 0.5));
+         return jsNumber(exec, -0.0);
+    return jsNumber(exec, floor(arg + 0.5));
 }
 
 JSValue* mathProtoFuncSin(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(sin(args[0]->toNumber(exec)));
+    return jsNumber(exec, sin(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncSqrt(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(sqrt(args[0]->toNumber(exec)));
+    return jsNumber(exec, sqrt(args[0]->toNumber(exec)));
 }
 
 JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, const ArgList& args)
 {
-    return jsNumber(tan(args[0]->toNumber(exec)));
+    return jsNumber(exec, tan(args[0]->toNumber(exec)));
 }
 
 } // namespace KJS

@@ -31,8 +31,8 @@ namespace KJS {
 
   class StringObject : public JSWrapperObject {
   public:
-    StringObject(JSObject* prototype);
-    StringObject(JSObject* prototype, const UString&);
+    StringObject(ExecState*, JSObject* prototype);
+    StringObject(ExecState*, JSObject* prototype, const UString&);
 
     static StringObject* create(ExecState*, JSString*);
 
@@ -55,8 +55,8 @@ namespace KJS {
   // WebCore uses this to make style.filter undetectable
   class StringObjectThatMasqueradesAsUndefined : public StringObject {
   public:
-      StringObjectThatMasqueradesAsUndefined(JSObject* proto, const UString& string)
-          : StringObject(proto, string) { }
+      StringObjectThatMasqueradesAsUndefined(ExecState* exec, JSObject* proto, const UString& string)
+          : StringObject(exec, proto, string) { }
       virtual bool masqueradeAsUndefined() const { return true; }
       virtual bool toBoolean(ExecState*) const { return false; }
   };

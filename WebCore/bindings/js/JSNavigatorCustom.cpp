@@ -106,11 +106,11 @@ JSValue* JSNavigator::appVersion(ExecState* exec) const
     Navigator* imp = static_cast<Navigator*>(impl());
     Frame* frame = imp->frame();
     if (!frame)
-        return jsString("");
+        return jsString(exec, "");
 
     if (needsYouTubeQuirk(exec, frame))
-        return jsString("");
-    return jsString(imp->appVersion());
+        return jsString(exec, "");
+    return jsString(exec, imp->appVersion());
 }
 
 }

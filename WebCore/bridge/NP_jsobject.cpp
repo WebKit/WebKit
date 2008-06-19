@@ -32,6 +32,7 @@
 #include <kjs/JSGlobalObject.h>
 #include <kjs/PropertyNameArray.h>
 #include "c_utility.h"
+#include <kjs/completion.h>
 #include <kjs/interpreter.h>
 #include "PlatformString.h"
 #include "npruntime_impl.h"

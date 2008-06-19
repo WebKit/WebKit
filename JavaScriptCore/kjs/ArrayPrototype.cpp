@@ -100,7 +100,7 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLis
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned k = 0; k < length; k++) {
@@ -128,7 +128,7 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLis
             break;
     }
     exec->dynamicGlobalObject()->arrayVisitedElements().remove(thisObj);
-    return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
+    return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
 JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const ArgList&)
@@ -143,7 +143,7 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned k = 0; k < length; k++) {
@@ -177,7 +177,7 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const 
             break;
     }
     exec->dynamicGlobalObject()->arrayVisitedElements().remove(thisObj);
-    return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
+    return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
 JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const ArgList& args)
@@ -189,7 +189,7 @@ JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const ArgList& a
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
 
     UChar comma = ',';
     UString separator = args[0]->isUndefined() ? UString(&comma, 1) : args[0]->toString(exec);
@@ -220,7 +220,7 @@ JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject* thisObj, const ArgList& a
             break;
     }
     exec->dynamicGlobalObject()->arrayVisitedElements().remove(thisObj);
-    return jsString(UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
+    return jsString(exec, UString(strBuffer.data(), strBuffer.data() ? strBuffer.size() : 0));
 }
 
 JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const ArgList& args)
@@ -253,7 +253,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject* thisObj, const ArgList&
         curObj = static_cast<JSObject*>(curArg); // may be 0
         ++it;
     }
-    arr->put(exec, exec->propertyNames().length, jsNumber(n));
+    arr->put(exec, exec->propertyNames().length, jsNumber(exec, n));
     return arr;
 }
 
@@ -262,12 +262,12 @@ JSValue* arrayProtoFuncPop(ExecState* exec, JSObject* thisObj, const ArgList&)
     JSValue* result = 0;
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     if (length == 0) {
-        thisObj->put(exec, exec->propertyNames().length, jsNumber(length));
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length));
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, length - 1);
         thisObj->deleteProperty(exec, length - 1);
-        thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1));
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length - 1));
     }
     return result;
 }
@@ -278,8 +278,8 @@ JSValue* arrayProtoFuncPush(ExecState* exec, JSObject* thisObj, const ArgList& a
     for (unsigned n = 0; n < args.size(); n++)
         thisObj->put(exec, length + n, args[n]);
     length += args.size();
-    thisObj->put(exec, exec->propertyNames().length, jsNumber(length));
-    return jsNumber(length);
+    thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length));
+    return jsNumber(exec, length);
 }
 
 JSValue* arrayProtoFuncReverse(ExecState* exec, JSObject* thisObj, const ArgList&)
@@ -311,7 +311,7 @@ JSValue* arrayProtoFuncShift(ExecState* exec, JSObject* thisObj, const ArgList&)
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     if (length == 0) {
-        thisObj->put(exec, exec->propertyNames().length, jsNumber(length));
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length));
         result = jsUndefined();
     } else {
         result = thisObj->get(exec, 0);
@@ -322,7 +322,7 @@ JSValue* arrayProtoFuncShift(ExecState* exec, JSObject* thisObj, const ArgList&)
                 thisObj->deleteProperty(exec, k - 1);
         }
         thisObj->deleteProperty(exec, length - 1);
-        thisObj->put(exec, exec->propertyNames().length, jsNumber(length - 1));
+        thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length - 1));
     }
     return result;
 }
@@ -366,7 +366,7 @@ JSValue* arrayProtoFuncSlice(ExecState* exec, JSObject* thisObj, const ArgList& 
         if (JSValue* v = getProperty(exec, thisObj, k))
             resObj->put(exec, n, v);
     }
-    resObj->put(exec, exec->propertyNames().length, jsNumber(n));
+    resObj->put(exec, exec->propertyNames().length, jsNumber(exec, n));
     return result;
 }
 
@@ -451,7 +451,7 @@ JSValue* arrayProtoFuncSplice(ExecState* exec, JSObject* thisObj, const ArgList&
         if (JSValue* v = getProperty(exec, thisObj, k + begin))
             resObj->put(exec, k, v);
     }
-    resObj->put(exec, exec->propertyNames().length, jsNumber(deleteCount));
+    resObj->put(exec, exec->propertyNames().length, jsNumber(exec, deleteCount));
 
     unsigned additionalArgs = std::max<int>(args.size() - 2, 0);
     if (additionalArgs != deleteCount) {
@@ -476,7 +476,7 @@ JSValue* arrayProtoFuncSplice(ExecState* exec, JSObject* thisObj, const ArgList&
     for (unsigned k = 0; k < additionalArgs; ++k)
         thisObj->put(exec, k + begin, args[k + 2]);
 
-    thisObj->put(exec, exec->propertyNames().length, jsNumber(length - deleteCount + additionalArgs));
+    thisObj->put(exec, exec->propertyNames().length, jsNumber(exec, length - deleteCount + additionalArgs));
     return result;
 }
 
@@ -495,7 +495,7 @@ JSValue* arrayProtoFuncUnShift(ExecState* exec, JSObject* thisObj, const ArgList
     }
     for (unsigned k = 0; k < nrArgs; ++k)
         thisObj->put(exec, k, args[k]);
-    JSValue* result = jsNumber(length + nrArgs);
+    JSValue* result = jsNumber(exec, length + nrArgs);
     thisObj->put(exec, exec->propertyNames().length, result);
     return result;
 }
@@ -523,7 +523,7 @@ JSValue* arrayProtoFuncFilter(ExecState* exec, JSObject* thisObj, const ArgList&
         ArgList eachArguments;
 
         eachArguments.append(v);
-        eachArguments.append(jsNumber(k));
+        eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
         JSValue* result = eachFunction->callAsFunction(exec, applyThis, eachArguments);
@@ -545,7 +545,7 @@ JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const ArgList& ar
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
 
     ArgList mapArgs;
-    mapArgs.append(jsNumber(length));
+    mapArgs.append(jsNumber(exec, length));
     JSObject* resultArray = static_cast<JSObject*>(exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, mapArgs));
 
     for (unsigned k = 0; k < length && !exec->hadException(); ++k) {
@@ -558,7 +558,7 @@ JSValue* arrayProtoFuncMap(ExecState* exec, JSObject* thisObj, const ArgList& ar
         ArgList eachArguments;
 
         eachArguments.append(v);
-        eachArguments.append(jsNumber(k));
+        eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
         JSValue* result = eachFunction->callAsFunction(exec, applyThis, eachArguments);
@@ -594,7 +594,7 @@ JSValue* arrayProtoFuncEvery(ExecState* exec, JSObject* thisObj, const ArgList& 
         ArgList eachArguments;
 
         eachArguments.append(slot.getValue(exec, k));
-        eachArguments.append(jsNumber(k));
+        eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
         bool predicateResult = eachFunction->callAsFunction(exec, applyThis, eachArguments)->toBoolean(exec);
@@ -625,7 +625,7 @@ JSValue* arrayProtoFuncForEach(ExecState* exec, JSObject* thisObj, const ArgList
 
         ArgList eachArguments;
         eachArguments.append(slot.getValue(exec, k));
-        eachArguments.append(jsNumber(k));
+        eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
         eachFunction->callAsFunction(exec, applyThis, eachArguments);
@@ -652,7 +652,7 @@ JSValue* arrayProtoFuncSome(ExecState* exec, JSObject* thisObj, const ArgList& a
 
         ArgList eachArguments;
         eachArguments.append(slot.getValue(exec, k));
-        eachArguments.append(jsNumber(k));
+        eachArguments.append(jsNumber(exec, k));
         eachArguments.append(thisObj);
 
         bool predicateResult = eachFunction->callAsFunction(exec, applyThis, eachArguments)->toBoolean(exec);
@@ -688,10 +688,10 @@ JSValue* arrayProtoFuncIndexOf(ExecState* exec, JSObject* thisObj, const ArgList
         if (!e)
             continue;
         if (strictEqual(searchElement, e))
-            return jsNumber(index);
+            return jsNumber(exec, index);
     }
 
-    return jsNumber(-1);
+    return jsNumber(exec, -1);
 }
 
 JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const ArgList& args)
@@ -706,7 +706,7 @@ JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const Arg
     if (d < 0) {
         d += length;
         if (d < 0)
-            return jsNumber(-1);
+            return jsNumber(exec, -1);
     }
     if (d < length)
         index = static_cast<int>(d);
@@ -717,10 +717,10 @@ JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject* thisObj, const Arg
         if (!e)
             continue;
         if (strictEqual(searchElement, e))
-            return jsNumber(index);
+            return jsNumber(exec, index);
     }
 
-    return jsNumber(-1);
+    return jsNumber(exec, -1);
 }
 
 // ------------------------------ ArrayConstructor -------------------------------
@@ -732,7 +732,7 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, FunctionPrototype* funcProto
     putDirect(exec->propertyNames().prototype, arrayProto, DontEnum|DontDelete|ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
 ConstructType ArrayConstructor::getConstructData(ConstructData&)
@@ -748,18 +748,18 @@ JSObject* ArrayConstructor::construct(ExecState* exec, const ArgList& args)
         uint32_t n = args[0]->toUInt32(exec);
         if (n != args[0]->toNumber(exec))
             return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
-        return new JSArray(exec->lexicalGlobalObject()->arrayPrototype(), n);
+        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), n);
     }
 
     // otherwise the array is constructed with the arguments in it
-    return new JSArray(exec->lexicalGlobalObject()->arrayPrototype(), args);
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), args);
 }
 
 // ECMA 15.6.1
 JSValue* ArrayConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
 {
     // equivalent to 'new Array(....)'
-    return construct(exec,args);
+    return construct(exec, args);
 }
 
 }

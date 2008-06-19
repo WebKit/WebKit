@@ -1,3 +1,27 @@
+2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Prepare JavaScript heap for being per-thread.
+
+        * JSRun.cpp: (JSRun::JSRun): Create JSGlueGlobalObject in a shared JS heap.
+
+        * JSUtils.h: Made getThreadGlobalExecState available throughout JSGlue.
+
+        * JSUtils.cpp:
+        (JSObjectKJSValue): Pass an ExecState where now required.
+        (unprotectGlobalObject):
+        (initializeGlobalObjectKey):
+        (getThreadGlobalExecState):
+        Moved these functions from JSValueWrapper.cpp, as the global exec state is now needed
+        elsewhere. I'm not quite sure how this relates to the global object from JSRun, but
+        since the new uses are all for Heap access, there doesn't seem to be any behavior change.
+
+        * JavaScriptGlue.cpp:
+        (JSLockInterpreter): Don't call registerThread explicitly, as JSLock will do that.
+
+        * UserObjectImp.cpp: (UserObjectImp::toPrimitive): Pass ExecState* where now required.
+
 2008-06-17  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

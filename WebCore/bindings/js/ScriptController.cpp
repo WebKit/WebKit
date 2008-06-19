@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include "StringSourceProvider.h"
 #include "JSEventListener.h"
+#include <kjs/completion.h>
 #include <kjs/debugger.h>
 
 #if ENABLE(SVG)

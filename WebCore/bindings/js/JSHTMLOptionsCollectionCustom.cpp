@@ -38,7 +38,7 @@ namespace WebCore {
 JSValue* JSHTMLOptionsCollection::length(ExecState* exec) const
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
-    return jsNumber(imp->length());
+    return jsNumber(exec, imp->length());
 }
 
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue* value)

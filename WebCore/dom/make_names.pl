@@ -729,8 +729,8 @@ sub printWrapperFunctions
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {
     if (!MediaPlayer::isAvailable())
-        return new JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
-    return new JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
+        return new (exec) JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
+    return new (exec) JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
 }
 
 END
@@ -739,7 +739,7 @@ END
             print F <<END
 static JSNode* create${ucName}Wrapper(ExecState* exec, PassRefPtr<$parameters{'namespace'}Element> element)
 {   
-    return new JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
+    return new (exec) JS$parameters{'namespace'}${ucName}Element(JS$parameters{'namespace'}${ucName}ElementPrototype::self(exec), static_cast<$parameters{'namespace'}${ucName}Element*>(element.get()));
 }
 
 END
@@ -813,7 +813,7 @@ END
     Create$parameters{'namespace'}ElementWrapperFunction createWrapperFunction = map.get(element->localName().impl());
     if (createWrapperFunction)
         return createWrapperFunction(exec, element);
-    return new JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
+    return new (exec) JS$parameters{'namespace'}Element(JS$parameters{'namespace'}ElementPrototype::self(exec), element.get());
 }
 
 }

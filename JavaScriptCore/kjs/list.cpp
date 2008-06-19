@@ -21,6 +21,8 @@
 #include "config.h"
 #include "list.h"
 
+#include "JSValue.h"
+
 using std::min;
 
 namespace KJS {
@@ -60,8 +62,8 @@ void ArgList::slowAppend(JSValue* v)
     if (!m_markSet) {
         // We can only register for explicit marking once we know which heap
         // is the current one, i.e., when a non-immediate value is appended.
-        if (!JSImmediate::isImmediate(v)) { // Will be: if (Heap* heap = Heap::heap(v))
-            ListSet& markSet = Collector::markListSet();
+        if (Heap* heap = Heap::heap(v)) {
+            ListSet& markSet = heap->markListSet();
             markSet.add(this);
             m_markSet = &markSet;
         }

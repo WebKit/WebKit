@@ -29,10 +29,12 @@
 #include "config.h"
 #include "JSRun.h"
 
+#include <JavaScriptCore/completion.h>
+
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
         fSource(CFStringToUString(source)),
-        fGlobalObject(new JSGlueGlobalObject(inFlags)),
+        fGlobalObject(new (JSGlobalObject::Shared) JSGlueGlobalObject(inFlags)),
         fFlags(inFlags)
 {
 }

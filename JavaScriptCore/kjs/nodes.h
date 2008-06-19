@@ -27,6 +27,7 @@
 #define NODES_H_
 
 #include "JSString.h"
+#include "LabelStack.h"
 #include "Opcode.h"
 #include "regexp.h"
 #include "RegisterID.h"

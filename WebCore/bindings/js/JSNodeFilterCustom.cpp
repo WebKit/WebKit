@@ -47,7 +47,7 @@ JSValue* JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
     short result = impl()->acceptNode(toNode(args[0]), exception);
     if (exception)
         exec->setException(exception);
-    return jsNumber(result);
+    return jsNumber(exec, result);
 }
 
 PassRefPtr<NodeFilter> toNodeFilter(KJS::JSValue* val)

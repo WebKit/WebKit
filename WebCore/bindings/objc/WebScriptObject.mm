@@ -37,6 +37,7 @@
 #import <JavaScriptCore/ExecState.h>
 #import <JavaScriptCore/APICast.h>
 #import <JavaScriptCore/JSGlobalObject.h>
+#import <JavaScriptCore/completion.h>
 #import <JavaScriptCore/interpreter.h>
 #import "objc_instance.h"
 #import "runtime_root.h"

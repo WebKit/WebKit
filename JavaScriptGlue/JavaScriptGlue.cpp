@@ -32,6 +32,7 @@
 #include "JSBase.h"
 #include "JSObject.h"
 #include "JSRun.h"
+#include <JavaScriptCore/completion.h>
 #include <JavaScriptCore/InitializeThreading.h>
 
 static CFTypeRef sJSCFNullRef = 0;
@@ -338,7 +339,7 @@ void JSCollect()
     initializeThreading();
 
     JSLock lock;
-    Collector::collect();
+    getThreadGlobalExecState()->heap()->collect();
 }
 
 /*
@@ -649,7 +650,6 @@ void JSLockInterpreter()
 {
     initializeThreading();
     JSLock::lock();
-    JSLock::registerThread();
 }
 
 

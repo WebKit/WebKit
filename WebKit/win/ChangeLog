@@ -1,3 +1,22 @@
+2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Prepare JavaScript heap for being per-thread.
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptObjectsCount):
+        (WebCoreStatistics::javaScriptGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount):
+        Use JSGlobalData::threadInstance()->heap instead of static Collector calls.
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::valueByEvaluatingJavaScriptFromString): Pass ExecState* where
+        now required.
+
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Trying to fix Windows build.

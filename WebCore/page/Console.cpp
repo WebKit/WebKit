@@ -38,6 +38,7 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
+#include <kjs/JSValue.h>
 #include <kjs/interpreter.h>
 #include <kjs/list.h>
 #include <profiler/Profiler.h>

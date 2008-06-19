@@ -1,3 +1,216 @@
+2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Prepare JavaScript heap for being per-thread.
+
+        * ForwardingHeaders/kjs/JSGlobalData.h: Added.
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectNow):
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+        (WebCore::JSCSSStyleDeclaration::nameGetter):
+        * bindings/js/JSCSSValueCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSCanvasPixelArrayCustom.cpp:
+        (WebCore::JSCanvasPixelArray::indexGetter):
+        (WebCore::toJS):
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        (WebCore::JSClipboard::getData):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMApplicationCacheCustom.cpp:
+        (WebCore::JSDOMApplicationCache::addEventListener):
+        (WebCore::JSDOMApplicationCache::removeEventListener):
+        (WebCore::JSDOMApplicationCache::setOnchecking):
+        (WebCore::JSDOMApplicationCache::setOnerror):
+        (WebCore::JSDOMApplicationCache::setOnnoupdate):
+        (WebCore::JSDOMApplicationCache::setOndownloading):
+        (WebCore::JSDOMApplicationCache::setOnprogress):
+        (WebCore::JSDOMApplicationCache::setOnupdateready):
+        (WebCore::JSDOMApplicationCache::setOncached):
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::jsStringOrNull):
+        (WebCore::jsOwnedStringOrNull):
+        (WebCore::jsStringOrUndefined):
+        (WebCore::jsStringOrFalse):
+        (WebCore::nonCachingStaticFunctionGetter):
+        (WebCore::objectToStringFunctionGetter):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+        (WebCore::cacheDOMObject):
+        (WebCore::cacheSVGDOMObject):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        (WebCore::JSDOMWindowBase::setListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSEventListener):
+        (WebCore::JSDOMWindowBase::findJSUnprotectedEventListener):
+        (WebCore::JSDOMWindowBase::findOrCreateJSUnprotectedEventListener):
+        (WebCore::windowProtoFuncAToB):
+        (WebCore::windowProtoFuncBToA):
+        (WebCore::windowProtoFuncSetTimeout):
+        (WebCore::windowProtoFuncSetInterval):
+        (WebCore::windowProtoFuncAddEventListener):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::operator new):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSLazyEventListener::eventParameterName):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::jsEventTargetAddEventListener):
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetPrototype::self):
+        * bindings/js/JSEventTargetNode.cpp:
+        (WebCore::JSEventTargetNode::setListener):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::getNamedItems):
+        (WebCore::toJS):
+        * bindings/js/JSHTMLFormElementCustom.cpp:
+        (WebCore::JSHTMLFormElement::nameGetter):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::getValueProperty):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor):
+        * bindings/js/JSHTMLOptionsCollectionCustom.cpp:
+        (WebCore::JSHTMLOptionsCollection::length):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap):
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::toString):
+        * bindings/js/JSNamedNodesCollection.cpp:
+        (WebCore::JSNamedNodesCollection::lengthGetter):
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::appVersion):
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::createWrapper):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::JSNodeFilter::acceptNode):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::getRuntimeObject):
+        * bindings/js/JSRGBColor.cpp:
+        (WebCore::getJSRGBColor):
+        * bindings/js/JSSQLResultSetRowListCustom.cpp:
+        (WebCore::JSSQLResultSetRowList::item):
+        * bindings/js/JSSVGLazyEventListener.cpp:
+        (WebCore::JSSVGLazyEventListener::eventParameterName):
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::nameGetter):
+        * bindings/js/JSStyleSheetCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSTextCustom.cpp:
+        (WebCore::toJSNewlyCreated):
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::JSXMLHttpRequestConstructor::construct):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::setOnreadystatechange):
+        (WebCore::JSXMLHttpRequest::setOnload):
+        (WebCore::JSXMLHttpRequest::setOnprogress):
+        (WebCore::JSXMLHttpRequest::getResponseHeader):
+        (WebCore::JSXMLHttpRequest::addEventListener):
+        (WebCore::JSXMLHttpRequest::removeEventListener):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::JSXSLTProcessorConstructor::construct):
+        * bindings/js/JSXSLTProcessorCustom.cpp:
+        (WebCore::JSXSLTProcessor::getParameter):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::defaultValue):
+        (KJS::Bindings::CInstance::stringValue):
+        (KJS::Bindings::CInstance::numberValue):
+        (KJS::Bindings::CInstance::valueOf):
+        * bridge/c/c_instance.h:
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        (JavaInstance::numberValue):
+        (JavaInstance::invokeMethod):
+        (JavaInstance::defaultValue):
+        (JavaInstance::valueOf):
+        * bridge/jni/jni_instance.h:
+        * bridge/jni/jni_jsobject.h:
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::setMember):
+        (JavaJSObject::setSlot):
+        (JavaJSObject::convertJObjectToValue):
+        (JavaJSObject::getListFromJArray):
+        * bridge/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaArray::convertJObjectToArray):
+        (JavaField::dispatchValueFromInstance):
+        (JavaField::valueFromInstance):
+        (JavaField::dispatchSetValueToInstance):
+        (JavaArray::valueAt):
+        * bridge/jni/jni_utility.h:
+        * bridge/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::fallbackObject):
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::defaultValue):
+        (ObjcInstance::stringValue):
+        (ObjcInstance::numberValue):
+        (ObjcInstance::valueOf):
+        * bridge/objc/objc_utility.h:
+        * bridge/objc/objc_utility.mm:
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bridge/runtime.h:
+        (KJS::Bindings::Instance::valueOf):
+        * bridge/runtime_array.cpp:
+        (RuntimeArray::lengthGetter):
+        * bridge/runtime_method.cpp:
+        (RuntimeMethod::lengthGetter):
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::methodGetter):
+        (RuntimeObjectImp::defaultValue):
+        * dom/make_names.pl:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::dropProtection):
+        * bridge/qt/qt_class.cpp:
+        (KJS::Bindings::QtClass::fallbackObject):
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::construct):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        (KJS::Bindings::QtInstance::defaultValue):
+        (KJS::Bindings::QtInstance::stringValue):
+        (KJS::Bindings::QtInstance::numberValue):
+        (KJS::Bindings::QtInstance::valueOf):
+        * bridge/qt/qt_instance.h:
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMetaMethod::lengthGetter):
+        (KJS::Bindings::QtRuntimeMetaMethod::connectGetter):
+        (KJS::Bindings::QtRuntimeMetaMethod::disconnectGetter):
+        (KJS::Bindings::QtRuntimeConnectionMethod::lengthGetter):
+        (KJS::Bindings::QtConnectionObject::execute):
+        Pass ExecState* where now required.
+
 2008-06-19  Timothy Hatcher  <timothy@apple.com>
 
         Update the JavaScript syntax highlight colors to match Xcode.

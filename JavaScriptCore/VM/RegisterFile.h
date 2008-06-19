@@ -136,9 +136,9 @@ namespace KJS {
 
         void copyGlobals(RegisterFile* src);
 
-        void mark()
+        void mark(Heap* heap)
         {
-            Collector::markStackObjectsConservatively(m_buffer, m_base + m_size);
+            heap->markStackObjectsConservatively(m_buffer, m_base + m_size);
         }
 
         bool isGlobal() { return !!m_baseObserver; }

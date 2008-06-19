@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007 Apple Computer, Inc.
+ *  Copyright (C) 2003, 2007, 2008 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -22,7 +22,7 @@
 #ifndef KJS_LIST_H
 #define KJS_LIST_H
 
-#include <kjs/JSValue.h>
+#include "JSImmediate.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
@@ -120,7 +120,7 @@ namespace KJS {
         void slowAppend(JSValue*);
         
         JSValue** buffer() const { return *m_bufferSlot + m_offset; }
-        
+
         JSValue*** m_bufferSlot;
         size_t m_offset;
         size_t m_size;

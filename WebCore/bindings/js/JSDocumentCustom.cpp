@@ -82,13 +82,13 @@ JSValue* toJS(ExecState* exec, Document* doc)
         return ret;
 
     if (doc->isHTMLDocument())
-        ret = new JSHTMLDocument(JSHTMLDocumentPrototype::self(exec), static_cast<HTMLDocument*>(doc));
+        ret = new (exec) JSHTMLDocument(JSHTMLDocumentPrototype::self(exec), static_cast<HTMLDocument*>(doc));
 #if ENABLE(SVG)
     else if (doc->isSVGDocument())
-        ret = new JSSVGDocument(JSSVGDocumentPrototype::self(exec), static_cast<SVGDocument*>(doc));
+        ret = new (exec) JSSVGDocument(JSSVGDocumentPrototype::self(exec), static_cast<SVGDocument*>(doc));
 #endif
     else
-        ret = new JSDocument(JSDocumentPrototype::self(exec), doc);
+        ret = new (exec) JSDocument(JSDocumentPrototype::self(exec), doc);
 
     // Make sure the document is kept around by the window object, and works right with the
     // back/forward cache.
@@ -97,7 +97,7 @@ JSValue* toJS(ExecState* exec, Document* doc)
         for (Node* n = doc; n; n = n->traverseNextNode())
             nodeCount++;
         
-        Collector::reportExtraMemoryCost(nodeCount * sizeof(Node));
+        exec->heap()->reportExtraMemoryCost(nodeCount * sizeof(Node));
     }
 
     ScriptInterpreter::putDOMObject(doc, ret);

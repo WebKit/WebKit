@@ -25,6 +25,7 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
+#include "ExecState.h"
 #include "JSImmediate.h"
 #include "collector.h"
 #include "ustring.h"
@@ -51,7 +52,7 @@ struct Instruction;
  */
 class JSValue : Noncopyable {
     friend class JSCell; // so it can derive from this class
-    friend class Collector; // so it can call asCell()
+    friend class Heap; // so it can call asCell()
 private:
     JSValue();
     virtual ~JSValue();
@@ -141,7 +142,7 @@ private:
 };
 
 class JSCell : public JSValue {
-    friend class Collector;
+    friend class Heap;
     friend class GetterSetter;
     friend class JSObject;
     friend class JSPropertyNameIterator;
@@ -185,7 +186,7 @@ public:
     virtual JSObject* toObject(ExecState*) const = 0;
 
     // Garbage collection.
-    void* operator new(size_t);
+    void* operator new(size_t, ExecState*);
     virtual void mark();
     bool marked() const;
 
@@ -201,7 +202,7 @@ private:
 };
 
 class JSNumberCell : public JSCell {
-    friend JSValue* jsNumberCell(double);
+    friend JSValue* jsNumberCell(ExecState*, double);
 public:
     double value() const { return val; }
 
@@ -215,12 +216,12 @@ public:
     virtual JSObject* toObject(ExecState*) const;
     virtual JSObject* toThisObject(ExecState*) const;
 
-    void* operator new(size_t size)
+    void* operator new(size_t size, ExecState* exec)
     {
 #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-        return Collector::inlineAllocateNumber(size);
+        return exec->heap()->inlineAllocateNumber(size);
 #else
-        return Collector::allocateNumber(size);
+        return exec->heap()->allocateNumber(size);
 #endif
     }
 
@@ -237,91 +238,69 @@ private:
     double val;
 };
 
-JSCell* jsString(const UString&); // returns empty string if passed null string
-JSCell* jsString(const char* = ""); // returns empty string if passed 0
+JSCell* jsString(ExecState*, const UString&); // returns empty string if passed null string
+JSCell* jsString(ExecState*, const char* = ""); // returns empty string if passed 0
 
 // should be used for strings that are owned by an object that will
 // likely outlive the JSValue this makes, such as the parse tree or a
 // DOM object that contains a UString
-JSCell* jsOwnedString(const UString&); 
+JSCell* jsOwnedString(ExecState*, const UString&); 
 
 extern const double NaN;
 extern const double Inf;
 
 // Beware marking this function ALWAYS_INLINE: It takes a PIC branch, so
 // inlining it may not always be a win.
-inline JSValue* jsNumberCell(double d)
+inline JSValue* jsNumberCell(ExecState* exec, double d)
 {
-    return new JSNumberCell(d);
+    return new (exec) JSNumberCell(d);
 }
 
-ALWAYS_INLINE JSValue* jsUndefined()
+inline JSValue* jsNaN(ExecState* exec)
 {
-    return JSImmediate::undefinedImmediate();
+    return jsNumberCell(exec, NaN);
 }
 
-inline JSValue* jsNull()
-{
-    return JSImmediate::nullImmediate();
-}
-
-inline JSValue* jsNaN()
-{
-    return jsNumberCell(NaN);
-}
-
-inline JSValue* jsBoolean(bool b)
-{
-    return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
-}
-
-ALWAYS_INLINE JSValue* jsNumber(double d)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, double d)
 {
     JSValue* v = JSImmediate::from(d);
-    return v ? v : jsNumberCell(d);
+    return v ? v : jsNumberCell(exec, d);
 }
 
-ALWAYS_INLINE JSValue* jsNumber(int i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, int i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(i);
+    return v ? v : jsNumberCell(exec, i);
 }
 
-ALWAYS_INLINE JSValue* jsNumber(unsigned i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(i);
+    return v ? v : jsNumberCell(exec, i);
 }
 
-ALWAYS_INLINE JSValue* jsNumber(long i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(i);
+    return v ? v : jsNumberCell(exec, i);
 }
 
-ALWAYS_INLINE JSValue* jsNumber(unsigned long i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(i);
+    return v ? v : jsNumberCell(exec, i);
 }
 
-ALWAYS_INLINE JSValue* jsNumber(long long i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long long i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(static_cast<double>(i));
+    return v ? v : jsNumberCell(exec, static_cast<double>(i));
 }
 
-ALWAYS_INLINE JSValue* jsNumber(unsigned long long i)
+ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long long i)
 {
     JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(static_cast<double>(i));
-}
-
-ALWAYS_INLINE JSValue* jsNumberFromAnd(ExecState *exec, JSValue* v1, JSValue* v2)
-{
-    if (JSImmediate::areBothImmediateNumbers(v1, v2))
-        return JSImmediate::andImmediateNumbers(v1, v2);
-    return jsNumber(v1->toInt32(exec) & v2->toInt32(exec));
+    return v ? v : jsNumberCell(exec, static_cast<double>(i));
 }
 
 inline JSValue::JSValue()
@@ -357,12 +336,12 @@ inline bool JSCell::isObject() const
 
 inline bool JSCell::marked() const
 {
-    return Collector::isCellMarked(this);
+    return Heap::isCellMarked(this);
 }
 
 inline void JSCell::mark()
 {
-    return Collector::markCell(this);
+    return Heap::markCell(this);
 }
 
 ALWAYS_INLINE JSCell* JSValue::asCell()
@@ -535,7 +514,7 @@ ALWAYS_INLINE double JSValue::toNumber(ExecState *exec) const
 
 ALWAYS_INLINE JSValue* JSValue::toJSNumber(ExecState* exec) const
 {
-    return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(this->toNumber(exec));
+    return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(exec, this->toNumber(exec));
 }
 
 inline UString JSValue::toString(ExecState *exec) const

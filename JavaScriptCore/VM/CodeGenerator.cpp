@@ -568,7 +568,7 @@ RegisterID* CodeGenerator::emitLoad(RegisterID* dst, double d)
 {
     emitOpcode(op_load);
     instructions().append(dst->index());
-    instructions().append(addConstant(jsNumber(d)));
+    instructions().append(addConstant(jsNumber(globalExec(), d)));
     return dst;
 }
 

@@ -61,6 +61,8 @@ CFTypeRef GetCFNull(void);
 inline CFTypeRef RetainCFType(CFTypeRef x) { if (x) x = CFRetain(x); return x; }
 inline void ReleaseCFType(CFTypeRef x) { if (x) CFRelease(x);  }
 
+ExecState* getThreadGlobalExecState();
+
 enum {
     kJSInvalidTypeID = 0,
     kJSObjectTypeID,

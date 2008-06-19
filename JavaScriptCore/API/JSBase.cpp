@@ -28,6 +28,7 @@
 #include "JSBase.h"
 
 #include "APICast.h"
+#include "completion.h"
 #include <kjs/ExecState.h>
 #include <kjs/InitializeThreading.h>
 #include <kjs/interpreter.h>
@@ -85,9 +86,21 @@ void JSGarbageCollect(JSContextRef ctx)
     if (!ctx)
         initializeThreading();
 
+    // It might seem that we have a context passed to this function, and can use toJS(ctx)->heap(), but the parameter is likely to be NULL,
+    // and it may actually be garbage for some clients (most likely, because of JSGarbageCollect being called after releasing the context).
+
     JSLock lock;
-    if (!Collector::isBusy())
-        Collector::collect();
+
+    // FIXME: It would be good to avoid creating a JSGlobalData instance if it didn't exist for this thread yet.
+    Heap* heap = JSGlobalData::threadInstance().heap;
+    if (!heap->isBusy())
+        heap->collect();
+
+    // FIXME: Similarly, we shouldn't create a shared instance here.
+    heap = JSGlobalData::sharedInstance().heap;
+    if (!heap->isBusy())
+        heap->collect();
+
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when
     // the collector is busy.

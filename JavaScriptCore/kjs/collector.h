@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include <string.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
+#include <wtf/Noncopyable.h>
 
 namespace KJS {
 
@@ -33,7 +34,22 @@ namespace KJS {
     class JSValue;
     class ArgList;
 
-    class Collector {
+    enum OperationInProgress { NoOperation, Allocation, Collection };
+
+    struct CollectorHeap {
+        CollectorBlock** blocks;
+        size_t numBlocks;
+        size_t usedBlocks;
+        size_t firstBlockWithPossibleSpace;
+
+        size_t numLiveObjects;
+        size_t numLiveObjectsAtLastCollect;
+        size_t extraCost;
+
+        OperationInProgress operationInProgress;
+    };
+
+    class Heap : Noncopyable {
     public:
         class Thread;
         enum HeapType { PrimaryHeap, NumberHeap };
@@ -43,64 +59,74 @@ namespace KJS {
         // one file, so the heapAllocate template definitions are available.
         // However, allocateNumber is used via jsNumberCell outside JavaScriptCore.
         // Thus allocateNumber needs to provide a non-inline version too.
-        static void* allocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
-        static void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
-#else
-        static void* allocate(size_t);
+        void* inlineAllocateNumber(size_t s) { return heapAllocate<NumberHeap>(s); }
+        void* inlineAllocate(size_t s) { return heapAllocate<PrimaryHeap>(s); }
 #endif
-        static void* allocateNumber(size_t s);
+        void* allocateNumber(size_t);
+        void* allocate(size_t);
 
-        static bool collect();
-        static bool isBusy(); // true if an allocation or collection is in progress
+        bool collect();
+        bool isBusy(); // true if an allocation or collection is in progress
 
         static const size_t minExtraCostSize = 256;
 
-        static void reportExtraMemoryCost(size_t cost);
+        void reportExtraMemoryCost(size_t cost);
 
-        static size_t size();
+        size_t size();
 
-        static void protect(JSValue*);
-        static void unprotect(JSValue*);
-        
-        static void collectOnMainThreadOnly(JSValue*);
+        void protect(JSValue*);
+        void unprotect(JSValue*);
 
-        static size_t globalObjectCount();
-        static size_t protectedObjectCount();
-        static size_t protectedGlobalObjectCount();
-        static HashCountedSet<const char*>* protectedObjectTypeCounts();
+        void collectOnMainThreadOnly(JSValue*);
 
-        static void registerThread();
-        
+        static Heap* heap(const JSValue*); // 0 for immediate values
+
+        size_t globalObjectCount();
+        size_t protectedObjectCount();
+        size_t protectedGlobalObjectCount();
+        HashCountedSet<const char*>* protectedObjectTypeCounts();
+
         static void registerAsMainThread();
+        static void registerThread(); // Should only be called by clients that can use the same heap from multiple threads.
+
+#if PLATFORM(DARWIN)
+        void initializeHeapIntrospector();
+#endif
 
         static bool isCellMarked(const JSCell*);
         static void markCell(JSCell*);
 
-        static void markStackObjectsConservatively(void* start, void* end);
+        void markStackObjectsConservatively(void* start, void* end);
 
-        static HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
+        HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
 
     private:
-        template <Collector::HeapType heapType> static void* heapAllocate(size_t s);
-        template <Collector::HeapType heapType> static size_t sweep(bool);
+        template <Heap::HeapType heapType> void* heapAllocate(size_t);
+        template <Heap::HeapType heapType> size_t sweep(bool);
         static const CollectorBlock* cellBlock(const JSCell*);
         static CollectorBlock* cellBlock(JSCell*);
         static size_t cellOffset(const JSCell*);
 
-        Collector();
+        Heap();
+        friend class JSGlobalData;
 
-        static void recordExtraCost(size_t);
-        static void markProtectedObjects();
-        static void markMainThreadOnlyObjects();
-        static void markCurrentThreadConservatively();
-        static void markCurrentThreadConservativelyInternal();
-        static void markOtherThreadConservatively(Thread*);
-        static void markStackObjectsConservatively();
+        void recordExtraCost(size_t);
+        void markProtectedObjects();
+        void markMainThreadOnlyObjects();
+        void markCurrentThreadConservatively();
+        void markCurrentThreadConservativelyInternal();
+        void markOtherThreadConservatively(Thread*);
+        void markStackObjectsConservatively();
 
-        static size_t mainThreadOnlyObjectCount;
-        static bool memoryFull;
+        typedef HashCountedSet<JSCell*> ProtectCountSet;
 
-        static HashSet<ArgList*>* m_markListSet;
+        const size_t m_pagesize;
+
+        size_t mainThreadOnlyObjectCount;
+        CollectorHeap primaryHeap;
+        CollectorHeap numberHeap;
+        ProtectCountSet protectedValues;
+        HashSet<ArgList*>* m_markListSet;
     };
 
     // tunable parameters
@@ -160,6 +186,7 @@ namespace KJS {
         CollectorCell* freeList;
         CollectorBitmap marked;
         CollectorBitmap collectOnMainThreadOnly;
+        Heap* heap;
     };
 
     class SmallCellCollectorBlock {
@@ -169,49 +196,35 @@ namespace KJS {
         SmallCollectorCell* freeList;
         CollectorBitmap marked;
         CollectorBitmap collectOnMainThreadOnly;
+        Heap* heap;
     };
 
-    enum OperationInProgress { NoOperation, Allocation, Collection };
-
-    struct CollectorHeap {
-        CollectorBlock** blocks;
-        size_t numBlocks;
-        size_t usedBlocks;
-        size_t firstBlockWithPossibleSpace;
-
-        size_t numLiveObjects;
-        size_t numLiveObjectsAtLastCollect;
-        size_t extraCost;
-
-        OperationInProgress operationInProgress;
-    };
-
-    inline const CollectorBlock* Collector::cellBlock(const JSCell* cell)
+    inline const CollectorBlock* Heap::cellBlock(const JSCell* cell)
     {
         return reinterpret_cast<const CollectorBlock*>(reinterpret_cast<uintptr_t>(cell) & BLOCK_MASK);
     }
 
-    inline CollectorBlock* Collector::cellBlock(JSCell* cell)
+    inline CollectorBlock* Heap::cellBlock(JSCell* cell)
     {
         return const_cast<CollectorBlock*>(cellBlock(const_cast<const JSCell*>(cell)));
     }
 
-    inline size_t Collector::cellOffset(const JSCell* cell)
+    inline size_t Heap::cellOffset(const JSCell* cell)
     {
         return (reinterpret_cast<uintptr_t>(cell) & BLOCK_OFFSET_MASK) / CELL_SIZE;
     }
 
-    inline bool Collector::isCellMarked(const JSCell* cell)
+    inline bool Heap::isCellMarked(const JSCell* cell)
     {
         return cellBlock(cell)->marked.get(cellOffset(cell));
     }
 
-    inline void Collector::markCell(JSCell* cell)
+    inline void Heap::markCell(JSCell* cell)
     {
         cellBlock(cell)->marked.set(cellOffset(cell));
     }
 
-    inline void Collector::reportExtraMemoryCost(size_t cost)
+    inline void Heap::reportExtraMemoryCost(size_t cost)
     {
         if (cost > minExtraCostSize) 
             recordExtraCost(cost / (CELL_SIZE * 2)); 

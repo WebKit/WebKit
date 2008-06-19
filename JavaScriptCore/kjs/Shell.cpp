@@ -28,6 +28,7 @@
 #include "Parser.h"
 #include "ArrayPrototype.h"
 #include "collector.h"
+#include "completion.h"
 #include "JSFunction.h"
 #include "InitializeThreading.h"
 #include "interpreter.h"
@@ -163,18 +164,18 @@ COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false
 
 GlobalObject::GlobalObject(Vector<UString>& arguments)
 {
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "debug"), functionDebug));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "print"), functionPrint));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "quit"), functionQuit));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "gc"), functionGC));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "version"), functionVersion));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "run"), functionRun));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
-    putDirectFunction(new PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "debug"), functionDebug));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "print"), functionPrint));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "quit"), functionQuit));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "gc"), functionGC));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "version"), functionVersion));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "run"), functionRun));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
+    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
     JSObject* array = arrayConstructor()->construct(globalExec(), globalExec()->emptyList());
     for (size_t i = 0; i < arguments.size(); ++i)
-        array->put(globalExec(), i, jsString(arguments[i]));
+        array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
     putDirect(Identifier(globalExec(), "arguments"), array);
 
     Interpreter::setShouldPrintExceptions(true);
@@ -200,10 +201,10 @@ JSValue* functionDebug(ExecState* exec, JSObject*, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* functionGC(ExecState*, JSObject*, const ArgList&)
+JSValue* functionGC(ExecState* exec, JSObject*, const ArgList&)
 {
     JSLock lock;
-    Collector::collect();
+    exec->heap()->collect();
     return jsUndefined();
 }
 
@@ -228,7 +229,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, const ArgList& args)
     Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
     stopWatch.stop();
 
-    return jsNumber(stopWatch.getElapsedMS());
+    return jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS());
 }
 
 JSValue* functionLoad(ExecState* exec, JSObject*, const ArgList& args)
@@ -244,7 +245,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* functionReadline(ExecState*, JSObject*, const ArgList&)
+JSValue* functionReadline(ExecState* exec, JSObject*, const ArgList&)
 {
     Vector<char, 256> line;
     int c;
@@ -255,7 +256,7 @@ JSValue* functionReadline(ExecState*, JSObject*, const ArgList&)
         line.append(c);
     }
     line.append('\0');
-    return jsString(line.data());
+    return jsString(exec, line.data());
 }
 
 JSValue* functionQuit(ExecState*, JSObject*, const ArgList&)
@@ -451,7 +452,7 @@ int jscmain(int argc, char** argv)
         runInteractive(globalObject);
 
 #ifndef NDEBUG
-    Collector::collect();
+    JSGlobalData::threadInstance().heap->collect();
 #endif
 
     return success ? 0 : 3;

@@ -44,11 +44,11 @@ static JSValue* functionProtoFuncCall(ExecState*, JSObject*, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
 {
-    putDirect(exec->propertyNames().length, jsNumber(0), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 
-    putDirectFunction(new PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(new PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(new (exec) PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 // ECMA 15.3.4
@@ -70,10 +70,10 @@ JSValue* functionProtoFuncToString(ExecState* exec, JSObject* thisObj, const Arg
 
     if (thisObj->inherits(&JSFunction::info)) {
         JSFunction* fi = static_cast<JSFunction*>(thisObj);
-        return jsString("function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toSourceString());
+        return jsString(exec, "function " + fi->functionName().ustring() + "(" + fi->body->paramString() + ") " + fi->body->toSourceString());
     }
 
-    return jsString("function " + static_cast<InternalFunction*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
+    return jsString(exec, "function " + static_cast<InternalFunction*>(thisObj)->functionName().ustring() + "() {\n    [native code]\n}");
 }
 
 JSValue* functionProtoFuncApply(ExecState* exec, JSObject* thisObj, const ArgList& args)
@@ -133,7 +133,7 @@ FunctionConstructor::FunctionConstructor(ExecState* exec, FunctionPrototype* fun
     putDirect(exec->propertyNames().prototype, functionPrototype, DontEnum | DontDelete | ReadOnly);
 
     // Number of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(1), ReadOnly | DontDelete | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
 ConstructType FunctionConstructor::getConstructData(ConstructData&)
@@ -174,7 +174,7 @@ JSObject* FunctionConstructor::construct(ExecState* exec, const ArgList& args, c
     functionBody->setSource(SourceRange(source, 0, source->length()));
     ScopeChain scopeChain(exec->lexicalGlobalObject(), exec->globalThisValue());
 
-    JSFunction* fimp = new JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
+    JSFunction* fimp = new (exec) JSFunction(exec, functionName, functionBody.get(), scopeChain.node());
 
     // parse parameter list. throw syntax error on illegal identifiers
     int len = p.size();
