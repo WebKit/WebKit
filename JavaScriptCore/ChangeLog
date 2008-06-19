@@ -1,3 +1,10 @@
+2008-06-19  Alp Toker  <alp@nuanti.com>
+
+        GTK+/autotools build fix. JSGlobalObject.cpp in now in
+        AllInOneFile.cpp and shouldn't be built separately.
+
+        * GNUmakefile.am:
+
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
