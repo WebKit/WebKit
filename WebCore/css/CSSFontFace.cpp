@@ -59,7 +59,17 @@ bool CSSFontFace::isValid() const
     }
     return false;
 }
-    
+
+void CSSFontFace::addedToSegmentedFontFace(CSSSegmentedFontFace* segmentedFontFace)
+{
+    m_segmentedFontFaces.add(segmentedFontFace);
+}
+
+void CSSFontFace::removedFromSegmentedFontFace(CSSSegmentedFontFace* segmentedFontFace)
+{
+    m_segmentedFontFaces.remove(segmentedFontFace);
+}
+
 void CSSFontFace::addSource(CSSFontFaceSource* source)
 {
     m_sources.append(source);
@@ -68,7 +78,9 @@ void CSSFontFace::addSource(CSSFontFaceSource* source)
 
 void CSSFontFace::fontLoaded(CSSFontFaceSource*)
 {
-    m_segmentedFontFace->fontLoaded(this);
+    HashSet<CSSSegmentedFontFace*>::iterator end = m_segmentedFontFaces.end();
+    for (HashSet<CSSSegmentedFontFace*>::iterator it = m_segmentedFontFaces.begin(); it != end; ++it)
+        (*it)->fontLoaded(this);
 }
 
 SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription, bool syntheticBold, bool syntheticItalic)
@@ -76,11 +88,13 @@ SimpleFontData* CSSFontFace::getFontData(const FontDescription& fontDescription,
     if (!isValid())
         return 0;
         
-    // If we hit a local font, we know it is valid, and can just return it.
+    ASSERT(!m_segmentedFontFaces.isEmpty());
+    CSSFontSelector* fontSelector = (*m_segmentedFontFaces.begin())->fontSelector();
+
     SimpleFontData* result = 0;
     unsigned size = m_sources.size();
     for (unsigned i = 0; i < size && !result; i++)
-        result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, m_segmentedFontFace->fontSelector());
+        result = m_sources[i]->getFontData(fontDescription, syntheticBold, syntheticItalic, fontSelector);
     return result;
 }
 

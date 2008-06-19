@@ -1,3 +1,34 @@
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6008098> REGRESSION: Crash at FontFallbackList::fontDataAt()
+
+        Test: fast/css/font-face-multiple-families.html
+
+        Made changes to reflect the fact that the relationship between
+        CSSFontFace and CSSSegmentedFontFace is in fact many-to-many.
+
+        * css/CSSFontFace.cpp:
+        (WebCore::CSSFontFace::addedToSegmentedFontFace): Added.
+        (WebCore::CSSFontFace::removedFromSegmentedFontFace): Added.
+        (WebCore::CSSFontFace::fontLoaded): Changed to notify all segmented font
+        faces that include this font face.
+        (WebCore::CSSFontFace::getFontData): Updated to get the font selector
+        from one of the segmented font faces.
+        * css/CSSFontFace.h:
+        (WebCore::CSSFontFace::CSSFontFace):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Fixed the direct cause of
+        the crash, namely releasing the font face when adding it to the first
+        family that uses it, making it impossible to add it to the second and
+        onwards families.
+        * css/CSSSegmentedFontFace.cpp:
+        (WebCore::CSSSegmentedFontFace::~CSSSegmentedFontFace): Added code to
+        call CSSFontFace::removedFromSegmentedFontFace().
+        (WebCore::CSSSegmentedFontFace::overlayRange): Added code to call
+        CSSFontFace::{addedTo, removedFrom}SegmentedFontFace().
+
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Qt build fix.

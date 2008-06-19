@@ -42,6 +42,9 @@ CSSSegmentedFontFace::CSSSegmentedFontFace(CSSFontSelector* fontSelector)
 CSSSegmentedFontFace::~CSSSegmentedFontFace()
 {
     pruneTable();
+    unsigned size = m_ranges.size();
+    for (unsigned i = 0; i < size; i++)
+        m_ranges[i].fontFace()->removedFromSegmentedFontFace(this);
 }
 
 void CSSSegmentedFontFace::pruneTable()
@@ -85,24 +88,31 @@ void CSSSegmentedFontFace::fontLoaded(CSSFontFace*)
 void CSSSegmentedFontFace::overlayRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace> fontFace)
 {
     pruneTable();
-    fontFace->setSegmentedFontFace(this);
 
     unsigned size = m_ranges.size();
     if (size) {
+        for (unsigned i = 0; i < size; i++)
+            m_ranges[i].fontFace()->removedFromSegmentedFontFace(this);
+
         Vector<FontFaceRange, 8> oldRanges = m_ranges;
         m_ranges.clear();
         for (unsigned i = 0; i < size; i++) {
             const FontFaceRange& range = oldRanges[i];
-            if (range.from() > to || range.to() < from)
+            if (range.from() > to || range.to() < from) {
                 m_ranges.append(range);
-            else if (range.from() < from) {
+                range.fontFace()->addedToSegmentedFontFace(this);
+            } else if (range.from() < from) {
                 m_ranges.append(FontFaceRange(range.from(), from - 1, range.fontFace()));
                 if (range.to() > to)
                     m_ranges.append(FontFaceRange(to + 1, range.to(), range.fontFace()));
-            } else if (range.to() > to)
+                range.fontFace()->addedToSegmentedFontFace(this);
+            } else if (range.to() > to) {
                 m_ranges.append(FontFaceRange(to + 1, range.to(), range.fontFace()));
+                range.fontFace()->addedToSegmentedFontFace(this);
+            }
         }
     }
+    fontFace->addedToSegmentedFontFace(this);
     m_ranges.append(FontFaceRange(from, to, fontFace));
 }
 

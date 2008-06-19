@@ -1,3 +1,12 @@
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6008098> REGRESSION: Crash at FontFallbackList::fontDataAt()
+
+        * fast/css/font-face-multiple-families-expected.txt: Added.
+        * fast/css/font-face-multiple-families.html: Added.
+
 2008-06-18  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

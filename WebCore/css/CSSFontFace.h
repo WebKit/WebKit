@@ -26,6 +26,7 @@
 #ifndef CSSFontFace_h
 #define CSSFontFace_h
 
+#include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -42,7 +43,8 @@ public:
     static PassRefPtr<CSSFontFace> create() { return adoptRef(new CSSFontFace); }
     ~CSSFontFace();
 
-    void setSegmentedFontFace(CSSSegmentedFontFace* segmentedFontFace) { m_segmentedFontFace = segmentedFontFace; }
+    void addedToSegmentedFontFace(CSSSegmentedFontFace*);
+    void removedFromSegmentedFontFace(CSSSegmentedFontFace*);
 
     bool isLoaded() const;
     bool isValid() const;
@@ -55,11 +57,10 @@ public:
 
 private:
     CSSFontFace()
-        : m_segmentedFontFace(0)
     {
     }
 
-    CSSSegmentedFontFace* m_segmentedFontFace;
+    HashSet<CSSSegmentedFontFace*> m_segmentedFontFaces;
     Vector<CSSFontFaceSource*> m_sources;
 };
 

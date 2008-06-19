@@ -290,7 +290,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 segmentedFontFace->overlayRange(range->from(), range->to(), fontFace);
             }
         } else
-            segmentedFontFace->overlayRange(0, 0x7FFFFFFF, fontFace.release());
+            segmentedFontFace->overlayRange(0, 0x7FFFFFFF, fontFace);
     }
 }
 
