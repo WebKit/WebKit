@@ -571,6 +571,7 @@ webcore_sources += \
 	WebCore/css/CSSFontFaceSrcValue.cpp \
 	WebCore/css/CSSFontSelector.cpp \
 	WebCore/css/CSSFontFaceSource.cpp \
+	WebCore/css/CSSFunctionValue.cpp \
 	WebCore/css/CSSGradientValue.cpp \
 	WebCore/css/CSSHelper.cpp \
 	WebCore/css/CSSImageGeneratorValue.cpp \
@@ -582,6 +583,7 @@ webcore_sources += \
 	WebCore/css/CSSMutableStyleDeclaration.cpp \
 	WebCore/css/CSSPageRule.cpp \
 	WebCore/css/CSSParser.cpp \
+	WebCore/css/CSSParserValues.cpp \
 	WebCore/css/CSSPrimitiveValue.cpp \
 	WebCore/css/CSSProperty.cpp \
 	WebCore/css/CSSReflectValue.cpp \
@@ -597,6 +599,9 @@ webcore_sources += \
 	WebCore/css/CSSTransformValue.cpp \
 	WebCore/css/CSSUnicodeRangeValue.cpp \
 	WebCore/css/CSSValueList.cpp \
+	WebCore/css/CSSVariableDependentValue.cpp \
+	WebCore/css/CSSVariablesDeclaration.cpp \
+	WebCore/css/CSSVariablesRule.cpp \
 	WebCore/css/FontFamilyValue.cpp \
 	WebCore/css/FontValue.cpp \
 	WebCore/css/MediaFeatureNames.cpp \
