@@ -1,3 +1,40 @@
+2008-06-19  John Sullivan  <sullivan@apple.com>
+
+        Rubber-stamped by Dan
+        
+        Prepended all FrameViewPrivate instance member variables with "m_" (in preparation
+        for adding a new one in a future patch)
+
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameViewPrivate::reset):
+        (WebCore::FrameView::~FrameView):
+        (WebCore::FrameView::resetScrollbars):
+        (WebCore::FrameView::didFirstLayout):
+        (WebCore::FrameView::initScrollbars):
+        (WebCore::FrameView::layoutCount):
+        (WebCore::FrameView::needsFullRepaint):
+        (WebCore::FrameView::layoutRoot):
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::setUseSlowRepaints):
+        (WebCore::FrameView::removeSlowRepaintObject):
+        (WebCore::FrameView::setScrollbarsMode):
+        (WebCore::FrameView::setVScrollbarMode):
+        (WebCore::FrameView::setHScrollbarMode):
+        (WebCore::FrameView::scheduleRelayout):
+        (WebCore::FrameView::scheduleRelayoutOfSubtree):
+        (WebCore::FrameView::layoutPending):
+        (WebCore::FrameView::needsLayout):
+        (WebCore::FrameView::unscheduleRelayout):
+        (WebCore::FrameView::isTransparent):
+        (WebCore::FrameView::setTransparent):
+        (WebCore::FrameView::baseBackgroundColor):
+        (WebCore::FrameView::setBaseBackgroundColor):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::updateOverflowStatus):
+
 2008-06-19  David Hyatt  <hyatt@apple.com>
 
         Add initial support for CSS variables.  Non-dynamic cases should (hopefully) all work.  Things will get
