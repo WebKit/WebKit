@@ -46,6 +46,8 @@ class CSSSelector;
 class CSSStyleRule;
 class CSSStyleSheet;
 class CSSValue;
+class CSSVariableDependentValue;
+class CSSVariablesRule;
 class Document;
 class Element;
 class Frame;
@@ -128,6 +130,9 @@ public:
 
         void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
         void visitedStateChanged(unsigned visitedHash) { m_checker.visitedStateChanged(visitedHash); }
+        
+        void addVariables(CSSVariablesRule* variables);
+        CSSValue* resolveVariableDependentValue(CSSVariableDependentValue*);
 
     private:
         enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
@@ -140,14 +145,14 @@ public:
         void adjustRenderStyle(RenderStyle*, Element*);
 
         void addMatchedRule(CSSRuleData* rule) { m_matchedRules.append(rule); }
-        void addMatchedDeclaration(CSSMutableStyleDeclaration* decl) { m_matchedDecls.append(decl); }
+        void addMatchedDeclaration(CSSMutableStyleDeclaration* decl);
 
         void matchRules(CSSRuleSet*, int& firstRuleIndex, int& lastRuleIndex);
         void matchRulesForList(CSSRuleDataList*, int& firstRuleIndex, int& lastRuleIndex);
         void sortMatchedRules(unsigned start, unsigned end);
 
         void applyDeclarations(bool firstPass, bool important, int startIndex, int endIndex);
-
+        
         CSSRuleSet* m_authorStyle;
         CSSRuleSet* m_userStyle;
         RefPtr<CSSStyleSheet> m_userSheet;
@@ -245,6 +250,9 @@ public:
         HashSet<AtomicStringImpl*> m_selectorAttrs;
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
+        
+        HashMap<String, CSSVariablesRule*> m_variablesMap;
+        HashMap<CSSMutableStyleDeclaration*, RefPtr<CSSMutableStyleDeclaration> > m_resolvedVariablesDeclarations;
     };
 
     class CSSRuleData {

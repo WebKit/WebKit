@@ -38,7 +38,8 @@ public:
         IMPORT_RULE,
         MEDIA_RULE,
         FONT_FACE_RULE,
-        PAGE_RULE
+        PAGE_RULE,
+        VARIABLES_RULE
     };
 
     // FIXME: Change to return CSSRuleType.

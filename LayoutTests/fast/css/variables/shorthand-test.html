@@ -1,0 +1,18 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    borderWidth: 10px;
+    borderStyle: solid;
+    borderColor: green;
+}
+
+div {
+    border: 20px dotted red;
+    border: -webkit-var(borderWidth) -webkit-var(borderStyle) -webkit-var(borderColor);
+}
+</style>
+</head>
+<body>
+<div>This block hould have a 10px solid green border.</div>

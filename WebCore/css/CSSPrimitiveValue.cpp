@@ -510,6 +510,7 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
+        case CSS_PARSER_VARIABLE:
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -527,6 +528,7 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
+        case CSS_PARSER_VARIABLE:
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -609,6 +611,7 @@ String CSSPrimitiveValue::cssText() const
             // FIXME
             break;
         case CSS_NUMBER:
+        case CSS_PARSER_INTEGER:
             text = String::number(m_value.num);
             break;
         case CSS_PERCENTAGE:
@@ -736,8 +739,81 @@ String CSSPrimitiveValue::cssText() const
             }
             break;
 #endif
+        case CSS_PARSER_VARIABLE:
+            text = "-webkit-var(";
+            text += m_value.string;
+            text += ")";
+            break;
+        case CSS_PARSER_OPERATOR:
+            char c = static_cast<char>(m_value.ident);
+            text = String(&c, 1U);
+            break;
     }
     return text;
+}
+
+CSSParserValue CSSPrimitiveValue::parserValue() const
+{
+    // We only have to handle a subset of types.
+    CSSParserValue value;
+    value.id = 0;
+    value.isInt = false;
+    value.unit = CSSPrimitiveValue::CSS_IDENT;
+    switch (m_type) {
+        case CSS_NUMBER:
+        case CSS_PERCENTAGE:
+        case CSS_EMS:
+        case CSS_EXS:
+        case CSS_PX:
+        case CSS_CM:
+        case CSS_MM:
+        case CSS_IN:
+        case CSS_PT:
+        case CSS_PC:
+        case CSS_DEG:
+        case CSS_RAD:
+        case CSS_GRAD:
+        case CSS_MS:
+        case CSS_S:
+        case CSS_HZ:
+        case CSS_KHZ:
+        case CSS_DIMENSION:
+            value.fValue = m_value.num;
+            value.unit = m_type;
+            break;
+        case CSS_STRING:
+        case CSS_URI:
+        case CSS_PARSER_VARIABLE:
+            value.string.characters = const_cast<UChar*>(m_value.string->characters());
+            value.string.length = m_value.string->length();
+            value.unit = m_type;
+            break;
+        case CSS_IDENT:
+            value.id = m_value.ident;
+            break;
+        case CSS_PARSER_OPERATOR:
+            value.iValue = m_value.ident;
+            value.unit = CSSParserValue::Operator;
+            break;
+        case CSS_PARSER_INTEGER:
+            value.fValue = m_value.num;
+            value.unit = CSSPrimitiveValue::CSS_NUMBER;
+            value.isInt = true;
+            break;
+        case CSS_UNKNOWN:
+        case CSS_ATTR:
+        case CSS_COUNTER:
+        case CSS_RECT:
+        case CSS_RGBCOLOR:
+        case CSS_PAIR:
+#if ENABLE(DASHBOARD_SUPPORT)
+        case CSS_DASHBOARD_REGION:
+#endif
+            ASSERT_NOT_REACHED();
+            break;
+    }
+    
+    return value;
 }
 
 } // namespace WebCore

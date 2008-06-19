@@ -1,3 +1,27 @@
+2008-06-19  David Hyatt  <hyatt@apple.com>
+
+        Add layout tests for CSS variables.
+
+        Reviewed by Beth
+
+        * fast/css/variables: Added.
+        * fast/css/variables/colors-test.html: Added.
+        * fast/css/variables/font-test.html: Added.
+        * fast/css/variables/image-test.html: Added.
+        * fast/css/variables/import-test.html: Added.
+        * fast/css/variables/invalid-variable-test.html: Added.
+        * fast/css/variables/margin-test.html: Added.
+        * fast/css/variables/misplaced-import-test.html: Added.
+        * fast/css/variables/misplaced-variables-test.html: Added.
+        * fast/css/variables/override-test.html: Added.
+        * fast/css/variables/print-test.html: Added.
+        * fast/css/variables/resources: Added.
+        * fast/css/variables/resources/bad.css: Added.
+        * fast/css/variables/resources/good.css: Added.
+        * fast/css/variables/resources/listmark.gif: Added.
+        * fast/css/variables/shorthand-test.html: Added.
+        * fast/css/variables/single-term-test.html: Added.
+
 2008-06-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

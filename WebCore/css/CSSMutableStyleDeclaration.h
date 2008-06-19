@@ -37,13 +37,17 @@ public:
     {
         return adoptRef(new CSSMutableStyleDeclaration);
     }
+    static PassRefPtr<CSSMutableStyleDeclaration> create(CSSRule* parentRule)
+    {
+        return adoptRef(new CSSMutableStyleDeclaration(parentRule));
+    }
     static PassRefPtr<CSSMutableStyleDeclaration> create(CSSRule* parentRule, const CSSProperty* const* properties, int numProperties)
     {
         return adoptRef(new CSSMutableStyleDeclaration(parentRule, properties, numProperties));
     }
-    static PassRefPtr<CSSMutableStyleDeclaration> create(const DeprecatedValueList<CSSProperty>& properties)
+    static PassRefPtr<CSSMutableStyleDeclaration> create(const DeprecatedValueList<CSSProperty>& properties, unsigned variableDependentValueCount)
     {
-        return adoptRef(new CSSMutableStyleDeclaration(0, properties));
+        return adoptRef(new CSSMutableStyleDeclaration(0, properties, variableDependentValueCount));
     }
 
     CSSMutableStyleDeclaration& operator=(const CSSMutableStyleDeclaration&);
@@ -104,12 +108,14 @@ public:
 
     void merge(CSSMutableStyleDeclaration*, bool argOverridesOnConflict = true);
 
+    bool hasVariableDependentValue() const { return m_variableDependentValueCount > 0; }
+    
 protected:
     CSSMutableStyleDeclaration(CSSRule* parentRule);
 
 private:
     CSSMutableStyleDeclaration();
-    CSSMutableStyleDeclaration(CSSRule* parentRule, const DeprecatedValueList<CSSProperty>&);
+    CSSMutableStyleDeclaration(CSSRule* parentRule, const DeprecatedValueList<CSSProperty>&, unsigned variableDependentValueCount);
     CSSMutableStyleDeclaration(CSSRule* parentRule, const CSSProperty* const *, int numProperties);
 
     virtual PassRefPtr<CSSMutableStyleDeclaration> makeMutable();
@@ -123,6 +129,7 @@ private:
  
     DeprecatedValueList<CSSProperty> m_values;
     Node* m_node;
+    unsigned m_variableDependentValueCount;
 };
 
 } // namespace WebCore

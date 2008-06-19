@@ -39,7 +39,7 @@ namespace WebCore {
 
 bool CSSParser::parseSVGValue(int propId, bool important)
 {
-    Value* value = m_valueList->current();
+    CSSParserValue* value = m_valueList->current();
     if (!value)
         return false;
 
@@ -303,7 +303,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
             parsedValue = CSSPrimitiveValue::create(value->string, (CSSPrimitiveValue::UnitTypes) value->unit);
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
             parsedValue = CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit);
-        else if (value->unit >= Value::Q_EMS)
+        else if (value->unit >= CSSParserValue::Q_EMS)
             parsedValue = CSSQuirkPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_EMS);
         m_valueList->next();
     }
@@ -317,7 +317,7 @@ bool CSSParser::parseSVGValue(int propId, bool important)
 PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
 {
     RefPtr<CSSValueList> ret = CSSValueList::createCommaSeparated();
-    Value* value = m_valueList->current();
+    CSSParserValue* value = m_valueList->current();
     bool valid_primitive = true;
     while (value) {
         valid_primitive = validUnit(value, FLength | FPercent |FNonNeg, false);
@@ -328,7 +328,7 @@ PassRefPtr<CSSValue> CSSParser::parseSVGStrokeDasharray()
         else if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
             ret->append(CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes) value->unit));
         value = m_valueList->next();
-        if (value && value->unit == Value::Operator && value->iValue == ',')
+        if (value && value->unit == CSSParserValue::Operator && value->iValue == ',')
             value = m_valueList->next();
     }
     if (!valid_primitive)

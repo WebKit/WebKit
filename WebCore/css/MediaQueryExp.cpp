@@ -34,13 +34,13 @@
 
 namespace WebCore {
 
-MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueList)
+MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* valueList)
     : m_mediaFeature(mediaFeature)
     , m_value(0)
 {
     if (valueList) {
         if (valueList->size() == 1) {
-            Value* value = valueList->current();
+            CSSParserValue* value = valueList->current();
 
             if (value->id != 0)
                 m_value = CSSPrimitiveValue::createIdentifier(value->id);
@@ -56,11 +56,11 @@ MediaQueryExp::MediaQueryExp(const AtomicString& mediaFeature, ValueList* valueL
             // currently accepts only <integer>/<integer>
 
             RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
-            Value* value = 0;
+            CSSParserValue* value = 0;
             bool isValid = true;
 
             while ((value = valueList->current()) && isValid) {
-                if (value->unit == Value::Operator && value->iValue == '/')
+                if (value->unit == CSSParserValue::Operator && value->iValue == '/')
                     list->append(CSSPrimitiveValue::create("/", CSSPrimitiveValue::CSS_STRING));
                 else if (value->unit == CSSPrimitiveValue::CSS_NUMBER)
                     list->append(CSSPrimitiveValue::create(value->fValue, CSSPrimitiveValue::CSS_NUMBER));

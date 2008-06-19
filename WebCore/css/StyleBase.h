@@ -51,6 +51,8 @@ namespace WebCore {
         virtual bool isFontFaceRule() { return false; }
         virtual bool isImportRule() { return false; }
         virtual bool isMediaRule() { return false; }
+        virtual bool isVariablesRule() { return false; }
+        
         virtual bool isRule() { return false; }
         virtual bool isStyleRule() { return false; }
         virtual bool isStyleSheet() const { return false; }

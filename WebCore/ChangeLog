@@ -1,3 +1,182 @@
+2008-06-19  David Hyatt  <hyatt@apple.com>
+
+        Add initial support for CSS variables.  Non-dynamic cases should (hopefully) all work.  Things will get
+        confused if you use the CSS OM to remove variables/inject variables, etc.  In addition no DOM APIs are
+        exposed yet for the new variable interfaces.
+
+        Reviewed by Beth
+
+        Added many tests to fast/css/variables/
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFunctionValue.cpp: Added.
+        (WebCore::CSSFunctionValue::CSSFunctionValue):
+        (WebCore::CSSFunctionValue::~CSSFunctionValue):
+        (WebCore::CSSFunctionValue::cssText):
+        (WebCore::CSSFunctionValue::parserValue):
+        * css/CSSFunctionValue.h: Added.
+        (WebCore::CSSFunctionValue::create):
+        * css/CSSGrammar.y:
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::CSSMutableStyleDeclaration):
+        (WebCore::CSSMutableStyleDeclaration::copy):
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::create):
+        (WebCore::CSSMutableStyleDeclaration::hasVariableDependentValue):
+        * css/CSSParser.cpp:
+        (WebCore::equal):
+        (WebCore::equalIgnoringCase):
+        (WebCore::CSSParser::~CSSParser):
+        (WebCore::CSSParserString::lower):
+        (WebCore::CSSParser::document):
+        (WebCore::CSSParser::validUnit):
+        (WebCore::unitFromString):
+        (WebCore::CSSParser::checkForOrphanedUnits):
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseFillShorthand):
+        (WebCore::CSSParser::parseTransitionShorthand):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseFillImage):
+        (WebCore::CSSParser::parseFillPosition):
+        (WebCore::CSSParser::parseFillSize):
+        (WebCore::CSSParser::parseFillProperty):
+        (WebCore::CSSParser::parseTransitionDuration):
+        (WebCore::CSSParser::parseTransitionRepeatCount):
+        (WebCore::CSSParser::parseTimingFunctionValue):
+        (WebCore::CSSParser::parseTransitionTimingFunction):
+        (WebCore::CSSParser::parseTransitionProperty):
+        (WebCore::skipCommaInDashboardRegion):
+        (WebCore::CSSParser::parseDashboardRegions):
+        (WebCore::CSSParser::parseCounterContent):
+        (WebCore::CSSParser::parseShape):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseFontFamily):
+        (WebCore::CSSParser::parseFontFaceSrc):
+        (WebCore::CSSParser::parseFontFaceUnicodeRange):
+        (WebCore::CSSParser::parseColorParameters):
+        (WebCore::CSSParser::parseHSLParameters):
+        (WebCore::CSSParser::parseColor):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::ShadowParseContext::commitLength):
+        (WebCore::CSSParser::parseShadow):
+        (WebCore::CSSParser::parseReflect):
+        (WebCore::BorderImageParseContext::commitNumber):
+        (WebCore::BorderImageParseContext::commitWidth):
+        (WebCore::BorderImageParseContext::commitBorderImage):
+        (WebCore::CSSParser::parseBorderImage):
+        (WebCore::CSSParser::parseCounter):
+        (WebCore::parseGradientPoint):
+        (WebCore::parseGradientColorStop):
+        (WebCore::CSSParser::parseGradient):
+        (WebCore::CSSParser::parseCanvas):
+        (WebCore::TransformOperationInfo::TransformOperationInfo):
+        (WebCore::CSSParser::parseTransform):
+        (WebCore::CSSParser::lex):
+        (WebCore::CSSParser::text):
+        (WebCore::CSSParser::createFloatingValueList):
+        (WebCore::CSSParser::sinkFloatingValueList):
+        (WebCore::CSSParser::createFloatingFunction):
+        (WebCore::CSSParser::sinkFloatingFunction):
+        (WebCore::CSSParser::sinkFloatingValue):
+        (WebCore::CSSParser::createFloatingMediaQueryExp):
+        (WebCore::CSSParser::createCharsetRule):
+        (WebCore::CSSParser::createImportRule):
+        (WebCore::CSSParser::createVariablesRule):
+        (WebCore::CSSParser::addVariable):
+        (WebCore::CSSParser::clearVariables):
+        (WebCore::CSSParser::parseVariable):
+        (WebCore::CSSParser::parsePropertyWithResolvedVariables):
+        (WebCore::CSSParser::checkForVariables):
+        (WebCore::CSSParser::addUnresolvedProperty):
+        (WebCore::cssPropertyID):
+        (WebCore::cssValueKeywordID):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp: Added.
+        (WebCore::CSSParserValueList::~CSSParserValueList):
+        (WebCore::CSSParserValueList::addValue):
+        (WebCore::CSSParserValueList::deleteValueAt):
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSParserValues.h: Added.
+        (WebCore::CSSParserString::operator String):
+        (WebCore::CSSParserString::operator AtomicString):
+        (WebCore::CSSParserValue::):
+        (WebCore::CSSParserValueList::CSSParserValueList):
+        (WebCore::CSSParserValueList::size):
+        (WebCore::CSSParserValueList::current):
+        (WebCore::CSSParserValueList::next):
+        (WebCore::CSSParserValueList::valueAt):
+        (WebCore::CSSParserValueList::clear):
+        (WebCore::CSSParserValueList::containsVariables):
+        (WebCore::CSSParserFunction::~CSSParserFunction):
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        (WebCore::CSSPrimitiveValue::parserValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        (WebCore::CSSPrimitiveValue::setPrimitiveType):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::):
+        * css/CSSRule.idl:
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::addVariables):
+        (WebCore::CSSStyleSelector::resolveVariableDependentValue):
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        * css/CSSStyleSelector.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isVariableDependentValue):
+        (WebCore::CSSValue::parserValue):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::CSSValueList):
+        (WebCore::CSSValueList::createParserValueList):
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::createFromParserValueList):
+        * css/CSSVariableDependentValue.cpp: Added.
+        (WebCore::CSSVariableDependentValue::CSSVariableDependentValue):
+        (WebCore::CSSVariableDependentValue::~CSSVariableDependentValue):
+        (WebCore::CSSVariableDependentValue::cssText):
+        * css/CSSVariableDependentValue.h: Added.
+        (WebCore::CSSVariableDependentValue::create):
+        (WebCore::CSSVariableDependentValue::isVariableDependentValue):
+        (WebCore::CSSVariableDependentValue::valueList):
+        * css/CSSVariablesDeclaration.cpp: Added.
+        (WebCore::CSSVariablesDeclaration::CSSVariablesDeclaration):
+        (WebCore::CSSVariablesDeclaration::~CSSVariablesDeclaration):
+        (WebCore::CSSVariablesDeclaration::getVariableValue):
+        (WebCore::CSSVariablesDeclaration::removeVariable):
+        (WebCore::CSSVariablesDeclaration::setVariable):
+        (WebCore::CSSVariablesDeclaration::addParsedVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedVariable):
+        (WebCore::CSSVariablesDeclaration::length):
+        (WebCore::CSSVariablesDeclaration::item):
+        (WebCore::CSSVariablesDeclaration::parentRule):
+        (WebCore::CSSVariablesDeclaration::cssText):
+        * css/CSSVariablesDeclaration.h: Added.
+        (WebCore::CSSVariablesDeclaration::create):
+        * css/CSSVariablesRule.cpp: Added.
+        (WebCore::CSSVariablesRule::CSSVariablesRule):
+        (WebCore::CSSVariablesRule::~CSSVariablesRule):
+        (WebCore::CSSVariablesRule::cssText):
+        * css/CSSVariablesRule.h: Added.
+        (WebCore::CSSVariablesRule::media):
+        (WebCore::CSSVariablesRule::variables):
+        (WebCore::CSSVariablesRule::type):
+        (WebCore::CSSVariablesRule::isVariablesRule):
+        (WebCore::CSSVariablesRule::setDeclaration):
+        * css/MediaQueryExp.cpp:
+        (WebCore::MediaQueryExp::MediaQueryExp):
+        * css/MediaQueryExp.h:
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+        (WebCore::CSSParser::parseSVGStrokeDasharray):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isVariablesRule):
+        * css/tokenizer.flex:
+
 2008-06-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.

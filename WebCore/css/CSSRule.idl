@@ -36,6 +36,7 @@ module css {
         const unsigned short MEDIA_RULE = 4;
         const unsigned short FONT_FACE_RULE = 5;
         const unsigned short PAGE_RULE = 6;
+        const unsigned short VARIABLES_RULE = 7;
 
         readonly attribute unsigned short   type;
 

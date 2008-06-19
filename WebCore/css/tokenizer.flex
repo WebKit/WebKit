@@ -59,6 +59,8 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "@-webkit-decls"        {yyTok = WEBKIT_DECLS_SYM; return yyTok; }
 "@-webkit-value"        {yyTok = WEBKIT_VALUE_SYM; return yyTok; }
 "@-webkit-mediaquery"   {BEGIN(mediaquery); yyTok = WEBKIT_MEDIAQUERY_SYM; return yyTok; }
+"@-webkit-variables"    {yyTok = WEBKIT_VARIABLES_SYM; return yyTok; }
+"@-webkit-variables-decls" { yyTok = WEBKIT_VARIABLES_DECLS_SYM; return yyTok; }
 
 "!"{w}"important"       {yyTok = IMPORTANT_SYM; return yyTok;}
 
@@ -86,6 +88,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "not("                  {yyTok = NOTFUNCTION; return yyTok;}
 "url("{w}{string}{w}")" {yyTok = URI; return yyTok;}
 "url("{w}{url}{w}")"    {yyTok = URI; return yyTok;}
+"-webkit-var("{w}{ident}{w}")" { yyTok = VARCALL; return yyTok; }
 {ident}"("              {yyTok = FUNCTION; return yyTok;}
 
 U\+{range}              {yyTok = UNICODERANGE; return yyTok;}

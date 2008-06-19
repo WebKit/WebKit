@@ -34,12 +34,12 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
-class ValueList;
+class CSSParserValueList;
 
 class MediaQueryExp
 {
 public:
-    MediaQueryExp(const AtomicString& mediaFeature, ValueList* values);
+    MediaQueryExp(const AtomicString& mediaFeature, CSSParserValueList* values);
     ~MediaQueryExp();
 
     AtomicString mediaFeature() const { return m_mediaFeature; }

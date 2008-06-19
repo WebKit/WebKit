@@ -1,0 +1,22 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    foreground: green;
+    background: rgb(255, 255, 255);
+}
+
+@-webkit-variables print {
+    foreground: black;
+    background: red;
+}
+
+body {
+    color: -webkit-var(foreground);
+    background-color: -webkit-var(background);
+}
+</style>
+</head>
+<body>
+This text should be green on a white background.  There should be no red visible.

@@ -24,6 +24,7 @@
 
 #include "AtomicString.h"
 #include "Color.h"
+#include "CSSParserValues.h"
 #include "MediaQuery.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -39,64 +40,12 @@ namespace WebCore {
     class CSSStyleSheet;
     class CSSValue;
     class CSSValueList;
+    class CSSVariablesDeclaration;
     class Document;
     class MediaList;
     class MediaQueryExp;
     class StyleBase;
     class StyleList;
-    struct Function;
-
-    struct ParseString {
-        UChar* characters;
-        int length;
-
-        void lower();
-
-        operator String() const { return String(characters, length); }
-        operator AtomicString() const { return AtomicString(characters, length); }
-    };
-
-    struct Value {
-        int id;
-        bool isInt;
-        union {
-            double fValue;
-            int iValue;
-            ParseString string;
-            Function* function;
-        };
-        enum {
-            Operator = 0x100000,
-            Function = 0x100001,
-            Q_EMS    = 0x100002
-        };
-        int unit;
-    };
-
-    class ValueList {
-    public:
-        ValueList() : m_current(0) { }
-        ~ValueList();
-
-        void addValue(const Value& v) { m_values.append(v); }
-        unsigned size() const { return m_values.size(); }
-        Value* current() { return m_current < m_values.size() ? &m_values[m_current] : 0; }
-        Value* next() { ++m_current; return current(); }
-
-        Value* valueAt(unsigned i) { return i < m_values.size() ? &m_values[i] : 0; }
-        void deleteValueAt(unsigned i) { m_values.remove(i); }
-
-    private:
-        Vector<Value, 16> m_values;
-        unsigned m_current;
-    };
-
-    struct Function {
-        ParseString name;
-        ValueList* args;
-
-        ~Function() { delete args; }
-    };
 
     class CSSParser {
     public:
@@ -138,7 +87,7 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseTransitionDuration();
         PassRefPtr<CSSValue> parseTransitionRepeatCount();
         PassRefPtr<CSSValue> parseTransitionTimingFunction();
-        bool parseTimingFunctionValue(ValueList*& args, double& result);
+        bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
         PassRefPtr<CSSValue> parseTransitionProperty();
         bool parseTransitionProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
@@ -151,12 +100,12 @@ namespace WebCore {
         PassRefPtr<CSSValueList> parseFontFamily();
 
         bool parseCounter(int propId, int defaultValue, bool important);
-        PassRefPtr<CSSValue> parseCounterContent(ValueList* args, bool counters);
+        PassRefPtr<CSSValue> parseCounterContent(CSSParserValueList* args, bool counters);
 
-        bool parseColorParameters(Value*, int* colorValues, bool parseAlpha);
-        bool parseHSLParameters(Value*, double* colorValues, bool parseAlpha);
-        PassRefPtr<CSSPrimitiveValue> parseColor(Value* = 0);
-        bool parseColorFromValue(Value*, RGBA32&, bool = false);
+        bool parseColorParameters(CSSParserValue*, int* colorValues, bool parseAlpha);
+        bool parseHSLParameters(CSSParserValue*, double* colorValues, bool parseAlpha);
+        PassRefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = 0);
+        bool parseColorFromValue(CSSParserValue*, RGBA32&, bool = false);
 
         static bool parseColor(const String&, RGBA32& rgb, bool strict);
 
@@ -182,29 +131,33 @@ namespace WebCore {
 
         PassRefPtr<CSSValueList> parseTransform();
         bool parseTransformOrigin(int propId, int& propId1, int& propId2, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
-        
+
+        bool parseVariable(CSSVariablesDeclaration*, const String& variableName, const String& variableValue);
+        void parsePropertyWithResolvedVariables(int propId, bool important, CSSMutableStyleDeclaration*, CSSParserValueList*);
+
         int yyparse();
 
         CSSSelector* createFloatingSelector();
         CSSSelector* sinkFloatingSelector(CSSSelector*);
 
-        ValueList* createFloatingValueList();
-        ValueList* sinkFloatingValueList(ValueList*);
+        CSSParserValueList* createFloatingValueList();
+        CSSParserValueList* sinkFloatingValueList(CSSParserValueList*);
 
-        Function* createFloatingFunction();
-        Function* sinkFloatingFunction(Function*);
+        CSSParserFunction* createFloatingFunction();
+        CSSParserFunction* sinkFloatingFunction(CSSParserFunction*);
 
-        Value& sinkFloatingValue(Value&);
+        CSSParserValue& sinkFloatingValue(CSSParserValue&);
 
         MediaList* createMediaList();
-        CSSRule* createCharsetRule(const ParseString&);
-        CSSRule* createImportRule(const ParseString&, MediaList*);
+        CSSRule* createCharsetRule(const CSSParserString&);
+        CSSRule* createImportRule(const CSSParserString&, MediaList*);
         CSSRule* createMediaRule(MediaList*, CSSRuleList*);
         CSSRuleList* createRuleList();
         CSSRule* createStyleRule(CSSSelector*);
         CSSRule* createFontFaceRule();
+        CSSRule* createVariablesRule(MediaList*);
 
-        MediaQueryExp* createFloatingMediaQueryExp(const AtomicString&, ValueList*);
+        MediaQueryExp* createFloatingMediaQueryExp(const AtomicString&, CSSParserValueList*);
         MediaQueryExp* sinkFloatingMediaQueryExp(MediaQueryExp*);
         Vector<MediaQueryExp*>* createFloatingMediaQueryExpList();
         Vector<MediaQueryExp*>* sinkFloatingMediaQueryExpList(Vector<MediaQueryExp*>*);
@@ -212,6 +165,10 @@ namespace WebCore {
         MediaQuery* createFloatingMediaQuery(Vector<MediaQueryExp*>*);
         MediaQuery* sinkFloatingMediaQuery(MediaQuery*);
 
+        bool addVariable(const CSSParserString&, CSSParserValue&);
+        bool checkForVariables(CSSParserValueList*);
+        void addUnresolvedProperty(int propId, bool important);
+        
     public:
         bool m_strict;
         bool m_important;
@@ -219,7 +176,7 @@ namespace WebCore {
         CSSStyleSheet* m_styleSheet;
         RefPtr<CSSRule> m_rule;
         MediaQuery* m_mediaQuery;
-        ValueList* m_valueList;
+        CSSParserValueList* m_valueList;
         CSSProperty** m_parsedProperties;
         int m_numParsedProperties;
         int m_maxParsedProperties;
@@ -227,6 +184,9 @@ namespace WebCore {
         int m_inParseShorthand;
         int m_currentShorthand;
         bool m_implicitShorthand;
+
+        Vector<String> m_variableNames;
+        Vector<RefPtr<CSSValue> > m_variableValues;
 
         AtomicString m_defaultNamespace;
 
@@ -246,6 +206,8 @@ namespace WebCore {
 
         void checkForOrphanedUnits();
         
+        void clearVariables();
+
         UChar* m_data;
         UChar* yytext;
         UChar* yy_c_buf_p;
@@ -259,8 +221,8 @@ namespace WebCore {
         Vector<RefPtr<StyleBase> > m_parsedStyleObjects;
         Vector<RefPtr<CSSRuleList> > m_parsedRuleLists;
         HashSet<CSSSelector*> m_floatingSelectors;
-        HashSet<ValueList*> m_floatingValueLists;
-        HashSet<Function*> m_floatingFunctions;
+        HashSet<CSSParserValueList*> m_floatingValueLists;
+        HashSet<CSSParserFunction*> m_floatingFunctions;
 
         MediaQuery* m_floatingMediaQuery;
         MediaQueryExp* m_floatingMediaQueryExp;
@@ -285,14 +247,14 @@ namespace WebCore {
             return static_cast<Units>(static_cast<unsigned>(a) | static_cast<unsigned>(b));
         }
 
-        static bool validUnit(Value*, Units, bool strict);
+        static bool validUnit(CSSParserValue*, Units, bool strict);
         
         friend class TransformOperationInfo;
     };
 
-    int cssPropertyID(const ParseString&);
+    int cssPropertyID(const CSSParserString&);
     int cssPropertyID(const String&);
-    int cssValueKeywordID(const ParseString&);
+    int cssValueKeywordID(const CSSParserString&);
 
     class ShorthandScope {
     public:

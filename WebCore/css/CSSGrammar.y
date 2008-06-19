@@ -56,7 +56,7 @@ using namespace HTMLNames;
     char character;
     int integer;
     double number;
-    ParseString string;
+    CSSParserString string;
 
     CSSRule* rule;
     CSSRuleList* ruleList;
@@ -66,8 +66,8 @@ using namespace HTMLNames;
     MediaQuery* mediaQuery;
     MediaQuery::Restrictor mediaQueryRestrictor;
     MediaQueryExp* mediaQueryExp;
-    Value value;
-    ValueList* valueList;
+    CSSParserValue value;
+    CSSParserValueList* valueList;
     Vector<MediaQueryExp*>* mediaQueryExpList;
 }
 
@@ -85,7 +85,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 42
+%expect 44
 
 %left UNIMPORTANT_TOK
 
@@ -120,6 +120,8 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_DECLS_SYM
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
+%token WEBKIT_VARIABLES_SYM
+%token WEBKIT_VARIABLES_DECLS_SYM
 
 %token IMPORTANT_SYM
 %token MEDIA_ONLY
@@ -153,6 +155,8 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %token <string> UNICODERANGE
 
+%token <string> VARCALL
+
 %type <relation> combinator
 
 %type <rule> charset
@@ -167,6 +171,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <rule> invalid_import
 %type <rule> rule
 %type <rule> valid_rule
+%type <rule> variables_rule
 
 %type <string> maybe_ns_prefix
 
@@ -215,18 +220,25 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <value> term
 %type <value> unary_term
 %type <value> function
+%type <value> term_or_varcall
 
 %type <string> element_name
 %type <string> attr_name
 
+%type <string> variable_name
+%type <boolean> variables_declaration_list
+%type <boolean> variables_decl_list
+%type <boolean> variables_declaration
+
 %%
 
 stylesheet:
-    maybe_charset maybe_sgml import_list namespace_list rule_list
+    maybe_charset maybe_sgml import_list variables_list namespace_list rule_list
   | webkit_rule maybe_space
   | webkit_decls maybe_space
   | webkit_value maybe_space
   | webkit_mediaquery maybe_space
+  | webkit_variables_decls maybe_space
   ;
 
 valid_rule_or_import:
@@ -242,6 +254,12 @@ webkit_rule:
 
 webkit_decls:
     WEBKIT_DECLS_SYM '{' maybe_space declaration_list '}' {
+        /* can be empty */
+    }
+;
+
+webkit_variables_decls:
+    WEBKIT_VARIABLES_DECLS_SYM '{' maybe_space variables_declaration_list '}' {
         /* can be empty */
     }
 ;
@@ -306,6 +324,15 @@ import_list:
  }
  ;
 
+variables_list:
+/* empty */
+| variables_list variables_rule maybe_sgml {
+    CSSParser* p = static_cast<CSSParser*>(parser);
+     if ($2 && p->m_styleSheet)
+         p->m_styleSheet->append($2);
+}
+;
+
 namespace_list:
 /* empty */
 | namespace_list namespace maybe_sgml
@@ -345,6 +372,91 @@ import:
         $$ = 0;
     }
   ;
+
+variables_rule:
+    WEBKIT_VARIABLES_SYM maybe_space maybe_media_list '{' maybe_space variables_declaration_list '}' {
+        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3);
+    }
+    ;
+
+variables_declaration_list:
+    variables_declaration {
+        $$ = $1;
+    }
+    | variables_decl_list variables_declaration {
+        $$ = $1;
+        if ($2)
+            $$ = $2;
+    }
+    | variables_decl_list {
+        $$ = $1;
+    }
+    | error invalid_block_list error {
+        $$ = false;
+    }
+    | error {
+        $$ = false;
+    }
+    | variables_decl_list error {
+        $$ = $1;
+    }
+    ;
+
+variables_decl_list:
+    variables_declaration ';' maybe_space {
+        $$ = $1;
+    }
+    | variables_declaration invalid_block_list ';' maybe_space {
+        $$ = false;
+    }
+    | error ';' maybe_space {
+        $$ = false;
+    }
+    | error invalid_block_list error ';' maybe_space {
+        $$ = false;
+    }
+    | variables_decl_list variables_declaration ';' maybe_space {
+        $$ = $1;
+        if ($2)
+            $$ = $2;
+    }
+    | variables_decl_list error ';' maybe_space {
+        $$ = $1;
+    }
+    | variables_decl_list error invalid_block_list error ';' maybe_space {
+        $$ = $1;
+    }
+    ;
+
+variables_declaration:
+    variable_name ':' maybe_space term {
+        $$ = static_cast<CSSParser*>(parser)->addVariable($1, $4);
+    }
+    |
+    variable_name error {
+        $$ = false;
+    }
+    |
+    variable_name ':' maybe_space error term {
+        $$ = false;
+    }
+    |
+    variable_name ':' maybe_space {
+        /* @variables { varname: } Just reduce away this variable with no value. */
+        $$ = false;
+    }
+    |
+    variable_name ':' maybe_space error {
+        /* if we come across rules with invalid values like this case: @variables { varname: *; }, just discard the property/value pair */
+        $$ = false;
+    }
+    ;
+
+variable_name:
+    IDENT maybe_space {
+        $$ = $1;
+    }
+    ;
 
 namespace:
 NAMESPACE_SYM maybe_space maybe_ns_prefix string_or_uri maybe_space ';' {
@@ -667,7 +779,7 @@ simple_selector:
 
 element_name:
     IDENT {
-        ParseString& str = $1;
+        CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
         Document* doc = p->document();
         if (doc && doc->isHTMLDocument())
@@ -745,7 +857,7 @@ class:
 
 attr_name:
     IDENT maybe_space {
-        ParseString& str = $1;
+        CSSParserString& str = $1;
         CSSParser* p = static_cast<CSSParser*>(parser);
         Document* doc = p->document();
         if (doc && doc->isHTMLDocument())
@@ -1024,19 +1136,19 @@ prio:
   ;
 
 expr:
-    term {
+    term_or_varcall {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingValueList();
         $$->addValue(p->sinkFloatingValue($1));
     }
-    | expr operator term {
+    | expr operator term_or_varcall {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $1;
         if ($$) {
             if ($2) {
-                Value v;
+                CSSParserValue v;
                 v.id = 0;
-                v.unit = Value::Operator;
+                v.unit = CSSParserValue::Operator;
                 v.iValue = $2;
                 $$->addValue(v);
             }
@@ -1047,6 +1159,17 @@ expr:
         $$ = 0;
     }
   ;
+
+term_or_varcall:
+    term {
+        $$ = $1;
+    }
+    | VARCALL maybe_space {
+        $$.id = 0;
+        $$.string = $1;
+        $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE;
+    }
+    ;
 
 operator:
     '/' maybe_space {
@@ -1075,7 +1198,7 @@ term:
   | URI maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_URI; }
   | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE }
   | hexcolor { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_RGBCOLOR; }
-  | '#' maybe_space { $$.id = 0; $$.string = ParseString(); $$.unit = CSSPrimitiveValue::CSS_RGBCOLOR; } /* Handle error case: "color: #;" */
+  | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_RGBCOLOR; } /* Handle error case: "color: #;" */
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function {
       $$ = $1;
@@ -1101,7 +1224,7 @@ unary_term:
   | HERZ maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_HZ; }
   | KHERZ maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_KHZ; }
   | EMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EMS; }
-  | QEMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = Value::Q_EMS; }
+  | QEMS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSParserValue::Q_EMS; }
   | EXS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EXS; }
     ;
 
@@ -1109,20 +1232,20 @@ unary_term:
 function:
     FUNCTION maybe_space expr ')' maybe_space {
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Function* f = p->createFloatingFunction();
+        CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
         f->args = p->sinkFloatingValueList($3);
         $$.id = 0;
-        $$.unit = Value::Function;
+        $$.unit = CSSParserValue::Function;
         $$.function = f;
     } |
     FUNCTION maybe_space error {
         CSSParser* p = static_cast<CSSParser*>(parser);
-        Function* f = p->createFloatingFunction();
+        CSSParserFunction* f = p->createFloatingFunction();
         f->name = $1;
         f->args = 0;
         $$.id = 0;
-        $$.unit = Value::Function;
+        $$.unit = CSSParserValue::Function;
         $$.function = f;
   }
   ;

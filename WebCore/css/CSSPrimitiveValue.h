@@ -67,7 +67,12 @@ public:
         CSS_RGBCOLOR = 25,
         CSS_PAIR = 100, // We envision this being exposed as a means of getting computed style values for pairs (border-spacing/radius, background-position, etc.)
         CSS_DASHBOARD_REGION = 101, // FIXME: Dashboard region should not be a primitive value.
-        CSS_UNICODE_RANGE = 102
+        CSS_UNICODE_RANGE = 102,
+        
+        // These next types are just used internally to allow us to translate back and forth from CSSPrimitiveValues to CSSParserValues.
+        CSS_PARSER_OPERATOR = 103,
+        CSS_PARSER_INTEGER = 104,
+        CSS_PARSER_VARIABLE = 105
     };
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident)
@@ -117,6 +122,9 @@ public:
     float computeLengthFloat(RenderStyle*, double multiplier, bool computingFontSize = false);
     double computeLengthDouble(RenderStyle*, double multiplier = 1.0, bool computingFontSize = false);
 
+    // use with care!!!
+    void setPrimitiveType(unsigned short type) { m_type = type; }
+    
     double getDoubleValue(unsigned short unitType, ExceptionCode&);
     double getDoubleValue(unsigned short unitType);
     double getDoubleValue() const { return m_value.num; }
@@ -155,6 +163,8 @@ public:
     virtual String cssText() const;
 
     virtual bool isQuirkValue() { return false; }
+
+    virtual CSSParserValue parserValue() const;
 
 protected:
     // FIXME: int vs. unsigned overloading is too subtle to distinguish the color and identifier cases.

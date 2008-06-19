@@ -23,6 +23,9 @@
 
 #include "StyleBase.h"
 
+#include "CSSParserValues.h"
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
 typedef int ExceptionCode;
@@ -56,6 +59,9 @@ public:
     virtual bool isSVGColor() const { return false; }
     virtual bool isSVGPaint() const { return false; }
 #endif
+
+    virtual bool isVariableDependentValue() const { return false; }
+    virtual CSSParserValue parserValue() const { ASSERT_NOT_REACHED(); return CSSParserValue(); }
 
 protected:
     CSSValue() : StyleBase(0) { }

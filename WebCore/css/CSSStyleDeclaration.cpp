@@ -140,12 +140,16 @@ void CSSStyleDeclaration::diff(CSSMutableStyleDeclaration* style) const
 PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(const int* set, unsigned length) const
 {
     DeprecatedValueList<CSSProperty> list;
+    unsigned variableDependentValueCount = 0;
     for (unsigned i = 0; i < length; i++) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
-        if (value)
+        if (value) {
             list.append(CSSProperty(set[i], value.release(), false));
+            if (value->isVariableDependentValue())
+                variableDependentValueCount++;
+        }
     }
-    return CSSMutableStyleDeclaration::create(list);
+    return CSSMutableStyleDeclaration::create(list, variableDependentValueCount);
 }
 
 } // namespace WebCore
