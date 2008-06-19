@@ -28,6 +28,7 @@
 #include "WebJavaScriptCollector.h"
 
 #pragma warning(push, 0)
+#include <JavaScriptCore/JSGlobalData.h>
 #include <JavaScriptCore/collector.h>
 #include <WebCore/GCController.h>
 #pragma warning(pop)
