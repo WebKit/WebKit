@@ -4292,9 +4292,9 @@ bool CSSParser::parseVariable(CSSVariablesDeclaration* declaration, const String
     if (m_variableNames.size()) {
         ok = true;
         declaration->addParsedVariable(variableName, m_variableValues[0]);
-        clearVariables();
-    } else
-        clearVariables();
+    } 
+    
+    clearVariables();
 
     return ok;
 }
@@ -4321,11 +4321,11 @@ bool CSSParser::checkForVariables(CSSParserValueList* valueList)
         if (valueList->valueAt(i)->unit == CSSPrimitiveValue::CSS_PARSER_VARIABLE) {
             hasVariables = true;
             break;
-        } else if (valueList->valueAt(i)->unit == CSSParserValue::Function) {
-            if (checkForVariables(valueList->valueAt(i)->function->args)) {
-                hasVariables = true;
-                break;
-            }
+        } 
+        
+        if (valueList->valueAt(i)->unit == CSSParserValue::Function && checkForVariables(valueList->valueAt(i)->function->args)) {
+            hasVariables = true;
+            break;
         }
     }
 
@@ -4336,7 +4336,7 @@ void CSSParser::addUnresolvedProperty(int propId, bool important)
 {
     RefPtr<CSSVariableDependentValue> val = CSSVariableDependentValue::create(CSSValueList::createFromParserValueList(m_valueList));
     m_valueList = 0;
-    addProperty(propId, val.get(), important);
+    addProperty(propId, val.release(), important);
 }
 
 static int cssPropertyID(const UChar* propertyName, unsigned length)

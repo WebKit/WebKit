@@ -430,9 +430,9 @@ void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
     }
 
     // See if we have already resolved the variables in this declaration.
-    RefPtr<CSSMutableStyleDeclaration> resolvedDecl = m_resolvedVariablesDeclarations.get(decl);
+    CSSMutableStyleDeclaration* resolvedDecl = m_resolvedVariablesDeclarations.get(decl).get();
     if (resolvedDecl) {
-        m_matchedDecls.append(resolvedDecl.get());
+        m_matchedDecls.append(resolvedDecl);
         return;
     }
 

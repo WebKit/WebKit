@@ -38,7 +38,7 @@ public:
     {
         return adoptRef(new CSSVariableDependentValue(valueList));
     }
-    ~CSSVariableDependentValue();
+    virtual ~CSSVariableDependentValue();
     
     virtual String cssText() const;
 

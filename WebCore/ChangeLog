@@ -1,3 +1,19 @@
+2008-06-19  David Hyatt  <hyatt@apple.com>
+
+        Implement some cleanup of CSS variables based off Darin's review comments.
+
+        Reviewed by darin
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseVariable):
+        (WebCore::CSSParser::checkForVariables):
+        (WebCore::CSSParser::addUnresolvedProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        * css/CSSVariableDependentValue.h:
+        * css/CSSVariablesRule.cpp:
+        (WebCore::CSSVariablesRule::CSSVariablesRule):
+
 2008-06-19  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Dan
