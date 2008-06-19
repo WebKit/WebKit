@@ -938,8 +938,8 @@ void FrameView::resumeScheduledEvents()
 void FrameView::performPostLayoutTasks()
 {
     if (d->m_firstLayoutCallbackPending) {
-        m_frame->loader()->didFirstLayout();
         d->m_firstLayoutCallbackPending = false;
+        m_frame->loader()->didFirstLayout();
     }
     
     RenderView* root = m_frame->contentRenderer();

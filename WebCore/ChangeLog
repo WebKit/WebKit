@@ -2,6 +2,16 @@
 
         Reviewed by Darin
         
+        Tweak to previous checkin
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::performPostLayoutTasks):
+        clear m_firstLayoutCallbackPending before performing callback, to avoid recursion
+
+2008-06-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
         - fixed <rdar://problem/6021353> Assertion failure (!root->needsLayout()) after certain steps
         
         The didFirstLayout callback was called in a place where trouble would ensue if the client
