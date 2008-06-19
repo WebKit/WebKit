@@ -90,9 +90,6 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 Heap::Heap()
     : mainThreadOnlyObjectCount(0)
     , m_markListSet(0)
-#if PLATFORM(UNIX)
-    , m_pagesize(getpagesize())
-#endif
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -111,10 +108,15 @@ static NEVER_INLINE CollectorBlock* allocateBlock()
     posix_memalign(&address, BLOCK_SIZE, BLOCK_SIZE);
     memset(address, 0, BLOCK_SIZE);
 #else
-    
+
+#if USE(MULTIPLE_THREADS)
+#error Need to initialize pagesize safely.
+#endif
+    static size_t pagesize = getpagesize();
+
     size_t extra = 0;
-    if (BLOCK_SIZE > m_pagesize)
-        extra = BLOCK_SIZE - m_pagesize;
+    if (BLOCK_SIZE > pagesize)
+        extra = BLOCK_SIZE - pagesize;
 
     void* mmapResult = mmap(NULL, BLOCK_SIZE + extra, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
     uintptr_t address = reinterpret_cast<uintptr_t>(mmapResult);

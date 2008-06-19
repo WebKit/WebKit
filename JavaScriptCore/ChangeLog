@@ -1,5 +1,16 @@
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
+        Build fix.
+
+        * kjs/collector.cpp:
+        (KJS::Heap::Heap):
+        (KJS::allocateBlock):
+        * kjs/collector.h:
+        No, #if PLATFORM(UNIX) was not right. I've just moved the unsafe initialization back for now,
+        as the platforms that use that code path do not use multiple threads yet.
+
+2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
+
         Windows and Qt build fixes.
 
         * kjs/collector.h: 
