@@ -1,3 +1,17 @@
+192008-06-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19598
+          Crash in WebCore::RenderBlock::determineStartPosition
+
+        Test: fast/dynamic/floating-to-positioned-2.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::setStyle): Changed to also remove relatively
+        positioned floats from object lists when they become positioned, because
+        then they cease to be floating.
+
 2008-06-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.
