@@ -20,6 +20,7 @@
 #ifndef BINDINGS_QT_RUNTIME_H_
 #define BINDINGS_QT_RUNTIME_H_
 
+#include "completion.h"
 #include "runtime.h"
 #include "runtime_method.h"
 #include "protect.h"
