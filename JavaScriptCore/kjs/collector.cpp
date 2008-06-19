@@ -85,12 +85,14 @@ const size_t LOW_WATER_FACTOR = 4;
 const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 // This value has to be a macro to be used in max() without introducing
 // a PIC branch in Mach-O binaries, see <rdar://problem/5971391>.
-#define MIN_ARRAY_SIZE 14UL
+#define MIN_ARRAY_SIZE (static_cast<size_t>(14))
 
 Heap::Heap()
-    : m_pagesize(getpagesize())
-    , mainThreadOnlyObjectCount(0)
+    : mainThreadOnlyObjectCount(0)
     , m_markListSet(0)
+#if PLATFORM(UNIX)
+    , m_pagesize(getpagesize())
+#endif
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -476,12 +478,13 @@ void Heap::registerThread()
     }
 }
 
+#if PLATFORM(DARWIN)
 void Heap::initializeHeapIntrospector()
 {
     ASSERT(pthread_main_np());
     CollectorHeapIntrospector::init(&primaryHeap, &numberHeap);
 }
-
+#endif
 #endif
 
 #define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char*) - 1)) == 0)

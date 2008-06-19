@@ -120,13 +120,15 @@ namespace KJS {
 
         typedef HashCountedSet<JSCell*> ProtectCountSet;
 
-        const size_t m_pagesize;
-
         size_t mainThreadOnlyObjectCount;
         CollectorHeap primaryHeap;
         CollectorHeap numberHeap;
         ProtectCountSet protectedValues;
         HashSet<ArgList*>* m_markListSet;
+
+#if PLATFORM(UNIX)
+        const size_t m_pagesize;
+#endif
     };
 
     // tunable parameters
