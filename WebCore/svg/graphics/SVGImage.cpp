@@ -46,7 +46,7 @@
 #include "SVGSVGElement.h"
 #include "Settings.h"
 
-#include "SVGImageEmptyClients.h"
+#include "EmptyClients.h"
 
 namespace WebCore {
 
@@ -194,12 +194,12 @@ bool SVGImage::dataChanged(bool allDataReceived)
         return true;
     
     if (allDataReceived) {
-        static ChromeClient* dummyChromeClient = new SVGEmptyChromeClient;
-        static FrameLoaderClient* dummyFrameLoaderClient =  new SVGEmptyFrameLoaderClient;
-        static EditorClient* dummyEditorClient = new SVGEmptyEditorClient;
-        static ContextMenuClient* dummyContextMenuClient = new SVGEmptyContextMenuClient;
-        static DragClient* dummyDragClient = new SVGEmptyDragClient;
-        static InspectorClient* dummyInspectorClient = new SVGEmptyInspectorClient;
+        static ChromeClient* dummyChromeClient = new EmptyChromeClient;
+        static FrameLoaderClient* dummyFrameLoaderClient =  new EmptyFrameLoaderClient;
+        static EditorClient* dummyEditorClient = new EmptyEditorClient;
+        static ContextMenuClient* dummyContextMenuClient = new EmptyContextMenuClient;
+        static DragClient* dummyDragClient = new EmptyDragClient;
+        static InspectorClient* dummyInspectorClient = new EmptyInspectorClient;
 
         // FIXME: If this SVG ends up loading itself, we'll leak this Frame (and associated DOM & render trees).
         // The Cache code does not know about CachedImages holding Frames and won't know to break the cycle.

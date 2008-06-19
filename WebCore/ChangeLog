@@ -1,3 +1,32 @@
+2008-06-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        Bug 19529 : Empty clients need to be refactored
+        https://bugs.webkit.org/show_bug.cgi?id=19529
+
+        - SVGImageEmptyClients' refactoring in order to be able to use them for other
+        elements.
+
+        - Trimmed empty spaces that were pointed out by git.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/EmptyClients.h: Copied from WebCore/svg/graphics/SVGImageEmptyClients.h.
+
+        (WebCore::EmptyChromeClient::~EmptyChromeClient):
+        (WebCore::EmptyFrameLoaderClient::~EmptyFrameLoaderClient):
+        (WebCore::EmptyEditorClient::~EmptyEditorClient):
+        (WebCore::EmptyEditorClient::smartInsertDeleteEnabled):
+        (WebCore::EmptyContextMenuClient::~EmptyContextMenuClient):
+        (WebCore::EmptyDragClient::~EmptyDragClient):
+        (WebCore::EmptyDragClient::createDragImageForLink):
+        (WebCore::EmptyInspectorClient::~EmptyInspectorClient):
+        Renamed SVGImageEmpty*Client classes to Empty*Client.
+
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+        * svg/graphics/SVGImageEmptyClients.h: Removed.
+
 2008-06-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
