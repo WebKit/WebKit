@@ -451,6 +451,7 @@ SOURCES += \
     css/CSSFontFaceSrcValue.cpp \
     css/CSSFontSelector.cpp \
     css/CSSFontFaceSource.cpp \
+    css/CSSFunctionValue.cpp \
     css/CSSGradientValue.cpp \
     css/CSSHelper.cpp \
     css/CSSImageValue.cpp \
@@ -462,6 +463,7 @@ SOURCES += \
     css/CSSMutableStyleDeclaration.cpp \
     css/CSSPageRule.cpp \
     css/CSSParser.cpp \
+    css/CSSParserValues.cpp \
     css/CSSPrimitiveValue.cpp \
     css/CSSProperty.cpp \
     css/CSSReflectValue.cpp \
@@ -477,6 +479,9 @@ SOURCES += \
     css/CSSTransformValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
+    css/CSSVariableDependentValue.cpp \
+    css/CSSVariablesDeclaration.cpp \
+    css/CSSVariablesRule.cpp \
     css/FontFamilyValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
