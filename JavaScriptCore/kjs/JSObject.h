@@ -486,7 +486,7 @@ inline JSObject::JSObject(JSValue* proto)
     : _proto(proto)
 {
     ASSERT(proto);
-    ASSERT(Heap::heap(this) == Heap::heap(proto));
+    ASSERT(proto == jsNull() || Heap::heap(this) == Heap::heap(proto));
 }
 
 inline JSObject::JSObject()

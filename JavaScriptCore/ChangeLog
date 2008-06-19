@@ -1,5 +1,14 @@
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Sam.
+
+        Fix an assertion failure at startup.
+
+        * kjs/JSObject.h: (KJS::JSObject::JSObject): Allow jsNull prototype in an assertion (I had
+        it fixed in a wrong copy of the file, so I wasn't getting the failure).
+
+2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix.
 
         * kjs/collector.cpp:
