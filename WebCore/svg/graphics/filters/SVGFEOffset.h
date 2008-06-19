@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGFEOffset : public SVGFilterEffect {
 public:
-    SVGFEOffset(SVGResourceFilter*);
+    static PassRefPtr<SVGFEOffset> create(SVGResourceFilter*);
 
     float dx() const;
     void setDx(float);
@@ -44,6 +44,8 @@ public:
 #endif
 
 private:
+    SVGFEOffset(SVGResourceFilter*);
+
     float m_dx;
     float m_dy;
 };

@@ -38,6 +38,11 @@ SVGFETurbulence::SVGFETurbulence(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFETurbulence> SVGFETurbulence::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFETurbulence(filter));
+}
+
 SVGTurbulanceType SVGFETurbulence::type() const
 {
     return m_type;

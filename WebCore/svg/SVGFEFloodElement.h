@@ -42,7 +42,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable SVGFEFlood *m_filterEffect;
+        mutable RefPtr<SVGFEFlood> m_filterEffect;
     };
 
 } // namespace WebCore

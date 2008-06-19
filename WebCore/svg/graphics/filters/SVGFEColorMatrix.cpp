@@ -32,6 +32,11 @@ SVGFEColorMatrix::SVGFEColorMatrix(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEColorMatrix> SVGFEColorMatrix::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEColorMatrix(filter));
+}
+
 SVGColorMatrixType SVGFEColorMatrix::type() const
 {
     return m_type;

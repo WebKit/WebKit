@@ -34,6 +34,11 @@ SVGFEGaussianBlur::SVGFEGaussianBlur(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEGaussianBlur> SVGFEGaussianBlur::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEGaussianBlur(filter));
+}
+
 float SVGFEGaussianBlur::stdDeviationX() const
 {
     return m_x;

@@ -38,7 +38,7 @@ enum SVGColorMatrixType {
 
 class SVGFEColorMatrix : public SVGFilterEffect {
 public:
-    SVGFEColorMatrix(SVGResourceFilter*);
+    static PassRefPtr<SVGFEColorMatrix> create(SVGResourceFilter*);
 
     SVGColorMatrixType type() const;
     void setType(SVGColorMatrixType);
@@ -53,6 +53,8 @@ public:
 #endif
 
 private:
+    SVGFEColorMatrix(SVGResourceFilter*);
+
     SVGColorMatrixType m_type;
     Vector<float> m_values;
 };

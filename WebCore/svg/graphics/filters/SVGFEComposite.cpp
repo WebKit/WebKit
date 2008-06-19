@@ -37,6 +37,11 @@ SVGFEComposite::SVGFEComposite(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEComposite> SVGFEComposite::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEComposite(filter));
+}
+
 String SVGFEComposite::in2() const
 {
     return m_in2;

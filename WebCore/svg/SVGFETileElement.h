@@ -29,7 +29,6 @@
 
 namespace WebCore
 {
-
     class SVGFETileElement : public SVGFilterPrimitiveStandardAttributes
     {
     public:
@@ -45,7 +44,7 @@ namespace WebCore
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETileElement, String, String, In1, in1)
 
-        mutable SVGFETile* m_filterEffect;
+        mutable RefPtr<SVGFETile> m_filterEffect;
     };
 
 } // namespace WebCore

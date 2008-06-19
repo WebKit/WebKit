@@ -1,3 +1,127 @@
+2008-06-19  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Oliver.
+
+        Starting to clean up the SVG Filter code. Mostly adding 'create' wrapper
+        functions and changing raw pointer fields to RefPtrs.
+
+        * Configurations/WebCore.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::~SVGFEBlendElement):
+        (WebCore::SVGFEBlendElement::filterEffect):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::~SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::~SVGFEComponentTransferElement):
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::~SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::filterEffect):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement):
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::~SVGFEFloodElement):
+        (WebCore::SVGFEFloodElement::filterEffect):
+        * svg/SVGFEFloodElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement):
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::~SVGFEImageElement):
+        (WebCore::SVGFEImageElement::filterEffect):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::~SVGFEMergeElement):
+        (WebCore::SVGFEMergeElement::filterEffect):
+        * svg/SVGFEMergeElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::~SVGFEOffsetElement):
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::~SVGFESpecularLightingElement):
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::~SVGFETileElement):
+        (WebCore::SVGFETileElement::filterEffect):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::~SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/graphics/SVGResourceFilter.cpp:
+        (WebCore::SVGResourceFilter::addFilterEffect):
+        * svg/graphics/SVGResourceFilter.h:
+        * svg/graphics/filters/SVGFEBlend.cpp:
+        (WebCore::SVGFEBlend::create):
+        * svg/graphics/filters/SVGFEBlend.h:
+        * svg/graphics/filters/SVGFEColorMatrix.cpp:
+        (WebCore::SVGFEColorMatrix::create):
+        * svg/graphics/filters/SVGFEColorMatrix.h:
+        * svg/graphics/filters/SVGFEComponentTransfer.cpp:
+        (WebCore::SVGFEComponentTransfer::create):
+        * svg/graphics/filters/SVGFEComponentTransfer.h:
+        * svg/graphics/filters/SVGFEComposite.cpp:
+        (WebCore::SVGFEComposite::create):
+        * svg/graphics/filters/SVGFEComposite.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::SVGFEConvolveMatrix::create):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::SVGFEDiffuseLighting::create):
+        (WebCore::SVGFEDiffuseLighting::~SVGFEDiffuseLighting):
+        (WebCore::SVGFEDiffuseLighting::lightSource):
+        (WebCore::SVGFEDiffuseLighting::setLightSource):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::SVGFEDisplacementMap::create):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::SVGFEFlood::create):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::SVGFEGaussianBlur::create):
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::SVGFEImage::create):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::SVGFEMerge::SVGFEMerge):
+        (WebCore::SVGFEMerge::create):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::SVGFEOffset::create):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::SVGFESpecularLighting::create):
+        (WebCore::SVGFESpecularLighting::~SVGFESpecularLighting):
+        (WebCore::SVGFESpecularLighting::lightSource):
+        (WebCore::SVGFESpecularLighting::setLightSource):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp: Added.
+        (WebCore::SVGFETile::SVGFETile):
+        (WebCore::SVGFETile::create):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::SVGFETurbulence::create):
+        * svg/graphics/filters/SVGFETurbulence.h:
+        * svg/graphics/filters/SVGFilterEffect.h:
+        * svg/graphics/filters/SVGLightSource.h:
+
 2008-06-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

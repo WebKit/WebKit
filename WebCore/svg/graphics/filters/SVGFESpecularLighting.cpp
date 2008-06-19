@@ -39,9 +39,13 @@ SVGFESpecularLighting::SVGFESpecularLighting(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFESpecularLighting> SVGFESpecularLighting::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFESpecularLighting(filter));
+}
+
 SVGFESpecularLighting::~SVGFESpecularLighting()
 {
-    delete m_lightSource;
 }
 
 Color SVGFESpecularLighting::lightingColor() const
@@ -106,15 +110,12 @@ void SVGFESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 
 const SVGLightSource* SVGFESpecularLighting::lightSource() const
 {
-    return m_lightSource;
+    return m_lightSource.get();
 }
 
 void SVGFESpecularLighting::setLightSource(SVGLightSource* lightSource)
 {
-    if (m_lightSource != lightSource) {
-        delete m_lightSource;
-        m_lightSource = lightSource;
-    }
+    m_lightSource = lightSource;
 }
 
 TextStream& SVGFESpecularLighting::externalRepresentation(TextStream& ts) const

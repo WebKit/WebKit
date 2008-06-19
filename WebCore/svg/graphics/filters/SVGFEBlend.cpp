@@ -33,6 +33,11 @@ SVGFEBlend::SVGFEBlend(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEBlend> SVGFEBlend::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEBlend(filter));
+}
+
 String SVGFEBlend::in2() const
 {
     return m_in2;

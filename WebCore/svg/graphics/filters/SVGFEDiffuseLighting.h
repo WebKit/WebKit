@@ -32,7 +32,7 @@ class SVGLightSource;
 
 class SVGFEDiffuseLighting : public SVGFilterEffect {
 public:
-    SVGFEDiffuseLighting(SVGResourceFilter*);
+    static PassRefPtr<SVGFEDiffuseLighting> create(SVGResourceFilter*);
     virtual ~SVGFEDiffuseLighting();
 
     Color lightingColor() const;
@@ -60,12 +60,14 @@ public:
 #endif
 
 private:
+    SVGFEDiffuseLighting(SVGResourceFilter*);
+    
     Color m_lightingColor;
     float m_surfaceScale;
     float m_diffuseConstant;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    SVGLightSource* m_lightSource;
+    RefPtr<SVGLightSource> m_lightSource;
 };
 
 } // namespace WebCore

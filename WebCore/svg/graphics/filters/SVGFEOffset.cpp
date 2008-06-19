@@ -34,6 +34,11 @@ SVGFEOffset::SVGFEOffset(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEOffset> SVGFEOffset::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEOffset(filter));
+}
+
 float SVGFEOffset::dx() const
 {
     return m_dx;

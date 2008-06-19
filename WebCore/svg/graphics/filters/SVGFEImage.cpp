@@ -35,6 +35,11 @@ SVGFEImage::SVGFEImage(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEImage> SVGFEImage::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEImage(filter));
+}
+
 SVGFEImage::~SVGFEImage()
 {
     if (m_cachedImage)

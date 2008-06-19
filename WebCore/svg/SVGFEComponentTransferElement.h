@@ -45,7 +45,7 @@ namespace WebCore
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEComponentTransferElement, String, String, In1, in1)
 
-        mutable SVGFEComponentTransfer *m_filterEffect;
+        mutable RefPtr<SVGFEComponentTransfer> m_filterEffect;
     };
 
 } // namespace WebCore

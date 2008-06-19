@@ -39,7 +39,7 @@ namespace WebCore {
 class SVGResourceFilter;
 class TextStream;
 
-class SVGFilterEffect {
+class SVGFilterEffect : public RefCounted<SVGFilterEffect> {
 public:
     SVGFilterEffect(SVGResourceFilter*);
     virtual ~SVGFilterEffect() { }

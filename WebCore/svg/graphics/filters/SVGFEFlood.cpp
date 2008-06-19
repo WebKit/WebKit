@@ -34,6 +34,11 @@ SVGFEFlood::SVGFEFlood(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEFlood> SVGFEFlood::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEFlood(filter));
+}
+
 Color SVGFEFlood::floodColor() const
 {
     return m_floodColor;

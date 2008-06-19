@@ -48,7 +48,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, int, int, Type, type)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, SVGNumberList*, RefPtr<SVGNumberList>, Values, values)
 
-        mutable SVGFEColorMatrix* m_filterEffect;
+        mutable RefPtr<SVGFEColorMatrix> m_filterEffect;
     };
 
 } // namespace WebCore

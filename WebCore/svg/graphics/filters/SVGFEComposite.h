@@ -39,7 +39,7 @@ enum SVGCompositeOperationType {
 
 class SVGFEComposite : public SVGFilterEffect {
 public:
-    SVGFEComposite(SVGResourceFilter*);
+    static PassRefPtr<SVGFEComposite> create(SVGResourceFilter*);
 
     String in2() const;
     void setIn2(const String&);
@@ -66,6 +66,8 @@ public:
 #endif
 
 private:
+    SVGFEComposite(SVGResourceFilter*);
+
     SVGCompositeOperationType m_operation;
     float m_k1;
     float m_k2;

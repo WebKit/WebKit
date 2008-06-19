@@ -48,7 +48,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, KernelUnitLengthY, kernelUnitLengthY)
 
-        mutable SVGFEDiffuseLighting* m_filterEffect;
+        mutable RefPtr<SVGFEDiffuseLighting> m_filterEffect;
         
         void updateLights() const;
     };

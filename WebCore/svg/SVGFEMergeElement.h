@@ -41,7 +41,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable SVGFEMerge* m_filterEffect;
+        mutable RefPtr<SVGFEMerge> m_filterEffect;
     };
 
 } // namespace WebCore

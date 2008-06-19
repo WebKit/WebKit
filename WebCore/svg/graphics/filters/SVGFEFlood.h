@@ -30,7 +30,7 @@ namespace WebCore {
 
 class SVGFEFlood : public SVGFilterEffect {
 public:
-    SVGFEFlood(SVGResourceFilter*);
+    static PassRefPtr<SVGFEFlood> create(SVGResourceFilter*);
 
     Color floodColor() const;
     void setFloodColor(const Color &);
@@ -45,6 +45,8 @@ public:
 #endif
 
 private:
+    SVGFEFlood(SVGResourceFilter*);
+
     Color m_floodColor;
     float m_floodOpacity;
 };

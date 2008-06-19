@@ -41,7 +41,6 @@ SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName,
 
 SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 {
-    delete m_filterEffect;
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
@@ -70,14 +69,14 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = new SVGFEGaussianBlur(filter);
+        m_filterEffect = SVGFEGaussianBlur::create(filter);
     
     m_filterEffect->setIn(in1());
     m_filterEffect->setStdDeviationX(stdDeviationX());
     m_filterEffect->setStdDeviationY(stdDeviationY());
 
-    setStandardAttributes(m_filterEffect); 
-    return m_filterEffect;
+    setStandardAttributes(m_filterEffect.get()); 
+    return m_filterEffect.get();
 }
 
 }

@@ -29,7 +29,7 @@ namespace WebCore {
 
 class SVGFEGaussianBlur : public SVGFilterEffect {
 public:
-    SVGFEGaussianBlur(SVGResourceFilter*);
+    static PassRefPtr<SVGFEGaussianBlur> create(SVGResourceFilter*);
 
     float stdDeviationX() const;
     void setStdDeviationX(float);
@@ -44,6 +44,8 @@ public:
 #endif
 
 private:
+    SVGFEGaussianBlur(SVGResourceFilter*);
+
     float m_x;
     float m_y;
 };

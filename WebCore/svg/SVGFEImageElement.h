@@ -61,7 +61,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGPreserveAspectRatio*, RefPtr<SVGPreserveAspectRatio>, PreserveAspectRatio, preserveAspectRatio)
 
         CachedImage* m_cachedImage;
-        mutable SVGFEImage* m_filterEffect;
+        mutable RefPtr<SVGFEImage> m_filterEffect;
     };
 
 } // namespace WebCore

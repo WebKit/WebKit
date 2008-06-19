@@ -37,7 +37,7 @@ enum SVGChannelSelectorType {
 
 class SVGFEDisplacementMap : public SVGFilterEffect {
 public:
-    SVGFEDisplacementMap(SVGResourceFilter*);
+    static PassRefPtr<SVGFEDisplacementMap> create(SVGResourceFilter*);
 
     String in2() const;
     void setIn2(const String&);
@@ -58,6 +58,8 @@ public:
 #endif
 
 private:
+    SVGFEDisplacementMap(SVGResourceFilter*);
+
     SVGChannelSelectorType m_xChannelSelector;
     SVGChannelSelectorType m_yChannelSelector;
     float m_scale;

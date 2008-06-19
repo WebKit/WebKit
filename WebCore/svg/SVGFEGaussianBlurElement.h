@@ -49,7 +49,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, float, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, float, StdDeviationY, stdDeviationY)
 
-        mutable SVGFEGaussianBlur* m_filterEffect;
+        mutable RefPtr<SVGFEGaussianBlur> m_filterEffect;
     };
 
 } // namespace WebCore

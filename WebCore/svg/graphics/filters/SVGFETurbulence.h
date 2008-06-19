@@ -35,7 +35,7 @@ enum SVGTurbulanceType {
 
 class SVGFETurbulence : public SVGFilterEffect {
 public:
-    SVGFETurbulence(SVGResourceFilter*);
+    static PassRefPtr<SVGFETurbulence> create(SVGResourceFilter*);
 
     SVGTurbulanceType type() const;
     void setType(SVGTurbulanceType);
@@ -58,6 +58,8 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
 private:
+    SVGFETurbulence(SVGResourceFilter*);
+
     float m_baseFrequencyX;
     float m_baseFrequencyY;
     int m_numOctaves;

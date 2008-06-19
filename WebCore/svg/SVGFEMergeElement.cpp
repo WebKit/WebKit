@@ -38,14 +38,14 @@ SVGFEMergeElement::SVGFEMergeElement(const QualifiedName& tagName, Document* doc
 
 SVGFEMergeElement::~SVGFEMergeElement()
 {
-    delete m_filterEffect;
 }
 
 SVGFEMerge* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = new SVGFEMerge(filter);
-    setStandardAttributes(m_filterEffect);
+        m_filterEffect = SVGFEMerge::create(filter);
+        
+    setStandardAttributes(m_filterEffect.get());
 
     Vector<String> mergeInputs;
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
@@ -54,7 +54,7 @@ SVGFEMerge* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
     }
 
     m_filterEffect->setMergeInputs(mergeInputs);
-    return m_filterEffect;
+    return m_filterEffect.get();
 }
 
 }

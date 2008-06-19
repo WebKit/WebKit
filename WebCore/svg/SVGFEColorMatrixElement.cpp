@@ -41,7 +41,6 @@ SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, D
 
 SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
 {
-    delete m_filterEffect;
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
@@ -72,10 +71,10 @@ void SVGFEColorMatrixElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFEColorMatrix* SVGFEColorMatrixElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect)
-        m_filterEffect = new SVGFEColorMatrix(filter);
+        m_filterEffect = SVGFEColorMatrix::create(filter);
         
     m_filterEffect->setIn(in1());
-    setStandardAttributes(m_filterEffect);
+    setStandardAttributes(m_filterEffect.get());
 
     Vector<float> _values;
     SVGNumberList* numbers = values();
@@ -88,7 +87,7 @@ SVGFEColorMatrix* SVGFEColorMatrixElement::filterEffect(SVGResourceFilter* filte
     m_filterEffect->setValues(_values);
     m_filterEffect->setType((SVGColorMatrixType) type());
     
-    return m_filterEffect;
+    return m_filterEffect.get();
 }
 
 }

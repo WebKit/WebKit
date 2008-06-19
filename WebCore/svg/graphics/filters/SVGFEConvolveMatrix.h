@@ -36,7 +36,7 @@ enum SVGEdgeModeType {
 
 class SVGFEConvolveMatrix : public SVGFilterEffect {
 public:
-    SVGFEConvolveMatrix(SVGResourceFilter*);
+    static PassRefPtr<SVGFEConvolveMatrix> create(SVGResourceFilter*);
 
     FloatSize kernelSize() const;
     void setKernelSize(FloatSize);
@@ -65,6 +65,8 @@ public:
     virtual TextStream& externalRepresentation(TextStream&) const;
 
 private:
+    SVGFEConvolveMatrix(SVGResourceFilter*);
+
     FloatSize m_kernelSize;
     float m_divisor;
     float m_bias;

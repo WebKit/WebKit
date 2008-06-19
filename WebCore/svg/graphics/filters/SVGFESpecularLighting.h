@@ -31,7 +31,7 @@ namespace WebCore {
 
 class SVGFESpecularLighting : public SVGFilterEffect {
 public:
-    SVGFESpecularLighting(SVGResourceFilter*);
+    static PassRefPtr<SVGFESpecularLighting> create(SVGResourceFilter*);
     virtual ~SVGFESpecularLighting();
 
     Color lightingColor() const;
@@ -62,13 +62,15 @@ public:
 #endif
 
 private:
+    SVGFESpecularLighting(SVGResourceFilter*);
+
     Color m_lightingColor;
     float m_surfaceScale;
     float m_specularConstant;
     float m_specularExponent;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    SVGLightSource* m_lightSource;
+    RefPtr<SVGLightSource> m_lightSource;
 };
 
 } // namespace WebCore

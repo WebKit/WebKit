@@ -1,7 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005 Rob Buis <buis@kde.org>
-                  2005 Eric Seidel <eric@webkit.org>
+    Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -19,35 +17,24 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGFEMerge_h
-#define SVGFEMerge_h
+#include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "SVGFETile.h"
 
 namespace WebCore {
 
-class SVGFEMerge : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEMerge> create(SVGResourceFilter*);
+SVGFETile::SVGFETile(SVGResourceFilter* filter)
+    : SVGFilterEffect(filter)
+{
+}
 
-    const Vector<String>& mergeInputs() const;
-    void setMergeInputs(const Vector<String>& mergeInputs);
-
-    virtual TextStream& externalRepresentation(TextStream&) const;
-
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
-
-private:
-    SVGFEMerge(SVGResourceFilter*);
-
-    Vector<String> m_mergeInputs;
-};
+PassRefPtr<SVGFETile> SVGFETile::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFETile(filter));
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
-#endif // SVGFEMerge_h

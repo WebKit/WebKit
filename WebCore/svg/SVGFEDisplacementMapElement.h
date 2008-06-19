@@ -46,7 +46,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, int, YChannelSelector, yChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, float, float, Scale, scale)
 
-        mutable SVGFEDisplacementMap* m_filterEffect;
+        mutable RefPtr<SVGFEDisplacementMap> m_filterEffect;
     };
 
 } // namespace WebCore

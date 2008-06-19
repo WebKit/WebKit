@@ -32,7 +32,7 @@ namespace WebCore {
 class SVGFEImage : public SVGFilterEffect
                  , public CachedResourceClient {
 public:
-    SVGFEImage(SVGResourceFilter*);
+    static PassRefPtr<SVGFEImage> create(SVGResourceFilter*);
     virtual ~SVGFEImage();
 
     // FIXME: We need to support <svg> (RenderObject*) as well as image data.
@@ -49,6 +49,8 @@ public:
     virtual void imageChanged(CachedImage*);
     
 private:
+    SVGFEImage(SVGResourceFilter*);
+
     CachedImage* m_cachedImage;
 };
 

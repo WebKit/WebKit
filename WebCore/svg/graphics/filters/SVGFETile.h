@@ -26,16 +26,18 @@
 #include "SVGFilterEffect.h"
 
 namespace WebCore {
+    
+    class SVGFETile : public SVGFilterEffect {
+    public:
+        static PassRefPtr<SVGFETile> create(SVGResourceFilter*);
 
-class SVGFETile : public SVGFilterEffect
-{
-public:
-    SVGFETile(SVGResourceFilter* filter) : SVGFilterEffect(filter) { }
+    #if PLATFORM(CI)
+        virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
+    #endif
+    private:
+        SVGFETile(SVGResourceFilter*);
 
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
-};
+    };
 
 } // namespace WebCore
 

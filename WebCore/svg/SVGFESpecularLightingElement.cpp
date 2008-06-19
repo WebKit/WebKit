@@ -46,7 +46,6 @@ SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& 
 
 SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
 {
-    delete m_filterEffect;
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
@@ -80,7 +79,7 @@ void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect(SVGResourceFilter* filter) const
 {
     if (!m_filterEffect) 
-        m_filterEffect = new SVGFESpecularLighting(filter);
+        m_filterEffect = SVGFESpecularLighting::create(filter);
 
     m_filterEffect->setIn(in1());
     m_filterEffect->setSpecularConstant((specularConstant()));
@@ -99,10 +98,10 @@ SVGFESpecularLighting* SVGFESpecularLightingElement::filterEffect(SVGResourceFil
     parentStyle->deref(document()->renderArena());
     filterStyle->deref(document()->renderArena());
 
-    setStandardAttributes(m_filterEffect);
+    setStandardAttributes(m_filterEffect.get());
 
     updateLights();
-    return m_filterEffect;
+    return m_filterEffect.get();
 }
 
 void SVGFESpecularLightingElement::updateLights() const

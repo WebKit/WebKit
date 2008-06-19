@@ -32,6 +32,11 @@ SVGFEComponentTransfer::SVGFEComponentTransfer(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEComponentTransfer> SVGFEComponentTransfer::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEComponentTransfer(filter));
+}
+
 SVGComponentTransferFunction SVGFEComponentTransfer::redFunction() const
 {
     return m_redFunc;

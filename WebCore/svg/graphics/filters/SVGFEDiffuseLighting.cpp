@@ -39,9 +39,13 @@ SVGFEDiffuseLighting::SVGFEDiffuseLighting(SVGResourceFilter* filter)
 {
 }
 
+PassRefPtr<SVGFEDiffuseLighting> SVGFEDiffuseLighting::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEDiffuseLighting(filter));
+}
+
 SVGFEDiffuseLighting::~SVGFEDiffuseLighting()
 {
-    delete m_lightSource;
 }
 
 Color SVGFEDiffuseLighting::lightingColor() const
@@ -96,15 +100,12 @@ void SVGFEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 
 const SVGLightSource* SVGFEDiffuseLighting::lightSource() const
 {
-    return m_lightSource;
+    return m_lightSource.get();
 }
 
 void SVGFEDiffuseLighting::setLightSource(SVGLightSource* lightSource)
 {    
-    if (m_lightSource != lightSource) {
-        delete m_lightSource;
-        m_lightSource = lightSource;
-    }
+    m_lightSource = lightSource;
 }
 
 TextStream& SVGFEDiffuseLighting::externalRepresentation(TextStream& ts) const

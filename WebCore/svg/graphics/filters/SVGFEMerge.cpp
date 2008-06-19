@@ -27,6 +27,16 @@
 
 namespace WebCore {
 
+SVGFEMerge::SVGFEMerge(SVGResourceFilter* filter) 
+    : SVGFilterEffect(filter) 
+{
+}
+
+PassRefPtr<SVGFEMerge> SVGFEMerge::create(SVGResourceFilter* filter)
+{
+    return adoptRef(new SVGFEMerge(filter));
+}
+
 const Vector<String>& SVGFEMerge::mergeInputs() const
 {
     return m_mergeInputs;
