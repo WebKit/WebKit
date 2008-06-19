@@ -1,3 +1,13 @@
+2008-06-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix storage leak
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::copy): Added an adoptRef that
+        I missed when changing these objects to start with a refcount of 1.
+
 2008-06-18  Timothy Hatcher  <timothy@apple.com>
 
         Add a script build phase to remove the WebKit.qrc file from

@@ -799,7 +799,7 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::makeMutable()
 
 PassRefPtr<CSSMutableStyleDeclaration> CSSMutableStyleDeclaration::copy() const
 {
-    return new CSSMutableStyleDeclaration(0, m_values);
+    return adoptRef(new CSSMutableStyleDeclaration(0, m_values));
 }
 
 } // namespace WebCore
