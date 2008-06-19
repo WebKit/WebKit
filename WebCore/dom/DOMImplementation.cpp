@@ -315,12 +315,6 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return FTPDirectoryDocument::create(frame);
 #endif
 
-#if ENABLE(VIDEO)
-     // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
-     if (MediaPlayer::supportsType(type))
-         return MediaDocument::create(frame);
-#endif
-
     PluginData* pluginData = 0;
     if (frame && frame->page())
         pluginData = frame->page()->pluginData();
@@ -331,6 +325,13 @@ PassRefPtr<Document> DOMImplementation::createDocument(const String& type, Frame
         return PluginDocument::create(frame);
     if (Image::supportsType(type))
         return ImageDocument::create(frame);
+
+#if ENABLE(VIDEO)
+     // Check to see if the type can be played by our MediaPlayer, if so create a MediaDocument
+     if (MediaPlayer::supportsType(type))
+         return MediaDocument::create(frame);
+#endif
+
     // Everything else except text/plain can be overridden by plugins. In particular, Adobe SVG Viewer should be used for SVG, if installed.
     // Disallowing plug-ins to use text/plain prevents plug-ins from hijacking a fundamental type that the browser is expected to handle,
     // and also serves as an optimization to prevent loading the plug-in database in the common case.

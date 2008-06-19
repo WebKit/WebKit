@@ -1,3 +1,12 @@
+2008-06-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix assertion in fast/dom/ImageDocument-image-deletion.html caused by new media document creation.
+
+        * dom/DOMImplementation.cpp: (WebCore::DOMImplementation::createDocument):
+          Create the media document after we're done processing pdfs and images.
+
 192008-06-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
