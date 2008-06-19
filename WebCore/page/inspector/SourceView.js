@@ -80,6 +80,8 @@ WebInspector.SourceView.prototype = {
             this.attach();
 
             InspectorController.addResourceSourceToFrame(this.resource.identifier, this.sourceFrame.element);
+            if (this.resource.type === WebInspector.Resource.Type.Script)
+                this.sourceFrame.syntaxHighlightJavascript();
         }
     },
 

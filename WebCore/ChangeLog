@@ -1,3 +1,19 @@
+2008-06-19  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Added JavaScript syntax highlighting to the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14360
+
+        Reviewed by Tim Hatcher and Adam Roben.
+
+        * page/inspector/ScriptView.js: Added a call to syntaxHighlightJavascript.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._syntaxHighlightJavascriptLine): Added.
+        Modifies a line content element.
+        (WebInspector.SourceFrame.prototype.syntaxHighlightJavascript): Added.
+        Syntax highlights the entire script.
+        * page/inspector/SourceView.js: Added a call to syntaxHighlightJavascript.
+
 2008-06-19  Alex Mathews  <possessedpenguinbob@gmail.com>
 
         Reviewed by Oliver.

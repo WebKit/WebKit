@@ -55,6 +55,7 @@ WebInspector.ScriptView.prototype = {
         this.attach();
 
         InspectorController.addSourceToFrame("text/javascript", this.script.source, this.sourceFrame.element);
+        this.script.source.syntaxHighlightJavascript();
     },
 
     revealLine: function(lineNumber)
