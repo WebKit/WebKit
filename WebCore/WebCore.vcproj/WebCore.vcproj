@@ -8109,6 +8109,22 @@
 				RelativePath="..\css\CSSFontSelector.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\css\CSSFunctionValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSFunctionValue.h"
+				>
+			</File>
 			<File
 				RelativePath="..\css\CSSGradientValue.cpp"
 				>
@@ -8291,6 +8307,22 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSParser.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSParserValues.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSParserValues.h"
 				>
 			</File>
 			<File
@@ -8559,6 +8591,54 @@
 			</File>
 			<File
 				RelativePath="..\css\CSSValueList.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSVariableDependentValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSVariableDependentValue.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSVariablesDeclaration.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSVariablesDeclaration.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\css\CSSVariablesRule.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\CSSVariablesRule.h"
 				>
 			</File>
 			<File
