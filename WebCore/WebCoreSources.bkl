@@ -135,6 +135,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSFontFaceSource.cpp
         css/CSSFontFaceSrcValue.cpp
         css/CSSFontSelector.cpp
+        css/CSSFunctionValue.cpp
         css/CSSGradientValue.cpp
         css/CSSHelper.cpp
         css/CSSImageValue.cpp
@@ -146,6 +147,7 @@ This file contains the list of files needed to build WebCore.
         css/CSSMutableStyleDeclaration.cpp
         css/CSSPageRule.cpp
         css/CSSParser.cpp
+        css/CSSParserValues.cpp
         css/CSSPrimitiveValue.cpp
         css/CSSProperty.cpp
         css/CSSReflectValue.cpp
@@ -161,6 +163,9 @@ This file contains the list of files needed to build WebCore.
         css/CSSTimingFunctionValue.cpp
         css/CSSUnicodeRangeValue.cpp
         css/CSSValueList.cpp
+        css/CSSVariableDependentValue.cpp
+        css/CSSVariablesRule.cpp
+        css/CSSVariablesDeclaration.cpp
         css/FontFamilyValue.cpp
         css/FontValue.cpp
         css/MediaFeatureNames.cpp
