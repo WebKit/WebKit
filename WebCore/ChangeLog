@@ -1,3 +1,22 @@
+2008-06-19  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/6021353> Assertion failure (!root->needsLayout()) after certain steps
+        
+        The didFirstLayout callback was called in a place where trouble would ensue if the client
+        did any work that would cause the layout to be dirtied. Fixed by delaying the callback
+        until performPostLayoutTasks.
+
+        * page/FrameView.cpp:
+        new m_firstLayoutCallbackPending instance member variable in FrameViewPrivate
+        (WebCore::FrameViewPrivate::reset):
+        set m_firstLayoutCallbackPending to false
+        (WebCore::FrameView::layout):
+        set m_firstLayoutCallbackPending instead of a local variable; don't do didFirstLayout callback here
+        (WebCore::FrameView::performPostLayoutTasks):
+        if m_firstLayoutCallbackPending is set, do didFirstLayout callback here, then clear m_firstLayoutCallbackPending
+
 2008-06-19  David Hyatt  <hyatt@apple.com>
 
         Implement some cleanup of CSS variables based off Darin's review comments.
