@@ -199,10 +199,10 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
         styleText += ".webkit-line-content { background-color: white; }\n";
         styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-transition-property: background-color; -webkit-transition-duration: 1s; }\n";
-        styleText += ".webkit-javascript-comment { color: rgb(35, 110, 3); }\n";
-        styleText += ".webkit-javascript-keyword { color: rgb(166, 23, 0); }\n";
+        styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
+        styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
-        styleText += ".webkit-javascript-string, .webkit-javascript-regexp { color: rgb(127, 18, 178); }\n";
+        styleText += ".webkit-javascript-string, .webkit-javascript-regexp { color: rgb(196, 26, 22); }\n";
 
         styleElement.textContent = styleText;
 

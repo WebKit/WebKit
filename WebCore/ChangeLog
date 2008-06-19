@@ -1,3 +1,12 @@
+2008-06-19  Timothy Hatcher  <timothy@apple.com>
+
+        Update the JavaScript syntax highlight colors to match Xcode.
+        This matches the other Xcode colors we are using for HTML.
+
+        Reviewed by Dan Bernstein.
+
+        * page/inspector/SourceFrame.js:
+
 2008-06-19  Keishi Hattori  <casey.hattori@gmail.com>
 
         Added JavaScript syntax highlighting to the Web Inspector.
