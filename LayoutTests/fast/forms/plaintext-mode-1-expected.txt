@@ -8,7 +8,7 @@ Success: document.queryCommandEnabled("Delete") == true
 Success: document.queryCommandEnabled("FontName") == true
 Success: document.queryCommandEnabled("FontSize") == true
 Success: document.queryCommandEnabled("FontSizeDelta") == true
-Success: document.queryCommandEnabled("ForeColor") == true
+Success: document.queryCommandEnabled("ForeColor") == false
 Success: document.queryCommandEnabled("ForwardDelete") == true
 Success: document.queryCommandEnabled("Indent") == false
 Success: document.queryCommandEnabled("InsertHTML") == true
