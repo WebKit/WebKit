@@ -1,5 +1,21 @@
 2008-06-20  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug where the source view in the Resources panel had a
+        couple of extra pixels at the bottom when fully scrolled.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.set autoSizesToFitContentHeight):
+        Call removeStyleClass instead of addStyleClass for "webkit-height-sized-to-fit"
+        when sizing to fit is being disabled.
+        * page/inspector/inspector.css:
+        (.resource-view.headers-visible .source-view-frame): Added the
+        vertical-align: top property to prevent line alignment from adding extra
+        pixels on the bottom.
+
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
         Changed all lineHeight, baselinePosition and verticalPositionHint
         calls to return int instead of short. The short was overflowing
         when a value greater than 32,767 was encountered.

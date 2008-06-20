@@ -73,7 +73,7 @@ WebInspector.SourceFrame.prototype = {
         } else {
             this.element.style.removeProperty("height");
             if (this.element.contentDocument)
-                this.element.contentDocument.body.addStyleClass("webkit-height-sized-to-fit");
+                this.element.contentDocument.body.removeStyleClass("webkit-height-sized-to-fit");
             window.removeEventListener("resize", this._windowResizeListener, false);
             delete this._windowResizeListener;
         }

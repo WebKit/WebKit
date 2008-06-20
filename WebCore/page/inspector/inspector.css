@@ -635,6 +635,7 @@ body.console-visible #console {
 
 .resource-view.headers-visible .source-view-frame {
     height: auto;
+    vertical-align: top;
 }
 
 .webkit-line-gutter-backdrop {
