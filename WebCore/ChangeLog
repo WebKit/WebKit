@@ -1,5 +1,11 @@
 2008-06-20  Kevin McCullough  <kmccullough@apple.com>
 
+        Rubber stamped by Adele. 
+
+        * manual-tests/inspector/profiler-test-stop-profiling-after-setTimeout.html: Added.
+
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5958770> JSProfiler: Time incorrectly given to (idle)
