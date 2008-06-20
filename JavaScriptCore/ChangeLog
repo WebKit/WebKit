@@ -1,6 +1,12 @@
 2008-06-20  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Tim.
+        Just giving credit.
+
+        * ChangeLog:
+
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim and Dan.
 
         <rdar://problem/6024846> JSProfiler: ASSERT hit in Profiler.
         - Because InspectorController can call startProfiling() and
