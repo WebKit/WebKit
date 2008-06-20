@@ -1,5 +1,14 @@
 2008-06-19  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        - two more updated results for the last patch
+
+        * platform/mac/fast/dynamic/insert-before-table-part-in-continuation-expected.txt:
+        * platform/mac/fast/invalid/020-expected.txt:
+
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         - updated tests and results after fixing a bug where anonymous tables were inserted in the wrong place
