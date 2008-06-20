@@ -133,8 +133,6 @@ namespace KJS {
 #endif
     };
 
-    Machine& machine();
-
 } // namespace KJS
 
 #endif // Machine_h

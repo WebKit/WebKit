@@ -151,7 +151,7 @@ void CodeBlock::dump(ExecState* exec) const
 
     size_t instructionCount = 0;
     for (Vector<Instruction>::const_iterator it = begin; it != end; ++it)
-        if (machine().isOpcode(it->u.opcode))
+        if (exec->machine()->isOpcode(it->u.opcode))
             ++instructionCount;
 
     printf("%lu instructions; %lu bytes at %p; %d locals (%d parameters); %d temporaries\n\n",
@@ -204,7 +204,7 @@ void CodeBlock::dump(ExecState* exec) const
 void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator& it) const
 {
     int location = it - begin;
-    switch (machine().getOpcodeID(it->u.opcode)) {
+    switch (exec->machine()->getOpcodeID(it->u.opcode)) {
         case op_load: {
             int r0 = (++it)->u.operand;
             int k0 = (++it)->u.operand;

@@ -1,3 +1,40 @@
+2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Make Machine per-JSGlobalData.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitOpcode):
+        * VM/Machine.cpp:
+        (KJS::callEval):
+        (KJS::Machine::unwindCallFrame):
+        (KJS::Machine::throwException):
+        (KJS::Machine::execute):
+        (KJS::Machine::debug):
+        * VM/Machine.h:
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::evaluate):
+        * kjs/DebuggerCallFrame.h:
+        (KJS::DebuggerCallFrame::DebuggerCallFrame):
+        * kjs/ExecState.cpp:
+        (KJS::ExecState::ExecState):
+        * kjs/ExecState.h:
+        (KJS::ExecState::machine):
+        * kjs/JSFunction.cpp:
+        (KJS::JSFunction::callAsFunction):
+        (KJS::JSFunction::argumentsGetter):
+        (KJS::JSFunction::callerGetter):
+        (KJS::JSFunction::construct):
+        (KJS::globalFuncEval):
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+
 2008-06-19  Alp Toker  <alp@nuanti.com>
 
         GTK+/autotools build fix. JSGlobalObject.cpp in now in

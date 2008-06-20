@@ -34,6 +34,7 @@
 #include "lexer.h"
 #include "list.h"
 #include "lookup.h"
+#include "Machine.h"
 #include "nodes.h"
 #include "Parser.h"
 
@@ -79,6 +80,7 @@ JSGlobalData::JSGlobalData()
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
+    , machine(new Machine)
 {
 }
 

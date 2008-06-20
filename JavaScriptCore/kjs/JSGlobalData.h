@@ -45,6 +45,7 @@ namespace KJS {
     class IdentifierTable;
     class JSGlobalObject;
     class Lexer;
+    class Machine;
     class Parser;
     class ParserRefCounted;
     class UString;
@@ -78,6 +79,8 @@ namespace KJS {
         Parser* parser;
 
         JSGlobalObject* head;
+
+        Machine* machine;
 
     private:
         friend class WTF::ThreadSpecific<JSGlobalData>;

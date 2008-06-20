@@ -87,12 +87,12 @@ JSValue* JSFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const Ar
     RegisterFile* current = stack->current();
     if (!current->safeForReentry()) {
         stack->pushFunctionRegisterFile();
-        JSValue* result = machine().execute(body.get(), exec, this, thisObj, args, stack, _scope.node(), &exception);
+        JSValue* result = exec->machine()->execute(body.get(), exec, this, thisObj, args, stack, _scope.node(), &exception);
         stack->popFunctionRegisterFile();
         exec->setException(exception);
         return result;
     } else {
-        JSValue* result = machine().execute(body.get(), exec, this, thisObj, args, stack, _scope.node(), &exception);
+        JSValue* result = exec->machine()->execute(body.get(), exec, this, thisObj, args, stack, _scope.node(), &exception);
         current->setSafeForReentry(true);
         exec->setException(exception);
         return result;
@@ -102,14 +102,12 @@ JSValue* JSFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const Ar
 JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
-    ASSERT(exec->machine());
     return exec->machine()->retrieveArguments(exec, thisObj);
 }
 
 JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
-    ASSERT(exec->machine());
     return exec->machine()->retrieveCaller(exec, thisObj);
 }
 
@@ -198,7 +196,7 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     JSObject* thisObj = new (exec) JSObject(proto);
 
     JSValue* exception = 0;
-    JSValue* result = machine().execute(body.get(), exec, this, thisObj, args, &exec->dynamicGlobalObject()->registerFileStack(), _scope.node(), &exception);
+    JSValue* result = exec->machine()->execute(body.get(), exec, this, thisObj, args, &exec->dynamicGlobalObject()->registerFileStack(), _scope.node(), &exception);
     if (exception) {
         exec->setException(exception);
         return thisObj;
@@ -580,7 +578,7 @@ JSValue* globalFuncEval(ExecState* exec, PrototypeReflexiveFunction* function, J
         return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
     JSValue* exception = 0;
-    JSValue* value = machine().execute(evalNode.get(), exec, thisObj, &exec->dynamicGlobalObject()->registerFileStack(), globalObject->globalScopeChain().node(), &exception);
+    JSValue* value = exec->machine()->execute(evalNode.get(), exec, thisObj, &exec->dynamicGlobalObject()->registerFileStack(), globalObject->globalScopeChain().node(), &exception);
 
     if (exception) {
         exec->setException(exception);

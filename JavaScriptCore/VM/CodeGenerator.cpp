@@ -395,7 +395,7 @@ PassRefPtr<LabelID> CodeGenerator::emitLabel(LabelID* l0)
 
 void CodeGenerator::emitOpcode(OpcodeID opcodeID)
 {
-    instructions().append(machine().getOpcode(opcodeID));
+    instructions().append(globalData()->machine->getOpcode(opcodeID));
     m_lastOpcodeID = opcodeID;
 }
 
