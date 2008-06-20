@@ -1,5 +1,16 @@
 2008-06-19  Justin Garcia  <justin.garcia@apple.com>
 
+        Reviewed by Oliver.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=16049>
+        execCommand('backColor') fails on collapsed selections
+
+        * editing/EditorCommand.cpp:
+        (WebCore::CommandEntry::): Enable BackColor for caret selections, and
+        disable ForeColor in plaintext-only regions.
+
+2008-06-19  Justin Garcia  <justin.garcia@apple.com>
+
         Reviewed by John.
 
         <https://bugs.webkit.org/show_bug.cgi?id=19653>
