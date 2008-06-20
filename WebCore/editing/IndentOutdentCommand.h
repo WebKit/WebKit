@@ -37,6 +37,8 @@ public:
     {
         return adoptRef(new IndentOutdentCommand(document, type, marginInPixels));
     }
+    
+    virtual bool preservesTypingStyle() const { return true; }
 
 private:
     IndentOutdentCommand(Document*, EIndentType, int marginInPixels);

@@ -61,7 +61,7 @@ private:
     void mergeParagraphs();
     void removePreviouslySelectedEmptyTableRows();
     void calculateEndingPosition();
-    void calculateTypingStyleAfterDelete(Node*);
+    void calculateTypingStyleAfterDelete();
     void clearTransientState();
     virtual void removeNode(Node*);
     virtual void deleteTextFromNode(Text*, int, int);

@@ -246,8 +246,6 @@ void DeleteSelectionCommand::saveTypingStyleState()
         return;
         
     // Figure out the typing style in effect before the delete is done.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     RefPtr<CSSComputedStyleDeclaration> computedStyle = positionBeforeTabSpan(m_selectionToDelete.start()).computedStyle();
     m_typingStyle = computedStyle->copyInheritableProperties();
     
@@ -611,7 +609,7 @@ void DeleteSelectionCommand::removePreviouslySelectedEmptyTableRows()
         }
 }
 
-void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlaceholder)
+void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
 {
     if (!m_typingStyle)
         return;
@@ -621,8 +619,6 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlace
     // commands being composed with this one will work, and also cache it on the command,
     // so the Frame::appliedEditing can set it after the whole composite command 
     // has completed.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     
     // If we deleted into a blockquote, but are now no longer in a blockquote, use the alternate typing style
     if (m_deleteIntoBlockquoteStyle && !nearestMailBlockquote(m_endingPosition.node()))
@@ -633,25 +629,28 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(Node *insertedPlace
     endingStyle->diff(m_typingStyle.get());
     if (!m_typingStyle->length())
         m_typingStyle = 0;
-    if (insertedPlaceholder && m_typingStyle) {
-        // Apply style to the placeholder. This makes sure that the single line in the
-        // paragraph has the right height, and that the paragraph takes on the style
-        // of the preceding line and retains it even if you click away, click back, and
-        // then start typing. In this case, the typing style is applied right now, and
-        // is not retained until the next typing action.
+    VisiblePosition visibleEnd(m_endingPosition);
+    if (m_typingStyle && 
+        isStartOfParagraph(visibleEnd) &&
+        isEndOfParagraph(visibleEnd) &&
+        lineBreakExistsAtPosition(visibleEnd)) {
+        // Apply style to the placeholder that is now holding open the empty paragraph. 
+        // This makes sure that the paragraph has the right height, and that the paragraph 
+        // takes on the right style and retains it even if you move the selection away and
+        // then move it back (which will clear typing style).
 
-        setEndingSelection(Selection(Position(insertedPlaceholder, 0), DOWNSTREAM));
+        setEndingSelection(visibleEnd);
         applyStyle(m_typingStyle.get(), EditActionUnspecified);
-        // applyStyle can destroy insertedPlaceholder if it needs to move it, but it 
-        // will set an endingSelection() at [movedPlaceholder, 0] if it does so.
-        if (!insertedPlaceholder->inDocument())
-            m_endingPosition = endingSelection().start();
+        // applyStyle can destroy the placeholder that was at m_endingPosition if it needs to 
+        // move it, but it will set an endingSelection() at [movedPlaceholder, 0] if it does so.
+        m_endingPosition = endingSelection().start();
         m_typingStyle = 0;
     }
-    // Set m_typingStyle as the typing style.
-    // It's perfectly OK for m_typingStyle to be null.
+    // This is where we've deleted all traces of a style but not a whole paragraph (that's handled above).
+    // In this case if we start typing, the new characters should have the same style as the just deleted ones,
+    // but, if we change the selection, come back and start typing that style should be lost.  Also see 
+    // preserveTypingStyle() below.
     document()->frame()->setTypingStyle(m_typingStyle.get());
-    setTypingStyle(m_typingStyle.get());
 }
 
 void DeleteSelectionCommand::clearTransientState()
@@ -750,7 +749,7 @@ void DeleteSelectionCommand::doApply()
     // deleting just a BR is handled specially, at least because we do not
     // want to replace it with a placeholder BR!
     if (handleSpecialCaseBRDelete()) {
-        calculateTypingStyleAfterDelete(false);
+        calculateTypingStyleAfterDelete();
         setEndingSelection(Selection(m_endingPosition, affinity));
         clearTransientState();
         rebalanceWhitespace();
@@ -772,7 +771,7 @@ void DeleteSelectionCommand::doApply()
 
     rebalanceWhitespaceAt(m_endingPosition);
 
-    calculateTypingStyleAfterDelete(placeholder.get());
+    calculateTypingStyleAfterDelete();
     
     setEndingSelection(Selection(m_endingPosition, affinity));
     clearTransientState();
@@ -786,9 +785,12 @@ EditAction DeleteSelectionCommand::editingAction() const
     return EditActionCut;
 }
 
+// Normally deletion doesn't preserve the typing style that was present before it.  For example,
+// type a character, Bold, then delete the character and start typing.  The Bold typing style shouldn't
+// stick around.  Deletion should preserve a typing style that *it* sets, however.
 bool DeleteSelectionCommand::preservesTypingStyle() const
 {
-    return true;
+    return m_typingStyle;
 }
 
 } // namespace WebCore

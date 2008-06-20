@@ -52,12 +52,11 @@ public:
 
     Element* startingRootEditableElement() const { return m_startingRootEditableElement.get(); }
     Element* endingRootEditableElement() const { return m_endingRootEditableElement.get(); }
-
-    CSSMutableStyleDeclaration* typingStyle() const { return m_typingStyle.get(); };
-    void setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration>);
     
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
+    
+    virtual bool preservesTypingStyle() const;
 
 protected:
     EditCommand(Document*);
@@ -75,14 +74,11 @@ private:
     virtual void doUnapply() = 0;
     virtual void doReapply(); // calls doApply()
 
-    virtual bool preservesTypingStyle() const;
-
     RefPtr<Document> m_document;
     Selection m_startingSelection;
     Selection m_endingSelection;
     RefPtr<Element> m_startingRootEditableElement;
     RefPtr<Element> m_endingRootEditableElement;
-    RefPtr<CSSMutableStyleDeclaration> m_typingStyle;
     CompositeEditCommand* m_parent;
 
     friend void applyCommand(PassRefPtr<EditCommand>);

@@ -76,8 +76,6 @@ void InsertParagraphSeparatorCommand::applyStyleAfterInsertion(Node* originalEnc
         originalEnclosingBlock->hasTagName(h5Tag))
         return;
         
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (!m_style)
         return;
 

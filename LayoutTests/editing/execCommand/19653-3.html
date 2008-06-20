@@ -1,0 +1,18 @@
+<div id="description1">This tests deleting a Bold paragraph, then changing the selection and moving it back to the spot where that paragraph was deleted and typing more. The new text should be Bold, too.</div>
+<div id="edit1" contentEditable="true"><div id="one"><b>Bold</b><br></div><div id="two"><br></div></div>
+
+<script>
+if (window.layoutTestController)
+    window.layoutTestController.dumpAsText();
+one = document.getElementById("one");
+window.getSelection().setBaseAndExtent(one, 0, one, one.childNodes.length);
+document.execCommand("Delete");
+
+window.getSelection().modify("move", "forward", "character");
+window.getSelection().modify("move", "backward", "character");
+
+document.execCommand("InsertText", false, "Bold");
+
+if (window.layoutTestController)
+    document.body.innerText = document.getElementById("description1").innerText + "\n" + edit1.innerHTML;
+</script>

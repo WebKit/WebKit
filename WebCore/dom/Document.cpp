@@ -42,7 +42,6 @@
 #include "DocumentType.h"
 #include "EditingText.h"
 #include "Editor.h"
-#include "EditorClient.h"
 #include "EntityReference.h"
 #include "Event.h"
 #include "EventHandler.h"

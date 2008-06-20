@@ -1,3 +1,29 @@
+2008-06-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19653
+        Typing style lost when creating list from, indenting or outdenting an empty paragraph
+
+        These demonstrate fixes:
+        * editing/execCommand/19653-1-expected.txt: Added.
+        * editing/execCommand/19653-1.html: Added.
+        * editing/execCommand/19653-2-expected.txt: Added.
+        * editing/execCommand/19653-2.html: Added.
+        * editing/execCommand/19653-3-expected.txt: Added.
+        * editing/execCommand/19653-3.html: Added.
+        * editing/execCommand/19653-4-expected.txt: Added.
+        * editing/execCommand/19653-4.html: Added.
+        Changed to an equivalent but more bloated DOM because of a pre-existing bug in ApplyStyleCommand:
+        * platform/mac/editing/deleting/delete-br-011-expected.txt:
+        Fixed a bug where the typing style wasn't applied to the placeholder in an empty paragraph,
+        so typing would create text with the right style, but if you were to change the selection
+        and then come back and start typing, the style would be wrong.  The size of the caret was
+        also wrong as a result:
+        * platform/mac/editing/deleting/delete-br-012-expected.txt:
+        * platform/mac/editing/deleting/delete-br-012-expected.png:
+        * platform/mac/editing/deleting/delete-br-012-expected.checksum:
+
 2008-06-19  David Hyatt  <hyatt@apple.com>
 
         Add layout tests for CSS variables.

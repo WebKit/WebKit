@@ -1,3 +1,78 @@
+2008-06-19  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19653>
+        Typing style lost when creating list from, indenting or outdenting an empty paragraph
+        
+        There were two problems.  First, moveParagraphs didn't preserve the style of empty paragraphs.
+        Second, indent, outdent and list creation returned false from preservesTypingStyle.
+        The second problem couldn't be fixed by just adding preservesTypingStyle() { return true; }
+        to those commands, though, because of other bugs.
+        
+        Cleaned up the implementation of typing style enough to remove FIXMEs for:
+        
+        <rdar://problem/3769899> Implementation of typing style needs improvement 
+        
+        which has actually been closed for some time now anyway.
+        
+        * dom/Document.cpp: Removed an unused header.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): Preserve the style of an empty paragraph, too.
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::saveTypingStyleState): Removed FIXME.
+        (WebCore::DeleteSelectionCommand::calculateTypingStyleAfterDelete): 
+        Removed FIXME.  
+        If there is a typing style to apply after a delete, apply it to any line break that acts as a paragraph
+        placeholder, not only one that was inserted by deletion.  This fixes a bug where deleting
+        <div><b>Bold</b><br></div>, changing the selection and then coming back and typing wouldn't 
+        produce bold text.  
+        Don't set the EditCommand's typingStyle, it has been removed (more on that later).
+        (WebCore::DeleteSelectionCommand::doApply): We don't need to pass calculateTypingStyleAfterDelete
+        the inserted placeholder because it will find it.
+        (WebCore::DeleteSelectionCommand::preservesTypingStyle): Normally deletion doesn't preserve the 
+        typing style that was present before it.  For example, type a character, Bold, then delete the 
+        character and start typing.  The Bold typing style shouldn't stick around.  We got this right before 
+        purely by chance. Deletion should preserve a typing style that *it* sets, however.
+        * editing/DeleteSelectionCommand.h: No longer need to pass calculateTypingStyleAfterDelete
+        the inserted placeholder.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::apply): 
+        Clearing or not clearing a removed anchor should not be determined by whether or not a command 
+        preservesTypingStyle().  For example, the deletion that removed an anchor (and stored it), may 
+        not preserve the typing style, but that doesn't mean that it should then go and clear the removed 
+        anchor.  All high level commands, and all commands that a TypingCommand spawns, except for
+        text insertions, which should restore a removed anchor, should clear it.
+        There is no longer a typing style on EditCommand, removed code that cleared it.  Code that clears the 
+        *actual* typing style is now in Editor::appliedEditing, just like before.
+        There is no longer a typing style on EditCommand, removed code to set one.
+        (WebCore::EditCommand::styleAtPosition): Removed FIXME.
+        * editing/EditCommand.h: 
+        Removed code assosiated with m_typingStyle.
+        Made preservesTypingStyle() public, so that we can call it from Editor::appliedEditing().
+        * editing/Editor.cpp:
+        (WebCore::Editor::appliedEditing):
+        Removed code to preserve the removedAnchor during the call to setSelection, because we no longer
+        request to clear the typing style with that call.  Also removed the FIXME about this.
+        Before, a command would set the Frame's typing style by setting its own typingStyle, and then 
+        letting code here, in appliedEditing pick that up and set it on the Frame.  Now, the command 
+        itself sets the Frame's typing style.  Deletion is the only command that does this right now.
+        * editing/IndentOutdentCommand.h:
+        (WebCore::IndentOutdentCommand::preservesTypingStyle): Added, returns true.
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply): Removed FIXME.
+        * editing/InsertListCommand.h:
+        (WebCore::InsertListCommand::preservesTypingStyle): Added.
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::applyStyleAfterInsertion): Removed FIXME.
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::input): Removed FIXME.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Removed FIXME and also added one about clearing
+        the typing style here.  It seems like it's something that could wait until after the command
+        has been performed, since there is no code between this point and the end of the operation
+        that queries or uses the typing style.
+
 2008-06-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

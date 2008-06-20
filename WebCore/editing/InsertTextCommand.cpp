@@ -186,8 +186,6 @@ void InsertTextCommand::input(const String& originalText, bool selectInsertedTex
     setEndingSelection(forcedEndingSelection);
 
     // Handle the case where there is a typing style.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     RefPtr<CSSComputedStyleDeclaration> endingStyle = endPosition.computedStyle();
     endingStyle->diff(typingStyle);

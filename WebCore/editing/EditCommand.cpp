@@ -88,19 +88,18 @@ void EditCommand::apply()
     // use them perform one if one is necessary (like for the creation of VisiblePositions).
     if (!m_parent)
         updateLayout();
+    
+    // All high level commands, and all commands that a TypingCommand spawns, except for
+    // text insertions, which should restore a removed anchor, should clear it.
+    if (!m_parent && !isTypingCommand())
+        frame->editor()->setRemovedAnchor(0);
+    if (m_parent && m_parent->isTypingCommand() && !isInsertTextCommand())
+        frame->editor()->setRemovedAnchor(0);
 
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();
     doApply();
     deleteButtonController->enable();
-
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (!preservesTypingStyle()) {
-        setTypingStyle(0);
-        if (!m_parent)
-            frame->editor()->setRemovedAnchor(0);
-    }
 
     if (!m_parent) {
         updateLayout();
@@ -188,20 +187,6 @@ void EditCommand::setEndingSelection(const Selection &s)
     }
 }
 
-void EditCommand::setTypingStyle(PassRefPtr<CSSMutableStyleDeclaration> style)
-{
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (!m_parent) {
-        // Special more-efficient case for where there's only one command that
-        // takes advantage of the ability of PassRefPtr to pass its ref to a RefPtr.
-        m_typingStyle = style;
-        return;
-    }
-    for (EditCommand* cmd = this; cmd; cmd = cmd->m_parent)
-        cmd->m_typingStyle = style.get(); // must use get() to avoid setting parent styles to 0
-}
-
 bool EditCommand::preservesTypingStyle() const
 {
     return false;
@@ -221,8 +206,6 @@ PassRefPtr<CSSMutableStyleDeclaration> EditCommand::styleAtPosition(const Positi
 {
     RefPtr<CSSMutableStyleDeclaration> style = positionBeforeTabSpan(pos).computedStyle()->copyInheritableProperties();
  
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     if (typingStyle)
         style->merge(typingStyle);

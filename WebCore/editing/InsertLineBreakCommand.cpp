@@ -162,8 +162,6 @@ void InsertLineBreakCommand::doApply()
     }
 
     // Handle the case where there is a typing style.
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     
     CSSMutableStyleDeclaration* typingStyle = document()->frame()->typingStyle();
     

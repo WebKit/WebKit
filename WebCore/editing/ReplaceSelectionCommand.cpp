@@ -720,13 +720,11 @@ void ReplaceSelectionCommand::doApply()
     
     // Paste at start or end of link goes outside of link.
     insertionPos = positionAvoidingSpecialElementBoundary(insertionPos);
-
-    Frame *frame = document()->frame();
     
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    frame->clearTypingStyle();
-    setTypingStyle(0);
+    // FIXME: Can this wait until after the operation has been performed?  There doesn't seem to be
+    // any work performed after this that queries or uses the typing style.
+    if (Frame* frame = document()->frame())
+        frame->clearTypingStyle();
     
     bool handledStyleSpans = handleStyleSpansBeforeInsertion(fragment, insertionPos);
     
