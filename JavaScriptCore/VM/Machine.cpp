@@ -671,8 +671,11 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 
     registerFileStack->popGlobalRegisterFile();
 
-    if (*profiler)
+    if (*profiler) {
         (*profiler)->didExecute(exec, programNode->sourceURL(), programNode->lineNo());
+        if (!m_reentryDepth)
+            (*profiler)->didFinishAllExecution(exec);
+    }
 
     return result;
 }
@@ -729,6 +732,9 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, registerFile, r, scopeChain, newCodeBlock, exception);
     m_reentryDepth--;
+
+    if (*profiler && !m_reentryDepth)
+        (*profiler)->didFinishAllExecution(exec);
 
     registerFile->shrink(oldSize);
     return result;
@@ -795,8 +801,11 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
     registerFile->shrink(oldSize);
 
-    if (*profiler)
+    if (*profiler) {
         (*profiler)->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
+        if (!m_reentryDepth)
+            (*profiler)->didFinishAllExecution(exec);
+    }
 
     return result;
 }

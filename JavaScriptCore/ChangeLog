@@ -1,3 +1,48 @@
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5958770> JSProfiler: Time incorrectly given to (idle)
+        if profiling is started and finished within the same function. (19230)
+        - Now we profile one more stack frame up from the last frame to allocate
+        the time spent in it, if it exists.
+
+        * JavaScriptCore.exp:
+        * VM/Machine.cpp: We need to let the profiler know when the JS program 
+        has finished since that is what will actually stop the profiler instead
+        of just calling stopProfiling().
+        (KJS::Machine::execute):
+        * profiler/Profile.cpp:
+        (KJS::Profile::create): Moved from Profile.h since it was getting pretty
+        long.
+        (KJS::Profile::Profile): We now have a client, which is a listener who
+        we will return this profile to, once it has actually finished.
+        (KJS::Profile::stopProfiling): Instead of fully stopping the profiler
+        here, we set the flag and keep it profiling in the background.
+        (KJS::Profile::didFinishAllExecution): This is where the profiler
+        actually finishes and creates the (idle) node if one should be made.
+        (KJS::Profile::removeProfileStart): Don't use m_currentNode since it is
+        needed by the profiler as it runs silently in the background.
+        (KJS::Profile::removeProfileEnd): Ditto.
+        (KJS::Profile::willExecute): Don't profile new functions if we have
+        stopped profiling.
+        (KJS::Profile::didExecute): Only record one more return as all the
+        remaining time will be attributed to that function.
+        (KJS::Profile::setupCurrentNodeAsStopped): Sets the current node's time.
+        * profiler/Profile.h: Added functions and variables for the above
+        changes.
+        (KJS::Profile::client):
+        * profiler/ProfileNode.h:
+        (KJS::CallIdentifier::toString): Debug method.
+        * profiler/Profiler.cpp: Added support for the ProfilerClient.
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling): No longer return sthe profile.
+        (KJS::Profiler::didFinishAllExecution): Now returns the profile to the
+        client instead of stopProfiling.
+        * profiler/Profiler.h:
+        (KJS::ProfilerClient::~ProfilerClient): Clients will implement this
+        interface.
+
 2008-06-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

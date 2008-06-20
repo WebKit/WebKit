@@ -1,3 +1,31 @@
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5958770> JSProfiler: Time incorrectly given to (idle)
+        if profiling is started and finished within the same function. (19230)
+        - Now we profile one more stack frame up from the last frame to allocate
+        the time spent in it, if it exists.
+
+        * page/Console.cpp:
+        * manual-tests/inspector/profiler-test-start-and-stop-profiling-in-the-same-function.html: Added.
+        (WebCore::Console::profile): When stating the profiler give a client for
+        the callback of when the profile actually finishes.
+        (WebCore::Console::profileEnd): No longer needs to handle the return of
+        the profile object since it will be retruned in the client's callback.
+        (WebCore::Console::finishedProfiling): Implemenet the ProfileClient
+        callback method.
+        * page/Console.h: Inherit from the ProfileClient.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::startUserInitiatedProfiling): Use the
+        client callback.
+        (WebCore::InspectorController::stopUserInitiatedProfiling): Does not
+        need to handle the profile being returned as it is now handled by the
+        client callback.
+        (WebCore::InspectorController::finishedProfiling): Implement the
+        ProfileClient callback method.
+        * page/InspectorController.h: Inherit from the ProfileClient.
+
 2008-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Makes the JavaScript syntax highlighter process lines in chunks

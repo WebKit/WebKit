@@ -65,6 +65,7 @@ namespace KJS {
 
 #ifndef NDEBUG
         operator const char* () const { return name.UTF8String().c_str(); }
+        const char* toString() const { return *this; }
 #endif
     };
 

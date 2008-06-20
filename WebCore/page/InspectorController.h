@@ -35,6 +35,7 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 #include <JavaScriptCore/JSContextRef.h>
+#include <profiler/Profiler.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -62,7 +63,7 @@ struct InspectorDatabaseResource;
 struct InspectorResource;
 class ResourceRequest;
 
-class InspectorController : JavaScriptDebugListener {
+class InspectorController : JavaScriptDebugListener, public KJS::ProfilerClient {
 public:
     typedef HashMap<long long, RefPtr<InspectorResource> > ResourcesMap;
     typedef HashMap<RefPtr<Frame>, ResourcesMap*> FrameResourcesMap;
@@ -101,6 +102,7 @@ public:
     bool isRecordingUserInitiatedProfile() const { return m_recordingUserInitiatedProfile; }
     void startUserInitiatedProfiling();
     void stopUserInitiatedProfiling();
+    void finishedProfiling(PassRefPtr<KJS::Profile>);
 
     bool windowVisible();
     void setWindowVisible(bool visible = true);

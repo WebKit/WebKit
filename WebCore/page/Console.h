@@ -30,12 +30,14 @@
 #define Console_h
 
 #include "PlatformString.h"
+#include <profiler/Profiler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
 namespace KJS {
     class ExecState;
     class ArgList;
+    class Profile;
 }
 
 namespace WebCore {
@@ -58,7 +60,7 @@ namespace WebCore {
         ErrorMessageLevel
     };
 
-    class Console : public RefCounted<Console> {
+    class Console : public RefCounted<Console>, public KJS::ProfilerClient {
     public:
         static PassRefPtr<Console> create(Frame* frame) { return adoptRef(new Console(frame)); }
 
@@ -72,8 +74,10 @@ namespace WebCore {
         void log(KJS::ExecState*, const KJS::ArgList& arguments);
         void warn(KJS::ExecState*, const KJS::ArgList& arguments);
         void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList& arguments);
-        void profile(KJS::ExecState*, const KJS::ArgList& arguments) const;
-        void profileEnd(KJS::ExecState*, const KJS::ArgList& arguments) const;
+        void profile(KJS::ExecState*, const KJS::ArgList& arguments);
+        void profileEnd(KJS::ExecState*, const KJS::ArgList& arguments);
+
+        void finishedProfiling(PassRefPtr<KJS::Profile>);
 
     private:
         Console(Frame*);

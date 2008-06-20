@@ -41,11 +41,17 @@ static void calculateVisibleTotalTime(ProfileNode* n) { n->calculateVisibleTotal
 static void restoreAll(ProfileNode* n) { n->restore(); }
 static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
 
-Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier)
+PassRefPtr<Profile> Profile::create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
+{
+    return adoptRef(new Profile(title, originatingGlobalExec, pageGroupIdentifier, client));
+}
+
+Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
     : m_title(title)
     , m_originatingGlobalExec(originatingGlobalExec)
     , m_pageGroupIdentifier(pageGroupIdentifier)
-    , m_depth(0)
+    , m_client(client)
+    , m_stoppedProfiling(false)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
@@ -59,8 +65,15 @@ void Profile::stopProfiling()
     removeProfileStart();
     removeProfileEnd();
 
-    double headSelfTime = m_head->selfTime();
-    if (headSelfTime) {
+    m_stoppedProfiling = true;
+}
+
+bool Profile::didFinishAllExecution()
+{
+    if (!m_stoppedProfiling)
+        return false;
+
+    if (double headSelfTime = m_head->selfTime()) {
         RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), m_head.get(), m_head.get());
 
         idleNode->setTotalTime(headSelfTime);
@@ -71,61 +84,80 @@ void Profile::stopProfiling()
         m_head->addChild(idleNode.release());
     }
 
-    m_depth = 0;
     m_currentNode = 0;
     m_originatingGlobalExec = 0;
+    return true;
 }
 
 // The console.profile that started this profile will be the first child.
 void Profile::removeProfileStart() {
+    ProfileNode* currentNode;
     for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
-        m_currentNode = next;
+        currentNode = next;
 
-    ASSERT(m_currentNode->callIdentifier().name == "profile");
+    ASSERT(currentNode->callIdentifier().name == "profile");
 
-    for (ProfileNode* currentParent = m_currentNode->parent(); currentParent; currentParent = currentParent->parent())
-        currentParent->setTotalTime(currentParent->totalTime() - m_currentNode->totalTime());
+    for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
+        currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
 
-    m_currentNode->parent()->removeChild(0);
+    currentNode->parent()->removeChild(0);
 }
 
 // The console.profileEnd that stopped this profile will be the last child.
 void Profile::removeProfileEnd() {
+    ProfileNode* currentNode;
     for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
-        m_currentNode = next;
+        currentNode = next;
 
-    ASSERT(m_currentNode->callIdentifier().name == "profileEnd");
+    ASSERT(currentNode->callIdentifier().name == "profileEnd");
 
-    for (ProfileNode* currentParent = m_currentNode->parent(); currentParent; currentParent = currentParent->parent())
-        currentParent->setTotalTime(currentParent->totalTime() - m_currentNode->totalTime());
+    for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
+        currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
 
-    m_currentNode->parent()->removeChild(m_currentNode->parent()->children().size() - 1);
+    currentNode->parent()->removeChild(currentNode->parent()->children().size() - 1);
 }
 
 void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
+    if (m_stoppedProfiling)
+        return;
+
     ASSERT(m_currentNode);
     m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
 
 void Profile::didExecute(const CallIdentifier& callIdentifier)
 {
-    ASSERT(m_currentNode);
+    if (!m_currentNode)
+        return;
 
-    // In case the profiler started recording calls in the middle of a stack frame,
-    // when returning up the stack it needs to insert the calls it missed on the
-    // way down.
     if (m_currentNode == m_head) {
         m_currentNode = ProfileNode::create(callIdentifier, m_head.get(), m_head.get());
         m_currentNode->setStartTime(m_head->startTime());
         m_currentNode->didExecute();
-        m_head->insertNode(m_currentNode.release());
-        m_currentNode = m_head;
+        m_head->insertNode(m_currentNode.get());
+
+        if (m_stoppedProfiling) {
+            setupCurrentNodeAsStopped();
+            m_currentNode = 0;
+        } else
+            m_currentNode = m_head;
+
+        return;
+    }
+
+    if (m_stoppedProfiling) {
+        m_currentNode = m_currentNode->parent();
         return;
     }
 
     m_currentNode = m_currentNode->didExecute();
-    --m_depth;
+}
+
+void Profile::setupCurrentNodeAsStopped() {
+    m_currentNode->setTotalTime(m_head->selfTime());
+    m_head->setSelfTime(0.0);
+    m_currentNode->stopProfiling();
 }
 
 void Profile::forEach(UnaryFunction function)

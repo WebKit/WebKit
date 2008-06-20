@@ -1423,7 +1423,7 @@ void InspectorController::startUserInitiatedProfiling()
     m_recordingUserInitiatedProfile = true;
 
     ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    Profiler::profiler()->startProfiling(exec, UserInitiatedProfileName);
+    Profiler::profiler()->startProfiling(exec, UserInitiatedProfileName, this);
 }
 
 void InspectorController::stopUserInitiatedProfiling()
@@ -1434,9 +1434,12 @@ void InspectorController::stopUserInitiatedProfiling()
     m_recordingUserInitiatedProfile = false;
 
     ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
-    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, UserInitiatedProfileName);
-    if (profile)
-        addProfile(profile);
+    Profiler::profiler()->stopProfiling(exec, UserInitiatedProfileName);
+}
+
+void InspectorController::finishedProfiling(PassRefPtr<Profile> prpProfile)
+{
+    addProfile(prpProfile);
 }
 
 static void addHeaders(JSContextRef context, JSObjectRef object, const HTTPHeaderMap& headers, JSValueRef* exception)

@@ -33,15 +33,17 @@
 namespace KJS {
 
     class ExecState;
+    class ProfilerClient;
     typedef void (*UnaryFunction)(ProfileNode*);
 
     class Profile : public RefCounted<Profile> {
     public:
-        static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier) { return adoptRef(new Profile(title, originatingGlobalExec, pageGroupIdentifier)); }
+        static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
 
         void willExecute(const CallIdentifier&);
         void didExecute(const CallIdentifier&);
         void stopProfiling();
+        bool didFinishAllExecution();
 
         const UString& title() const { return m_title; };
         ProfileNode* callTree() const { return m_head.get(); };
@@ -50,6 +52,7 @@ namespace KJS {
 
         ExecState* originatingGlobalExec() const { return m_originatingGlobalExec; }
         unsigned pageGroupIdentifier() const { return m_pageGroupIdentifier; }
+        ProfilerClient* client() { return m_client; }
 
         void forEach(UnaryFunction);
         void sortTotalTimeDescending() { forEach(ProfileNode::sortTotalTimeDescending); }
@@ -69,21 +72,21 @@ namespace KJS {
         void debugPrintData() const;
         void debugPrintDataSampleStyle() const;
 #endif
-
         typedef void (Profile::*ProfileFunction)(const CallIdentifier& callIdentifier);
 
     private:
-        Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier);
+        Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
         void removeProfileStart();
         void removeProfileEnd();
+        void setupCurrentNodeAsStopped();
 
         UString m_title;
         ExecState* m_originatingGlobalExec;
         unsigned m_pageGroupIdentifier;
         RefPtr<ProfileNode> m_head;
         RefPtr<ProfileNode> m_currentNode;
-        
-        unsigned m_depth;
+        ProfilerClient* m_client;
+        bool m_stoppedProfiling;
     };
 
 } // namespace KJS
