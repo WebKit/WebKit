@@ -689,7 +689,10 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
             m_firstData = false;
         }
         fl->addData(data, length);
-    } else {
+    }
+    
+    // We re-check here as the plugin can have been created
+    if (m_pluginView) {
         if (!m_hasSentResponseToPlugin) {
             m_pluginView->didReceiveResponse(loader->response());
             m_hasSentResponseToPlugin = true;

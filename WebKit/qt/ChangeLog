@@ -1,3 +1,14 @@
+2008-06-20  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19082
+        [Qt] Full-page plugins not activated
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::committedLoad): Re-check if there's a
+        plugin present, as it can be created during the function.
+
 2008-06-20  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Simon.
