@@ -187,6 +187,11 @@
 #define WTF_COMPILER_GCC 1
 #endif
 
+/* COMPILER(MINGW) */
+#if defined(MINGW) || defined(__MINGW32__)
+#define WTF_COMPILER_MINGW 1
+#endif
+
 /* COMPILER(BORLAND) */
 /* not really fully supported - is this relevant any more? */
 #if defined(__BORLANDC__)
