@@ -131,7 +131,7 @@ bool RenderThemeQt::supportsFocusRing(const RenderStyle* style) const
     return true; // Qt provides this through the style
 }
 
-short RenderThemeQt::baselinePosition(const RenderObject* o) const
+int RenderThemeQt::baselinePosition(const RenderObject* o) const
 {
     if (o->style()->appearance() == CheckboxAppearance ||
         o->style()->appearance() == RadioAppearance)

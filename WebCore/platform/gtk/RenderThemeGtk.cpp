@@ -71,7 +71,7 @@ bool RenderThemeGtk::controlSupportsTints(const RenderObject* o) const
     return isEnabled(o);
 }
 
-short RenderThemeGtk::baselinePosition(const RenderObject* o) const
+int RenderThemeGtk::baselinePosition(const RenderObject* o) const
 {
     // FIXME: This strategy is possibly incorrect for the GTK+ port.
     if (o->style()->appearance() == CheckboxAppearance ||

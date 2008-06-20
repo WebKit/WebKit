@@ -1,3 +1,15 @@
+2008-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix for r34702, r34700 and r34693
+        Qt build fix for r34700 and r34693
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * platform/gtk/RenderThemeGtk.cpp:
+        * platform/gtk/RenderThemeGtk.h:
+        * platform/qt/RenderThemeQt.cpp:
+        * platform/qt/RenderThemeQt.h:
+
 2008-06-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.

@@ -84,6 +84,8 @@ webcore_built_sources += \
 	DerivedSources/JSCSSStyleSheet.h \
 	DerivedSources/JSCSSValue.h \
 	DerivedSources/JSCSSValueList.h \
+	DerivedSources/JSCSSVariablesDeclaration.h \
+	DerivedSources/JSCSSVariablesRule.h \
 	DerivedSources/JSCanvasGradient.h \
 	DerivedSources/JSCanvasPattern.h \
 	DerivedSources/JSCanvasPixelArray.h \
@@ -106,8 +108,8 @@ webcore_built_sources += \
 	DerivedSources/JSEntityReference.h \
 	DerivedSources/JSEvent.h \
 	DerivedSources/JSEventException.h \
-	DerivedSources/File.h \
-	DerivedSources/FileList.h \
+	DerivedSources/JSFile.h \
+	DerivedSources/JSFileList.h \
 	DerivedSources/JSHTMLAnchorElement.h \
 	DerivedSources/JSHTMLAppletElement.h \
 	DerivedSources/JSHTMLAreaElement.h \
@@ -223,6 +225,8 @@ webcore_built_sources += \
 	DerivedSources/JSCSSStyleSheet.cpp \
 	DerivedSources/JSCSSValue.cpp \
 	DerivedSources/JSCSSValueList.cpp \
+	DerivedSources/JSCSSVariablesDeclaration.cpp \
+	DerivedSources/JSCSSVariablesRule.cpp \
 	DerivedSources/JSCanvasGradient.cpp \
 	DerivedSources/JSCanvasPattern.cpp \
 	DerivedSources/JSCanvasPixelArray.cpp \
@@ -360,6 +364,8 @@ IDL_BINDINGS +=  \
 	WebCore/css/CSSStyleSheet.idl \
 	WebCore/css/CSSValue.idl \
 	WebCore/css/CSSValueList.idl \
+	WebCore/css/CSSVariablesDeclaration.idl \
+	WebCore/css/CSSVariablesRule.idl \
 	WebCore/css/MediaList.idl \
 	WebCore/css/Rect.idl \
 	WebCore/css/StyleSheet.idl \
