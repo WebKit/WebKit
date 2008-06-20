@@ -1,5 +1,13 @@
 2008-06-20  Kevin McCullough  <kmccullough@apple.com>
 
+        -Leopard Build Fix.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::removeProfileStart):
+        (KJS::Profile::removeProfileEnd):
+
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
         Just giving credit.
 
         * ChangeLog:

@@ -91,7 +91,7 @@ bool Profile::didFinishAllExecution()
 
 // The console.profile that started this profile will be the first child.
 void Profile::removeProfileStart() {
-    ProfileNode* currentNode;
+    ProfileNode* currentNode = 0;
     for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
         currentNode = next;
 
@@ -106,7 +106,7 @@ void Profile::removeProfileStart() {
 
 // The console.profileEnd that stopped this profile will be the last child.
 void Profile::removeProfileEnd() {
-    ProfileNode* currentNode;
+    ProfileNode* currentNode = 0;
     for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
         currentNode = next;
 
