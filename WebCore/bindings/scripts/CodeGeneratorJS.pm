@@ -152,7 +152,7 @@ sub IndexGetterReturnsStrings
 {
     my $type = shift;
 
-    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList";
+    return 1 if $type eq "CSSStyleDeclaration" or $type eq "MediaList" or $type eq "CSSVariablesDeclaration";
     return 0;
 }
 

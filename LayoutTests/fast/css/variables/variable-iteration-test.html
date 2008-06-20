@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    foregroundColor: green;
+    backgroundColor: white;
+}
+
+div {
+    color: red;
+    background-color: red;
+}
+</style>
+</head>
+<body>
+<div id="output">
+This text should be green.  There should be no red visible.
+</div>
+<script>
+var variables = document.styleSheets[0].cssRules[0].variables;
+var output = document.getElementById('output');
+for (var i = 0; i < variables.length; i++) {
+    var result = variables.getVariableValue(variables[i]);
+    if (variables[i] == "foregroundColor")
+        output.style.color = result;
+    else if (variables[i] == "backgroundColor")
+        output.style.backgroundColor = result;
+}
+</script>
+</body>
+</html>

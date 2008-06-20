@@ -29,6 +29,7 @@
 #include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSValueList.h"
+#include "Document.h"
 #include "ExceptionCode.h"
 
 namespace WebCore {
@@ -70,6 +71,8 @@ String CSSVariablesDeclaration::removeVariable(const String& variableName, Excep
                 s--;
             }
         }
+        
+        setChanged();
     }
     
     // FIXME: Communicate this change so that the document will update.
@@ -82,6 +85,8 @@ void CSSVariablesDeclaration::setVariable(const String& variableName, const Stri
     CSSParser parser(useStrictParsing());
     if (!parser.parseVariable(this, variableName, variableValue)) // If the parse succeeds, it will call addParsedVariable (our internal method for doing the add) with the parsed Value*.
         excCode = SYNTAX_ERR;
+    else
+        setChanged();
 }
 
 void CSSVariablesDeclaration::addParsedVariable(const String& variableName, PassRefPtr<CSSValueList> variableValue, bool updateNamesList)
@@ -130,6 +135,21 @@ String CSSVariablesDeclaration::cssText() const
     }
     result += " }";
     return result;
+}
+
+void CSSVariablesDeclaration::setCssText(const String&)
+{
+    // FIXME: It's not clear if this is actually settable.
+}
+
+void CSSVariablesDeclaration::setChanged()
+{
+    // FIXME: Make this much better (it has the same problem CSSMutableStyleDeclaration does).
+    StyleBase* root = this;
+    while (StyleBase* parent = root->parent())
+        root = parent;
+    if (root->isCSSStyleSheet())
+        static_cast<CSSStyleSheet*>(root)->doc()->updateStyleSelector();
 }
 
 }

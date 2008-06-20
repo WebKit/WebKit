@@ -57,13 +57,16 @@ public:
 
     CSSRule* parentRule();
 
-    String cssText() const; // FIXME: The spec contradicts itself regarding whether or not cssText is settable.
+    String cssText() const;
+    void setCssText(const String&); // FIXME: The spec contradicts itself regarding whether or not cssText is settable.
 
     void addParsedVariable(const String& variableName, PassRefPtr<CSSValueList> variableValue, bool updateNamesList = true);
     CSSValueList* getParsedVariable(const String& variableName);
 
 private:
     CSSVariablesDeclaration(StyleBase* owningRule, const Vector<String>& names, const Vector<RefPtr<CSSValueList> >& values);
+
+    void setChanged();
 
 protected:
     Vector<String> m_variableNames;

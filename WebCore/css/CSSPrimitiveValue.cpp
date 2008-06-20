@@ -788,9 +788,13 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
             value.string.length = m_value.string->length();
             value.unit = m_type;
             break;
-        case CSS_IDENT:
+        case CSS_IDENT: {
             value.id = m_value.ident;
+            String name = valueOrPropertyName(m_value.ident);
+            value.string.characters = const_cast<UChar*>(name.characters());
+            value.string.length = name.length();
             break;
+        }
         case CSS_PARSER_OPERATOR:
             value.iValue = m_value.ident;
             value.unit = CSSParserValue::Operator;

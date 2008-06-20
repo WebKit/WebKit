@@ -3682,6 +3682,16 @@
 		BC64B4DA0CB4298A005F2B62 /* CSSFontFaceSrcValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */; };
 		BC64B4DB0CB4298A005F2B62 /* CSSFontSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */; };
 		BC64B4DC0CB4298A005F2B62 /* CSSFontSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */; };
+		BC686C7C0E0C330100DE8A08 /* JSCSSVariablesDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC686C780E0C330100DE8A08 /* JSCSSVariablesDeclaration.cpp */; };
+		BC686C7D0E0C330100DE8A08 /* JSCSSVariablesDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686C790E0C330100DE8A08 /* JSCSSVariablesDeclaration.h */; };
+		BC686C7E0E0C330100DE8A08 /* JSCSSVariablesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC686C7A0E0C330100DE8A08 /* JSCSSVariablesRule.cpp */; };
+		BC686C7F0E0C330100DE8A08 /* JSCSSVariablesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686C7B0E0C330100DE8A08 /* JSCSSVariablesRule.h */; };
+		BC686CB20E0C343900DE8A08 /* DOMCSSVariablesDeclaration.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686CAC0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.h */; };
+		BC686CB30E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC686CAD0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm */; };
+		BC686CB50E0C343900DE8A08 /* DOMCSSVariablesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686CAF0E0C343900DE8A08 /* DOMCSSVariablesRule.h */; };
+		BC686CB60E0C343900DE8A08 /* DOMCSSVariablesRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC686CB00E0C343900DE8A08 /* DOMCSSVariablesRule.mm */; };
+		BC686CBB0E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686CB90E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h */; };
+		BC686CBC0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC686CBA0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h */; };
 		BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */; };
 		BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6C49F30D7DBA0500FFA558 /* JSImageConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */; };
@@ -8015,6 +8025,16 @@
 		BC64B4D20CB4298A005F2B62 /* CSSFontFaceSrcValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontFaceSrcValue.h; sourceTree = "<group>"; };
 		BC64B4D30CB4298A005F2B62 /* CSSFontSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFontSelector.cpp; sourceTree = "<group>"; };
 		BC64B4D40CB4298A005F2B62 /* CSSFontSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFontSelector.h; sourceTree = "<group>"; };
+		BC686C780E0C330100DE8A08 /* JSCSSVariablesDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSVariablesDeclaration.cpp; sourceTree = "<group>"; };
+		BC686C790E0C330100DE8A08 /* JSCSSVariablesDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSVariablesDeclaration.h; sourceTree = "<group>"; };
+		BC686C7A0E0C330100DE8A08 /* JSCSSVariablesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSVariablesRule.cpp; sourceTree = "<group>"; };
+		BC686C7B0E0C330100DE8A08 /* JSCSSVariablesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCSSVariablesRule.h; sourceTree = "<group>"; };
+		BC686CAC0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSVariablesDeclaration.h; sourceTree = "<group>"; };
+		BC686CAD0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCSSVariablesDeclaration.mm; sourceTree = "<group>"; };
+		BC686CAF0E0C343900DE8A08 /* DOMCSSVariablesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSVariablesRule.h; sourceTree = "<group>"; };
+		BC686CB00E0C343900DE8A08 /* DOMCSSVariablesRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCSSVariablesRule.mm; sourceTree = "<group>"; };
+		BC686CB90E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSVariablesDeclarationInternal.h; sourceTree = "<group>"; };
+		BC686CBA0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSVariablesRuleInternal.h; sourceTree = "<group>"; };
 		BC6932710D7E293900AE44D1 /* JSDOMWindowBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowBase.cpp; sourceTree = "<group>"; };
 		BC6932720D7E293900AE44D1 /* JSDOMWindowBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowBase.h; sourceTree = "<group>"; };
 		BC6C49F10D7DBA0500FFA558 /* JSImageConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSImageConstructor.cpp; sourceTree = "<group>"; };
@@ -9266,6 +9286,10 @@
 		85967DCA0AA8BF0F005FEDEE /* CSS */ = {
 			isa = PBXGroup;
 			children = (
+				BC686CAC0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.h */,
+				BC686CAD0E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm */,
+				BC686CAF0E0C343900DE8A08 /* DOMCSSVariablesRule.h */,
+				BC686CB00E0C343900DE8A08 /* DOMCSSVariablesRule.mm */,
 				85032DC30AA8C9BE007D3B7D /* DOMCSSCharsetRule.h */,
 				85032DC40AA8C9BE007D3B7D /* DOMCSSCharsetRule.mm */,
 				85032DC50AA8C9BE007D3B7D /* DOMCSSFontFaceRule.h */,
@@ -10074,6 +10098,8 @@
 				85909CDB0ACC7A7E00DF01F1 /* DOMCSSUnknownRuleInternal.h */,
 				85B498F20ADB336A00925CBB /* DOMCSSValueInternal.h */,
 				85909D280ACC7D5500DF01F1 /* DOMCSSValueListInternal.h */,
+				BC686CB90E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h */,
+				BC686CBA0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h */,
 				85E711450AC5D5340053270F /* DOMDocumentFragmentInternal.h */,
 				85E711460AC5D5340053270F /* DOMDocumentInternal.h */,
 				85E711470AC5D5340053270F /* DOMDocumentTypeInternal.h */,
@@ -11144,6 +11170,10 @@
 		A83B790E0CCAFF97000B0825 /* CSS */ = {
 			isa = PBXGroup;
 			children = (
+				BC686C780E0C330100DE8A08 /* JSCSSVariablesDeclaration.cpp */,
+				BC686C790E0C330100DE8A08 /* JSCSSVariablesDeclaration.h */,
+				BC686C7A0E0C330100DE8A08 /* JSCSSVariablesRule.cpp */,
+				BC686C7B0E0C330100DE8A08 /* JSCSSVariablesRule.h */,
 				930705D709E0C9B700B17FE4 /* JSCounter.cpp */,
 				930705D909E0C9BF00B17FE4 /* JSCounter.h */,
 				BC46C1F00C0DDC8F0020CFC3 /* JSCSSCharsetRule.cpp */,
@@ -15170,6 +15200,12 @@
 				BC02A4B70E0997B9004B6D2B /* CSSParserValues.h in Headers */,
 				BC02A63C0E09A9CF004B6D2B /* CSSFunctionValue.h in Headers */,
 				AB40484E0E083FA8007D6920 /* MediaDocument.h in Headers */,
+				BC686C7D0E0C330100DE8A08 /* JSCSSVariablesDeclaration.h in Headers */,
+				BC686C7F0E0C330100DE8A08 /* JSCSSVariablesRule.h in Headers */,
+				BC686CB20E0C343900DE8A08 /* DOMCSSVariablesDeclaration.h in Headers */,
+				BC686CB50E0C343900DE8A08 /* DOMCSSVariablesRule.h in Headers */,
+				BC686CBB0E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h in Headers */,
+				BC686CBC0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16931,6 +16967,10 @@
 				BC02A6460E09AAE9004B6D2B /* CSSFunctionValue.cpp in Sources */,
 				AB40484D0E083FA8007D6920 /* MediaDocument.cpp in Sources */,
 				A7D27FC40E0A599F0079AD2B /* SVGFETile.cpp in Sources */,
+				BC686C7C0E0C330100DE8A08 /* JSCSSVariablesDeclaration.cpp in Sources */,
+				BC686C7E0E0C330100DE8A08 /* JSCSSVariablesRule.cpp in Sources */,
+				BC686CB30E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm in Sources */,
+				BC686CB60E0C343900DE8A08 /* DOMCSSVariablesRule.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

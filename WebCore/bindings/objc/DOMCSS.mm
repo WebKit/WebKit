@@ -141,6 +141,9 @@
         case DOM_PAGE_RULE:
             wrapperClass = [DOMCSSPageRule class];
             break;
+        case DOM_VARIABLES_RULE:
+            wrapperClass = [DOMCSSVariablesRule class];
+            break;
     }
     return [[[wrapperClass alloc] _initWithCSSRule:impl] autorelease];
 }

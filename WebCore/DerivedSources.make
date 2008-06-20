@@ -59,6 +59,8 @@ DOM_CLASSES = \
     CSSUnknownRule \
     CSSValue \
     CSSValueList \
+    CSSVariablesRule \
+    CSSVariablesDeclaration \
     CanvasGradient \
     CanvasPattern \
     CanvasPixelArray \

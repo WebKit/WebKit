@@ -54,6 +54,8 @@
 #import "DOMCSSUnknownRuleInternal.h"
 #import "DOMCSSValueInternal.h"
 #import "DOMCSSValueListInternal.h"
+#import "DOMCSSVariablesRuleInternal.h"
+#import "DOMCSSVariablesDeclarationInternal.h"
 #import "DOMCharacterDataInternal.h"
 #import "DOMCommentInternal.h"
 #import "DOMCounterInternal.h"

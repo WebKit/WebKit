@@ -1,3 +1,22 @@
+2008-06-20  David Hyatt  <hyatt@apple.com>
+
+        Add tests of the DOM APIs for addition, removal and iteration.
+
+        Reviewed by Sam
+
+        * fast/css/variables/remove-variable-test.html: Added.
+        * fast/css/variables/set-variable-test.html: Added.
+        * fast/css/variables/variable-iteration-test.html: Added.
+        * platform/mac/fast/css/variables/remove-variable-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/remove-variable-test-expected.png: Added.
+        * platform/mac/fast/css/variables/remove-variable-test-expected.txt: Added.
+        * platform/mac/fast/css/variables/set-variable-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/set-variable-test-expected.png: Added.
+        * platform/mac/fast/css/variables/set-variable-test-expected.txt: Added.
+        * platform/mac/fast/css/variables/variable-iteration-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/variable-iteration-test-expected.png: Added.
+        * platform/mac/fast/css/variables/variable-iteration-test-expected.txt: Added.
+
 2008-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Test for: iframes with a height of 32,768px or greater do not layout correctly
