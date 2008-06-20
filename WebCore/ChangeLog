@@ -1,5 +1,24 @@
 2008-06-20  Timothy Hatcher  <timothy@apple.com>
 
+        Makes the JavaScript syntax highlighter process lines in chunks
+        so the user interface isn't blocked for large script files.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19677
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addMessageToSource): Use the cells
+        property on the row instead of getElementsByTagName.
+        (WebInspector.SourceFrame.prototype.syntaxHighlightJavascript): Use the
+        cells property on the row instead of getElementsByTagName. Added
+        a nested processChunk function that highlights 10 lines at a time
+        This processChunk function is called at an interval of 25ms. The
+        code is still highlighted quickly, and the user can't tell it wasn't
+        highlighted all at once.
+
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where the source view in the Resources panel had a
         couple of extra pixels at the bottom when fully scrolled.
 

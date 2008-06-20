@@ -321,7 +321,7 @@ WebInspector.SourceFrame.prototype = {
         if (!row)
             return;
 
-        var cell = row.getElementsByTagName("td")[1];
+        var cell = row.cells[1];
         if (!cell)
             return;
 
@@ -594,9 +594,11 @@ WebInspector.SourceFrame.prototype = {
         if (!table)
             return;
 
+        var i = 0;
         var rows = table.rows;
         var rowsLength = rows.length;
         var previousCell = null;
+        var processChunkInterval;
 
         function deleteContinueFlags(cell)
         {
@@ -608,16 +610,31 @@ WebInspector.SourceFrame.prototype = {
             delete cell._regexpContinues;
         }
 
-        for (var i = 0; i < rowsLength; ++i) {
-            var row = rows[i];
-            var cell = row.getElementsByTagName("td")[1];
-            if (!cell)
-                continue;
-            this._syntaxHighlightJavascriptLine(cell, previousCell);
-            deleteContinueFlags(previousCell);
-            previousCell = cell;
+        // Split up the work into chunks so we don't block the
+        // UI thread while processing.
+
+        function processChunk()
+        {
+            for (var end = Math.min(i + 10, rowsLength); i < end; ++i) {
+                var row = rows[i];
+                if (!row)
+                    continue;
+                var cell = row.cells[1];
+                if (!cell)
+                    continue;
+                this._syntaxHighlightJavascriptLine(cell, previousCell);
+                if (i < (end - 1))
+                    deleteContinueFlags(previousCell);
+                previousCell = cell;
+            }
+
+            if (i >= rowsLength && processChunkInterval) {
+                deleteContinueFlags(previousCell);
+                clearInterval(processChunkInterval);
+            }
         }
 
-        deleteContinueFlags(previousCell);
+        processChunk.call(this);
+        processChunkInterval = setInterval(processChunk.bind(this), 25);
     }
 }
