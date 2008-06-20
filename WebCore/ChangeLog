@@ -1,3 +1,9 @@
+2008-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix: Add files missing in the previous fix (r34705)
+
+        * GNUmakefile.am:
+
 2008-06-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

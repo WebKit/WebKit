@@ -249,6 +249,8 @@ webcore_built_sources += \
 	DerivedSources/JSEntityReference.cpp \
 	DerivedSources/JSEvent.cpp \
 	DerivedSources/JSEventException.cpp \
+	DerivedSources/JSFile.cpp \
+	DerivedSources/JSFileList.cpp \
 	DerivedSources/JSHTMLAnchorElement.cpp \
 	DerivedSources/JSHTMLAppletElement.cpp \
 	DerivedSources/JSHTMLAreaElement.cpp \
