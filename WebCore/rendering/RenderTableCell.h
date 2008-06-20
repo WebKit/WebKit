@@ -104,7 +104,7 @@ public:
     virtual void computeAbsoluteRepaintRect(IntRect&, bool fixed = false);
     virtual bool absolutePosition(int& x, int& y, bool fixed = false) const;
 
-    virtual short baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
+    virtual int baselinePosition(bool firstLine = false, bool isRootLineBox = false) const;
 
     void setCellTopExtra(int p) { m_topExtra = p; }
     void setCellBottomExtra(int p) { m_bottomExtra = p; }

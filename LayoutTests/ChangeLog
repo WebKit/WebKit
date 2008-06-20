@@ -1,3 +1,13 @@
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Test for: iframes with a height of 32,768px or greater do not layout correctly
+        https://bugs.webkit.org/show_bug.cgi?id=19679
+
+        Reviewed by Dave Hyatt.
+
+        * fast/css/line-height-overflow.html: Added.
+        * platform/mac/fast/css/line-height-overflow-expected.txt: Added.
+
 2008-06-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

@@ -939,7 +939,7 @@ int RenderText::height() const
     return retval;
 }
 
-short RenderText::lineHeight(bool firstLine, bool) const
+int RenderText::lineHeight(bool firstLine, bool) const
 {
     // Always use the interior line height of the parent (e.g., if our parent is an inline block).
     return parent()->lineHeight(firstLine, true);
@@ -1089,7 +1089,7 @@ IntRect RenderText::selectionRect(bool clipToVisibleContent)
     return rect;
 }
 
-short RenderText::verticalPositionHint(bool firstLine) const
+int RenderText::verticalPositionHint(bool firstLine) const
 {
     if (parent()->isReplaced())
         return 0; // Treat inline blocks just like blocks.  There can't be any vertical position hint.

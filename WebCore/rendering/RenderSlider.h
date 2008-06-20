@@ -39,7 +39,7 @@ namespace WebCore {
         virtual const char* renderName() const { return "RenderSlider"; }
         virtual bool isSlider() const { return true; }
 
-        virtual short baselinePosition( bool, bool ) const;
+        virtual int baselinePosition( bool, bool ) const;
         virtual void calcPrefWidths();
         virtual void setStyle(RenderStyle*);
         virtual void layout();

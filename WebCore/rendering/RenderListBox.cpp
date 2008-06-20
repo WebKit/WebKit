@@ -247,7 +247,7 @@ void RenderListBox::calcHeight()
     }
 }
 
-short RenderListBox::baselinePosition(bool b, bool isRootLineBox) const
+int RenderListBox::baselinePosition(bool b, bool isRootLineBox) const
 {
     return height() + marginTop() + marginBottom() - baselineAdjustment;
 }

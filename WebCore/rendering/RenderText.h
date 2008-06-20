@@ -77,7 +77,7 @@ public:
     virtual int width() const;
     virtual int height() const;
 
-    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
+    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
     virtual int minPrefWidth() const;
     virtual int maxPrefWidth() const;
@@ -96,7 +96,7 @@ public:
     virtual int xPos() const;
     virtual int yPos() const;
 
-    virtual short verticalPositionHint(bool firstLine) const;
+    virtual int verticalPositionHint(bool firstLine) const;
 
     void setText(PassRefPtr<StringImpl>, bool force = false);
     void setTextWithOffset(PassRefPtr<StringImpl>, unsigned offset, unsigned len, bool force = false);

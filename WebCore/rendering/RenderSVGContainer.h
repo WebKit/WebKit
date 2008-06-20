@@ -70,8 +70,8 @@ public:
     virtual const char* renderName() const { return "RenderSVGContainer"; }
 
     virtual bool requiresLayer();
-    virtual short lineHeight(bool b, bool isRootLineBox = false) const;
-    virtual short baselinePosition(bool b, bool isRootLineBox = false) const;
+    virtual int lineHeight(bool b, bool isRootLineBox = false) const;
+    virtual int baselinePosition(bool b, bool isRootLineBox = false) const;
 
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);

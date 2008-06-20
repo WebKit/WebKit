@@ -44,12 +44,12 @@ bool RenderSVGHiddenContainer::requiresLayer()
     return false;
 }
 
-short RenderSVGHiddenContainer::lineHeight(bool b, bool isRootLineBox) const
+int RenderSVGHiddenContainer::lineHeight(bool b, bool isRootLineBox) const
 {
     return 0;
 }
 
-short RenderSVGHiddenContainer::baselinePosition(bool b, bool isRootLineBox) const
+int RenderSVGHiddenContainer::baselinePosition(bool b, bool isRootLineBox) const
 {
     return 0;
 }

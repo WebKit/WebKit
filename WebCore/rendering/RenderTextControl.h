@@ -50,7 +50,7 @@ public:
     virtual void setStyle(RenderStyle*);
     virtual void updateFromElement();
     virtual bool canHaveChildren() const { return false; }
-    virtual short baselinePosition(bool firstLine, bool isRootLineBox) const;
+    virtual int baselinePosition(bool firstLine, bool isRootLineBox) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
     virtual void layout();
     virtual bool avoidsFloats() const { return true; }

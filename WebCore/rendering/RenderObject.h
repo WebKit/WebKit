@@ -105,9 +105,9 @@ enum HitTestAction {
 };
 
 enum VerticalPositionHint {
-    PositionTop = -0x2000,
-    PositionBottom = 0x2000,
-    PositionUndefined = 0x1fff
+    PositionTop = -0x7fffffff,
+    PositionBottom = 0x7fffffff,
+    PositionUndefined = static_cast<int>(0x80000000)
 };
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -440,12 +440,12 @@ public:
     virtual void deleteLineBoxWrapper();
 
     // for discussion of lineHeight see CSS2 spec
-    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
+    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
     // for the vertical-align property of inline elements
     // the difference between this objects baseline position and the lines baseline position.
-    virtual short verticalPositionHint(bool firstLine) const;
+    virtual int verticalPositionHint(bool firstLine) const;
     // the offset of baseline from the top of the object.
-    virtual short baselinePosition(bool firstLine, bool isRootLineBox = false) const;
+    virtual int baselinePosition(bool firstLine, bool isRootLineBox = false) const;
 
     /*
      * Paint the object and its children, clipped by (x|y|w|h).
@@ -907,7 +907,7 @@ protected:
 
     virtual IntRect viewRect() const;
 
-    short getVerticalPosition(bool firstLine) const;
+    int getVerticalPosition(bool firstLine) const;
 
     void adjustRectForOutlineAndShadow(IntRect&) const;
 
@@ -925,7 +925,7 @@ private:
 #ifndef NDEBUG
     bool m_hasAXObject;
 #endif
-    mutable short m_verticalPosition : 15;
+    mutable int m_verticalPosition;
 
     bool m_needsLayout               : 1;
     bool m_needsPositionedMovementLayout :1;

@@ -49,14 +49,14 @@ InlineBox* RenderBR::createInlineBox(bool makePlaceholder, bool isRootLineBox, b
     return box;
 }
 
-short RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderBR::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
     if (firstTextBox() && !firstTextBox()->isText())
         return 0;
     return RenderText::baselinePosition(firstLine, isRootLineBox);
 }
 
-short RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
+int RenderBR::lineHeight(bool firstLine, bool isRootLineBox) const
 {
     if (firstTextBox() && !firstTextBox()->isText())
         return 0;

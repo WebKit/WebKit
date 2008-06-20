@@ -2652,11 +2652,11 @@ bool RenderObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int /*x*/,
     return false;
 }
 
-short RenderObject::verticalPositionHint(bool firstLine) const
+int RenderObject::verticalPositionHint(bool firstLine) const
 {
     if (firstLine) // We're only really a first-line style if the document actually uses first-line rules.
         firstLine = document()->usesFirstLineRules();
-    short vpos = m_verticalPosition;
+    int vpos = m_verticalPosition;
     if (m_verticalPosition == PositionUndefined || firstLine) {
         vpos = getVerticalPosition(firstLine);
         if (!firstLine)
@@ -2666,7 +2666,7 @@ short RenderObject::verticalPositionHint(bool firstLine) const
     return vpos;
 }
 
-short RenderObject::getVerticalPosition(bool firstLine) const
+int RenderObject::getVerticalPosition(bool firstLine) const
 {
     if (!isInline())
         return 0;
@@ -2709,7 +2709,7 @@ short RenderObject::getVerticalPosition(bool firstLine) const
     return vpos;
 }
 
-short RenderObject::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
+int RenderObject::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
 {
     RenderStyle* s = style(firstLine);
 
@@ -2726,7 +2726,7 @@ short RenderObject::lineHeight(bool firstLine, bool /*isRootLineBox*/) const
     return lh.value();
 }
 
-short RenderObject::baselinePosition(bool firstLine, bool isRootLineBox) const
+int RenderObject::baselinePosition(bool firstLine, bool isRootLineBox) const
 {
     const Font& f = style(firstLine)->font();
     return f.ascent() + (lineHeight(firstLine, isRootLineBox) - f.height()) / 2;

@@ -801,14 +801,14 @@ void RenderListMarker::updateMargins()
     style()->setMarginRight(Length(marginRight, Fixed));
 }
 
-short RenderListMarker::lineHeight(bool, bool) const
+int RenderListMarker::lineHeight(bool, bool) const
 {
     if (!isImage())
         return m_listItem->lineHeight(false, true);
     return height();
 }
 
-short RenderListMarker::baselinePosition(bool, bool) const
+int RenderListMarker::baselinePosition(bool, bool) const
 {
     if (!isImage()) {
         const Font& font = style()->font();

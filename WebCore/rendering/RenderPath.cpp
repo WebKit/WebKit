@@ -170,14 +170,14 @@ bool RenderPath::requiresLayer()
     return false;
 }
 
-short RenderPath::lineHeight(bool b, bool isRootLineBox) const
+int RenderPath::lineHeight(bool b, bool isRootLineBox) const
 {
-    return static_cast<short>(relativeBBox(true).height());
+    return relativeBBox(true).height();
 }
 
-short RenderPath::baselinePosition(bool b, bool isRootLineBox) const
+int RenderPath::baselinePosition(bool b, bool isRootLineBox) const
 {
-    return static_cast<short>(relativeBBox(true).height());
+    return relativeBBox(true).height();
 }
 
 static inline void fillAndStrokePath(const Path& path, GraphicsContext* context, RenderStyle* style, RenderPath* object)

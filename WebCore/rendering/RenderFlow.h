@@ -76,7 +76,7 @@ public:
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
 
-    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const;
+    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const;
 
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }
@@ -119,7 +119,7 @@ protected:
     InlineFlowBox* m_firstLineBox;
     InlineFlowBox* m_lastLineBox;
 
-    mutable short m_lineHeight;
+    mutable int m_lineHeight;
     
     // These bitfields are moved here from subclasses to pack them together
     // from RenderBlock

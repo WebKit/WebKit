@@ -309,7 +309,7 @@ Color RenderTheme::inactiveListBoxSelectionForegroundColor() const
     return Color(0, 0, 0);
 }
 
-short RenderTheme::baselinePosition(const RenderObject* o) const
+int RenderTheme::baselinePosition(const RenderObject* o) const
 {
     return o->height() + o->marginTop();
 }

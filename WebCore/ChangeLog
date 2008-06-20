@@ -1,3 +1,66 @@
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Changed all lineHeight, baselinePosition and verticalPositionHint
+        calls to return int instead of short. The short was overflowing
+        when a value greater than 32,767 was encountered.
+
+        Fixes: iframes with a height of 32,768px or greater do not layout correctly
+        https://bugs.webkit.org/show_bug.cgi?id=19679
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/css/line-height-overflow.html
+
+        * rendering/RenderBR.cpp:
+        (WebCore::RenderBR::baselinePosition):
+        * rendering/RenderBR.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lineHeight):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlow.cpp:
+        * rendering/RenderFlow.h:
+        * rendering/RenderListBox.cpp:
+        * rendering/RenderListBox.h:
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::lineHeight):
+        * rendering/RenderListMarker.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::verticalPositionHint):
+        * rendering/RenderObject.h:
+        (WebCore::):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::lineHeight):
+        * rendering/RenderPath.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::lineHeight):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::lineHeight):
+        * rendering/RenderSVGContainer.h:
+        * rendering/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::lineHeight):
+        * rendering/RenderSVGHiddenContainer.h:
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::lineHeight):
+        * rendering/RenderSVGRoot.h:
+        * rendering/RenderSlider.cpp:
+        * rendering/RenderSlider.h:
+        * rendering/RenderTableCell.cpp:
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.cpp:
+        * rendering/RenderText.h:
+        * rendering/RenderTextControl.cpp:
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTheme.cpp:
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        * rendering/RenderThemeSafari.cpp:
+        * rendering/RenderThemeSafari.h:
+
 2008-06-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

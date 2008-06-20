@@ -39,7 +39,7 @@ public:
 
     virtual const char* renderName() const { return "RenderTableCol"; }
     virtual bool isTableCol() const { return true; }
-    virtual short lineHeight(bool) const { return 0; }
+    virtual int lineHeight(bool) const { return 0; }
     virtual void updateFromElement();
 
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;

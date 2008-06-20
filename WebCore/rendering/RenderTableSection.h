@@ -49,7 +49,7 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
-    virtual short lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }
+    virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }
     virtual void position(InlineBox*) { }
 
     void addCell(RenderTableCell*, RenderObject* row);
