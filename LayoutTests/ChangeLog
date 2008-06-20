@@ -1,3 +1,41 @@
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - updated tests and results after fixing a bug where anonymous tables were inserted in the wrong place
+
+        * fast/forms/form-hides-table.html: Wrapped every case in a block in
+        order to prevent cross-talk.
+        * platform/mac/fast/forms/form-hides-table-expected.checksum:
+        * platform/mac/fast/forms/form-hides-table-expected.png:
+        * platform/mac/fast/forms/form-hides-table-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.checksum: Added.
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.png: Added.
+        * platform/mac/tables/mozilla/bugs/bug2479-2-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug2479-4-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug278266-expected.checksum: Added.
+        * platform/mac/tables/mozilla/bugs/bug278266-expected.png: Added.
+        * platform/mac/tables/mozilla/bugs/bug278266-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug8411-expected.checksum: Added.
+        * platform/mac/tables/mozilla/bugs/bug8411-expected.png: Added.
+        * platform/mac/tables/mozilla/bugs/bug8411-expected.txt: Added.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.checksum: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.png: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-2-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug278266-expected.checksum: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug278266-expected.png: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug278266-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug8411-expected.checksum: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug8411-expected.png: Removed.
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug8411-expected.txt: Removed.
+        * platform/mac/tables/mozilla_expected_failures/other/test4-expected.txt:
+        * tables/mozilla/bugs/bug2479-2.html: Copied from LayoutTests/tables/mozilla_expected_failures/bugs/bug2479-2.html.
+        * tables/mozilla/bugs/bug278266.html: Copied from LayoutTests/tables/mozilla_expected_failures/bugs/bug278266.html.
+        * tables/mozilla/bugs/bug8411.xml: Copied from LayoutTests/tables/mozilla_expected_failures/bugs/bug8411.xml.
+        * tables/mozilla_expected_failures/bugs/bug2479-2.html: Removed.
+        * tables/mozilla_expected_failures/bugs/bug278266.html: Removed.
+        * tables/mozilla_expected_failures/bugs/bug8411.xml: Removed.
+
 2008-06-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.

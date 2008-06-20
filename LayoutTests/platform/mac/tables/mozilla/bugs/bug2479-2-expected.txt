@@ -3,7 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x574
   RenderBlock {HTML} at (0,0) size 800x574 [bgcolor=#00FF99]
     RenderBody {BODY} at (57,64) size 686x446 [bgcolor=#99FFCC] [border: (3px solid #000000)]
-      RenderTable at (3,3) size 308x19
+      RenderBlock {P} at (3,3) size 680x64
+        RenderText {#text} at (0,6) size 636x51
+          text run at (0,6) width 597: "These links are in an element with display table-row, and the li elements "
+          text run at (597,6) width 39: "have"
+          text run at (0,38) width 153: "display: table-cell. "
+          text run at (153,38) width 131: "They disappear:"
+      RenderTable at (3,67) size 308x19
         RenderTableSection (anonymous) at (0,0) size 308x19
           RenderTableRow {UL} at (0,0) size 308x19 [bgcolor=#00CC99]
             RenderTableCell {LI} at (0,0) size 77x19 [r=0 c=0 rs=1 cs=1]
@@ -22,12 +28,6 @@ layer at (0,0) size 800x574
               RenderInline {A} at (0,0) size 35x19 [color=#0000EE]
                 RenderText {#text} at (21,0) size 35x19
                   text run at (21,0) width 35: "links"
-      RenderBlock {P} at (3,22) size 680x64
-        RenderText {#text} at (0,6) size 636x51
-          text run at (0,6) width 597: "These links are in an element with display table-row, and the li elements "
-          text run at (597,6) width 39: "have"
-          text run at (0,38) width 153: "display: table-cell. "
-          text run at (153,38) width 131: "They disappear:"
       RenderBlock {DIV} at (3,86) size 680x357
         RenderBlock (anonymous) at (16,16) size 648x19
           RenderText {#text} at (0,0) size 514x19

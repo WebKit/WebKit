@@ -1,3 +1,19 @@
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix a bug where anonymous tables were inserted in the wrong place
+
+        Tests: tables/mozilla/bugs/bug2479-2.html
+               tables/mozilla/bugs/bug278266.html
+               tables/mozilla/bugs/bug8411.xml
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::addChild): Changed to create an anonymous
+        table and insert it before beforeChild unless the insertion point is
+        right after an existing anonymous table, in which case the existing
+        table is used.
+
 2008-06-19  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by Oliver.
