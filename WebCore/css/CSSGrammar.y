@@ -220,7 +220,6 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <value> term
 %type <value> unary_term
 %type <value> function
-%type <value> term_or_varcall
 
 %type <string> element_name
 %type <string> attr_name
@@ -429,7 +428,7 @@ variables_decl_list:
     ;
 
 variables_declaration:
-    variable_name ':' maybe_space term {
+    variable_name ':' maybe_space expr {
         $$ = static_cast<CSSParser*>(parser)->addVariable($1, $4);
     }
     |
@@ -437,7 +436,7 @@ variables_declaration:
         $$ = false;
     }
     |
-    variable_name ':' maybe_space error term {
+    variable_name ':' maybe_space error expr {
         $$ = false;
     }
     |
@@ -1136,12 +1135,12 @@ prio:
   ;
 
 expr:
-    term_or_varcall {
+    term {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = p->createFloatingValueList();
         $$->addValue(p->sinkFloatingValue($1));
     }
-    | expr operator term_or_varcall {
+    | expr operator term {
         CSSParser* p = static_cast<CSSParser*>(parser);
         $$ = $1;
         if ($$) {
@@ -1159,17 +1158,6 @@ expr:
         $$ = 0;
     }
   ;
-
-term_or_varcall:
-    term {
-        $$ = $1;
-    }
-    | VARCALL maybe_space {
-        $$.id = 0;
-        $$.string = $1;
-        $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE;
-    }
-    ;
 
 operator:
     '/' maybe_space {
@@ -1202,6 +1190,11 @@ term:
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function {
       $$ = $1;
+  }
+  | VARCALL maybe_space {
+      $$.id = 0;
+      $$.string = $1;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE;
   }
   | '%' maybe_space {} /* Handle width: %; */
   ;

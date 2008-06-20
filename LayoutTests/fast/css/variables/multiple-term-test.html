@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    completeBorder: 10px solid green;
+}
+
+div {
+    border: 20px solid red;
+    border: -webkit-var(completeBorder);
+}
+</style>
+</head>
+<body>
+<div>This div should have a 10px solid green border.  If this div has a red border, then the test has failed.</div>

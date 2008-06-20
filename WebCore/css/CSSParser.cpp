@@ -4264,10 +4264,14 @@ CSSRule* CSSParser::createVariablesRule(MediaList* mediaList)
     return rule;
 }
 
-bool CSSParser::addVariable(const CSSParserString& name, CSSParserValue& value)
+bool CSSParser::addVariable(const CSSParserString& name, CSSParserValueList* valueList)
 {
+    if (checkForVariables(valueList)) {
+        delete valueList;
+        return false;
+    }
     m_variableNames.append(String(name));
-    m_variableValues.append(value.createCSSValue());
+    m_variableValues.append(CSSValueList::createFromParserValueList(valueList));
     return true;
 }
 

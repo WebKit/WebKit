@@ -1,3 +1,25 @@
+2008-06-20  David Hyatt  <hyatt@apple.com>
+
+        Allow CSS variables to support arbitrary expressions as values instead of just a single term.
+
+        Reviewed by Sam
+
+        Removed fast/css/variables/single-term-test.html and replaced with multiple-term-test.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addVariable):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::CSSVariablesDeclaration):
+        (WebCore::CSSVariablesDeclaration::getVariableValue):
+        (WebCore::CSSVariablesDeclaration::addParsedVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedVariable):
+        * css/CSSVariablesDeclaration.h:
+        (WebCore::CSSVariablesDeclaration::create):
+
 2008-06-19  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

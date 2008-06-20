@@ -1,3 +1,18 @@
+2008-06-20  David Hyatt  <hyatt@apple.com>
+
+        Allow CSS variables to support arbitrary expressions as values instead of just a single term.
+
+        Reviewed by Sam
+
+        * fast/css/variables/single-term-test.html: Removed.
+        * fast/css/variables/multiple-term-test.html: Added.
+        * platform/mac/fast/css/variables/multiple-term-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/multiple-term-test-expected.png: Added.
+        * platform/mac/fast/css/variables/multiple-term-test-expected.txt: Added.
+        * platform/mac/fast/css/variables/single-term-test-expected.checksum: Removed.
+        * platform/mac/fast/css/variables/single-term-test-expected.png: Removed.
+        * platform/mac/fast/css/variables/single-term-test-expected.txt: Removed.
+
 2008-06-20  Darin Adler  <darin@apple.com>
 
         - updated results for some recent changes
