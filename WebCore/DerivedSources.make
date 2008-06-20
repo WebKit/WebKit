@@ -88,6 +88,8 @@ DOM_CLASSES = \
     EventException \
     EventListener \
     EventTarget \
+    File \
+    FileList \
     HTMLAnchorElement \
     HTMLAppletElement \
     HTMLAreaElement \

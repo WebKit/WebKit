@@ -33,6 +33,8 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "File.h"
+#include "FileList.h"
 #include "FocusController.h"
 #include "FormDataList.h"
 #include "Frame.h"
@@ -46,10 +48,10 @@
 #include "RenderButton.h"
 #include "RenderFileUploadControl.h"
 #include "RenderImage.h"
+#include "RenderSlider.h"
 #include "RenderText.h"
 #include "RenderTextControl.h"
 #include "RenderTheme.h"
-#include "RenderSlider.h"
 #include "SelectionController.h"
 #include "TextBreakIterator.h"
 #include "TextEvent.h"
@@ -298,6 +300,9 @@ void HTMLInputElement::setInputType(const String& t)
             setAttribute(typeAttr, type());
         else {
             checkedRadioButtons(this).removeButton(this);
+
+            if (newType == FILE && !m_fileList)
+                m_fileList = FileList::create();
 
             bool wasAttached = m_attached;
             if (wasAttached)
@@ -842,12 +847,12 @@ bool HTMLInputElement::appendFormData(FormDataList& encoding, bool multipart)
 
             // If no filename at all is entered, return successful but empty.
             // Null would be more logical, but Netscape posts an empty file. Argh.
-            if (value().isEmpty()) {
+            if (m_fileList->isEmpty()) {
                 encoding.appendData(name(), String(""));
                 return true;
             }
 
-            encoding.appendFile(name(), value());
+            encoding.appendFile(name(), m_fileList->item(0)->path());
             return true;
     }
     return false;
@@ -914,17 +919,20 @@ void HTMLInputElement::copyNonAttributeProperties(const Element *source)
 
 String HTMLInputElement::value() const
 {
-    String value = m_value;
+    if (inputType() == FILE) {
+        if (!m_fileList->isEmpty())
+            return m_fileList->item(0)->fileName();
+        return String();
+    }
 
-    // It's important *not* to fall back to the value attribute for file inputs,
-    // because that would allow a malicious web page to upload files by setting the
-    // value attribute in markup.
-    if (value.isNull() && inputType() != FILE)
+    String value = m_value;
+    if (value.isNull()) {
         value = constrainValue(getAttribute(valueAttr));
 
-    // If no attribute exists, then just use "on" or "" based off the checked() state of the control.
-    if (value.isNull() && (inputType() == CHECKBOX || inputType() == RADIO))
-        return checked() ? "on" : "";
+        // If no attribute exists, then just use "on" or "" based off the checked() state of the control.
+        if (value.isNull() && (inputType() == CHECKBOX || inputType() == RADIO))
+            return checked() ? "on" : "";
+    }
 
     return value;
 }
@@ -965,9 +973,13 @@ void HTMLInputElement::setValue(const String& value)
 
     setValueMatchesRenderer(false);
     if (storesValueSeparateFromAttribute()) {
-        m_value = constrainValue(value);
-        if (isTextField() && inDocument())
-            document()->updateRendering();
+        if (inputType() == FILE)
+            m_fileList->clear();
+        else {
+            m_value = constrainValue(value);
+            if (isTextField() && inDocument())
+                document()->updateRendering();
+        }
         if (renderer())
             renderer()->updateFromElement();
         setChanged();
@@ -990,13 +1002,18 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Renderer and our event handler are responsible for constraining values.
     ASSERT(value == constrainValue(value) || constrainValue(value).isEmpty());
 
-    // Workaround for bug where trailing \n is included in the result of textContent.
-    // The assert macro above may also be simplified to:  value == constrainValue(value)
-    // http://bugs.webkit.org/show_bug.cgi?id=9661
-    if (value == "\n")
-        m_value = "";
-    else
-        m_value = value;
+    if (inputType() == FILE) {
+        m_fileList->clear();
+        m_fileList->append(File::create(value));
+    } else {
+        // Workaround for bug where trailing \n is included in the result of textContent.
+        // The assert macro above may also be simplified to:  value == constrainValue(value)
+        // http://bugs.webkit.org/show_bug.cgi?id=9661
+        if (value == "\n")
+            m_value = "";
+        else
+            m_value = value;
+    }
 
     setValueMatchesRenderer();
 
@@ -1470,6 +1487,13 @@ String HTMLInputElement::useMap() const
 void HTMLInputElement::setUseMap(const String &value)
 {
     setAttribute(usemapAttr, value);
+}
+
+FileList* HTMLInputElement::files()
+{
+    if (inputType() != FILE)
+        return 0;
+    return m_fileList.get();
 }
 
 String HTMLInputElement::constrainValue(const String& proposedValue) const

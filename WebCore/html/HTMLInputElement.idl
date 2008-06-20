@@ -70,6 +70,8 @@ module html {
         readonly attribute DOMString       altDisplayString;
         readonly attribute URL             absoluteImageURL;
 #endif
+
+        readonly attribute FileList files;
     };
 
 }

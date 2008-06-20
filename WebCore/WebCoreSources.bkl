@@ -224,6 +224,8 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSEntityReference.cpp
         DerivedSources/WebCore/JSEvent.cpp
         DerivedSources/WebCore/JSEventException.cpp
+        DerivedSources/WebCore/JSFile.cpp
+        DerivedSources/WebCore/JSFileList.cpp
         DerivedSources/WebCore/JSHTMLAnchorElement.cpp
         DerivedSources/WebCore/JSHTMLAppletElement.cpp
         DerivedSources/WebCore/JSHTMLAreaElement.cpp
@@ -471,6 +473,8 @@ This file contains the list of files needed to build WebCore.
         html/CanvasPixelArray.cpp
         html/CanvasRenderingContext2D.cpp
         html/CanvasStyle.cpp
+        html/File.cpp
+        html/FileList.cpp
         html/FormDataList.cpp
         html/HTMLAnchorElement.cpp
         html/HTMLAppletElement.cpp

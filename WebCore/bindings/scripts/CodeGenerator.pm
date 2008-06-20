@@ -34,10 +34,11 @@ my $codeGenerator = 0;
 
 my $verbose = 0;
 
-my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, 
+my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1, 
                          "unsigned int" => 1, "unsigned short" => 1,
-                         "unsigned long" => 1, "float" => 1,
-                         "double" => 1, "boolean" => 1, "void" => 1);
+                         "unsigned long" => 1, "unsigned long long" => 1, 
+                         "float" => 1, "double" => 1, 
+                         "boolean" => 1, "void" => 1);
 
 my %podTypeHash = ("RGBColor" => 1, "SVGLength" => 1, "SVGPoint" => 1, "SVGRect" => 1, "SVGNumber" => 1, "SVGMatrix" => 1, "SVGTransform" => 1);
  

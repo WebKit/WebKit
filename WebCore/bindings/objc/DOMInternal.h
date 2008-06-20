@@ -67,6 +67,8 @@
 #import "DOMEntityInternal.h"
 #import "DOMEntityReferenceInternal.h"
 #import "DOMEventInternal.h"
+#import "DOMFileInternal.h"
+#import "DOMFileListInternal.h"
 #import "DOMHTMLAnchorElementInternal.h"
 #import "DOMHTMLAppletElementInternal.h"
 #import "DOMHTMLAreaElementInternal.h"

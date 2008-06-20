@@ -29,6 +29,7 @@
 
 namespace WebCore {
 
+class FileList;
 class HTMLImageLoader;
 class KURL;
 class Selection;
@@ -178,7 +179,9 @@ public:
 
     bool autofilled() const { return m_autofilled; }
     void setAutofilled(bool b = true) { m_autofilled = b; }
-    
+
+    FileList* files();
+
     void cacheSelection(int s, int e) { cachedSelStart = s; cachedSelEnd = e; };
     void addSearchResult();
     void onSearch();
@@ -213,6 +216,8 @@ private:
     short m_maxResults;
 
     OwnPtr<HTMLImageLoader> m_imageLoader;
+
+    RefPtr<FileList> m_fileList;
 
     unsigned m_type : 4; // InputType 
     bool m_checked : 1;

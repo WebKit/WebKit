@@ -80,7 +80,7 @@ $idlType = '[a-zA-Z0-9_]';      # Generic type/"value string" identifier
 $idlDataType = '[a-zA-Z0-9\ ]';   # Generic data type identifier
 
 # Magic IDL parsing regular expressions
-my $supportedTypes = "((?:unsigned )?(?:int|short|long)|(?:$idlIdNs*))";
+my $supportedTypes = "((?:unsigned )?(?:int|short|(?:long )?long)|(?:$idlIdNs*))";
 
 # Special IDL notations
 $extendedAttributeSyntax = '\[[^]]*\]'; # Used for extended attributes

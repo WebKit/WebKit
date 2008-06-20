@@ -106,6 +106,8 @@ webcore_built_sources += \
 	DerivedSources/JSEntityReference.h \
 	DerivedSources/JSEvent.h \
 	DerivedSources/JSEventException.h \
+	DerivedSources/File.h \
+	DerivedSources/FileList.h \
 	DerivedSources/JSHTMLAnchorElement.h \
 	DerivedSources/JSHTMLAppletElement.h \
 	DerivedSources/JSHTMLAreaElement.h \
@@ -734,6 +736,8 @@ webcore_sources += \
 	WebCore/html/CanvasPixelArray.cpp \
 	WebCore/html/CanvasRenderingContext2D.cpp \
 	WebCore/html/CanvasStyle.cpp \
+	WebCore/html/File.cpp \
+	WebCore/html/FileList.cpp \
 	WebCore/html/FormDataList.cpp \
 	WebCore/html/HTMLAnchorElement.cpp \
 	WebCore/html/HTMLAppletElement.cpp \

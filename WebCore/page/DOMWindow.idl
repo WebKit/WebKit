@@ -285,6 +285,9 @@ module window {
 
         attribute ClipboardConstructor Clipboard;
 
+        attribute FileConstructor File;
+        attribute FileListConstructor FileList;
+
         attribute NodeFilterConstructor NodeFilter;
         attribute RangeConstructor Range;
         attribute RangeExceptionConstructor RangeException;

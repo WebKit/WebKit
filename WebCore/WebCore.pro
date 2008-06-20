@@ -282,6 +282,8 @@ IDL_BINDINGS += \
     html/CanvasPattern.idl \
     html/CanvasPixelArray.idl \
     html/CanvasRenderingContext2D.idl \
+    html/File.idl \
+    html/FileList.idl \
     html/HTMLAnchorElement.idl \
     html/HTMLAppletElement.idl \
     html/HTMLAreaElement.idl \
@@ -613,6 +615,8 @@ SOURCES += \
     html/CanvasPixelArray.cpp \
     html/CanvasRenderingContext2D.cpp \
     html/CanvasStyle.cpp \
+    html/File.cpp \
+    html/FileList.cpp \
     html/FormDataList.cpp \
     html/HTMLAnchorElement.cpp \
     html/HTMLAppletElement.cpp \

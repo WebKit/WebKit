@@ -1,3 +1,55 @@
+2008-06-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Add 'files' property to the HTMLInputElement, which returns a FileList object 
+        (when type=file, null otherwise) containing a list of all the files selected.
+        It currently always contains only 0 or 1 files as multifile input is not supported 
+        yet.  The list contains File objects which contains the name and size of the file. 
+        The inspiration for these interfaces is from:
+            - http://developer.mozilla.org/en/docs/nsIDOMFileList
+            - http://developer.mozilla.org/en/docs/nsIDOMFile
+
+        Also fixes <rdar://problem/6022802>
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/objc/DOMInternal.h:
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/IDLStructure.pm:
+        * html/File.cpp: Added.
+        (WebCore::File::File):
+        (WebCore::File::fileSize):
+        * html/File.h: Added.
+        (WebCore::File::create):
+        (WebCore::File::fileName):
+        (WebCore::File::path):
+        * html/File.idl: Added.
+        * html/FileList.cpp: Added.
+        (WebCore::FileList::FileList):
+        (WebCore::FileList::item):
+        * html/FileList.h: Added.
+        (WebCore::FileList::create):
+        (WebCore::FileList::length):
+        (WebCore::FileList::isEmpty):
+        (WebCore::FileList::clear):
+        (WebCore::FileList::append):
+        * html/FileList.idl: Added.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::appendFormData):
+        (WebCore::HTMLInputElement::value):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::files):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * page/DOMWindow.idl:
+
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
         Make sure CSS variables work inside the inline style attribute.
