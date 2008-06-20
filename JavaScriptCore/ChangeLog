@@ -1,5 +1,14 @@
 2008-06-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Reviewed by Simon.
+
+        Surpress compiler warning (int vs unsigned comparison).
+
+        * wtf/unicode/qt4/UnicodeQt4.h:
+        (WTF::Unicode::toLower):
+
+2008-06-19  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Reviewed by Timothy Hatcher.
 
         Introduce compiler define for MinGW, to have COMPILER(MINGW).

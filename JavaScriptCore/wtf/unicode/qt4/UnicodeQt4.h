@@ -198,7 +198,7 @@ namespace WTF {
         }
 
         int needed = 0;
-        while (s < e && (rindex < resultLength || !r)) {
+        while (s < e && (rindex < uint(resultLength) || !r)) {
             uint c = *s;
             if (QChar(c).isLowSurrogate() && QChar(*(s - 1)).isHighSurrogate())
                 c = QChar::surrogateToUcs4(*(s - 1), c);
@@ -213,7 +213,7 @@ namespace WTF {
                 }
                 qstring = qstring.toLower();
                 for (int i = 0; i < qstring.length(); ++i) {
-                    if (rindex >= resultLength) {
+                    if (rindex >= uint(resultLength)) {
                         needed += qstring.length() - i;
                         break;
                     }
@@ -231,7 +231,7 @@ namespace WTF {
         if (s < e)
             needed += e - s;
         *error = (needed != 0);
-        if (rindex < resultLength)
+        if (rindex < uint(resultLength))
             r[rindex] = 0;
         return rindex + needed;
     }
