@@ -2,6 +2,19 @@
 
         Reviewed by Tim.
 
+        <rdar://problem/6024846> JSProfiler: ASSERT hit in Profiler.
+        - Because InspectorController can call startProfiling() and
+        stopProfiling() we cannot assert that console.profile() and
+        console.profileEnd() will be in the profile tree.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::removeProfileStart):
+        (KJS::Profile::removeProfileEnd):
+
+2008-06-20  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
         <rdar://problem/5958770> JSProfiler: Time incorrectly given to (idle)
         if profiling is started and finished within the same function. (19230)
         - Now we profile one more stack frame up from the last frame to allocate

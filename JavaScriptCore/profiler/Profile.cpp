@@ -95,7 +95,8 @@ void Profile::removeProfileStart() {
     for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
         currentNode = next;
 
-    ASSERT(currentNode->callIdentifier().name == "profile");
+    if (currentNode->callIdentifier().name != "profile")
+        return;
 
     for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
         currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
@@ -109,7 +110,8 @@ void Profile::removeProfileEnd() {
     for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
         currentNode = next;
 
-    ASSERT(currentNode->callIdentifier().name == "profileEnd");
+    if (currentNode->callIdentifier().name != "profileEnd")
+        return;
 
     for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
         currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
