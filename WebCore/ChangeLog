@@ -1,3 +1,15 @@
+2008-06-19  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix crash in CSSStyleDeclaration::copyPropertiesInSet()
+
+        Covered by many editing tests
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::copyPropertiesInSet): Re-ordered to avoid
+        null pointer deref.
+
 2008-06-19  David Hyatt  <hyatt@apple.com>
 
         Fix out of bounds bug in CSSVariablesDeclaration's item() method.

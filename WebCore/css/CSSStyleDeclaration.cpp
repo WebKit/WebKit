@@ -144,9 +144,9 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(
     for (unsigned i = 0; i < length; i++) {
         RefPtr<CSSValue> value = getPropertyCSSValue(set[i]);
         if (value) {
-            list.append(CSSProperty(set[i], value.release(), false));
             if (value->isVariableDependentValue())
                 variableDependentValueCount++;
+            list.append(CSSProperty(set[i], value.release(), false));
         }
     }
     return CSSMutableStyleDeclaration::create(list, variableDependentValueCount);
