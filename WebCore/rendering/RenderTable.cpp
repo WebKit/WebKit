@@ -189,14 +189,14 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     }
 
     RenderObject* lastBox = beforeChild;
-    while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION)
+    while (lastBox && lastBox->parent()->isAnonymous() && !lastBox->isTableSection() && lastBox->style()->display() != TABLE_CAPTION && lastBox->style()->display() != TABLE_COLUMN_GROUP)
         lastBox = lastBox->parent();
     if (lastBox && lastBox->isAnonymous() && !isAfterContent(lastBox)) {
         lastBox->addChild(child, beforeChild);
         return;
     }
 
-    if (beforeChild && !beforeChild->isTableSection() && beforeChild->style()->display() != TABLE_CAPTION)
+    if (beforeChild && !beforeChild->isTableSection() && beforeChild->style()->display() != TABLE_CAPTION && beforeChild->style()->display() != TABLE_COLUMN_GROUP)
         beforeChild = 0;
     RenderTableSection* section = new (renderArena()) RenderTableSection(document() /* anonymous */);
     RenderStyle* newStyle = new (renderArena()) RenderStyle();

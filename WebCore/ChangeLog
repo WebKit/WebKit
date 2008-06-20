@@ -1,3 +1,23 @@
+2008-06-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19519
+          <rdar://problem/6007345> DOM modification causes stack exhaustion (BUTTON OBJECT COLGROUP)
+
+        Test: fast/table/prepend-in-anonymous-table.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildToFlow): Added code to handle the case
+        of inserting before a child that has been wrapped by an anonymous table,
+        in which case if the new child is the type that needs to be in a table,
+        it is inserted into the table, and otherwise it is inserted before the
+        table.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::addChild): Added table-column-group alongside
+        table-caption as content that can exist inside an anonymous table
+        without being wrapped in a table section.
+
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
         Allow CSS variables to support arbitrary expressions as values instead of just a single term.

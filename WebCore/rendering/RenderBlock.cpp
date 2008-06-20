@@ -154,19 +154,39 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
 
     bool madeBoxesNonInline = false;
 
-    // If the requested beforeChild is not one of our children, then this is most likely because
-    // there is an anonymous block box within this object that contains the beforeChild. So
-    // just insert the child into the anonymous block box instead of here.
+    // If the requested beforeChild is not one of our children, then this is because
+    // there is an anonymous container within this object that contains the beforeChild.
     if (beforeChild && beforeChild->parent() != this) {
-        ASSERT(beforeChild->parent());
-        ASSERT(beforeChild->parent()->isAnonymousBlock());
+        RenderObject* anonymousChild = beforeChild->parent();
+        ASSERT(anonymousChild);
 
-        if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
-            beforeChild->parent()->addChild(newChild, beforeChild);
-        else
-            addChildToFlow(newChild, beforeChild->parent());
+        while (anonymousChild->parent() != this)
+            anonymousChild = anonymousChild->parent();
 
-        return;
+        ASSERT(anonymousChild->isAnonymous());
+
+        if (anonymousChild->isAnonymousBlock()) {
+            // Insert the child into the anonymous block box instead of here.
+            if (newChild->isInline() || beforeChild->parent()->firstChild() != beforeChild)
+                beforeChild->parent()->addChild(newChild, beforeChild);
+            else
+                addChildToFlow(newChild, beforeChild->parent());
+            return;
+        }
+
+        ASSERT(anonymousChild->isTable());
+        if (newChild->isTableCol() && newChild->style()->display() == TABLE_COLUMN_GROUP
+                || newChild->isRenderBlock() && newChild->style()->display() == TABLE_CAPTION
+                || newChild->isTableSection()
+                || newChild->isTableRow()
+                || newChild->isTableCell()) {
+            // Insert into the anonymous table.
+            anonymousChild->addChild(newChild, beforeChild);
+            return;
+        }
+
+        // Go on to insert before the anonymous table.
+        beforeChild = anonymousChild;
     }
 
     // A block has to either have all of its children inline, or all of its children as blocks.

@@ -1,3 +1,15 @@
+2008-06-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19519
+          <rdar://problem/6007345> DOM modification causes stack exhaustion (BUTTON OBJECT COLGROUP)
+
+        * fast/table/prepend-in-anonymous-table.html: Added.
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.checksum: Added.
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.png: Added.
+        * platform/mac/fast/table/prepend-in-anonymous-table-expected.txt: Added.
+
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
         Allow CSS variables to support arbitrary expressions as values instead of just a single term.
