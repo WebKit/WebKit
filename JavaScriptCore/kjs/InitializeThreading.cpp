@@ -59,7 +59,7 @@ static void initializeThreadingOnce()
 
 void initializeThreading()
 {
-#if PLATFORM(DARWIN)
+#if PLATFORM(DARWIN) && USE(MULTIPLE_THREADS)
     pthread_once(&initializeThreadingKeyOnce, initializeThreadingOnce);
 
     // FIXME: do we want heap introspector to work on other threads?

@@ -1,3 +1,11 @@
+2008-06-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        !USE(MULTIPLE_THREADS) on Darwin build fix
+
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreading):
+        * kjs/collector.h:
+
 2008-06-20  Kevin McCullough  <kmccullough@apple.com>
 
         -Leopard Build Fix.
