@@ -1,5 +1,17 @@
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
+        Make sure CSS variables work inside the inline style attribute.
+
+        Reviewed by Beth
+
+        Added fast/css/variables/inline-style-test.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::removeProperty):
+        (WebCore::CSSMutableStyleDeclaration::addParsedProperties):
+
+2008-06-20  David Hyatt  <hyatt@apple.com>
+
         Add support for the CSSVariablesRule and CSSVariablesDeclaration DOM APIs.  These allow querying of
         variables names and values, as well as iteration, setting and removal.
 

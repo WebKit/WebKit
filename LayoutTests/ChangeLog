@@ -1,5 +1,16 @@
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
+        Make sure CSS variables work inside the inline style attribute.
+
+        Reviewed by Beth
+
+        * fast/css/variables/inline-style-test.html: Added.
+        * platform/mac/fast/css/variables/inline-style-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/inline-style-test-expected.png: Added.
+        * platform/mac/fast/css/variables/inline-style-test-expected.txt: Added.
+
+2008-06-20  David Hyatt  <hyatt@apple.com>
+
         Add tests of the DOM APIs for addition, removal and iteration.
 
         Reviewed by Sam

@@ -515,6 +515,8 @@ String CSSMutableStyleDeclaration::removeProperty(int propertyID, bool notifyCha
         if (propertyID == (*it).m_id) {
             if (returnText)
                 value = (*it).value()->cssText();
+            if ((*it).value()->isVariableDependentValue())
+                m_variableDependentValueCount--;
             m_values.remove(it);
             if (notifyChanged)
                 setChanged();
@@ -643,7 +645,7 @@ void CSSMutableStyleDeclaration::parseDeclaration(const String& styleDeclaration
     setChanged();
 }
 
-void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty * const * properties, int numProperties)
+void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty* const* properties, int numProperties)
 {
     for (int i = 0; i < numProperties; ++i) {
         // Only add properties that have no !important counterpart present
@@ -651,6 +653,8 @@ void CSSMutableStyleDeclaration::addParsedProperties(const CSSProperty * const *
             removeProperty(properties[i]->id(), false);
             ASSERT(properties[i]);
             m_values.append(*properties[i]);
+            if (properties[i]->value()->isVariableDependentValue())
+                m_variableDependentValueCount++;
         }
     }
     // FIXME: This probably should have a call to setChanged() if something changed. We may also wish to add
