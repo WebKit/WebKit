@@ -533,6 +533,9 @@ bool FrameLoaderClientQt::canShowMIMEType(const String& MIMEType) const
     if (MIMETypeRegistry::isSupportedNonImageMIMEType(MIMEType))
         return true;
 
+    if (PluginDatabase::installedPlugins()->isMIMETypeRegistered(MIMEType))
+        return true;
+
     return false;
 }
 

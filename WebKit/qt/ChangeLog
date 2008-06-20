@@ -1,3 +1,14 @@
+2008-06-20  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19082
+        [Qt] Full-page plugins not activated
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::canShowMIMEType): Return true if the
+        MIME type is supported by a plugin.
+
 2008-06-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
