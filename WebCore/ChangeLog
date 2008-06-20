@@ -1,3 +1,13 @@
+2008-06-20  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix leak of mask images
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::arenaDelete): Added a call to removeClient() on
+        the mask box image.
+
 2008-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix for r34702, r34700 and r34693

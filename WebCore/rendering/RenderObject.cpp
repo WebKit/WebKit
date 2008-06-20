@@ -2555,6 +2555,9 @@ void RenderObject::arenaDelete(RenderArena* arena, void* base)
         if (StyleImage* borderImage = m_style->borderImage().image())
             borderImage->removeClient(this);
 
+        if (StyleImage* maskBoxImage = m_style->maskBoxImage().image())
+            maskBoxImage->removeClient(this);
+
         m_style->deref(arena);
     }
 
