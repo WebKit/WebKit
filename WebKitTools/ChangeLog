@@ -1,3 +1,17 @@
+2008-06-20  Brent Fulgham  <bfulgham@gmail.com>
+
+        Reviewed by Darin.
+
+        Extend the build-webkit (and set-webkit-configuration) script to
+        support Cairo-based webkit builds.  (see http://bugs.webkit.org/show_bug.cgi?17952)
+
+        * Scripts/build-webkit:  Add --cairo-win32 to the help message
+        * Scripts/webkitdirs.pm:  Extend the 'determinePassedConfiguration
+          subroutine to recognize the --cairo-win32 flag.  When present,
+          the build configuration is changed from Debug/Release to
+          Debug_Cairo/Release_Cairo.  This flag is only active when the
+          isCygwin() test is true.
+
 2008-06-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Justin Garcia.

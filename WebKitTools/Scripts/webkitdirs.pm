@@ -269,16 +269,21 @@ sub determinePassedConfiguration
 {
     return if $searchedForPassedConfiguration;
     $searchedForPassedConfiguration = 1;
+
+    my $isWinCairo = grep(/^--cairo-win32$/i, @ARGV);
+
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
         if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
+            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
             return;
         }
         if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
+            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
             return;
         }
     }

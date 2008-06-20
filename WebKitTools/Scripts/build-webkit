@@ -64,6 +64,7 @@ my $programName = basename($0);
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
+  --cairo-win32                 Build using Cairo (rather than CoreGraphics) on Windows
   --clean                       Cleanup the build directory
   --universal                   Build 2-way universal (PPC and Intel 32-bit)
   --64-bit                      Build 64-bit, combine with --universal to build 4-way universal
