@@ -1,3 +1,14 @@
+2008-06-21  Marvin Decker  <marv.decker@gmail.com>
+
+        Reviewed by Dave Hyatt.
+
+        Adds a NULL check for getting the small caps page of glyph data. The
+        page() function can explicitly return null in some cases, and every
+        other usage in this function does the check.
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::glyphDataForCharacter):
+
 2008-06-21  Alex Taylor  <darwin@milliamp.org>
 
         Reviewed by Dan Bernstein.

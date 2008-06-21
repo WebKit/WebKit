@@ -408,9 +408,12 @@ const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceS
                         return data;
 
                     GlyphPageTreeNode* smallCapsNode = GlyphPageTreeNode::getRootChild(smallCapsFontData, pageNumber);
-                    const GlyphData& data = smallCapsNode->page()->glyphDataForCharacter(c);
-                    if (data.fontData)
-                        return data;
+                    const GlyphPage* smallCapsPage = smallCapsNode->page();
+                    if (smallCapsPage) {
+                        const GlyphData& data = smallCapsPage->glyphDataForCharacter(c);
+                        if (data.fontData)
+                            return data;
+                    }
 
                     // Do not attempt system fallback off the smallCapsFontData. This is the very unlikely case that
                     // a font has the lowercase character but the small caps font does not have its uppercase version.
