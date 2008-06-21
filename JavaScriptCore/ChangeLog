@@ -1,3 +1,21 @@
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Fixed an ASSERT(m_actualSelfTime <= m_actualTotalTime) when starting
+        and stopping a profile from the Develop menu. Also prevents
+        inserting an incorrect parent node as the new head after profiling
+        is stopped from the Develop menu.
+
+        Reviewed by Dan Bernstein.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::stopProfiling): If the current node is already the head
+        then there is no more need to record future nodes in didExecute.
+        (KJS::Profile::didExecute): Move the code of setupCurrentNodeAsStopped
+        into here since this was the only caller. When setting the total time
+        keep any current total time while adding the self time of the head.
+        (KJS::Profile::setupCurrentNodeAsStopped): Removed.
+        * profiler/Profile.h: Removed setupCurrentNodeAsStopped.
+
 2008-06-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         !USE(MULTIPLE_THREADS) on Darwin build fix

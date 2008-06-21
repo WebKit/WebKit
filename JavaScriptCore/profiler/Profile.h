@@ -78,7 +78,6 @@ namespace KJS {
         Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
         void removeProfileStart();
         void removeProfileEnd();
-        void setupCurrentNodeAsStopped();
 
         UString m_title;
         ExecState* m_originatingGlobalExec;
