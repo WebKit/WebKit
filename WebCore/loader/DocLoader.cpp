@@ -37,6 +37,7 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "loader.h"
+#include "SecurityOrigin.h"
 
 #define PRELOAD_DEBUG 0
 
@@ -138,7 +139,34 @@ CachedXBLDocument* DocLoader::requestXBLDocument(const String& url)
 CachedResource* DocLoader::requestResource(CachedResource::Type type, const String& url, const String& charset, bool isPreload)
 {
     KURL fullURL = m_doc->completeURL(url);
-    
+
+    // Some types of resources can be loaded only from the same origin.  Other
+    // types of resources, like Images, Scripts, and CSS, can be loaded from
+    // any URL.
+    switch (type) {
+    case CachedResource::ImageResource:
+    case CachedResource::CSSStyleSheet:
+    case CachedResource::Script:
+    case CachedResource::FontResource:
+        // These types of resources can be loaded from any origin.
+        // FIXME: Are we sure about CachedResource::FontResource?
+        break;
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+#if ENABLE(XBL)
+    case CachedResource::XBL:
+#endif
+#if ENABLE(XSLT) || ENABLE(XBL)
+        if (!m_doc->securityOrigin()->canRequest(fullURL))
+            return 0;
+        break;
+#endif
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
+
     if (cache()->disabled()) {
         HashMap<String, CachedResource*>::iterator it = m_docResources.find(fullURL.string());
         

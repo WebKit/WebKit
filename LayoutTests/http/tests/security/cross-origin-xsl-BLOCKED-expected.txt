@@ -1,0 +1,2 @@
+This test loads the XML document in an iframe so that it can call dumpAsText(). This test passes if the iframe below is blank.
+

@@ -1,3 +1,20 @@
+2008-06-21  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=19649>:
+          XSL style sheets allowed across origins
+
+        Block cross-orgin loads of XSL style sheets, matching Internet
+        Explorer, Firefox, and Opera.  Also, we now block loading of XBL
+        across origins, matching Firefox.  The XBL behavior does not appear
+        testable because XBL seems to not be enabled.
+
+        Test: http/tests/security/cross-origin-xsl-BLOCKED.html
+
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::requestResource):
+
 2008-06-21  Marvin Decker  <marv.decker@gmail.com>
 
         Reviewed by Dave Hyatt.
