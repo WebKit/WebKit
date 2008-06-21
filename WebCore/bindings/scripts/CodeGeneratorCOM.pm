@@ -267,7 +267,7 @@ sub AddIncludesForTypeInCPPHeader
     return if $codeGenerator->IsNonPointerType($type);
 
     # Add special Cases HERE
-    
+
     if ($type =~ m/^I/) {
         $type = "WebKit";
     }

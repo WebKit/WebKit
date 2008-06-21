@@ -1,3 +1,9 @@
+2008-06-20  Sam Weinig  <sam@webkit.org>
+
+        Fix Windows build.
+
+        * bindings/scripts/CodeGeneratorCOM.pm:
+
 2008-06-20  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix: Add files missing in the previous fix (r34705)
