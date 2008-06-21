@@ -2,6 +2,9 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19542
+          <rdar://problem/6007976> Crash in Font::glyphDataForCharacter when getting small caps data
+
         Adds a NULL check for getting the small caps page of glyph data. The
         page() function can explicitly return null in some cases, and every
         other usage in this function does the check.
