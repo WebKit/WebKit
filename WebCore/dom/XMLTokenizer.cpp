@@ -399,7 +399,12 @@ static bool shouldAllowExternalLoad(const KURL& url)
     // retrieved content.  If we had more context, we could potentially allow
     // the parser to load a DTD.  As things stand, we take the conservative
     // route and allow same-origin requests only.
-    return globalDocLoader->doc()->securityOrigin()->canRequest(url);
+    if (!globalDocLoader->doc()->securityOrigin()->canRequest(url)) {
+        globalDocLoader->printAccessDeniedMessage(url);
+        return false;
+    }
+
+    return true;
 }
 
 static void* openFunc(const char* uri)

@@ -32,12 +32,15 @@
 #include "CachedImage.h"
 #include "CachedScript.h"
 #include "CachedXSLStyleSheet.h"
+#include "Console.h"
 #include "CString.h"
 #include "Document.h"
+#include "DOMWindow.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "loader.h"
 #include "SecurityOrigin.h"
+#include "Settings.h"
 
 #define PRELOAD_DEBUG 0
 
@@ -158,8 +161,10 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
     case CachedResource::XBL:
 #endif
 #if ENABLE(XSLT) || ENABLE(XBL)
-        if (!m_doc->securityOrigin()->canRequest(fullURL))
+        if (!m_doc->securityOrigin()->canRequest(fullURL)) {
+            printAccessDeniedMessage(fullURL);
             return 0;
+        }
         break;
 #endif
     default:
@@ -187,6 +192,30 @@ CachedResource* DocLoader::requestResource(CachedResource::Type type, const Stri
         checkCacheObjectStatus(resource);
     }
     return resource;
+}
+
+void DocLoader::printAccessDeniedMessage(const KURL& url) const
+{
+    if (url.isNull())
+        return;
+
+    if (!m_frame)
+        return;
+
+    Settings* settings = m_frame->settings();
+    if (!settings || settings->privateBrowsingEnabled())
+        return;
+
+    String message = m_doc->url().isNull() ?
+        String::format("Unsafe attempt to load URL %s.",
+                       url.string().utf8().data()) :
+        String::format("Unsafe attempt to load URL %s from frame with URL %s. "
+                       "Domains, protocols and ports must match.\n",
+                       url.string().utf8().data(),
+                       m_doc->url().string().utf8().data());
+
+    // FIXME: provide a real line number and source URL.
+    m_frame->domWindow()->console()->addMessage(OtherMessageSource, ErrorMessageLevel, message, 1, String());
 }
 
 void DocLoader::setAutoLoadImages(bool enable)

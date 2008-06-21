@@ -67,6 +67,9 @@ public:
     CachedXBLDocument* requestXBLDocument(const String &url);
 #endif
 
+    // Logs an access denied message to the console for the specified URL.
+    void printAccessDeniedMessage(const KURL& url) const;
+
     CachedResource* cachedResource(const String& url) const { return m_docResources.get(url); }
     const HashMap<String, CachedResource*>& allCachedResources() const { return m_docResources; }
 

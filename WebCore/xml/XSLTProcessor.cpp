@@ -129,6 +129,8 @@ static xmlDocPtr docLoaderFunc(const xmlChar* uri,
 
             if (globalDocLoader->frame() && globalDocLoader->doc()->securityOrigin()->canRequest(url))
                 globalDocLoader->frame()->loader()->loadResourceSynchronously(url, error, response, data);
+            else
+                globalDocLoader->printAccessDeniedMessage(url);
 
             Console* console = 0;
             if (Frame* frame = globalProcessor->xslStylesheet()->ownerDocument()->frame())
