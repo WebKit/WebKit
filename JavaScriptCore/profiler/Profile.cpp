@@ -37,10 +37,6 @@ namespace KJS {
 
 static const char* NonJSExecution = "(idle)";
 
-static void calculateVisibleTotalTime(ProfileNode* n) { n->calculateVisibleTotalTime(); }
-static void restoreAll(ProfileNode* n) { n->restore(); }
-static void stopProfiling(ProfileNode* n) { n->stopProfiling(); }
-
 PassRefPtr<Profile> Profile::create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
 {
     return adoptRef(new Profile(title, originatingGlobalExec, pageGroupIdentifier, client));
@@ -61,7 +57,7 @@ Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigne
 
 void Profile::stopProfiling()
 {
-    forEach(KJS::stopProfiling);
+    forEach(&ProfileNode::stopProfiling);
     removeProfileStart();
     removeProfileEnd();
 
@@ -163,7 +159,7 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
     m_currentNode = m_currentNode->didExecute();
 }
 
-void Profile::forEach(UnaryFunction function)
+void Profile::forEach(void (ProfileNode::*function)())
 {
     ProfileNode* currentNode = m_head->firstChild();
     for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
@@ -171,7 +167,7 @@ void Profile::forEach(UnaryFunction function)
 
     ProfileNode* endNode = m_head->traverseNextNodePostOrder();
     while (currentNode && currentNode != endNode) {
-        function(currentNode);
+        (currentNode->*function)();
         currentNode = currentNode->traverseNextNodePostOrder();
     } 
 }
@@ -187,7 +183,7 @@ void Profile::focus(const ProfileNode* profileNode)
         processChildren = currentNode->focus(callIdentifier);
 
     // Set the visible time of all nodes so that the %s display correctly.
-    forEach(KJS::calculateVisibleTotalTime);
+    forEach(&ProfileNode::calculateVisibleTotalTime);
 }
 
 void Profile::exclude(const ProfileNode* profileNode)
@@ -207,7 +203,7 @@ void Profile::exclude(const ProfileNode* profileNode)
 
 void Profile::restoreAll()
 {
-    forEach(KJS::restoreAll);
+    forEach(&ProfileNode::restore);
 }
 
 #ifndef NDEBUG

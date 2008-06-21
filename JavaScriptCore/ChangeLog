@@ -1,3 +1,26 @@
+2008-06-20  Timothy Hatcher  <timothy@apple.com>
+
+        Use member function pointers for the Profile::forEach function.
+        Eliminating a few static functions and simplified things a little.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * JavaScriptCore.exp: Change the symbol for forEach.
+        * profiler/Profile.cpp:
+        (KJS::Profile::forEach): Use a member function pointer.
+        * profiler/Profile.h:
+        (KJS::Profile::sortTotalTimeDescending): Pass a function pointer.
+        (KJS::Profile::sortTotalTimeAscending): Ditto.
+        (KJS::Profile::sortSelfTimeDescending): Ditto.
+        (KJS::Profile::sortSelfTimeAscending): Ditto.
+        (KJS::Profile::sortCallsDescending): Ditto.
+        * profiler/ProfileNode.h:
+        (KJS::ProfileNode::sortTotalTimeDescending): No longer static.
+        (KJS::ProfileNode::sortTotalTimeAscending): Ditto.
+        (KJS::ProfileNode::sortSelfTimeDescending): Ditto.
+        (KJS::ProfileNode::sortSelfTimeAscending): Ditto.
+        (KJS::ProfileNode::sortCallsDescending): Ditto.
+
 2008-06-20  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

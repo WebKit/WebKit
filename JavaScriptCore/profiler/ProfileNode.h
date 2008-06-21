@@ -121,14 +121,14 @@ namespace KJS {
         ProfileNode* traverseNextNodePreOrder(bool processChildren = true) const;
         
         void sort(bool (*)(const RefPtr<ProfileNode>&, const RefPtr<ProfileNode>&));
-        static void sortTotalTimeDescending(ProfileNode* n) { n->sort(totalTimeDescendingComparator); }
-        static void sortTotalTimeAscending(ProfileNode* n) { n->sort(totalTimeAscendingComparator); }
-        static void sortSelfTimeDescending(ProfileNode* n) { n->sort(selfTimeDescendingComparator); }
-        static void sortSelfTimeAscending(ProfileNode* n) { n->sort(selfTimeAscendingComparator); }
-        static void sortCallsDescending(ProfileNode* n) { n->sort(callsDescendingComparator); }
-        static void sortCallsAscending(ProfileNode* n) { n->sort(callsAscendingComparator); }
-        static void sortFunctionNameDescending(ProfileNode* n) { n->sort(functionNameDescendingComparator); }
-        static void sortFunctionNameAscending(ProfileNode* n) { n->sort(functionNameAscendingComparator); }
+        void sortTotalTimeDescending() { sort(totalTimeDescendingComparator); }
+        void sortTotalTimeAscending() { sort(totalTimeAscendingComparator); }
+        void sortSelfTimeDescending() { sort(selfTimeDescendingComparator); }
+        void sortSelfTimeAscending() { sort(selfTimeAscendingComparator); }
+        void sortCallsDescending() { sort(callsDescendingComparator); }
+        void sortCallsAscending() { sort(callsAscendingComparator); }
+        void sortFunctionNameDescending() { sort(functionNameDescendingComparator); }
+        void sortFunctionNameAscending() { sort(functionNameAscendingComparator); }
 
         void calculateVisibleTotalTime();
         bool focus(const CallIdentifier&);
