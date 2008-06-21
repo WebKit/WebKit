@@ -1,3 +1,12 @@
+2008-06-21  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Mark Rowe.
+
+        Fix the build for non-Mac Darwin platforms by disabling their support
+        for readline in the JavaScript shell.
+
+        * kjs/config.h:
+
 2008-06-20  Timothy Hatcher  <timothy@apple.com>
 
         Use member function pointers for the Profile::forEach function.
