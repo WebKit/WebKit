@@ -201,6 +201,8 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSCSSStyleSheet.cpp
         DerivedSources/WebCore/JSCSSValue.cpp
         DerivedSources/WebCore/JSCSSValueList.cpp
+        DerivedSources/WebCore/JSCSSVariablesDeclaration.cpp
+        DerivedSources/WebCore/JSCSSVariablesRule.cpp
         DerivedSources/WebCore/JSCanvasGradient.cpp
         DerivedSources/WebCore/JSCanvasPattern.cpp
         DerivedSources/WebCore/JSCanvasPixelArray.cpp
