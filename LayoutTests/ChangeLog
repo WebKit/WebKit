@@ -1,3 +1,12 @@
+2008-06-21  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Alexey Proskuryakov.
+
+        - update results for newly-added CSS variables, file and file list
+          global constructors
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-06-21  Alex Taylor  <darwin@milliamp.org>
 
         Reviewed by Dan Bernstein.
