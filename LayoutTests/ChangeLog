@@ -1,3 +1,28 @@
+2008-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 7931: Escaped elements within a textarea block can cause the textarea box to be closed prematurely
+
+        <https://bugs.webkit.org/show_bug.cgi?id=7931>
+
+        Reviewed by Darin.
+
+        The entity-end-textarea-tag.html contains 11 test cases:  one
+        for each character in '</textarea>'.  The rest of the tests
+        only test one encoding:  '<' as '&lt;'.
+
+        * fast/parser/entity-end-iframe-tag-expected.txt: Added.
+        * fast/parser/entity-end-iframe-tag.html: Added.
+        * fast/parser/entity-end-script-tag-expected.txt: Added.
+        * fast/parser/entity-end-script-tag.html: Added.
+        * fast/parser/entity-end-style-tag-expected.txt: Added.
+        * fast/parser/entity-end-style-tag.html: Added.
+        * fast/parser/entity-end-textarea-tag-expected.txt: Added.
+        * fast/parser/entity-end-textarea-tag.html: Added.
+        * fast/parser/entity-end-title-tag-expected.txt: Added.
+        * fast/parser/entity-end-title-tag.html: Added.
+        * fast/parser/entity-end-xmp-tag-expected.txt: Added.
+        * fast/parser/entity-end-xmp-tag.html: Added.
+
 2008-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

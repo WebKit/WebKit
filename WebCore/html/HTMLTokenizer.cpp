@@ -312,6 +312,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
     if (state.inComment()) 
         state = parseComment(src, state);
 
+    int lastDecodedEntityPosition = -1;
     while ( !src.isEmpty() ) {
         checkScriptBuffer();
         UChar ch = *src;
@@ -362,7 +363,8 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
         // possible end of tagname, lets check.
         if (!scriptCodeResync && !state.escaped() && !src.escaped() && (ch == '>' || ch == '/' || isASCIISpace(ch)) &&
              scriptCodeSize >= searchStopperLen &&
-             tagMatch( searchStopper, scriptCode+scriptCodeSize-searchStopperLen, searchStopperLen )) {
+             tagMatch(searchStopper, scriptCode + scriptCodeSize - searchStopperLen, searchStopperLen) &&
+             (lastDecodedEntityPosition < scriptCodeSize - searchStopperLen)) {
             scriptCodeResync = scriptCodeSize-searchStopperLen+1;
             tquote = NoQuote;
             continue;
@@ -381,6 +383,7 @@ HTMLTokenizer::State HTMLTokenizer::parseSpecial(SegmentedString &src, State sta
             src.advancePastNonNewline();
             state = parseEntity(src, scriptCodeDest, state, m_cBufferPos, true, false);
             scriptCodeSize = scriptCodeDest - scriptCode;
+            lastDecodedEntityPosition = scriptCodeSize;
         } else {
             scriptCode[scriptCodeSize++] = ch;
             src.advance(m_lineNumber);

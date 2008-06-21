@@ -1,3 +1,33 @@
+2008-06-21  David Kilzer  <ddkilzer@apple.com>
+
+        Bug 7931: Escaped elements within a textarea block can cause the textarea box to be closed prematurely
+
+        <https://bugs.webkit.org/show_bug.cgi?id=7931>
+
+        Reviewed by Darin.
+
+        Tests: fast/parser/entity-end-iframe-tag.html
+               fast/parser/entity-end-script-tag.html
+               fast/parser/entity-end-style-tag.html
+               fast/parser/entity-end-textarea-tag.html
+               fast/parser/entity-end-title-tag.html
+               fast/parser/entity-end-xmp-tag.html
+
+        Previously the parser accepted end tags for textarea, title and
+        iframe elements that contained entity-escaped characters such as
+        '&lt;'.  The fix is to save the position of the last entity-escaped
+        character converted and to use that to make sure the end tag does
+        not contain an escaped character.
+
+        Note that this was not an issue for script, style and xmp elements
+        since they already ignored entity-escaped characters.
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial): When looking for a closing
+        tag, ignore any text with entity-escaped characters by making sure
+        lastDecodedEntityPosition is less than the first character of the
+        end tag.
+
 2008-06-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
