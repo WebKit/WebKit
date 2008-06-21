@@ -2152,8 +2152,7 @@ namespace KJS {
     class ProgramNode : public ScopeNode {
     public:
         static ProgramNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
-        virtual ~ProgramNode();
-        
+
         ProgramCodeBlock& code(ScopeChainNode* scopeChain, bool canCreateGlobals) KJS_FAST_CALL
         {
             if (!m_code)
@@ -2176,8 +2175,7 @@ namespace KJS {
     class EvalNode : public ScopeNode {
     public:
         static EvalNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
-        virtual ~EvalNode();
-        
+
         EvalCodeBlock& code(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
             if (!m_code)
@@ -2197,8 +2195,7 @@ namespace KJS {
     class FunctionBodyNode : public ScopeNode {
     public:
         static FunctionBodyNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
-        virtual ~FunctionBodyNode();
-        
+
         Vector<Identifier>& parameters() KJS_FAST_CALL { return m_parameters; }
         UString paramString() const KJS_FAST_CALL;
 

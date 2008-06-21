@@ -1549,10 +1549,6 @@ ProgramNode::ProgramNode(SourceElements* children, VarStack* varStack, FunctionS
 {
 }
 
-ProgramNode::~ProgramNode()
-{
-}
-
 ProgramNode* ProgramNode::create(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
 {
     return new ProgramNode(children, varStack, funcStack, usesEval, needsClosure);
@@ -1562,10 +1558,6 @@ ProgramNode* ProgramNode::create(SourceElements* children, VarStack* varStack, F
 
 EvalNode::EvalNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
     : ScopeNode(children, varStack, funcStack, usesEval, needsClosure)
-{
-}
-
-EvalNode::~EvalNode()
 {
 }
 
@@ -1604,10 +1596,6 @@ EvalNode* EvalNode::create(SourceElements* children, VarStack* varStack, Functio
 
 FunctionBodyNode::FunctionBodyNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
     : ScopeNode(children, varStack, funcStack, usesEval, needsClosure)
-{
-}
-
-FunctionBodyNode::~FunctionBodyNode()
 {
 }
 
