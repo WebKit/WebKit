@@ -539,12 +539,13 @@ Element* HTMLElement::insertAdjacentElement(const String& where, Element* newChi
 
 void HTMLElement::insertAdjacentHTML(const String& where, const String& html, ExceptionCode& ec)
 {
-    // FIXME: perhaps this should use createFragmentFromMarkup() instead as
-    // createContextualFragment() has all sorts of odd rules in it.
-    RefPtr<DocumentFragment> fragment = createContextualFragment(html);
-    if (!fragment) {
-        ec = NO_MODIFICATION_ALLOWED_ERR;
-        return;
+    RefPtr<DocumentFragment> fragment = document()->createDocumentFragment();
+    if (document()->isHTMLDocument())
+         parseHTMLDocumentFragment(html, fragment.get());
+    else {
+        if (!parseXMLDocumentFragment(html, fragment.get(), this))
+            // FIXME: We should propagate a syntax error exception out here.
+            return;
     }
 
     insertAdjacent(where, fragment.get(), ec);

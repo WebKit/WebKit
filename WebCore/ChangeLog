@@ -1,3 +1,16 @@
+2008-06-21  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19647
+        REGRESSION: Problem with extjs (insertAdjacentHTML)
+
+        Test: fast/dynamic/insertAdjacentHTML-allowed-parents.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::insertAdjacentHTML): Don't use innerHTML logic for creating
+        the DocumentFragment from the html string.
+
 2008-06-21  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
