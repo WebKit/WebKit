@@ -1,3 +1,15 @@
+2008-06-21  Alex Taylor  <darwin@milliamp.org>
+
+        Reviewed by Dan Bernstein.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=12425>
+        Test support for border-radius on fieldset elements.
+
+        * fast/borders/fieldsetBorderRadius.html: Added.
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.checksum: Added.
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.png: Added.
+        * platform/mac/fast/borders/fieldsetBorderRadius-expected.txt: Added.
+
 2008-06-20  David Hyatt  <hyatt@apple.com>
 
         Make sure CSS variables work inside the inline style attribute.
