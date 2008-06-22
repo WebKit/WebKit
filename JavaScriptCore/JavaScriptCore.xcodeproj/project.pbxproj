@@ -109,6 +109,7 @@
 		1CAA8B4D0D32C39A0041BCFF /* JavaScriptCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CAA8B4B0D32C39A0041BCFF /* JavaScriptCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5186111E0CC824900081412B /* Deque.h in Headers */ = {isa = PBXBuildFile; fileRef = 5186111D0CC824830081412B /* Deque.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		51F648D70BB4E2CA0033D760 /* RetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 51F648D60BB4E2CA0033D760 /* RetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5D5D8AB60E0D0A7200F9C692 /* jsc in Copy Into Framework */ = {isa = PBXBuildFile; fileRef = 932F5BE10822A1C700736975 /* jsc */; };
 		5DA479660CFBCF56009328A0 /* TCPackedCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA479650CFBCF56009328A0 /* TCPackedCache.h */; };
 		5DBD18AC0C54018700C15EAE /* CollectorHeapIntrospector.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AA0C54018700C15EAE /* CollectorHeapIntrospector.h */; };
 		5DBD18B00C5401A700C15EAE /* MallocZoneSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */; };
@@ -373,6 +374,20 @@
 			remoteInfo = "jsc (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		5D5D8ABA0E0D0A7300F9C692 /* Copy Into Framework */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = JavaScriptCore.framework/Resources;
+			dstSubfolderSpec = 16;
+			files = (
+				5D5D8AB60E0D0A7200F9C692 /* jsc in Copy Into Framework */,
+			);
+			name = "Copy Into Framework";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06D358A10DAAD9C4003B174E /* MainThreadMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadMac.mm; sourceTree = "<group>"; };
@@ -1376,6 +1391,8 @@
 			buildPhases = (
 				932F5BDC0822A1C700736975 /* Sources */,
 				932F5BDE0822A1C700736975 /* Frameworks */,
+				5D5D8ABA0E0D0A7300F9C692 /* Copy Into Framework */,
+				5D5D8ABF0E0D0B0300F9C692 /* Fix Framework Reference */,
 			);
 			buildRules = (
 				5DAD97A80B39B89F0014FEFF /* PBXBuildRule */,
@@ -1471,6 +1488,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Touch Info.plist to let Xcode know it needs to copy it into the built product\ntouch \"$SRCROOT/Info.plist\"\n";
+		};
+		5D5D8ABF0E0D0B0300F9C692 /* Fix Framework Reference */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/JavaScriptCore.framework/Resources/jsc",
+			);
+			name = "Fix Framework Reference";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Update the copied jsc binary to refer to JavaScriptcore.framework relative to its location\ninstall_name_tool -change \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Versions/A/JavaScriptCore\" \"@loader_path/../JavaScriptCore\" \"${BUILT_PRODUCTS_DIR}/JavaScriptCore.framework/Resources/jsc\"\n";
 		};
 		65FB3F6509D11E9100F49DEB /* Generate Derived Sources */ = {
 			isa = PBXShellScriptBuildPhase;
