@@ -1,3 +1,14 @@
+2008-06-21  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a typo "new" in the keywords list for hte JavaScript
+        syntax highlighter. And adds "get" and "set" to the keyword list.
+
+        Reviewed by Sam Weinig.
+
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._syntaxHighlightJavascriptLine):
+        Fixes the "new" typo and adds "get" and "set".
+
 2008-06-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 7931: Escaped elements within a textarea block can cause the textarea box to be closed prematurely
