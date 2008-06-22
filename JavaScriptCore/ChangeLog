@@ -2,6 +2,14 @@
 
         Rubber-stamped by Sam Weinig.
 
+        Tweak the paths of the items in the "tests" group to clean things up a little.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-06-21  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
         Fix jsc to link against libedit.dylib rather than libedit.2.dylib.
 
         * JavaScriptCore.xcodeproj/project.pbxproj:
