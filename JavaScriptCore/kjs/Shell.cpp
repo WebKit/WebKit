@@ -347,9 +347,8 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
 }
 
 static void runInteractive(GlobalObject* globalObject)
-{   
-    bool done = false;
-    while (!done) {
+{
+    while (true) {
 #if HAVE(READLINE)
         char* line = readline(interactivePrompt);
         if (!line)
@@ -374,6 +373,7 @@ static void runInteractive(GlobalObject* globalObject)
         if (completion.isValueCompletion())
             printf("%s\n", completion.value()->toString(globalObject->globalExec()).UTF8String().c_str());
     }
+    printf("\n");
 }
 
 static void printUsageStatement()

@@ -1,5 +1,15 @@
 2008-06-21  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Print a blank line when exiting the jsc interactive mode to ensure that the shell
+        prompt will start on a new line.
+
+        * kjs/Shell.cpp:
+        (runInteractive):
+
+2008-06-21  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Sam Weinig.
 
         Tweak the paths of the items in the "tests" group to clean things up a little.
