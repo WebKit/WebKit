@@ -71,7 +71,9 @@ module html {
         readonly attribute URL             absoluteImageURL;
 #endif
 
+#if !defined(LANGUAGE_COM)
         readonly attribute FileList files;
+#endif
     };
 
 }

@@ -271,7 +271,7 @@ sub AddIncludesForTypeInCPPHeader
     if ($type =~ m/^I/) {
         $type = "WebKit";
     }
-    
+
     if ($useAngleBrackets) {
         $CPPHeaderIncludesAngle{"$type.h"} = 1;
         return;
