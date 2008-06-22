@@ -1,5 +1,13 @@
 2008-06-21  Mark Rowe  <mrowe@apple.com>
 
+        Rubber-stamped by Sam Weinig.
+
+        Fix jsc to link against libedit.dylib rather than libedit.2.dylib.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-06-21  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Copy the JavaScriptCore shell (jsc) into JavaScriptCore.framework so that it will
