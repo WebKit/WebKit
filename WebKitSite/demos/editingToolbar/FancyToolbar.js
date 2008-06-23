@@ -289,6 +289,7 @@ FancyToolbar.prototype.show = function()
     this.editArea.contentDocument.addEventListener("mouseup", this.updateToolbarListener, false);
     this.editArea.contentDocument.addEventListener("mousemove", this.updateToolbarListener, false);
     this.editArea.contentDocument.addEventListener("keypress", this.updateToolbarListener, false);
+    this.editArea.contentDocument.addEventListener("keyup", this.updateToolbarListener, false);
 
     window.addEventListener("resize", this.windowResizeListener, false);
 
@@ -317,6 +318,7 @@ FancyToolbar.prototype.hidden = function()
     this.editArea.contentDocument.removeEventListener("mouseup", this.updateToolbarListener, false);
     this.editArea.contentDocument.removeEventListener("mousemove", this.updateToolbarListener, false);
     this.editArea.contentDocument.removeEventListener("keypress", this.updateToolbarListener, false);
+    this.editArea.contentDocument.removeEventListener("keyup", this.updateToolbarListener, false);
     window.removeEventListener("resize", this.windowResizeListener, false);
 
     // remove the toolbar element

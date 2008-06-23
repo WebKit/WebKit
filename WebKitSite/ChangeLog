@@ -1,3 +1,13 @@
+2008-06-22  Aaron Digulla  <digulla@hepe.com>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=18993
+        Bug 18993: Update of buttons in editing toolbar demo lags behind
+
+        * demos/editingToolbar/FancyToolbar.js:
+        * demos/editingToolbar/index.html:
+
 2008-06-16  Maciej Stachowiak  <mjs@apple.com>
 
         A handy reference image.
