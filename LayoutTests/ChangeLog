@@ -1,3 +1,15 @@
+2008-06-23  David Kilzer  <ddkilzer@apple.com>
+
+        Updated test for Bug 15823: getPropertyValue for border returns null, should compute the shorthand value
+
+        <https://bugs.webkit.org/show_bug.cgi?id=15823>
+
+        Rubber-stamped by Darin.
+
+        * fast/css/getPropertyValue-border-expected.txt: Updated results.
+        * fast/css/getPropertyValue-border.html: Test all combinations of
+        (mismatched) border values.
+
 2008-06-22  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Darin Adler.
