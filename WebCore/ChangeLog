@@ -1,5 +1,13 @@
 2008-06-23  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dave Hyatt.
+
+        Remove empty file.
+
+        * xml/XMLHttpRequestProgressEvent.cpp: Removed.
+
+2008-06-23  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Tim Hatcher.
 
         Rename XMLHttpRequest::sameOriginRequest to XMLHttpRequest::makeSameOriginRequest
