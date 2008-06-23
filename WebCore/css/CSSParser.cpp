@@ -689,11 +689,11 @@ bool CSSParser::parseValue(int propId, bool important)
             valid_primitive = true;
         break;
 
-    case CSSPropertyOutlineStyle:        // <border-style> | auto | inherit
-        if (id == CSSValueAuto) {
+    case CSSPropertyOutlineStyle:        // (<border-style> except hidden) | auto | inherit
+        if (id == CSSValueAuto || id == CSSValueNone || (id >= CSSValueInset && id <= CSSValueDouble))
             valid_primitive = true;
-            break;
-        } // Fall through!
+        break; 
+        
     case CSSPropertyBorderTopStyle:     //// <border-style> | inherit
     case CSSPropertyBorderRightStyle:   //   Defined as:    none | hidden | dotted | dashed |
     case CSSPropertyBorderBottomStyle:  //   solid | double | groove | ridge | inset | outset

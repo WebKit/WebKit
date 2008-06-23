@@ -1791,7 +1791,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
         }
     }
 
-    if (style->outlineStyleIsAuto() || style->outlineStyle() <= BHIDDEN)
+    if (style->outlineStyleIsAuto() || style->outlineStyle() == BNONE)
         return;
 
     tx -= offset;

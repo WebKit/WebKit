@@ -1,3 +1,13 @@
+2008-06-22  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=19520
+        Bug 19520: WebKit incorrectly accepts hidden as the value of outline-style
+
+        * fast/css/outline-hidden-illegal-value-expected.txt: Added.
+        * fast/css/outline-hidden-illegal-value.html: Added.
+
 2008-06-21  David Kilzer  <ddkilzer@apple.com>
 
         Bug 7931: Escaped elements within a textarea block can cause the textarea box to be closed prematurely

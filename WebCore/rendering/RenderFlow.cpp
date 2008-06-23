@@ -767,7 +767,7 @@ void RenderFlow::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)
         graphicsContext->clearFocusRing();
     }
 
-    if (style()->outlineStyleIsAuto() || style()->outlineStyle() <= BHIDDEN)
+    if (style()->outlineStyleIsAuto() || style()->outlineStyle() == BNONE)
         return;
 
     Vector<IntRect> rects;

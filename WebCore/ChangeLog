@@ -1,3 +1,22 @@
+2008-06-22  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=19520
+        Bug 19520: WebKit incorrectly accepts hidden as the value of outline-style
+
+        Test: fast/css/outline-hidden-illegal-value.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * rendering/RenderFlow.cpp:
+        (WebCore::RenderFlow::paintOutline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::outlineWidth):
+        (WebCore::RenderStyle::outlineOffset):
+
 2008-06-22  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Dan Bernstein.
