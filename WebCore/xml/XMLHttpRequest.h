@@ -21,7 +21,9 @@
 #define XMLHttpRequest_h
 
 #include "AccessControlList.h"
+#include "EventListener.h"
 #include "EventTarget.h"
+#include "FormData.h"
 #include "ResourceResponse.h"
 #include "SubresourceLoaderClient.h"
 #include <wtf/OwnPtr.h>
@@ -29,6 +31,7 @@
 namespace WebCore {
 
 class Document;
+class File;
 class TextResourceDecoder;
 
 // these exact numeric values are important because JS expects them
@@ -56,7 +59,9 @@ public:
     void open(const String& method, const KURL&, bool async, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
-    void send(const String& body, ExceptionCode&);
+    void send(ExceptionCode&);
+    void send(Document*, ExceptionCode&);
+    void send(const String&, ExceptionCode&);
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);
@@ -65,12 +70,14 @@ public:
     const KJS::UString& responseText() const;
     Document* responseXML() const;
 
-    void setOnReadyStateChangeListener(PassRefPtr<EventListener>);
-    EventListener* onReadyStateChangeListener() const;
-    void setOnLoadListener(PassRefPtr<EventListener>);
-    EventListener* onLoadListener() const;
-    void setOnProgressListener(PassRefPtr<EventListener>);
-    EventListener* onProgressListener() const;
+    void setOnReadyStateChangeListener(PassRefPtr<EventListener> eventListener) { m_onReadyStateChangeListener = eventListener; }
+    EventListener* onReadyStateChangeListener() const { return m_onReadyStateChangeListener.get(); }
+
+    void setOnLoadListener(PassRefPtr<EventListener> eventListener) { m_onLoadListener = eventListener; }
+    EventListener* onLoadListener() const { return m_onLoadListener.get(); }
+
+    void setOnProgressListener(PassRefPtr<EventListener> eventListener) { m_onProgressListener = eventListener; }
+    EventListener* onProgressListener() const { return m_onProgressListener.get(); }
 
     typedef Vector<RefPtr<EventListener> > ListenerVector;
     typedef HashMap<AtomicStringImpl*, ListenerVector> EventListenersMap;
@@ -111,6 +118,8 @@ private:
     String responseMIMEType() const;
     bool responseIsXML() const;
 
+    bool initSend(ExceptionCode&);
+
     String getRequestHeader(const String& name) const;
     void setRequestHeaderInternal(const String& name, const String& value);
 
@@ -118,10 +127,13 @@ private:
     void callReadyStateChangeListener();
     void dropProtection();
     void internalAbort();
-    void clearResponseEntityBody();
+    void clearResponse();
+    void clearRequest();
 
-    void sameOriginRequest(const String& body, ResourceRequest&);
-    void crossSiteAccessRequest(const String& body, ResourceRequest&, ExceptionCode&);
+    void createRequest(ExceptionCode&);
+
+    void sameOriginRequest(ResourceRequest&);
+    void crossSiteAccessRequest(ResourceRequest&, ExceptionCode&);
 
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
@@ -144,6 +156,7 @@ private:
     KURL m_url;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
+    RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
     bool m_async;
 

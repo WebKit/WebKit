@@ -23,6 +23,7 @@ module core {
     interface [
         GenerateConstructor,
         GenerateToJS,
+        GenerateNativeConverter,
         CustomMarkFunction,
         InlineGetOwnPropertySlot,
         InterfaceUUID=48BB95FC-2D08-4c54-BE65-7558736A4CAE,

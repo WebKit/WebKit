@@ -1,3 +1,36 @@
+2008-06-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Some XMLHttpRequest re-organization to aid further enhancements coming soon.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send): Explicitly call overloaded versions of send,
+        instead of always calling though send(DOMString).
+        * dom/Document.idl: Adds native converter.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::initSend):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::sameOriginRequest):
+        (WebCore::XMLHttpRequest::crossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::clearResponse):
+        (WebCore::XMLHttpRequest::clearRequest):
+        (WebCore::XMLHttpRequest::genericError):
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::setOnReadyStateChangeListener): Inline.
+        (WebCore::XMLHttpRequest::onReadyStateChangeListener): Ditto.
+        (WebCore::XMLHttpRequest::setOnLoadListener): Ditto.
+        (WebCore::XMLHttpRequest::onLoadListener): Ditto.
+        (WebCore::XMLHttpRequest::setOnProgressListener): Ditto.
+        (WebCore::XMLHttpRequest::onProgressListener): Ditto.
+        Makes the request entity body a member variable so that the send method
+        can be more easily broken up.
+
 2008-06-23  Timothy Hatcher  <timothy@apple.com>
 
         Make profiles of the same name in the Inspector group in the

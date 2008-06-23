@@ -29,9 +29,8 @@
 #include "config.h"
 #include "JSXMLHttpRequest.h"
 
-#include "XMLHttpRequest.h"
-
 #include "DOMWindow.h"
+#include "Document.h"
 #include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -40,7 +39,7 @@
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
-#include "markup.h"
+#include "XMLHttpRequest.h"
 
 using namespace KJS;
 
@@ -164,21 +163,19 @@ JSValue* JSXMLHttpRequest::setRequestHeader(ExecState* exec, const ArgList& args
 
 JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
 {
-    String body;
-    if (args.size() >= 1) {
-        if (args[0]->toObject(exec)->inherits(&JSDocument::s_info))
-            body = createMarkup(static_cast<Document*>(static_cast<JSDocument*>(args[0]->toObject(exec))->impl()));
-        else {
-            // converting certain values (like null) to object can set an exception
-            if (exec->hadException())
-                exec->clearException();
-            else
-                body = args[0]->toString(exec);
-        }
+    ExceptionCode ec = 0;
+    if (args.isEmpty())
+        impl()->send(ec);
+    else {
+        JSValue* val = args[0];
+        if (val->isUndefinedOrNull())
+            impl()->send(ec);
+        else if (val->isObject(&JSDocument::s_info))
+            impl()->send(toDocument(val), ec);
+        else
+            impl()->send(val->toString(exec), ec);
     }
 
-    ExceptionCode ec = 0;
-    impl()->send(body, ec);
     setDOMException(exec, ec);
     return jsUndefined();
 }

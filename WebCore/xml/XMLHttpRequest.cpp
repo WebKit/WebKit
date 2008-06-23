@@ -33,13 +33,14 @@
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
 #include "InspectorController.h"
+#include "JSDOMBinding.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
 #include "TextResourceDecoder.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
-#include "JSDOMBinding.h"
+#include "markup.h"
 
 namespace WebCore {
 
@@ -200,36 +201,6 @@ Document* XMLHttpRequest::responseXML() const
     return m_responseXML.get();
 }
 
-EventListener* XMLHttpRequest::onReadyStateChangeListener() const
-{
-    return m_onReadyStateChangeListener.get();
-}
-
-void XMLHttpRequest::setOnReadyStateChangeListener(PassRefPtr<EventListener> eventListener)
-{
-    m_onReadyStateChangeListener = eventListener;
-}
-
-EventListener* XMLHttpRequest::onLoadListener() const
-{
-    return m_onLoadListener.get();
-}
-
-EventListener* XMLHttpRequest::onProgressListener() const
-{
-    return m_onProgressListener.get();
-}
-
-void XMLHttpRequest::setOnLoadListener(PassRefPtr<EventListener> eventListener)
-{
-    m_onLoadListener = eventListener;
-}
-
-void XMLHttpRequest::setOnProgressListener(PassRefPtr<EventListener> eventListener)
-{
-    m_onProgressListener = eventListener;
-}
-
 void XMLHttpRequest::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
 {
     EventListenersMap::iterator iter = m_eventListeners.find(eventType.impl());
@@ -325,8 +296,8 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     m_error = false;
 
     // clear stuff from possible previous load
-    m_requestHeaders.clear();
-    clearResponseEntityBody();
+    clearResponse();
+    clearRequest();
 
     ASSERT(m_state == UNSENT);
 
@@ -382,25 +353,89 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, con
     open(method, urlWithCredentials, async, ec);
 }
 
-void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
+bool XMLHttpRequest::initSend(ExceptionCode& ec)
 {
     if (!m_doc)
-        return;
+        return false;
 
     if (m_state != OPENED || m_loader) {
         ec = INVALID_STATE_ERR;
-        return;
+        return false;
     }
 
     m_error = false;
+    return true;
+}
 
+void XMLHttpRequest::send(ExceptionCode& ec)
+{
+    send(String(), ec);
+}
+
+void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
+{
+    ASSERT(document);
+
+    if (!initSend(ec))
+        return;
+
+    if (m_method != "GET" && m_method != "HEAD" && (m_url.protocolIs("http") || m_url.protocolIs("https"))) {
+        String contentType = getRequestHeader("Content-Type");
+        if (contentType.isEmpty()) {
+#if ENABLE(DASHBOARD_SUPPORT)
+            Settings* settings = m_doc->settings();
+            if (settings && settings->usesDashboardBackwardCompatibilityMode())
+                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
+            else
+#endif
+                // FIXME: this should include the charset used for encoding.
+                setRequestHeaderInternal("Content-Type", "application/xml");
+        }
+
+        // FIXME: According to XMLHttpRequest Level 2, this should use the Document.innerHTML algorithm
+        // from the HTML5 specification to serialize the document.
+        String body = createMarkup(document);
+
+        // FIXME: this should use value of document.inputEncoding to determine the encoding to use.
+        TextEncoding encoding = UTF8Encoding();
+        m_requestEntityBody = FormData::create(encoding.encode(body.characters(), body.length(), EntitiesForUnencodables));
+    }
+
+    createRequest(ec);
+}
+
+void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
+{
+    if (!initSend(ec))
+        return;
+
+    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocolIs("http") || m_url.protocolIs("https"))) {
+        String contentType = getRequestHeader("Content-Type");
+        if (contentType.isEmpty()) {
+#if ENABLE(DASHBOARD_SUPPORT)
+            Settings* settings = m_doc->settings();
+            if (settings && settings->usesDashboardBackwardCompatibilityMode())
+                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
+            else
+#endif
+                setRequestHeaderInternal("Content-Type", "application/xml");
+        }
+
+        m_requestEntityBody = FormData::create(UTF8Encoding().encode(body.characters(), body.length(), EntitiesForUnencodables));
+    }
+
+    createRequest(ec);
+}
+
+void XMLHttpRequest::createRequest(ExceptionCode& ec)
+{
     m_sameOriginRequest = m_doc->securityOrigin()->canRequest(m_url);
 
     ResourceRequest request;
     if (m_sameOriginRequest)
-        sameOriginRequest(body, request);
+        sameOriginRequest(request);
     else {
-        crossSiteAccessRequest(body, request, ec);
+        crossSiteAccessRequest(request, ec);
         if (ec)
             return;
         if (m_inMethodCheck)
@@ -415,31 +450,13 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
     loadRequestSynchronously(request, ec);
 }
 
-void XMLHttpRequest::sameOriginRequest(const String& body, ResourceRequest& request)
+void XMLHttpRequest::sameOriginRequest(ResourceRequest& request)
 {
     request.setURL(m_url);
     request.setHTTPMethod(m_method);
 
-    if (!body.isNull() && m_method != "GET" && m_method != "HEAD" && (m_url.protocolIs("http") || m_url.protocolIs("https"))) {
-        String contentType = getRequestHeader("Content-Type");
-        if (contentType.isEmpty()) {
-#if ENABLE(DASHBOARD_SUPPORT)
-            Settings* settings = m_doc->settings();
-            if (settings && settings->usesDashboardBackwardCompatibilityMode())
-                setRequestHeaderInternal("Content-Type", "application/x-www-form-urlencoded");
-            else
-#endif
-                setRequestHeaderInternal("Content-Type", "application/xml");
-        }
-
-        // FIXME: must use xmlEncoding for documents.
-        String charset = "UTF-8";
-
-        TextEncoding encoding(charset);
-        if (!encoding.isValid()) // FIXME: report an error?
-            encoding = UTF8Encoding();
-        request.setHTTPBody(FormData::create(encoding.encode(body.characters(), body.length(), EntitiesForUnencodables)));
-    }
+    if (m_requestEntityBody)
+        request.setHTTPBody(m_requestEntityBody.release());
 
     if (m_requestHeaders.size() > 0)
         request.addHTTPHeaderFields(m_requestHeaders);
@@ -453,7 +470,7 @@ String XMLHttpRequest::accessControlOrigin() const
     return accessControlOrigin;
 }
 
-void XMLHttpRequest::crossSiteAccessRequest(const String& body, ResourceRequest& request, ExceptionCode& ec)
+void XMLHttpRequest::crossSiteAccessRequest(ResourceRequest& request, ExceptionCode& ec)
 {
     KURL url = m_url;
     url.setUser(String());
@@ -577,6 +594,8 @@ void XMLHttpRequest::abort()
         changeState(DONE);
         m_state = UNSENT;
     }
+
+    
 }
 
 void XMLHttpRequest::internalAbort()
@@ -599,7 +618,7 @@ void XMLHttpRequest::internalAbort()
         dropProtection();
 }
 
-void XMLHttpRequest::clearResponseEntityBody()
+void XMLHttpRequest::clearResponse()
 {
     m_response = ResourceResponse();
     {
@@ -610,10 +629,16 @@ void XMLHttpRequest::clearResponseEntityBody()
     m_responseXML = 0;
 }
 
+void XMLHttpRequest::clearRequest()
+{
+    m_requestHeaders.clear();
+    m_requestEntityBody = 0;
+}
+
 void XMLHttpRequest::genericError()
 {
-    clearResponseEntityBody();
-    m_requestHeaders.clear();
+    clearResponse();
+    clearRequest();
     m_error = true;
 
     // The spec says we should "Synchronously switch the state to DONE." and then "Synchronously dispatch a readystatechange event on the object"
@@ -983,7 +1008,7 @@ void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
     }
 
     ExceptionCode ec = 0;
-    dispatchEvent(evt, ec, false);
+    dispatchEvent(evt.release(), ec, false);
     ASSERT(!ec);
 }
 
