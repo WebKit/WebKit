@@ -1,3 +1,14 @@
+2008-06-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Restore a collectOnMainThreadOnly call that was accidentally removed in r34659. It will not
+        be needed when heaps are actually per-thread, but this isn't the case yet, and collecting
+        on a different thread causes crashes.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+
 2008-06-22  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Darin Adler.

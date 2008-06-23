@@ -49,6 +49,9 @@ namespace WebCore {
         explicit DOMObject(KJS::JSValue* prototype) // FIXME: this should take a JSObject once JSLocation has a real prototype
             : JSObject(prototype)
         {
+            // DOMObject destruction is not thread-safe because DOMObjects wrap 
+            // unsafe WebCore DOM data structures.
+            KJS::Heap::heap(this)->collectOnMainThreadOnly(this);
         }
 
 #ifndef NDEBUG
