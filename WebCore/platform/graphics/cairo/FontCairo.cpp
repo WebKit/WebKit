@@ -60,7 +60,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     context->getShadow(shadowSize, shadowBlur, shadowColor);
 
     // TODO: Blur support
-    bool hasShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && !shadowSize.isEmpty();
+    bool hasShadow = context->textDrawingMode() == cTextFill && shadowColor.isValid() && (shadowSize.width() || shadowSize.height());
     if (hasShadow) {
         // Disable graphics context shadows (not yet implemented) and paint them manually
         context->clearShadow();

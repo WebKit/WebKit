@@ -1,3 +1,14 @@
+2008-06-22  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=19675
+        Bug 19675: [GTK] negative text-shadows are not rendered
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs): The IntSize::isEmpty() call checks that the
+        sizes are > 0, while we need to check for != 0.
+
 2008-06-22  kuchhal  <kuchhal@yahoo.com>
 
         Reviewed by Darin Adler.
