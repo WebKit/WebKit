@@ -1,5 +1,18 @@
 2008-06-23  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Tim Hatcher.
+
+        Rename XMLHttpRequest::sameOriginRequest to XMLHttpRequest::makeSameOriginRequest
+        and XMLHttpRequest::crossSiteAccessRequest to XMLHttpRequest::makeCrossSiteAccessRequest.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::makeSameOriginRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequest):
+        * xml/XMLHttpRequest.h:
+
+2008-06-23  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Some XMLHttpRequest re-organization to aid further enhancements coming soon.

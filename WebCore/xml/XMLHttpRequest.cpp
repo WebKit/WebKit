@@ -433,9 +433,9 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 
     ResourceRequest request;
     if (m_sameOriginRequest)
-        sameOriginRequest(request);
+        makeSameOriginRequest(request);
     else {
-        crossSiteAccessRequest(request, ec);
+        makeCrossSiteAccessRequest(request, ec);
         if (ec)
             return;
         if (m_inMethodCheck)
@@ -450,7 +450,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     loadRequestSynchronously(request, ec);
 }
 
-void XMLHttpRequest::sameOriginRequest(ResourceRequest& request)
+void XMLHttpRequest::makeSameOriginRequest(ResourceRequest& request)
 {
     request.setURL(m_url);
     request.setHTTPMethod(m_method);
@@ -470,7 +470,7 @@ String XMLHttpRequest::accessControlOrigin() const
     return accessControlOrigin;
 }
 
-void XMLHttpRequest::crossSiteAccessRequest(ResourceRequest& request, ExceptionCode& ec)
+void XMLHttpRequest::makeCrossSiteAccessRequest(ResourceRequest& request, ExceptionCode& ec)
 {
     KURL url = m_url;
     url.setUser(String());
