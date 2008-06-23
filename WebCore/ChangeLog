@@ -1,3 +1,13 @@
+2008-06-22  kuchhal  <kuchhal@yahoo.com>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=19697
+        Bug 19697: Redundant releaseRef causing memory leak
+
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        (WebCore::fragmentFromCF_HTML):
+
 2008-06-21  Sam Weinig  <sam@webkit.org>
 
         Fix Windows build.
