@@ -97,6 +97,23 @@ WebInspector.SidebarTreeElement = function(className, title, subtitle, represent
 }
 
 WebInspector.SidebarTreeElement.prototype = {
+    get small()
+    {
+        return this._small;
+    },
+
+    set small(x)
+    {
+        this._small = x;
+
+        if (this._listItemNode) {
+            if (this._small)
+                this._listItemNode.addStyleClass("small");
+            else
+                this._listItemNode.removeStyleClass("small");
+        }
+    },
+
     get mainTitle()
     {
         return this._mainTitle;
@@ -162,6 +179,9 @@ WebInspector.SidebarTreeElement.prototype = {
 
         if (this.className)
             this._listItemNode.addStyleClass(this.className);
+
+        if (this.small)
+            this._listItemNode.addStyleClass("small");
 
         if (this.hasChildren && this.disclosureButton)
             this._listItemNode.appendChild(this.disclosureButton);

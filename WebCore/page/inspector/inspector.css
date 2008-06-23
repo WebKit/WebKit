@@ -2486,6 +2486,14 @@ body.inactive .sidebar-tree-item.selected {
     content: url(Images/profileIcon.png);
 }
 
+.profile-sidebar-tree-item.small .icon {
+    content: url(Images/profileSmallIcon.png);
+}
+
+.profile-group-sidebar-tree-item .icon {
+    content: url(Images/profileGroupIcon.png);
+}
+
 .profile-view {
     display: none;
     overflow: hidden;

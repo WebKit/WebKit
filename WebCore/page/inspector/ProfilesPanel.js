@@ -105,6 +105,9 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         this._profiles = [];
+        this._profileGroups = {};
+
+        this.sidebarTreeElement.removeStyleClass("some-expandable");
 
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
@@ -121,10 +124,54 @@ WebInspector.ProfilesPanel.prototype = {
     {
         this._profiles.push(profile);
 
+        var sidebarParent = this.sidebarTree;
+        var small = false;
+        var alternateTitle;
+
+        if (profile.title !== "org.webkit.profiles.user-initiated") {
+            if (!(profile.title in this._profileGroups))
+                this._profileGroups[profile.title] = [];
+
+            var group = this._profileGroups[profile.title];
+            group.push(profile);
+
+            if (group.length === 2) {
+                // Make a group TreeElement now that there are 2 profiles.
+                group._profilesTreeElement = new WebInspector.ProfileGroupSidebarTreeElement(profile.title);
+
+                // Insert at the same index for the first profile of the group.
+                var index = this.sidebarTree.children.indexOf(group[0]._profilesTreeElement);
+                this.sidebarTree.insertChild(group._profilesTreeElement, index);
+
+                // Move the first profile to the group.
+                var selected = group[0]._profilesTreeElement.selected;
+                this.sidebarTree.removeChild(group[0]._profilesTreeElement);
+                group._profilesTreeElement.appendChild(group[0]._profilesTreeElement);
+                if (selected) {
+                    group[0]._profilesTreeElement.select();
+                    group[0]._profilesTreeElement.reveal();
+                }
+
+                group[0]._profilesTreeElement.small = true;
+                group[0]._profilesTreeElement.mainTitle = WebInspector.UIString("Run %d", 1);
+
+                this.sidebarTreeElement.addStyleClass("some-expandable");
+            }
+
+            if (group.length >= 2) {
+                sidebarParent = group._profilesTreeElement;
+                alternateTitle = WebInspector.UIString("Run %d", group.length);
+                small = true;
+            }
+        }
+
         var profileTreeElement = new WebInspector.ProfileSidebarTreeElement(profile);
+        profileTreeElement.small = small;
+        if (alternateTitle)
+            profileTreeElement.mainTitle = alternateTitle;
         profile._profilesTreeElement = profileTreeElement;
 
-        this.sidebarTree.appendChild(profileTreeElement);
+        sidebarParent.appendChild(profileTreeElement);
     },
 
     showProfile: function(profile)
@@ -255,6 +302,8 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
 
     get mainTitle()
     {
+        if (this._mainTitle)
+            return this._mainTitle;
         if (this.profile.title === "org.webkit.profiles.user-initiated")
             return WebInspector.UIString("Profile %d", this._profileNumber);
         return this.profile.title;
@@ -262,7 +311,8 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
 
     set mainTitle(x)
     {
-        // Can't change mainTitle.
+        this._mainTitle = x;
+        this.refreshTitles();
     },
 
     get subtitle()
@@ -277,3 +327,17 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
 }
 
 WebInspector.ProfileSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;
+
+WebInspector.ProfileGroupSidebarTreeElement = function(title, subtitle)
+{
+    WebInspector.SidebarTreeElement.call(this, "profile-group-sidebar-tree-item", title, subtitle, null, true);
+}
+
+WebInspector.ProfileGroupSidebarTreeElement.prototype = {
+    onselect: function()
+    {
+        WebInspector.panels.profiles.showProfile(this.children[this.children.length - 1].profile);
+    }
+}
+
+WebInspector.ProfileGroupSidebarTreeElement.prototype.__proto__ = WebInspector.SidebarTreeElement.prototype;

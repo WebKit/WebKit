@@ -1,3 +1,38 @@
+2008-06-23  Timothy Hatcher  <timothy@apple.com>
+
+        Make profiles of the same name in the Inspector group in the
+        sidebar under a collapsable item that contains all the runs.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19713
+
+        Reviewed by Darin Adler.
+
+        * English.lproj/localizedStrings.js: New strings.
+        * page/inspector/Images/profileGroupIcon.png: Added.
+        * page/inspector/Images/profileSmallIcon.png: Added.
+        * page/inspector/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.reset): Clear _profileGroups.
+        Remove the "some-expandable" class from the sidebarTree.
+        (WebInspector.ProfilesPanel.prototype.addProfile): Append new profiles
+        that have the same name as a previous profile into a group. When a
+        group has 2 profiles a ProfileGroupSidebarTreeElement is made and the
+        ProfileSidebarTreeElements are appended to the group's element. 
+        (WebInspector.ProfileSidebarTreeElement.prototype.get mainTitle):
+        Return _mainTitle is it is set.
+        (WebInspector.ProfileSidebarTreeElement.prototype.set mainTitle):
+        Set _mainTitle which is an override title.
+        (WebInspector.ProfileGroupSidebarTreeElement): Inherit SidebarTreeElement.
+        (WebInspector.ProfileGroupSidebarTreeElement.prototype.onselect):
+        Show the last profile in the group when selected.
+        * page/inspector/SidebarTreeElement.js:
+        (WebInspector.SidebarTreeElement.prototype.get small): Return _small.
+        (WebInspector.SidebarTreeElement.prototype.set small): Set _small and
+        update the style to match.
+        (WebInspector.SidebarTreeElement.prototype.onattach): Set the small
+        class if the small property is true.
+        * page/inspector/inspector.css: New styles for profiles groups
+        and for the small profiles.
+
 2008-06-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
