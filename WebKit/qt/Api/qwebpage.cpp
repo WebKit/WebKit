@@ -464,11 +464,25 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 {
-    if (currentContextMenu) {
-        currentContextMenu->exec(ev->globalPos());
-        delete currentContextMenu;
-        currentContextMenu = 0;
+    QMenu *menu = q->createStandardContextMenu();
+    if (menu) {
+        menu->exec(ev->globalPos());
+        delete menu;
     }
+}
+
+/*!
+    \since 4.5
+    This function creates the standard context menu which is shown when
+    the user clicks on the web page with the right mouse button. It is
+    called from the default contextMenuEvent() handler. The popup menu's
+    ownership is transferred to the caller.
+ */
+QMenu *QWebPage::createStandardContextMenu()
+{
+    QMenu *menu = d->currentContextMenu;
+    d->currentContextMenu = 0;
+    return menu;
 }
 
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)

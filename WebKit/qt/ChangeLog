@@ -1,3 +1,9 @@
+2008-06-23  Benjamin C Meyer  <ben@meyerhome.net>
+
+        Reviewed by Simon.
+
+        Add function to retrieve the standard context menu
+
 2008-06-20  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Simon.

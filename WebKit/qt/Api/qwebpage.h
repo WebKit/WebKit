@@ -31,6 +31,7 @@ QT_BEGIN_NAMESPACE
 class QNetworkProxy;
 class QUndoStack;
 class QUrl;
+class QMenu;
 class QNetworkRequest;
 class QNetworkReply;
 class QNetworkAccessManager;
@@ -227,6 +228,8 @@ public:
 
     bool swallowContextMenuEvent(QContextMenuEvent *event);
     void updatePositionDependentActions(const QPoint &pos);
+
+    QMenu *createStandardContextMenu();
 
     enum Extension {
     };
