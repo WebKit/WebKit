@@ -613,6 +613,12 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 // IE treats a nested select as </select>. Let's do the same
                 popBlock(localName);
             }
+        } else if (h->hasLocalName(selectTag)) {
+            if (localName == inputTag || localName == textareaTag) {
+                reportError(MisplacedContentRetryError, &localName, &currentTagName);
+                popBlock(currentTagName);
+                handled = true;
+            }
         } else if (h->hasLocalName(colgroupTag)) {
             popBlock(currentTagName);
             handled = true;

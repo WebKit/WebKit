@@ -2,6 +2,16 @@
 
         Reviewed by Darin Adler.
 
+        Test for https://bugs.webkit.org/show_bug.cgi?id=17421
+        Bug 17421: Lack of end tag for SELECT element causes the rest of page to not be rendered
+
+        * fast/parser/input-textarea-inside-select-element-expected.txt: Added.
+        * fast/parser/input-textarea-inside-select-element.html: Added.
+
+2008-06-22  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
         Test for https://bugs.webkit.org/show_bug.cgi?id=19520
         Bug 19520: WebKit incorrectly accepts hidden as the value of outline-style
 

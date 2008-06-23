@@ -1,3 +1,15 @@
+2008-06-22  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=17421
+        Bug 17421: Lack of end tag for SELECT element causes the rest of page to not be rendered
+
+        Test: fast/parser/input-textarea-inside-select-element.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+
 2008-06-22  David Krause  <david.krause@gmail.com>
 
         Reviewed by Darin Adler.
