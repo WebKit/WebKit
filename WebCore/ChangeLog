@@ -1,5 +1,13 @@
 2008-06-23  Sam Weinig  <sam@webkit.org>
 
+        Remove XMLHttpRequestProgressEvent.cpp from project files.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+
+2008-06-23  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Dave Hyatt.
 
         Remove empty file.

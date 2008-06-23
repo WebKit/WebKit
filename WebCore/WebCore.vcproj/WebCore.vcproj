@@ -10462,10 +10462,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\xml\XMLHttpRequestProgressEvent.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\xml\XMLHttpRequestProgressEvent.h"
 				>
 			</File>

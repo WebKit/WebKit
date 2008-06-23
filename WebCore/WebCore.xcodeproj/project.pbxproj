@@ -4037,7 +4037,6 @@
 		EDEC98030AED7E170059137F /* WebCorePrefix.h in Headers */ = {isa = PBXBuildFile; fileRef = EDEC98020AED7E170059137F /* WebCorePrefix.h */; };
 		F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */; };
 		F916C48E0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */; };
-		F9F0ED790DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */; };
 		F9F0ED7A0DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */; };
 /* End PBXBuildFile section */
 
@@ -8455,7 +8454,6 @@
 		F8216299029F4FB501000131 /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
 		F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
-		F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestProgressEvent.cpp; sourceTree = "<group>"; };
 		F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestProgressEvent.h; sourceTree = "<group>"; };
 		F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = XMLHttpRequestProgressEvent.idl; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
@@ -12653,7 +12651,6 @@
 				BC348BA70DB7F1B8004ABAB9 /* XMLHttpRequest.idl */,
 				BC60D9C70D2A29E500B9918F /* XMLHttpRequestException.h */,
 				BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */,
-				F9F0ED760DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp */,
 				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
 				F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */,
 				1ACE53E40A8D18E70022947D /* XMLSerializer.cpp */,
@@ -16996,7 +16993,6 @@
 				BC348BBE0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp in Sources */,
 				BC348BD30DB7F804004ABAB9 /* JSXMLHttpRequest.cpp in Sources */,
 				BC348BE90DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp in Sources */,
-				F9F0ED790DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.cpp in Sources */,
 				F916C48D0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp in Sources */,
 				BCD0FBD00DBD625E00B2F630 /* DOMAbstractView.mm in Sources */,
 				1CA19CAF0DC1145F0065A994 /* JavaScriptCallFrame.cpp in Sources */,
