@@ -1,3 +1,9 @@
+2008-06-23  Kevin McCullough  <kmccullough@apple.com>
+
+        -Build fix.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-06-23  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
