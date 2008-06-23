@@ -1,3 +1,13 @@
+2008-06-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        Make changedDocuments a HashSet.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setDocumentChanged):
+        (WebCore::Document::updateDocumentsRendering):
+
 2008-06-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

@@ -255,7 +255,7 @@ static bool acceptsEditingFocus(Node *node)
     return frame->editor()->shouldBeginEditing(rangeOfContents(root).get());
 }
 
-static DeprecatedPtrList<Document>* changedDocuments = 0;
+static HashSet<Document*>* changedDocuments = 0;
 
 Document::Document(Frame* frame, bool isXHTML)
     : ContainerNode(0)
@@ -1063,8 +1063,8 @@ void Document::setDocumentChanged(bool b)
     if (b) {
         if (!m_docChanged) {
             if (!changedDocuments)
-                changedDocuments = new DeprecatedPtrList<Document>;
-            changedDocuments->append(this);
+                changedDocuments = new HashSet<Document*>;
+            changedDocuments->add(this);
         }
         if (m_accessKeyMapValid) {
             m_accessKeyMapValid = false;
@@ -1174,7 +1174,11 @@ void Document::updateDocumentsRendering()
     if (!changedDocuments)
         return;
 
-    while (Document* doc = changedDocuments->take()) {
+    while (changedDocuments->size()) {
+        HashSet<Document*>::iterator it = changedDocuments->begin();
+        Document* doc = *it;
+        changedDocuments->remove(it);
+        
         doc->m_docChanged = false;
         doc->updateRendering();
     }
