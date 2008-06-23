@@ -840,7 +840,7 @@ int main(int argc, char* argv[])
     JSStringRelease(functionBody);
     
     string = JSValueToStringCopy(context, function, NULL);
-    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) \n{\n  return foo;\n}");
+    assertEqualsAsUTF8String(JSValueMakeString(context, string), "function foo(foo) {return foo;}");
     JSStringRelease(string);
 
     JSStringRef print = JSStringCreateWithUTF8CString("print");
