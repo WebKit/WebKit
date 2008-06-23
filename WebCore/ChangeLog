@@ -1,3 +1,14 @@
+2008-06-23  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/6024267> VO unable to read massive emails because AccessibilityObject::lengthForVisiblePositionRange makes the string
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::replacedNodeNeedsCharacter):
+        (WebCore::AccessibilityObject::stringForVisiblePositionRange):
+        (WebCore::AccessibilityObject::lengthForVisiblePositionRange):
+
 2008-06-23  Steve Falkenburg  <sfalken@apple.com>
 
         Added our own mechanism for generating temporary file names.

@@ -563,20 +563,20 @@ VisiblePositionRange AccessibilityObject::visiblePositionRangeForRange(const Pla
     return VisiblePositionRange(startPosition, endPosition);
 }
 
-static String stringForReplacedNode(Node* replacedNode)
+static bool replacedNodeNeedsCharacter(Node* replacedNode)
 {
     // we should always be given a rendered node and a replaced node, but be safe
     // replaced nodes are either attachments (widgets) or images
     if (!replacedNode || !replacedNode->renderer() || !replacedNode->renderer()->isReplaced() || replacedNode->isTextNode()) {
-        return String();
+        return false;
     }
 
     // create an AX object, but skip it if it is not supposed to be seen
     AccessibilityObject* object = replacedNode->renderer()->document()->axObjectCache()->get(replacedNode->renderer());
     if (object->accessibilityIsIgnored())
-        return String();
+        return false;
 
-    return String(&objectReplacementCharacter, 1);
+    return true;
 }
 
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
@@ -584,28 +584,26 @@ String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionR
     if (visiblePositionRange.isNull())
         return String();
 
-    String resultString;
-    TextIterator it(makeRange(visiblePositionRange.start, visiblePositionRange.end).get());
-    while (!it.atEnd()) {
+    Vector<UChar> resultVector;
+    RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
+    for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
         // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
         if (it.length() != 0) {
-            resultString.append(it.characters(), it.length());
+            resultVector.append(it.characters(), it.length());
         } else {
             // locate the node and starting offset for this replaced range
             int exception = 0;
             Node* node = it.range()->startContainer(exception);
             ASSERT(node == it.range()->endContainer(exception));
             int offset = it.range()->startOffset(exception);
-            String attachmentString = stringForReplacedNode(node->childNode(offset));
 
-            // append the replacement string
-            if (!attachmentString.isNull())
-                resultString.append(attachmentString);
+            if (replacedNodeNeedsCharacter(node->childNode(offset))) {
+                resultVector.append(objectReplacementCharacter);
+            }
         }
-        it.advance();
     }
 
-    return resultString.isEmpty() ? String() : resultString;
+    return String::adopt(resultVector);
 }
 
 IntRect AccessibilityObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
@@ -616,11 +614,28 @@ IntRect AccessibilityObject::boundsForVisiblePositionRange(const VisiblePosition
 int AccessibilityObject::lengthForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     // FIXME: Multi-byte support
-    String string = stringForVisiblePositionRange(visiblePositionRange);
-    if (string.isEmpty())
+    if (visiblePositionRange.isNull())
         return -1;
+    
+    int length = 0;
+    RefPtr<Range> range = makeRange(visiblePositionRange.start, visiblePositionRange.end);
+    for (TextIterator it(range.get()); !it.atEnd(); it.advance()) {
+        // non-zero length means textual node, zero length means replaced node (AKA "attachments" in AX)
+        if (it.length() != 0) {
+            length += it.length();
+        } else {
+            // locate the node and starting offset for this replaced range
+            int exception = 0;
+            Node* node = it.range()->startContainer(exception);
+            ASSERT(node == it.range()->endContainer(exception));
+            int offset = it.range()->startOffset(exception);
 
-    return string.length();
+            if (replacedNodeNeedsCharacter(node->childNode(offset)))
+                length++;
+        }
+    }
+    
+    return length;
 }
 
 void AccessibilityObject::setSelectedVisiblePositionRange(const VisiblePositionRange&) const
