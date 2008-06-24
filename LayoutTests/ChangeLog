@@ -1,3 +1,12 @@
+2008-06-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/6026335> REGRESSION: Caret disappears after deleting a particular selection involving a ToDo
+
+        * editing/deleting/6026335-expected.txt: Added.
+        * editing/deleting/6026335.html: Added.
+
 2008-06-24  Sam Weinig and Beth Dakin  <bdakin@apple.com and sam@webkit.org>
 
         Reviewed by Darin.

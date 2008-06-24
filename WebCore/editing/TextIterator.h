@@ -126,6 +126,8 @@ private:
     
     // Used by selection preservation code.  There should be one character emitted between every VisiblePosition
     // in the Range used to create the TextIterator.
+    // FIXME <rdar://problem/6028818>: This functionality should eventually be phased out when we rewrite 
+    // moveParagraphs to not clone/destroy moved content.
     bool m_emitCharactersBetweenAllVisiblePositions;
 };
 

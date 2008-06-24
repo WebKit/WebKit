@@ -1,3 +1,24 @@
+2008-06-24  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/6026335> REGRESSION: Caret disappears after deleting a particular selection involving a ToDo
+        
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphs): If asked to preserveStyle, we
+        apply styles from the moved paragraph to the destination with applyStyle, which
+        does selection preservation when it needs to apply block styles.  Selection preservation 
+        uses relatively untested code in TextIterator to count VisiblePositions which fails in 
+        this particular test case because it doesn't handle changes in editability properly.  
+        We can avoid this bug by not applying block styles from moved paragraphs.  This is 
+        something that should be done anyway, since the moved paragraph should assume the 
+        block styles of the destination.
+        * editing/EditCommand.cpp:
+        (WebCore::EditCommand::styleAtPosition): Added a FIXME about how it is misleading for
+        this function to also include the typing style.
+        * editing/TextIterator.h: Added a FIXME about how the code path used for selection preservation
+        is buggy and should be phased out when we rewrite moveParagraphs.
+
 2008-06-24  Kevin McCullough  <kmccullough@apple.com>
 
         -Added a manual test for the profiler.
