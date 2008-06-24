@@ -1,3 +1,17 @@
+2008-06-24  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18459
+
+        Implemented basic text-shadow support for the Qt port.
+
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawText): implement text-shadow support in the Qt port
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLine): also draw shadows for text
+        decorations such as unerlines
+
 2008-06-24  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, adapt to various JSCore API changes.

@@ -129,6 +129,13 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& 
     Color color = ctx->fillColor();
     p->setPen(QColor(color));
 
+    // text shadow
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    ctx->getShadow(shadowSize, shadowBlur, shadowColor);
+    bool hasShadow = ctx->textDrawingMode() == cTextFill && shadowColor.isValid() && (shadowSize.width() || shadowSize.height());
+
     QString string = qstring(run);
 
     if (from > 0 || to < run.length()) {
@@ -142,10 +149,31 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& 
         QFontMetrics fm(m_font);
         int ascent = fm.ascent();
         QRectF clip(point.x() + x1, point.y() - ascent, x2 - x1, fm.height());
-
+        if (hasShadow) {
+            // TODO: when blur support is added, the clip will need to account
+            // for the blur radius
+            qreal dx1 = 0, dx2 = 0, dy1 = 0, dy2 = 0;
+            if (shadowSize.width() > 0)
+                dx2 = shadowSize.width();
+            else
+                dx1 = -shadowSize.width();
+            if (shadowSize.height() > 0)
+                dy2 = shadowSize.height();
+            else
+                dy1 = -shadowSize.height();
+            // expand the clip rect to include the text shadow as well
+            clip.adjust(dx1, dx2, dy1, dy2);
+        }
         p->save();
         p->setClipRect(clip.toRect());
         QPointF pt(point.x(), point.y() - ascent);
+        if (hasShadow) {
+            p->save();
+            p->setPen(QColor(shadowColor));
+            p->translate(shadowSize.width(), shadowSize.height());
+            line.draw(p, pt);
+            p->restore();
+        }
         line.draw(p, pt);
         p->restore();
         return;
@@ -155,6 +183,14 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& 
 
     QPointF pt(point.x(), point.y());
     int flags = run.rtl() ? Qt::TextForceRightToLeft : Qt::TextForceLeftToRight;
+    if (hasShadow) {
+        // TODO: text shadow blur support
+        p->save();
+        p->setPen(QColor(shadowColor));
+        p->translate(shadowSize.width(), shadowSize.height());
+        p->drawText(pt, string, flags, run.padding());
+        p->restore();
+    }
     p->drawText(pt, string, flags, run.padding());
 }
 

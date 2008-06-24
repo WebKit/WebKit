@@ -453,8 +453,21 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     QPainter *p = m_data->p();
     const bool antiAlias = p->testRenderHint(QPainter::Antialiasing);
     p->setRenderHint(QPainter::Antialiasing, m_data->antiAliasingForRectsAndLines);
-
     adjustLineToPixelBoundaries(p1, p2, strokeThickness(), strokeStyle());
+
+    IntSize shadowSize;
+    int shadowBlur;
+    Color shadowColor;
+    getShadow(shadowSize, shadowBlur, shadowColor);
+    bool hasShadow = textDrawingMode() == cTextFill && shadowColor.isValid() && (shadowSize.width() || shadowSize.height());
+    if (hasShadow) {
+        p->save();
+        p->translate(shadowSize.width(), shadowSize.height());
+        p->setPen(QColor(shadowColor));
+        p->drawLine(p1, p2);
+        p->restore();
+    }
+
     p->drawLine(p1, p2);
 
     p->setRenderHint(QPainter::Antialiasing, antiAlias);
