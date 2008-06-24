@@ -29,6 +29,7 @@
 #import "DumpRenderTree.h"
 #import "FrameLoadDelegate.h"
 
+#import "AccessibilityController.h"
 #import "AppleScriptController.h"
 #import "EventSendingController.h"
 #import "GCController.h"
@@ -94,8 +95,10 @@
 
 - (id)init
 {
-    if ((self = [super init]))
+    if ((self = [super init])) {
         gcController = new GCController;
+        accessibilityController = new AccessibilityController;
+    }
     return self;
 }
 
@@ -241,6 +244,9 @@
     ASSERT(!exception);
 
     gcController->makeWindowObject(context, globalObject, &exception);
+    ASSERT(!exception);
+
+    accessibilityController->makeWindowObject(context, globalObject, &exception);
     ASSERT(!exception);
 
     // Make Old-Style controllers

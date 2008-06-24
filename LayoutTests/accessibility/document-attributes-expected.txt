@@ -1,0 +1,27 @@
+AXRole: AXWebArea
+AXSubrole: 
+AXRoleDescription: HTML content
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXWebArea>
+AXPosition: NSPoint: {-10000, 10900}
+AXSize: NSSize: {0, 0}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXWebArea>
+AXSelectedTextMarkerRange: 
+AXStartTextMarker: <AXWebArea>
+AXEndTextMarker: <AXWebArea>
+AXVisited: 0
+AXLinkedUIElements: 
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXLinkUIElements: <array of size 0>
+AXLoaded: 1
+AXLayoutCount: 2
+AXURL: LayoutTests/accessibility/document-attributes.html
+
+

@@ -1,3 +1,31 @@
+2008-06-24  Sam Weinig and Beth Dakin  <bdakin@apple.com and sam@webkit.org>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/5884881> Make DumpRenderTree support 
+        accessibility tests
+
+        This patch adds some basic support for accessibility layout tests 
+        on the Mac.
+
+        * DumpRenderTree/AccessibilityController.cpp: Added.
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        (dumpCurrentAttributesCallback):
+        (AccessibilityController::makeWindowObject):
+        (AccessibilityController::getJSClass):
+        (AccessibilityController::staticFunctions):
+        * DumpRenderTree/AccessibilityController.h: Added.
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm: Added.
+        (descriptionOfValue):
+        (AccessibilityController::dumpCurrentAttributes):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        * DumpRenderTree/mac/FrameLoadDelegate.h:
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate init]):
+        (-[FrameLoadDelegate webView:didClearWindowObject:forFrame:]):
+
 2008-06-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dan Bernstein

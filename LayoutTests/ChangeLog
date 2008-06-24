@@ -1,3 +1,17 @@
+2008-06-24  Sam Weinig and Beth Dakin  <bdakin@apple.com and sam@webkit.org>
+
+        Reviewed by Darin.
+        
+        First test for <rdar://problem/5884881> Make DumpRenderTree support 
+        accessibility tests
+
+        * accessibility: Added.
+        * accessibility/document-attributes-expected.txt: Added.
+        * accessibility/document-attributes.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2008-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

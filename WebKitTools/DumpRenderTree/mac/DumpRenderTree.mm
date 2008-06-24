@@ -29,6 +29,7 @@
  
 #import "DumpRenderTree.h"
 
+#import "AccessibilityController.h"
 #import "CheckedMalloc.h"
 #import "DumpRenderTreePasteboard.h"
 #import "DumpRenderTreeWindow.h"

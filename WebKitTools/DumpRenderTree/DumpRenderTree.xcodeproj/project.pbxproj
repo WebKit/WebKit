@@ -90,6 +90,8 @@
 		BCB284D00CFA83CC007E533E /* PixelDumpSupportCG.h in Headers */ = {isa = PBXBuildFile; fileRef = BCB284890CFA8202007E533E /* PixelDumpSupportCG.h */; };
 		BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */; };
 		BCB284F60CFA84F8007E533E /* ImageDiffCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB284F30CFA84F2007E533E /* ImageDiffCG.cpp */; };
+		BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */; };
+		BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */; };
 		BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCF6C64F0C98E9C000AC063E /* GCController.cpp */; };
 /* End PBXBuildFile section */
 
@@ -200,6 +202,9 @@
 		BCB2848C0CFA8221007E533E /* PixelDumpSupportMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; name = PixelDumpSupportMac.mm; path = mac/PixelDumpSupportMac.mm; sourceTree = "<group>"; };
 		BCB284B20CFA82CB007E533E /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		BCB284F30CFA84F2007E533E /* ImageDiffCG.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = ImageDiffCG.cpp; path = cg/ImageDiffCG.cpp; sourceTree = "<group>"; };
+		BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityController.h; sourceTree = "<group>"; };
+		BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityController.cpp; sourceTree = "<group>"; };
+		BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerMac.mm; path = mac/AccessibilityControllerMac.mm; sourceTree = "<group>"; };
 		BCF6C64F0C98E9C000AC063E /* GCController.cpp */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 30; path = GCController.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,6 +290,9 @@
 		1422A2690AF6F45200E1A883 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
+				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
+				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,
 				BCA18B360C9B021900114369 /* AppleScriptController.h */,
 				BCA18B370C9B021900114369 /* AppleScriptController.m */,
 				BCA18B6B0C9B08DB00114369 /* EventSendingController.h */,
@@ -589,6 +597,8 @@
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
+				BCD08B3A0E1057EF00A7D0C1 /* AccessibilityController.cpp in Sources */,
+				BCD08B710E1059D200A7D0C1 /* AccessibilityControllerMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
