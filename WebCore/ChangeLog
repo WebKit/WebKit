@@ -1,3 +1,14 @@
+2008-06-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19723
+        REGRESSION(r34648): Some SVG tests crash when running under --threaded
+
+        * rendering/RenderSVGInlineText.cpp: (WebCore::RenderSVGInlineText::destroy): Do not attempt
+        to paint during document destruction, because rendering structures are not kept in a
+        consistent state then.
+
 2008-06-24  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
         Reviewed by Darin.
