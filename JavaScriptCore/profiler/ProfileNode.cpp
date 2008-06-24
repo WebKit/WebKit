@@ -228,7 +228,7 @@ void ProfileNode::restore()
 
 void ProfileNode::endAndRecordCall()
 {
-    m_actualTotalTime += getCount() - m_startTime;
+    m_actualTotalTime += m_startTime ? getCount() - m_startTime : 0.0;
     m_startTime = 0.0;
 
     ++m_numberOfCalls;

@@ -99,9 +99,10 @@ void Profile::removeProfileStart() {
     if (currentNode->callIdentifier().name != "profile")
         return;
 
-    for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
-        currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
+    // Attribute the time of the node aobut to be removed to the self time of its parent
+    currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
 
+    ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[0])->callIdentifier());
     currentNode->parent()->removeChild(0);
 }
 
@@ -114,9 +115,10 @@ void Profile::removeProfileEnd() {
     if (currentNode->callIdentifier().name != "profileEnd")
         return;
 
-    for (ProfileNode* currentParent = currentNode->parent(); currentParent; currentParent = currentParent->parent())
-        currentParent->setTotalTime(currentParent->totalTime() - currentNode->totalTime());
+    // Attribute the time of the node aobut to be removed to the self time of its parent
+    currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
 
+    ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[currentNode->parent()->children().size() - 1])->callIdentifier());
     currentNode->parent()->removeChild(currentNode->parent()->children().size() - 1);
 }
 
@@ -138,15 +140,15 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
         m_currentNode = ProfileNode::create(callIdentifier, m_head.get(), m_head.get());
         m_currentNode->setStartTime(m_head->startTime());
         m_currentNode->didExecute();
-        m_head->insertNode(m_currentNode.get());
 
         if (m_stoppedProfiling) {
-            m_currentNode->setTotalTime(m_currentNode->totalTime() + m_head->selfTime());
+            m_currentNode->setTotalTime(m_head->totalTime());
+            m_currentNode->setSelfTime(m_head->selfTime());
             m_head->setSelfTime(0.0);
-            m_currentNode->stopProfiling();
-            m_currentNode = 0;
-        } else
-            m_currentNode = m_head;
+        }
+
+        m_head->insertNode(m_currentNode.release());            
+        m_currentNode = m_stoppedProfiling ? 0 : m_head;
 
         return;
     }

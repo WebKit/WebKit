@@ -1,3 +1,28 @@
+2008-06-24  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/6031594> JSProfiler: Profiler goes into an infinite
+        loop sometimes.
+        <rdar://problem/6031603> JSProfiler: Profiler asserts in debug and
+        give the wrong times in release
+
+        Fixed two issues found by Tim in the same test.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::removeProfileStart): No longer take profile's time from
+        all ancestors, but instead attribute it to its parent.  Also add an
+        Assert to ensure we only delete the child we mean to.
+        (KJS::Profile::removeProfileEnd): Ditto for profileEnd.
+        (KJS::Profile::didExecute): Cleaned up the execution order and correctly
+        attribute all of the parent's time to the new node.
+        * profiler/ProfileNode.cpp: If this node does not have a startTime it
+        should not get a giant total time, but instead be 0.
+        (KJS::ProfileNode::endAndRecordCall):
+        * profiler/ProfileNode.h:
+        (KJS::ProfileNode::removeChild): Should reset the sibling pointers since
+        one of them has been removed.
+
 2008-06-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron.

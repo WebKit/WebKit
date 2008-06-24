@@ -108,7 +108,7 @@ namespace KJS {
         const Vector<RefPtr<ProfileNode> >& children() const { return m_children; }
         ProfileNode* firstChild() const { return m_children.size() ? m_children.first().get() : 0; }
         ProfileNode* lastChild() const { return m_children.size() ? m_children.last().get() : 0; }
-        void removeChild(unsigned index) { m_children.remove(index); }
+        void removeChild(unsigned index) { m_children.remove(index); resetChildrensSiblings(); }
         void addChild(PassRefPtr<ProfileNode> prpChild);
         void insertNode(PassRefPtr<ProfileNode> prpNode);
 
