@@ -129,14 +129,13 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& 
     Color color = ctx->fillColor();
     p->setPen(QColor(color));
 
+    QString string = qstring(run);
+
     // text shadow
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
-    ctx->getShadow(shadowSize, shadowBlur, shadowColor);
-    bool hasShadow = ctx->textDrawingMode() == cTextFill && shadowColor.isValid() && (shadowSize.width() || shadowSize.height());
-
-    QString string = qstring(run);
+    bool hasShadow = ctx->textDrawingMode() == cTextFill && ctx->getShadow(shadowSize, shadowBlur, shadowColor);
 
     if (from > 0 || to < run.length()) {
         QTextLayout layout(string, m_font);
@@ -149,6 +148,7 @@ void Font::drawText(GraphicsContext* ctx, const TextRun& run, const FloatPoint& 
         QFontMetrics fm(m_font);
         int ascent = fm.ascent();
         QRectF clip(point.x() + x1, point.y() - ascent, x2 - x1, fm.height());
+
         if (hasShadow) {
             // TODO: when blur support is added, the clip will need to account
             // for the blur radius

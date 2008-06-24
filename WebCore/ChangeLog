@@ -1,5 +1,28 @@
 2008-06-24  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19727
+
+        Return bool from GraphicsContext::getShadow() so the tests aren't duplicated so
+        many times in Cairo and Qt ports.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::getShadow): return a boolean from getShadow()
+        which indicates whether there is a visible shadow to draw or not.  Ports
+        without a platform shadow implementation can use this flag to determine
+        whether a shadow needs to be drawn manually
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/qt/FontQt.cpp:
+        (WebCore::Font::drawText):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::drawLine): use return from getShadow() to
+        determine whether to draw the shadow
+
+2008-06-24  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
         Reviewed by Simon.
 
         https://bugs.webkit.org/show_bug.cgi?id=18459

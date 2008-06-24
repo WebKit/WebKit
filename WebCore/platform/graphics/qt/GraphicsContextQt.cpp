@@ -438,9 +438,7 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     IntSize shadowSize;
     int shadowBlur;
     Color shadowColor;
-    getShadow(shadowSize, shadowBlur, shadowColor);
-    bool hasShadow = textDrawingMode() == cTextFill && shadowColor.isValid() && (shadowSize.width() || shadowSize.height());
-    if (hasShadow) {
+    if (textDrawingMode() == cTextFill && getShadow(shadowSize, shadowBlur, shadowColor)) {
         p->save();
         p->translate(shadowSize.width(), shadowSize.height());
         p->setPen(QColor(shadowColor));

@@ -154,11 +154,13 @@ void GraphicsContext::clearShadow()
     clearPlatformShadow();
 }
 
-void GraphicsContext::getShadow(IntSize& size, int& blur, Color& color)
+bool GraphicsContext::getShadow(IntSize& size, int& blur, Color& color) const
 {
     size = m_common->state.shadowSize;
     blur = m_common->state.shadowBlur;
     color = m_common->state.shadowColor;
+
+    return color.isValid() && color.alpha() && (blur || size.width() || size.height());
 }
 
 float GraphicsContext::strokeThickness() const

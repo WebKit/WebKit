@@ -197,7 +197,7 @@ namespace WebCore {
         void endTransparencyLayer();
 
         void setShadow(const IntSize&, int blur, const Color&);
-        void getShadow(IntSize&, int&, Color&);
+        bool getShadow(IntSize&, int&, Color&) const;
         void clearShadow();
 
         void initFocusRing(int width, int offset);
