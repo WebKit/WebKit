@@ -895,7 +895,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     Instruction* vPC = codeBlock->instructions.begin();
     JSValue** k = codeBlock->jsValues.data();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
-
+    
     registerFile->setSafeForReentry(false);
 #define VM_CHECK_EXCEPTION() \
      do { \
@@ -908,7 +908,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 #if DUMP_OPCODE_STATS
     OpcodeStats::resetLastInstruction();
 #endif
-
+    
+#define CHECK_FOR_TIMEOUT() 
+    
 #if HAVE(COMPUTED_GOTO)
     #define NEXT_OPCODE goto *vPC->u.opcode
 #if DUMP_OPCODE_STATS
@@ -1887,6 +1889,26 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         vPC += target;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_loop_if_true) {
+        /* loop_if_true cond(r) target(offset)
+         
+           Jumps to offset target from the current instruction, if and
+           only if register cond converts to boolean as true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+        int cond = (++vPC)->u.operand;
+        int target = (++vPC)->u.operand;
+        if (r[cond].u.jsValue->toBoolean(exec)) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_OPCODE;
+        }
+        
+        ++vPC;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_jtrue) {
         /* jtrue cond(r) target(offset)
 
@@ -1916,6 +1938,33 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             NEXT_OPCODE;
         }
 
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_loop_if_less) {
+        /* loop_if_less src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is less than register src2, as
+           with the ECMAScript '<' operator, and then jumps to offset
+           target from the current instruction, if and only if the 
+           result of the comparison is true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
+        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int target = (++vPC)->u.operand;
+        
+        bool result = jsLess(exec, src1, src2);
+        VM_CHECK_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_OPCODE;
+        }
+        
         ++vPC;
         NEXT_OPCODE;
     }

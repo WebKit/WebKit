@@ -1,3 +1,22 @@
+2008-06-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron.
+
+        Add special loop opcodes as groundwork for slow script
+        termination.  Also added a few assertions to prevent us
+        from accidentally coalescing conditional jump operands
+        in a way that might bypass the slow script opcodes.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrueMayCombine):
+        (KJS::CodeGenerator::emitJumpScopes):
+        * VM/LabelID.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+
 2008-06-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron.
