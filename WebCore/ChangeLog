@@ -1,3 +1,11 @@
+2008-06-24  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        For the Qt port, fix linking with MinGW.
+
+        * WebCore.pro:
+
 2008-06-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

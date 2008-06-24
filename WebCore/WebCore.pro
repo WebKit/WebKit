@@ -1021,8 +1021,8 @@ SOURCES += \
     else: SOURCES += platform/qt/SystemTimeQt.cpp
 
     win32-* {
-        LIBS += gdi32.lib
-        LIBS += user32.lib
+        LIBS += -lgdi32
+        LIBS += -luser32
     }
 
     # Files belonging to the Qt 4.3 build
