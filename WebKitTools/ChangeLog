@@ -1,3 +1,12 @@
+2008-06-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        * Scripts/extract-localizable-strings:
+        add UI_STRING_LOCALIZE_LATER, LPCTSTR_UI_STRING_LOCALIZE_LATER, and LOG_WARNING to the 
+        list of debugging macros, to avoid noise when keeping the list of localized string 
+        exceptions up to date
+
 2008-06-24  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Darin Adler.
