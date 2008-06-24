@@ -1,3 +1,16 @@
+2008-06-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Tests for:
+
+        Bug 19716: REGRESSION (SquirrelFish): Reproducible crash after entering a username at mint.com
+        <https://bugs.webkit.org/show_bug.cgi?id=19716>
+
+        * fast/js/reentrant-call-unwind-expected.txt: Added.
+        * fast/js/reentrant-call-unwind.html: Added.
+        * fast/js/resources/reentrant-call-unwind.js: Added.
+
 2008-06-23  David Kilzer  <ddkilzer@apple.com>
 
         Updated test for Bug 15823: getPropertyValue for border returns null, should compute the shorthand value

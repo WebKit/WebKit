@@ -1,3 +1,17 @@
+2008-06-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19716: REGRESSION (SquirrelFish): Reproducible crash after entering a username at mint.com
+        <https://bugs.webkit.org/show_bug.cgi?id=19716>
+
+        When unwinding callframes for exceptions, check whether the callframe
+        was created by a reentrant native call to JavaScript after tearing off
+        the local variables instead of before.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::unwindCallFrame):
+
 2008-06-23  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
