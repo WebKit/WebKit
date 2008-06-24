@@ -1,3 +1,9 @@
+2008-06-24  Kevin McCullough  <kmccullough@apple.com>
+
+        -Added a manual test for the profiler.
+
+        * manual-tests/inspector/profiler-test-compare-multiple-profiles.html: Added.
+
 2008-06-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
