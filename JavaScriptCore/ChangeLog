@@ -1,3 +1,13 @@
+2008-06-23  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove the sample member of Span when NO_TCMALLOC_SAMPLES is defined.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::Delete): Only update Span::sample if NO_TCMALLOC_SAMPLES is not defined.
+        (WTF::TCMallocStats::do_free):  Ditto.
+
 2008-06-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

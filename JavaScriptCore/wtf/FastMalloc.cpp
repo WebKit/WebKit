@@ -864,7 +864,9 @@ struct Span {
   Span*         prev;           // Used when in link list
   void*         objects;        // Linked list of free objects
   unsigned int  free : 1;       // Is the span free
+#ifndef NO_TCMALLOC_SAMPLES
   unsigned int  sample : 1;     // Sampled object?
+#endif
   unsigned int  sizeclass : 8;  // Size-class for small objects (or 0)
   unsigned int  refcount : 11;  // Number of non-free objects
 
@@ -1286,7 +1288,9 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
   ASSERT(GetDescriptor(span->start) == span);
   ASSERT(GetDescriptor(span->start + span->length - 1) == span);
   span->sizeclass = 0;
+#ifndef NO_TCMALLOC_SAMPLES
   span->sample = 0;
+#endif
 
   // Coalesce -- we guarantee that "p" != 0, so no bounds checking
   // necessary.  We do not bother resetting the stale pagemap
@@ -2952,7 +2956,9 @@ static ALWAYS_INLINE void do_free(void* ptr) {
     pageheap->CacheSizeClass(p, cl);
   }
   if (cl != 0) {
+#ifndef NO_TCMALLOC_SAMPLES
     ASSERT(!pageheap->GetDescriptor(p)->sample);
+#endif
     TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCacheIfPresent();
     if (heap != NULL) {
       heap->Deallocate(ptr, cl);
@@ -2965,11 +2971,13 @@ static ALWAYS_INLINE void do_free(void* ptr) {
     SpinLockHolder h(&pageheap_lock);
     ASSERT(reinterpret_cast<uintptr_t>(ptr) % kPageSize == 0);
     ASSERT(span != NULL && span->start == p);
+#ifndef NO_TCMALLOC_SAMPLES
     if (span->sample) {
       DLL_Remove(span);
       stacktrace_allocator.Delete(reinterpret_cast<StackTrace*>(span->objects));
       span->objects = NULL;
     }
+#endif
     pageheap->Delete(span);
   }
 }
