@@ -53,6 +53,7 @@
 #include "HitTestResult.h"
 
 #include "runtime.h"
+#include "runtime_object.h"
 #include "runtime_root.h"
 #include "JSDOMWindow.h"
 #include "qt_instance.h"

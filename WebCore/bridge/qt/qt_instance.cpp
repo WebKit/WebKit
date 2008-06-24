@@ -111,7 +111,9 @@ ConstructType QtRuntimeObjectImp::getConstructData(ConstructData& constructData)
 JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const ArgList& args)
 {
     // ECMA 15.2.2.1 (?)
-    JSValue *val = callAsFunction(exec, this, args);
+    CallData callData;
+    CallType callType = getCallData(callData);
+    JSValue* val = call(exec, this, callType, callData, this, args);
 
     if (!val || val->type() == NullType || val->type() == UndefinedType)
         return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
@@ -161,10 +163,10 @@ PassRefPtr<QtInstance> QtInstance::getQtInstance(QObject* o, PassRefPtr<RootObje
     return ret.release();
 }
 
-JSObject* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance> instance)
+RuntimeObjectImp* QtInstance::getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance> instance)
 {
     JSLock lock;
-    JSObject* ret = cachedObjects.value(instance.get());
+    RuntimeObjectImp* ret = static_cast<RuntimeObjectImp*>(cachedObjects.value(instance.get()));
     if (!ret) {
         ret = new (exec) QtRuntimeObjectImp(instance);
         cachedObjects.insert(instance.get(), ret);
@@ -277,12 +279,13 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
         return throwError(exec, GeneralError, "cannot call function of deleted QObject");
 
     // implementsCall will update our default method cache, if possible
-    CallData d;
-    if (getCallData(d) != CallTypeNone) {
+    CallData callData;
+    CallType callType = getCallData(callData);
+    if (callType != CallTypeNone) {
         if (!m_defaultMethod)
             m_defaultMethod = new (exec) QtRuntimeMetaMethod(exec, Identifier(exec, "[[Call]]"),this, m_defaultMethodIndex, QByteArray("qscript_call"), true);
 
-        return m_defaultMethod->callAsFunction(exec, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
+        return call(exec, m_defaultMethod, callType, callData, 0, args); // Luckily QtRuntimeMetaMethod ignores the obj parameter
     } else
         return throwError(exec, TypeError, "not a function");
 }

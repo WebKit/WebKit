@@ -158,7 +158,6 @@ public:
     QtRuntimeMetaMethod(ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate);
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
 
     virtual void mark();
 
@@ -166,6 +165,8 @@ protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
 private:
+    virtual CallType getCallData(CallData&);
+    static JSValue* call(ExecState* exec, JSObject* functionObject, JSValue* thisValue, const ArgList& args);
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* connectGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* disconnectGetter(ExecState*, const Identifier&, const PropertySlot&);
@@ -178,12 +179,13 @@ public:
     QtRuntimeConnectionMethod(ExecState *exec, const Identifier &n, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature );
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
 
 protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}
 
 private:
+    virtual CallType getCallData(CallData&);
+    static JSValue* call(ExecState* exec, JSObject* functionObject, JSValue* thisValue, const ArgList& args);
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     static QMultiMap<QObject *, QtConnectionObject *> connections;
     friend class QtConnectionObject;

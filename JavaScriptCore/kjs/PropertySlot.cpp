@@ -23,6 +23,7 @@
 #include "config.h"
 #include "PropertySlot.h"
 
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "RegisterFileStack.h"

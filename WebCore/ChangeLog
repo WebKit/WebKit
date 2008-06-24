@@ -1,3 +1,20 @@
+2008-06-24  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, adapt to various JSCore API changes.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::construct):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        (KJS::Bindings::QtInstance::invokeDefaultMethod):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMetaMethod::getCallData):
+        (KJS::Bindings::QtRuntimeConnectionMethod::call):
+        (KJS::Bindings::QtRuntimeConnectionMethod::getCallData):
+        (KJS::Bindings::QtConnectionObject::execute):
+        * bridge/qt/qt_runtime.h:
+        (KJS::Bindings::QtRuntimeConnectionMethod::d_func):
+
 2008-06-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Remove XMLHttpRequestProgressEvent.cpp from more project files.
