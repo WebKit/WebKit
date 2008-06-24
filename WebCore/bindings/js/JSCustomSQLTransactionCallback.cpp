@@ -118,7 +118,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     CallData handleEventCallData;
     CallType handleEventCallType = handleEventFunction->getCallData(handleEventCallData);
     CallData callbackCallData;
-    CallType callbackCallType;
+    CallType callbackCallType = CallTypeNone;
 
     if (handleEventCallType == CallTypeNone) {
         callbackCallType = m_data->callback()->getCallData(callbackCallData);

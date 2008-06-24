@@ -64,7 +64,7 @@ bool JSCustomSQLStatementErrorCallback::handleEvent(SQLTransaction* transaction,
     CallData handleEventCallData;
     CallType handleEventCallType = handleEventFunction->getCallData(handleEventCallData);
     CallData callbackCallData;
-    CallType callbackCallType;
+    CallType callbackCallType = CallTypeNone;
 
     if (handleEventCallType == CallTypeNone) {
         callbackCallType = m_callback->getCallData(callbackCallData);
