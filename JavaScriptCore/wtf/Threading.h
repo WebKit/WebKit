@@ -171,8 +171,13 @@ private:
 #if PLATFORM(WIN_OS) && !COMPILER(MSVC7)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
+#if COMPILER(MINGW)
+inline void atomicIncrement(int* addend) { InterlockedIncrement(reinterpret_cast<long*>(addend)); }
+inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
+#else
 inline void atomicIncrement(int volatile* addend) { InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
+#endif
 
 #elif PLATFORM(DARWIN)
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1

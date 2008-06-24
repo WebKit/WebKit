@@ -58,7 +58,7 @@
 #include <signal.h>
 #endif
 
-#if PLATFORM(WIN_OS)
+#if COMPILER(MSVC)
 #include <crtdbg.h>
 #include <windows.h>
 #endif
@@ -273,7 +273,7 @@ JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&)
 // be in a separate main function because the jscmain function requires object
 // unwinding.
 
-#if PLATFORM(WIN_OS) && !defined(_DEBUG)
+#if COMPILER(MSVC) && !defined(_DEBUG)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
 #else
