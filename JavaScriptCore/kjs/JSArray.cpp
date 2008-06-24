@@ -23,6 +23,7 @@
 #include "config.h"
 #include "JSArray.h"
 
+#include "ArrayPrototype.h"
 #include "PropertyNameArray.h"
 #include <wtf/Assertions.h>
 #include <wtf/AVLTree.h>
@@ -557,8 +558,10 @@ struct AVLTreeAbstractorForArrayCompare {
 
     Vector<AVLTreeNodeForArrayCompare> m_nodes;
     ExecState* m_exec;
-    JSObject* m_compareFunction;
-    JSObject* m_globalThisValue;
+    JSValue* m_compareFunction;
+    CallType m_compareCallType;
+    const CallData* m_compareCallData;
+    JSValue* m_globalThisValue;
 
     handle get_less(handle h) { return m_nodes[h].lt & 0x7FFFFFFF; }
     void set_less(handle h, handle lh) { m_nodes[h].lt &= 0x80000000; m_nodes[h].lt |= lh; }
@@ -595,7 +598,7 @@ struct AVLTreeAbstractorForArrayCompare {
         ArgList arguments;
         arguments.append(va);
         arguments.append(vb);
-        double compareResult = m_compareFunction->callAsFunction(m_exec, m_globalThisValue, arguments)->toNumber(m_exec);
+        double compareResult = call(m_exec, m_compareFunction, m_compareCallType, *m_compareCallData, m_globalThisValue, arguments)->toNumber(m_exec);
         return (compareResult < 0) ? -1 : 1; // Not passing equality through, because we need to store all values, even if equivalent.
     }
 
@@ -605,7 +608,7 @@ struct AVLTreeAbstractorForArrayCompare {
     static handle null() { return 0x7FFFFFFF; }
 };
 
-void JSArray::sort(ExecState* exec, JSObject* compareFunction)
+void JSArray::sort(ExecState* exec, JSValue* compareFunction, CallType callType, const CallData& callData)
 {
     checkConsistency();
 
@@ -625,6 +628,8 @@ void JSArray::sort(ExecState* exec, JSObject* compareFunction)
     AVLTree<AVLTreeAbstractorForArrayCompare, 44> tree; // Depth 44 is enough for 2^31 items
     tree.abstractor().m_exec = exec;
     tree.abstractor().m_compareFunction = compareFunction;
+    tree.abstractor().m_compareCallType = callType;
+    tree.abstractor().m_compareCallData = &callData;
     tree.abstractor().m_globalThisValue = exec->globalThisValue();
     tree.abstractor().m_nodes.resize(usedVectorLength + (m_storage->m_sparseValueMap ? m_storage->m_sparseValueMap->size() : 0));
 
@@ -809,5 +814,27 @@ void JSArray::checkConsistency(ConsistencyCheckType type)
 }
 
 #endif
+
+JSArray* constructEmptyArray(ExecState* exec)
+{
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), 0);
+}
+
+JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
+{
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), initialLength);
+}
+
+JSArray* constructArray(ExecState* exec, JSValue* singleItemValue)
+{
+    ArgList values;
+    values.append(singleItemValue);
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), values);
+}
+
+JSArray* constructArray(ExecState* exec, const ArgList& values)
+{
+    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), values);
+}
 
 }

@@ -38,16 +38,13 @@ namespace KJS {
         ErrorPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
     };
 
-    JSValue* errorProtoFuncToString(ExecState*, JSObject*, const ArgList&);
-
     class ErrorConstructor : public InternalFunction {
     public:
         ErrorConstructor(ExecState*, FunctionPrototype*, ErrorPrototype*);
 
+    private:
         virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const ArgList&);
-
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
+        virtual CallType getCallData(CallData&);
     };
 
     class NativeErrorPrototype : public JSObject {
@@ -58,19 +55,16 @@ namespace KJS {
     class NativeErrorConstructor : public InternalFunction {
     public:
         NativeErrorConstructor(ExecState*, FunctionPrototype*, NativeErrorPrototype*);
-
-        virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const ArgList&);
-
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
-
         virtual void mark();
-
-        virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
+        ErrorInstance* construct(ExecState*, const ArgList&);
 
     private:
-        JSObject* proto;
+        virtual const ClassInfo* classInfo() const { return &info; }
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
+
+        NativeErrorPrototype* proto;
     };
 
 } // namespace KJS

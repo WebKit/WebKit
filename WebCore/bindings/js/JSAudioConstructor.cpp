@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,7 @@
 #include "config.h"
 
 #if ENABLE(VIDEO)
+
 #include "JSAudioConstructor.h"
 
 #include "Document.h"
@@ -46,26 +47,22 @@ JSAudioConstructor::JSAudioConstructor(ExecState* exec, Document* document)
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
 }
 
-ConstructType JSAudioConstructor::getConstructData(ConstructData&)
+static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    return ConstructTypeNative;
+    // FIXME: Why doesn't this need the call toJS on the document like JSImageConstructor?
+
+    RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(static_cast<JSAudioConstructor*>(constructor)->document());
+    if (args.size() > 0) {
+        audio->setSrc(args[0]->toString(exec));
+        audio->scheduleLoad();
+    }
+    return static_cast<JSObject*>(toJS(exec, audio.release()));
 }
 
-JSObject* JSAudioConstructor::construct(ExecState* exec, const ArgList& args)
+ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)
 {
-    ExceptionCode exception = 0;
-    RefPtr<Element> element = m_document->createElement("audio", exception);
-    HTMLAudioElement* audio = 0;
-    if (element && !exception) {
-        audio = static_cast<HTMLAudioElement*>(element.get());
-        if (args.size() > 0) {
-            audio->setSrc(args[0]->toString(exec));
-            audio->scheduleLoad();
-        }
-    }
-
-    setDOMException(exec, exception);
-    return static_cast<JSObject*>(toJS(exec, audio));
+    constructData.native.function = constructAudio;
+    return ConstructTypeNative;
 }
 
 } // namespace WebCore

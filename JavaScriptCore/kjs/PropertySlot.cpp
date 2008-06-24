@@ -36,16 +36,17 @@ JSValue* PropertySlot::undefinedGetter(ExecState*, const Identifier&, const Prop
 
 JSValue* PropertySlot::functionGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
-    CallData data;
-    CallType callType = slot.m_data.getterFunc->getCallData(data);
+    CallData callData;
+    CallType callType = slot.m_data.getterFunc->getCallData(callData);
     if (callType == CallTypeNative)
-        return slot.m_data.getterFunc->callAsFunction(exec, static_cast<JSObject*>(slot.slotBase()), exec->emptyList());
+        return callData.native.function(exec, slot.m_data.getterFunc, slot.slotBase(), exec->emptyList());
     ASSERT(callType == CallTypeJS);
     RegisterFileStack* stack = &exec->dynamicGlobalObject()->registerFileStack();
     stack->pushFunctionRegisterFile();
-    JSValue* result = slot.m_data.getterFunc->callAsFunction(exec, static_cast<JSObject*>(slot.slotBase()), exec->emptyList());
+    // FIXME: This can be done more efficiently using the callData.
+    JSValue* result = static_cast<JSFunction*>(slot.m_data.getterFunc)->call(exec, slot.slotBase(), exec->emptyList());
     stack->popFunctionRegisterFile();
-    return result;    
+    return result;
 }
 
 }

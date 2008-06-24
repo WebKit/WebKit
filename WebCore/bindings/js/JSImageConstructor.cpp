@@ -36,44 +36,40 @@ JSImageConstructor::JSImageConstructor(ExecState* exec, Document* document)
 {
 }
 
-ConstructType JSImageConstructor::getConstructData(ConstructData&)
-{
-    return ConstructTypeNative;
-}
-
-JSObject* JSImageConstructor::construct(ExecState* exec, const ArgList& args)
+static JSObject* constructImage(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     bool widthSet = false;
     bool heightSet = false;
     int width = 0;
     int height = 0;
-
     if (args.size() > 0) {
         widthSet = true;
         width = args[0]->toInt32(exec);
     }
-
     if (args.size() > 1) {
         heightSet = true;
         height = args[1]->toInt32(exec);
     }
 
+    Document* document = static_cast<JSImageConstructor*>(constructor)->document();
+
     // Calling toJS on the document causes the JS document wrapper to be
     // added to the window object. This is done to ensure that JSDocument::mark
     // will be called (which will cause the image element to be marked if necessary).
-    // This is only a problem for elements created using the Image constructor since all
-    // other elements are created through the document, using document.createElement for example.
-    toJS(exec, m_document.get());
+    toJS(exec, document);
 
-    HTMLImageElement* image = new HTMLImageElement(m_document.get());
-    JSObject* result = static_cast<JSObject*>(toJS(exec, image));
-
+    RefPtr<HTMLImageElement> image = new HTMLImageElement(document);
     if (widthSet)
         image->setWidth(width);
     if (heightSet)
         image->setHeight(height);
+    return static_cast<JSObject*>(toJS(exec, image.release()));
+}
 
-    return result;
+ConstructType JSImageConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructImage;
+    return ConstructTypeNative;
 }
 
 } // namespace WebCore

@@ -32,36 +32,39 @@ namespace KJS {
   public:
     JSArray(JSObject* prototype, unsigned initialLength);
     JSArray(JSObject* prototype, const ArgList& initialValues);
-    ~JSArray();
+    virtual ~JSArray();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
-    virtual void put(ExecState*, unsigned propertyName, JSValue*);
-    virtual bool deleteProperty(ExecState *, const Identifier& propertyName);
-    virtual bool deleteProperty(ExecState *, unsigned propertyName);
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+    virtual void put(ExecState*, unsigned propertyName, JSValue*); // FIXME: Make protected and add setItem.
 
-    virtual void mark();
-
-    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
     unsigned getLength() const { return m_length; }
+    void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
     JSValue* getItem(unsigned) const;
 
     void sort(ExecState*);
-    void sort(ExecState*, JSObject* compareFunction);
+    void sort(ExecState*, JSValue* compareFunction, CallType, const CallData&);
 
   protected:
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+    virtual bool deleteProperty(ExecState*, unsigned propertyName);
+    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+    virtual void mark();
+
     void* lazyCreationData();
     void setLazyCreationData(void*);
 
   private:
+    using JSObject::get;
+
+    virtual const ClassInfo* classInfo() const { return &info; }
+
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
     bool inlineGetOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-    void setLength(unsigned);
     bool increaseVectorLength(unsigned newLength);
     
     unsigned compactForSorting();
@@ -73,6 +76,11 @@ namespace KJS {
     unsigned m_vectorLength;
     ArrayStorage* m_storage;
   };
+
+  JSArray* constructEmptyArray(ExecState*);
+  JSArray* constructEmptyArray(ExecState*, unsigned initialLength);
+  JSArray* constructArray(ExecState*, JSValue* singleItemValue);
+  JSArray* constructArray(ExecState*, const ArgList& values);
 
 } // namespace KJS
 

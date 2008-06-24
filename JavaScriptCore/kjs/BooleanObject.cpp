@@ -40,8 +40,8 @@ BooleanObject::BooleanObject(JSObject* proto)
 // ------------------------------ BooleanPrototype --------------------------
 
 // Functions
-static JSValue* booleanProtoFuncToString(ExecState*, JSObject*, const ArgList&);
-static JSValue* booleanProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
+static JSValue* booleanProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* booleanProtoFuncValueOf(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 // ECMA 15.6.4
 
@@ -59,26 +59,26 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto
 
 // ECMA 15.6.4.2 + 15.6.4.3
 
-JSValue* booleanProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
+JSValue* booleanProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisObj->inherits(&BooleanObject::info))
+    if (JSImmediate::isBoolean(thisValue))
+        return jsString(exec, JSImmediate::toString(thisValue));
+
+    if (!thisValue->isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<BooleanObject*>(thisObj)->internalValue();
-    ASSERT(v);
-
-    return jsString(exec, v->toString(exec));
+    return jsString(exec, JSImmediate::toString(static_cast<BooleanObject*>(thisValue)->internalValue()));
 }
-JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const ArgList&)
+
+JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisObj->inherits(&BooleanObject::info))
+    if (JSImmediate::isBoolean(thisValue))
+        return thisValue;
+
+    if (!thisValue->isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<BooleanObject*>(thisObj)->internalValue();
-    ASSERT(v);
-
-    // TODO: optimize for bool case
-    return jsBoolean(v->toBoolean(exec));
+    return static_cast<BooleanObject*>(thisValue)->internalValue();
 }
 
 // ------------------------------ BooleanConstructor -----------------------------
@@ -93,24 +93,42 @@ BooleanConstructor::BooleanConstructor(ExecState* exec, FunctionPrototype* funct
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontDelete | DontEnum);
 }
 
-ConstructType BooleanConstructor::getConstructData(ConstructData&)
-{
-    return ConstructTypeNative;
-}
-
 // ECMA 15.6.2
-JSObject* BooleanConstructor::construct(ExecState* exec, const ArgList& args)
+JSObject* constructBoolean(ExecState* exec, const ArgList& args)
 {
-    BooleanObject* obj(new (exec) BooleanObject(exec->lexicalGlobalObject()->booleanPrototype()));
+    BooleanObject* obj = new (exec) BooleanObject(exec->lexicalGlobalObject()->booleanPrototype());
     obj->setInternalValue(jsBoolean(args[0]->toBoolean(exec)));
     return obj;
 }
 
-// ECMA 15.6.1
-JSValue* BooleanConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
+static JSObject* constructWithBooleanConstructor(ExecState* exec, JSObject*, const ArgList& args)
 {
-    // TODO: optimize for bool case
+    return constructBoolean(exec, args);
+}
+
+ConstructType BooleanConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructWithBooleanConstructor;
+    return ConstructTypeNative;
+}
+
+// ECMA 15.6.1
+static JSValue* callBooleanConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+{
     return jsBoolean(args[0]->toBoolean(exec));
+}
+
+CallType BooleanConstructor::getCallData(CallData& callData)
+{
+    callData.native.function = callBooleanConstructor;
+    return CallTypeNative;
+}
+
+JSObject* constructBooleanFromImmediateBoolean(ExecState* exec, JSValue* immediateBooleanValue)
+{
+    BooleanObject* obj = new (exec) BooleanObject(exec->lexicalGlobalObject()->booleanPrototype());
+    obj->setInternalValue(immediateBooleanValue);
+    return obj;
 }
 
 } // namespace KJS

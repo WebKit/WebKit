@@ -37,17 +37,20 @@ namespace WebCore {
     public:
         JSAudioConstructor(KJS::ExecState*, Document*);
 
-        virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
-        virtual KJS::JSObject* construct(KJS::ExecState*, const KJS::ArgList&);
+        Document* document() const { return m_document.get(); }
 
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
         static const KJS::ClassInfo s_info;
 
     private:
+        virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
+
+        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+
         RefPtr<Document> m_document;
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)
+
 #endif // JSAudioConstructor_h

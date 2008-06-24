@@ -37,17 +37,18 @@ JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Docume
     putDirect(exec->propertyNames().prototype, JSXMLHttpRequestPrototype::self(exec), None);
 }
 
-KJS::ConstructType JSXMLHttpRequestConstructor::getConstructData(KJS::ConstructData& data)
+static JSObject* constructXMLHttpRequest(ExecState* exec, JSObject* constructor, const ArgList&)
 {
-    return ConstructTypeNative;
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(static_cast<JSXMLHttpRequestConstructor*>(constructor)->document());
+    JSXMLHttpRequest* result = new (exec) JSXMLHttpRequest(JSXMLHttpRequestPrototype::self(exec), xmlHttpRequest.get());
+    ScriptInterpreter::putDOMObject(xmlHttpRequest.get(), result);
+    return result;
 }
 
-JSObject* JSXMLHttpRequestConstructor::construct(ExecState* exec, const ArgList&)
+ConstructType JSXMLHttpRequestConstructor::getConstructData(ConstructData& constructData)
 {
-    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(m_document.get());
-    JSXMLHttpRequest* ret = new (exec) JSXMLHttpRequest(JSXMLHttpRequestPrototype::self(exec), xmlHttpRequest.get());
-    ScriptInterpreter::putDOMObject(xmlHttpRequest.get(), ret);
-    return ret;
+    constructData.native.function = constructXMLHttpRequest;
+    return ConstructTypeNative;
 }
 
 } // namespace WebCore

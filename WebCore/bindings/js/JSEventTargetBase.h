@@ -59,14 +59,6 @@ namespace WebCore {
         };
     };
 
-    // Helper function for the partial specializated template functions below 
-    bool retrieveEventTargetAndCorrespondingNode(KJS::ExecState*, KJS::JSObject* thisObj, Node*&, EventTarget*&);
-
-    // Functions
-    KJS::JSValue* jsEventTargetAddEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* jsEventTargetRemoveEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* jsEventTargetDispatchEvent(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-
     // Helper function for getValueProperty/putValueProperty
     const AtomicString& eventNameForPropertyToken(int token);
 

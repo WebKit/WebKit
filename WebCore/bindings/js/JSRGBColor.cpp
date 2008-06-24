@@ -35,7 +35,7 @@ namespace WebCore {
 const ClassInfo JSRGBColor::s_info = { "RGBColor", 0, &JSRGBColorTable, 0 };
 
 /*
-@begin JSRGBColorTable 3
+@begin JSRGBColorTable
   red   WebCore::JSRGBColor::Red        DontDelete|ReadOnly
   green WebCore::JSRGBColor::Green      DontDelete|ReadOnly
   blue  WebCore::JSRGBColor::Blue       DontDelete|ReadOnly

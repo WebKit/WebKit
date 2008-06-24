@@ -1,3 +1,207 @@
+2008-06-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        Update for JavaScript changes.
+
+        - Use CallData and ConstructData instead of the obsolete implementsCall,
+          callAsFunction, and construct functions.
+
+        - Updated native function arguments, specifically to allow a JSValue
+          rather than a JSObject for the this argument, and to call toThisObject
+          as needed when treating it as an object.
+
+        - Made some more class members private and protected, including virtual
+          function overrides.
+
+        - Eliminated the use of getCallData in the JavaScript bridging code as
+          a way to check if an instance supports invokeDefaultMethod.
+
+        - Eliminated unnecessary polymorphism in the NodeIterator and TreeWalker
+          classes. They were using virtual functions simply to share an instance
+          of the RefCounted template, which was not helpful.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::constructAudio):
+        (WebCore::JSAudioConstructor::getConstructData):
+        * bindings/js/JSAudioConstructor.h:
+        (WebCore::JSAudioConstructor::document):
+        (WebCore::JSAudioConstructor::classInfo):
+        * bindings/js/JSClipboardCustom.cpp:
+        (WebCore::JSClipboard::types):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::windowProtoFuncAToB):
+        (WebCore::windowProtoFuncBToA):
+        (WebCore::windowProtoFuncOpen):
+        (WebCore::windowProtoFuncSetTimeout):
+        (WebCore::windowProtoFuncClearTimeout):
+        (WebCore::windowProtoFuncSetInterval):
+        (WebCore::windowProtoFuncAddEventListener):
+        (WebCore::windowProtoFuncRemoveEventListener):
+        (WebCore::windowProtoFuncShowModalDialog):
+        (WebCore::windowProtoFuncNotImplemented):
+        (WebCore::toJSDOMWindow):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowShell.h:
+        (WebCore::JSDOMWindowShell::classInfo):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::retrieveEventTargetAndCorrespondingNode):
+        (WebCore::jsEventTargetAddEventListener):
+        (WebCore::jsEventTargetRemoveEventListener):
+        (WebCore::jsEventTargetDispatchEvent):
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLAppletElement::customPut):
+        (WebCore::JSHTMLAppletElement::getCallData):
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+        (WebCore::callHTMLCollection):
+        (WebCore::JSHTMLCollection::getCallData):
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        (WebCore::JSHTMLDocument::open):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLEmbedElement::customPut):
+        (WebCore::JSHTMLEmbedElement::getCallData):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::jsHTMLInputElementBaseFunctionSetSelectionRange):
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::customGetOwnPropertySlot):
+        (WebCore::JSHTMLObjectElement::customPut):
+        (WebCore::JSHTMLObjectElement::getCallData):
+        * bindings/js/JSHTMLOptionElementConstructor.cpp:
+        (WebCore::constructHTMLOptionElement):
+        (WebCore::JSHTMLOptionElementConstructor::getConstructData):
+        * bindings/js/JSHTMLOptionElementConstructor.h:
+        (WebCore::JSHTMLOptionElementConstructor::document):
+        (WebCore::JSHTMLOptionElementConstructor::classInfo):
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::constructImage):
+        (WebCore::JSImageConstructor::getConstructData):
+        * bindings/js/JSImageConstructor.h:
+        (WebCore::JSImageConstructor::document):
+        (WebCore::JSImageConstructor::classInfo):
+        * bindings/js/JSInspectedObjectWrapper.h:
+        (WebCore::JSInspectedObjectWrapper::classInfo):
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::prepareIncomingValue):
+        * bindings/js/JSJavaScriptCallFrameCustom.cpp:
+        (WebCore::JSJavaScriptCallFrame::scopeChain):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::JSNodeFilterCondition):
+        (WebCore::JSNodeFilterCondition::mark):
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/JSNodeFilterCondition.h:
+        (WebCore::JSNodeFilterCondition::create):
+        * bindings/js/JSNodeFilterCustom.cpp:
+        (WebCore::toNodeFilter):
+        * bindings/js/JSNodeListCustom.cpp:
+        (WebCore::callNodeList):
+        (WebCore::JSNodeList::getCallData):
+        (WebCore::JSNodeList::canGetItemsForName):
+        (WebCore::JSNodeList::nameGetter):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectGetter):
+        (WebCore::runtimeObjectPropertyGetter):
+        (WebCore::runtimeObjectCustomGetOwnPropertySlot):
+        (WebCore::runtimeObjectCustomPut):
+        (WebCore::runtimeObjectGetCallData):
+        (WebCore::pluginInstance):
+        (WebCore::getRuntimeObject):
+        (WebCore::callPlugin):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::put):
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::getConstructData):
+        (WebCore::JSQuarantinedObjectWrapper::hasInstance):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+        (WebCore::JSQuarantinedObjectWrapper::getCallData):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        (WebCore::JSQuarantinedObjectWrapper::className):
+        * bindings/js/JSRGBColor.cpp:
+        * bindings/js/JSXMLHttpRequestConstructor.cpp:
+        (WebCore::constructXMLHttpRequest):
+        (WebCore::JSXMLHttpRequestConstructor::getConstructData):
+        * bindings/js/JSXMLHttpRequestConstructor.h:
+        (WebCore::JSXMLHttpRequestConstructor::document):
+        (WebCore::JSXMLHttpRequestConstructor::classInfo):
+        * bindings/js/JSXSLTProcessorConstructor.cpp:
+        (WebCore::constructXSLTProcessor):
+        (WebCore::JSXSLTProcessorConstructor::getConstructData):
+        * bindings/js/JSXSLTProcessorConstructor.h:
+        (WebCore::JSXSLTProcessorConstructor::classInfo):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScheduledAction.h:
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::supportsInvokeDefaultMethod):
+        * bridge/c/c_instance.h:
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::supportsInvokeDefaultMethod):
+        * bridge/objc/objc_runtime.h:
+        (KJS::Bindings::ObjcFallbackObjectImp::propertyName):
+        (KJS::Bindings::ObjcFallbackObjectImp::classInfo):
+        * bridge/objc/objc_runtime.mm:
+        (Bindings::webScriptObjectClass):
+        (Bindings::webUndefinedClass):
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (callObjCFallbackObject):
+        (ObjcFallbackObjectImp::getCallData):
+        * bridge/qt/qt_instance.h:
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        (KJS::Bindings::Instance::getInstance):
+        * bridge/runtime.h:
+        (KJS::Bindings::Field::~Field):
+        (KJS::Bindings::Method::~Method):
+        (KJS::Bindings::Class::~Class):
+        (KJS::Bindings::Instance::supportsInvokeDefaultMethod):
+        * bridge/runtime_method.cpp:
+        (KJS::callRuntimeMethod):
+        (KJS::RuntimeMethod::getCallData):
+        * bridge/runtime_method.h:
+        (KJS::RuntimeMethod::methods):
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::defaultValue):
+        (callRuntimeObject):
+        (RuntimeObjectImp::getCallData):
+        * bridge/runtime_object.h:
+        (KJS::RuntimeObjectImp::getInternalInstance):
+        (KJS::RuntimeObjectImp::classInfo):
+        * dom/NodeIterator.h:
+        * dom/Traversal.cpp:
+        * dom/Traversal.h:
+        * dom/TreeWalker.h:
+
 2008-06-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

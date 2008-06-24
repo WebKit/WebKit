@@ -60,17 +60,16 @@ void JSCustomVoidCallback::handleEvent()
         
     KJS::JSLock lock;
         
-    JSValue* handleEventFuncValue = m_callback->get(exec, Identifier(exec, "handleEvent"));
-    JSObject* handleEventFunc = 0;
-    if (handleEventFuncValue->isObject()) {
-        handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
-        if (!handleEventFunc->implementsCall())
-            handleEventFunc = 0;
-    }
-        
-    if (!handleEventFunc && !m_callback->implementsCall()) {
-        // FIXME: Should an exception be thrown here?
-        return;
+    JSValue* function = m_callback->get(exec, Identifier(exec, "handleEvent"));
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone) {
+        callType = m_callback->getCallData(callData);
+        if (callType == CallTypeNone) {
+            // FIXME: Should an exception be thrown here?
+            return;
+        }
+        function = m_callback;
     }
         
     RefPtr<JSCustomVoidCallback> protect(this);
@@ -78,10 +77,7 @@ void JSCustomVoidCallback::handleEvent()
     ArgList args;
     
     globalObject->startTimeoutCheck();
-    if (handleEventFunc)
-        handleEventFunc->callAsFunction(exec, m_callback, args);
-    else
-        m_callback->callAsFunction(exec, m_callback, args);
+    call(exec, function, callType, callData, m_callback, args);
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {

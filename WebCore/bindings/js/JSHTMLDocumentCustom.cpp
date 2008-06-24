@@ -102,10 +102,12 @@ JSValue* JSHTMLDocument::open(ExecState* exec, const ArgList& args)
         if (frame) {
             JSDOMWindowShell* wrapper = toJSDOMWindowShell(frame);
             if (wrapper) {
-                JSObject* functionObject = wrapper->get(exec, Identifier(exec, "open"))->getObject();
-                if (!functionObject || !functionObject->implementsCall())
+                JSValue* function = wrapper->get(exec, Identifier(exec, "open"));
+                CallData callData;
+                CallType callType = function->getCallData(callData);
+                if (callType == CallTypeNone)
                     return throwError(exec, TypeError);
-                return functionObject->callAsFunction(exec, wrapper, args);
+                return call(exec, function, callType, callData, wrapper, args);
             }
         }
         return jsUndefined();

@@ -255,9 +255,24 @@ void JSCell::put(ExecState* exec, unsigned identifier, JSValue* value)
     toObject(exec)->put(exec, identifier, value);
 }
 
+bool JSCell::deleteProperty(ExecState* exec, const Identifier& identifier)
+{
+    return toObject(exec)->deleteProperty(exec, identifier);
+}
+
+bool JSCell::deleteProperty(ExecState* exec, unsigned identifier)
+{
+    return toObject(exec)->deleteProperty(exec, identifier);
+}
+
 JSObject* JSCell::toThisObject(ExecState* exec) const
 {
     return toObject(exec);
+}
+
+const ClassInfo* JSCell::classInfo() const
+{
+    return 0;
 }
 
 JSCell* jsString(ExecState* exec, const char* s)
@@ -273,6 +288,24 @@ JSCell* jsString(ExecState* exec, const UString& s)
 JSCell* jsOwnedString(ExecState* exec, const UString& s)
 {
     return s.isNull() ? new (exec) JSString("", JSString::HasOtherOwner) : new (exec) JSString(s, JSString::HasOtherOwner);
+}
+
+JSValue* call(ExecState* exec, JSValue* functionObject, CallType callType, const CallData& callData, JSValue* thisValue, const ArgList& args)
+{
+    if (callType == CallTypeNative)
+        return callData.native.function(exec, static_cast<JSObject*>(functionObject), thisValue, args);
+    ASSERT(callType == CallTypeJS);
+    // FIXME: This can be done more efficiently using the callData.
+    return static_cast<JSFunction*>(functionObject)->call(exec, thisValue, args);
+}
+
+JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
+{
+    if (constructType == ConstructTypeNative)
+        return constructData.native.function(exec, static_cast<JSObject*>(object), args);
+    ASSERT(constructType == ConstructTypeJS);
+    // FIXME: This can be done more efficiently using the constructData.
+    return static_cast<JSFunction*>(object)->construct(exec, args);
 }
 
 } // namespace KJS

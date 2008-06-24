@@ -143,11 +143,7 @@ void JSQuarantinedObjectWrapper::put(ExecState* exec, const Identifier& identifi
     if (!allowsSetProperty())
         return;
 
-    JSValue* preparedValue = prepareIncomingValue(exec, value);
-    if (!preparedValue)
-        return;
-
-    m_unwrappedObject->put(unwrappedExecState(), identifier, preparedValue);
+    m_unwrappedObject->put(unwrappedExecState(), identifier, prepareIncomingValue(exec, value));
 
     transferExceptionToExecState(exec);
 }
@@ -157,11 +153,7 @@ void JSQuarantinedObjectWrapper::put(ExecState* exec, unsigned identifier, JSVal
     if (!allowsSetProperty())
         return;
 
-    JSValue* preparedValue = prepareIncomingValue(exec, value);
-    if (!preparedValue)
-        return;
-
-    m_unwrappedObject->put(unwrappedExecState(), identifier, preparedValue);
+    m_unwrappedObject->put(unwrappedExecState(), identifier, prepareIncomingValue(exec, value));
 
     transferExceptionToExecState(exec);
 }
@@ -190,31 +182,40 @@ bool JSQuarantinedObjectWrapper::deleteProperty(ExecState* exec, unsigned identi
     return result;
 }
 
-KJS::ConstructType JSQuarantinedObjectWrapper::getConstructData(KJS::ConstructData& data)
+JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    return m_unwrappedObject->getConstructData(data);
-}
+    JSQuarantinedObjectWrapper* wrapper = static_cast<JSQuarantinedObjectWrapper*>(constructor);
 
-JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, const ArgList& args)
-{
-    if (!allowsConstruct())
-        return 0;
+    ArgList preparedArgs;
+    for (size_t i = 0; i < args.size(); ++i)
+        preparedArgs.append(wrapper->prepareIncomingValue(exec, args[i]));
 
-    ArgList argsCopy;
-    for (size_t i = 0; i < args.size(); ++i) {
-        JSValue* preparedValue = prepareIncomingValue(exec, args[i]);
-        if (!preparedValue)
-            return 0;
-        argsCopy.append(preparedValue);
-    }
+    // FIXME: Would be nice to find a way to reuse the result of m_unwrappedObject->getConstructData
+    // from when we called it in JSQuarantinedObjectWrapper::getConstructData.
+    ConstructData unwrappedConstructData;
+    ConstructType unwrappedConstructType = wrapper->m_unwrappedObject->getConstructData(unwrappedConstructData);
+    ASSERT(unwrappedConstructType != ConstructTypeNone);
 
-    JSValue* resultValue = wrapOutgoingValue(unwrappedExecState(), m_unwrappedObject->construct(unwrappedExecState(), argsCopy));
+    JSValue* unwrappedResult = KJS::construct(exec, wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
+
+    JSValue* resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
     ASSERT(resultValue->isObject());
-    JSObject* result = resultValue->toObject(exec);
+    JSObject* result = static_cast<JSObject*>(resultValue);
 
-    transferExceptionToExecState(exec);
+    wrapper->transferExceptionToExecState(exec);
 
     return result;
+}
+
+ConstructType JSQuarantinedObjectWrapper::getConstructData(ConstructData& constructData)
+{
+    if (!allowsConstruct())
+        return ConstructTypeNone;
+    ConstructData unwrappedConstructData;
+    if (m_unwrappedObject->getConstructData(unwrappedConstructData) == ConstructTypeNone)
+        return ConstructTypeNone;
+    constructData.native.function = construct;
+    return ConstructTypeNative;
 }
 
 bool JSQuarantinedObjectWrapper::implementsHasInstance() const
@@ -227,45 +228,47 @@ bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value)
     if (!allowsHasInstance())
         return false;
 
-    JSValue* preparedValue = prepareIncomingValue(exec, value);
-    if (!preparedValue)
-        return false;
-
-    bool result = m_unwrappedObject->hasInstance(unwrappedExecState(), preparedValue);
+    bool result = m_unwrappedObject->hasInstance(unwrappedExecState(), prepareIncomingValue(exec, value));
 
     transferExceptionToExecState(exec);
 
     return result;
 }
 
-CallType JSQuarantinedObjectWrapper::getCallData(CallData&)
+JSValue* JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
 {
-    CallData temp;
-    return m_unwrappedObject->getCallData(temp) != CallTypeNone ? CallTypeNative : CallTypeNone;
-}
+    JSQuarantinedObjectWrapper* wrapper = static_cast<JSQuarantinedObjectWrapper*>(function);
 
-JSValue* JSQuarantinedObjectWrapper::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args)
-{
-    if (!allowsCallAsFunction())
-        return jsUndefined();
-
-    JSObject* preparedThisObj = static_cast<JSObject*>(prepareIncomingValue(exec, thisObj));
-    if (!preparedThisObj)
-        return jsUndefined();
+    JSValue* preparedThisValue = wrapper->prepareIncomingValue(exec, thisValue);
 
     ArgList preparedArgs;
-    for (size_t i = 0; i < args.size(); ++i) {
-        JSValue* preparedValue = prepareIncomingValue(exec, args[i]);
-        if (!preparedValue)
-            return jsUndefined();
-        preparedArgs.append(preparedValue);
-    }
+    for (size_t i = 0; i < args.size(); ++i)
+        preparedArgs.append(wrapper->prepareIncomingValue(exec, args[i]));
 
-    JSValue* result = wrapOutgoingValue(unwrappedExecState(), m_unwrappedObject->callAsFunction(unwrappedExecState(), preparedThisObj, preparedArgs));
+    // FIXME: Would be nice to find a way to reuse the result of m_unwrappedObject->getCallData
+    // from when we called it in JSQuarantinedObjectWrapper::getCallData.
+    CallData unwrappedCallData;
+    CallType unwrappedCallType = wrapper->m_unwrappedObject->getCallData(unwrappedCallData);
+    ASSERT(unwrappedCallType != CallTypeNone);
 
-    transferExceptionToExecState(exec);
+    JSValue* unwrappedResult = KJS::call(exec, wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
+
+    JSValue* result = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
+
+    wrapper->transferExceptionToExecState(exec);
 
     return result;
+}
+
+CallType JSQuarantinedObjectWrapper::getCallData(CallData& callData)
+{
+    if (!allowsCallAsFunction())
+        return CallTypeNone;
+    CallData unwrappedCallData;
+    if (m_unwrappedObject->getCallData(unwrappedCallData) == CallTypeNone)
+        return CallTypeNone;
+    callData.native.function = call;
+    return CallTypeNative;
 }
 
 void JSQuarantinedObjectWrapper::getPropertyNames(ExecState* exec, PropertyNameArray& array)

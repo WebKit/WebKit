@@ -69,11 +69,6 @@ JSType JSObject::type() const
   return ObjectType;
 }
 
-const ClassInfo *JSObject::classInfo() const
-{
-  return 0;
-}
-
 UString JSObject::className() const
 {
   const ClassInfo *ci = classInfo();
@@ -93,7 +88,7 @@ static void throwSetterError(ExecState *exec)
 }
 
 // ECMA 8.6.2.2
-void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *value)
+void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
   ASSERT(value);
   ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
@@ -101,7 +96,7 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
   if (propertyName == exec->propertyNames().underscoreProto) {
     JSObject* proto = value->getObject();
 
-    // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla
+    // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
     if (!proto && value != jsNull())
       return;
 
@@ -112,61 +107,53 @@ void JSObject::put(ExecState* exec, const Identifier &propertyName, JSValue *val
       }
       proto = proto->prototype() ? proto->prototype()->getObject() : 0;
     }
-    
+
     setPrototype(value);
     return;
   }
 
   // Check if there are any setters or getters in the prototype chain
-  JSObject *obj = this;
-  bool hasGettersOrSetters = false;
-  while (true) {
-    if (obj->_prop.hasGetterSetterProperties()) {
-      hasGettersOrSetters = true;
-      break;
+  JSObject* obj;
+  JSValue* prototype;
+  for (obj = this; !obj->_prop.hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
+    prototype = obj->_proto;
+    if (prototype == jsNull()) {
+      _prop.put(propertyName, value, 0, true);
+      return;
     }
-      
-    if (obj->_proto == jsNull())
-      break;
-      
-    obj = static_cast<JSObject *>(obj->_proto);
   }
-  
-  if (hasGettersOrSetters) {
-    unsigned attributes;
-    if (_prop.get(propertyName, attributes) && attributes & ReadOnly)
-        return;
 
-    obj = this;
-    while (true) {
-      if (JSValue *gs = obj->_prop.get(propertyName, attributes)) {
-        if (attributes & IsGetterSetter) {
-          JSObject *setterFunc = static_cast<GetterSetter *>(gs)->getSetter();
-        
-          if (!setterFunc) {
-            throwSetterError(exec);
-            return;
-          }
-            
-          ArgList args;
-          args.append(value);
-        
-          setterFunc->callAsFunction(exec, this->toThisObject(exec), args);
+  unsigned attributes;
+  if (_prop.get(propertyName, attributes) && attributes & ReadOnly)
+    return;
+
+  for (; ; obj = static_cast<JSObject*>(prototype)) {
+    if (JSValue* gs = obj->_prop.get(propertyName, attributes)) {
+      if (attributes & IsGetterSetter) {
+        JSObject* setterFunc = static_cast<GetterSetter*>(gs)->setter();        
+        if (!setterFunc) {
+          throwSetterError(exec);
           return;
-        } else {
-          // If there's an existing property on the object or one of its 
-          // prototype it should be replaced, so we just break here.
-          break;
         }
+
+        CallData callData;
+        CallType callType = setterFunc->getCallData(callData);
+        ArgList args;
+        args.append(value);
+        call(exec, setterFunc, callType, callData, this, args);
+        return;
       }
-     
-      if (!obj->_proto->isObject())
-        break;
-        
-      obj = static_cast<JSObject *>(obj->_proto);
+
+      // If there's an existing property on the object or one of its 
+      // prototypes it should be replaced, so break here.
+      break;
     }
+
+    prototype = obj->_proto;
+    if (prototype == jsNull())
+      break;
   }
-  
+
   _prop.put(propertyName, value, 0, true);
 }
 
@@ -230,23 +217,20 @@ bool JSObject::deleteProperty(ExecState *exec, unsigned propertyName)
   return deleteProperty(exec, Identifier::from(exec, propertyName));
 }
 
-static ALWAYS_INLINE JSValue *tryGetAndCallProperty(ExecState *exec, const JSObject *object, const Identifier &propertyName) {
-  JSValue* v = object->get(exec, propertyName);
-  if (v->isObject()) {
-      JSObject* o = static_cast<JSObject*>(v);
-      CallData data;
-      CallType callType = o->getCallData(data);
-      // spec says "not primitive type" but ...
-      if (callType != CallTypeNone) {
-          JSObject* thisObj = const_cast<JSObject*>(object);
-          JSValue* def = o->callAsFunction(exec, thisObj->toThisObject(exec), exec->emptyList());
-          JSType defType = def->type();
-          ASSERT(defType != GetterSetterType);
-          if (defType != ObjectType)
-              return def;
-    }
-  }
-  return NULL;
+static ALWAYS_INLINE JSValue* callDefaultValueFunction(ExecState* exec, const JSObject* object, const Identifier& propertyName)
+{
+    JSValue* function = object->get(exec, propertyName);
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone)
+        return 0;
+    JSValue* result = call(exec, function, callType, callData, const_cast<JSObject*>(object), exec->emptyList());
+    ASSERT(result->type() != GetterSetterType);
+    if (exec->hadException())
+        return exec->exception();
+    if (result->isObject())
+        return 0;
+    return result;
 }
 
 bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& result)
@@ -259,28 +243,28 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& res
 // ECMA 8.6.2.6
 JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
 {
-  // We need this check to guard against the case where this object is rhs of
-  // a binary expression where lhs threw an exception in its conversion to
-  // primitive
-  if (exec->hadException())
-    return exec->exception();
-  /* Prefer String for Date objects */
-  if ((hint == StringType) || (hint != NumberType && _proto == exec->lexicalGlobalObject()->datePrototype())) {
-    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().toString))
-      return v;
-    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().valueOf))
-      return v;
-  } else {
-    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().valueOf))
-      return v;
-    if (JSValue* v = tryGetAndCallProperty(exec, this, exec->propertyNames().toString))
-      return v;
-  }
+    // We need this check to guard against the case where this object is rhs of
+    // a binary expression where lhs threw an exception in its conversion to
+    // primitive.
+    if (exec->hadException())
+        return exec->exception();
 
-  if (exec->hadException())
-    return exec->exception();
+    // Must call toString first for Date objects.
+    if ((hint == StringType) || (hint != NumberType && _proto == exec->lexicalGlobalObject()->datePrototype())) {
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
+            return value;
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
+            return value;
+    } else {
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
+            return value;
+        if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
+            return value;
+    }
 
-  return throwError(exec, TypeError, "No default value");
+    ASSERT(!exec->hadException());
+
+    return throwError(exec, TypeError, "No default value");
 }
 
 const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifier& propertyName) const
@@ -334,7 +318,7 @@ JSValue* JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
         if (v) {
             if (v->type() != GetterSetterType)
                 return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetter*>(v)->getGetter();
+            JSObject* funcObj = static_cast<GetterSetter*>(v)->getter();
             if (!funcObj)
                 return jsUndefined();
             return funcObj;
@@ -354,7 +338,7 @@ JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
         if (v) {
             if (v->type() != GetterSetterType)
                 return jsUndefined();
-            JSObject* funcObj = static_cast<GetterSetter*>(v)->getSetter();
+            JSObject* funcObj = static_cast<GetterSetter*>(v)->setter();
             if (!funcObj)
                 return jsUndefined();
             return funcObj;
@@ -366,29 +350,6 @@ JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
     }
 }
 
-JSObject* JSObject::construct(ExecState*, const ArgList& /*args*/)
-{
-  ASSERT(false);
-  return NULL;
-}
-
-JSObject* JSObject::construct(ExecState* exec, const ArgList& args, const Identifier& /*functionName*/, const UString& /*sourceURL*/, int /*lineNumber*/)
-{
-  return construct(exec, args);
-}
-
-bool JSObject::implementsCall()
-{
-    CallData callData;
-    return getCallData(callData) != CallTypeNone;
-}
-
-JSValue *JSObject::callAsFunction(ExecState* /*exec*/, JSObject* /*thisObj*/, const ArgList &/*args*/)
-{
-  ASSERT(false);
-  return NULL;
-}
-
 bool JSObject::implementsHasInstance() const
 {
   return false;
@@ -398,7 +359,7 @@ bool JSObject::hasInstance(ExecState* exec, JSValue* value)
 {
     JSValue* proto = get(exec, exec->propertyNames().prototype);
     if (!proto->isObject()) {
-        throwError(exec, TypeError, "intanceof called on an object with an invalid prototype property.");
+        throwError(exec, TypeError, "instanceof called on an object with an invalid prototype property.");
         return false;
     }
     
@@ -507,11 +468,9 @@ void JSObject::putDirectFunction(InternalFunction* func, int attr)
     putDirect(func->functionName(), func, attr); 
 }
 
-void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue **location)
+void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)
 {
-    GetterSetter *gs = static_cast<GetterSetter *>(*location);
-    JSObject *getterFunc = gs->getGetter();
-    if (getterFunc)
+    if (JSObject* getterFunc = static_cast<GetterSetter*>(*location)->getter())
         slot.setGetterSlot(getterFunc);
     else
         slot.setUndefined();
@@ -560,7 +519,9 @@ JSObject* Error::create(ExecState* exec, ErrorType errtype, const UString& messa
     args.append(jsString(exec, name));
   else
     args.append(jsString(exec, message));
-  JSObject *err = static_cast<JSObject *>(cons->construct(exec,args));
+  ConstructData constructData;
+  ConstructType constructType = cons->getConstructData(constructData);
+  JSObject* err = construct(exec, cons, constructType, constructData, args);
 
   if (lineno != -1)
     err->put(exec, Identifier(exec, "line"), jsNumber(exec, lineno));
@@ -604,6 +565,11 @@ JSObject *throwError(ExecState *exec, ErrorType type, const UString &message, in
     JSObject *error = Error::create(exec, type, message, line, sourceId, sourceURL);
     exec->setException(error);
     return error;
+}
+
+JSObject* constructEmptyObject(ExecState* exec)
+{
+    return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
 }
 
 } // namespace KJS

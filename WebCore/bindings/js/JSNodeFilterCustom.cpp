@@ -50,19 +50,12 @@ JSValue* JSNodeFilter::acceptNode(ExecState* exec, const ArgList& args)
     return jsNumber(exec, result);
 }
 
-PassRefPtr<NodeFilter> toNodeFilter(KJS::JSValue* val)
+PassRefPtr<NodeFilter> toNodeFilter(JSValue* value)
 {
-    if (!val || !val->isObject())
-        return 0;
+    if (value->isObject(&JSNodeFilter::s_info))
+        return static_cast<JSNodeFilter*>(value)->impl();
 
-    if (val->isObject(&JSNodeFilter::s_info))
-        return static_cast<JSNodeFilter*>(val)->impl();
-
-    KJS::JSObject* o = static_cast<KJS::JSObject*>(val);
-    if (!o->implementsCall())
-        return 0;
-
-    return NodeFilter::create(JSNodeFilterCondition::create(o));
+    return NodeFilter::create(JSNodeFilterCondition::create(value));
 }
 
 } // namespace WebCore

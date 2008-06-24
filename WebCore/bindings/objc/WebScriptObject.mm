@@ -281,22 +281,17 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
+    JSLock lock;
+    
     // Look up the function object.
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
-    JSLock lock;
-    
-    JSValue* func = [self _imp]->get(exec, Identifier(exec, String(name)));
-
-    if (!func || !func->isObject())
-        // Maybe throw an exception here?
-        return 0;
-
-    // Call the function object.
-    JSObject *funcImp = static_cast<JSObject*>(func);
-    if (!funcImp->implementsCall())
-        return 0;
+    JSValue* function = [self _imp]->get(exec, Identifier(exec, String(name)));
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone)
+        return nil;
 
     ArgList argList;
     getListFromNSArray(exec, args, [self _rootObject], argList);
@@ -305,7 +300,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         return nil;
 
     [self _rootObject]->globalObject()->startTimeoutCheck();
-    JSValue *result = funcImp->callAsFunction(exec, [self _imp], argList);
+    JSValue* result = call(exec, function, callType, callData, [self _imp], argList);
     [self _rootObject]->globalObject()->stopTimeoutCheck();
 
     if (exec->hadException()) {
@@ -532,8 +527,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     }
 
     if (value->isString()) {
-        UString u = value->getString();
-        return [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
+        const UString& u = static_cast<JSString*>(value)->value();
+        return [NSString stringWithCharacters:u.data() length:u.size()];
     }
 
     if (value->isNumber())

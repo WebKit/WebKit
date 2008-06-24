@@ -160,23 +160,12 @@ namespace WebCore {
         OwnPtr<JSDOMWindowBasePrivate> d;
     };
 
-    // Functions
-    KJS::JSValue* windowProtoFuncAToB(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncBToA(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncOpen(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncSetTimeout(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncClearTimeout(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncSetInterval(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncAddEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncRemoveEventListener(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncShowModalDialog(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-    KJS::JSValue* windowProtoFuncNotImplemented(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
-
     // Returns a JSDOMWindow or jsNull()
     KJS::JSValue* toJS(KJS::ExecState*, DOMWindow*);
 
     // Returns JSDOMWindow or 0
     JSDOMWindow* toJSDOMWindow(Frame*);
+    JSDOMWindow* toJSDOMWindow(KJS::JSValue*);
 
 } // namespace WebCore
 

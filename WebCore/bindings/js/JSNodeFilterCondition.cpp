@@ -39,14 +39,15 @@ static JSValue* takeException(ExecState* exec)
     return exception;
 }
 
-JSNodeFilterCondition::JSNodeFilterCondition(JSObject* filter)
+JSNodeFilterCondition::JSNodeFilterCondition(JSValue* filter)
     : m_filter(filter)
 {
 }
 
 void JSNodeFilterCondition::mark()
 {
-    m_filter->mark();
+    if (!m_filter->marked())
+        m_filter->mark();
 }
 
 short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) const
@@ -58,8 +59,10 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) c
 
     JSLock lock;
 
-    if (!m_filter->implementsCall())
-        return NodeFilter::FILTER_REJECT;
+    CallData callData;
+    CallType callType = m_filter->getCallData(callData);
+    if (callType == CallTypeNone)
+        return NodeFilter::FILTER_ACCEPT;
 
     ExecState* exec = frame->script()->globalObject()->globalExec();
     ArgList args;
@@ -68,7 +71,7 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) c
         exception = takeException(exec);
         return NodeFilter::FILTER_REJECT;
     }
-    JSValue* result = m_filter->callAsFunction(exec, m_filter, args);
+    JSValue* result = call(exec, m_filter, callType, callData, m_filter, args);
     if (exec->hadException()) {
         exception = takeException(exec);
         return NodeFilter::FILTER_REJECT;

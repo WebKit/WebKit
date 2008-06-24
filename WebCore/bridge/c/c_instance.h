@@ -53,9 +53,8 @@ public:
     virtual JSValue* valueOf(ExecState*) const;
     virtual JSValue* defaultValue(ExecState*, JSType hint) const;
     
-    virtual KJS::CallType getCallData(KJS::CallData&);
-    
     virtual JSValue *invokeMethod (ExecState *exec, const MethodList &method, const ArgList &args);
+    virtual bool supportsInvokeDefaultMethod() const;
     virtual JSValue *invokeDefaultMethod (ExecState *exec, const ArgList &args);
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 

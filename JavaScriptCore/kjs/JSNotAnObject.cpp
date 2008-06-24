@@ -126,34 +126,6 @@ bool JSNotAnObject::deleteProperty(ExecState* exec, unsigned)
     return false;
 }
 
-JSValue* JSNotAnObject::defaultValue(ExecState* exec, JSType) const
-{
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
-    return m_exception;
-}
-
-JSObject* JSNotAnObject::construct(ExecState* exec, const ArgList&)
-{
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
-    return m_exception;
-}
-
-JSObject* JSNotAnObject::construct(ExecState* exec, const ArgList&, const Identifier&, const UString&, int)
-{
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
-    return m_exception;
-}
-
-JSValue* JSNotAnObject::callAsFunction(ExecState* exec, JSObject*, const ArgList&)
-{
-    UNUSED_PARAM(exec);
-    ASSERT(exec->hadException() && exec->exception() == m_exception);
-    return m_exception;
-}
-
 void JSNotAnObject::getPropertyNames(ExecState* exec, PropertyNameArray&)
 {
     UNUSED_PARAM(exec);

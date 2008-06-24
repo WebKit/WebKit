@@ -1,6 +1,4 @@
-// -*- c-basic-offset: 2 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -39,26 +37,6 @@ namespace KJS {
 
         enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
     };
-
-    // Functions
-    JSValue* mathProtoFuncAbs(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncACos(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncASin(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncATan(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncATan2(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncCeil(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncCos(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncExp(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncFloor(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncLog(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncMax(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncMin(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncPow(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncRandom(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncRound(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncSin(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncSqrt(ExecState*, JSObject*, const ArgList&);
-    JSValue* mathProtoFuncTan(ExecState*, JSObject*, const ArgList&);
 
 } // namespace KJS
 

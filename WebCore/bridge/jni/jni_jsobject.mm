@@ -291,17 +291,17 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     JSLock lock;
     
     Identifier identifier(exec, JavaString(methodName).ustring());
-    JSValue* func = _imp->get(exec, identifier);
-    if (func->isUndefinedOrNull())
+    JSValue* function = _imp->get(exec, identifier);
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone)
         return 0;
 
     // Call the function object.
-    JSObject *funcImp = static_cast<JSObject*>(func);
-    JSObject *thisObj = const_cast<JSObject*>(_imp);
     ArgList argList;
     getListFromJArray(exec, args, argList);
     rootObject->globalObject()->startTimeoutCheck();
-    JSValue *result = funcImp->callAsFunction(exec, thisObj, argList);
+    JSValue* result = KJS::call(exec, function, callType, callData, _imp, argList);
     rootObject->globalObject()->stopTimeoutCheck();
 
     return convertValueToJObject(result);

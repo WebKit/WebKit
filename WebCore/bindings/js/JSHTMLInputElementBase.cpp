@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,29 +22,37 @@
 
 #include "HTMLInputElement.h"
 
-#include "JSHTMLInputElementBaseTable.cpp"
-
 using namespace KJS;
 
 namespace WebCore {
 
+static JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState*, JSObject*, JSValue*, const ArgList&);
+
+}
+
+#include "JSHTMLInputElementBaseTable.cpp"
+
+namespace WebCore {
+
 /*
-@begin JSHTMLInputElementBaseTable 3
+@begin JSHTMLInputElementBaseTable
   selectionStart        WebCore::JSHTMLInputElementBase::SelectionStart            DontDelete
   selectionEnd          WebCore::JSHTMLInputElementBase::SelectionEnd              DontDelete
 @end
-@begin JSHTMLInputElementBasePrototypeTable 0
+@begin JSHTMLInputElementBasePrototypeTable
 @end
-@begin JSHTMLInputElementBaseFunctionTable 1
+@begin JSHTMLInputElementBaseFunctionTable
   setSelectionRange     WebCore::jsHTMLInputElementBaseFunctionSetSelectionRange         DontDelete|Function 2
 @end
 */
 
 KJS_IMPLEMENT_PROTOTYPE("HTMLInputElementBase", JSHTMLInputElementBasePrototype)
 
-JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObject* thisObj, const ArgList& args)
+// SetSelectionRange is implemented on the class instead of on the prototype
+// to make it easier to enable/disable lookup of the function based on input type.
+JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    HTMLInputElement& input = *static_cast<HTMLInputElement*>(static_cast<JSHTMLInputElementBase*>(thisObj)->impl());
+    HTMLInputElement& input = *static_cast<HTMLInputElement*>(static_cast<JSHTMLInputElementBase*>(thisValue)->impl());
     input.setSelectionRange(args[0]->toInt32(exec), args[1]->toInt32(exec));
     return jsUndefined();
 }

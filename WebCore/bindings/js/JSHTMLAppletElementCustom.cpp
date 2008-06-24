@@ -35,22 +35,17 @@ using namespace KJS;
 
 bool JSHTMLAppletElement::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this, static_cast<HTMLElement*>(impl()));
+    return runtimeObjectCustomGetOwnPropertySlot(exec, propertyName, slot, this);
 }
 
 bool JSHTMLAppletElement::customPut(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    return runtimeObjectCustomPut(exec, propertyName, value, static_cast<HTMLElement*>(impl()));
+    return runtimeObjectCustomPut(exec, propertyName, value, impl());
 }
 
-CallType JSHTMLAppletElement::getCallData(CallData&)
+CallType JSHTMLAppletElement::getCallData(CallData& callData)
 {
-    return runtimeObjectImplementsCall(static_cast<HTMLElement*>(impl())) ? CallTypeNative : CallTypeNone;
-}
-
-JSValue* JSHTMLAppletElement::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList& args)
-{
-    return runtimeObjectCallAsFunction(exec, thisObj, args, static_cast<HTMLElement*>(impl()));
+    return runtimeObjectGetCallData(impl(), callData);
 }
 
 bool JSHTMLAppletElement::canGetItemsForName(ExecState*, HTMLAppletElement*, const Identifier& propertyName)

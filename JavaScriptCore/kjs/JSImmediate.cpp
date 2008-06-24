@@ -29,23 +29,17 @@
 
 namespace KJS {
 
-JSObject *JSImmediate::toObject(const JSValue *v, ExecState *exec)
+JSObject* JSImmediate::toObject(const JSValue *v, ExecState *exec)
 {
     ASSERT(isImmediate(v));
     if (v == jsNull())
         return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
-    else if (v == jsUndefined())
+    if (v == jsUndefined())
         return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
-    else if (isBoolean(v)) {
-        ArgList args;
-        args.append(const_cast<JSValue *>(v));
-        return exec->lexicalGlobalObject()->booleanConstructor()->construct(exec, args);
-    } else {
-        ASSERT(isNumber(v));
-        ArgList args;
-        args.append(const_cast<JSValue *>(v));
-        return exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args);
-    }
+    if (isBoolean(v))
+        return constructBooleanFromImmediateBoolean(exec, const_cast<JSValue*>(v));
+    ASSERT(isNumber(v));
+    return constructNumberFromImmediateNumber(exec, const_cast<JSValue*>(v));
 }
 
 UString JSImmediate::toString(const JSValue* v)

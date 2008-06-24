@@ -51,13 +51,13 @@ static JSValue* getNamedItems(ExecState* exec, HTMLCollection* impl, const Ident
 
 // HTMLCollections are strange objects, they support both get and call,
 // so that document.forms.item(0) and document.forms(0) both work.
-JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
+static JSValue* callHTMLCollection(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)
 {
     if (args.size() < 1)
         return jsUndefined();
 
     // Do not use thisObj here. It can be the JSHTMLDocument, in the document.forms(i) case.
-    HTMLCollection* collection = impl();
+    HTMLCollection* collection = static_cast<JSHTMLCollection*>(function)->impl();
 
     // Also, do we need the TypeError test here ?
 
@@ -91,8 +91,9 @@ JSValue* JSHTMLCollection::callAsFunction(ExecState* exec, JSObject*, const ArgL
     return jsUndefined();
 }
 
-CallType JSHTMLCollection::getCallData(CallData&)
+CallType JSHTMLCollection::getCallData(CallData& callData)
 {
+    callData.native.function = callHTMLCollection;
     return CallTypeNative;
 }
 

@@ -459,10 +459,7 @@ sub GenerateHeader
     push(@headerContent, "    virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
 
     # Custom call functions
-    if ($dataNode->extendedAttributes->{"CustomCall"}) {
-        push(@headerContent, "    virtual KJS::JSValue* callAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);\n");
-        push(@headerContent, "    virtual KJS::CallType getCallData(KJS::CallData&);\n\n");
-    }
+    push(@headerContent, "    virtual KJS::CallType getCallData(KJS::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};
 
     # Custom deleteProperty function
     push(@headerContent, "    virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
@@ -657,7 +654,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);\n");
+            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, KJS::JSValue*, const KJS::ArgList&);\n");
         }
     }
 
@@ -1204,21 +1201,18 @@ sub GenerateImplementation
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
             my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
 
-            push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject* thisObj, const ArgList& args)\n");
+            push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)\n");
             push(@implContent, "{\n");
 
             if ($interfaceName eq "DOMWindow") {
-                AddIncludesForType("JSDOMWindowShell");
-                push(@implContent, "    ASSERT(!thisObj->inherits(&JSDOMWindow::s_info));\n");
-                push(@implContent, "    if (!thisObj->inherits(&JSDOMWindowShell::s_info))\n");
+                push(@implContent, "    $className* castedThisObj = toJSDOMWindow(thisValue);\n");
+                push(@implContent, "    if (!castedThisObj)\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
-                push(@implContent, "    $className* castedThisObj = static_cast<JSDOMWindowShell*>(thisObj)->window();\n");
             } else {
-                push(@implContent, "    if (!thisObj->inherits(&${className}::s_info))\n");
+                push(@implContent, "    if (!thisValue->isObject(&${className}::s_info))\n");
                 push(@implContent, "        return throwError(exec, TypeError);\n");
-                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisObj);\n");
+                push(@implContent, "    $className* castedThisObj = static_cast<$className*>(thisValue);\n");
             }
-
 
             if ($dataNode->extendedAttributes->{"CheckDomainSecurity"} && 
                 !$function->signature->extendedAttributes->{"DoNotCheckDomainSecurity"}) {
@@ -1797,8 +1791,15 @@ EOF
 
     if ($canConstruct) {
 $implContent .= << "EOF";
-    virtual ConstructType getConstructData(ConstructData&) { return ConstructTypeNative; }
-    virtual JSObject* construct(ExecState* exec, const ArgList& args) { return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create())); }
+    static JSObject* construct(ExecState* exec, JSObject*, const ArgList&)
+    {
+        return static_cast<JSObject*>(toJS(exec, ${interfaceName}::create()));
+    }
+    virtual ConstructType getConstructData(ConstructData& constructData)
+    {
+        constructData.native.function = construct;
+        return ConstructTypeNative;
+    }
 EOF
     }
 

@@ -80,18 +80,17 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
         
-    JSValue* lookupNamespaceURIFuncValue = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
-    JSObject* lookupNamespaceURIFunc = 0;
-    if (lookupNamespaceURIFuncValue->isObject()) {      
-        lookupNamespaceURIFunc = static_cast<JSObject*>(lookupNamespaceURIFuncValue);
-        if (!lookupNamespaceURIFunc->implementsCall())
-            lookupNamespaceURIFunc = 0;
-    }
-
-    if (!lookupNamespaceURIFunc && !m_customResolver->implementsCall()) {
-        // FIXME: pass actual line number and source URL.
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String());
-        return String();
+    JSValue* function = m_customResolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone) {
+        callType = m_customResolver->getCallData(callData);
+        if (callType == CallTypeNone) {
+            // FIXME: Pass actual line number and source URL.
+            m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "XPathNSResolver does not have a lookupNamespaceURI method.", 0, String());
+            return String();
+        }
+        function = m_customResolver;
     }
 
     RefPtr<JSCustomXPathNSResolver> selfProtector(this);
@@ -99,15 +98,11 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     ArgList args;
     args.append(jsString(exec, prefix));
 
-    String result;
-    JSValue* retval;
     globalObject->startTimeoutCheck();
-    if (lookupNamespaceURIFunc)
-        retval = lookupNamespaceURIFunc->callAsFunction(exec, m_customResolver, args);
-    else
-        retval = m_customResolver->callAsFunction(exec, m_customResolver, args);
+    JSValue* retval = call(exec, function, callType, callData, m_customResolver, args);
     globalObject->stopTimeoutCheck();
 
+    String result;
     if (exec->hadException()) {
         JSObject* exception = exec->exception()->toObject(exec);
         String message = exception->get(exec, exec->propertyNames().message)->toString(exec);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,18 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "WebScriptObject.h"
+#include <wtf/RetainPtr.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
 
-extern ClassStructPtr KJS::Bindings::webScriptObjectClass()
+extern ClassStructPtr Bindings::webScriptObjectClass()
 {
     static ClassStructPtr<WebScriptObject> webScriptObjectClass = NSClassFromString(@"WebScriptObject");
     return webScriptObjectClass;
 }
 
-extern ClassStructPtr KJS::Bindings::webUndefinedClass()
+extern ClassStructPtr Bindings::webUndefinedClass()
 {
     static ClassStructPtr<WebUndefined> webUndefinedClass = NSClassFromString(@"WebUndefined");
     return webUndefinedClass;
@@ -198,7 +199,7 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::info = { "ObjcFallbackObject", 0, 0, 0 };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const KJS::Identifier propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const Identifier& propertyName)
 : _instance(i)
 , _item(propertyName)
 {
@@ -225,20 +226,14 @@ JSType ObjcFallbackObjectImp::type() const
     return UndefinedType;
 }
 
-CallType ObjcFallbackObjectImp::getCallData(CallData&)
+static JSValue* callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
 {
-    id targetObject = _instance->getObject();
-    return [targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)] ? CallTypeNative : CallTypeNone;
-}
-
-JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList &args)
-{
-    if (thisObj->classInfo() != &KJS::RuntimeObjectImp::s_info)
+    if (!thisValue->isObject(&RuntimeObjectImp::s_info))
         return throwError(exec, TypeError);
 
     JSValue* result = jsUndefined();
 
-    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisObj);
+    RuntimeObjectImp* imp = static_cast<RuntimeObjectImp*>(thisValue);
     Instance* instance = imp->getInternalInstance();
 
     if (!instance)
@@ -250,18 +245,28 @@ JSValue* ObjcFallbackObjectImp::callAsFunction(ExecState* exec, JSObject* thisOb
     id targetObject = objcInstance->getObject();
     
     if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)]){
-        MethodList methodList;
         ObjcClass* objcClass = static_cast<ObjcClass*>(instance->getClass());
-        ObjcMethod* fallbackMethod = new ObjcMethod (objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:)));
-        fallbackMethod->setJavaScriptName((CFStringRef)[NSString stringWithCString:_item.ascii() encoding:NSASCIIStringEncoding]);
-        methodList.append(fallbackMethod);
+        OwnPtr<ObjcMethod> fallbackMethod(new ObjcMethod(objcClass->isa(), sel_getName(@selector(invokeUndefinedMethodFromWebScript:withArguments:))));
+        const Identifier& nameIdentifier = static_cast<ObjcFallbackObjectImp*>(function)->propertyName();
+        RetainPtr<CFStringRef> name(AdoptCF, CFStringCreateWithCharacters(0, nameIdentifier.data(), nameIdentifier.size()));
+        fallbackMethod->setJavaScriptName(name.get());
+        MethodList methodList;
+        methodList.append(fallbackMethod.get());
         result = instance->invokeMethod(exec, methodList, args);
-        delete fallbackMethod;
     }
             
     instance->end();
 
     return result;
+}
+
+CallType ObjcFallbackObjectImp::getCallData(CallData& callData)
+{
+    id targetObject = _instance->getObject();
+    if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
+        return CallTypeNone;
+    callData.native.function = callObjCFallbackObject;
+    return CallTypeNative;
 }
 
 bool ObjcFallbackObjectImp::deleteProperty(ExecState*, const Identifier&)

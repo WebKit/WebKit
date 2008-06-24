@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,13 +35,21 @@
 namespace KJS {
 
 template <class Base>
-class JSCallbackObject : public Base
-{
+class JSCallbackObject : public Base {
 public:
     JSCallbackObject(ExecState*, JSClassRef, JSValue* prototype, void* data);
     JSCallbackObject(JSClassRef);
     virtual ~JSCallbackObject();
 
+    void setPrivate(void* data);
+    void* getPrivate();
+
+    static const ClassInfo info;
+
+    JSClassRef classRef() const { return m_class; }
+    bool inherits(JSClassRef) const;
+
+private:
     virtual UString className() const;
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
@@ -53,31 +61,23 @@ public:
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);
 
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const ArgList& args);
-
     virtual bool implementsHasInstance() const;
     virtual bool hasInstance(ExecState *exec, JSValue *value);
-
-    virtual CallType getCallData(CallData&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList &args);
 
     virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
     virtual double toNumber(ExecState*) const;
     virtual UString toString(ExecState*) const;
 
-    void setPrivate(void* data);
-    void* getPrivate();
-    
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
+    virtual ConstructType getConstructData(ConstructData&);
+    virtual CallType getCallData(CallData&);
+    virtual const ClassInfo* classInfo() const { return &info; }
 
-    bool inherits(JSClassRef) const;
-    
-private:
     void init(ExecState*);
-    
+ 
+    static JSValue* call(ExecState*, JSObject* functionObject, JSValue* thisValue, const ArgList&);
+    static JSObject* construct(ExecState*, JSObject* constructor, const ArgList&);
+   
     static JSValue* cachedValueGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);

@@ -38,35 +38,39 @@ JSHTMLOptionElementConstructor::JSHTMLOptionElementConstructor(ExecState* exec, 
     putDirect(exec->propertyNames().length, jsNumber(exec, 4), ReadOnly|DontDelete|DontEnum);
 }
 
-ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData&)
+static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
-    return ConstructTypeNative;
-}
+    Document* document = static_cast<JSHTMLOptionElementConstructor*>(constructor)->document();
 
-JSObject* JSHTMLOptionElementConstructor::construct(ExecState* exec, const ArgList& args)
-{
     ExceptionCode ec = 0;
 
-    RefPtr<HTMLOptionElement> element = static_pointer_cast<HTMLOptionElement>(m_document->createElement("option", ec));
-    if (element) {
-        RefPtr<Text> text = m_document->createTextNode("");
-        if (!args[0]->isUndefined())
-            text->setData(args[0]->toString(exec), ec);
-        if (ec == 0)
-            element->appendChild(text.release(), ec);
-        if (ec == 0 && !args[1]->isUndefined())
-            element->setValue(args[1]->toString(exec));
-        if (ec == 0)
-            element->setDefaultSelected(args[2]->toBoolean(exec));
-        if (ec == 0)
-            element->setSelected(args[3]->toBoolean(exec));
+    RefPtr<HTMLOptionElement> element = static_pointer_cast<HTMLOptionElement>(document->createElement("option", ec));
+    RefPtr<Text> text;
+    if (ec == 0)
+        text = document->createTextNode("");
+    if (ec == 0 && !args[0]->isUndefined())
+        text->setData(args[0]->toString(exec), ec);
+    if (ec == 0)
+        element->appendChild(text.release(), ec);
+    if (ec == 0 && !args[1]->isUndefined())
+        element->setValue(args[1]->toString(exec));
+    if (ec == 0)
+        element->setDefaultSelected(args[2]->toBoolean(exec));
+    if (ec == 0)
+        element->setSelected(args[3]->toBoolean(exec));
+
+    if (ec) {
+        setDOMException(exec, ec);
+        return 0;
     }
 
-    setDOMException(exec, ec);
-    if (ec || !element)
-        return 0;
-
     return static_cast<JSObject*>(toJS(exec, element.release()));
+}
+
+ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructHTMLOptionElement;
+    return ConstructTypeNative;
 }
 
 } // namespace WebCore

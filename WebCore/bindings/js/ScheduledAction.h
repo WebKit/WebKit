@@ -24,23 +24,17 @@
 #include <kjs/protect.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
-    class JSValue;
-    class ArgList;
-}
-
 namespace WebCore {
 
     class JSDOMWindowShell;
 
-   /**
-    * An action (either function or string) to be executed after a specified
+   /* An action (either function or string) to be executed after a specified
     * time interval, either once or repeatedly. Used for window.setTimeout()
     * and window.setInterval()
     */
     class ScheduledAction {
     public:
-        ScheduledAction(KJS::JSValue* func, const KJS::ArgList& args);
+        ScheduledAction(KJS::JSValue* function, const KJS::ArgList&);
         ScheduledAction(const String& code)
             : m_code(code)
         {
@@ -49,7 +43,7 @@ namespace WebCore {
         void execute(JSDOMWindowShell*);
 
     private:
-        KJS::ProtectedPtr<KJS::JSValue> m_func;
+        KJS::ProtectedPtr<KJS::JSValue> m_function;
         Vector<KJS::ProtectedPtr<KJS::JSValue> > m_args;
         String m_code;
     };

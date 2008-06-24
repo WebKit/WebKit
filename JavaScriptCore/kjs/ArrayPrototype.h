@@ -39,33 +39,9 @@ namespace KJS {
   class ArrayConstructor : public InternalFunction {
   public:
     ArrayConstructor(ExecState*, FunctionPrototype*, ArrayPrototype*);
-
     virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const ArgList&);
-
-    virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
-
+    virtual CallType getCallData(CallData&);
   };
-
-  JSValue* arrayProtoFuncToString(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncToLocaleString(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncConcat(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncJoin(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncPop(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncPush(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncReverse(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncShift(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncSlice(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncSort(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncSplice(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncUnShift(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncEvery(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncForEach(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncSome(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncIndexOf(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncFilter(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncMap(ExecState*, JSObject*, const ArgList&);
-  JSValue* arrayProtoFuncLastIndexOf(ExecState*, JSObject*, const ArgList&);
 
 } // namespace KJS
 

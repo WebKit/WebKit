@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,14 +33,13 @@ namespace KJS {
 
 class RuntimeMethod : public InternalFunction {
 public:
-    RuntimeMethod(ExecState *exec, const Identifier &n, Bindings::MethodList &methodList);
-    
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
+    RuntimeMethod(ExecState*, const Identifier& name, Bindings::MethodList&);
+    Bindings::MethodList* methods() const { return _methodList.get(); }
 
 private:
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+    virtual CallType getCallData(CallData&);
 
     OwnPtr<Bindings::MethodList> _methodList;
 };

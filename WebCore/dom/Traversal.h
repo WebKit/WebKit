@@ -26,7 +26,6 @@
 #define Traversal_h
 
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace KJS {
@@ -38,10 +37,8 @@ namespace WebCore {
     class Node;
     class NodeFilter;
 
-    class Traversal : public RefCounted<Traversal> {
+    class Traversal {
     public:
-        virtual ~Traversal();
-
         Node* root() const { return m_root.get(); }
         unsigned whatToShow() const { return m_whatToShow; }
         NodeFilter* filter() const { return m_filter.get(); }
@@ -49,7 +46,6 @@ namespace WebCore {
 
     protected:
         Traversal(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
-        
         short acceptNode(Node*, KJS::JSValue*& jsException) const;
 
     private:

@@ -59,7 +59,7 @@ JSValue* JSClipboard::types(ExecState* exec) const
     HashSet<String>::const_iterator end = types.end();
     for (HashSet<String>::const_iterator it = types.begin(); it != end; ++it)
         list.append(jsString(exec, UString(*it)));
-    return exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
+    return constructArray(exec, list);
 }
 
 JSValue* JSClipboard::clearData(ExecState* exec, const ArgList& args)

@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,27 +27,24 @@
 #ifndef JSCallbackFunction_h
 #define JSCallbackFunction_h
 
-#include "JSObjectRef.h"
 #include "JSFunction.h"
-#include "JSObject.h"
+#include "JSObjectRef.h"
 
 namespace KJS {
 
-class JSCallbackFunction : public InternalFunction
-{
+class JSCallbackFunction : public InternalFunction {
 public:
-    JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCallback callback, const Identifier& name);
+    JSCallbackFunction(ExecState*, JSObjectCallAsFunctionCallback, const Identifier& name);
 
-    virtual bool implementsHasInstance() const;
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList &args);
-
-    virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     
 private:
-    JSCallbackFunction(); // prevent default construction
-    JSCallbackFunction(const JSCallbackFunction&);
-    
+    virtual bool implementsHasInstance() const;
+    virtual CallType getCallData(CallData&);
+    virtual const ClassInfo* classInfo() const { return &info; }
+
+    static JSValue* call(ExecState*, JSObject*, JSValue*, const ArgList&);
+
     JSObjectCallAsFunctionCallback m_callback;
 };
 

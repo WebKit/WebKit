@@ -43,12 +43,12 @@ NumberObject::NumberObject(JSObject* proto)
 
 // ------------------------------ NumberPrototype ---------------------------
 
-static JSValue* numberProtoFuncToString(ExecState*, JSObject*, const ArgList&);
-static JSValue* numberProtoFuncToLocaleString(ExecState*, JSObject*, const ArgList&);
-static JSValue* numberProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
-static JSValue* numberProtoFuncToFixed(ExecState*, JSObject*, const ArgList&);
-static JSValue* numberProtoFuncToExponential(ExecState*, JSObject*, const ArgList&);
-static JSValue* numberProtoFuncToPrecision(ExecState*, JSObject*, const ArgList&);
+static JSValue* numberProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* numberProtoFuncToLocaleString(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* numberProtoFuncValueOf(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* numberProtoFuncToFixed(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* numberProtoFuncToExponential(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* numberProtoFuncToPrecision(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 // ECMA 15.7.4
 
@@ -142,12 +142,12 @@ static double intPow10(int e)
 }
 
 
-JSValue* numberProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList& args)
+JSValue* numberProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<NumberObject*>(thisObj)->internalValue();
+    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     double radixAsDouble = args[0]->toInteger(exec); // nan -> 0
     if (radixAsDouble == 10 || args[0]->isUndefined())
@@ -163,7 +163,7 @@ JSValue* numberProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLi
     // unless someone finds a precise rule.
     char s[2048 + 3];
     const char* lastCharInString = s + sizeof(s) - 1;
-    double x = v->toNumber(exec);
+    double x = v->uncheckedGetNumber();
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
 
@@ -207,29 +207,29 @@ JSValue* numberProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLi
     return jsString(exec, startOfResultString);
 }
 
-JSValue* numberProtoFuncToLocaleString(ExecState* exec, JSObject* thisObj, const ArgList&)
+JSValue* numberProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
     // TODO
-    return jsString(exec, static_cast<NumberObject*>(thisObj)->internalValue()->toString(exec));
+    return jsString(exec, static_cast<NumberObject*>(thisValue)->internalValue()->toString(exec));
 }
 
-JSValue* numberProtoFuncValueOf(ExecState* exec, JSObject* thisObj, const ArgList&)
+JSValue* numberProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
-    return static_cast<NumberObject*>(thisObj)->internalValue()->toJSNumber(exec);
+    return static_cast<NumberObject*>(thisValue)->internalValue();
 }
 
-JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject* thisObj, const ArgList& args)
+JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<NumberObject*>(thisObj)->internalValue();
+    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     JSValue* fractionDigits = args[0];
     double df = fractionDigits->toInteger(exec);
@@ -237,7 +237,7 @@ JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject* thisObj, const ArgLis
         return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
     int f = (int)df;
 
-    double x = v->toNumber(exec);
+    double x = v->uncheckedGetNumber();
     if (isnan(x))
         return jsString(exec, "NaN");
 
@@ -310,14 +310,12 @@ static void exponentialPartToString(char* buf, int& i, int decimalPoint)
     buf[i++] = static_cast<char>('0' + exponential % 10);
 }
 
-JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject* thisObj, const ArgList& args)
+JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<NumberObject*>(thisObj)->internalValue();
-
-    double x = v->toNumber(exec);
+    double x = static_cast<NumberObject*>(thisValue)->internalValue()->uncheckedGetNumber();
 
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
@@ -381,15 +379,15 @@ JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject* thisObj, const 
     return jsString(exec, buf);
 }
 
-JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject* thisObj, const ArgList& args)
+JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisObj->inherits(&NumberObject::info))
+    if (!thisValue->isObject(&NumberObject::info))
         return throwError(exec, TypeError);
 
-    JSValue* v = static_cast<NumberObject*>(thisObj)->internalValue();
+    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     double doublePrecision = args[0]->toIntegerPreserveNaN(exec);
-    double x = v->toNumber(exec);
+    double x = v->uncheckedGetNumber();
     if (args[0]->isUndefined() || isnan(x) || isinf(x))
         return jsString(exec, v->toString(exec));
 
@@ -453,7 +451,7 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject* thisObj, const Ar
 const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
 
 /* Source for NumberObject.lut.h
-@begin numberTable 5
+@begin numberTable
   NaN                   NumberConstructor::NaNValue       DontEnum|DontDelete|ReadOnly
   NEGATIVE_INFINITY     NumberConstructor::NegInfinity    DontEnum|DontDelete|ReadOnly
   POSITIVE_INFINITY     NumberConstructor::PosInfinity    DontEnum|DontDelete|ReadOnly
@@ -462,13 +460,13 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
 @end
 */
 NumberConstructor::NumberConstructor(ExecState* exec, FunctionPrototype* funcProto, NumberPrototype* numberProto)
-    : InternalFunction(funcProto, Identifier(exec, numberProto->classInfo()->className))
+    : InternalFunction(funcProto, Identifier(exec, numberProto->info.className))
 {
     // Number.Prototype
     putDirect(exec->propertyNames().prototype, numberProto, DontEnum|DontDelete|ReadOnly);
 
     // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly|DontDelete|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 bool NumberConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -495,28 +493,45 @@ JSValue* NumberConstructor::getValueProperty(ExecState* exec, int token) const
     return jsNull();
 }
 
-ConstructType NumberConstructor::getConstructData(ConstructData&)
-{
-    return ConstructTypeNative;
-}
-
 // ECMA 15.7.1
-JSObject* NumberConstructor::construct(ExecState* exec, const ArgList& args)
+static JSObject* constructWithNumberConstructor(ExecState* exec, JSObject*, const ArgList& args)
 {
-    JSObject* proto = exec->lexicalGlobalObject()->numberPrototype();
-    NumberObject* obj = new (exec) NumberObject(proto);
-
-    // FIXME: Check args[0]->isUndefined() instead of args.isEmpty()?
+    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
     double n = args.isEmpty() ? 0 : args[0]->toNumber(exec);
     obj->setInternalValue(jsNumber(exec, n));
     return obj;
 }
 
-// ECMA 15.7.2
-JSValue* NumberConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
+ConstructType NumberConstructor::getConstructData(ConstructData& constructData)
 {
-    // FIXME: Check args[0]->isUndefined() instead of args.isEmpty()?
+    constructData.native.function = constructWithNumberConstructor;
+    return ConstructTypeNative;
+}
+
+// ECMA 15.7.2
+static JSValue* callNumberConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
+{
     return jsNumber(exec, args.isEmpty() ? 0 : args[0]->toNumber(exec));
+}
+
+CallType NumberConstructor::getCallData(CallData& callData)
+{
+    callData.native.function = callNumberConstructor;
+    return CallTypeNative;
+}
+
+NumberObject* constructNumber(ExecState* exec, JSNumberCell* number)
+{
+    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
+    obj->setInternalValue(number);
+    return obj;
+}
+
+NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValue* value)
+{
+    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
+    obj->setInternalValue(value);
+    return obj;
 }
 
 } // namespace KJS

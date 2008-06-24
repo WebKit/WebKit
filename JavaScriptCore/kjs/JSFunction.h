@@ -39,19 +39,18 @@ namespace KJS {
 
   class InternalFunction : public JSObject {
   public:
+    static const ClassInfo info;
+    virtual const ClassInfo* classInfo() const { return &info; }
+    const Identifier& functionName() const { return m_name; }
+
+  protected:
     InternalFunction();
     InternalFunction(FunctionPrototype*, const Identifier&);
 
-    virtual CallType getCallData(CallData&);
-
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObjec, const ArgList& args) = 0;
+  private:
+    virtual CallType getCallData(CallData&) = 0;
     virtual bool implementsHasInstance() const;
 
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-    const Identifier& functionName() const { return m_name; }
-
-  private:
     Identifier m_name;
   };
 
@@ -63,17 +62,13 @@ namespace KJS {
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const ArgList& args);
+    JSObject* construct(ExecState*, const ArgList&);
+    JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
 
-    virtual CallType getCallData(CallData&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
+    // Note: Returns a null identifier for any parameters that will never get set
+    // due to a later parameter with the same name.
+    const Identifier& getParameterName(int index);
 
-    // Note: unlike body->paramName, this returns Identifier::null for parameters 
-    // that will never get set, due to later param having the same name
-    Identifier getParameterName(int index);
-
-    virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
 
     RefPtr<FunctionBodyNode> body;
@@ -84,6 +79,10 @@ namespace KJS {
     virtual void mark();
 
   private:
+    virtual const ClassInfo* classInfo() const { return &info; }
+    virtual ConstructType getConstructData(ConstructData&);
+    virtual CallType getCallData(CallData&);
+
     ScopeChain _scope;
 
     static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
@@ -93,7 +92,7 @@ namespace KJS {
 
   class IndexToNameMap {
   public:
-    IndexToNameMap(JSFunction*, const ArgList& args);
+    IndexToNameMap(JSFunction*, const ArgList&);
     ~IndexToNameMap();
     
     Identifier& operator[](const Identifier& index);
@@ -123,49 +122,40 @@ namespace KJS {
 
   class PrototypeFunction : public InternalFunction {
   public:
-    typedef JSValue* (*JSMemberFunction)(ExecState*, JSObject* thisObj, const ArgList&);
-
-    PrototypeFunction(ExecState*, int len, const Identifier&, JSMemberFunction);
-    PrototypeFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, JSMemberFunction);
-
-    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList&);
+    PrototypeFunction(ExecState*, int len, const Identifier&, NativeFunction);
+    PrototypeFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, NativeFunction);
 
   private:
-    const JSMemberFunction m_function;
+    virtual CallType getCallData(CallData&);
+
+    const NativeFunction m_function;
   };
 
+    class GlobalEvalFunction : public PrototypeFunction {
+    public:
+        GlobalEvalFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, NativeFunction, JSGlobalObject* expectedThisObject);
+        JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject; }
 
-  // Just like PrototypeFunction, but callbacks also get passed the JS function object.
-  class PrototypeReflexiveFunction : public InternalFunction {
-  public:
-    typedef JSValue* (*JSMemberFunction)(ExecState*, PrototypeReflexiveFunction*, JSObject* thisObj, const ArgList&);
+    private:
+        virtual void mark();
 
-    PrototypeReflexiveFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, JSMemberFunction, JSGlobalObject* expectedThisObject);
-
-    virtual void mark();
-    virtual JSValue* callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList&);
-
-    JSGlobalObject* cachedGlobalObject() const { return m_cachedGlobalObject; }
-
-  private:
-    const JSMemberFunction m_function;
-    JSGlobalObject* m_cachedGlobalObject;
-  };
+        JSGlobalObject* m_cachedGlobalObject;
+    };
 
     // Global Functions
-    JSValue* globalFuncEval(ExecState*, PrototypeReflexiveFunction*, JSObject*, const ArgList&);
-    JSValue* globalFuncParseInt(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncParseFloat(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncIsNaN(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncIsFinite(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncDecodeURI(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncDecodeURIComponent(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncEncodeURI(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncEncodeURIComponent(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncEscape(ExecState*, JSObject*, const ArgList&);
-    JSValue* globalFuncUnescape(ExecState*, JSObject*, const ArgList&);
+    JSValue* globalFuncEval(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncParseInt(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncParseFloat(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncIsNaN(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncIsFinite(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncDecodeURI(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncDecodeURIComponent(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncEncodeURI(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncEncodeURIComponent(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncEscape(ExecState*, JSObject*, JSValue*, const ArgList&);
+    JSValue* globalFuncUnescape(ExecState*, JSObject*, JSValue*, const ArgList&);
 #ifndef NDEBUG
-    JSValue* globalFuncKJSPrint(ExecState*, JSObject*, const ArgList&);
+    JSValue* globalFuncKJSPrint(ExecState*, JSObject*, JSValue*, const ArgList&);
 #endif
 
     static const double mantissaOverflowLowerBound = 9007199254740992.0;

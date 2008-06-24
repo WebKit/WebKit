@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,15 +46,16 @@ JSCallbackFunction::JSCallbackFunction(ExecState* exec, JSObjectCallAsFunctionCa
 
 // InternalFunction mish-mashes constructor and function behavior -- we should 
 // refactor the code so this override isn't necessary
-bool JSCallbackFunction::implementsHasInstance() const { 
+bool JSCallbackFunction::implementsHasInstance() const
+{ 
     return false; 
 }
 
-JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, const ArgList &args)
+JSValue* JSCallbackFunction::call(ExecState* exec, JSObject* functionObject, JSValue* thisValue, const ArgList& args)
 {
     JSContextRef execRef = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
-    JSObjectRef thisObjRef = toRef(thisObj);
+    JSObjectRef functionRef = toRef(functionObject);
+    JSObjectRef thisObjRef = toRef(thisValue->toThisObject(exec));
 
     int argumentCount = static_cast<int>(args.size());
     Vector<JSValueRef, 16> arguments(argumentCount);
@@ -62,7 +63,13 @@ JSValue* JSCallbackFunction::callAsFunction(ExecState* exec, JSObject* thisObj, 
         arguments[i] = toRef(args[i]);
 
     JSLock::DropAllLocks dropAllLocks;
-    return toJS(m_callback(execRef, thisRef, thisObjRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
+    return toJS(static_cast<JSCallbackFunction*>(functionObject)->m_callback(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
+}
+
+CallType JSCallbackFunction::getCallData(CallData& callData)
+{
+    callData.native.function = call;
+    return CallTypeNative;
 }
 
 } // namespace KJS

@@ -107,14 +107,16 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
         JSLock lock;
         
         // Call the function object.
-        JSObject *funcImp = static_cast<JSObject*>(obj->imp);
-        if (!funcImp->implementsCall())
+        JSValue* function = obj->imp;
+        CallData callData;
+        CallType callType = function->getCallData(callData);
+        if (callType == CallTypeNone)
             return false;
         
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->globalObject()->startTimeoutCheck();
-        JSValue *resultV = funcImp->callAsFunction(exec, funcImp, argList);
+        JSValue *resultV = call(exec, function, callType, callData, function, argList);
         rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.
@@ -146,29 +148,23 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
             return _NPN_Evaluate(npp, o, (NPString *)&args[0].value.stringValue, result);
         }
 
-        // Lookup the function object.
+        // Look up the function object.
         RootObject* rootObject = obj->rootObject;
         if (!rootObject || !rootObject->isValid())
             return false;
-
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock;
-        JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
-        if (func->isNull()) {
-            NULL_TO_NPVARIANT(*result);
+        JSValue* function = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
+        CallData callData;
+        CallType callType = function->getCallData(callData);
+        if (callType == CallTypeNone)
             return false;
-        } 
-        if (func->isUndefined()) {
-            VOID_TO_NPVARIANT(*result);
-            return false;
-        }
+
         // Call the function object.
-        JSObject *funcImp = static_cast<JSObject*>(func);
-        JSObject *thisObj = const_cast<JSObject*>(obj->imp);
         ArgList argList;
         getListFromVariantArgs(exec, args, argCount, rootObject, argList);
         rootObject->globalObject()->startTimeoutCheck();
-        JSValue *resultV = funcImp->callAsFunction(exec, thisObj, argList);
+        JSValue* resultV = call(exec, function, callType, callData, obj->imp, argList);
         rootObject->globalObject()->stopTimeoutCheck();
 
         // Convert and return the result of the function call.

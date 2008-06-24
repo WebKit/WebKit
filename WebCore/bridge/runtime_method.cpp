@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,8 +29,9 @@
 #include <kjs/JSGlobalObject.h>
 #include "runtime_object.h"
 
-using namespace KJS::Bindings;
-using namespace KJS;
+namespace KJS {
+
+using namespace Bindings;
 
 RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings::MethodList &m) 
     : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), ident)
@@ -61,32 +62,41 @@ bool RuntimeMethod::getOwnPropertySlot(ExecState* exec, const Identifier& proper
     return InternalFunction::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-JSValue *RuntimeMethod::callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args)
+static JSValue* callRuntimeMethod(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
 {
-    if (_methodList->isEmpty())
+    RuntimeMethod* method = static_cast<RuntimeMethod*>(function);
+
+    if (method->methods()->isEmpty())
         return jsUndefined();
     
-    RuntimeObjectImp *imp = 0;
+    RuntimeObjectImp* imp;
 
-    if (thisObj->classInfo() == &KJS::RuntimeObjectImp::s_info) {
-        imp = static_cast<RuntimeObjectImp*>(thisObj);
+    if (thisValue->isObject(&RuntimeObjectImp::s_info)) {
+        imp = static_cast<RuntimeObjectImp*>(thisValue);
     } else {
         // If thisObj is the DOM object for a plugin, get the corresponding
         // runtime object from the DOM object.
-        JSValue* value = thisObj->get(exec, Identifier(exec, "__apple_runtime_object"));
-        if (value->isObject(&KJS::RuntimeObjectImp::s_info))    
+        JSValue* value = thisValue->get(exec, Identifier(exec, "__apple_runtime_object"));
+        if (value->isObject(&RuntimeObjectImp::s_info))    
             imp = static_cast<RuntimeObjectImp*>(value);
+        else
+            return throwError(exec, TypeError);
     }
-
-    if (!imp)
-        return throwError(exec, TypeError);
 
     RefPtr<Instance> instance = imp->getInternalInstance();
     if (!instance) 
         return RuntimeObjectImp::throwInvalidAccessError(exec);
         
     instance->begin();
-    JSValue *aValue = instance->invokeMethod(exec, *_methodList, args);
+    JSValue* result = instance->invokeMethod(exec, *method->methods(), args);
     instance->end();
-    return aValue;
+    return result;
+}
+
+CallType RuntimeMethod::getCallData(CallData& callData)
+{
+    callData.native.function = callRuntimeMethod;
+    return CallTypeNative;
+}
+
 }

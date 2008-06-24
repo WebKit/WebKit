@@ -79,57 +79,13 @@ namespace KJS {
   /**
    * @internal
    *
-   * Functions to implement all methods that are properties of the
-   * String.prototype object
-   */
-
-  JSValue* stringProtoFuncToString(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncValueOf(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncCharAt(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncCharCodeAt(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncConcat(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncIndexOf(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncLastIndexOf(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncMatch(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncReplace(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSearch(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSlice(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSplit(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSubstr(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSubstring(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncToLowerCase(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncToUpperCase(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncToLocaleLowerCase(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncToLocaleUpperCase(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncLocaleCompare(ExecState*, JSObject*, const ArgList&);
-
-  JSValue* stringProtoFuncBig(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSmall(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncBlink(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncBold(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncFixed(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncItalics(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncStrike(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSub(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncSup(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncFontcolor(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncFontsize(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncAnchor(ExecState*, JSObject*, const ArgList&);
-  JSValue* stringProtoFuncLink(ExecState*, JSObject*, const ArgList&);
-
-  /**
-   * @internal
-   *
    * The initial value of the the global variable's "String" property
    */
   class StringConstructor : public InternalFunction {
   public:
     StringConstructor(ExecState*, FunctionPrototype*, StringPrototype*);
-
     virtual ConstructType getConstructData(ConstructData&);
-    virtual JSObject* construct(ExecState*, const ArgList&);
-
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
+    virtual CallType getCallData(CallData&);
   };
 
   /**
@@ -141,7 +97,7 @@ namespace KJS {
   class StringConstructorFunction : public InternalFunction {
   public:
     StringConstructorFunction(ExecState*, FunctionPrototype*, const Identifier&);
-    virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList& args);
+    virtual CallType getCallData(CallData&);
   };
 
 } // namespace

@@ -175,18 +175,14 @@ UString JSNumberCell::toString(ExecState *) const
   return UString::from(val);
 }
 
-JSObject *JSNumberCell::toObject(ExecState *exec) const
+JSObject* JSNumberCell::toObject(ExecState* exec) const
 {
-  ArgList args;
-  args.append(const_cast<JSNumberCell*>(this));
-  return static_cast<JSObject *>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec,args));
+    return constructNumber(exec, const_cast<JSNumberCell*>(this));
 }
 
 JSObject* JSNumberCell::toThisObject(ExecState* exec) const
 {
-    ArgList args;
-    args.append(const_cast<JSNumberCell*>(this));
-    return static_cast<JSObject*>(exec->lexicalGlobalObject()->numberConstructor()->construct(exec, args));
+    return constructNumber(exec, const_cast<JSNumberCell*>(this));
 }
 
 bool JSNumberCell::getUInt32(uint32_t& uint32) const
@@ -212,19 +208,20 @@ bool JSNumberCell::getTruncatedUInt32(uint32_t& uint32) const
 }
 
 // --------------------------- GetterSetter ---------------------------------
+
 void GetterSetter::mark()
 {
     JSCell::mark();
-    
-    if (getter && !getter->marked())
-        getter->mark();
-    if (setter && !setter->marked())
-        setter->mark();
+
+    if (m_getter && !m_getter->marked())
+        m_getter->mark();
+    if (m_setter && !m_setter->marked())
+        m_setter->mark();
 }
 
 JSValue* GetterSetter::toPrimitive(ExecState*, JSType) const
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return jsNull();
 }
 
@@ -238,54 +235,26 @@ bool GetterSetter::getPrimitiveNumber(ExecState*, double& number, JSValue*& valu
 
 bool GetterSetter::toBoolean(ExecState*) const
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return false;
 }
 
-double GetterSetter::toNumber(ExecState *) const
+double GetterSetter::toNumber(ExecState*) const
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return 0.0;
 }
 
-UString GetterSetter::toString(ExecState *) const
+UString GetterSetter::toString(ExecState*) const
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return UString::null();
 }
 
-JSObject *GetterSetter::toObject(ExecState *exec) const
+JSObject* GetterSetter::toObject(ExecState* exec) const
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return jsNull()->toObject(exec);
-}
-
-bool GetterSetter::getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-bool GetterSetter::getOwnPropertySlot(ExecState*, unsigned, PropertySlot&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
-void GetterSetter::put(ExecState*, const Identifier&, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void GetterSetter::put(ExecState*, unsigned, JSValue*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-JSObject* GetterSetter::toThisObject(ExecState*) const
-{
-    ASSERT_NOT_REACHED();
-    return 0;
 }
 
 // ------------------------------ LabelStack -----------------------------------
@@ -322,20 +291,15 @@ InternalFunction::InternalFunction()
 {
 }
 
-InternalFunction::InternalFunction(FunctionPrototype* funcProto, const Identifier& name)
-  : JSObject(funcProto)
-  , m_name(name)
+InternalFunction::InternalFunction(FunctionPrototype* prototype, const Identifier& name)
+    : JSObject(prototype)
+    , m_name(name)
 {
-}
-
-CallType InternalFunction::getCallData(CallData&)
-{
-    return CallTypeNative;
 }
 
 bool InternalFunction::implementsHasInstance() const
 {
-  return true;
+    return true;
 }
 
 }

@@ -1682,7 +1682,7 @@ JSFunction* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeCha
 {
     JSFunction* func = new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
 
-    JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
+    JSObject* proto = constructEmptyObject(exec);
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
     func->putDirect(exec->propertyNames().length, jsNumber(exec, m_body->parameters().size()), ReadOnly | DontDelete | DontEnum);
@@ -1704,7 +1704,7 @@ RegisterID* FuncExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 JSFunction* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeChain)
 {
     JSFunction* func = new (exec) JSFunction(exec, m_ident, m_body.get(), scopeChain);
-    JSObject* proto = exec->lexicalGlobalObject()->objectConstructor()->construct(exec, exec->emptyList());
+    JSObject* proto = constructEmptyObject(exec);
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
 

@@ -160,7 +160,11 @@ JSObjectRef JSValueWrapper::JSObjectCallFunction(void *data, JSObjectRef thisObj
             listArgs.append(kgsArg);
         }
 
-        JSValue *resultValue = objValue->callAsFunction(exec, ksjThisObj, listArgs);
+        CallData callData;
+        CallType callType = objValue->getCallData(callData);
+        if (callType == CallTypeNone)
+            return 0;
+        JSValue* resultValue = call(exec, objValue, callType, callData, ksjThisObj, listArgs);
         JSValueWrapper* wrapperValue = new JSValueWrapper(resultValue);
         JSObjectCallBacks callBacks;
         GetJSObectCallBacks(callBacks);

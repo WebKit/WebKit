@@ -43,7 +43,8 @@ namespace KJS {
         {
         }
 
-        // JSValue methods
+     private:
+       // JSValue methods
         virtual JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
         virtual bool toBoolean(ExecState*) const;
@@ -64,16 +65,8 @@ namespace KJS {
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
-        virtual JSValue* defaultValue(ExecState*, JSType hint) const;
-
-        virtual JSObject* construct(ExecState*, const ArgList&);
-        virtual JSObject* construct(ExecState*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
-
-        virtual JSValue* callAsFunction(ExecState*, JSObject* thisObj, const ArgList&);
-
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-    private:
         JSObject* m_exception;
     };
 

@@ -72,14 +72,14 @@ using namespace WTF;
 
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
 
-static JSValue* functionPrint(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionDebug(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionGC(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionVersion(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionRun(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionLoad(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionReadline(ExecState*, JSObject*, const ArgList&);
-static JSValue* functionQuit(ExecState*, JSObject*, const ArgList&);
+static JSValue* functionPrint(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionDebug(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionGC(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionVersion(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionRun(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionLoad(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionReadline(ExecState*, JSObject*, JSValue*, const ArgList&);
+static JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 struct Options {
     Options()
@@ -173,7 +173,7 @@ GlobalObject::GlobalObject(Vector<UString>& arguments)
     putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
     putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
-    JSObject* array = arrayConstructor()->construct(globalExec(), globalExec()->emptyList());
+    JSObject* array = constructEmptyArray(globalExec());
     for (size_t i = 0; i < arguments.size(); ++i)
         array->put(globalExec(), i, jsString(globalExec(), arguments[i]));
     putDirect(Identifier(globalExec(), "arguments"), array);
@@ -181,7 +181,7 @@ GlobalObject::GlobalObject(Vector<UString>& arguments)
     Interpreter::setShouldPrintExceptions(true);
 }
 
-JSValue* functionPrint(ExecState* exec, JSObject*, const ArgList& args)
+JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     for (unsigned i = 0; i < args.size(); ++i) {
         if (i != 0)
@@ -195,27 +195,27 @@ JSValue* functionPrint(ExecState* exec, JSObject*, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* functionDebug(ExecState* exec, JSObject*, const ArgList& args)
+JSValue* functionDebug(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     fprintf(stderr, "--> %s\n", args[0]->toString(exec).UTF8String().c_str());
     return jsUndefined();
 }
 
-JSValue* functionGC(ExecState* exec, JSObject*, const ArgList&)
+JSValue* functionGC(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
     JSLock lock;
     exec->heap()->collect();
     return jsUndefined();
 }
 
-JSValue* functionVersion(ExecState*, JSObject*, const ArgList&)
+JSValue* functionVersion(ExecState*, JSObject*, JSValue*, const ArgList&)
 {
     // We need this function for compatibility with the Mozilla JS tests but for now
     // we don't actually do any version-specific handling
     return jsUndefined();
 }
 
-JSValue* functionRun(ExecState* exec, JSObject*, const ArgList& args)
+JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     StopWatch stopWatch;
     UString fileName = args[0]->toString(exec);
@@ -232,7 +232,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, const ArgList& args)
     return jsNumber(globalObject->globalExec(), stopWatch.getElapsedMS());
 }
 
-JSValue* functionLoad(ExecState* exec, JSObject*, const ArgList& args)
+JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     UString fileName = args[0]->toString(exec);
     Vector<char> script;
@@ -245,7 +245,7 @@ JSValue* functionLoad(ExecState* exec, JSObject*, const ArgList& args)
     return jsUndefined();
 }
 
-JSValue* functionReadline(ExecState* exec, JSObject*, const ArgList&)
+JSValue* functionReadline(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
     Vector<char, 256> line;
     int c;
@@ -259,7 +259,7 @@ JSValue* functionReadline(ExecState* exec, JSObject*, const ArgList&)
     return jsString(exec, line.data());
 }
 
-JSValue* functionQuit(ExecState*, JSObject*, const ArgList&)
+JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&)
 {
     exit(0);
 #if !COMPILER(MSVC)

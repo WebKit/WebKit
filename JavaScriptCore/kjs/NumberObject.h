@@ -27,13 +27,19 @@
 
 namespace KJS {
 
+    class JSNumberCell;
+
     class NumberObject : public JSWrapperObject {
     public:
         NumberObject(JSObject* prototype);
-
-        virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
+
+    private:
+        virtual const ClassInfo* classInfo() const { return &info; }
     };
+
+    NumberObject* constructNumber(ExecState*, JSNumberCell*);
+    NumberObject* constructNumberFromImmediateNumber(ExecState*, JSValue*);
 
     /**
      * @internal
@@ -55,20 +61,17 @@ namespace KJS {
     public:
         NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
 
-        virtual ConstructType getConstructData(ConstructData&);
-        virtual JSObject* construct(ExecState*, const ArgList&);
-
-        virtual JSValue* callAsFunction(ExecState*, JSObject*, const ArgList&);
-
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
 
-        virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
         enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
 
-        JSObject* construct(const ArgList&);
+    private:
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
+        virtual const ClassInfo* classInfo() const { return &info; }
     };
 
 } // namespace KJS

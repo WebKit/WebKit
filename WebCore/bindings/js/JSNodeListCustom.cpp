@@ -35,30 +35,28 @@ using namespace KJS;
 
 namespace WebCore {
 
-// Need to support both get and call, so that list[0] and list(0) work.
-KJS::JSValue* JSNodeList::callAsFunction(KJS::ExecState* exec, KJS::JSObject* thisObj, const KJS::ArgList& args)
+// Need to support call so that list(0) works.
+static JSValue* callNodeList(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)
 {
-    // Do not use thisObj here. See JSHTMLCollection.
-    KJS::UString s = args[0]->toString(exec);
     bool ok;
-    unsigned u = s.toUInt32(&ok);
-    if (ok)
-        return toJS(exec, impl()->item(u));
-
-    return KJS::jsUndefined();
+    unsigned index = args[0]->toString(exec).toUInt32(&ok);
+    if (!ok)
+        return jsUndefined();
+    return toJS(exec, static_cast<JSNodeList*>(function)->impl()->item(index));
 }
 
-CallType JSNodeList::getCallData(CallData&)
+CallType JSNodeList::getCallData(CallData& callData)
 {
+    callData.native.function = callNodeList;
     return CallTypeNative;
 }
 
-bool JSNodeList::canGetItemsForName(KJS::ExecState*, NodeList* impl, const KJS::Identifier& propertyName)
+bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier& propertyName)
 {
     return impl->itemWithName(propertyName);
 }
 
-KJS::JSValue* JSNodeList::nameGetter(KJS::ExecState* exec, const KJS::Identifier& propertyName, const KJS::PropertySlot& slot)
+JSValue* JSNodeList::nameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     JSNodeList* thisObj = static_cast<JSNodeList*>(slot.slotBase());
     return toJS(exec, thisObj->impl()->itemWithName(propertyName));

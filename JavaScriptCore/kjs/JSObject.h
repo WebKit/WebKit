@@ -84,32 +84,25 @@ namespace KJS {
   public:
     JSType type() const { return GetterSetterType; }
       
-    GetterSetter() : getter(0), setter(0) { }
-      
-    virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
-    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-    virtual bool toBoolean(ExecState *exec) const;
-    virtual double toNumber(ExecState *exec) const;
-    virtual UString toString(ExecState *exec) const;
-    virtual JSObject *toObject(ExecState *exec) const;
+    GetterSetter() : m_getter(0), m_setter(0) { }
       
     virtual void mark();
       
-    JSObject *getGetter() { return getter; }
-    void setGetter(JSObject *g) { getter = g; }
-    JSObject *getSetter() { return setter; }
-    void setSetter(JSObject *s) { setter = s; }
+    JSObject* getter() const { return m_getter; }
+    void setGetter(JSObject* getter) { m_getter = getter; }
+    JSObject* setter() const { return m_setter; }
+    void setSetter(JSObject* setter) { m_setter = setter; }
       
   private:
-    // Object operations, with the toObject operation included.
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned index, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
-    virtual void put(ExecState*, unsigned propertyName, JSValue*);
-    virtual JSObject* toThisObject(ExecState*) const;
+    virtual JSValue* toPrimitive(ExecState*, JSType preferred) const;
+    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
+    virtual bool toBoolean(ExecState*) const;
+    virtual double toNumber(ExecState*) const;
+    virtual UString toString(ExecState*) const;
+    virtual JSObject* toObject(ExecState*) const;
 
-    JSObject *getter;
-    JSObject *setter;  
+    JSObject* m_getter;
+    JSObject* m_setter;  
   };
   
   class JSObject : public JSCell {
@@ -167,7 +160,6 @@ namespace KJS {
      *
      * @see inherits()
      */
-    virtual const ClassInfo *classInfo() const;
 
     /**
      * Checks whether this object inherits from the class with the specified
@@ -195,7 +187,7 @@ namespace KJS {
      * @return true if this object's class inherits from class with the
      * ClassInfo pointer specified in cinfo
      */
-    bool inherits(const ClassInfo *cinfo) const;
+    bool inherits(const ClassInfo* classInfo) const { return isObject(classInfo); } // FIXME: Merge with isObject.
 
     // internal properties (ECMA 262-3 8.6.2)
 
@@ -230,7 +222,7 @@ namespace KJS {
 
     /**
      * Retrieves the specified property from the object. If neither the object
-     * or any other object in it's prototype chain have the property, this
+     * or any other object in its prototype chain have the property, this
      * function will return Undefined.
      *
      * See ECMA 8.6.2.1
@@ -276,7 +268,7 @@ namespace KJS {
     bool propertyIsEnumerable(ExecState *exec, const Identifier &propertyName) const;
 
     /**
-     * Checks to see whether the object (or any object in it's prototype chain)
+     * Checks to see whether the object (or any object in its prototype chain)
      * has a property with the specified name.
      *
      * See ECMA 8.6.2.4
@@ -319,58 +311,7 @@ namespace KJS {
      * Implementation of the [[DefaultValue]] internal property (implemented by
      * all Objects)
      */
-    virtual JSValue *defaultValue(ExecState *exec, JSType hint) const;
-
-    /**
-     * Creates a new object based on this object. Typically this means the
-     * following:
-     * 1. A new object is created
-     * 2. The prototype of the new object is set to the value of this object's
-     *    "prototype" property
-     * 3. The call() method of this object is called, with the new object
-     *    passed as the this value
-     * 4. The new object is returned
-     *
-     * In some cases, Host objects may differ from these semantics, although
-     * this is discouraged.
-     *
-     * If an error occurs during construction, the execution state's exception
-     * will be set. This can be tested for with ExecState::hadException().
-     * Under some circumstances, the exception object may also be returned.
-     *
-     * Note: This function should not be called if getConstructData() returns
-     * ConstructTypeNone, in which case it will result in an assertion failure.
-     *
-     * @param exec The current execution state
-     * @param args The arguments to be passed to call() once the new object has
-     * been created
-     * @return The newly created &amp; initialized object
-     */
-    /**
-     * Implementation of the [[Construct]] internal property
-     */
-    virtual JSObject* construct(ExecState* exec, const ArgList& args);
-    virtual JSObject* construct(ExecState* exec, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber);
-
-    /**
-     * Calls this object as if it is a function.
-     *
-     * Note: This function should not be called if implementsCall() returns
-     * false, in which case it will result in an assertion failure.
-     *
-     * See ECMA 8.6.2.3
-     *
-     * @param exec The current execution state
-     * @param thisObj The obj to be used as "this" within function execution.
-     * Note that in most cases this will be different from the C++ "this"
-     * object. For example, if the ECMAScript code "window.location->toString()"
-     * is executed, call() will be invoked on the C++ object which implements
-     * the toString method, with the thisObj being window.location
-     * @param args ArgList of arguments to be passed to the function
-     * @return The return value from the function
-     */
-    bool implementsCall();
-    virtual JSValue *callAsFunction(ExecState *exec, JSObject *thisObj, const ArgList &args);
+    virtual JSValue* defaultValue(ExecState*, JSType hint) const;
 
     /**
      * Whether or not the object implements the hasInstance() method. If this
@@ -446,6 +387,8 @@ namespace KJS {
     JSValue *_proto;
   };
 
+    JSObject* constructEmptyObject(ExecState*);
+
   /**
    * Types of Native Errors available. For custom errors, GeneralError
    * should be used.
@@ -505,24 +448,19 @@ inline void JSObject::setPrototype(JSValue *proto)
     _proto = proto;
 }
 
-inline bool JSObject::inherits(const ClassInfo *info) const
+inline bool JSCell::isObject(const ClassInfo* info) const
 {
-    for (const ClassInfo *ci = classInfo(); ci; ci = ci->parentClass)
+    for (const ClassInfo* ci = classInfo(); ci; ci = ci->parentClass) {
         if (ci == info)
             return true;
+    }
     return false;
 }
 
-// this method is here to be after the inline declaration of JSObject::inherits
-inline bool JSCell::isObject(const ClassInfo *info) const
-{
-    return isObject() && static_cast<const JSObject *>(this)->inherits(info);
-}
-
 // this method is here to be after the inline declaration of JSCell::isObject
-inline bool JSValue::isObject(const ClassInfo *c) const
+inline bool JSValue::isObject(const ClassInfo* classInfo) const
 {
-    return !JSImmediate::isImmediate(this) && asCell()->isObject(c);
+    return !JSImmediate::isImmediate(this) && asCell()->isObject(classInfo);
 }
 
 inline JSValue *JSObject::get(ExecState *exec, const Identifier &propertyName) const

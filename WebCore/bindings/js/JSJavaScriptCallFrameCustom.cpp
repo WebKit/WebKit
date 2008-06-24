@@ -80,7 +80,7 @@ JSValue* JSJavaScriptCallFrame::scopeChain(ExecState* exec) const
         ++iter;
     } while (iter != end);
 
-    return exec->lexicalGlobalObject()->arrayConstructor()->construct(exec, list);
+    return constructArray(exec, list);
 }
 
 } // namespace WebCore

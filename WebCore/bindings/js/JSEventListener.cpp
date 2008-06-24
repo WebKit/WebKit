@@ -62,15 +62,15 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
     ExecState* exec = window->globalExec();
 
-    JSValue* handleEventFuncValue = listener->get(exec, Identifier(exec, "handleEvent"));
-    JSObject* handleEventFunc = 0;
-    if (handleEventFuncValue->isObject()) {
-        handleEventFunc = static_cast<JSObject*>(handleEventFuncValue);
-        if (!handleEventFunc->implementsCall())
-            handleEventFunc = 0;
+    JSValue* handleEventFunction = listener->get(exec, Identifier(exec, "handleEvent"));
+    CallData callData;
+    CallType callType = handleEventFunction->getCallData(callData);
+    if (callType == CallTypeNone) {
+        handleEventFunction = 0;
+        callType = listener->getCallData(callData);
     }
 
-    if (handleEventFunc || listener->implementsCall()) {
+    if (callType != CallTypeNone) {
         ref();
 
         ArgList args;
@@ -80,17 +80,17 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
         window->setCurrentEvent(event);
 
         JSValue* retval;
-        if (handleEventFunc) {
+        if (handleEventFunction) {
             window->startTimeoutCheck();
-            retval = handleEventFunc->callAsFunction(exec, listener, args);
+            retval = call(exec, handleEventFunction, callType, callData, listener, args);
         } else {
-            JSObject* thisObj;
+            JSValue* thisValue;
             if (isWindowEvent)
-                thisObj = window->shell();
+                thisValue = window->shell();
             else
-                thisObj = static_cast<JSObject*>(toJS(exec, event->currentTarget()));
+                thisValue = toJS(exec, event->currentTarget());
             window->startTimeoutCheck();
-            retval = listener->callAsFunction(exec, thisObj, args);
+            retval = call(exec, listener, callType, callData, thisValue, args);
         }
         window->stopTimeoutCheck();
 
@@ -274,7 +274,6 @@ void JSLazyEventListener::parseCode() const
         ExecState* exec = window()->globalExec();
 
         JSLock lock;
-        JSObject* constr = window()->functionConstructor();
         ArgList args;
 
         UString sourceURL(frame->loader()->url().string());
@@ -283,7 +282,7 @@ void JSLazyEventListener::parseCode() const
 
         // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
         // have been added with setAttribute from a script, and we should pass String() in that case.
-        m_listener = constr->construct(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok ?
+        m_listener = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
 
         JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
 

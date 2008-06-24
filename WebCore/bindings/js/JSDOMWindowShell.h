@@ -52,11 +52,14 @@ namespace WebCore {
         }
 
         static const KJS::ClassInfo s_info;
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
 
-        // Forwarded methods
+        DOMWindow* impl() const;
+        void disconnectFrame();
+        void clear();
 
-        // JSObject methods
+        void* operator new(size_t);
+
+    private:
         virtual void mark();
         virtual KJS::UString className() const;
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::PropertySlot&);
@@ -70,15 +73,8 @@ namespace WebCore {
         virtual KJS::JSValue* lookupGetter(KJS::ExecState*, const KJS::Identifier& propertyName);
         virtual KJS::JSValue* lookupSetter(KJS::ExecState*, const KJS::Identifier& propertyName);
         virtual KJS::JSGlobalObject* toGlobalObject(KJS::ExecState*) const;
+        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
 
-        // JSDOMWindow methods
-        DOMWindow* impl() const;
-        void disconnectFrame();
-        void clear();
-
-        void* operator new(size_t);
-
-    private:
         JSDOMWindow* m_window;
     };
 

@@ -29,14 +29,12 @@ namespace WebCore {
     class Node;
 
     // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
-    // FIXME: Move these to a more appropriate place.
 
     KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
     KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
-    bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*, HTMLElement*);
+    bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*);
     bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, HTMLElement*);
-    bool runtimeObjectImplementsCall(HTMLElement*);
-    KJS::JSValue* runtimeObjectCallAsFunction(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&, HTMLElement*);
+    KJS::CallType runtimeObjectGetCallData(HTMLElement*, KJS::CallData&);
 
 } // namespace WebCore
 

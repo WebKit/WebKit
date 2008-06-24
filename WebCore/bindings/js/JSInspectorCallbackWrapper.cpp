@@ -80,7 +80,7 @@ JSValue* JSInspectorCallbackWrapper::prepareIncomingValue(ExecState* unwrappedEx
         // is called. (The client-side storage API calls the callback with the `this` object set to the callback itself.)
         ASSERT_WITH_MESSAGE(wrapper == this, "A different wrapper was passed into a JSInspectorCallbackWrapper");
         if (wrapper != this)
-            return 0;
+            return jsUndefined();
 
         return wrapper->unwrappedObject();
     }

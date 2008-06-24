@@ -36,8 +36,8 @@ using namespace KJS;
 
 namespace WebCore {
 
-ScheduledAction::ScheduledAction(JSValue* func, const ArgList& args)
-    : m_func(func)
+ScheduledAction::ScheduledAction(JSValue* function, const ArgList& args)
+    : m_function(function)
 {
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
@@ -54,14 +54,14 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
     if (!frame->script()->isEnabled())
         return;
 
-    ScriptController* script = frame->script();
-    
+    frame->script()->setProcessingTimerCallback(true);
 
-    script->setProcessingTimerCallback(true);
+    JSLock lock;
 
-    if (JSValue* func = m_func.get()) {
-        JSLock lock;
-        if (func->isObject() && static_cast<JSObject*>(func)->implementsCall()) {
+    if (m_function) {
+        CallData callData;
+        CallType callType = m_function->getCallData(callData);
+        if (callType != CallTypeNone) {
             JSDOMWindow* window = windowShell->window();
             ExecState* exec = window->globalExec();
 
@@ -71,7 +71,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
                 args.append(m_args[i]);
 
             window->startTimeoutCheck();
-            static_cast<JSObject*>(func)->callAsFunction(exec, windowShell, args);
+            call(exec, m_function, callType, callData, windowShell, args);
             window->stopTimeoutCheck();
             if (exec->hadException()) {
                 JSObject* exception = exec->exception()->toObject(exec);
@@ -89,10 +89,10 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
     // FIXME: Is this really the right point to do the update? We need a place that works
     // for all possible entry points that might possibly execute script, but this seems
     // to be a bit too low-level.
-    if (Document* doc = frame->document())
-        doc->updateRendering();
+    if (Document* document = frame->document())
+        document->updateRendering();
 
-    script->setProcessingTimerCallback(false);
+    frame->script()->setProcessingTimerCallback(false);
 }
 
 } // namespace WebCore

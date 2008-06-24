@@ -39,6 +39,8 @@ ErrorInstance::ErrorInstance(JSObject* prototype)
 
 // ------------------------------ ErrorPrototype ----------------------------
 
+static JSValue* errorProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
+
 // ECMA 15.9.4
 ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
     : ErrorInstance(objectPrototype)
@@ -51,8 +53,10 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
     putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
-JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgList&)
+JSValue* errorProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
+    JSObject* thisObj = thisValue->toThisObject(exec);
+
     UString s = "Error";
 
     JSValue* v = thisObj->get(exec, exec->propertyNames().name);
@@ -60,9 +64,11 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject* thisObj, const ArgLis
         s = v->toString(exec);
 
     v = thisObj->get(exec, exec->propertyNames().message);
-    if (!v->isUndefined())
-        // Mozilla compatible format
-        s += ": " + v->toString(exec);
+    if (!v->isUndefined()) {
+        // Mozilla-compatible format.
+        s += ": ";
+        s += v->toString(exec);
+    }
 
     return jsString(exec, s);
 }
@@ -77,29 +83,37 @@ ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* funcProto
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete|ReadOnly|DontEnum);
 }
 
-ConstructType ErrorConstructor::getConstructData(ConstructData&)
-{
-    return ConstructTypeNative;
-}
-
 // ECMA 15.9.3
-JSObject* ErrorConstructor::construct(ExecState* exec, const ArgList& args)
+static ErrorInstance* constructError(ExecState* exec, const ArgList& args)
 {
-    JSObject* proto = static_cast<JSObject*>(exec->lexicalGlobalObject()->errorPrototype());
-    JSObject* imp = new (exec) ErrorInstance(proto);
-    JSObject* obj(imp);
-
+    ErrorInstance* obj = new (exec) ErrorInstance(exec->lexicalGlobalObject()->errorPrototype());
     if (!args[0]->isUndefined())
-        imp->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
-
+        obj->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
     return obj;
 }
 
+static JSObject* constructWithErrorConstructor(ExecState* exec, JSObject*, const ArgList& args)
+{
+    return constructError(exec, args);
+}
+
+ConstructType ErrorConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructWithErrorConstructor;
+    return ConstructTypeNative;
+}
+
 // ECMA 15.9.2
-JSValue* ErrorConstructor::callAsFunction(ExecState* exec, JSObject* /*thisObj*/, const ArgList& args)
+static JSValue* callErrorConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     // "Error()" gives the sames result as "new Error()"
-    return construct(exec, args);
+    return constructError(exec, args);
+}
+
+CallType ErrorConstructor::getCallData(CallData& callData)
+{
+    callData.native.function = callErrorConstructor;
+    return CallTypeNative;
 }
 
 // ------------------------------ NativeErrorPrototype ----------------------
@@ -123,23 +137,34 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototyp
     putDirect(exec->propertyNames().prototype, proto, DontDelete|ReadOnly|DontEnum);
 }
 
-ConstructType NativeErrorConstructor::getConstructData(ConstructData&)
+ErrorInstance* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
+    ErrorInstance* object = new (exec) ErrorInstance(proto);
+    if (!args[0]->isUndefined())
+        object->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
+    return object;
+}
+
+static JSObject* constructWithNativeErrorConstructor(ExecState* exec, JSObject* constructor, const ArgList& args)
+{
+    return static_cast<NativeErrorConstructor*>(constructor)->construct(exec, args);
+}
+
+ConstructType NativeErrorConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructWithNativeErrorConstructor;
     return ConstructTypeNative;
 }
 
-JSObject* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
+static JSValue* callNativeErrorConstructor(ExecState* exec, JSObject* constructor, JSValue*, const ArgList& args)
 {
-    JSObject* imp = new (exec) ErrorInstance(proto);
-    JSObject* obj(imp);
-    if (!args[0]->isUndefined())
-        imp->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
-    return obj;
+    return static_cast<NativeErrorConstructor*>(constructor)->construct(exec, args);
 }
 
-JSValue* NativeErrorConstructor::callAsFunction(ExecState* exec, JSObject*, const ArgList& args)
+CallType NativeErrorConstructor::getCallData(CallData& callData)
 {
-    return construct(exec, args);
+    callData.native.function = callNativeErrorConstructor;
+    return CallTypeNative;
 }
 
 void NativeErrorConstructor::mark()

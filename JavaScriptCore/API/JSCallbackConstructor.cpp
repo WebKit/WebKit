@@ -1,6 +1,6 @@
 // -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -56,27 +56,29 @@ bool JSCallbackConstructor::implementsHasInstance() const
     return true;
 }
 
-ConstructType JSCallbackConstructor::getConstructData(ConstructData&)
-{
-    return ConstructTypeNative;
-}
-
-JSObject* JSCallbackConstructor::construct(ExecState* exec, const ArgList &args)
+static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, const ArgList& args)
 {
     JSContextRef ctx = toRef(exec);
-    JSObjectRef thisRef = toRef(this);
+    JSObjectRef constructorRef = toRef(constructor);
 
-    if (m_callback) {
+    JSObjectCallAsConstructorCallback callback = static_cast<JSCallbackConstructor*>(constructor)->callback();
+    if (callback) {
         int argumentCount = static_cast<int>(args.size());
         Vector<JSValueRef, 16> arguments(argumentCount);
         for (int i = 0; i < argumentCount; i++)
             arguments[i] = toRef(args[i]);
             
         JSLock::DropAllLocks dropAllLocks;
-        return toJS(m_callback(ctx, thisRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
+        return toJS(callback(ctx, constructorRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
     }
     
-    return toJS(JSObjectMake(ctx, m_class, 0));
+    return toJS(JSObjectMake(ctx, static_cast<JSCallbackConstructor*>(constructor)->classRef(), 0));
+}
+
+ConstructType JSCallbackConstructor::getConstructData(ConstructData& constructData)
+{
+    constructData.native.function = constructJSCallback;
+    return ConstructTypeNative;
 }
 
 } // namespace KJS
