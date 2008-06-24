@@ -47,17 +47,26 @@ use strict;
 use File::Basename;
 use File::Spec;
 use File::Temp;
+use Getopt::Long;
 
 sub readHeaderValues();
 
 my %pcre_internal;
 
-if (scalar(@ARGV) != 1) {
-    print STDERR "Usage: ", basename($0), " output-file\n";
+if (scalar(@ARGV) < 1) {
+    print STDERR "Usage: ", basename($0), " [--preprocessor=program] output-file\n";
     exit 1;
 }
 
-my $outputFile = shift @ARGV;
+my $outputFile;
+my $preprocessor;
+GetOptions('preprocessor=s' => \$preprocessor);
+if (not $preprocessor) {
+    $preprocessor = "cpp";
+}
+
+$outputFile = $ARGV[0];
+die('Must specify output file.') unless defined($outputFile);
 
 readHeaderValues();
 
@@ -232,7 +241,7 @@ sub readHeaderValues()
     local $/ = undef;
 
     my $headerPath = File::Spec->catfile(dirname($0), "pcre_internal.h");
-
+ 
     my $fh = new File::Temp(
         DIR => ($ENV{'TMPDIR'} || "/tmp"),
         SUFFIX => ".in",
@@ -255,10 +264,10 @@ sub readHeaderValues()
 
     close($fh);
 
-    open(CPP, "cpp \"$tempFile\" |") or die "$!";
+    open(CPP, "$preprocessor \"$tempFile\" |") or die "$!";
     my $content = <CPP>;
     close(CPP);
-
+    
     eval $content;
     die "$@" if $@;
 }

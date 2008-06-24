@@ -23,10 +23,11 @@ SOURCES += \
 }
 
 # GENERATOR: "chartables.c": compile and execute the chartables generator (and add it to sources)
+win32-msvc*|wince*: PREPROCESSOR = "--preprocessor=\"$$QMAKE_CC /E\""
 DFTABLES = $$PWD/dftables
 ctgen.input = DFTABLES
 ctgen.output = $$GENERATED_SOURCES_DIR/chartables.c
-ctgen.commands = perl $$DFTABLES ${QMAKE_FILE_OUT}
+ctgen.commands = perl $$DFTABLES ${QMAKE_FILE_OUT} $$PREPROCESSOR
 ctgen.CONFIG += target_predeps no_link
 ctgen.variable_out = GENERATED_SOURCES
 ctgen.dependency_type = TYPE_C

@@ -1,3 +1,17 @@
+2008-06-24  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon.
+
+        For the Qt build on Windows don't depend on the presence of GNU CPP
+        but use MSVC's preprocessor instead.
+        dftables accepts a --preprocessor option which is set in pcre.pri for MSVC platforms.
+
+        * pcre/dftables: Added support for specifying the preprocessor command
+        to use via --preprocessor, similar to
+        WebCore/bindings/scripts/generate-bindings.pl.
+        * pcre/pcre.pri: Pass --preprocessor='cl /e' to dftables, or more
+        generally speaking QMAKE_CC /E for the win32-msvc buildspecs.
+
 2008-06-24  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, added missing include.
