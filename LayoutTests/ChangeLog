@@ -1,3 +1,16 @@
+2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Tests for:
+
+        Bug 19730: REGRESSION (r34497): Text in alerts in "Leisure suit Larry" is not wrapped
+        <https://bugs.webkit.org/show_bug.cgi?id=19730>
+
+        * fast/js/codegen-loops-logical-nodes-expected.txt: Added.
+        * fast/js/codegen-loops-logical-nodes.html: Added.
+        * fast/js/resources/codegen-loops-logical-nodes.js: Added.
+
 2008-06-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

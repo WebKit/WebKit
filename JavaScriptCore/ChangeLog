@@ -1,3 +1,17 @@
+2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19730: REGRESSION (r34497): Text in alerts in "Leisure suit Larry" is not wrapped
+        <https://bugs.webkit.org/show_bug.cgi?id=19730>
+
+        Do not convert the pair (less, jtrue) to jless when jtrue is a jump
+        target. An example of this is when the condition of a while loop is a
+        LogicalOrNode.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitLabel):
+
 2008-06-20  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Adam Roben.

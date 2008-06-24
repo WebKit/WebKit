@@ -1,0 +1,33 @@
+Tests loop codegen when the condition is a logical node.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS while_or_eq() is true
+PASS while_or_neq() is true
+PASS while_or_less() is true
+PASS while_or_lesseq() is true
+PASS while_and_eq() is true
+PASS while_and_neq() is true
+PASS while_and_less() is true
+PASS while_and_lesseq() is true
+PASS for_or_eq() is true
+PASS for_or_neq() is true
+PASS for_or_less() is true
+PASS for_or_lesseq() is true
+PASS for_and_eq() is true
+PASS for_and_neq() is true
+PASS for_and_less() is true
+PASS for_and_lesseq() is true
+PASS dowhile_or_eq() is true
+PASS dowhile_or_neq() is true
+PASS dowhile_or_less() is true
+PASS dowhile_or_lesseq() is true
+PASS dowhile_and_eq() is true
+PASS dowhile_and_neq() is true
+PASS dowhile_and_less() is true
+PASS dowhile_and_lesseq() is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

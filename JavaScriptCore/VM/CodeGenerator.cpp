@@ -390,6 +390,10 @@ PassRefPtr<LabelID> CodeGenerator::newLabel()
 PassRefPtr<LabelID> CodeGenerator::emitLabel(LabelID* l0)
 {
     l0->setLocation(instructions().size());
+    
+    // This disables peephole optimizations when an instruction is a jump target
+    m_lastOpcodeID = op_end;
+    
     return l0;
 }
 
