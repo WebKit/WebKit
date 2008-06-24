@@ -1,3 +1,12 @@
+2008-06-23  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix a math error in my last change.
+        
+        Reviewed by Ada Chan.
+
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::openTemporaryFile):
+
 2008-06-23  Kevin McCullough  <kmccullough@apple.com>
 
         -Build fix.

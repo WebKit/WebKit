@@ -208,7 +208,9 @@ CString openTemporaryFile(const char*, PlatformFileHandle& handle)
         // don't include both upper and lowercase since Windows file systems are typically not case sensitive.
         const char validChars[] = "0123456789abcdefghijklmnopqrstuvwxyz";
         for (int i = 0; i < randomPartLength; ++i)
-            tempFile[i] = validChars[tempFile[i] % sizeof(validChars)];
+            tempFile[i] = validChars[tempFile[i] % (sizeof(validChars) - 1)];
+
+        ASSERT(strlen(tempFile) == sizeof(tempFile) - 1);
 
         if (!PathCombineA(proposedPath, tempPath, tempFile))
             break;
