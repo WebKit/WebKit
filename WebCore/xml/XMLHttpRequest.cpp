@@ -264,28 +264,10 @@ void XMLHttpRequest::callReadyStateChangeListener()
     if (!m_doc || !m_doc->frame())
         return;
 
-    RefPtr<Event> evt = Event::create(readystatechangeEvent, false, false);
-    if (m_onReadyStateChangeListener) {
-        evt->setTarget(this);
-        evt->setCurrentTarget(this);
-        m_onReadyStateChangeListener->handleEvent(evt.get(), false);
-    }
+    dispatchReadyStateChangeEvent();
 
-    ExceptionCode ec = 0;
-    dispatchEvent(evt.release(), ec, false);
-    ASSERT(!ec);
-    
-    if (m_state == DONE) {
-        evt = Event::create(loadEvent, false, false);
-        if (m_onLoadListener) {
-            evt->setTarget(this);
-            evt->setCurrentTarget(this);
-            m_onLoadListener->handleEvent(evt.get(), false);
-        }
-        
-        dispatchEvent(evt, ec, false);
-        ASSERT(!ec);
-    }
+    if (m_state == DONE)
+        dispatchLoadEvent();
 }
 
 void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
@@ -429,6 +411,9 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
 
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
+    if (m_async)
+        dispatchLoadStartEvent();
+
     m_sameOriginRequest = m_doc->securityOrigin()->canRequest(m_url);
 
     ResourceRequest request;
@@ -595,7 +580,7 @@ void XMLHttpRequest::abort()
         m_state = UNSENT;
     }
 
-    
+    dispatchAbortEvent();
 }
 
 void XMLHttpRequest::internalAbort()
@@ -648,13 +633,13 @@ void XMLHttpRequest::genericError()
 void XMLHttpRequest::networkError()
 {
     genericError();
-    // FIXME: we need to "Synchronously dispatch a progress event called error on the object" here.
+    dispatchErrorEvent();
 }
 
 void XMLHttpRequest::abortError()
 {
     genericError();
-    // FIXME: we need to "Synchronously dispatch a progress event called abort on the object" here.
+    dispatchAbortEvent();
 }
 
 void XMLHttpRequest::dropProtection()        
@@ -826,6 +811,10 @@ void XMLHttpRequest::processSyncLoadResults(const Vector<char>& data, const Reso
 
 void XMLHttpRequest::didFail(SubresourceLoader* loader, const ResourceError& error)
 {
+    // If we are already in an error state, for instance we called abort(), bail out early.
+    if (m_error)
+        return;
+
     if (error.isCancellation()) {
         abortError();
         return;
@@ -986,7 +975,6 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
 void XMLHttpRequest::updateAndDispatchOnProgress(unsigned int len)
 {
     long long expectedLength = m_response.expectedContentLength();
-
     m_receivedLength += len;
 
     // FIXME: the spec requires that we dispatch the event according to the least
@@ -994,22 +982,58 @@ void XMLHttpRequest::updateAndDispatchOnProgress(unsigned int len)
     dispatchProgressEvent(expectedLength);
 }
 
-void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
+void XMLHttpRequest::dispatchReadyStateChangeEvent()
 {
-    // If we do not have the information or it is odd, set lengthComputable to false.
-    RefPtr<XMLHttpRequestProgressEvent> evt = XMLHttpRequestProgressEvent::create(progressEvent,
-        expectedLength && m_receivedLength <= expectedLength,
-        static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
-
-    if (m_onProgressListener) {
+    RefPtr<Event> evt = Event::create(readystatechangeEvent, false, false);
+    if (m_onReadyStateChangeListener) {
         evt->setTarget(this);
         evt->setCurrentTarget(this);
-        m_onProgressListener->handleEvent(evt.get(), false);
+        m_onReadyStateChangeListener->handleEvent(evt.get(), false);
     }
 
     ExceptionCode ec = 0;
     dispatchEvent(evt.release(), ec, false);
     ASSERT(!ec);
+}
+
+void XMLHttpRequest::dispatchXMLHttpRequestProgressEvent(EventListener* listener, const AtomicString& type, bool lengthComputable, unsigned loaded, unsigned total)
+{
+    RefPtr<XMLHttpRequestProgressEvent> evt = XMLHttpRequestProgressEvent::create(type, lengthComputable, loaded, total);
+    if (listener) {
+        evt->setTarget(this);
+        evt->setCurrentTarget(this);
+        listener->handleEvent(evt.get(), false);
+    }
+
+    ExceptionCode ec = 0;
+    dispatchEvent(evt.release(), ec, false);
+    ASSERT(!ec);
+}
+
+void XMLHttpRequest::dispatchAbortEvent()
+{
+    dispatchXMLHttpRequestProgressEvent(m_onAbortListener.get(), abortEvent, false, 0, 0);
+}
+
+void XMLHttpRequest::dispatchErrorEvent()
+{
+    dispatchXMLHttpRequestProgressEvent(m_onErrorListener.get(), errorEvent, false, 0, 0);
+}
+
+void XMLHttpRequest::dispatchLoadEvent()
+{
+    dispatchXMLHttpRequestProgressEvent(m_onLoadListener.get(), loadEvent, false, 0, 0);
+}
+
+void XMLHttpRequest::dispatchLoadStartEvent()
+{
+    dispatchXMLHttpRequestProgressEvent(m_onLoadStartListener.get(), loadstartEvent, false, 0, 0);
+}
+
+void XMLHttpRequest::dispatchProgressEvent(long long expectedLength)
+{
+    dispatchXMLHttpRequestProgressEvent(m_onProgressListener.get(), progressEvent, expectedLength && m_receivedLength <= expectedLength, 
+                                        static_cast<unsigned>(m_receivedLength), static_cast<unsigned>(expectedLength));
 }
 
 void XMLHttpRequest::cancelRequests(Document* m_doc)

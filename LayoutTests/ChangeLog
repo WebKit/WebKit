@@ -1,3 +1,17 @@
+2008-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add tests for loadstart, abort and error events for XMLHttpRequests
+
+        * http/tests/xmlhttprequest/onabort-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/onabort-event.html: Added.
+        * http/tests/xmlhttprequest/onerror-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/onerror-event.html: Added.
+        * http/tests/xmlhttprequest/onloadstart-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/onloadstart-event.html: Added.
+        * http/tests/xmlhttprequest/resources/get.txt: Added.
+
 2008-06-24  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Darin Adler.

@@ -1,0 +1,4 @@
+This test that the error event is fired for XMLHttpRequests
+
+PASS: error event fired.
+

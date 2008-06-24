@@ -31,13 +31,16 @@ module xml {
     interface [
         CustomMarkFunction
     ] XMLHttpRequest {
-        // event handler
-        attribute [Custom] EventListener onreadystatechange;
-        // Note: onload is not in the specification
+        // From XMLHttpRequestEventTarget
+        // event handler attributes
+        attribute [Custom] EventListener onabort;
+        attribute [Custom] EventListener onerror;
         attribute [Custom] EventListener onload;
-
-        // XMLHttpRequest 2 extension
+        attribute [Custom] EventListener onloadstart;
         attribute [Custom] EventListener onprogress;
+
+        // event handler attributes
+        attribute [Custom] EventListener onreadystatechange;
 
         // state
         const unsigned short UNSENT = 0;

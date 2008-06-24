@@ -57,6 +57,7 @@ namespace WebCore { namespace EventNames {
     macro(keypress) \
     macro(keyup) \
     macro(load) \
+    macro(loadstart) \
     macro(message) \
     macro(mousedown) \
     macro(mousemove) \

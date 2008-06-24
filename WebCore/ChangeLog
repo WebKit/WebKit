@@ -1,3 +1,49 @@
+2008-06-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Add support for loadstart, abort and error events for XMLHttpRequests.
+
+        Tests: http/tests/xmlhttprequest/onabort-event.html
+               http/tests/xmlhttprequest/onerror-event.html
+               http/tests/xmlhttprequest/onloadstart-event.html
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        (WebCore::JSXMLHttpRequest::onreadystatechange):
+        (WebCore::JSXMLHttpRequest::onabort):
+        (WebCore::JSXMLHttpRequest::setOnabort):
+        (WebCore::JSXMLHttpRequest::onerror):
+        (WebCore::JSXMLHttpRequest::setOnerror):
+        (WebCore::JSXMLHttpRequest::onload):
+        (WebCore::JSXMLHttpRequest::onloadstart):
+        (WebCore::JSXMLHttpRequest::setOnloadstart):
+        (WebCore::JSXMLHttpRequest::onprogress):
+        * dom/EventNames.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::callReadyStateChangeListener):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::networkError):
+        (WebCore::XMLHttpRequest::abortError):
+        (WebCore::XMLHttpRequest::didFail):
+        (WebCore::XMLHttpRequest::updateAndDispatchOnProgress):
+        (WebCore::XMLHttpRequest::dispatchReadyStateChangeEvent):
+        (WebCore::XMLHttpRequest::dispatchXMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequest::dispatchAbortEvent):
+        (WebCore::XMLHttpRequest::dispatchErrorEvent):
+        (WebCore::XMLHttpRequest::dispatchLoadEvent):
+        (WebCore::XMLHttpRequest::dispatchLoadStartEvent):
+        (WebCore::XMLHttpRequest::dispatchProgressEvent):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::setOnAbortListener):
+        (WebCore::XMLHttpRequest::onAbortListener):
+        (WebCore::XMLHttpRequest::setOnErrorListener):
+        (WebCore::XMLHttpRequest::onErrorListener):
+        (WebCore::XMLHttpRequest::setOnLoadStartListener):
+        (WebCore::XMLHttpRequest::onLoadStartListener):
+        * xml/XMLHttpRequest.idl:
+
 2008-06-24  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
