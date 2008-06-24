@@ -1,3 +1,18 @@
+2008-06-24  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Make ParserRefCountedCounter actually perform a leak check.
+
+        * kjs/nodes.cpp:
+        (KJS::ParserRefCountedCounter::~ParserRefCountedCounter): Check for leaks in destructor,
+        not in constructor.
+        (KJS::ParserRefCountedCounter::increment):
+        (KJS::ParserRefCountedCounter::decrement):
+        (KJS::ParserRefCounted::ParserRefCounted):
+        (KJS::ParserRefCounted::~ParserRefCounted):
+        While at it, also made counting thread-safe.
+
 2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.
