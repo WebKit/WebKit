@@ -4,6 +4,22 @@
 
         https://bugs.webkit.org/show_bug.cgi?id=18459
 
+        Clean up and remove unused platform shadow code.
+
+        Minor edits by Simon, removed unused TextShadow struct.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::setPlatformShadow):
+        (WebCore::GraphicsContext::clearPlatformShadow): Qt doesn't support a
+        platform shadow, so just make these functions empty.  The shadows are
+        drawn manually in function like drawLine(), etc.
+
+2008-06-24  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18459
+
         Implemented basic text-shadow support for the Qt port.
 
         * platform/graphics/qt/FontQt.cpp:
