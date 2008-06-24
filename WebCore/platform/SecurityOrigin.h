@@ -46,26 +46,61 @@ namespace WebCore {
         static PassRefPtr<SecurityOrigin> create(const KURL&);
         static PassRefPtr<SecurityOrigin> createEmpty();
 
+        // Create a deep copy of this SecurityOrigin.  This method is useful
+        // when marshalling a SecurityOrigin to another thread.
         PassRefPtr<SecurityOrigin> copy();
 
+        // Set the domain property of this security origin to newDomain.  This
+        // function does not check whether newDomain is a suffix of the current
+        // domain.  The caller is responsible for validating newDomain.
         void setDomainFromDOM(const String& newDomain);
+
         String protocol() const { return m_protocol; }
         String host() const { return m_host; }
         String domain() const { return m_domain; }
         unsigned short port() const { return m_port; }
 
         // Returns true if this SecurityOrigin can script objects in the given
-        // SecurityOrigin.
+        // SecurityOrigin.  For example, call this function before allowing
+        // script from one security origin to read or write objects from
+        // another SecurityOrigin.
         bool canAccess(const SecurityOrigin*) const;
 
         // Returns true if this SecurityOrigin can read content retrieved from
-        // the given URL. For example, call this function before issuing
+        // the given URL.  For example, call this function before issuing
         // XMLHttpRequests.
         bool canRequest(const KURL&) const;
 
+        // Returns true if this SecurityOrigin can load local resources, such
+        // as images, iframes, and style sheets, and can link to local URLs.
+        // For example, call this function before creating an iframe to a
+        // file:// URL.
+        //
+        // Note: A SecurityOrigin might be allowed to load local resources
+        //       without being able to issue an XMLHttpRequest for a local URL.
+        //       To determine whether the SecurityOrigin can issue an
+        //       XMLHttpRequest for a URL, call canRequest(url).
+        bool canLoadLocalResources() const { return m_canLoadLocalResources; }
+
+        // Explicitly grant the ability to load local resources to this
+        // SecurityOrigin.
+        void grantLoadLocalResources() { m_canLoadLocalResources = true; }
+
         bool isSecureTransitionTo(const KURL&) const;
 
+        // The local SecurityOrigin is the most privileged SecurityOrigin.
+        // The local SecurityOrigin can script any document, navigate to local
+        // resources, and can set arbitrary headers on XMLHttpRequests.
+        bool isLocal() const;
+
+        // The empty SecurityOrigin is the least privileged SecurityOrigin.
         bool isEmpty() const;
+
+        // Convert this SecurityOrigin into a string.  The string
+        // representation of a SecurityOrigin is similar to a URL, except it
+        // lacks a path component.  The string representation does not encode
+        // the value of the SecurityOrigin's domain property.  The empty
+        // SecurityOrigin is represented with the null string.
         String toString() const;
 
         // Serialize the security origin for storage in the database. This format is
@@ -94,6 +129,7 @@ namespace WebCore {
         unsigned short m_port;
         bool m_noAccess;
         bool m_domainWasSetInDOM;
+        bool m_canLoadLocalResources;
     };
 
 } // namespace WebCore

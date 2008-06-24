@@ -702,7 +702,7 @@ void XMLHttpRequest::setRequestHeader(const String& name, const String& value, E
     }
         
     // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (!m_doc->isAllowedToLoadLocalResources() && !isSafeRequestHeader(name)) {
+    if (!m_doc->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
         if (m_doc && m_doc->frame())
             m_doc->frame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, "Refused to set unsafe header " + name, 1, String());
         return;

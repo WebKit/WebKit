@@ -1,3 +1,31 @@
+2008-06-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16756
+
+        Move isAllowedToLoadLocalResources into SecurityOrigin.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setURL):
+        (WebCore::Document::initSecurityContext):
+        * dom/Document.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::canLoad):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::SecurityOrigin):
+        (WebCore::SecurityOrigin::isLocal):
+        * platform/SecurityOrigin.h:
+        (WebCore::SecurityOrigin::protocol):
+        (WebCore::SecurityOrigin::host):
+        (WebCore::SecurityOrigin::domain):
+        (WebCore::SecurityOrigin::port):
+        (WebCore::SecurityOrigin::canLoadLocalResources):
+        (WebCore::SecurityOrigin::grantLoadLocalResources):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::setRequestHeader):
+
 2008-06-23  Mark Rowe  <mrowe@apple.com>
 
         Fix the Windows build.

@@ -287,7 +287,6 @@ Document::Document(Frame* frame, bool isXHTML)
     , m_accessKeyMapValid(false)
     , m_createRenderers(true)
     , m_inPageCache(false)
-    , m_isAllowedToLoadLocalResources(false)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_numNodeListCaches(0)
@@ -1705,27 +1704,7 @@ void Document::setURL(const KURL& url)
 
     m_url = newURL;
     m_documentURI = m_url.string();
-    m_isAllowedToLoadLocalResources = shouldBeAllowedToLoadLocalResources();
     updateBaseURL();
-}
- 
-bool Document::shouldBeAllowedToLoadLocalResources() const
-{
-    if (FrameLoader::shouldTreatURLAsLocal(m_url.string()))
-        return true;
-
-    Frame* frame = this->frame();
-    if (!frame)
-        return false;
-    
-    DocumentLoader* documentLoader = frame->loader()->documentLoader();
-    if (!documentLoader)
-        return false;
-
-    if (m_url == blankURL() && frame->loader()->opener() && frame->loader()->opener()->document()->isAllowedToLoadLocalResources())
-        return true;
-    
-    return documentLoader->substituteData().isValid();
 }
 
 void Document::setBaseElementURL(const KURL& baseElementURL)
@@ -3944,6 +3923,13 @@ void Document::initSecurityContext()
     const KURL& url = m_frame->loader()->url();
     m_cookieURL = url;
     m_securityOrigin = SecurityOrigin::create(url);
+
+    // If this document was loaded with substituteData, then the document can
+    // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
+    // for further discussion.
+    DocumentLoader* documentLoader = m_frame->loader()->documentLoader();
+    if (documentLoader && documentLoader->substituteData().isValid())
+        m_securityOrigin->grantLoadLocalResources();
 
     if (!m_securityOrigin->isEmpty())
         return;

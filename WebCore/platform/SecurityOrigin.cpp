@@ -69,6 +69,9 @@ SecurityOrigin::SecurityOrigin(const KURL& url)
     // document.domain starts as m_host, but can be set by the DOM.
     m_domain = m_host;
 
+    // By default, only local SecurityOrigins can load local resources.
+    m_canLoadLocalResources = isLocal();
+
     if (isDefaultPortForProtocol(m_port, m_protocol))
         m_port = 0;
 }
@@ -80,6 +83,7 @@ SecurityOrigin::SecurityOrigin(const SecurityOrigin* other)
     , m_port(other->m_port)
     , m_noAccess(other->m_noAccess)
     , m_domainWasSetInDOM(other->m_domainWasSetInDOM)
+    , m_canLoadLocalResources(other->m_canLoadLocalResources)
 {
 }
 
@@ -111,7 +115,7 @@ void SecurityOrigin::setDomainFromDOM(const String& newDomain)
 
 bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 {  
-    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
+    if (isLocal())
         return true;
 
     if (m_noAccess || other->m_noAccess)
@@ -152,7 +156,7 @@ bool SecurityOrigin::canAccess(const SecurityOrigin* other) const
 
 bool SecurityOrigin::canRequest(const KURL& url) const
 {
-    if (FrameLoader::shouldTreatSchemeAsLocal(m_protocol))
+    if (isLocal())
         return true;
 
     if (m_noAccess)
@@ -163,6 +167,11 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     // We call isSameSchemeHostPort here instead of canAccess because we want
     // to ignore document.domain effects.
     return isSameSchemeHostPort(targetOrigin.get());
+}
+
+bool SecurityOrigin::isLocal() const
+{
+    return FrameLoader::shouldTreatSchemeAsLocal(m_protocol);
 }
 
 bool SecurityOrigin::isSecureTransitionTo(const KURL& url) const
