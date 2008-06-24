@@ -1,3 +1,16 @@
+2008-06-24  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/5957606>
+        CrashTracer: [USER] 2 crashes in Safari at com.apple.WebCore: WebCore::DocumentLoader::cancelPendingSubstituteLoad + 23
+
+        Remove the loader from the document loader after calling didFail, so that the loader will be deferred corectly
+        in case the call do didFail starts a new run loop.
+        
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+
 2008-06-24  Alexey Proskuryakov  <ap@webkit.org>
 
         Release build fix.

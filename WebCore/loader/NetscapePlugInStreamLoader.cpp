@@ -111,8 +111,13 @@ void NetscapePlugInStreamLoader::didCancel(const ResourceError& error)
 {
     RefPtr<NetscapePlugInStreamLoader> protect(this);
 
-    m_documentLoader->removePlugInStreamLoader(this);
     m_client->didFail(this, error);
+
+    // We need to remove the stream loader after the call to didFail, since didFail can 
+    // spawn a new run loop and if the loader has been removed it won't be deferred when
+    // the document loader is asked to defer loading.
+    m_documentLoader->removePlugInStreamLoader(this);
+
     ResourceLoader::didCancel(error);
 }
 
