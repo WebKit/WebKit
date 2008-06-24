@@ -1,3 +1,9 @@
+2008-06-23  Mark Rowe  <mrowe@apple.com>
+
+        Fix the Windows build.
+
+        * WebCore.vcproj/WebCore.vcproj: Add generated files related to CSS variables to the Windows project file.
+
 2008-06-23  Steve Falkenburg  <sfalken@apple.com>
 
         Fix a math error in my last change.
