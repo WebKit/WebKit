@@ -1,3 +1,15 @@
+2008-06-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19739
+          REGRESSION: fast/js/property-getters-and-setters.html fails
+
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::put): Remove an untested optimization I checked in by accident.
+        The two loops up the prototype chain both need to start from this; instead the
+        second loop was starting where the first loop left off.
+
 2008-06-24  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

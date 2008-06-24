@@ -113,9 +113,8 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
   }
 
   // Check if there are any setters or getters in the prototype chain
-  JSObject* obj;
   JSValue* prototype;
-  for (obj = this; !obj->_prop.hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
+  for (JSObject* obj = this; !obj->_prop.hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
     prototype = obj->_proto;
     if (prototype == jsNull()) {
       _prop.put(propertyName, value, 0, true);
@@ -127,7 +126,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
   if (_prop.get(propertyName, attributes) && attributes & ReadOnly)
     return;
 
-  for (; ; obj = static_cast<JSObject*>(prototype)) {
+  for (JSObject* obj = this; ; obj = static_cast<JSObject*>(prototype)) {
     if (JSValue* gs = obj->_prop.get(propertyName, attributes)) {
       if (attributes & IsGetterSetter) {
         JSObject* setterFunc = static_cast<GetterSetter*>(gs)->setter();        
