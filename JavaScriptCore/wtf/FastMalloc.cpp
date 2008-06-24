@@ -93,6 +93,8 @@
 #define FORCE_SYSTEM_MALLOC 1
 #endif
 
+#define TCMALLOC_TRACK_DECOMMITED_SPANS (HAVE(VIRTUALALLOC))
+
 #ifndef NDEBUG
 namespace WTF {
 
@@ -869,6 +871,7 @@ struct Span {
 #endif
   unsigned int  sizeclass : 8;  // Size-class for small objects (or 0)
   unsigned int  refcount : 11;  // Number of non-free objects
+  bool decommitted : 1;
 
 #undef SPAN_HISTORY
 #ifdef SPAN_HISTORY
@@ -878,6 +881,12 @@ struct Span {
   int value[64];
 #endif
 };
+
+#if TCMALLOC_TRACK_DECOMMITED_SPANS
+#define ASSERT_SPAN_COMMITTED(span) ASSERT(!span->decommitted)
+#else
+#define ASSERT_SPAN_COMMITTED(span)
+#endif
 
 #ifdef SPAN_HISTORY
 void Event(Span* span, char op, int v = 0) {
@@ -1180,13 +1189,22 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
 
     Span* result = ll->next;
     Carve(result, n, released);
+#if TCMALLOC_TRACK_DECOMMITED_SPANS
+    if (result->decommitted) {
+        TCMalloc_SystemCommit(reinterpret_cast<void*>(result->start << kPageShift), static_cast<size_t>(n << kPageShift));
+        result->decommitted = false;
+    }
+#endif
     ASSERT(Check());
     free_pages_ -= n;
     return result;
   }
 
   Span* result = AllocLarge(n);
-  if (result != NULL) return result;
+  if (result != NULL) {
+      ASSERT_SPAN_COMMITTED(result);
+      return result;
+  }
 
   // Grow the heap and try again
   if (!GrowHeap(n)) {
@@ -1233,6 +1251,12 @@ Span* TCMalloc_PageHeap::AllocLarge(Length n) {
 
   if (best != NULL) {
     Carve(best, n, from_released);
+#if TCMALLOC_TRACK_DECOMMITED_SPANS
+    if (best->decommitted) {
+        TCMalloc_SystemCommit(reinterpret_cast<void*>(best->start << kPageShift), static_cast<size_t>(n << kPageShift));
+        best->decommitted = false;
+    }
+#endif
     ASSERT(Check());
     free_pages_ -= n;
     return best;
@@ -1257,6 +1281,15 @@ Span* TCMalloc_PageHeap::Split(Span* span, Length n) {
   return leftover;
 }
 
+#if !TCMALLOC_TRACK_DECOMMITED_SPANS
+static ALWAYS_INLINE void propagateDecommittedState(Span*, Span*) { }
+#else
+static ALWAYS_INLINE void propagateDecommittedState(Span* destination, Span* source)
+{
+    destination->decommitted = source->decommitted;
+}
+#endif
+
 inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
   ASSERT(n > 0);
   DLL_Remove(span);
@@ -1268,6 +1301,7 @@ inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
   if (extra > 0) {
     Span* leftover = NewSpan(span->start + n, extra);
     leftover->free = 1;
+    propagateDecommittedState(leftover, span);
     Event(leftover, 'S', extra);
     RecordSpan(leftover);
 
@@ -1280,6 +1314,16 @@ inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
     pagemap_.set(span->start + n - 1, span);
   }
 }
+
+#if !TCMALLOC_TRACK_DECOMMITED_SPANS
+static ALWAYS_INLINE void mergeDecommittedStates(Span*, Span*) { }
+#else
+static ALWAYS_INLINE void mergeDecommittedStates(Span* destination, Span* other)
+{
+    if (other->decommitted)
+        destination->decommitted = true;
+}
+#endif
 
 inline void TCMalloc_PageHeap::Delete(Span* span) {
   ASSERT(Check());
@@ -1307,6 +1351,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
     // Merge preceding span into this span
     ASSERT(prev->start + prev->length == p);
     const Length len = prev->length;
+    mergeDecommittedStates(span, prev);
     DLL_Remove(prev);
     DeleteSpan(prev);
     span->start -= len;
@@ -1319,6 +1364,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
     // Merge next span into this span
     ASSERT(next->start == p+n);
     const Length len = next->length;
+    mergeDecommittedStates(span, next);
     DLL_Remove(next);
     DeleteSpan(next);
     span->length += len;
@@ -1359,6 +1405,9 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
       DLL_Remove(s);
       TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
                              static_cast<size_t>(s->length << kPageShift));
+#if TCMALLOC_TRACK_DECOMMITED_SPANS
+      s->decommitted = true;
+#endif
       DLL_Prepend(&slist->returned, s);
 
       scavenge_counter_ = std::max<size_t>(64UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
@@ -2099,6 +2148,7 @@ void* TCMalloc_Central_FreeList::FetchFromSpans() {
   Span* span = nonempty_.next;
 
   ASSERT(span->objects != NULL);
+  ASSERT_SPAN_COMMITTED(span);
   span->refcount++;
   void* result = span->objects;
   span->objects = *(reinterpret_cast<void**>(result));
@@ -2129,6 +2179,7 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
     lock_.Lock();
     return;
   }
+  ASSERT_SPAN_COMMITTED(span);
   ASSERT(span->length == npages);
   // Cache sizeclass info eagerly.  Locking is not necessary.
   // (Instead of being eager, we could just replace any stale info
@@ -2905,6 +2956,7 @@ static inline void* CheckedMallocResult(void *result)
 }
 
 static inline void* SpanToMallocResult(Span *span) {
+  ASSERT_SPAN_COMMITTED(span);
   pageheap->CacheSizeClass(span->start, 0);
   return
       CheckedMallocResult(reinterpret_cast<void*>(span->start << kPageShift));

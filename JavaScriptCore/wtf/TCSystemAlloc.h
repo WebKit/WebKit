@@ -62,4 +62,10 @@ extern void* TCMalloc_SystemAlloc(size_t bytes, size_t *actual_bytes,
 // be released, partial pages will not.)
 extern void TCMalloc_SystemRelease(void* start, size_t length);
 
+#if HAVE(VIRTUALALLOC)
+extern void TCMalloc_SystemCommit(void* start, size_t length);
+#else
+inline void TCMalloc_SystemCommit(void*, size_t) { }
+#endif
+
 #endif /* TCMALLOC_SYSTEM_ALLOC_H__ */

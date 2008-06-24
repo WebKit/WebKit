@@ -428,3 +428,11 @@ void TCMalloc_SystemRelease(void* start, size_t length)
   return;
 #endif
 }
+
+#if HAVE(VIRTUALALLOC)
+void TCMalloc_SystemCommit(void* start, size_t length)
+{
+    UNUSED_PARAM(start);
+    UNUSED_PARAM(length);
+}
+#endif

@@ -1,5 +1,25 @@
 2008-06-23  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Prepration for returning memory to the OS on Windows.  Track whether a portion of a span of memory was returned to the OS.
+        If it was, ask that it be recommitted before returning it to the application as an allocated region.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::New):  If the span was decommitted, ask that it be recommitted before returning it.
+        (WTF::TCMalloc_PageHeap::AllocLarge):  Ditto.
+        (WTF::TCMalloc_PageHeap::Carve):  When splitting a span, ensure that the decommitted state propogates to the two new spans.
+        (WTF::TCMalloc_PageHeap::Delete):  When merging a span, ensure that the resulting span is marked as decommitted if any of the
+        spans being merged were marked as decommitted.
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):  Mark as decommitted after releasing the span.
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpans): Add an assertion to catch a decommitted span being returned to the application
+        without first being recommitted.
+        (WTF::TCMalloc_Central_FreeList::Populate): Ditto.
+        * wtf/TCSystemAlloc.cpp: Stub out TCMalloc_SystemCommit.
+        * wtf/TCSystemAlloc.h:
+
+2008-06-23  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Sam Weinig.
 
         Remove the sample member of Span when NO_TCMALLOC_SAMPLES is defined.
