@@ -900,7 +900,6 @@ SOURCES += \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
-    xml/XMLHttpRequestProgressEvent.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \
     xml/XPathExpression.cpp \

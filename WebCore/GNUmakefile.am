@@ -1027,7 +1027,6 @@ webcore_sources += \
 	WebCore/xml/AccessItemRule.cpp \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/XMLHttpRequest.cpp \
-	WebCore/xml/XMLHttpRequestProgressEvent.cpp \
 	WebCore/xml/XMLSerializer.cpp
 
 if TARGET_X11
