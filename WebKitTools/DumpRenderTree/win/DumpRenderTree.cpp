@@ -214,7 +214,16 @@ static void initialize()
         TEXT("Times Bold.ttf"),
         TEXT("Times Italic.ttf"),
         TEXT("Times Roman.ttf"),
-        TEXT("WebKit Layout Tests.ttf")
+        TEXT("WebKit Layout Tests.ttf"),
+        TEXT("WebKitWeightWatcher100.ttf"),
+        TEXT("WebKitWeightWatcher200.ttf"),
+        TEXT("WebKitWeightWatcher300.ttf"),
+        TEXT("WebKitWeightWatcher400.ttf"),
+        TEXT("WebKitWeightWatcher500.ttf"),
+        TEXT("WebKitWeightWatcher600.ttf"),
+        TEXT("WebKitWeightWatcher700.ttf"),
+        TEXT("WebKitWeightWatcher800.ttf"),
+        TEXT("WebKitWeightWatcher900.ttf")
     };
 
     wstring resourcesPath = fontsPath();

@@ -1,3 +1,28 @@
+2008-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        - add a font family for testing font-weight
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added linker
+        flags to create data sections for the WeightWatcher fonts.
+        * DumpRenderTree/fonts: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher100.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher200.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher300.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher400.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher500.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher600.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher700.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher800.ttf: Added.
+        * DumpRenderTree/fonts/WebKitWeightWatcher900.ttf: Added.
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (activateFonts): Renamed activateAhemFont to this and made it activate
+        the WeightWatcher fonts in addition to Ahem.
+        (prepareConsistentTestingEnvironment): Adjusted for the name change.
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (initialize): Added the WeightWatcher fonts.
+
 2008-06-20  Brent Fulgham  <bfulgham@gmail.com>
 
         Reviewed by Darin.

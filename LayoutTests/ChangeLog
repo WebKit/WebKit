@@ -1,3 +1,14 @@
+2008-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Darin Adler.
+
+        - add font-weight test for a family that has 9 weights
+
+        * fast/css/font-weight-1.html: Added.
+        * platform/mac/fast/css/font-weight-1-expected.checksum: Added.
+        * platform/mac/fast/css/font-weight-1-expected.png: Added.
+        * platform/mac/fast/css/font-weight-1-expected.txt: Added.
+
 2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

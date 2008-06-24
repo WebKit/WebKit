@@ -195,21 +195,37 @@ static BOOL shouldIgnoreWebCoreNodeLeaks(CFStringRef URLString)
     return NO;
 }
 
-static void activateAhemFont()
-{    
-    unsigned long fontDataLength;
-    char* fontData = getsectdata("__DATA", "Ahem", &fontDataLength);
-    if (!fontData) {
-        fprintf(stderr, "Failed to locate the Ahem font.\n");
-        exit(1);
-    }
+static void activateFonts()
+{
+    static const char* fontSectionNames[] = {
+        "Ahem",
+        "WeightWatcher100",
+        "WeightWatcher200",
+        "WeightWatcher300",
+        "WeightWatcher400",
+        "WeightWatcher500",
+        "WeightWatcher600",
+        "WeightWatcher700",
+        "WeightWatcher800",
+        "WeightWatcher900",
+        0
+    };
 
-    ATSFontContainerRef fontContainer;
-    OSStatus status = ATSFontActivateFromMemory(fontData, fontDataLength, kATSFontContextLocal, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &fontContainer);
+    for (unsigned i = 0; fontSectionNames[i]; ++i) {
+        unsigned long fontDataLength;
+        char* fontData = getsectdata("__DATA", fontSectionNames[i], &fontDataLength);
+        if (!fontData) {
+            fprintf(stderr, "Failed to locate the %s font.\n", fontSectionNames[i]);
+            exit(1);
+        }
 
-    if (status != noErr) {
-        fprintf(stderr, "Failed to activate the Ahem font.\n");
-        exit(1);
+        ATSFontContainerRef fontContainer;
+        OSStatus status = ATSFontActivateFromMemory(fontData, fontDataLength, kATSFontContextLocal, kATSFontFormatUnspecified, NULL, kATSOptionFlagsDefault, &fontContainer);
+
+        if (status != noErr) {
+            fprintf(stderr, "Failed to activate the %s font.\n", fontSectionNames[i]);
+            exit(1);
+        }
     }
 }
 
@@ -435,7 +451,7 @@ static void prepareConsistentTestingEnvironment()
     poseAsClass("DumpRenderTreeEvent", "NSEvent");
 
     setDefaultsToConsistentValuesForTesting();
-    activateAhemFont();
+    activateFonts();
     
     if (dumpPixels)
         initializeColorSpaceAndScreeBufferForPixelTests();

@@ -127,6 +127,15 @@
 		1AC6C7800D07589B00CD3161 /* PluginObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginObject.cpp; sourceTree = "<group>"; };
 		1AC6C7810D07589B00CD3161 /* TestObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TestObject.cpp; sourceTree = "<group>"; };
 		32A70AAB03705E1F00C91783 /* DumpRenderTreePrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreePrefix.h; sourceTree = "<group>"; };
+		375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
+		375F09720DAC3CB600C8B4E5 /* WebKitWeightWatcher200.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher200.ttf; path = fonts/WebKitWeightWatcher200.ttf; sourceTree = "<group>"; };
+		375F09730DAC3CB600C8B4E5 /* WebKitWeightWatcher300.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher300.ttf; path = fonts/WebKitWeightWatcher300.ttf; sourceTree = "<group>"; };
+		375F09740DAC3CB600C8B4E5 /* WebKitWeightWatcher400.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher400.ttf; path = fonts/WebKitWeightWatcher400.ttf; sourceTree = "<group>"; };
+		375F09750DAC3CB600C8B4E5 /* WebKitWeightWatcher500.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher500.ttf; path = fonts/WebKitWeightWatcher500.ttf; sourceTree = "<group>"; };
+		375F09760DAC3CB600C8B4E5 /* WebKitWeightWatcher600.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher600.ttf; path = fonts/WebKitWeightWatcher600.ttf; sourceTree = "<group>"; };
+		375F09770DAC3CB600C8B4E5 /* WebKitWeightWatcher700.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher700.ttf; path = fonts/WebKitWeightWatcher700.ttf; sourceTree = "<group>"; };
+		375F09780DAC3CB600C8B4E5 /* WebKitWeightWatcher800.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher800.ttf; path = fonts/WebKitWeightWatcher800.ttf; sourceTree = "<group>"; };
+		375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
 		9335435F03D75502008635CE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9340995408540CAF007F3BC8 /* DumpRenderTree */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DumpRenderTree; sourceTree = BUILT_PRODUCTS_DIR; };
 		A803FF7409CAAD08009B2A37 /* DumpRenderTree.h */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.h; fileEncoding = 4; path = DumpRenderTree.h; sourceTree = "<group>"; };
@@ -326,6 +335,15 @@
 		9345229B0BD12B2C0086EDA0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				375F09710DAC3CB600C8B4E5 /* WebKitWeightWatcher100.ttf */,
+				375F09720DAC3CB600C8B4E5 /* WebKit_WeightWatcher200.ttf */,
+				375F09730DAC3CB600C8B4E5 /* WebKit_WeightWatcher300.ttf */,
+				375F09740DAC3CB600C8B4E5 /* WebKit_WeightWatcher400.ttf */,
+				375F09750DAC3CB600C8B4E5 /* WebKit_WeightWatcher500.ttf */,
+				375F09760DAC3CB600C8B4E5 /* WebKit_WeightWatcher600.ttf */,
+				375F09770DAC3CB600C8B4E5 /* WebKit_WeightWatcher700.ttf */,
+				375F09780DAC3CB600C8B4E5 /* WebKit_WeightWatcher800.ttf */,
+				375F09790DAC3CB600C8B4E5 /* WebKit_WeightWatcher900.ttf */,
 				AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */,
 			);
 			name = Resources;
@@ -621,6 +639,48 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCB281F00CFA713D007E533E /* DumpRenderTree.xcconfig */;
 			buildSettings = {
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__DATA,
+					Ahem,
+					"qt/fonts/AHEM____.TTF",
+					"-sectcreate",
+					__DATA,
+					WeightWatcher100,
+					fonts/WebKitWeightWatcher100.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher200,
+					fonts/WebKitWeightWatcher200.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher300,
+					fonts/WebKitWeightWatcher300.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher400,
+					fonts/WebKitWeightWatcher400.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher500,
+					fonts/WebKitWeightWatcher500.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher600,
+					fonts/WebKitWeightWatcher600.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher700,
+					fonts/WebKitWeightWatcher700.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher800,
+					fonts/WebKitWeightWatcher800.ttf,
+					"-sectcreate",
+					__DATA,
+					WeightWatcher900,
+					fonts/WebKitWeightWatcher900.ttf,
+				);
 			};
 			name = Debug;
 		};
