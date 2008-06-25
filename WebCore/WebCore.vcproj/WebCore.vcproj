@@ -4989,6 +4989,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontTraitsMask.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\GeneratedImage.cpp"
 					>
 				</File>

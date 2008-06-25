@@ -197,19 +197,32 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 const SegmentedFontData* segmentedFontData = static_cast<const SegmentedFontData*>(fontData);
                 unsigned numRanges = segmentedFontData->numRanges();
                 bool zeroFilled = false;
+                RefPtr<GlyphPage> scratchPage;
+                GlyphPage* pageToFill = m_page.get();
                 for (unsigned i = 0; i < numRanges; i++) {
                     const FontDataRange& range = segmentedFontData->rangeAt(i);
                     int from = max(0, range.from() - static_cast<int>(start));
                     int to = 1 + min(range.to() - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
                     if (from < static_cast<int>(GlyphPage::size) && to > 0) {
+                        if (haveGlyphs && !scratchPage) {
+                            scratchPage = GlyphPage::create(this);
+                            pageToFill = scratchPage.get();
+                        }
+
                         if (!zeroFilled) {
                             if (from > 0 || to < static_cast<int>(GlyphPage::size)) {
                                 for (unsigned i = 0; i < GlyphPage::size; i++)
-                                    m_page->setGlyphDataForIndex(i, 0, 0);
+                                    pageToFill->setGlyphDataForIndex(i, 0, 0);
                             }
                             zeroFilled = true;
                         }
-                        haveGlyphs |= m_page->fill(from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
+                        haveGlyphs |= pageToFill->fill(from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData());
+                        if (scratchPage) {
+                            for (int j = from; j < to; j++) {
+                                if (!m_page->m_glyphs[j].glyph && pageToFill->m_glyphs[j].glyph)
+                                    m_page->m_glyphs[j] = pageToFill->m_glyphs[j];
+                            }
+                        }
                     }
                 }
             } else

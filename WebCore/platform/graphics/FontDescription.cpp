@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Nicholas Shanks <contact@nickshanks.com>
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -87,6 +88,14 @@ FontWeight FontDescription::bolderWeight(void) const
     }
     ASSERT_NOT_REACHED();
     return FontWeightNormal;
+}
+
+FontTraitsMask FontDescription::traitsMask() const
+{
+    return static_cast<FontTraitsMask>((m_italic ? FontStyleItalicMask : FontStyleNormalMask)
+            | (m_smallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask)
+            | (FontWeight100Mask << (m_weight - FontWeight100)));
+    
 }
 
 } // namespace WebCore

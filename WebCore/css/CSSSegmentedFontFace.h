@@ -40,24 +40,6 @@ class FontData;
 class FontDescription;
 class SegmentedFontData;
 
-struct FontFaceRange {
-    FontFaceRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace> fontFace)
-        : m_from(from)
-        , m_to(to)
-        , m_fontFace(fontFace)
-    {
-    }
-
-    UChar32 from() const { return m_from; }
-    UChar32 to() const { return m_to; }
-    CSSFontFace* fontFace() const { return m_fontFace.get(); }
-
-private:
-    UChar32 m_from;
-    UChar32 m_to;
-    RefPtr<CSSFontFace> m_fontFace;
-};
-
 class CSSSegmentedFontFace : public RefCounted<CSSSegmentedFontFace> {
 public:
     static PassRefPtr<CSSSegmentedFontFace> create(CSSFontSelector* selector) { return adoptRef(new CSSSegmentedFontFace(selector)); }
@@ -69,10 +51,9 @@ public:
 
     void fontLoaded(CSSFontFace*);
 
-    unsigned numRanges() const { return m_ranges.size(); }
-    void overlayRange(UChar32 from, UChar32 to, PassRefPtr<CSSFontFace>);
+    void appendFontFace(PassRefPtr<CSSFontFace>);
 
-    FontData* getFontData(const FontDescription&, bool syntheticBold, bool syntheticItalic);
+    FontData* getFontData(const FontDescription&);
 
 private:
     CSSSegmentedFontFace(CSSFontSelector*);
@@ -81,7 +62,7 @@ private:
 
     CSSFontSelector* m_fontSelector;
     HashMap<unsigned, SegmentedFontData*> m_fontDataTable;
-    Vector<FontFaceRange, 1> m_ranges;
+    Vector<RefPtr<CSSFontFace>, 1> m_fontFaces;
 };
 
 } // namespace WebCore

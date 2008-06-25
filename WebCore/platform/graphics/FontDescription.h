@@ -27,6 +27,7 @@
 
 #include "FontFamily.h"
 #include "FontRenderingMode.h"
+#include "FontTraitsMask.h"
 
 namespace WebCore {
 
@@ -81,6 +82,8 @@ public:
     bool usePrinterFont() const { return m_usePrinterFont; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     int keywordSize() const { return m_keywordSize; }
+
+    FontTraitsMask traitsMask() const;
 
     void setFamily(const FontFamily& family) { m_familyList = family; }
     void setComputedSize(float s) { m_computedSize = s; }

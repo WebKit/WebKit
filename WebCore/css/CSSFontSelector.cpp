@@ -69,6 +69,9 @@ CSSFontSelector::CSSFontSelector(Document* document)
 
 CSSFontSelector::~CSSFontSelector()
 {
+    deleteAllValues(m_fontFaces);
+    deleteAllValues(m_locallyInstalledFontFaces);
+    deleteAllValues(m_fonts);
 }
 
 bool CSSFontSelector::isEmpty() const
@@ -79,16 +82,6 @@ bool CSSFontSelector::isEmpty() const
 DocLoader* CSSFontSelector::docLoader() const
 {
     return m_document->docLoader();
-}
-
-static String hashForFont(const String& familyName, FontWeight weight, bool italic)
-{
-    String familyHash(familyName);
-    familyHash += "-webkit-weight-";
-    familyHash += String::number(weight);
-    if (italic)
-        familyHash += "-webkit-italic";
-    return AtomicString(familyHash);
 }
 
 void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
@@ -111,52 +104,56 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
     CSSValueList* rangeList = static_cast<CSSValueList*>(unicodeRange.get());
 
-    // Create a FontDescription for this font and set up bold/italic info properly.
-    FontDescription fontDescription;
+    unsigned traitsMask = 0;
 
     if (RefPtr<CSSValue> fontStyle = style->getPropertyCSSValue(CSSPropertyFontStyle))
-        fontDescription.setItalic(static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() != CSSValueNormal);
+        traitsMask |= static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() == CSSValueNormal ? FontStyleNormalMask : FontStyleItalicMask;
+    else
+        traitsMask |= FontStyleMask;
 
     if (RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight)) {
         switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
             case CSSValueBolder:
             case CSSValueBold:
             case CSSValue700:
-                fontDescription.setWeight(FontWeightBold);
+                traitsMask |= FontWeight700Mask;
                 break;
             case CSSValueNormal:
             case CSSValue400:
-                fontDescription.setWeight(FontWeightNormal);
+                traitsMask |= FontWeight400Mask;
                 break;
             case CSSValue900:
-                fontDescription.setWeight(FontWeight900);
+                traitsMask |= FontWeight900Mask;
                 break;
             case CSSValue800:
-                fontDescription.setWeight(FontWeight800);
+                traitsMask |= FontWeight800Mask;
                 break;
             case CSSValue600:
-                fontDescription.setWeight(FontWeight600);
+                traitsMask |= FontWeight600Mask;
                 break;
             case CSSValue500:
-                fontDescription.setWeight(FontWeight500);
+                traitsMask |= FontWeight500Mask;
                 break;
             case CSSValue300:
-                fontDescription.setWeight(FontWeight300);
+                traitsMask |= FontWeight300Mask;
                 break;
             case CSSValueLighter:
             case CSSValue200:
-                fontDescription.setWeight(FontWeight200);
+                traitsMask |= FontWeight200Mask;
                 break;
             case CSSValue100:
-                fontDescription.setWeight(FontWeight100);
+                traitsMask |= FontWeight100Mask;
                 break;
             default:
                 break;
         }
-    }
+    } else
+        traitsMask |= FontWeightMask;
 
     if (RefPtr<CSSValue> fontVariant = style->getPropertyCSSValue(CSSPropertyFontVariant))
-        fontDescription.setSmallCaps(static_cast<CSSPrimitiveValue*>(fontVariant.get())->getIdent() == CSSValueSmallCaps);
+        traitsMask |= static_cast<CSSPrimitiveValue*>(fontVariant.get())->getIdent() == CSSValueSmallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask;
+    else
+        traitsMask |= FontVariantNormalMask;
 
     // Each item in the src property's list is a single CSSFontFaceSource. Put them all into a CSSFontFace.
     RefPtr<CSSFontFace> fontFace;
@@ -191,22 +188,12 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
                 }
             }
         } else {
-            String family = item->resource();
-
-            // Test the validity of the local font now.  We don't want to include this font if it does not exist
-            // on the system.  If it *does* exist on the system, then we don't need to look any further.
-            if (FontCache::fontExists(fontDescription, family)
-#if ENABLE(SVG_FONTS)
-                || foundSVGFont
-#endif
-               ) {
-                source = new CSSFontFaceSource(family);
-                foundLocal = true;
-            }
+            source = new CSSFontFaceSource(item->resource());
+            foundLocal = true;
         }
 
         if (!fontFace)
-            fontFace = CSSFontFace::create();
+            fontFace = CSSFontFace::create(static_cast<FontTraitsMask>(traitsMask));
 
         if (source) {
 #if ENABLE(SVG_FONTS)
@@ -214,16 +201,20 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #endif
             fontFace->addSource(source);
         }
-
-        // We can just break if we see a local font that is valid.
-        if (foundLocal)
-            break;
     }
 
     ASSERT(fontFace);
 
     if (fontFace && !fontFace->isValid())
         return;
+
+    if (rangeList) {
+        unsigned numRanges = rangeList->length();
+        for (unsigned i = 0; i < numRanges; i++) {
+            CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->itemWithoutBoundsCheck(i));
+            fontFace->addRange(range->from(), range->to());
+        }
+    }
 
     // Hash under every single family name.
     int familyLength = familyList->length();
@@ -263,34 +254,36 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #if ENABLE(SVG_FONTS)
         // SVG allows several <font> elements with the same font-family, differing only
         // in ie. font-variant. Be sure to pick up the right one - in getFontData below.
-        if (foundSVGFont && fontDescription.smallCaps())
+        if (foundSVGFont && (traitsMask & FontVariantSmallCapsMask))
             familyName += "-webkit-svg-small-caps";
 #endif
 
-        String hash = hashForFont(familyName.lower(), fontDescription.weight(), fontDescription.italic());
-        CSSSegmentedFontFace* segmentedFontFace = m_fonts.get(hash).get();
-        if (!segmentedFontFace) {
-            RefPtr<CSSSegmentedFontFace> newFace = CSSSegmentedFontFace::create(this);
-            segmentedFontFace = newFace.get();
-            m_fonts.set(hash, newFace.release());
-        }
-        if (rangeList) {
-            // A local font matching the font description should come first, so that it gets used for
-            // any character not overlaid by explicit @font-face rules for the family.
-            if (!segmentedFontFace->numRanges() && FontCache::fontExists(fontDescription, familyName)) {
-                RefPtr<CSSFontFace> implicitFontFace = CSSFontFace::create();
-                implicitFontFace->addSource(new CSSFontFaceSource(familyName));
-                ASSERT(implicitFontFace->isValid());
-                segmentedFontFace->overlayRange(0, 0x7FFFFFFF, implicitFontFace.release());
-            }
+        familyName = familyName.lower();
+        Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(familyName);
+        if (!familyFontFaces) {
+            familyFontFaces = new Vector<RefPtr<CSSFontFace> >;
+            m_fontFaces.set(familyName, familyFontFaces);
 
-            unsigned numRanges = rangeList->length();
-            for (unsigned i = 0; i < numRanges; i++) {
-                CSSUnicodeRangeValue* range = static_cast<CSSUnicodeRangeValue*>(rangeList->itemWithoutBoundsCheck(i));
-                segmentedFontFace->overlayRange(range->from(), range->to(), fontFace);
+            ASSERT(!m_locallyInstalledFontFaces.contains(familyName));
+            Vector<RefPtr<CSSFontFace> >* familyLocallyInstalledFaces;
+
+            Vector<unsigned> locallyInstalledFontsTraitsMasks;
+            FontCache::getTraitsInFamily(familyName, locallyInstalledFontsTraitsMasks);
+            unsigned numLocallyInstalledFaces = locallyInstalledFontsTraitsMasks.size();
+            if (numLocallyInstalledFaces) {
+                familyLocallyInstalledFaces = new Vector<RefPtr<CSSFontFace> >;
+                m_locallyInstalledFontFaces.set(familyName, familyLocallyInstalledFaces);
+
+                for (unsigned i = 0; i < numLocallyInstalledFaces; ++i) {
+                    RefPtr<CSSFontFace> locallyInstalledFontFace = CSSFontFace::create(static_cast<FontTraitsMask>(locallyInstalledFontsTraitsMasks[i]));
+                    locallyInstalledFontFace->addSource(new CSSFontFaceSource(familyName));
+                    ASSERT(locallyInstalledFontFace->isValid());
+                    familyLocallyInstalledFaces->append(locallyInstalledFontFace);
+                }
             }
-        } else
-            segmentedFontFace->overlayRange(0, 0x7FFFFFFF, fontFace);
+        }
+
+        familyFontFaces->append(fontFace);
     }
 }
 
@@ -325,80 +318,136 @@ static FontData* fontDataForGenericFamily(Document* document, const FontDescript
     return 0;
 }
 
+static FontTraitsMask desiredTraitsMaskForComparison;
+
+static inline bool compareFontFaces(CSSFontFace* first, CSSFontFace* second)
+{
+    FontTraitsMask firstTraitsMask = first->traitsMask();
+    FontTraitsMask secondTraitsMask = second->traitsMask();
+
+    bool firstHasDesiredVariant = firstTraitsMask & desiredTraitsMaskForComparison & FontVariantMask;
+    bool secondHasDesiredVariant = secondTraitsMask & desiredTraitsMaskForComparison & FontVariantMask;
+
+    if (firstHasDesiredVariant != secondHasDesiredVariant)
+        return firstHasDesiredVariant;
+
+    bool firstHasDesiredStyle = firstTraitsMask & desiredTraitsMaskForComparison & FontStyleMask;
+    bool secondHasDesiredStyle = secondTraitsMask & desiredTraitsMaskForComparison & FontStyleMask;
+
+    if (firstHasDesiredStyle != secondHasDesiredStyle)
+        return firstHasDesiredStyle;
+
+    if (secondTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
+        return false;
+    if (firstTraitsMask & desiredTraitsMaskForComparison & FontWeightMask)
+        return true;
+
+    // http://www.w3.org/TR/2002/WD-css3-webfonts-20020802/#q46 says: "If there are fewer then 9 weights in the family, the default algorithm
+    // for filling the "holes" is as follows. If '500' is unassigned, it will be assigned the same font as '400'. If any of the values '600',
+    // '700', '800', or '900' remains unassigned, they are assigned to the same face as the next darker assigned keyword, if any, or the next
+    // lighter one otherwise. If any of '300', '200', or '100' remains unassigned, it is assigned to the next lighter assigned keyword, if any,
+    // or the next darker otherwise."
+    // For '400', we made up our own rule (which then '500' follows).
+
+    static const FontTraitsMask weightFallbackRules[9][8] = {
+        { FontWeight200Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
+        { FontWeight100Mask, FontWeight300Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
+        { FontWeight200Mask, FontWeight100Mask, FontWeight400Mask, FontWeight500Mask, FontWeight600Mask, FontWeight700Mask, FontWeight800Mask, FontWeight900Mask },
+        { FontWeight500Mask, FontWeight300Mask, FontWeight600Mask, FontWeight200Mask, FontWeight700Mask, FontWeight100Mask, FontWeight800Mask, FontWeight900Mask },
+        { FontWeight400Mask, FontWeight300Mask, FontWeight600Mask, FontWeight200Mask, FontWeight700Mask, FontWeight100Mask, FontWeight800Mask, FontWeight900Mask },
+        { FontWeight700Mask, FontWeight800Mask, FontWeight900Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
+        { FontWeight800Mask, FontWeight900Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
+        { FontWeight900Mask, FontWeight700Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask },
+        { FontWeight800Mask, FontWeight700Mask, FontWeight600Mask, FontWeight500Mask, FontWeight400Mask, FontWeight300Mask, FontWeight200Mask, FontWeight100Mask }
+    };
+
+    const FontTraitsMask* weightFallbackRule = weightFallbackRules[0];
+    unsigned w = FontWeight100Bit;
+    while (!(desiredTraitsMaskForComparison & (1 << w))) {
+        w++;
+        weightFallbackRule += 8;
+    }
+
+    for (unsigned i = 0; i < 8; ++i) {
+        if (secondTraitsMask & weightFallbackRule[i])
+            return false;
+        if (firstTraitsMask & weightFallbackRule[i])
+            return true;
+    }
+
+    return false;
+}
+
 FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, const AtomicString& familyName)
 {
-    if (m_fonts.isEmpty()) {
+    if (m_fontFaces.isEmpty()) {
         if (familyName.startsWith("-webkit-"))
             return fontDataForGenericFamily(m_document, fontDescription, familyName);
         return 0;
     }
 
-    FontWeight weight = fontDescription.weight();
-    bool italic = fontDescription.italic();
-    
-    bool syntheticBold = false;
-    bool syntheticItalic = false;
-
     String family = familyName.string().lower();
-
-    RefPtr<CSSSegmentedFontFace> face;
 
 #if ENABLE(SVG_FONTS)
     if (fontDescription.smallCaps())
         family += "-webkit-svg-small-caps";
 #endif
 
-    // If we don't find a face, we should try synthesizing it from another variant. We are presumably better at synthesizing italic than
-    // synthesizing bold, and we cannot synthesize a lighter face at all.
-    int attemptedWeight = weight;
-    while (!face) {
-        face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), italic));
-        if (face)
-            break;
-        if (italic) {
-            face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), false));
-            if (face) {
-                syntheticItalic = true;
-                break;
-            }
-        }
-        if (attemptedWeight == FontWeight100)
-            break;
-        attemptedWeight--;
-        syntheticBold = true;
-    }
-
-#if ENABLE(SVG_FONTS)
-    // If no face was found, and if we're a SVG Font we may have hit following case:
-    // <font-face> specified font-weight and/or font-style to be ie. bold and italic.
-    // And the font-family requested is non-bold & non-italic. For SVG Fonts we still
-    // have to return the defined font, and not fallback to the system default.
-    if (!face) {
-        syntheticBold = false;
-        // Try all heavier weights
-        for (attemptedWeight = weight + 1; !face && attemptedWeight <= FontWeight900; ++attemptedWeight)
-            face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), italic));
-
-        // Try italics with all weights
-        if (!face && !italic) {
-            for (attemptedWeight = weight; !face && attemptedWeight >= FontWeight100; --attemptedWeight)
-                face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), true));
-
-            for (attemptedWeight = weight + 1; !face && attemptedWeight <= FontWeight900; ++attemptedWeight)
-                face = m_fonts.get(hashForFont(family, static_cast<FontWeight>(attemptedWeight), true));
-        }
-    }
-#endif
-
+    Vector<RefPtr<CSSFontFace> >* familyFontFaces = m_fontFaces.get(family);
     // If no face was found, then return 0 and let the OS come up with its best match for the name.
-    if (!face) {
+    if (!familyFontFaces || familyFontFaces->isEmpty()) {
         // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our
         // settings.
         return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
 
+    HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >* segmentedFontFaceCache = m_fonts.get(family);
+    if (!segmentedFontFaceCache) {
+        segmentedFontFaceCache = new HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >;
+        m_fonts.set(family, segmentedFontFaceCache);
+    }
+
+    FontTraitsMask traitsMask = fontDescription.traitsMask();
+
+    RefPtr<CSSSegmentedFontFace> face = segmentedFontFaceCache->get(traitsMask);
+
+    if (!face) {
+        face = CSSSegmentedFontFace::create(this);
+        segmentedFontFaceCache->set(traitsMask, face);
+        // Collect all matching faces and sort them in order of preference.
+        Vector<CSSFontFace*, 32> candidateFontFaces;
+        for (int i = familyFontFaces->size() - 1; i >= 0; --i) {
+            CSSFontFace* candidate = familyFontFaces->at(i).get();
+            unsigned candidateTraitsMask = candidate->traitsMask();
+            if ((traitsMask & FontStyleNormalMask) && !(candidateTraitsMask & FontStyleNormalMask))
+                continue;
+            if ((traitsMask & FontVariantNormalMask) && !(candidateTraitsMask & FontVariantNormalMask))
+                continue;
+            candidateFontFaces.append(candidate);
+        }
+
+        if (Vector<RefPtr<CSSFontFace> >* familyLocallyInstalledFontFaces = m_locallyInstalledFontFaces.get(family)) {
+            unsigned numLocallyInstalledFontFaces = familyLocallyInstalledFontFaces->size();
+            for (unsigned i = 0; i < numLocallyInstalledFontFaces; ++i) {
+                CSSFontFace* candidate = familyLocallyInstalledFontFaces->at(i).get();
+                unsigned candidateTraitsMask = candidate->traitsMask();
+                if ((traitsMask & FontStyleNormalMask) && !(candidateTraitsMask & FontStyleNormalMask))
+                    continue;
+                if ((traitsMask & FontVariantNormalMask) && !(candidateTraitsMask & FontVariantNormalMask))
+                    continue;
+                candidateFontFaces.append(candidate);
+            }
+        }
+
+        desiredTraitsMaskForComparison = traitsMask;
+        std::stable_sort(candidateFontFaces.begin(), candidateFontFaces.end(), compareFontFaces);
+        unsigned numCandidates = candidateFontFaces.size();
+        for (unsigned i = 0; i < numCandidates; ++i)
+            face->appendFontFace(candidateFontFaces[i]);
+    }
+
     // We have a face.  Ask it for a font data.  If it cannot produce one, it will fail, and the OS will take over.
-    return face->getFontData(fontDescription, syntheticBold, syntheticItalic);
+    return face->getFontData(fontDescription);
 }
 
 }

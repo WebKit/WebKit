@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 #define FontCache_h
 
 #include <limits.h>
+#include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
 #if PLATFORM(WIN)
@@ -64,7 +65,7 @@ public:
     static IMLangFontLink2* getFontLinkInterface();
 #endif
 
-    static bool fontExists(const FontDescription&, const AtomicString& family);
+    static void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
     static FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
     static SimpleFontData* getCachedFontData(const FontPlatformData*);

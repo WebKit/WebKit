@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Nicholas Shanks <webkit@nickshanks.com>
  *
  * Redistribution and use in source and binary forms, with or without
@@ -28,9 +28,12 @@
  */
 
 #import "config.h"
+#import "FontTraitsMask.h"
 #import "WebFontCache.h"
 
 #import <math.h>
+
+using namespace WebCore;
 
 #ifdef BUILDING_ON_TIGER
 typedef int NSInteger;
@@ -105,7 +108,64 @@ static inline void fixUpWeight(NSInteger& weight, NSString *fontName)
         weight = 2;
 }
 
+static inline FontTraitsMask toTraitsMask(NSFontTraitMask appKitTraits, NSInteger appKitWeight)
+{
+    return static_cast<FontTraitsMask>(((appKitTraits & NSFontItalicTrait) ? FontStyleItalicMask : FontStyleNormalMask)
+        | FontVariantNormalMask
+        | (appKitWeight == 1 ? FontWeight100Mask :
+              appKitWeight == 2 ? FontWeight200Mask :
+              appKitWeight <= 4 ? FontWeight300Mask :
+              appKitWeight == 5 ? FontWeight400Mask :
+              appKitWeight == 6 ? FontWeight500Mask :
+              appKitWeight <= 8 ? FontWeight600Mask :
+              appKitWeight == 9 ? FontWeight700Mask :
+              appKitWeight <= 11 ? FontWeight800Mask :
+                                   FontWeight900Mask));
+}
+
 @implementation WebFontCache
+
++ (void)getTraits:(Vector<unsigned>&)traitsMasks inFamily:(NSString *)desiredFamily
+{
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+    NSEnumerator *e = [[fontManager availableFontFamilies] objectEnumerator];
+    NSString *availableFamily;
+    while ((availableFamily = [e nextObject])) {
+        if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame)
+            break;
+    }
+
+    if (!availableFamily) {
+        // Match by PostScript name.
+        NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
+        NSString *availableFont;
+        while ((availableFont = [availableFonts nextObject])) {
+            if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
+                NSFont *font = [NSFont fontWithName:availableFont size:10];
+                NSInteger weight = [fontManager weightOfFont:font];
+                fixUpWeight(weight, desiredFamily);
+                traitsMasks.append(toTraitsMask([fontManager traitsOfFont:font], weight));
+                break;
+            }
+        }
+        return;
+    }
+
+    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];    
+    unsigned n = [fonts count];
+    unsigned i;
+    for (i = 0; i < n; i++) {
+        NSArray *fontInfo = [fonts objectAtIndex:i];
+        // Array indices must be hard coded because of lame AppKit API.
+        NSString *fontFullName = [fontInfo objectAtIndex:0];
+        NSInteger fontWeight = [[fontInfo objectAtIndex:2] intValue];
+        fixUpWeight(fontWeight, fontFullName);
+
+        NSFontTraitMask fontTraits = [[fontInfo objectAtIndex:3] unsignedIntValue];
+        traitsMasks.append(toTraitsMask(fontTraits, fontWeight));
+    }
+}
 
 // Family name is somewhat of a misnomer here.  We first attempt to find an exact match
 // comparing the desiredFamily to the PostScript name of the installed fonts.  If that fails

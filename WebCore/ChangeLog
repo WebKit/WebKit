@@ -1,3 +1,105 @@
+2008-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5873639> REGRESSION (r31620): css2.1/t1506-c525-font-wt-00-b fails on Windows
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18863
+          <rdar://problem/5908890> weight mappings with @font-face aren't consistent
+
+        Tests: fast/css/font-face-locally-installed.html
+               fast/css/font-face-multiple-faces.html
+
+        * WebCore.vcproj/WebCore.vcproj: Added FontTraitsMask.h.
+
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * css/CSSFontFace.h:
+        Made CSSFontFace store descriptors from the @font-face rule, as follows:
+        (WebCore::CSSFontFace::create): Added a FontTraitsMask argument.
+        (WebCore::CSSFontFace::traitsMask): Added this accessor.
+        (WebCore::CSSFontFace::addRange): Added.
+        (WebCore::CSSFontFace::ranges): Added.
+        (WebCore::CSSFontFace::UnicodeRange::UnicodeRange):
+        (WebCore::CSSFontFace::UnicodeRange::from):
+        (WebCore::CSSFontFace::UnicodeRange::to):
+        (WebCore::CSSFontFace::CSSFontFace): Added a FontTraitsMask and a vector
+        of UnicodeRanges as member variables.
+
+        * css/CSSFontFaceSource.cpp:
+        Changed the hash key from the font size alone to the font size and
+        the synthetic style bits, needed if the same source supplies different
+        synthesized versions.
+        (WebCore::CSSFontFaceSource::pruneTable):
+        (WebCore::CSSFontFaceSource::getFontData):
+
+        * css/CSSFontFaceSource.h:
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::~CSSFontSelector): Added code to delete
+        the contents of the font face, locally-installed font face and segmented
+        font tables.
+        (WebCore::CSSFontSelector::addFontFaceRule): Changed this function to
+        not create segmented font faces, but instead just collect font faces
+        and annotate them with descriptors (traits and unicode ranges).
+        (WebCore::compareFontFaces): Added. Used in getFontData() to sort the
+        font faces by proximity to the desired traits.
+        (WebCore::CSSFontSelector::getFontData): Changed to create the segmented
+        font face here and cache it.
+
+        * css/CSSFontSelector.h:
+
+        * css/CSSSegmentedFontFace.cpp:
+        Changed to keep a vector of font faces instead of font face ranges, as
+        font faces now know their Unicode ranges.
+        (WebCore::CSSSegmentedFontFace::~CSSSegmentedFontFace):
+        (WebCore::CSSSegmentedFontFace::isLoaded):
+        (WebCore::CSSSegmentedFontFace::isValid):
+        (WebCore::CSSSegmentedFontFace::appendFontFace):
+        (WebCore::CSSSegmentedFontFace::getFontData): Removed the synthetic
+        traits parameters, and instead changed to set them on each FontData
+        separately based on the difference between the desired traits and
+        the font face's traits.
+
+        * css/CSSSegmentedFontFace.h:
+
+        * platform/graphics/FontCache.h:
+        Removed fontExists() and added getTraitsInFamily().
+
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::traitsMask): Added.
+
+        * platform/graphics/FontDescription.h:
+
+        * platform/graphics/FontTraitsMask.h: Added.
+
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::initializePage): Changed to fill in with
+        glyphs from all fonts in the segmented font, using each font in turn to
+        fill in characters not covered by earlier fonts.
+
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getTraitsInFamily): Added a stub.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getTraitsInFamily): Added.
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getTraitsInFamily): Added a stub.
+
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::TraitsInFamilyProcData::TraitsInFamilyProcData): Added.
+        (WebCore::traitsInFamilyEnumProc): Added.
+        (WebCore::FontCache::getTraitsInFamily): Added.
+
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getTraitsInFamily): Added a stub.
+
+        * platform/mac/WebFontCache.h:
+        * platform/mac/WebFontCache.mm:
+        (toTraitsMask): Added.
+        (+[WebFontCache getTraits:inFamily:]): Added.
+
 2008-06-24  Anonymous
 
         Reviewed by Darin Adler.  Committed by Adam Barth.

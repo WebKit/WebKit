@@ -162,13 +162,9 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fo
     return platformFont;
 }
 
-bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {
-    NSFontTraitMask traits = fontDescription.italic() ? NSFontItalicTrait : 0;
-    int weight = toAppKitFontWeight(fontDescription.weight());
-    float size = fontDescription.computedPixelSize();
-
-    return [WebFontCache fontWithFamily:family traits:traits weight:weight size:size];
+    [WebFontCache getTraits:traitsMasks inFamily:familyName];
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

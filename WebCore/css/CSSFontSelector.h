@@ -34,6 +34,7 @@
 namespace WebCore {
 
 class AtomicString;
+class CSSFontFace;
 class CSSFontFaceRule;
 class CSSSegmentedFontFace;
 class Document;
@@ -63,7 +64,9 @@ private:
     CSSFontSelector(Document*);
 
     Document* m_document;
-    HashMap<String, RefPtr<CSSSegmentedFontFace> > m_fonts;
+    HashMap<String, Vector<RefPtr<CSSFontFace> >*> m_fontFaces;
+    HashMap<String, Vector<RefPtr<CSSFontFace> >*> m_locallyInstalledFontFaces;
+    HashMap<String, HashMap<unsigned, RefPtr<CSSSegmentedFontFace> >*> m_fonts;
 };
 
 } // namespace WebCore

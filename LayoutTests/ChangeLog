@@ -1,3 +1,20 @@
+2008-06-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - tests for https://bugs.webkit.org/show_bug.cgi?id=18863
+          <rdar://problem/5908890> weight mappings with @font-face aren't consistent
+
+        * fast/css/font-face-locally-installed.html: Added.
+        * fast/css/font-face-multiple-faces.html: Added.
+        * platform/mac/fast/css/font-face-locally-installed-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-locally-installed-expected.png: Added.
+        * platform/mac/fast/css/font-face-locally-installed-expected.txt: Added.
+        * platform/mac/fast/css/font-face-multiple-faces-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-multiple-faces-expected.png: Added.
+        * platform/mac/fast/css/font-face-multiple-faces-expected.txt: Added.
+        * platform/win/Skipped: Removed css2.1/t1506-c525-font-wt-00-b.html.
+
 2008-06-24  Anonymous
 
         Reviewed by Darin Adler.  Committed by Adam Barth.

@@ -64,10 +64,9 @@ FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontD
     return new FontPlatformData(fontDescription,family);
 }
 
-bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {
     notImplemented();
-    return true;
 }
 
 }

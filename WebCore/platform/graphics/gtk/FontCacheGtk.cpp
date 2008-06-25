@@ -61,16 +61,8 @@ FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fo
     return getCachedFontPlatformData(fontDescription, timesStr);
 }
 
-bool FontCache::fontExists(const FontDescription& fontDescription, const AtomicString& family)
+void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
 {
-    FontPlatformData platformData(fontDescription, family);
-#if defined(USE_PANGO)
-    return platformData.m_font != 0;
-#elif defined(USE_FREETYPE)
-    return platformData.m_pattern != 0;
-#else
-#error "Must define a font backend"
-#endif
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
