@@ -1,5 +1,19 @@
 2008-06-25  Alexey Proskuryakov  <ap@webkit.org>
 
+        Forgot to address a review comment about better names for tracked objects, doing it now.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/nodes.cpp:
+        (KJS::ParserRefCounted::ParserRefCounted):
+        (KJS::ParserRefCounted::ref):
+        (KJS::ParserRefCounted::deref):
+        (KJS::ParserRefCounted::hasOneRef):
+        (KJS::ParserRefCounted::deleteNewObjects):
+
+2008-06-25  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoff.
 
         Remove more threadInstance() calls.

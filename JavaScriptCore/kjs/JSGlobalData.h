@@ -73,8 +73,8 @@ namespace KJS {
         const ArgList emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
 
         // Tracked object sets are transient, only needed when parsing.
-        HashSet<ParserRefCounted*>* newTrackedObjects;
-        HashCountedSet<ParserRefCounted*>* trackedObjectExtraRefCounts;
+        HashSet<ParserRefCounted*>* newParserObjects;
+        HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;
 
         Lexer* lexer;
         Parser* parser;

@@ -112,10 +112,10 @@ ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
 #ifndef NDEBUG
     ParserRefCountedCounter::increment();
 #endif
-    if (!m_globalData->newTrackedObjects)
-        m_globalData->newTrackedObjects = new HashSet<ParserRefCounted*>;
-    m_globalData->newTrackedObjects->add(this);
-    ASSERT(m_globalData->newTrackedObjects->contains(this));
+    if (!m_globalData->newParserObjects)
+        m_globalData->newParserObjects = new HashSet<ParserRefCounted*>;
+    m_globalData->newParserObjects->add(this);
+    ASSERT(m_globalData->newParserObjects->contains(this));
 }
 
 ParserRefCounted::~ParserRefCounted()
@@ -128,66 +128,66 @@ ParserRefCounted::~ParserRefCounted()
 void ParserRefCounted::ref()
 {
     // bumping from 0 to 1 is just removing from the new nodes set
-    if (m_globalData->newTrackedObjects) {
-        HashSet<ParserRefCounted*>::iterator it = m_globalData->newTrackedObjects->find(this);
-        if (it != m_globalData->newTrackedObjects->end()) {
-            m_globalData->newTrackedObjects->remove(it);
-            ASSERT(!m_globalData->trackedObjectExtraRefCounts || !m_globalData->trackedObjectExtraRefCounts->contains(this));
+    if (m_globalData->newParserObjects) {
+        HashSet<ParserRefCounted*>::iterator it = m_globalData->newParserObjects->find(this);
+        if (it != m_globalData->newParserObjects->end()) {
+            m_globalData->newParserObjects->remove(it);
+            ASSERT(!m_globalData->parserObjectExtraRefCounts || !m_globalData->parserObjectExtraRefCounts->contains(this));
             return;
         }
     }
 
-    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
 
-    if (!m_globalData->trackedObjectExtraRefCounts)
-        m_globalData->trackedObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
-    m_globalData->trackedObjectExtraRefCounts->add(this);
+    if (!m_globalData->parserObjectExtraRefCounts)
+        m_globalData->parserObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
+    m_globalData->parserObjectExtraRefCounts->add(this);
 }
 
 void ParserRefCounted::deref()
 {
-    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
 
-    if (!m_globalData->trackedObjectExtraRefCounts) {
+    if (!m_globalData->parserObjectExtraRefCounts) {
         delete this;
         return;
     }
 
-    HashCountedSet<ParserRefCounted*>::iterator it = m_globalData->trackedObjectExtraRefCounts->find(this);
-    if (it == m_globalData->trackedObjectExtraRefCounts->end())
+    HashCountedSet<ParserRefCounted*>::iterator it = m_globalData->parserObjectExtraRefCounts->find(this);
+    if (it == m_globalData->parserObjectExtraRefCounts->end())
         delete this;
     else
-        m_globalData->trackedObjectExtraRefCounts->remove(it);
+        m_globalData->parserObjectExtraRefCounts->remove(it);
 }
 
 bool ParserRefCounted::hasOneRef()
 {
-    if (m_globalData->newTrackedObjects && m_globalData->newTrackedObjects->contains(this)) {
-        ASSERT(!m_globalData->trackedObjectExtraRefCounts || !m_globalData->trackedObjectExtraRefCounts->contains(this));
+    if (m_globalData->newParserObjects && m_globalData->newParserObjects->contains(this)) {
+        ASSERT(!m_globalData->parserObjectExtraRefCounts || !m_globalData->parserObjectExtraRefCounts->contains(this));
         return false;
     }
 
-    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newParserObjects || !m_globalData->newParserObjects->contains(this));
 
-    if (!m_globalData->trackedObjectExtraRefCounts)
+    if (!m_globalData->parserObjectExtraRefCounts)
         return true;
 
-    return !m_globalData->trackedObjectExtraRefCounts->contains(this);
+    return !m_globalData->parserObjectExtraRefCounts->contains(this);
 }
 
 void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
 {
-    if (!globalData->newTrackedObjects)
+    if (!globalData->newParserObjects)
         return;
 
 #ifndef NDEBUG
-    HashSet<ParserRefCounted*>::iterator end = globalData->newTrackedObjects->end();
-    for (HashSet<ParserRefCounted*>::iterator it = globalData->newTrackedObjects->begin(); it != end; ++it)
-        ASSERT(!globalData->trackedObjectExtraRefCounts || !globalData->trackedObjectExtraRefCounts->contains(*it));
+    HashSet<ParserRefCounted*>::iterator end = globalData->newParserObjects->end();
+    for (HashSet<ParserRefCounted*>::iterator it = globalData->newParserObjects->begin(); it != end; ++it)
+        ASSERT(!globalData->parserObjectExtraRefCounts || !globalData->parserObjectExtraRefCounts->contains(*it));
 #endif
-    deleteAllValues(*globalData->newTrackedObjects);
-    delete globalData->newTrackedObjects;
-    globalData->newTrackedObjects = 0;
+    deleteAllValues(*globalData->newParserObjects);
+    delete globalData->newParserObjects;
+    globalData->newParserObjects = 0;
 }
 
 Node::Node(JSGlobalData* globalData)
