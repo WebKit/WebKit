@@ -34,19 +34,19 @@ class Document;
 class File;
 class TextResourceDecoder;
 
-// these exact numeric values are important because JS expects them
-enum XMLHttpRequestState {
-    UNSENT = 0,             // The object has been constructed.
-    OPENED = 1,             // The open() method has been successfully invoked. During this state request headers can be set using setRequestHeader() and the request can be made using the send() method.
-    HEADERS_RECEIVED = 2,   // All HTTP headers have been received. Several response members of the object are now available.
-    LOADING = 3,            // The response entity body is being received.
-    DONE = 4                // The data transfer has been completed or something went wrong during the transfer (such as infinite redirects)..
-};
-
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
 public:
-    static PassRefPtr<XMLHttpRequest> create(Document *document) { return adoptRef(new XMLHttpRequest(document)); }
+    static PassRefPtr<XMLHttpRequest> create(Document* document) { return adoptRef(new XMLHttpRequest(document)); }
     ~XMLHttpRequest();
+
+    // These exact numeric values are important because JS expects them.
+    enum State {
+        UNSENT = 0,
+        OPENED = 1,
+        HEADERS_RECEIVED = 2,
+        LOADING = 3,
+        DONE = 4
+    };
 
     virtual XMLHttpRequest* toXMLHttpRequest() { return this; }
 
@@ -55,7 +55,7 @@ public:
 
     String statusText(ExceptionCode&) const;
     int status(ExceptionCode&) const;
-    XMLHttpRequestState readyState() const;
+    State readyState() const;
     void open(const String& method, const KURL&, bool async, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, ExceptionCode&);
     void open(const String& method, const KURL&, bool async, const String& user, const String& password, ExceptionCode&);
@@ -130,7 +130,7 @@ private:
     String getRequestHeader(const String& name) const;
     void setRequestHeaderInternal(const String& name, const String& value);
 
-    void changeState(XMLHttpRequestState newState);
+    void changeState(State newState);
     void callReadyStateChangeListener();
     void dropProtection();
     void internalAbort();
@@ -179,7 +179,7 @@ private:
     bool m_async;
 
     RefPtr<SubresourceLoader> m_loader;
-    XMLHttpRequestState m_state;
+    State m_state;
 
     ResourceResponse m_response;
     String m_responseEncoding;

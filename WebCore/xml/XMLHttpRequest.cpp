@@ -164,7 +164,7 @@ XMLHttpRequest::~XMLHttpRequest()
         removeFromRequestsByDocument(m_doc, this);
 }
 
-XMLHttpRequestState XMLHttpRequest::readyState() const
+XMLHttpRequest::State XMLHttpRequest::readyState() const
 {
     return m_state;
 }
@@ -251,7 +251,7 @@ bool XMLHttpRequest::dispatchEvent(PassRefPtr<Event> evt, ExceptionCode& ec, boo
     return !evt->defaultPrevented();
 }
 
-void XMLHttpRequest::changeState(XMLHttpRequestState newState)
+void XMLHttpRequest::changeState(State newState)
 {
     if (m_state != newState) {
         m_state = newState;
@@ -273,7 +273,7 @@ void XMLHttpRequest::callReadyStateChangeListener()
 void XMLHttpRequest::open(const String& method, const KURL& url, bool async, ExceptionCode& ec)
 {
     internalAbort();
-    XMLHttpRequestState previousState = m_state;
+    State previousState = m_state;
     m_state = UNSENT;
     m_error = false;
 

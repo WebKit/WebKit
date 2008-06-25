@@ -1,3 +1,17 @@
+2008-06-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Brady Eidson.
+
+        Move XMLHttpRequestState enum into XMLHttpRequest and rename to State.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::readyState):
+        (WebCore::XMLHttpRequest::changeState):
+        (WebCore::XMLHttpRequest::open):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::create):
+        (WebCore::XMLHttpRequest::):
+
 2008-06-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.
