@@ -1,3 +1,11 @@
+2008-06-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - add another test using remote fonts to the Tiger skipped list
+
+        * platform/mac-tiger/Skipped: Added fast/css/font-weight-1.html.
+
 2008-06-24  Mark Rowe  <mrowe@apple.com>
 
         Exclude the newly-added accessibilityController from the dumped window properties.

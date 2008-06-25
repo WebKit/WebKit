@@ -10,6 +10,7 @@ http/tests/loading/text-content-type-with-binary-extension.html
 # Tets using font-face are failing intermittently on Tiger build bots.
 fast/css/font-face-remote.html
 fast/css/font-face-unicode-range.html
+fast/css/font-weight-1.html
 http/tests/misc/acid3.html
 
 # <rdar://problem/5960969> LayoutTests that send an OPTIONS request don't work on Tiger due to Apache 1.3
