@@ -1,5 +1,16 @@
 2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Make the JavaScript shell collect the heap from main() instead of
+        jscmain() to suppress leak messages in debug builds.
+
+        * kjs/Shell.cpp:
+        (main):
+        (jscmain):
+
+2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej.
 
         Make the conversion of the pair (less, jtrue) to jless use register

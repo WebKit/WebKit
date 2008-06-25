@@ -297,6 +297,10 @@ int main(int argc, char** argv)
     int res = 0;
     TRY
         res = jscmain(argc, argv);
+#ifndef NDEBUG
+        JSLock lock;
+        JSGlobalData::threadInstance().heap->collect();
+#endif
     EXCEPT(res = 3)
     return res;
 }
@@ -450,10 +454,6 @@ int jscmain(int argc, char** argv)
     bool success = runWithScripts(globalObject, options.fileNames, options.prettyPrint, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);
-
-#ifndef NDEBUG
-    globalObject->globalData()->heap->collect();
-#endif
 
     return success ? 0 : 3;
 }
