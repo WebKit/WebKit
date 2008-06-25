@@ -1,0 +1,2 @@
+The title of this document is:
+<!-- </title> --> This text should be part of the title.

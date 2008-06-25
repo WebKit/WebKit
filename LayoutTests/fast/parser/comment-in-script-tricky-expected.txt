@@ -1,0 +1,1 @@
+This should invoke document.write.

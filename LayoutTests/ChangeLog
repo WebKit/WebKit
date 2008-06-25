@@ -1,3 +1,25 @@
+2008-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19597
+
+        Test that we correctly parse comments containing end tags in CDATA and
+        RCDATA contexts.
+
+        * fast/parser/comment-in-script-tricky-expected.txt: Added.
+        * fast/parser/comment-in-script-tricky.html: Added.
+        * fast/parser/comment-in-style.html: Added.
+        * fast/parser/comment-in-textarea.html: Added.
+        * fast/parser/comment-in-title-expected.txt: Added.
+        * fast/parser/comment-in-title.html: Added.
+        * platform/mac/fast/parser/comment-in-style-expected.checksum: Added.
+        * platform/mac/fast/parser/comment-in-style-expected.png: Added.
+        * platform/mac/fast/parser/comment-in-style-expected.txt: Added.
+        * platform/mac/fast/parser/comment-in-textarea-expected.checksum: Added.
+        * platform/mac/fast/parser/comment-in-textarea-expected.png: Added.
+        * platform/mac/fast/parser/comment-in-textarea-expected.txt: Added.
+
 2008-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

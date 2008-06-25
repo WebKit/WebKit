@@ -1,3 +1,20 @@
+2008-06-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=19597>
+
+        Correctly parse <!-- </textarea> --> inside a <textarea>, matching
+        Internet Explorer, Firefox, Opera, and HTML 5.
+
+        Tests: fast/parser/comment-in-script-tricky.html
+               fast/parser/comment-in-style.html
+               fast/parser/comment-in-textarea.html
+               fast/parser/comment-in-title.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+
 2008-06-24  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.
