@@ -97,7 +97,7 @@ namespace KJS {
     
     Identifier& operator[](const Identifier& index);
     bool isMapped(const Identifier& index) const;
-    void unMap(const Identifier& index);
+    void unMap(ExecState* exec, const Identifier& index);
     
   private:
     unsigned size;

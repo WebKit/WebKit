@@ -77,6 +77,8 @@ JSGlobalData::JSGlobalData()
 #endif
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
+    , newTrackedObjects(0)
+    , trackedObjectExtraRefCounts(0)
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)

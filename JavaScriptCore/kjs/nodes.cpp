@@ -106,18 +106,16 @@ static ParserRefCountedCounter parserRefCountedCounter;
 
 #endif
 
-static HashSet<ParserRefCounted*>* newTrackedObjects;
-static HashCountedSet<ParserRefCounted*>* trackedObjectExtraRefCounts;
-
-ParserRefCounted::ParserRefCounted()
+ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
+    : m_globalData(globalData)
 {
 #ifndef NDEBUG
     ParserRefCountedCounter::increment();
 #endif
-    if (!newTrackedObjects)
-        newTrackedObjects = new HashSet<ParserRefCounted*>;
-    newTrackedObjects->add(this);
-    ASSERT(newTrackedObjects->contains(this));
+    if (!m_globalData->newTrackedObjects)
+        m_globalData->newTrackedObjects = new HashSet<ParserRefCounted*>;
+    m_globalData->newTrackedObjects->add(this);
+    ASSERT(m_globalData->newTrackedObjects->contains(this));
 }
 
 ParserRefCounted::~ParserRefCounted()
@@ -130,78 +128,80 @@ ParserRefCounted::~ParserRefCounted()
 void ParserRefCounted::ref()
 {
     // bumping from 0 to 1 is just removing from the new nodes set
-    if (newTrackedObjects) {
-        HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->find(this);
-        if (it != newTrackedObjects->end()) {
-            newTrackedObjects->remove(it);
-            ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
+    if (m_globalData->newTrackedObjects) {
+        HashSet<ParserRefCounted*>::iterator it = m_globalData->newTrackedObjects->find(this);
+        if (it != m_globalData->newTrackedObjects->end()) {
+            m_globalData->newTrackedObjects->remove(it);
+            ASSERT(!m_globalData->trackedObjectExtraRefCounts || !m_globalData->trackedObjectExtraRefCounts->contains(this));
             return;
         }
     }
 
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
 
-    if (!trackedObjectExtraRefCounts)
-        trackedObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
-    trackedObjectExtraRefCounts->add(this);
+    if (!m_globalData->trackedObjectExtraRefCounts)
+        m_globalData->trackedObjectExtraRefCounts = new HashCountedSet<ParserRefCounted*>;
+    m_globalData->trackedObjectExtraRefCounts->add(this);
 }
 
 void ParserRefCounted::deref()
 {
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
 
-    if (!trackedObjectExtraRefCounts) {
+    if (!m_globalData->trackedObjectExtraRefCounts) {
         delete this;
         return;
     }
 
-    HashCountedSet<ParserRefCounted*>::iterator it = trackedObjectExtraRefCounts->find(this);
-    if (it == trackedObjectExtraRefCounts->end())
+    HashCountedSet<ParserRefCounted*>::iterator it = m_globalData->trackedObjectExtraRefCounts->find(this);
+    if (it == m_globalData->trackedObjectExtraRefCounts->end())
         delete this;
     else
-        trackedObjectExtraRefCounts->remove(it);
+        m_globalData->trackedObjectExtraRefCounts->remove(it);
 }
 
 bool ParserRefCounted::hasOneRef()
 {
-    if (newTrackedObjects && newTrackedObjects->contains(this)) {
-        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(this));
+    if (m_globalData->newTrackedObjects && m_globalData->newTrackedObjects->contains(this)) {
+        ASSERT(!m_globalData->trackedObjectExtraRefCounts || !m_globalData->trackedObjectExtraRefCounts->contains(this));
         return false;
     }
 
-    ASSERT(!newTrackedObjects || !newTrackedObjects->contains(this));
+    ASSERT(!m_globalData->newTrackedObjects || !m_globalData->newTrackedObjects->contains(this));
 
-    if (!trackedObjectExtraRefCounts)
+    if (!m_globalData->trackedObjectExtraRefCounts)
         return true;
 
-    return !trackedObjectExtraRefCounts->contains(this);
+    return !m_globalData->trackedObjectExtraRefCounts->contains(this);
 }
 
-void ParserRefCounted::deleteNewObjects()
+void ParserRefCounted::deleteNewObjects(JSGlobalData* globalData)
 {
-    if (!newTrackedObjects)
+    if (!globalData->newTrackedObjects)
         return;
 
 #ifndef NDEBUG
-    HashSet<ParserRefCounted*>::iterator end = newTrackedObjects->end();
-    for (HashSet<ParserRefCounted*>::iterator it = newTrackedObjects->begin(); it != end; ++it)
-        ASSERT(!trackedObjectExtraRefCounts || !trackedObjectExtraRefCounts->contains(*it));
+    HashSet<ParserRefCounted*>::iterator end = globalData->newTrackedObjects->end();
+    for (HashSet<ParserRefCounted*>::iterator it = globalData->newTrackedObjects->begin(); it != end; ++it)
+        ASSERT(!globalData->trackedObjectExtraRefCounts || !globalData->trackedObjectExtraRefCounts->contains(*it));
 #endif
-    deleteAllValues(*newTrackedObjects);
-    delete newTrackedObjects;
-    newTrackedObjects = 0;
+    deleteAllValues(*globalData->newTrackedObjects);
+    delete globalData->newTrackedObjects;
+    globalData->newTrackedObjects = 0;
 }
 
-Node::Node()
-    : m_expectedReturnType(ObjectType)
+Node::Node(JSGlobalData* globalData)
+    : ParserRefCounted(globalData)
+    , m_expectedReturnType(ObjectType)
 {
-    m_line = JSGlobalData::threadInstance().lexer->lineNo();
+    m_line = globalData->lexer->lineNo();
 }
 
-Node::Node(JSType expectedReturn)
-    : m_expectedReturnType(expectedReturn)
+Node::Node(JSGlobalData* globalData, JSType expectedReturn)
+    : ParserRefCounted(globalData)
+    , m_expectedReturnType(expectedReturn)
 {
-    m_line = JSGlobalData::threadInstance().lexer->lineNo();
+    m_line = globalData->lexer->lineNo();
 }
 
 static void substitute(UString& string, const UString& substring) KJS_FAST_CALL;
@@ -247,8 +247,9 @@ RegisterID* Node::emitThrowError(CodeGenerator& generator, ErrorType e, const ch
     
 // ------------------------------ StatementNode --------------------------------
 
-StatementNode::StatementNode()
-    : m_lastLine(-1)
+StatementNode::StatementNode(JSGlobalData* globalData)
+    : Node(globalData)
+    , m_lastLine(-1)
 {
     m_line = -1;
 }
@@ -271,8 +272,9 @@ void SourceElements::append(PassRefPtr<StatementNode> statement)
 
 // ------------------------------ BreakpointCheckStatement --------------------------------
 
-BreakpointCheckStatement::BreakpointCheckStatement(PassRefPtr<StatementNode> statement)
-    : m_statement(statement)
+BreakpointCheckStatement::BreakpointCheckStatement(JSGlobalData* globalData, PassRefPtr<StatementNode> statement)
+    : StatementNode(globalData)
+    , m_statement(statement)
 {
     ASSERT(m_statement);
 }
@@ -1022,8 +1024,9 @@ RegisterID* CommaNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ConstDeclNode ----------------------------------
 
-ConstDeclNode::ConstDeclNode(const Identifier& ident, ExpressionNode* init)
-    : m_ident(ident)
+ConstDeclNode::ConstDeclNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* init)
+    : ExpressionNode(globalData)
+    , m_ident(ident)
     , m_init(init)
 {
 }
@@ -1106,7 +1109,8 @@ static inline Node* statementListInitializeVariableAccessStack(StatementVector& 
 
 // ------------------------------ BlockNode ------------------------------------
 
-BlockNode::BlockNode(SourceElements* children)
+BlockNode::BlockNode(JSGlobalData* globalData, SourceElements* children)
+    : StatementNode(globalData)
 {
     if (children)
         children->releaseContentsIntoVector(m_children);
@@ -1264,8 +1268,9 @@ RegisterID* ForNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ForInNode ------------------------------------
 
-ForInNode::ForInNode(ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
-    : m_init(0L)
+ForInNode::ForInNode(JSGlobalData* globalData, ExpressionNode* l, ExpressionNode* expr, StatementNode* statement)
+    : StatementNode(globalData)
+    , m_init(0L)
     , m_lexpr(l)
     , m_expr(expr)
     , m_statement(statement)
@@ -1273,15 +1278,16 @@ ForInNode::ForInNode(ExpressionNode* l, ExpressionNode* expr, StatementNode* sta
 {
 }
 
-ForInNode::ForInNode(const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement)
-    : m_ident(ident)
-    , m_lexpr(new ResolveNode(ident))
+ForInNode::ForInNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* in, ExpressionNode* expr, StatementNode* statement)
+    : StatementNode(globalData)
+    , m_ident(ident)
+    , m_lexpr(new ResolveNode(globalData, ident))
     , m_expr(expr)
     , m_statement(statement)
     , m_identIsVarDecl(true)
 {
     if (in)
-        m_init = new AssignResolveNode(ident, in, true);
+        m_init = new AssignResolveNode(globalData,ident, in, true);
     // for( var foo = bar in baz )
 }
 
@@ -1565,10 +1571,10 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-ScopeNode::ScopeNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
-    : BlockNode(children)
-    , m_sourceURL(JSGlobalData::threadInstance().parser->sourceURL())
-    , m_sourceId(JSGlobalData::threadInstance().parser->sourceId())
+ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+    : BlockNode(globalData, children)
+    , m_sourceURL(globalData->parser->sourceURL())
+    , m_sourceId(globalData->parser->sourceId())
     , m_usesEval(usesEval)
     , m_needsClosure(needsClosure)
 {
@@ -1580,20 +1586,20 @@ ScopeNode::ScopeNode(SourceElements* children, VarStack* varStack, FunctionStack
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
-    : ScopeNode(children, varStack, funcStack, usesEval, needsClosure)
+ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
 {
 }
 
-ProgramNode* ProgramNode::create(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
 {
-    return new ProgramNode(children, varStack, funcStack, usesEval, needsClosure);
+    return new ProgramNode(globalData, children, varStack, funcStack, usesEval, needsClosure);
 }
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
-    : ScopeNode(children, varStack, funcStack, usesEval, needsClosure)
+EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
 {
 }
 
@@ -1623,15 +1629,15 @@ void EvalNode::generateCode(ScopeChainNode* sc)
     generator.generate();
 }
 
-EvalNode* EvalNode::create(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
 {
-    return new EvalNode(children, varStack, funcStack, usesEval, needsClosure);
+    return new EvalNode(globalData, children, varStack, funcStack, usesEval, needsClosure);
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
-    : ScopeNode(children, varStack, funcStack, usesEval, needsClosure)
+FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
 {
 }
 
@@ -1641,9 +1647,9 @@ void FunctionBodyNode::mark()
         m_code->mark();
 }
 
-FunctionBodyNode* FunctionBodyNode::create(SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
 {
-    return new FunctionBodyNode(children, varStack, funcStack, usesEval, needsClosure);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure);
 }
 
 void FunctionBodyNode::generateCode(ScopeChainNode* sc)

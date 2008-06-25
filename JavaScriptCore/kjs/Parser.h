@@ -39,6 +39,11 @@ namespace KJS {
     class UString;
 
     template <typename T> struct ParserRefCountedData : ParserRefCounted {
+        ParserRefCountedData(JSGlobalData* globalData)
+            : ParserRefCounted(globalData)
+        {
+        }
+
         T data;
     };
 
@@ -83,7 +88,8 @@ namespace KJS {
             m_sourceURL = UString();
             return 0;
         }
-        RefPtr<ParsedNode> node = ParsedNode::create(m_sourceElements.release().get(),
+        RefPtr<ParsedNode> node = ParsedNode::create(&exec->globalData(),
+                                                     m_sourceElements.release().get(),
                                                      m_varDeclarations ? &m_varDeclarations->data : 0, 
                                                      m_funcDeclarations ? &m_funcDeclarations->data : 0,
                                                      m_usesEval,

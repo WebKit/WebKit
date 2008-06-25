@@ -163,7 +163,7 @@ const Identifier& JSFunction::getParameterName(int index)
     Vector<Identifier>& parameters = body->parameters();
 
     if (static_cast<size_t>(index) >= body->parameters().size())
-        return JSGlobalData::threadInstance().propertyNames->nullIdentifier;
+        return _scope.globalObject()->globalData()->propertyNames->nullIdentifier;
   
     const Identifier& name = parameters[index];
 
@@ -171,7 +171,7 @@ const Identifier& JSFunction::getParameterName(int index)
     size_t size = parameters.size();
     for (size_t i = index + 1; i < size; ++i)
         if (parameters[i] == name)
-            return JSGlobalData::threadInstance().propertyNames->nullIdentifier;
+            return _scope.globalObject()->globalData()->propertyNames->nullIdentifier;
 
     return name;
 }
@@ -251,14 +251,14 @@ bool IndexToNameMap::isMapped(const Identifier& index) const
   return true;
 }
 
-void IndexToNameMap::unMap(const Identifier& index)
+void IndexToNameMap::unMap(ExecState* exec, const Identifier& index)
 {
   bool indexIsNumber;
   unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
 
   ASSERT(indexIsNumber && indexAsNumber < size);
   
-  _map[indexAsNumber] = JSGlobalData::threadInstance().propertyNames->nullIdentifier;
+  _map[indexAsNumber] = exec->propertyNames().nullIdentifier;
 }
 
 Identifier& IndexToNameMap::operator[](const Identifier& index)
@@ -327,7 +327,7 @@ void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue* va
 bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName) 
 {
   if (indexToNameMap.isMapped(propertyName)) {
-    indexToNameMap.unMap(propertyName);
+    indexToNameMap.unMap(exec, propertyName);
     return true;
   } else {
     return JSObject::deleteProperty(exec, propertyName);

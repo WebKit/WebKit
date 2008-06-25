@@ -119,17 +119,19 @@ namespace KJS {
 
     class ParserRefCounted : Noncopyable {
     protected:
-        ParserRefCounted() KJS_FAST_CALL;
+        ParserRefCounted(JSGlobalData*) KJS_FAST_CALL;
         ParserRefCounted(PlacementNewAdoptType) KJS_FAST_CALL
         {
         }
+
+        JSGlobalData* m_globalData;
 
     public:
         void ref() KJS_FAST_CALL;
         void deref() KJS_FAST_CALL;
         bool hasOneRef() KJS_FAST_CALL;
 
-        static void deleteNewObjects() KJS_FAST_CALL;
+        static void deleteNewObjects(JSGlobalData*) KJS_FAST_CALL;
 
         virtual ~ParserRefCounted();
     };
@@ -140,7 +142,7 @@ namespace KJS {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        Node() KJS_FAST_CALL;
+        Node(JSGlobalData*) KJS_FAST_CALL;
         Node(PlacementNewAdoptType placementAdopt) KJS_FAST_CALL
             : ParserRefCounted(placementAdopt)
         {
@@ -186,7 +188,7 @@ namespace KJS {
         virtual bool needsParensIfLeftmost() const { return false; }
         
     protected:
-        Node(JSType) KJS_FAST_CALL; // used by ExpressionNode
+        Node(JSGlobalData*, JSType) KJS_FAST_CALL; // used by ExpressionNode
 
         RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg);
         RegisterID* emitThrowError(CodeGenerator&, ErrorType, const char* msg, const Identifier&);
@@ -197,9 +199,9 @@ namespace KJS {
 
     class ExpressionNode : public Node {
     public:
-        ExpressionNode() KJS_FAST_CALL : Node() {}
-        ExpressionNode(JSType expectedReturn) KJS_FAST_CALL
-            : Node(expectedReturn)
+        ExpressionNode(JSGlobalData* globalData) KJS_FAST_CALL : Node(globalData) {}
+        ExpressionNode(JSGlobalData* globalData, JSType expectedReturn) KJS_FAST_CALL
+            : Node(globalData, expectedReturn)
         {
         }
 
@@ -224,7 +226,7 @@ namespace KJS {
 
     class StatementNode : public Node {
     public:
-        StatementNode() KJS_FAST_CALL;
+        StatementNode(JSGlobalData*) KJS_FAST_CALL;
         void setLoc(int line0, int line1) KJS_FAST_CALL;
         int firstLine() const KJS_FAST_CALL { return lineNo(); }
         int lastLine() const KJS_FAST_CALL { return m_lastLine; }
@@ -242,8 +244,8 @@ namespace KJS {
 
     class NullNode : public ExpressionNode {
     public:
-        NullNode() KJS_FAST_CALL
-            : ExpressionNode(NullType)
+        NullNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : ExpressionNode(globalData, NullType)
         {
         }
 
@@ -255,8 +257,8 @@ namespace KJS {
 
     class BooleanNode : public ExpressionNode {
     public:
-        BooleanNode(bool value) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
+        BooleanNode(JSGlobalData* globalData, bool value) KJS_FAST_CALL
+            : ExpressionNode(globalData, BooleanType)
             , m_value(value)
         {
         }
@@ -273,8 +275,8 @@ namespace KJS {
 
     class NumberNode : public ExpressionNode {
     public:
-        NumberNode(double v) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
+        NumberNode(JSGlobalData* globalData, double v) KJS_FAST_CALL
+            : ExpressionNode(globalData, NumberType)
             , m_double(v)
         {
         }
@@ -295,8 +297,8 @@ namespace KJS {
 
     class ImmediateNumberNode : public NumberNode {
     public:
-        ImmediateNumberNode(JSValue* v, double d) KJS_FAST_CALL
-            : NumberNode(d)
+        ImmediateNumberNode(JSGlobalData* globalData, JSValue* v, double d) KJS_FAST_CALL
+            : NumberNode(globalData, d)
             , m_value(v)
         {
             ASSERT(v == JSImmediate::from(d));
@@ -310,8 +312,8 @@ namespace KJS {
 
     class StringNode : public ExpressionNode {
     public:
-        StringNode(const UString* v) KJS_FAST_CALL
-            : ExpressionNode(StringType)
+        StringNode(JSGlobalData* globalData, const UString* v) KJS_FAST_CALL
+            : ExpressionNode(globalData, StringType)
             , m_value(*v)
         {
         }
@@ -328,8 +330,9 @@ namespace KJS {
 
     class RegExpNode : public ExpressionNode {
     public:
-        RegExpNode(const UString& pattern, const UString& flags) KJS_FAST_CALL
-            : m_regExp(RegExp::create(pattern, flags))
+        RegExpNode(JSGlobalData* globalData, const UString& pattern, const UString& flags) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_regExp(RegExp::create(pattern, flags))
         {
         }
 
@@ -344,7 +347,8 @@ namespace KJS {
 
     class ThisNode : public ExpressionNode {
     public:
-        ThisNode() KJS_FAST_CALL
+        ThisNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : ExpressionNode(globalData)
         {
         }
 
@@ -356,8 +360,9 @@ namespace KJS {
 
     class ResolveNode : public ExpressionNode {
     public:
-        ResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        ResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
         {
         }
 
@@ -386,14 +391,16 @@ namespace KJS {
 
     class ElementNode : public Node {
     public:
-        ElementNode(int elision, ExpressionNode* node) KJS_FAST_CALL
-            : m_elision(elision)
+        ElementNode(JSGlobalData* globalData, int elision, ExpressionNode* node) KJS_FAST_CALL
+            : Node(globalData)
+            , m_elision(elision)
             , m_node(node)
         {
         }
 
-        ElementNode(ElementNode* l, int elision, ExpressionNode* node) KJS_FAST_CALL
-            : m_elision(elision)
+        ElementNode(JSGlobalData* globalData, ElementNode* l, int elision, ExpressionNode* node) KJS_FAST_CALL
+            : Node(globalData)
+            , m_elision(elision)
             , m_node(node)
         {
             l->m_next = this;
@@ -413,21 +420,24 @@ namespace KJS {
 
     class ArrayNode : public ExpressionNode {
     public:
-        ArrayNode(int elision) KJS_FAST_CALL
-            : m_elision(elision)
+        ArrayNode(JSGlobalData* globalData, int elision) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_elision(elision)
             , m_optional(true)
         {
         }
 
-        ArrayNode(ElementNode* element) KJS_FAST_CALL
-            : m_element(element)
+        ArrayNode(JSGlobalData* globalData, ElementNode* element) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_element(element)
             , m_elision(0)
             , m_optional(false)
         {
         }
 
-        ArrayNode(int elision, ElementNode* element) KJS_FAST_CALL
-            : m_element(element)
+        ArrayNode(JSGlobalData* globalData, int elision, ElementNode* element) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_element(element)
             , m_elision(elision)
             , m_optional(true)
         {
@@ -448,8 +458,9 @@ namespace KJS {
     public:
         enum Type { Constant, Getter, Setter };
 
-        PropertyNode(const Identifier& name, ExpressionNode* assign, Type type) KJS_FAST_CALL
-            : m_name(name)
+        PropertyNode(JSGlobalData* globalData, const Identifier& name, ExpressionNode* assign, Type type) KJS_FAST_CALL
+            : Node(globalData)
+            , m_name(name)
             , m_assign(assign)
             , m_type(type)
         {
@@ -469,13 +480,15 @@ namespace KJS {
 
     class PropertyListNode : public Node {
     public:
-        PropertyListNode(PropertyNode* node) KJS_FAST_CALL
-            : m_node(node)
+        PropertyListNode(JSGlobalData* globalData, PropertyNode* node) KJS_FAST_CALL
+            : Node(globalData)
+            , m_node(node)
         {
         }
 
-        PropertyListNode(PropertyNode* node, PropertyListNode* list) KJS_FAST_CALL
-            : m_node(node)
+        PropertyListNode(JSGlobalData* globalData, PropertyNode* node, PropertyListNode* list) KJS_FAST_CALL
+            : Node(globalData)
+            , m_node(node)
         {
             list->m_next = this;
         }
@@ -494,12 +507,14 @@ namespace KJS {
 
     class ObjectLiteralNode : public ExpressionNode {
     public:
-        ObjectLiteralNode() KJS_FAST_CALL
+        ObjectLiteralNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : ExpressionNode(globalData)
         {
         }
 
-        ObjectLiteralNode(PropertyListNode* list) KJS_FAST_CALL
-            : m_list(list)
+        ObjectLiteralNode(JSGlobalData* globalData, PropertyListNode* list) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_list(list)
         {
         }
 
@@ -514,8 +529,9 @@ namespace KJS {
 
     class BracketAccessorNode : public ExpressionNode {
     public:
-        BracketAccessorNode(ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments) KJS_FAST_CALL
-            : m_base(base)
+        BracketAccessorNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, bool subscriptHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
             , m_subscriptHasAssignments(subscriptHasAssignments)
         {
@@ -539,8 +555,9 @@ namespace KJS {
 
     class DotAccessorNode : public ExpressionNode {
     public:
-        DotAccessorNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : m_base(base)
+        DotAccessorNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
         {
         }
@@ -561,13 +578,15 @@ namespace KJS {
 
     class ArgumentListNode : public Node {
     public:
-        ArgumentListNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        ArgumentListNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : Node(globalData)
+            , m_expr(expr)
         {
         }
 
-        ArgumentListNode(ArgumentListNode* listNode, ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        ArgumentListNode(JSGlobalData* globalData, ArgumentListNode* listNode, ExpressionNode* expr) KJS_FAST_CALL
+            : Node(globalData)
+            , m_expr(expr)
         {
             listNode->m_next = this;
         }
@@ -584,12 +603,14 @@ namespace KJS {
 
     class ArgumentsNode : public Node {
     public:
-        ArgumentsNode() KJS_FAST_CALL
+        ArgumentsNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : Node(globalData)
         {
         }
 
-        ArgumentsNode(ArgumentListNode* listNode) KJS_FAST_CALL
-            : m_listNode(listNode)
+        ArgumentsNode(JSGlobalData* globalData, ArgumentListNode* listNode) KJS_FAST_CALL
+            : Node(globalData)
+            , m_listNode(listNode)
         {
         }
 
@@ -601,13 +622,15 @@ namespace KJS {
 
     class NewExprNode : public ExpressionNode {
     public:
-        NewExprNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        NewExprNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
         {
         }
 
-        NewExprNode(ExpressionNode* expr, ArgumentsNode* args) KJS_FAST_CALL
-            : m_expr(expr)
+        NewExprNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
             , m_args(args)
         {
         }
@@ -624,8 +647,9 @@ namespace KJS {
 
     class EvalFunctionCallNode : public ExpressionNode {
     public:
-        EvalFunctionCallNode(ArgumentsNode* args) KJS_FAST_CALL
-            : m_args(args)
+        EvalFunctionCallNode(JSGlobalData* globalData, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_args(args)
         {
         }
 
@@ -639,8 +663,9 @@ namespace KJS {
 
     class FunctionCallValueNode : public ExpressionNode {
     public:
-        FunctionCallValueNode(ExpressionNode* expr, ArgumentsNode* args) KJS_FAST_CALL
-            : m_expr(expr)
+        FunctionCallValueNode(JSGlobalData* globalData, ExpressionNode* expr, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
             , m_args(args)
         {
         }
@@ -656,8 +681,9 @@ namespace KJS {
 
     class FunctionCallResolveNode : public ExpressionNode {
     public:
-        FunctionCallResolveNode(const Identifier& ident, ArgumentsNode* args) KJS_FAST_CALL
-            : m_ident(ident)
+        FunctionCallResolveNode(JSGlobalData* globalData, const Identifier& ident, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
             , m_args(args)
         {
         }
@@ -683,8 +709,9 @@ namespace KJS {
     
     class FunctionCallBracketNode : public ExpressionNode {
     public:
-        FunctionCallBracketNode(ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args) KJS_FAST_CALL
-            : m_base(base)
+        FunctionCallBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
             , m_args(args)
         {
@@ -702,8 +729,9 @@ namespace KJS {
 
     class FunctionCallDotNode : public ExpressionNode {
     public:
-        FunctionCallDotNode(ExpressionNode* base, const Identifier& ident, ArgumentsNode* args) KJS_FAST_CALL
-            : m_base(base)
+        FunctionCallDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ArgumentsNode* args) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
             , m_args(args)
         {
@@ -721,8 +749,8 @@ namespace KJS {
 
     class PrePostResolveNode : public ExpressionNode {
     public:
-        PrePostResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : ExpressionNode(NumberType)
+        PrePostResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData, NumberType)
             , m_ident(ident)
         {
         }
@@ -740,8 +768,8 @@ namespace KJS {
 
     class PostIncResolveNode : public PrePostResolveNode {
     public:
-        PostIncResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : PrePostResolveNode(ident)
+        PostIncResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : PrePostResolveNode(globalData, ident)
         {
         }
 
@@ -757,8 +785,8 @@ namespace KJS {
 
     class PostDecResolveNode : public PrePostResolveNode {
     public:
-        PostDecResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : PrePostResolveNode(ident)
+        PostDecResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : PrePostResolveNode(globalData, ident)
         {
         }
 
@@ -775,8 +803,9 @@ namespace KJS {
 
     class PostfixBracketNode : public ExpressionNode {
     public:
-        PostfixBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : m_base(base)
+        PostfixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
         {
         }
@@ -790,8 +819,8 @@ namespace KJS {
 
     class PostIncBracketNode : public PostfixBracketNode {
     public:
-        PostIncBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PostfixBracketNode(base, subscript)
+        PostIncBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : PostfixBracketNode(globalData, base, subscript)
         {
         }
 
@@ -802,8 +831,8 @@ namespace KJS {
 
     class PostDecBracketNode : public PostfixBracketNode {
     public:
-        PostDecBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PostfixBracketNode(base, subscript)
+        PostDecBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : PostfixBracketNode(globalData, base, subscript)
         {
         }
 
@@ -814,8 +843,9 @@ namespace KJS {
 
     class PostfixDotNode : public ExpressionNode {
     public:
-        PostfixDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : m_base(base)
+        PostfixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
         {
         }
@@ -829,8 +859,8 @@ namespace KJS {
 
     class PostIncDotNode : public PostfixDotNode {
     public:
-        PostIncDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PostfixDotNode(base, ident)
+        PostIncDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : PostfixDotNode(globalData, base, ident)
         {
         }
 
@@ -841,8 +871,8 @@ namespace KJS {
 
     class PostDecDotNode : public PostfixDotNode {
     public:
-        PostDecDotNode(ExpressionNode*  base, const Identifier& ident) KJS_FAST_CALL
-            : PostfixDotNode(base, ident)
+        PostDecDotNode(JSGlobalData* globalData, ExpressionNode*  base, const Identifier& ident) KJS_FAST_CALL
+            : PostfixDotNode(globalData, base, ident)
         {
         }
 
@@ -853,8 +883,9 @@ namespace KJS {
 
     class PostfixErrorNode : public ExpressionNode {
     public:
-        PostfixErrorNode(ExpressionNode* expr, Operator oper) KJS_FAST_CALL
-            : m_expr(expr)
+        PostfixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
             , m_operator(oper)
         {
         }
@@ -870,8 +901,9 @@ namespace KJS {
 
     class DeleteResolveNode : public ExpressionNode {
     public:
-        DeleteResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        DeleteResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
         {
         }
 
@@ -892,8 +924,9 @@ namespace KJS {
 
     class DeleteBracketNode : public ExpressionNode {
     public:
-        DeleteBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : m_base(base)
+        DeleteBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
         {
         }
@@ -910,8 +943,9 @@ namespace KJS {
 
     class DeleteDotNode : public ExpressionNode {
     public:
-        DeleteDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : m_base(base)
+        DeleteDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
         {
         }
@@ -928,8 +962,9 @@ namespace KJS {
 
     class DeleteValueNode : public ExpressionNode {
     public:
-        DeleteValueNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        DeleteValueNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
         {
         }
 
@@ -944,8 +979,9 @@ namespace KJS {
 
     class VoidNode : public ExpressionNode {
     public:
-        VoidNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        VoidNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
         {
         }
 
@@ -960,8 +996,8 @@ namespace KJS {
 
     class TypeOfResolveNode : public ExpressionNode {
     public:
-        TypeOfResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : ExpressionNode(StringType)
+        TypeOfResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData, StringType)
             , m_ident(ident)
         {
         }
@@ -987,8 +1023,8 @@ namespace KJS {
 
     class TypeOfValueNode : public ExpressionNode {
     public:
-        TypeOfValueNode(ExpressionNode* expr) KJS_FAST_CALL
-            : ExpressionNode(StringType)
+        TypeOfValueNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : ExpressionNode(globalData, StringType)
             , m_expr(expr)
         {
         }
@@ -1004,8 +1040,8 @@ namespace KJS {
 
     class PreIncResolveNode : public PrePostResolveNode {
     public:
-        PreIncResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : PrePostResolveNode(ident)
+        PreIncResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : PrePostResolveNode(globalData, ident)
         {
         }
 
@@ -1022,8 +1058,8 @@ namespace KJS {
 
     class PreDecResolveNode : public PrePostResolveNode {
     public:
-        PreDecResolveNode(const Identifier& ident) KJS_FAST_CALL
-            : PrePostResolveNode(ident)
+        PreDecResolveNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : PrePostResolveNode(globalData, ident)
         {
         }
 
@@ -1040,8 +1076,9 @@ namespace KJS {
 
     class PrefixBracketNode : public ExpressionNode {
     public:
-        PrefixBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : m_base(base)
+        PrefixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
         {
         }
@@ -1055,8 +1092,8 @@ namespace KJS {
 
     class PreIncBracketNode : public PrefixBracketNode {
     public:
-        PreIncBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PrefixBracketNode(base, subscript)
+        PreIncBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : PrefixBracketNode(globalData, base, subscript)
         {
         }
 
@@ -1067,8 +1104,8 @@ namespace KJS {
 
     class PreDecBracketNode : public PrefixBracketNode {
     public:
-        PreDecBracketNode(ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PrefixBracketNode(base, subscript)
+        PreDecBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+            : PrefixBracketNode(globalData, base, subscript)
         {
         }
 
@@ -1079,8 +1116,9 @@ namespace KJS {
 
     class PrefixDotNode : public ExpressionNode {
     public:
-        PrefixDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : m_base(base)
+        PrefixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
         {
         }
@@ -1094,8 +1132,8 @@ namespace KJS {
 
     class PreIncDotNode : public PrefixDotNode {
     public:
-        PreIncDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PrefixDotNode(base, ident)
+        PreIncDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : PrefixDotNode(globalData, base, ident)
         {
         }
 
@@ -1106,8 +1144,8 @@ namespace KJS {
 
     class PreDecDotNode : public PrefixDotNode {
     public:
-        PreDecDotNode(ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PrefixDotNode(base, ident)
+        PreDecDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+            : PrefixDotNode(globalData, base, ident)
         {
         }
 
@@ -1118,8 +1156,9 @@ namespace KJS {
 
     class PrefixErrorNode : public ExpressionNode {
     public:
-        PrefixErrorNode(ExpressionNode* expr, Operator oper) KJS_FAST_CALL
-            : m_expr(expr)
+        PrefixErrorNode(JSGlobalData* globalData, ExpressionNode* expr, Operator oper) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr(expr)
             , m_operator(oper)
         {
         }
@@ -1135,13 +1174,14 @@ namespace KJS {
 
     class UnaryOpNode : public ExpressionNode {
     public:
-        UnaryOpNode(ExpressionNode* expr)
-            : m_expr(expr)
+        UnaryOpNode(JSGlobalData* globalData, ExpressionNode* expr)
+            : ExpressionNode(globalData)
+            , m_expr(expr)
         {
         }
 
-        UnaryOpNode(JSType type, ExpressionNode* expr)
-            : ExpressionNode(type)
+        UnaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* expr)
+            : ExpressionNode(globalData, type)
             , m_expr(expr)
         {
         }
@@ -1155,8 +1195,8 @@ namespace KJS {
 
     class UnaryPlusNode : public UnaryOpNode {
     public:
-        UnaryPlusNode(ExpressionNode* expr) KJS_FAST_CALL
-            : UnaryOpNode(NumberType, expr)
+        UnaryPlusNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : UnaryOpNode(globalData, NumberType, expr)
         {
         }
 
@@ -1167,8 +1207,8 @@ namespace KJS {
 
     class NegateNode : public UnaryOpNode {
     public:
-        NegateNode(ExpressionNode* expr) KJS_FAST_CALL
-            : UnaryOpNode(NumberType, expr)
+        NegateNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : UnaryOpNode(globalData, NumberType, expr)
         {
         }
 
@@ -1179,8 +1219,8 @@ namespace KJS {
 
     class BitwiseNotNode : public UnaryOpNode {
     public:
-        BitwiseNotNode(ExpressionNode* expr) KJS_FAST_CALL
-            : UnaryOpNode(NumberType, expr)
+        BitwiseNotNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : UnaryOpNode(globalData, NumberType, expr)
         {
         }
 
@@ -1191,8 +1231,8 @@ namespace KJS {
 
     class LogicalNotNode : public UnaryOpNode {
     public:
-        LogicalNotNode(ExpressionNode* expr) KJS_FAST_CALL
-            : UnaryOpNode(BooleanType, expr)
+        LogicalNotNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : UnaryOpNode(globalData, BooleanType, expr)
         {
         }
 
@@ -1203,15 +1243,16 @@ namespace KJS {
 
     class BinaryOpNode : public ExpressionNode {
     public:
-        BinaryOpNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
-            : m_term1(term1)
+        BinaryOpNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(globalData)
+            , m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
-        BinaryOpNode(JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
-            : ExpressionNode(type)
+        BinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(globalData, type)
             , m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
@@ -1229,15 +1270,16 @@ namespace KJS {
 
     class ReverseBinaryOpNode : public ExpressionNode {
     public:
-        ReverseBinaryOpNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
-            : m_term1(term1)
+        ReverseBinaryOpNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(globalData)
+            , m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
-        ReverseBinaryOpNode(JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
-            : ExpressionNode(type)
+        ReverseBinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+            : ExpressionNode(globalData, type)
             , m_term1(term1)
             , m_term2(term2)
             , m_rightHasAssignments(rightHasAssignments)
@@ -1255,8 +1297,8 @@ namespace KJS {
 
     class MultNode : public BinaryOpNode {
     public:
-        MultNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        MultNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1267,8 +1309,8 @@ namespace KJS {
 
     class DivNode : public BinaryOpNode {
     public:
-        DivNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        DivNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1279,8 +1321,8 @@ namespace KJS {
 
     class ModNode : public BinaryOpNode {
     public:
-        ModNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        ModNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1291,8 +1333,8 @@ namespace KJS {
 
     class AddNode : public BinaryOpNode {
     public:
-        AddNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(term1, term2, rightHasAssignments)
+        AddNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1303,8 +1345,8 @@ namespace KJS {
 
     class SubNode : public BinaryOpNode {
     public:
-        SubNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(term1, term2, rightHasAssignments)
+        SubNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1315,8 +1357,8 @@ namespace KJS {
 
     class LeftShiftNode : public BinaryOpNode {
     public:
-        LeftShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        LeftShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1327,8 +1369,8 @@ namespace KJS {
 
     class RightShiftNode : public BinaryOpNode {
     public:
-        RightShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        RightShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1339,8 +1381,8 @@ namespace KJS {
 
     class UnsignedRightShiftNode : public BinaryOpNode {
     public:
-        UnsignedRightShiftNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        UnsignedRightShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1351,8 +1393,8 @@ namespace KJS {
 
     class LessNode : public BinaryOpNode {
     public:
-        LessNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        LessNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1363,8 +1405,8 @@ namespace KJS {
 
     class GreaterNode : public ReverseBinaryOpNode {
     public:
-        GreaterNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ReverseBinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        GreaterNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1375,8 +1417,8 @@ namespace KJS {
 
     class LessEqNode : public BinaryOpNode {
     public:
-        LessEqNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        LessEqNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1387,8 +1429,8 @@ namespace KJS {
 
     class GreaterEqNode : public ReverseBinaryOpNode {
     public:
-        GreaterEqNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ReverseBinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        GreaterEqNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1399,8 +1441,8 @@ namespace KJS {
 
     class InstanceOfNode : public BinaryOpNode {
     public:
-        InstanceOfNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        InstanceOfNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1411,8 +1453,8 @@ namespace KJS {
 
     class InNode : public BinaryOpNode {
     public:
-        InNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(term1, term2, rightHasAssignments)
+        InNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1423,8 +1465,8 @@ namespace KJS {
 
     class EqualNode : public BinaryOpNode {
     public:
-        EqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        EqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1435,8 +1477,8 @@ namespace KJS {
 
     class NotEqualNode : public BinaryOpNode {
     public:
-        NotEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        NotEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1447,8 +1489,8 @@ namespace KJS {
 
     class StrictEqualNode : public BinaryOpNode {
     public:
-        StrictEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        StrictEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1459,8 +1501,8 @@ namespace KJS {
 
     class NotStrictEqualNode : public BinaryOpNode {
     public:
-        NotStrictEqualNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(BooleanType, term1, term2, rightHasAssignments)
+        NotStrictEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1471,8 +1513,8 @@ namespace KJS {
 
     class BitAndNode : public BinaryOpNode {
     public:
-        BitAndNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        BitAndNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1483,8 +1525,8 @@ namespace KJS {
 
     class BitOrNode : public BinaryOpNode {
     public:
-        BitOrNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        BitOrNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1495,8 +1537,8 @@ namespace KJS {
 
     class BitXOrNode : public BinaryOpNode {
     public:
-        BitXOrNode(ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(NumberType, term1, term2, rightHasAssignments)
+        BitXOrNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
         {
         }
 
@@ -1510,8 +1552,8 @@ namespace KJS {
      */
     class LogicalAndNode : public ExpressionNode {
     public:
-        LogicalAndNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
+        LogicalAndNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+            : ExpressionNode(globalData, BooleanType)
             , m_expr1(expr1)
             , m_expr2(expr2)
         {
@@ -1528,8 +1570,8 @@ namespace KJS {
 
     class LogicalOrNode : public ExpressionNode {
     public:
-        LogicalOrNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(BooleanType)
+        LogicalOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+            : ExpressionNode(globalData, BooleanType)
             , m_expr1(expr1)
             , m_expr2(expr2)
         {
@@ -1549,8 +1591,9 @@ namespace KJS {
      */
     class ConditionalNode : public ExpressionNode {
     public:
-        ConditionalNode(ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_logical(logical)
+        ConditionalNode(JSGlobalData* globalData, ExpressionNode* logical, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_logical(logical)
             , m_expr1(expr1)
             , m_expr2(expr2)
         {
@@ -1568,8 +1611,9 @@ namespace KJS {
 
     class ReadModifyResolveNode : public ExpressionNode {
     public:
-        ReadModifyResolveNode(const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments) KJS_FAST_CALL
-            : m_ident(ident)
+        ReadModifyResolveNode(JSGlobalData* globalData, const Identifier& ident, Operator oper, ExpressionNode*  right, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
             , m_right(right)
             , m_operator(oper)
             , m_rightHasAssignments(rightHasAssignments)
@@ -1599,8 +1643,9 @@ namespace KJS {
 
     class AssignResolveNode : public ExpressionNode {
     public:
-        AssignResolveNode(const Identifier& ident, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
-            : m_ident(ident)
+        AssignResolveNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
             , m_right(right)
             , m_rightHasAssignments(rightHasAssignments)
         {
@@ -1627,8 +1672,9 @@ namespace KJS {
 
     class ReadModifyBracketNode : public ExpressionNode {
     public:
-        ReadModifyBracketNode(ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments) KJS_FAST_CALL
-            : m_base(base)
+        ReadModifyBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
             , m_right(right)
             , m_operator(oper)
@@ -1653,8 +1699,9 @@ namespace KJS {
 
     class AssignBracketNode : public ExpressionNode {
     public:
-        AssignBracketNode(ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments) KJS_FAST_CALL
-            : m_base(base)
+        AssignBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, ExpressionNode* right, bool subscriptHasAssignments, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_subscript(subscript)
             , m_right(right)
             , m_subscriptHasAssignments(subscriptHasAssignments)
@@ -1677,8 +1724,9 @@ namespace KJS {
 
     class AssignDotNode : public ExpressionNode {
     public:
-        AssignDotNode(ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
-            : m_base(base)
+        AssignDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
             , m_right(right)
             , m_rightHasAssignments(rightHasAssignments)
@@ -1698,8 +1746,9 @@ namespace KJS {
 
     class ReadModifyDotNode : public ExpressionNode {
     public:
-        ReadModifyDotNode(ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
-            : m_base(base)
+        ReadModifyDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper, ExpressionNode* right, bool rightHasAssignments) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_base(base)
             , m_ident(ident)
             , m_right(right)
             , m_operator(oper)
@@ -1722,8 +1771,9 @@ namespace KJS {
 
     class AssignErrorNode : public ExpressionNode {
     public:
-        AssignErrorNode(ExpressionNode* left, Operator oper, ExpressionNode* right) KJS_FAST_CALL
-            : m_left(left)
+        AssignErrorNode(JSGlobalData* globalData, ExpressionNode* left, Operator oper, ExpressionNode* right) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_left(left)
             , m_operator(oper)
             , m_right(right)
         {
@@ -1741,8 +1791,9 @@ namespace KJS {
 
     class CommaNode : public ExpressionNode {
     public:
-        CommaNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : m_expr1(expr1)
+        CommaNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_expr1(expr1)
             , m_expr2(expr2)
         {
         }
@@ -1758,8 +1809,8 @@ namespace KJS {
     
     class VarDeclCommaNode : public CommaNode {
     public:
-        VarDeclCommaNode(ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : CommaNode(expr1, expr2)
+        VarDeclCommaNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+            : CommaNode(globalData, expr1, expr2)
         {
         }
         virtual Precedence precedence() const { return PrecAssignment; }
@@ -1767,7 +1818,7 @@ namespace KJS {
 
     class ConstDeclNode : public ExpressionNode {
     public:
-        ConstDeclNode(const Identifier& ident, ExpressionNode* in) KJS_FAST_CALL;
+        ConstDeclNode(JSGlobalData* globalData, const Identifier& ident, ExpressionNode* in) KJS_FAST_CALL;
 
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
@@ -1783,8 +1834,9 @@ namespace KJS {
 
     class ConstStatementNode : public StatementNode {
     public:
-        ConstStatementNode(ConstDeclNode* next) KJS_FAST_CALL
-            : m_next(next)
+        ConstStatementNode(JSGlobalData* globalData, ConstDeclNode* next) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_next(next)
         {
         }
 
@@ -1800,6 +1852,8 @@ namespace KJS {
 
     class SourceElements : public ParserRefCounted {
     public:
+        SourceElements(JSGlobalData* globalData) : ParserRefCounted(globalData) {}
+
         void append(PassRefPtr<StatementNode>);
         void releaseContentsIntoVector(StatementVector& destination)
         {
@@ -1813,7 +1867,7 @@ namespace KJS {
 
     class BlockNode : public StatementNode {
     public:
-        BlockNode(SourceElements* children) KJS_FAST_CALL;
+        BlockNode(JSGlobalData*, SourceElements* children) KJS_FAST_CALL;
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1826,7 +1880,8 @@ namespace KJS {
 
     class EmptyStatementNode : public StatementNode {
     public:
-        EmptyStatementNode() KJS_FAST_CALL // debug
+        EmptyStatementNode(JSGlobalData* globalData) KJS_FAST_CALL // debug
+            : StatementNode(globalData)
         {
         }
 
@@ -1838,7 +1893,8 @@ namespace KJS {
     
     class DebuggerStatementNode : public StatementNode {
     public:
-        DebuggerStatementNode() KJS_FAST_CALL
+        DebuggerStatementNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : StatementNode(globalData)
         {
         }
         
@@ -1849,8 +1905,9 @@ namespace KJS {
 
     class ExprStatementNode : public StatementNode {
     public:
-        ExprStatementNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        ExprStatementNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
         {
         }
 
@@ -1863,8 +1920,9 @@ namespace KJS {
 
     class VarStatementNode : public StatementNode {
     public:
-        VarStatementNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        VarStatementNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
         {
         }
         
@@ -1878,8 +1936,9 @@ namespace KJS {
 
     class IfNode : public StatementNode {
     public:
-        IfNode(ExpressionNode* condition, StatementNode* ifBlock) KJS_FAST_CALL
-            : m_condition(condition)
+        IfNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_condition(condition)
             , m_ifBlock(ifBlock)
         {
         }
@@ -1894,8 +1953,8 @@ namespace KJS {
 
     class IfElseNode : public IfNode {
     public:
-        IfElseNode(ExpressionNode* condtion, StatementNode* ifBlock, StatementNode* elseBlock) KJS_FAST_CALL
-            : IfNode(condtion, ifBlock)
+        IfElseNode(JSGlobalData* globalData, ExpressionNode* condition, StatementNode* ifBlock, StatementNode* elseBlock) KJS_FAST_CALL
+            : IfNode(globalData, condition, ifBlock)
             , m_elseBlock(elseBlock)
         {
         }
@@ -1909,8 +1968,9 @@ namespace KJS {
 
     class DoWhileNode : public StatementNode {
     public:
-        DoWhileNode(StatementNode* statement, ExpressionNode* expr) KJS_FAST_CALL
-            : m_statement(statement)
+        DoWhileNode(JSGlobalData* globalData, StatementNode* statement, ExpressionNode* expr) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_statement(statement)
             , m_expr(expr)
         {
         }
@@ -1925,8 +1985,9 @@ namespace KJS {
 
     class WhileNode : public StatementNode {
     public:
-        WhileNode(ExpressionNode* expr, StatementNode* statement) KJS_FAST_CALL
-            : m_expr(expr)
+        WhileNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
             , m_statement(statement)
         {
         }
@@ -1941,8 +2002,9 @@ namespace KJS {
 
     class ForNode : public StatementNode {
     public:
-        ForNode(ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl) KJS_FAST_CALL
-            : m_expr1(expr1)
+        ForNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, ExpressionNode* expr3, StatementNode* statement, bool expr1WasVarDecl) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr1(expr1)
             , m_expr2(expr2)
             , m_expr3(expr3)
             , m_statement(statement)
@@ -1964,8 +2026,8 @@ namespace KJS {
 
     class ForInNode : public StatementNode {
     public:
-        ForInNode(ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
-        ForInNode(const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
+        ForInNode(JSGlobalData*, ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
+        ForInNode(JSGlobalData*, const Identifier&, ExpressionNode*, ExpressionNode*, StatementNode*) KJS_FAST_CALL;
         
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
@@ -1981,12 +2043,14 @@ namespace KJS {
 
     class ContinueNode : public StatementNode {
     public:
-        ContinueNode() KJS_FAST_CALL
+        ContinueNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : StatementNode(globalData)
         {
         }
 
-        ContinueNode(const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        ContinueNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_ident(ident)
         {
         }
         
@@ -1999,12 +2063,14 @@ namespace KJS {
 
     class BreakNode : public StatementNode {
     public:
-        BreakNode() KJS_FAST_CALL
+        BreakNode(JSGlobalData* globalData) KJS_FAST_CALL
+            : StatementNode(globalData)
         {
         }
 
-        BreakNode(const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        BreakNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_ident(ident)
         {
         }
         
@@ -2017,8 +2083,9 @@ namespace KJS {
 
     class ReturnNode : public StatementNode {
     public:
-        ReturnNode(ExpressionNode* value) KJS_FAST_CALL
-            : m_value(value)
+        ReturnNode(JSGlobalData* globalData, ExpressionNode* value) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_value(value)
         {
         }
 
@@ -2032,8 +2099,9 @@ namespace KJS {
 
     class WithNode : public StatementNode {
     public:
-        WithNode(ExpressionNode* expr, StatementNode* statement) KJS_FAST_CALL
-            : m_expr(expr)
+        WithNode(JSGlobalData* globalData, ExpressionNode* expr, StatementNode* statement) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
             , m_statement(statement)
         {
         }
@@ -2048,8 +2116,9 @@ namespace KJS {
 
     class LabelNode : public StatementNode {
     public:
-        LabelNode(const Identifier& label, StatementNode* statement) KJS_FAST_CALL
-            : m_label(label)
+        LabelNode(JSGlobalData* globalData, const Identifier& label, StatementNode* statement) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_label(label)
             , m_statement(statement)
         {
         }
@@ -2065,8 +2134,9 @@ namespace KJS {
 
     class ThrowNode : public StatementNode {
     public:
-        ThrowNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        ThrowNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
         {
         }
 
@@ -2079,8 +2149,9 @@ namespace KJS {
 
     class TryNode : public StatementNode {
     public:
-        TryNode(StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock) KJS_FAST_CALL
-            : m_tryBlock(tryBlock)
+        TryNode(JSGlobalData* globalData, StatementNode* tryBlock, const Identifier& exceptionIdent, StatementNode* catchBlock, StatementNode* finallyBlock) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_tryBlock(tryBlock)
             , m_exceptionIdent(exceptionIdent)
             , m_catchBlock(catchBlock)
             , m_finallyBlock(finallyBlock)
@@ -2100,13 +2171,15 @@ namespace KJS {
 
     class ParameterNode : public Node {
     public:
-        ParameterNode(const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        ParameterNode(JSGlobalData* globalData, const Identifier& ident) KJS_FAST_CALL
+            : Node(globalData)
+            , m_ident(ident)
         {
         }
 
-        ParameterNode(ParameterNode* l, const Identifier& ident) KJS_FAST_CALL
-            : m_ident(ident)
+        ParameterNode(JSGlobalData* globalData, ParameterNode* l, const Identifier& ident) KJS_FAST_CALL
+            : Node(globalData)
+            , m_ident(ident)
         {
             l->m_next = this;
         }
@@ -2126,7 +2199,7 @@ namespace KJS {
 
     class ScopeNode : public BlockNode {
     public:
-        ScopeNode(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        ScopeNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         int sourceId() const KJS_FAST_CALL { return m_sourceId; }
         const UString& sourceURL() const KJS_FAST_CALL { return m_sourceURL; }
@@ -2151,7 +2224,7 @@ namespace KJS {
 
     class ProgramNode : public ScopeNode {
     public:
-        static ProgramNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         ProgramCodeBlock& code(ScopeChainNode* scopeChain, bool canCreateGlobals) KJS_FAST_CALL
         {
@@ -2161,7 +2234,7 @@ namespace KJS {
         }
 
     private:
-        ProgramNode(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         void generateCode(ScopeChainNode*, bool) KJS_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
@@ -2174,7 +2247,7 @@ namespace KJS {
 
     class EvalNode : public ScopeNode {
     public:
-        static EvalNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         EvalCodeBlock& code(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
@@ -2184,7 +2257,7 @@ namespace KJS {
         }
 
     private:
-        EvalNode(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         void generateCode(ScopeChainNode*) KJS_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
@@ -2194,7 +2267,7 @@ namespace KJS {
 
     class FunctionBodyNode : public ScopeNode {
     public:
-        static FunctionBodyNode* create(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
         Vector<Identifier>& parameters() KJS_FAST_CALL { return m_parameters; }
         UString paramString() const KJS_FAST_CALL;
@@ -2223,7 +2296,7 @@ namespace KJS {
         UString toSourceString() const KJS_FAST_CALL { return UString("{") + m_source.toString() + UString("}"); }
 
     protected:
-        FunctionBodyNode(SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
     private:
         void generateCode(ScopeChainNode*) KJS_FAST_CALL;
@@ -2236,8 +2309,9 @@ namespace KJS {
 
     class FuncExprNode : public ExpressionNode {
     public:
-        FuncExprNode(const Identifier& ident, FunctionBodyNode* body, const SourceRange& source, ParameterNode* parameter = 0) KJS_FAST_CALL
-            : m_ident(ident)
+        FuncExprNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceRange& source, ParameterNode* parameter = 0) KJS_FAST_CALL
+            : ExpressionNode(globalData)
+            , m_ident(ident)
             , m_parameter(parameter)
             , m_body(body)
         {
@@ -2265,8 +2339,9 @@ namespace KJS {
 
     class FuncDeclNode : public StatementNode {
     public:
-        FuncDeclNode(const Identifier& ident, FunctionBodyNode* body, const SourceRange& source, ParameterNode* parameter = 0) KJS_FAST_CALL
-            : m_ident(ident)
+        FuncDeclNode(JSGlobalData* globalData, const Identifier& ident, FunctionBodyNode* body, const SourceRange& source, ParameterNode* parameter = 0) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_ident(ident)
             , m_parameter(parameter)
             , m_body(body)
         {
@@ -2292,13 +2367,15 @@ namespace KJS {
 
     class CaseClauseNode : public Node {
     public:
-        CaseClauseNode(ExpressionNode* expr) KJS_FAST_CALL
-            : m_expr(expr)
+        CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr) KJS_FAST_CALL
+            : Node(globalData)
+            , m_expr(expr)
         {
         }
 
-        CaseClauseNode(ExpressionNode* expr, SourceElements* children) KJS_FAST_CALL
-            : m_expr(expr)
+        CaseClauseNode(JSGlobalData* globalData, ExpressionNode* expr, SourceElements* children) KJS_FAST_CALL
+            : Node(globalData)
+            , m_expr(expr)
         {
             if (children)
                 children->releaseContentsIntoVector(m_children);
@@ -2317,13 +2394,15 @@ namespace KJS {
 
     class ClauseListNode : public Node {
     public:
-        ClauseListNode(CaseClauseNode* clause) KJS_FAST_CALL
-            : m_clause(clause)
+        ClauseListNode(JSGlobalData* globalData, CaseClauseNode* clause) KJS_FAST_CALL
+            : Node(globalData)
+            , m_clause(clause)
         {
         }
 
-        ClauseListNode(ClauseListNode* clauseList, CaseClauseNode* clause) KJS_FAST_CALL
-            : m_clause(clause)
+        ClauseListNode(JSGlobalData* globalData, ClauseListNode* clauseList, CaseClauseNode* clause) KJS_FAST_CALL
+            : Node(globalData)
+            , m_clause(clause)
         {
             clauseList->m_next = this;
         }
@@ -2342,8 +2421,9 @@ namespace KJS {
 
     class CaseBlockNode : public Node {
     public:
-        CaseBlockNode(ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2) KJS_FAST_CALL
-            : m_list1(list1)
+        CaseBlockNode(JSGlobalData* globalData, ClauseListNode* list1, CaseClauseNode* defaultClause, ClauseListNode* list2) KJS_FAST_CALL
+            : Node(globalData)
+            , m_list1(list1)
             , m_defaultClause(defaultClause)
             , m_list2(list2)
         {
@@ -2362,8 +2442,9 @@ namespace KJS {
 
     class SwitchNode : public StatementNode {
     public:
-        SwitchNode(ExpressionNode* expr, CaseBlockNode* block) KJS_FAST_CALL
-            : m_expr(expr)
+        SwitchNode(JSGlobalData* globalData, ExpressionNode* expr, CaseBlockNode* block) KJS_FAST_CALL
+            : StatementNode(globalData)
+            , m_expr(expr)
             , m_block(block)
         {
         }
@@ -2379,7 +2460,7 @@ namespace KJS {
 
     class BreakpointCheckStatement : public StatementNode {
     public:
-        BreakpointCheckStatement(PassRefPtr<StatementNode>) KJS_FAST_CALL;
+        BreakpointCheckStatement(JSGlobalData*, PassRefPtr<StatementNode>) KJS_FAST_CALL;
 
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
 

@@ -1,3 +1,164 @@
+2008-06-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Remove more threadInstance() calls.
+
+        * kjs/JSFunction.cpp:
+        (KJS::JSFunction::getParameterName):
+        (KJS::IndexToNameMap::unMap):
+        (KJS::Arguments::deleteProperty):
+        * kjs/JSFunction.h:
+        Access nullIdentifier without going to thread specific storage.
+
+        * JavaScriptCore.exp:
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/Parser.cpp:
+        (KJS::Parser::parse):
+        * kjs/Parser.h:
+        (KJS::ParserRefCountedData::ParserRefCountedData):
+        (KJS::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::ParserRefCounted::ParserRefCounted):
+        (KJS::ParserRefCounted::ref):
+        (KJS::ParserRefCounted::deref):
+        (KJS::ParserRefCounted::hasOneRef):
+        (KJS::ParserRefCounted::deleteNewObjects):
+        (KJS::Node::Node):
+        (KJS::StatementNode::StatementNode):
+        (KJS::BreakpointCheckStatement::BreakpointCheckStatement):
+        (KJS::ConstDeclNode::ConstDeclNode):
+        (KJS::BlockNode::BlockNode):
+        (KJS::ForInNode::ForInNode):
+        (KJS::ScopeNode::ScopeNode):
+        (KJS::ProgramNode::ProgramNode):
+        (KJS::ProgramNode::create):
+        (KJS::EvalNode::EvalNode):
+        (KJS::EvalNode::create):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        (KJS::FunctionBodyNode::create):
+        * kjs/nodes.h:
+        (KJS::ExpressionNode::):
+        (KJS::NullNode::):
+        (KJS::BooleanNode::):
+        (KJS::NumberNode::):
+        (KJS::ImmediateNumberNode::):
+        (KJS::StringNode::):
+        (KJS::RegExpNode::):
+        (KJS::ThisNode::):
+        (KJS::ResolveNode::):
+        (KJS::ElementNode::):
+        (KJS::ArrayNode::):
+        (KJS::PropertyNode::):
+        (KJS::PropertyListNode::):
+        (KJS::ObjectLiteralNode::):
+        (KJS::BracketAccessorNode::):
+        (KJS::DotAccessorNode::):
+        (KJS::ArgumentListNode::):
+        (KJS::ArgumentsNode::):
+        (KJS::NewExprNode::):
+        (KJS::EvalFunctionCallNode::):
+        (KJS::FunctionCallValueNode::):
+        (KJS::FunctionCallResolveNode::):
+        (KJS::FunctionCallBracketNode::):
+        (KJS::FunctionCallDotNode::):
+        (KJS::PrePostResolveNode::):
+        (KJS::PostIncResolveNode::):
+        (KJS::PostDecResolveNode::):
+        (KJS::PostfixBracketNode::):
+        (KJS::PostIncBracketNode::):
+        (KJS::PostDecBracketNode::):
+        (KJS::PostfixDotNode::):
+        (KJS::PostIncDotNode::):
+        (KJS::PostDecDotNode::):
+        (KJS::PostfixErrorNode::):
+        (KJS::DeleteResolveNode::):
+        (KJS::DeleteBracketNode::):
+        (KJS::DeleteDotNode::):
+        (KJS::DeleteValueNode::):
+        (KJS::VoidNode::):
+        (KJS::TypeOfResolveNode::):
+        (KJS::TypeOfValueNode::):
+        (KJS::PreIncResolveNode::):
+        (KJS::PreDecResolveNode::):
+        (KJS::PrefixBracketNode::):
+        (KJS::PreIncBracketNode::):
+        (KJS::PreDecBracketNode::):
+        (KJS::PrefixDotNode::):
+        (KJS::PreIncDotNode::):
+        (KJS::PreDecDotNode::):
+        (KJS::PrefixErrorNode::):
+        (KJS::UnaryOpNode::UnaryOpNode):
+        (KJS::UnaryPlusNode::):
+        (KJS::NegateNode::):
+        (KJS::BitwiseNotNode::):
+        (KJS::LogicalNotNode::):
+        (KJS::BinaryOpNode::BinaryOpNode):
+        (KJS::ReverseBinaryOpNode::ReverseBinaryOpNode):
+        (KJS::MultNode::):
+        (KJS::DivNode::):
+        (KJS::ModNode::):
+        (KJS::AddNode::):
+        (KJS::SubNode::):
+        (KJS::LeftShiftNode::):
+        (KJS::RightShiftNode::):
+        (KJS::UnsignedRightShiftNode::):
+        (KJS::LessNode::):
+        (KJS::GreaterNode::):
+        (KJS::LessEqNode::):
+        (KJS::GreaterEqNode::):
+        (KJS::InstanceOfNode::):
+        (KJS::InNode::):
+        (KJS::EqualNode::):
+        (KJS::NotEqualNode::):
+        (KJS::StrictEqualNode::):
+        (KJS::NotStrictEqualNode::):
+        (KJS::BitAndNode::):
+        (KJS::BitOrNode::):
+        (KJS::BitXOrNode::):
+        (KJS::LogicalAndNode::):
+        (KJS::LogicalOrNode::):
+        (KJS::ConditionalNode::):
+        (KJS::ReadModifyResolveNode::):
+        (KJS::AssignResolveNode::):
+        (KJS::ReadModifyBracketNode::):
+        (KJS::AssignBracketNode::):
+        (KJS::AssignDotNode::):
+        (KJS::ReadModifyDotNode::):
+        (KJS::AssignErrorNode::):
+        (KJS::CommaNode::):
+        (KJS::VarDeclCommaNode::):
+        (KJS::ConstStatementNode::):
+        (KJS::SourceElements::SourceElements):
+        (KJS::EmptyStatementNode::):
+        (KJS::DebuggerStatementNode::):
+        (KJS::ExprStatementNode::):
+        (KJS::VarStatementNode::):
+        (KJS::IfNode::):
+        (KJS::IfElseNode::):
+        (KJS::DoWhileNode::):
+        (KJS::WhileNode::):
+        (KJS::ForNode::):
+        (KJS::ContinueNode::):
+        (KJS::BreakNode::):
+        (KJS::ReturnNode::):
+        (KJS::WithNode::):
+        (KJS::LabelNode::):
+        (KJS::ThrowNode::):
+        (KJS::TryNode::):
+        (KJS::ParameterNode::):
+        (KJS::FuncExprNode::):
+        (KJS::FuncDeclNode::):
+        (KJS::CaseClauseNode::):
+        (KJS::ClauseListNode::):
+        (KJS::CaseBlockNode::):
+        (KJS::SwitchNode::):
+        Changed ParserRefCounted to hold a JSGlobalData pointer, and used it to replace
+        threadInstance calls.
+
 2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Alexey Proskuryakov.
