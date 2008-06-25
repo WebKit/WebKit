@@ -1,3 +1,22 @@
+2008-06-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Make the conversion of the pair (less, jtrue) to jless use register
+        reference counting information for safety instead of requiring callers
+        to decide whether it is safe.
+
+        No changes on SunSpider codegen.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        * VM/CodeGenerator.h:
+        * kjs/nodes.cpp:
+        (KJS::DoWhileNode::emitCode):
+        (KJS::WhileNode::emitCode):
+        (KJS::ForNode::emitCode):
+        (KJS::CaseBlockNode::emitCodeForBlock):
+
 2008-06-24  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

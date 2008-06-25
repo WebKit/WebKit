@@ -425,7 +425,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJump(LabelID* target)
     return target;
 }
 
-PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrueMayCombine(RegisterID* cond, LabelID* target)
+PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* target)
 {
     if (m_lastOpcodeID == op_less) {
         int dstIndex;
@@ -434,7 +434,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrueMayCombine(RegisterID* cond, La
         
         retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
         
-        if (cond->index() == dstIndex) {
+        if (cond->index() == dstIndex && !cond->refCount()) {
             rewindBinaryOp();
             emitOpcode(op_jless);
             instructions().append(src1Index);
@@ -444,11 +444,6 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrueMayCombine(RegisterID* cond, La
         }
     }
     
-    return emitJumpIfTrue(cond, target);
-}
-
-PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* target)
-{
     emitOpcode(op_jtrue);
     instructions().append(cond->index());
     instructions().append(target->offsetFrom(instructions().size()));

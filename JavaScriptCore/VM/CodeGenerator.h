@@ -245,7 +245,6 @@ namespace KJS {
 
         PassRefPtr<LabelID> emitLabel(LabelID*);
         PassRefPtr<LabelID> emitJump(LabelID* target);
-        PassRefPtr<LabelID> emitJumpIfTrueMayCombine(RegisterID* cond, LabelID* target);
         PassRefPtr<LabelID> emitJumpIfTrue(RegisterID* cond, LabelID* target);
         PassRefPtr<LabelID> emitJumpIfFalse(RegisterID* cond, LabelID* target);
         PassRefPtr<LabelID> emitJumpScopes(LabelID* target, int targetScopeDepth);
