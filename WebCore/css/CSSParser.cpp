@@ -4257,11 +4257,12 @@ CSSRule* CSSParser::createFontFaceRule()
 
 CSSRule* CSSParser::createVariablesRule(MediaList* mediaList)
 {
-    CSSVariablesRule* rule = new CSSVariablesRule(m_styleSheet, mediaList);
-    m_parsedStyleObjects.append(rule);
-    rule->setDeclaration(CSSVariablesDeclaration::create(rule, m_variableNames, m_variableValues).get());
-    clearVariables();
-    return rule;
+    RefPtr<CSSVariablesRule> rule = CSSVariablesRule::create(m_styleSheet, mediaList);
+    rule->setDeclaration(CSSVariablesDeclaration::create(rule.get(), m_variableNames, m_variableValues));
+    clearVariables();    
+    CSSRule* result = rule.get();
+    m_parsedStyleObjects.append(rule.release());
+    return result;
 }
 
 bool CSSParser::addVariable(const CSSParserString& name, CSSParserValueList* valueList)

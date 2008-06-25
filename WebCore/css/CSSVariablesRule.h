@@ -37,7 +37,11 @@ class MediaList;
 
 class CSSVariablesRule : public CSSRule {
 public:
-    CSSVariablesRule(CSSStyleSheet* parent, MediaList*);
+    static PassRefPtr<CSSVariablesRule> create(CSSStyleSheet* parent, MediaList* mediaList)
+    {
+        return adoptRef(new CSSVariablesRule(parent, mediaList));
+    }
+
     virtual ~CSSVariablesRule();
 
     // CSSVariablesRule interface
@@ -51,9 +55,11 @@ public:
 
     // Used internally.  Does not notify the document of the change.  Only intended
     // for use on initial parse.
-    void setDeclaration(CSSVariablesDeclaration* decl) { m_variables = decl; }
+    void setDeclaration(PassRefPtr<CSSVariablesDeclaration> decl) { m_variables = decl; }
 
-protected:
+private:
+    CSSVariablesRule(CSSStyleSheet* parent, MediaList*);
+
     RefPtr<MediaList> m_lstMedia;
     RefPtr<CSSVariablesDeclaration> m_variables;
 };
