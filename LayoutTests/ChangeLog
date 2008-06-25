@@ -1,3 +1,25 @@
+2008-06-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+        
+        <rdar://problem/5994480> Line break lost on some pastes
+        
+        These demonstrate fixes:
+        * editing/inserting/5994480.html: Added.
+        * editing/inserting/5994480-expected.txt: Added.
+        * editing/inserting/5994480-2.html: Added.
+        * editing/inserting/5994480-2-expected.txt: Added.
+        
+        The changes made in this fix caused more of the unrendered text from the original 
+        file to be preserved and show up in the test results.  We insert a line break after
+        inserted content to separate it from content that comes after and prevent it from
+        being merged.  In these what came after was unrendered whitespace that was previously
+        clobbered by the merge:
+        * platform/mac/editing/pasteboard/paste-match-style-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-010-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-001-expected.txt:
+        * platform/mac/editing/style/style-boundary-005-expected.txt:
+
 2008-06-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

@@ -793,6 +793,17 @@ void ReplaceSelectionCommand::doApply()
         VisiblePosition destination = startOfInsertedContent.previous();
         VisiblePosition startOfParagraphToMove = startOfInsertedContent;
         
+        // Merging the the first paragraph of inserted content with the content that came
+        // before the selection that was pasted into would also move content after 
+        // the selection that was pasted into if: only one paragraph was being pasted, 
+        // and it was not wrapped in a block, the selection that was pasted into ended 
+        // at the end of a block and the next paragraph didn't start at the start of a block.
+        // Insert a line break just after the inserted content to separate it from what 
+        // comes after and prevent that from happening.
+        VisiblePosition endOfInsertedContent = positionAtEndOfInsertedContent();
+        if (startOfParagraph(endOfInsertedContent) == startOfParagraphToMove)
+            insertNodeAt(createBreakElement(document()).get(), endOfInsertedContent.deepEquivalent());
+        
         // FIXME: Maintain positions for the start and end of inserted content instead of keeping nodes.  The nodes are
         // only ever used to create positions where inserted content starts/ends.
         moveParagraph(startOfParagraphToMove, endOfParagraph(startOfParagraphToMove), destination);

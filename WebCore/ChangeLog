@@ -1,3 +1,38 @@
+2008-06-25  Justin Garcia  <justin.garcia@apple.com>
+
+        Reviewed by John.
+
+        <rdar://problem/5994480> Line break lost on some pastes
+        
+        Merging the the first paragraph of inserted content with the content that came
+        before the selection that was pasted into would also move content after 
+        the selection that was pasted into if:
+        
+        1) Only one paragraph was being pasted, and it was not wrapped in a block
+        2) The selection that was pasted into ended at the end of a block
+        3) The next paragraph didn't start at the start of a block.
+        
+        Insert a line break just after the inserted content to separate it from what 
+        comes after and prevent that from happening.
+        
+        Doing this exposed a bug in deletion where it would insert an unnecessary placeholder
+        when deleting a paragraph that started or ended with an input element.  This was
+        because its m_startBlock and m_endBlock were still computed with the old deprecated
+        enclosingBlockFlowOrTableElement().
+        
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::initializePositionData): Use the new method for
+        getting an enclosing block.
+        (WebCore::DeleteSelectionCommand::doApply): The new method for getting an enclosing
+        block will return 0 if it reaches the root editable element before finding a block,
+        so if we're deleting inside an inline editable root, m_start/endBlock will
+        be 0.  Removed an early return for this case (we already have test coverage for it).
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply): Insert a line break just after the inserted 
+        content to separate it from what comes after.
+        * dom/Node.h: Removed enclosingBlockFlowOrTableElement().
+        * dom/Node.cpp: Ditto.
+
 2008-06-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dave Hyatt.

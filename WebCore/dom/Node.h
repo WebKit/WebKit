@@ -199,8 +199,10 @@ public:
     Node* previousLeafNode() const;
 
     bool isEditableBlock() const;
+    
+    // enclosingBlockFlowElement() is deprecated.  Use enclosingBlock instead.
     Element* enclosingBlockFlowElement() const;
-    Element* enclosingBlockFlowOrTableElement() const;
+    
     Element* enclosingInlineElement() const;
     Element* rootEditableElement() const;
     

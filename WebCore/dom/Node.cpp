@@ -1118,22 +1118,6 @@ bool Node::isEditableBlock() const
     return isContentEditable() && isBlockFlow();
 }
 
-Element *Node::enclosingBlockFlowOrTableElement() const
-{
-    Node *n = const_cast<Node *>(this);
-    if (isBlockFlowOrBlockTable())
-        return static_cast<Element *>(n);
-
-    while (1) {
-        n = n->parentNode();
-        if (!n)
-            break;
-        if (n->isBlockFlowOrBlockTable() || n->hasTagName(bodyTag))
-            return static_cast<Element *>(n);
-    }
-    return 0;
-}
-
 Element *Node::enclosingBlockFlowElement() const
 {
     Node *n = const_cast<Node *>(this);

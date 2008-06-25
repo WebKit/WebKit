@@ -226,11 +226,14 @@ void DeleteSelectionCommand::initializePositionData()
         }
     }
     
-    //
-    // Handle setting start and end blocks and the start node.
-    //
-    m_startBlock = m_downstreamStart.node()->enclosingBlockFlowOrTableElement();
-    m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowOrTableElement();
+    // We must pass the positions through rangeCompliantEquivalent, since some editing positions
+    // that appear inside their nodes aren't really inside them.  [hr, 0] is one example.
+    // FIXME: rangeComplaintEquivalent should eventually be moved into enclosing element getters
+    // like the one below, since editing functions should obviously accept editing positions.
+    // FIXME: Passing false to enclosingNodeOfType tells it that it's OK to return a non-editable
+    // node.  This was done to match existing behavior, but it seems wrong.
+    m_startBlock = enclosingNodeOfType(rangeCompliantEquivalent(m_downstreamStart), &isBlock, false);
+    m_endBlock = enclosingNodeOfType(rangeCompliantEquivalent(m_upstreamEnd), &isBlock, false);
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()
@@ -729,15 +732,6 @@ void DeleteSelectionCommand::doApply()
     
     // set up our state
     initializePositionData();
-    if (!m_startBlock || !m_endBlock) {
-        // Can't figure out what blocks we're in. This can happen if
-        // the document structure is not what we are expecting, like if
-        // the document has no body element, or if the editable block
-        // has been changed to display: inline. Some day it might
-        // be nice to be able to deal with this, but for now, bail.
-        clearTransientState();
-        return;
-    }
 
     // Delete any text that may hinder our ability to fixup whitespace after the delete
     deleteInsignificantTextDownstream(m_trailingWhitespace);    
