@@ -1,3 +1,15 @@
+2008-06-25  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Attempt to fix Windows debug build. The compiler gives a warning when
+        Structured Exception Handling and destructors are used in the same
+        function. Using manual locking and unlocking instead of constructors
+        and destructors should fix the warning.
+
+        * kjs/Shell.cpp:
+        (main):
+
 2008-06-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Forgot to address a review comment about better names for tracked objects, doing it now.
