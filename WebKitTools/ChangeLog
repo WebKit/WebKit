@@ -1,5 +1,15 @@
 2008-06-24  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Stephanie Lewis.
+
+        - move the linker flags from the debug configuration in the project
+          to the shared configuration
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/DumpRenderTree.xcconfig:
+
+2008-06-24  Dan Bernstein  <mitz@apple.com>
+
         - try to fix the Tiger build
 
         * DumpRenderTree/mac/AccessibilityControllerMac.mm:
