@@ -1,3 +1,21 @@
+2008-06-24  David Kilzer  <ddkilzer@apple.com>
+
+        Make PrettyPatch handle diffs with no Index or diff headers
+
+        Part of Bug 19290: More patches not handled by PrettyPatch.rb
+        <https://bugs.webkit.org/show_bug.cgi?id=19290>
+
+        Reviewed by Adam.
+
+        * PrettyPatch/PrettyPatch.rb:
+        (PrettyPatch.DIFF_HEADER_FORMATS): Added regular expression to
+        match on "+++ " lines for patches with no "Index" or "diff" header.
+        (PrettyPatch.FileDiff.initialize): Look for filename on "+++ " line
+        when the first line of a patch has no "Index" or "diff" header.
+        (PrettyPatch.FileDiff.parse): Added haveSeenDiffHeader state
+        variable to determine when no "Index" or "diff" header has been
+        found, but a new patch has started with a "--- " line.
+
 2008-06-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adam Roben.

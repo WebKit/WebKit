@@ -29,7 +29,8 @@ public
 private
     DIFF_HEADER_FORMATS = [
         /^Index: (.*)\r?$/,
-        /^diff --git a\/.+ b\/(.+)\r?$/
+        /^diff --git a\/.+ b\/(.+)\r?$/,
+        /^\+\+\+ ([^\t]+)(\t.*)?\r?$/
     ]
 
     RELAXED_DIFF_HEADER_FORMATS = [
@@ -177,11 +178,12 @@ EOF
         def initialize(lines)
             @filename = PrettyPatch.filename_from_diff_header(lines[0].chomp)
             startOfSections = 1
-            for i in 1...lines.length
+            for i in 0...lines.length
                 case lines[i]
                 when /^--- /
                     @from = PrettyPatch.revisionOrDescription(lines[i])
                 when /^\+\+\+ /
+                    @filename = PrettyPatch.filename_from_diff_header(lines[i].chomp) if @filename.nil?
                     @to = PrettyPatch.revisionOrDescription(lines[i])
                     startOfSections = i + 1
                     break
@@ -200,8 +202,15 @@ EOF
         end
 
         def self.parse(string)
+            haveSeenDiffHeader = false
             linesForDiffs = string.inject([]) do |diffChunks, line|
-                diffChunks << [] if PrettyPatch.diff_header?(line)
+                if (PrettyPatch.diff_header?(line))
+                    diffChunks << []
+                    haveSeenDiffHeader = true
+                elsif (!haveSeenDiffHeader && line =~ /^--- /)
+                    diffChunks << []
+                    haveSeenDiffHeader = false
+                end
                 diffChunks.last << line unless diffChunks.last.nil?
                 diffChunks
             end
