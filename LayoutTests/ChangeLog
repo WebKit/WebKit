@@ -1,3 +1,14 @@
+2008-06-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        <rdar://problem/6007111> 
+        https://bugs.webkit.org/show_bug.cgi?id=19516
+        DOM modification causes Access Violation (NULL pointer?)
+
+        * fast/dom/HTMLHtmlElement/duplicate-html-element-crash-expected.txt: Added.
+        * fast/dom/HTMLHtmlElement/duplicate-html-element-crash.html: Added.
+
 2008-06-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
