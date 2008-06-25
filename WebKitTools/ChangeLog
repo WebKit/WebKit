@@ -1,3 +1,9 @@
+2008-06-24  Dan Bernstein  <mitz@apple.com>
+
+        - try to fix the Tiger build
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+
 2008-06-24  Sam Weinig and Beth Dakin  <bdakin@apple.com and sam@webkit.org>
 
         Reviewed by Darin.

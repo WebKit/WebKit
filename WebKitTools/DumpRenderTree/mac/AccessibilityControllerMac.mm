@@ -30,6 +30,7 @@
 #import <JavaScriptCore/JSStringRef.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLView.h>
+#import <WebKit/WebTypesInternal.h>
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 
