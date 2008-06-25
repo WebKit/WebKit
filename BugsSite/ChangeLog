@@ -1,4 +1,4 @@
-2008-06-24  David Kilzer  <ddkilzer@apple.com>
+2008-06-25  David Kilzer  <ddkilzer@apple.com>
 
         Make PrettyPatch handle diffs with no Index or diff headers
 
