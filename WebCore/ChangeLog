@@ -1,3 +1,14 @@
+2008-06-24  Anonymous
+
+        Reviewed by Darin Adler.  Committed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19470
+
+        Check for a null documentElement() to fix four crashes.
+
+        * WebCore/dom/Document.cpp:
+        * WebCore/dom/Node.cpp:
+
 2008-06-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -1383,7 +1383,9 @@ bool Node::isDefaultNamespace(const String &namespaceURI) const
             return false;
         }
         case DOCUMENT_NODE:
-            return static_cast <const Document *>(this)->documentElement()->isDefaultNamespace(namespaceURI);
+            if (Element* de = static_cast<const Document*>(this)->documentElement())
+                return de->isDefaultNamespace(namespaceURI);
+            return false;
         case ENTITY_NODE:
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:
@@ -1414,7 +1416,9 @@ String Node::lookupPrefix(const String &namespaceURI) const
         case ELEMENT_NODE:
             return lookupNamespacePrefix(namespaceURI, static_cast<const Element *>(this));
         case DOCUMENT_NODE:
-            return static_cast<const Document *>(this)->documentElement()->lookupPrefix(namespaceURI);
+            if (Element* de = static_cast<const Document*>(this)->documentElement())
+                return de->lookupPrefix(namespaceURI);
+            return String();
         case ENTITY_NODE:
         case NOTATION_NODE:
         case DOCUMENT_FRAGMENT_NODE:
@@ -1472,7 +1476,9 @@ String Node::lookupNamespaceURI(const String &prefix) const
             return String();
         }
         case DOCUMENT_NODE:
-            return static_cast<const Document *>(this)->documentElement()->lookupNamespaceURI(prefix);
+            if (Element* de = static_cast<const Document*>(this)->documentElement())
+                return de->lookupNamespaceURI(prefix);
+            return String();
         case ENTITY_NODE:
         case NOTATION_NODE:
         case DOCUMENT_TYPE_NODE:

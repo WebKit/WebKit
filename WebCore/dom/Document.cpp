@@ -1453,7 +1453,7 @@ HTMLElement* Document::body()
 
 void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)
 {
-    if (!newBody) { 
+    if (!newBody || !documentElement()) { 
         ec = HIERARCHY_REQUEST_ERR;
         return;
     }
