@@ -50,8 +50,6 @@ namespace KJS {
         void stopProfiling(ExecState*, const UString& title);
         void didFinishAllExecution(ExecState*);
 
-        Profile* findProfile(ExecState*, const UString& title) const;
-
         void willExecute(ExecState* exec, JSObject* calledFunction);
         void willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber);
         void didExecute(ExecState* exec, JSObject* calledFunction);

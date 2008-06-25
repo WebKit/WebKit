@@ -1,12 +1,10 @@
 <html>
 <head>
-<script src="resources/profiler-test-JS-resources.js"></script>
 <script>
 var j = 0;
 function test(len) {
     for (var i = 0; i < len; ++i)
         ++j;
-    test2(2000 - len);
 }
 
 function test2(len) {
@@ -15,22 +13,17 @@ function test2(len) {
 }
 
 console.profile("Test");
-test(100);
-console.profileEnd("Test");
-
-console.profile("Test");
 test(1000);
 console.profileEnd("Test");
+test2(1000);
 </script>
 </head>
 
 <body>
-This page has multiple profiles with the same name.
+This page has an anonymous JavaScript function that calls built-in functions.
 <br>
 <br>
 To use this test, load it in the browser then load the WebInspector and look at
-the profile.  It should not crash or hang and there should be multiple runs of the
-same named profile.
-<div id="output"></div>
+the profile. There should be two nodes in the profile, a "(program)" node with one child that is "test".
 </body>
 </html>

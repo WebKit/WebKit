@@ -1,3 +1,27 @@
+2008-06-25  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes an ASSERT in the profiler when starting multiple profiles
+        with the same name inside the same function/program.
+
+        Reviewed by Kevin McCullough.
+
+        * profiler/Profile.cpp:
+        (KJS::Profile::Profile): Initialize m_stoppedCallDepth to zero.
+        (KJS::Profile::stopProfiling): Set the current node to the parent,
+        because we are in a call that will not get a didExecute call.
+        (KJS::Profile::removeProfile): Increment m_stoppedCallDepth to
+        account for didExecute not being called for profile.
+        (KJS::Profile::willExecute): Increment m_stoppedCallDepth if stopped.
+        (KJS::Profile::didExecute): Decrement m_stoppedCallDepth if stopped and
+        greater than zero, and return early.
+        * profiler/Profile.h: Added stoppedProfiling().
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::findProfile): Removed.
+        (KJS::Profiler::startProfiling): Don't return early for stopped profiles.
+        (KJS::Profiler::stopProfiling): Skipp stopped profiles.
+        (KJS::Profiler::didFinishAllExecution): Code clean-up.
+        * profiler/Profiler.h: Removed findProfile.
+
 2008-06-25  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Alexey Proskuryakov.

@@ -46,6 +46,7 @@ Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigne
     : m_title(title)
     , m_originatingGlobalExec(originatingGlobalExec)
     , m_pageGroupIdentifier(pageGroupIdentifier)
+    , m_stoppedCallDepth(0)
     , m_client(client)
     , m_stoppedProfiling(false)
 {
@@ -61,10 +62,11 @@ void Profile::stopProfiling()
     removeProfileStart();
     removeProfileEnd();
 
-    // Already at the head, set m_currentNode to prevent
-    // didExecute from recording more nodes.
-    if (m_currentNode == m_head)
-        m_currentNode = 0;
+    ASSERT(m_currentNode);
+
+    // Set the current node to the parent, because we are in a call that
+    // will not get didExecute call.
+    m_currentNode = m_currentNode->parent();
 
     m_stoppedProfiling = true;
 }
@@ -99,6 +101,9 @@ void Profile::removeProfileStart() {
     if (currentNode->callIdentifier().name != "profile")
         return;
 
+    // Increment m_stoppedCallDepth to account for didExecute not being called for console.profile.
+    ++m_stoppedCallDepth;
+
     // Attribute the time of the node aobut to be removed to the self time of its parent
     currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
 
@@ -124,8 +129,10 @@ void Profile::removeProfileEnd() {
 
 void Profile::willExecute(const CallIdentifier& callIdentifier)
 {
-    if (m_stoppedProfiling)
+    if (m_stoppedProfiling) {
+        ++m_stoppedCallDepth;
         return;
+    }
 
     ASSERT(m_currentNode);
     m_currentNode = m_currentNode->willExecute(callIdentifier);
@@ -135,6 +142,11 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
 {
     if (!m_currentNode)
         return;
+
+    if (m_stoppedProfiling && m_stoppedCallDepth > 0) {
+        --m_stoppedCallDepth;
+        return;
+    }
 
     if (m_currentNode == m_head) {
         m_currentNode = ProfileNode::create(callIdentifier, m_head.get(), m_head.get());
@@ -153,12 +165,9 @@ void Profile::didExecute(const CallIdentifier& callIdentifier)
         return;
     }
 
-    if (m_stoppedProfiling) {
-        m_currentNode = m_currentNode->parent();
-        return;
-    }
-
-    m_currentNode = m_currentNode->didExecute();
+    // Set m_currentNode to the parent (which didExecute returns). If stopped, just set the
+    // m_currentNode to the parent and don't call didExecute.
+    m_currentNode = m_stoppedProfiling ? m_currentNode->parent() : m_currentNode->didExecute();
 }
 
 void Profile::forEach(void (ProfileNode::*function)())
