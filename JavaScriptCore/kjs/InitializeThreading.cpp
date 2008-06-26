@@ -48,9 +48,6 @@ static void initializeThreadingOnce()
     WTF::initializeThreading();
 #if USE(MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
-#if !PLATFORM(DARWIN) // Darwin has pthread_main_np(), and doesn't need registerAsMainThread() called.
-    Heap::registerAsMainThread();
-#endif
     JSGlobalData::threadInstance();
     UString::null();
     initDateMath();

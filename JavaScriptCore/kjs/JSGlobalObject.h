@@ -161,7 +161,7 @@ namespace KJS {
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
 
         // Per-thread linked list of all global objects.
-        static JSGlobalObject*& head() { return JSGlobalData::threadInstance().head; }
+        JSGlobalObject*& head() { return d()->globalData->head; }
         JSGlobalObject* next() { return d()->next; }
 
         // Resets the global object to contain only built-in properties, sets

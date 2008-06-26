@@ -1,5 +1,49 @@
 2008-06-26  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Maciej.
+
+        Make JSGlobalData per-thread.
+
+        No change on SunSpider total.
+
+        * wtf/ThreadSpecific.h: Re-enabled the actual implementation.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject): Re-added a JSLock-related assertion. We'll probably
+        want to preserve these somehow to keep legacy behavior in working condition.
+        (KJS::JSGlobalObject::init): Initialize globalData pointer earlier, so that it is ready
+        when updating JSGlobalObject linked list.
+
+        * kjs/JSGlobalObject.h: (KJS::JSGlobalObject::head): Changed head() to be non-static, and
+        to use JSGlobalData associated with the current object.
+
+        * kjs/InitializeThreading.cpp: (KJS::initializeThreadingOnce): Removed a no longer needed
+        Heap::registerAsMainThread() call.
+
+        * kjs/JSGlobalData.h: Removed a lying lie comment - parserObjectExtraRefCounts is not
+        transient, and while newParserObjects may conceptually be such, there is still some node
+        manipulation going on outside Parser::parse which touches it.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::~JSGlobalData): Delete recently added members.
+        (KJS::JSGlobalData::sharedInstance): Actually use a separate instance.
+
+        * kjs/collector.cpp:
+        (KJS::Heap::Heap):
+        (KJS::Heap::~Heap): Added a destructor, which unconditionally deletes everything.
+        (KJS::Heap::sweep): Removed code related to "collect on main thread only" logic.
+        (KJS::Heap::collect): Ditto.
+        (KJS::Heap::globalObjectCount): Explicitly use per-thread instance of JSGlobalObject linked
+        list now that JSGlobalObject::head() is not static. Curently, WebCoreStatistics methods only
+        work with the main thread currently anyway.
+        (KJS::Heap::protectedGlobalObjectCount): Ditto.
+
+        * kjs/collector.h: Removed code related to "collect on main thread only" logic.
+
+        * JavaScriptCore.exp: Removed Heap::collectOnMainThreadOnly.
+
+2008-06-26  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Darin.
 
         https://bugs.webkit.org/show_bug.cgi?id=19767

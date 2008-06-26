@@ -38,7 +38,6 @@ RuntimeObjectImp::RuntimeObjectImp(PassRefPtr<Bindings::Instance> i)
     : instance(i)
 {
     instance->rootObject()->addRuntimeObject(this);
-    Heap::heap(this)->collectOnMainThreadOnly(this);
 }
 
 RuntimeObjectImp::~RuntimeObjectImp()

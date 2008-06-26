@@ -1,3 +1,18 @@
+2008-06-26  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Make JSGlobalData per-thread.
+
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::JSDOMWindowBase):
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        Removed collectOnMainThreadOnly() calls. WebCore objects live in their own heap now, so
+        there is no danger for them to be collected on a wrong thread.
+
 2008-06-26  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

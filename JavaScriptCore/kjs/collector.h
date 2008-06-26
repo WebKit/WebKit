@@ -77,8 +77,6 @@ namespace KJS {
         void protect(JSValue*);
         void unprotect(JSValue*);
 
-        void collectOnMainThreadOnly(JSValue*);
-
         static Heap* heap(const JSValue*); // 0 for immediate values
 
         size_t globalObjectCount();
@@ -86,7 +84,6 @@ namespace KJS {
         size_t protectedGlobalObjectCount();
         HashCountedSet<const char*>* protectedObjectTypeCounts();
 
-        static void registerAsMainThread();
         static void registerThread(); // Should only be called by clients that can use the same heap from multiple threads.
 
 #if PLATFORM(DARWIN) && USE(MULTIPLE_THREADS)
@@ -102,17 +99,17 @@ namespace KJS {
 
     private:
         template <Heap::HeapType heapType> void* heapAllocate(size_t);
-        template <Heap::HeapType heapType> size_t sweep(bool);
+        template <Heap::HeapType heapType> size_t sweep();
         static const CollectorBlock* cellBlock(const JSCell*);
         static CollectorBlock* cellBlock(JSCell*);
         static size_t cellOffset(const JSCell*);
 
         Heap();
+        ~Heap();
         friend class JSGlobalData;
 
         void recordExtraCost(size_t);
         void markProtectedObjects();
-        void markMainThreadOnlyObjects();
         void markCurrentThreadConservatively();
         void markCurrentThreadConservativelyInternal();
         void markOtherThreadConservatively(Thread*);
@@ -120,7 +117,6 @@ namespace KJS {
 
         typedef HashCountedSet<JSCell*> ProtectCountSet;
 
-        size_t mainThreadOnlyObjectCount;
         CollectorHeap primaryHeap;
         CollectorHeap numberHeap;
         ProtectCountSet protectedValues;
@@ -183,7 +179,6 @@ namespace KJS {
         uint32_t usedCells;
         CollectorCell* freeList;
         CollectorBitmap marked;
-        CollectorBitmap collectOnMainThreadOnly;
         Heap* heap;
     };
 
@@ -193,7 +188,6 @@ namespace KJS {
         uint32_t usedCells;
         SmallCollectorCell* freeList;
         CollectorBitmap marked;
-        CollectorBitmap collectOnMainThreadOnly;
         Heap* heap;
     };
 

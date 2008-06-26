@@ -89,6 +89,10 @@ JSGlobalData::JSGlobalData()
 JSGlobalData::~JSGlobalData()
 {
 #if USE(MULTIPLE_THREADS)
+    delete heap;
+
+    delete machine;
+
     delete[] arrayTable->table;
     delete[] dateTable->table;
     delete[] mathTable->table;
@@ -109,6 +113,9 @@ JSGlobalData::~JSGlobalData()
 
     delete propertyNames;
     deleteIdentifierTable(identifierTable);
+
+    delete newParserObjects;
+    delete parserObjectExtraRefCounts;
 #endif
 }
 
@@ -125,15 +132,12 @@ JSGlobalData& JSGlobalData::threadInstance()
 
 JSGlobalData& JSGlobalData::sharedInstance()
 {
-    return threadInstance();
-/*
 #if USE(MULTIPLE_THREADS)
     AtomicallyInitializedStatic(JSGlobalData, sharedInstance);
 #else
     static JSGlobalData sharedInstance;
 #endif
     return sharedInstance;
-*/
 }
 
 }
