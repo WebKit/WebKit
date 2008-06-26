@@ -1,3 +1,13 @@
+2008-06-25  Jean-Charles Verdié  <jcverdie@pleyo.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19581
+          Disable hanging test
+
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml: Removed.
+        * dom/xhtml/level2/html/HTMLFrameElement09.xhtml-disabled: Copied from LayoutTests/dom/xhtml/level2/html/HTMLFrameElement09.xhtml.
+
 2008-06-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
