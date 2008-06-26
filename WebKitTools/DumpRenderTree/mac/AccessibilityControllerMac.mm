@@ -42,6 +42,22 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
     if ([valueObject isKindOfClass:[NSArray class]])
         return [NSString stringWithFormat:@"<array of size %d>", [(NSArray*)valueObject count]];
 
+    if ([valueObject isKindOfClass:[NSNumber class]])
+        return [(NSNumber*)valueObject stringValue];
+
+    if ([valueObject isKindOfClass:[NSValue class]]) {
+        NSString* type = [NSString stringWithCString:[valueObject objCType] encoding:NSASCIIStringEncoding];
+        NSValue* value = (NSValue*)valueObject;
+        if ([type rangeOfString:@"NSRect"].length > 0)
+            return [NSString stringWithFormat:@"NSRect: %@", NSStringFromRect([value rectValue])];
+        if ([type rangeOfString:@"NSPoint"].length > 0)
+            return [NSString stringWithFormat:@"NSPoint: %@", NSStringFromPoint([value pointValue])];
+        if ([type rangeOfString:@"NSSize"].length > 0)
+            return [NSString stringWithFormat:@"NSSize: %@", NSStringFromSize([value sizeValue])];
+        if ([type rangeOfString:@"NSRange"].length > 0)
+            return [NSString stringWithFormat:@"NSRange: %@", NSStringFromRange([value rangeValue])];
+    }
+
     // Strip absolute URL paths
     NSString* description = [valueObject description];
     NSRange range = [description rangeOfString:@"LayoutTests"];

@@ -1,3 +1,16 @@
+2008-06-26  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders.
+
+        This is a speculative fix for the failing layout test on the build 
+        bot. It seems that the problem that the Build Bot is having is 
+        Tiger-specific. On Tiger, [NSValue description] was not very smart. 
+        So I replaced our call to description with a hand-rolled equivalent 
+        that will match on both platforms. 
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (descriptionOfValue):
+
 2008-06-25  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
