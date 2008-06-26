@@ -1712,6 +1712,30 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
 
 @implementation WebView
 
+#ifdef BUILDING_ON_TIGER
+static IMP oldReleaseIMP;
+
+static void
+tigerMailReleaseIMP(WebView* self, SEL cmd)
+{
+    // If we're on the main thread or the retain count is not 1, we can safely call the old release implementation.
+    if (pthread_main_np() != 0 || [self retainCount] > 1) {
+        oldReleaseIMP(self, cmd);
+        return;
+    }
+     
+    // Release the web view on the main thread
+    [self performSelectorOnMainThread:@selector(release) withObject:nil waitUntilDone:NO];
+}
+
+// We declare a release method here so that we don't try to modify -[NSObject release].
+- (void)release
+{
+    [super release];
+}
+
+#endif
+
 + (void)initialize
 {
     static BOOL initialized = NO;
@@ -1722,6 +1746,21 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_applicationWillTerminate) name:NSApplicationWillTerminateNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:) name:WebPreferencesChangedNotification object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesRemovedNotification:) name:WebPreferencesRemovedNotification object:nil];
+    
+#ifdef BUILDING_ON_TIGER
+    // Tiger Mail can sometimes call release on a secondary thread, which can end up calling -[WebView dealloc] which isn't thread safe.
+    // To work around this we check if Mail is running and replace the release method which one that makes sure that the final release
+    // happens on the main thread.
+    if (![[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.mail"])
+        return;
+    
+    if (oldReleaseIMP)
+        return;
+    
+    Method releaseMethod = class_getInstanceMethod(self, @selector(release));
+    ASSERT(releaseMethod);   
+    oldReleaseIMP = method_setImplementation(releaseMethod,(IMP)tigerMailReleaseIMP);
+#endif
 }
 
 + (void)_applicationWillTerminate

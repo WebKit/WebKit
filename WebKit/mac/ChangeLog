@@ -1,3 +1,20 @@
+2008-06-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        <rdar://problem/5984270> 
+        REGRESSION (Tiger only) : Mail crashes because message load is being processed on a secondary thread
+        
+        * WebView/WebView.mm:
+        (tigerMailReleaseIMP):
+        New method that makes sure that the final release happens on the main thread.
+        
+        (-[WebView release]):
+        New method that just calls [super release];
+        
+        (+[WebView initialize]):
+        When running under Tiger mail, replace the release method with tigerMailReleaseIMP.
+
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff.
