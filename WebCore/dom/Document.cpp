@@ -308,8 +308,7 @@ Document::Document(Frame* frame, bool isXHTML)
 
     m_axObjectCache = 0;
     
-    // FIXME: DocLoader probably no longer needs the frame argument
-    m_docLoader = new DocLoader(frame, this);
+    m_docLoader = new DocLoader(this);
 
     visuallyOrdered = false;
     m_bParsing = false;
@@ -1285,14 +1284,22 @@ void Document::detach()
 
     if (render)
         render->destroy();
-
-    // FIXME: is this needed or desirable?
-    m_frame = 0;
+    
+    // This is required, as our Frame might delete itself as soon as it detaches
+    // us.  However, this violates Node::detach() symantics, as it's never
+    // possible to re-attach.  Eventually Document::detach() should be renamed
+    // or this call made explicit in each of the callers of Document::detach().
+    clearFramePointer();
     
     if (m_renderArena) {
         delete m_renderArena;
         m_renderArena = 0;
     }
+}
+
+void Document::clearFramePointer()
+{
+    m_frame = 0;
 }
 
 void Document::removeAllEventListenersFromAllNodes()

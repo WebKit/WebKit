@@ -1,3 +1,32 @@
+2008-06-26  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        CSS @import statements can cause DocLoader to use
+        a dead Frame pointer.
+        https://bugs.webkit.org/show_bug.cgi?id=19618
+        
+        The fix is to get rid of the Frame pointer on DocLoader.
+        
+        I also took this opportunity to clean up Document::detach
+        a little to make it clear why we clear the m_frame pointer
+        there, and to note that in the future we should stop
+        using Node::detach to mean "tear down the whole rendering
+        tree and detach from the frame".
+
+        Test: I don't know how to make a good test for this, the test
+        we have is network timing dependent and does not make a good
+        layout test.
+
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::detach):
+        (WebCore::Document::clearFramePointer):
+        * dom/Document.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::frame):
+        * loader/DocLoader.h:
+
 2008-06-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady.

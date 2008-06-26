@@ -51,7 +51,7 @@ friend class Cache;
 friend class HTMLImageLoader;
 
 public:
-    DocLoader(Frame*, Document*);
+    DocLoader(Document*);
     ~DocLoader();
 
     CachedImage* requestImage(const String& url);
@@ -79,7 +79,7 @@ public:
     CachePolicy cachePolicy() const { return m_cachePolicy; }
     void setCachePolicy(CachePolicy);
     
-    Frame* frame() const { return m_frame; }
+    Frame* frame() const; // Can be NULL
     Document* doc() const { return m_doc; }
 
     void removeCachedResource(CachedResource*) const;
@@ -111,8 +111,7 @@ private:
     HashSet<String> m_reloadedURLs;
     mutable HashMap<String, CachedResource*> m_docResources;
     CachePolicy m_cachePolicy;
-    Frame* m_frame;
-    Document *m_doc;
+    Document* m_doc;
     
     int m_requestCount;
     

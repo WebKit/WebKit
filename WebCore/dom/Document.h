@@ -378,6 +378,8 @@ public:
     virtual void attach();
     virtual void detach();
 
+    void clearFramePointer();
+
     RenderArena* renderArena() { return m_renderArena; }
 
     void clearAXObjectCache();
