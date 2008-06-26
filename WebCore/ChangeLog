@@ -1,3 +1,26 @@
+2008-06-26  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [svg] Disable plugins for SVG images
+        The Qt platform allows to have a plugin factory per Page. Now SVG Images
+        are using a Page and dummy/empty clients for Chrome. The only way to get
+        the kit from the WebCore::Page is to go through the ChromeClient but this
+        is not possible when the ChromeClient is an empty client. This leads to a
+        crash in PluginDataQt.cpp. One way to avoid this would have been the
+        addition of a rtti like field to ChromeClient to see if it is an empty
+        client. The other possibility is to not enable plugins for images.
+
+        The SVGImage relies on the fact that the document is a SVGDocument and
+        that the rootElement is a SVGSVGElement. If plugins are used we could
+        end up with a PluginDocument and crash badly. Do not try to use plugins
+        if plugins are disabled for the WebCore::Page.
+
+        * dom/DOMImplementation.cpp:
+        (WebCore::DOMImplementation::createDocument):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::dataChanged):
+
 2008-06-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
