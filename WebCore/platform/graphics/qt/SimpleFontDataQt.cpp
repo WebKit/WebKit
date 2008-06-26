@@ -22,10 +22,14 @@
 #include "config.h"
 #include "SimpleFontData.h"
 
+#include "SVGFontData.h"
+
 namespace WebCore {
 
 SimpleFontData::SimpleFontData(const FontPlatformData& font, bool customFont, bool loading, SVGFontData*)
-    : m_font(font), m_isCustomFont(customFont), m_isLoading(loading)
+    : m_font(font)
+    , m_isCustomFont(customFont)
+    , m_isLoading(loading)
 {
 }
 
