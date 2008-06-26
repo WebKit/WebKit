@@ -17,6 +17,8 @@
 		1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */; };
 		1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */; };
 		1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1AE1CEF20E141CC4000027BC /* MainThreadObjectDeallocator.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE1CEF00E141CC4000027BC /* MainThreadObjectDeallocator.h */; };
+		1AE1CEF30E141CC4000027BC /* MainThreadObjectDeallocator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AE1CEF10E141CC4000027BC /* MainThreadObjectDeallocator.mm */; };
 		1AEA66D40DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */; };
 		1AEA66D50DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */; };
 		1AEA66D80DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */; };
@@ -309,6 +311,8 @@
 		1A2D754C0DE480B900F0A648 /* WebIconFetcher.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebIconFetcher.mm; sourceTree = "<group>"; };
 		1A2D754F0DE4810E00F0A648 /* WebIconFetcherInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebIconFetcherInternal.h; sourceTree = "<group>"; };
 		1A7F9C4B0DD3DDEA0028F8A5 /* nptextinput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nptextinput.h; sourceTree = "<group>"; };
+		1AE1CEF00E141CC4000027BC /* MainThreadObjectDeallocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainThreadObjectDeallocator.h; sourceTree = "<group>"; };
+		1AE1CEF10E141CC4000027BC /* MainThreadObjectDeallocator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MainThreadObjectDeallocator.mm; sourceTree = "<group>"; };
 		1AEA66D20DC6B1FF003D12BF /* WebNetscapePluginEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandler.h; sourceTree = "<group>"; };
 		1AEA66D30DC6B1FF003D12BF /* WebNetscapePluginEventHandler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapePluginEventHandler.mm; sourceTree = "<group>"; };
 		1AEA66D60DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapePluginEventHandlerCarbon.h; sourceTree = "<group>"; };
@@ -982,6 +986,8 @@
 				84311A1305EAAAF00088EDA4 /* WebResource.mm */,
 				7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
+				1AE1CEF00E141CC4000027BC /* MainThreadObjectDeallocator.h */,
+				1AE1CEF10E141CC4000027BC /* MainThreadObjectDeallocator.mm */,
 			);
 			name = WebView;
 			path = mac/WebView;
@@ -1309,6 +1315,7 @@
 				1A7F9C4C0DD3DDEA0028F8A5 /* nptextinput.h in Headers */,
 				1A2D754D0DE480B900F0A648 /* WebIconFetcher.h in Headers */,
 				1A2D75500DE4810E00F0A648 /* WebIconFetcherInternal.h in Headers */,
+				1AE1CEF20E141CC4000027BC /* MainThreadObjectDeallocator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1594,6 +1601,7 @@
 				1AEA66D90DC6B209003D12BF /* WebNetscapePluginEventHandlerCarbon.mm in Sources */,
 				1AEA6A510DC8CE2F003D12BF /* WebNetscapePluginEventHandlerCocoa.mm in Sources */,
 				1A2D754E0DE480B900F0A648 /* WebIconFetcher.mm in Sources */,
+				1AE1CEF30E141CC4000027BC /* MainThreadObjectDeallocator.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

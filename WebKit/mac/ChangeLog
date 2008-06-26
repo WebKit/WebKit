@@ -1,3 +1,18 @@
+2008-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add a new MainThreadObjectDeallocator which can schedule dealloc calls on the main thread
+        if necessary. Use this for the WebView class. 
+                
+        * WebView/MainThreadObjectDeallocator.h: Added.
+        * WebView/MainThreadObjectDeallocator.mm: Added.
+        (deallocCallback):
+        (scheduleDeallocateOnMainThread):
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]):
+        (+[WebView initialize]):
+
 2008-06-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.

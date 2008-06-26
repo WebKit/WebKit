@@ -1,3 +1,11 @@
+2008-06-26  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add MainThreadObjectDeallocator to sources.
+        
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-06-24  John Sullivan  <sullivan@apple.com>
 
         Rubber-stamped by Sam Weinig
