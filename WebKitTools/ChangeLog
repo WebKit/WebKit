@@ -1,5 +1,15 @@
 2008-06-26  Beth Dakin  <bdakin@apple.com>
 
+        Reviewed by Sam.
+
+        Do not include AXPosition in the dump of all of the accessibility 
+        attributes since it is screen-specific.
+
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::allAttributesOfFocusedElement):
+
+2008-06-26  Beth Dakin  <bdakin@apple.com>
+
         Reviewed by Anders.
 
         This is a speculative fix for the failing layout test on the build 

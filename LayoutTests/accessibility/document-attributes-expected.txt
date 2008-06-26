@@ -4,7 +4,6 @@ AXRoleDescription: HTML content
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXWebArea>
-AXPosition: NSPoint: {-10000, 10900}
 AXSize: NSSize: {0, 0}
 AXTitle: 
 AXDescription: 

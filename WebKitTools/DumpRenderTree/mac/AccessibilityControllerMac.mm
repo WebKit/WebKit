@@ -85,6 +85,12 @@ JSStringRef AccessibilityController::allAttributesOfFocusedElement()
     Vector<UniChar> buffer;
     for (NSUInteger i = 0; i < [supportedAttributes count]; ++i) {
         NSString* attribute = [supportedAttributes objectAtIndex:i];
+        
+        // Right now, position provides useless and screen-specific information, so we do not
+        // want to include it for the sake of universally passing tests.
+        if ([attribute isEqualToString:@"AXPosition"])
+            continue;
+        
         id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
         NSString* value = descriptionOfValue(valueObject, accessibilityObject);
 
