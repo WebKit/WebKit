@@ -1,3 +1,25 @@
+2008-06-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        This patch adds support to the AccessibilityController to query the 
+        following attributes specifically, without a full attribute dump: 
+        AXRole, AXTitle, and AXDescription.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (allAttributesForFocusedElementCallback):
+        (roleOfFocusedElementCallback):
+        (titleOfFocusedElementCallback):
+        (descriptionOfFocusedElementCallback):
+        (AccessibilityController::staticFunctions):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::allAttributesForFocusedElement):
+        (concatenateAttributeAndValue):
+        (AccessibilityController::roleOfFocusedElement):
+        (AccessibilityController::titleOfFocusedElement):
+        (AccessibilityController::descriptionOfFocusedElement):
+
 2008-06-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Stephanie Lewis.

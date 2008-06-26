@@ -1,3 +1,21 @@
+2008-06-25  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        New tests that exercise the ability to query the following 
+        accessibility attributes individually: role, title, and 
+        description.
+
+        * accessibility/aria-describedby-on-input-expected.txt: Added.
+        * accessibility/aria-describedby-on-input.html: Added.
+        * accessibility/aria-labelledby-on-input-expected.txt: Added.
+        * accessibility/aria-labelledby-on-input.html: Added.
+        * accessibility/aria-roles-expected.txt: Added.
+        * accessibility/aria-roles.html: Added.
+        * accessibility/document-attributes.html:
+        * accessibility/resources: Added.
+        * accessibility/resources/cake.png: Added.
+
 2008-06-25  Justin Garcia  <justin.garcia@apple.com>
 
         Reviewed by John.

@@ -60,7 +60,7 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
     return [valueObject description];
 }
 
-JSStringRef AccessibilityController::dumpCurrentAttributes()
+JSStringRef AccessibilityController::allAttributesOfFocusedElement()
 {
     WebHTMLView* view = [[mainFrame frameView] documentView];
     id accessibilityObject = [view accessibilityFocusedUIElement];
@@ -85,4 +85,42 @@ JSStringRef AccessibilityController::dumpCurrentAttributes()
     }
 
     return JSStringCreateWithCharacters(buffer.data(), buffer.size());
+}
+
+static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)
+{
+    Vector<UniChar> buffer([attribute length]);
+    [attribute getCharacters:buffer.data()];
+    buffer.append(':');
+    buffer.append(' ');
+
+    Vector<UniChar> valueBuffer([value length]);
+    [value getCharacters:valueBuffer.data()];
+    buffer.append(valueBuffer);
+
+    return JSStringCreateWithCharacters(buffer.data(), buffer.size());
+}
+
+JSStringRef AccessibilityController::roleOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    NSString* role = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXRole"], accessibilityObject);
+    return concatenateAttributeAndValue(@"AXRole", role);
+}
+
+JSStringRef AccessibilityController::titleOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    NSString* title = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXTitle"], accessibilityObject);
+    return concatenateAttributeAndValue(@"AXTitle", title);
+}
+
+JSStringRef AccessibilityController::descriptionOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    id description = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXDescription"], accessibilityObject);
+    return concatenateAttributeAndValue(@"AXDescription", description);
 }
