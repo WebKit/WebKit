@@ -21,24 +21,26 @@
 
 #include "config.h"
 
-#if ENABLE(SVG) && ENABLE(SVG_EXPERIMENTAL_FEATURES)
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGResourceFilter.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
 SVGResourceFilterPlatformData* SVGResourceFilter::createPlatformData()
 {
+    notImplemented();
     return 0;
 }
 
 void SVGResourceFilter::prepareFilter(GraphicsContext*&, const FloatRect&)
 {
-    // FIXME: implement me :-)
+    notImplemented();
 }
 
 void SVGResourceFilter::applyFilter(GraphicsContext*&, const FloatRect&)
 {
-    // FIXME: implement me :-)
+    notImplemented();
 }
 
 } // namespace WebCore

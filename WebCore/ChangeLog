@@ -1,3 +1,16 @@
+2008-06-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [svg] Make QtWebKit build more of the SVG support
+        Add the proper defines and files, update SVGResourceFilterQt.cpp
+        to be enabled by the filter option and not by experimental svg support
+
+        * WebCore.pro:
+        * svg/graphics/qt/SVGResourceFilterQt.cpp:
+        (WebCore::SVGResourceFilter::createPlatformData):
+        (WebCore::SVGResourceFilter::prepareFilter):
+
 2008-06-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Brady Eidson.

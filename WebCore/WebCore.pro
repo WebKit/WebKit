@@ -74,9 +74,11 @@ win32-g++ {
 !contains(DEFINES, ENABLE_XPATH=.): DEFINES += ENABLE_XPATH=1
 #!contains(DEFINES, ENABLE_XBL=.): DEFINES += ENABLE_XBL=1
 !contains(DEFINES, ENABLE_SVG=.): DEFINES += ENABLE_SVG=1
+#!contains(DEFINES, ENABLE_SVG_FONTS=.): DEFINES += ENABLE_SVG_FONTS=1
+!contains(DEFINES, ENABLE_SVG_FILTERS=.): DEFINES += ENABLE_SVG_FILTERS=1
 !contains(DEFINES, ENABLE_SVG_FOREIGN_OBJECT=.): DEFINES += ENABLE_SVG_FOREIGN_OBJECT=1
 !contains(DEFINES, ENABLE_SVG_ANIMATION=.): DEFINES += ENABLE_SVG_ANIMATION=1
-#!contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
+!contains(DEFINES, ENABLE_SVG_AS_IMAGE=.): DEFINES += ENABLE_SVG_AS_IMAGE=1
 !contains(DEFINES, ENABLE_SVG_USE=.): DEFINES += ENABLE_SVG_USE=1
 contains(QT_CONFIG, phonon):DEFINES += ENABLE_VIDEO=1
 else:DEFINES += ENABLE_VIDEO=0
@@ -1243,6 +1245,7 @@ contains(DEFINES, ENABLE_SVG=1) {
     IDL_BINDINGS += \
         svg/SVGZoomEvent.idl \
         svg/SVGAElement.idl \
+        svg/SVGAltGlyphElement.idl \
         svg/SVGAngle.idl \
         svg/SVGAnimateColorElement.idl \
         svg/SVGAnimatedAngle.idl \
@@ -1372,10 +1375,6 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/SVGUnitTypes.idl \
         svg/SVGUseElement.idl \
         svg/SVGViewElement.idl 
-
-    # ### SVG_FONTS
-    # IDL_BINDINGS += \
-    #  svg/SVGAltGlyphElement.idl \
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
@@ -1538,6 +1537,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/graphics/filters/SVGFEMorphology.cpp \
         svg/graphics/filters/SVGFEOffset.cpp \
         svg/graphics/filters/SVGFESpecularLighting.cpp \
+        svg/graphics/filters/SVGFETile.cpp \
         svg/graphics/filters/SVGFETurbulence.cpp \
         svg/graphics/filters/SVGFilterEffect.cpp \
         svg/graphics/filters/SVGLightSource.cpp \
