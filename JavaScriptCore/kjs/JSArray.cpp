@@ -584,6 +584,8 @@ struct AVLTreeAbstractorForArrayCompare {
             m_nodes[h].lt |= 0x80000000;
             if (bf < 0)
                 m_nodes[h].gt |= 0x80000000;
+            else
+                m_nodes[h].gt &= 0x7FFFFFFF;
         }
     }
 
