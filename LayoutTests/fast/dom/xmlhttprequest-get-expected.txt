@@ -21,7 +21,7 @@ statusText
 readyState
 4
 Event information
-Event object: [object Event]
+Event object: [object XMLHttpRequestProgressEvent]
 Event properties:
 AT_TARGET : '2'
 BLUR : '8192'
@@ -44,13 +44,19 @@ MOUSEUP : '2'
 SELECT : '16384'
 bubbles : 'false'
 cancelBubble : 'false'
-cancelable : 'false'
+cancelable : 'true'
 clipboardData : 'undefined'
 currentTarget : '[object XMLHttpRequest]'
 eventPhase : '0'
 initEvent : 'function initEvent() {
     [native code]
 }'
+initProgressEvent : 'function initProgressEvent() {
+    [native code]
+}'
+lengthComputable : 'false'
+loaded : '0'
+position : '0'
 preventDefault : 'function preventDefault() {
     [native code]
 }'
@@ -60,5 +66,7 @@ stopPropagation : 'function stopPropagation() {
     [native code]
 }'
 target : '[object XMLHttpRequest]'
+total : '0'
+totalSize : '0'
 type : 'load'
 

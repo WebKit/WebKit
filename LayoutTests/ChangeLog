@@ -1,3 +1,9 @@
+2008-06-26  Sam Weinig  <sam@webkit.org>
+
+        Update result after adding new progress events to XMLHttpRequest.
+
+        * fast/dom/xmlhttprequest-get-expected.txt:
+
 2008-06-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
