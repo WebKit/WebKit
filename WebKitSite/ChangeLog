@@ -1,3 +1,12 @@
+2008-06-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Not reviewed, web site fix.
+        
+        Remove blank lines in an attempt to fix feeds.
+
+        * blog/wp-content/themes/webkit/index.php:
+        * blog/wp-content/themes/webkit/links.php:
+
 2008-06-22  Aaron Digulla  <digulla@hepe.com>
 
         Reviewed by Darin Adler.

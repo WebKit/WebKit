@@ -2,9 +2,7 @@
 /*
 Template Name: Links
 */
-?>
-
-<?php get_header(); ?>
+?><?php get_header(); ?>
 
 <div id="content" class="widecolumn">
 
@@ -13,6 +11,6 @@ Template Name: Links
 <?php get_links_list(); ?>
 </ul>
 
-</div>	
+</div>        
 
 <?php get_footer(); ?>
