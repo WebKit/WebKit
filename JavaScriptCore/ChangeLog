@@ -1,3 +1,16 @@
+2008-06-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler and Geoff Garen.
+
+        Fix the malloc zone introspection functions so that malloc_zone_statistics does not give
+        bogus output in an application that uses JavaScriptCore.
+
+        * kjs/CollectorHeapIntrospector.cpp:
+        (KJS::CollectorHeapIntrospector::statistics): Return statistics about memory allocated by the collector.
+        * kjs/CollectorHeapIntrospector.h:
+        * wtf/FastMalloc.cpp: Zero out the statistics.  FastMalloc doesn't track this information at present.
+        Returning zero for all values is preferable to returning bogus data.
+
 2008-06-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -297,7 +297,7 @@ public:
     static void log(malloc_zone_t*, void*) { }
     static void forceLock(malloc_zone_t*) { }
     static void forceUnlock(malloc_zone_t*) { }
-    static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
+    static void statistics(malloc_zone_t*, malloc_statistics_t* stats) { memset(stats, 0, sizeof(malloc_statistics_t)); }
 
 private:
     FastMallocZone(TCMalloc_PageHeap*, TCMalloc_ThreadCache**, TCMalloc_Central_FreeListPadded*);

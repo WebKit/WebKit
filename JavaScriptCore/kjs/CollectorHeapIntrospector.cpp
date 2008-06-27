@@ -93,4 +93,16 @@ kern_return_t CollectorHeapIntrospector::enumerate(task_t task, void* context, u
     return 0;
 }
 
+void CollectorHeapIntrospector::statistics(malloc_zone_t* zone, malloc_statistics_t* stats)
+{
+    JSLock lock;
+    CollectorHeapIntrospector* introspector = reinterpret_cast<CollectorHeapIntrospector*>(zone);
+    CollectorHeap* primaryHeap = introspector->m_primaryHeap;
+    CollectorHeap* numberHeap = introspector->m_numberHeap;
+    stats->blocks_in_use = primaryHeap->usedBlocks + numberHeap->usedBlocks;
+    stats->size_in_use = primaryHeap->usedBlocks * BLOCK_SIZE + numberHeap->usedBlocks * BLOCK_SIZE;
+    stats->max_size_in_use = stats->size_in_use;
+    stats->size_allocated = primaryHeap->numBlocks * BLOCK_SIZE + numberHeap->numBlocks * BLOCK_SIZE;
+}
+
 } // namespace KJS

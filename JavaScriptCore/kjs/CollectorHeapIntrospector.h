@@ -46,7 +46,7 @@ public:
     static void log(malloc_zone_t*, void*) { }
     static void forceLock(malloc_zone_t*) { }
     static void forceUnlock(malloc_zone_t*) { }
-    static void statistics(malloc_zone_t*, malloc_statistics_t*) { }
+    static void statistics(malloc_zone_t*, malloc_statistics_t*);
 
 private:
     CollectorHeapIntrospector(CollectorHeap*, CollectorHeap*);
