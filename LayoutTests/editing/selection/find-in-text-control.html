@@ -1,0 +1,49 @@
+<p id="description" style="display: none;">
+    Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=7023">https://bugs.webkit.org/show_bug.cgi?id=7023</a> Searching in text areas</i>.
+</p>
+<div id="div">
+    Lorem ip<textarea id="textarea">sum dolor si</textarea>t amet
+</div>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var result = "";
+
+    function findAll(target)
+    {
+        document.body.offsetTop;
+        var sel = getSelection();
+        sel.empty();
+        var ranges = [];
+        document.execCommand("FindString", false, target);
+        if (!sel.rangeCount) {
+            result += "Target " + target + " not matched\n";
+            return;
+        }
+        var range = sel.getRangeAt(0);
+        while (!ranges[0] || range.startContainer != ranges[0].startContainer || range.startOffset != ranges[0].startOffset) {
+            ranges.push(range);
+            document.execCommand("FindString", false, target);
+            range = sel.getRangeAt(0);
+        }
+        var div = document.getElementById("div");
+        result += "Target " + target + " matched at:\n";
+        while (range = ranges.shift()) {
+            result += "    ";
+            result += range.startContainer.parentNode != div ? "text control" : range.startContainer.nextSibling ? "outer text before" : "outer text after";
+            result += ", at offset " + range.startOffset + "\n";
+        }
+    }
+
+    findAll("m");
+    findAll("s");
+    findAll("si");
+    findAll("rem");
+    findAll("ipsum");
+    findAll("sit");
+    findAll("amet");
+
+    document.body.appendChild(document.createElement("pre")).appendChild(document.createTextNode(result));
+    document.getElementById("description").style.display = "";
+</script>

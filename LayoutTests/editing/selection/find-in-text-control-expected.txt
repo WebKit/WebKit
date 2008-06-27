@@ -1,0 +1,19 @@
+Test for https://bugs.webkit.org/show_bug.cgi?id=7023 Searching in text areas.
+
+Lorem ipt amet
+Target m matched at:
+    outer text before, at offset 9
+    text control, at offset 2
+    outer text after, at offset 3
+Target s matched at:
+    text control, at offset 0
+    text control, at offset 10
+Target si matched at:
+    text control, at offset 10
+Target rem matched at:
+    outer text before, at offset 7
+Target ipsum not matched
+Target sit not matched
+Target amet matched at:
+    outer text after, at offset 2
+

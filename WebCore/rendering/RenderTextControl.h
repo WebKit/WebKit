@@ -142,6 +142,9 @@ private:
     void searchEventTimerFired(Timer<RenderTextControl>*);
     String finishText(Vector<UChar>&) const;
 
+    friend class TextIterator;
+    HTMLElement* innerTextElement() const;
+
     RefPtr<HTMLTextFieldInnerElement> m_innerBlock;
     RefPtr<HTMLTextFieldInnerTextElement> m_innerText;
     RefPtr<HTMLSearchFieldResultsButtonElement> m_resultsButton;

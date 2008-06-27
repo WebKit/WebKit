@@ -1,3 +1,13 @@
+2008-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/3099526> Find command doesn't search form input controls (textareas and text fields)
+          http://bugs.webkit.org/show_bug.cgi?id=7023
+
+        * editing/selection/find-in-text-control-expected.txt: Added.
+        * editing/selection/find-in-text-control.html: Added.
+
 2008-06-26  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam.

@@ -1,3 +1,45 @@
+2008-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/3099526> Find command doesn't search form input controls (textareas and text fields)
+          http://bugs.webkit.org/show_bug.cgi?id=7023
+
+        Test: editing/selection/find-in-text-control.html
+
+        * WebCore.base.exp: Updated the TextIterator constructor signature.
+
+        * editing/TextIterator.cpp:
+        (WebCore::TextIterator::TextIterator): Added an enterTextControls
+        boolean parameter that determines whether the iterator should visit text
+        inside text areas and text fields. Added code to initialize the
+        m_inShadowContent member variable based on whether the range is in
+        shadow content.
+        (WebCore::TextIterator::advance): Added code to step out of shadow
+        content.
+        (WebCore::TextIterator::handleReplacedElement): Added code to enter
+        text controls if desired.
+        (WebCore::CharacterIterator::CharacterIterator): Added an
+        enterTextControls boolean parameter that determines whether the iterator
+        should visit text inside text areas and text fields. This is passed to
+        the TextIterator constructor.
+        (WebCore::findPlainText): Changed to use a CharacterIterator that
+        visits text controls.
+
+        * editing/TextIterator.h: Added member variables to track whether the
+        current node is in a shadow tree and whether the iterator should visit
+        text controls.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): Changed to find inside text controls.
+        (WebCore::Frame::markAllMatchesForText): Ditto.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::innerTextElement): Added.
+        * rendering/RenderTextControl.h: Added innerTextElement(), a private
+        accessor method that is accessible to TextIterator through class
+        friendship.
+
 2008-06-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -578,6 +578,11 @@ String RenderTextControl::finishText(Vector<UChar>& result) const
     return String::adopt(result);
 }
 
+HTMLElement* RenderTextControl::innerTextElement() const
+{
+    return m_innerText.get();
+}
+
 String RenderTextControl::text()
 {
     if (!m_innerText)
