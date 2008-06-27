@@ -1,3 +1,13 @@
+2008-06-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove unnecessary options to make_names.pl command line
+        http://bugs.webkit.org/show_bug.cgi?id=19777
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+
 2008-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
