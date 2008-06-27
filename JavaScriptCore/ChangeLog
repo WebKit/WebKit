@@ -1,5 +1,11 @@
 2008-06-26  Mark Rowe  <mrowe@apple.com>
 
+        Speculative fix for the Windows build.
+
+        * kjs/JSImmediate.cpp:
+
+2008-06-26  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Darin Adler and Geoff Garen.
 
         Fix the malloc zone introspection functions so that malloc_zone_statistics does not give
