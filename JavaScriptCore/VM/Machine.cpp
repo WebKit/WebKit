@@ -2114,8 +2114,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
             int registerOffset = r - (*registerBase);
 
-            r[firstArg].u.jsValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : (r[thisVal].u.jsValue)->toObject(exec);
-            JSValue* thisValue = r[firstArg].u.jsValue;
+            JSValue* thisValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].u.jsValue;
 
             ArgList args(reinterpret_cast<JSValue***>(registerBase), registerOffset + firstArg + 1, argCount - 1);
 

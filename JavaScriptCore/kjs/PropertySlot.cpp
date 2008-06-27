@@ -44,7 +44,7 @@ JSValue* PropertySlot::functionGetter(ExecState* exec, const Identifier&, const 
     ASSERT(callType == CallTypeJS);
     RegisterFileStack* stack = &exec->dynamicGlobalObject()->registerFileStack();
     stack->pushFunctionRegisterFile();
-    // FIXME: This can be done more efficiently using the callData.
+    // FIXME: Can this be done more efficiently using the callData?
     JSValue* result = static_cast<JSFunction*>(slot.m_data.getterFunc)->call(exec, slot.slotBase(), exec->emptyList());
     stack->popFunctionRegisterFile();
     return result;

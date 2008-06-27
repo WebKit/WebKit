@@ -434,12 +434,12 @@ double JSObject::toNumber(ExecState *exec) const
   return prim->toNumber(exec);
 }
 
-UString JSObject::toString(ExecState *exec) const
+UString JSObject::toString(ExecState* exec) const
 {
-  JSValue *prim = toPrimitive(exec,StringType);
-  if (exec->hadException()) // should be picked up soon in nodes.cpp
-    return "";
-  return prim->toString(exec);
+    JSValue* primitive = toPrimitive(exec, StringType);
+    if (exec->hadException())
+        return "";
+    return primitive->toString(exec);
 }
 
 JSObject *JSObject::toObject(ExecState*) const

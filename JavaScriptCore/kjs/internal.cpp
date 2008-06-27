@@ -78,6 +78,16 @@ UString JSString::toString(ExecState*) const
     return m_value;
 }
 
+UString JSString::toThisString(ExecState*) const
+{
+    return m_value;
+}
+
+JSString* JSString::toThisJSString(ExecState*)
+{
+    return this;
+}
+
 inline StringObject* StringObject::create(ExecState* exec, JSString* string)
 {
     return new (exec) StringObject(exec->lexicalGlobalObject()->stringPrototype(), string);
@@ -114,20 +124,16 @@ bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNam
     // This function should only be called by JSValue::get.
     if (getStringPropertySlot(exec, propertyName, slot))
         return true;
-    JSObject* object = StringObject::create(exec, this);
-    slot.setBase(object);
-    if (object->JSObject::getOwnPropertySlot(exec, propertyName, slot))
-        return true;
-    while (true) {
-        JSValue* proto = object->prototype();
-        if (!proto->isObject()) {
-            slot.setUndefined();
-            return true;
-        }
-        object = static_cast<JSObject*>(proto);
+    slot.setBase(this);
+    JSObject* object;
+    for (JSValue* prototype = exec->lexicalGlobalObject()->stringPrototype(); prototype != jsNull(); prototype = object->prototype()) {
+        ASSERT(prototype->isObject());
+        object = static_cast<JSObject*>(prototype);
         if (object->getOwnPropertySlot(exec, propertyName, slot))
             return true;
     }
+    slot.setUndefined();
+    return true;
 }
 
 bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
@@ -168,11 +174,18 @@ double JSNumberCell::toNumber(ExecState *) const
   return val;
 }
 
-UString JSNumberCell::toString(ExecState *) const
+UString JSNumberCell::toString(ExecState*) const
 {
-  if (val == 0.0) // +0.0 or -0.0
-    return "0";
-  return UString::from(val);
+    if (val == 0.0) // +0.0 or -0.0
+        return "0";
+    return UString::from(val);
+}
+
+UString JSNumberCell::toThisString(ExecState*) const
+{
+    if (val == 0.0) // +0.0 or -0.0
+        return "0";
+    return UString::from(val);
 }
 
 JSObject* JSNumberCell::toObject(ExecState* exec) const
@@ -205,6 +218,11 @@ bool JSNumberCell::getTruncatedUInt32(uint32_t& uint32) const
         return false;
     uint32 = static_cast<uint32_t>(val);
     return true;
+}
+
+JSValue* JSNumberCell::getJSNumber()
+{
+    return this;
 }
 
 // --------------------------- GetterSetter ---------------------------------

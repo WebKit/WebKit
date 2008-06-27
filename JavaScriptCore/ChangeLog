@@ -1,3 +1,152 @@
+2008-06-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19721
+          speed up JavaScriptCore by not wrapping strings in objects just
+          to call functions on them
+
+        - optimize UString append and the replace function a bit
+
+        SunSpider says 1.8% faster.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/JSPropertyNameIterator.cpp: Added include of JSString.h, now needed
+        because jsString returns a JSString*.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Removed the toObject call from native
+        function calls. Also removed code to put the this value into a register.
+
+        * kjs/BooleanObject.cpp:
+        (KJS::booleanProtoFuncToString): Rewrite to handle false and true
+        separately.
+
+        * kjs/FunctionPrototype.cpp:
+        (KJS::constructFunction): Use single-character append rather than building
+        a string for each character.
+        * kjs/JSFunction.cpp:
+        (KJS::globalFuncUnescape): Ditto.
+
+        * kjs/JSImmediate.cpp:
+        (KJS::JSImmediate::prototype): Added. Gets the appropriate prototype for
+        use with an immediate value. To be used instead of toObject when doing a
+        get on an immediate value.
+        * kjs/JSImmediate.h: Added prototype.
+
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::toString): Tweaked formatting.
+
+        * kjs/JSObject.h:
+        (KJS::JSValue::get): Use prototype instead of toObject to avoid creating
+        an object wrapper just to search for properties. This also saves an
+        unnecessary hash table lookup since the object wrappers themselves don't
+        have any properties.
+
+        * kjs/JSString.h: Added toThisString and toThisJSString.
+
+        * kjs/JSValue.cpp:
+        (KJS::JSCell::toThisString): Added.
+        (KJS::JSCell::toThisJSString): Added.
+        (KJS::JSCell::getJSNumber): Added.
+        (KJS::jsString): Changed return type to JSString*.
+        (KJS::jsOwnedString): Ditto.
+
+        * kjs/JSValue.h:
+        (KJS::JSValue::toThisString): Added.
+        (KJS::JSValue::toThisJSString): Added.
+        (KJS::JSValue::getJSNumber): Added.
+
+        * kjs/NumberObject.cpp:
+        (KJS::NumberObject::getJSNumber): Added.
+        (KJS::integer_part_noexp): Append C string directly rather than first
+        turning it into a UString.
+        (KJS::numberProtoFuncToString): Use getJSNumber to check if the value
+        is a number rather than isObject(&NumberObject::info). This works for
+        immediate numbers, number cells, and NumberObject instances.
+        (KJS::numberProtoFuncToLocaleString): Ditto.
+        (KJS::numberProtoFuncValueOf): Ditto.
+        (KJS::numberProtoFuncToFixed): Ditto.
+        (KJS::numberProtoFuncToExponential): Ditto.
+        (KJS::numberProtoFuncToPrecision): Ditto.
+        * kjs/NumberObject.h: Added getJSNumber.
+
+        * kjs/PropertySlot.cpp: Tweaked comment.
+
+        * kjs/internal.cpp:
+        (KJS::JSString::toThisString): Added.
+        (KJS::JSString::toThisJSString): Added.
+        (KJS::JSString::getOwnPropertySlot): Changed code that searches the
+        prototype chain to start with the string prototype and not create a
+        string object.
+        (KJS::JSNumberCell::toThisString): Added.
+        (KJS::JSNumberCell::getJSNumber): Added.
+
+        * kjs/lookup.cpp:
+        (KJS::staticFunctionGetter): Moved here, because there's no point in
+        having a function that's only used for a function pointer be inline.
+        (KJS::setUpStaticFunctionSlot): New function for getStaticFunctionSlot.
+
+        * kjs/lookup.h:
+        (KJS::staticValueGetter): Don't mark this inline. It doesn't make sense
+        to have a function that's only used for a function pointer be inline.
+        (KJS::getStaticFunctionSlot): Changed to get properties from the parent
+        first before doing any handling of functions. This is the fastest way
+        to return the function once the initial setup is done.
+
+        * kjs/string_object.cpp:
+        (KJS::StringObject::getPropertyNames): Call value() instead of getString(),
+        avoiding an unnecessary virtual function call (the call to the type()
+        function in the implementation of the isString() function).
+        (KJS::StringObject::toString): Added.
+        (KJS::StringObject::toThisString): Added.
+        (KJS::StringObject::toThisJSString): Added.
+        (KJS::substituteBackreferences): Rewrote to use a appending algorithm
+        instead of a the old one that tried to replace in place.
+        (KJS::stringProtoFuncReplace): Merged this function and the replace function.
+        Replaced the hand-rolled dynamic arrays for source ranges and replacements
+        with Vector.
+        (KJS::stringProtoFuncToString): Handle JSString as well as StringObject.
+        Removed the separate valueOf implementation, since it can just share this.
+        (KJS::stringProtoFuncCharAt): Use toThisString, which handles JSString as
+        well as StringObject, and is slightly more efficient than the old code too.
+        (KJS::stringProtoFuncCharCodeAt): Ditto.
+        (KJS::stringProtoFuncConcat): Ditto.
+        (KJS::stringProtoFuncIndexOf): Ditto.
+        (KJS::stringProtoFuncLastIndexOf): Ditto.
+        (KJS::stringProtoFuncMatch): Ditto.
+        (KJS::stringProtoFuncSearch): Ditto.
+        (KJS::stringProtoFuncSlice): Ditto.
+        (KJS::stringProtoFuncSplit): Ditto.
+        (KJS::stringProtoFuncSubstr): Ditto.
+        (KJS::stringProtoFuncSubstring): Ditto.
+        (KJS::stringProtoFuncToLowerCase): Use toThisJSString.
+        (KJS::stringProtoFuncToUpperCase): Ditto.
+        (KJS::stringProtoFuncToLocaleLowerCase): Ditto.
+        (KJS::stringProtoFuncToLocaleUpperCase): Ditto.
+        (KJS::stringProtoFuncLocaleCompare): Ditto.
+        (KJS::stringProtoFuncBig): Use toThisString.
+        (KJS::stringProtoFuncSmall): Ditto.
+        (KJS::stringProtoFuncBlink): Ditto.
+        (KJS::stringProtoFuncBold): Ditto.
+        (KJS::stringProtoFuncFixed): Ditto.
+        (KJS::stringProtoFuncItalics): Ditto.
+        (KJS::stringProtoFuncStrike): Ditto.
+        (KJS::stringProtoFuncSub): Ditto.
+        (KJS::stringProtoFuncSup): Ditto.
+        (KJS::stringProtoFuncFontcolor): Ditto.
+        (KJS::stringProtoFuncFontsize): Ditto.
+        (KJS::stringProtoFuncAnchor): Ditto.
+        (KJS::stringProtoFuncLink): Ditto.
+
+        * kjs/string_object.h: Added toString, toThisString, and toThisJSString.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::append): Added a version that takes a character pointer and
+        size, so we don't have to create a UString just to append to another UString.
+        * kjs/ustring.h:
+
 2008-06-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

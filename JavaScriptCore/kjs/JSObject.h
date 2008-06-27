@@ -581,9 +581,9 @@ inline JSValue* JSObject::toPrimitive(ExecState* exec, JSType preferredType) con
 inline JSValue* JSValue::get(ExecState* exec, const Identifier& propertyName) const
 {
     if (UNLIKELY(JSImmediate::isImmediate(this))) {
-        JSObject* object = JSImmediate::toObject(this, exec);
-        PropertySlot slot(object);
-        if (!object->getPropertySlot(exec, propertyName, slot))
+        JSObject* prototype = JSImmediate::prototype(this, exec);
+        PropertySlot slot(const_cast<JSValue*>(this));
+        if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
         return slot.getValue(exec, propertyName);
     }
@@ -603,9 +603,9 @@ inline JSValue* JSValue::get(ExecState* exec, const Identifier& propertyName) co
 inline JSValue* JSValue::get(ExecState* exec, unsigned propertyName) const
 {
     if (UNLIKELY(JSImmediate::isImmediate(this))) {
-        JSObject* object = JSImmediate::toObject(this, exec);
-        PropertySlot slot(object);
-        if (!object->getPropertySlot(exec, propertyName, slot))
+        JSObject* prototype = JSImmediate::prototype(this, exec);
+        PropertySlot slot(const_cast<JSValue*>(this));
+        if (!prototype->getPropertySlot(exec, propertyName, slot))
             return jsUndefined();
         return slot.getValue(exec, propertyName);
     }

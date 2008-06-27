@@ -270,22 +270,37 @@ JSObject* JSCell::toThisObject(ExecState* exec) const
     return toObject(exec);
 }
 
+UString JSCell::toThisString(ExecState* exec) const
+{
+    return toThisObject(exec)->toString(exec);
+}
+
+JSString* JSCell::toThisJSString(ExecState* exec)
+{
+    return jsString(exec, toThisString(exec));
+}
+
 const ClassInfo* JSCell::classInfo() const
 {
     return 0;
 }
 
-JSCell* jsString(ExecState* exec, const char* s)
+JSValue* JSCell::getJSNumber()
+{
+    return 0;
+}
+
+JSString* jsString(ExecState* exec, const char* s)
 {
     return new (exec) JSString(s ? s : "");
 }
 
-JSCell* jsString(ExecState* exec, const UString& s)
+JSString* jsString(ExecState* exec, const UString& s)
 {
     return s.isNull() ? new (exec) JSString("") : new (exec) JSString(s);
 }
 
-JSCell* jsOwnedString(ExecState* exec, const UString& s)
+JSString* jsOwnedString(ExecState* exec, const UString& s)
 {
     return s.isNull() ? new (exec) JSString("", JSString::HasOtherOwner) : new (exec) JSString(s, JSString::HasOtherOwner);
 }
@@ -295,7 +310,7 @@ JSValue* call(ExecState* exec, JSValue* functionObject, CallType callType, const
     if (callType == CallTypeNative)
         return callData.native.function(exec, static_cast<JSObject*>(functionObject), thisValue, args);
     ASSERT(callType == CallTypeJS);
-    // FIXME: This can be done more efficiently using the callData.
+    // FIXME: Can this be done more efficiently using the callData?
     return static_cast<JSFunction*>(functionObject)->call(exec, thisValue, args);
 }
 
@@ -304,7 +319,7 @@ JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructTyp
     if (constructType == ConstructTypeNative)
         return constructData.native.function(exec, static_cast<JSObject*>(object), args);
     ASSERT(constructType == ConstructTypeJS);
-    // FIXME: This can be done more efficiently using the constructData.
+    // FIXME: Can this be done more efficiently using the constructData?
     return static_cast<JSFunction*>(object)->construct(exec, args);
 }
 

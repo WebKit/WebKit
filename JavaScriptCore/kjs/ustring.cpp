@@ -774,6 +774,50 @@ UString& UString::append(const UString &t)
   return *this;
 }
 
+UString& UString::append(const UChar* tData, int tSize)
+{
+  int thisSize = size();
+  int thisOffset = m_rep->offset;
+  int length = thisSize + tSize;
+
+  // possible cases:
+  if (tSize == 0) {
+    // t is empty
+  } else if (thisSize == 0) {
+    // this is empty
+    m_rep = Rep::createCopying(tData, tSize);
+  } else if (m_rep->baseIsSelf() && m_rep->rc == 1) {
+    // this is direct and has refcount of 1 (so we can just alter it directly)
+    expandCapacity(thisOffset + length);
+    if (data()) {
+        memcpy(const_cast<UChar*>(data() + thisSize), tData, tSize * sizeof(UChar));
+        m_rep->len = length;
+        m_rep->_hash = 0;
+    }
+  } else if (thisOffset + thisSize == usedCapacity() && thisSize >= minShareSize) {
+    // this reaches the end of the buffer - extend it if it's long enough to append to
+    expandCapacity(thisOffset + length);
+    if (data()) {
+        memcpy(const_cast<UChar*>(data() + thisSize), tData, tSize * sizeof(UChar));
+        m_rep = Rep::create(m_rep, 0, length);
+    }
+  } else {
+    // this is shared with someone using more capacity, gotta make a whole new string
+    size_t newCapacity = expandedSize(length, 0);
+    UChar* d = allocChars(newCapacity);
+    if (!d)
+        m_rep = &Rep::null;
+    else {
+        memcpy(d, data(), thisSize * sizeof(UChar));
+        memcpy(const_cast<UChar*>(d + thisSize), tData, tSize * sizeof(UChar));
+        m_rep = Rep::create(d, length);
+        m_rep->capacity = newCapacity;
+    }
+  }
+
+  return *this;
+}
+
 UString& UString::append(const char *t)
 {
   int thisSize = size();

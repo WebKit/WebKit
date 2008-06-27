@@ -36,6 +36,7 @@ namespace KJS {
 
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
+        virtual JSValue* getJSNumber();
     };
 
     NumberObject* constructNumber(ExecState*, JSNumberCell*);

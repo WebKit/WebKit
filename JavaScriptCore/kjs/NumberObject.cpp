@@ -41,6 +41,11 @@ NumberObject::NumberObject(JSObject* proto)
 {
 }
 
+JSValue* NumberObject::getJSNumber()
+{
+    return internalValue();
+}
+
 // ------------------------------ NumberPrototype ---------------------------
 
 static JSValue* numberProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
@@ -94,7 +99,7 @@ static UString integer_part_noexp(double d)
             strncpy(buf.data(), result, decimalPoint);
 
         buf[decimalPoint] = '\0';
-        str += UString(buf.data());
+        str.append(buf.data());
     }
 
     freedtoa(result);
@@ -144,10 +149,9 @@ static double intPow10(int e)
 
 JSValue* numberProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
-
-    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     double radixAsDouble = args[0]->toInteger(exec); // nan -> 0
     if (radixAsDouble == 10 || args[0]->isUndefined())
@@ -209,27 +213,29 @@ JSValue* numberProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
 
 JSValue* numberProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    // FIXME: Not implemented yet.
+
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
 
-    // TODO
-    return jsString(exec, static_cast<NumberObject*>(thisValue)->internalValue()->toString(exec));
+    return jsString(exec, v->toString(exec));
 }
 
 JSValue* numberProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
 
-    return static_cast<NumberObject*>(thisValue)->internalValue();
+    return v;
 }
 
 JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
-
-    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     JSValue* fractionDigits = args[0];
     double df = fractionDigits->toInteger(exec);
@@ -312,10 +318,11 @@ static void exponentialPartToString(char* buf, int& i, int decimalPoint)
 
 JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
 
-    double x = static_cast<NumberObject*>(thisValue)->internalValue()->uncheckedGetNumber();
+    double x = v->uncheckedGetNumber();
 
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
@@ -381,10 +388,9 @@ JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValue* thisV
 
 JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    if (!thisValue->isObject(&NumberObject::info))
+    JSValue* v = thisValue->getJSNumber();
+    if (!v)
         return throwError(exec, TypeError);
-
-    JSValue* v = static_cast<NumberObject*>(thisValue)->internalValue();
 
     double doublePrecision = args[0]->toIntegerPreserveNaN(exec);
     double x = v->uncheckedGetNumber();

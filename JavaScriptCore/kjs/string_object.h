@@ -50,6 +50,11 @@ namespace KJS {
 
   protected:
     StringObject(JSObject* prototype, JSString*);
+
+  private:
+    virtual UString toString(ExecState*) const;
+    virtual UString toThisString(ExecState*) const;
+    virtual JSString* toThisJSString(ExecState*);
   };
 
   // WebCore uses this to make style.filter undetectable

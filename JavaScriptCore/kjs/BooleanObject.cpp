@@ -61,13 +61,20 @@ BooleanPrototype::BooleanPrototype(ExecState* exec, ObjectPrototype* objectProto
 
 JSValue* booleanProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (JSImmediate::isBoolean(thisValue))
-        return jsString(exec, JSImmediate::toString(thisValue));
+    if (thisValue == jsBoolean(false))
+        return jsString(exec, "false");
+
+    if (thisValue == jsBoolean(true))
+        return jsString(exec, "true");
 
     if (!thisValue->isObject(&BooleanObject::info))
         return throwError(exec, TypeError);
 
-    return jsString(exec, JSImmediate::toString(static_cast<BooleanObject*>(thisValue)->internalValue()));
+    if (static_cast<BooleanObject*>(thisValue)->internalValue() == jsBoolean(false))
+        return jsString(exec, "false");
+
+    ASSERT(static_cast<BooleanObject*>(thisValue)->internalValue() == jsBoolean(true));
+    return jsString(exec, "true");
 }
 
 JSValue* booleanProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

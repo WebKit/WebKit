@@ -21,40 +21,51 @@
 #include "config.h"
 #include "JSImmediate.h"
 
-#include "JSGlobalObject.h"
 #include "BooleanObject.h"
 #include "JSNotAnObject.h"
 #include "NumberObject.h"
-#include "JSObject.h"
 
 namespace KJS {
 
-JSObject* JSImmediate::toObject(const JSValue *v, ExecState *exec)
+JSObject* JSImmediate::toObject(const JSValue* v, ExecState* exec)
 {
     ASSERT(isImmediate(v));
-    if (v == jsNull())
-        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
-    if (v == jsUndefined())
-        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
+    if (isNumber(v))
+        return constructNumberFromImmediateNumber(exec, const_cast<JSValue*>(v));
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, const_cast<JSValue*>(v));
-    ASSERT(isNumber(v));
-    return constructNumberFromImmediateNumber(exec, const_cast<JSValue*>(v));
+    if (v == jsNull())
+        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
+    ASSERT(v == jsUndefined());
+    return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
+}
+
+JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
+{
+    ASSERT(isImmediate(v));
+    if (isNumber(v))
+        return exec->lexicalGlobalObject()->numberPrototype();
+    if (isBoolean(v))
+        return exec->lexicalGlobalObject()->booleanPrototype();
+    if (v == jsNull())
+        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
+    ASSERT(v == jsUndefined());
+    return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
 }
 
 UString JSImmediate::toString(const JSValue* v)
 {
     ASSERT(isImmediate(v));
-    if (v == jsNull())
-        return "null";
-    if (v == jsUndefined())
-        return "undefined";
-    if (v == jsBoolean(true))
-        return "true";
+    if (isNumber(v))
+        return UString::from(getTruncatedInt32(v));
     if (v == jsBoolean(false))
         return "false";
-    ASSERT(isNumber(v));
-    return UString::from(getTruncatedInt32(v));
+    if (v == jsBoolean(true))
+        return "true";
+    if (v == jsNull())
+        return "null";
+    ASSERT(v == jsUndefined());
+    return "undefined";
 }
 
 } // namespace KJS

@@ -97,29 +97,18 @@ private:
 
   /**
    * @internal
-   * Helper for getStaticFunctionSlot and getStaticPropertySlot
+   * Helper for getStaticPropertySlot
    */
-  inline JSValue* staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
-  {
-      // Look for cached value in dynamic map of properties (in JSObject)
-      ASSERT(slot.slotBase()->isObject());
-      JSObject* thisObj = static_cast<JSObject*>(slot.slotBase());
-      JSValue* cachedVal = thisObj->getDirect(propertyName);
-      if (cachedVal)
-        return cachedVal;
+  JSValue* staticFunctionGetter(ExecState*, const Identifier& propertyName, const PropertySlot&);
 
-      const HashEntry* entry = slot.staticEntry();
-      JSValue* val = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
-      thisObj->putDirect(propertyName, val, entry->attributes);
-      return val;
-  }
+  void setUpStaticFunctionSlot(ExecState*, const HashEntry*, JSObject* thisObject, const Identifier& propertyName, PropertySlot&);
 
   /**
    * @internal
    * Helper for getStaticValueSlot and getStaticPropertySlot
    */
   template <class ThisImp>
-  inline JSValue* staticValueGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
+  JSValue* staticValueGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
   {
       ThisImp* thisObj = static_cast<ThisImp*>(slot.slotBase());
       const HashEntry* entry = slot.staticEntry();
@@ -170,14 +159,14 @@ private:
   template <class ParentImp>
   inline bool getStaticFunctionSlot(ExecState* exec, const HashTable* table, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
   {
+    if (static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertySlot(exec, propertyName, slot))
+      return true;
+
     const HashEntry* entry = table->entry(exec, propertyName);
+    if (!entry)
+        return false;
 
-    if (!entry) // not found, forward to parent
-      return static_cast<ParentImp*>(thisObj)->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
-
-    ASSERT(entry->attributes & Function);
-
-    slot.setStaticEntry(thisObj, entry, staticFunctionGetter);
+    setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
     return true;
   }
 

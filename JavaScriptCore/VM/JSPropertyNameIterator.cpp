@@ -29,9 +29,10 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
-#include "identifier.h"
 #include "JSObject.h"
+#include "JSString.h"
 #include "PropertyNameArray.h"
+#include "identifier.h"
 
 namespace KJS {
 
