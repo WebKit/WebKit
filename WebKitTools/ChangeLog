@@ -1,5 +1,9 @@
 2008-06-26  Darin Adler  <darin@apple.com>
 
+        * Scripts/check-for-weak-vtables: Fixed comment.
+
+2008-06-26  Darin Adler  <darin@apple.com>
+
         * Scripts/check-for-weak-vtables: Added.
 
 2008-06-26  Beth Dakin  <bdakin@apple.com>
