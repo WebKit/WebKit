@@ -223,6 +223,7 @@ public:
     PassRefPtr<Element> createElement(const QualifiedName&, bool createdByParser, ExceptionCode& ec);
     Element* getElementById(const AtomicString&) const;
     bool hasElementWithId(AtomicStringImpl* id) const;
+    bool containsMultipleElementsWithId(const AtomicString& elementId) { return m_duplicateIds.contains(elementId.impl()); }
 
     Element* elementFromPoint(int x, int y) const;
     String readyState() const;
@@ -753,7 +754,7 @@ public:
     // Extension for manipulating canvas drawing contexts for use in CSS
     CanvasRenderingContext2D* getCSSCanvasContext(const String& type, const String& name, int width, int height);
     HTMLCanvasElement* getCSSCanvasElement(const String& name);
-
+    
 protected:
     Document(Frame*, bool isXHTML);
 

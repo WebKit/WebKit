@@ -40,18 +40,28 @@ PassRefPtr<StaticNodeList> createSelectorNodeList(PassRefPtr<Node> rootNode, CSS
 {
     Vector<RefPtr<Node> > nodes;
     Document* document = rootNode->document();
-    CSSStyleSelector::SelectorChecker selectorChecker(document, !document->inCompatMode());
-    for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode.get())) {
-        if (n->isElementNode()) {
-            Element* element = static_cast<Element*>(n);
-            for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
-                if (selectorChecker.checkSelector(selector, element)) {
-                    nodes.append(n);
-                    break;
+    AtomicString selectorValue = querySelector->m_value;
+
+    if (!querySelector->next() && querySelector->m_match == CSSSelector::Id && !document->containsMultipleElementsWithId(selectorValue)) {
+        Element* element = document->getElementById(selectorValue);
+        if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode.get())))
+            nodes.append(element);
+    } else {
+        CSSStyleSelector::SelectorChecker selectorChecker(document, !document->inCompatMode());
+        
+        for (Node* n = rootNode->firstChild(); n; n = n->traverseNextNode(rootNode.get())) {
+            if (n->isElementNode()) {
+                Element* element = static_cast<Element*>(n);
+                for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
+                    if (selectorChecker.checkSelector(selector, element)) {
+                        nodes.append(n);
+                        break;
+                    }
                 }
             }
         }
     }
+    
     return StaticNodeList::adopt(nodes);
 }
 
