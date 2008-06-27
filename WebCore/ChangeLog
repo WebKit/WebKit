@@ -1,3 +1,13 @@
+2008-06-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6031969> Crash in SecurityOrigin code going Forward to a page in the back/forward cache
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::open): Make sure to update the SecurityOrigin and URL of the 
+        DOMWindow when opening a CachedPage.
+
 2008-06-26  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Beth Dakin.
