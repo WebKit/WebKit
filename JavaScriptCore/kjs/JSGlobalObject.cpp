@@ -37,6 +37,7 @@
 #include "debugger.h"
 #include "error_object.h"
 #include "FunctionPrototype.h"
+#include "Machine.h"
 #include "MathObject.h"
 #include "NumberObject.h"
 #include "object_object.h"

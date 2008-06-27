@@ -273,14 +273,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSArray.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSArray.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\ArrayPrototype.cpp"
 				>
 			</File>
@@ -365,14 +357,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSFunction.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSFunction.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\FunctionPrototype.cpp"
 				>
 			</File>
@@ -401,10 +385,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSString.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\interpreter.cpp"
 				>
 			</File>
@@ -418,6 +398,22 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSActivation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSArray.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSFunction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSFunction.h"
 				>
 			</File>
 			<File
@@ -461,7 +457,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSValue.h"
 				>
 			</File>
 			<File
@@ -521,14 +537,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\object_object.cpp"
 				>
 			</File>
@@ -553,19 +561,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\PropertySlot.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\PropertySlot.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\PropertyNameArray.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\PropertyNameArray.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\PropertySlot.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\PropertySlot.h"
 				>
 			</File>
 			<File
@@ -630,14 +638,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\ustring.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSValue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSValue.h"
 				>
 			</File>
 			<Filter
@@ -1019,14 +1019,6 @@
 			</File>
 			<File
 				RelativePath="..\..\VM\RegisterFile.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\VM\RegisterFileStack.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\VM\RegisterFileStack.h"
 				>
 			</File>
 		</Filter>

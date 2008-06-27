@@ -1,3 +1,15 @@
+2008-06-27  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff.
+
+        Build fixes. 
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * VM/RegisterFile.h:
+        (KJS::RegisterFile::RegisterFile):
+        * kjs/JSGlobalObject.cpp:
+        * kjs/collector.cpp:
+
 2008-06-27  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
