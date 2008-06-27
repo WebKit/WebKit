@@ -127,11 +127,24 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
             results->m_animatedColor = color;
         return;
     }
+    AnimationMode animationMode = this->animationMode();
     if (m_propertyType == PathProperty) {
-        results->m_animatedPath = SVGPathSegList::createAnimated(m_fromPath.get(), m_toPath.get(), percentage);
+        if (percentage == 0)
+            results->m_animatedPath = m_fromPath;
+        else if (percentage == 1.f)
+            results->m_animatedPath = m_toPath;
+        else {
+            if (m_fromPath && m_toPath)
+                results->m_animatedPath = SVGPathSegList::createAnimated(m_fromPath.get(), m_toPath.get(), percentage);
+            else
+                results->m_animatedPath.clear();
+            // Fall back to discrete animation if the paths are not compatible
+            if (!results->m_animatedPath)
+                results->m_animatedPath = ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1.0f) 
+                    ? m_toPath : m_fromPath;
+        }
         return;
     }
-    AnimationMode animationMode = this->animationMode();
     ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
     if ((animationMode == FromToAnimation && percentage > 0.5f) || animationMode == ToAnimation || percentage == 1.0f)
         results->m_animatedString = m_toString;

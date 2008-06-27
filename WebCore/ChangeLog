@@ -1,3 +1,17 @@
+2008-06-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/6030720> 
+        REGRESSION: Discrete animation between incompatible paths does not work
+
+        Fall back to discrete path animation if paths are not suitable for morphing.
+        
+        Test: svg/custom/animate-path-discrete.svg
+        
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+
 2008-06-26  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Sam Weinig.

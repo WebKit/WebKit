@@ -1,3 +1,13 @@
+2008-06-27  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+        
+        <rdar://problem/6030720> 
+        REGRESSION: Discrete animation between incompatible paths does not work
+
+        * svg/custom/animate-path-discrete.svg: Added.
+        * platform/mac/svg/custom/animate-path-discrete-expected.txt: Added.
+
 2008-06-26  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Sam Weinig.
