@@ -1,3 +1,11 @@
+2008-06-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * JSUtils.cpp: Added include of <JavaScriptCore/JSString.h> since jsString
+        will soon be changed to return a JSString*.
+        * UserObjectImp.cpp: Ditto.
+
 2008-06-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,8 @@
 
 #include "config.h"
 #include "UserObjectImp.h"
+
+#include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
 const ClassInfo UserObjectImp::info = { "UserObject", 0, 0, 0 };

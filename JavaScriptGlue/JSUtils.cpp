@@ -28,12 +28,13 @@
 
 #include "config.h"
 #include "JSUtils.h"
+
 #include "JSBase.h"
 #include "JSObject.h"
 #include "JSRun.h"
-#include "UserObjectImp.h"
 #include "JSValueWrapper.h"
-#include "JSObject.h"
+#include "UserObjectImp.h"
+#include <JavaScriptCore/JSString.h>
 #include <JavaScriptCore/PropertyNameArray.h>
 
 struct ObjectImpList {
