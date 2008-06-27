@@ -1,3 +1,22 @@
+2008-06-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Fix <https://bugs.webkit.org/show_bug.cgi?id=19784>:
+          Text areas in Wikipedia edit pages are empty, following content is missing
+
+        Don't treat entities as comment starters in parseSpecial.
+
+        Tests: fast/parser/comment-in-iframe.html
+               fast/parser/entity-comment-in-iframe.html
+               fast/parser/entity-comment-in-script-tricky.html
+               fast/parser/entity-comment-in-style.html
+               fast/parser/entity-comment-in-textarea.html
+               fast/parser/entity-comment-in-title.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial):
+
 2008-06-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
