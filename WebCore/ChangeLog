@@ -1,3 +1,10 @@
+2008-06-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        * bridge/runtime.h: Added include of JSString.h since jsString will soon
+        change to return a JSString*.
+
 2008-06-26  Adele Peterson  <adele@apple.com>
 
         Fix suggested by Eric Carlson, added by me, reviewed by Adam.
