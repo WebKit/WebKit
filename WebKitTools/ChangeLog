@@ -1,3 +1,14 @@
+2008-06-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Christian Dywan.
+
+        [Gtk] Initialize webview settings before running DRT tests
+        http://bugs.webkit.org/show_bug.cgi?id=19778
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (setDefaultsToConsistentStateValuesForTesting):
+        (main):
+
 2008-06-26  Darin Adler  <darin@apple.com>
 
         * Scripts/check-for-weak-vtables: Fixed comment.

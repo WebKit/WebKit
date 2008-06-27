@@ -206,6 +206,21 @@ void dump()
     done = true;
 }
 
+static void setDefaultsToConsistentStateValuesForTesting()
+{
+    WebKitWebSettings *settings = webkit_web_view_get_settings(webView);
+
+    g_object_set(G_OBJECT(settings),
+                 "default-font-family", "Times",
+                 "monospace-font-family", "Courier",
+                 "serif-font-family", "Times",
+                 "sans-serif-font-family", "Helvetica",
+                 "default-font-size", 16,
+                 "default-monospace-font-size", 13,
+                 "minimum-font-size", 1,
+                 NULL);
+}
+
 static void runTest(const char* pathOrURL)
 {
     gchar* url = autocorrectURL(pathOrURL);
@@ -352,6 +367,8 @@ int main(int argc, char* argv[])
     g_signal_connect(G_OBJECT(webView), "script-alert", G_CALLBACK(webViewScriptAlert), 0);
     g_signal_connect(G_OBJECT(webView), "script-prompt", G_CALLBACK(webViewScriptPrompt), 0);
     g_signal_connect(G_OBJECT(webView), "script-confirm", G_CALLBACK(webViewScriptConfirm), 0);
+
+    setDefaultsToConsistentStateValuesForTesting();
 
     if (argc == optind+1 && strcmp(argv[optind], "-") == 0) {
         char filenameBuffer[2048];
