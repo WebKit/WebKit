@@ -1,3 +1,9 @@
+2008-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        * css/main.css: Reduced text shadow offsets.
+
 2008-06-25  Maciej Stachowiak  <mjs@apple.com>
 
         Not reviewed, web site fix.

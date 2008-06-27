@@ -1,3 +1,9 @@
+2008-06-27  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        * wwwroot/planetwebkit.css: Reduced text shadow offsets.
+
 2008-06-02  Maciej Stachowiak  <mjs@apple.com>
 
         * config.ini: Correct URL for just-added blog.

@@ -65,13 +65,13 @@ p {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-shadow: #bbb 3px 3px 2px;
+    text-shadow: #bbb 2px 2px 2px;
     font-size: 24px;
 }
 
 h2, h3, h4 {
     margin-bottom: 0px;
-    text-shadow: #bbb 2px 2px 1px;
+    text-shadow: #bbb 1px 1px 1px;
 }
 
 h2 {
