@@ -1,3 +1,12 @@
+2008-06-26  Adele Peterson  <adele@apple.com>
+
+        Fix suggested by Eric Carlson, added by me, reviewed by Adam.
+
+        Fix for <rdar://problem/5733006> <video> and <audio> element should not prompt user for missing files
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: (WebCore::MediaPlayerPrivate::createQTMovie):
+        Set object with key QTMovieAskUnresolvedDataRefsAttribute to NO in the attributes dictionary passed to -[QTMovie initWithAttributes:]
+
 2008-06-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

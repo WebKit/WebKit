@@ -59,6 +59,7 @@ SOFT_LINK_POINTER(QTKit, QTMediaTypeBase, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeSound, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeText, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMediaTypeVideo, NSString *)
+SOFT_LINK_POINTER(QTKit, QTMovieAskUnresolvedDataRefsAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDataSizeAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieDidEndNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieHasVideoAttribute, NSString *)
@@ -84,6 +85,7 @@ SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification,
 #define QTMediaTypeSound getQTMediaTypeSound()
 #define QTMediaTypeText getQTMediaTypeText()
 #define QTMediaTypeVideo getQTMediaTypeVideo()
+#define QTMovieAskUnresolvedDataRefsAttribute getQTMovieAskUnresolvedDataRefsAttribute()
 #define QTMovieDataSizeAttribute getQTMovieDataSizeAttribute()
 #define QTMovieDidEndNotification getQTMovieDidEndNotification()
 #define QTMovieHasVideoAttribute getQTMovieHasVideoAttribute()
@@ -184,6 +186,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                      cocoaURL, QTMovieURLAttribute,
                                      [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
                                      [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
+                                     [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
                                      nil];
     
     NSError* error = nil;
