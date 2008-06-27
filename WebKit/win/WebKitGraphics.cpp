@@ -140,20 +140,22 @@ void FontMetrics(const WebFontDescription& description, int* ascent, int* descen
         *lineSpacing = font.lineSpacing();
 }
 
-void CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription& description, float width, WCHAR* buffer)
+unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription& description, float width, WCHAR* buffer)
 {
     ASSERT(buffer);
 
     String result = StringTruncator::centerTruncate(String(text, length), width, makeFont(description), false);
     memcpy(buffer, result.characters(), result.length() * sizeof(UChar));
     buffer[result.length()] = '\0';
+    return result.length();
 }
 
-void RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription& description, float width, WCHAR* buffer)
+unsigned RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription& description, float width, WCHAR* buffer)
 {
     ASSERT(buffer);
 
     String result = StringTruncator::rightTruncate(String(text, length), width, makeFont(description), false);
     memcpy(buffer, result.characters(), result.length() * sizeof(UChar));
     buffer[result.length()] = '\0';
+    return result.length();
 }

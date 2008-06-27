@@ -28,6 +28,8 @@
 
 #include <windows.h>
 
+extern "C" {
+
 typedef struct CGColor* CGColorRef;
 typedef struct CGContext* CGContextRef;
 
@@ -65,8 +67,10 @@ void WebDrawText(WebTextRenderInfo*);
 float TextFloatWidth(LPCTSTR text, int length, const WebFontDescription&);
 void FontMetrics(const WebFontDescription&, int* ascent, int* descent, int* lineSpacing);
 
-// buffer must be large enough to hold all of "text", including its null terminator.
-void CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
-void RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
+// buffer must be large enough to hold all of "text", including its null terminator. Returns the number of characters put in buffer (excluding the null terminator).
+unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
+unsigned RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
+
+}
 
 #endif // !defined(WebKitGraphics_h)

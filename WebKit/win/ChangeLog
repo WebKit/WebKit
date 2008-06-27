@@ -1,3 +1,20 @@
+2008-06-27  Adam Roben  <aroben@apple.com>
+
+        Change WebKitGraphics truncation functions to return the length of the
+        truncated string
+
+        Reviewed by Darin Adler.
+
+        * WebKitGraphics.cpp:
+        (CenterTruncateStringToWidth):
+        (RightTruncateStringToWidth):
+        Return the length.
+        * WebKitGraphics.h:
+        The truncation functions now return an unsigned int that is the length
+        of the truncated string. The whole file has been marked extern "C" to
+        keep the symbols for these functions from changing (which would break
+        nightly builds).
+
 2008-06-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
