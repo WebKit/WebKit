@@ -45,27 +45,16 @@ JSActivation::JSActivation(PassRefPtr<FunctionBodyNode> functionBody, Register**
 
 JSActivation::~JSActivation()
 {
-    delete d()->registerArray;
     delete d();
 }
 
 void JSActivation::copyRegisters()
 {
-    int numRegisters = d()->functionBody->generatedCode().numLocals;
-    if (!numRegisters)
+    int numLocals = d()->functionBody->generatedCode().numLocals;
+    if (!numLocals)
         return;
 
-    Register* registerArray = static_cast<Register*>(fastMalloc(numRegisters * sizeof(Register)));
-
-    Register* end = registers();
-    Register* src = end - numRegisters;
-    Register* dst = registerArray;
-    while (src != end)
-        *dst++ = *src++;
-
-    d()->registerArray = registerArray;
-    d()->registerBase = &d()->registerArray;
-    d()->registerOffset = numRegisters;
+    copyRegisterArray(registers() - numLocals, numLocals);
 }
 
 bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -135,19 +124,6 @@ void JSActivation::mark()
     
     if (d()->argumentsObject)
         d()->argumentsObject->mark();
-    
-    // No need to mark our values if they're still in the regsiter file, since
-    // the register file gets marked independently.
-    if(!d()->registerArray)
-        return;
-    
-    int numRegisters = d()->functionBody->generatedCode().numLocals;
-    Register* end = d()->registerArray + numRegisters;
-    for (Register* it = d()->registerArray; it != end; ++it) {
-        JSValue* v = (*it).u.jsValue;
-        if (!v->marked())
-            v->mark();
-    }
 }
 
 bool JSActivation::isActivationObject() const
@@ -179,7 +155,7 @@ PropertySlot::GetValueFunc JSActivation::getArgumentsGetter()
 
 JSObject* JSActivation::createArgumentsObject(ExecState* exec)
 {
-    Register* callFrame = registers() - d()->functionBody->generatedCode().numLocals - Machine::CallFrameHeaderSize;
+    Register* callFrame = registers() - d()->functionBody->generatedCode().numLocals - RegisterFile::CallFrameHeaderSize;
 
     JSFunction* function;
     Register* argv;

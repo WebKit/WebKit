@@ -29,83 +29,18 @@
 #include "config.h"
 #include "RegisterFile.h"
 
-#include "RegisterFileStack.h"
-#include "Register.h"
-
-using namespace std;
-
 namespace KJS {
 
-size_t RegisterFile::newBuffer(size_t size, size_t capacity, size_t minCapacity, size_t maxSize, size_t offset)
+RegisterFile::~RegisterFile()
 {
-    capacity = (max(minCapacity, min(maxSize, max<size_t>(16, capacity + capacity / 4 + 1))));
-    Register* newBuffer = static_cast<Register*>(fastCalloc(capacity, sizeof(Register))); // zero-filled memory
-
-    if (m_buffer)
-        memcpy(newBuffer + offset, m_buffer, size * sizeof(Register));
-
-    setBuffer(newBuffer);
-    return capacity;
-}
-
-bool RegisterFile::growBuffer(size_t minCapacity, size_t maxSize)
-{
-    if (minCapacity > m_maxSize)
-        return false;
-
-    size_t numGlobalSlots = this->numGlobalSlots();
-    size_t size = m_size + numGlobalSlots;
-    size_t capacity = m_capacity + numGlobalSlots;
-    minCapacity += numGlobalSlots;
-
-    capacity = newBuffer(size, capacity, minCapacity, maxSize, 0);
-
-    setBase(m_buffer + numGlobalSlots);
-    m_capacity = capacity - numGlobalSlots;
-    return true;
-}
-
-void RegisterFile::addGlobalSlots(size_t count)
-{
-    if (!count)
-        return;
-    ASSERT(safeForReentry());
-    size_t numGlobalSlots = this->numGlobalSlots();
-    size_t size = m_size + numGlobalSlots;
-    size_t capacity = m_capacity + numGlobalSlots;
-    size_t minCapacity = size + count;
-
-    if (minCapacity < capacity)
-        memmove(m_buffer + count, m_buffer, size * sizeof(Register));
-    else
-        capacity = newBuffer(size, capacity, minCapacity, m_maxSize, count);
-
-    numGlobalSlots += count;
-
-    setBase(m_buffer + numGlobalSlots);
-    m_capacity = capacity - numGlobalSlots;
-}
-
-void RegisterFile::copyGlobals(RegisterFile* src)
-{
-    ASSERT(src->numGlobalSlots() > 0); // Global code should always allocate at least a "this" slot.
-    size_t numSlotsToCopy = src->numGlobalSlots() - 1; // Don't propogate the nested "this" value back to the parent register file.
-    if (!numSlotsToCopy)
-        return;
-    memcpy(m_buffer, src->m_buffer, numSlotsToCopy * sizeof(Register));
-}
-
-void RegisterFile::setBase(Register* base)
-{
-    m_base = base;
-    if (m_baseObserver)
-        m_baseObserver->baseChanged(this);
-}
-
-void RegisterFile::clear()
-{
-    setBase(m_buffer);
-    m_size = 0;
+#if HAVE(MMAP)
+    munmap(m_buffer, m_capacity + m_maxGlobals);
+#elif HAVE(VIRTUALALLOC)
+    // FIXME: Use VirtualFree.
+    fastFree(m_buffer);
+#else
+    #error "Don't know how to release virtual memory on this platform."
+#endif
 }
 
 } // namespace KJS

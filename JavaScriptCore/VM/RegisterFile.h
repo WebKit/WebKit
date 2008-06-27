@@ -31,6 +31,9 @@
 
 #include "Register.h"
 #include "collector.h"
+#if HAVE(MMAP)
+#include <sys/mman.h>
+#endif
 #include <wtf/Noncopyable.h>
 
 namespace KJS {
@@ -82,30 +85,57 @@ namespace KJS {
     "base", not "buffer".
 */
 
-    class RegisterFileStack;
+    class JSGlobalObject;
 
     class RegisterFile : Noncopyable {
     public:
-        enum { DefaultRegisterFileSize = 2 * 1024 * 1024 };
+        enum {
+            CallerCodeBlock = 0,
+            ReturnVPC,
+            CallerScopeChain,
+            CallerRegisterOffset,
+            ReturnValueRegister,
+            ArgumentStartRegister,
+            ArgumentCount,
+            CalledAsConstructor,
+            Callee,
+            OptionalCalleeActivation,
+            CallFrameHeaderSize
+        };
 
-        RegisterFile(size_t maxSize, RegisterFileStack* m_baseObserver)
-            : m_safeForReentry(true)
-            , m_size(0)
-            , m_capacity(0)
-            , m_maxSize(maxSize)
+        enum { ProgramCodeThisRegister = - 1 };
+
+        enum { DefaultCapacity = 2 * 1024 * 1024 };
+        enum { DefaultMaxGlobals = 8 * 1024 };
+
+        RegisterFile(size_t capacity = DefaultCapacity, size_t maxGlobals = DefaultMaxGlobals)
+            : m_size(0)
+            , m_capacity(capacity)
+            , m_numGlobals(0)
+            , m_maxGlobals(maxGlobals)
             , m_base(0)
             , m_buffer(0)
-            , m_baseObserver(m_baseObserver)
+            , m_globalObject(0)
         {
+            size_t bufferLength = (capacity + maxGlobals) * sizeof(Register);
+#if HAVE(MMAP)
+            m_buffer = static_cast<Register*>(mmap(0, bufferLength, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANON, -1, 0));
+#elif HAVE(VIRTUALALLOC)
+            // FIXME: Use VirtualAlloc, and commit pages as we go.
+            m_buffer = fastMalloc(bufferLength);
+#else
+            #error "Don't know how to reserve virtual memory on this platform."
+#endif
+            m_base = m_buffer + maxGlobals;
         }
 
-        ~RegisterFile()
-        {
-            setBuffer(0);
-        }
+        ~RegisterFile();
 
         // Pointer to a value that holds the base of this register file.
         Register** basePointer() { return &m_base; }
+        
+        void setGlobalObject(JSGlobalObject* globalObject) { m_globalObject = globalObject; }
+        JSGlobalObject* globalObject() { return m_globalObject; }
 
         void shrink(size_t size)
         {
@@ -116,56 +146,37 @@ namespace KJS {
         bool grow(size_t size)
         {
             if (size > m_size) {
-                if (size > m_capacity) {
-                    if (size > m_maxSize)
-                        return false;
-                    growBuffer(size, m_maxSize);
-                }
+                if (size > m_capacity)
+                    return false;
+#if !HAVE(MMAP) && HAVE(VIRTUALALLOC)
+                // FIXME: Use VirtualAlloc, and commit pages as we go.
+#endif
                 m_size = size;
             }
             return true;
         }
 
         size_t size() { return m_size; }
-        size_t maxSize() { return m_maxSize; }
+        
+        void setNumGlobals(size_t numGlobals) { m_numGlobals = numGlobals; }
+        int numGlobals() { return m_numGlobals; }
+        size_t maxGlobals() { return m_maxGlobals; }
 
-        void clear();
-
-        void addGlobalSlots(size_t count);
-        int numGlobalSlots() { return static_cast<int>(m_base - m_buffer); }
-
-        void copyGlobals(RegisterFile* src);
+        Register* lastGlobal() { return m_base - m_numGlobals; }
 
         void mark(Heap* heap)
         {
-            heap->markStackObjectsConservatively(m_buffer, m_base + m_size);
+            heap->markConservatively(lastGlobal(), m_base + m_size);
         }
-
-        bool isGlobal() { return !!m_baseObserver; }
-
-        bool safeForReentry() { return m_safeForReentry; }
-        void setSafeForReentry(bool safeForReentry) { m_safeForReentry = safeForReentry; }
 
     private:
-        size_t newBuffer(size_t size, size_t capacity, size_t minCapacity, size_t maxSize, size_t offset);
-        bool growBuffer(size_t minCapacity, size_t maxSize);
-        void setBuffer(Register* buffer)
-        {
-            if (m_buffer)
-                fastFree(m_buffer);
-
-            m_buffer = buffer;
-        }
-
-        void setBase(Register*);
-
-        bool m_safeForReentry;
         size_t m_size;
         size_t m_capacity;
-        size_t m_maxSize;
+        size_t m_numGlobals;
+        size_t m_maxGlobals;
         Register* m_base;
         Register* m_buffer;
-        RegisterFileStack* m_baseObserver;
+        JSGlobalObject* m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
 } // namespace KJS

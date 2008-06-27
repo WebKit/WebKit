@@ -66,6 +66,9 @@ namespace KJS {
         JSValue* exception() const { return m_exception; }
 
     private:
+        Register* r() const;
+        Register* callFrame() const;
+
         JSGlobalObject* m_dynamicGlobalObject;
         const CodeBlock* m_codeBlock;
         ScopeChainNode* m_scopeChain;

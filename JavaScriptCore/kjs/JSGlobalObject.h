@@ -26,7 +26,6 @@
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
 #include "RegisterFile.h"
-#include "RegisterFileStack.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -75,7 +74,7 @@ namespace KJS {
 
         struct JSGlobalObjectData : public JSVariableObjectData {
             JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
-                : JSVariableObjectData(&symbolTable, registerFileStack.globalBasePointer(), 0)
+                : JSVariableObjectData(&symbolTable, 0, 0)
                 , globalScopeChain(globalObject, thisValue)
             {
             }
@@ -85,7 +84,6 @@ namespace KJS {
 
             Debugger* debugger;
             
-            RegisterFileStack registerFileStack;
             ScopeChain globalScopeChain;
             OwnPtr<ExecState> globalExec;
 
@@ -235,7 +233,8 @@ namespace KJS {
 
         HashSet<ProgramCodeBlock*>& codeBlocks() { return d()->codeBlocks; }
 
-        RegisterFileStack& registerFileStack() { return d()->registerFileStack; }
+        void copyGlobalsFrom(RegisterFile&);
+        void copyGlobalsTo(RegisterFile&);
 
         // Per-thread hash tables, cached on the global object for faster access.
         JSGlobalData* globalData() { return d()->globalData; }
@@ -270,16 +269,18 @@ namespace KJS {
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     {
-        RegisterFile* registerFile = registerFileStack().current();
-        ASSERT(registerFile->safeForReentry() && registerFile->isGlobal() && !registerFile->size());
-        int index = -registerFile->numGlobalSlots() - 1;
-        registerFile->addGlobalSlots(count);
-        for (int i = 0; i < count; ++i) {
-            ASSERT(globals[i].attributes & DontDelete);
-            SymbolTableEntry newEntry(index, globals[i].attributes);
-            symbolTable().add(globals[i].identifier.ustring().rep(), newEntry);
-            valueAt(index) = globals[i].value;
-            --index;
+        int numGlobals = d()->registerOffset;
+        Register* registerArray = static_cast<Register*>(fastMalloc((numGlobals + count) * sizeof(Register)));
+        if (d()->registerArray)
+            memcpy(registerArray + count, d()->registerArray, numGlobals * sizeof(Register));
+        setRegisterArray(registerArray, numGlobals + count);
+
+        for (int i = 0, index = -numGlobals - 1; i < count; ++i, --index) {
+            GlobalPropertyInfo& global = globals[i];
+            ASSERT(global.attributes & DontDelete);
+            SymbolTableEntry newEntry(index, global.attributes);
+            symbolTable().add(global.identifier.ustring().rep(), newEntry);
+            valueAt(index) = global.value;
         }
     }
 

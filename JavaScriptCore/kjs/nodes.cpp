@@ -1688,14 +1688,14 @@ RegisterID* ProgramNode::emitCode(CodeGenerator& generator, RegisterID*)
     return 0;
 }
 
-void ProgramNode::generateCode(ScopeChainNode* sc, bool canCreateGlobals)
+void ProgramNode::generateCode(ScopeChainNode* sc)
 {
     ScopeChain scopeChain(sc);
     JSGlobalObject* globalObject = scopeChain.globalObject();
     
     m_code.set(new ProgramCodeBlock(this, GlobalCode, globalObject));
     
-    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get(), m_varStack, m_functionStack, canCreateGlobals);
+    CodeGenerator generator(this, globalObject->debugger(), scopeChain, &globalObject->symbolTable(), m_code.get(), m_varStack, m_functionStack);
     generator.generate();
 }
 

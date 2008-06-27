@@ -107,7 +107,12 @@ JSGlobalObject::~JSGlobalObject()
     HashSet<ProgramCodeBlock*>::const_iterator end = codeBlocks().end();
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->globalObject = 0;
-    
+        
+    RegisterFile& registerFile = globalData()->machine->registerFile();
+    if (registerFile.globalObject() == this) {
+        registerFile.setGlobalObject(0);
+        registerFile.setNumGlobals(0);
+    }
     delete d();
 }
 
@@ -190,8 +195,6 @@ void JSGlobalObject::reset(JSValue* prototype)
     // dangerous. (The allocations below may cause a GC.)
 
     _prop.clear();
-    registerFileStack().current()->clear();
-    registerFileStack().current()->addGlobalSlots(1);
     symbolTable().clear();
 
     // Prototypes
@@ -410,8 +413,6 @@ void JSGlobalObject::mark()
     for (HashSet<ProgramCodeBlock*>::const_iterator it = codeBlocks().begin(); it != end; ++it)
         (*it)->mark();
 
-    registerFileStack().mark(globalData()->heap);
-
     markIfNeeded(d()->globalExec->exception());
 
     markIfNeeded(d()->regExpConstructor);
@@ -455,6 +456,37 @@ ExecState* JSGlobalObject::globalExec()
 bool JSGlobalObject::isDynamicScope() const
 {
     return true;
+}
+
+void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
+{
+    ASSERT(!d()->registerArray);
+
+    int numGlobals = registerFile.numGlobals();
+    if (!numGlobals) {
+        ASSERT(!d()->registerOffset);
+        d()->registerBase = 0;
+        return;
+    }
+    copyRegisterArray(registerFile.lastGlobal(), numGlobals);
+}
+
+void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
+{
+    JSGlobalObject* lastGlobalObject = registerFile.globalObject();
+    if (lastGlobalObject && lastGlobalObject != this)
+        lastGlobalObject->copyGlobalsFrom(registerFile);
+
+    registerFile.setGlobalObject(this);
+    registerFile.setNumGlobals(symbolTable().size());
+
+    if (d()->registerArray) {
+        memcpy(*registerFile.basePointer() - d()->registerOffset, d()->registerArray, d()->registerOffset * sizeof(Register));
+        setRegisterArray(0, 0);
+    }
+
+    d()->registerBase = registerFile.basePointer();
+    d()->registerOffset = 0;
 }
 
 void* JSGlobalObject::operator new(size_t size)

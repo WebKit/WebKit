@@ -1,3 +1,92 @@
+2008-06-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        One RegisterFile to rule them all!
+        
+        SunSpider reports a 0.2% speedup.
+
+        This patch removes the RegisterFileStack abstraction and replaces it with
+        a single register file that
+        
+        (a) allocates a fixed storage area, including a fixed area for global
+        vars, so that no operation may cause the register file to reallocate
+        
+        and
+
+        (b) swaps between global storage areas when executing code in different 
+        global objects.
+        
+        This patch also changes the layout of the register file so that all call
+        frames, including call frames for global code, get a header. This is
+        required to support re-entrant global code. It also just makes things simpler.
+        
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::addGlobalVar): New function. Differs from addVar in
+        that
+        
+        (a) global vars don't contribute to a CodeBlock's numLocals count, since
+        global storage is fixed and allocated at startup
+        
+        and
+        
+        (b) references to global vars get shifted to elide intermediate stack
+        between "r" and the global storage area.
+        
+        * VM/Machine.cpp:
+        (KJS::Machine::dumpRegisters): Updated this function to match the new
+        register file layout, and added the ability to dump exact identifiers
+        for the different parts of a call frame.
+        
+        (KJS::Machine::unwindCallFrame): Updated this function to match the new
+        register file layout.
+         
+        (KJS::Machine::execute): Updated this function to initialize a call frame
+        header for global code, and to swap global storage areas when switching
+        to execution in a new global object.
+        
+        (KJS::Machine::privateExecute): Got rid of "safeForReentry" and re-reading
+        of registerBase because the register file is always safe for reentry now,
+        and registerBase never changes.
+        
+        * VM/Machine.h: Moved the call frame header enum from Machine to RegisterFile,
+        to resolve a header dependency problem (a good sign that the enum belonged
+        in RegisterFile all along!)
+
+        * VM/RegisterFile.cpp:
+        * VM/RegisterFile.h: Changed RegisterFile to mmap a fixed size register
+        area. This allows us to avoid re-allocting the register file later on.
+        Instead, we rely on the OS to allocate physical pages to the register
+        file as necessary.
+
+        * VM/RegisterFileStack.cpp: Removed. Tada!
+        * VM/RegisterFileStack.h: Removed. Tada!
+
+        * kjs/DebuggerCallFrame.cpp: Updated this class to match the new
+        register file layout, greatly simplifying it in the process.
+
+        * kjs/JSActivation.h:
+        * kjs/JSActivation.cpp: Moved some of this logic up to JSVariableObject,
+        since the global object now needs to be able to tear off its registers
+        just like the activation object.
+
+        * kjs/JSFunction.cpp: No need to fiddle with the register file anymore.
+
+        * kjs/JSGlobalObject.h:
+        * kjs/JSGlobalObject.cpp: Updated JSGlobalObject to support moving its
+        global storage area into and out of the register file.
+
+        * kjs/PropertySlot.cpp: No need to fiddle with the register file anymore.
+
+        * kjs/collector.cpp: Renamed markStackObjectConservatively to
+        markConservatively, since we don't just mark stack objects this way.
+        
+        Also, added code to mark the machine's register file.
+
+        * kjs/config.h: Moved some platforms #defines from here...
+        * wtf/Platform.h: ...to here, to support mmap/VirtualAlloc detection
+        in RegisterFile.h.
+
 2008-06-26  Mark Rowe  <mrowe@apple.com>
 
         Speculative fix for the Windows build.

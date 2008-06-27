@@ -58,6 +58,7 @@ namespace KJS {
         static JSGlobalData& threadInstance();
         static JSGlobalData& sharedInstance();
 
+        Machine* machine;
         Heap* heap;
 
         const HashTable* arrayTable;
@@ -79,8 +80,6 @@ namespace KJS {
         Parser* parser;
 
         JSGlobalObject* head;
-
-        Machine* machine;
 
     private:
         friend class WTF::ThreadSpecific<JSGlobalData>;

@@ -1,3 +1,18 @@
+2008-06-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added a test for what happens when a script exceeds the limit on declared
+        global variables.
+
+        * fast/js/global-var-limit-expected.txt: Added.
+        * fast/js/global-var-limit.html: Added.
+
+        * fast/js/global-recursion-on-full-stack-expected.txt: Updated for new
+        (slightly more correct) behavior. Since the stack overflow happens in the
+        middle of a try/catch block, it should be caught, instead of logged to
+        the console.
+
 2008-06-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

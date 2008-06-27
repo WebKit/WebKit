@@ -76,7 +76,7 @@ namespace KJS {
 
         static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
 
-        CodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&, bool canCreateGlobals);
+        CodeGenerator(ProgramNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*, VarStack&, FunctionStack&);
         CodeGenerator(FunctionBodyNode*, const Debugger*, const ScopeChain&, SymbolTable*, CodeBlock*);
         CodeGenerator(EvalNode*, const Debugger*, const ScopeChain&, SymbolTable*, EvalCodeBlock*);
 
@@ -312,12 +312,22 @@ namespace KJS {
         RegisterID* addVar(const Identifier& ident, bool isConstant)
         {
             RegisterID* local;
-            addVar(ident, local, isConstant);
+            addVar(ident, isConstant, local);
             return local;
         }
-
         // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
-        bool addVar(const Identifier&, RegisterID*&, bool isConstant);
+        bool addVar(const Identifier&, bool isConstant, RegisterID*&);
+
+
+        // Returns the RegisterID corresponding to ident.
+        RegisterID* addGlobalVar(const Identifier& ident, bool isConstant)
+        {
+            RegisterID* local;
+            addGlobalVar(ident, isConstant, local);
+            return local;
+        }
+        // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
+        bool addGlobalVar(const Identifier&, bool isConstant, RegisterID*&);
 
         RegisterID* addParameter(const Identifier&);
 
@@ -357,6 +367,8 @@ namespace KJS {
 
         int m_nextVar;
         int m_nextParameter;
+
+        int m_globalVarStorageOffset;
 
         // Constant pool
         IdentifierMap m_identifierMap;

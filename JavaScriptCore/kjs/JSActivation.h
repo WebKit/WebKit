@@ -65,13 +65,11 @@ namespace KJS {
         struct JSActivationData : public JSVariableObjectData {
             JSActivationData(PassRefPtr<FunctionBodyNode> functionBody_, Register** registerBase, int registerOffset)
                 : JSVariableObjectData(&functionBody_->symbolTable(), registerBase, registerOffset)
-                , registerArray(0)
                 , functionBody(functionBody_)
                 , argumentsObject(0)
             {
             }
 
-            Register* registerArray;
             RefPtr<FunctionBodyNode> functionBody; // Owns the symbol table and code block
             JSObject* argumentsObject;
         };

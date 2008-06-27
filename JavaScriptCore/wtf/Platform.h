@@ -224,6 +224,7 @@
 #define WTF_PLATFORM_CF 1
 #define WTF_USE_PTHREADS 1
 #define ENABLE_MAC_JAVA_BRIDGE 1
+#define HAVE_READLINE 1
 #endif
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(SYMBIAN) || PLATFORM(WIN) || PLATFORM(WX)
@@ -249,6 +250,36 @@
 
 #if COMPILER(GCC)
 #define HAVE_COMPUTED_GOTO 1
+#endif
+
+#if PLATFORM(DARWIN)
+
+#define HAVE_ERRNO_H 1
+#define HAVE_MMAP 1
+#define HAVE_MERGESORT 1
+#define HAVE_SBRK 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_PARAM_H 1
+#define HAVE_SYS_TIME_H 1
+#define HAVE_SYS_TIMEB_H 1
+
+#elif PLATFORM(WIN_OS)
+
+#define HAVE_FLOAT_H 1
+#define HAVE_SYS_TIMEB_H 1
+#define HAVE_VIRTUALALLOC 1
+
+#else
+
+/* FIXME: is this actually used or do other platforms generate their own config.h? */
+
+#define HAVE_ERRNO_H 1
+#define HAVE_MMAP 1
+#define HAVE_SBRK 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_PARAM_H 1
+#define HAVE_SYS_TIME_H 1
+
 #endif
 
 /* ENABLE macro defaults */

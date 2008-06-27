@@ -79,7 +79,7 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
     JSObject* thisObj = (!thisValue || thisValue->isUndefinedOrNull()) ? exec->dynamicGlobalObject() : thisValue->toObject(exec);
 
     JSValue* exception = 0;
-    JSValue* result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exec->dynamicGlobalObject()->registerFileStack(), &exception);
+    JSValue* result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
 
     return exception ? Completion(Throw, exception) : Completion(Normal, result);
 }

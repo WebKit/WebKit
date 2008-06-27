@@ -89,8 +89,9 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
-Heap::Heap()
+Heap::Heap(Machine* machine)
     : m_markListSet(0)
+    , m_machine(machine)
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -494,7 +495,7 @@ void Heap::initializeHeapIntrospector()
 // cell size needs to be a power of two for this to be valid
 #define IS_HALF_CELL_ALIGNED(p) (((intptr_t)(p) & (CELL_MASK >> 1)) == 0)
 
-void Heap::markStackObjectsConservatively(void* start, void* end)
+void Heap::markConservatively(void* start, void* end)
 {
     if (start > end) {
         void* tmp = start;
@@ -553,7 +554,7 @@ void NEVER_INLINE Heap::markCurrentThreadConservativelyInternal()
     void* dummy;
     void* stackPointer = &dummy;
     void* stackBase = currentThreadStackBase();
-    markStackObjectsConservatively(stackPointer, stackBase);
+    markConservatively(stackPointer, stackBase);
 }
 
 void Heap::markCurrentThreadConservatively()
@@ -711,10 +712,10 @@ void Heap::markOtherThreadConservatively(Thread* thread)
     size_t regSize = getPlatformThreadRegisters(thread->platformThread, regs);
 
     // mark the thread's registers
-    markStackObjectsConservatively((void*)&regs, (void*)((char*)&regs + regSize));
+    markConservatively((void*)&regs, (void*)((char*)&regs + regSize));
 
     void* stackPointer = otherThreadStackPointer(regs);
-    markStackObjectsConservatively(stackPointer, thread->stackBase);
+    markConservatively(stackPointer, thread->stackBase);
 
     resumeThread(thread->platformThread);
 }
@@ -906,6 +907,7 @@ bool Heap::collect()
 
     markStackObjectsConservatively();
     markProtectedObjects();
+    m_machine->mark(this);
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
 

@@ -63,9 +63,42 @@ bool JSVariableObject::getPropertyAttributes(ExecState* exec, const Identifier& 
     return JSObject::getPropertyAttributes(exec, propertyName, attributes);
 }
 
+void JSVariableObject::mark()
+{
+    JSObject::mark();
+
+    if(!d->registerArray)
+        return;
+    
+    Register* end = d->registerArray + d->registerOffset;
+    for (Register* it = d->registerArray; it != end; ++it) {
+        JSValue* v = (*it).u.jsValue;
+        if (!v->marked())
+            v->mark();
+    }
+}
+
 bool JSVariableObject::isVariableObject() const
 {
     return true;
+}
+
+void JSVariableObject::copyRegisterArray(Register* src, size_t count)
+{
+    ASSERT(!d->registerArray);
+
+    Register* registerArray = static_cast<Register*>(fastMalloc(count * sizeof(Register)));
+    memcpy(registerArray, src, count * sizeof(Register));
+
+    setRegisterArray(registerArray, count);
+}
+
+void JSVariableObject::setRegisterArray(Register* registerArray, size_t count)
+{
+    delete d->registerArray;
+    d->registerArray = registerArray;
+    d->registerBase = &d->registerArray;
+    d->registerOffset = count;
 }
 
 } // namespace KJS
