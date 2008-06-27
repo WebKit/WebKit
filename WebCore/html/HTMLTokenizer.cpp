@@ -1852,7 +1852,7 @@ void HTMLTokenizer::finish()
         scriptCode[scriptCodeSize + 1] = 0;
         int pos;
         String food;
-        if (m_state.inScript() || m_state.inStyle())
+        if (m_state.inScript() || m_state.inStyle() || m_state.inTextArea())
             food = String(scriptCode, scriptCodeSize);
         else if (m_state.inServer()) {
             food = "<";
