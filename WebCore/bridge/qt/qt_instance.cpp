@@ -26,7 +26,7 @@
 #include "qt_runtime.h"
 #include "PropertyNameArray.h"
 #include "runtime_object.h"
-#include "object_object.h"
+#include "ObjectPrototype.h"
 
 #include <qmetaobject.h>
 #include <qdebug.h>

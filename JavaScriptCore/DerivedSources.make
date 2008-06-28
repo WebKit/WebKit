@@ -39,7 +39,7 @@ all : \
     grammar.cpp \
     lexer.lut.h \
     MathObject.lut.h \
-    NumberObject.lut.h \
+    NumberConstructor.lut.h \
     RegExpObject.lut.h \
     string_object.lut.h \
     $(JavaScriptCore)/docs/bytecode.html \

@@ -1,5 +1,8 @@
+// -*- c-basic-offset: 2 -*-
 /*
+ *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2006 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,27 +20,31 @@
  *
  */
 
-#ifndef MathObject_h
-#define MathObject_h
+#ifndef FunctionConstructor_h
+#define FunctionConstructor_h
 
-#include "JSObject.h"
-#include "lookup.h"
+#include "JSFunction.h"
 
 namespace KJS {
 
-    class MathObject : public JSObject {
+    class FunctionPrototype;
+
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Function" property
+     */
+    class FunctionConstructor : public InternalFunction {
     public:
-        MathObject(ExecState*, ObjectPrototype*);
-
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-
-        enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
+        FunctionConstructor(ExecState*, FunctionPrototype*);
+    private:
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
     };
+
+    JSObject* constructFunction(ExecState*, const ArgList&, const Identifier& functionName, const UString& sourceURL, int lineNumber);
+    JSObject* constructFunction(ExecState*, const ArgList&);
 
 } // namespace KJS
 
-#endif // MathObject_h
+#endif // FunctionConstructor_h

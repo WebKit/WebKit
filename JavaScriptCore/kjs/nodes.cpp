@@ -28,7 +28,6 @@
 
 #include "CodeGenerator.h"
 #include "ExecState.h"
-#include "FunctionPrototype.h"
 #include "JSGlobalObject.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"

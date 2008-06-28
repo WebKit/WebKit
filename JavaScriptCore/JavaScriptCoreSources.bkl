@@ -59,6 +59,7 @@ Source files for JSCore.
         kjs/error_object.cpp
         kjs/ExecState.cpp
         kjs/JSFunction.cpp
+        kjs/FunctionConstructor.cpp
         kjs/FunctionPrototype.cpp
         kjs/identifier.cpp
         kjs/InitializeThreading.cpp
@@ -78,9 +79,12 @@ Source files for JSCore.
         kjs/MathObject.cpp
         kjs/nodes.cpp
         kjs/nodes2string.cpp
+        kjs/NumberConstructor.cpp
         kjs/NumberObject.cpp
+        kjs/NumberPrototype.cpp
         kjs/JSObject.cpp
-        kjs/object_object.cpp
+        kjs/ObjectConstructor.cpp
+        kjs/ObjectPrototype.cpp
         kjs/operations.cpp
         kjs/Parser.cpp
         kjs/PropertyMap.cpp

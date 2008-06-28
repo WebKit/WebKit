@@ -27,19 +27,20 @@
 #include "JSFunction.h"
 
 #include "ExecState.h"
+#include "FunctionPrototype.h"
 #include "JSActivation.h"
 #include "JSGlobalObject.h"
+#include "JSString.h"
 #include "Machine.h"
+#include "ObjectPrototype.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
+#include "ScopeChainMark.h"
 #include "debugger.h"
 #include "dtoa.h"
-#include "FunctionPrototype.h"
-#include "JSString.h"
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"
-#include "ScopeChainMark.h"
 #include <errno.h>
 #include <profiler/Profiler.h>
 #include <stdio.h>

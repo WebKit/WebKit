@@ -356,7 +356,7 @@ sub GenerateHeader
     } else {
         push(@headerContentHeader, "#include \"JSDOMBinding.h\"\n");
         push(@headerContentHeader, "#include <kjs/JSGlobalObject.h>\n");
-        push(@headerContentHeader, "#include <kjs/object_object.h>\n");
+        push(@headerContentHeader, "#include <kjs/ObjectPrototype.h>\n");
     }
     if ($interfaceName eq "Node") {
         push(@headerContentHeader, "#include \"EventTargetNode.h\"\n");

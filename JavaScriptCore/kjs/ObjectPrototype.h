@@ -1,5 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -17,27 +18,28 @@
  *
  */
 
-#ifndef MathObject_h
-#define MathObject_h
+#ifndef ObjectPrototype_h
+#define ObjectPrototype_h
 
 #include "JSObject.h"
-#include "lookup.h"
 
 namespace KJS {
 
-    class MathObject : public JSObject {
+    class FunctionPrototype;
+
+    /**
+     * @internal
+     *
+     * The initial value of Object.prototype (and thus all objects created
+     * with the Object constructor
+     */
+    class ObjectPrototype : public JSObject {
     public:
-        MathObject(ExecState*, ObjectPrototype*);
-
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-
-        virtual const ClassInfo* classInfo() const { return &info; }
-        static const ClassInfo info;
-
-        enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
+        ObjectPrototype(ExecState*, FunctionPrototype*);
     };
+
+    JSValue* objectProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 } // namespace KJS
 
-#endif // MathObject_h
+#endif // ObjectPrototype_h

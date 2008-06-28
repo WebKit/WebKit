@@ -381,6 +381,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\FunctionConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\FunctionConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\FunctionPrototype.cpp"
 				>
 			</File>
@@ -553,6 +561,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\NumberConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NumberConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\NumberObject.cpp"
 				>
 			</File>
@@ -561,11 +577,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\object_object.cpp"
+				RelativePath="..\..\kjs\NumberPrototype.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\object_object.h"
+				RelativePath="..\..\kjs\NumberPrototype.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ObjectConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ObjectConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ObjectPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ObjectPrototype.h"
 				>
 			</File>
 			<File
@@ -725,7 +757,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\NumberObject.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\NumberConstructor.lut.h"
 					>
 				</File>
 				<File

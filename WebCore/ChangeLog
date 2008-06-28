@@ -1,3 +1,17 @@
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Update includes after remaming object_object.h to ObjectPrototype.h and
+        splitting FunctionConstructor out of FunctionPrototype.h
+
+        * ForwardingHeaders/kjs/FunctionConstructor.h: Added.
+        * ForwardingHeaders/kjs/ObjectPrototype.h: Copied from WebCore/ForwardingHeaders/kjs/object_object.h.
+        * ForwardingHeaders/kjs/object_object.h: Removed.
+        * bindings/js/JSEventListener.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/qt/qt_instance.cpp:
+
 2008-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

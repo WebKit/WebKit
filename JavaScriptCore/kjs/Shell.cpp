@@ -22,6 +22,9 @@
 
 #include "config.h"
 
+#include "ObjectPrototype.h"
+#include "ObjectConstructor.h"
+
 #include "CodeGenerator.h"
 #include "InitializeThreading.h"
 #include "JSArray.h"

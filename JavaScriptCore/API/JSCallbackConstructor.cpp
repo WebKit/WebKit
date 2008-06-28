@@ -29,7 +29,7 @@
 
 #include "APICast.h"
 #include <kjs/JSGlobalObject.h>
-#include <kjs/object_object.h>
+#include <kjs/ObjectPrototype.h>
 #include <wtf/Vector.h>
 
 namespace KJS {

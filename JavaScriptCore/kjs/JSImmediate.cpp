@@ -24,7 +24,7 @@
 #include "BooleanConstructor.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
-#include "NumberObject.h"
+#include "NumberPrototype.h"
 
 namespace KJS {
 

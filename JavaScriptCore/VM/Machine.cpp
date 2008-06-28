@@ -40,12 +40,12 @@
 #include "JSLock.h"
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
+#include "ObjectPrototype.h"
 #include "Parser.h"
 #include "Profiler.h"
 #include "RegExpObject.h"
 #include "Register.h"
 #include "debugger.h"
-#include "object_object.h"
 #include "operations.h"
 #include <stdio.h>
 

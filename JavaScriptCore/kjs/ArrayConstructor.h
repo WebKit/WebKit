@@ -21,11 +21,12 @@
 #ifndef ArrayConstructor_h
 #define ArrayConstructor_h
 
-#include "FunctionPrototype.h"
+#include "JSFunction.h"
 
 namespace KJS {
 
   class ArrayPrototype;
+  class FunctionPrototype;
 
   class ArrayConstructor : public InternalFunction {
   public:

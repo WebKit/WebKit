@@ -1,3 +1,51 @@
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Splits FunctionConstructor out of FunctionPrototype.h/cpp
+        Splits NumberConstructor and NumberPrototype out of NumberObject.h/cpp
+        Rename object_object.h/cpp to ObjectPrototype.h/cpp and split out ObjectConstructor.
+
+        * API/JSCallbackConstructor.cpp:
+        * API/JSClassRef.cpp:
+        * API/JSObjectRef.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArrayConstructor.cpp:
+        * kjs/ArrayConstructor.h:
+        * kjs/FunctionConstructor.cpp: Copied from JavaScriptCore/kjs/FunctionPrototype.cpp.
+        * kjs/FunctionConstructor.h: Copied from JavaScriptCore/kjs/FunctionPrototype.h.
+        * kjs/FunctionPrototype.cpp:
+        * kjs/FunctionPrototype.h:
+        * kjs/JSFunction.cpp:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSImmediate.cpp:
+        * kjs/MathObject.h:
+        * kjs/NumberConstructor.cpp: Copied from JavaScriptCore/kjs/NumberObject.cpp.
+        * kjs/NumberConstructor.h: Copied from JavaScriptCore/kjs/NumberObject.h.
+        * kjs/NumberObject.cpp:
+        * kjs/NumberObject.h:
+        * kjs/NumberPrototype.cpp: Copied from JavaScriptCore/kjs/NumberObject.cpp.
+        * kjs/NumberPrototype.h: Copied from JavaScriptCore/kjs/NumberObject.h.
+        * kjs/ObjectConstructor.cpp: Copied from JavaScriptCore/kjs/object_object.cpp.
+        * kjs/ObjectConstructor.h: Copied from JavaScriptCore/kjs/object_object.h.
+        * kjs/ObjectPrototype.cpp: Copied from JavaScriptCore/kjs/object_object.cpp.
+        * kjs/ObjectPrototype.h: Copied from JavaScriptCore/kjs/object_object.h.
+        * kjs/RegExpObject.h:
+        * kjs/Shell.cpp:
+        * kjs/error_object.h:
+        * kjs/internal.cpp:
+        * kjs/nodes.cpp:
+        * kjs/object_object.cpp: Removed.
+        * kjs/object_object.h: Removed.
+        * kjs/string_object.h:
+
 2008-06-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

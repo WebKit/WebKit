@@ -1,4 +1,6 @@
+// -*- c-basic-offset: 2 -*-
 /*
+ *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -17,27 +19,38 @@
  *
  */
 
-#ifndef MathObject_h
-#define MathObject_h
+#ifndef NumberConstructor_h
+#define NumberConstructor_h
 
-#include "JSObject.h"
-#include "lookup.h"
+#include "JSFunction.h"
 
 namespace KJS {
 
-    class MathObject : public JSObject {
+    class FunctionPrototype;
+    class NumberPrototype;
+
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Number" property
+     */
+    class NumberConstructor : public InternalFunction {
     public:
-        MathObject(ExecState*, ObjectPrototype*);
+        NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
 
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
 
-        virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
-        enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
+        enum { NaNValue, NegInfinity, PosInfinity, MaxValue, MinValue };
+
+    private:
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
+        virtual const ClassInfo* classInfo() const { return &info; }
     };
 
 } // namespace KJS
 
-#endif // MathObject_h
+#endif // NumberConstructor_h

@@ -22,12 +22,13 @@
 #ifndef STRING_OBJECT_H_
 #define STRING_OBJECT_H_
 
-#include "FunctionPrototype.h"
 #include "JSWrapperObject.h"
 #include "JSString.h"
 #include "lookup.h"
 
 namespace KJS {
+
+  class FunctionPrototype;
 
   class StringObject : public JSWrapperObject {
   public:

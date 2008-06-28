@@ -19,16 +19,12 @@
  */
 
 #include "config.h"
-#include "object_object.h"
+#include "ObjectPrototype.h"
 
-#include "JSGlobalObject.h"
 #include "operations.h"
 #include "FunctionPrototype.h"
-#include <stdio.h>
 
 namespace KJS {
-
-// ------------------------------ ObjectPrototype --------------------------------
 
 static JSValue* objectProtoFuncValueOf(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* objectProtoFuncHasOwnProperty(ExecState*, JSObject*, JSValue*, const ArgList&);
@@ -131,49 +127,6 @@ JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* this
 JSValue* objectProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
     return jsString(exec, "[object " + thisValue->toThisObject(exec)->className() + "]");
-}
-
-// ------------------------------ ObjectConstructor --------------------------------
-
-ObjectConstructor::ObjectConstructor(ExecState* exec, ObjectPrototype* objProto, FunctionPrototype* funcProto)
-  : InternalFunction(funcProto, Identifier(exec, "Object"))
-{
-  // ECMA 15.2.3.1
-  putDirect(exec->propertyNames().prototype, objProto, DontEnum|DontDelete|ReadOnly);
-
-  // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
-}
-
-// ECMA 15.2.2
-static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& args)
-{
-    JSValue* arg = args[0];
-    if (arg->isUndefinedOrNull())
-        return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
-    return arg->toObject(exec);
-}
-
-static JSObject* constructWithObjectConstructor(ExecState* exec, JSObject*, const ArgList& args)
-{
-    return constructObject(exec, args);
-}
-
-ConstructType ObjectConstructor::getConstructData(ConstructData& constructData)
-{
-    constructData.native.function = constructWithObjectConstructor;
-    return ConstructTypeNative;
-}
-
-static JSValue* callObjectConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
-{
-    return constructObject(exec, args);
-}
-
-CallType ObjectConstructor::getCallData(CallData& callData)
-{
-    callData.native.function = callObjectConstructor;
-    return CallTypeNative;
 }
 
 } // namespace KJS

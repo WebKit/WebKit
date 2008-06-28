@@ -32,7 +32,7 @@
 #include "JSEvent.h"
 #include "JSEventTargetNode.h"
 #include "ScriptController.h"
-#include <kjs/FunctionPrototype.h>
+#include <kjs/FunctionConstructor.h>
 
 using namespace KJS;
 

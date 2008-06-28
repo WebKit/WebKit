@@ -21,7 +21,7 @@ javascriptcore_built_nosources += \
 	JavaScriptCore/kjs/ArrayPrototype.lut.h \
 	JavaScriptCore/kjs/date_object.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
-	JavaScriptCore/kjs/NumberObject.lut.h \
+	JavaScriptCore/kjs/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
 	JavaScriptCore/pcre/chartables.c \
@@ -96,6 +96,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/dtoa.cpp \
 	JavaScriptCore/kjs/error_object.cpp \
 	JavaScriptCore/kjs/JSFunction.cpp \
+	JavaScriptCore/kjs/FunctionConstructor.cpp \
 	JavaScriptCore/kjs/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/identifier.cpp \
 	JavaScriptCore/kjs/internal.cpp \
@@ -106,10 +107,13 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/MathObject.cpp \
 	JavaScriptCore/kjs/nodes.cpp \
 	JavaScriptCore/kjs/nodes2string.cpp \
+	JavaScriptCore/kjs/NumberConstructor.cpp \
 	JavaScriptCore/kjs/NumberObject.cpp \
+	JavaScriptCore/kjs/NumberPrototype.cpp \
 	JavaScriptCore/kjs/JSObject.cpp \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
-	JavaScriptCore/kjs/object_object.cpp \
+	JavaScriptCore/kjs/ObjectConstructor.cpp \
+	JavaScriptCore/kjs/ObjectPrototype.cpp \
 	JavaScriptCore/kjs/operations.cpp \
 	JavaScriptCore/kjs/PropertyMap.cpp \
 	JavaScriptCore/kjs/PropertySlot.cpp \
@@ -208,7 +212,7 @@ CLEANFILES += \
 	JavaScriptCore/kjs/ArrayPrototype.lut.h \
 	JavaScriptCore/kjs/date_object.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
-	JavaScriptCore/kjs/NumberObject.lut.h \
+	JavaScriptCore/kjs/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/string_object.lut.h \
 	JavaScriptCore/pcre/chartables.c \

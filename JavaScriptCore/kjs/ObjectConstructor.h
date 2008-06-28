@@ -18,25 +18,15 @@
  *
  */
 
-#ifndef _OBJECT_OBJECT_H_
-#define _OBJECT_OBJECT_H_
+#ifndef ObjectConstructor_h
+#define ObjectConstructor_h
 
 #include "JSFunction.h"
 
 namespace KJS {
 
-    /**
-     * @internal
-     *
-     * The initial value of Object.prototype (and thus all objects created
-     * with the Object constructor
-     */
-    class ObjectPrototype : public JSObject {
-    public:
-        ObjectPrototype(ExecState*, FunctionPrototype*);
-    };
-
-    JSValue* objectProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
+    class FunctionPrototype;
+    class ObjectPrototype;
 
     /**
      * @internal
@@ -53,4 +43,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif // _OBJECT_OBJECT_H_
+#endif // ObjectConstructor_h

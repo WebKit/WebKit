@@ -28,19 +28,19 @@
 #include "JSObjectRef.h"
 
 #include "APICast.h"
+#include "FunctionConstructor.h"
 #include "JSCallbackConstructor.h"
 #include "JSCallbackFunction.h"
 #include "JSCallbackObject.h"
 #include "JSClassRef.h"
-#include "JSGlobalObject.h"
-#include "JSValueRef.h"
-#include "PropertyNameArray.h"
 #include "JSFunction.h"
-#include "FunctionPrototype.h"
-#include "identifier.h"
-#include "JSString.h"
+#include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "object_object.h"
+#include "JSString.h"
+#include "JSValueRef.h"
+#include "ObjectPrototype.h"
+#include "PropertyNameArray.h"
+#include "identifier.h"
 #include <wtf/Platform.h>
 
 using namespace KJS;

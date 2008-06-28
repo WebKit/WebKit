@@ -15,7 +15,7 @@ include(pcre/pcre.pri)
 
 LUT_FILES += \
     kjs/date_object.cpp \
-    kjs/NumberObject.cpp \
+    kjs/NumberConstructor.cpp \
     kjs/string_object.cpp \
     kjs/ArrayPrototype.cpp \
     kjs/MathObject.cpp \
@@ -80,6 +80,7 @@ SOURCES += \
     kjs/dtoa.cpp \
     kjs/error_object.cpp \
     kjs/ExecState.cpp \
+    kjs/FunctionConstructor.cpp \
     kjs/FunctionPrototype.cpp \
     kjs/identifier.cpp \
     kjs/internal.cpp \
@@ -93,9 +94,12 @@ SOURCES += \
     kjs/MathObject.cpp \
     kjs/nodes.cpp \
     kjs/nodes2string.cpp \
+    kjs/NumberConstructor.cpp \
     kjs/NumberObject.cpp \
+    kjs/NumberPrototype.cpp \
     kjs/JSObject.cpp \
-    kjs/object_object.cpp \
+    kjs/ObjectConstructor.cpp \
+    kjs/ObjectPrototype.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
     kjs/PropertyMap.cpp \

@@ -25,6 +25,7 @@
 #include "ArrayConstructor.h"
 
 #include "ArrayPrototype.h"
+#include "FunctionPrototype.h"
 #include "JSArray.h"
 #include "error_object.h"
 #include "lookup.h"

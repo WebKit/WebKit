@@ -21,9 +21,11 @@
 #ifndef ERROR_OBJECT_H_
 #define ERROR_OBJECT_H_
 
-#include "FunctionPrototype.h"
+#include "JSFunction.h"
 
 namespace KJS {
+
+    class FunctionPrototype;
 
     class ErrorInstance : public JSObject {
     public:

@@ -30,10 +30,10 @@
 #include "APICast.h"
 #include "JSCallbackObject.h"
 #include "JSObjectRef.h"
-#include <kjs/JSGlobalObject.h>
-#include <kjs/identifier.h>
 #include <kjs/InitializeThreading.h>
-#include <kjs/object_object.h>
+#include <kjs/JSGlobalObject.h>
+#include <kjs/ObjectPrototype.h>
+#include <kjs/identifier.h>
 
 using namespace KJS;
 
