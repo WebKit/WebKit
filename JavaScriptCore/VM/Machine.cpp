@@ -49,9 +49,27 @@
 #include "operations.h"
 #include "RegExpObject.h"
 
+#if HAVE(SYS_TIME_H)
+#include <sys/time.h>
+#endif
+
+#if PLATFORM(WIN_OS)
+#include <windows.h>
+#endif
+
+#if PLATFORM(QT)
+#include <QDateTime>
+#endif
+
 using namespace std;
 
 namespace KJS {
+
+// Default number of ticks before a timeout check should be done.
+static const int initialTickCountThreshold = 255;
+
+// Preferred number of milliseconds between each timeout check
+static const int preferredScriptCheckTimeInterval = 1000;
 
 #if HAVE(COMPUTED_GOTO)
 static void* op_throw_end_indirect;
@@ -452,6 +470,11 @@ NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeChainNod
 
 Machine::Machine()
     : m_reentryDepth(0)
+    , m_timeoutTime(0)
+    , m_timeAtLastCheckTimeout(0)
+    , m_timeExecuting(0)
+    , m_timeoutCheckCount(0)
+    , m_ticksUntilNextTimeoutCheck(initialTickCountThreshold)
 {
     privateExecute(InitializeAndReturn);
 }
@@ -590,6 +613,13 @@ NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue* exce
         if (!exception->hasProperty(exec, Identifier(exec, "line")) && !exception->hasProperty(exec, Identifier(exec, "sourceURL"))) {
             exception->put(exec, Identifier(exec, "line"), jsNumber(exec, codeBlock->lineNumberForVPC(vPC)));
             exception->put(exec, Identifier(exec, "sourceURL"), jsOwnedString(exec, codeBlock->ownerNode->sourceURL()));
+        }
+
+        if (exception->isWatchdogException()) {
+            while (unwindCallFrame(exec, exceptionValue, registerBase, vPC, codeBlock, k, scopeChain, r)) {
+                 // Don't need handler checks or anything, we just want to unroll all the JS callframes possible.
+            }
+            return 0;
         }
     }
 
@@ -847,6 +877,72 @@ NEVER_INLINE void Machine::debug(ExecState* exec, const Instruction* vPC, const 
     }
 }
 
+void Machine::resetTimeoutCheck()
+{
+    m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
+    m_timeAtLastCheckTimeout = 0;
+    m_timeExecuting = 0;
+}
+
+// Returns the current time in milliseconds
+// It doesn't matter what "current time" is here, just as long as
+// it's possible to measure the time difference correctly.
+// In an ideal world this would be in DateMath or some such, but unfortunately
+// that's a regression.
+static inline unsigned getCurrentTime()
+{
+#if HAVE(SYS_TIME_H)
+    struct timeval tv;
+    gettimeofday(&tv, 0);
+    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+#elif PLATFORM(QT)
+    QDateTime t = QDateTime::currentDateTime();
+    return t.toTime_t() * 1000 + t.time().msec();
+#elif PLATFORM(WIN_OS)
+    return timeGetTime();
+#else
+#error Platform does not have getCurrentTime function
+#endif
+}
+
+// We have to return a JSValue here, gcc seems to produce worse code if 
+// we attempt to return a bool
+ALWAYS_INLINE JSValue* Machine::checkTimeout(JSGlobalObject* globalObject)
+{
+    unsigned currentTime = getCurrentTime();
+    
+    if (!m_timeAtLastCheckTimeout) {
+        // Suspicious amount of looping in a script -- start timing it
+        m_timeAtLastCheckTimeout = currentTime;
+        return 0;
+    }
+    
+    unsigned timeDiff = currentTime - m_timeAtLastCheckTimeout;
+    
+    if (timeDiff == 0)
+        timeDiff = 1;
+    
+    m_timeExecuting += timeDiff;
+    m_timeAtLastCheckTimeout = currentTime;
+    
+    // Adjust the tick threshold so we get the next checkTimeout call in the interval specified in 
+    // preferredScriptCheckTimeInterval
+    m_ticksUntilNextTimeoutCheck = static_cast<unsigned>((static_cast<float>(preferredScriptCheckTimeInterval) / timeDiff) * m_ticksUntilNextTimeoutCheck);
+    // If the new threshold is 0 reset it to the default threshold. This can happen if the timeDiff is higher than the
+    // preferred script check time interval.
+    if (m_ticksUntilNextTimeoutCheck == 0)
+        m_ticksUntilNextTimeoutCheck = initialTickCountThreshold;
+    
+    if (m_timeoutTime && m_timeExecuting > m_timeoutTime) {
+        if (globalObject->shouldInterruptScript())
+            return jsNull(); // Appeasing GCC, all we need is a non-null js value.
+        
+        resetTimeoutCheck();
+    }
+    
+    return 0;
+}
+    
 JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue** exception)
 {
     // One-time initialization of our address tables. We have to put this code
@@ -874,7 +970,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     Instruction* vPC = codeBlock->instructions.begin();
     JSValue** k = codeBlock->jsValues.data();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
-    
+    unsigned tickCount = m_ticksUntilNextTimeoutCheck + 1;
+
 #define VM_CHECK_EXCEPTION() \
      do { \
         if (UNLIKELY(exec->hadException())) { \
@@ -887,6 +984,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     OpcodeStats::resetLastInstruction();
 #endif
 
+#define CHECK_FOR_TIMEOUT() \
+    if (!--tickCount) { \
+        if ((exceptionValue = checkTimeout(exec->dynamicGlobalObject()))) \
+            goto vm_throw; \
+        tickCount = m_ticksUntilNextTimeoutCheck; \
+    }
+    
 #if HAVE(COMPUTED_GOTO)
     #define NEXT_OPCODE goto *vPC->u.opcode
 #if DUMP_OPCODE_STATS
@@ -1843,6 +1947,23 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_loop) {
+        /* loop target(offset)
+         
+           Jumps unconditionally to offset target from the current
+           instruction.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+#if DUMP_OPCODE_STATS
+        OpcodeStats::resetLastInstruction();
+#endif
+        int target = (++vPC)->u.operand;
+        CHECK_FOR_TIMEOUT();
+        vPC += target;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_jmp) {
         /* jmp target(offset)
 
@@ -1855,6 +1976,26 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int target = (++vPC)->u.operand;
 
         vPC += target;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_loop_if_true) {
+        /* loop_if_true cond(r) target(offset)
+         
+           Jumps to offset target from the current instruction, if and
+           only if register cond converts to boolean as true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+        int cond = (++vPC)->u.operand;
+        int target = (++vPC)->u.operand;
+        if (r[cond].u.jsValue->toBoolean(exec)) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_OPCODE;
+        }
+        
+        ++vPC;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_jtrue) {
@@ -1886,6 +2027,33 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             NEXT_OPCODE;
         }
 
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_loop_if_less) {
+        /* loop_if_less src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is less than register src2, as
+           with the ECMAScript '<' operator, and then jumps to offset
+           target from the current instruction, if and only if the 
+           result of the comparison is true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+         */
+        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
+        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int target = (++vPC)->u.operand;
+        
+        bool result = jsLess(exec, src1, src2);
+        VM_CHECK_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_OPCODE;
+        }
+        
         ++vPC;
         NEXT_OPCODE;
     }
@@ -2284,6 +2452,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         JSPropertyNameIterator* it = r[iter].u.jsPropertyNameIterator;
         if (JSValue* temp = it->next(exec)) {
+            CHECK_FOR_TIMEOUT();
             r[dst].u.jsValue = temp;
             vPC += target;
             NEXT_OPCODE;
@@ -2475,6 +2644,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     vm_throw: {
         exec->clearException();
+        if (!tickCount) {
+            // The exceptionValue is a lie! (GCC produces bad code for reasons I 
+            // cannot fathom if we don't assign to the exceptionValue before branching)
+            exceptionValue = createInterruptedExecutionException(exec);
+        }
         handlerVPC = throwException(exec, exceptionValue, &registerBase, vPC, codeBlock, k, scopeChain, r);
         if (!handlerVPC) {
             *exception = exceptionValue;

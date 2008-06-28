@@ -89,13 +89,6 @@ namespace KJS {
 
             int recursion;
 
-            unsigned timeoutTime;
-            unsigned timeAtLastCheckTimeout;
-            unsigned timeExecuting;
-            unsigned timeoutCheckCount;
-            unsigned tickCount;
-            unsigned ticksUntilNextTimeoutCheck;
-
             RegExpConstructor* regExpConstructor;
             ErrorConstructor* errorConstructor;
             NativeErrorConstructor* evalErrorConstructor;
@@ -202,10 +195,9 @@ namespace KJS {
         void setPageGroupIdentifier(unsigned value) { d()->pageGroupIdentifier = value; }
         unsigned pageGroupIdentifier() const { return d()->pageGroupIdentifier; }
 
-        void setTimeoutTime(unsigned timeoutTime) { d()->timeoutTime = timeoutTime; }
+        void setTimeoutTime(unsigned timeoutTime);
         void startTimeoutCheck();
         void stopTimeoutCheck();
-        bool timedOut();
 
         Debugger* debugger() const { return d()->debugger; }
         void setDebugger(Debugger* debugger) { d()->debugger = debugger; }
@@ -262,9 +254,6 @@ namespace KJS {
         };
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
-    private:
-        bool checkTimeout();
-        void resetTimeoutCheck();
     };
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
@@ -296,16 +285,6 @@ namespace KJS {
         if (JSVariableObject::getOwnPropertySlotForWrite(exec, propertyName, slot, slotIsWriteable))
             return true;
         return symbolTableGet(propertyName, slot, slotIsWriteable);
-    }
-
-    inline bool JSGlobalObject::timedOut()
-    {
-        d()->tickCount++;
-
-        if (d()->tickCount != d()->ticksUntilNextTimeoutCheck)
-            return false;
-
-        return checkTimeout();
     }
 
     inline JSGlobalObject* ScopeChainNode::globalObject() const

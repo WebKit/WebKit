@@ -81,7 +81,12 @@ Completion Interpreter::evaluate(ExecState* exec, ScopeChain& scopeChain, const 
     JSValue* exception = 0;
     JSValue* result = exec->machine()->execute(programNode.get(), exec, scopeChain.node(), thisObj, &exception);
 
-    return exception ? Completion(Throw, exception) : Completion(Normal, result);
+    if (exception) {
+        if (exception->isObject() && static_cast<JSObject*>(exception)->isWatchdogException())
+            return Completion(Interrupted, result);
+        return Completion(Throw, exception);
+    }
+    return Completion(Normal, result);
 }
 
 static bool printExceptions = false;

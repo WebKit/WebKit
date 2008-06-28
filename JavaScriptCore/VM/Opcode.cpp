@@ -105,6 +105,9 @@ static const char* opcodeNames[] = {
     "jfalse      ",
     "jless       ",
     "jmp_scopes  ",
+    "loop        ",
+    "loop_if_true",
+    "loop_if_less",
 
     "new_func    ",
     "new_func_exp",

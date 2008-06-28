@@ -1,3 +1,58 @@
+2008-06-27  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam.
+
+        Bug 18626: SQUIRRELFISH: support the "slow script" dialog <https://bugs.webkit.org/show_bug.cgi?id=18626>
+        <rdar://problem/5973931> Slow script dialog needs to be reimplemented for squirrelfish
+
+        Adds support for the slow script dialog in squirrelfish.  This requires the addition
+        of three new op codes, op_loop, op_loop_if_true, and op_loop_if_less which have the
+        same behaviour as their simple jump equivalents but have an additional time out check.
+
+        Additional assertions were added to other jump instructions to prevent accidentally
+        creating loops with jump types that do not support time out checks.
+
+        Sunspider does not report a regression, however this appears very sensitive to code
+        layout and hardware, so i would expect up to a 1% regression on other systems.
+
+        Part of this required moving the old timeout logic from JSGlobalObject and into Machine
+        which is the cause of a number of the larger diff blocks.
+
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        (KJS::CodeGenerator::emitJumpScopes):
+        * VM/ExceptionHelpers.cpp:
+        (KJS::InterruptedExecutionError::isWatchdogException):
+        (KJS::createInterruptedExecutionException):
+        * VM/ExceptionHelpers.h:
+        * VM/LabelID.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine):
+        (KJS::Machine::throwException):
+        (KJS::Machine::resetTimeoutCheck):
+        (KJS::getCurrentTime):
+        (KJS::Machine::checkTimeout):
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        (KJS::Machine::setTimeoutTime):
+        (KJS::Machine::startTimeoutCheck):
+        (KJS::Machine::stopTimeoutCheck):
+        (KJS::Machine::initTimeout):
+        * VM/Opcode.cpp:
+        (KJS::):
+        * VM/Opcode.h:
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::init):
+        (KJS::JSGlobalObject::setTimeoutTime):
+        (KJS::JSGlobalObject::startTimeoutCheck):
+        * kjs/JSGlobalObject.h:
+        * kjs/JSObject.h:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::evaluate):
+
 2008-06-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk and Qt build fix: Remove RegisterFileStack from the build

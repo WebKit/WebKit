@@ -45,6 +45,16 @@ static void substitute(UString& string, const UString& substring)
     string = newString;
 }
 
+class InterruptedExecutionError : public JSObject {
+public:
+    virtual bool isWatchdogException() const { return true; }
+};
+
+JSValue* createInterruptedExecutionException(ExecState* exec)
+{
+    return new (exec) InterruptedExecutionError;
+}
+
 JSValue* createError(ExecState* exec, ErrorType e, const char* msg)
 {
     return Error::create(exec, e, msg, -1, -1, 0);

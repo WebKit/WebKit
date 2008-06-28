@@ -45,18 +45,6 @@
 #include "ScopeChainMark.h"
 #include "string_object.h"
 
-#if HAVE(SYS_TIME_H)
-#include <sys/time.h>
-#endif
-
-#if PLATFORM(WIN_OS)
-#include <windows.h>
-#endif
-
-#if PLATFORM(QT)
-#include <QDateTime>
-#endif
-
 namespace KJS {
 
 // Default number of ticks before a timeout check should be done.
@@ -69,25 +57,6 @@ static inline void markIfNeeded(JSValue* v)
 {
     if (v && !v->marked())
         v->mark();
-}
-    
-// Returns the current time in milliseconds
-// It doesn't matter what "current time" is here, just as long as
-// it's possible to measure the time difference correctly.
-static inline unsigned getCurrentTime()
-{
-#if HAVE(SYS_TIME_H)
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    return tv.tv_sec * 1000 + tv.tv_usec / 1000;
-#elif PLATFORM(QT)
-    QDateTime t = QDateTime::currentDateTime();
-    return t.toTime_t() * 1000 + t.time().msec();
-#elif PLATFORM(WIN_OS)
-    return timeGetTime();
-#else
-#error Platform does not have getCurrentTime function
-#endif
 }
 
 JSGlobalObject::~JSGlobalObject()
@@ -131,13 +100,10 @@ void JSGlobalObject::init(JSObject* thisValue)
     } else
         headObject = d()->next = d()->prev = this;
 
-    resetTimeoutCheck();
-    d()->timeoutTime = 0;
-    d()->timeoutCheckCount = 0;
-
     d()->recursion = 0;
     d()->debugger = 0;
-    
+    globalData()->machine->initTimeout();
+
     d()->globalExec.set(new ExecState(this, thisValue, d()->globalScopeChain.node()));
 
     d()->pageGroupIdentifier = 0;
@@ -346,64 +312,19 @@ void JSGlobalObject::reset(JSValue* prototype)
     lastInPrototypeChain(this)->setPrototype(d()->objectPrototype);
 }
 
+void JSGlobalObject::setTimeoutTime(unsigned timeoutTime)
+{
+    globalData()->machine->setTimeoutTime(timeoutTime);
+}
+
 void JSGlobalObject::startTimeoutCheck()
 {
-    if (!d()->timeoutCheckCount)
-        resetTimeoutCheck();
-    
-    ++d()->timeoutCheckCount;
+    globalData()->machine->startTimeoutCheck();
 }
 
 void JSGlobalObject::stopTimeoutCheck()
 {
-    --d()->timeoutCheckCount;
-}
-
-void JSGlobalObject::resetTimeoutCheck()
-{
-    d()->tickCount = 0;
-    d()->ticksUntilNextTimeoutCheck = initialTickCountThreshold;
-    d()->timeAtLastCheckTimeout = 0;
-    d()->timeExecuting = 0;
-}
-
-bool JSGlobalObject::checkTimeout()
-{    
-    d()->tickCount = 0;
-    
-    unsigned currentTime = getCurrentTime();
-
-    if (!d()->timeAtLastCheckTimeout) {
-        // Suspicious amount of looping in a script -- start timing it
-        d()->timeAtLastCheckTimeout = currentTime;
-        return false;
-    }
-
-    unsigned timeDiff = currentTime - d()->timeAtLastCheckTimeout;
-
-    if (timeDiff == 0)
-        timeDiff = 1;
-    
-    d()->timeExecuting += timeDiff;
-    d()->timeAtLastCheckTimeout = currentTime;
-    
-    // Adjust the tick threshold so we get the next checkTimeout call in the interval specified in 
-    // preferredScriptCheckTimeInterval
-    d()->ticksUntilNextTimeoutCheck = (unsigned)((float)preferredScriptCheckTimeInterval / timeDiff) * d()->ticksUntilNextTimeoutCheck;
-
-    // If the new threshold is 0 reset it to the default threshold. This can happen if the timeDiff is higher than the
-    // preferred script check time interval.
-    if (d()->ticksUntilNextTimeoutCheck == 0)
-        d()->ticksUntilNextTimeoutCheck = initialTickCountThreshold;
-
-    if (d()->timeoutTime && d()->timeExecuting > d()->timeoutTime) {
-        if (shouldInterruptScript())
-            return true;
-        
-        resetTimeoutCheck();
-    }
-    
-    return false;
+    globalData()->machine->stopTimeoutCheck();
 }
 
 void JSGlobalObject::mark()

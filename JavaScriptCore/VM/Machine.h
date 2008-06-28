@@ -42,6 +42,7 @@ namespace KJS {
     class FunctionBodyNode;
     class Instruction;
     class JSFunction;
+    class JSGlobalObject;
     class ProgramNode;
     class Register;
     class RegisterFile;
@@ -96,7 +97,27 @@ namespace KJS {
         JSValue* retrieveCaller(ExecState*, JSFunction*) const;
 
         void getFunctionAndArguments(Register** registerBase, Register* callFrame, JSFunction*&, Register*& argv, int& argc);
+        void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
+        
+        void startTimeoutCheck()
+        {
+            if (!m_timeoutCheckCount)
+                resetTimeoutCheck();
+            
+            ++m_timeoutCheckCount;
+        }
+        
+        void stopTimeoutCheck()
+        {
+            --m_timeoutCheckCount;
+        }
 
+        inline void initTimeout()
+        {
+            resetTimeoutCheck();
+            m_timeoutTime = 0;
+            m_timeoutCheckCount = 0;
+        }
         void mark(Heap* heap) { m_registerFile.mark(heap); }
 
     private:
@@ -118,7 +139,16 @@ namespace KJS {
         void dumpCallFrame(const CodeBlock*, ScopeChainNode*, RegisterFile*, const Register*);
         void dumpRegisters(const CodeBlock*, RegisterFile*, const Register*);
 
+        JSValue* checkTimeout(JSGlobalObject*);
+        void resetTimeoutCheck();
+
         int m_reentryDepth;
+        unsigned m_timeoutTime;
+        unsigned m_timeAtLastCheckTimeout;
+        unsigned m_timeExecuting;
+        unsigned m_timeoutCheckCount;
+        unsigned m_ticksUntilNextTimeoutCheck;
+
         RegisterFile m_registerFile;
 
 #if HAVE(COMPUTED_GOTO)
