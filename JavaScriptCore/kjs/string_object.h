@@ -94,18 +94,6 @@ namespace KJS {
     virtual CallType getCallData(CallData&);
   };
 
-  /**
-   * @internal
-   *
-   * Class to implement all methods that are properties of the
-   * String object
-   */
-  class StringConstructorFunction : public InternalFunction {
-  public:
-    StringConstructorFunction(ExecState*, FunctionPrototype*, const Identifier&);
-    virtual CallType getCallData(CallData&);
-  };
-
-} // namespace
+} // namespace KJS
 
 #endif

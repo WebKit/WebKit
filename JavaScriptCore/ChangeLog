@@ -1,5 +1,13 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Darin Adler.
+
+        Remove unused StringConstructorFunction class.
+
+        * kjs/string_object.h:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Fix windows build.
 
         * kjs/ArrayPrototype.cpp:
