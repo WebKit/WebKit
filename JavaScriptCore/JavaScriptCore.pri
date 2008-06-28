@@ -59,7 +59,6 @@ SOURCES += \
     VM/Opcode.cpp \
     VM/Register.cpp \
     VM/RegisterFile.cpp \
-    VM/RegisterFileStack.cpp \
     VM/RegisterID.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code

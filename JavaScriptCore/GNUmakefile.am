@@ -52,7 +52,6 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Opcode.cpp \
 	JavaScriptCore/VM/Register.cpp \
-	JavaScriptCore/VM/RegisterFileStack.cpp \
 	JavaScriptCore/VM/RegisterID.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
 	JavaScriptCore/pcre/pcre_exec.cpp \

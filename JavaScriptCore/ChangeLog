@@ -1,3 +1,11 @@
+2008-06-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk and Qt build fix: Remove RegisterFileStack from the build
+        scripts.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+
 2008-06-27  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
