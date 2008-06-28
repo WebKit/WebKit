@@ -1,3 +1,132 @@
+2008-06-28  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Update all (except four) SVG pixel tests, after a long time.
+        Four tests are broken in trunk, filed bugs 19798 & 19799.
+
+        Add all missing png/checksum files, and move files around which were misplaced.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-06-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-06-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-07-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-07-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-08-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-08-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-30-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-30-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-36-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-39-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-40-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-41-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/animate-elem-41-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/render-groups-01-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/render-groups-03-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-06-t-expected.checksum:
+        * platform/mac-leopard/svg/W3C-SVG-1.1/text-text-06-t-expected.png:
+        * platform/mac-leopard/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac-leopard/svg/batik/masking/maskRegions-expected.png:
+        * platform/mac-leopard/svg/batik/paints/patternPreserveAspectRatioA-expected.checksum:
+        * platform/mac-leopard/svg/batik/paints/patternPreserveAspectRatioA-expected.png:
+        * platform/mac-leopard/svg/batik/paints/patternRegions-expected.checksum:
+        * platform/mac-leopard/svg/batik/paints/patternRegions-expected.png:
+        * platform/mac-leopard/svg/batik/text/textEffect-expected.checksum:
+        * platform/mac-leopard/svg/batik/text/textEffect-expected.png:
+        * platform/mac-leopard/svg/carto.net/scrollbar-expected.checksum:
+        * platform/mac-leopard/svg/carto.net/scrollbar-expected.png:
+        * platform/mac-leopard/svg/carto.net/selectionlist-expected.checksum:
+        * platform/mac-leopard/svg/carto.net/selectionlist-expected.png:
+        * platform/mac-leopard/svg/custom/altglyph-expected.checksum: Copied from platform/mac/svg/custom/altglyph-expected.checksum.
+        * platform/mac-leopard/svg/custom/altglyph-expected.png: Copied from platform/mac/svg/custom/altglyph-expected.png.
+        * platform/mac-leopard/svg/custom/animate-path-discrete-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/animate-path-discrete-expected.png: Added.
+        * platform/mac-leopard/svg/custom/animate-path-morphing-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/animate-path-morphing-expected.png: Added.
+        * platform/mac-leopard/svg/custom/clip-path-display-none-child-expected.checksum: Copied from platform/mac/svg/custom/clip-path-display-none-child-expected.checksum.
+        * platform/mac-leopard/svg/custom/clip-path-display-none-child-expected.png: Copied from platform/mac/svg/custom/clip-path-display-none-child-expected.png.
+        * platform/mac-leopard/svg/custom/deep-dynamic-updates-expected.checksum:
+        * platform/mac-leopard/svg/custom/deep-dynamic-updates-expected.png:
+        * platform/mac-leopard/svg/custom/focus-ring-expected.checksum:
+        * platform/mac-leopard/svg/custom/focus-ring-expected.png:
+        * platform/mac-leopard/svg/custom/getPresentationAttribute-modify-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/getPresentationAttribute-modify-expected.png: Added.
+        * platform/mac-leopard/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac-leopard/svg/custom/grayscale-gradient-mask-expected.png:
+        * platform/mac-leopard/svg/custom/image-parent-translation-expected.checksum:
+        * platform/mac-leopard/svg/custom/image-parent-translation-expected.png:
+        * platform/mac-leopard/svg/custom/image-small-width-height-expected.checksum:
+        * platform/mac-leopard/svg/custom/image-small-width-height-expected.png:
+        * platform/mac-leopard/svg/custom/js-late-mask-and-object-creation-expected.checksum:
+        * platform/mac-leopard/svg/custom/js-late-mask-and-object-creation-expected.png:
+        * platform/mac-leopard/svg/custom/js-late-mask-creation-expected.checksum:
+        * platform/mac-leopard/svg/custom/js-late-mask-creation-expected.png:
+        * platform/mac-leopard/svg/custom/loadevents-capturing-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/loadevents-capturing-expected.png: Added.
+        * platform/mac-leopard/svg/custom/loadevents-externalresourcesrequired-displaynone-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/loadevents-externalresourcesrequired-displaynone-expected.png: Added.
+        * platform/mac-leopard/svg/custom/loadevents-externalresourcesrequired-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/loadevents-externalresourcesrequired-expected.png: Added.
+        * platform/mac-leopard/svg/custom/loadevents-normal-displaynone-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/loadevents-normal-displaynone-expected.png: Added.
+        * platform/mac-leopard/svg/custom/loadevents-normal-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/loadevents-normal-expected.png: Added.
+        * platform/mac-leopard/svg/custom/marker-getPropertyValue-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/marker-getPropertyValue-expected.png: Added.
+        * platform/mac-leopard/svg/custom/mask-changes-expected.checksum:
+        * platform/mac-leopard/svg/custom/mask-changes-expected.png:
+        * platform/mac-leopard/svg/custom/mask-child-changes-expected.checksum:
+        * platform/mac-leopard/svg/custom/mask-child-changes-expected.png:
+        * platform/mac-leopard/svg/custom/pattern-cycle-detection-expected.checksum:
+        * platform/mac-leopard/svg/custom/pattern-cycle-detection-expected.png:
+        * platform/mac-leopard/svg/custom/pattern-deep-referencing-expected.checksum:
+        * platform/mac-leopard/svg/custom/pattern-deep-referencing-expected.png:
+        * platform/mac-leopard/svg/custom/pattern-rotate-expected.checksum:
+        * platform/mac-leopard/svg/custom/pattern-rotate-expected.png:
+        * platform/mac-leopard/svg/custom/pattern-y-offset-expected.checksum:
+        * platform/mac-leopard/svg/custom/pattern-y-offset-expected.png:
+        * platform/mac-leopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.checksum:
+        * platform/mac-leopard/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/mac-leopard/svg/custom/svg-features-expected.checksum:
+        * platform/mac-leopard/svg/custom/svg-features-expected.png:
+        * platform/mac-leopard/svg/custom/text-dom-removal-expected.checksum: Copied from platform/mac/svg/custom/text-dom-removal-expected.checksum.
+        * platform/mac-leopard/svg/custom/text-dom-removal-expected.png: Copied from platform/mac/svg/custom/text-dom-removal-expected.png.
+        * platform/mac-leopard/svg/custom/text-linking-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/text-linking-expected.png: Added.
+        * platform/mac-leopard/svg/custom/text-xy-updates-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/text-xy-updates-expected.png: Added.
+        * platform/mac-leopard/svg/custom/use-on-g-containing-foreignObject-and-image-expected.checksum:
+        * platform/mac-leopard/svg/custom/use-on-g-containing-foreignObject-and-image-expected.png:
+        * platform/mac-leopard/svg/dom/SVGRectElement: Added.
+        * platform/mac-leopard/svg/dom/SVGRectElement/rect-modify-rx-expected.checksum: Added.
+        * platform/mac-leopard/svg/dom/SVGRectElement/rect-modify-rx-expected.png: Added.
+        * platform/mac-leopard/svg/text/kerning-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/kerning-expected.png: Added.
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.checksum: Added.
+        * platform/mac-leopard/svg/text/multichar-glyph-expected.png: Added.
+        * platform/mac/svg/custom/altglyph-expected.checksum: Removed.
+        * platform/mac/svg/custom/altglyph-expected.png: Removed.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.checksum: Removed.
+        * platform/mac/svg/custom/clip-path-display-none-child-expected.png: Removed.
+        * platform/mac/svg/custom/text-dom-removal-expected.checksum: Removed.
+        * platform/mac/svg/custom/text-dom-removal-expected.png: Removed.
+
 2008-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
