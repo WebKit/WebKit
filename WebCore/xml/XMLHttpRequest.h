@@ -31,7 +31,6 @@
 namespace WebCore {
 
 class Document;
-class File;
 class TextResourceDecoder;
 
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
@@ -115,9 +114,9 @@ private:
     virtual void didFinishLoading(SubresourceLoader*);
     virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&);
 
-    // Special versions for the method check preflight
-    void didReceiveResponseMethodCheck(SubresourceLoader*, const ResourceResponse&);
-    void didFinishLoadingMethodCheck(SubresourceLoader*);
+    // Special versions for the preflight
+    void didReceiveResponsePreflight(SubresourceLoader*, const ResourceResponse&);
+    void didFinishLoadingPreflight(SubresourceLoader*);
 
     void processSyncLoadResults(const Vector<char>& data, const ResourceResponse&, ExceptionCode&);
     void updateAndDispatchOnProgress(unsigned int len);
@@ -139,14 +138,17 @@ private:
 
     void createRequest(ExceptionCode&);
 
-    void makeSameOriginRequest(ResourceRequest&);
-    void makeCrossSiteAccessRequest(ResourceRequest&, ExceptionCode&);
+    void makeSameOriginRequest(ExceptionCode&);
+    void makeCrossSiteAccessRequest(ExceptionCode&);
+
+    void makeSimpleCrossSiteAccessRequest(ExceptionCode&);
+    void makeCrossSiteAccessRequestWithPreflight(ExceptionCode&);
+    void handleAsynchronousPreflightResult();
 
     void loadRequestSynchronously(ResourceRequest&, ExceptionCode&);
     void loadRequestAsynchronously(ResourceRequest&);
 
-    void handleAsynchronousMethodCheckResult();
-
+    bool isSimpleCrossSiteAccessRequest() const;
     String accessControlOrigin() const;
 
     void genericError();
@@ -201,7 +203,8 @@ private:
 
     bool m_sameOriginRequest;
     bool m_allowAccess;
-    bool m_inMethodCheck;
+    bool m_inPreflight;
+    HTTPHeaderMap m_crossSiteRequestHeaders;
 
     // FIXME: Add support for AccessControlList in a PI in an XML document in addition to the http header.
     OwnPtr<AccessControlList> m_httpAccessControlList;

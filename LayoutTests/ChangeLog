@@ -1,3 +1,23 @@
+2008-06-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6025499> Make Cross-site XHR match the final specification
+        Add tests for the updated implemented subset of Access-Control for XMLHttpRequest.
+
+        * http/tests/xmlhttprequest/access-control-basic-blacklist-request-headers-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-blacklist-request-headers.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-async-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-print-headers.cgi: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi: Added.
+        * http/tests/xmlhttprequest/set-dangerous-headers-expected.txt:
+
 2008-06-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,5 +1,50 @@
 2008-06-27  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Dan Bernstein.
+
+        <rdar://problem/6025499> Make Cross-site XHR match the final specification
+
+        Update the implemented subset of Access-Control for XMLHttpRequest to the 
+        latest version. (Editor's Draft 25 May 2008)
+
+        - Now differentiates between simple and non-simple cross-site requests, the later
+          requiring a preflight.
+        - Now sends request headers cross-site, limited by a blacklist.
+        - Now allows access to cross-site response headers, limited by a whitelist.
+        - Now sends request entity body for non-get cross-site requests after preflight.
+
+        Tests: http/tests/xmlhttprequest/access-control-basic-blacklist-request-headers.html
+               http/tests/xmlhttprequest/access-control-basic-get-fail-non-simple.html
+               http/tests/xmlhttprequest/access-control-basic-whitelist-response-headers.html
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isOnAccessControllRequestHeaderBlackList):
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist):
+        (WebCore::isOnAccessControlResponseHeaderWhitelist):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::makeSameOriginRequest):
+        (WebCore::XMLHttpRequest::isSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::clearRequest):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::setRequestHeaderInternal):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        (WebCore::XMLHttpRequest::didReceiveData):
+        * xml/XMLHttpRequest.h:
+
+2008-06-27  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Mark Rowe.
 
         Clean up sorting in WebCore.xcodeproj.

@@ -1,0 +1,56 @@
+<html>
+<body>
+<p>Test that setRequestHeader cannot be used to send security-sensitive headers cross-site.</p>
+<pre id='console'></pre>
+<script type="text/javascript">
+    function log(message)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+    }
+
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var req = new XMLHttpRequest;
+    req.open("GET", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-allow-print-headers.cgi", false);
+
+    req.setRequestHeader("accept-charset", "foobar");
+    req.setRequestHeader("accept-encoding", "foobar");
+    req.setRequestHeader("origin", "foobar");
+    req.setRequestHeader("authorization", "foobar");
+    req.setRequestHeader("connection", "foobar");
+    req.setRequestHeader("content-length", "123456");
+    req.setRequestHeader("content-transfer-encoding", "foobar");
+    req.setRequestHeader("cookie", "foobar");
+    req.setRequestHeader("cookie2", "foobar");
+    req.setRequestHeader("date", "foobar");
+    req.setRequestHeader("expect", "100-continue");
+    req.setRequestHeader("host", "foobar");
+    req.setRequestHeader("keep-alive", "foobar");
+    req.setRequestHeader("referer", "foobar");
+    req.setRequestHeader("te", "foobar");
+    req.setRequestHeader("trailer", "foobar");
+    req.setRequestHeader("transfer-encoding", "foobar");
+    req.setRequestHeader("upgrade", "foobar");
+    req.setRequestHeader("via", "foobar");
+
+    req.setRequestHeader("Proxy-", "foobar");
+    req.setRequestHeader("Proxy-test", "foobar");
+    req.setRequestHeader("PROXY-FOO", "foobar");
+
+    req.setRequestHeader("Sec-", "foobar");
+    req.setRequestHeader("Sec-test", "foobar");
+    req.setRequestHeader("SEC-FOO", "foobar");
+
+    try {
+        req.send("");
+        if (req.responseText.match("100-continue|foobar|123456"))
+            log(req.responseText);
+        else
+            log("SUCCESS");
+    } catch (e) {
+        log("FAIL: " + e);;
+    }
+</script>
+</body>
+</html>
