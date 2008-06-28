@@ -93,7 +93,9 @@ Source files for JSCore.
         kjs/regexp.cpp
         kjs/RegExpObject.cpp
         kjs/ScopeChain.cpp
-        kjs/string_object.cpp
+        kjs/StringConstructor.cpp
+        kjs/StringObject.cpp
+        kjs/StringPrototype.cpp
         kjs/ustring.cpp
         kjs/JSValue.cpp
 

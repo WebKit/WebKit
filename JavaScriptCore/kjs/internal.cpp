@@ -29,6 +29,7 @@
 #include "MathObject.h"
 #include "NumberObject.h"
 #include "RegExpObject.h"
+#include "StringPrototype.h"
 #include "collector.h"
 #include "date_object.h"
 #include "debugger.h"
@@ -36,7 +37,6 @@
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"
-#include "string_object.h"
 #include <math.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>

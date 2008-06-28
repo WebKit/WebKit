@@ -45,10 +45,11 @@
 #include "ObjectPrototype.h"
 #include "RegExpObject.h"
 #include "ScopeChainMark.h"
+#include "StringConstructor.h"
+#include "StringPrototype.h"
 #include "date_object.h"
 #include "debugger.h"
 #include "error_object.h"
-#include "string_object.h"
 
 namespace KJS {
 

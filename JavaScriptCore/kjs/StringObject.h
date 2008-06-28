@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
@@ -19,16 +18,13 @@
  *
  */
 
-#ifndef STRING_OBJECT_H_
-#define STRING_OBJECT_H_
+#ifndef StringObject_h
+#define StringObject_h
 
 #include "JSWrapperObject.h"
 #include "JSString.h"
-#include "lookup.h"
 
 namespace KJS {
-
-  class FunctionPrototype;
 
   class StringObject : public JSWrapperObject {
   public:
@@ -58,42 +54,6 @@ namespace KJS {
     virtual JSString* toThisJSString(ExecState*);
   };
 
-  // WebCore uses this to make style.filter undetectable
-  class StringObjectThatMasqueradesAsUndefined : public StringObject {
-  public:
-      StringObjectThatMasqueradesAsUndefined(ExecState* exec, JSObject* proto, const UString& string)
-          : StringObject(exec, proto, string) { }
-      virtual bool masqueradeAsUndefined() const { return true; }
-      virtual bool toBoolean(ExecState*) const { return false; }
-  };
-
-  /**
-   * @internal
-   *
-   * The initial value of String.prototype (and thus all objects created
-   * with the String constructor
-   */
-  class StringPrototype : public StringObject {
-  public:
-    StringPrototype(ExecState *exec,
-                       ObjectPrototype *objProto);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
-
-  /**
-   * @internal
-   *
-   * The initial value of the the global variable's "String" property
-   */
-  class StringConstructor : public InternalFunction {
-  public:
-    StringConstructor(ExecState*, FunctionPrototype*, StringPrototype*);
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual CallType getCallData(CallData&);
-  };
-
 } // namespace KJS
 
-#endif
+#endif // StringObject_h

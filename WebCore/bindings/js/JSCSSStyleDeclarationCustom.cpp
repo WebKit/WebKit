@@ -31,7 +31,8 @@
 #include "CSSStyleDeclaration.h"
 #include "CSSValue.h"
 #include "PlatformString.h"
-#include <kjs/string_object.h>
+#include <kjs/StringObjectThatMasqueradesAsUndefined.h>
+#include <kjs/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 
 using namespace KJS;

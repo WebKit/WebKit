@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
@@ -20,15 +19,13 @@
  */
 
 #include "config.h"
-#include "string_object.h"
+#include "StringPrototype.h"
 
 #include "JSArray.h"
-#include "JSWrapperObject.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
 #include "error_object.h"
-#include "operations.h"
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Collator.h>
 
@@ -71,86 +68,13 @@ static JSValue* stringProtoFuncLink(ExecState*, JSObject*, JSValue*, const ArgLi
 
 }
 
-#include "string_object.lut.h"
+#include "StringPrototype.lut.h"
 
 namespace KJS {
 
-// ------------------------------ StringObject ----------------------------
-
-const ClassInfo StringObject::info = { "String", 0, 0, 0 };
-
-StringObject::StringObject(ExecState* exec, JSObject* proto)
-  : JSWrapperObject(proto)
-{
-  setInternalValue(jsString(exec, ""));
-}
-
-StringObject::StringObject(JSObject* proto, JSString* string)
-  : JSWrapperObject(proto)
-{
-  setInternalValue(string);
-}
-
-StringObject::StringObject(ExecState* exec, JSObject* proto, const UString& string)
-  : JSWrapperObject(proto)
-{
-  setInternalValue(jsString(exec, string));
-}
-
-bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-{
-    if (internalValue()->getStringPropertySlot(exec, propertyName, slot))
-        return true;
-    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
-}
-    
-bool StringObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
-{
-    if (internalValue()->getStringPropertySlot(propertyName, slot))
-        return true;    
-    return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
-}
-
-void StringObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
-{
-    if (propertyName == exec->propertyNames().length)
-        return;
-    JSObject::put(exec, propertyName, value);
-}
-
-bool StringObject::deleteProperty(ExecState *exec, const Identifier &propertyName)
-{
-  if (propertyName == exec->propertyNames().length)
-    return false;
-  return JSObject::deleteProperty(exec, propertyName);
-}
-
-void StringObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
-{
-  int size = internalValue()->value().size();
-  for (int i = 0; i < size; i++)
-    propertyNames.add(Identifier(exec, UString::from(i)));
-  return JSObject::getPropertyNames(exec, propertyNames);
-}
-
-UString StringObject::toString(ExecState*) const
-{
-    return internalValue()->value();
-}
-
-UString StringObject::toThisString(ExecState*) const
-{
-    return internalValue()->value();
-}
-
-JSString* StringObject::toThisJSString(ExecState*)
-{
-    return internalValue();
-}
-
-// ------------------------------ StringPrototype ---------------------------
 const ClassInfo StringPrototype::info = { "String", &StringObject::info, 0, ExecState::stringTable };
-/* Source for string_object.lut.h
+
+/* Source for StringPrototype.lut.h
 @begin stringTable 26
   toString              stringProtoFuncToString          DontEnum|Function       0
   valueOf               stringProtoFuncToString          DontEnum|Function       0
@@ -187,6 +111,7 @@ const ClassInfo StringPrototype::info = { "String", &StringObject::info, 0, Exec
   link                  stringProtoFuncLink              DontEnum|Function       1
 @end
 */
+
 // ECMA 15.5.4
 StringPrototype::StringPrototype(ExecState* exec, ObjectPrototype* objProto)
   : StringObject(exec, objProto)
@@ -870,66 +795,6 @@ JSValue* stringProtoFuncLink(ExecState* exec, JSObject*, JSValue* thisValue, con
     UString s = thisValue->toThisString(exec);
     JSValue* a0 = args[0];
     return jsString(exec, "<a href=\"" + a0->toString(exec) + "\">" + s + "</a>");
-}
-
-// ------------------------------ StringConstructor ------------------------------
-
-static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
-{
-    UString s;
-    if (args.size()) {
-        UChar* buf = static_cast<UChar*>(fastMalloc(args.size() * sizeof(UChar)));
-        UChar* p = buf;
-        ArgList::const_iterator end = args.end();
-        for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-          *p++ = static_cast<UChar>((*it)->toUInt32(exec));
-        s = UString(buf, args.size(), false);
-    } else
-        s = "";
-
-    return jsString(exec, s);
-}
-
-StringConstructor::StringConstructor(ExecState* exec, FunctionPrototype* funcProto, StringPrototype* stringProto)
-  : InternalFunction(funcProto, Identifier(exec, stringProto->classInfo()->className))
-{
-  // ECMA 15.5.3.1 String.prototype
-  putDirect(exec->propertyNames().prototype, stringProto, ReadOnly | DontEnum | DontDelete);
-
-  // ECMA 15.5.3.2 fromCharCode()
-  putDirectFunction(new (exec) PrototypeFunction(exec, funcProto, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
-
-  // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
-}
-
-// ECMA 15.5.2
-static JSObject* constructWithStringConstructor(ExecState* exec, JSObject*, const ArgList& args)
-{
-    JSObject* prototype = exec->lexicalGlobalObject()->stringPrototype();
-    if (args.isEmpty())
-        return new (exec) StringObject(exec, prototype);
-    return new (exec) StringObject(exec, prototype, args[0]->toString(exec));
-}
-
-ConstructType StringConstructor::getConstructData(ConstructData& constructData)
-{
-    constructData.native.function = constructWithStringConstructor;
-    return ConstructTypeNative;
-}
-
-// ECMA 15.5.1
-static JSValue* callStringConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
-{
-    if (args.isEmpty())
-        return jsString(exec, "");
-    return jsString(exec, args[0]->toString(exec));
-}
-
-CallType StringConstructor::getCallData(CallData& callData)
-{
-    callData.native.function = callStringConstructor;
-    return CallTypeNative;
 }
 
 } // namespace KJS

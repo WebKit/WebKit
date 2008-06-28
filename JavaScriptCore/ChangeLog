@@ -1,3 +1,29 @@
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Rename string_object.h/cpp to StringObject.h/cpp and split out StringObjectThatMasqueradesAsUndefined,
+        StringConstructor and StringPrototype.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/StringConstructor.cpp: Copied from JavaScriptCore/kjs/string_object.cpp.
+        * kjs/StringConstructor.h: Copied from JavaScriptCore/kjs/string_object.h.
+        * kjs/StringObject.cpp: Copied from JavaScriptCore/kjs/string_object.cpp.
+        * kjs/StringObject.h: Copied from JavaScriptCore/kjs/string_object.h.
+        * kjs/StringObjectThatMasqueradesAsUndefined.h: Copied from JavaScriptCore/kjs/string_object.h.
+        * kjs/StringPrototype.cpp: Copied from JavaScriptCore/kjs/string_object.cpp.
+        * kjs/StringPrototype.h: Copied from JavaScriptCore/kjs/string_object.h.
+        * kjs/internal.cpp:
+        * kjs/string_object.cpp: Removed.
+        * kjs/string_object.h: Removed.
+
 2008-06-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix: JSVariableObject is now part of AllInOne

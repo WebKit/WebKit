@@ -677,11 +677,31 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\string_object.cpp"
+				RelativePath="..\..\kjs\StringConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\string_object.h"
+				RelativePath="..\..\kjs\StringConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StringObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StringObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StringObjectThatMasqueradesAsUndefined.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StringPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StringPrototype.h"
 				>
 			</File>
 			<File
@@ -765,7 +785,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\string_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\StringPrototype.lut.h"
 					>
 				</File>
 			</Filter>

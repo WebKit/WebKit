@@ -41,7 +41,7 @@ all : \
     MathObject.lut.h \
     NumberConstructor.lut.h \
     RegExpObject.lut.h \
-    string_object.lut.h \
+    StringPrototype.lut.h \
     $(JavaScriptCore)/docs/bytecode.html \
 #
 

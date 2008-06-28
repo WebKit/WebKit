@@ -16,7 +16,7 @@ include(pcre/pcre.pri)
 LUT_FILES += \
     kjs/date_object.cpp \
     kjs/NumberConstructor.cpp \
-    kjs/string_object.cpp \
+    kjs/StringPrototype.cpp \
     kjs/ArrayPrototype.cpp \
     kjs/MathObject.cpp \
     kjs/RegExpObject.cpp
@@ -108,7 +108,9 @@ SOURCES += \
     kjs/regexp.cpp \
     kjs/RegExpObject.cpp \
     kjs/ScopeChain.cpp \
-    kjs/string_object.cpp \
+    kjs/StringConstructor.cpp \
+    kjs/StringObject.cpp \
+    kjs/StringPrototype.cpp \
     kjs/ustring.cpp \
     kjs/JSValue.cpp \
     profiler/ProfileNode.cpp \

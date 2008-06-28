@@ -1,5 +1,19 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Darin Adler.
+
+        Update includes after remaming string_object.h to StringObject.h and
+        splitting out StringObjectThatMasqueradesAsUndefined, StringConstructor
+        and StringPrototype.
+
+        * ForwardingHeaders/kjs/StringObject.h: Copied from WebCore/ForwardingHeaders/kjs/string_object.h.
+        * ForwardingHeaders/kjs/StringObjectThatMasqueradesAsUndefined.h: Added.
+        * ForwardingHeaders/kjs/StringPrototype.h: Added.
+        * ForwardingHeaders/kjs/string_object.h: Removed.
+        * bindings/js/JSCSSStyleDeclarationCustom.cpp:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Oliver Hunt.
 
         Update includes after remaming object_object.h to ObjectPrototype.h and
