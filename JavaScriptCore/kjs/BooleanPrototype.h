@@ -25,6 +25,8 @@
 
 namespace KJS {
 
+    class FunctionPrototype;
+
     /**
      * @internal
      *

@@ -24,6 +24,7 @@
 #include "JSGlobalObject.h"
 #include "Parser.h"
 #include "debugger.h"
+#include "JSArray.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "lexer.h"
