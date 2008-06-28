@@ -1,5 +1,5 @@
 <html>
-<head>
+<head id="head">
     <script type="text/javascript">
         function print(message, color) {
             var paragraph = document.createElement("div");
@@ -14,13 +14,14 @@
             layoutTestController.dumpAsText(); 
         }
         
-        var results = [true, true, false];
+        var results = [true, true, true, false];
         var description = ["remove src attribute of an <img> to see whether it gets loaded. (It should NOT be loaded.)",
                            "define an <img> with no src specified to see whether it gets loaded. (It should NOT be loaded.)",
-                           "define a <img> with src='' to see whether it gets loaded. (It should be loaded.)" ]
+                           "define a <img> with src='' to see whether it gets loaded. (It should NOT be loaded, because the base URI is a local file.)",
+                           "change the base URI to an http: URL and define a <img> with src='' to see whether it gets loaded. (It should be loaded.)" ]
 
         function outputResults() {
-            for (index = 0; index < 3; index++) {
+            for (index = 0; index < 4; index++) {
                 print("[" + index +"] " + description[index], "black");
                 if (results[index])
                     print("PASS", "green");
@@ -36,10 +37,12 @@
     <div id="console"></div>
     <img id="image1" style="display:none" src="resources/test-load.jpg" onerror="results[0] = false;" />
     <img id="image2" style="display:none" onerror="results[1] = false;" />
-    <img id="image3" style="display:none" src="" onerror="results[2] = true;" />
+    <img id="image3" style="display:none" src="" onerror="results[2] = false;" />
     <script type="text/javascript">
         var imgNode1 = document.getElementById("image1");
         imgNode1.removeAttribute("src");
+        document.getElementById("head").appendChild(document.createElement("base")).setAttribute("href", "http://127.0.0.1:8888/");
     </script>
+    <img id="image4" style="display:none" src="" onerror="results[3] = true;" />
 </body>
 </html>

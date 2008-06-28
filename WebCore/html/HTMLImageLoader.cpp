@@ -91,9 +91,12 @@ void HTMLImageLoader::updateFromElement()
 
     AtomicString attr = elem->getAttribute(elem->imageSourceAttributeName());
     
-    // Treat a lack of src or empty string for src as no image at all.
+    // Do not load any image if the 'src' attribute is missing or if it is
+    // an empty string referring to a local file. The latter condition is
+    // a quirk that preserves old behavior that Dashboard widgets
+    // need (<rdar://problem/5994621>).
     CachedImage *newImage = 0;
-    if (!attr.isNull()) {
+    if (!(attr.isNull() || attr.isEmpty() && doc->baseURI().isLocalFile())) {
         if (m_loadManually) {
             doc->docLoader()->setAutoLoadImages(false);
             newImage = new CachedImage(parseURL(attr));
