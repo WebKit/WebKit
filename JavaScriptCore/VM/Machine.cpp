@@ -48,6 +48,8 @@
 #include "operations.h"
 #include "RegExpObject.h"
 
+#include <stdio.h>
+
 #if HAVE(SYS_TIME_H)
 #include <sys/time.h>
 #endif

@@ -1,3 +1,11 @@
+2008-06-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Build fix
+
+        * VM/Machine.cpp: include stdio.h for printf
+
 2008-06-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
