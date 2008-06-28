@@ -22,6 +22,7 @@
 #include "StringConstructor.h"
 
 #include "FunctionPrototype.h"
+#include "JSGlobalObject.h"
 #include "StringPrototype.h"
 
 namespace KJS {

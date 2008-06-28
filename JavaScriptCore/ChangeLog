@@ -1,5 +1,11 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Fix non-AllInOne builds.
+
+        * kjs/StringConstructor.cpp:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Darin Adler.
 
         Rename string_object.h/cpp to StringObject.h/cpp and split out StringObjectThatMasqueradesAsUndefined,
