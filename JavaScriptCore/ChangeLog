@@ -1,3 +1,10 @@
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        * kjs/nodes.h: Remove obsolete PlacementNewAdopt constructors.
+        We no longer mutate the AST in place.
+
 2008-06-28  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Oliver Hunt.
