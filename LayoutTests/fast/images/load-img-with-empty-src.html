@@ -14,7 +14,7 @@
             layoutTestController.dumpAsText(); 
         }
         
-        var status = [true, true, false];
+        var results = [true, true, false];
         var description = ["remove src attribute of an <img> to see whether it gets loaded. (It should NOT be loaded.)",
                            "define an <img> with no src specified to see whether it gets loaded. (It should NOT be loaded.)",
                            "define a <img> with src='' to see whether it gets loaded. (It should be loaded.)" ]
@@ -22,7 +22,7 @@
         function outputResults() {
             for (index = 0; index < 3; index++) {
                 print("[" + index +"] " + description[index], "black");
-                if (status[index])
+                if (results[index])
                     print("PASS", "green");
                 else
                     print("FAIL", "red");
@@ -34,9 +34,9 @@
     <p>This page tests loading image with empty src attribute.</p>
     <hr>
     <div id="console"></div>
-    <img id="image1" style="display:none" src="resources/test-load.jpg" onerror="status[0] = false;" />
-    <img id="image2" style="display:none" onerror="status[1] = false;" />
-    <img id="image3" style="display:none" src="" onerror="status[2] = true;" />
+    <img id="image1" style="display:none" src="resources/test-load.jpg" onerror="results[0] = false;" />
+    <img id="image2" style="display:none" onerror="results[1] = false;" />
+    <img id="image3" style="display:none" src="" onerror="results[2] = true;" />
     <script type="text/javascript">
         var imgNode1 = document.getElementById("image1");
         imgNode1.removeAttribute("src");

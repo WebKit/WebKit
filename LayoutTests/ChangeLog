@@ -1,3 +1,12 @@
+2008-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - make a test valid
+
+        * fast/images/load-img-with-empty-src.html: Renamed the "status"
+        variable to "results", because "status" is a Window property.
+
 2008-06-27  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
