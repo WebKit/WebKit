@@ -23,8 +23,9 @@
 
 #include "JSGlobalObject.h"
 #include "JSObject.h"
-#include "operations.h"
 #include "JSValue.h"
+#include "ObjectPrototype.h"
+#include "operations.h"
 
 namespace KJS {
 

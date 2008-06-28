@@ -22,15 +22,16 @@
 #include "RegExpObject.h"
 #include "RegExpObject.lut.h"
 
-#include "JSArray.h"
 #include "ArrayPrototype.h"
-#include "error_object.h"
-#include "JSString.h"
+#include "JSArray.h"
 #include "JSObject.h"
+#include "JSString.h"
+#include "JSValue.h"
+#include "ObjectPrototype.h"
+#include "UnusedParam.h"
+#include "error_object.h"
 #include "operations.h"
 #include "regexp.h"
-#include "JSValue.h"
-#include "UnusedParam.h"
 
 #include <stdio.h>
 

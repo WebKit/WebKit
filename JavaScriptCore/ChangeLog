@@ -1,5 +1,13 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Try and fix the Windows build again.
+
+        * kjs/RegExpObject.cpp:
+        * kjs/date_object.cpp:
+        * kjs/error_object.cpp:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Darin Adler.
 
         Remove unused StringConstructorFunction class.

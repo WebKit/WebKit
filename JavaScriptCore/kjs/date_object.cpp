@@ -24,6 +24,7 @@
 
 #include "DateMath.h"
 #include "JSString.h"
+#include "ObjectPrototype.h"
 #include "error_object.h"
 #include "operations.h"
 #include <float.h>
