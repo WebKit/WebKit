@@ -1,3 +1,28 @@
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19801
+          add a feature so we can tell what regular expressions are taking time
+
+        * pcre/pcre_compile.cpp:
+        (jsRegExpCompile): Compile in the string if REGEXP_HISTOGRAM is on.
+
+        * pcre/pcre_exec.cpp:
+        (jsRegExpExecute): Add hook to time execution.
+        (Histogram::~Histogram): Print a sorted list of what took time.
+        (Histogram::add): Accumulate records of what took time.
+        (HistogramTimeLogger::~HistogramTimeLogger): Hook that calls
+        Histogram::add at the right moment and creates the global histogram
+        object.
+
+        * pcre/pcre_internal.h: Define REGEXP_HISTOGRAM.
+
+        * pcre/pcre_tables.cpp: Added missing include of "config.h". Not needed
+        any more, but an omissions an earlier version of this patch detected.
+        * pcre/pcre_ucp_searchfuncs.cpp: Ditto.
+        * pcre/pcre_xclass.cpp: Ditto.
+
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
         Try and fix the Windows build again.

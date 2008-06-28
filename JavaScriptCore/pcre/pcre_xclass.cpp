@@ -40,6 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* This module contains an internal function that is used to match an extended
 class (one that contains characters whose values are > 255). */
 
+#include "config.h"
 #include "pcre_internal.h"
 
 /*************************************************

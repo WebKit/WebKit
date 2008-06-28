@@ -43,13 +43,16 @@ that does pattern matching using an NFA algorithm, following the rules from
 the JavaScript specification. There are also some supporting functions. */
 
 #include "config.h"
-
 #include "pcre_internal.h"
 
+#include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 
-#include <limits.h>
+#if REGEXP_HISTOGRAM
+#include <kjs/DateMath.h>
+#include <kjs/ustring.h>
+#endif
 
 using namespace WTF;
 
@@ -66,6 +69,39 @@ using namespace WTF;
 typedef int ReturnLocation;
 #else
 typedef void* ReturnLocation;
+#endif
+
+#if !REGEXP_HISTOGRAM
+
+class HistogramTimeLogger {
+public:
+    HistogramTimeLogger(const JSRegExp*) { }
+};
+
+#else
+
+using namespace KJS;
+
+class Histogram {
+public:
+    ~Histogram();
+    void add(const JSRegExp*, double);
+
+private:
+    typedef HashMap<RefPtr<UString::Rep>, double> Map;
+    Map times;
+};
+
+class HistogramTimeLogger {
+public:
+    HistogramTimeLogger(const JSRegExp*);
+    ~HistogramTimeLogger();
+
+private:
+    const JSRegExp* m_re;
+    double m_startTime;
+};
+
 #endif
 
 /* Structure for building a chain of data for holding the values of
@@ -1922,7 +1958,9 @@ int jsRegExpExecute(const JSRegExp* re,
     ASSERT(subject);
     ASSERT(offsetCount >= 0);
     ASSERT(offsets || offsetCount == 0);
-    
+
+    HistogramTimeLogger logger(re);
+
     MatchData matchBlock;
     matchBlock.startSubject = subject;
     matchBlock.endSubject = matchBlock.startSubject + length;
@@ -2081,3 +2119,58 @@ int jsRegExpExecute(const JSRegExp* re,
     DPRINTF((">>>> returning PCRE_ERROR_NOMATCH\n"));
     return JSRegExpErrorNoMatch;
 }
+
+#if REGEXP_HISTOGRAM
+
+class CompareHistogramEntries {
+public:
+    bool operator()(const pair<UString, double>& a, const pair<UString, double>& b)
+    {
+        if (a.second == b.second)
+            return a.first < b.first;
+        return a.second < b.second;
+    }
+};
+
+Histogram::~Histogram()
+{
+    Vector<pair<UString, double> > values;
+    Map::iterator end = times.end();
+    for (Map::iterator it = times.begin(); it != end; ++it)
+        values.append(*it);
+    sort(values.begin(), values.end(), CompareHistogramEntries());
+    size_t size = values.size();
+    printf("Regular Expressions, sorted by time spent evaluating them:\n");
+    for (size_t i = 0; i < size; ++i)
+        printf("    %f - %s\n", values[size - i - 1].second, values[size - i - 1].first.UTF8String().c_str());
+}
+
+void Histogram::add(const JSRegExp* re, double elapsedTime)
+{
+    UString string(reinterpret_cast<const UChar*>(reinterpret_cast<const char*>(re) + re->stringOffset), re->stringLength);
+    if (re->options & IgnoreCaseOption && re->options & MatchAcrossMultipleLinesOption)
+        string += " (multi-line, ignore case)";
+    else {
+        if (re->options & IgnoreCaseOption)
+            string += " (ignore case)";
+        if (re->options & MatchAcrossMultipleLinesOption)
+            string += " (multi-line)";
+    }
+    pair<Map::iterator, bool> result = times.add(string.rep(), elapsedTime);
+    if (!result.second)
+        result.first->second += elapsedTime;
+}
+
+HistogramTimeLogger::HistogramTimeLogger(const JSRegExp* re)
+    : m_re(re)
+    , m_startTime(getCurrentUTCTimeWithMicroseconds())
+{
+}
+
+HistogramTimeLogger::~HistogramTimeLogger()
+{
+    static Histogram histogram;
+    histogram.add(m_re, getCurrentUTCTimeWithMicroseconds() - m_startTime);
+}
+
+#endif

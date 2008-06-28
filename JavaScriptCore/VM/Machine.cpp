@@ -887,8 +887,8 @@ void Machine::resetTimeoutCheck()
 // Returns the current time in milliseconds
 // It doesn't matter what "current time" is here, just as long as
 // it's possible to measure the time difference correctly.
-// In an ideal world this would be in DateMath or some such, but unfortunately
-// that's a regression.
+// In an ideal world this would just be getCurrentUTCTimeWithMicroseconds
+// from DateMath.h, but unfortunately there's a slowdown if we use tha.
 static inline unsigned getCurrentTime()
 {
 #if HAVE(SYS_TIME_H)

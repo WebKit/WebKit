@@ -40,6 +40,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /* This module contains some fixed tables that are used by more than one of the
 PCRE code modules. */
 
+#include "config.h"
 #include "pcre_internal.h"
 
 /*************************************************

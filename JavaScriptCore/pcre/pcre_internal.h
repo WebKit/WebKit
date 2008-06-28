@@ -69,6 +69,9 @@ total length. */
 
 #ifndef DFTABLES
 
+// Change the following to 1 to dump used regular expressions at process exit time.
+#define REGEXP_HISTOGRAM 0
+
 #include "Assertions.h"
 
 #if COMPILER(MSVC)
@@ -315,13 +318,7 @@ are in conflict! */
 
 #define EXTRACT_BASIC_MAX  100
 
-/* The index of names and the
-code vector run on as long as necessary after the end. We store an explicit
-offset to the name table so that if a regex is compiled on one host, saved, and
-then run on another where the size of pointers is different, all might still
-be well. For the case of compiled-on-4 and run-on-8, we include an extra
-pointer that is always NULL.
-*/
+/* The code vector runs on as long as necessary after the end. */
 
 struct JSRegExp {
     unsigned options;
@@ -331,6 +328,11 @@ struct JSRegExp {
     
     unsigned short firstByte;
     unsigned short reqByte;
+
+#if REGEXP_HISTOGRAM
+    size_t stringOffset;
+    size_t stringLength;
+#endif
 };
 
 /* Internal shared data tables. These are tables that are used by more than one
