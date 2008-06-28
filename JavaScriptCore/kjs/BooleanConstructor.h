@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,29 @@
  *
  */
 
-#include "config.h"
-#include "BooleanObject.h"
+#ifndef BooleanConstructor_h
+#define BooleanConstructor_h
+
+#include "FunctionPrototype.h"
 
 namespace KJS {
 
-const ClassInfo BooleanObject::info = { "Boolean", 0, 0, 0 };
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Boolean" property
+     */
+    class BooleanConstructor : public InternalFunction {
+    public:
+        BooleanConstructor(ExecState*, FunctionPrototype*, BooleanPrototype*);
+    private:
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
+    };
 
-BooleanObject::BooleanObject(JSObject* proto)
-    : JSWrapperObject(proto)
-{
-}
+    JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSValue*);
+    JSObject* constructBoolean(ExecState*, const ArgList&);
 
 } // namespace KJS
+
+#endif // BooleanConstructor_h

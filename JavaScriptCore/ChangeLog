@@ -1,3 +1,37 @@
+2008-06-27  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Splits ArrayConstructor out of ArrayPrototype.h/cpp
+        Splits BooleanConstructor and BooleanPrototype out of BooleanObject.h/cpp
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArrayConstructor.cpp: Copied from kjs/ArrayPrototype.cpp.
+        * kjs/ArrayConstructor.h: Copied from kjs/ArrayPrototype.h.
+        * kjs/ArrayPrototype.cpp:
+        * kjs/ArrayPrototype.h:
+        * kjs/BooleanConstructor.cpp: Copied from kjs/BooleanObject.cpp.
+        * kjs/BooleanConstructor.h: Copied from kjs/BooleanObject.h.
+        * kjs/BooleanObject.cpp:
+        * kjs/BooleanObject.h:
+        * kjs/BooleanPrototype.cpp: Copied from kjs/BooleanObject.cpp.
+        * kjs/BooleanPrototype.h: Copied from kjs/BooleanObject.h.
+        * kjs/CommonIdentifiers.h:
+        * kjs/FunctionPrototype.cpp:
+        * kjs/JSArray.cpp:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSImmediate.cpp:
+        * kjs/Shell.cpp:
+        * kjs/internal.cpp:
+        * kjs/nodes.cpp:
+        * kjs/string_object.cpp:
+
 2008-06-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam.

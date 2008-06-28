@@ -273,6 +273,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\ArrayConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ArrayConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\ArrayPrototype.cpp"
 				>
 			</File>
@@ -281,11 +289,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\BooleanConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\BooleanConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\BooleanObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\BooleanObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\BooleanPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\BooleanPrototype.h"
 				>
 			</File>
 			<File

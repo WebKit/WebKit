@@ -22,12 +22,12 @@
 #include "config.h"
 #include "string_object.h"
 
+#include "JSArray.h"
 #include "JSWrapperObject.h"
 #include "PropertyNameArray.h"
-#include "ArrayPrototype.h"
+#include "RegExpObject.h"
 #include "error_object.h"
 #include "operations.h"
-#include "RegExpObject.h"
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/Collator.h>
 

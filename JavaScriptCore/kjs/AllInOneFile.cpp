@@ -29,8 +29,11 @@
 #include "JSFunction.cpp"
 #include "debugger.cpp"
 #include "JSArray.cpp"
+#include "ArrayConstructor.cpp"
 #include "ArrayPrototype.cpp"
+#include "BooleanConstructor.cpp"
 #include "BooleanObject.cpp"
+#include "BooleanPrototype.cpp"
 #include "collector.cpp"
 #if PLATFORM(DARWIN)
 #include "CollectorHeapIntrospector.cpp"

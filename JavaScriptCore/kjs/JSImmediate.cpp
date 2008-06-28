@@ -21,7 +21,7 @@
 #include "config.h"
 #include "JSImmediate.h"
 
-#include "BooleanObject.h"
+#include "BooleanConstructor.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "NumberObject.h"

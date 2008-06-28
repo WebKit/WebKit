@@ -24,8 +24,6 @@
 #include "JSString.h"
 
 #include "ExecState.h"
-#include "ArrayPrototype.h"
-#include "BooleanObject.h"
 #include "collector.h"
 #include "date_object.h"
 #include "debugger.h"

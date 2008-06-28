@@ -67,8 +67,11 @@ SOURCES += \
     kjs/JSFunction.cpp \
     kjs/debugger.cpp \
     kjs/JSArray.cpp \
+    kjs/ArrayConstructor.cpp \
     kjs/ArrayPrototype.cpp \
+    kjs/BooleanConstructor.cpp \
     kjs/BooleanObject.cpp \
+    kjs/BooleanPrototype.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
     kjs/date_object.cpp \

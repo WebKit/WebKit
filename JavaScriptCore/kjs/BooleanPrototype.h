@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -18,16 +18,24 @@
  *
  */
 
-#include "config.h"
+#ifndef BooleanPrototype_h
+#define BooleanPrototype_h
+
 #include "BooleanObject.h"
 
 namespace KJS {
 
-const ClassInfo BooleanObject::info = { "Boolean", 0, 0, 0 };
-
-BooleanObject::BooleanObject(JSObject* proto)
-    : JSWrapperObject(proto)
-{
-}
+    /**
+     * @internal
+     *
+     * The initial value of Boolean.prototype (and thus all objects created
+     * with the Boolean constructor
+     */
+    class BooleanPrototype : public BooleanObject {
+    public:
+        BooleanPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
+    };
 
 } // namespace KJS
+
+#endif // BooleanPrototype_h

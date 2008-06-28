@@ -25,8 +25,8 @@
 
 #include "ArrayPrototype.h"
 #include "PropertyNameArray.h"
-#include <wtf/Assertions.h>
 #include <wtf/AVLTree.h>
+#include <wtf/Assertions.h>
 
 #define CHECK_ARRAY_CONSISTENCY 0
 

@@ -23,7 +23,6 @@
 
 #include "JSGlobalObject.h"
 #include "Parser.h"
-#include "ArrayPrototype.h"
 #include "debugger.h"
 #include "JSFunction.h"
 #include "JSString.h"

@@ -224,6 +224,7 @@
 		A7C31DAA0DBEBA4300FDF8EB /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */; };
 		A8E894320CD0602400367179 /* JSCallbackObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */; };
 		A8E894340CD0603F00367179 /* JSGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894330CD0603F00367179 /* JSGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC7952090E15E8A800A898AB /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; };
 		BC8F3CED0DAF1A8000577A80 /* ConstructData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCF655590A2049710038A194 /* MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF6553B0A2048DE0038A194 /* MathExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		D212022B0AD4310D00ED79B6 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateMath.h */; };
@@ -583,6 +584,12 @@
 		A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentedVector.h; path = VM/SegmentedVector.h; sourceTree = "<group>"; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
+		BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayConstructor.cpp; sourceTree = "<group>"; };
+		BC7952070E15E8A800A898AB /* ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.h; sourceTree = "<group>"; };
+		BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanConstructor.cpp; sourceTree = "<group>"; };
+		BC7952330E15EB5600A898AB /* BooleanConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanConstructor.h; sourceTree = "<group>"; };
+		BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanPrototype.cpp; sourceTree = "<group>"; };
+		BC7952350E15EB5600A898AB /* BooleanPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanPrototype.h; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
@@ -977,15 +984,17 @@
 		65417200039E01BA0058BFEB /* kjs */ = {
 			isa = PBXGroup;
 			children = (
-				65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */,
-				65E866EE0DD59AFA00A2B2A1 /* SourceRange.h */,
 				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
-				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
-				938772E5038BFE19008635CE /* JSArray.h */,
+				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
+				BC7952070E15E8A800A898AB /* ArrayConstructor.h */,
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
 				F692A84E0255597D01FF60F7 /* ArrayPrototype.h */,
+				BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */,
+				BC7952330E15EB5600A898AB /* BooleanConstructor.h */,
 				F692A8500255597D01FF60F7 /* BooleanObject.cpp */,
 				704FD35305697E6D003DBED9 /* BooleanObject.h */,
+				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
+				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				F692A8520255597D01FF60F7 /* collector.cpp */,
 				F692A8530255597D01FF60F7 /* collector.h */,
@@ -1007,8 +1016,6 @@
 				F692A85B0255597D01FF60F7 /* error_object.h */,
 				14BD53F40A3E12D800BAF59C /* ExecState.cpp */,
 				14BD53F30A3E12D800BAF59C /* ExecState.h */,
-				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
-				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
 				933A3499038AE7C6008635CE /* grammar.y */,
@@ -1017,21 +1024,30 @@
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				F692A8610255597D01FF60F7 /* internal.cpp */,
-				F692A8620255597D01FF60F7 /* JSString.h */,
 				F692A8630255597D01FF60F7 /* interpreter.cpp */,
 				F692A8640255597D01FF60F7 /* interpreter.h */,
 				14DA818F0D99FD2000B0A4FB /* JSActivation.cpp */,
 				14DA818E0D99FD2000B0A4FB /* JSActivation.h */,
-				E18E3A560DF9278C00D90B34 /* JSGlobalData.h */,
+				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
+				938772E5038BFE19008635CE /* JSArray.h */,
+				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
+				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */,
+				E18E3A560DF9278C00D90B34 /* JSGlobalData.h */,
 				14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */,
 				A8E894330CD0603F00367179 /* JSGlobalObject.h */,
 				14760863099C633800437128 /* JSImmediate.cpp */,
 				1483B589099BC1950016E4F0 /* JSImmediate.h */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
+				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
+				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
+				F692A8750255597D01FF60F7 /* JSObject.cpp */,
+				F692A8760255597D01FF60F7 /* JSObject.h */,
+				F692A8620255597D01FF60F7 /* JSString.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
-				14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */,
+				F692A8870255597D01FF60F7 /* JSValue.cpp */,
+				14ABB36E099C076400E2A24F /* JSValue.h */,
 				14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */,
 				14F252560D08DD8D004ECFFF /* JSVariableObject.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
@@ -1066,15 +1082,14 @@
 				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
 				9374D3A7038D9D74008635CE /* ScopeChain.h */,
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
+				65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */,
+				65E866EE0DD59AFA00A2B2A1 /* SourceRange.h */,
 				F692A87F0255597D01FF60F7 /* string_object.cpp */,
 				F692A8800255597D01FF60F7 /* string_object.h */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				F692A8850255597D01FF60F7 /* ustring.cpp */,
 				F692A8860255597D01FF60F7 /* ustring.h */,
-				F692A8870255597D01FF60F7 /* JSValue.cpp */,
-				14ABB36E099C076400E2A24F /* JSValue.h */,
-				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
-				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
+				14F252600D08DF2F004ECFFF /* JSVariableObject.cpp */,
 			);
 			path = kjs;
 			sourceTree = "<group>";
@@ -1307,6 +1322,7 @@
 				A7C31DA90DBEBA4300FDF8EB /* SegmentedVector.h in Headers */,
 				1480DB9D0DDC227F003CFDF2 /* DebuggerCallFrame.h in Headers */,
 				E18E3A580DF9278C00D90B34 /* JSGlobalData.h in Headers */,
+				BC7952090E15E8A800A898AB /* ArrayConstructor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

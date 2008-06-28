@@ -68,7 +68,6 @@
 namespace KJS {
 
     class CommonIdentifiers : Noncopyable {
-
     private:
         CommonIdentifiers(JSGlobalData*);
         friend struct JSGlobalData;

@@ -85,8 +85,11 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/kjs/PropertyNameArray.cpp \
 	JavaScriptCore/kjs/JSArray.cpp \
+	JavaScriptCore/kjs/ArrayConstructor.cpp \
 	JavaScriptCore/kjs/ArrayPrototype.cpp \
+	JavaScriptCore/kjs/BooleanConstructor.cpp \
 	JavaScriptCore/kjs/BooleanObject.cpp \
+	JavaScriptCore/kjs/BooleanPrototype.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/kjs/date_object.cpp \
 	JavaScriptCore/kjs/debugger.cpp \

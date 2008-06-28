@@ -28,7 +28,6 @@
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
-#include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
 
@@ -774,57 +773,6 @@ JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue* thisValu
     }
 
     return jsNumber(exec, -1);
-}
-
-// ------------------------------ ArrayConstructor -------------------------------
-
-ArrayConstructor::ArrayConstructor(ExecState* exec, FunctionPrototype* funcProto, ArrayPrototype* arrayProto)
-    : InternalFunction(funcProto, Identifier(exec, arrayProto->classInfo()->className))
-{
-    // ECMA 15.4.3.1 Array.prototype
-    putDirect(exec->propertyNames().prototype, arrayProto, DontEnum|DontDelete|ReadOnly);
-
-    // no. of arguments for constructor
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
-}
-
-static JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
-{
-    // a single numeric argument denotes the array size (!)
-    if (args.size() == 1 && args[0]->isNumber()) {
-        uint32_t n = args[0]->toUInt32(exec);
-        if (n != args[0]->toNumber(exec))
-            return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
-        return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), n);
-    }
-
-    // otherwise the array is constructed with the arguments in it
-    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), args);
-}
-
-static JSObject* constructWithArrayConstructor(ExecState* exec, JSObject*, const ArgList& args)
-{
-    return constructArrayWithSizeQuirk(exec, args);
-}
-
-// ECMA 15.4.2
-ConstructType ArrayConstructor::getConstructData(ConstructData& constructData)
-{
-    constructData.native.function = constructWithArrayConstructor;
-    return ConstructTypeNative;
-}
-
-static JSValue* callArrayConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
-{
-    return constructArrayWithSizeQuirk(exec, args);
-}
-
-// ECMA 15.6.1
-CallType ArrayConstructor::getCallData(CallData& callData)
-{
-    // equivalent to 'new Array(....)'
-    callData.native.function = callArrayConstructor;
-    return CallTypeNative;
 }
 
 }

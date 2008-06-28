@@ -40,12 +40,11 @@
 #include "Parser.h"
 #include "Profiler.h"
 #include "Register.h"
-#include "ArrayPrototype.h"
+#include "JSArray.h"
 #include "debugger.h"
 #include "JSFunction.h"
 #include "JSString.h"
 #include "object_object.h"
-#include "operations.h"
 #include "operations.h"
 #include "RegExpObject.h"
 

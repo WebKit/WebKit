@@ -23,17 +23,17 @@
 #include "config.h"
 
 #include "CodeGenerator.h"
+#include "InitializeThreading.h"
+#include "JSArray.h"
+#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
+#include "JSObject.h"
 #include "Parser.h"
-#include "ArrayPrototype.h"
 #include "collector.h"
 #include "completion.h"
-#include "JSFunction.h"
-#include "InitializeThreading.h"
 #include "interpreter.h"
 #include "nodes.h"
-#include "JSObject.h"
 #include "protect.h"
 #include <math.h>
 #include <stdio.h>

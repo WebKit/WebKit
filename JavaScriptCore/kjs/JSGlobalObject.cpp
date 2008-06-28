@@ -32,7 +32,9 @@
 
 #include "CodeBlock.h"
 #include "ArrayPrototype.h"
-#include "BooleanObject.h"
+#include "ArrayConstructor.h"
+#include "BooleanPrototype.h"
+#include "BooleanConstructor.h"
 #include "date_object.h"
 #include "debugger.h"
 #include "error_object.h"

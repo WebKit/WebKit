@@ -21,7 +21,6 @@
 #ifndef BooleanObject_h
 #define BooleanObject_h
 
-#include "FunctionPrototype.h"
 #include "JSWrapperObject.h"
 
 namespace KJS {
@@ -33,33 +32,6 @@ namespace KJS {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     };
-
-    /**
-     * @internal
-     *
-     * The initial value of Boolean.prototype (and thus all objects created
-     * with the Boolean constructor
-     */
-    class BooleanPrototype : public BooleanObject {
-    public:
-        BooleanPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
-    };
-
-    /**
-     * @internal
-     *
-     * The initial value of the the global variable's "Boolean" property
-     */
-    class BooleanConstructor : public InternalFunction {
-    public:
-        BooleanConstructor(ExecState*, FunctionPrototype*, BooleanPrototype*);
-    private:
-        virtual ConstructType getConstructData(ConstructData&);
-        virtual CallType getCallData(CallData&);
-    };
-
-    JSObject* constructBooleanFromImmediateBoolean(ExecState*, JSValue*);
-    JSObject* constructBoolean(ExecState*, const ArgList&);
 
 } // namespace KJS
 
