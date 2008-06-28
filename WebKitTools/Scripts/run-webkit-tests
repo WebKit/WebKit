@@ -801,8 +801,9 @@ for my $test (@tests) {
             open DIFF, ">", "$testResultsDirectory/$base-$diffsTag.png" or die;
             print DIFF $diffPNG;
             close DIFF;
-            
-            copy("$expectedDir/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
+
+            my $expectedPixelDir = expectedDirectoryForTest($base, $isText, 1);
+            copy("$expectedPixelDir/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
 
             open DIFFHTML, ">$testResultsDirectory/$base-$diffsTag.html" or die;
             print DIFFHTML "<html>\n";
