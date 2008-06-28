@@ -25,6 +25,7 @@
 #include "ArrayPrototype.h"
 
 #include "Machine.h"
+#include "ObjectPrototype.h"
 #include "error_object.h"
 #include "lookup.h"
 #include "operations.h"

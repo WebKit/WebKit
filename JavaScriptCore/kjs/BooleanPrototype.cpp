@@ -21,6 +21,8 @@
 #include "config.h"
 #include "BooleanPrototype.h"
 
+#include "FunctionPrototype.h"
+#include "ObjectPrototype.h"
 #include "error_object.h"
 
 namespace KJS {

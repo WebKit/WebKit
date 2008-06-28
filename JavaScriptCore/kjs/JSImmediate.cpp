@@ -22,8 +22,10 @@
 #include "JSImmediate.h"
 
 #include "BooleanConstructor.h"
+#include "BooleanPrototype.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
+#include "NumberConstructor.h"
 #include "NumberPrototype.h"
 
 namespace KJS {

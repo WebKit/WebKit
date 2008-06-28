@@ -21,11 +21,14 @@
 #ifndef RegExpObject_h
 #define RegExpObject_h
 
+#include "JSFunction.h"
+#include "JSObject.h"
 #include "regexp.h"
 
 namespace KJS {
 
     class FunctionPrototype;
+    class ObjectPrototype;
     struct RegExpConstructorPrivate;
 
     class RegExpPrototype : public JSObject {

@@ -21,6 +21,7 @@
 #include "config.h"
 #include "MathObject.h"
 
+#include "ObjectPrototype.h"
 #include "operations.h"
 #include <time.h>
 #include <wtf/Assertions.h>

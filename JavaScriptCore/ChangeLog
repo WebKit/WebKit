@@ -1,5 +1,23 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Fix windows build.
+
+        * kjs/ArrayPrototype.cpp:
+        * kjs/BooleanPrototype.cpp:
+        * kjs/BooleanPrototype.h:
+        * kjs/FunctionPrototype.cpp:
+        * kjs/JSImmediate.cpp:
+        * kjs/JSObject.cpp:
+        * kjs/MathObject.cpp:
+        * kjs/NumberPrototype.cpp:
+        * kjs/NumberPrototype.h:
+        * kjs/ObjectConstructor.cpp:
+        * kjs/RegExpObject.h:
+        * kjs/error_object.h:
+        * kjs/string_object.cpp:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Oliver Hunt.
 
         Splits FunctionConstructor out of FunctionPrototype.h/cpp

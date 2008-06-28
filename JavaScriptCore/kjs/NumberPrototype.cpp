@@ -22,7 +22,10 @@
 #include "config.h"
 #include "NumberPrototype.h"
 
+#include "FunctionPrototype.h"
+#include "ObjectPrototype.h"
 #include "dtoa.h"
+#include "error_object.h"
 #include "error_object.h"
 #include "operations.h"
 #include <wtf/Assertions.h>

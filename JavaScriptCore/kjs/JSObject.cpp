@@ -25,11 +25,12 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "ObjectPrototype.h"
+#include "PropertyNameArray.h"
 #include "date_object.h"
 #include "error_object.h"
 #include "nodes.h"
 #include "operations.h"
-#include "PropertyNameArray.h"
 #include <math.h>
 #include <profiler/Profiler.h>
 #include <wtf/Assertions.h>
