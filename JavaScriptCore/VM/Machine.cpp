@@ -35,19 +35,18 @@
 #include "ExceptionHelpers.h"
 #include "ExecState.h"
 #include "JSActivation.h"
+#include "JSArray.h"
+#include "JSFunction.h"
 #include "JSLock.h"
 #include "JSPropertyNameIterator.h"
+#include "JSString.h"
 #include "Parser.h"
 #include "Profiler.h"
+#include "RegExpObject.h"
 #include "Register.h"
-#include "JSArray.h"
 #include "debugger.h"
-#include "JSFunction.h"
-#include "JSString.h"
 #include "object_object.h"
 #include "operations.h"
-#include "RegExpObject.h"
-
 #include <stdio.h>
 
 #if HAVE(SYS_TIME_H)
@@ -1036,13 +1035,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_new_array) {
-        /* new_array dst(r)
+        /* new_array dst(r) firstArg(r) argCount(n)
 
-           Constructs a new empty Array instance using the original
+           Constructs a new Array instance using the original
            constructor, and puts the result in register dst.
+           The array will contain argCount elements with values
+           taken from registers starting at register firstArg.
         */
         int dst = (++vPC)->u.operand;
-        r[dst].u.jsValue = constructEmptyArray(exec);
+        int firstArg = (++vPC)->u.operand;
+        int argCount = (++vPC)->u.operand;
+        ArgList args(reinterpret_cast<JSValue***>(&registerBase), r - registerBase + firstArg, argCount);
+        r[dst].u.jsValue = constructArray(exec, args);
 
         ++vPC;
         NEXT_OPCODE;

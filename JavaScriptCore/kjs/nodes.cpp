@@ -47,17 +47,14 @@ using namespace WTF;
 
 namespace KJS {
 
-static inline UString::Rep* rep(const Identifier& ident)
-{
-    return ident.ustring().rep();
-}
-
 // ------------------------------ Node -----------------------------------------
 
 #ifndef NDEBUG
+
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX Log
 #endif
+
 static WTFLogChannel LogKJSNodeLeaks = { 0x00000000, "", WTFLogChannelOn };
 
 struct ParserRefCountedCounter {
@@ -99,6 +96,7 @@ void ParserRefCountedCounter::decrement()
 {
     --count;
 }
+
 #endif
 
 static ParserRefCountedCounter parserRefCountedCounter;
@@ -212,20 +210,6 @@ static void substitute(UString& string, const UString& substring)
     newString.append(substring);
     newString.append(string.substr(position + 2));
     string = newString;
-}
-
-static inline int currentSourceId(ExecState* exec) KJS_FAST_CALL;
-static inline int currentSourceId(ExecState*)
-{
-    ASSERT_NOT_REACHED();
-    return 0;
-}
-
-static inline const UString currentSourceURL(ExecState* exec) KJS_FAST_CALL;
-static inline const UString currentSourceURL(ExecState*)
-{
-    ASSERT_NOT_REACHED();
-    return UString();
 }
 
 RegisterID* Node::emitThrowError(CodeGenerator& generator, ErrorType e, const char* msg)
@@ -345,23 +329,35 @@ RegisterID* ResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ArrayNode ------------------------------------
 
-
 RegisterID* ArrayNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> newArray = generator.emitNewArray(generator.tempDestination(dst));
-    unsigned length = 0;
+    // FIXME: Should we put all of this code into emitNewArray?
 
-    RegisterID* value;
-    for (ElementNode* n = m_element.get(); n; n = n->m_next.get()) {
-        value = generator.emitNode(n->m_node.get());
-        length += n->m_elision;
-        generator.emitPutByIndex(newArray.get(), length++, value);
+    unsigned length = 0;
+    ElementNode* firstPutElement;
+    for (firstPutElement = m_element.get(); firstPutElement; firstPutElement = firstPutElement->next()) {
+        if (firstPutElement->elision())
+            break;
+        ++length;
     }
 
-    value = generator.emitLoad(generator.newTemporary(), jsNumber(generator.globalExec(), m_elision + length));
-    generator.emitPutById(newArray.get(), generator.propertyNames().length, value);
+    if (!firstPutElement && !m_elision)
+        return generator.emitNewArray(generator.finalDestination(dst), m_element.get());
 
-    return generator.moveToDestinationIfNeeded(dst, newArray.get());
+    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element.get());
+
+    for (ElementNode* n = firstPutElement; n; n = n->next()) {
+        RegisterID* value = generator.emitNode(n->value());
+        length += n->elision();
+        generator.emitPutByIndex(array.get(), length++, value);
+    }
+
+    if (m_elision) {
+        RegisterID* value = generator.emitLoad(generator.newTemporary(), jsNumber(generator.globalExec(), m_elision + length));
+        generator.emitPutById(array.get(), generator.propertyNames().length, value);
+    }
+
+    return generator.moveToDestinationIfNeeded(dst, array.get());
 }
 
 // ------------------------------ ObjectLiteralNode ----------------------------
@@ -370,8 +366,7 @@ RegisterID* ObjectLiteralNode::emitCode(CodeGenerator& generator, RegisterID* ds
 {
     if (m_list)
         return generator.emitNode(dst, m_list.get());
-    else
-        return generator.emitNewObject(generator.finalDestination(dst));
+    return generator.emitNewObject(generator.finalDestination(dst));
 }
 
 // ------------------------------ PropertyListNode -----------------------------

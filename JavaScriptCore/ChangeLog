@@ -1,6 +1,35 @@
 2008-06-28  Darin Adler  <darin@apple.com>
 
-        Reviewed by Oliver Hunt.
+        Reviewed by Oliver.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19787
+          create most arrays from values in registers rather than with multiple put operations
+
+        SunSpider says 0.8% faster.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump): Added argv and argc parameters to new_array.
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Ditto.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitNewArray): Added.
+        * VM/CodeGenerator.h: Added ElementNode* argument to emitNewArray.
+
+        * kjs/nodes.cpp:
+        (KJS::ArrayNode::emitCode): Pass the ElementNode to emitNewArray so it can be
+        initialized with as many elements as possible. If the array doesn't have any
+        holes in it, that's all that's needed. If there are holes, then emit some separate
+        put operations for the other values in the array and for the length as needed.
+
+        * kjs/nodes.h: Added some accessors to ElementNode so the code generator can
+        iterate through elements and generate code to evaluate them. Now ArrayNode does
+        not need to be a friend. Also took out some unused PlacementNewAdoptType
+        constructors.
+
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
 
         * kjs/nodes.h: Remove obsolete PlacementNewAdopt constructors.
         We no longer mutate the AST in place.

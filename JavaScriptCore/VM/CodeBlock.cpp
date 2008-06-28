@@ -30,9 +30,9 @@
 #include "config.h"
 #include "CodeBlock.h"
 
+#include "JSValue.h"
 #include "Machine.h"
 #include "debugger.h"
-#include "JSValue.h"
 #include <stdio.h>
 
 namespace KJS {
@@ -217,8 +217,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_new_array: {
-            int r0 = (++it)->u.operand;
-            printf("[%4d] new_array\t %s\n", location, registerName(r0).c_str());
+            int dst = (++it)->u.operand;
+            int argv = (++it)->u.operand;
+            int argc = (++it)->u.operand;
+            printf("[%4d] new_array\t %s, %s, %d\n", location, registerName(dst).c_str(), registerName(argv).c_str(), argc);
             break;
         }
         case op_new_regexp: {

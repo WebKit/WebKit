@@ -199,7 +199,7 @@ namespace KJS {
         RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
 
         RegisterID* emitNewObject(RegisterID* dst) { return emitNullaryOp(op_new_object, dst); }
-        RegisterID* emitNewArray(RegisterID* dst) { return emitNullaryOp(op_new_array, dst); }
+        RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FuncDeclNode* func);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);

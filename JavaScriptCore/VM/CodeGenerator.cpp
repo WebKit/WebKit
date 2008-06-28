@@ -30,8 +30,8 @@
 #include "config.h"
 #include "CodeGenerator.h"
 
-#include "Machine.h"
 #include "JSFunction.h"
+#include "Machine.h"
 
 using namespace std;
 
@@ -791,12 +791,28 @@ RegisterID* CodeGenerator::emitPutByIndex(RegisterID* base, unsigned index, Regi
     return value;
 }
 
-RegisterID* CodeGenerator::emitNewFunction(RegisterID* r0, FuncDeclNode* n)
+RegisterID* CodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements)
+{
+    Vector<RefPtr<RegisterID>, 16> argv;
+    for (ElementNode* n = elements; n; n = n->next()) {
+        if (n->elision())
+            break;
+        argv.append(newTemporary());
+        emitNode(argv.last().get(), n->value());
+    }
+    emitOpcode(op_new_array);
+    instructions().append(dst->index());
+    instructions().append(argv.size() ? argv[0]->index() : 0); // argv
+    instructions().append(argv.size()); // argc
+    return dst;
+}
+
+RegisterID* CodeGenerator::emitNewFunction(RegisterID* dst, FuncDeclNode* n)
 {
     emitOpcode(op_new_func);
-    instructions().append(r0->index());
+    instructions().append(dst->index());
     instructions().append(addConstant(n));
-    return r0;
+    return dst;
 }
 
 RegisterID* CodeGenerator::emitNewRegExp(RegisterID* dst, RegExp* regExp)
