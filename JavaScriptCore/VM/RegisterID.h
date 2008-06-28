@@ -99,12 +99,13 @@ namespace KJS {
 #endif
     };
 
+    inline RegisterID* ignoredResult() { return reinterpret_cast<RegisterID*>(1); }
+
 } // namespace KJS
 
 namespace WTF {
 
-    template<> struct VectorTraits<KJS::RegisterID> : VectorTraitsBase<true, KJS::RegisterID>
-    {
+    template<> struct VectorTraits<KJS::RegisterID> : VectorTraitsBase<true, KJS::RegisterID> {
         static const bool needsInitialization = true;
         static const bool canInitializeWithMemset = true; // Default initialization just sets everything to 0 or false, so this is safe.
     };

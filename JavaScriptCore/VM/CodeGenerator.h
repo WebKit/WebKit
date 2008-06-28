@@ -128,16 +128,19 @@ namespace KJS {
 
         // Functions for handling of dst register
 
-        // Returns  a place to write intermediate values of an operation
+        // Returns a place to write intermediate values of an operation
         // which reuses dst if it is safe to do so.
-
-        RegisterID* tempDestination(RegisterID* dst) { return (dst && dst->isTemporary()) ? dst : newTemporary(); }
+        RegisterID* tempDestination(RegisterID* dst)
+        {
+            return (dst && dst != ignoredResult() && dst->isTemporary()) ? dst : newTemporary();
+        }
 
         // Returns the place to write the final output of an operation.
         RegisterID* finalDestination(RegisterID* originalDst, RegisterID* tempDst = 0)
         {
-            if (originalDst)
+            if (originalDst && originalDst != ignoredResult())
                 return originalDst;
+            ASSERT(tempDst != ignoredResult());
             if (tempDst && tempDst->isTemporary())
                 return tempDst;
             return newTemporary();
@@ -145,22 +148,28 @@ namespace KJS {
 
         RegisterID* destinationForAssignResult(RegisterID* dst)
         {
-            if (dst && m_codeBlock->needsFullScopeChain)
+            if (dst && dst != ignoredResult() && m_codeBlock->needsFullScopeChain)
                 return dst->isTemporary() ? dst : newTemporary();
             return 0;
         }
 
-        // moves src to dst if dst is not null and is different from src, otherwise just returns src
-        RegisterID* moveToDestinationIfNeeded(RegisterID* dst, RegisterID* src) { return (dst && dst != src) ? emitMove(dst, src) : src; }
+        // Moves src to dst if dst is not null and is different from src, otherwise just returns src.
+        RegisterID* moveToDestinationIfNeeded(RegisterID* dst, RegisterID* src)
+        {
+            return dst == ignoredResult() ? 0 : (dst && dst != src) ? emitMove(dst, src) : src;
+        }
 
         PassRefPtr<LabelID> newLabel();
 
         // The emitNode functions are just syntactic sugar for calling
-        // Node::emitCode. They're the only functions that accept a NULL register.
+        // Node::emitCode. These functions accept a 0 for the register,
+        // meaning that the node should allocate a register, or ignoredResult(),
+        // meaning that the node need not put the result in a register.
+        // Other emit functions do not accept 0 or ignoredResult().
         RegisterID* emitNode(RegisterID* dst, Node* n)
         {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
-            ASSERT(!dst || !dst->isTemporary() || dst->refCount());
+            ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             if (!m_codeBlock->lineInfo.size() || m_codeBlock->lineInfo.last().lineNumber != n->lineNo()) {
                 LineInfo info = { instructions().size(), n->lineNo() };
                 m_codeBlock->lineInfo.append(info);

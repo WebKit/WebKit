@@ -2,6 +2,71 @@
 
         Reviewed by Oliver.
 
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19796
+          optimize expressions with ignored results (especially post-increment)
+
+        SunSpider says 0.9% faster.
+
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::tempDestination): Create a new temporary for
+        ignoredResult() too, just as we would for 0.
+        (KJS::CodeGenerator::finalDestination): Use the temporary if the
+        register passed in is ignoredResult() too, just as we would for 0.
+        (KJS::CodeGenerator::destinationForAssignResult): Return 0 if the
+        passed in register is ignoredResult(), just as we would for 0.
+        (KJS::CodeGenerator::moveToDestinationIfNeeded): Return 0 if the
+        register passed in is ignoredResult(). What matters is that we
+        don't want to emit a move. The return value won't be looked at.
+        (KJS::CodeGenerator::emitNode): Allow ignoredResult() and pass it
+        through to the node's emitCode function.
+
+        * VM/RegisterID.h:
+        (KJS::ignoredResult): Added. Special value to indicate the result of
+        a node will be ignored and need not be put in any register.
+
+        * kjs/nodes.cpp:
+        (KJS::NullNode::emitCode): Do nothing if dst == ignoredResult().
+        (KJS::BooleanNode::emitCode): Ditto.
+        (KJS::NumberNode::emitCode): Ditto.
+        (KJS::StringNode::emitCode): Ditto.
+        (KJS::RegExpNode::emitCode): Ditto.
+        (KJS::ThisNode::emitCode): Ditto.
+        (KJS::ResolveNode::emitCode): Do nothing if dst == ignoredResult() and
+        the identifier resolves to a local variable.
+        (KJS::ObjectLiteralNode::emitCode): Do nothing if dst == ignoredResult()
+        and the object is empty.
+        (KJS::PostIncResolveNode::emitCode): If dst == ignoredResult(), then do
+        nothing for the local constant case, and do a pre-increment in all the
+        other cases.
+        (KJS::PostDecResolveNode::emitCode): Ditto.
+        (KJS::PostIncBracketNode::emitCode): Ditto.
+        (KJS::PostDecBracketNode::emitCode): Ditto.
+        (KJS::PostIncDotNode::emitCode): Ditto.
+        (KJS::PostDecDotNode::emitCode): Ditto.
+        (KJS::DeleteValueNode::emitCode): Pass ignoredResult() when evaluating
+        the expression.
+        (KJS::VoidNode::emitCode): Ditto.
+        (KJS::TypeOfResolveNode::emitCode): If dst == ignoredResult(), do nothing
+        if the identifier resolves to a local variable, and don't bother generating
+        a typeof opcode in the other case.
+        (KJS::TypeOfValueNode::emitCode): Ditto.
+        (KJS::PreIncResolveNode::emitCode): Do nothing if dst == ignoredResult() and
+        the identifier resolves to a local constant.
+        (KJS::PreDecResolveNode::emitCode): Ditto.
+        (KJS::AssignResolveNode::emitCode): Turn ignoredResult() into 0 in a couple
+        places, because we need to put the result into a register so we can assign
+        it. At other sites this is taken care of by functions like finalDestination.
+        (KJS::CommaNode::emitCode): Pass ignoredResult() when evaluating the first
+        expression.
+        (KJS::ForNode::emitCode): Pass ignoredResult() when evaluating the first and
+        third expressions.
+        (KJS::ForInNode::emitCode): Pass ignoredResult() when evaluating the first
+        expression.
+
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
         - https://bugs.webkit.org/show_bug.cgi?id=19787
           create most arrays from values in registers rather than with multiple put operations
 
