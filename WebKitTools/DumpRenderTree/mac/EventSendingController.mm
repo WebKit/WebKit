@@ -204,7 +204,7 @@ BOOL replayingSavedEvents;
 
 static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction action)
 {
-    switch(button) {
+    switch (button) {
         case LeftMouseButton:
             switch (action) {
                 case MouseDown:
@@ -234,7 +234,7 @@ static NSEventType eventTypeForMouseButtonAndAction(int button, MouseAction acti
             }
     }
     assert(0);
-    return 0;
+    return static_cast<NSEventType>(0);
 }
 
 - (void)updateClickCountForButton:(int)buttonNumber
