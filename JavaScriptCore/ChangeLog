@@ -1,5 +1,12 @@
 2008-06-29  Sam Weinig  <sam@webkit.org>
 
+        Fix non-AllInOne builds.
+
+        * kjs/JSObject.cpp:
+        * kjs/JSValue.cpp:
+
+2008-06-29  Sam Weinig  <sam@webkit.org>
+
         Build fix for Qt.
 
         * kjs/DateMath.cpp:

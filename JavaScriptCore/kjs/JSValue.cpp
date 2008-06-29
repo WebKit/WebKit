@@ -23,6 +23,7 @@
 #include "config.h"
 #include "JSValue.h"
 
+#include "JSFunction.h"
 #include "nodes.h"
 #include <stdio.h>
 #include <string.h>

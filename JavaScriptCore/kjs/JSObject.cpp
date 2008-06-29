@@ -28,6 +28,7 @@
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
 #include "JSGlobalObject.h"
+#include "NativeErrorConstructor.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "lookup.h"
