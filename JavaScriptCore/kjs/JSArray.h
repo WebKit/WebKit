@@ -42,7 +42,6 @@ namespace KJS {
 
     unsigned getLength() const { return m_length; }
     void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
-    JSValue* getItem(unsigned) const;
 
     void sort(ExecState*);
     void sort(ExecState*, JSValue* compareFunction, CallType, const CallData&);
@@ -58,8 +57,6 @@ namespace KJS {
     void setLazyCreationData(void*);
 
   private:
-    using JSObject::get;
-
     virtual const ClassInfo* classInfo() const { return &info; }
 
     static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);

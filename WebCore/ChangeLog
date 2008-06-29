@@ -1,3 +1,15 @@
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam and Cameron.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19805
+          Array.concat turns missing array elements into "undefined"
+
+        * bridge/jni/jni_utility.cpp:
+        (KJS::Bindings::convertArrayInstanceToJavaArray):
+        Use get instead of getItem, since we always want to consider values from the
+        prototypes when looking at JavaScript arrays.
+
 2008-06-28  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

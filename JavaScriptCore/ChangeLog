@@ -1,5 +1,24 @@
 2008-06-28  Darin Adler  <darin@apple.com>
 
+        Reviewed by Sam and Cameron.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19805
+          Array.concat turns missing array elements into "undefined"
+
+        Test: fast/js/array-holes.html
+
+        * JavaScriptCore.exp: No longer export JSArray::getItem.
+
+        * kjs/ArrayPrototype.cpp:
+        (KJS::arrayProtoFuncConcat): Changed to use getProperty instead of
+        JSArray::getItem -- need to handle properties from the prototype chain
+        instead of ignoring them.
+
+        * kjs/JSArray.cpp: Removed getItem.
+        * kjs/JSArray.h: Ditto.
+
+2008-06-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Cameron.
 
         - https://bugs.webkit.org/show_bug.cgi?id=19804

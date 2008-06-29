@@ -367,7 +367,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
                 env->FindClass("java/lang/String"),
                 env->NewStringUTF(""));
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 UString stringValue = item->toString(exec);
                 env->SetObjectArrayElement(jarray,i,
                     env->functions->NewString(env, (const jchar *)stringValue.data(), stringValue.size()));
@@ -379,7 +379,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case boolean_type: {
             jarray = (jobjectArray)env->NewBooleanArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jboolean value = (jboolean)item->toNumber(exec);
                 env->SetBooleanArrayRegion((jbooleanArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -389,7 +389,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case byte_type: {
             jarray = (jobjectArray)env->NewByteArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jbyte value = (jbyte)item->toNumber(exec);
                 env->SetByteArrayRegion((jbyteArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -399,7 +399,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case char_type: {
             jarray = (jobjectArray)env->NewCharArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 UString stringValue = item->toString(exec);
                 jchar value = 0;
                 if (stringValue.size() > 0)
@@ -412,7 +412,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case short_type: {
             jarray = (jobjectArray)env->NewShortArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jshort value = (jshort)item->toNumber(exec);
                 env->SetShortArrayRegion((jshortArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -422,7 +422,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case int_type: {
             jarray = (jobjectArray)env->NewIntArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jint value = (jint)item->toNumber(exec);
                 env->SetIntArrayRegion((jintArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -432,7 +432,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case long_type: {
             jarray = (jobjectArray)env->NewLongArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jlong value = (jlong)item->toNumber(exec);
                 env->SetLongArrayRegion((jlongArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -442,7 +442,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case float_type: {
             jarray = (jobjectArray)env->NewFloatArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jfloat value = (jfloat)item->toNumber(exec);
                 env->SetFloatArrayRegion((jfloatArray)jarray, (jsize)i, (jsize)1, &value);
             }
@@ -452,7 +452,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
         case double_type: {
             jarray = (jobjectArray)env->NewDoubleArray(length);
             for(unsigned i = 0; i < length; i++) {
-                JSValue* item = jsArray->getItem(i);
+                JSValue* item = jsArray->get(exec, i);
                 jdouble value = (jdouble)item->toNumber(exec);
                 env->SetDoubleArrayRegion((jdoubleArray)jarray, (jsize)i, (jsize)1, &value);
             }

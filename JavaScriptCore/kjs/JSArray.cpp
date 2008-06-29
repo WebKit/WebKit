@@ -131,25 +131,6 @@ JSArray::~JSArray()
     fastFree(m_storage);
 }
 
-JSValue* JSArray::getItem(unsigned i) const
-{
-    ASSERT(i <= maxArrayIndex);
-
-    ArrayStorage* storage = m_storage;
-
-    if (i < storage->m_vectorLength) {
-        JSValue* value = storage->m_vector[i];
-        return value ? value : jsUndefined();
-    }
-
-    SparseArrayValueMap* map = storage->m_sparseValueMap;
-    if (!map)
-        return jsUndefined();
-
-    JSValue* value = map->get(i);
-    return value ? value : jsUndefined();
-}
-
 JSValue* JSArray::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     return jsNumber(exec, static_cast<JSArray*>(slot.slotBase())->m_length);

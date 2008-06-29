@@ -266,7 +266,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, co
             JSArray* curArray = static_cast<JSArray*>(curArg);
             unsigned length = curArray->getLength();
             for (unsigned k = 0; k < length; ++k) {
-                if (JSValue* v = curArray->getItem(k))
+                if (JSValue* v = getProperty(exec, curArray, k))
                     arr->put(exec, n, v);
                 n++;
             }
