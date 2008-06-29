@@ -3242,7 +3242,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                     aeDesc = [NSAppleEventDescriptor listDescriptor];
                     unsigned numItems = array->getLength();
                     for (unsigned i = 0; i < numItems; ++i)
-                        [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->getItem(i)) atIndex:0];
+                        [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
                     
                     visitedElems.remove(object);
                 }
