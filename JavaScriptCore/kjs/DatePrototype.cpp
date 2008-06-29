@@ -36,10 +36,6 @@
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
 
-#if HAVE(ERRNO_H)
-#include <errno.h>
-#endif
-
 #if HAVE(SYS_PARAM_H)
 #include <sys/param.h>
 #endif

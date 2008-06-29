@@ -51,6 +51,10 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StringExtras.h>
 
+#if HAVE(ERRNO_H)
+#include <errno.h>
+#endif
+
 #if PLATFORM(DARWIN)
 #include <notify.h>
 #endif
