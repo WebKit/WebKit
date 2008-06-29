@@ -780,9 +780,6 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, int tx, int ty, Re
                 ASSERT_NOT_REACHED();
         }
 
-        if (marker.endOffset > end() + 1)
-            // marker also runs into the next run. Bail now, no more marker advancement.
-            break;
     }
 }
 

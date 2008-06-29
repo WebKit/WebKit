@@ -3143,17 +3143,17 @@ void Document::removeMarkers(Range* range, DocumentMarker::MarkerType markerType
     }
 }
 
-// Markers are stored in order sorted by their location.
-// They do not overlap each other, as currently required by the drawing code in RenderText.cpp.
+// Markers are stored in order sorted by their start offset.
+// Markers of the same type do not overlap each other.
 
-void Document::addMarker(Node *node, DocumentMarker newMarker) 
+void Document::addMarker(Node* node, DocumentMarker newMarker) 
 {
     ASSERT(newMarker.endOffset >= newMarker.startOffset);
     if (newMarker.endOffset == newMarker.startOffset)
         return;
-    
+
     MarkerMapVectorPair* vectorPair = m_markers.get(node);
-    
+
     if (!vectorPair) {
         vectorPair = new MarkerMapVectorPair;
         vectorPair->first.append(newMarker);
@@ -3162,32 +3162,44 @@ void Document::addMarker(Node *node, DocumentMarker newMarker)
     } else {
         Vector<DocumentMarker>& markers = vectorPair->first;
         Vector<IntRect>& rects = vectorPair->second;
-        ASSERT(markers.size() == rects.size());
+        size_t numMarkers = markers.size();
+        ASSERT(numMarkers == rects.size());
         size_t i;
-        for (i = 0; i != markers.size();) {
+        // Iterate over all markers whose start offset is less than or equal to the new marker's.
+        // If one of them is of the same type as the new marker and touches it or intersects with it
+        // (there is at most one), remove it and adjust the new marker's start offset to encompass it.
+        for (i = 0; i < numMarkers; ++i) {
             DocumentMarker marker = markers[i];
-            
-            if (newMarker.endOffset < marker.startOffset+1) {
-                // This is the first marker that is completely after newMarker, and disjoint from it.
-                // We found our insertion point.
+            if (marker.startOffset > newMarker.startOffset)
                 break;
-            } else if (newMarker.startOffset > marker.endOffset) {
-                // maker is before newMarker, and disjoint from it.  Keep scanning.
-                i++;
-            } else if (newMarker == marker) {
-                // already have this one, NOP
-                return;
-            } else {
-                // marker and newMarker intersect or touch - merge them into newMarker
-                newMarker.startOffset = min(newMarker.startOffset, marker.startOffset);
-                newMarker.endOffset = max(newMarker.endOffset, marker.endOffset);
-                // remove old one, we'll add newMarker later
+            if (marker.type == newMarker.type && marker.endOffset >= newMarker.startOffset) {
+                newMarker.startOffset = marker.startOffset;
                 markers.remove(i);
                 rects.remove(i);
-                // it points to the next marker to consider
+                numMarkers--;
+                break;
             }
         }
-        // at this point i points to the node before which we want to insert
+        size_t j = i;
+        // Iterate over all markers whose end offset is less than or equal to the new marker's,
+        // removing markers of the same type as the new marker which touch it or intersect with it,
+        // adjusting the new marker's end offset to cover them if necessary.
+        while (j < numMarkers) {
+            DocumentMarker marker = markers[j];
+            if (marker.startOffset > newMarker.endOffset)
+                break;
+            if (marker.type == newMarker.type) {
+                markers.remove(j);
+                rects.remove(j);
+                if (newMarker.endOffset <= marker.endOffset) {
+                    newMarker.endOffset = marker.endOffset;
+                    break;
+                }
+                numMarkers--;
+            } else
+                j++;
+        }
+        // At this point i points to the node before which we want to insert.
         markers.insert(i, newMarker);
         rects.insert(i, placeholderRectForMarker());
     }

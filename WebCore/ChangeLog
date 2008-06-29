@@ -1,3 +1,16 @@
+2008-06-28  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - allow document markers to touch or overlap if they are not of the same type
+
+        Cannot be tested in DumpRenderTree
+
+        * dom/Document.cpp:
+        (WebCore::Document::addMarker):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.
