@@ -27,7 +27,6 @@
 #include "JSString.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
-#include "error_object.h"
 
 namespace KJS {
 

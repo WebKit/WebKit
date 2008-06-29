@@ -26,12 +26,10 @@
 
 #include "Machine.h"
 #include "ObjectPrototype.h"
-#include "error_object.h"
 #include "lookup.h"
 #include "operations.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
-
 #include <algorithm> // for std::min
 
 namespace KJS {

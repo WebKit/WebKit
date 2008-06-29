@@ -96,7 +96,9 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/DatePrototype.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
-	JavaScriptCore/kjs/error_object.cpp \
+	JavaScriptCore/kjs/ErrorConstructor.cpp \
+	JavaScriptCore/kjs/ErrorInstance.cpp \
+	JavaScriptCore/kjs/ErrorPrototype.cpp \
 	JavaScriptCore/kjs/JSFunction.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/kjs/FunctionConstructor.cpp \
@@ -110,6 +112,8 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/MathObject.cpp \
 	JavaScriptCore/kjs/nodes.cpp \
 	JavaScriptCore/kjs/nodes2string.cpp \
+	JavaScriptCore/kjs/NativeErrorConstructor.cpp \
+	JavaScriptCore/kjs/NativeErrorPrototype.cpp \
 	JavaScriptCore/kjs/NumberConstructor.cpp \
 	JavaScriptCore/kjs/NumberObject.cpp \
 	JavaScriptCore/kjs/NumberPrototype.cpp \

@@ -37,10 +37,14 @@
 #include "CodeBlock.h"
 #include "DateConstructor.h"
 #include "DatePrototype.h"
+#include "ErrorConstructor.h"
+#include "ErrorPrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "Machine.h"
 #include "MathObject.h"
+#include "NativeErrorConstructor.h"
+#include "NativeErrorPrototype.h"
 #include "NumberConstructor.h"
 #include "NumberPrototype.h"
 #include "ObjectConstructor.h"
@@ -51,7 +55,6 @@
 #include "StringConstructor.h"
 #include "StringPrototype.h"
 #include "debugger.h"
-#include "error_object.h"
 
 namespace KJS {
 

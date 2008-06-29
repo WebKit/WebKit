@@ -95,6 +95,11 @@
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
 		A7C31DAA0DBEBA4300FDF8EB /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */; };
+		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
+		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
+		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
+		BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */; };
+		BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E98B0E183E38000F9297 /* ErrorInstance.h */; };
 		BC18C3E40E16F5CD00B34460 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B78A0A4305AB00517CFC /* APICast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; };
@@ -120,7 +125,6 @@
 		BC18C3FC0E16F5CD00B34460 /* Deque.h in Headers */ = {isa = PBXBuildFile; fileRef = 5186111D0CC824830081412B /* Deque.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3FD0E16F5CD00B34460 /* DisallowCType.h in Headers */ = {isa = PBXBuildFile; fileRef = 938C4F6B0CA06BCE00D9310A /* DisallowCType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3FE0E16F5CD00B34460 /* dtoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 651F6413039D5B5F0078395C /* dtoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C3FF0E16F5CD00B34460 /* error_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A85B0255597D01FF60F7 /* error_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		BC18C4010E16F5CD00B34460 /* ExecState.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BD53F30A3E12D800BAF59C /* ExecState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4020E16F5CD00B34460 /* FastMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 65E217BA08E7EECC0023E5F6 /* FastMalloc.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -586,6 +590,16 @@
 		A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentedVector.h; path = VM/SegmentedVector.h; sourceTree = "<group>"; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
+		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
+		BC02E9050E1839DB000F9297 /* ErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorConstructor.h; sourceTree = "<group>"; };
+		BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorPrototype.cpp; sourceTree = "<group>"; };
+		BC02E9070E1839DB000F9297 /* ErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorPrototype.h; sourceTree = "<group>"; };
+		BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeErrorConstructor.cpp; sourceTree = "<group>"; };
+		BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeErrorConstructor.h; sourceTree = "<group>"; };
+		BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NativeErrorPrototype.cpp; sourceTree = "<group>"; };
+		BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NativeErrorPrototype.h; sourceTree = "<group>"; };
+		BC02E98A0E183E38000F9297 /* ErrorInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorInstance.cpp; sourceTree = "<group>"; };
+		BC02E98B0E183E38000F9297 /* ErrorInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorInstance.h; sourceTree = "<group>"; };
 		BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringConstructor.cpp; sourceTree = "<group>"; };
 		BC18C3C10E16EE3300B34460 /* StringConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.h; sourceTree = "<group>"; };
 		BC18C3C20E16EE3300B34460 /* StringObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringObject.cpp; sourceTree = "<group>"; };
@@ -665,8 +679,6 @@
 		F692A8560255597D01FF60F7 /* date_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = date_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8580255597D01FF60F7 /* debugger.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugger.cpp; path = kjs/debugger.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8590255597D01FF60F7 /* debugger.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = debugger.h; path = kjs/debugger.h; sourceTree = "<group>"; tabWidth = 8; };
-		F692A85A0255597D01FF60F7 /* error_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error_object.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		F692A85B0255597D01FF60F7 /* error_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = error_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionPrototype.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A85D0255597D01FF60F7 /* FunctionPrototype.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FunctionPrototype.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A85E0255597D01FF60F7 /* JSFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFunction.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -1050,8 +1062,12 @@
 				D21202290AD4310C00ED79B6 /* DateMath.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
 				651F6413039D5B5F0078395C /* dtoa.h */,
-				F692A85A0255597D01FF60F7 /* error_object.cpp */,
-				F692A85B0255597D01FF60F7 /* error_object.h */,
+				BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */,
+				BC02E9050E1839DB000F9297 /* ErrorConstructor.h */,
+				BC02E98A0E183E38000F9297 /* ErrorInstance.cpp */,
+				BC02E98B0E183E38000F9297 /* ErrorInstance.h */,
+				BC02E9060E1839DB000F9297 /* ErrorPrototype.cpp */,
+				BC02E9070E1839DB000F9297 /* ErrorPrototype.h */,
 				14BD53F40A3E12D800BAF59C /* ExecState.cpp */,
 				14BD53F30A3E12D800BAF59C /* ExecState.h */,
 				BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */,
@@ -1100,6 +1116,10 @@
 				F692A8690255597D01FF60F7 /* lookup.h */,
 				F692A86A0255597D01FF60F7 /* MathObject.cpp */,
 				F692A86B0255597D01FF60F7 /* MathObject.h */,
+				BC02E9080E1839DB000F9297 /* NativeErrorConstructor.cpp */,
+				BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */,
+				BC02E90A0E1839DB000F9297 /* NativeErrorPrototype.cpp */,
+				BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */,
 				BC2680C20E16D4E900A06E92 /* NumberConstructor.cpp */,
 				BC2680C30E16D4E900A06E92 /* NumberConstructor.h */,
 				F692A8700255597D01FF60F7 /* NumberObject.cpp */,
@@ -1256,7 +1276,6 @@
 				BC18C3FC0E16F5CD00B34460 /* Deque.h in Headers */,
 				BC18C3FD0E16F5CD00B34460 /* DisallowCType.h in Headers */,
 				BC18C3FE0E16F5CD00B34460 /* dtoa.h in Headers */,
-				BC18C3FF0E16F5CD00B34460 /* error_object.h in Headers */,
 				BC18C4000E16F5CD00B34460 /* ExceptionHelpers.h in Headers */,
 				BC18C4010E16F5CD00B34460 /* ExecState.h in Headers */,
 				BC18C4020E16F5CD00B34460 /* FastMalloc.h in Headers */,
@@ -1387,6 +1406,11 @@
 				BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */,
 				BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */,
 				BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */,
+				BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */,
+				BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */,
+				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
+				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
+				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

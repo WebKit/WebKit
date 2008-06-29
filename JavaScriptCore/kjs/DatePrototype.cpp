@@ -26,7 +26,6 @@
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "date_object.h"
-#include "error_object.h"
 #include <float.h>
 #include <limits.h>
 #include <locale.h>

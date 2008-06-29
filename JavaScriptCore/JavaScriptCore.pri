@@ -81,7 +81,9 @@ SOURCES += \
     kjs/DatePrototype.cpp \
     kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
-    kjs/error_object.cpp \
+    kjs/ErrorConstructor.cpp \
+    kjs/ErrorInstance.cpp \
+    kjs/ErrorPrototype.cpp \
     kjs/ExecState.cpp \
     kjs/FunctionConstructor.cpp \
     kjs/FunctionPrototype.cpp \
@@ -95,6 +97,8 @@ SOURCES += \
     kjs/list.cpp \
     kjs/lookup.cpp \
     kjs/MathObject.cpp \
+    kjs/NativeErrorConstructor.cpp \
+    kjs/NativeErrorPrototype.cpp \
     kjs/nodes.cpp \
     kjs/nodes2string.cpp \
     kjs/NumberConstructor.cpp \

@@ -31,7 +31,6 @@
 #include "StringPrototype.h"
 #include "collector.h"
 #include "debugger.h"
-#include "error_object.h"
 #include "lexer.h"
 #include "nodes.h"
 #include "operations.h"

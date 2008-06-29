@@ -26,10 +26,10 @@
 #include "JSObject.h"
 
 #include "DatePrototype.h"
+#include "ErrorConstructor.h"
 #include "JSGlobalObject.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
-#include "error_object.h"
 #include "lookup.h"
 #include "nodes.h"
 #include "operations.h"

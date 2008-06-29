@@ -1,5 +1,44 @@
 2008-06-29  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Cameron Zwarich.
+
+        Splits ErrorConstructor, ErrorPrototype,  NativeErrorConstructor and
+        NativeErrorPrototype out of error_object.h/cpp and renames it ErrorInstance.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArrayConstructor.cpp:
+        * kjs/ArrayPrototype.cpp:
+        * kjs/BooleanPrototype.cpp:
+        * kjs/DatePrototype.cpp:
+        * kjs/ErrorConstructor.cpp: Copied from kjs/error_object.cpp.
+        * kjs/ErrorConstructor.h: Copied from kjs/error_object.h.
+        * kjs/ErrorInstance.cpp: Copied from kjs/error_object.cpp.
+        * kjs/ErrorInstance.h: Copied from kjs/error_object.h.
+        * kjs/ErrorPrototype.cpp: Copied from kjs/error_object.cpp.
+        * kjs/ErrorPrototype.h: Copied from kjs/error_object.h.
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSObject.cpp:
+        * kjs/JSValue.cpp:
+        * kjs/NativeErrorConstructor.cpp: Copied from kjs/error_object.cpp.
+        * kjs/NativeErrorConstructor.h: Copied from kjs/error_object.h.
+        * kjs/NativeErrorPrototype.cpp: Copied from kjs/error_object.cpp.
+        * kjs/NativeErrorPrototype.h: Copied from kjs/error_object.h.
+        * kjs/NumberPrototype.cpp:
+        * kjs/RegExpConstructor.cpp:
+        * kjs/RegExpObject.cpp:
+        * kjs/RegExpPrototype.cpp:
+        * kjs/StringPrototype.cpp:
+        * kjs/error_object.cpp: Removed.
+        * kjs/error_object.h: Removed.
+        * kjs/internal.cpp:
+
+2008-06-29  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne build.
 
         * kjs/DateConstructor.cpp:

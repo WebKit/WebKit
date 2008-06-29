@@ -381,11 +381,27 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\error_object.cpp"
+				RelativePath="..\..\kjs\ErrorConstructor.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\error_object.h"
+				RelativePath="..\..\kjs\ErrorConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ErrorInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ErrorInstance.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ErrorPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ErrorPrototype.h"
 				>
 			</File>
 			<File
@@ -574,6 +590,22 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\NodeInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NativeErrorConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NativeErrorConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NativeErrorPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NativeErrorPrototype.h"
 				>
 			</File>
 			<File

@@ -58,7 +58,9 @@ Source files for JSCore.
         kjs/debugger.cpp
         kjs/DebuggerCallFrame.cpp
         kjs/dtoa.cpp
-        kjs/error_object.cpp
+        kjs/ErrorConstructor.cpp
+        kjs/ErrorInstance.cpp
+        kjs/ErrorPrototype.cpp
         kjs/ExecState.cpp
         kjs/JSFunction.cpp
         kjs/FunctionConstructor.cpp
@@ -79,6 +81,8 @@ Source files for JSCore.
         kjs/list.cpp
         kjs/lookup.cpp
         kjs/MathObject.cpp
+        kjs/NativeErrorConstructor.cpp
+        kjs/NativeErrorPrototype.cpp
         kjs/nodes.cpp
         kjs/nodes2string.cpp
         kjs/NumberConstructor.cpp
