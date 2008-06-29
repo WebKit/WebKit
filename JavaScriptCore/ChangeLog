@@ -1,3 +1,45 @@
+2008-06-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Cameron.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=19804
+          optimize access to arrays without "holes"
+
+        SunSpider says 1.8% faster.
+
+        * kjs/JSArray.cpp:
+        (KJS::JSArray::JSArray): Initialize m_fastAccessCutoff when creating
+        arrays. Also updated for new location of m_vectorLength.
+        (KJS::JSArray::getItem): Updated for new location of m_vectorLength.
+        (KJS::JSArray::getSlowCase): Added. Broke out the non-hot parts of
+        getOwnPropertySlot to make the hot part faster.
+        (KJS::JSArray::getOwnPropertySlot): Added a new faster case for
+        indices lower than m_fastAccessCutoff. We can do theese with no
+        additional checks or branches.
+        (KJS::JSArray::put): Added a new faster case for indices lower than
+        m_fastAccessCutoff. We can do theese with no additional checks or
+        branches. Moved the maxArrayIndex handling out of this function.
+        Added code to set m_fastAccessCutoff when the very last hole in
+        an array is filled; this is how the cutoff gets set for most arrays.
+        (KJS::JSArray::putSlowCase): Moved the rest of the put function logic
+        in here, to make the hot part of the put function faster.
+        (KJS::JSArray::deleteProperty): Added code to lower m_fastAccessCutoff
+        when a delete makes a new hole in the array.
+        (KJS::JSArray::getPropertyNames): Updated for new location of
+        m_vectorLength.
+        (KJS::JSArray::increaseVectorLength): Ditto.
+        (KJS::JSArray::setLength): Added code to lower m_fastAccessCutoff
+        when setLength makes the array smaller.
+        (KJS::JSArray::mark): Updated for new location of m_vectorLength.
+        (KJS::JSArray::sort): Ditto. Set m_fastAccessCutoff after moving
+        all the holes to the end of the array.
+        (KJS::JSArray::compactForSorting): Ditto.
+        (KJS::JSArray::checkConsistency): Added consistency checks fro
+        m_fastAccessCutoff and updated for the new location of m_vectorLength.
+
+        * kjs/JSArray.h: Added declarations for slow case functions.
+        Replaced m_vectorLength with m_fastAccessCutoff.
+
 2008-06-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Sam.
