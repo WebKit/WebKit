@@ -25,9 +25,9 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "DatePrototype.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
-#include "date_object.h"
 #include "error_object.h"
 #include "nodes.h"
 #include "operations.h"

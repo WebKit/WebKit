@@ -14,7 +14,7 @@ isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
 include(pcre/pcre.pri)
 
 LUT_FILES += \
-    kjs/date_object.cpp \
+    kjs/DatePrototype.cpp \
     kjs/NumberConstructor.cpp \
     kjs/StringPrototype.cpp \
     kjs/ArrayPrototype.cpp \
@@ -76,7 +76,9 @@ SOURCES += \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
     kjs/date_object.cpp \
+    kjs/DateConstructor.cpp \
     kjs/DateMath.cpp \
+    kjs/DatePrototype.cpp \
     kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
     kjs/error_object.cpp \

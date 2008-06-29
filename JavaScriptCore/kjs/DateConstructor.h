@@ -18,42 +18,29 @@
  *
  */
 
-#ifndef DATE_OBJECT_H
-#define DATE_OBJECT_H
+#ifndef DateConstructor_h
+#define DateConstructor_h
 
-#include "JSWrapperObject.h"
+#include "JSFunction.h"
 
 namespace KJS {
 
-    struct GregorianDateTime;
+    class DatePrototype;
     class FunctionPrototype;
-    class ObjectPrototype;
 
-    class DateInstance : public JSWrapperObject {
+    /**
+     * @internal
+     *
+     * The initial value of the the global variable's "Date" property
+     */
+    class DateConstructor : public InternalFunction {
     public:
-        DateInstance(JSObject* prototype);
-        virtual ~DateInstance();
-
-        double internalNumber() const { return internalValue()->uncheckedGetNumber(); }
-
-        bool getTime(GregorianDateTime&, int& offset) const;
-        bool getUTCTime(GregorianDateTime&) const;
-        bool getTime(double& milliseconds, int& offset) const;
-        bool getUTCTime(double& milliseconds) const;
-        
-        static const ClassInfo info;
-
-        void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&) const;
-
+        DateConstructor(ExecState*, FunctionPrototype*, DatePrototype*);
     private:
-        virtual const ClassInfo* classInfo() const { return &info; }
-
-        using JSWrapperObject::internalValue;
-
-        struct Cache;
-        mutable Cache* m_cache;
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
     };
 
 } // namespace KJS
 
-#endif
+#endif // DateConstructor_h

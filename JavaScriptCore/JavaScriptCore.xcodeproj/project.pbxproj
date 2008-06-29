@@ -241,7 +241,6 @@
 		BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE3D0F40DD8DDFB00468714 /* WebKitAvailability.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */; };
 		BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5250E16FCA700B34460 /* StringPrototype.lut.h */; };
-		BC18C5280E16FCB500B34460 /* date_object.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5270E16FCB500B34460 /* date_object.lut.h */; };
 		BC18C52A0E16FCC200B34460 /* MathObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C5290E16FCC200B34460 /* MathObject.lut.h */; };
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
@@ -249,6 +248,9 @@
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
 		BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */; };
+		BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203460E17135E002C7E82 /* DateConstructor.h */; };
+		BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203480E17135E002C7E82 /* DatePrototype.h */; };
+		BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */; };
 		E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
 		E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */; };
 		E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
@@ -593,7 +595,6 @@
 		BC18C3C60E16EE3300B34460 /* StringPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.h; sourceTree = "<group>"; };
 		BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayPrototype.lut.h; sourceTree = "<group>"; };
 		BC18C5250E16FCA700B34460 /* StringPrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPrototype.lut.h; sourceTree = "<group>"; };
-		BC18C5270E16FCB500B34460 /* date_object.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = date_object.lut.h; sourceTree = "<group>"; };
 		BC18C5290E16FCC200B34460 /* MathObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathObject.lut.h; sourceTree = "<group>"; };
 		BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpObject.lut.h; sourceTree = "<group>"; };
 		BC18C52D0E16FCE100B34460 /* lexer.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lexer.lut.h; sourceTree = "<group>"; };
@@ -624,6 +625,11 @@
 		BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpPrototype.cpp; sourceTree = "<group>"; };
 		BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpPrototype.h; sourceTree = "<group>"; };
 		BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpConstructor.lut.h; sourceTree = "<group>"; };
+		BCD203450E17135E002C7E82 /* DateConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateConstructor.cpp; sourceTree = "<group>"; };
+		BCD203460E17135E002C7E82 /* DateConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateConstructor.h; sourceTree = "<group>"; };
+		BCD203470E17135E002C7E82 /* DatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatePrototype.cpp; sourceTree = "<group>"; };
+		BCD203480E17135E002C7E82 /* DatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.h; sourceTree = "<group>"; };
+		BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.lut.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
@@ -934,7 +940,7 @@
 			children = (
 				BC18C5230E16FC8A00B34460 /* ArrayPrototype.lut.h */,
 				65B174BE09D1000200820339 /* chartables.c */,
-				BC18C5270E16FCB500B34460 /* date_object.lut.h */,
+				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
 				65FB3F4809D11B2400F49DEB /* grammar.cpp */,
 				BC18C52F0E16FCEB00B34460 /* grammar.h */,
 				BC18C52D0E16FCE100B34460 /* lexer.lut.h */,
@@ -954,6 +960,7 @@
 			isa = PBXGroup;
 			children = (
 				06D358A00DAAD9C4003B174E /* mac */,
+				E195678D09E7CF1200B89D13 /* unicode */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -999,7 +1006,6 @@
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
-				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
@@ -1036,6 +1042,10 @@
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				F692A8550255597D01FF60F7 /* date_object.cpp */,
 				F692A8560255597D01FF60F7 /* date_object.h */,
+				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,
+				BCD203460E17135E002C7E82 /* DateConstructor.h */,
+				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
+				BCD203480E17135E002C7E82 /* DatePrototype.h */,
 				D21202280AD4310C00ED79B6 /* DateMath.cpp */,
 				D21202290AD4310C00ED79B6 /* DateMath.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
@@ -1367,7 +1377,6 @@
 				BC18C47A0E16F5CD00B34460 /* WebKitAvailability.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
 				BC18C5260E16FCA700B34460 /* StringPrototype.lut.h in Headers */,
-				BC18C5280E16FCB500B34460 /* date_object.lut.h in Headers */,
 				BC18C52A0E16FCC200B34460 /* MathObject.lut.h in Headers */,
 				BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */,
@@ -1375,6 +1384,9 @@
 				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
 				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
 				BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */,
+				BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */,
+				BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */,
+				BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -349,11 +349,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\DateConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DateConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\DateMath.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\DateMath.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DatePrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DatePrototype.h"
 				>
 			</File>
 			<File
@@ -740,7 +756,7 @@
 					>
 				</File>
 				<File
-					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\date_object.lut.h"
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\DatePrototype.lut.h"
 					>
 				</File>
 				<File

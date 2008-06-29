@@ -42,11 +42,14 @@
 #include "config.h"
 #include "DateMath.h"
 
+#include "JSValue.h"
 #include <math.h>
 #include <stdint.h>
-#include <JSValue.h>
-
+#include <time.h>
+#include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
+#include <wtf/MathExtras.h>
+#include <wtf/StringExtras.h>
 
 #if PLATFORM(DARWIN)
 #include <notify.h>
@@ -523,6 +526,422 @@ void initDateMath()
         s_haveCachedUTCOffset = true;
     }
 #endif
+}
+
+static inline double ymdhmsToSeconds(long year, int mon, int day, int hour, int minute, int second)
+{
+    double days = (day - 32075)
+        + floor(1461 * (year + 4800.0 + (mon - 14) / 12) / 4)
+        + 367 * (mon - 2 - (mon - 14) / 12 * 12) / 12
+        - floor(3 * ((year + 4900.0 + (mon - 14) / 12) / 100) / 4)
+        - 2440588;
+    return ((days * hoursPerDay + hour) * minutesPerHour + minute) * secondsPerMinute + second;
+}
+
+// We follow the recommendation of RFC 2822 to consider all
+// obsolete time zones not listed here equivalent to "-0000".
+static const struct KnownZone {
+#if !PLATFORM(WIN_OS)
+    const
+#endif
+        char tzName[4];
+    int tzOffset;
+} known_zones[] = {
+    { "UT", 0 },
+    { "GMT", 0 },
+    { "EST", -300 },
+    { "EDT", -240 },
+    { "CST", -360 },
+    { "CDT", -300 },
+    { "MST", -420 },
+    { "MDT", -360 },
+    { "PST", -480 },
+    { "PDT", -420 }
+};
+
+inline static void skipSpacesAndComments(const char*& s)
+{
+    int nesting = 0;
+    char ch;
+    while ((ch = *s)) {
+        if (!isASCIISpace(ch)) {
+            if (ch == '(')
+                nesting++;
+            else if (ch == ')' && nesting > 0)
+                nesting--;
+            else if (nesting == 0)
+                break;
+        }
+        s++;
+    }
+}
+
+// returns 0-11 (Jan-Dec); -1 on failure
+static int findMonth(const char* monthStr)
+{
+    ASSERT(monthStr);
+    char needle[4];
+    for (int i = 0; i < 3; ++i) {
+        if (!*monthStr)
+            return -1;
+        needle[i] = static_cast<char>(toASCIILower(*monthStr++));
+    }
+    needle[3] = '\0';
+    const char *haystack = "janfebmaraprmayjunjulaugsepoctnovdec";
+    const char *str = strstr(haystack, needle);
+    if (str) {
+        int position = static_cast<int>(str - haystack);
+        if (position % 3 == 0)
+            return position / 3;
+    }
+    return -1;
+}
+
+double parseDate(const UString &date)
+{
+    // This parses a date in the form:
+    //     Tuesday, 09-Nov-99 23:12:40 GMT
+    // or
+    //     Sat, 01-Jan-2000 08:00:00 GMT
+    // or
+    //     Sat, 01 Jan 2000 08:00:00 GMT
+    // or
+    //     01 Jan 99 22:00 +0100    (exceptions in rfc822/rfc2822)
+    // ### non RFC formats, added for Javascript:
+    //     [Wednesday] January 09 1999 23:12:40 GMT
+    //     [Wednesday] January 09 23:12:40 GMT 1999
+    //
+    // We ignore the weekday.
+
+    CString dateCString = date.UTF8String();
+    const char *dateString = dateCString.c_str();
+     
+    // Skip leading space
+    skipSpacesAndComments(dateString);
+
+    long month = -1;
+    const char *wordStart = dateString;
+    // Check contents of first words if not number
+    while (*dateString && !isASCIIDigit(*dateString)) {
+        if (isASCIISpace(*dateString) || *dateString == '(') {
+            if (dateString - wordStart >= 3)
+                month = findMonth(wordStart);
+            skipSpacesAndComments(dateString);
+            wordStart = dateString;
+        } else
+           dateString++;
+    }
+
+    // Missing delimiter between month and day (like "January29")?
+    if (month == -1 && wordStart != dateString)
+        month = findMonth(wordStart);
+
+    skipSpacesAndComments(dateString);
+
+    if (!*dateString)
+        return NaN;
+
+    // ' 09-Nov-99 23:12:40 GMT'
+    char *newPosStr;
+    errno = 0;
+    long day = strtol(dateString, &newPosStr, 10);
+    if (errno)
+        return NaN;
+    dateString = newPosStr;
+
+    if (!*dateString)
+        return NaN;
+
+    if (day < 0)
+        return NaN;
+
+    long year = 0;
+    if (day > 31) {
+        // ### where is the boundary and what happens below?
+        if (*dateString != '/')
+            return NaN;
+        // looks like a YYYY/MM/DD date
+        if (!*++dateString)
+            return NaN;
+        year = day;
+        month = strtol(dateString, &newPosStr, 10) - 1;
+        if (errno)
+            return NaN;
+        dateString = newPosStr;
+        if (*dateString++ != '/' || !*dateString)
+            return NaN;
+        day = strtol(dateString, &newPosStr, 10);
+        if (errno)
+            return NaN;
+        dateString = newPosStr;
+    } else if (*dateString == '/' && month == -1) {
+        dateString++;
+        // This looks like a MM/DD/YYYY date, not an RFC date.
+        month = day - 1; // 0-based
+        day = strtol(dateString, &newPosStr, 10);
+        if (errno)
+            return NaN;
+        if (day < 1 || day > 31)
+            return NaN;
+        dateString = newPosStr;
+        if (*dateString == '/')
+            dateString++;
+        if (!*dateString)
+            return NaN;
+     } else {
+        if (*dateString == '-')
+            dateString++;
+
+        skipSpacesAndComments(dateString);
+
+        if (*dateString == ',')
+            dateString++;
+
+        if (month == -1) { // not found yet
+            month = findMonth(dateString);
+            if (month == -1)
+                return NaN;
+
+            while (*dateString && *dateString != '-' && *dateString != ',' && !isASCIISpace(*dateString))
+                dateString++;
+
+            if (!*dateString)
+                return NaN;
+
+            // '-99 23:12:40 GMT'
+            if (*dateString != '-' && *dateString != '/' && *dateString != ',' && !isASCIISpace(*dateString))
+                return NaN;
+            dateString++;
+        }
+    }
+
+    if (month < 0 || month > 11)
+        return NaN;
+
+    // '99 23:12:40 GMT'
+    if (year <= 0 && *dateString) {
+        year = strtol(dateString, &newPosStr, 10);
+        if (errno)
+            return NaN;
+    }
+    
+    // Don't fail if the time is missing.
+    long hour = 0;
+    long minute = 0;
+    long second = 0;
+    if (!*newPosStr)
+        dateString = newPosStr;
+    else {
+        // ' 23:12:40 GMT'
+        if (!(isASCIISpace(*newPosStr) || *newPosStr == ',')) {
+            if (*newPosStr != ':')
+                return NaN;
+            // There was no year; the number was the hour.
+            year = -1;
+        } else {
+            // in the normal case (we parsed the year), advance to the next number
+            dateString = ++newPosStr;
+            skipSpacesAndComments(dateString);
+        }
+
+        hour = strtol(dateString, &newPosStr, 10);
+        // Do not check for errno here since we want to continue
+        // even if errno was set becasue we are still looking
+        // for the timezone!
+
+        // Read a number? If not, this might be a timezone name.
+        if (newPosStr != dateString) {
+            dateString = newPosStr;
+
+            if (hour < 0 || hour > 23)
+                return NaN;
+
+            if (!*dateString)
+                return NaN;
+
+            // ':12:40 GMT'
+            if (*dateString++ != ':')
+                return NaN;
+
+            minute = strtol(dateString, &newPosStr, 10);
+            if (errno)
+                return NaN;
+            dateString = newPosStr;
+
+            if (minute < 0 || minute > 59)
+                return NaN;
+
+            // ':40 GMT'
+            if (*dateString && *dateString != ':' && !isASCIISpace(*dateString))
+                return NaN;
+
+            // seconds are optional in rfc822 + rfc2822
+            if (*dateString ==':') {
+                dateString++;
+
+                second = strtol(dateString, &newPosStr, 10);
+                if (errno)
+                    return NaN;
+                dateString = newPosStr;
+            
+                if (second < 0 || second > 59)
+                    return NaN;
+            }
+
+            skipSpacesAndComments(dateString);
+
+            if (strncasecmp(dateString, "AM", 2) == 0) {
+                if (hour > 12)
+                    return NaN;
+                if (hour == 12)
+                    hour = 0;
+                dateString += 2;
+                skipSpacesAndComments(dateString);
+            } else if (strncasecmp(dateString, "PM", 2) == 0) {
+                if (hour > 12)
+                    return NaN;
+                if (hour != 12)
+                    hour += 12;
+                dateString += 2;
+                skipSpacesAndComments(dateString);
+            }
+        }
+    }
+
+    bool haveTZ = false;
+    int offset = 0;
+
+    // Don't fail if the time zone is missing. 
+    // Some websites omit the time zone (4275206).
+    if (*dateString) {
+        if (strncasecmp(dateString, "GMT", 3) == 0 || strncasecmp(dateString, "UTC", 3) == 0) {
+            dateString += 3;
+            haveTZ = true;
+        }
+
+        if (*dateString == '+' || *dateString == '-') {
+            long o = strtol(dateString, &newPosStr, 10);
+            if (errno)
+                return NaN;
+            dateString = newPosStr;
+
+            if (o < -9959 || o > 9959)
+                return NaN;
+
+            int sgn = (o < 0) ? -1 : 1;
+            o = abs(o);
+            if (*dateString != ':') {
+                offset = ((o / 100) * 60 + (o % 100)) * sgn;
+            } else { // GMT+05:00
+                long o2 = strtol(dateString, &newPosStr, 10);
+                if (errno)
+                    return NaN;
+                dateString = newPosStr;
+                offset = (o * 60 + o2) * sgn;
+            }
+            haveTZ = true;
+        } else {
+            for (int i = 0; i < int(sizeof(known_zones) / sizeof(KnownZone)); i++) {
+                if (0 == strncasecmp(dateString, known_zones[i].tzName, strlen(known_zones[i].tzName))) {
+                    offset = known_zones[i].tzOffset;
+                    dateString += strlen(known_zones[i].tzName);
+                    haveTZ = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    skipSpacesAndComments(dateString);
+
+    if (*dateString && year == -1) {
+        year = strtol(dateString, &newPosStr, 10);
+        if (errno)
+            return NaN;
+        dateString = newPosStr;
+    }
+     
+    skipSpacesAndComments(dateString);
+     
+    // Trailing garbage
+    if (*dateString)
+        return NaN;
+
+    // Y2K: Handle 2 digit years.
+    if (year >= 0 && year < 100) {
+        if (year < 50)
+            year += 2000;
+        else
+            year += 1900;
+    }
+
+    // fall back to local timezone
+    if (!haveTZ) {
+        GregorianDateTime t;
+        t.monthDay = day;
+        t.month = month;
+        t.year = year - 1900;
+        t.isDST = -1;
+        t.second = second;
+        t.minute = minute;
+        t.hour = hour;
+
+        // Use our gregorianDateTimeToMS() rather than mktime() as the latter can't handle the full year range.
+        return gregorianDateTimeToMS(t, 0, false);
+    }
+
+    return (ymdhmsToSeconds(year, month + 1, day, hour, minute, second) - (offset * 60.0)) * msPerSecond;
+}
+
+double timeClip(double t)
+{
+    if (!isfinite(t))
+        return NaN;
+    if (fabs(t) > 8.64E15)
+        return NaN;
+    return trunc(t);
+}
+
+UString formatDate(const GregorianDateTime &t)
+{
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%s %s %02d %04d",
+        weekdayName[(t.weekDay + 6) % 7],
+        monthName[t.month], t.monthDay, t.year + 1900);
+    return buffer;
+}
+
+UString formatDateUTCVariant(const GregorianDateTime &t)
+{
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%s, %02d %s %04d",
+        weekdayName[(t.weekDay + 6) % 7],
+        t.monthDay, monthName[t.month], t.year + 1900);
+    return buffer;
+}
+
+UString formatTime(const GregorianDateTime &t, bool utc)
+{
+    char buffer[100];
+    if (utc) {
+        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", t.hour, t.minute, t.second);
+    } else {
+        int offset = abs(gmtoffset(t));
+        char tzname[70];
+        struct tm gtm = t;
+        strftime(tzname, sizeof(tzname), "%Z", &gtm);
+
+        if (tzname[0]) {
+            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d (%s)",
+                t.hour, t.minute, t.second,
+                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60, tzname);
+        } else {
+            snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
+                t.hour, t.minute, t.second,
+                gmtoffset(t) < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
+        }
+    }
+    return UString(buffer);
 }
 
 } // namespace KJS

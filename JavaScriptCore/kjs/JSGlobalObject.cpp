@@ -35,6 +35,8 @@
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
 #include "CodeBlock.h"
+#include "DateConstructor.h"
+#include "DatePrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
 #include "Machine.h"
@@ -48,7 +50,6 @@
 #include "ScopeChainMark.h"
 #include "StringConstructor.h"
 #include "StringPrototype.h"
-#include "date_object.h"
 #include "debugger.h"
 #include "error_object.h"
 

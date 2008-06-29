@@ -19,7 +19,7 @@ javascriptcore_h_api += \
 
 javascriptcore_built_nosources += \
 	JavaScriptCore/kjs/ArrayPrototype.lut.h \
-	JavaScriptCore/kjs/date_object.lut.h \
+	JavaScriptCore/kjs/DatePrototype.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
 	JavaScriptCore/kjs/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpConstructor.lut.h \
@@ -92,6 +92,8 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/BooleanPrototype.cpp \
 	JavaScriptCore/kjs/collector.cpp \
 	JavaScriptCore/kjs/date_object.cpp \
+	JavaScriptCore/kjs/DateConstructor.cpp \
+	JavaScriptCore/kjs/DatePrototype.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
 	JavaScriptCore/kjs/error_object.cpp \
@@ -215,7 +217,7 @@ Programs_jsc_LDADD = \
 # Clean rules for JavaScriptCore
 CLEANFILES += \
 	JavaScriptCore/kjs/ArrayPrototype.lut.h \
-	JavaScriptCore/kjs/date_object.lut.h \
+	JavaScriptCore/kjs/DatePrototype.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
 	JavaScriptCore/kjs/NumberConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpConstructor.lut.h \

@@ -35,7 +35,7 @@ VPATH = \
 all : \
     ArrayPrototype.lut.h \
     chartables.c \
-    date_object.lut.h \
+    DatePrototype.lut.h \
     grammar.cpp \
     lexer.lut.h \
     MathObject.lut.h \

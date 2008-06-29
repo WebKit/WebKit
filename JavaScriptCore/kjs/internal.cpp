@@ -30,7 +30,6 @@
 #include "NumberObject.h"
 #include "StringPrototype.h"
 #include "collector.h"
-#include "date_object.h"
 #include "debugger.h"
 #include "error_object.h"
 #include "lexer.h"

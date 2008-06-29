@@ -1,3 +1,39 @@
+2008-06-29  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Splits DateConstructor and DatePrototype out of date_object.h/cpp
+        Moves shared Date code into DateMath.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/DateConstructor.cpp: Copied from kjs/date_object.cpp.
+        * kjs/DateConstructor.h: Copied from kjs/date_object.h.
+        * kjs/DateMath.cpp:
+        (KJS::ymdhmsToSeconds):
+        (KJS::):
+        (KJS::skipSpacesAndComments):
+        (KJS::findMonth):
+        (KJS::parseDate):
+        (KJS::timeClip):
+        (KJS::formatDate):
+        (KJS::formatDateUTCVariant):
+        (KJS::formatTime):
+        * kjs/DateMath.h:
+        (KJS::gmtoffset):
+        * kjs/DatePrototype.cpp: Copied from kjs/date_object.cpp.
+        * kjs/DatePrototype.h: Copied from kjs/date_object.h.
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSObject.cpp:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/internal.cpp:
+
 2008-06-29  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Cameron Zwarich
