@@ -1,3 +1,10 @@
+2008-06-28  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Flag headers as private or public as is appropriate.
+        These settings were accidentally removed during some project file cleanup.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.
