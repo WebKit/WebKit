@@ -26,6 +26,7 @@
 #include "JSArray.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
+#include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "error_object.h"
 #include "regexp.h"

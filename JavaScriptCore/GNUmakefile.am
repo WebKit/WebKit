@@ -96,6 +96,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/dtoa.cpp \
 	JavaScriptCore/kjs/error_object.cpp \
 	JavaScriptCore/kjs/JSFunction.cpp \
+	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/kjs/FunctionConstructor.cpp \
 	JavaScriptCore/kjs/FunctionPrototype.cpp \
 	JavaScriptCore/kjs/identifier.cpp \

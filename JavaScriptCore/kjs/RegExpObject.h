@@ -26,6 +26,8 @@
 
 namespace KJS {
 
+    class RegExpPrototype;
+
     class RegExpObject : public JSObject {
     public:
         enum { Global, IgnoreCase, Multiline, Source, LastIndex };
