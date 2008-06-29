@@ -1,3 +1,15 @@
+2008-06-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Add multi-button click event test case.
+        FireFox and IE only send click events for left-clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=15173
+
+        * fast/events/mouse-click-events-expected.txt: Added.
+        * fast/events/mouse-click-events.html: Copied from LayoutTests/fast/parser/resources/TEMPLATE.html.
+        * fast/events/resources/mouse-click-events.js: Added.
+
 2008-06-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam and Cameron.

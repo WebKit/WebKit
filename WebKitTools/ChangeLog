@@ -1,3 +1,25 @@
+2008-06-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by darin.
+
+        Add multi-button mouseevent support to DRT
+        https://bugs.webkit.org/show_bug.cgi?id=15173
+        
+        It's now possible to specify the mouse button with:
+        eventSender.mouseDown(1); eventSender.mouseUp(1); etc.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/EventSendingController.h:
+        * DumpRenderTree/mac/EventSendingController.mm:
+        (+[EventSendingController isSelectorExcludedFromWebScript:]):
+        (+[EventSendingController webScriptNameForSelector:]):
+        (eventTypeForMouseButtonAndAction):
+        (-[EventSendingController updateClickCountForButton:]):
+        (-[EventSendingController mouseDown:]):
+        (-[EventSendingController mouseUp:]):
+        (-[EventSendingController mouseMoveToX:Y:]):
+        (-[EventSendingController contextClick]):
+
 2008-06-28  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -31,7 +31,7 @@
 
 @interface EventSendingController : NSObject <DOMEventListener>
 {
-    BOOL down;
+    BOOL leftMouseButtonDown;
     BOOL dragMode;
     int clickCount;
     NSTimeInterval lastClick;
