@@ -40,6 +40,7 @@ all : \
     lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
+    RegExpConstructor.lut.h \
     RegExpObject.lut.h \
     StringPrototype.lut.h \
     $(JavaScriptCore)/docs/bytecode.html \

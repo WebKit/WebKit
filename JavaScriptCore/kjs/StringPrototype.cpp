@@ -24,6 +24,7 @@
 #include "JSArray.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
+#include "RegExpConstructor.h"
 #include "RegExpObject.h"
 #include "error_object.h"
 #include <wtf/MathExtras.h>

@@ -19,6 +19,7 @@ LUT_FILES += \
     kjs/StringPrototype.cpp \
     kjs/ArrayPrototype.cpp \
     kjs/MathObject.cpp \
+    kjs/RegExpConstructor.cpp \
     kjs/RegExpObject.cpp
 
 KEYWORDLUT_FILES += \
@@ -106,7 +107,9 @@ SOURCES += \
     kjs/PropertySlot.cpp \
     kjs/PropertyNameArray.cpp \
     kjs/regexp.cpp \
+    kjs/RegExpConstructor.cpp \
     kjs/RegExpObject.cpp \
+    kjs/RegExpPrototype.cpp \
     kjs/ScopeChain.cpp \
     kjs/StringConstructor.cpp \
     kjs/StringObject.cpp \

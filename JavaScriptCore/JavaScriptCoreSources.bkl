@@ -91,7 +91,9 @@ Source files for JSCore.
         kjs/PropertySlot.cpp
         kjs/PropertyNameArray.cpp
         kjs/regexp.cpp
+        kjs/RegExpConstructor.cpp
         kjs/RegExpObject.cpp
+        kjs/RegExpPrototype.cpp
         kjs/ScopeChain.cpp
         kjs/StringConstructor.cpp
         kjs/StringObject.cpp

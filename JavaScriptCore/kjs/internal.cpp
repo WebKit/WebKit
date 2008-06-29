@@ -28,7 +28,6 @@
 #include "JSObject.h"
 #include "MathObject.h"
 #include "NumberObject.h"
-#include "RegExpObject.h"
 #include "StringPrototype.h"
 #include "collector.h"
 #include "date_object.h"

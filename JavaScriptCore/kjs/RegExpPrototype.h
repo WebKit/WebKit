@@ -18,46 +18,24 @@
  *
  */
 
-#ifndef RegExpObject_h
-#define RegExpObject_h
+#ifndef RegExpPrototype_h
+#define RegExpPrototype_h
 
 #include "JSObject.h"
-#include "regexp.h"
 
 namespace KJS {
 
-    class RegExpObject : public JSObject {
+    class FunctionPrototype;
+    class ObjectPrototype;
+
+    class RegExpPrototype : public JSObject {
     public:
-        enum { Global, IgnoreCase, Multiline, Source, LastIndex };
-
-        RegExpObject(RegExpPrototype*, PassRefPtr<RegExp>);
-        virtual ~RegExpObject();
-
-        void setRegExp(PassRefPtr<RegExp> r) { m_regExp = r; }
-        RegExp* regExp() const { return m_regExp.get(); }
-
-        JSValue* test(ExecState*, const ArgList&);
-        JSValue* exec(ExecState*, const ArgList&);
-
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
-        void put(ExecState*, const Identifier&, JSValue*);
-        void putValueProperty(ExecState*, int token, JSValue*);
+        RegExpPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
-
-        void setLastIndex(double lastIndex) { m_lastIndex = lastIndex; }
-
-    private:
-        bool match(ExecState*, const ArgList&);
-
-        virtual CallType getCallData(CallData&);
-
-        RefPtr<RegExp> m_regExp;
-        double m_lastIndex;
     };
 
 } // namespace KJS
 
-#endif // RegExpObject_h
+#endif // RegExpPrototype_h

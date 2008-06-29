@@ -44,6 +44,7 @@
 #include "Parser.h"
 #include "Profiler.h"
 #include "RegExpObject.h"
+#include "RegExpPrototype.h"
 #include "Register.h"
 #include "debugger.h"
 #include "operations.h"

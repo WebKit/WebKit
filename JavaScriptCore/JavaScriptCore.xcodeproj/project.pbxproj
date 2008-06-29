@@ -245,6 +245,9 @@
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
 		BC18C5300E16FCEB00B34460 /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* grammar.h */; };
+		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
+		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
+		BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */; };
 		E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
 		E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */; };
 		E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
@@ -615,6 +618,11 @@
 		BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanPrototype.cpp; sourceTree = "<group>"; };
 		BC7952350E15EB5600A898AB /* BooleanPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanPrototype.h; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
+		BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpConstructor.cpp; sourceTree = "<group>"; };
+		BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpConstructor.h; sourceTree = "<group>"; };
+		BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpPrototype.cpp; sourceTree = "<group>"; };
+		BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpPrototype.h; sourceTree = "<group>"; };
+		BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpConstructor.lut.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
@@ -931,6 +939,7 @@
 				BC18C52D0E16FCE100B34460 /* lexer.lut.h */,
 				BC18C5290E16FCC200B34460 /* MathObject.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
+				BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */,
 				BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */,
 				BC18C5250E16FCA700B34460 /* StringPrototype.lut.h */,
 			);
@@ -1101,8 +1110,12 @@
 				65C02FBB0637462A003E7EE6 /* protect.h */,
 				F692A87D0255597D01FF60F7 /* regexp.cpp */,
 				F692A87E0255597D01FF60F7 /* regexp.h */,
+				BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */,
+				BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */,
 				F692A87B0255597D01FF60F7 /* RegExpObject.cpp */,
 				F692A87C0255597D01FF60F7 /* RegExpObject.h */,
+				BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */,
+				BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */,
 				9374D3A8038D9D74008635CE /* ScopeChain.cpp */,
 				9374D3A7038D9D74008635CE /* ScopeChain.h */,
 				7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */,
@@ -1357,6 +1370,9 @@
 				BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */,
 				BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */,
 				BC18C5300E16FCEB00B34460 /* grammar.h in Headers */,
+				BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */,
+				BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */,
+				BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

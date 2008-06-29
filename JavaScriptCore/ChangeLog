@@ -1,5 +1,29 @@
 2008-06-28  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Darin Adler.
+
+        Splits RegExpConstructor and RegExpPrototype out of RegExpObject.h/cpp
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/RegExpConstructor.cpp: Copied from kjs/RegExpObject.cpp.
+        * kjs/RegExpConstructor.h: Copied from kjs/RegExpObject.h.
+        * kjs/RegExpObject.cpp:
+        * kjs/RegExpObject.h:
+        * kjs/RegExpPrototype.cpp: Copied from kjs/RegExpObject.cpp.
+        * kjs/RegExpPrototype.h: Copied from kjs/RegExpObject.h.
+        * kjs/StringPrototype.cpp:
+        * kjs/internal.cpp:
+
+2008-06-28  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne builds.
 
         * kjs/StringConstructor.cpp:

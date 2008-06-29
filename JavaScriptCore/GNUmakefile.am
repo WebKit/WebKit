@@ -22,6 +22,7 @@ javascriptcore_built_nosources += \
 	JavaScriptCore/kjs/date_object.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
 	JavaScriptCore/kjs/NumberConstructor.lut.h \
+	JavaScriptCore/kjs/RegExpConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \
@@ -117,7 +118,9 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/PropertyMap.cpp \
 	JavaScriptCore/kjs/PropertySlot.cpp \
 	JavaScriptCore/kjs/regexp.cpp \
+	JavaScriptCore/kjs/RegExpConstructor.cpp \
 	JavaScriptCore/kjs/RegExpObject.cpp \
+	JavaScriptCore/kjs/RegExpPrototype.cpp \
 	JavaScriptCore/kjs/ScopeChain.cpp \
 	JavaScriptCore/kjs/StringConstructor.cpp \
 	JavaScriptCore/kjs/StringObject.cpp \
@@ -214,6 +217,7 @@ CLEANFILES += \
 	JavaScriptCore/kjs/date_object.lut.h \
 	JavaScriptCore/kjs/MathObject.lut.h \
 	JavaScriptCore/kjs/NumberConstructor.lut.h \
+	JavaScriptCore/kjs/RegExpConstructor.lut.h \
 	JavaScriptCore/kjs/RegExpObject.lut.h \
 	JavaScriptCore/kjs/StringPrototype.lut.h \
 	JavaScriptCore/pcre/chartables.c \

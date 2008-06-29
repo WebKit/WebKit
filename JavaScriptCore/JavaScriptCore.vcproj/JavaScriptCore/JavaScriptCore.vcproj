@@ -645,11 +645,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\RegExpConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\RegExpConstructor.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\RegExpObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\RegExpObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\RegExpPrototype.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\RegExpPrototype.h"
 				>
 			</File>
 			<File
@@ -778,6 +794,10 @@
 				</File>
 				<File
 					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\NumberConstructor.lut.h"
+					>
+				</File>
+				<File
+					RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\RegExpConstructor.lut.h"
 					>
 				</File>
 				<File
