@@ -747,6 +747,19 @@ createTestWithExecOrderTest("throwingIndexBase[nonThrowingIndexThrowProperty] = 
 
 createTestWithExecOrderTest("throwingIndexBase[throwingIndex] = valueForAssignment", "throwingIndexBase, ***throw***")();
 
+testCount++;
+(function() {
+    executionOrder = "";
+    var result = true;
+    try {
+        result = Number.prototype.toString.call(false);
+    } catch (e) {
+        if (result == true)
+            pass("Number.prototype.toString.call(false)");
+        else
+            fail("Number.prototype.toString.call(false) writes to return destination before throwing an exception");
+    }
+})();
 
 log("Passed " + passCount + " of " + testCount + " tests.");
 </script>

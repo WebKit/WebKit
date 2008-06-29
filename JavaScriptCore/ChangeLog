@@ -1,3 +1,13 @@
+2008-06-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Sam.
+
+        When executing a native call, check for an exception before writing the
+        return value.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-06-28  Mark Rowe  <mrowe@apple.com>
 
         Build fix.  Flag headers as private or public as is appropriate.

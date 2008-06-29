@@ -159,5 +159,6 @@ PASS: nonThrowingIndexBase[throwingIndex] = valueForAssignment
 PASS: throwingIndexBase[nonThrowingIndexNoThrowProperty] = valueForAssignment
 PASS: throwingIndexBase[nonThrowingIndexThrowProperty] = valueForAssignment
 PASS: throwingIndexBase[throwingIndex] = valueForAssignment
-Passed 157 of 157 tests.
+PASS: Number.prototype.toString.call(false)
+Passed 158 of 158 tests.
 
