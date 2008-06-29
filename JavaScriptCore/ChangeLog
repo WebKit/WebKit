@@ -1,5 +1,13 @@
 2008-06-29  Sam Weinig  <sam@webkit.org>
 
+        Fix non-AllInOne build.
+
+        * kjs/DateConstructor.cpp:
+        * kjs/DateMath.cpp:
+        * kjs/JSObject.cpp:
+
+2008-06-29  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Oliver Hunt.
 
         Splits DateConstructor and DatePrototype out of date_object.h/cpp

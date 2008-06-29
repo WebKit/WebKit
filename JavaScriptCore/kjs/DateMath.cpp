@@ -63,6 +63,8 @@
 #include <sys/timeb.h>
 #endif
 
+using namespace WTF;
+
 namespace KJS {
 
 /* Constants */
