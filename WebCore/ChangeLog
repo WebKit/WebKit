@@ -1,5 +1,16 @@
 2008-06-29  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix SVG layout test regressions
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Made this function work
+        again with primitive values, because the @font-face rules SVG fonts
+        create still use a single primitive value rather than a value list.
+
+2008-06-29  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - fix <rdar://problem/5734440> Specifying a font-weight for @font-face not working
