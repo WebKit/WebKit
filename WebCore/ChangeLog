@@ -1,3 +1,21 @@
+2008-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - WebCore part of <rdar://problem/3881497> Writing direction context menu item has no effect on text typed in Safari
+
+        * WebCore.base.exp: Removed Editor::setBaseWritingDirection() and added
+        Frame::setSelectionBaseWritingDirection().
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Changed to
+        call Frame::setSelectionBaseWritingDirection().
+        * page/Frame.cpp:
+        (WebCore::Frame::setSelectionBaseWritingDirection): Added. If the
+        focused node is a text field or text area, changes its 'dir' attribute.
+        This is what IE does when the user changes the writing direction in a
+        text control. Otherwise, calls down to Editor::setBaseWritingDirection().
+        * page/Frame.h:
+
 2008-06-30  David Kilzer  <ddkilzer@apple.com>
 
         Improve HTMLObjectElement data encapsulation

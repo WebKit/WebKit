@@ -1,3 +1,16 @@
+2008-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        - WebKit/mac part of <rdar://problem/3881497> Writing direction context menu item has no effect on text typed in Safari
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView toggleBaseWritingDirection:]): Changed to call
+        WebCore::Frame::setSelectionBaseWritingDirection() instead of
+        WebCore::Editor::setBaseWritingDirection().
+        (-[WebHTMLView changeBaseWritingDirection:]): Ditto.
+        (-[WebHTMLView _changeBaseWritingDirectionTo:]): Ditto.
+
 2008-06-28  Darin Adler  <darin@apple.com>
 
         - fix build
