@@ -1,3 +1,11 @@
+2008-06-30  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - remove unused member variable
+
+        * page/Page.h: Removed Page::m_focusedNode.
+
 2008-06-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
