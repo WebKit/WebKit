@@ -198,7 +198,7 @@ namespace WTF {
 
     template<typename P> struct HashTraits<COMPtr<P> > : GenericHashTraits<COMPtr<P> > {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(P** slot) { *slot = reinterpret_cast<P*>(-1); }
+        static void constructDeletedValue(COMPtr<P>& slot) { slot.releaseRef(); *&slot = reinterpret_cast<P*>(-1); }
         static bool isDeletedValue(const COMPtr<P>& value) { return value == reinterpret_cast<P*>(-1); }
     };
 

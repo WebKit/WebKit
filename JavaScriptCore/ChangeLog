@@ -1,3 +1,24 @@
+2008-06-30  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5954749> Assertion failure due to HashTable's use of
+        operator&
+
+        HashTable was passing &value to constructDeletedValue, which in
+        classes like WebCore::COMPtr would cause an assertion. We now pass
+        value by reference instead of by address so that the HashTraits
+        implementations have more flexibility in constructing the deleted
+        value.
+
+        Reviewed by Ada Chan.
+
+        * VM/CodeGenerator.h: Updated for changes to HashTraits.
+        * wtf/HashTable.h:
+        (WTF::::deleteBucket): Changed to pass bucket by reference instead of
+        by address.
+        (WTF::::checkKey): Ditto.
+        * wtf/HashTraits.h:
+        (WTF::): Updated HashTraits for HashTable change.
+
 2008-06-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Cameron Zwarich.

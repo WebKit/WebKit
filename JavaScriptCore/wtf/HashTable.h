@@ -364,7 +364,7 @@ namespace WTF {
         void reinsert(ValueType&);
 
         static void initializeBucket(ValueType& bucket) { new (&bucket) ValueType(Traits::emptyValue()); }
-        static void deleteBucket(ValueType& bucket) { bucket.~ValueType(); Traits::constructDeletedValue(&bucket); }
+        static void deleteBucket(ValueType& bucket) { bucket.~ValueType(); Traits::constructDeletedValue(bucket); }
 
         FullLookupType makeLookupResult(ValueType* position, bool found, unsigned hash)
             { return FullLookupType(LookupType(position, found), hash); }
@@ -444,7 +444,7 @@ namespace WTF {
         ASSERT(!HashTranslator::equal(KeyTraits::emptyValue(), key));
         ValueType deletedValue = Traits::emptyValue();
         deletedValue.~ValueType();
-        Traits::constructDeletedValue(&deletedValue);
+        Traits::constructDeletedValue(deletedValue);
         ASSERT(!HashTranslator::equal(Extractor::extract(deletedValue), key));
         new (&deletedValue) ValueType(Traits::emptyValue());
     }

@@ -1,3 +1,21 @@
+2008-06-30  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://5954749> Assertion failure due to HashTable's use of
+        operator&
+
+        Reviewed by Ada Chan.
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        * dom/Document.h:
+        * dom/StyledElement.cpp:
+        * platform/graphics/FontCache.cpp:
+        * platform/graphics/IntSizeHash.h:
+        (WTF::):
+        * platform/text/StringHash.h:
+        * platform/win/COMPtr.h:
+        * svg/SVGAnimatedTemplate.h:
+        Updated all custom HashTraits for HashTable changes.
+
 2008-06-30  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build.

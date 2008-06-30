@@ -38,7 +38,7 @@ namespace WTF {
     template<> struct HashTraits<IntSize> : GenericHashTraits<IntSize> {
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
-        static void constructDeletedValue(IntSize* slot) { new (slot) IntSize(-1, -1); }
+        static void constructDeletedValue(IntSize& slot) { new (&slot) IntSize(-1, -1); }
         static bool isDeletedValue(const IntSize& value) { return value.width() == -1 && value.height() == -1; }
     };
 } // namespace WTF

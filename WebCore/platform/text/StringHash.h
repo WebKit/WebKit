@@ -233,7 +233,7 @@ namespace WTF {
 
     template<> struct HashTraits<WebCore::String> : GenericHashTraits<WebCore::String> {
         static const bool emptyValueIsZero = true;
-        static void constructDeletedValue(WebCore::String* slot) { new (slot) WebCore::String(HashTableDeletedValue); }
+        static void constructDeletedValue(WebCore::String& slot) { new (&slot) WebCore::String(HashTableDeletedValue); }
         static bool isDeletedValue(const WebCore::String& slot) { return slot.isHashTableDeletedValue(); }
     };
 

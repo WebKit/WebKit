@@ -90,9 +90,9 @@ namespace WebCore {
     struct SVGAnimatedTypeWrapperKeyHashTraits : WTF::GenericHashTraits<SVGAnimatedTypeWrapperKey> {
         static const bool emptyValueIsZero = true;
         
-        static void constructDeletedValue(SVGAnimatedTypeWrapperKey* slot)
+        static void constructDeletedValue(SVGAnimatedTypeWrapperKey& slot)
         {
-            new (slot) SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValue);
+            new (&slot) SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValue);
         }
         static bool isDeletedValue(const SVGAnimatedTypeWrapperKey& value)
         {

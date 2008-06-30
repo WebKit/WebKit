@@ -295,7 +295,7 @@ namespace KJS {
 
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
         struct JSValueHashTraits : HashTraits<JSValue*> {
-            static void constructDeletedValue(JSValue** slot) { *slot = JSImmediate::impossibleValue(); }
+            static void constructDeletedValue(JSValue*& slot) { slot = JSImmediate::impossibleValue(); }
             static bool isDeletedValue(JSValue* value) { return value == JSImmediate::impossibleValue(); }
         };
 

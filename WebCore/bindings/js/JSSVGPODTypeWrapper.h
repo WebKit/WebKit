@@ -232,9 +232,9 @@ struct PODTypeReadWriteHashInfoTraits : WTF::GenericHashTraits<PODTypeReadWriteH
         return key;
     }
 
-    static void constructDeletedValue(PODTypeReadWriteHashInfo<PODType, PODTypeCreator>* slot)
+    static void constructDeletedValue(PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& slot)
     {
-        new (slot) PODTypeReadWriteHashInfo<PODType, PODTypeCreator>(WTF::HashTableDeletedValue);
+        new (&slot) PODTypeReadWriteHashInfo<PODType, PODTypeCreator>(WTF::HashTableDeletedValue);
     }
     static bool isDeletedValue(const PODTypeReadWriteHashInfo<PODType, PODTypeCreator>& value)
     {
