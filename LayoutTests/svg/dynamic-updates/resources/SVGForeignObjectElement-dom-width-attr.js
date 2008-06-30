@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-dom-width-attr.js
-// [Expected rendering result] 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'width' attribute of the SVGForeignObjectElement object")
 createSVGTestCase();
@@ -7,7 +7,7 @@ createSVGTestCase();
 var foreignObjectElement = createSVGElement("foreignObject");
 foreignObjectElement.setAttribute("x", "100");
 foreignObjectElement.setAttribute("y", "80");
-foreignObjectElement.setAttribute("width", "0");
+foreignObjectElement.setAttribute("width", "2");
 foreignObjectElement.setAttribute("height", "150");
 
 var htmlDivElement = document.createElementNS(xhtmlNS, "xhtml:div");
@@ -17,15 +17,13 @@ htmlDivElement.textContent = "Test passed";
 foreignObjectElement.appendChild(htmlDivElement);
 rootSVGElement.appendChild(foreignObjectElement);
 
-shouldBeEqualToString("foreignObjectElement.getAttribute('width')", "0");
+shouldBeEqualToString("foreignObjectElement.getAttribute('width')", "2");
 
 function executeTest() {
     foreignObjectElement.setAttribute("width", "150");
     shouldBeEqualToString("foreignObjectElement.getAttribute('width')", "150");
 
-    waitForClickEvent(foreignObjectElement);
-    triggerUpdate();
+    completeTest();
 }
 
-executeTest();
-var successfullyParsed = true;
+startTest(foreignObjectElement, 101, 100);

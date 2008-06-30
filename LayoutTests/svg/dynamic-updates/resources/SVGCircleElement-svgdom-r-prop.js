@@ -7,19 +7,17 @@ createSVGTestCase();
 var circleElement = createSVGElement("circle");
 circleElement.setAttribute("cx", "150");
 circleElement.setAttribute("cy", "150");
-circleElement.setAttribute("r", "0");
+circleElement.setAttribute("r", "1");
 circleElement.setAttribute("fill", "green");
 
 rootSVGElement.appendChild(circleElement);
-shouldBe("circleElement.r.baseVal.value", "0");
+shouldBe("circleElement.r.baseVal.value", "1");
 
 function executeTest() {
     circleElement.r.baseVal.value = "150";
     shouldBe("circleElement.r.baseVal.value", "150");
 
-    waitForClickEvent(circleElement); 
-    triggerUpdate();
+    completeTest();
 }
 
-executeTest();
-var successfullyParsed = true;
+startTest(circleElement, 150, 150);

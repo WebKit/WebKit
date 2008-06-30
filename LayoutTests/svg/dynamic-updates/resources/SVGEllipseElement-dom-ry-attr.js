@@ -1,5 +1,5 @@
 // [Name] SVGEllipseElement-dom-ry-attr.js
-// [Expected rendering result] green ellipse - and a series of PASS mesages
+// [Expected rendering result] with rx = ry (in fact a circle) - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'ry' attribute of the SVGEllipseElement object")
 createSVGTestCase();
@@ -7,20 +7,18 @@ createSVGTestCase();
 var ellipseElement = createSVGElement("ellipse");
 ellipseElement.setAttribute("cx", "150");
 ellipseElement.setAttribute("cy", "150");
-ellipseElement.setAttribute("rx", "100");
-ellipseElement.setAttribute("ry", "0");
+ellipseElement.setAttribute("rx", "150");
+ellipseElement.setAttribute("ry", "10");
 ellipseElement.setAttribute("fill", "green");
 
 rootSVGElement.appendChild(ellipseElement);
-shouldBeEqualToString("ellipseElement.getAttribute('ry')", "0");
+shouldBeEqualToString("ellipseElement.getAttribute('ry')", "10");
 
 function executeTest() {
     ellipseElement.setAttribute("ry", "150");
     shouldBeEqualToString("ellipseElement.getAttribute('ry')", "150");
 
-    waitForClickEvent(ellipseElement);
-    triggerUpdate();
+    completeTest();
 }
 
-executeTest();
-var successfullyParsed = true;
+startTest(ellipseElement, 150, 150);

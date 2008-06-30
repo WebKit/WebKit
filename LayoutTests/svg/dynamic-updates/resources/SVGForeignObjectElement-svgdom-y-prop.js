@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-svgdom-y-prop.js
-// [Expected rendering result] 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
 
 description("Tests dynamic updates of the 'y' property of the SVGForeignObjectElement object")
 createSVGTestCase();
@@ -23,9 +23,7 @@ function executeTest() {
     foreignObjectElement.y.baseVal.value = "80";
     shouldBe("foreignObjectElement.y.baseVal.value", "80");
 
-    waitForClickEvent(foreignObjectElement);
-    triggerUpdate();
+    completeTest();
 }
 
-executeTest();
-var successfullyParsed = true;
+startTest(foreignObjectElement, 150, 50);

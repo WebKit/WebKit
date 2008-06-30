@@ -1,3 +1,107 @@
+2008-06-30  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fix all existing tests in svg/dynamic-updates to actually reflect repainting changes, by
+        removing the timing dependency. Instead model them like frame-getSVGDocument.html by
+        not including the <script src="js-test-post.js"> element within the TEMPLATE.html but
+        by dynamically injecting it, if the test actually finished.
+
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.checksum:
+        * platform/mac-leopard/svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.checksum:
+        * svg/dynamic-updates/SVGAElement-dom-href-attr.html:
+        * svg/dynamic-updates/SVGAElement-dom-target-attr.html:
+        * svg/dynamic-updates/SVGAElement-svgdom-href-prop.html:
+        * svg/dynamic-updates/SVGAElement-svgdom-target-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-dom-cx-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-dom-cy-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-dom-r-attr.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cx-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-cy-prop.html:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop-expected.txt:
+        * svg/dynamic-updates/SVGCircleElement-svgdom-r-prop.html:
+        * svg/dynamic-updates/SVGClipPathElement-dom-clipPathUnits-attr.html:
+        * svg/dynamic-updates/SVGClipPathElement-svgdom-clipPathUnits-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cx-attr-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cx-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cy-attr-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-dom-cy-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-rx-attr-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-dom-rx-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-dom-ry-attr-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-dom-ry-attr.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cx-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-cy-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-rx-prop.html:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop-expected.txt:
+        * svg/dynamic-updates/SVGEllipseElement-svgdom-ry-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr-expected.txt:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-height-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr-expected.txt:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-width-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-x-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-dom-y-attr.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop-expected.txt:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-height-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop-expected.txt:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-width-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-x-prop.html:
+        * svg/dynamic-updates/SVGForeignObjectElement-svgdom-y-prop.html:
+        * svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-rx-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-ry-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-rx-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-ry-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-height-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-width-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-x-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-y-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-height-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-width-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-x-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-y-prop.js:
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+        * svg/dynamic-updates/resources/TEMPLATE.html:
+
 2008-06-29  Dan Bernstein  <mitz@apple.com>
 
         - add a missing file from the last check-in
