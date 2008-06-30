@@ -1,5 +1,11 @@
 2008-06-29  Dan Bernstein  <mitz@apple.com>
 
+        - add a missing file from the last check-in
+
+        * fast/css/resources/font-face-descriptor-multiple-values-parsing.js: Added.
+
+2008-06-29  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Sam Weinig.
 
         - tests for <rdar://problem/5734440> Specifying a font-weight for @font-face not working
