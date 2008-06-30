@@ -1,3 +1,25 @@
+2008-06-30  David Kilzer  <ddkilzer@apple.com>
+
+        Improve HTMLObjectElement data encapsulation
+
+        Reviewed by Dave Hyatt.
+
+        HTMLObjectElement has some public member variables that should be
+        private with accessor methods.
+
+        No test cases added since there is no change in behavior.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::HTMLObjectElement): Reorder
+        initialization of member variables to match defined order in header.
+        * html/HTMLObjectElement.h:
+        (WebCore::HTMLObjectElement::classId): Added.
+        (WebCore::HTMLObjectElement::url): Added.
+        (WebCore::HTMLObjectElement::serviceType): Added.
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget): Use new accessor methods
+        in HTMLObjectElement now that its member variables are private.
+
 2008-06-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

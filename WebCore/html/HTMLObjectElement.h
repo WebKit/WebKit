@@ -104,21 +104,25 @@ public:
 
     bool isDocNamedItem() const { return m_docNamedItem; }
 
+    const String& classId() const { return m_classId; }
+    const String& url() const { return m_url; }
+    const String& serviceType() const { return m_serviceType; }
+
     bool containsJavaApplet() const;
 
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
+private:
+    void updateDocNamedItem();
+
+    AtomicString m_id;
     String m_serviceType;
     String m_url;
     String m_classId;
+    bool m_docNamedItem : 1;
     bool m_needWidgetUpdate : 1;
     bool m_useFallbackContent : 1;
     OwnPtr<HTMLImageLoader> m_imageLoader;
-
-private:
-    void updateDocNamedItem();
-    AtomicString m_id;
-    bool m_docNamedItem;
 };
 
 }

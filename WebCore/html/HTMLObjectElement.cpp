@@ -53,9 +53,9 @@ using namespace HTMLNames;
 
 HTMLObjectElement::HTMLObjectElement(Document* doc, bool createdByParser) 
     : HTMLPlugInElement(objectTag, doc)
+    , m_docNamedItem(true)
     , m_needWidgetUpdate(!createdByParser)
     , m_useFallbackContent(false)
-    , m_docNamedItem(true)
 {
 }
 
