@@ -1,3 +1,19 @@
+2008-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/6014209>
+        Crash when loading manifest from application cache fails
+        
+        There is no need to set any handles to 0 after calling cacheUpdateFailed(), since
+        that is done inside the function. Furthermore, after calling cacheUpdateFailed() the cache
+        group could be deleted causing us to access freed memory and then crashing.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::didReceiveResponse):
+        (WebCore::ApplicationCacheGroup::didFail):
+        (WebCore::ApplicationCacheGroup::didFailToLoadManifest):
+
 2008-06-30  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5954749> Assertion failure due to HashTable's use of
