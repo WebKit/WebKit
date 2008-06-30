@@ -1936,8 +1936,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
            Sets register value on register base as the property named
            by the immediate number property. Base is converted to
-           object first. register property is nominally converted to
-           string but numbers are treated more efficiently.
+           object first.
 
            Unlike many opcodes, this one does not write any output to
            the register file.
