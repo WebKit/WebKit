@@ -1,0 +1,31 @@
+<style>
+    @font-face {
+        font-family: test-one;
+        src: local(Helvetica);
+        font-weight: 100, 900;
+    }
+
+    @font-face {
+        font-family: test-one;
+        src: local(Courier);
+        font-weight: 400;
+    }
+</style>
+<p>
+    This tests <tt>@font-face</tt> rules with font descriptors that specify
+    multiple values.
+</p>
+<p>
+    Helvetica is assigned to weights 100 and 900 while courier is assigned to 400. Faces are assigned to other weights are according to the heuristic in the CSS3 Web Fonts working draft.
+</p>
+<div style="font-family: test-one; font-size: 36px;">
+    <span style="font-weight: 100;">100</span>
+    <span style="font-weight: 200;">200</span>
+    <span style="font-weight: 300;">300</span>
+    <span style="font-weight: 400;">400</span>
+    <span style="font-weight: 500;">500</span>
+    <span style="font-weight: 600;">600</span>
+    <span style="font-weight: 700;">700</span>
+    <span style="font-weight: 800;">800</span>
+    <span style="font-weight: 900;">900</span>
+</div>

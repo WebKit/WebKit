@@ -1,3 +1,46 @@
+2008-06-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5734440> Specifying a font-weight for @font-face not working
+
+        Tests: fast/css/font-face-descriptor-multiple-values-parsing.html
+               fast/css/font-face-descriptor-multiple-values.html
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Changed to work with value
+        lists for the descriptor properties.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser): Initialize m_hasFontFaceOnlyValues.
+        (WebCore::CSSParser::parseValue): Added a call to
+        deleteFontFaceOnlyValues() if necessary.
+        (WebCore::CSSParser::parseDeclaration): Ditto.
+        (WebCore::CSSParser::clearProperties): Added code to reset
+        m_hasFontFaceOnlyValues to false.
+        (WebCore::CSSParser::parseFontStyle): Added. If there is a single
+        valid identifier other than 'all', creates a CSSPrimitiveValue and
+        assigns it to the property. If 'all' is the only value, or if there are
+        multiple valid identifiers that are not 'all', creates a CSSValueList
+        and assigns it to the property, and sets m_hasFontFaceOnlyValues to
+        true.
+        (WebCore::CSSParser::parseFontVariant): Ditto.
+        (WebCore::CSSParser::parseFontWeight): Ditto.
+        (WebCore::CSSParser::createStyleRule): Added a call to
+        deleteFontFaceOnlyValues().
+        (WebCore::CSSParser::createFontFaceRule): Added code to change
+        font descriptor properties that had only one value, and therefore were
+        assigned a CSSPrimitiveValue, into CSSValueLists containing that value.
+        (WebCore::CSSParser::deleteFontFaceOnlyValues): Added. Retroactively
+        invalidates font descriptor properties that had values that are only
+        allowed in @font-face. Those are identified by having CSSValueLists
+        rather than CSSPrimitiveValues as their values.
+        * css/CSSParser.h: Added m_hasFontFaceOnlyValues, a flag that says that
+        font descriptor property values that are only valid in @font-face were
+        encountered. This is used when the style declaration is created (and we
+        finally know if it is @font-face or not) to delete invalid properties
+        if needed.
+
 2008-06-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam and Cameron.

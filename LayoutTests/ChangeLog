@@ -1,3 +1,16 @@
+2008-06-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - tests for <rdar://problem/5734440> Specifying a font-weight for @font-face not working
+
+        * fast/css/font-face-descriptor-multiple-values-parsing-expected.txt: Added.
+        * fast/css/font-face-descriptor-multiple-values-parsing.html: Added.
+        * fast/css/font-face-descriptor-multiple-values.html: Added.
+        * platform/mac/fast/css/font-face-descriptor-multiple-values-expected.checksum: Added.
+        * platform/mac/fast/css/font-face-descriptor-multiple-values-expected.png: Added.
+        * platform/mac/fast/css/font-face-descriptor-multiple-values-expected.txt: Added.
+
 2008-06-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by darin.

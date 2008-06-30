@@ -97,7 +97,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     CSSValueList* familyList = static_cast<CSSValueList*>(fontFamily.get());
     if (!familyList->length())
         return;
-        
+
     CSSValueList* srcList = static_cast<CSSValueList*>(src.get());
     if (!srcList->length())
         return;
@@ -106,59 +106,116 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
     unsigned traitsMask = 0;
 
-    if (RefPtr<CSSValue> fontStyle = style->getPropertyCSSValue(CSSPropertyFontStyle))
-        traitsMask |= static_cast<CSSPrimitiveValue*>(fontStyle.get())->getIdent() == CSSValueNormal ? FontStyleNormalMask : FontStyleItalicMask;
-    else
+    if (RefPtr<CSSValue> fontStyle = style->getPropertyCSSValue(CSSPropertyFontStyle)) {
+        if (!fontStyle->isValueList())
+            return;
+
+        CSSValueList* styleList = static_cast<CSSValueList*>(fontStyle.get());
+        unsigned numStyles = styleList->length();
+        if (!numStyles)
+            return;
+
+        for (unsigned i = 0; i < numStyles; ++i) {
+            switch (static_cast<CSSPrimitiveValue*>(styleList->itemWithoutBoundsCheck(i))->getIdent()) {
+                case CSSValueAll:
+                    traitsMask |= FontStyleMask;
+                    break;
+                case CSSValueNormal:
+                    traitsMask |= FontStyleNormalMask;
+                    break;
+                case CSSValueItalic:
+                case CSSValueOblique:
+                    traitsMask |= FontStyleItalicMask;
+                    break;
+                default:
+                    break;
+            }
+        }
+    } else
         traitsMask |= FontStyleMask;
 
     if (RefPtr<CSSValue> fontWeight = style->getPropertyCSSValue(CSSPropertyFontWeight)) {
-        switch (static_cast<CSSPrimitiveValue*>(fontWeight.get())->getIdent()) {
-            case CSSValueBolder:
-            case CSSValueBold:
-            case CSSValue700:
-                traitsMask |= FontWeight700Mask;
-                break;
-            case CSSValueNormal:
-            case CSSValue400:
-                traitsMask |= FontWeight400Mask;
-                break;
-            case CSSValue900:
-                traitsMask |= FontWeight900Mask;
-                break;
-            case CSSValue800:
-                traitsMask |= FontWeight800Mask;
-                break;
-            case CSSValue600:
-                traitsMask |= FontWeight600Mask;
-                break;
-            case CSSValue500:
-                traitsMask |= FontWeight500Mask;
-                break;
-            case CSSValue300:
-                traitsMask |= FontWeight300Mask;
-                break;
-            case CSSValueLighter:
-            case CSSValue200:
-                traitsMask |= FontWeight200Mask;
-                break;
-            case CSSValue100:
-                traitsMask |= FontWeight100Mask;
-                break;
-            default:
-                break;
+        if (!fontWeight->isValueList())
+            return;
+
+        CSSValueList* weightList = static_cast<CSSValueList*>(fontWeight.get());
+        unsigned numWeights = weightList->length();
+        if (!numWeights)
+            return;
+
+        for (unsigned i = 0; i < numWeights; ++i) {
+            switch (static_cast<CSSPrimitiveValue*>(weightList->itemWithoutBoundsCheck(i))->getIdent()) {
+                case CSSValueAll:
+                    traitsMask |= FontWeightMask;
+                    break;
+                case CSSValueBolder:
+                case CSSValueBold:
+                case CSSValue700:
+                    traitsMask |= FontWeight700Mask;
+                    break;
+                case CSSValueNormal:
+                case CSSValue400:
+                    traitsMask |= FontWeight400Mask;
+                    break;
+                case CSSValue900:
+                    traitsMask |= FontWeight900Mask;
+                    break;
+                case CSSValue800:
+                    traitsMask |= FontWeight800Mask;
+                    break;
+                case CSSValue600:
+                    traitsMask |= FontWeight600Mask;
+                    break;
+                case CSSValue500:
+                    traitsMask |= FontWeight500Mask;
+                    break;
+                case CSSValue300:
+                    traitsMask |= FontWeight300Mask;
+                    break;
+                case CSSValueLighter:
+                case CSSValue200:
+                    traitsMask |= FontWeight200Mask;
+                    break;
+                case CSSValue100:
+                    traitsMask |= FontWeight100Mask;
+                    break;
+                default:
+                    break;
+            }
         }
     } else
         traitsMask |= FontWeightMask;
 
-    if (RefPtr<CSSValue> fontVariant = style->getPropertyCSSValue(CSSPropertyFontVariant))
-        traitsMask |= static_cast<CSSPrimitiveValue*>(fontVariant.get())->getIdent() == CSSValueSmallCaps ? FontVariantSmallCapsMask : FontVariantNormalMask;
-    else
+    if (RefPtr<CSSValue> fontVariant = style->getPropertyCSSValue(CSSPropertyFontVariant)) {
+        if (!fontVariant->isValueList())
+            return;
+
+        CSSValueList* variantList = static_cast<CSSValueList*>(fontVariant.get());
+        unsigned numVariants = variantList->length();
+        if (!numVariants)
+            return;
+
+        for (unsigned i = 0; i < numVariants; ++i) {
+            switch (static_cast<CSSPrimitiveValue*>(variantList->itemWithoutBoundsCheck(i))->getIdent()) {
+                case CSSValueAll:
+                    traitsMask |= FontVariantMask;
+                    break;
+                case CSSValueNormal:
+                    traitsMask |= FontVariantNormalMask;
+                    break;
+                case CSSValueSmallCaps:
+                    traitsMask |= FontVariantSmallCapsMask;
+                    break;
+                default:
+                    break;
+            }
+        }
+    } else
         traitsMask |= FontVariantNormalMask;
 
     // Each item in the src property's list is a single CSSFontFaceSource. Put them all into a CSSFontFace.
     RefPtr<CSSFontFace> fontFace;
 
-    int i;
     int srcLength = srcList->length();
 
     bool foundLocal = false;
@@ -167,7 +224,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
     bool foundSVGFont = false;
 #endif
 
-    for (i = 0; i < srcLength; i++) {
+    for (int i = 0; i < srcLength; i++) {
         // An item in the list either specifies a string (local font name) or a URL (remote font to download).
         CSSFontFaceSrcValue* item = static_cast<CSSFontFaceSrcValue*>(srcList->itemWithoutBoundsCheck(i));
         CSSFontFaceSource* source = 0;
@@ -218,7 +275,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
     // Hash under every single family name.
     int familyLength = familyList->length();
-    for (i = 0; i < familyLength; i++) {
+    for (int i = 0; i < familyLength; i++) {
         CSSPrimitiveValue* item = static_cast<CSSPrimitiveValue*>(familyList->itemWithoutBoundsCheck(i));
         String familyName;
         if (item->primitiveType() == CSSPrimitiveValue::CSS_STRING)
