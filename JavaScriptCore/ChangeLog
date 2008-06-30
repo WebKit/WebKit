@@ -1,3 +1,21 @@
+2008-06-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Make RegisterFile really unmap memory on destruction.
+
+        This fixes run-webkit-tests --threaded, which ran out of address space in a few seconds.
+
+        * VM/RegisterFile.cpp: (KJS::RegisterFile::~RegisterFile): Unmap all the memory, not just
+        1/4 of it.
+
+        * kjs/JSGlobalObject.h: Don't include RegisterFile.h, so that changes to it don't make
+        half of WebCore rebuild.
+
+        * VM/Machine.h: Don't forward declare RegisterFile, as RegisterFile.h is included already.
+
+        * VM/RegisterFile.h: (KJS::RegisterFile::RegisterFile): Assert that the allocation succeeded.
+
 2008-06-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Oliver.

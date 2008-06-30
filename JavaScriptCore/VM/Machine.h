@@ -45,7 +45,6 @@ namespace KJS {
     class JSGlobalObject;
     class ProgramNode;
     class Register;
-    class RegisterFile;
     class ScopeChainNode;
 
     enum DebugHookID {
