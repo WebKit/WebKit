@@ -91,7 +91,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/BooleanObject.cpp \
 	JavaScriptCore/kjs/BooleanPrototype.cpp \
 	JavaScriptCore/kjs/collector.cpp \
-	JavaScriptCore/kjs/date_object.cpp \
+	JavaScriptCore/kjs/DateInstance.cpp \
 	JavaScriptCore/kjs/DateConstructor.cpp \
 	JavaScriptCore/kjs/DatePrototype.cpp \
 	JavaScriptCore/kjs/debugger.cpp \

@@ -100,6 +100,7 @@
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
 		BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E90B0E1839DB000F9297 /* NativeErrorPrototype.h */; };
 		BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E98B0E183E38000F9297 /* ErrorInstance.h */; };
+		BC1166020E1997B4008066DD /* DateInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1166010E1997B1008066DD /* DateInstance.h */; };
 		BC18C3E40E16F5CD00B34460 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B78A0A4305AB00517CFC /* APICast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; };
@@ -118,7 +119,6 @@
 		BC18C3F40E16F5CD00B34460 /* completion.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB2BC5030F772101FCFE1D /* completion.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3F50E16F5CD00B34460 /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = F68EBB8C0255D4C601FF60F7 /* config.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C3F70E16F5CD00B34460 /* date_object.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8560255597D01FF60F7 /* date_object.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3F90E16F5CD00B34460 /* DateMath.h in Headers */ = {isa = PBXBuildFile; fileRef = D21202290AD4310C00ED79B6 /* DateMath.h */; };
 		BC18C3FA0E16F5CD00B34460 /* debugger.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8590255597D01FF60F7 /* debugger.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -604,6 +604,8 @@
 		BC02E9B70E1844CF000F9297 /* LabelStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LabelStack.cpp; sourceTree = "<group>"; };
 		BC02E9B80E184545000F9297 /* GetterSetter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetterSetter.cpp; sourceTree = "<group>"; };
 		BC02E9B90E184580000F9297 /* JSNumberCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNumberCell.cpp; sourceTree = "<group>"; };
+		BC1166000E1997B1008066DD /* DateInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInstance.cpp; sourceTree = "<group>"; };
+		BC1166010E1997B1008066DD /* DateInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstance.h; sourceTree = "<group>"; };
 		BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringConstructor.cpp; sourceTree = "<group>"; };
 		BC18C3C10E16EE3300B34460 /* StringConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.h; sourceTree = "<group>"; };
 		BC18C3C20E16EE3300B34460 /* StringObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringObject.cpp; sourceTree = "<group>"; };
@@ -680,8 +682,6 @@
 		F692A8520255597D01FF60F7 /* collector.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = collector.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8530255597D01FF60F7 /* collector.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = collector.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8540255597D01FF60F7 /* create_hash_table */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = text.script.perl; path = create_hash_table; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8550255597D01FF60F7 /* date_object.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = date_object.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		F692A8560255597D01FF60F7 /* date_object.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = date_object.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8580255597D01FF60F7 /* debugger.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = debugger.cpp; path = kjs/debugger.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		F692A8590255597D01FF60F7 /* debugger.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = debugger.h; path = kjs/debugger.h; sourceTree = "<group>"; tabWidth = 8; };
 		F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionPrototype.cpp; sourceTree = "<group>"; tabWidth = 8; };
@@ -1056,8 +1056,8 @@
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
 				BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
-				F692A8550255597D01FF60F7 /* date_object.cpp */,
-				F692A8560255597D01FF60F7 /* date_object.h */,
+				BC1166000E1997B1008066DD /* DateInstance.cpp */,
+				BC1166010E1997B1008066DD /* DateInstance.h */,
 				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,
 				BCD203460E17135E002C7E82 /* DateConstructor.h */,
 				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
@@ -1277,7 +1277,6 @@
 				BC18C3F50E16F5CD00B34460 /* config.h in Headers */,
 				BC18C3F60E16F5CD00B34460 /* ConstructData.h in Headers */,
 				5DE6E5B30E1728EC00180407 /* create_hash_table in Headers */,
-				BC18C3F70E16F5CD00B34460 /* date_object.h in Headers */,
 				BC18C3F90E16F5CD00B34460 /* DateMath.h in Headers */,
 				BC18C3FA0E16F5CD00B34460 /* debugger.h in Headers */,
 				BC18C3FB0E16F5CD00B34460 /* DebuggerCallFrame.h in Headers */,
@@ -1419,6 +1418,7 @@
 				BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */,
 				BC02E9130E1839DB000F9297 /* NativeErrorPrototype.h in Headers */,
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
+				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -20,7 +20,7 @@
  */
 
 #include "config.h"
-#include "date_object.h"
+#include "DateInstance.h"
 
 #include "DateMath.h"
 #include <math.h>

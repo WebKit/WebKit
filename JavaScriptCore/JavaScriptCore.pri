@@ -75,7 +75,7 @@ SOURCES += \
     kjs/BooleanPrototype.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
-    kjs/date_object.cpp \
+    kjs/DateInstance.cpp \
     kjs/DateConstructor.cpp \
     kjs/DateMath.cpp \
     kjs/DatePrototype.cpp \

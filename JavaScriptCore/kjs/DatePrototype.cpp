@@ -25,7 +25,7 @@
 #include "DateMath.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
-#include "date_object.h"
+#include "DateInstance.h"
 #include <float.h>
 #include <limits.h>
 #include <locale.h>
@@ -298,7 +298,7 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, const ArgList& args, in
 
 const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState::dateTable};
 
-/* Source for date_object.lut.h
+/* Source for DatePrototype.lut.h
    FIXME: We could use templates to simplify the UTC variants.
 @begin dateTable
   toString              dateProtoFuncToString                DontEnum|Function       0

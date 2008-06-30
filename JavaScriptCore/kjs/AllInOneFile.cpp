@@ -42,7 +42,7 @@
 #include "DateConstructor.cpp"
 #include "DateMath.cpp"
 #include "DatePrototype.cpp"
-#include "date_object.cpp"
+#include "DateInstance.cpp"
 #include "dtoa.cpp"
 #include "ErrorInstance.cpp"
 #include "ErrorPrototype.cpp"

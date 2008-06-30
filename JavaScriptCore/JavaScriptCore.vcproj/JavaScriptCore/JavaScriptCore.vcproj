@@ -341,11 +341,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\date_object.cpp"
+				RelativePath="..\..\kjs\DateInstance.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\date_object.h"
+				RelativePath="..\..\kjs\DateInstance.h"
 				>
 			</File>
 			<File

@@ -18,16 +18,16 @@
  *
  */
 
-#ifndef DATE_OBJECT_H
-#define DATE_OBJECT_H
+#ifndef DateInstance_h
+#define DateInstance_h
 
 #include "JSWrapperObject.h"
 
 namespace KJS {
 
-    struct GregorianDateTime;
     class FunctionPrototype;
     class ObjectPrototype;
+    struct GregorianDateTime;
 
     class DateInstance : public JSWrapperObject {
     public:
@@ -56,4 +56,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif
+#endif // DateInstance_h

@@ -1,5 +1,25 @@
 2008-06-30  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped (reluctantly) by Kevin McCullough.
+
+        Rename date_object.h/cpp to DateInstance.h/cpp
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/DateConstructor.cpp:
+        * kjs/DateInstance.cpp: Copied from kjs/date_object.cpp.
+        * kjs/DateInstance.h: Copied from kjs/date_object.h.
+        * kjs/DatePrototype.cpp:
+        * kjs/DatePrototype.h:
+        * kjs/date_object.cpp: Removed.
+        * kjs/date_object.h: Removed.
+
+2008-06-30  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Darin Adler.
 
         Remove internal.cpp and move its contents to there own .cpp files.
