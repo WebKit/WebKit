@@ -1,3 +1,25 @@
+2008-06-29  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19821: Merge the instruction pair (less, jfalse)
+        <https://bugs.webkit.org/show_bug.cgi?id=19821>
+        
+        This is a 2.4% win on SunSpider. I needed to add an ALWAYS_INLINE
+        intrinisc to CodeGenerator::rewindBinaryOp() to avoid a massive
+        regression in regexp-dna.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::rewindBinaryOp):
+        (KJS::CodeGenerator::emitJumpIfFalse):
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.cpp:
+        (KJS::):
+        * VM/Opcode.h:
+
 2008-06-29  Sam Weinig  <sam@webkit.org>
 
         Fix non-AllInOne builds.
