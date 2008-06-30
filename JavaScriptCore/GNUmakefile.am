@@ -46,13 +46,9 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSNotAnObject.cpp \
 	JavaScriptCore/VM/CodeBlock.cpp \
 	JavaScriptCore/VM/ExceptionHelpers.cpp \
-	JavaScriptCore/VM/Instruction.cpp \
 	JavaScriptCore/VM/JSPropertyNameIterator.cpp \
-	JavaScriptCore/VM/LabelID.cpp \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Opcode.cpp \
-	JavaScriptCore/VM/Register.cpp \
-	JavaScriptCore/VM/RegisterID.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
 	JavaScriptCore/pcre/pcre_exec.cpp \
 	JavaScriptCore/pcre/pcre_tables.cpp \

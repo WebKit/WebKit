@@ -1,5 +1,20 @@
 2008-06-30  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Kevin McCullough.
+
+        Remove empty files Instruction.cpp, LabelID.cpp, Register.cpp and RegisterID.cpp.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Instruction.cpp: Removed.
+        * VM/LabelID.cpp: Removed.
+        * VM/Register.cpp: Removed.
+        * VM/RegisterID.cpp: Removed.
+
+2008-06-30  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped (reluctantly) by Kevin McCullough.
 
         Rename date_object.h/cpp to DateInstance.h/cpp

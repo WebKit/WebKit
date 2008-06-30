@@ -53,14 +53,10 @@ SOURCES += \
     VM/CodeBlock.cpp \
     VM/CodeGenerator.cpp \
     VM/ExceptionHelpers.cpp \
-    VM/Instruction.cpp \
     VM/JSPropertyNameIterator.cpp \
-    VM/LabelID.cpp \
     VM/Machine.cpp \
     VM/Opcode.cpp \
-    VM/Register.cpp \
-    VM/RegisterFile.cpp \
-    VM/RegisterID.cpp
+    VM/RegisterFile.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time

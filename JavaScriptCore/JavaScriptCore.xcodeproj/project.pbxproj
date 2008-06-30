@@ -58,11 +58,7 @@
 		14909A2D0DCAF6CD00B29EB3 /* ExecState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD53F40A3E12D800BAF59C /* ExecState.cpp */; };
 		149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */; };
 		149B15EB0D81F986009CB8C7 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B15E50D81F986009CB8C7 /* Opcode.cpp */; };
-		149B16BB0D82583F009CB8C7 /* RegisterID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B16B90D82583F009CB8C7 /* RegisterID.cpp */; };
 		149B1AA00D86ED73009CB8C7 /* CodeBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */; };
-		149B1AA40D86ED7C009CB8C7 /* Instruction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B1AA20D86ED7C009CB8C7 /* Instruction.cpp */; };
-		149B20DA0D8A0891009CB8C7 /* LabelID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B20D80D8A0891009CB8C7 /* LabelID.cpp */; };
-		149B25020D8AF6D1009CB8C7 /* Register.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 149B25000D8AF6D1009CB8C7 /* Register.cpp */; };
 		14ABDF600A437FEF00ECCA01 /* JSCallbackObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */; };
 		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
@@ -449,15 +445,11 @@
 		149B15E80D81F986009CB8C7 /* CodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeGenerator.h; path = VM/CodeGenerator.h; sourceTree = "<group>"; };
 		149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeGenerator.cpp; path = VM/CodeGenerator.cpp; sourceTree = "<group>"; };
 		149B16B80D82583F009CB8C7 /* RegisterID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegisterID.h; path = VM/RegisterID.h; sourceTree = "<group>"; };
-		149B16B90D82583F009CB8C7 /* RegisterID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegisterID.cpp; path = VM/RegisterID.cpp; sourceTree = "<group>"; };
 		149B1A9D0D86ED73009CB8C7 /* CodeBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CodeBlock.h; path = VM/CodeBlock.h; sourceTree = "<group>"; };
 		149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CodeBlock.cpp; path = VM/CodeBlock.cpp; sourceTree = "<group>"; };
 		149B1AA10D86ED7C009CB8C7 /* Instruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Instruction.h; path = VM/Instruction.h; sourceTree = "<group>"; };
-		149B1AA20D86ED7C009CB8C7 /* Instruction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Instruction.cpp; path = VM/Instruction.cpp; sourceTree = "<group>"; };
 		149B20D70D8A0891009CB8C7 /* LabelID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LabelID.h; path = VM/LabelID.h; sourceTree = "<group>"; };
-		149B20D80D8A0891009CB8C7 /* LabelID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LabelID.cpp; path = VM/LabelID.cpp; sourceTree = "<group>"; };
 		149B24FF0D8AF6D1009CB8C7 /* Register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Register.h; path = VM/Register.h; sourceTree = "<group>"; };
-		149B25000D8AF6D1009CB8C7 /* Register.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Register.cpp; path = VM/Register.cpp; sourceTree = "<group>"; };
 		14A396A60CD2933100B5B4FF /* SymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SymbolTable.h; sourceTree = "<group>"; };
 		14ABB36E099C076400E2A24F /* JSValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSValue.h; sourceTree = "<group>"; };
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
@@ -888,8 +880,8 @@
 			children = (
 				F692A8580255597D01FF60F7 /* debugger.cpp */,
 				F692A8590255597D01FF60F7 /* debugger.h */,
-				1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */,
 				149559ED0DDCDDF700648087 /* DebuggerCallFrame.cpp */,
+				1480DB9B0DDC227F003CFDF2 /* DebuggerCallFrame.h */,
 			);
 			name = debugger;
 			sourceTree = "<group>";
@@ -899,7 +891,6 @@
 			children = (
 				149B15E90D81F986009CB8C7 /* CodeGenerator.cpp */,
 				149B15E80D81F986009CB8C7 /* CodeGenerator.h */,
-				149B20D80D8A0891009CB8C7 /* LabelID.cpp */,
 				149B20D70D8A0891009CB8C7 /* LabelID.h */,
 				F692A8650255597D01FF60F7 /* lexer.cpp */,
 				F692A8660255597D01FF60F7 /* lexer.h */,
@@ -908,7 +899,6 @@
 				F5FFE656026B47A6018635CA /* nodes2string.cpp */,
 				93F0B3A909BB4DC00068FCE3 /* Parser.cpp */,
 				93F0B3AA09BB4DC00068FCE3 /* Parser.h */,
-				149B16B90D82583F009CB8C7 /* RegisterID.cpp */,
 				149B16B80D82583F009CB8C7 /* RegisterID.h */,
 				A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */,
 			);
@@ -920,7 +910,8 @@
 			children = (
 				149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */,
 				149B1A9D0D86ED73009CB8C7 /* CodeBlock.h */,
-				149B1AA20D86ED7C009CB8C7 /* Instruction.cpp */,
+				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
+				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
 				149B1AA10D86ED7C009CB8C7 /* Instruction.h */,
 				A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */,
 				A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */,
@@ -928,12 +919,9 @@
 				149B15E60D81F986009CB8C7 /* Machine.h */,
 				149B15E50D81F986009CB8C7 /* Opcode.cpp */,
 				149B15E40D81F986009CB8C7 /* Opcode.h */,
-				149B25000D8AF6D1009CB8C7 /* Register.cpp */,
 				149B24FF0D8AF6D1009CB8C7 /* Register.h */,
 				14D792650DAA03FB001A9F05 /* RegisterFile.cpp */,
 				14D792640DAA03FB001A9F05 /* RegisterFile.h */,
-				A72701B30DADE94900E548D7 /* ExceptionHelpers.h */,
-				A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */,
 			);
 			name = vm;
 			sourceTree = "<group>";
@@ -1696,11 +1684,7 @@
 				06D358B40DAADAAA003B174E /* MainThreadMac.mm in Sources */,
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,
 				149B15EB0D81F986009CB8C7 /* Opcode.cpp in Sources */,
-				149B16BB0D82583F009CB8C7 /* RegisterID.cpp in Sources */,
 				149B1AA00D86ED73009CB8C7 /* CodeBlock.cpp in Sources */,
-				149B1AA40D86ED7C009CB8C7 /* Instruction.cpp in Sources */,
-				149B20DA0D8A0891009CB8C7 /* LabelID.cpp in Sources */,
-				149B25020D8AF6D1009CB8C7 /* Register.cpp in Sources */,
 				A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */,
 				A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */,
 				A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */,

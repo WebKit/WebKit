@@ -128,15 +128,10 @@ Source files for JSCore.
         VM/CodeBlock.cpp
         VM/CodeGenerator.cpp
         VM/ExceptionHelpers.cpp
-        VM/Instruction.cpp
         VM/JSPropertyNameIterator.cpp
-        VM/LabelID.cpp
         VM/Machine.cpp
         VM/Opcode.cpp
-        VM/Register.cpp
         VM/RegisterFile.cpp
-        VM/RegisterFileStack.cpp
-        VM/RegisterID.cpp
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">
         wtf/Assertions.cpp
