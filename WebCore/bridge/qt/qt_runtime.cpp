@@ -20,10 +20,14 @@
 #include "config.h"
 #include "qt_runtime.h"
 #include "qt_instance.h"
+#include "JSGlobalObject.h"
 #include "JSObject.h"
 #include "JSArray.h"
 #include "date_object.h"
+#include "DatePrototype.h"
 #include "DateMath.h"
+#include "ObjectPrototype.h"
+#include "RegExpConstructor.h"
 #include "RegExpObject.h"
 #include <runtime.h>
 #include <runtime_object.h>
@@ -327,7 +331,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 int objdist = 0;
                 qConvDebug() << "converting a " << len << " length Array";
                 for (int i = 0; i < len; ++i) {
-                    JSValue *val = array->getItem(i);
+                    JSValue *val = array->get(exec, i);
                     result.append(convertValueToQVariant(exec, val, QMetaType::Void, &objdist, visitedObjects));
                     if (objdist == -1) {
                         qConvDebug() << "Failed converting element at index " << i;
@@ -375,7 +379,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 QStringList result;
                 int len = array->getLength();
                 for (int i = 0; i < len; ++i) {
-                    JSValue* val = array->getItem(i);
+                    JSValue* val = array->get(exec, i);
                     UString ustring = val->toString(exec);
                     QString qstring = QString::fromUtf16((const ushort*)ustring.rep()->data(),ustring.size());
 
@@ -597,7 +601,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     QObjectList result;
                     int len = array->getLength();
                     for (int i = 0; i < len; ++i) {
-                        JSValue* val = array->getItem(i);
+                        JSValue* val = array->get(exec, i);
                         int itemdist = -1;
                         QVariant item = convertValueToQVariant(exec, val, QMetaType::QObjectStar, &itemdist, visitedObjects);
                         if (itemdist >= 0)
@@ -648,7 +652,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     QList<int> result;
                     int len = array->getLength();
                     for (int i = 0; i < len; ++i) {
-                        JSValue* val = array->getItem(i);
+                        JSValue* val = array->get(exec, i);
                         int itemdist = -1;
                         QVariant item = convertValueToQVariant(exec, val, QMetaType::Int, &itemdist, visitedObjects);
                         if (itemdist >= 0)
