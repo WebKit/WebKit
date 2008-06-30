@@ -956,12 +956,8 @@ IntSize AccessibilityRenderObject::size() const
     return rect.size();
 }
 
-// the closest object for an internal anchor
-AccessibilityObject* AccessibilityRenderObject::linkedUIElement() const
+AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
 {
-    if (!isAnchor())
-        return 0;
-    
     HTMLAnchorElement* anchor = anchorElement();
     if (!anchor)
         return 0;
@@ -993,6 +989,56 @@ AccessibilityObject* AccessibilityRenderObject::linkedUIElement() const
     }
     
     return linkedAXElement;
+}
+    
+void AccessibilityRenderObject::addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const
+{
+    if (!m_renderer || roleValue() != RadioButtonRole)
+        return;
+    
+    Node* node = m_renderer->node();
+    if (!node || !node->hasTagName(inputTag))
+        return;
+    
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node);
+    // if there's a form, then this is easy
+    if (input->form()) {
+        Vector<RefPtr<Node> > formElements;
+        input->form()->getNamedElements(input->name(), formElements);
+        
+        unsigned len = formElements.size();
+        for (unsigned i = 0; i < len; ++i) {
+            Node* associateElement = formElements[i].get();
+            if (AccessibilityObject* object = m_renderer->document()->axObjectCache()->get(associateElement->renderer()))
+                linkedUIElements.append(object);        
+        } 
+    } else {
+        RefPtr<NodeList> list = node->document()->getElementsByTagName("input");
+        unsigned len = list->length();
+        for (unsigned i = 0; i < len; ++i) {
+            if (list->item(i)->hasTagName(inputTag)) {
+                HTMLInputElement* associateElement = static_cast<HTMLInputElement*>(list->item(i));
+                if (associateElement->isRadioButton() && associateElement->name() == input->name()) {
+                    if (AccessibilityObject* object = m_renderer->document()->axObjectCache()->get(associateElement->renderer()))
+                        linkedUIElements.append(object);
+                }
+            }
+        }
+    }
+}
+    
+// linked ui elements could be all the related radio buttons in a group
+// or an internal anchor connection
+void AccessibilityRenderObject::linkedUIElements(AccessibilityChildrenVector& linkedUIElements) const
+{
+    if (isAnchor()) {
+        AccessibilityObject* linkedAXElement = internalLinkElement();
+        if (linkedAXElement)
+            linkedUIElements.append(linkedAXElement);
+    }
+
+    if (roleValue() == RadioButtonRole)
+        addRadioButtonGroupMembers(linkedUIElements);
 }
 
 AccessibilityObject* AccessibilityRenderObject::titleUIElement() const

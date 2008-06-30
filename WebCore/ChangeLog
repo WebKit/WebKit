@@ -1,3 +1,20 @@
+2008-06-30  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/4180780> Add attribute to get all the radio buttons in a set
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::linkedUIElements):
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        (WebCore::AccessibilityRenderObject::addRadioButtonGroupMembers):
+        (WebCore::AccessibilityRenderObject::linkedUIElements):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2008-06-30  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Adele Peterson.

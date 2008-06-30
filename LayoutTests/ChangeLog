@@ -1,3 +1,17 @@
+2008-06-30  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+   
+        Added tests for internal link anchors and for radio button group members
+        Updated the accessibilty dump to output a standard NSLog null when the
+        object is null
+
+        * accessibility/document-attributes-expected.txt:
+        * accessibility/internal-link-anchors-expected.txt: Added.
+        * accessibility/internal-link-anchors.html: Added.
+        * accessibility/radio-button-group-members-expected.txt: Added.
+        * accessibility/radio-button-group-members.html: Added.
+
 2008-06-30  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti.

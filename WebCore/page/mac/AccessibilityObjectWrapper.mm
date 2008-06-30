@@ -1115,10 +1115,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     }
     
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {
-        AccessibilityObject* obj = m_object->linkedUIElement();
-        if (obj)
-            return (id) obj->wrapper();
-        return nil;
+        AccessibilityObject::AccessibilityChildrenVector linkedUIElements;
+        m_object->linkedUIElements(linkedUIElements);
+        if (linkedUIElements.size() == 0)
+            return nil;
+        return convertToNSArray(linkedUIElements);
     }
 
     if ([attributeName isEqualToString: NSAccessibilitySelectedAttribute])

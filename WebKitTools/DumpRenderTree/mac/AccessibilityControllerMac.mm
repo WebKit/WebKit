@@ -34,6 +34,9 @@
 #import <wtf/Vector.h>
 #import <wtf/RetainPtr.h>
 
+static JSStringRef nsStringToJSStringRef(NSString* string);
+static NSString* attributesOfElement(id accessibilityObject);
+
 static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObject)
 {
     if (!valueObject)
@@ -76,13 +79,37 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
     return [valueObject description];
 }
 
+JSStringRef AccessibilityController::attributesOfLinkedUIElementsForFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+
+    NSArray* linkedElements = [accessibilityObject accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
+    NSMutableString* allElementString = [NSMutableString string];
+    NSUInteger i = 0, count = [linkedElements count];
+    for (; i < count; ++i) {
+        NSString* attributes = attributesOfElement([linkedElements objectAtIndex:i]);
+        [allElementString appendFormat:@"%@\n------------\n",attributes];
+    }
+    
+    return nsStringToJSStringRef(allElementString);
+}
+
+
 JSStringRef AccessibilityController::allAttributesOfFocusedElement()
 {
     WebHTMLView* view = [[mainFrame frameView] documentView];
     id accessibilityObject = [view accessibilityFocusedUIElement];
+    
+    NSString* attributes = attributesOfElement(accessibilityObject);
+    return nsStringToJSStringRef(attributes);
+}
+
+static NSString* attributesOfElement(id accessibilityObject)
+{
     NSArray* supportedAttributes = [accessibilityObject accessibilityAttributeNames];
 
-    Vector<UniChar> buffer;
+    NSMutableString* attributesString = [NSMutableString string];
     for (NSUInteger i = 0; i < [supportedAttributes count]; ++i) {
         NSString* attribute = [supportedAttributes objectAtIndex:i];
         
@@ -93,19 +120,16 @@ JSStringRef AccessibilityController::allAttributesOfFocusedElement()
         
         id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
         NSString* value = descriptionOfValue(valueObject, accessibilityObject);
-
-        Vector<UniChar> attributeBuffer([attribute length]);
-        [attribute getCharacters:attributeBuffer.data()];
-        buffer.append(attributeBuffer);
-        buffer.append(':');
-        buffer.append(' ');
-
-        Vector<UniChar> valueBuffer([value length]);
-        [value getCharacters:valueBuffer.data()];
-        buffer.append(valueBuffer);
-        buffer.append('\n');
+        [attributesString appendFormat:@"%@: %@\n",attribute,value];
     }
-
+    
+    return attributesString;
+}
+        
+static JSStringRef nsStringToJSStringRef(NSString* string)
+{
+    Vector<UniChar> buffer([string length]);
+    [string getCharacters:buffer.data()];
     return JSStringCreateWithCharacters(buffer.data(), buffer.size());
 }
 

@@ -252,7 +252,7 @@ public:
     virtual AccessibilityObject* parentObject() const;
     virtual AccessibilityObject* parentObjectUnignored() const;
     virtual AccessibilityObject* observableObject() const;
-    virtual AccessibilityObject* linkedUIElement() const;
+    virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual AccessibilityObject* titleUIElement() const;
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;

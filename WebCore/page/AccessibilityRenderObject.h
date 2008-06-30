@@ -120,7 +120,7 @@ public:
     virtual AccessibilityObject* nextSibling() const;
     virtual AccessibilityObject* parentObject() const;
     virtual AccessibilityObject* observableObject() const;
-    virtual AccessibilityObject* linkedUIElement() const;
+    virtual void linkedUIElements(AccessibilityChildrenVector&) const;
     virtual AccessibilityObject* titleUIElement() const;
     virtual AccessibilityRole ariaRoleAttribute() const;
     virtual bool isPresentationalChildOfAriaRole() const;
@@ -168,7 +168,7 @@ public:
     virtual const String& actionVerb() const;
     virtual Widget* widget() const;
     virtual Widget* widgetForAttachmentView() const;
-    virtual void getDocumentLinks(Vector< RefPtr<AccessibilityObject> >&) const;
+    virtual void getDocumentLinks(AccessibilityChildrenVector&) const;
     virtual FrameView* documentFrameView() const;
     
     virtual const AccessibilityChildrenVector& children();
@@ -223,7 +223,8 @@ private:
     AccessibilityRole determineAriaRoleAttribute() const;
 
     IntRect checkboxOrRadioRect() const;
-    
+    void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;
+    AccessibilityObject* internalLinkElement() const;
 };
     
 } // namespace WebCore

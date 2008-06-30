@@ -1,3 +1,19 @@
+2008-06-30  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Support the ability to get the linked ui elements of an object
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (attributesOfLinkedUIElementsForFocusedElementCallback):
+        (AccessibilityController::staticFunctions):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::attributesOfLinkedUIElementsForFocusedElement):
+        (AccessibilityController::allAttributesOfFocusedElement):
+        (attributesOfElement):
+        (nsStringToJSStringRef):
+
 2008-06-29  Sam Weinig  <sam@webkit.org>
 
         Fix Tiger build.

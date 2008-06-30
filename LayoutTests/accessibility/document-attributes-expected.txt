@@ -1,5 +1,5 @@
 AXRole: AXWebArea
-AXSubrole: 
+AXSubrole: (null)
 AXRoleDescription: HTML content
 AXChildren: <array of size 0>
 AXHelp: 
@@ -11,11 +11,11 @@ AXValue:
 AXFocused: 0
 AXEnabled: 1
 AXWindow: <AXWebArea>
-AXSelectedTextMarkerRange: 
+AXSelectedTextMarkerRange: (null)
 AXStartTextMarker: <AXWebArea>
 AXEndTextMarker: <AXWebArea>
 AXVisited: 0
-AXLinkedUIElements: 
+AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
 AXLinkUIElements: <array of size 0>
