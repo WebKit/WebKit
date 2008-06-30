@@ -24,7 +24,10 @@
 #ifndef JSString_h
 #define JSString_h
 
-#include "JSObject.h"
+#include "CommonIdentifiers.h"
+#include "JSValue.h"
+#include "PropertySlot.h"
+#include "identifier.h"
 #include "ustring.h"
 
 namespace KJS {
@@ -94,4 +97,4 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(unsigned propertyName, Proper
 
 } // namespace
 
-#endif //  JSString_h
+#endif // JSString_h

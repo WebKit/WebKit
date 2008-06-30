@@ -87,12 +87,16 @@ SOURCES += \
     kjs/ExecState.cpp \
     kjs/FunctionConstructor.cpp \
     kjs/FunctionPrototype.cpp \
+    kjs/GetterSetter.cpp \
     kjs/identifier.cpp \
-    kjs/internal.cpp \
+    kjs/InternalFunction.cpp \
     kjs/interpreter.cpp \
     kjs/JSImmediate.cpp \
     kjs/JSLock.cpp \
+    kjs/JSNumberCell.cpp \
+    kjs/JSString.cpp \
     kjs/JSWrapperObject.cpp \
+    kjs/LabelStack.cpp \
     kjs/lexer.cpp \
     kjs/list.cpp \
     kjs/lookup.cpp \

@@ -429,6 +429,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\GetterSetter.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\identifier.cpp"
 				>
 			</File>
@@ -445,7 +449,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\internal.cpp"
+				RelativePath="..\..\kjs\InternalFunction.cpp"
 				>
 			</File>
 			<File
@@ -521,11 +525,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSNumberCell.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSObject.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSString.cpp"
 				>
 			</File>
 			<File
@@ -558,6 +570,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSWrapperObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\LabelStack.cpp"
 				>
 			</File>
 			<File

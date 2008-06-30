@@ -22,6 +22,9 @@
 #include "config.h"
 #include "NumberObject.h"
 
+#include "JSGlobalObject.h"
+#include "NumberPrototype.h"
+
 namespace KJS {
 
 const ClassInfo NumberObject::info = { "Number", 0, 0, 0 };
@@ -34,6 +37,20 @@ NumberObject::NumberObject(JSObject* proto)
 JSValue* NumberObject::getJSNumber()
 {
     return internalValue();
+}
+
+NumberObject* constructNumber(ExecState* exec, JSNumberCell* number)
+{
+    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
+    obj->setInternalValue(number);
+    return obj;
+}
+
+NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValue* value)
+{
+    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
+    obj->setInternalValue(value);
+    return obj;
 }
 
 } // namespace KJS

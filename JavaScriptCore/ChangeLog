@@ -1,3 +1,27 @@
+2008-06-30  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Darin Adler.
+
+        Remove internal.cpp and move its contents to there own .cpp files.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/GetterSetter.cpp: Copied from kjs/internal.cpp.
+        * kjs/InternalFunction.cpp: Copied from kjs/internal.cpp.
+        * kjs/JSNumberCell.cpp: Copied from kjs/internal.cpp.
+        * kjs/JSString.cpp: Copied from kjs/internal.cpp.
+        * kjs/JSString.h:
+        * kjs/LabelStack.cpp: Copied from kjs/internal.cpp.
+        * kjs/NumberConstructor.cpp:
+        * kjs/NumberObject.cpp:
+        (KJS::constructNumber):
+        (KJS::constructNumberFromImmediateNumber):
+        * kjs/internal.cpp: Removed.
+
 2008-06-30  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://5954749> Assertion failure due to HashTable's use of

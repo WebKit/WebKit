@@ -101,18 +101,4 @@ CallType NumberConstructor::getCallData(CallData& callData)
     return CallTypeNative;
 }
 
-NumberObject* constructNumber(ExecState* exec, JSNumberCell* number)
-{
-    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
-    obj->setInternalValue(number);
-    return obj;
-}
-
-NumberObject* constructNumberFromImmediateNumber(ExecState* exec, JSValue* value)
-{
-    NumberObject* obj = new (exec) NumberObject(exec->lexicalGlobalObject()->numberPrototype());
-    obj->setInternalValue(value);
-    return obj;
-}
-
 } // namespace KJS

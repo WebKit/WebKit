@@ -62,12 +62,13 @@ Source files for JSCore.
         kjs/ErrorInstance.cpp
         kjs/ErrorPrototype.cpp
         kjs/ExecState.cpp
+        kjs/GetterSetter.cpp
         kjs/JSFunction.cpp
         kjs/FunctionConstructor.cpp
         kjs/FunctionPrototype.cpp
         kjs/identifier.cpp
         kjs/InitializeThreading.cpp
-        kjs/internal.cpp
+        kjs/InternalFunction.cpp
         kjs/interpreter.cpp
         kjs/JSActivation.cpp
         kjs/JSGlobalData.cpp
@@ -76,7 +77,10 @@ Source files for JSCore.
         kjs/JSImmediate.cpp
         kjs/JSLock.cpp
         kjs/JSNotAnObject.cpp
+        kjs/JSNumberCell.cpp
+        kjs/JSString.cpp
         kjs/JSWrapperObject.cpp
+        kjs/LabelStack.cpp
         kjs/lexer.cpp
         kjs/list.cpp
         kjs/lookup.cpp
