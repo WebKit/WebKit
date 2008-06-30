@@ -1,3 +1,25 @@
+2008-06-30  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Niko.
+
+        Removed the obsolete and unmaintained WebKitPart. The integration of
+        QtWebKit into KDE is now done in the webkitkde component inside KDE.
+
+        * WebKitPart/WebKitFactory.cpp: Removed.
+        * WebKitPart/WebKitFactory.h: Removed.
+        * WebKitPart/WebKitPart.cpp: Removed.
+        * WebKitPart/WebKitPart.desktop: Removed.
+        * WebKitPart/WebKitPart.h: Removed.
+        * WebKitPart/WebKitPart.rc: Removed.
+        * WebKitPart/WebKitPartBrowser.rc: Removed.
+        * WebKitPart/WebKitPartBrowserExtension.cpp: Removed.
+        * WebKitPart/WebKitPartBrowserExtension.h: Removed.
+        * WebKitPart/WebKitPartClient.cpp: Removed.
+        * WebKitPart/WebKitPartClient.h: Removed.
+        * WebKitPart/WebKitPartInterface.cpp: Removed.
+        * WebKitPart/WebKitPartInterface.h: Removed.
+        * WebKitPart/org.kde.WebKitPart.xml: Removed.
+
 2008-06-24  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, added missing include for RuntimeObjectImp.
