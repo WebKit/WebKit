@@ -1,3 +1,12 @@
+2008-06-29  David Smith  <catfish.man@gmail.com>
+
+        Rubberstamped by Sam Weinig.
+
+        Change a redundant node->isElement() check to an ASSERT for a 1.3% speedup on getElementsByTagName.
+
+        * dom/TagNodeList.cpp:
+        (WebCore::TagNodeList::nodeMatches):
+
 2008-06-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
