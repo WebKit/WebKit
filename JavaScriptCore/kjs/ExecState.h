@@ -38,6 +38,7 @@ namespace KJS  {
     class JSVariableObject;
     class Machine;
     class ProgramNode;
+    class Register;
     class RegisterFile;
     class ScopeNode;
 
@@ -93,7 +94,7 @@ namespace KJS  {
         // Default constructor required for gcc 3.
         ExecState() { }
 
-        ExecState(ExecState*, RegisterFile*, ScopeChainNode*, int callFrameOffset);
+        ExecState(ExecState*, RegisterFile*, ScopeChainNode*, Register* callFrame);
 
         bool isGlobalObject(JSObject*) const;
 
@@ -108,7 +109,7 @@ namespace KJS  {
         ExecState* m_prev;
         RegisterFile* m_registerFile;
         ScopeChainNode* m_scopeChain;
-        int m_callFrameOffset; // A negative offset indicates a non-function scope.
+        Register* m_callFrame; // The most recent call frame.
     };
 
     enum CodeType { GlobalCode, EvalCode, FunctionCode };

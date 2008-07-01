@@ -394,11 +394,11 @@ bool JSGlobalObject::isDynamicScope() const
 void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
 {
     ASSERT(!d()->registerArray);
+    ASSERT(!d()->registerArraySize);
 
     int numGlobals = registerFile.numGlobals();
     if (!numGlobals) {
-        ASSERT(!d()->registerOffset);
-        d()->registerBase = 0;
+        d()->registers = 0;
         return;
     }
     copyRegisterArray(registerFile.lastGlobal(), numGlobals);
@@ -414,12 +414,11 @@ void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
     registerFile.setNumGlobals(symbolTable().size());
 
     if (d()->registerArray) {
-        memcpy(*registerFile.basePointer() - d()->registerOffset, d()->registerArray, d()->registerOffset * sizeof(Register));
+        memcpy(registerFile.base() - d()->registerArraySize, d()->registerArray.get(), d()->registerArraySize * sizeof(Register));
         setRegisterArray(0, 0);
     }
 
-    d()->registerBase = registerFile.basePointer();
-    d()->registerOffset = 0;
+    d()->registers = registerFile.base();
 }
 
 void* JSGlobalObject::operator new(size_t size)

@@ -36,14 +36,9 @@
 
 namespace KJS {
 
-Register* DebuggerCallFrame::r() const
-{
-    return *m_registerBase + m_registerOffset;
-}
-
 Register* DebuggerCallFrame::callFrame() const
 {
-    return r() - m_codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+    return m_registers - m_codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
 }
 
 const UString* DebuggerCallFrame::functionName() const
@@ -70,7 +65,7 @@ JSObject* DebuggerCallFrame::thisObject() const
     if (!m_codeBlock)
         return 0;
 
-    return static_cast<JSObject*>(r()[m_codeBlock->thisRegister].u.jsValue);
+    return static_cast<JSObject*>(m_registers[m_codeBlock->thisRegister].u.jsValue);
 }
 
 JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception) const

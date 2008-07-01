@@ -47,13 +47,12 @@ namespace KJS {
             FunctionType
         } Type;
 
-        DebuggerCallFrame(JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, JSValue* exception, Register** registerBase, int registerOffset)
+        DebuggerCallFrame(JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, JSValue* exception)
             : m_dynamicGlobalObject(dynamicGlobalObject)
             , m_codeBlock(codeBlock)
             , m_scopeChain(scopeChain)
+            , m_registers(r)
             , m_exception(exception)
-            , m_registerBase(registerBase)
-            , m_registerOffset(registerOffset)
         {
         }
 
@@ -66,15 +65,13 @@ namespace KJS {
         JSValue* exception() const { return m_exception; }
 
     private:
-        Register* r() const;
         Register* callFrame() const;
 
         JSGlobalObject* m_dynamicGlobalObject;
         const CodeBlock* m_codeBlock;
         ScopeChainNode* m_scopeChain;
+        Register* m_registers;
         JSValue* m_exception;
-        Register** m_registerBase;
-        int m_registerOffset;
     };
 
 } // namespace KJS

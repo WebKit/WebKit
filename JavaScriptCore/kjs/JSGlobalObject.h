@@ -74,7 +74,7 @@ namespace KJS {
 
         struct JSGlobalObjectData : public JSVariableObjectData {
             JSGlobalObjectData(JSGlobalObject* globalObject, JSObject* thisValue)
-                : JSVariableObjectData(&symbolTable, 0, 0)
+                : JSVariableObjectData(&symbolTable, 0)
                 , globalScopeChain(globalObject, thisValue)
             {
             }
@@ -258,13 +258,13 @@ namespace KJS {
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
     {
-        int numGlobals = d()->registerOffset;
-        Register* registerArray = static_cast<Register*>(fastMalloc((numGlobals + count) * sizeof(Register)));
+        size_t registerArraySize = d()->registerArraySize;
+        Register* registerArray = static_cast<Register*>(fastMalloc((registerArraySize + count) * sizeof(Register)));
         if (d()->registerArray)
-            memcpy(registerArray + count, d()->registerArray, numGlobals * sizeof(Register));
-        setRegisterArray(registerArray, numGlobals + count);
+            memcpy(registerArray + count, d()->registerArray.get(), registerArraySize * sizeof(Register));
+        setRegisterArray(registerArray, registerArraySize + count);
 
-        for (int i = 0, index = -numGlobals - 1; i < count; ++i, --index) {
+        for (int i = 0, index = -registerArraySize - 1; i < count; ++i, --index) {
             GlobalPropertyInfo& global = globals[i];
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);

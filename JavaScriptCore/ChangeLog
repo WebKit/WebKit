@@ -1,3 +1,13 @@
+2008-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Removed the "registerBase" abstraction. Since the register file never
+        reallocates, we can keep direct pointers into it, instead of
+        <registerBase, offset> tuples.
+        
+        SunSpider says 0.8% faster.
+        
 2008-06-30  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (build fix).

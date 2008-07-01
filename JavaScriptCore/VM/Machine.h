@@ -95,7 +95,7 @@ namespace KJS {
         JSValue* retrieveArguments(ExecState*, JSFunction*) const;
         JSValue* retrieveCaller(ExecState*, JSFunction*) const;
 
-        void getFunctionAndArguments(Register** registerBase, Register* callFrame, JSFunction*&, Register*& argv, int& argc);
+        void getArgumentsData(Register* callFrame, JSFunction*&, Register*& argv, int& argc);
         void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }
         
         void startTimeoutCheck()
@@ -126,12 +126,12 @@ namespace KJS {
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, int registerOffset, ScopeChainNode*, JSValue** exception);
 
         ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
-        NEVER_INLINE void debug(ExecState*, const Instruction*, const CodeBlock*, ScopeChainNode*, Register**, Register*);
+        NEVER_INLINE void debug(ExecState*, const Instruction*, const CodeBlock*, ScopeChainNode*, Register*);
 
-        NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, Register**, const Instruction*&, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
-        NEVER_INLINE Instruction* throwException(ExecState*, JSValue*, Register**, const Instruction*, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
+        NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, const Instruction*&, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
+        NEVER_INLINE Instruction* throwException(ExecState*, JSValue*, const Instruction*, CodeBlock*&, JSValue**&, ScopeChainNode*&, Register*&);
 
-        bool getCallFrame(ExecState*, JSFunction*, Register**& registerBase, int& callFrameOffset) const;
+        Register* callFrame(ExecState*, JSFunction*) const;
 
         JSValue* privateExecute(ExecutionFlag, ExecState* = 0, RegisterFile* = 0, Register* = 0, ScopeChainNode* = 0, CodeBlock* = 0, JSValue** exception = 0);
 

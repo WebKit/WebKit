@@ -34,7 +34,7 @@ void ArgList::getSlice(int startIndex, ArgList& result) const
     const_iterator start = min(begin() + startIndex, end());
     result.m_vector.appendRange(start, end());
     result.m_size = result.m_vector.size();
-    result.m_bufferSlot = result.m_vector.dataSlot();
+    result.m_buffer = result.m_vector.data();
 }
 
 void ArgList::markLists(ListSet& markSet)
@@ -79,7 +79,7 @@ void ArgList::slowAppend(JSValue* v)
     m_vector.reserveCapacity(m_vector.capacity() * 4);
     
     m_vector.uncheckedAppend(v);
-    m_bufferSlot = m_vector.dataSlot();
+    m_buffer = m_vector.data();
 }
 
 } // namespace KJS

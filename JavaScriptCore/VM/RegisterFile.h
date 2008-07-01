@@ -93,7 +93,7 @@ namespace KJS {
             CallerCodeBlock = 0,
             ReturnVPC,
             CallerScopeChain,
-            CallerRegisterOffset,
+            CallerRegisters,
             ReturnValueRegister,
             ArgumentStartRegister,
             ArgumentCount,
@@ -133,8 +133,7 @@ namespace KJS {
 
         ~RegisterFile();
 
-        // Pointer to a value that holds the base of this register file.
-        Register** basePointer() { return &m_base; }
+        Register* base() const { return m_base; }
         
         void setGlobalObject(JSGlobalObject* globalObject) { m_globalObject = globalObject; }
         JSGlobalObject* globalObject() { return m_globalObject; }

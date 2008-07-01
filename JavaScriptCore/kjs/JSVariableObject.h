@@ -29,10 +29,11 @@
 #ifndef JSVariableObject_h
 #define JSVariableObject_h
 
+#include "JSObject.h"
 #include "Register.h"
 #include "SymbolTable.h"
 #include "UnusedParam.h"
-#include "JSObject.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/UnusedParam.h>
 
 namespace KJS {
@@ -54,33 +55,25 @@ namespace KJS {
 
         virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
 
-        JSValue*& valueAt(int index) const { return registers()[index].u.jsValue; }
+        JSValue*& valueAt(int index) const { return d->registers[index].u.jsValue; }
 
     protected:
         // Subclasses of JSVariableObject can subclass this struct to add data
         // without increasing their own size (since there's a hard limit on the
         // size of a JSCell).
         struct JSVariableObjectData {
-            JSVariableObjectData(SymbolTable* symbolTable_, Register** registerBase_, int registerOffset_)
+            JSVariableObjectData(SymbolTable* symbolTable_, Register* registers_)
                 : symbolTable(symbolTable_)
-                , registerBase(registerBase_)
-                , registerOffset(registerOffset_)
-                , registerArray(0)
+                , registers(registers_)
+                , registerArraySize(0)
             {
                 ASSERT(symbolTable_);
             }
             
-            ~JSVariableObjectData()
-            {
-                delete registerArray;
-            }
-
             SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.
-
-            Register** registerBase; // Location where a pointer to the base of the register file is stored.
-            int registerOffset; // Offset of "r", the register past the end of local storage.
-
-            Register* registerArray; // Independent copy of registers that were once stored in the register file.
+            Register* registers; // Pointers to the register past the end of local storage. (Local storage indexes are negative.)
+            OwnPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
+            size_t registerArraySize;
         };
 
         JSVariableObject(JSVariableObjectData* data)
@@ -94,9 +87,6 @@ namespace KJS {
         {
         }
 
-        Register** registerBase() const { return d->registerBase; }
-        Register* registers() const { return *registerBase() + d->registerOffset; }
-        
         void copyRegisterArray(Register* src, size_t count);
         void setRegisterArray(Register* registerArray, size_t count);
 

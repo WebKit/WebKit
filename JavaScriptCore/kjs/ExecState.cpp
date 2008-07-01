@@ -39,11 +39,11 @@ ExecState::ExecState(JSGlobalObject* globalObject, JSObject* globalThisValue, Sc
     , m_prev(0)
     , m_registerFile(0)
     , m_scopeChain(globalScopeChain)
-    , m_callFrameOffset(-1)
+    , m_callFrame(0)
 {
 }
 
-ExecState::ExecState(ExecState* exec, RegisterFile* registerFile, ScopeChainNode* scopeChain, int callFrameOffset)
+ExecState::ExecState(ExecState* exec, RegisterFile* registerFile, ScopeChainNode* scopeChain, Register* callFrame)
     : m_globalObject(exec->m_globalObject)
     , m_globalThisValue(exec->m_globalThisValue)
     , m_exception(0)
@@ -51,7 +51,7 @@ ExecState::ExecState(ExecState* exec, RegisterFile* registerFile, ScopeChainNode
     , m_prev(exec)
     , m_registerFile(registerFile)
     , m_scopeChain(scopeChain)
-    , m_callFrameOffset(callFrameOffset)
+    , m_callFrame(callFrame)
 {
     ASSERT(!exec->m_exception);
 }

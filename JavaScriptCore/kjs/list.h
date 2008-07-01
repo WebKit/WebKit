@@ -50,15 +50,13 @@ namespace KJS {
             , m_isReadOnly(false)
 #endif
         {
-            m_bufferSlot = m_vector.dataSlot();
-            m_offset = 0;
+            m_buffer = m_vector.data();
             m_size = 0;
         }
 
         // Constructor for a read-only list whose data has already been allocated elsewhere.
-        ArgList(JSValue*** bufferSlot, size_t offset, size_t size)
-            : m_bufferSlot(bufferSlot)
-            , m_offset(offset)
+        ArgList(JSValue** buffer, size_t size)
+            : m_buffer(buffer)
             , m_size(size)
             , m_markSet(0)
 #ifndef NDEBUG
@@ -79,7 +77,7 @@ namespace KJS {
         JSValue* at(size_t i) const
         {
             if (i < m_size)
-                return buffer()[i];
+                return m_buffer[i];
             return jsUndefined();
         }
 
@@ -88,6 +86,7 @@ namespace KJS {
         void clear()
         {
             m_vector.clear();
+            m_buffer = 0;
             m_size = 0;
         }
 
@@ -108,21 +107,18 @@ namespace KJS {
 
         void getSlice(int startIndex, ArgList& result) const;
 
-        iterator begin() { return buffer(); }
-        iterator end() { return buffer() + m_size; }
+        iterator begin() { return m_buffer; }
+        iterator end() { return m_buffer + m_size; }
 
-        const_iterator begin() const { return buffer(); }
-        const_iterator end() const { return buffer() + m_size; }
+        const_iterator begin() const { return m_buffer; }
+        const_iterator end() const { return m_buffer + m_size; }
 
         static void markLists(ListSet&);
 
     private:
         void slowAppend(JSValue*);
         
-        JSValue** buffer() const { return *m_bufferSlot + m_offset; }
-
-        JSValue*** m_bufferSlot;
-        size_t m_offset;
+        JSValue** m_buffer;
         size_t m_size;
 
         VectorType m_vector;
