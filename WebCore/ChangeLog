@@ -1,3 +1,33 @@
+2008-06-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Add PluginMainThreadScheduler, a singleton which is responsible for scheduling plug-in 
+        callbacks on the main thread. Use this to implement NPN_PluginThreadAsyncCall on Windows.
+        
+        * WebCore.vcproj/WebCore.vcproj:
+        Add PluginMainThreadScheduler.{cpp|h}
+        
+        * plugins/PluginMainThreadScheduler.cpp: Added.
+        * plugins/PluginMainThreadScheduler.h: Added.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        Register with the thread scheduler.
+        
+        * plugins/npapi.cpp:
+        (NPN_PluginThreadAsyncCall):
+        Call the thread scheduler.
+        
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::load):
+        Initialize the NPN_PluginThreadAsyncCall callback.
+        
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::stop):
+        Unregister with the scheduler. This makes sure that we won't try to deliver callbacks
+        after the plug-in has been destroyed.
+
 2008-07-01  Adam Roben  <aroben@apple.com>
 
         Roll out r34913, as it broke the Windows build due to bad casting

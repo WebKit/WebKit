@@ -14196,6 +14196,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginMainThreadScheduler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginMainThreadScheduler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginPackage.cpp"
 				>
 			</File>

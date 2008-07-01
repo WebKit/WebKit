@@ -50,6 +50,7 @@
 #include "PlatformMouseEvent.h"
 #include "PluginMessageThrottlerWin.h"
 #include "PluginPackage.h"
+#include "PluginMainThreadScheduler.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 #include "PluginDatabase.h"
@@ -571,6 +572,8 @@ void PluginView::stop()
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
     }
+
+    PluginMainThreadScheduler::scheduler().unregisterPlugin(m_instance);
 
     // Destroy the plugin
     NPSavedData* savedData = 0;

@@ -298,6 +298,7 @@ bool PluginPackage::load()
     m_browserFuncs.getJavaPeer = NPN_GetJavaPeer;
     m_browserFuncs.pushpopupsenabledstate = NPN_PushPopupsEnabledState;
     m_browserFuncs.poppopupsenabledstate = NPN_PopPopupsEnabledState;
+    m_browserFuncs.pluginthreadasynccall = NPN_PluginThreadAsyncCall;
 
     m_browserFuncs.releasevariantvalue = _NPN_ReleaseVariantValue;
     m_browserFuncs.getstringidentifier = _NPN_GetStringIdentifier;

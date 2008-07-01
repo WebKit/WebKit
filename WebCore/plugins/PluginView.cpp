@@ -55,6 +55,7 @@
 #include "ScriptController.h"
 #include "PluginDatabase.h"
 #include "PluginDebug.h"
+#include "PluginMainThreadScheduler.h"
 #include "PluginPackage.h"
 #include "c_instance.h"
 #include "npruntime_impl.h"
@@ -146,6 +147,8 @@ bool PluginView::start()
 {
     if (m_isStarted)
         return false;
+
+    PluginMainThreadScheduler::scheduler().registerPlugin(m_instance);
 
     ASSERT(m_plugin);
     ASSERT(m_plugin->pluginFuncs()->newp);

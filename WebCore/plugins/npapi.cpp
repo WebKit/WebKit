@@ -26,6 +26,7 @@
 #include "config.h"
 
 #include "PluginInfoStore.h"
+#include "PluginMainThreadScheduler.h"
 #include "PluginView.h"
 #include "npruntime_internal.h"
 
@@ -160,14 +161,17 @@ void* NPN_GetJavaPeer(NPP instance)
     return 0;
 }
 
-void
-NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
+void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
 {
     pluginViewForInstance(instance)->pushPopupsEnabledState(enabled);
 }
 
-void
-NPN_PopPopupsEnabledState(NPP instance)
+void NPN_PopPopupsEnabledState(NPP instance)
 {
     pluginViewForInstance(instance)->popPopupsEnabledState();
+}
+
+void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
+{
+    PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
 }
