@@ -60,6 +60,7 @@ struct CompositionUnderline {
 
 enum TriState { FalseTriState, TrueTriState, MixedTriState };
 enum EditorCommandSource { CommandFromMenuOrKeyBinding, CommandFromDOM, CommandFromDOMWithUserInterface };
+enum WritingDirection { NaturalWritingDirection, LeftToRightWritingDirection, RightToLeftWritingDirection };
 
 class Editor {
 public:
@@ -215,7 +216,7 @@ public:
     void showColorPanel();
     void toggleBold();
     void toggleUnderline();
-    void setBaseWritingDirection(const String&);
+    void setBaseWritingDirection(WritingDirection);
 
     bool smartInsertDeleteEnabled();
     

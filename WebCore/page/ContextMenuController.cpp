@@ -249,13 +249,13 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
             m_client->stopSpeaking();
             break;
         case ContextMenuItemTagDefaultDirection:
-            frame->setSelectionBaseWritingDirection(NaturalWritingDirection);
+            frame->editor()->setBaseWritingDirection(NaturalWritingDirection);
             break;
         case ContextMenuItemTagLeftToRight:
-            frame->setSelectionBaseWritingDirection(LeftToRightWritingDirection);
+            frame->editor()->setBaseWritingDirection(LeftToRightWritingDirection);
             break;
         case ContextMenuItemTagRightToLeft:
-            frame->setSelectionBaseWritingDirection(RightToLeftWritingDirection);
+            frame->editor()->setBaseWritingDirection(RightToLeftWritingDirection);
             break;
 #if PLATFORM(MAC)
         case ContextMenuItemTagSearchInSpotlight:

@@ -1084,12 +1084,21 @@ void Editor::toggleUnderline()
     command("ToggleUnderline").execute();
 }
 
-void Editor::setBaseWritingDirection(const String& direction)
+void Editor::setBaseWritingDirection(WritingDirection direction)
 {
+    Node* focusedNode = frame()->document()->focusedNode();
+    if (focusedNode && (focusedNode->hasTagName(textareaTag)
+                        || focusedNode->hasTagName(inputTag) && (static_cast<HTMLInputElement*>(focusedNode)->inputType() == HTMLInputElement::TEXT
+                                                                || static_cast<HTMLInputElement*>(focusedNode)->inputType() == HTMLInputElement::SEARCH))) {
+        if (direction == NaturalWritingDirection)
+            return;
+        static_cast<HTMLElement*>(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
+        frame()->document()->updateRendering();
+        return;
+    }
 
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    ExceptionCode ec;
-    style->setProperty(CSSPropertyDirection, direction, false, ec);
+    style->setProperty(CSSPropertyDirection, direction == LeftToRightWritingDirection ? "ltr" : direction == RightToLeftWritingDirection ? "rtl" : "inherit", false);
     applyParagraphStyleToSelection(style.get(), EditActionSetWritingDirection);
 }
 

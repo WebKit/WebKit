@@ -1,3 +1,15 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKit part of moving the method to set the base writing direction from Frame to Editor
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView toggleBaseWritingDirection:]): Changed back to call the
+        Editor method.
+        (-[WebHTMLView changeBaseWritingDirection:]): Ditto.
+        (-[WebHTMLView _changeBaseWritingDirectionTo:]): Ditto.
+
 2008-07-01  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: forgot to check in this file.

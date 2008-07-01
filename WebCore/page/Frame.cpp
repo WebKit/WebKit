@@ -49,7 +49,6 @@
 #include "HTMLFormElement.h"
 #include "HTMLFrameElementBase.h"
 #include "HTMLFormControlElement.h"
-#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HitTestResult.h"
@@ -836,20 +835,6 @@ void Frame::updateSecureKeyboardEntryIfActive()
 {
     if (selection()->isFocusedAndActive())
         setUseSecureKeyboardEntry(d->m_doc->useSecureKeyboardEntryWhenActive());
-}
-
-void Frame::setSelectionBaseWritingDirection(WritingDirection direction)
-{
-    Node* focusedNode = document()->focusedNode();
-    if (focusedNode && (focusedNode->hasTagName(textareaTag)
-                        || focusedNode->hasTagName(inputTag) && (static_cast<HTMLInputElement*>(focusedNode)->inputType() == HTMLInputElement::TEXT
-                                                                || static_cast<HTMLInputElement*>(focusedNode)->inputType() == HTMLInputElement::SEARCH))) {
-        if (direction == NaturalWritingDirection)
-            return;
-        static_cast<HTMLElement*>(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
-        document()->updateRendering();
-    } else
-        editor()->setBaseWritingDirection(direction == LeftToRightWritingDirection ? "ltr" : direction == RightToLeftWritingDirection ? "rtl" : "inherit");
 }
 
 CSSMutableStyleDeclaration *Frame::typingStyle() const

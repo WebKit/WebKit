@@ -1,3 +1,21 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - move the method to set the base writing direction from Frame to Editor
+
+        * WebCore.base.exp: Updated.
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection): Changed the parameter to a
+        WritingDirection enum value and added the special behavior when the
+        focused node is a text field or a text area.
+        * editing/Editor.h:
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected): Changed back
+        to call the Editor method.
+        * page/Frame.cpp: Removed setSelectionBaseWritingDirection().
+        * page/Frame.h:
+
 2008-07-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Oliver.

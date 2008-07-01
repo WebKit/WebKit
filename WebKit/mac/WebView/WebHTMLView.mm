@@ -4372,7 +4372,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->setSelectionBaseWritingDirection(direction);
+        coreFrame->editor()->setBaseWritingDirection(direction);
 }
 
 - (void)changeBaseWritingDirection:(id)sender
@@ -4389,7 +4389,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     ASSERT(writingDirection != NSWritingDirectionNatural);
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->setSelectionBaseWritingDirection(writingDirection == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
+        coreFrame->editor()->setBaseWritingDirection(writingDirection == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
 }
 
 static BOOL writingDirectionKeyBindingsEnabled()
@@ -4411,7 +4411,7 @@ static BOOL writingDirectionKeyBindingsEnabled()
     }
 
     if (Frame* coreFrame = core([self _frame]))
-        coreFrame->setSelectionBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
+        coreFrame->editor()->setBaseWritingDirection(direction == NSWritingDirectionLeftToRight ? LeftToRightWritingDirection : RightToLeftWritingDirection);
 }
 
 - (void)changeBaseWritingDirectionToLTR:(id)sender
