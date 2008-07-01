@@ -1,3 +1,11 @@
+2008-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Build fixes.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::addStaticGlobals):
+
 2008-07-01  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix, include OwnPtr.h.

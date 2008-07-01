@@ -264,7 +264,7 @@ namespace KJS {
             memcpy(registerArray + count, d()->registerArray.get(), registerArraySize * sizeof(Register));
         setRegisterArray(registerArray, registerArraySize + count);
 
-        for (int i = 0, index = -registerArraySize - 1; i < count; ++i, --index) {
+        for (int i = 0, index = -static_cast<int>(registerArraySize) - 1; i < count; ++i, --index) {
             GlobalPropertyInfo& global = globals[i];
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);

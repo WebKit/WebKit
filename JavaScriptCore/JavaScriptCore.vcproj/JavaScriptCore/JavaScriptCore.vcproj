@@ -341,19 +341,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\DateInstance.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\DateInstance.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\DateConstructor.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\DateConstructor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DateInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\DateInstance.h"
 				>
 			</File>
 			<File
@@ -609,10 +609,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\NodeInfo.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\NativeErrorConstructor.cpp"
 				>
 			</File>
@@ -626,6 +622,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\NativeErrorPrototype.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\NodeInfo.h"
 				>
 			</File>
 			<File
@@ -1062,10 +1062,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\LabelID.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\VM\LabelID.h"
 				>
 			</File>
@@ -1106,10 +1102,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\RegisterID.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\VM\RegisterID.h"
 				>
 			</File>
@@ -1138,10 +1130,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\Instruction.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\VM\Instruction.h"
 				>
 			</File>
@@ -1167,10 +1155,6 @@
 			</File>
 			<File
 				RelativePath="..\..\VM\Opcode.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\VM\Register.cpp"
 				>
 			</File>
 			<File
