@@ -35,14 +35,14 @@ static TextStream& operator<<(TextStream& ts, const FloatPoint3D& p)
     return ts;
 }
 
-TextStream& SVGPointLightSource::externalRepresentation(TextStream& ts) const
+TextStream& PointLightSource::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=POINT-LIGHT] ";
     ts << "[position=\"" << position() << "\"]";
     return ts;
 }
 
-TextStream& SVGSpotLightSource::externalRepresentation(TextStream& ts) const
+TextStream& SpotLightSource::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=SPOT-LIGHT] ";
     ts << "[position=\"" << position() << "\"]";
@@ -52,7 +52,7 @@ TextStream& SVGSpotLightSource::externalRepresentation(TextStream& ts) const
     return ts;
 }
 
-TextStream& SVGDistantLightSource::externalRepresentation(TextStream& ts) const
+TextStream& DistantLightSource::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=DISTANT-LIGHT] ";
     ts << "[azimuth=\"" << azimuth() << "\"]";

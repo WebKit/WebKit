@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+                  2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
 
@@ -28,20 +29,20 @@
 
 namespace WebCore {
 
-class SVGPointLightSource : public SVGLightSource {
-public:
-    SVGPointLightSource(const FloatPoint3D& position)
-        : SVGLightSource(LS_POINT)
-        , m_position(position)
-    { }
+    class PointLightSource : public LightSource {
+    public:
+        PointLightSource(const FloatPoint3D& position)
+            : LightSource(LS_POINT)
+            , m_position(position)
+        { }
 
-    const FloatPoint3D& position() const { return m_position; }
+        const FloatPoint3D& position() const { return m_position; }
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-private:
-    FloatPoint3D m_position;
-};
+    private:
+        FloatPoint3D m_position;
+    };
 
 } // namespace WebCore
 

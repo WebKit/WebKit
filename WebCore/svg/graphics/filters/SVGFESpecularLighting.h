@@ -52,8 +52,8 @@ public:
     float kernelUnitLengthY() const;
     void setKernelUnitLengthY(float);
 
-    const SVGLightSource* lightSource() const;
-    void setLightSource(SVGLightSource*);
+    const LightSource* lightSource() const;
+    void setLightSource(LightSource*);
 
     virtual TextStream& externalRepresentation(TextStream&) const;
 
@@ -70,7 +70,7 @@ private:
     float m_specularExponent;
     float m_kernelUnitLengthX;
     float m_kernelUnitLengthY;
-    RefPtr<SVGLightSource> m_lightSource;
+    RefPtr<LightSource> m_lightSource;
 };
 
 } // namespace WebCore

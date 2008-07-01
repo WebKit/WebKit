@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+                  2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
 
@@ -28,31 +29,31 @@
 
 namespace WebCore {
 
-class SVGSpotLightSource : public SVGLightSource {
-public:
-    SVGSpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
-        : SVGLightSource(LS_SPOT)
-        , m_position(position)
-        , m_direction(direction)
-        , m_specularExponent(specularExponent)
-        , m_limitingConeAngle(limitingConeAngle)
-    { }
+    class SpotLightSource : public LightSource {
+    public:
+        SpotLightSource(const FloatPoint3D& position, const FloatPoint3D& direction, float specularExponent, float limitingConeAngle)
+            : LightSource(LS_SPOT)
+            , m_position(position)
+            , m_direction(direction)
+            , m_specularExponent(specularExponent)
+            , m_limitingConeAngle(limitingConeAngle)
+        { }
 
-    const FloatPoint3D& position() const { return m_position; }
-    const FloatPoint3D& direction() const { return m_direction; }
+        const FloatPoint3D& position() const { return m_position; }
+        const FloatPoint3D& direction() const { return m_direction; }
 
-    float specularExponent() const { return m_specularExponent; }
-    float limitingConeAngle() const { return m_limitingConeAngle; }
+        float specularExponent() const { return m_specularExponent; }
+        float limitingConeAngle() const { return m_limitingConeAngle; }
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-private:
-    FloatPoint3D m_position;
-    FloatPoint3D m_direction;
+    private:
+        FloatPoint3D m_position;
+        FloatPoint3D m_direction;
 
-    float m_specularExponent;
-    float m_limitingConeAngle;
-};
+        float m_specularExponent;
+        float m_limitingConeAngle;
+    };
 
 } // namespace WebCore
 

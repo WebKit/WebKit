@@ -34,9 +34,9 @@ SVGFEDistantLightElement::~SVGFEDistantLightElement()
 {
 }
 
-SVGLightSource* SVGFEDistantLightElement::lightSource() const
+LightSource* SVGFEDistantLightElement::lightSource() const
 {
-    return new SVGDistantLightSource(azimuth(), elevation());
+    return new DistantLightSource(azimuth(), elevation());
 }
 
 }

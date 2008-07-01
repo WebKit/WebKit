@@ -1,3 +1,69 @@
+2008-07-01  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Class name changes for SVG Light Effect files. The class names that changed :
+
+        SVGLightSource -> LightSource
+        SVGDistantLightSource -> DistantLightSource
+        SVGPointLightSource -> PointLightSource
+        SVGSpotLightSource -> SpotLightSource
+
+        Every other file that is changed is just propagating the class name changes to
+        dependent files.
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::updateLights):
+        * svg/SVGFEDistantLightElement.cpp:
+        (WebCore::SVGFEDistantLightElement::lightSource):
+        * svg/SVGFEDistantLightElement.h:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEPointLightElement.cpp:
+        (WebCore::SVGFEPointLightElement::lightSource):
+        * svg/SVGFEPointLightElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::updateLights):
+        * svg/SVGFESpotLightElement.cpp:
+        (WebCore::SVGFESpotLightElement::lightSource):
+        * svg/SVGFESpotLightElement.h:
+        * svg/graphics/filters/SVGDistantLightSource.h:
+        (WebCore::DistantLightSource::DistantLightSource):
+        (WebCore::DistantLightSource::azimuth):
+        (WebCore::DistantLightSource::elevation):
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::SVGFEDiffuseLighting::lightSource):
+        (WebCore::SVGFEDiffuseLighting::setLightSource):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::SVGFESpecularLighting::lightSource):
+        (WebCore::SVGFESpecularLighting::setLightSource):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGLightSource.cpp:
+        (WebCore::PointLightSource::externalRepresentation):
+        (WebCore::SpotLightSource::externalRepresentation):
+        (WebCore::DistantLightSource::externalRepresentation):
+        * svg/graphics/filters/SVGLightSource.h:
+        (WebCore::):
+        (WebCore::LightSource::LightSource):
+        (WebCore::LightSource::~LightSource):
+        (WebCore::LightSource::type):
+        * svg/graphics/filters/SVGPointLightSource.h:
+        (WebCore::PointLightSource::PointLightSource):
+        (WebCore::PointLightSource::position):
+        * svg/graphics/filters/SVGSpotLightSource.h:
+        (WebCore::SpotLightSource::SpotLightSource):
+        (WebCore::SpotLightSource::position):
+        (WebCore::SpotLightSource::direction):
+        (WebCore::SpotLightSource::specularExponent):
+        (WebCore::SpotLightSource::limitingConeAngle):
+        * svg/graphics/filters/cg/SVGFEDiffuseLightingCg.mm:
+        (WebCore::SVGFEDiffuseLighting::getCIFilter):
+        * svg/graphics/filters/cg/SVGFEHelpersCg.h:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm:
+        (WebCore::getLightVectors):
+        * svg/graphics/filters/cg/SVGFESpecularLightingCg.mm:
+        (WebCore::SVGFESpecularLighting::getCIFilter):
+
 2008-07-01  Alp Toker  <alp@nuanti.com>
 
         Rubber-stamped by Holger.

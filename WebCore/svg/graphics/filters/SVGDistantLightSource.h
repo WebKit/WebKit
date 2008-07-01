@@ -1,5 +1,6 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+    Copyright (C) 2008 Alex Mathews <possessedpenguinbob@gmail.com>
+                  2004, 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
                   2005 Eric Seidel <eric@webkit.org>
 
@@ -27,23 +28,23 @@
 
 namespace WebCore {
 
-class SVGDistantLightSource : public SVGLightSource {
-public:
-    SVGDistantLightSource(float azimuth, float elevation)
-        : SVGLightSource(LS_DISTANT)
-        , m_azimuth(azimuth)
-        , m_elevation(elevation)
-    { }
+    class DistantLightSource : public LightSource {
+    public:
+        DistantLightSource(float azimuth, float elevation)
+            : LightSource(LS_DISTANT)
+            , m_azimuth(azimuth)
+            , m_elevation(elevation)
+        { }
 
-    float azimuth() const { return m_azimuth; }
-    float elevation() const { return m_elevation; }
+        float azimuth() const { return m_azimuth; }
+        float elevation() const { return m_elevation; }
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual TextStream& externalRepresentation(TextStream&) const;
 
-private:
-    float m_azimuth;
-    float m_elevation;
-};
+    private:
+        float m_azimuth;
+        float m_elevation;
+    };
 
 } // namespace WebCore
 

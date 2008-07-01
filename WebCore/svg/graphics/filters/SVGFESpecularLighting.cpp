@@ -108,12 +108,12 @@ void SVGFESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
     m_kernelUnitLengthY = kernelUnitLengthY;
 }
 
-const SVGLightSource* SVGFESpecularLighting::lightSource() const
+const LightSource* SVGFESpecularLighting::lightSource() const
 {
     return m_lightSource.get();
 }
 
-void SVGFESpecularLighting::setLightSource(SVGLightSource* lightSource)
+void SVGFESpecularLighting::setLightSource(LightSource* lightSource)
 {
     m_lightSource = lightSource;
 }

@@ -31,7 +31,7 @@ namespace WebCore {
 
 CIFilter* SVGFEDiffuseLighting::getCIFilter(const FloatRect& bbox) const
 {
-    const SVGLightSource* light = lightSource();
+    const LightSource* light = lightSource();
     if (!light)
         return nil;
 

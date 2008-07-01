@@ -34,10 +34,10 @@ SVGFEPointLightElement::~SVGFEPointLightElement()
 {
 }
 
-SVGLightSource* SVGFEPointLightElement::lightSource() const
+LightSource* SVGFEPointLightElement::lightSource() const
 {
     FloatPoint3D pos(x(), y(), z());
-    return new SVGPointLightSource(pos);
+    return new PointLightSource(pos);
 }
 
 }

@@ -104,7 +104,7 @@ void SVGFEDiffuseLightingElement::updateLights() const
     if (!m_filterEffect)
         return;
     
-    SVGLightSource* light = 0;
+    LightSource* light = 0;
     for (Node* n = firstChild(); n; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feDistantLightTag) ||
             n->hasTagName(SVGNames::fePointLightTag) ||

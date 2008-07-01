@@ -34,7 +34,7 @@ SVGFESpotLightElement::~SVGFESpotLightElement()
 {
 }
 
-SVGLightSource* SVGFESpotLightElement::lightSource() const
+LightSource* SVGFESpotLightElement::lightSource() const
 {
     FloatPoint3D pos(x(), y(), z());
 
@@ -44,7 +44,7 @@ SVGLightSource* SVGFESpotLightElement::lightSource() const
                            pointsAtZ() - pos.z());
 
     direction.normalize();
-    return new SVGSpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
+    return new SpotLightSource(pos, direction, specularExponent(), limitingConeAngle());
 }
 
 }

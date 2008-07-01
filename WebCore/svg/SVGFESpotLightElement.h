@@ -31,7 +31,7 @@ namespace WebCore
         SVGFESpotLightElement(const QualifiedName&, Document*);
         virtual ~SVGFESpotLightElement();
 
-        virtual SVGLightSource* lightSource() const;
+        virtual LightSource* lightSource() const;
     };
 
 } // namespace WebCore
