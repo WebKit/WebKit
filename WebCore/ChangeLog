@@ -1,3 +1,13 @@
+2008-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Add PluginMainThreadScheduler.{cpp|h} to build.
+        
+        * WebCore.base.exp:
+        * WebCore.xcodeproj/project.pbxproj:
+        * plugins/PluginMainThreadScheduler.cpp:
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

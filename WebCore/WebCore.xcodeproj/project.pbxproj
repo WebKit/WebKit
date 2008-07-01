@@ -263,6 +263,8 @@
 		1AD2316E0CD269E700C1F194 /* JSSQLTransactionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */; };
 		1AD51A140CB59CD300953D11 /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AD51A120CB59CD300953D11 /* DatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AD51A150CB59CD300953D11 /* DatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */; };
+		1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */; };
+		1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1AE2AA1E0A1CDAB400B42B25 /* JSHTMLAreaElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0A0A1CDAB300B42B25 /* JSHTMLAreaElement.cpp */; };
 		1AE2AA1F0A1CDAB400B42B25 /* JSHTMLAreaElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AE2AA0B0A1CDAB300B42B25 /* JSHTMLAreaElement.h */; };
 		1AE2AA200A1CDAB400B42B25 /* JSHTMLBaseFontElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AE2AA0C0A1CDAB300B42B25 /* JSHTMLBaseFontElement.cpp */; };
@@ -4768,6 +4770,8 @@
 		1AD2316D0CD269E700C1F194 /* JSSQLTransactionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSQLTransactionCustom.cpp; sourceTree = "<group>"; };
 		1AD51A120CB59CD300953D11 /* DatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseTracker.h; sourceTree = "<group>"; };
 		1AD51A130CB59CD300953D11 /* DatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseTracker.cpp; sourceTree = "<group>"; };
+		1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginMainThreadScheduler.cpp; sourceTree = "<group>"; };
+		1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginMainThreadScheduler.h; sourceTree = "<group>"; };
 		1AE2A9F00A1CDA5700B42B25 /* HTMLAreaElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLAreaElement.idl; sourceTree = "<group>"; };
 		1AE2A9F10A1CDA5700B42B25 /* HTMLBaseFontElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBaseFontElement.idl; sourceTree = "<group>"; };
 		1AE2A9F20A1CDA5700B42B25 /* HTMLBodyElement.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = HTMLBodyElement.idl; sourceTree = "<group>"; };
@@ -8925,6 +8929,8 @@
 				A9C6E4F10D745E48006442E9 /* PluginData.cpp */,
 				A9C6E4F20D745E48006442E9 /* PluginData.h */,
 				A9C6E4F50D745E61006442E9 /* PluginDataMac.mm */,
+				1ADA140E0E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp */,
+				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
 				5DCF836C0D59159800953BC6 /* PluginInfoStore.h */,
 			);
 			path = plugins;
@@ -15254,6 +15260,7 @@
 				BC686CBB0E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h in Headers */,
 				BC686CBC0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h in Headers */,
 				3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */,
+				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17026,6 +17033,7 @@
 				BC686CB30E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm in Sources */,
 				BC686CB60E0C343900DE8A08 /* DOMCSSVariablesRule.mm in Sources */,
 				BC7951550E15DBFF00A898AB /* JSCanvasPixelArrayCustom.cpp in Sources */,
+				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

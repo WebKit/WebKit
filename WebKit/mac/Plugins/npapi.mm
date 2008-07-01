@@ -32,6 +32,9 @@
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebCore/PluginMainThreadScheduler.h>
+
+using namespace WebCore;
 
 WebBaseNetscapePluginView *pluginViewForInstance(NPP instance);
 
@@ -161,14 +164,17 @@ void* NPN_GetJavaPeer(NPP instance)
     return NULL;
 }
 
-void
-NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
+void NPN_PushPopupsEnabledState(NPP instance, NPBool enabled)
 {
 }
 
-void
-NPN_PopPopupsEnabledState(NPP instance)
+void NPN_PopPopupsEnabledState(NPP instance)
 {
+}
+
+void NPN_PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
+{
+    PluginMainThreadScheduler::scheduler().scheduleCall(instance, func, userData);
 }
 
 uint32 NPN_ScheduleTimer(NPP instance, uint32 interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32 timerID))

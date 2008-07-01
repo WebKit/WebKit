@@ -61,6 +61,7 @@
 #import <WebCore/FrameLoader.h> 
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
+#import <WebCore/PluginMainThreadScheduler.h>
 #import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/nptextinput.h>
@@ -2783,6 +2784,8 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     if (!wasDeferring)
         page->setDefersLoading(true);
     
+    PluginMainThreadScheduler::scheduler().registerPlugin(plugin);
+    
     [[self class] setCurrentPluginView:self];
     NPError npErr = NPP_New((char *)[MIMEType cString], plugin, mode, argsCount, cAttributes, cValues, NULL);
     [[self class] setCurrentPluginView:nil];
@@ -2796,6 +2799,8 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
 
 - (void)_destroyPlugin
 {
+    PluginMainThreadScheduler::scheduler().unregisterPlugin(plugin);
+    
     NPError npErr;
     npErr = NPP_Destroy(plugin, NULL);
     LOG(Plugins, "NPP_Destroy: %d", npErr);

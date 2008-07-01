@@ -1,3 +1,24 @@
+2008-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Use the PluginMainThreadScheduler, and implement NPN_PluginThreadAsyncCall.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView _createPlugin]):
+        Register the plug-in instance.
+        
+        (-[WebBaseNetscapePluginView _destroyPlugin]):
+        Unegister the plug-in instance.
+        
+        * Plugins/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        Set NPN_PluginThreadAsyncCall.
+        
+        * Plugins/npapi.mm:
+        (NPN_PluginThreadAsyncCall):
+        Implement this.
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
