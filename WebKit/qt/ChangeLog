@@ -1,3 +1,14 @@
+2008-07-01  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Don't show the tooltip instantly in the QtLauncher.
+        
+        Let the QWebView handle tooltips by itself, so we get
+        the expected delay as everywhere else.
+
+        * QtLauncher/main.cpp:
+
 2008-06-30  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Niko.

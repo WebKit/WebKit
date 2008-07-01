@@ -214,10 +214,6 @@ protected slots:
     void showLinkHover(const QString &link, const QString &toolTip)
     {
         statusBar()->showMessage(link);
-#ifndef QT_NO_TOOLTIP
-        if (!toolTip.isEmpty())
-            QToolTip::showText(QCursor::pos(), toolTip);
-#endif
     }
     void print()
     {
