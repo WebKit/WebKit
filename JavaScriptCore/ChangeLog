@@ -1,3 +1,30 @@
+2008-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Split JSCell and JSNumberCell class declarations out of JSValue.h
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/JSPropertyNameIterator.h:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSCell.cpp: Copied from JavaScriptCore/kjs/JSValue.cpp.
+        * kjs/JSCell.h: Copied from JavaScriptCore/kjs/JSValue.h.
+        (KJS::JSValue::getJSNumber):
+        * kjs/JSNumberCell.cpp:
+        * kjs/JSNumberCell.h: Copied from JavaScriptCore/kjs/JSValue.h.
+        * kjs/JSObject.h:
+        * kjs/JSString.cpp:
+        (KJS::jsString):
+        (KJS::jsOwnedString):
+        * kjs/JSString.h:
+        (KJS::JSValue::toThisJSString):
+        * kjs/JSValue.cpp:
+        * kjs/JSValue.h:
+
 2008-07-01  Anders Carlsson  <andersca@apple.com>
 
         Build fixes.

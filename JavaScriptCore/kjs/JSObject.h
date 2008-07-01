@@ -26,11 +26,12 @@
 
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
+#include "JSNumberCell.h"
 #include "JSType.h"
-#include "list.h"
 #include "PropertyMap.h"
 #include "PropertySlot.h"
 #include "ScopeChain.h"
+#include "list.h"
 
 namespace KJS {
 

@@ -87,6 +87,7 @@ SOURCES += \
     kjs/identifier.cpp \
     kjs/InternalFunction.cpp \
     kjs/interpreter.cpp \
+    kjs/JSCell.cpp \
     kjs/JSImmediate.cpp \
     kjs/JSLock.cpp \
     kjs/JSNumberCell.cpp \

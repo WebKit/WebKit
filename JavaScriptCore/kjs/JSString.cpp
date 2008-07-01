@@ -124,4 +124,19 @@ bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Proper
     return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }
 
+JSString* jsString(ExecState* exec, const char* s)
+{
+    return new (exec) JSString(s ? s : "");
+}
+
+JSString* jsString(ExecState* exec, const UString& s)
+{
+    return s.isNull() ? new (exec) JSString("") : new (exec) JSString(s);
+}
+
+JSString* jsOwnedString(ExecState* exec, const UString& s)
+{
+    return s.isNull() ? new (exec) JSString("", JSString::HasOtherOwner) : new (exec) JSString(s, JSString::HasOtherOwner);
+}
+
 } // namespace KJS

@@ -25,7 +25,7 @@
 #define JSString_h
 
 #include "CommonIdentifiers.h"
-#include "JSValue.h"
+#include "JSCell.h"
 #include "PropertySlot.h"
 #include "identifier.h"
 #include "ustring.h"
@@ -68,6 +68,14 @@ namespace KJS {
     UString m_value;
   };
 
+  JSString* jsString(ExecState*, const UString&); // returns empty string if passed null string
+  JSString* jsString(ExecState*, const char* = ""); // returns empty string if passed 0
+
+  // Should be used for strings that are owned by an object that will
+  // likely outlive the JSValue this makes, such as the parse tree or a
+  // DOM object that contains a UString
+  JSString* jsOwnedString(ExecState*, const UString&); 
+
 ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {
@@ -95,6 +103,13 @@ ALWAYS_INLINE bool JSString::getStringPropertySlot(unsigned propertyName, Proper
     return false;
 }
 
-} // namespace
+// --- JSValue inlines ----------------------------
+
+inline JSString* JSValue::toThisJSString(ExecState* exec)
+{
+    return JSImmediate::isImmediate(this) ? jsString(exec, JSImmediate::toString(this)) : asCell()->toThisJSString(exec);
+}
+
+} // namespace KJS
 
 #endif // JSString_h

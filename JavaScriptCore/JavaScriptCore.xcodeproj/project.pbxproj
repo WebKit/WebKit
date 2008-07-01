@@ -98,6 +98,7 @@
 		BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E98B0E183E38000F9297 /* ErrorInstance.h */; };
 		BC1166020E1997B4008066DD /* DateInstance.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1166010E1997B1008066DD /* DateInstance.h */; };
 		BC11667B0E199C05008066DD /* InternalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC11667A0E199C05008066DD /* InternalFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1167D80E19BCC9008066DD /* JSCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E40E16F5CD00B34460 /* AlwaysInline.h in Headers */ = {isa = PBXBuildFile; fileRef = 93AA4F770957251F0084B3A7 /* AlwaysInline.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E50E16F5CD00B34460 /* APICast.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B78A0A4305AB00517CFC /* APICast.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C3E60E16F5CD00B34460 /* ArrayConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7952070E15E8A800A898AB /* ArrayConstructor.h */; };
@@ -246,6 +247,7 @@
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
 		BC18C5300E16FCEB00B34460 /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* grammar.h */; };
+		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
 		BCD202D60E170708002C7E82 /* RegExpConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202D50E170708002C7E82 /* RegExpConstructor.lut.h */; };
@@ -600,6 +602,7 @@
 		BC1166000E1997B1008066DD /* DateInstance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DateInstance.cpp; sourceTree = "<group>"; };
 		BC1166010E1997B1008066DD /* DateInstance.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DateInstance.h; sourceTree = "<group>"; };
 		BC11667A0E199C05008066DD /* InternalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InternalFunction.h; sourceTree = "<group>"; };
+		BC1167D80E19BCC9008066DD /* JSCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCell.h; sourceTree = "<group>"; };
 		BC18C3C00E16EE3300B34460 /* StringConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringConstructor.cpp; sourceTree = "<group>"; };
 		BC18C3C10E16EE3300B34460 /* StringConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringConstructor.h; sourceTree = "<group>"; };
 		BC18C3C20E16EE3300B34460 /* StringObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StringObject.cpp; sourceTree = "<group>"; };
@@ -633,6 +636,8 @@
 		BC7952330E15EB5600A898AB /* BooleanConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanConstructor.h; sourceTree = "<group>"; };
 		BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanPrototype.cpp; sourceTree = "<group>"; };
 		BC7952350E15EB5600A898AB /* BooleanPrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BooleanPrototype.h; sourceTree = "<group>"; };
+		BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNumberCell.h; sourceTree = "<group>"; };
+		BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCell.cpp; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
 		BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpConstructor.cpp; sourceTree = "<group>"; };
@@ -1082,6 +1087,8 @@
 				14DA818E0D99FD2000B0A4FB /* JSActivation.h */,
 				93ADFCE60CCBD7AC00D30B08 /* JSArray.cpp */,
 				938772E5038BFE19008635CE /* JSArray.h */,
+				BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */,
+				BC1167D80E19BCC9008066DD /* JSCell.h */,
 				F692A85E0255597D01FF60F7 /* JSFunction.cpp */,
 				F692A85F0255597D01FF60F7 /* JSFunction.h */,
 				E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */,
@@ -1095,6 +1102,7 @@
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
 				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC02E9B90E184580000F9297 /* JSNumberCell.cpp */,
+				BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
@@ -1411,6 +1419,8 @@
 				BC02E98D0E183E38000F9297 /* ErrorInstance.h in Headers */,
 				BC1166020E1997B4008066DD /* DateInstance.h in Headers */,
 				BC11667B0E199C05008066DD /* InternalFunction.h in Headers */,
+				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
+				BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

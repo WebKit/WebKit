@@ -34,6 +34,7 @@ my %headerIncludes = ();
 my @implContentHeader = ();
 my @implContent = ();
 my %implIncludes = ();
+my %implKJSIncludes = ();
 
 # Default .h template
 my $headerTemplate = << "EOF";
@@ -871,6 +872,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
     if ($numConstants ne 0) {
+        $implKJSInclude{"JSNumberCell.h"};
         push(@implContent, "JSValue* ${className}Prototype::getValueProperty(ExecState* exec, int token) const\n{\n");
         push(@implContent, "    // The token is the numeric value of its associated constant\n");
         push(@implContent, "    return jsNumber(exec, token);\n}\n\n");
@@ -1493,7 +1495,11 @@ sub NativeToJSValue
     my $type = $codeGenerator->StripModule($signature->type);
 
     return "jsBoolean($value)" if $type eq "boolean";
-    return "jsNumber(exec, $value)" if $codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp";
+    
+    if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
+        $implKJSInclude{"JSNumberCell.h"};
+        return "jsNumber(exec, $value)";
+    }
 
     if ($codeGenerator->IsStringType($type)) {
         $implIncludes{"KURL.h"} = 1;
@@ -1505,6 +1511,7 @@ sub NativeToJSValue
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
+        $implKJSInclude{"JSString.h"};
         return "jsString(exec, $value)";
     }
 
@@ -1737,6 +1744,12 @@ sub WriteData
 
             print $IMPL "#include \"$implInclude\"\n" unless $codeGenerator->IsSVGAnimatedType($checkType);
         }
+        
+        print $IMPL "\n";
+
+        foreach my $implKJSInclude (sort keys(%implKJSInclude)) {
+            print $IMPL "#include <kjs/$implKJSInclude>\n";
+        }
 
         print $IMPL @implContent;
         close($IMPL);
@@ -1745,6 +1758,7 @@ sub WriteData
         @implContentHeader = ();
         @implContent = ();
         %implIncludes = ();
+        %implKJSIncludes = ();
     }
 
     if (defined($HEADER)) {
@@ -1820,6 +1834,8 @@ JSValue* ${className}Constructor::getValueProperty(ExecState* exec, int token) c
 }
 
 EOF
+
+    $implKJSInclude{"JSNumberCell.h"};
 
     return $implContent;
 }

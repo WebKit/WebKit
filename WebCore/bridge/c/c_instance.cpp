@@ -35,6 +35,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include <kjs/ExecState.h>
+#include <kjs/JSNumberCell.h>
 #include <kjs/PropertyNameArray.h>
 #include <wtf/Assertions.h>
 #include <wtf/StringExtras.h>

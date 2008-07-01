@@ -481,6 +481,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSCell.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSCell.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSFunction.cpp"
 				>
 			</File>
@@ -530,6 +538,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSNumberCell.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSNumberCell.h"
 				>
 			</File>
 			<File

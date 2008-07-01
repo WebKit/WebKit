@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "JSValue.h"
+#include "JSNumberCell.h"
 
 #include "JSType.h"
 #include "NumberObject.h"

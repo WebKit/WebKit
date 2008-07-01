@@ -1,3 +1,13 @@
+2008-07-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Split JSCell and JSNumberCell class declarations out of JSValue.h
+
+        * ForwardingHeaders/kjs/JSNumberCell.h: Added.
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/c/c_instance.cpp:
+
 2008-07-01  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
