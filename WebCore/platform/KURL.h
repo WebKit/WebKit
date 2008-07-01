@@ -224,6 +224,8 @@ const KURL& blankURL();
 
 bool protocolIs(const String& url, const char* protocol);
 
+String mimeTypeFromDataURL(const String& url);
+
 // Unescapes the given string using URL escaping rules, given an optional
 // encoding (defaulting to UTF-8 otherwise). DANGER: If the URL has "%00"
 // in it, the resulting string will have embedded null characters!

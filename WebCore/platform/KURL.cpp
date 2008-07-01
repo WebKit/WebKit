@@ -1539,6 +1539,21 @@ bool protocolIs(const String& url, const char* protocol)
     }
 }
 
+String mimeTypeFromDataURL(const String& url)
+{
+    ASSERT(protocolIs(url, "data"));
+    int index = url.find(';');
+    if (index == -1)
+        index = url.find(',');
+    if (index != -1) {
+        int len = index - 5;
+        if (len > 0)
+            return url.substring(5, len);
+        return "text/plain"; // Data URLs with no MIME type are considered text/plain.
+    }
+    return "";
+}
+
 const KURL& blankURL()
 {
     static KURL staticBlankURL("about:blank");

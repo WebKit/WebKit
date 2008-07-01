@@ -267,19 +267,9 @@ const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const
 
 bool HTMLObjectElement::isImageType()
 {
-    if (m_serviceType.isEmpty() && protocolIs(m_url, "data")) {
-        // Extract the MIME type from the data URL.
-        int index = m_url.find(';');
-        if (index == -1)
-            index = m_url.find(',');
-        if (index != -1) {
-            int len = index - 5;
-            if (len > 0)
-                m_serviceType = m_url.substring(5, len);
-            else
-                m_serviceType = "text/plain"; // Data URLs with no MIME type are considered text/plain.
-        }
-    }
+    if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
+        m_serviceType = mimeTypeFromDataURL(m_url);
+
     if (Frame* frame = document()->frame()) {
         KURL completedURL(frame->loader()->completeURL(m_url));
         return frame->loader()->client()->objectContentType(completedURL, m_serviceType) == ObjectContentImage;

@@ -1,3 +1,19 @@
+2008-07-01  David Kilzer  <ddkilzer@apple.com>
+
+        Move data: URL parsing code in HTMLObjectElement to KURL
+
+        Reviewed by Ada and Darin.
+
+        No test cases added since there is no change in behavior.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::isImageType): Extracted data: URL
+        parsing code into WebCore::mimeTypeFromDataURL() in KURL.cpp.
+        * platform/KURL.cpp:
+        (WebCore::mimeTypeFromDataURL): Added.
+        * platform/KURL.h:
+        (WebCore::mimeTypeFromDataURL): Added.
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
