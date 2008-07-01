@@ -22,6 +22,7 @@
 #define RegExpConstructor_h
 
 #include "InternalFunction.h"
+#include <wtf/OwnPtr.h>
 
 namespace KJS {
 
