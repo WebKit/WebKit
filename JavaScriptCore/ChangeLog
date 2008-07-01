@@ -1,3 +1,20 @@
+2008-06-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (build fix).
+
+        Fix build by adding all (hopefully) the missing includes.
+
+        * kjs/BooleanPrototype.cpp:
+        * kjs/DateConstructor.cpp:
+        * kjs/ErrorPrototype.cpp:
+        * kjs/FunctionPrototype.cpp:
+        * kjs/NativeErrorConstructor.cpp:
+        * kjs/NumberPrototype.cpp:
+        * kjs/ObjectPrototype.cpp:
+        * kjs/RegExpConstructor.cpp:
+        * kjs/StringConstructor.cpp:
+        * kjs/StringPrototype.cpp:
+
 2008-06-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

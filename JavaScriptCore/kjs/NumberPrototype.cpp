@@ -23,6 +23,7 @@
 #include "NumberPrototype.h"
 
 #include "FunctionPrototype.h"
+#include "JSFunction.h"
 #include "ObjectPrototype.h"
 #include "dtoa.h"
 #include "operations.h"

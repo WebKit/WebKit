@@ -22,6 +22,7 @@
 #include "ErrorPrototype.h"
 
 #include "FunctionPrototype.h"
+#include "JSFunction.h"
 #include "ObjectPrototype.h"
 #include "ustring.h"
 

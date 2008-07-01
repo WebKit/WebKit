@@ -22,6 +22,7 @@
 #include "StringPrototype.h"
 
 #include "JSArray.h"
+#include "JSFunction.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"

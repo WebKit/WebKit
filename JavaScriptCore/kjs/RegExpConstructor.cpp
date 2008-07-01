@@ -24,6 +24,7 @@
 
 #include "ArrayPrototype.h"
 #include "JSArray.h"
+#include "JSFunction.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "RegExpObject.h"
