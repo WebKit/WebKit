@@ -117,7 +117,6 @@ namespace KJS {
             m_timeoutTime = 0;
             m_timeoutCheckCount = 0;
         }
-        void mark(Heap* heap) { m_registerFile.mark(heap); }
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };

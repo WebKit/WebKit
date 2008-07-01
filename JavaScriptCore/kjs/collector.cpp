@@ -90,9 +90,8 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
-Heap::Heap(Machine* machine)
+Heap::Heap()
     : m_markListSet(0)
-    , m_machine(machine)
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -908,7 +907,6 @@ bool Heap::collect()
 
     markStackObjectsConservatively();
     markProtectedObjects();
-    m_machine->mark(this);
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
 

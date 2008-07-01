@@ -2,6 +2,19 @@
 
         Reviewed by Oliver Hunt.
         
+        Fixed a global object leak caused by the switch to one register file.
+        
+        Don't unconditionally mark the register file, since that logically
+        makes all global variables GC roots, even when their global object is
+        no longer reachable.
+        
+        Instead, make the global object associated with the register file
+        responsible for marking the register file.
+
+2008-06-30  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         Removed the "registerBase" abstraction. Since the register file never
         reallocates, we can keep direct pointers into it, instead of
         <registerBase, offset> tuples.
