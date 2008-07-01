@@ -217,7 +217,7 @@ void JSLocation::setHash(ExecState* exec, JSValue* value)
     String str = value->toString(exec);
     if (str.startsWith("#"))
         str = str.substring(1);
-    if (url.ref() == str || (oldRef.isNull() && str.isEmpty()))
+    if (oldRef == str || (oldRef.isNull() && str.isEmpty()))
         return;
     url.setRef(str);
 

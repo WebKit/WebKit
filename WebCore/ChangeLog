@@ -1,3 +1,12 @@
+2008-07-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Oliver.
+
+        - slight tweak of the setHash fix
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setHash): Use oldRef instead of recomputing url.ref().
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
