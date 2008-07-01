@@ -113,7 +113,7 @@ LinearGradientAttributes SVGLinearGradientElement::collectGradientProperties() c
             attributes.setSpreadMethod((SVGGradientSpreadMethod) current->spreadMethod());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::gradientUnitsAttr))
-            attributes.setBoundingBoxMode(current->getAttribute(SVGNames::gradientUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxMode(current->gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr))
             attributes.setGradientTransform(current->gradientTransform()->consolidate().matrix());

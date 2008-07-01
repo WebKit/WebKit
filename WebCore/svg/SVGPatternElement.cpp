@@ -297,10 +297,10 @@ PatternAttributes SVGPatternElement::collectPatternProperties() const
             attributes.setHeight(current->height());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::patternUnitsAttr))
-            attributes.setBoundingBoxMode(current->getAttribute(SVGNames::patternUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxMode(current->patternUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasBoundingBoxModeContent() && current->hasAttribute(SVGNames::patternContentUnitsAttr))
-            attributes.setBoundingBoxModeContent(current->getAttribute(SVGNames::patternContentUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxModeContent(current->patternContentUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasPatternTransform() && current->hasAttribute(SVGNames::patternTransformAttr))
             attributes.setPatternTransform(current->patternTransform()->consolidate().matrix());

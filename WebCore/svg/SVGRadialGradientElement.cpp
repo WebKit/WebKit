@@ -89,7 +89,7 @@ void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName
         return;
 
     if (attrName == SVGNames::cxAttr || attrName == SVGNames::cyAttr ||
-        attrName == SVGNames::fyAttr || attrName == SVGNames::fyAttr ||
+        attrName == SVGNames::fxAttr || attrName == SVGNames::fyAttr ||
         attrName == SVGNames::rAttr)
         m_resource->invalidate();
 }
@@ -126,7 +126,7 @@ RadialGradientAttributes SVGRadialGradientElement::collectGradientProperties() c
             attributes.setSpreadMethod((SVGGradientSpreadMethod) current->spreadMethod());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::gradientUnitsAttr))
-            attributes.setBoundingBoxMode(current->getAttribute(SVGNames::gradientUnitsAttr) == "objectBoundingBox");
+            attributes.setBoundingBoxMode(current->gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
 
         if (!attributes.hasGradientTransform() && current->hasAttribute(SVGNames::gradientTransformAttr))
             attributes.setGradientTransform(current->gradientTransform()->consolidate().matrix());

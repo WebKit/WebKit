@@ -1,3 +1,20 @@
+2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=19841
+        Fix two small problems in the gradient & pattern code.
+
+        Added 12 new layout tests: svg/dynamic-updates/SVGLinearGradientElement*.html
+
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientProperties): Compare against already computed bounding box information, instead of querying attributes.
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternProperties): Ditto.
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientProperties): Ditto.
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged): 'fxAttr' updating wasn't handled. Copy'n'paste error.
+
 2008-07-01  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the build, include SVGTransformList.h instead of

@@ -1,3 +1,74 @@
+2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=19841
+        Added new layout tests covering dynamic updates of SVGLinearGradientElement using DOM & SVG DOM.
+
+        One test "SVGLinearGradientElement-svgdom-gradientTransform-prop.html" contains an expected failure:    
+        It exposes a known JavaScript problem, covered by https://bugs.webkit.org/show_bug.cgi?id=17736.
+
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.png: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.checksum: Added.
+        * platform/mac-leopard/svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientTransform-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-gradientUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x1-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-x2-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-dom-y2-attr.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x1-prop.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-x2-prop.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-y2-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientTransform-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x1-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x2-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y1-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y2-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientTransform-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x1-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x2-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y1-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y2-prop.js: Added.
+
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Antti.
