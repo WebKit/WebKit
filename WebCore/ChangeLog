@@ -1,3 +1,14 @@
+2008-06-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Fix for <rdar://problem/5882050> clicking in hidden close box area of empty searchfield causes mousedown to stop firing
+
+        Test: fast/forms/search-hidden-cancel-button.html
+
+        * html/HTMLTextFieldInnerElement.cpp: (WebCore::HTMLSearchFieldCancelButtonElement::defaultEventHandler):
+          Don't start capturing mouse events if the cancel button isn't visible.  This was causing the button to start but never stop capturing mouse events.
+
 2008-06-30  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.

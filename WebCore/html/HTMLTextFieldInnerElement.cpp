@@ -104,9 +104,11 @@ void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
         input->focus();
         input->select();
         evt->setDefaultHandled();
-        if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(this);
-        m_capturing = true;
+        if (renderer() && renderer()->style()->visibility() == VISIBLE)
+            if (Frame* frame = document()->frame()) {
+                frame->eventHandler()->setCapturingMouseEventsNode(this);
+                m_capturing = true;
+            }
     } else if (evt->type() == mouseupEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() == LeftButton) {
         if (m_capturing && renderer() && renderer()->style()->visibility() == VISIBLE) {
             if (hovered()) {
@@ -114,9 +116,10 @@ void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
                 input->onSearch();
                 evt->setDefaultHandled();
             }
-            if (Frame* frame = document()->frame())
+            if (Frame* frame = document()->frame()) {
                 frame->eventHandler()->setCapturingMouseEventsNode(0);
-            m_capturing = false;
+                m_capturing = false;
+            }
         }
     }
     if (!evt->defaultHandled())

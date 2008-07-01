@@ -1,3 +1,12 @@
+2008-06-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Oliver.
+
+        Test for <rdar://problem/5882050> clicking in hidden close box area of empty searchfield causes mousedown to stop firing
+
+        * fast/forms/search-hidden-cancel-button-expected.txt: Added.
+        * fast/forms/search-hidden-cancel-button.html: Added.
+
 2008-06-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.
