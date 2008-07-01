@@ -45,6 +45,8 @@ status-bar
 #normal
 italic
 oblique
+# The following is only allowed in @font-face:
+all
 #
 # CSS_PROP_FONT_VARIANT:
 #

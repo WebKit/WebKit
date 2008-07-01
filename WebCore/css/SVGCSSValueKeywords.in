@@ -189,7 +189,7 @@ visibleStroke
 painted
 fill
 stroke
-all
+#all
 #none
 
 # CSS_PROP_COLOR_INTERPOLATION

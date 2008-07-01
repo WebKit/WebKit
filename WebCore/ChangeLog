@@ -1,3 +1,12 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix the non-SVG build
+
+        * css/CSSValueKeywords.in: Added 'all'.
+        * css/SVGCSSValueKeywords.in: Removed 'all'.
+
 2008-07-01  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix, include DateInstance.h.
