@@ -1,3 +1,12 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix <rdar://problem/6045896> REGRESSION: Leak in WebCore::StringImpl::create
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cleanup):
+
 2008-07-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.

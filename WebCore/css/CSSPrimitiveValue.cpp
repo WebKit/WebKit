@@ -216,6 +216,7 @@ void CSSPrimitiveValue::cleanup()
         case CSS_STRING:
         case CSS_URI:
         case CSS_ATTR:
+        case CSS_PARSER_VARIABLE:
             if (m_value.string)
                 m_value.string->deref();
             break;
