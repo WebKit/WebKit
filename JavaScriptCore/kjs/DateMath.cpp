@@ -42,7 +42,7 @@
 #include "config.h"
 #include "DateMath.h"
 
-#include "JSValue.h"
+#include "JSNumberCell.h"
 #include <math.h>
 #include <stdint.h>
 #include <time.h>
