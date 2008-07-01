@@ -1102,7 +1102,7 @@ Node* Node::shadowAncestorNode()
 
 Node* Node::shadowTreeRootNode()
 {
-    Node *root = this;
+    Node* root = this;
     while (root) {
         if (root->isShadowNode())
             return root;
