@@ -27,7 +27,7 @@
 #ifndef JSCallbackFunction_h
 #define JSCallbackFunction_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 #include "JSObjectRef.h"
 
 namespace KJS {

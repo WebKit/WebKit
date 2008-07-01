@@ -21,7 +21,7 @@
 #ifndef ObjectConstructor_h
 #define ObjectConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

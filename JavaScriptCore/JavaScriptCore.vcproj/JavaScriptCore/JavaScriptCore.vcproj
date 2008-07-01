@@ -453,6 +453,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\InternalFunction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\interpreter.cpp"
 				>
 			</File>

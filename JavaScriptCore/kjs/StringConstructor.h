@@ -21,7 +21,7 @@
 #ifndef StringConstructor_h
 #define StringConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

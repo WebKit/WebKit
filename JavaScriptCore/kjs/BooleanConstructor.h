@@ -21,7 +21,7 @@
 #ifndef BooleanConstructor_h
 #define BooleanConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

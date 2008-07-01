@@ -23,7 +23,7 @@
 #ifndef FunctionConstructor_h
 #define FunctionConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

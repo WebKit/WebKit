@@ -21,7 +21,7 @@
 #ifndef NativeErrorConstructor_h
 #define NativeErrorConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

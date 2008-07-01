@@ -21,7 +21,7 @@
 #ifndef DateConstructor_h
 #define DateConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

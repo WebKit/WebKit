@@ -23,7 +23,7 @@
 #ifndef FunctionPrototype_h
 #define FunctionPrototype_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

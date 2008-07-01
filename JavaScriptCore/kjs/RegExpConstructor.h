@@ -21,7 +21,7 @@
 #ifndef RegExpConstructor_h
 #define RegExpConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

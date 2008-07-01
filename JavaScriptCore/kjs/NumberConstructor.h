@@ -22,7 +22,7 @@
 #ifndef NumberConstructor_h
 #define NumberConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

@@ -21,7 +21,7 @@
 #ifndef ArrayConstructor_h
 #define ArrayConstructor_h
 
-#include "JSFunction.h"
+#include "InternalFunction.h"
 
 namespace KJS {
 

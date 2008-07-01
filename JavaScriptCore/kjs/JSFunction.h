@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
  *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
@@ -25,6 +24,7 @@
 #ifndef JSFunction_h
 #define JSFunction_h
 
+#include "InternalFunction.h"
 #include "JSVariableObject.h"
 #include "SymbolTable.h"
 #include "nodes.h"
@@ -36,23 +36,6 @@ namespace KJS {
   class FunctionPrototype;
   class JSActivation;
   class JSGlobalObject;
-
-  class InternalFunction : public JSObject {
-  public:
-    static const ClassInfo info;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    const Identifier& functionName() const { return m_name; }
-
-  protected:
-    InternalFunction();
-    InternalFunction(FunctionPrototype*, const Identifier&);
-
-  private:
-    virtual CallType getCallData(CallData&) = 0;
-    virtual bool implementsHasInstance() const;
-
-    Identifier m_name;
-  };
 
   class JSFunction : public InternalFunction {
   public:

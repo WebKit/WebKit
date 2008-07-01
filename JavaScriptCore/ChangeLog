@@ -1,5 +1,29 @@
 2008-06-30  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Darin Alder.
+
+        Split InternalFunction into its own header file.
+
+        * API/JSCallbackFunction.h:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/ArrayConstructor.h:
+        * kjs/BooleanConstructor.h:
+        * kjs/DateConstructor.h:
+        * kjs/ErrorConstructor.h:
+        * kjs/FunctionConstructor.h:
+        * kjs/FunctionPrototype.h:
+        * kjs/InternalFunction.h: Copied from kjs/JSFunction.h.
+        * kjs/JSFunction.h:
+        * kjs/NativeErrorConstructor.h:
+        * kjs/NumberConstructor.h:
+        * kjs/ObjectConstructor.h:
+        * kjs/RegExpConstructor.h:
+        * kjs/StringConstructor.h:
+        * profiler/Profiler.cpp:
+
+2008-06-30  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Kevin McCullough.
 
         Remove empty files Instruction.cpp, LabelID.cpp, Register.cpp and RegisterID.cpp.

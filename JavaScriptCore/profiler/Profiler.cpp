@@ -31,10 +31,9 @@
 
 #include "ExecState.h"
 #include "JSFunction.h"
-#include "ProfileNode.h"
 #include "JSGlobalObject.h"
 #include "Profile.h"
-
+#include "ProfileNode.h"
 #include <stdio.h>
 
 namespace KJS {
