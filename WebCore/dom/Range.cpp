@@ -1571,6 +1571,11 @@ Position Range::editingStartPosition() const
     return visiblePosition.deepEquivalent().downstream();
 }
 
+Node* Range::shadowTreeRootNode() const
+{
+    return startContainer() ? startContainer()->shadowTreeRootNode() : 0;
+}
+
 Node* Range::pastLastNode() const
 {
     if (!m_start.container() || !m_end.container())

@@ -48,7 +48,8 @@ public:
     Element* rootEditableElement() const { return m_sel.rootEditableElement(); }
     bool isContentEditable() const { return m_sel.isContentEditable(); }
     bool isContentRichlyEditable() const { return m_sel.isContentRichlyEditable(); }
-
+    Node* shadowTreeRootNode() const { return m_sel.shadowTreeRootNode(); }
+     
     void moveTo(const Range*, EAffinity, bool userTriggered = false);
     void moveTo(const VisiblePosition&, bool userTriggered = false);
     void moveTo(const VisiblePosition&, const VisiblePosition&, bool userTriggered = false);

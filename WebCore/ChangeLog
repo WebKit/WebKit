@@ -1,3 +1,26 @@
+2008-06-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        Fix for <rdar://problem/5301322> REGRESSION: Select All selects the whole page when used in readonly textareas
+
+        Test: editing/selection/select-all-textarea.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::shadowAncestorNode): Break out code to find the root of the shadow tree into a new helper function.
+        (WebCore::Node::shadowTreeRootNode): Added helper function.
+        * dom/Node.h:
+        * dom/Range.cpp: (WebCore::Range::shadowTreeRootNode): Added helper function.
+        * dom/Range.h:
+        * editing/Selection.cpp: (WebCore::Selection::shadowTreeRootNode): ditto.
+        * editing/Selection.h:
+        * editing/SelectionController.h: (WebCore::SelectionController::shadowTreeRootNode): ditto.
+        * editing/SelectionController.cpp: (WebCore::SelectionController::selectAll):
+        If the selection is in a shadow tree, only select the contents of that shadow tree, not the whole document.
+        * page/Frame.cpp:
+        (WebCore::Frame::findString): Use the new shadowTreeRootNode helper functions.
+        (WebCore::Frame::markAllMatchesForText): ditto.
+
 2008-06-30  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

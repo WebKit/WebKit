@@ -1094,13 +1094,21 @@ Node* Node::shadowAncestorNode()
         return this;
 #endif
 
-    Node *n = this;    
-    while (n) {
-        if (n->isShadowNode())
-            return n->shadowParentNode();
-        n = n->parentNode();
-    } 
+    Node* root = shadowTreeRootNode();
+    if (root)
+        return root->shadowParentNode();
     return this;
+}
+
+Node* Node::shadowTreeRootNode()
+{
+    Node *root = this;
+    while (root) {
+        if (root->isShadowNode())
+            return root;
+        root = root->parentNode();
+    }
+    return 0;
 }
 
 bool Node::isBlockFlow() const

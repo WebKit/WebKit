@@ -1606,21 +1606,13 @@ bool Frame::findString(const String& target, bool forward, bool caseFlag, bool w
     // is used depends on whether we're searching forward or backward, and whether startInSelection is set.
     RefPtr<Range> searchRange(rangeOfContents(document()));
     Selection selection = this->selection()->selection();
-    Node* selectionBaseNode = selection.base().node();
 
     if (forward)
         setStart(searchRange.get(), startInSelection ? selection.visibleStart() : selection.visibleEnd());
     else
         setEnd(searchRange.get(), startInSelection ? selection.visibleEnd() : selection.visibleStart());
 
-    bool selectionIsInMainContent = selectionBaseNode && !isInShadowTree(selectionBaseNode);
-    Node* shadowTreeRoot = 0;
-    if (!selectionIsInMainContent) {
-        shadowTreeRoot = selectionBaseNode;
-        while (shadowTreeRoot && !shadowTreeRoot->isShadowNode())
-            shadowTreeRoot = shadowTreeRoot->parentNode();
-    }
-
+    Node* shadowTreeRoot = selection.shadowTreeRootNode();
     if (shadowTreeRoot) {
         ExceptionCode ec = 0;
         if (forward)
@@ -1717,13 +1709,9 @@ unsigned Frame::markAllMatchesForText(const String& target, bool caseFlag, unsig
             break;
         
         setStart(searchRange.get(), newStart);
-        if (searchRange->collapsed(exception) && isInShadowTree(searchRange->startContainer())) {
-            Node* shadowTreeRoot = searchRange->startContainer();
-            while (shadowTreeRoot && !shadowTreeRoot->isShadowNode())
-                shadowTreeRoot = shadowTreeRoot->parentNode();
-            if (shadowTreeRoot)
-                searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), exception);
-        }
+        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        if (searchRange->collapsed(exception) && shadowTreeRoot)
+            searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), exception);
     } while (true);
     
     // Do a "fake" paint in order to execute the code that computes the rendered rect for 

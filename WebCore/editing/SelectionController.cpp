@@ -1017,7 +1017,14 @@ void SelectionController::selectAll()
         return;
     }
     
-    Node* root = isContentEditable() ? highestEditableRoot(m_sel.start()) : document->documentElement();
+    Node* root = 0;
+    if (isContentEditable())
+        root = highestEditableRoot(m_sel.start());
+    else {
+        root = shadowTreeRootNode();
+        if (!root)
+            root = document->documentElement();
+    }
     if (!root)
         return;
     Selection newSelection(Selection::selectionFromContentsOfNode(root));

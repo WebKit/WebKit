@@ -85,7 +85,8 @@ public:
     Element* rootEditableElement() const;
     bool isContentEditable() const;
     bool isContentRichlyEditable() const;
-
+    Node* shadowTreeRootNode() const;
+    
     void debugPosition() const;
 
 #ifndef NDEBUG

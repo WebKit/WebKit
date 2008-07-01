@@ -1,3 +1,12 @@
+2008-06-30  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Anders.
+
+        Test for <rdar://problem/5301322> REGRESSION: Select All selects the whole page when used in readonly textareas
+
+        * editing/selection/select-all-textarea-expected.txt: Added.
+        * editing/selection/select-all-textarea.html: Added.
+
 2008-06-30  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
