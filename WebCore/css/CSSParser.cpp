@@ -4487,7 +4487,6 @@ bool CSSParser::checkForVariables(CSSParserValueList* valueList)
 void CSSParser::addUnresolvedProperty(int propId, bool important)
 {
     RefPtr<CSSVariableDependentValue> val = CSSVariableDependentValue::create(CSSValueList::createFromParserValueList(m_valueList));
-    m_valueList = 0;
     addProperty(propId, val.release(), important);
 }
 

@@ -1,3 +1,12 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6045890> REGRESSION: Leak in WebCore::CSSParser::createFloatingValueList()
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addUnresolvedProperty):
+
 2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Brady Eidson.
