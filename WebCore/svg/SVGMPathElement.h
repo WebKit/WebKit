@@ -43,7 +43,7 @@ namespace WebCore {
         SVGPathElement* pathElement();
         
     protected:
-        virtual const SVGElement* contextElement() const { return this; }
+        virtual SVGElement* contextElement() { return this; }
     };
 
 } // namespace WebCore

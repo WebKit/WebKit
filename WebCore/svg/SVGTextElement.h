@@ -26,6 +26,7 @@
 #if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 #include "SVGTransformable.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
 
@@ -52,7 +53,7 @@ namespace WebCore {
         virtual void svgAttributeChanged(const QualifiedName&);
 
     protected:
-        virtual const SVGElement* contextElement() const { return this; }
+        virtual SVGElement* contextElement() { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)

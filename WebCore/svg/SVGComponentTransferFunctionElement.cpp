@@ -48,7 +48,7 @@ SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
 }
 
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr, m_type)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, SVGNumberList*, NumberList, numberList, TableValues, tableValues, SVGNames::tableValuesAttr, m_tableValues.get())
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGComponentTransferFunctionElement, SVGNumberList, NumberList, numberList, TableValues, tableValues, SVGNames::tableValuesAttr, m_tableValues)
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Slope, slope, SVGNames::slopeAttr, m_slope)
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Intercept, intercept, SVGNames::interceptAttr, m_intercept)
 ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Amplitude, amplitude, SVGNames::amplitudeAttr, m_amplitude)

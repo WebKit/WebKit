@@ -1,3 +1,26 @@
+2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)
+
+        Add new layout test covering SVG <-> XML synchronication (svg/custom/svg-xml-dom-sync.html).
+        Rename one hixie test that got fixed: 005-broken.xml -> 005.xml
+
+        * platform/mac-leopard/svg/custom/svg-xml-dom-sync-expected.checksum: Added.
+        * platform/mac-leopard/svg/custom/svg-xml-dom-sync-expected.png: Added.
+        * platform/mac-leopard/svg/hixie/dynamic/005-broken-expected.checksum: Removed.
+        * platform/mac-leopard/svg/hixie/dynamic/005-broken-expected.png: Removed.
+        * platform/mac-leopard/svg/hixie/dynamic/005-expected.checksum: Copied from platform/mac-leopard/svg/hixie/dynamic/005-broken-expected.checksum.
+        * platform/mac-leopard/svg/hixie/dynamic/005-expected.png: Copied from platform/mac-leopard/svg/hixie/dynamic/005-broken-expected.png.
+        * platform/mac/svg/hixie/dynamic/005-broken-expected.txt: Removed.
+        * platform/mac/svg/hixie/dynamic/005-expected.txt: Copied from platform/mac/svg/hixie/dynamic/005-broken-expected.txt.
+        * svg/custom/resources/svg-xml-dom-sync.js: Added.
+        * svg/custom/svg-xml-dom-sync-expected.txt: Added.
+        * svg/custom/svg-xml-dom-sync.html: Added.
+        * svg/hixie/dynamic/005-broken.xml: Removed.
+        * svg/hixie/dynamic/005.xml: Copied from svg/hixie/dynamic/005-broken.xml.
+
 2008-06-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Oliver.

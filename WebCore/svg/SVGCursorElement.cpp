@@ -36,8 +36,8 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(0, LengthModeWidth)
-    , m_y(0, LengthModeHeight)
+    , m_x(SVGLength(0, LengthModeWidth))
+    , m_y(SVGLength(0, LengthModeHeight))
 {
 }
 

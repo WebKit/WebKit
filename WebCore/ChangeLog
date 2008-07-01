@@ -1,3 +1,252 @@
+2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti & Eric.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)
+
+        SVG Errata states: "All SVG DOM objects that directly correspond to an
+        attribute, e.g. the SVGAnimatedLength 'ry' in an SVGRectElement, are live. This
+        means that any changes made to the attribute are immediately reflected in the
+        corresponding SVG DOM object." (see linked URL on bug report)
+
+        Until now only XML -> SVG DOM changes took affect, aka. changing the 'rx' attribute of a <rect>
+        element resuted in changes when accessing 'rx' through SVG DOM (rx.baseVal.value).
+
+        Add a new synchronization layer to handle SVG DOM -> XML changes.
+
+        Global macro change #1: ANIMATED_PROPERTY_FORWARD_DECLARATIONS contains the class name where it's defined as first parameter.
+        Global macro change #2: Add ANIMATED_PROPERTY_START_DECLARATIONS to all direct base-classes.
+        Global macro change #3: Rename ANIMATED_PROPERTY_DEFINITIONS to ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED for refcounted types (ie. SVGTransformList*).
+
+        Added test: svg/custom/svg-xml-dom-sync.html
+        Fixed test: svg/hixie/dynamic/005-broken.xml (renamed to 005.xml)
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element): Initialize the two new bits.
+        (WebCore::Element::attributes): Add hooks to call into SVG attribute synchronization code, wrapped in ENABLE(SVG) blocks.
+        (WebCore::Element::getAttribute): Ditto.
+        (WebCore::Element::hasAttributes): Ditto.
+        * dom/Element.h: Add two bits: m_synchronizedSVGAttributes/m_synchronizingSVGAttribute, to track synchronization status.
+        (WebCore::Element::updateAnimatedSVGAttribute): New virtual function, handling the synronication, similar to updateStyleAttribute.
+        * dom/NamedAttrMap.h: Make addAttribute/removeAttribute protected, from use within the ANIMATED_* macros.
+        * svg/SVGAElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGAElement::contextElement): Return non-const value.
+        * svg/SVGAltGlyphElement.h:
+        (WebCore::SVGAltGlyphElement::contextElement): Ditto.
+        * svg/SVGAnimateElement.h:
+        (WebCore::SVGAnimateElement::contextElement): Ditto.
+        * svg/SVGAnimateMotionElement.h:
+        (WebCore::SVGAnimateMotionElement::contextElement): Ditto.
+        * svg/SVGAnimateTransformElement.h:
+        (WebCore::SVGAnimateTransformElement::contextElement): Ditto.
+        * svg/SVGAnimatedTemplate.h: Add toString() conversion to all SVGAnimated* classes
+        (WebCore::SVGAnimatedTemplate::toString):
+        (WebCore::SVGAnimatedTemplate::associatedAttributeName):
+        (WebCore::lookupOrCreateWrapper):
+        (WebCore::SVGAnimatedAngle::SVGAnimatedAngle): 
+        (WebCore::SVGAnimatedAngle::toString):
+        (WebCore::SVGAnimatedBoolean::SVGAnimatedBoolean):
+        (WebCore::SVGAnimatedBoolean::toString):
+        (WebCore::SVGAnimatedEnumeration::SVGAnimatedEnumeration):
+        (WebCore::SVGAnimatedEnumeration::toString):
+        (WebCore::SVGAnimatedInteger::SVGAnimatedInteger):
+        (WebCore::SVGAnimatedInteger::toString):
+        (WebCore::SVGAnimatedLength::SVGAnimatedLength):
+        (WebCore::SVGAnimatedLength::toString):
+        (WebCore::SVGAnimatedLengthList::SVGAnimatedLengthList):
+        (WebCore::SVGAnimatedLengthList::toString):
+        (WebCore::SVGAnimatedNumber::SVGAnimatedNumber):
+        (WebCore::SVGAnimatedNumber::toString):
+        (WebCore::SVGAnimatedNumberList::SVGAnimatedNumberList):
+        (WebCore::SVGAnimatedNumberList::toString):
+        (WebCore::SVGAnimatedPreserveAspectRatio::SVGAnimatedPreserveAspectRatio):
+        (WebCore::SVGAnimatedPreserveAspectRatio::toString):
+        (WebCore::SVGAnimatedRect::SVGAnimatedRect):
+        (WebCore::SVGAnimatedRect::toString):
+        (WebCore::SVGAnimatedString::SVGAnimatedString):
+        (WebCore::SVGAnimatedString::toString):
+        (WebCore::SVGAnimatedTransformList::SVGAnimatedTransformList):
+        (WebCore::SVGAnimatedTransformList::toString):
+        (WebCore::SVGAnimatedType::SVGAnimatedType):
+        * svg/SVGAnimationElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        * svg/SVGCircleElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGCircleElement::contextElement): Return non-const value.
+        * svg/SVGClipPathElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGClipPathElement::contextElement): Return non-const value.
+        * svg/SVGComponentTransferFunctionElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGComponentTransferFunctionElement.h: Add ANIMATED_PROPERTY_START_DECLARATIONS, as this class is a base class.
+        * svg/SVGCursorElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS. Add ANIMATED_PROPERTY_START_DECLARATIONS.
+        (WebCore::SVGCursorElement::contextElement): Return non-const value.
+        * svg/SVGDefsElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGDefsElement::contextElement): Return non-const value.
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::updateAnimatedSVGAttribute): Override virtual function from Element, to handle SVG<->XML DOM synchronization.
+        (WebCore::SVGElement::setSynchronizedSVGAttributes):
+        * svg/SVGElement.h: Add helper class "StoredTypeWithDirtyFlag".
+        (StoredTypeWithDirtyFlag::StoredTypeWithDirtyFlag): Tracks a type and a flag indicating that SVG<->XML DOM synchronization has to be done.
+        (StoredTypeWithDirtyFlag::operator=):
+        (StoredTypeWithDirtyFlag::operator==):
+        (StoredTypeWithDirtyFlag::operator!=):
+        (StoredTypeWithDirtyFlag::operator StoredType):
+        (WebCore::SVGElement::invokeSVGPropertySynchronizer): New set of functions taking care of invoking the update handlers.
+        (WebCore::SVGElement::invokeAllSVGPropertySynchronizers): Ditto.
+        (WebCore::SVGElement::addSVGPropertySynchronizer): Ditto.
+        * svg/SVGEllipseElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        * svg/SVGEllipseElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGEllipseElement::contextElement): Return non-const value.
+        * svg/SVGExternalResourcesRequired.h: Change contextElement() to return a non-const value.
+        * svg/SVGFEBlendElement.h:
+        (WebCore::SVGFEBlendElement::contextElement): Return non-const value.
+        * svg/SVGFEColorMatrixElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGFEColorMatrixElement.h:
+        (WebCore::SVGFEColorMatrixElement::contextElement): Return non-const value.
+        * svg/SVGFEComponentTransferElement.h:
+        (WebCore::SVGFEComponentTransferElement::contextElement): Return non-const value.
+        * svg/SVGFECompositeElement.h:
+        (WebCore::SVGFECompositeElement::contextElement): Return non-const value.
+        * svg/SVGFEDiffuseLightingElement.h:
+        (WebCore::SVGFEDiffuseLightingElement::contextElement): Return non-const value.
+        * svg/SVGFEDisplacementMapElement.h:
+        (WebCore::SVGFEDisplacementMapElement::contextElement): Return non-const value.
+        * svg/SVGFEFloodElement.h:
+        (WebCore::SVGFEFloodElement::contextElement): Return non-const value.
+        * svg/SVGFEGaussianBlurElement.h:
+        (WebCore::SVGFEGaussianBlurElement::contextElement): Return non-const value.
+        * svg/SVGFEImageElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGFEImageElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGFEImageElement::contextElement): Return non-const value.
+        * svg/SVGFELightElement.h: Add ANIMATED_PROPERTY_START_DECLARATIONS, as this is a base class.
+        * svg/SVGFEMergeElement.h:
+        (WebCore::SVGFEMergeElement::contextElement): Return non-const value.
+        * svg/SVGFEMergeNodeElement.h: Add ANIMATED_PROPERTY_START_DECLARATIONS, as this is a base class.
+        (WebCore::SVGFEMergeNodeElement::contextElement): Return non-const value.
+        * svg/SVGFEOffsetElement.h:
+        (WebCore::SVGFEOffsetElement::contextElement): Return non-const value.
+        * svg/SVGFESpecularLightingElement.h:
+        (WebCore::SVGFESpecularLightingElement::contextElement): Return non-const value.
+        * svg/SVGFETileElement.h:
+        (WebCore::SVGFETileElement::contextElement): Return non-const value.
+        * svg/SVGFETurbulenceElement.h:
+        (WebCore::SVGFETurbulenceElement::contextElement): Return non-const value.
+        * svg/SVGFilterElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        * svg/SVGFilterElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGFilterElement::contextElement): Return non-const value.
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        * svg/SVGFilterPrimitiveStandardAttributes.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGFilterPrimitiveStandardAttributes::contextElement): Return non-const value.
+        * svg/SVGFitToViewBox.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGFitToViewBox.h: Change contextElement() to return a non-const value.
+        * svg/SVGFontElement.h:
+        (WebCore::SVGFontElement::contextElement): Return non-const value.
+        * svg/SVGForeignObjectElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        * svg/SVGForeignObjectElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGForeignObjectElement::contextElement): Return non-const value.
+        * svg/SVGGElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGGElement::contextElement): Return non-const value.
+        * svg/SVGGradientElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGGradientElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        * svg/SVGImageElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change. Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGImageElement::SVGImageElement):
+        * svg/SVGImageElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGImageElement::contextElement): Return non-const value.
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::valueAsString): Add new function converting SVG values to strings.
+        * svg/SVGLengthList.h:
+        * svg/SVGLineElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGLineElement::SVGLineElement):
+        * svg/SVGLineElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGLineElement::contextElement): Return non-const value.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement): Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGLinearGradientElement::collectGradientProperties):
+        * svg/SVGLinearGradientElement.h:
+        (WebCore::SVGLinearGradientElement::contextElement): Return non-const value.
+        * svg/SVGMPathElement.h:
+        (WebCore::SVGMPathElement::contextElement): Return non-const value.
+        * svg/SVGMarkerElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change. Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        * svg/SVGMarkerElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGMarkerElement::contextElement): Return non-const value.
+        * svg/SVGMaskElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        * svg/SVGMaskElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGMaskElement::contextElement): Return non-const value.
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::valueAsString): Add new function converting SVG values to strings.
+        * svg/SVGNumberList.h:
+        * svg/SVGPathElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGPathElement::contextElement): Return non-const value.
+        * svg/SVGPatternElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change. Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::collectPatternProperties):
+        * svg/SVGPatternElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGPatternElement::contextElement): Return non-const value.
+        * svg/SVGPolyElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGPolyElement::contextElement): Return non-const value.
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::valueAsString): Add new function converting SVG values to strings.
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/SVGRadialGradientElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        (WebCore::SVGRadialGradientElement::collectGradientProperties):
+        * svg/SVGRadialGradientElement.h:
+        (WebCore::SVGRadialGradientElement::contextElement): Return non-const value.
+        * svg/SVGRectElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGRectElement::SVGRectElement):
+        * svg/SVGRectElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGRectElement::contextElement): Return non-const value.
+        * svg/SVGSVGElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::currentView): Pass non-const SVGSVGElement* object to SVGViewSpec.
+        * svg/SVGSVGElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGSVGElement::contextElement): Return non-const value.
+        * svg/SVGScriptElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGScriptElement::contextElement): Return non-const value.
+        * svg/SVGStyledElement.h: Add ANIMATED_PROPERTY_START_DECLARATIONS, as this is a base class.
+        * svg/SVGStyledTransformableElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSwitchElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGSwitchElement::contextElement): Return non-const value.
+        * svg/SVGSymbolElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGSymbolElement::contextElement): Return non-const value.
+        * svg/SVGTRefElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGTRefElement::contextElement): Return non-const value.
+        * svg/SVGTSpanElement.h:
+        (WebCore::SVGTSpanElement::contextElement): Return non-const value.
+        * svg/SVGTextContentElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        * svg/SVGTextContentElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        * svg/SVGTextElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::contextElement): Return non-const value.
+        * svg/SVGTextPathElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        * svg/SVGTextPathElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGTextPathElement::contextElement): Return non-const value.
+        * svg/SVGTextPositioningElement.cpp: Apply ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED change.
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTransformList.cpp:
+        (SVGTransformList::valueAsString): Add new function converting SVG values to strings.
+        * svg/SVGTransformList.h:
+        * svg/SVGURIReference.h: Change contextElement() to return a non-const value.
+        * svg/SVGUseElement.cpp: Wrap SVGLength objects in SVGLength() statements.
+        (WebCore::SVGUseElement::SVGUseElement):
+        * svg/SVGUseElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGUseElement::contextElement): Return non-const value.
+        * svg/SVGViewElement.h: Apply global macro change for ANIMATED_PROPERTY_FORWARD_DECLARATIONS.
+        (WebCore::SVGViewElement::contextElement): Return non-const value.
+        * svg/SVGViewSpec.cpp:
+        (WebCore::SVGViewSpec::SVGViewSpec): Pass non-const context element in constructor.
+        (WebCore::SVGViewSpec::contextElement): Return non-const value.
+        * svg/SVGViewSpec.h:
+
 2008-07-01  Alex Mathews  <possessedpenguinbob@gmail.com>
 
         Reviewed by Nikolas Zimmermann.

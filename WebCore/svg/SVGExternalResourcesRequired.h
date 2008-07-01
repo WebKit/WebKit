@@ -50,7 +50,7 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     protected:
-        virtual const SVGElement* contextElement() const = 0;
+        virtual SVGElement* contextElement() = 0;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, bool, ExternalResourcesRequired, externalResourcesRequired)

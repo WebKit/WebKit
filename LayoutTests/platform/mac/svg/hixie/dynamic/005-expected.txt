@@ -4,4 +4,4 @@ layer at (0,0) size 300x300
   RenderSVGRoot {svg} at (0,0) size 300x300
     RenderPath {rect} at (0,0) size 150x300 [fill={[type=SOLID] [color=#FF0000]}] [data="M0.00,0.00 L150.00,0.00 L150.00,300.00 L0.00,300.00"]
     RenderPath {rect} at (0,0) size 300x150 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,0.00 L300.00,0.00 L300.00,150.00 L0.00,150.00"]
-    RenderPath {rect} at (0,150) size 300x150 [fill={[type=SOLID] [color=#000000]}] [data="M0.00,150.00 L300.00,150.00 L300.00,300.00 L0.00,300.00"]
+    RenderPath {rect} at (0,150) size 300x150 [fill={[type=SOLID] [color=#008000]}] [data="M0.00,150.00 L300.00,150.00 L300.00,300.00 L0.00,300.00"]

@@ -38,7 +38,7 @@ namespace WebCore
         virtual SVGFEMerge* filterEffect(SVGResourceFilter*) const;
 
     protected:
-        virtual const SVGElement* contextElement() const { return this; }
+        virtual SVGElement* contextElement() { return this; }
 
     private:
         mutable RefPtr<SVGFEMerge> m_filterEffect;

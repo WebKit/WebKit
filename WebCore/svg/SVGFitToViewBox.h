@@ -25,11 +25,11 @@
 
 #if ENABLE(SVG)
 #include "SVGElement.h"
+#include "SVGPreserveAspectRatio.h"
 
 namespace WebCore {
 
     class AffineTransform;
-    class SVGPreserveAspectRatio;
 
     class SVGFitToViewBox {
     public:
@@ -44,7 +44,7 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     protected:
-        virtual const SVGElement* contextElement() const = 0;
+        virtual SVGElement* contextElement() = 0;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGFitToViewBox, FloatRect, FloatRect, ViewBox, viewBox)

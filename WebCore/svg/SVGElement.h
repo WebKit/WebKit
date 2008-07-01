@@ -31,28 +31,101 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGNames.h"
 
+// Helper class for ANIMATED_PROPERTY* macros
+template<typename StoredType>
+class StoredTypeWithDirtyFlag {
+public:
+    StoredTypeWithDirtyFlag()
+        : value()
+        , dirty(false)
+    {
+    }
+
+    StoredTypeWithDirtyFlag(const StoredType& other)
+        : value(other)
+        , dirty(false)
+    {
+    }
+
+    StoredTypeWithDirtyFlag(const StoredTypeWithDirtyFlag& other)
+        : value(other.value)
+        , dirty(other.dirty)
+    {
+    }
+
+    StoredType& operator=(const StoredType& other)
+    {
+        value = other;
+        dirty = true;
+        return value;
+    }
+
+    StoredTypeWithDirtyFlag& operator=(const StoredTypeWithDirtyFlag& other)
+    {
+        value = other.value;
+        dirty = other.dirty;
+        return (*this);
+    }
+
+    bool operator==(const StoredType& other) const
+    {
+        return value == other.value;
+    }
+
+    bool operator!=(const StoredType& other) const
+    {
+        return !((*this) == other);
+    }
+
+    bool operator==(const StoredTypeWithDirtyFlag& other) const
+    {
+        return dirty == other.dirty && value == other.value;
+    }
+
+    bool operator!=(const StoredTypeWithDirtyFlag& other) const
+    {
+        return !((*this) == other);
+    }
+
+    operator StoredType() const
+    {
+        return value;    
+    }
+
+    StoredType value;
+    bool dirty;
+};
+
 #define ANIMATED_PROPERTY_EMPTY_DECLARATIONS(BareType, NullType, UpperProperty, LowerProperty) \
 public: \
     virtual BareType LowerProperty() const { ASSERT_NOT_REACHED(); return NullType; } \
     virtual void set##UpperProperty(BareType newValue) { ASSERT_NOT_REACHED(); }\
     virtual BareType LowerProperty##BaseValue() const { ASSERT_NOT_REACHED(); return NullType; } \
     virtual void set##UpperProperty##BaseValue(BareType newValue) { ASSERT_NOT_REACHED(); } \
-    virtual void start##UpperProperty() const { ASSERT_NOT_REACHED(); } \
+    virtual void synchronize##UpperProperty() { ASSERT_NOT_REACHED(); } \
+    virtual SVGElement::AnimatedPropertySynchronizer synchronizerFor##UpperProperty() { ASSERT_NOT_REACHED(); return 0; } \
+    virtual void start##UpperProperty() { ASSERT_NOT_REACHED(); } \
     virtual void stop##UpperProperty() { ASSERT_NOT_REACHED(); }
 
-#define ANIMATED_PROPERTY_FORWARD_DECLARATIONS(ForwardClass, BareType, UpperProperty, LowerProperty) \
+#define ANIMATED_PROPERTY_FORWARD_DECLARATIONS(ClassType, ForwardClass, BareType, UpperProperty, LowerProperty) \
 public: \
     virtual BareType LowerProperty() const { return ForwardClass::LowerProperty(); } \
     virtual void set##UpperProperty(BareType newValue) { ForwardClass::set##UpperProperty(newValue); } \
     virtual BareType LowerProperty##BaseValue() const { return ForwardClass::LowerProperty##BaseValue(); } \
     virtual void set##UpperProperty##BaseValue(BareType newValue) { ForwardClass::set##UpperProperty##BaseValue(newValue); } \
-    virtual void start##UpperProperty() const { ForwardClass::start##UpperProperty(); } \
+    virtual void synchronize##UpperProperty() { ForwardClass::synchronize##UpperProperty(); } \
+    virtual SVGElement::AnimatedPropertySynchronizer synchronizerFor##UpperProperty() { return static_cast<SVGElement::AnimatedPropertySynchronizer>(&ClassType::synchronize##UpperProperty); } \
+    virtual void start##UpperProperty() { ForwardClass::start##UpperProperty(); } \
     virtual void stop##UpperProperty() { ForwardClass::stop##UpperProperty(); }
 
 #define ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(ClassType, ClassStorageType, BareType, StorageType, UpperProperty, LowerProperty) \
-class SVGAnimatedTemplate##UpperProperty : public SVGAnimatedTemplate<BareType> { \
+class SVGAnimatedTemplate##UpperProperty \
+: public SVGAnimatedType<BareType> \
+{ \
 public: \
-    static PassRefPtr<SVGAnimatedTemplate##UpperProperty> create(const ClassType* element, const QualifiedName& attributeName) \
+    SVGAnimatedTemplate##UpperProperty(ClassType*, const QualifiedName&); \
+    virtual ~SVGAnimatedTemplate##UpperProperty() { } \
+    static PassRefPtr<SVGAnimatedTemplate##UpperProperty> create(ClassType* element, const QualifiedName& attributeName) \
     { \
         return adoptRef(new SVGAnimatedTemplate##UpperProperty(element, attributeName)); \
     } \
@@ -70,16 +143,46 @@ public: \
     void set##UpperProperty(BareType); \
     BareType LowerProperty##BaseValue() const; \
     void set##UpperProperty##BaseValue(BareType); \
-    PassRefPtr<SVGAnimatedTemplate##UpperProperty> LowerProperty##Animated() const; \
-    void start##UpperProperty() const; \
+    PassRefPtr<SVGAnimatedTemplate##UpperProperty> LowerProperty##Animated(); \
+    void synchronize##UpperProperty(); \
+    SVGElement::AnimatedPropertySynchronizer synchronizerFor##UpperProperty(); \
+    void start##UpperProperty(); \
     void stop##UpperProperty(); \
 \
 private: \
-    StorageType m_##LowerProperty;
+    StoredTypeWithDirtyFlag<StorageType> m_##LowerProperty;
+
+#define ANIMATED_PROPERTY_START_DECLARATIONS(ClassType) \
+public: \
+    virtual void invokeSVGPropertySynchronizer(StringImpl* stringImpl) const \
+    { \
+        if (m_svgPropertyUpdateMap.contains(stringImpl)) { \
+            SVGElement::AnimatedPropertySynchronizer updateMethod = m_svgPropertyUpdateMap.get(stringImpl); \
+            (const_cast<ClassType*>(this)->*updateMethod)(); \
+        } \
+    } \
+\
+    virtual void invokeAllSVGPropertySynchronizers() const \
+    { \
+        HashMap<StringImpl*, SVGElement::AnimatedPropertySynchronizer>::const_iterator it = m_svgPropertyUpdateMap.begin(); \
+        const HashMap<StringImpl*, SVGElement::AnimatedPropertySynchronizer>::const_iterator end = m_svgPropertyUpdateMap.end(); \
+        for (; it != end; ++it) { \
+            SVGElement::AnimatedPropertySynchronizer updateMethod = it->second; \
+            (const_cast<ClassType*>(this)->*updateMethod)(); \
+        } \
+    } \
+\
+    virtual void addSVGPropertySynchronizer(const QualifiedName& attrName, SVGElement::AnimatedPropertySynchronizer method) \
+    { \
+        m_svgPropertyUpdateMap.set(attrName.localName().impl(), method); \
+    } \
+\
+private: \
+    HashMap<StringImpl*, SVGElement::AnimatedPropertySynchronizer> m_svgPropertyUpdateMap;
 
 #define ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassType, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, ContextElement) \
-ClassName::SVGAnimatedTemplate##UpperProperty::SVGAnimatedTemplate##UpperProperty(const ClassType* element, const QualifiedName& attributeName) \
-: SVGAnimatedTemplate<BareType>(attributeName), m_element(const_cast<ClassType*>(element)) { } \
+ClassName::SVGAnimatedTemplate##UpperProperty::SVGAnimatedTemplate##UpperProperty(ClassType* element, const QualifiedName& attributeName) \
+: SVGAnimatedType<BareType>(attributeName), m_element(element) { } \
 \
 BareType ClassName::SVGAnimatedTemplate##UpperProperty::baseVal() const \
 { \
@@ -104,49 +207,74 @@ BareType ClassName::LowerProperty() const \
 void ClassName::set##UpperProperty(BareType newValue) \
 { \
     m_##LowerProperty = newValue; \
+\
+    SVGElement* context = ContextElement; \
+    ASSERT(context); \
+    context->setSynchronizedSVGAttributes(false); \
 } \
 BareType ClassName::LowerProperty##BaseValue() const \
 { \
-    const SVGElement* context = ContextElement; \
+    SVGElement* context = ContextElement; \
     ASSERT(context); \
     SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
-    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName)) \
-         return extensions->baseValue<BareType>(context, AttrName); \
+    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName.localName())) \
+         return extensions->baseValue<BareType>(context, AttrName.localName()); \
     return LowerProperty(); \
 } \
+\
 void ClassName::set##UpperProperty##BaseValue(BareType newValue) \
 { \
-    const SVGElement* context = ContextElement; \
+    SVGElement* context = ContextElement; \
     ASSERT(context); \
     SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
-    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName)) { \
-        extensions->setBaseValue<BareType>(context, AttrName, newValue); \
+    if (extensions && extensions->hasBaseValue<BareType>(context, AttrName.localName())) { \
+        extensions->setBaseValue<BareType>(context, AttrName.localName(), newValue); \
         return; \
     } \
     /* Only update stored property, if not animating */ \
     set##UpperProperty(newValue); \
 } \
 \
-void ClassName::start##UpperProperty() const \
+void ClassName::synchronize##UpperProperty() \
 { \
-    const SVGElement* context = ContextElement; \
+    if (!m_##LowerProperty.dirty) \
+        return; \
+    SVGElement* context = ContextElement; \
+    ASSERT(context); \
+    RefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> animatedClass(LowerProperty##Animated()); \
+    ASSERT(animatedClass); \
+    AtomicString value(animatedClass->toString()); \
+    NamedAttrMap* namedAttrMap = context->attributes(false); \
+    Attribute* old = namedAttrMap->getAttributeItem(AttrName); \
+    if (old && value.isNull()) \
+        namedAttrMap->removeAttribute(old->name()); \
+    else if (!old && !value.isNull()) \
+        namedAttrMap->addAttribute(context->createAttribute(QualifiedName(nullAtom, AttrName.localName(), nullAtom), value)); \
+    else if (old && !value.isNull()) \
+        old->setValue(value); \
+    m_##LowerProperty.dirty = false; \
+} \
+\
+void ClassName::start##UpperProperty() \
+{ \
+    SVGElement* context = ContextElement; \
     ASSERT(context); \
     SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
     if (extensions) { \
-        ASSERT(!extensions->hasBaseValue<BareType>(context, AttrName)); \
-        extensions->setBaseValue<BareType>(context, AttrName, LowerProperty()); \
+        ASSERT(!extensions->hasBaseValue<BareType>(context, AttrName.localName())); \
+        extensions->setBaseValue<BareType>(context, AttrName.localName(), LowerProperty()); \
     } \
 } \
 \
 void ClassName::stop##UpperProperty() \
 { \
-    const SVGElement* context = ContextElement; \
+    SVGElement* context = ContextElement; \
     ASSERT(context); \
     SVGDocumentExtensions* extensions = (context->document() ? context->document()->accessSVGExtensions() : 0); \
     if (extensions) { \
-        ASSERT(extensions->hasBaseValue<BareType>(context, AttrName)); \
-        set##UpperProperty(extensions->baseValue<BareType>(context, AttrName)); \
-        extensions->removeBaseValue<BareType>(context, AttrName); \
+        ASSERT(extensions->hasBaseValue<BareType>(context, AttrName.localName())); \
+        set##UpperProperty(extensions->baseValue<BareType>(context, AttrName.localName())); \
+        extensions->removeBaseValue<BareType>(context, AttrName.localName()); \
     } \
 }
 
@@ -158,23 +286,43 @@ ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(SVGElement, RefPtr<SVGElement>, BareType
 ANIMATED_PROPERTY_DECLARATIONS_INTERNAL(ClassName, RefPtr<ClassName>, BareType, StorageType, UpperProperty, LowerProperty)
 
 #define ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
-ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, SVGElement, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName.localName(), StorageGetter, contextElement()) \
-PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, SVGElement, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, const_cast<ClassName*>(this)->contextElement()) \
+PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() \
 { \
-    const SVGElement* context = contextElement(); \
+    SVGElement* context = contextElement(); \
     ASSERT(context); \
-    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, SVGElement>(context, AttrName, AttrName.localName()); \
+    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, SVGElement>(context, AttrName, AttrName.localName(), context->synchronizerFor##UpperProperty()); \
+} \
+\
+SVGElement::AnimatedPropertySynchronizer ClassName::synchronizerFor##UpperProperty() \
+{ \
+    ASSERT_NOT_REACHED(); \
+    return 0; \
 }
 
+#define ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED_WITH_CONTEXT(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(ClassName, BareType*, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, static_cast<RefPtr<BareType> >(StorageGetter).get())
+
 #define ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrIdentifier, StorageGetter) \
-ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName.localName(), StorageGetter, this) \
-PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() const \
+ANIMATED_PROPERTY_DEFINITIONS_INTERNAL(ClassName, ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter, const_cast<ClassName*>(this)) \
+PassRefPtr<ClassName::SVGAnimatedTemplate##UpperProperty> ClassName::LowerProperty##Animated() \
 { \
-    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, ClassName>(this, AttrName, AttrIdentifier); \
+    return lookupOrCreateWrapper<ClassName::SVGAnimatedTemplate##UpperProperty, ClassName>(this, AttrName, AttrIdentifier, synchronizerFor##UpperProperty()); \
+} \
+\
+SVGElement::AnimatedPropertySynchronizer ClassName::synchronizerFor##UpperProperty() \
+{ \
+    return static_cast<SVGElement::AnimatedPropertySynchronizer>(&ClassName::synchronize##UpperProperty); \
 }
+
+#define ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED_WITH_CUSTOM_IDENTIFIER(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrIdentifier, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType*, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrIdentifier, static_cast<RefPtr<BareType> >(StorageGetter).get())
 
 #define ANIMATED_PROPERTY_DEFINITIONS(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrName.localName(), StorageGetter)
+
+#define ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(ClassName, BareType, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, StorageGetter) \
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(ClassName, BareType*, UpperClassName, LowerClassName, UpperProperty, LowerProperty, AttrName, AttrName.localName(), static_cast<RefPtr<BareType> >(StorageGetter).get())
 
 namespace WebCore {
 
@@ -229,6 +377,7 @@ namespace WebCore {
         virtual AffineTransform* supplementalTransform() { return 0; }
 
         // Forwarded properties (declared/defined anywhere else in the inheritance structure)
+        typedef void (SVGElement::*AnimatedPropertySynchronizer)();
 
         // -> For SVGURIReference
         ANIMATED_PROPERTY_EMPTY_DECLARATIONS(String, String(), Href, href)
@@ -241,6 +390,13 @@ namespace WebCore {
         ANIMATED_PROPERTY_EMPTY_DECLARATIONS(bool, false, ExternalResourcesRequired, externalResourcesRequired)
 
         virtual bool dispatchEvent(PassRefPtr<Event> e, ExceptionCode& ec, bool tempEvent = false);
+
+        virtual void invokeSVGPropertySynchronizer(StringImpl*) const { }
+        virtual void invokeAllSVGPropertySynchronizers() const { }
+        virtual void addSVGPropertySynchronizer(const QualifiedName&, AnimatedPropertySynchronizer) { ASSERT_NOT_REACHED(); }
+
+        virtual void updateAnimatedSVGAttribute(StringImpl*) const;
+        virtual void setSynchronizedSVGAttributes(bool) const;
 
     private:
         void addSVGEventListener(const AtomicString& eventType, const Attribute*);
