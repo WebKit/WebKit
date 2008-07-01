@@ -41,11 +41,11 @@ namespace WebCore {
 
 SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_cx(SVGLength(this, LengthModeWidth))
-    , m_cy(SVGLength(this, LengthModeHeight))
-    , m_r(SVGLength(this, LengthModeOther))
-    , m_fx(SVGLength(this, LengthModeWidth))
-    , m_fy(SVGLength(this, LengthModeHeight))
+    , m_cx(this, LengthModeWidth)
+    , m_cy(this, LengthModeHeight)
+    , m_r(this, LengthModeOther)
+    , m_fx(this, LengthModeWidth)
+    , m_fy(this, LengthModeHeight)
 {
     // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
     setCxBaseValue(SVGLength(this, LengthModeWidth, "50%"));

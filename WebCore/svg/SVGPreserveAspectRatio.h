@@ -74,7 +74,6 @@ namespace WebCore {
 
         // Helper
         bool parsePreserveAspectRatio(const UChar*& currParam, const UChar* end, bool validate = true);
-        String valueAsString() const;
 
         const QualifiedName& associatedAttributeName() const { return SVGNames::preserveAspectRatioAttr; }
 

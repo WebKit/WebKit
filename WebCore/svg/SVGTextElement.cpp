@@ -46,7 +46,7 @@ SVGTextElement::~SVGTextElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextElement, SVGTransformList, TransformList, transformList, Transform, transform, SVGNames::transformAttr, m_transform)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr, m_transform.get())
 
 void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 {

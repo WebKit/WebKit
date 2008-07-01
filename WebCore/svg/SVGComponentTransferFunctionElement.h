@@ -44,7 +44,6 @@ namespace WebCore
         SVGComponentTransferFunction transferFunction() const;
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS(SVGComponentTransferFunctionElement)
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Slope, slope)

@@ -36,12 +36,12 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(SVGLength(this, LengthModeWidth))
-    , m_y(SVGLength(this, LengthModeHeight))
-    , m_width(SVGLength(this, LengthModeWidth))
-    , m_height(SVGLength(this, LengthModeHeight))
-    , m_rx(SVGLength(this, LengthModeWidth))
-    , m_ry(SVGLength(this, LengthModeHeight))
+    , m_x(this, LengthModeWidth)
+    , m_y(this, LengthModeHeight)
+    , m_width(this, LengthModeWidth)
+    , m_height(this, LengthModeHeight)
+    , m_rx(this, LengthModeWidth)
+    , m_ry(this, LengthModeHeight)
 {
 }
 

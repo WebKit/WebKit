@@ -40,7 +40,7 @@ namespace WebCore {
         virtual void parseMappedAttribute(MappedAttribute*);
         
     private:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
         
         virtual void resetToBaseValue(const String&);
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString);

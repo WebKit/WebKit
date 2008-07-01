@@ -37,10 +37,9 @@ namespace WebCore
         virtual void parseMappedAttribute(MappedAttribute*);
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS(SVGFEMergeNodeElement)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEMergeNodeElement, String, String, In1, in1)
     };
 

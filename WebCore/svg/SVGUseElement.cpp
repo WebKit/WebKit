@@ -58,10 +58,10 @@ SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(SVGLength(this, LengthModeWidth))
-    , m_y(SVGLength(this, LengthModeHeight))
-    , m_width(SVGLength(this, LengthModeWidth))
-    , m_height(SVGLength(this, LengthModeHeight))
+    , m_x(this, LengthModeWidth)
+    , m_y(this, LengthModeHeight)
+    , m_width(this, LengthModeWidth)
+    , m_height(this, LengthModeHeight)
 {
 }
 

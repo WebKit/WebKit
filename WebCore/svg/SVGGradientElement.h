@@ -24,15 +24,15 @@
 #define SVGGradientElement_h
 
 #if ENABLE(SVG)
-#include "SVGExternalResourcesRequired.h"
 #include "SVGPaintServerGradient.h"
+#include "SVGExternalResourcesRequired.h"
 #include "SVGStyledElement.h"
-#include "SVGTransformList.h"
 #include "SVGURIReference.h"
 
 namespace WebCore {
 
     class SVGGradientElement;
+    class SVGTransformList;
 
     class SVGGradientElement : public SVGStyledElement,
                                public SVGURIReference,
@@ -68,8 +68,8 @@ namespace WebCore {
         mutable RefPtr<SVGPaintServerGradient> m_resource;
  
     protected:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGGradientElement, SVGURIReference, String, Href, href)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGGradientElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, SpreadMethod, spreadMethod)
         ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)

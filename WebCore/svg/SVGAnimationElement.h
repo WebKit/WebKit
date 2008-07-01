@@ -93,8 +93,8 @@ protected:
         virtual void startedActiveInterval();
         virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
         virtual void endedActiveInterval();
-       
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGAnimationElement, SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 private:
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;

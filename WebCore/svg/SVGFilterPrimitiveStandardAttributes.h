@@ -47,7 +47,7 @@ namespace WebCore {
         void setStandardAttributes(SVGFilterEffect*) const;
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, SVGLength, X, x)

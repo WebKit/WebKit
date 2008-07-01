@@ -89,11 +89,11 @@ public:
     
     bool mapsEquivalent(const NamedAttrMap* otherMap) const;
 
+protected:
     // These functions are internal, and do no error checking.
     void addAttribute(PassRefPtr<Attribute>);
     void removeAttribute(const QualifiedName& name);
 
-protected:
     virtual void clearAttributes();
 
     void detachFromElement();

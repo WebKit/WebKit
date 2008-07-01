@@ -46,7 +46,7 @@ namespace WebCore {
         LinearGradientAttributes collectGradientProperties() const;
 
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, SVGLength, X1, x1)

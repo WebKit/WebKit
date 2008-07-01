@@ -1,3 +1,9 @@
+2008-07-01  Adam Roben  <aroben@apple.com>
+
+        Roll out r34913, as it broke the Windows build due to bad casting
+
+        Rubberstamped by Anders Carlsson.
+
 2008-07-01  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

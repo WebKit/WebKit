@@ -1,3 +1,16 @@
+2008-07-01  Adam Roben  <aroben@apple.com>
+
+        Roll out r34913, as it broke the Windows build due to bad casting
+
+        r34913 introduced code that assigned pointers-to-member from a derived
+        class into a base class pointer-to-member type (e.g., assigned a void
+        (SVGUseElement::*)() into a void (SVGElement::*)()). This is bad
+        because it could allow us to call SVGUseElement member functions on a
+        different SVGElement-derived class. MSVC rightly flagged this as an
+        error.
+
+        Rubberstamped by Anders Carlsson.
+
 2008-07-01  Darin Adler  <darin@apple.com>
 
         - fix build

@@ -67,10 +67,10 @@ namespace WebCore
         bool childShouldCreateRenderer(Node*) const;
     
     protected:
-        virtual SVGElement* contextElement() { return this; }
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGTextPathElement, SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
 
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGLength, SVGLength, StartOffset, startOffset)
         ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, int, int, Method, method)

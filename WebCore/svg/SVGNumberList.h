@@ -37,9 +37,7 @@ namespace WebCore {
         virtual ~SVGNumberList();
 
         void parse(const String& value);
- 
-        String valueAsString() const;
-
+        
     private:
         SVGNumberList(const QualifiedName&);
     };
