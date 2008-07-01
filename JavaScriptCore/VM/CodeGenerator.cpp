@@ -451,7 +451,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
         
         retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
         
-        if (cond->index() == dstIndex && !cond->refCount()) {
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
             rewindBinaryOp();
             emitOpcode(target->isForwardLabel() ? op_jless : op_loop_if_less);
             instructions().append(src1Index);
@@ -478,7 +478,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfFalse(RegisterID* cond, LabelID* ta
         
         retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
         
-        if (cond->index() == dstIndex && !cond->refCount()) {
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
             rewindBinaryOp();
             emitOpcode(op_jnless);
             instructions().append(src1Index);

@@ -1,3 +1,17 @@
+2008-06-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Bug 19830: REGRESSION (r34883): Google Reader doesn't show up feed list on sidebar
+        <https://bugs.webkit.org/show_bug.cgi?id=19830>
+
+        Ensure that we do not eliminate a write to a local register when doing
+        peephole optimizations.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        (KJS::CodeGenerator::emitJumpIfFalse):
+
 2008-06-30  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Alder.

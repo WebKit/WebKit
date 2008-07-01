@@ -1,3 +1,16 @@
+2008-06-30  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Tests for:
+
+        Bug 19830: REGRESSION (r34883): Google Reader doesn't show up feed list on sidebar
+        <https://bugs.webkit.org/show_bug.cgi?id=19830>
+
+        * fast/js/codegen-peephole-locals-expected.txt: Added.
+        * fast/js/codegen-peephole-locals.html: Added.
+        * fast/js/resources/codegen-peephole-locals.js: Added.
+
 2008-06-30  Adele Peterson  <adele@apple.com>
 
         Reviewed by Anders.
