@@ -1,3 +1,12 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        - fix SVG pointer-events layout test failures
+
+        * css/SVGCSSParser.cpp:
+        (WebCore::CSSParser::parseSVGValue):
+
 2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti.

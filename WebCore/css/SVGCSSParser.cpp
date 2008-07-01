@@ -163,8 +163,8 @@ bool CSSParser::parseSVGValue(int propId, bool important)
     case CSSPropertyPointerEvents:
     // none | visiblePainted | visibleFill | visibleStroke | visible |
     // painted | fill | stroke | none | all | inherit
-        if (id == CSSValueVisible || id == CSSValueNone ||
-          (id >= CSSValueVisiblepainted && id <= CSSValueAll))
+        if (id == CSSValueVisible || id == CSSValueNone || id == CSSValueAll ||
+          (id >= CSSValueVisiblepainted && id <= CSSValueStroke))
             valid_primitive = true;
         break;
 
