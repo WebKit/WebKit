@@ -1,5 +1,11 @@
 2008-07-01  Sam Weinig  <sam@webkit.org>
 
+        Try and fix mac builds.
+
+        * JavaScriptCore.exp:
+
+2008-07-01  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne builds.
 
         * kjs/DateMath.cpp:
