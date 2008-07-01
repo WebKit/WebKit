@@ -1,3 +1,16 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Antti.
+
+        <rdar://problem/6033080> REGRESSION: Some CH characters display as garbage on webpage for
+        the first time.
+
+        Test: fast/encoding/preload-encoding.html
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::tokenize): Reset charset when entering a tag, not just when
+        starting a load.
+
 2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti & Eric.

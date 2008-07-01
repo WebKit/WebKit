@@ -345,11 +345,13 @@ void PreloadScanner::tokenize(const SegmentedString& source)
                     m_state = CloseTagOpen;
                 else if (cc >= 'A' && cc <= 'Z') {
                     m_tagName.clear();
+                    m_charset = String();
                     m_tagName.append(cc + 0x20);
                     m_closeTag = false;
                     m_state = TagName;
                 } else if (cc >= 'a' && cc <= 'z') {
                     m_tagName.clear();
+                    m_charset = String();
                     m_tagName.append(cc);
                     m_closeTag = false;
                     m_state = TagName;
@@ -389,11 +391,13 @@ void PreloadScanner::tokenize(const SegmentedString& source)
             }
             if (cc >= 'A' && cc <= 'Z') {
                 m_tagName.clear();
+                m_charset = String();
                 m_tagName.append(cc + 0x20);
                 m_closeTag = true;
                 m_state = TagName;
             } else if (cc >= 'a' && cc <= 'z') {
                 m_tagName.clear();
+                m_charset = String();
                 m_tagName.append(cc);
                 m_closeTag = true;
                 m_state = TagName;

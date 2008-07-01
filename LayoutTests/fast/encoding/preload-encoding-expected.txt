@@ -1,18 +1,4 @@
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock (anonymous) at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 531x18
-          text run at (0,0) width 531: "Test script with charset. You should see 44 and degree symbol without any garbage:"
-      RenderBlock {DIV} at (0,18) size 784x18
-        RenderText {#text} at (0,0) size 21x18
-          text run at (0,0) width 21: "44\x{BA}"
-      RenderBlock (anonymous) at (0,36) size 784x18
-        RenderText {#text} at (0,0) size 611x18
-          text run at (0,0) width 611: "Test link rel=stylesheet with charset. You should see 44 and degree symbol without any garbage:"
-      RenderBlock {DIV} at (0,54) size 784x18
-        RenderInline (generated) at (0,0) size 21x18
-          RenderText at (0,0) size 21x18
-            text run at (0,0) width 21: "44\x{BA}"
+Script with charset: SUССЕSS.
+Link rel=stylesheet with charset: SUCCESS
+Script without charset: SUССЕSS
+Link rel=stylesheet without charset: SUCCESS

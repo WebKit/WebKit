@@ -1,3 +1,20 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Antti.
+
+        <rdar://problem/6033080> REGRESSION: Some CH characters display as garbage on webpage for
+        the first time.
+
+        * fast/encoding/preload-encoding-expected.txt:
+        * fast/encoding/preload-encoding.html:
+        * fast/encoding/resources/preloaded-gb2312.css: Added.
+        * fast/encoding/resources/preloaded-gb2312.js: Added.
+        * fast/encoding/resources/preloaded-utf-8.css: Copied from LayoutTests/fast/encoding/resources/utf-8.css.
+        * fast/encoding/resources/preloaded-utf-8.js: Copied from LayoutTests/fast/encoding/resources/utf-8.js.
+        * fast/encoding/resources/utf-8.css: Removed.
+        * fast/encoding/resources/utf-8.js: Removed.
+        Converted the test to plain text, added cases for the new issue.
+
 2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti.
