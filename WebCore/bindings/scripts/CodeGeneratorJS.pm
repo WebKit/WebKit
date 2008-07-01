@@ -872,7 +872,7 @@ sub GenerateImplementation
         push(@implContent, "}\n\n");
     }
     if ($numConstants ne 0) {
-        $implKJSInclude{"JSNumberCell.h"};
+        $implKJSInclude{"JSNumberCell.h"} = 1;
         push(@implContent, "JSValue* ${className}Prototype::getValueProperty(ExecState* exec, int token) const\n{\n");
         push(@implContent, "    // The token is the numeric value of its associated constant\n");
         push(@implContent, "    return jsNumber(exec, token);\n}\n\n");
@@ -1497,7 +1497,7 @@ sub NativeToJSValue
     return "jsBoolean($value)" if $type eq "boolean";
     
     if ($codeGenerator->IsPrimitiveType($type) or $type eq "SVGPaintType" or $type eq "DOMTimeStamp") {
-        $implKJSInclude{"JSNumberCell.h"};
+        $implKJSInclude{"JSNumberCell.h"} = 1;
         return "jsNumber(exec, $value)";
     }
 
@@ -1511,7 +1511,7 @@ sub NativeToJSValue
 
             die "Unknown value for ConvertNullStringTo extended attribute";
         }
-        $implKJSInclude{"JSString.h"};
+        $implKJSInclude{"JSString.h"} = 1;
         return "jsString(exec, $value)";
     }
 
@@ -1835,7 +1835,7 @@ JSValue* ${className}Constructor::getValueProperty(ExecState* exec, int token) c
 
 EOF
 
-    $implKJSInclude{"JSNumberCell.h"};
+    $implKJSInclude{"JSNumberCell.h"} = 1;
 
     return $implContent;
 }

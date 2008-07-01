@@ -1,3 +1,10 @@
+2008-07-01  Darin Adler  <darin@apple.com>
+
+        - fix build
+
+        * bindings/scripts/CodeGeneratorJS.pm: Fix warnings that indicate this was
+        not working propertly.
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
