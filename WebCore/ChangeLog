@@ -1,3 +1,12 @@
+2008-07-01  Alp Toker  <alp@nuanti.com>
+
+        Rubber-stamped by Holger.
+
+        autotools cleanup: move some GTK+-specific sources from libwebcore to
+        libwebcoregtk.
+
+        * GNUmakefile.am:
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

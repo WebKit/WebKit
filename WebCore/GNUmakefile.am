@@ -893,15 +893,16 @@ webcore_sources += \
 	WebCore/platform/text/AtomicString.cpp \
 	WebCore/platform/text/Base64.cpp \
 	WebCore/platform/text/BidiContext.cpp \
-	WebCore/platform/ContextMenu.cpp \
 	WebCore/platform/text/CString.cpp \
+	WebCore/platform/text/TextCodecICU.cpp \
+	WebCore/platform/text/TextBoundariesICU.cpp \
+	WebCore/platform/text/TextBreakIteratorICU.cpp \
+	WebCore/platform/ContextMenu.cpp \
 	WebCore/platform/DeprecatedPtrListImpl.cpp \
 	WebCore/platform/DeprecatedValueListImpl.cpp \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragImage.cpp \
 	WebCore/platform/FileChooser.cpp \
-	WebCore/platform/graphics/FontDescription.cpp \
-	WebCore/platform/graphics/FontFamily.cpp \
 	WebCore/platform/graphics/AffineTransform.cpp \
 	WebCore/platform/graphics/BitmapImage.cpp \
 	WebCore/platform/graphics/Color.cpp \
@@ -909,7 +910,15 @@ webcore_sources += \
 	WebCore/platform/graphics/FloatPoint.cpp \
 	WebCore/platform/graphics/FloatRect.cpp \
 	WebCore/platform/graphics/FloatSize.cpp \
-        WebCore/platform/graphics/GeneratedImage.cpp \
+	WebCore/platform/graphics/FontCache.cpp \
+	WebCore/platform/graphics/Font.cpp \
+	WebCore/platform/graphics/FontData.cpp \
+	WebCore/platform/graphics/FontDescription.cpp \
+	WebCore/platform/graphics/FontFallbackList.cpp \
+	WebCore/platform/graphics/FontFamily.cpp \
+	WebCore/platform/graphics/GeneratedImage.cpp \
+	WebCore/platform/graphics/GlyphPageTreeNode.cpp \
+	WebCore/platform/graphics/GlyphWidthMap.cpp \
 	WebCore/platform/graphics/Gradient.cpp \
 	WebCore/platform/graphics/GraphicsContext.cpp \
 	WebCore/platform/graphics/GraphicsTypes.cpp \
@@ -918,6 +927,9 @@ webcore_sources += \
 	WebCore/platform/graphics/Path.cpp \
 	WebCore/platform/graphics/PathTraversalState.cpp \
 	WebCore/platform/graphics/Pen.cpp \
+	WebCore/platform/graphics/SegmentedFontData.cpp \
+	WebCore/platform/graphics/SimpleFontData.cpp \
+	WebCore/platform/graphics/StringTruncator.cpp \
 	WebCore/platform/KURL.cpp \
 	WebCore/platform/Logging.cpp \
 	WebCore/platform/MIMETypeRegistry.cpp \
@@ -961,10 +973,6 @@ webcore_sources += \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/plugins/PluginView.cpp \
 	WebCore/plugins/npapi.cpp \
-	WebCore/plugins/gtk/PluginDataGtk.cpp \
-	WebCore/plugins/gtk/PluginDatabaseGtk.cpp \
-	WebCore/plugins/gtk/PluginPackageGtk.cpp \
-	WebCore/plugins/gtk/PluginViewGtk.cpp \
 	WebCore/rendering/AutoTableLayout.cpp \
 	WebCore/rendering/bidi.cpp \
 	WebCore/rendering/break_lines.cpp \
@@ -1029,6 +1037,12 @@ webcore_sources += \
 	WebCore/xml/XMLHttpRequest.cpp \
 	WebCore/xml/XMLSerializer.cpp
 
+webcoregtk_sources += \
+	WebCore/plugins/gtk/PluginDataGtk.cpp \
+	WebCore/plugins/gtk/PluginDatabaseGtk.cpp \
+	WebCore/plugins/gtk/PluginPackageGtk.cpp \
+	WebCore/plugins/gtk/PluginViewGtk.cpp
+
 if TARGET_X11
 webcoregtk_sources += \
 	WebCore/plugins/gtk/gtk2xtbin.c
@@ -1039,18 +1053,6 @@ webcoregtk_headers += \
 	WebCore/platform/gtk/PasteboardHelper.h
 
 webcoregtk_sources += \
-	WebCore/platform/graphics/GlyphPageTreeNode.cpp \
-	WebCore/platform/graphics/GlyphWidthMap.cpp \
-	WebCore/platform/graphics/FontCache.cpp \
-	WebCore/platform/graphics/Font.cpp \
-	WebCore/platform/graphics/FontData.cpp \
-	WebCore/platform/graphics/FontFallbackList.cpp \
-	WebCore/platform/graphics/SegmentedFontData.cpp \
-	WebCore/platform/graphics/SimpleFontData.cpp \
-	WebCore/platform/graphics/StringTruncator.cpp \
-	WebCore/platform/text/TextCodecICU.cpp \
-	WebCore/platform/text/TextBoundariesICU.cpp \
-	WebCore/platform/text/TextBreakIteratorICU.cpp \
 	WebCore/page/gtk/AXObjectCacheAtk.cpp \
 	WebCore/page/gtk/AccessibilityObjectWrapperAtk.cpp \
 	WebCore/page/gtk/EventHandlerGtk.cpp \
