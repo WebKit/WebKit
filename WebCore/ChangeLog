@@ -1,3 +1,17 @@
+2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Brady Eidson.
+
+        Bug 19822: REGRESSION (r30243): setting location.hash to "#" causes a reload
+        <https://bugs.webkit.org/show_bug.cgi?id=19822>
+
+        Change JSLocation::setHash() to not schedule navigation in the case
+        where the old fragment is the null String and the new fragment is an
+        empty String.
+
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::setHash):
+
 2008-06-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

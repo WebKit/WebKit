@@ -213,10 +213,11 @@ void JSLocation::setHash(ExecState* exec, JSValue* value)
     ASSERT(frame);
 
     KURL url = frame->loader()->url();
+    String oldRef = url.ref();
     String str = value->toString(exec);
     if (str.startsWith("#"))
         str = str.substring(1);
-    if (url.ref() == str)
+    if (url.ref() == str || (oldRef.isNull() && str.isEmpty()))
         return;
     url.setRef(str);
 

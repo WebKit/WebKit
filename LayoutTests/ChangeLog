@@ -1,3 +1,15 @@
+2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Brady Eidson.
+
+        Tests for:
+
+        Bug 19822: REGRESSION (r30243): setting location.hash to "#" causes a reload
+        <https://bugs.webkit.org/show_bug.cgi?id=19822>
+
+        * http/tests/loading/location-hash-reload-cycle-expected.txt: Added.
+        * http/tests/loading/location-hash-reload-cycle.html: Added.
+
 2008-07-01  Adam Roben  <aroben@apple.com>
 
         Roll out r34913, as it broke the Windows build due to bad casting
