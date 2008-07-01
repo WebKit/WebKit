@@ -1,3 +1,13 @@
+2008-07-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        Don't add the Mozilla user agent quirk for Flash 10.
+        
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::isPluginBlacklisted):
+        (WebCore::PluginPackage::determineQuirks):
+
 2008-07-01  David Kilzer  <ddkilzer@apple.com>
 
         Move data: URL parsing code in HTMLObjectElement to KURL

@@ -68,12 +68,12 @@ int PluginPackage::compareFileVersion(const PlatformModuleVersion& compareVersio
 
 bool PluginPackage::isPluginBlacklisted()
 {
-    static const PlatformModuleVersion slPluginMinRequired(0x51BE0000, 0x00010000);
-
     if (name() == "Silverlight Plug-In") {
         // workaround for <rdar://5557379> Crash in Silverlight when opening microsoft.com.
         // the latest 1.0 version of Silverlight does not reproduce this crash, so allow it
         // and any newer versions
+        static const PlatformModuleVersion slPluginMinRequired(0x51BE0000, 0x00010000);
+
         if (compareFileVersion(slPluginMinRequired) < 0)
             return true;
     } else if (fileName() == "npmozax.dll")
@@ -85,11 +85,13 @@ bool PluginPackage::isPluginBlacklisted()
 
 void PluginPackage::determineQuirks(const String& mimeType)
 {
-    static const PlatformModuleVersion lastKnownUnloadableRealPlayerVersion(0x000B0B24, 0x00060000);
-
     if (mimeType == "application/x-shockwave-flash") {
-        // The flash plugin only requests windowless plugins if we return a mozilla user agent
-        m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+        static const PlatformModuleVersion flashTenVersion(0x000a0000, 0x0000);
+
+        // Pre 10 Flash only requests windowless plugins if we return a mozilla user agent
+        if (compareFileVersion(flashTenVersion) < 0)
+            m_quirks.add(PluginQuirkWantsMozillaUserAgent);
+
         m_quirks.add(PluginQuirkThrottleInvalidate);
         m_quirks.add(PluginQuirkThrottleWMUserPlusOneMessages);
         m_quirks.add(PluginQuirkFlashURLNotifyBug);
@@ -147,6 +149,8 @@ void PluginPackage::determineQuirks(const String& mimeType)
     if (mimeType == "audio/x-pn-realaudio-plugin") {
         // Prevent the Real plugin from calling the Window Proc recursively, causing the stack to overflow.
         m_quirks.add(PluginQuirkDontCallWndProcForSameMessageRecursively);
+
+        static const PlatformModuleVersion lastKnownUnloadableRealPlayerVersion(0x000B0B24, 0x00060000);
 
         // Unloading RealPlayer versions newer than 10.5 can cause a hang; see rdar://5669317.
         // FIXME: Resume unloading when this bug in the RealPlayer Plug-In is fixed (rdar://5713147)
