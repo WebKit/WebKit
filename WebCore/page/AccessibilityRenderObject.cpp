@@ -931,7 +931,7 @@ IntRect AccessibilityRenderObject::checkboxOrRadioRect() const
     
     HTMLLabelElement* label = labelForElement(static_cast<Element*>(m_renderer->element()));
     if (!label || !label->renderer())
-        return IntRect();
+        return boundingBoxRect();
     
     IntRect labelRect = axObjectCache()->get(label->renderer())->elementRect();
     labelRect.unite(boundingBoxRect());

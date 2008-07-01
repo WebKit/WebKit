@@ -170,3 +170,19 @@ JSStringRef AccessibilityController::descriptionOfFocusedElement()
     id description = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXDescription"], accessibilityObject);
     return concatenateAttributeAndValue(@"AXDescription", description);
 }
+
+double AccessibilityController::widthOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    NSValue* sizeValue = [accessibilityObject accessibilityAttributeValue:@"AXSize"];
+    return (double)[sizeValue sizeValue].width;
+}
+
+double AccessibilityController::heightOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    NSValue* sizeValue = [accessibilityObject accessibilityAttributeValue:@"AXSize"];
+    return (double)[sizeValue sizeValue].height;
+}

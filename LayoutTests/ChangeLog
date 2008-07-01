@@ -1,3 +1,14 @@
+2008-07-01  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Fixes: <rdar://problem/6041580> REGRESSION: AX: AXSize of radio buttons is 0,0
+        Added new layout test for size of checkboxes and radio buttons
+
+        * accessibility/radio-button-checkbox-size-expected.txt: Added.
+        * accessibility/radio-button-checkbox-size.html: Added.
+        * accessibility/radio-button-group-members-expected.txt:
+
 2008-07-01  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti.

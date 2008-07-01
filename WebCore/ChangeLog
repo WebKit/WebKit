@@ -1,3 +1,14 @@
+2008-07-01  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/6041580> REGRESSION: AX: AXSize of radio buttons is 0,0
+
+        Test: accessibility/radio-button-checkbox-size.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Antti Koivisto.
