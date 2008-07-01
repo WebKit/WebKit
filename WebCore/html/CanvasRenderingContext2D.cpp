@@ -1132,7 +1132,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
         return 0;
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
-    RetainPtr<CGImageRef> image = canvas->createPlatformImage();
+    RetainPtr<CGImageRef> image(AdoptCF, canvas->createPlatformImage());
     if (!image)
         return 0;
     return CanvasPattern::create(image.get(), repeatX, repeatY, canvas->originClean());

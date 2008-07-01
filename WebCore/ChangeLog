@@ -1,3 +1,12 @@
+2008-07-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6045893> REGRESSION: Leak in WebCore::HTMLCanvasElement::createPlatformImage() const
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+
 2008-07-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
