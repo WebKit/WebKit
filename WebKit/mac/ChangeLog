@@ -1,3 +1,9 @@
+2008-07-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Build fix.
+
+        * WebView/WebView.mm:
+
 2008-07-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

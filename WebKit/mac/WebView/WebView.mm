@@ -92,7 +92,7 @@
 #import <JavaScriptCore/HashTraits.h>
 #import <JavaScriptCore/RefPtr.h>
 #import <JavaScriptCore/ArrayPrototype.h>
-#import <JavaScriptCore/date_object.h>
+#import <JavaScriptCore/DateInstance.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>

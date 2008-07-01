@@ -1,3 +1,9 @@
+2008-07-01  Kevin McCullough  <kmccullough@apple.com>
+
+        Build fix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
