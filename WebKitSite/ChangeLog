@@ -1,3 +1,9 @@
+2008-07-01  Mark Rowe  <mrowe@apple.com>
+
+        Update the path to the configuration file.
+
+        * blog/wp-config.php:
+
 2008-06-27  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Timothy Hatcher.

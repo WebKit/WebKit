@@ -1,6 +1,5 @@
 <?php
-require('/var/opendarwin/secrets/webkit-blog-config.php');
-/* Stop editing */
+require('/www/auth/webkit-blog-config.php');
 
 define('WP_CACHE', true); //Added by WP-Cache Manager
 define('ABSPATH', dirname(__FILE__).'/');
