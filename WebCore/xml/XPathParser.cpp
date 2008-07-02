@@ -202,7 +202,7 @@ Token Parser::lexString()
     }
 
     // Ouch, went off the end -- report error.
-    return Token(ERROR);
+    return Token(XPATH_ERROR);
 }
 
 Token Parser::lexNumber()
@@ -306,7 +306,7 @@ Token Parser::nextTokenInternal()
         case '!':
             if (peekAheadHelper() == '=')
                 return makeTokenAndAdvance(EQOP, EqTestOp::OP_NE, 2);
-            return Token(ERROR);
+            return Token(XPATH_ERROR);
         case '<':
             if (peekAheadHelper() == '=')
                 return makeTokenAndAdvance(RELOP, EqTestOp::OP_LE, 2);
@@ -324,14 +324,14 @@ Token Parser::nextTokenInternal()
             m_nextPos++;
             String name;
             if (!lexQName(name))
-                return Token(ERROR);
+                return Token(XPATH_ERROR);
             return Token(VARIABLEREFERENCE, name);
         }
     }
 
     String name;
     if (!lexNCName(name))
-        return Token(ERROR);
+        return Token(XPATH_ERROR);
 
     skipWS();
     // If we're in an operator context, check for any operator names
@@ -358,7 +358,7 @@ Token Parser::nextTokenInternal()
             if (isAxisName(name, axis))
                 return Token(AXISNAME, axis);
             // Ugh, :: is only valid in axis names -> error
-            return Token(ERROR);
+            return Token(XPATH_ERROR);
         }
 
         // Seems like this is a fully qualified qname, or perhaps the * modified one from NameTest
@@ -371,7 +371,7 @@ Token Parser::nextTokenInternal()
         // Make a full qname.
         String n2;
         if (!lexNCName(n2))
-            return Token(ERROR);
+            return Token(XPATH_ERROR);
         
         name = name + ":" + n2;
     }

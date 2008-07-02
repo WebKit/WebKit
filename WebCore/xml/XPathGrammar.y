@@ -82,7 +82,7 @@ void xpathyyerror(const char* str) { }
 %token <str> VARIABLEREFERENCE NUMBER
 %token DOTDOT SLASHSLASH
 %token <str> NAMETEST
-%token ERROR
+%token XPATH_ERROR
 
 %type <locationPath> LocationPath
 %type <locationPath> AbsoluteLocationPath

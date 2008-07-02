@@ -1,3 +1,17 @@
+2008-07-02  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Adam Roben.
+
+        - Windows build fix
+
+        Renamed the ERROR token in the XPath grammar to XPATH_ERROR, because
+        the ERROR macro is defined in <wingdi.h>.
+
+        * xml/XPathGrammar.y:
+        * xml/XPathParser.cpp:
+        (WebCore::XPath::Parser::lexString):
+        (WebCore::XPath::Parser::nextTokenInternal):
+
 2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Inspired and reviewed by Mark Rowe.
