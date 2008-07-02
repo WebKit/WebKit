@@ -1,5 +1,17 @@
 2008-07-02  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Gtk build.
+
+        * plugins/gtk/PluginViewGtk.cpp: Adapt to JSLock API changes.
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::init):
+
+2008-07-02  Simon Hausmann  <hausmann@webkit.org>
+
         Build fixes.
 
         * WebCore.pro: Added plugins/PluginMainThreadScheduler.cpp to the
