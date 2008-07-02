@@ -1,3 +1,24 @@
+2008-07-01  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Prep for more Filter class name changes. Added the first few files for
+        the new Filter architecture to come.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/Filter.cpp: Added.
+        (WebCore::Filter::Filter):
+        (WebCore::Filter::create):
+        * svg/Filter.h: Added.
+        * svg/FilterBuilder.h: Added.
+        (WebCore::FilterBuilder::add):
+        (WebCore::FilterBuilder::getEffectById):
+        (WebCore::FilterBuilder::filter):
+        * svg/FilterEffect.cpp: Added.
+        (WebCore::FilterEffect::FilterEffect):
+        (WebCore::FilterEffect::~FilterEffect):
+        * svg/FilterEffect.h: Added.
+
 2008-07-01  Christian Dywan  <christian@twotoasts.de>
 
         Gtk+ build fix.

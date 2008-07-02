@@ -451,6 +451,11 @@
 		4E19592C0A39DACC00220FE5 /* MediaQueryEvaluator.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */; };
 		4E19592D0A39DACC00220FE5 /* MediaQueryExp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */; };
 		4E19592E0A39DACC00220FE5 /* MediaQueryExp.h in Headers */ = {isa = PBXBuildFile; fileRef = 4E1959280A39DACC00220FE5 /* MediaQueryExp.h */; };
+		50A5DF750E1A13C9000A03AE /* Filter.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A5DF730E1A13C9000A03AE /* Filter.h */; };
+		50A5DF760E1A13C9000A03AE /* FilterBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A5DF740E1A13C9000A03AE /* FilterBuilder.h */; };
+		50A5E2100E1ABAF2000A03AE /* FilterEffect.h in Headers */ = {isa = PBXBuildFile; fileRef = 50A5E20F0E1ABAF2000A03AE /* FilterEffect.h */; };
+		50A5E4720E1AEF3A000A03AE /* Filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50A5E4710E1AEF3A000A03AE /* Filter.cpp */; };
+		50A5E4740E1AEF84000A03AE /* FilterEffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 50A5E4730E1AEF84000A03AE /* FilterEffect.cpp */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
 		5116D9770CF177BD00C2B84D /* DatabaseDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 5116D9750CF177BD00C2B84D /* DatabaseDetails.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4966,6 +4971,11 @@
 		4E1959260A39DACC00220FE5 /* MediaQueryEvaluator.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryEvaluator.h; sourceTree = "<group>"; };
 		4E1959270A39DACC00220FE5 /* MediaQueryExp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = MediaQueryExp.cpp; sourceTree = "<group>"; };
 		4E1959280A39DACC00220FE5 /* MediaQueryExp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MediaQueryExp.h; sourceTree = "<group>"; };
+		50A5DF730E1A13C9000A03AE /* Filter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filter.h; sourceTree = "<group>"; };
+		50A5DF740E1A13C9000A03AE /* FilterBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterBuilder.h; sourceTree = "<group>"; };
+		50A5E20F0E1ABAF2000A03AE /* FilterEffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FilterEffect.h; sourceTree = "<group>"; };
+		50A5E4710E1AEF3A000A03AE /* Filter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Filter.cpp; sourceTree = "<group>"; };
+		50A5E4730E1AEF84000A03AE /* FilterEffect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FilterEffect.cpp; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		5116D9750CF177BD00C2B84D /* DatabaseDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseDetails.h; sourceTree = "<group>"; };
@@ -11405,6 +11415,9 @@
 				B22277CC0D00BF1F0071B782 /* ColorDistance.h */,
 				E415F1830D9A1A830033CE97 /* ElementTimeControl.h */,
 				E415F10C0D9A05870033CE97 /* ElementTimeControl.idl */,
+				50A5DF730E1A13C9000A03AE /* Filter.h */,
+				50A5DF740E1A13C9000A03AE /* FilterBuilder.h */,
+				50A5E20F0E1ABAF2000A03AE /* FilterEffect.h */,
 				B22277CD0D00BF1F0071B782 /* GradientAttributes.h */,
 				B22277CE0D00BF1F0071B782 /* LinearGradientAttributes.h */,
 				B22277DB0D00BF1F0071B782 /* PatternAttributes.h */,
@@ -11471,7 +11484,9 @@
 				B22278150D00BF1F0071B782 /* SVGDefinitionSrcElement.h */,
 				B22278160D00BF1F0071B782 /* SVGDefinitionSrcElement.idl */,
 				B22278170D00BF1F0071B782 /* SVGDefsElement.cpp */,
+				50A5E4710E1AEF3A000A03AE /* Filter.cpp */,
 				B22278180D00BF1F0071B782 /* SVGDefsElement.h */,
+				50A5E4730E1AEF84000A03AE /* FilterEffect.cpp */,
 				B22278190D00BF1F0071B782 /* SVGDefsElement.idl */,
 				B222781A0D00BF1F0071B782 /* SVGDescElement.cpp */,
 				B222781B0D00BF1F0071B782 /* SVGDescElement.h */,
@@ -15260,6 +15275,9 @@
 				BC686CBB0E0C349D00DE8A08 /* DOMCSSVariablesDeclarationInternal.h in Headers */,
 				BC686CBC0E0C349D00DE8A08 /* DOMCSSVariablesRuleInternal.h in Headers */,
 				3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */,
+				50A5DF750E1A13C9000A03AE /* Filter.h in Headers */,
+				50A5DF760E1A13C9000A03AE /* FilterBuilder.h in Headers */,
+				50A5E2100E1ABAF2000A03AE /* FilterEffect.h in Headers */,
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17033,6 +17051,8 @@
 				BC686CB30E0C343900DE8A08 /* DOMCSSVariablesDeclaration.mm in Sources */,
 				BC686CB60E0C343900DE8A08 /* DOMCSSVariablesRule.mm in Sources */,
 				BC7951550E15DBFF00A898AB /* JSCanvasPixelArrayCustom.cpp in Sources */,
+				50A5E4720E1AEF3A000A03AE /* Filter.cpp in Sources */,
+				50A5E4740E1AEF84000A03AE /* FilterEffect.cpp in Sources */,
 				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
