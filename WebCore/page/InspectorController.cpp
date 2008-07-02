@@ -66,9 +66,9 @@
 #include "TextIterator.h"
 #include "ScriptController.h"
 #include <JavaScriptCore/APICast.h>
-#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <kjs/JSLock.h>
 #include <kjs/ustring.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>

@@ -33,9 +33,9 @@
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
 
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/InspectorController.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 

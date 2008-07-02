@@ -28,7 +28,7 @@
 
 #import "WebHistoryItemPrivate.h"
 
-#import <JavaScriptCore/PassRefPtr.h>
+#import <wtf/PassRefPtr.h>
 
 namespace WebCore {
     class HistoryItem;

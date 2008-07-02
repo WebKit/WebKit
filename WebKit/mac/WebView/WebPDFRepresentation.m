@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPDFRepresentation.h>
 #import <WebKit/WebPDFView.h>
+#import <wtf/Assertions.h>
 
 #import <PDFKit/PDFDocument.h>
 

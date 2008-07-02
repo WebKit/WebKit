@@ -35,12 +35,12 @@
 #import "WebResourcePrivate.h"
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/Element.h>
 #import <WebCore/MIMETypeRegistry.h>
 #import <WebCore/RenderImage.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
+#import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 #import <WebKitSystemInterface.h>
 

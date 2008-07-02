@@ -54,7 +54,6 @@
 #import "WebViewInternal.h"
 #import "WebViewPrivate.h"
 #import <Foundation/NSURLRequest.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/DragController.h>
 #import <WebCore/EventHandler.h>
 #import <WebCore/Frame.h>
@@ -66,6 +65,7 @@
 #import <WebCore/WebCoreFrameView.h>
 #import <WebCore/WebCoreView.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 

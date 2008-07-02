@@ -47,7 +47,6 @@
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebViewInternal.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -58,6 +57,7 @@
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebKit/DOMHTML.h>
 #import <WebKit/DOMPrivate.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 

@@ -66,7 +66,7 @@
 #endif
 #endif
 
-#include <JavaScriptCore/Platform.h>
+#include <wtf/Platform.h>
 
 #ifdef __cplusplus
 #include <wtf/FastMalloc.h>

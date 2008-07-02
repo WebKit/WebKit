@@ -28,7 +28,7 @@
 
 #import <WebKit/WebKitSystemBits.h>
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 #include <mach/mach.h>
 #include <mach/host_info.h>

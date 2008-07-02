@@ -75,7 +75,7 @@
 #include "npruntime_impl.h"
 #include "runtime_root.h"
 #include "visible_units.h"
-#include <JavaScriptCore/JSLock.h>
+#include <kjs/JSLock.h>
 
 #if FRAME_LOADS_USER_STYLESHEET
 #include "UserStyleSheetLoader.h"

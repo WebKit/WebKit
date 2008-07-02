@@ -28,7 +28,6 @@
 
 #import <WebKit/WebPluginDatabase.h>
 
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
@@ -43,6 +42,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <Webkit/WebHTMLView.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
 
 static void checkCandidate(WebBasePluginPackage **currentPlugin, WebBasePluginPackage **candidatePlugin);
 

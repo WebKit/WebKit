@@ -30,8 +30,8 @@
 
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <WebKit/WebAuthenticationPanel.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebNSDictionaryExtras.h>
+#import <wtf/Assertions.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
 

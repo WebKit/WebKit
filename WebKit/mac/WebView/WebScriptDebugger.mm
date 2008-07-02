@@ -31,8 +31,8 @@
 #include "WebFrameInternal.h"
 #include "WebViewInternal.h"
 #include "WebScriptDebugDelegate.h"
-#include <JavaScriptCore/JSGlobalObject.h>
-#include <JavaScriptCore/DebuggerCallFrame.h>
+#include <kjs/JSGlobalObject.h>
+#include <kjs/DebuggerCallFrame.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Frame.h>
 #include <WebCore/JSDOMWindow.h>

@@ -53,7 +53,7 @@
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include "JSDOMBinding.h"
-#include <JavaScriptCore/JSLock.h>
+#include <kjs/JSLock.h>
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 #ifndef WebScriptDebugger_h
 #define WebScriptDebugger_h
 
-#include <JavaScriptCore/debugger.h>
+#include <kjs/debugger.h>
 
 #include <wtf/RetainPtr.h>
 

@@ -26,7 +26,7 @@
 #ifndef ExceptionHandlers_h
 #define ExceptionHandlers_h
 
-#include <JavaScriptCore/Assertions.h>
+#include <wtf/Assertions.h>
 
 #if !defined(NDEBUG) && !defined(DISABLE_THREAD_CHECK)
 #define DOM_ASSERT_MAIN_THREAD() do \

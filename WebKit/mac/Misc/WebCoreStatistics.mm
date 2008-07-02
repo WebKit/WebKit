@@ -30,8 +30,8 @@
 
 #import "WebCache.h"
 #import "WebFrameInternal.h"
-#import <JavaScriptCore/interpreter.h>
-#import <JavaScriptCore/JSLock.h>
+#import <kjs/interpreter.h>
+#import <kjs/JSLock.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>

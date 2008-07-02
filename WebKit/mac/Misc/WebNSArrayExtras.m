@@ -28,7 +28,7 @@
 
 #import "WebNSArrayExtras.h"
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 @implementation NSMutableArray (WebExtras)
 

@@ -52,8 +52,7 @@
 #import "WebViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import <Carbon/Carbon.h>
-#import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/JSLock.h>
+#import <kjs/JSLock.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/Element.h>
@@ -67,6 +66,7 @@
 #import <WebKit/nptextinput.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKit/WebUIDelegate.h>
+#import <wtf/Assertions.h>
 #import <objc/objc-runtime.h>
 
 using namespace WebCore;

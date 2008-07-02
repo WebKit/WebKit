@@ -1,3 +1,20 @@
+2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Inspired and reviewed by Mark Rowe.
+
+        Change non-API includes from JavaScriptCore/ to kjs/ and wtf/ to match prevalent style.
+
+        * bindings/objc/ExceptionHandlers.h:
+        * bindings/objc/WebScriptObject.mm:
+        * dom/Document.cpp:
+        * dom/Node.cpp:
+        * page/Frame.cpp:
+        * page/InspectorController.cpp:
+        * page/JavaScriptProfileNode.cpp:
+        * page/mac/FrameMac.mm:
+        * platform/mac/ThreadCheck.mm:
+        * xml/XMLHttpRequest.cpp:
+
 2008-07-02  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Gtk build.

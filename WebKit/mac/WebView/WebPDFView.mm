@@ -45,7 +45,6 @@
 #import "WebUIDelegatePrivate.h"
 #import "WebView.h"
 #import "WebViewInternal.h"
-#import <JavaScriptCore/Assertions.h>
 #import <PDFKit/PDFKit.h>
 #import <WebCore/EventNames.h>
 #import <WebCore/Frame.h>
@@ -54,6 +53,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/MouseEvent.h>
 #import <WebCore/PlatformKeyboardEvent.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 using namespace EventNames;

@@ -29,8 +29,8 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <JavaScriptCore/JSLock.h>
 #import <Foundation/NSURLRequest.h>
+#import <kjs/JSLock.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/ResourceRequest.h>

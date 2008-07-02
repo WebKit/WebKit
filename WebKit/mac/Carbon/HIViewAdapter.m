@@ -31,7 +31,7 @@
 #import "HIViewAdapter.h"
 
 #import "WebNSObjectExtras.h"
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 static void SetViewNeedsDisplay(HIViewRef inView, RgnHandle inRegion, Boolean inNeedsDisplay);
 

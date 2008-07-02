@@ -34,16 +34,16 @@
 #import "JSDOMWindowCustom.h"
 #import "PlatformString.h"
 #import "WebCoreObjCExtras.h"
-#import <JavaScriptCore/ExecState.h>
-#import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/JSGlobalObject.h>
-#import <JavaScriptCore/JSLock.h>
-#import <JavaScriptCore/completion.h>
-#import <JavaScriptCore/interpreter.h>
 #import "objc_instance.h"
 #import "runtime_root.h"
 #import "runtime.h"
 #import "runtime_object.h"
+#import <JavaScriptCore/APICast.h>
+#import <kjs/ExecState.h>
+#import <kjs/JSGlobalObject.h>
+#import <kjs/JSLock.h>
+#import <kjs/completion.h>
+#import <kjs/interpreter.h>
 
 #ifdef BUILDING_ON_TIGER
 typedef unsigned NSUInteger;

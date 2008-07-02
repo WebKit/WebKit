@@ -28,13 +28,13 @@
 
 #import <WebKit/WebBasePluginPackage.h>
 
-#import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/Vector.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Assertions.h>
+#import <wtf/Vector.h>
 
 #import <WebKitSystemInterface.h>
 

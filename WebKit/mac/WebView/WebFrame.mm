@@ -49,7 +49,6 @@
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/JSLock.h>
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -77,6 +76,7 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/markup.h>
 #import <WebCore/visible_units.h>
+#import <kjs/JSLock.h>
 
 using namespace std;
 using namespace WebCore;

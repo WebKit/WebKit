@@ -35,13 +35,13 @@
 #import "WebFrameInternal.h"
 #import "WebFramePrivate.h"
 #import "WebKitNSStringExtras.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/CSSHelper.h>
 #import <WebCore/Document.h>
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/markup.h>
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMHTML.h>
+#import <wtf/Assertions.h>
 
 #if ENABLE(SVG)
 #import <WebKit/DOMSVG.h>

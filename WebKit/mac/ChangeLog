@@ -1,3 +1,47 @@
+2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Inspired and reviewed by Mark Rowe.
+
+        Change non-API includes from JavaScriptCore/ to kjs/ and wtf/ to match prevalent style.
+
+        * Carbon/HIViewAdapter.m:
+        * DOM/WebDOMOperations.mm:
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        * DefaultDelegates/WebDefaultPolicyDelegate.m:
+        * History/WebBackForwardList.mm:
+        * History/WebHistory.mm:
+        * History/WebHistoryItem.mm:
+        * History/WebHistoryItemInternal.h:
+        * Misc/WebCoreStatistics.mm:
+        * Misc/WebDownload.m:
+        * Misc/WebGraphicsExtras.c:
+        * Misc/WebKitLogging.h:
+        * Misc/WebKitSystemBits.m:
+        * Misc/WebLocalizableStrings.m:
+        * Misc/WebNSArrayExtras.m:
+        * Misc/WebNSDataExtras.m:
+        * Misc/WebNSDictionaryExtras.m:
+        * Misc/WebNSFileManagerExtras.m:
+        * Misc/WebNSPasteboardExtras.mm:
+        * Misc/WebNSURLExtras.mm:
+        * Misc/WebNSUserDefaultsExtras.m:
+        * Panels/WebAuthenticationPanel.m:
+        * Panels/WebPanelAuthenticationHandler.m:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.m:
+        * Plugins/WebNetscapePluginEmbeddedView.mm:
+        * Plugins/WebPluginContainerCheck.mm:
+        * Plugins/WebPluginController.mm:
+        * Plugins/WebPluginDatabase.mm:
+        * WebCoreSupport/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport/WebKeyGenerator.m:
+        * WebCoreSupport/WebViewFactory.mm:
+        * WebKitPrefix.h:
+        * WebView/WebHTMLRepresentation.mm:
+        * WebView/WebPDFRepresentation.m:
+        * WebView/WebPDFView.mm:
+        * WebView/WebScriptDebugger.mm:
+
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

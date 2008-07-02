@@ -29,7 +29,7 @@
 #import <WebKit/WebNSDataExtras.h>
 #import <WebKit/WebNSDataExtrasPrivate.h>
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 @interface NSString (WebNSDataExtrasInternal)
 - (NSString *)_web_capitalizeRFC822HeaderFieldName;

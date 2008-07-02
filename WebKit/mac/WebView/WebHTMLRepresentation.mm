@@ -42,7 +42,6 @@
 #import "WebResourcePrivate.h"
 #import "WebView.h"
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
@@ -54,6 +53,7 @@
 #import <WebCore/Range.h>
 #import <WebCore/TextResourceDecoder.h>
 #import <WebKit/DOMHTMLInputElement.h>
+#import <wtf/Assertions.h>
 
 using namespace WebCore;
 using namespace HTMLNames;

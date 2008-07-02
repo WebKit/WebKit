@@ -88,12 +88,10 @@
 #import "WebUIDelegatePrivate.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
-#import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/HashTraits.h>
-#import <JavaScriptCore/RefPtr.h>
-#import <JavaScriptCore/ArrayPrototype.h>
-#import <JavaScriptCore/DateInstance.h>
-#import <JavaScriptCore/JSLock.h>
+#import <kjs/ArrayPrototype.h>
+#import <kjs/DateInstance.h>
+#import <kjs/InitializeThreading.h>
+#import <kjs/JSLock.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
@@ -127,7 +125,9 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/DOMPrivate.h>
 #import <WebKitSystemInterface.h>
-#import <kjs/InitializeThreading.h>
+#import <wtf/Assertions.h>
+#import <wtf/HashTraits.h>
+#import <wtf/RefPtr.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>

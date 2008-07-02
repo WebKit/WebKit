@@ -27,7 +27,7 @@
 #import "ThreadCheck.h"
 
 #import "StringHash.h"
-#import <JavaScriptCore/HashSet.h>
+#import <wtf/HashSet.h>
 
 namespace WebCore {
 

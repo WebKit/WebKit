@@ -28,7 +28,6 @@
 
 #import <WebKit/WebViewFactory.h>
 
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebViewInternal.h>
 #import <WebKit/WebHTMLViewInternal.h>
@@ -38,6 +37,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
 
 @interface NSMenu (WebViewFactoryAdditions)
 - (NSMenuItem *)addItemWithTitle:(NSString *)title action:(SEL)action tag:(int)tag;

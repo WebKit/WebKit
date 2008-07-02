@@ -31,9 +31,9 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSContextRef.h>
-#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <kjs/JSLock.h>
 #include <kjs/JSValue.h>
 
 using namespace KJS;

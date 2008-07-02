@@ -89,7 +89,7 @@
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
-#import <JavaScriptCore/JSLock.h>
+#import <kjs/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "c_instance.h"

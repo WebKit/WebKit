@@ -29,8 +29,8 @@
 #import "WebGraphicsExtras.h"
 
 #import <Accelerate/Accelerate.h>
-#import <JavaScriptCore/Assertions.h>
 #import <dlfcn.h>
+#import <wtf/Assertions.h>
 
 unsigned WebConvertBGRAToARGB(unsigned char *offscreenBuffer, int rowBytes, int x, int y, int width, int height)
 {

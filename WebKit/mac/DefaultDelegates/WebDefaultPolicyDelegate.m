@@ -36,7 +36,7 @@
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponse.h>
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 
 @implementation WebDefaultPolicyDelegate

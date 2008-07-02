@@ -28,7 +28,7 @@
 
 #import <WebKit/WebLocalizableStrings.h>
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
 

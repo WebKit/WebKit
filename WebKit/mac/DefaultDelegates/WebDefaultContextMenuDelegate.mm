@@ -43,12 +43,12 @@
 #import "WebViewInternal.h"
 #import <Foundation/NSURLConnection.h>
 #import <Foundation/NSURLRequest.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/Editor.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMPrivate.h>
+#import <wtf/Assertions.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 

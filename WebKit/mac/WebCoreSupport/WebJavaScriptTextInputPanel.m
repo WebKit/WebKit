@@ -28,7 +28,7 @@
 
 #import "WebJavaScriptTextInputPanel.h"
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 #import <WebKit/WebNSControlExtras.h>
 #import <WebKit/WebNSWindowExtras.h>

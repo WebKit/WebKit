@@ -28,7 +28,7 @@
 
 #import <WebKit/WebNSDataExtras.h>
 
-#import <JavaScriptCore/Assertions.h>
+#import <wtf/Assertions.h>
 
 @implementation NSDictionary (WebNSDictionaryExtras)
 -(NSNumber *)_webkit_numberForKey:(id)key

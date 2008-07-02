@@ -37,7 +37,6 @@
 #import "WebPreferencesPrivate.h"
 #import "WebTypesInternal.h"
 #import "WebViewPrivate.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/BackForwardList.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Page.h>
@@ -45,6 +44,7 @@
 #import <WebCore/Settings.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Assertions.h>
 #import <wtf/RetainPtr.h>
 
 using namespace WebCore;

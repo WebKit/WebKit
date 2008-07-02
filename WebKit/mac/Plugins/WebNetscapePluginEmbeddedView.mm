@@ -40,9 +40,9 @@
 #import "WebNetscapePluginPackage.h"
 #import "WebNetscapePluginStream.h"
 #import "WebView.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <wtf/Assertions.h>
 
 @implementation WebNetscapePluginEmbeddedView
 

@@ -31,9 +31,9 @@
 #import <Foundation/NSURLAuthenticationChallenge.h>
 #import <Foundation/NSURLProtectionSpace.h>
 #import <Foundation/NSURLCredential.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebKit/WebLocalizableStrings.h>
 #import <WebKit/WebNSURLExtras.h>
+#import <wtf/Assertions.h>
 
 #import <WebKit/WebNSControlExtras.h>
 

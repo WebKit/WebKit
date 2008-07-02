@@ -35,10 +35,10 @@
 #import "WebNSObjectExtras.h"
 #import "WebSystemInterface.h"
 #import <Foundation/NSURLRequest.h>
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LoaderNSURLExtras.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/Assertions.h>
 #import <unicode/uchar.h>
 #import <unicode/uidna.h>
 #import <unicode/uscript.h>

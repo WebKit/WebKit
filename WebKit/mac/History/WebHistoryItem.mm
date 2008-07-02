@@ -42,7 +42,6 @@
 #import "WebNSViewExtras.h"
 #import "WebPluginController.h"
 #import "WebTypesInternal.h"
-#import <JavaScriptCore/Assertions.h>
 #import <WebCore/CachedPage.h>
 #import <WebCore/HistoryItem.h>
 #import <WebCore/Image.h>
@@ -51,6 +50,7 @@
 #import <WebCore/PlatformString.h>
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/Assertions.h>
 
 // Private keys used in the WebHistoryItem's dictionary representation.
 // see 3245793 for explanation of "lastVisitedDate"

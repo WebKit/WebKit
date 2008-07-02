@@ -33,12 +33,12 @@
 #import "WebNSURLExtras.h"
 #import "WebTypesInternal.h"
 #import <Foundation/NSError.h>
-#import <JavaScriptCore/Assertions.h>
-#import <JavaScriptCore/HashMap.h>
-#import <JavaScriptCore/RetainPtr.h>
-#import <JavaScriptCore/Vector.h>
 #import <WebCore/Page.h>
 #import <WebCore/PageGroup.h>
+#import <wtf/Assertions.h>
+#import <wtf/HashMap.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/Vector.h>
 
 using namespace WebCore;
 
