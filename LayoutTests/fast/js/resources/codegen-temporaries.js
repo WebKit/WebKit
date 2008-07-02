@@ -854,4 +854,62 @@ function bitxor_test3()
 
 shouldBe("bitxor_test3()", "3");
 
+function switch_test1_helper(a, b)
+{
+    switch (a) {
+    case b:
+        break;
+    default:
+        break;
+    }
+    
+    return b;
+}
+
+function switch_test1()
+{
+    return switch_test1_helper(0, 1) == 1;
+}
+
+shouldBeTrue("switch_test1()");
+
+function switch_test2_helper(a, b)
+{
+    var c = b;
+    switch (a) {
+    case c:
+        break;
+    default:
+        break;
+    }
+    
+    return c;
+}
+
+function switch_test2()
+{
+    return switch_test2_helper(0, 1) == 1;
+}
+
+shouldBeTrue("switch_test2()");
+
+function switch_test3_helper(a)
+{
+    switch (a) {
+    case this:
+        break;
+    default:
+        break;
+    }
+    
+    return this;
+}
+
+function switch_test3()
+{
+    return this == switch_test3_helper.call(this, 0);
+}
+
+shouldBeTrue("switch_test3()");
+
 var successfullyParsed = true;

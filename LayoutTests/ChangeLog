@@ -1,5 +1,17 @@
 2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Darin.
+
+        Tests for:
+
+        Bug 19844: JavaScript Switch statement modifies "this"
+        <https://bugs.webkit.org/show_bug.cgi?id=19844>
+
+        * fast/js/codegen-temporaries-expected.txt:
+        * fast/js/resources/codegen-temporaries.js:
+
+2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Brady Eidson.
 
         Tests for:

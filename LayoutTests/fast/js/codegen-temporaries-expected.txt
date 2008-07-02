@@ -105,6 +105,9 @@ PASS bitor_test3() is 3
 PASS bitxor_test1() is 3
 PASS bitxor_test2() is 3
 PASS bitxor_test3() is 3
+PASS switch_test1() is true
+PASS switch_test2() is true
+PASS switch_test3() is true
 PASS successfullyParsed is true
 
 TEST COMPLETE

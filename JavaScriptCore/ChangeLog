@@ -1,3 +1,16 @@
+2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Bug 19844: JavaScript Switch statement modifies "this"
+        <https://bugs.webkit.org/show_bug.cgi?id=19844>
+
+        Use a temporary when generating code for switch clauses to avoid
+        overwriting 'this' or a local variable.
+
+        * kjs/nodes.cpp:
+        (KJS::CaseBlockNode::emitCodeForBlock):
+
 2008-07-01  Christian Dywan  <christian@twotoasts.de>
 
         Gtk+ build fix.
