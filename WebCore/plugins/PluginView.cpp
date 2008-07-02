@@ -156,7 +156,7 @@ bool PluginView::start()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-        KJS::JSLock::DropAllLocks dropAllLocks;
+        KJS::JSLock::DropAllLocks dropAllLocks(false);
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->newp((NPMIMEType)m_mimeType.data(), m_instance, m_mode, m_paramCount, m_paramNames, m_paramValues, NULL);
         setCallingPlugin(false);
@@ -203,7 +203,7 @@ static bool getString(ScriptController* proxy, JSValue* result, String& string)
 {
     if (!proxy || !result || result->isUndefined())
         return false;
-    JSLock lock;
+    JSLock lock(false);
 
     ExecState* exec = proxy->globalObject()->globalExec();
     UString ustring = result->toString(exec);
@@ -238,7 +238,7 @@ void PluginView::performRequest(PluginRequest* request)
             // FIXME: <rdar://problem/4807469> This should be sent when the document has finished loading
             if (request->sendNotification()) {
                 PluginView::setCurrentPluginView(this);
-                KJS::JSLock::DropAllLocks dropAllLocks;
+                KJS::JSLock::DropAllLocks dropAllLocks(false);
                 setCallingPlugin(true);
                 m_plugin->pluginFuncs()->urlnotify(m_instance, requestURL.string().utf8().data(), NPRES_DONE, request->notifyData());
                 setCallingPlugin(false);
@@ -466,7 +466,7 @@ PassRefPtr<KJS::Bindings::Instance> PluginView::bindingInstance()
     NPError npErr;
     {
         PluginView::setCurrentPluginView(this);
-        KJS::JSLock::DropAllLocks dropAllLocks;
+        KJS::JSLock::DropAllLocks dropAllLocks(false);
         setCallingPlugin(true);
         npErr = m_plugin->pluginFuncs()->getvalue(m_instance, NPPVpluginScriptableNPObject, &object);
         setCallingPlugin(false);

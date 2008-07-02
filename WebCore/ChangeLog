@@ -1,3 +1,18 @@
+2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::getString):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::bindingInstance):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        Pass false to JSLock and JSLock::DropAllLocks constructors.
+
 2008-07-01  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
