@@ -1,5 +1,11 @@
 2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
 
+        Another non-AllInOne build fix.
+
+        * kjs/JSGlobalObject.cpp: Include JSLock.h here, too.
+
+2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
+
         Non-AllInOne build fix.
 
         * kjs/interpreter.cpp: Include JSLock.h.

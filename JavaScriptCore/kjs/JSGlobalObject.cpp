@@ -41,6 +41,7 @@
 #include "ErrorPrototype.h"
 #include "FunctionConstructor.h"
 #include "FunctionPrototype.h"
+#include "JSLock.h"
 #include "Machine.h"
 #include "MathObject.h"
 #include "NativeErrorConstructor.h"
