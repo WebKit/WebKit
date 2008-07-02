@@ -1,3 +1,28 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19834
+        Failed assertion in JavaScriptCore/VM/SegmentedVector.h:82
+
+        Creating a global object with a custom prototype resets it twice (wasteful!).
+        So, addStaticGlobals() was called twice, but JSGlobalObject::reset() didn't reset
+        the register array.        
+
+        * kjs/JSGlobalObject.cpp: (KJS::JSGlobalObject::reset): Call setRegisterArray(0, 0).
+
+        * kjs/JSVariableObject.h: Changed registerArray to OwnArrayPtr. Also, added private copy
+        constructor and operator= to ensure that no one attempts to copy this object (for whatever
+        reason, I couldn't make Noncopyable work).
+
+        * kjs/JSGlobalObject.h: (KJS::JSGlobalObject::addStaticGlobals): Allocate registerArray
+        with new[].
+
+        * kjs/JSVariableObject.cpp:
+        (KJS::JSVariableObject::copyRegisterArray): Allocate registerArray with new[].
+        (KJS::JSVariableObject::setRegisterArray): Avoid hitting an assertion in OwnArrayPtr when
+        "changing" the value from 0 to 0.
+
 2008-07-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

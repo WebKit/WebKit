@@ -174,6 +174,7 @@ void JSGlobalObject::reset(JSValue* prototype)
 
     _prop.clear();
     symbolTable().clear();
+    setRegisterArray(0, 0);
 
     // Prototypes
     d()->functionPrototype = 0;

@@ -67,7 +67,7 @@ void JSVariableObject::mark()
 {
     JSObject::mark();
 
-    if(!d->registerArray)
+    if (!d->registerArray)
         return;
     
     Register* end = d->registerArray.get() + d->registerArraySize;
@@ -87,7 +87,7 @@ void JSVariableObject::copyRegisterArray(Register* src, size_t count)
 {
     ASSERT(!d->registerArray);
 
-    Register* registerArray = static_cast<Register*>(fastMalloc(count * sizeof(Register)));
+    Register* registerArray = new Register[count];
     memcpy(registerArray, src, count * sizeof(Register));
 
     setRegisterArray(registerArray, count);
@@ -95,7 +95,8 @@ void JSVariableObject::copyRegisterArray(Register* src, size_t count)
 
 void JSVariableObject::setRegisterArray(Register* registerArray, size_t count)
 {
-    d->registerArray.set(registerArray);
+    if (registerArray != d->registerArray.get())
+        d->registerArray.set(registerArray);
     d->registerArraySize = count;
     d->registers = registerArray + count;
 }

@@ -33,7 +33,7 @@
 #include "Register.h"
 #include "SymbolTable.h"
 #include "UnusedParam.h"
-#include <wtf/OwnPtr.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/UnusedParam.h>
 
 namespace KJS {
@@ -69,11 +69,15 @@ namespace KJS {
             {
                 ASSERT(symbolTable_);
             }
-            
+
             SymbolTable* symbolTable; // Maps name -> offset from "r" in register file.
             Register* registers; // Pointers to the register past the end of local storage. (Local storage indexes are negative.)
-            OwnPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
+            OwnArrayPtr<Register> registerArray; // Independent copy of registers, used when a variable object copies its registers out of the register file.
             size_t registerArraySize;
+
+        private:
+            JSVariableObjectData(const JSVariableObjectData&);
+            JSVariableObjectData& operator=(const JSVariableObjectData&);
         };
 
         JSVariableObject(JSVariableObjectData* data)
