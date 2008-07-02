@@ -226,7 +226,13 @@ static ALWAYS_INLINE JSValue* callDefaultValueFunction(ExecState* exec, const JS
     CallData callData;
     CallType callType = function->getCallData(callData);
     if (callType == CallTypeNone)
-        return 0;
+        return exec->exception();
+
+    // Prevent "toString" and "valueOf" from observing execution if an exception
+    // is pending.
+    if (exec->hadException())
+        return exec->exception();
+
     JSValue* result = call(exec, function, callType, callData, const_cast<JSObject*>(object), exec->emptyList());
     ASSERT(result->type() != GetterSetterType);
     if (exec->hadException())
@@ -246,12 +252,6 @@ bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& res
 // ECMA 8.6.2.6
 JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
 {
-    // We need this check to guard against the case where this object is rhs of
-    // a binary expression where lhs threw an exception in its conversion to
-    // primitive.
-    if (exec->hadException())
-        return exec->exception();
-
     // Must call toString first for Date objects.
     if ((hint == StringType) || (hint != NumberType && _proto == exec->lexicalGlobalObject()->datePrototype())) {
         if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))

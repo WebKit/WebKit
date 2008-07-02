@@ -2,6 +2,35 @@
 
         Reviewed by Oliver Hunt.
         
+        Removed and/or reordered exception checks in array-style a[n] access.
+        
+        SunSpider says 1.4% faster.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): No need to check for exceptions before
+        calling toString, toNumber and/or get. If the call ends up being observable
+        through toString, valueOf, or a getter, we short-circuit it there, instead.
+        In the op_del_by_val case, I removed the incorrect comment without actually
+        removing the code, since I didn't want to tempt the GCC fates!
+
+        * kjs/JSObject.cpp:
+        (KJS::callDefaultValueFunction): Added exception check to prevent
+        toString and valueOf functions from observing execution after an exception
+        has been thrown. This removes some of the burden of exception checking
+        from the machine.
+
+        (KJS::JSObject::defaultValue): Removed redundant exception check here.
+
+        * kjs/PropertySlot.cpp:
+        (KJS::PropertySlot::functionGetter): Added exception check to prevent
+        getter functions from observing execution after an exception has been
+        thrown. This removes some of the burden of exception checking from the
+        machine.
+
+2008-07-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
         Optimized a[n] get and put for cases where n is an immediate unsigned
         value.
         
