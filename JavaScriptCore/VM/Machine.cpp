@@ -1829,11 +1829,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
 
         JSValue* baseValue = r[base].u.jsValue;
-
         JSValue* subscript = r[property].u.jsValue;
+
         JSValue* result;
-        uint32_t i;
-        if (subscript->getUInt32(i))
+        unsigned i;
+
+        bool isUInt32 = JSImmediate::getUInt32(subscript, i);
+        if (LIKELY(isUInt32))
             result = baseValue->get(exec, i);
         else {
             JSObject* baseObj = baseValue->toObject(exec); // may throw
@@ -1870,11 +1872,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int value = (++vPC)->u.operand;
 
         JSValue* baseValue = r[base].u.jsValue;
-
         JSValue* subscript = r[property].u.jsValue;
 
-        uint32_t i;
-        if (subscript->getUInt32(i))
+        unsigned i;
+
+        bool isUInt32 = JSImmediate::getUInt32(subscript, i);
+        if (LIKELY(isUInt32))
             baseValue->put(exec, i, r[value].u.jsValue);
         else {
             JSObject* baseObj = baseValue->toObject(exec);

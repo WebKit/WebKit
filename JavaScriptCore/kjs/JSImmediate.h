@@ -71,6 +71,12 @@ public:
         return (getTag(v) == NumberType);
     }
     
+    static ALWAYS_INLINE bool isPositiveNumber(const JSValue* v)
+    {
+        // A single mask to check for the sign bit and the number tag all at once.
+        return (reinterpret_cast<uintptr_t>(v) & (0x80000000 | NumberType)) == NumberType;
+    }
+    
     static ALWAYS_INLINE bool isBoolean(const JSValue* v)
     {
         return (getTag(v) == BooleanType);
@@ -328,9 +334,8 @@ ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
 
 ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
 {
-    const int32_t si = static_cast<int32_t>(unTag(v)) >> 2;
-    i = si;
-    return isNumber(v) & (si >= 0);
+    i = static_cast<uintptr_t>(unTag(v)) >> 2;
+    return isPositiveNumber(v);
 }
 
 ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
