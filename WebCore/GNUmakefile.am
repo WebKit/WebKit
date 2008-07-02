@@ -969,6 +969,7 @@ webcore_sources += \
 	WebCore/plugins/PluginData.cpp \
 	WebCore/plugins/PluginDatabase.cpp \
 	WebCore/plugins/PluginInfoStore.cpp \
+	WebCore/plugins/PluginMainThreadScheduler.cpp \
 	WebCore/plugins/PluginPackage.cpp \
 	WebCore/plugins/PluginStream.cpp \
 	WebCore/plugins/PluginView.cpp \

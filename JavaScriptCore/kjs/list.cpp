@@ -22,6 +22,7 @@
 #include "list.h"
 
 #include "JSValue.h"
+#include "JSCell.h"
 
 using std::min;
 

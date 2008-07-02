@@ -1,3 +1,9 @@
+2008-07-01  Christian Dywan  <christian@twotoasts.de>
+
+        Gtk+ build fix.
+
+        * kjs/list.cpp: Include "JSCell.h"
+
 2008-07-01  Kevin McCullough  <kmccullough@apple.com>
 
         Build fix.
