@@ -1,3 +1,15 @@
+2008-07-02  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=19850
+        Bug 19850: REGRESSION (r34887): SVGEllipseElement-dom-cx-attr.html and SVGEllipseElement-svgdom-cx-prop.html are failing
+
+        Update the coordinates used when clicking to initiate the test so that the test does not fail on Tiger.
+
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js:
+
 2008-07-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

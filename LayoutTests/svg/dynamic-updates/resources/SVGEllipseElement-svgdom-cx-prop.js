@@ -21,4 +21,4 @@ function executeTest() {
     completeTest();
 }
 
-startTest(ellipseElement, 50, 150);
+startTest(ellipseElement, 45, 150);
