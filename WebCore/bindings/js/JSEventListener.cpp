@@ -33,6 +33,7 @@
 #include "JSEventTargetNode.h"
 #include "ScriptController.h"
 #include <kjs/FunctionConstructor.h>
+#include <kjs/JSLock.h>
 
 using namespace KJS;
 
@@ -58,7 +59,7 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     if (!script->isEnabled() || script->isPaused())
         return;
 
-    JSLock lock;
+    JSLock lock(false);
 
     ExecState* exec = window->globalExec();
 
@@ -273,7 +274,7 @@ void JSLazyEventListener::parseCode() const
     if (frame && frame->script()->isEnabled()) {
         ExecState* exec = window()->globalExec();
 
-        JSLock lock;
+        JSLock lock(false);
         ArgList args;
 
         UString sourceURL(frame->loader()->url().string());

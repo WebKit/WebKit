@@ -96,7 +96,8 @@
 #include <WebCore/TypingCommand.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #pragma warning(pop)
-#include <kjs/InitializeThreading.h>
+#include <JavaScriptCore/InitializeThreading.h>
+#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValue.h>
 #include <CFNetwork/CFURLCachePriv.h>
 #include <CFNetwork/CFURLProtocolPriv.h>
@@ -2624,7 +2625,7 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     if(!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult->isString()) {
-        JSLock lock;
+        JSLock lock(false);
         *result = BString(String(scriptExecutionResult->getString()));
     }
 

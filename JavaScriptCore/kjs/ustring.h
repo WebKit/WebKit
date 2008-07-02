@@ -23,7 +23,6 @@
 #ifndef _KJS_USTRING_H_
 #define _KJS_USTRING_H_
 
-#include "JSLock.h"
 #include "collector.h"
 #include <stdint.h>
 #include <wtf/Assertions.h>

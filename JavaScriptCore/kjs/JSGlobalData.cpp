@@ -56,9 +56,9 @@ extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
 
-JSGlobalData::JSGlobalData()
+JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
-    , heap(new Heap)
+    , heap(new Heap(isShared))
 #if USE(MULTIPLE_THREADS)
     , arrayTable(new HashTable(KJS::arrayTable))
     , dateTable(new HashTable(KJS::dateTable))
@@ -83,6 +83,7 @@ JSGlobalData::JSGlobalData()
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
+    , isSharedInstance(isShared)
 {
 }
 
@@ -132,11 +133,12 @@ JSGlobalData& JSGlobalData::threadInstance()
 JSGlobalData& JSGlobalData::sharedInstance()
 {
 #if USE(MULTIPLE_THREADS)
-    AtomicallyInitializedStatic(JSGlobalData, sharedInstance);
-#else
-    static JSGlobalData sharedInstance;
+    MutexLocker locker(*atomicallyInitializedStaticMutex);
 #endif
-    return sharedInstance;
+    static JSGlobalData* sharedInstance;
+    if (!sharedInstance)
+        sharedInstance = new JSGlobalData(true);
+    return *sharedInstance;
 }
 
 }

@@ -34,6 +34,7 @@
 #pragma warning(push, 0)
 #include <JavaScriptCore/collector.h>
 #pragma warning(pop)
+#include <JavaScriptCore/JSLock.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -96,7 +97,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock;
+    JSLock lock(false);
     *count = (UINT)JSGlobalData::threadInstance().heap->size();
     return S_OK;
 }
@@ -107,7 +108,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptGlobalObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock;
+    JSLock lock(false);
     *count = (UINT)JSGlobalData::threadInstance().heap->globalObjectCount();
     return S_OK;
 }
@@ -118,7 +119,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectsCount(
     if (!count)
         return E_POINTER;
 
-    JSLock lock;
+    JSLock lock(false);
     *count = (UINT)JSGlobalData::threadInstance().heap->protectedObjectCount();
     return S_OK;
 }
@@ -129,7 +130,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
     if (!count)
         return E_POINTER;
 
-    JSLock lock;
+    JSLock lock(false);
     *count = (UINT)JSGlobalData::threadInstance().heap->protectedGlobalObjectCount();
     return S_OK;
 }

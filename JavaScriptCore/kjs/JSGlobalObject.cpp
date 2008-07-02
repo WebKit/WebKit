@@ -101,7 +101,7 @@ void JSGlobalObject::init(JSObject* thisValue)
 {
     ASSERT(JSLock::currentThreadIsHoldingLock());
 
-    d()->globalData = (Heap::heap(this) == JSGlobalData::sharedInstance().heap) ? &JSGlobalData::sharedInstance() : &JSGlobalData::threadInstance();
+    d()->globalData = Heap::heap(this)->isShared() ? &JSGlobalData::sharedInstance() : &JSGlobalData::threadInstance();
 
     if (JSGlobalObject*& headObject = head()) {
         d()->prev = headObject;

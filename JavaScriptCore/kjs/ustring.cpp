@@ -24,7 +24,6 @@
 #include "config.h"
 #include "ustring.h"
 
-#include "JSLock.h"
 #include "collector.h"
 #include "dtoa.h"
 #include "JSFunction.h"

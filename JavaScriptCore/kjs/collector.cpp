@@ -23,6 +23,7 @@
 
 #include "ExecState.h"
 #include "JSGlobalObject.h"
+#include "JSLock.h"
 #include "JSString.h"
 #include "JSValue.h"
 #include "list.h"
@@ -90,8 +91,9 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
-Heap::Heap()
+Heap::Heap(bool isShared)
     : m_markListSet(0)
+    , m_isShared(isShared)
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -99,7 +101,7 @@ Heap::Heap()
 
 Heap::~Heap()
 {
-    JSLock lock;
+    JSLock lock(false);
 
     delete m_markListSet;
     sweep<PrimaryHeap>();
@@ -438,7 +440,9 @@ static void destroyRegisteredThread(void* data)
 
     // Can't use JSLock convenience object here because we don't want to re-register
     // an exiting thread.
-    JSLock::lock();
+    // JSLock is only used for code simplicity here, as we only need to protect registeredThreads
+    // list manipulation, not JS data structures.
+    JSLock::lock(true);
 
     if (registeredThreads == thread) {
         registeredThreads = registeredThreads->next;
@@ -455,7 +459,7 @@ static void destroyRegisteredThread(void* data)
         ASSERT(t); // If t is NULL, we never found ourselves in the list.
     }
 
-    JSLock::unlock();
+    JSLock::unlock(true);
 
     delete thread;
 }
@@ -467,6 +471,7 @@ static void initializeRegisteredThreadKey()
 
 void Heap::registerThread()
 {
+    // Since registerThread() is only called when using a shared heap, these locks will be real.
     ASSERT(JSLock::lockCount() > 0);
     ASSERT(JSLock::currentThreadIsHoldingLock());
 
@@ -728,7 +733,7 @@ void Heap::markStackObjectsConservatively()
 
 #if USE(MULTIPLE_THREADS)
 
-    if (this == JSGlobalData::sharedInstance().heap) {
+    if (m_isShared) {
 
 #ifndef NDEBUG
         // Forbid malloc during the mark phase. Marking a thread suspends it, so 
@@ -736,6 +741,8 @@ void Heap::markStackObjectsConservatively()
         // suspended while holding the malloc lock.
         fastMallocForbid();
 #endif
+        // It is safe to access the registeredThreads list, because we earlier asserted that locks are being held,
+        // and since this is a shared heap, they are real locks.
         for (Thread* thread = registeredThreads; thread != NULL; thread = thread->next) {
             if (!pthread_equal(thread->posixThread, pthread_self()))
                 markOtherThreadConservatively(thread);
@@ -747,28 +754,48 @@ void Heap::markStackObjectsConservatively()
 #endif
 }
 
+void Heap::setGCProtectNeedsLocking()
+{
+    // Most clients do not need to call this, with the notable exception of WebCore.
+    // Clients that use shared heap have JSLock protection, while others are not supposed
+    // to migrate JS objects between threads. WebCore violates this contract in Database code,
+    // which calls gcUnprotect from a secondary thread.
+    if (!m_protectedValuesMutex)
+        m_protectedValuesMutex.set(new Mutex);
+}
+
 void Heap::protect(JSValue* k)
 {
     ASSERT(k);
-    ASSERT(JSLock::lockCount() > 0);
-    ASSERT(JSLock::currentThreadIsHoldingLock());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_isShared);
 
     if (JSImmediate::isImmediate(k))
         return;
 
-    protectedValues.add(k->asCell());
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
+    m_protectedValues.add(k->asCell());
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
 }
 
 void Heap::unprotect(JSValue* k)
 {
     ASSERT(k);
-    ASSERT(JSLock::lockCount() > 0);
-    ASSERT(JSLock::currentThreadIsHoldingLock());
+    ASSERT(JSLock::currentThreadIsHoldingLock() || !m_isShared);
 
     if (JSImmediate::isImmediate(k))
         return;
 
-    protectedValues.remove(k->asCell());
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
+    m_protectedValues.remove(k->asCell());
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
 }
 
 Heap* Heap::heap(const JSValue* v)
@@ -780,12 +807,18 @@ Heap* Heap::heap(const JSValue* v)
 
 void Heap::markProtectedObjects()
 {
-    ProtectCountSet::iterator end = protectedValues.end();
-    for (ProtectCountSet::iterator it = protectedValues.begin(); it != end; ++it) {
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
+    ProtectCountSet::iterator end = m_protectedValues.end();
+    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it) {
         JSCell* val = it->first;
         if (!val->marked())
             val->mark();
     }
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
 }
 
 template <Heap::HeapType heapType> size_t Heap::sweep()
@@ -940,21 +973,36 @@ size_t Heap::globalObjectCount()
 
 size_t Heap::protectedGlobalObjectCount()
 {
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
     size_t count = 0;
     if (JSGlobalObject* head = JSGlobalData::threadInstance().head) {
         JSGlobalObject* o = head;
         do {
-            if (protectedValues.contains(o))
+            if (m_protectedValues.contains(o))
                 ++count;
             o = o->next();
         } while (o != head);
     }
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
+
     return count;
 }
 
 size_t Heap::protectedObjectCount()
 {
-    return protectedValues.size();
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
+    size_t result = m_protectedValues.size();
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
+
+    return result;
 }
 
 static const char* typeName(JSCell* val)
@@ -994,9 +1042,15 @@ HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()
 {
     HashCountedSet<const char*>* counts = new HashCountedSet<const char*>;
 
-    ProtectCountSet::iterator end = protectedValues.end();
-    for (ProtectCountSet::iterator it = protectedValues.begin(); it != end; ++it)
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->lock();
+
+    ProtectCountSet::iterator end = m_protectedValues.end();
+    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
         counts->add(typeName(it->first));
+
+    if (m_protectedValuesMutex)
+        m_protectedValuesMutex->unlock();
 
     return counts;
 }

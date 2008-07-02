@@ -37,6 +37,8 @@ namespace KJS {
         PropertyNameArray(JSGlobalData* globalData) : m_globalData(globalData) {}
         PropertyNameArray(ExecState* exec) : m_globalData(&exec->globalData()) {}
 
+        JSGlobalData* globalData() { return m_globalData; }
+
         void add(const Identifier& identifier) { add(identifier.ustring().rep()); }
         void add(UString::Rep*);
         void addKnownUnique(UString::Rep* identifier) { m_vector.append(Identifier(m_globalData, identifier)); }

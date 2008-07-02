@@ -192,7 +192,7 @@ static bool getString(JSValue* result, String& string)
 {
     if (!result)
         return false;
-    JSLock lock;
+    JSLock lock(false);
     UString ustring;
     if (!result->getString(ustring))
         return false;

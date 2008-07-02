@@ -42,7 +42,7 @@ namespace WebCore {
 
 static void* collect(void*)
 {
-    JSLock lock;
+    JSLock lock(false);
     JSGlobalData::threadInstance().heap->collect();
     return 0;
 }
@@ -68,13 +68,13 @@ void GCController::garbageCollectSoon()
 
 void GCController::gcTimerFired(Timer<GCController>*)
 {
-    JSLock lock;
+    JSLock lock(false);
     JSGlobalData::threadInstance().heap->collect();
 }
 
 void GCController::garbageCollectNow()
 {
-    JSLock lock;
+    JSLock lock(false);
     JSGlobalData::threadInstance().heap->collect();
 }
 
@@ -84,10 +84,8 @@ void GCController::garbageCollectOnAlternateThreadForDebugging(bool waitUntilDon
     pthread_t thread;
     pthread_create(&thread, NULL, collect, NULL);
 
-    if (waitUntilDone) {
-        JSLock::DropAllLocks dropLocks; // Otherwise our lock would deadlock the collect thread we're joining
+    if (waitUntilDone)
         pthread_join(thread, NULL);
-    }
 #endif
 }
 

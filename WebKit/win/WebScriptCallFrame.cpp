@@ -187,7 +187,7 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromSt
 
     *result = 0;
 
-    JSLock lock;
+    JSLock lock(false);
 
     JSValue* scriptExecutionResult = valueByEvaluatingJavaScriptFromString(script);
     *result = WebCore::BString(jsValueToString(m_state, scriptExecutionResult)).release();

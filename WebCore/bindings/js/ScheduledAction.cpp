@@ -31,6 +31,7 @@
 #include "FrameLoader.h"
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 
 using namespace KJS;
 
@@ -56,7 +57,7 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
 
     frame->script()->setProcessingTimerCallback(true);
 
-    JSLock lock;
+    JSLock lock(false);
 
     if (m_function) {
         CallData callData;

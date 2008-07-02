@@ -30,6 +30,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "WebScriptObject.h"
+#include <kjs/JSLock.h>
 #include <wtf/RetainPtr.h>
 
 using namespace KJS;
@@ -107,16 +108,16 @@ JSValue* ObjcField::valueFromInstance(ExecState* exec, const Instance* instance)
     
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
 
-   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
         if (id objcValue = [targetObject valueForKey:key])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
     } @catch(NSException* localException) {
-        JSLock::lock();
+        JSLock::lock(false);
         throwError(exec, GeneralError, [localException reason]);
-        JSLock::unlock();
+        JSLock::unlock(false);
     }
 
     return result;
@@ -135,15 +136,15 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
     id targetObject = (static_cast<const ObjcInstance*>(instance))->getObject();
     id value = convertValueToObjcObject(exec, aValue);
 
-   JSLock::DropAllLocks dropAllLocks; // Can't put this inside the @try scope because it unwinds incorrectly.
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     @try {
         NSString* key = [NSString stringWithCString:name() encoding:NSASCIIStringEncoding];
         [targetObject setValue:value forKey:key];
     } @catch(NSException* localException) {
-        JSLock::lock();
+        JSLock::lock(false);
         throwError(exec, GeneralError, [localException reason]);
-        JSLock::unlock();
+        JSLock::unlock(false);
     }
 }
 

@@ -32,6 +32,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <kjs/JSArray.h>
+#include <kjs/JSLock.h>
 #include <dlfcn.h>
 
 namespace KJS {
@@ -346,10 +347,9 @@ jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *sig
     return result;
 }
 
-static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, const char *javaClassName) {
+static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, const char *javaClassName)
+{
 
-    ASSERT(JSLock::lockCount() > 0);
-    
     JNIEnv *env = getJNIEnv();
     // As JS Arrays can contain a mixture of objects, assume we can convert to
     // the requested Java Array type requested, unless the array type is some object array
@@ -472,7 +472,7 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
 
 jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, const char *javaClassName)
 {
-    JSLock lock;
+    JSLock lock(false);
     
     jvalue result;
    

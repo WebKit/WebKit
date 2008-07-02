@@ -91,7 +91,7 @@ CachedPage::CachedPage(Page* page)
     Frame* mainFrame = page->mainFrame();
     mainFrame->clearTimers();
 
-    JSLock lock;
+    JSLock lock(false);
 
     ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
@@ -117,7 +117,7 @@ void CachedPage::restore(Page* page)
 
     Frame* mainFrame = page->mainFrame();
 
-    JSLock lock;
+    JSLock lock(false);
 
     ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
@@ -179,7 +179,7 @@ void CachedPage::clear()
     m_mousePressNode = 0;
     m_URL = KURL();
 
-    JSLock lock;
+    JSLock lock(false);
     m_pausedTimeouts.clear();
     m_window = 0;
 

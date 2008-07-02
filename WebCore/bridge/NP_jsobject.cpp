@@ -30,6 +30,7 @@
 #include "NP_jsobject.h"
 
 #include <kjs/JSGlobalObject.h>
+#include <kjs/JSLock.h>
 #include <kjs/PropertyNameArray.h>
 #include "c_utility.h"
 #include <kjs/completion.h>
@@ -104,7 +105,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
             return false;
         
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         
         // Call the function object.
         JSValue* function = obj->imp;
@@ -153,7 +154,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
         if (!rootObject || !rootObject->isValid())
             return false;
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         JSValue* function = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         CallData callData;
         CallType callType = function->getCallData(callData);
@@ -190,7 +191,7 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         
-        JSLock lock;
+        JSLock lock(false);
         String scriptString = convertNPStringToUTF16(s);
         rootObject->globalObject()->startTimeoutCheck();
         Completion completion = Interpreter::evaluate(rootObject->globalObject()->globalExec(), rootObject->globalObject()->globalScopeChain(), UString(), 1, scriptString);
@@ -226,7 +227,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
         ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         
-        JSLock lock;
+        JSLock lock(false);
         JSValue *result;
         if (i->isString)
             result = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
@@ -257,7 +258,7 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
         if (i->isString)
             obj->imp->put(exec, identifierFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant, rootObject));
@@ -291,7 +292,7 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
                 return false;
         }
 
-        JSLock lock;
+        JSLock lock(false);
         if (i->isString)
             obj->imp->deleteProperty(exec, identifierFromNPIdentifier(i->value.string));
         else
@@ -313,7 +314,7 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
 
         ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = (PrivateIdentifier*)propertyName;
-        JSLock lock;
+        JSLock lock(false);
         if (i->isString)
             return obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string));
         return obj->imp->hasProperty(exec, i->value.number);
@@ -339,7 +340,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
             return false;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
         return !func->isUndefined();
     }
@@ -359,7 +360,7 @@ void _NPN_SetException(NPObject* o, const NPUTF8* message)
             return;
 
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         throwError(exec, GeneralError, message);
     }
 }
@@ -374,7 +375,7 @@ bool _NPN_Enumerate(NPP, NPObject *o, NPIdentifier **identifier, uint32_t *count
             return false;
         
         ExecState* exec = rootObject->globalObject()->globalExec();
-        JSLock lock;
+        JSLock lock(false);
         PropertyNameArray propertyNames(exec);
 
         obj->imp->getPropertyNames(exec, propertyNames);

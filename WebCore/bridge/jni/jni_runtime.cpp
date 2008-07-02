@@ -33,6 +33,7 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include "runtime_root.h"
+#include <kjs/JSLock.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -314,7 +315,7 @@ static void appendClassName(UString& aString, const char* className)
 const char *JavaMethod::signature() const 
 {
     if (!_signature) {
-        JSLock lock;
+        JSLock lock(false);
 
         UString signatureBuilder("(");
         for (int i = 0; i < _numParameters; i++) {

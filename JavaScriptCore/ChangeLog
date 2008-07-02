@@ -1,3 +1,155 @@
+2008-06-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Disable JSLock for per-thread contexts.
+
+        No change on SunSpider.
+
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        (KJS::JSGlobalData::sharedInstance):
+        Added isSharedInstance as a better way to tell whether the instance is shared (legacy).
+
+        * kjs/JSLock.cpp:
+        (KJS::createJSLockCount):
+        (KJS::JSLock::lockCount):
+        (KJS::setLockCount):
+        (KJS::JSLock::JSLock):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::JSLock::currentThreadIsHoldingLock):
+        (KJS::JSLock::DropAllLocks::DropAllLocks):
+        (KJS::JSLock::DropAllLocks::~DropAllLocks):
+        * kjs/JSLock.h:
+        (KJS::JSLock::JSLock):
+        (KJS::JSLock::~JSLock):
+        Made JSLock and JSLock::DropAllLocks constructors take a parameter to decide whether to
+        actually lock a mutex, or only to increment recursion count. We cannot turn it into no-op
+        if we want to keep existing assertions working.
+        Made recursion count per-thread, now that locks may not lock.
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript): Take JSLock after casting JSContextRef to ExecState* (which doesn't need
+        locking in any case), so that a decision whether to actually lock can be made.
+        (JSCheckScriptSyntax): Ditto.
+        (JSGarbageCollect): Only lock while collecting the shared heap, not the per-thread one.
+
+        * API/JSObjectRef.cpp:
+        (JSClassCreate): Don't lock, as there is no reason to.
+        (JSClassRetain): Ditto.
+        (JSClassRelease): Ditto.
+        (JSPropertyNameArrayRetain): Ditto.
+        (JSPropertyNameArrayRelease): Only lock while deleting the array, as that may touch
+        identifier table.
+        (JSPropertyNameAccumulatorAddName): Adding a string also involves an identifier table
+        lookup, and possibly modification.
+
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        (JSStringCreateWithUTF8CString):
+        (JSStringRetain):
+        (JSStringRelease):
+        (JSStringGetUTF8CString):
+        (JSStringIsEqual):
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        JSStringRef operations other than releasing do not need locking.
+
+        * VM/Machine.cpp: Don't include unused JSLock.h.
+
+        * kjs/CollectorHeapIntrospector.cpp: (KJS::CollectorHeapIntrospector::statistics):
+        Don't take the lock for real, as heap introspection pauses the process anyway. It seems that
+        the existing code could cause deadlocks.
+
+        * kjs/Shell.cpp:
+        (functionGC):
+        (main):
+        (jscmain):
+        The test tool uses a per-thread context, so no real locking is required.
+
+        * kjs/collector.h:
+        (KJS::Heap::setGCProtectNeedsLocking): Optionally protect m_protectedValues access with a
+        per-heap mutex. This is only needed for WebCore Database code, which violates the "no data
+        migration between threads" by using ProtectedPtr on a background thread.
+        (KJS::Heap::isShared): Keep a shared flag here, as well.
+
+        * kjs/protect.h:
+        (KJS::::ProtectedPtr):
+        (KJS::::~ProtectedPtr):
+        (KJS::::operator):
+        (KJS::operator==):
+        (KJS::operator!=):
+        ProtectedPtr is ony used from WebCore, so it doesn't need to take JSLock. An assertion in
+        Heap::protect/unprotect guards agains possible future unlocked uses of ProtectedPtr in JSC.
+
+        * kjs/collector.cpp:
+        (KJS::Heap::Heap): Initialize m_isShared.
+        (KJS::Heap::~Heap): No need to lock for real during destruction, but must keep assertions
+        in sweep() working.
+        (KJS::destroyRegisteredThread): Registered thread list is only accessed for shared heap,
+        so locking is always needed here.
+        (KJS::Heap::registerThread): Ditto.
+        (KJS::Heap::markStackObjectsConservatively): Use m_isShared instead of comparing to a shared
+        instance for a small speedup.
+        (KJS::Heap::setGCProtectNeedsLocking): Create m_protectedValuesMutex. There is currently no
+        way to undo this - and ideally, Database code will be fixed to lo longer require this quirk.
+        (KJS::Heap::protect): Take m_protectedValuesMutex (if it exists) while accessing
+        m_protectedValues.
+        (KJS::Heap::unprotect): Ditto.
+        (KJS::Heap::markProtectedObjects): Ditto.
+        (KJS::Heap::protectedGlobalObjectCount): Ditto.
+        (KJS::Heap::protectedObjectCount): Ditto.
+        (KJS::Heap::protectedObjectTypeCounts): Ditto.
+
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        Don't include JSLock.h, which is no longer used here. As a result, an explicit include had
+        to be added to many files in JavaScriptGlue, WebCore and WebKit.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::init):
+        * API/JSCallbackConstructor.cpp:
+        (KJS::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::init):
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::construct):
+        (KJS::::hasInstance):
+        (KJS::::call):
+        (KJS::::getPropertyNames):
+        (KJS::::toNumber):
+        (KJS::::toString):
+        (KJS::::staticValueGetter):
+        (KJS::::callbackGetter):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate):
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsStrictEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * JavaScriptCore.exp:
+        * kjs/PropertyNameArray.h:
+        (KJS::PropertyNameArray::globalData):
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+        Pass a parameter to JSLock/JSLock::DropAllLocks to decide whether the lock needs to be taken.
+
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
@@ -305,7 +457,7 @@
         * wtf/HashTraits.h:
         (WTF::): Updated HashTraits for HashTable change.
 
-2008-06-30  Alexey Proskuryakov  <ap@webkit.org>
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Cameron Zwarich.
 

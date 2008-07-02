@@ -1,3 +1,21 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Disable JSLock for per-thread contexts.
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptObjectsCount):
+        (WebCoreStatistics::javaScriptGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount):
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+        Pass a parameter (false) to JSLock to indicate that WebKit doesn't need locking.
+        Include JSLock.h, as it is no longer brought in implicitly.
+
 2008-06-27  Adam Roben  <aroben@apple.com>
 
         Change WebKitGraphics truncation functions to return the length of the

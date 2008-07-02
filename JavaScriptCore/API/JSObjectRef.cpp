@@ -47,7 +47,6 @@ using namespace KJS;
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {
-    JSLock lock;
     RefPtr<OpaqueJSClass> jsClass = (definition->attributes & kJSClassAttributeNoAutomaticPrototype)
         ? OpaqueJSClass::createNoAutomaticPrototype(definition)
         : OpaqueJSClass::create(definition);
@@ -57,21 +56,19 @@ JSClassRef JSClassCreate(const JSClassDefinition* definition)
 
 JSClassRef JSClassRetain(JSClassRef jsClass)
 {
-    JSLock lock;
     jsClass->ref();
     return jsClass;
 }
 
 void JSClassRelease(JSClassRef jsClass)
 {
-    JSLock lock;
     jsClass->deref();
 }
 
 JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
 
     if (!jsClass)
         return toRef(new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype())); // slightly more efficient
@@ -85,8 +82,8 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
 
 JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name, JSObjectCallAsFunctionCallback callAsFunction)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     Identifier nameID = name ? Identifier(exec, toJS(name)) : Identifier(exec, "anonymous");
     
     return toRef(new (exec) JSCallbackFunction(exec, callAsFunction, nameID));
@@ -94,8 +91,8 @@ JSObjectRef JSObjectMakeFunctionWithCallback(JSContextRef ctx, JSStringRef name,
 
 JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObjectCallAsConstructorCallback callAsConstructor)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     
     JSValue* jsPrototype = jsClass 
         ? jsClass->prototype(ctx)
@@ -108,9 +105,9 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
 
 JSObjectRef JSObjectMakeFunction(JSContextRef ctx, JSStringRef name, unsigned parameterCount, const JSStringRef parameterNames[], JSStringRef body, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
-    JSLock lock;
-    
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
+
     UString::Rep* bodyRep = toJS(body);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
     
@@ -147,8 +144,8 @@ void JSObjectSetPrototype(JSContextRef, JSObjectRef object, JSValueRef value)
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     UString::Rep* nameRep = toJS(propertyName);
     
@@ -157,8 +154,8 @@ bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
 JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     UString::Rep* nameRep = toJS(propertyName);
 
@@ -173,8 +170,8 @@ JSValueRef JSObjectGetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef
 
 void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSPropertyAttributes attributes, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     Identifier name(exec, toJS(propertyName));
     JSValue* jsValue = toJS(value);
@@ -193,8 +190,8 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
 JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
 
     JSValue* jsValue = jsObject->get(exec, propertyIndex);
@@ -209,8 +206,8 @@ JSValueRef JSObjectGetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsi
 
 void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned propertyIndex, JSValueRef value, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     JSValue* jsValue = toJS(value);
     
@@ -224,8 +221,8 @@ void JSObjectSetPropertyAtIndex(JSContextRef ctx, JSObjectRef object, unsigned p
 
 bool JSObjectDeleteProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     UString::Rep* nameRep = toJS(propertyName);
 
@@ -273,8 +270,8 @@ bool JSObjectIsFunction(JSContextRef, JSObjectRef object)
 
 JSValueRef JSObjectCallAsFunction(JSContextRef ctx, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
     JSObject* jsThisObject = toJS(thisObject);
 
@@ -309,8 +306,8 @@ bool JSObjectIsConstructor(JSContextRef, JSObjectRef object)
 
 JSObjectRef JSObjectCallAsConstructor(JSContextRef ctx, JSObjectRef object, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsObject = toJS(object);
 
     ConstructData constructData;
@@ -343,9 +340,9 @@ struct OpaqueJSPropertyNameArray
 
 JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef object)
 {
-    JSLock lock;
     JSObject* jsObject = toJS(object);
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     
     JSPropertyNameArrayRef propertyNames = new OpaqueJSPropertyNameArray(&exec->globalData());
     jsObject->getPropertyNames(exec, propertyNames->array);
@@ -355,16 +352,16 @@ JSPropertyNameArrayRef JSObjectCopyPropertyNames(JSContextRef ctx, JSObjectRef o
 
 JSPropertyNameArrayRef JSPropertyNameArrayRetain(JSPropertyNameArrayRef array)
 {
-    JSLock lock;
     ++array->refCount;
     return array;
 }
 
 void JSPropertyNameArrayRelease(JSPropertyNameArrayRef array)
 {
-    JSLock lock;
-    if (--array->refCount == 0)
+    if (--array->refCount == 0) {
+        JSLock lock(array->array.globalData()->isSharedInstance);
         delete array;
+    }
 }
 
 size_t JSPropertyNameArrayGetCount(JSPropertyNameArrayRef array)
@@ -379,8 +376,9 @@ JSStringRef JSPropertyNameArrayGetNameAtIndex(JSPropertyNameArrayRef array, size
 
 void JSPropertyNameAccumulatorAddName(JSPropertyNameAccumulatorRef array, JSStringRef propertyName)
 {
-    JSLock lock;
     PropertyNameArray* propertyNames = toJS(array);
     UString::Rep* rep = toJS(propertyName);
+
+    JSLock lock(propertyNames->globalData()->isSharedInstance);
     propertyNames->add(rep);
 }

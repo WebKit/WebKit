@@ -37,6 +37,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 
 namespace WebCore {
 
@@ -75,7 +76,7 @@ String JSCustomXPathNSResolver::lookupNamespaceURI(const String& prefix)
     if (!m_frame->script()->isEnabled())
         return String();
 
-    JSLock lock;
+    JSLock lock(false);
 
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();

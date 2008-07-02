@@ -41,7 +41,7 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 {
     initializeThreading();
 
-    JSLock lock;
+    JSLock lock(true);
 
     if (!globalObjectClass) {
         JSGlobalObject* globalObject = new (JSGlobalObject::Shared) JSGlobalObject;
@@ -59,16 +59,16 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     gcProtect(exec->dynamicGlobalObject());
     return ctx;
 }
 
 void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     gcUnprotect(exec->dynamicGlobalObject());
 }
 

@@ -1,3 +1,37 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Disable JSLock for per-thread contexts.
+
+        * ForwardingHeaders/wtf/Locker.h: Added.
+        * ForwardingHeaders/wtf/Threading.h: Added.
+        * JSBase.cpp:
+        (JSBase::Release):
+        * JSUtils.cpp:
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (unprotectGlobalObject):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectCopyCFValue):
+        * JavaScriptGlue.cpp:
+        (JSRunCreate):
+        (JSRunEvaluate):
+        (JSRunCheckSyntax):
+        (JSCollect):
+        (JSLockInterpreter):
+        (JSUnlockInterpreter):
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+        Pass a parameter (always true) to JSLock and JSLock::DropAllLocks to indicate that JSG
+        clients always need implicit mutex protection.
+        Added includes that are now needed.
+
 2008-06-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

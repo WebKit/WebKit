@@ -37,6 +37,7 @@
 #include "runtime_root.h"
 #include <kjs/ExecState.h>
 #include <kjs/JSGlobalObject.h>
+#include <kjs/JSLock.h>
 #include <kjs/completion.h>
 #include <kjs/interpreter.h>
 #include <wtf/Assertions.h>
@@ -288,7 +289,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     
     // Lookup the function object.
     ExecState* exec = rootObject->globalObject()->globalExec();
-    JSLock lock;
+    JSLock lock(false);
     
     Identifier identifier(exec, JavaString(methodName).ustring());
     JSValue* function = _imp->get(exec, identifier);
@@ -313,7 +314,7 @@ jobject JavaJSObject::eval(jstring script) const
     
     JSValue* result;
 
-    JSLock lock;
+    JSLock lock(false);
     
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -344,7 +345,7 @@ jobject JavaJSObject::getMember(jstring memberName) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
     
-    JSLock lock;
+    JSLock lock(false);
     JSValue* result = _imp->get(exec, Identifier(exec, JavaString(memberName).ustring()));
 
     return convertValueToJObject(result);
@@ -359,7 +360,7 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
         return;
 
     ExecState* exec = rootObject->globalObject()->globalExec();
-    JSLock lock;
+    JSLock lock(false);
     _imp->put(exec, Identifier(exec, JavaString(memberName).ustring()), convertJObjectToValue(exec, value));
 }
 
@@ -373,7 +374,7 @@ void JavaJSObject::removeMember(jstring memberName) const
         return;
 
     ExecState* exec = rootObject->globalObject()->globalExec();
-    JSLock lock;
+    JSLock lock(false);
     _imp->deleteProperty(exec, Identifier(exec, JavaString(memberName).ustring()));
 }
 
@@ -392,7 +393,7 @@ jobject JavaJSObject::getSlot(jint index) const
 
     ExecState* exec = rootObject->globalObject()->globalExec();
 
-    JSLock lock;
+    JSLock lock(false);
     JSValue *result = _imp->get (exec, (unsigned)index);
 
     return convertValueToJObject(result);
@@ -412,7 +413,7 @@ void JavaJSObject::setSlot(jint index, jobject value) const
         return;
 
     ExecState* exec = rootObject->globalObject()->globalExec();
-    JSLock lock;
+    JSLock lock(false);
     _imp->put(exec, (unsigned)index, convertJObjectToValue(exec, value));
 }
 
@@ -425,7 +426,7 @@ jstring JavaJSObject::toString() const
     if (!rootObject)
         return 0;
 
-    JSLock lock;
+    JSLock lock(false);
     JSObject *thisObj = const_cast<JSObject*>(_imp);
     ExecState* exec = rootObject->globalObject()->globalExec();
     
@@ -483,7 +484,7 @@ jlong JavaJSObject::createNative(jlong nativeHandle)
 
 jobject JavaJSObject::convertValueToJObject (JSValue *value) const
 {
-    JSLock lock;
+    JSLock lock(false);
     
     RootObject* rootObject = this->rootObject();
     if (!rootObject)
@@ -599,7 +600,7 @@ JSValue* JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject)
         return imp;
     }
 
-    JSLock lock;
+    JSLock lock(false);
 
     return KJS::Bindings::Instance::createRuntimeObject(exec, JavaInstance::create(theObject, _rootObject));
 }

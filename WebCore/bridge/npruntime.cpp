@@ -66,7 +66,7 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
     if (name) {
         PrivateIdentifier* identifier = 0;
         
-        KJS::JSLock lock;
+        KJS::JSLock lock(false);
         
         identifier = getStringIdentifierMap()->get(identifierFromNPIdentifier(name).ustring().rep());
         if (identifier == 0) {

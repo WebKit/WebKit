@@ -95,7 +95,7 @@ kern_return_t CollectorHeapIntrospector::enumerate(task_t task, void* context, u
 
 void CollectorHeapIntrospector::statistics(malloc_zone_t* zone, malloc_statistics_t* stats)
 {
-    JSLock lock;
+    JSLock lock(false);
     CollectorHeapIntrospector* introspector = reinterpret_cast<CollectorHeapIntrospector*>(zone);
     CollectorHeap* primaryHeap = introspector->m_primaryHeap;
     CollectorHeap* numberHeap = introspector->m_numberHeap;

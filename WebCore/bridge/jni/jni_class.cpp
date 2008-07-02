@@ -29,6 +29,7 @@
 #if ENABLE(MAC_JAVA_BRIDGE)
 
 #include <kjs/identifier.h>
+#include <kjs/JSLock.h>
 #include "jni_utility.h"
 #include "jni_runtime.h"
 
@@ -60,7 +61,7 @@ JavaClass::JavaClass(jobject anInstance)
         jobject aJField = env->GetObjectArrayElement((jobjectArray)fields, i);
         Field *aField = new JavaField(env, aJField); // deleted in the JavaClass destructor
         {
-            JSLock lock;
+            JSLock lock(false);
             _fields.set(Identifier(globalData, UString(aField->name())).ustring().rep(), aField);
         }
         env->DeleteLocalRef(aJField);
@@ -74,7 +75,7 @@ JavaClass::JavaClass(jobject anInstance)
         Method *aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
         MethodList* methodList;
         {
-            JSLock lock;
+            JSLock lock(false);
 
             methodList = _methods.get(Identifier(globalData, UString(aMethod->name())).ustring().rep());
             if (!methodList) {
@@ -90,7 +91,7 @@ JavaClass::JavaClass(jobject anInstance)
 JavaClass::~JavaClass() {
     free((void *)_name);
 
-    JSLock lock;
+    JSLock lock(false);
 
     deleteAllValues(_fields);
     _fields.clear();

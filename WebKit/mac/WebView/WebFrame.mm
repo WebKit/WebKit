@@ -49,6 +49,7 @@
 #import "WebScriptDebugger.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSLock.h>
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/ColorMac.h>
@@ -617,7 +618,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!result || !result->isBoolean() && !result->isString() && !result->isNumber())
         return @"";
 
-    JSLock lock;
+    JSLock lock(false);
     return String(result->toString(_private->coreFrame->script()->globalObject()->globalExec()));
 }
 

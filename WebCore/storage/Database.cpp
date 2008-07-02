@@ -126,6 +126,8 @@ Database::Database(Document* document, const String& name, const String& expecte
         m_name = "";
 
     KJS::initializeThreading();
+    // Database code violates the normal JSCore contract by calling jsUnprotect from a secondary thread, and thus needs additional locking.
+    KJS::JSGlobalData::threadInstance().heap->setGCProtectNeedsLocking();
 
     m_guid = guidForOriginAndName(m_securityOrigin->toString(), name);
 

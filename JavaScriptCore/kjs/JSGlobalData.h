@@ -81,10 +81,12 @@ namespace KJS {
 
         JSGlobalObject* head;
 
+        bool isSharedInstance;
+
     private:
         friend class WTF::ThreadSpecific<JSGlobalData>;
 
-        JSGlobalData();
+        JSGlobalData(bool isShared = false);
         ~JSGlobalData();
     };
 

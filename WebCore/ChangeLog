@@ -1,3 +1,192 @@
+2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Disable JSLock for per-thread contexts.
+
+        * bridge/runtime_root.cpp:
+        (KJS::Bindings::RootObject::invalidate):
+        (KJS::Bindings::RootObject::gcProtect):
+        (KJS::Bindings::RootObject::gcUnprotect):
+        Don't lock while calling gcProtect/gcUnprotect, which now has its own implicit lock.
+
+        * storage/Database.cpp: (WebCore::Database::Database): Call Heap::setGCProtectNeedsLocking
+        to indicate that protected value list can be concurrently accessed from multiple threads now.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::loadRequestSynchronously): There is no need to drop the locks here,
+        as fake locks cannot deadlock, and there is no danger that someone will try to take a real
+        JSLock on the main thread while we are waiting for response.
+        (WebCore::XMLHttpRequest::loadRequestAsynchronously): There is no need to explicitly lock
+        around gcProtect/gcUnprotect now.
+        (WebCore::XMLHttpRequest::dropProtection): Access heap directly, rather than via
+        JSGlobalData::threadInstance().
+
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectNow):
+        (WebCore::GCController::garbageCollectOnAlternateThreadForDebugging):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::DOMWindowTimer::~DOMWindowTimer):
+        (WebCore::JSDOMWindowBase::clear):
+        (WebCore::JSDOMWindowBase::timerFired):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        (WebCore::JSLazyEventListener::parseCode):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        (WebCore::ScriptController::clear):
+        (WebCore::ScriptController::createHTMLEventHandler):
+        (WebCore::ScriptController::createSVGEventHandler):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_SetException):
+        (_NPN_Enumerate):
+        * bridge/c/c_class.cpp:
+        (KJS::Bindings::CClass::~CClass):
+        (KJS::Bindings::CClass::methodsNamed):
+        (KJS::Bindings::CClass::fieldNamed):
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        (KJS::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_runtime.cpp:
+        (KJS::Bindings::CField::valueFromInstance):
+        (KJS::Bindings::CField::setValueToInstance):
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        (KJS::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        (JavaJSObject::toString):
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bridge/jni/jni_runtime.cpp:
+        (JavaMethod::signature):
+        * bridge/jni/jni_runtime.h:
+        (KJS::Bindings::JavaString::JavaString):
+        (KJS::Bindings::JavaString::_commonInit):
+        (KJS::Bindings::JavaString::~JavaString):
+        (KJS::Bindings::JavaString::UTF8String):
+        * bridge/jni/jni_utility.cpp:
+        (KJS::Bindings::convertArrayInstanceToJavaArray):
+        (KJS::Bindings::convertValueToJValue):
+        * bridge/npruntime.cpp:
+        (_NPN_GetStringIdentifier):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::moveGlobalExceptionToExecState):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bridge/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        * bridge/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::createNPObject):
+        * loader/FrameLoader.cpp:
+        (WebCore::getString):
+        * page/Frame.cpp:
+        (WebCore::Frame::bindingRootObject):
+        (WebCore::Frame::windowScriptNPObject):
+        (WebCore::Frame::clearScriptObjects):
+        * page/InspectorController.cpp:
+        (WebCore::jsStringRef):
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::XMLHttpRequestResource::XMLHttpRequestResource):
+        (WebCore::XMLHttpRequestResource::~XMLHttpRequestResource):
+        (WebCore::getResourceDocumentNode):
+        (WebCore::search):
+        (WebCore::inspectedWindow):
+        (WebCore::wrapCallback):
+        (WebCore::currentCallFrame):
+        (WebCore::profiles):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::addDatabaseScriptResource):
+        (WebCore::InspectorController::addScriptProfile):
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::getTotalTime):
+        (WebCore::getSelfTime):
+        (WebCore::getTotalPercent):
+        (WebCore::getSelfPercent):
+        (WebCore::getNumberOfCalls):
+        (WebCore::getChildren):
+        (WebCore::getVisible):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::windowScriptObject):
+        Pass a parameter (always false) to JSLock and JSLock::DropAllLocks to indicate that WebCore
+        doesn't need locking. In the future, it may be possible to remove some of these if we
+        establish that this won't make JSC assertions fail (and that we don't want to add such
+        assertions either).
+        Added includes that are now needed.
+
 2008-07-01  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

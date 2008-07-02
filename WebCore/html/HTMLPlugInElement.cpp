@@ -36,6 +36,7 @@
 #include "Settings.h"
 #include "Widget.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
 #include "runtime.h"
@@ -188,7 +189,7 @@ NPObject* HTMLPlugInElement::createNPObject()
         return _NPN_CreateNoScriptObject();
     
     // Create a JSObject bound to this element
-    JSLock lock;
+    JSLock lock(false);
     ExecState *exec = frame->script()->globalObject()->globalExec();
     JSValue* jsElementValue = toJS(exec, this);
     if (!jsElementValue || !jsElementValue->isObject())

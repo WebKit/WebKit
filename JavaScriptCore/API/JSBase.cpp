@@ -40,8 +40,8 @@ using namespace KJS;
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
-    JSLock lock;
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     JSObject* jsThisObject = toJS(thisObject);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
@@ -65,9 +65,8 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
-    JSLock lock;
-
     ExecState* exec = toJS(ctx);
+    JSLock lock(exec);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
     Completion completion = Interpreter::checkSyntax(exec->dynamicGlobalObject()->globalExec(), UString(sourceURLRep), startingLineNumber, UString(scriptRep));
@@ -89,12 +88,12 @@ void JSGarbageCollect(JSContextRef ctx)
     // It might seem that we have a context passed to this function, and can use toJS(ctx)->heap(), but the parameter is likely to be NULL,
     // and it may actually be garbage for some clients (most likely, because of JSGarbageCollect being called after releasing the context).
 
-    JSLock lock;
-
     // FIXME: It would be good to avoid creating a JSGlobalData instance if it didn't exist for this thread yet.
     Heap* heap = JSGlobalData::threadInstance().heap;
     if (!heap->isBusy())
         heap->collect();
+
+    JSLock lock(true);
 
     // FIXME: Similarly, we shouldn't create a shared instance here.
     heap = JSGlobalData::sharedInstance().heap;

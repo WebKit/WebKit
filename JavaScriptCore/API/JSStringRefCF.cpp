@@ -37,7 +37,6 @@ using namespace KJS;
 
 JSStringRef JSStringCreateWithCFString(CFStringRef string)
 {
-    JSLock lock;
     CFIndex length = CFStringGetLength(string);
     UString::Rep* rep;
     if (!length)

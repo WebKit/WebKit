@@ -37,7 +37,6 @@
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSFunction.h"
-#include "JSLock.h"
 #include "JSPropertyNameIterator.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"

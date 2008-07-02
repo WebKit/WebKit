@@ -89,6 +89,7 @@
 #import "visible_units.h"
 #import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "c_instance.h"
@@ -598,7 +599,7 @@ WebScriptObject* Frame::windowScriptObject()
         return 0;
 
     if (!d->m_windowScriptObject) {
-        KJS::JSLock lock;
+        KJS::JSLock lock(false);
         KJS::JSObject* win = toJSDOMWindowShell(this);
         KJS::Bindings::RootObject *root = bindingRootObject();
         d->m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root];
