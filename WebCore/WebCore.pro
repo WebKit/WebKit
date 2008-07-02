@@ -1042,7 +1042,8 @@ SOURCES += \
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
-        SOURCES += plugins/npapi.cpp
+        SOURCES += plugins/npapi.cpp \
+                   plugins/PluginMainThreadScheduler.cpp
 
         unix:!mac {
             SOURCES += \

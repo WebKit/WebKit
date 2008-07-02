@@ -1364,13 +1364,13 @@ void QWebPage::triggerAction(WebAction action, bool checked)
             break;
 
         case SetTextDirectionDefault:
-            editor->setBaseWritingDirection("inherit");
+            editor->setBaseWritingDirection(NaturalWritingDirection);
             break;
         case SetTextDirectionLeftToRight:
-            editor->setBaseWritingDirection("ltr");
+            editor->setBaseWritingDirection(LeftToRightWritingDirection);
             break;
         case SetTextDirectionRightToLeft:
-            editor->setBaseWritingDirection("rtl");
+            editor->setBaseWritingDirection(RightToLeftWritingDirection);
             break;
 
         case ToggleBold:

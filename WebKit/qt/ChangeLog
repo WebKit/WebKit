@@ -1,3 +1,11 @@
+2008-07-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Build fix.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction): The signature of setBaseWritingDirection
+        changed to take an enum instead of a string.
+
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

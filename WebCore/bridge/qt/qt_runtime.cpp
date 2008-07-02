@@ -21,6 +21,7 @@
 #include "qt_runtime.h"
 #include "qt_instance.h"
 #include "JSGlobalObject.h"
+#include "JSLock.h"
 #include "JSObject.h"
 #include "JSArray.h"
 #include "DateInstance.h"
@@ -150,7 +151,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
         return QVariant();
     }
 
-    JSLock lock;
+    JSLock lock(false);
     JSRealType type = valueRealType(exec, value);
     if (hint == QMetaType::Void) {
         switch(type) {
@@ -717,7 +718,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         return jsNull();
     }
 
-    JSLock lock;
+    JSLock lock(false);
 
     if (type == QMetaType::Bool)
         return jsBoolean(variant.toBool());
@@ -1294,7 +1295,7 @@ JSValue* QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JS
         return jsUndefined();
 
     // We have to pick a method that matches..
-    JSLock lock;
+    JSLock lock(false);
 
     QObject *obj = d->m_instance->getObject();
     if (obj) {
@@ -1387,7 +1388,7 @@ JSValue* QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObje
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(functionObject)->d_func();
 
-    JSLock lock;
+    JSLock lock(false);
 
     QObject* sender = d->m_instance->getObject();
 
@@ -1617,7 +1618,7 @@ void QtConnectionObject::execute(void **argv)
 
         int argc = parameterTypes.count();
 
-        JSLock lock;
+        JSLock lock(false);
 
         // ### Should the Interpreter/ExecState come from somewhere else?
         RefPtr<RootObject> ro = m_instance->rootObject();

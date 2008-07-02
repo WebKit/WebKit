@@ -158,6 +158,11 @@ JSLock::DropAllLocks::~DropAllLocks()
 
 #else
 
+JSLock::JSLock(ExecState* exec)
+    : m_lockingForReal(false)
+{
+}
+
 // If threading support is off, set the lock count to a constant value of 1 so assertions
 // that the lock is held don't fail
 int JSLock::lockCount()
@@ -170,11 +175,19 @@ bool JSLock::currentThreadIsHoldingLock()
     return true;
 }
 
-void JSLock::lock()
+void JSLock::lock(bool)
 {
 }
 
-void JSLock::unlock()
+void JSLock::unlock(bool)
+{
+}
+
+void JSLock::lock(ExecState*)
+{
+}
+
+void JSLock::unlock(ExecState*)
 {
 }
 
@@ -182,7 +195,11 @@ void JSLock::registerThread()
 {
 }
 
-JSLock::DropAllLocks::DropAllLocks()
+JSLock::DropAllLocks::DropAllLocks(ExecState*)
+{
+}
+
+JSLock::DropAllLocks::DropAllLocks(bool)
 {
 }
 

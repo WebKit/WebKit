@@ -34,7 +34,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <JavaScriptCore/JSValue.h>
+#include <kjs/JSValue.h>
 
 using namespace KJS;
 

@@ -1,3 +1,23 @@
+2008-07-02  Simon Hausmann  <hausmann@webkit.org>
+
+        Build fixes.
+
+        * WebCore.pro: Added plugins/PluginMainThreadScheduler.cpp to the
+        build.
+        * bridge/qt/qt_instance.cpp: Adjust to JSLock API change.
+        * bridge/qt/qt_runtime.cpp: Ditto.
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMetaMethod::call):
+        (KJS::Bindings::QtRuntimeConnectionMethod::call):
+        (KJS::Bindings::QtConnectionObject::execute):
+        * page/JavaScriptProfileNode.cpp: Inlude kjs/JSValue.h instead of
+        JavaScriptCore/JSValue.h.
+        * plugins/qt/PluginViewQt.cpp: Adjust to JSLock API changes.
+        (WebCore::PluginView::setNPWindowRect): Ditto.
+        (WebCore::PluginView::stop): Ditto.
+        (WebCore::PluginView::init): Ditto.
+
 2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Build fix.
