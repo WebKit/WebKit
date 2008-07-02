@@ -29,7 +29,8 @@
 #ifndef ProfileNode_h
 #define ProfileNode_h
 
-#include <kjs/ustring.h>
+#include "CallIdentifier.h"
+
 #include <wtf/Vector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -40,34 +41,6 @@ namespace KJS {
 
     typedef Vector<RefPtr<ProfileNode> >::const_iterator StackIterator;
     typedef HashCountedSet<UString::Rep*> FunctionCallHashCount;
-
-    struct CallIdentifier {
-        UString name;
-        UString url;
-        unsigned lineNumber;
-        
-        CallIdentifier(UString name, UString url, int lineNumber)
-            : name(name)
-            , url(url)
-            , lineNumber(lineNumber)
-        {
-        }
-
-        CallIdentifier(const CallIdentifier& ci)
-            : name(ci.name)
-            , url(ci.url)
-            , lineNumber(ci.lineNumber)
-        {
-        }
-
-        inline bool operator==(const CallIdentifier& ci) const { return ci.lineNumber == lineNumber && ci.name == name && ci.url == url; }
-        inline bool operator!=(const CallIdentifier& ci) const { return !(*this == ci); }
-
-#ifndef NDEBUG
-        operator const char* () const { return name.UTF8String().c_str(); }
-        const char* toString() const { return *this; }
-#endif
-    };
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
@@ -84,9 +57,9 @@ namespace KJS {
         void setParent(ProfileNode* parent) { m_parent = parent; }
         ProfileNode* nextSibling() const { return m_nextSibling; }
         void setNextSibling(ProfileNode* nextSibling) { m_nextSibling = nextSibling; }
-        UString functionName() const { return m_callIdentifier.name; }
-        UString url() const { return m_callIdentifier.url; }
-        unsigned lineNumber() const { return m_callIdentifier.lineNumber; }
+        UString functionName() const { return m_callIdentifier.m_name; }
+        UString url() const { return m_callIdentifier.m_url; }
+        unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }
 
         double startTime() const { return m_startTime; }
         void setStartTime(double startTime) { m_startTime = startTime; }

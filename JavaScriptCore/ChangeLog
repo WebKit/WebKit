@@ -1,3 +1,19 @@
+2008-07-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan.
+
+        Broke CallIdentifier out into its own file. I did this because it's
+        going to grow a lot soon and I wanted this to be a separate patch.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/CallIdentifier.h: Added.
+        (KJS::CallIdentifier::CallIdentifier):
+        (KJS::CallIdentifier::operator==):
+        (KJS::CallIdentifier::operator!=):
+        (KJS::CallIdentifier::operator const char* ):
+        (KJS::CallIdentifier::toString):
+        * profiler/ProfileNode.h:
+
 2008-07-02  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix. Implemented missing functions for single-threaded build.

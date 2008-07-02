@@ -98,7 +98,7 @@ void Profile::removeProfileStart() {
     for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
         currentNode = next;
 
-    if (currentNode->callIdentifier().name != "profile")
+    if (currentNode->callIdentifier().m_name != "profile")
         return;
 
     // Increment m_stoppedCallDepth to account for didExecute not being called for console.profile.
@@ -117,7 +117,7 @@ void Profile::removeProfileEnd() {
     for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
         currentNode = next;
 
-    if (currentNode->callIdentifier().name != "profileEnd")
+    if (currentNode->callIdentifier().m_name != "profileEnd")
         return;
 
     // Attribute the time of the node aobut to be removed to the self time of its parent
