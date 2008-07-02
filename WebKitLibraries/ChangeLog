@@ -1,3 +1,12 @@
+2008-07-01  Steve Falkenburg  <sfalken@apple.com>
+
+        Bump version numbers.
+        
+        Reviewed by Mark Rowe.
+
+        * win/tools/scripts/PRODUCTVERSION:
+        * win/tools/scripts/VERSION:
+
 2008-05-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
