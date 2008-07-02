@@ -1,5 +1,26 @@
 2008-07-02  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/5951532> JSProfiler: Implement Bottom-Up view (19228)
+        - Subclass TreeProfile as I prepare for a HeavyProfile to be comming
+        later.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/Profile.cpp: By default we create a TreeProfile.
+        (KJS::Profile::create):
+        * profiler/Profile.h: Changes to the Profile class to make it amenable
+        to be inherited from.
+        (KJS::Profile::~Profile):
+        * profiler/TreeProfile.cpp: Added.
+        (KJS::TreeProfile::create):
+        (KJS::TreeProfile::TreeProfile):
+        (KJS::TreeProfile::heavyProfile):
+        * profiler/TreeProfile.h: Added.
+        (KJS::TreeProfile::treeProfile):
+
+2008-07-02  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Dan.
 
         Broke CallIdentifier out into its own file. I did this because it's

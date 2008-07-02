@@ -38,6 +38,7 @@ namespace KJS {
     class Profile : public RefCounted<Profile> {
     public:
         static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
+        virtual ~Profile();
 
         void willExecute(const CallIdentifier&);
         void didExecute(const CallIdentifier&);
@@ -69,15 +70,19 @@ namespace KJS {
 
         bool stoppedProfiling() { return m_stoppedProfiling; }
 
+        virtual Profile* heavyProfile() = 0;
+        virtual Profile* treeProfile() = 0; 
+
 #ifndef NDEBUG
         void debugPrintData() const;
         void debugPrintDataSampleStyle() const;
 #endif
         typedef void (Profile::*ProfileFunction)(const CallIdentifier& callIdentifier);
 
-    private:
+    protected:
         Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
 
+    private:
         void removeProfileStart();
         void removeProfileEnd();
 

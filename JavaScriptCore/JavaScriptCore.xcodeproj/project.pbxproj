@@ -86,6 +86,8 @@
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
+		95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CD41B10E1BF6560085358E /* TreeProfile.cpp */; };
+		95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CD41B20E1BF6560085358E /* TreeProfile.h */; };
 		95E3BC050E1AE68200B2D1C1 /* CallIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
 		A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */; };
@@ -577,6 +579,8 @@
 		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
 		95AB83550DA43B4400BC83F3 /* ProfileNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProfileNode.h; path = profiler/ProfileNode.h; sourceTree = "<group>"; };
 		95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRetainPtr.h; sourceTree = "<group>"; };
+		95CD41B10E1BF6560085358E /* TreeProfile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TreeProfile.cpp; path = profiler/TreeProfile.cpp; sourceTree = "<group>"; };
+		95CD41B20E1BF6560085358E /* TreeProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TreeProfile.h; path = profiler/TreeProfile.h; sourceTree = "<group>"; };
 		95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CallIdentifier.h; path = profiler/CallIdentifier.h; sourceTree = "<group>"; };
 		A72700770DAC605600E548D7 /* JSNotAnObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSNotAnObject.h; sourceTree = "<group>"; };
 		A72700780DAC605600E548D7 /* JSNotAnObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNotAnObject.cpp; sourceTree = "<group>"; };
@@ -1207,6 +1211,8 @@
 		95AB831A0DA42C6900BC83F3 /* profiler */ = {
 			isa = PBXGroup;
 			children = (
+				95CD41B10E1BF6560085358E /* TreeProfile.cpp */,
+				95CD41B20E1BF6560085358E /* TreeProfile.h */,
 				95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */,
 				95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */,
 				95AB83550DA43B4400BC83F3 /* ProfileNode.h */,
@@ -1425,6 +1431,7 @@
 				BC11667B0E199C05008066DD /* InternalFunction.h in Headers */,
 				BC1167DA0E19BCC9008066DD /* JSCell.h in Headers */,
 				BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */,
+				95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1708,6 +1715,7 @@
 				A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */,
 				149559EE0DDCDDF700648087 /* DebuggerCallFrame.cpp in Sources */,
 				E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */,
+				95CD41B30E1BF6560085358E /* TreeProfile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
