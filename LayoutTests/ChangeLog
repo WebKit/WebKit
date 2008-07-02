@@ -1,3 +1,14 @@
+2008-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Testcase to cover a CanvasRenderingContext2D reference outlasting any
+        references to the underlying canvas element.
+
+        * fast/canvas/canvas-longlived-context-expected.txt: Added.
+        * fast/canvas/canvas-longlived-context.html: Added.
+        * fast/canvas/canvas-longlived-context.js: Added.
+
 2008-07-01  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

@@ -1,3 +1,26 @@
+2008-07-01  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        <rdar://problem/5974306> CanvasRenderingContext2D becomes invalid when source canvas element is collected
+
+        In order to fix this we now make the rendering context and the canvas element
+        share the same reference count, ensuring that references to the rendering
+        context will force the canvas element to remain live as well.
+
+        Test: fast/canvas/canvas-longlived-context.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::clearPathForDashboardBackwardCompatibilityMode):
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        (WebCore::CanvasRenderingContext2D::putImageData):
+        * html/CanvasRenderingContext2D.h:
+        (WebCore::CanvasRenderingContext2D::create):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::getContext):
+        * html/HTMLCanvasElement.h:
+
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

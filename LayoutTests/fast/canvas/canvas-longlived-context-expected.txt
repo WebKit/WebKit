@@ -1,0 +1,10 @@
+This test ensures that Canvas and CanvasRenderingContext2D work correctly if the rendering context outlives the canvas element
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getPixel(50,50) is [0,128,0,255]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
