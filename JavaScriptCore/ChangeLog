@@ -1,3 +1,17 @@
+2008-07-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Darin.
+
+        Bug 19776: Number.toExponential() is incorrect for numbers between 0.1 and 1
+        <https://bugs.webkit.org/show_bug.cgi?id=19776>
+
+        Perform the sign check for the exponent on the actual exponent value,
+        which is 1 less than the value of decimalPoint, instead of on the value
+        of decimalPoint itself.
+
+        * kjs/NumberPrototype.cpp:
+        (KJS::exponentialPartToString):
+
 2008-07-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

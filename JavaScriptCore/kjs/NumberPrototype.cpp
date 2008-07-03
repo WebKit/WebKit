@@ -289,10 +289,10 @@ static void fractionalPartToString(char* buf, int& i, const char* result, int re
 static void exponentialPartToString(char* buf, int& i, int decimalPoint)
 {
     buf[i++] = 'e';
-    buf[i++] = (decimalPoint >= 0) ? '+' : '-';
     // decimalPoint can't be more than 3 digits decimal given the
     // nature of float representation
     int exponential = decimalPoint - 1;
+    buf[i++] = (exponential >= 0) ? '+' : '-';
     if (exponential < 0)
         exponential *= -1;
     if (exponential >= 100)

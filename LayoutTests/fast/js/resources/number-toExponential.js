@@ -41,4 +41,10 @@ shouldBeEqualToString("posInf.toExponential()", "Infinity");
 shouldBeEqualToString("negInf.toExponential()", "-Infinity");
 shouldBeEqualToString("nan.toExponential()", "NaN");
 
+shouldBeEqualToString("(0.01).toExponential()", "1e-2");
+shouldBeEqualToString("(0.1).toExponential()", "1e-1");
+shouldBeEqualToString("(0.9).toExponential()", "9e-1");
+shouldBeEqualToString("(0.9999).toExponential()", "9.999e-1");
+shouldBeEqualToString("(0.9999).toExponential(2)", "1.00e+0");
+
 var successfullyParsed = true;

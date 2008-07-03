@@ -26,6 +26,11 @@ PASS (1234.567).toExponential(negInf) threw exception RangeError: toExponential(
 PASS posInf.toExponential() is "Infinity"
 PASS negInf.toExponential() is "-Infinity"
 PASS nan.toExponential() is "NaN"
+PASS (0.01).toExponential() is "1e-2"
+PASS (0.1).toExponential() is "1e-1"
+PASS (0.9).toExponential() is "9e-1"
+PASS (0.9999).toExponential() is "9.999e-1"
+PASS (0.9999).toExponential(2) is "1.00e+0"
 PASS successfullyParsed is true
 
 TEST COMPLETE
