@@ -126,7 +126,7 @@ JSValue* JSArray::lengthGetter(ExecState* exec, const Identifier&, const Propert
     return jsNumber(exec, static_cast<JSArray*>(slot.slotBase())->m_length);
 }
 
-NEVER_INLINE bool JSArray::getOwnPropertySlotSlowCase(ExecState* exec, unsigned i, PropertySlot& slot)
+bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
     ArrayStorage* storage = m_storage;
 
@@ -170,16 +170,6 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName
     return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
-bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
-{
-    if (i < m_fastAccessCutoff) {
-        slot.setValueSlot(&m_storage->m_vector[i]);
-        return true;
-    }
-
-    return getOwnPropertySlotSlowCase(exec, i, slot);
-}
-
 // ECMA 15.4.5.1
 void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
@@ -206,12 +196,6 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue* valu
 void JSArray::put(ExecState* exec, unsigned i, JSValue* value)
 {
     checkConsistency();
-
-    if (i < m_fastAccessCutoff) {
-        m_storage->m_vector[i] = value;
-        checkConsistency();
-        return;
-    }
 
     unsigned length = m_length;
     if (i >= length && i <= maxArrayIndex) {

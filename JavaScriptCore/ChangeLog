@@ -1,3 +1,14 @@
+2008-07-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Removed checking for the array get/put fast case from the array code.
+        Callers who want the fast case should call getIndex and/or setIndex
+        instead. (get_by_val and put_by_val already do this.)
+        
+        SunSpider reports no change overall, but a 1.4% speedup on fannkuch and
+        a 3.6% speedup on nsieve.
+
 2008-07-03  Dan Bernstein  <mitz@apple.com>
 
         - Windows build fix
