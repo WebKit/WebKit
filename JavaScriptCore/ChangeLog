@@ -1,3 +1,29 @@
+2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Don't create unnecessary JSGlobalData instances.
+
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::threadInstanceExists):
+        (KJS::JSGlobalData::sharedInstanceExists):
+        (KJS::JSGlobalData::threadInstance):
+        (KJS::JSGlobalData::sharedInstance):
+        (KJS::JSGlobalData::threadInstanceInternal):
+        (KJS::JSGlobalData::sharedInstanceInternal):
+        Added methods to query instance existence.
+
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreadingOnce):
+        Initialize thread instance static in a new way.
+
+        * API/JSBase.cpp:
+        (JSGarbageCollect):
+        * kjs/collector.cpp:
+        (KJS::Heap::collect):
+        Check for instance existence before accessing it.
+
 2008-07-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

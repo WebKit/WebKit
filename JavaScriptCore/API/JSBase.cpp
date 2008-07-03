@@ -88,17 +88,19 @@ void JSGarbageCollect(JSContextRef ctx)
     // It might seem that we have a context passed to this function, and can use toJS(ctx)->heap(), but the parameter is likely to be NULL,
     // and it may actually be garbage for some clients (most likely, because of JSGarbageCollect being called after releasing the context).
 
-    // FIXME: It would be good to avoid creating a JSGlobalData instance if it didn't exist for this thread yet.
-    Heap* heap = JSGlobalData::threadInstance().heap;
-    if (!heap->isBusy())
-        heap->collect();
+    if (JSGlobalData::threadInstanceExists()) {
+        Heap* heap = JSGlobalData::threadInstance().heap;
+        if (!heap->isBusy())
+            heap->collect();
+    }
 
     JSLock lock(true);
 
-    // FIXME: Similarly, we shouldn't create a shared instance here.
-    heap = JSGlobalData::sharedInstance().heap;
-    if (!heap->isBusy())
-        heap->collect();
+    if (JSGlobalData::sharedInstanceExists()) {
+        Heap* heap = JSGlobalData::sharedInstance().heap;
+        if (!heap->isBusy())
+            heap->collect();
+    }
 
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when

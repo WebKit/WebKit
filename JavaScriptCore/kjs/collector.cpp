@@ -925,7 +925,7 @@ template <Heap::HeapType heapType> size_t Heap::sweep()
 bool Heap::collect()
 {
 #ifndef NDEBUG
-    if (JSGlobalData::sharedInstance().heap == this) {
+    if (JSGlobalData::sharedInstanceExists() && JSGlobalData::sharedInstance().heap == this) {
         ASSERT(JSLock::lockCount() > 0);
         ASSERT(JSLock::currentThreadIsHoldingLock());
     }

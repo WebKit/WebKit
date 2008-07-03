@@ -33,10 +33,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
-
-namespace WTF {
-    template<typename> class ThreadSpecific;
-}
+#include <wtf/OwnPtr.h>
 
 namespace KJS {
 
@@ -55,6 +52,8 @@ namespace KJS {
     // Note that the effective instance may be different from the thread one in case of legacy
     // JavaScriptCore clients, which all share a single JSGlobalData, and thus cannot run concurrently.
     struct JSGlobalData : Noncopyable {
+        static bool threadInstanceExists();
+        static bool sharedInstanceExists();
         static JSGlobalData& threadInstance();
         static JSGlobalData& sharedInstance();
 
@@ -84,10 +83,19 @@ namespace KJS {
         bool isSharedInstance;
 
     private:
-        friend class WTF::ThreadSpecific<JSGlobalData>;
-
         JSGlobalData(bool isShared = false);
         ~JSGlobalData();
+
+        static JSGlobalData*& threadInstanceInternal();
+        static JSGlobalData*& sharedInstanceInternal();
+
+        struct DataInstance {
+            DataInstance() : m_data(0) {}
+            ~DataInstance() { delete m_data; }
+            operator JSGlobalData*&() { return m_data; }
+
+            JSGlobalData* m_data;
+        };
     };
 
 }

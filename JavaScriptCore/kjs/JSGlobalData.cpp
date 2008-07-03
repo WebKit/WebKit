@@ -31,6 +31,7 @@
 
 #include "collector.h"
 #include "CommonIdentifiers.h"
+#include "JSLock.h"
 #include "lexer.h"
 #include "list.h"
 #include "lookup.h"
@@ -119,26 +120,48 @@ JSGlobalData::~JSGlobalData()
 #endif
 }
 
+bool JSGlobalData::threadInstanceExists()
+{
+    return threadInstanceInternal();
+}
+
+bool JSGlobalData::sharedInstanceExists()
+{
+    return sharedInstanceInternal();
+}
+
 JSGlobalData& JSGlobalData::threadInstance()
 {
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<JSGlobalData> sharedInstance;
-    return *sharedInstance;
-#else
-    static JSGlobalData sharedInstance;
-    return sharedInstance;
-#endif
+    JSGlobalData*& instance = threadInstanceInternal();
+    if (!instance)
+        instance = new JSGlobalData;
+    return *instance;
 }
 
 JSGlobalData& JSGlobalData::sharedInstance()
 {
+    JSGlobalData*& instance = sharedInstanceInternal();
+    if (!instance)
+        instance = new JSGlobalData(true);
+    return *instance;
+}
+
+JSGlobalData*& JSGlobalData::threadInstanceInternal()
+{
 #if USE(MULTIPLE_THREADS)
-    MutexLocker locker(*atomicallyInitializedStaticMutex);
+    static ThreadSpecific<DataInstance> threadInstance;
+    return *threadInstance;
+#else
+    static JSGlobalData threadInstance;
+    return &threadInstance;
 #endif
+}
+
+JSGlobalData*& JSGlobalData::sharedInstanceInternal()
+{
+    ASSERT(JSLock::currentThreadIsHoldingLock());
     static JSGlobalData* sharedInstance;
-    if (!sharedInstance)
-        sharedInstance = new JSGlobalData(true);
-    return *sharedInstance;
+    return sharedInstance;
 }
 
 }
