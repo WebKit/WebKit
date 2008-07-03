@@ -1892,6 +1892,8 @@ webcore_sources += \
 	WebCore/svg/SVGDocumentExtensions.cpp \
 	WebCore/svg/SVGImageLoader.cpp \
 	WebCore/svg/ColorDistance.cpp \
+	WebCore/svg/Filter.cpp \
+	WebCore/svg/FilterEffect.cpp \
 	WebCore/svg/SVGAElement.cpp \
 	WebCore/svg/SVGAltGlyphElement.cpp \
 	WebCore/svg/SVGAngle.cpp \
@@ -2036,6 +2038,7 @@ webcore_sources += \
 	WebCore/svg/graphics/filters/SVGFEMorphology.cpp \
 	WebCore/svg/graphics/filters/SVGFEOffset.cpp \
 	WebCore/svg/graphics/filters/SVGFESpecularLighting.cpp \
+	WebCore/svg/graphics/filters/SVGFETile.cpp \
 	WebCore/svg/graphics/filters/SVGFETurbulence.cpp \
 	WebCore/svg/graphics/filters/SVGFilterEffect.cpp \
 	WebCore/svg/graphics/filters/SVGLightSource.cpp \

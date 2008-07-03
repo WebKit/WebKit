@@ -1,3 +1,9 @@
+2008-07-03  Maciej Katafiasz  <mathrick@gmail.com>
+
+        Gtk build fix with SVG filters enabled
+
+        * GNUmakefile.am: Include missing SVG filter sources
+
 2008-07-03  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt build, added FilterEffect to the build.
