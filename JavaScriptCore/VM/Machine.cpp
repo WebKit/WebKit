@@ -482,11 +482,11 @@ Machine::Machine()
 
     JSArray* jsArray = new (storage) JSArray(jsNull(), 0);
     m_jsArrayVptr = jsArray->vptr();
-    jsArray->~JSCell();
+    static_cast<JSCell*>(jsArray)->~JSCell();
 
     JSString* jsString = new (storage) JSString("");
     m_jsStringVptr = jsString->vptr();
-    jsString->~JSCell();
+    static_cast<JSCell*>(jsString)->~JSCell();
     
     fastFree(storage);
 }
