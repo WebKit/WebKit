@@ -20,7 +20,7 @@
         an array, we optimize both get and put. When a is a string, we only
         optimize get, since you can't put to a string.
         
-        SunSpider says 9.0% faster.
+        SunSpider says 3.4% faster.
 
 2008-07-02  Kevin McCullough  <kmccullough@apple.com>
 
