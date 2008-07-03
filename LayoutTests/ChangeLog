@@ -1,3 +1,12 @@
+2008-07-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Updated this test to match our lower recursion limit, and to signal
+        failure as failure.
+
+        * fast/js/deep-recursion-test.html:
+
 2008-07-02  Oliver Hunt  <oliver@apple.com>
 
         RS=Mark Rowe.
