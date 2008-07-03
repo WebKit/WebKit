@@ -16,8 +16,9 @@
 
         Reviewed by Oliver Hunt.
 
-        Optimized a[n] get for cases where a is an array or a string, and a[n]
-        put for cases where a is an array.
+        Optimized a[n] get for cases when a is an array or a string. When a is
+        an array, we optimize both get and put. When a is a string, we only
+        optimize get, since you can't put to a string.
         
         SunSpider says 9.0% faster.
 
