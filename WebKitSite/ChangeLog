@@ -1,3 +1,9 @@
+2008-07-02  Mark Rowe  <mrowe@apple.com>
+
+        Update a URL that was out of date.
+
+        * building/checkout.html:
+
 2008-07-01  Mark Rowe  <mrowe@apple.com>
 
         Update the path to the configuration file.
