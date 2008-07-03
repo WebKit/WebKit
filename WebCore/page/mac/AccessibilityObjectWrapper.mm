@@ -534,7 +534,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* webAreaAttrs = nil;
     static NSArray* textAttrs = nil;
     static NSArray* listBoxAttrs = nil;
-    static NSArray* progressIndicatorAttrs = nil;
+    static NSArray* rangeAttrs = nil;
     static NSArray* commonMenuAttrs = nil;
     static NSArray* menuAttrs = nil;
     static NSArray* menuBarAttrs = nil;
@@ -611,13 +611,13 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         listBoxAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
-    if (progressIndicatorAttrs == nil) {
+    if (rangeAttrs == nil) {
         tempArray = [[NSMutableArray alloc] initWithArray:attributes];
         [tempArray addObject:NSAccessibilityTopLevelUIElementAttribute];
         [tempArray addObject:NSAccessibilityValueAttribute];
         [tempArray addObject:NSAccessibilityMinValueAttribute];
         [tempArray addObject:NSAccessibilityMaxValueAttribute];
-        progressIndicatorAttrs = [[NSArray alloc] initWithArray:tempArray];
+        rangeAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
     if (menuBarAttrs == nil) {
@@ -686,8 +686,8 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isListBox())
         return listBoxAttrs;
 
-    if (m_object->isProgressIndicator())
-        return progressIndicatorAttrs;
+    if (m_object->isProgressIndicator() || m_object->isSlider())
+        return rangeAttrs;
 
     if (m_object->isControl())
         return controlAttrs;
@@ -1056,7 +1056,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             if ([[[self attachmentView] accessibilityAttributeNames] containsObject:NSAccessibilityValueAttribute]) 
                 return [[self attachmentView] accessibilityAttributeValue:NSAccessibilityValueAttribute];
         }
-        if (m_object->isProgressIndicator())
+        if (m_object->isProgressIndicator() || m_object->isSlider())
             return [NSNumber numberWithFloat:m_object->valueForRange()];
         if (m_object->hasIntValue())
             return [NSNumber numberWithInt:m_object->intValue()];

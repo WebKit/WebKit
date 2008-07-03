@@ -76,6 +76,7 @@ public:
     virtual bool isCheckboxOrRadio() const;
     virtual bool isFileUploadButton() const;
     virtual bool isProgressIndicator() const;
+    virtual bool isSlider() const;
     virtual bool isMenuRelated() const;
     virtual bool isMenu() const;
     virtual bool isMenuBar() const;

@@ -70,12 +70,4 @@ Broccoli
 Beets
 This test PASSES in DumpRenderTree. The role is AXRole: AXGroup
 
-The following should be a slider:
-
-X
-
-Actual slider:
-
- This test PASSES in DumpRenderTree. The role is AXRole: AXGroup
-
 

@@ -208,6 +208,7 @@ public:
     virtual bool isMenuItem() const { return false; }
     virtual bool isFileUploadButton() const { return false; };
     virtual bool isProgressIndicator() const { return false; };
+    virtual bool isSlider() const { return false; };
     virtual bool isControl() const { return false; };
     
     virtual bool isChecked() const { return false; };

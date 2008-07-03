@@ -253,6 +253,11 @@ bool AccessibilityRenderObject::isProgressIndicator() const
 {
     return roleValue() == ProgressIndicatorRole;
 }
+
+bool AccessibilityRenderObject::isSlider() const
+{
+    return roleValue() == SliderRole;
+}
     
 bool AccessibilityRenderObject::isMenuRelated() const
 {
@@ -641,7 +646,7 @@ int AccessibilityRenderObject::intValue() const
 
 float AccessibilityRenderObject::valueForRange() const
 {
-    if (!isProgressIndicator())
+    if (!isProgressIndicator() && !isSlider())
         return 0.0f;
 
     return getAttribute(aria_valuenowAttr).toFloat();
@@ -649,7 +654,7 @@ float AccessibilityRenderObject::valueForRange() const
 
 float AccessibilityRenderObject::maxValueForRange() const
 {
-    if (!isProgressIndicator())
+    if (!isProgressIndicator() && !isSlider())
         return 0.0f;
 
     return getAttribute(aria_valuemaxAttr).toFloat();
@@ -657,7 +662,7 @@ float AccessibilityRenderObject::maxValueForRange() const
 
 float AccessibilityRenderObject::minValueForRange() const
 {
-    if (!isProgressIndicator())
+    if (!isProgressIndicator() && !isSlider())
         return 0.0f;
 
     return getAttribute(aria_valueminAttr).toFloat();
@@ -1064,9 +1069,6 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (!m_renderer || m_renderer->style()->visibility() != VISIBLE)
         return true;
 
-    if (ariaRoleAttribute() != UnknownRole)
-        return false;
-    
     if (isPresentationalChildOfAriaRole())
         return true;
         
@@ -1148,6 +1150,9 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
         }
         return false;
     }
+    
+    if (ariaRole != UnknownRole)
+        return false;
     
     if (isAttachment())
         return false;
@@ -1831,8 +1836,10 @@ AccessibilityObject* AccessibilityRenderObject::focusedUIElement() const
     
     AccessibilityObject* obj = focusedNodeRenderer->document()->axObjectCache()->get(focusedNodeRenderer);
     
-    if (obj->shouldFocusActiveDescendant())
-        obj = obj->activeDescendant();
+    if (obj->shouldFocusActiveDescendant()) {
+        if (AccessibilityObject* descendant = obj->activeDescendant())
+            obj = descendant;
+    }
     
     // the HTML element, for example, is focusable but has an AX object that is ignored
     if (obj->accessibilityIsIgnored())
@@ -1860,7 +1867,6 @@ bool AccessibilityRenderObject::shouldFocusActiveDescendant() const
     alert
     alertdialog
     grid
-    spinbutton
     status
     timer
     tree
@@ -1925,22 +1931,25 @@ static const ARIARoleMap& createARIARoleMap()
     };
 
     static const RoleEntry roles[] = {
-        { String("button"), ButtonRole },
-        { String("checkbox"), CheckBoxRole },
-        { String("heading"), HeadingRole },
-        { String("img"), ImageRole },
-        { String("link"), WebCoreLinkRole },
-        { String("progressbar"), ProgressIndicatorRole },
-        { String("radio"), RadioButtonRole },
-        { String("textbox"), TextAreaRole },
-        { String("listbox"), ListBoxRole },
-         // "option" isn't here because it may map to different roles depending on the parent element's role
-        { String("menu"), MenuRole },
-        { String("menubar"), GroupRole },
+        { "button", ButtonRole },
+        { "checkbox", CheckBoxRole },
+        { "group", GroupRole },
+        { "heading", HeadingRole },
+        { "img", ImageRole },
+        { "link", WebCoreLinkRole },
+        { "listbox", ListBoxRole },
+        // "option" isn't here because it may map to different roles depending on the parent element's role
+        { "menu", MenuRole },
+        { "menubar", GroupRole },
         // "menuitem" isn't here because it may map to different roles depending on the parent element's role
-        { String("menuitemcheckbox"), MenuItemRole },
-        { String("menuitemradio"), MenuItemRole },
-        { String("group"), GroupRole }
+        { "menuitemcheckbox", MenuItemRole },
+        { "menuitemradio", MenuItemRole },
+        { "progressbar", ProgressIndicatorRole },
+        { "radio", RadioButtonRole },
+        { "range", SliderRole },
+        { "slider", SliderRole },
+        { "spinbutton", ProgressIndicatorRole },
+        { "textbox", TextAreaRole }
     };
     ARIARoleMap& roleMap = *new ARIARoleMap;
         
@@ -2157,7 +2166,7 @@ bool AccessibilityRenderObject::canSetValueAttribute() const
     if (isWebArea()) 
         return !isReadOnly();
 
-    return isTextControl() || isProgressIndicator();
+    return isTextControl() || isProgressIndicator() || isSlider();
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const
