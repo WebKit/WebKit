@@ -1,3 +1,15 @@
+2008-07-03  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19884
+        Locating a store at www.366.ru doesn't work
+
+        Test: fast/forms/submit-with-base.html
+
+        * html/HTMLFormElement.cpp: (WebCore::HTMLFormElement::submit): Treat empty action the same
+        as missing one - ignore base URL.
+
 2008-07-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

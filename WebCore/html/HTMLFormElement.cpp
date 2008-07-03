@@ -461,7 +461,7 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
     
-    if (!m_url)
+    if (m_url.isEmpty())
         m_url = document()->url().string();
 
     if (m_post) {

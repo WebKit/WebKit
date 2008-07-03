@@ -1,0 +1,5 @@
+Test for bug 19884 Locating a store at www.366.ru doesn't work.
+
+PASS
+
+
