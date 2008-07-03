@@ -100,7 +100,17 @@ void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
         m_children.last()->setNextSibling(child.get());
     m_children.append(child.release());
 }
-        
+
+ProfileNode* ProfileNode::findChild(ProfileNode* node) const
+{
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        if (*node == m_children[i].get())
+            return m_children[i].get();
+    }
+
+    return 0;
+}
+
 void ProfileNode::insertNode(PassRefPtr<ProfileNode> prpNode)
 {
     RefPtr<ProfileNode> node = prpNode;

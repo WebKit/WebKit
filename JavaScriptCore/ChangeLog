@@ -1,3 +1,22 @@
+2008-07-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        -Small cleanup in preparation for implementing Bottom-up.
+
+        * profiler/CallIdentifier.h: Rename debug function to make it clear of
+        its output and intention to be debug only.
+        (KJS::CallIdentifier::operator const char* ): Implement in terms of
+        c_str.
+        (KJS::CallIdentifier::c_str):
+        * profiler/ProfileNode.cpp: Impelment findChild() which will be needed
+        by the bottom-up implementation.
+        (KJS::ProfileNode::findChild):
+        * profiler/ProfileNode.h: Added comments to make the collections of
+        functions more clear.
+        (KJS::ProfileNode::operator==):
+        (KJS::ProfileNode::c_str):
+
 2008-07-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.
