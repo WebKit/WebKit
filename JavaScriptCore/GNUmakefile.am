@@ -57,6 +57,7 @@ javascriptcore_sources += \
 	JavaScriptCore/profiler/ProfileNode.cpp \
 	JavaScriptCore/profiler/Profile.cpp \
 	JavaScriptCore/profiler/Profiler.cpp \
+	JavaScriptCore/profiler/TreeProfile.cpp \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/HashTable.cpp \
 	JavaScriptCore/wtf/MainThread.cpp \

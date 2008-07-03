@@ -1,3 +1,9 @@
+2008-07-02  Alp Toker  <alp@nuanti.com>
+
+        Build fix for r34960. Add TreeProfile.cpp to build.
+
+        * GNUmakefile.am:
+
 2008-07-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
