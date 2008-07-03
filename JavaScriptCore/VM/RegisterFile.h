@@ -105,7 +105,7 @@ namespace KJS {
 
         enum { ProgramCodeThisRegister = - 1 };
 
-        enum { DefaultCapacity = 2 * 1024 * 1024 };
+        enum { DefaultCapacity = 2 * 1024 * 1024 / sizeof(Register) };
         enum { DefaultMaxGlobals = 8 * 1024 };
 
         RegisterFile(size_t capacity = DefaultCapacity, size_t maxGlobals = DefaultMaxGlobals)
