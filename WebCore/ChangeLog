@@ -1,3 +1,16 @@
+2008-07-03  David Hyatt  <hyatt@apple.com>
+
+        Revise Dan's fix for an assert on Windows, since layoutIfNeededRecursive doesn't exist on the
+        Mac.  Revert updateControlTints and add the layout call outside of it in the already-existing
+        !PLATFORM(MAC) ifdef in FocusController's setActive method.
+
+        Reviewed by ggaren, weinig
+
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateControlTints):
+
 2008-07-03  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.
