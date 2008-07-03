@@ -48,15 +48,16 @@ static void createJSLockCount()
 pthread_once_t createJSLockCountOnce = PTHREAD_ONCE_INIT;
 
 // Lock nesting count.
-int JSLock::lockCount()
+ssize_t JSLock::lockCount()
 {
     pthread_once(&createJSLockCountOnce, createJSLockCount);
 
-    return reinterpret_cast<int>(pthread_getspecific(JSLockCount));
+    return reinterpret_cast<ssize_t>(pthread_getspecific(JSLockCount));
 }
 
-static void setLockCount(int count)
+static void setLockCount(ssize_t count)
 {
+    ASSERT(count >= 0);
     pthread_setspecific(JSLockCount, reinterpret_cast<void*>(count));
 }
 
@@ -78,7 +79,7 @@ void JSLock::lock(bool lockForReal)
 
     pthread_once(&createJSLockCountOnce, createJSLockCount);
 
-    int currentLockCount = lockCount();
+    ssize_t currentLockCount = lockCount();
     if (!currentLockCount && lockForReal) {
         int result;
         result = pthread_mutex_lock(&JSMutex);
@@ -97,7 +98,7 @@ void JSLock::unlock(bool lockForReal)
         return;
 #endif
 
-    int newLockCount = lockCount() - 1;
+    ssize_t newLockCount = lockCount() - 1;
     setLockCount(newLockCount);
     if (!newLockCount && lockForReal) {
         int result;
@@ -133,7 +134,7 @@ JSLock::DropAllLocks::DropAllLocks(ExecState* exec)
     pthread_once(&createJSLockCountOnce, createJSLockCount);
 
     m_lockCount = JSLock::lockCount();
-    for (int i = 0; i < m_lockCount; i++)
+    for (ssize_t i = 0; i < m_lockCount; i++)
         JSLock::unlock(m_lockingForReal);
 }
 
@@ -146,13 +147,13 @@ JSLock::DropAllLocks::DropAllLocks(bool lockingForReal)
     // will prevent a real lock from being taken.
 
     m_lockCount = JSLock::lockCount();
-    for (int i = 0; i < m_lockCount; i++)
+    for (ssize_t i = 0; i < m_lockCount; i++)
         JSLock::unlock(m_lockingForReal);
 }
 
 JSLock::DropAllLocks::~DropAllLocks()
 {
-    for (int i = 0; i < m_lockCount; i++)
+    for (ssize_t i = 0; i < m_lockCount; i++)
         JSLock::lock(m_lockingForReal);
 }
 
@@ -165,7 +166,7 @@ JSLock::JSLock(ExecState* exec)
 
 // If threading support is off, set the lock count to a constant value of 1 so assertions
 // that the lock is held don't fail
-int JSLock::lockCount()
+ssize_t JSLock::lockCount()
 {
     return 1;
 }

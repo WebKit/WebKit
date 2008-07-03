@@ -1,3 +1,16 @@
+2008-07-02  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 64-bit build.  pthread_getspecific works with pointer-sized values,
+        so use ssize_t rather than int to track the lock count to avoid warnings about
+        truncating the result of pthread_getspecific.
+
+        * kjs/JSLock.cpp:
+        (KJS::JSLock::lockCount):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::JSLock::DropAllLocks::DropAllLocks):
+        * kjs/JSLock.h:
+
 2008-07-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

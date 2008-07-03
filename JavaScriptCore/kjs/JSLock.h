@@ -84,7 +84,7 @@ namespace KJS {
         static void lock(ExecState*);
         static void unlock(ExecState*);
 
-        static int lockCount();
+        static ssize_t lockCount();
         static bool currentThreadIsHoldingLock();
 
         static void registerThread();
@@ -98,7 +98,7 @@ namespace KJS {
             ~DropAllLocks();
             
         private:
-            int m_lockCount;
+            ssize_t m_lockCount;
             bool m_lockingForReal;
         };
     };
