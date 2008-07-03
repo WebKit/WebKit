@@ -1,5 +1,14 @@
 2008-07-03  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Fix the non-threaded build.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::threadInstanceInternal):
+
+2008-07-03  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build, added TreeProfile to the build.
 
         * JavaScriptCore.pri:
