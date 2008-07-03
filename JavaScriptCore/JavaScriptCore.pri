@@ -126,6 +126,7 @@ SOURCES += \
     profiler/ProfileNode.cpp \
     profiler/Profile.cpp \
     profiler/Profiler.cpp \
+    profiler/TreeProfile.cpp \
     wtf/FastMalloc.cpp \
     wtf/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp

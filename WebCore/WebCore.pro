@@ -1392,6 +1392,7 @@ contains(DEFINES, ENABLE_SVG=1) {
         bindings/js/JSSVGLazyEventListener.cpp \
         svg/SVGZoomEvent.cpp \
         rendering/PointerEventsHitRules.cpp \
+        svg/FilterEffect.cpp \
         svg/SVGDocumentExtensions.cpp \
         svg/SVGImageLoader.cpp \
         svg/ColorDistance.cpp \
