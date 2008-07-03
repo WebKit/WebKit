@@ -1,3 +1,21 @@
+2008-07-03  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff.
+
+        Bug 19853: REGRESSION (r34838): Crash when visiting http://www.thewebsiteisdown.com/salesguy.html
+        https://bugs.webkit.org/show_bug.cgi?id=19853
+
+        Remove the body of _NPN_SetException(), because it was simply calling
+        throwError(), which sets an exception on an ExecState but does not
+        actually handle it. The presence of an exception on the global ExecState
+        causes assertions that there is no exception set on that ExecState to
+        fail, as well as causing Machine::execute() to mistakingly return 0 in
+        some cases, as it assumes the presence of an exception implies that it
+        has run out of memory.
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetException):
+
 2008-07-03  Maciej Katafiasz  <mathrick@gmail.com>
 
         Gtk build fix with SVG filters enabled
