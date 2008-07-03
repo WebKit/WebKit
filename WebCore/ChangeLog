@@ -1,3 +1,16 @@
+2008-07-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel and John Sullivan
+
+        Fix for <rdar://problem/5549871> - Crash when calling [WebView stopLoading:] or [WebFrame stopLoading] 
+        inside of the frame load delegate method -webView:didStartProvisionalLoadForFrame:.
+
+        Test: fast/loader/stop-provisional-loads.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm): Since the provisionalDocumentLoader may have been cleared
+          by the prepareForLoadStart() call, null check it again.
+
 2008-07-01  Alex Mathews  <possessedpenguinbob@gmail.com>
 
         Reviewed by Oliver Hunt.

@@ -3137,6 +3137,11 @@ void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
         return;
 
     m_provisionalDocumentLoader->prepareForLoadStart();
+    
+    // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader, 
+    // so we need to null check it again.
+    if (!m_provisionalDocumentLoader)
+        return;
 
     DocumentLoader* activeDocLoader = activeDocumentLoader();
     if (activeDocLoader && activeDocLoader->isLoadingMainResource())

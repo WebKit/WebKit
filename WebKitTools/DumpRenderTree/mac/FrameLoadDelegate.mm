@@ -150,6 +150,12 @@
     // end up doing two dumps for one test.
     if (!topLoadingFrame && !done)
         topLoadingFrame = frame;
+
+    if (!done && layoutTestController->stopProvisionalFrameLoads()) {
+        NSString *string = [NSString stringWithFormat:@"%@ - stopping load in didStartProvisionalLoadForFrame callback", [frame _drt_descriptionSuitableForTestResult]];
+        printf ("%s\n", [string UTF8String]);
+        [frame stopLoading];
+    }
 }
 
 - (void)webView:(WebView *)sender didCommitLoadForFrame:(WebFrame *)frame

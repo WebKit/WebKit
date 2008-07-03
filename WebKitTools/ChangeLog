@@ -1,3 +1,25 @@
+2008-07-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel and John Sullivan
+
+        Add the ability to tell DRT to call stopLoading on a WebFrame inside of a didStartProvisionalLoadForFrame
+        load delegate.
+
+        Required to add a layout test for the fix for <rdar://problem/5549871>
+
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate webView:didStartProvisionalLoadForFrame:]): If stopProvisionalFrameLoads is set, call
+          [WebFrame stopLoading] to test for the crash reflected in 5549871
+
+        All of the following are infrastructure to add the layoutTestController.setStopProvisionalFrameLoads() call:
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (setStopProvisionalFrameLoadsCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::stopProvisionalFrameLoads):
+        (LayoutTestController::setStopProvisionalFrameLoads):
+
 2008-07-01  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

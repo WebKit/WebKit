@@ -119,6 +119,9 @@ public:
 
     bool closeRemainingWindowsWhenComplete() const { return m_closeRemainingWindowsWhenComplete; }
     void setCloseRemainingWindowsWhenComplete(bool closeRemainingWindowsWhenComplete) { m_closeRemainingWindowsWhenComplete = closeRemainingWindowsWhenComplete; }
+    
+    bool stopProvisionalFrameLoads() const { return m_stopProvisionalFrameLoads; }
+    void setStopProvisionalFrameLoads(bool stopProvisionalFrameLoads) { m_stopProvisionalFrameLoads = stopProvisionalFrameLoads; }
 
     bool testRepaint() const { return m_testRepaint; }
     void setTestRepaint(bool testRepaint) { m_testRepaint = testRepaint; }
@@ -153,6 +156,7 @@ private:
     bool m_callCloseOnWebViews;
     bool m_canOpenWindows;
     bool m_closeRemainingWindowsWhenComplete;
+    bool m_stopProvisionalFrameLoads;
     bool m_testRepaint;
     bool m_testRepaintSweepHorizontally;
     bool m_waitToDump; // True if waitUntilDone() has been called, but notifyDone() has not yet been called.

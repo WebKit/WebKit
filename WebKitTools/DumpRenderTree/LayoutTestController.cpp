@@ -52,6 +52,7 @@ LayoutTestController::LayoutTestController(bool testRepaintDefault, bool testRep
     , m_callCloseOnWebViews(true)
     , m_canOpenWindows(false)
     , m_closeRemainingWindowsWhenComplete(true)
+    , m_stopProvisionalFrameLoads(false)
     , m_testRepaint(testRepaintDefault)
     , m_testRepaintSweepHorizontally(testRepaintSweepHorizontallyDefault)
     , m_waitToDump(false)
@@ -598,6 +599,12 @@ static JSValueRef setPopupBlockingEnabledCallback(JSContextRef context, JSObject
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setStopProvisionalFrameLoadsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    LayoutTestController* controller = reinterpret_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    controller->setStopProvisionalFrameLoads(true);
+    return JSValueMakeUndefined(context);
+}
 
 // Static Values
 
@@ -695,6 +702,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "setPersistentUserStyleSheetLocation", setPersistentUserStyleSheetLocationCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPrivateBrowsingEnabled", setPrivateBrowsingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setPopupBlockingEnabled", setPopupBlockingEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setStopProvisionalFrameLoads", setStopProvisionalFrameLoadsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setTabKeyCyclesThroughElements", setTabKeyCyclesThroughElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUseDashboardCompatibilityMode", setUseDashboardCompatibilityModeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setUserStyleSheetEnabled", setUserStyleSheetEnabledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
