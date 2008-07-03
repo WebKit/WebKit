@@ -26,7 +26,7 @@ function prepareCanvas() {
 }
 
 function clobberGC(count) {
-    for (var i = 0; i < 10000; ++i)
+    for (var i = 0; i < 5000; ++i)
         ({a: i*i*i*0.5+"str", b: i/Math.sqrt(i)});
     if (count > 0)
         clobberGC(count-1);
@@ -34,7 +34,7 @@ function clobberGC(count) {
 
 function test() {
     context = prepareCanvas();
-    clobberGC(50);
+    clobberGC(40);
     pixelShouldBe(50, 50, [0, 128, 0, 255]);
 }
 test();
