@@ -111,7 +111,7 @@ namespace KJS {
         static size_t cellOffset(const JSCell*);
 
         friend class JSGlobalData;
-        Heap(bool isShared);
+        Heap(Machine*, bool isShared);
         ~Heap();
 
         void recordExtraCost(size_t);
@@ -132,6 +132,8 @@ namespace KJS {
         HashSet<ArgList*>* m_markListSet;
 
         bool m_isShared;
+        
+        Machine* m_machine;
     };
 
     // tunable parameters

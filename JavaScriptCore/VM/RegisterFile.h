@@ -164,11 +164,9 @@ namespace KJS {
         size_t maxGlobals() { return m_maxGlobals; }
 
         Register* lastGlobal() { return m_base - m_numGlobals; }
-
-        void mark(Heap* heap)
-        {
-            heap->markConservatively(lastGlobal(), m_base + m_size);
-        }
+        
+        void markGlobals(Heap* heap) { heap->markConservatively(lastGlobal(), m_base); }
+        void markCallFrames(Heap* heap) { heap->markConservatively(m_base, m_base + m_size); }
 
     private:
         size_t m_size;

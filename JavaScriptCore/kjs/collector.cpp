@@ -92,9 +92,10 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
-Heap::Heap(bool isShared)
+Heap::Heap(Machine* machine, bool isShared)
     : m_markListSet(0)
     , m_isShared(isShared)
+    , m_machine(machine)
 {
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
@@ -944,6 +945,7 @@ bool Heap::collect()
     markProtectedObjects();
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
+    m_machine->registerFile().markCallFrames(this);
 
     JAVASCRIPTCORE_GC_MARKED();
 

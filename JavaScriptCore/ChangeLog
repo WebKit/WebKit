@@ -1,3 +1,22 @@
+2008-07-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed https://bugs.webkit.org/show_bug.cgi?id=19862
+        REGRESSION (r34907): Gmail crashes in JavaScriptCore code while editing drafts
+        
+        I was never able to reproduce this issue, but Cameron could, and he says
+        that this patch fixes it.
+        
+        The crash seems tied to a timer or event handler callback. In such a case,
+        the sole reference to the global object may be in the current call frame,
+        so we can't depend on the global object to mark the call frame area in
+        the register file.
+        
+        The new GC marking rule is: the global object is not responsible for
+        marking the whole register file -- it's just responsible for the globals
+        section it's tied to. The heap is responsible for marking the call frame area.
+
 2008-07-02  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

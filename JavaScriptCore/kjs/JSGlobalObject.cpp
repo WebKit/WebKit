@@ -350,7 +350,7 @@ void JSGlobalObject::mark()
 
     RegisterFile& registerFile = globalData()->machine->registerFile();
     if (registerFile.globalObject() == this)
-        registerFile.mark(globalData()->heap);
+        registerFile.markGlobals(globalData()->heap);
 
     markIfNeeded(d()->globalExec->exception());
 
