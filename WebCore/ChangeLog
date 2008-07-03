@@ -1,3 +1,20 @@
+2008-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        <rdar://5983747> Safari crashes trying to load the SilverLight plugin
+
+        If a plug-in returned an error code from NPP_NewStream, we would call
+        NPP_DestroyStream while cleaning up the request. We now only call
+        NPP_DestroyStream if NPP_NewStream was successful, matching Firefox.
+
+        Reviewed by Anders.
+
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream): If NPP_NewStream returns an error,
+        don't set m_streamState to StreamStarted, and return after calling
+        cancelAndDestroyStream.
+        (WebCore::PluginStream::destroyStream): Don't call NPP_DestroyStream if
+        the stream didn't start successfully.
+
 2008-07-03  David Hyatt  <hyatt@apple.com>
 
         Revise Dan's fix for an assert on Windows, since layoutIfNeededRecursive doesn't exist on the

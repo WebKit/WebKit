@@ -61,12 +61,13 @@ NPClass *getPluginClass(void)
 
 static bool identifiersInitialized = false;
 
-#define ID_PROPERTY_PROPERTY        0
-#define ID_PROPERTY_EVENT_LOGGING   1
-#define ID_PROPERTY_HAS_STREAM      2
-#define ID_PROPERTY_TEST_OBJECT     3
-#define ID_PROPERTY_LOG_DESTROY     4
-#define NUM_PROPERTY_IDENTIFIERS    5
+#define ID_PROPERTY_PROPERTY                    0
+#define ID_PROPERTY_EVENT_LOGGING               1
+#define ID_PROPERTY_HAS_STREAM                  2
+#define ID_PROPERTY_TEST_OBJECT                 3
+#define ID_PROPERTY_LOG_DESTROY                 4
+#define ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM 5
+#define NUM_PROPERTY_IDENTIFIERS                6
 
 static NPIdentifier pluginPropertyIdentifiers[NUM_PROPERTY_IDENTIFIERS];
 static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
@@ -75,6 +76,7 @@ static const NPUTF8 *pluginPropertyIdentifierNames[NUM_PROPERTY_IDENTIFIERS] = {
     "hasStream",
     "testObject",
     "logDestroy",
+    "returnErrorFromNewStream",
 };
 
 #define ID_TEST_CALLBACK_METHOD     0
@@ -164,6 +166,9 @@ static bool pluginGetProperty(NPObject* obj, NPIdentifier name, NPVariant* resul
         browser->retainobject(testObject);
         OBJECT_TO_NPVARIANT(testObject, *result);
         return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
+        BOOLEAN_TO_NPVARIANT(plugin->returnErrorFromNewStream, *result);
+        return true;
     }
     return false;
 }
@@ -176,6 +181,9 @@ static bool pluginSetProperty(NPObject* obj, NPIdentifier name, const NPVariant*
         return true;
     } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_LOG_DESTROY]) {
         plugin->logDestroy = NPVARIANT_TO_BOOLEAN(*variant);
+        return true;
+    } else if (name == pluginPropertyIdentifiers[ID_PROPERTY_RETURN_ERROR_FROM_NEWSTREAM]) {
+        plugin->returnErrorFromNewStream = NPVARIANT_TO_BOOLEAN(*variant);
         return true;
     }
 
@@ -574,6 +582,9 @@ static NPObject *pluginAllocate(NPP npp, NPClass *theClass)
     newInstance->npp = npp;
     newInstance->testObject = browser->createobject(npp, getTestClass());
     newInstance->eventLogging = FALSE;
+    newInstance->onStreamLoad = 0;
+    newInstance->onStreamDestroy = 0;
+    newInstance->onURLNotify = 0;
     newInstance->logDestroy = FALSE;
     newInstance->logSetWindow = FALSE;
     newInstance->returnErrorFromNewStream = FALSE;

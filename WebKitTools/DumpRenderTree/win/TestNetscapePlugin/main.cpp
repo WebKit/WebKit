@@ -76,12 +76,14 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, ch
 {
     if (browser->version >= 14) {
         PluginObject* obj = (PluginObject*)browser->createobject(instance, getPluginClass());
-    
-        obj->onStreamLoad = NULL;
         
         for (int16 i = 0; i < argc; i++) {
             if (_stricmp(argn[i], "onstreamload") == 0 && !obj->onStreamLoad)
                 obj->onStreamLoad = _strdup(argv[i]);
+            else if (_stricmp(argn[i], "onStreamDestroy") == 0 && !obj->onStreamDestroy)
+                obj->onStreamDestroy = _strdup(argv[i]);
+            else if (_stricmp(argn[i], "onURLNotify") == 0 && !obj->onURLNotify)
+                obj->onURLNotify = _strdup(argv[i]);
         }
         
         instance->pdata = obj;
@@ -96,7 +98,13 @@ NPError NPP_Destroy(NPP instance, NPSavedData **save)
     if (obj) {
         if (obj->onStreamLoad)
             free(obj->onStreamLoad);
-        
+
+        if (obj->onURLNotify)
+            free(obj->onURLNotify);
+
+        if (obj->onStreamDestroy)
+            free(obj->onStreamDestroy);
+
         if (obj->logDestroy)
             printf("PLUGIN: NPP_Destroy\n");
 
@@ -110,30 +118,43 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
     return NPERR_NO_ERROR;
 }
 
+static void executeScript(const PluginObject* obj, const char* script)
+{
+    NPObject *windowScriptObject;
+    browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);
+
+    NPString npScript;
+    npScript.UTF8Characters = script;
+    npScript.UTF8Length = strlen(script);
+
+    NPVariant browserResult;
+    browser->evaluate(obj->npp, windowScriptObject, &npScript, &browserResult);
+    browser->releasevariantvalue(&browserResult);
+}
+
 NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream *stream, NPBool seekable, uint16 *stype)
 {
     PluginObject* obj = (PluginObject*)instance->pdata;
+
+    if (obj->returnErrorFromNewStream)
+        return NPERR_GENERIC_ERROR;
+
     obj->stream = stream;
     *stype = NP_ASFILEONLY;
 
-    if (obj->onStreamLoad) {
-        NPObject *windowScriptObject;
-        browser->getvalue(obj->npp, NPNVWindowNPObject, &windowScriptObject);
-                
-        NPString script;
-        script.UTF8Characters = obj->onStreamLoad;
-        script.UTF8Length = strlen(obj->onStreamLoad);
-        
-        NPVariant browserResult;
-        browser->evaluate(obj->npp, windowScriptObject, &script, &browserResult);
-        browser->releasevariantvalue(&browserResult);
-    }
+    if (obj->onStreamLoad)
+        executeScript(obj, obj->onStreamLoad);
     
     return NPERR_NO_ERROR;
 }
 
 NPError NPP_DestroyStream(NPP instance, NPStream *stream, NPReason reason)
 {
+    PluginObject* obj = (PluginObject*)instance->pdata;
+
+    if (obj->onStreamDestroy)
+        executeScript(obj, obj->onStreamDestroy);
+
     return NPERR_NO_ERROR;
 }
 
@@ -168,6 +189,9 @@ int16 NPP_HandleEvent(NPP instance, void *event)
 void NPP_URLNotify(NPP instance, const char *url, NPReason reason, void *notifyData)
 {
     PluginObject *obj = (PluginObject*)instance->pdata;
+
+    if (obj->onURLNotify)
+        executeScript(obj, obj->onURLNotify);
         
     handleCallback(obj, url, reason, notifyData);
 }

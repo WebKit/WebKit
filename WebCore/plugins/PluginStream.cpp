@@ -187,10 +187,12 @@ void PluginStream::startStream()
     if (m_reason != WebReasonNone)
         return;
         
-    m_streamState = StreamStarted;
-
-    if (npErr != NPERR_NO_ERROR)
+    if (npErr != NPERR_NO_ERROR) {
         cancelAndDestroyStream(npErr);
+        return;
+    }
+
+    m_streamState = StreamStarted;
 
     if (m_transferMode == NP_NORMAL)
         return;
@@ -252,12 +254,17 @@ void PluginStream::destroyStream()
                 m_loader->setDefersLoading(false);
         }
 
-        if (m_loader)
-            m_loader->setDefersLoading(true);
-        NPError npErr = m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
-        if (m_loader)
-            m_loader->setDefersLoading(false);
-        LOG_NPERROR(npErr);
+        if (m_streamState != StreamBeforeStarted) {
+            if (m_loader)
+                m_loader->setDefersLoading(true);
+
+            NPError npErr = m_pluginFuncs->destroystream(m_instance, &m_stream, m_reason);
+
+            if (m_loader)
+                m_loader->setDefersLoading(false);
+
+            LOG_NPERROR(npErr);
+        }
 
         m_stream.ndata = 0;
     }

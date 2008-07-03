@@ -37,6 +37,8 @@ typedef struct {
     NPObject* testObject;
     NPStream* stream;
     char* onStreamLoad;
+    char* onStreamDestroy;
+    char* onURLNotify;
     char* firstUrl;
     char* firstHeaders;
     char* lastUrl;

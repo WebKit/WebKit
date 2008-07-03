@@ -1,3 +1,32 @@
+2008-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Allow tests to define JavaScript to execute when NPP_DestroyStream or
+        NPP_URLNotify is called.
+
+        Reviewed by Anders.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.cpp: Add a new
+        property, "returnErrorFromNewStream." This is to support the test for
+        <rdar://5983747> Safari crashes trying to load the SilverLight plugin,
+        caused by WebKit calling NPP_DestroyStream after a plug-in returns an
+        error from NPP_NewStream.
+        (pluginGetProperty): 
+        (pluginSetProperty):
+        (pluginAllocate):
+        * DumpRenderTree/TestNetscapePlugIn.subproj/PluginObject.h: Added new
+        members, onStreamDestroy and onURLNotify.
+        * DumpRenderTree/win/TestNetscapePlugin/main.cpp:
+        (NPP_New): Remove initialization of onStreamLoad; this was moved to
+        pluginAllocate. Look for new arguments onStreamDestroy and
+        onURLNotify, and store their values.
+        (NPP_Destroy): Free new members.
+        (executeScript): Code moved from onStreamLoad
+        (NPP_NewStream): If returnErrorFromNewStream has been set to true,
+        return a generic error code. If onStreamLoad is set, execute it as
+        JavaScript.
+        (NPP_DestroyStream): If onStreamDestroy is set, execute it as JS.
+        (NPP_URLNotify): Same, for onURLNotify.
+
 2008-07-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel and John Sullivan
