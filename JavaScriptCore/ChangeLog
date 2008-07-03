@@ -1,3 +1,20 @@
+2008-07-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add the ability to trace JavaScriptCore garabge collections using dtrace.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Generate the dtrace probe header
+        file when building on a new enough version of Mac OS X.
+        * JavaScriptCorePrefix.h: Add our standard Mac OS X version detection macros.
+        * kjs/Tracing.d: Declare three dtrace probes.
+        * kjs/Tracing.h: Include the generated dtrace macros if dtrace is available,
+        otherwise provide versions that do nothing.
+        * kjs/collector.cpp:
+        (KJS::Heap::collect): Fire dtrace probes when starting a collection, after the
+        mark phase has completed, and when the collection is complete.
+        * wtf/Platform.h: Define HAVE_DTRACE when building on a new enough version of Mac OS X.
+
 2008-07-02  Geoffrey Garen  <ggaren@apple.com>
 
         Rubber stamped by Oliver Hunt.

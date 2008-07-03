@@ -28,6 +28,7 @@
 #include "JSValue.h"
 #include "list.h"
 #include "Machine.h"
+#include "Tracing.h"
 #include <algorithm>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -932,7 +933,8 @@ bool Heap::collect()
     ASSERT((primaryHeap.operationInProgress == NoOperation) | (numberHeap.operationInProgress == NoOperation));
     if ((primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation))
         abort();
-    
+
+    JAVASCRIPTCORE_GC_BEGIN();
     primaryHeap.operationInProgress = Collection;
     numberHeap.operationInProgress = Collection;
 
@@ -943,12 +945,15 @@ bool Heap::collect()
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
 
+    JAVASCRIPTCORE_GC_MARKED();
+
     size_t originalLiveObjects = primaryHeap.numLiveObjects + numberHeap.numLiveObjects;
     size_t numLiveObjects = sweep<PrimaryHeap>();
     numLiveObjects += sweep<NumberHeap>();
-  
+
     primaryHeap.operationInProgress = NoOperation;
     numberHeap.operationInProgress = NoOperation;
+    JAVASCRIPTCORE_GC_END(originalLiveObjects, numLiveObjects);
 
     return numLiveObjects < originalLiveObjects;
 }
