@@ -1,3 +1,17 @@
+2008-07-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fix <rdar://problem/6020930> Bidi Problem When Resizing Window
+
+        Test: fast/text/international/bidi-AN-after-empty-run.html
+
+        * platform/text/BidiResolver.h:
+        (WebCore::::appendRun): Changed to reset the current direction and
+        "end of run" direction even in the empty run case.
+        * rendering/bidi.cpp:
+        (WebCore::BidiState::appendRun): Ditto.
+
 2008-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         <rdar://5983747> Safari crashes trying to load the SilverLight plugin

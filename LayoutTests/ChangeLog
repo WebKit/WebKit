@@ -1,3 +1,14 @@
+2008-07-03  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - test for <rdar://problem/6020930> Bidi Problem When Resizing Window
+
+        * fast/text/international/bidi-AN-after-empty-run.html: Added.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.checksum: Added.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png: Added.
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt: Added.
+
 2008-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Test for <rdar://5983747> Safari crashes trying to load the SilverLight plugin

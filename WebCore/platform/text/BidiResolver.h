@@ -244,13 +244,13 @@ inline void BidiResolver<Iterator, Run>::moveRunToBeginning(Run* run)
 template <class Iterator, class Run>
 void BidiResolver<Iterator, Run>::appendRun()
 {
-    if (emptyRun || eor.atEnd())
-        return;
+    if (!emptyRun && !eor.atEnd()) {
+        addRun(new Run(sor.offset(), eor.offset() + 1, context(), m_direction));
 
-    addRun(new Run(sor.offset(), eor.offset() + 1, context(), m_direction));
+        eor.increment();
+        sor = eor;
+    }
 
-    eor.increment();
-    sor = eor;
     m_direction = WTF::Unicode::OtherNeutral;
     m_status.eor = WTF::Unicode::OtherNeutral;
 }

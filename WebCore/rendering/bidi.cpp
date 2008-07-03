@@ -427,29 +427,29 @@ static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState
 template <>
 void BidiState::appendRun()
 {
-    if (emptyRun || eor.atEnd())
-        return;
-
-    int start = sor.pos;
-    RenderObject *obj = sor.obj;
-    while (obj && obj != eor.obj && obj != endOfLine.obj) {
-        appendRunsForObject(start, obj->length(), obj, *this);        
-        start = 0;
-        obj = bidiNext(sor.block, obj);
-    }
-    if (obj) {
-        unsigned pos = obj == eor.obj ? eor.pos : UINT_MAX;
-        if (obj == endOfLine.obj && endOfLine.pos <= pos) {
-            reachedEndOfLine = true;
-            pos = endOfLine.pos;
+    if (!emptyRun && !eor.atEnd()) {
+        int start = sor.pos;
+        RenderObject *obj = sor.obj;
+        while (obj && obj != eor.obj && obj != endOfLine.obj) {
+            appendRunsForObject(start, obj->length(), obj, *this);        
+            start = 0;
+            obj = bidiNext(sor.block, obj);
         }
-        // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
-        int end = obj->length() ? pos+1 : 0;
-        appendRunsForObject(start, end, obj, *this);
+        if (obj) {
+            unsigned pos = obj == eor.obj ? eor.pos : UINT_MAX;
+            if (obj == endOfLine.obj && endOfLine.pos <= pos) {
+                reachedEndOfLine = true;
+                pos = endOfLine.pos;
+            }
+            // It's OK to add runs for zero-length RenderObjects, just don't make the run larger than it should be
+            int end = obj->length() ? pos+1 : 0;
+            appendRunsForObject(start, end, obj, *this);
+        }
+        
+        eor.increment();
+        sor = eor;
     }
-    
-    eor.increment();
-    sor = eor;
+
     m_direction = OtherNeutral;
     m_status.eor = OtherNeutral;
 }
