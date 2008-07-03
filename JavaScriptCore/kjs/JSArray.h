@@ -26,11 +26,19 @@
 
 namespace KJS {
 
-  struct ArrayStorage;
+  typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;
+
+  struct ArrayStorage {
+      unsigned m_vectorLength;
+      unsigned m_numValuesInVector;
+      SparseArrayValueMap* m_sparseValueMap;
+      void* lazyCreationData; // A JSArray subclass can use this to fill the vector lazily.
+      JSValue* m_vector[1];
+  };
 
   class JSArray : public JSObject {
   public:
-    JSArray(JSObject* prototype, unsigned initialLength);
+    JSArray(JSValue* prototype, unsigned initialLength);
     JSArray(JSObject* prototype, const ArgList& initialValues);
     virtual ~JSArray();
 
@@ -45,6 +53,20 @@ namespace KJS {
 
     void sort(ExecState*);
     void sort(ExecState*, JSValue* compareFunction, CallType, const CallData&);
+
+    bool canGetIndex(unsigned i) { return i < m_fastAccessCutoff; }
+    JSValue* getIndex(unsigned i)
+    {
+        ASSERT(canGetIndex(i));
+        return m_storage->m_vector[i];
+    }
+
+    bool canSetIndex(unsigned i) { return i < m_fastAccessCutoff; }
+    JSValue* setIndex(unsigned i, JSValue* v)
+    {
+        ASSERT(canSetIndex(i));
+        return m_storage->m_vector[i] = v;
+    }
 
   protected:
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);

@@ -34,16 +34,6 @@ using namespace std;
 
 namespace KJS {
 
-typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;
-
-struct ArrayStorage {
-    unsigned m_vectorLength;
-    unsigned m_numValuesInVector;
-    SparseArrayValueMap* m_sparseValueMap;
-    void* lazyCreationData; // An JSArray subclass can use this to fill the vector lazily.
-    JSValue* m_vector[1];
-};
-
 // 0xFFFFFFFF is a bit weird -- is not an array index even though it's an integer.
 static const unsigned maxArrayIndex = 0xFFFFFFFEU;
 
@@ -81,7 +71,7 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
-JSArray::JSArray(JSObject* prototype, unsigned initialLength)
+JSArray::JSArray(JSValue* prototype, unsigned initialLength)
     : JSObject(prototype)
 {
     unsigned initialCapacity = min(initialLength, sparseArrayCutoff);

@@ -1,3 +1,12 @@
+2008-07-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Optimized a[n] get for cases where a is an array or a string, and a[n]
+        put for cases where a is an array.
+        
+        SunSpider says 9.0% faster.
+
 2008-07-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

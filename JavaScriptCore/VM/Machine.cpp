@@ -45,6 +45,7 @@
 #include "RegExpObject.h"
 #include "RegExpPrototype.h"
 #include "Register.h"
+#include "collector.h"
 #include "debugger.h"
 #include "operations.h"
 #include <stdio.h>
@@ -475,6 +476,19 @@ Machine::Machine()
     , m_ticksUntilNextTimeoutCheck(initialTickCountThreshold)
 {
     privateExecute(InitializeAndReturn);
+    
+    // Bizarrely, calling fastMalloc here is faster than allocating space on the stack.
+    void* storage = fastMalloc(sizeof(CollectorBlock));
+
+    JSArray* jsArray = new (storage) JSArray(jsNull(), 0);
+    m_jsArrayVptr = jsArray->vptr();
+    jsArray->~JSCell();
+
+    JSString* jsString = new (storage) JSString("");
+    m_jsStringVptr = jsString->vptr();
+    jsString->~JSCell();
+    
+    fastFree(storage);
 }
 
 void Machine::dumpCallFrame(const CodeBlock* codeBlock, ScopeChainNode* scopeChain, RegisterFile* registerFile, const Register* r)
@@ -1834,9 +1848,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         unsigned i;
 
         bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-        if (LIKELY(isUInt32))
-            result = baseValue->get(exec, i);
-        else {
+        if (LIKELY(isUInt32)) {
+            if (isJSArray(baseValue)) {
+                JSArray* jsArray = static_cast<JSArray*>(baseValue);
+                if (jsArray->canGetIndex(i))
+                    result = jsArray->getIndex(i);
+                else
+                    result = jsArray->JSArray::get(exec, i);
+            } else if (isJSString(baseValue) && static_cast<JSString*>(baseValue)->canGetIndex(i))
+                result = static_cast<JSString*>(baseValue)->getIndex(exec, i);
+            else
+                result = baseValue->get(exec, i);
+        } else {
             Identifier property(exec, subscript->toString(exec));
             result = baseValue->get(exec, property);
         }
@@ -1867,9 +1890,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         unsigned i;
 
         bool isUInt32 = JSImmediate::getUInt32(subscript, i);
-        if (LIKELY(isUInt32))
-            baseValue->put(exec, i, r[value].u.jsValue);
-        else {
+        if (LIKELY(isUInt32)) {
+            if (isJSArray(baseValue)) {
+                JSArray* jsArray = static_cast<JSArray*>(baseValue);
+                if (jsArray->canSetIndex(i))
+                    jsArray->setIndex(i, r[value].u.jsValue);
+                else
+                    jsArray->JSArray::put(exec, i, r[value].u.jsValue);
+            } else
+                baseValue->put(exec, i, r[value].u.jsValue);
+        } else {
             Identifier property(exec, subscript->toString(exec));
             if (!exec->hadException()) // Don't put to an object if toString threw an exception.
                 baseValue->put(exec, property, r[value].u.jsValue);
