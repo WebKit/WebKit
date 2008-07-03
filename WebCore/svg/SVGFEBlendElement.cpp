@@ -31,7 +31,7 @@ namespace WebCore {
 
 SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_mode(SVG_FEBLEND_MODE_NORMAL)
+    , m_mode(FEBLEND_MODE_NORMAL)
     , m_filterEffect(0)
 {
 }
@@ -49,15 +49,15 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::modeAttr) {
         if (value == "normal")
-            setModeBaseValue(SVG_FEBLEND_MODE_NORMAL);
+            setModeBaseValue(FEBLEND_MODE_NORMAL);
         else if (value == "multiply")
-            setModeBaseValue(SVG_FEBLEND_MODE_MULTIPLY);
+            setModeBaseValue(FEBLEND_MODE_MULTIPLY);
         else if (value == "screen")
-            setModeBaseValue(SVG_FEBLEND_MODE_SCREEN);
+            setModeBaseValue(FEBLEND_MODE_SCREEN);
         else if (value == "darken")
-            setModeBaseValue(SVG_FEBLEND_MODE_DARKEN);
+            setModeBaseValue(FEBLEND_MODE_DARKEN);
         else if (value == "lighten")
-            setModeBaseValue(SVG_FEBLEND_MODE_LIGHTEN);
+            setModeBaseValue(FEBLEND_MODE_LIGHTEN);
     } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
@@ -66,16 +66,24 @@ void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEBlend* SVGFEBlendElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFEBlendElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEBlend::create(filter);
+    ASSERT_NOT_REACHED(); 
+    return 0;
+}
+
+bool SVGFEBlendElement::build(FilterBuilder* builder)
+{
+    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input2 = builder->getEffectById(in2());
     
-    m_filterEffect->setBlendMode((SVGBlendModeType) mode());
-    m_filterEffect->setIn(in1());
-    m_filterEffect->setIn2(in2());
-    setStandardAttributes(m_filterEffect.get());
-    return m_filterEffect.get();
+    if(!input1 || !input2)
+        return false;
+
+    RefPtr<FilterEffect> addedEffect = FEBlend::create(input1, input2, static_cast<BlendModeType> (mode()));
+    builder->add(result(), addedEffect.release());
+    
+    return true;
 }
 
 }

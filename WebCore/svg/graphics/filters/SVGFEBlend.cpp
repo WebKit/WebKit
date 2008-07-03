@@ -27,65 +27,45 @@
 
 namespace WebCore {
 
-SVGFEBlend::SVGFEBlend(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_mode(SVG_FEBLEND_MODE_UNKNOWN)
+FEBlend::FEBlend(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
+    : FilterEffect()
+    , m_in(in)
+    , m_in2(in2)
+    , m_mode(mode)
 {
 }
 
-PassRefPtr<SVGFEBlend> SVGFEBlend::create(SVGResourceFilter* filter)
+PassRefPtr<FEBlend> FEBlend::create(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
 {
-    return adoptRef(new SVGFEBlend(filter));
+    return adoptRef(new FEBlend(in, in2, mode));
 }
 
-String SVGFEBlend::in2() const
+FilterEffect* FEBlend::in2() const
 {
-    return m_in2;
+    return m_in2.get();
 }
 
-void SVGFEBlend::setIn2(const String& in2)
+void FEBlend::setIn2(FilterEffect* in2)
 {
     m_in2 = in2;
 }
 
-SVGBlendModeType SVGFEBlend::blendMode() const
+BlendModeType FEBlend::blendMode() const
 {
     return m_mode;
 }
 
-void SVGFEBlend::setBlendMode(SVGBlendModeType mode)
+void FEBlend::setBlendMode(BlendModeType mode)
 {
     m_mode = mode;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGBlendModeType t)
+void FEBlend::apply()
 {
-    switch (t)
-    {
-        case SVG_FEBLEND_MODE_UNKNOWN:
-            ts << "UNKNOWN"; break;
-        case SVG_FEBLEND_MODE_NORMAL:
-            ts << "NORMAL"; break;
-        case SVG_FEBLEND_MODE_MULTIPLY:
-            ts << "MULTIPLY"; break;
-        case SVG_FEBLEND_MODE_SCREEN:
-            ts << "SCREEN"; break;
-        case SVG_FEBLEND_MODE_DARKEN:
-            ts << "DARKEN"; break;
-        case SVG_FEBLEND_MODE_LIGHTEN:
-            ts << "LIGHTEN"; break;
-    }
-    return ts;
 }
 
-TextStream& SVGFEBlend::externalRepresentation(TextStream& ts) const
+void FEBlend::dump()
 {
-    ts << "[type=BLEND] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    if (!m_in2.isEmpty())
-        ts << " [in2=\"" << m_in2 << "\"]";
-    ts << " [blend mode=" << m_mode << "]";
-    return ts;
 }
 
 } // namespace WebCore

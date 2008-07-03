@@ -23,41 +23,40 @@
 #define SVGFEBlend_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#include "FilterEffect.h"
 #include "SVGFilterEffect.h"
 
 namespace WebCore {
 
-enum SVGBlendModeType {
-    SVG_FEBLEND_MODE_UNKNOWN  = 0,
-    SVG_FEBLEND_MODE_NORMAL   = 1,
-    SVG_FEBLEND_MODE_MULTIPLY = 2,
-    SVG_FEBLEND_MODE_SCREEN   = 3,
-    SVG_FEBLEND_MODE_DARKEN   = 4,
-    SVG_FEBLEND_MODE_LIGHTEN  = 5
-};
+    enum BlendModeType {
+        FEBLEND_MODE_UNKNOWN  = 0,
+        FEBLEND_MODE_NORMAL   = 1,
+        FEBLEND_MODE_MULTIPLY = 2,
+        FEBLEND_MODE_SCREEN   = 3,
+        FEBLEND_MODE_DARKEN   = 4,
+        FEBLEND_MODE_LIGHTEN  = 5
+    };
 
-class SVGFEBlend : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEBlend> create(SVGResourceFilter*);
-    
-    String in2() const;
-    void setIn2(const String&);
+    class FEBlend : public FilterEffect {
+    public:
+        static PassRefPtr<FEBlend> create(FilterEffect*, FilterEffect*, BlendModeType);
+        
+        FilterEffect* in2() const;
+        void setIn2(FilterEffect*);
 
-    SVGBlendModeType blendMode() const;
-    void setBlendMode(SVGBlendModeType);
+        BlendModeType blendMode() const;
+        void setBlendMode(BlendModeType);
+        
+        virtual void apply();
+        virtual void dump();
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+    private:
+        FEBlend(FilterEffect*, FilterEffect*, BlendModeType);
 
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
-
-private:
-    SVGFEBlend(SVGResourceFilter*);
-
-    SVGBlendModeType m_mode;
-    String m_in2;
-};
+        RefPtr<FilterEffect> m_in;
+        RefPtr<FilterEffect> m_in2;
+        BlendModeType m_mode;
+    };
 
 } // namespace WebCore
 
