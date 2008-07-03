@@ -1,5 +1,11 @@
 2008-07-03  Dan Bernstein  <mitz@apple.com>
 
+        - Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Added TreeProfile.{h,cpp}.
+
+2008-07-03  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Anders Carlsson.
 
         - Windows build fix
