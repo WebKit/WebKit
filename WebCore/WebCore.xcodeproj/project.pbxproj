@@ -1833,6 +1833,14 @@
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
 		A7352C190B1BB89D00A986D0 /* RenderSVGBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */; };
 		A7352C1A0B1BB89D00A986D0 /* RenderSVGBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */; };
+		A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */; };
+		A75E8B890E1DE2D6007F2481 /* FEBlend.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B810E1DE2D6007F2481 /* FEBlend.h */; };
+		A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B820E1DE2D6007F2481 /* FEColorMatrix.cpp */; };
+		A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B830E1DE2D6007F2481 /* FEColorMatrix.h */; };
+		A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B840E1DE2D6007F2481 /* FEComponentTransfer.cpp */; };
+		A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */; };
+		A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */; };
+		A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = A75E8B870E1DE2D6007F2481 /* FEComposite.h */; };
 		A77979160D6B9D0C003851B9 /* CanvasPixelArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */; };
 		A77979170D6B9D0C003851B9 /* CanvasPixelArray.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */; };
 		A77979190D6B9D0C003851B9 /* ImageData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A77979130D6B9D0C003851B9 /* ImageData.cpp */; };
@@ -3055,14 +3063,6 @@
 		B255996F0D00D8BA00BB825C /* WKTableTransferFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598D50D00D8B900BB825C /* WKTableTransferFilter.h */; };
 		B25599700D00D8BA00BB825C /* WKTableTransferFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = B25598D60D00D8B900BB825C /* WKTableTransferFilter.m */; };
 		B25599710D00D8BA00BB825C /* SVGDistantLightSource.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */; };
-		B25599720D00D8BA00BB825C /* SVGFEBlend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598D80D00D8B900BB825C /* SVGFEBlend.cpp */; };
-		B25599730D00D8BA00BB825C /* SVGFEBlend.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598D90D00D8B900BB825C /* SVGFEBlend.h */; };
-		B25599740D00D8BA00BB825C /* SVGFEColorMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598DA0D00D8B900BB825C /* SVGFEColorMatrix.cpp */; };
-		B25599750D00D8BA00BB825C /* SVGFEColorMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598DB0D00D8B900BB825C /* SVGFEColorMatrix.h */; };
-		B25599760D00D8BA00BB825C /* SVGFEComponentTransfer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598DC0D00D8B900BB825C /* SVGFEComponentTransfer.cpp */; };
-		B25599770D00D8BA00BB825C /* SVGFEComponentTransfer.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598DD0D00D8B900BB825C /* SVGFEComponentTransfer.h */; };
-		B25599780D00D8BA00BB825C /* SVGFEComposite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598DE0D00D8B900BB825C /* SVGFEComposite.cpp */; };
-		B25599790D00D8BA00BB825C /* SVGFEComposite.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598DF0D00D8B900BB825C /* SVGFEComposite.h */; };
 		B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */; };
 		B255997B0D00D8BA00BB825C /* SVGFEConvolveMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */; };
 		B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */; };
@@ -6292,6 +6292,14 @@
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A7352C170B1BB89D00A986D0 /* RenderSVGBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGBlock.cpp; sourceTree = "<group>"; };
 		A7352C180B1BB89D00A986D0 /* RenderSVGBlock.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGBlock.h; sourceTree = "<group>"; };
+		A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEBlend.cpp; path = filters/FEBlend.cpp; sourceTree = "<group>"; };
+		A75E8B810E1DE2D6007F2481 /* FEBlend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEBlend.h; path = filters/FEBlend.h; sourceTree = "<group>"; };
+		A75E8B820E1DE2D6007F2481 /* FEColorMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEColorMatrix.cpp; path = filters/FEColorMatrix.cpp; sourceTree = "<group>"; };
+		A75E8B830E1DE2D6007F2481 /* FEColorMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEColorMatrix.h; path = filters/FEColorMatrix.h; sourceTree = "<group>"; };
+		A75E8B840E1DE2D6007F2481 /* FEComponentTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEComponentTransfer.cpp; path = filters/FEComponentTransfer.cpp; sourceTree = "<group>"; };
+		A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComponentTransfer.h; path = filters/FEComponentTransfer.h; sourceTree = "<group>"; };
+		A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FEComposite.cpp; path = filters/FEComposite.cpp; sourceTree = "<group>"; };
+		A75E8B870E1DE2D6007F2481 /* FEComposite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FEComposite.h; path = filters/FEComposite.h; sourceTree = "<group>"; };
 		A77979100D6B9D0C003851B9 /* CanvasPixelArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CanvasPixelArray.cpp; sourceTree = "<group>"; };
 		A77979110D6B9D0C003851B9 /* CanvasPixelArray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CanvasPixelArray.h; sourceTree = "<group>"; };
 		A77979120D6B9D0C003851B9 /* CanvasPixelArray.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CanvasPixelArray.idl; sourceTree = "<group>"; };
@@ -7403,14 +7411,6 @@
 		B25598D50D00D8B900BB825C /* WKTableTransferFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKTableTransferFilter.h; sourceTree = "<group>"; };
 		B25598D60D00D8B900BB825C /* WKTableTransferFilter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = WKTableTransferFilter.m; sourceTree = "<group>"; };
 		B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGDistantLightSource.h; sourceTree = "<group>"; };
-		B25598D80D00D8B900BB825C /* SVGFEBlend.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEBlend.cpp; sourceTree = "<group>"; };
-		B25598D90D00D8B900BB825C /* SVGFEBlend.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEBlend.h; sourceTree = "<group>"; };
-		B25598DA0D00D8B900BB825C /* SVGFEColorMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEColorMatrix.cpp; sourceTree = "<group>"; };
-		B25598DB0D00D8B900BB825C /* SVGFEColorMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEColorMatrix.h; sourceTree = "<group>"; };
-		B25598DC0D00D8B900BB825C /* SVGFEComponentTransfer.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEComponentTransfer.cpp; sourceTree = "<group>"; };
-		B25598DD0D00D8B900BB825C /* SVGFEComponentTransfer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEComponentTransfer.h; sourceTree = "<group>"; };
-		B25598DE0D00D8B900BB825C /* SVGFEComposite.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEComposite.cpp; sourceTree = "<group>"; };
-		B25598DF0D00D8B900BB825C /* SVGFEComposite.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEComposite.h; sourceTree = "<group>"; };
 		B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEConvolveMatrix.cpp; sourceTree = "<group>"; };
 		B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEConvolveMatrix.h; sourceTree = "<group>"; };
 		B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGFEDiffuseLighting.cpp; sourceTree = "<group>"; };
@@ -10776,6 +10776,21 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		A75E8B7F0E1DE2B0007F2481 /* filters */ = {
+			isa = PBXGroup;
+			children = (
+				A75E8B800E1DE2D6007F2481 /* FEBlend.cpp */,
+				A75E8B810E1DE2D6007F2481 /* FEBlend.h */,
+				A75E8B820E1DE2D6007F2481 /* FEColorMatrix.cpp */,
+				A75E8B830E1DE2D6007F2481 /* FEColorMatrix.h */,
+				A75E8B840E1DE2D6007F2481 /* FEComponentTransfer.cpp */,
+				A75E8B850E1DE2D6007F2481 /* FEComponentTransfer.h */,
+				A75E8B860E1DE2D6007F2481 /* FEComposite.cpp */,
+				A75E8B870E1DE2D6007F2481 /* FEComposite.h */,
+			);
+			name = filters;
+			sourceTree = "<group>";
+		};
 		A83B79080CCAFF2B000B0825 /* HTML */ = {
 			isa = PBXGroup;
 			children = (
@@ -11893,14 +11908,6 @@
 			children = (
 				B255989D0D00D8B800BB825C /* cg */,
 				B25598D70D00D8B900BB825C /* SVGDistantLightSource.h */,
-				B25598D80D00D8B900BB825C /* SVGFEBlend.cpp */,
-				B25598D90D00D8B900BB825C /* SVGFEBlend.h */,
-				B25598DA0D00D8B900BB825C /* SVGFEColorMatrix.cpp */,
-				B25598DB0D00D8B900BB825C /* SVGFEColorMatrix.h */,
-				B25598DC0D00D8B900BB825C /* SVGFEComponentTransfer.cpp */,
-				B25598DD0D00D8B900BB825C /* SVGFEComponentTransfer.h */,
-				B25598DE0D00D8B900BB825C /* SVGFEComposite.cpp */,
-				B25598DF0D00D8B900BB825C /* SVGFEComposite.h */,
 				B25598E00D00D8B900BB825C /* SVGFEConvolveMatrix.cpp */,
 				B25598E10D00D8B900BB825C /* SVGFEConvolveMatrix.h */,
 				B25598E20D00D8B900BB825C /* SVGFEDiffuseLighting.cpp */,
@@ -12058,6 +12065,7 @@
 		B2A015910AF6CD53006BCE0E /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				A75E8B7F0E1DE2B0007F2481 /* filters */,
 				B27535290B053814002CE64F /* cg */,
 				B27535490B053814002CE64F /* mac */,
 				B27535270B053814002CE64F /* AffineTransform.cpp */,
@@ -14767,13 +14775,9 @@
 				B22279C00D00BF220071B782 /* SVGEllipseElement.h in Headers */,
 				B22279C20D00BF220071B782 /* SVGException.h in Headers */,
 				B22279C50D00BF220071B782 /* SVGExternalResourcesRequired.h in Headers */,
-				B25599730D00D8BA00BB825C /* SVGFEBlend.h in Headers */,
 				B22279C80D00BF220071B782 /* SVGFEBlendElement.h in Headers */,
-				B25599750D00D8BA00BB825C /* SVGFEColorMatrix.h in Headers */,
 				B22279CB0D00BF220071B782 /* SVGFEColorMatrixElement.h in Headers */,
-				B25599770D00D8BA00BB825C /* SVGFEComponentTransfer.h in Headers */,
 				B22279CE0D00BF220071B782 /* SVGFEComponentTransferElement.h in Headers */,
-				B25599790D00D8BA00BB825C /* SVGFEComposite.h in Headers */,
 				B22279D10D00BF220071B782 /* SVGFECompositeElement.h in Headers */,
 				B255997B0D00D8BA00BB825C /* SVGFEConvolveMatrix.h in Headers */,
 				B255997D0D00D8BA00BB825C /* SVGFEDiffuseLighting.h in Headers */,
@@ -15267,6 +15271,10 @@
 				50A5DF760E1A13C9000A03AE /* FilterBuilder.h in Headers */,
 				50A5E2100E1ABAF2000A03AE /* FilterEffect.h in Headers */,
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
+				A75E8B890E1DE2D6007F2481 /* FEBlend.h in Headers */,
+				A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */,
+				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
+				A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16555,13 +16563,9 @@
 				B22279BC0D00BF220071B782 /* SVGElementInstanceList.cpp in Sources */,
 				B22279BF0D00BF220071B782 /* SVGEllipseElement.cpp in Sources */,
 				B22279C40D00BF220071B782 /* SVGExternalResourcesRequired.cpp in Sources */,
-				B25599720D00D8BA00BB825C /* SVGFEBlend.cpp in Sources */,
 				B22279C70D00BF220071B782 /* SVGFEBlendElement.cpp in Sources */,
-				B25599740D00D8BA00BB825C /* SVGFEColorMatrix.cpp in Sources */,
 				B22279CA0D00BF220071B782 /* SVGFEColorMatrixElement.cpp in Sources */,
-				B25599760D00D8BA00BB825C /* SVGFEComponentTransfer.cpp in Sources */,
 				B22279CD0D00BF220071B782 /* SVGFEComponentTransferElement.cpp in Sources */,
-				B25599780D00D8BA00BB825C /* SVGFEComposite.cpp in Sources */,
 				B22279D00D00BF220071B782 /* SVGFECompositeElement.cpp in Sources */,
 				B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */,
 				B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */,
@@ -17038,6 +17042,10 @@
 				50A5E4720E1AEF3A000A03AE /* Filter.cpp in Sources */,
 				50A5E4740E1AEF84000A03AE /* FilterEffect.cpp in Sources */,
 				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,
+				A75E8B880E1DE2D6007F2481 /* FEBlend.cpp in Sources */,
+				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
+				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
+				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

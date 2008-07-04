@@ -22,84 +22,48 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFEComposite.h"
+#include "FEBlend.h"
 
 namespace WebCore {
 
-FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
-    const float& k1, const float& k2, const float& k3, const float& k4)
+FEBlend::FEBlend(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
     : FilterEffect()
     , m_in(in)
     , m_in2(in2)
-    , m_type(type)
-    , m_k1(k1)
-    , m_k2(k2)
-    , m_k3(k3)
-    , m_k4(k4)
+    , m_mode(mode)
 {
 }
 
-PassRefPtr<FEComposite> FEComposite::create(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
-    const float& k1, const float& k2, const float& k3, const float& k4)
+PassRefPtr<FEBlend> FEBlend::create(FilterEffect* in, FilterEffect* in2, BlendModeType mode)
 {
-    return adoptRef(new FEComposite(in, in2, type, k1, k2, k3, k4));
+    return adoptRef(new FEBlend(in, in2, mode));
 }
 
-CompositeOperationType FEComposite::operation() const
+FilterEffect* FEBlend::in2() const
 {
-    return m_type;
+    return m_in2.get();
 }
 
-void FEComposite::setOperation(CompositeOperationType type)
+void FEBlend::setIn2(FilterEffect* in2)
 {
-    m_type = type;
+    m_in2 = in2;
 }
 
-float FEComposite::k1() const
+BlendModeType FEBlend::blendMode() const
 {
-    return m_k1;
+    return m_mode;
 }
 
-void FEComposite::setK1(float k1)
+void FEBlend::setBlendMode(BlendModeType mode)
 {
-    m_k1 = k1;
+    m_mode = mode;
 }
 
-float FEComposite::k2() const
-{
-    return m_k2;
-}
-
-void FEComposite::setK2(float k2)
-{
-    m_k2 = k2;
-}
-
-float FEComposite::k3() const
-{
-    return m_k3;
-}
-
-void FEComposite::setK3(float k3)
-{
-    m_k3 = k3;
-}
-
-float FEComposite::k4() const
-{
-    return m_k4;
-}
-
-void FEComposite::setK4(float k4)
-{
-    m_k4 = k4;
-}
-
-void FEComposite::apply()
+void FEBlend::apply()
 {
 }
 
-void FEComposite::dump()
+void FEBlend::dump()
 {
 }
 

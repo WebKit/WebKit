@@ -25,7 +25,7 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterBuilder.h"
-#include "SVGFEColorMatrix.h"
+#include "FEColorMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore

@@ -1,3 +1,25 @@
+2008-07-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Move filter implementations to platform directory.
+
+        * WebCore.vcproj/WebCore.vcproj
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.h:
+        * platform/graphics/filters/FEBlend.cpp: Renamed from WebCore/svg/graphics/filters/SVGFEBlend.cpp.
+        * platform/graphics/filters/FEBlend.h: Renamed from WebCore/svg/graphics/filters/SVGFEBlend.h.
+        * platform/graphics/filters/FEColorMatrix.cpp: Renamed from WebCore/svg/graphics/filters/SVGFEColorMatrix.cpp.
+        * platform/graphics/filters/FEColorMatrix.h: Renamed from WebCore/svg/graphics/filters/SVGFEColorMatrix.h.
+        * platform/graphics/filters/FEComponentTransfer.cpp: Renamed from WebCore/svg/graphics/filters/SVGFEComponentTransfer.cpp.
+        * platform/graphics/filters/FEComponentTransfer.h: Renamed from WebCore/svg/graphics/filters/SVGFEComponentTransfer.h.
+        * platform/graphics/filters/FEComposite.cpp: Renamed from WebCore/svg/graphics/filters/SVGFEComposite.cpp.
+        * platform/graphics/filters/FEComposite.h: Renamed from WebCore/svg/graphics/filters/SVGFEComposite.h.
+
 2008-07-03  Alex Mathews  <possessedpenguinbob@gmail.com>
 
         Reviewed by Oliver Hunt.

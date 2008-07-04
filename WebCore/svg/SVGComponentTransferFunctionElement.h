@@ -25,7 +25,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
 #include "SVGElement.h"
-#include "SVGFEComponentTransfer.h"
+#include "FEComponentTransfer.h"
 
 namespace WebCore
 {

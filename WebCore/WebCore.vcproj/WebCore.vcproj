@@ -15734,39 +15734,39 @@
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEBlend.cpp"
+						RelativePath="..\platform\graphics\filters\FEBlend.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEBlend.h"
+						RelativePath="..\platform\graphics\filters\FEBlend.h"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEColorMatrix.cpp"
+						RelativePath="..\platform\graphics\filters\FEColorMatrix.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEColorMatrix.h"
+						RelativePath="..\platform\graphics\filters\FEColorMatrix.h"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEComponentTransfer.cpp"
+						RelativePath="..\platform\graphics\filters\FEComponentTransfer.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEComponentTransfer.h"
+						RelativePath="..\platform\graphics\filters\FEComponentTransfer.h"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEComposite.cpp"
+						RelativePath="..\platform\graphics\filters\FEComposite.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEComposite.h"
+						RelativePath="..\platform\graphics\filters\FEComposite.h"
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\SVGFEConvolveMatrix.cpp"
+						RelativePath="..\platform\graphics\filters\FEConvolveMatrix.cpp"
 						>
 					</File>
 					<File

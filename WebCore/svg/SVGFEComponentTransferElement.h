@@ -26,7 +26,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
-#include "SVGFEComponentTransfer.h"
+#include "FEComponentTransfer.h"
 
 namespace WebCore
 {

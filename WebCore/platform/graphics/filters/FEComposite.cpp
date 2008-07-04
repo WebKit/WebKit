@@ -22,48 +22,84 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFEColorMatrix.h"
+#include "FEComposite.h"
 
 namespace WebCore {
 
-FEColorMatrix::FEColorMatrix(FilterEffect* in, ColorMatrixType type, const Vector<float>& values)
+FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
+    const float& k1, const float& k2, const float& k3, const float& k4)
     : FilterEffect()
     , m_in(in)
+    , m_in2(in2)
     , m_type(type)
-    , m_values(values)
+    , m_k1(k1)
+    , m_k2(k2)
+    , m_k3(k3)
+    , m_k4(k4)
 {
 }
 
-PassRefPtr<FEColorMatrix> FEColorMatrix::create(FilterEffect* in, ColorMatrixType type, const Vector<float>& values)
+PassRefPtr<FEComposite> FEComposite::create(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
+    const float& k1, const float& k2, const float& k3, const float& k4)
 {
-    return adoptRef(new FEColorMatrix(in, type, values));
+    return adoptRef(new FEComposite(in, in2, type, k1, k2, k3, k4));
 }
 
-ColorMatrixType FEColorMatrix::type() const
+CompositeOperationType FEComposite::operation() const
 {
     return m_type;
 }
 
-void FEColorMatrix::setType(ColorMatrixType type)
+void FEComposite::setOperation(CompositeOperationType type)
 {
     m_type = type;
 }
 
-const Vector<float>& FEColorMatrix::values() const
+float FEComposite::k1() const
 {
-    return m_values;
+    return m_k1;
 }
 
-void FEColorMatrix::setValues(const Vector<float> &values)
+void FEComposite::setK1(float k1)
 {
-    m_values = values;
+    m_k1 = k1;
 }
 
-void FEColorMatrix::apply()
+float FEComposite::k2() const
+{
+    return m_k2;
+}
+
+void FEComposite::setK2(float k2)
+{
+    m_k2 = k2;
+}
+
+float FEComposite::k3() const
+{
+    return m_k3;
+}
+
+void FEComposite::setK3(float k3)
+{
+    m_k3 = k3;
+}
+
+float FEComposite::k4() const
+{
+    return m_k4;
+}
+
+void FEComposite::setK4(float k4)
+{
+    m_k4 = k4;
+}
+
+void FEComposite::apply()
 {
 }
 
-void FEColorMatrix::dump()
+void FEComposite::dump()
 {
 }
 
