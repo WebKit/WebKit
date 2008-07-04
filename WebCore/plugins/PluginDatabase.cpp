@@ -264,15 +264,17 @@ void PluginDatabase::remove(PluginPackage* package)
     m_pluginsByPath.remove(package->path());
 }
 
-#if PLATFORM(GTK) || (PLATFORM(QT) && defined(Q_WS_X11))
+#if !PLATFORM(WIN)
+// For Safari/Win the following three methods are implemented
+// in PluginDatabaseWin.cpp, but if we can use WebCore constructs
+// for the logic we should perhaps move it here under XP_WIN?
 
-#if PLATFORM(GTK)
-#include <gdkconfig.h>
-#endif
-
-static void addMozillaPluginDirectories(Vector<String>& paths)
+Vector<String> PluginDatabase::defaultPluginDirectories()
 {
-#if PLATFORM(QT) || defined(GDK_WINDOWING_X11)
+    Vector<String> paths;
+
+    // Add paths specific to each platform
+#if defined(XP_UNIX)
     String userPluginPath = homeDirectoryPath();
     userPluginPath.append(String("/.mozilla/plugins"));
     paths.append(userPluginPath);
@@ -306,19 +308,18 @@ static void addMozillaPluginDirectories(Vector<String>& paths)
     String mozPath(getenv("MOZ_PLUGIN_PATH"));
     mozPath.split(UChar(':'), /* allowEmptyEntries */ false, mozPaths);
     paths.append(mozPaths);
+#elif defined(XP_MACOSX)
+    String userPluginPath = homeDirectoryPath();
+    userPluginPath.append(String("/Library/Internet Plug-Ins"));
+    paths.append(userPluginPath);
+    paths.append("/Library/Internet Plug-Ins");
+#elif defined(XP_WIN)
+    String userPluginPath = homeDirectoryPath();
+    userPluginPath.append(String("\\Application Data\\Mozilla\\plugins"));
+    paths.append(userPluginPath);
 #endif
 
-#if defined(GDK_WINDOWING_WIN32)
-    gchar* directory = g_build_filename(g_get_home_dir(), "Application Data", "Mozilla", "plugins", NULL);
-    paths.append(directory);
-    g_free(directory);
-#endif
-}
-
-Vector<String> PluginDatabase::defaultPluginDirectories()
-{
-    Vector<String> paths;
-
+    // Add paths specific to each port
 #if PLATFORM(QT)
     Vector<String> qtPaths;
     String qtPath(getenv("QTWEBKIT_PLUGIN_PATH"));
@@ -326,21 +327,48 @@ Vector<String> PluginDatabase::defaultPluginDirectories()
     paths.append(qtPaths);
 #endif
 
-    addMozillaPluginDirectories(paths);
-
     return paths;
 }
 
-#if PLATFORM(QT) || (PLATFORM(GTK) && !defined(GDK_WINDOWING_WIN32))
 bool PluginDatabase::isPreferredPluginDirectory(const String& path)
 {
-    // TODO: We should normalize the path before doing a comparison.
-    String prefPath = homeDirectoryPath();
-    prefPath.append(String("/.mozilla/plugins"));
+    String preferredPath = homeDirectoryPath();
 
-    return path == prefPath;
-}
+#if defined(XP_UNIX)
+    preferredPath.append(String("/.mozilla/plugins"));
+#elif defined(XP_MACOSX)
+    preferredPath.append(String("/Library/Internet Plug-Ins"));
+#elif defined(XP_WIN)
+    preferredPath.append(String("\\Application Data\\Mozilla\\plugins"));
 #endif
+
+    // TODO: We should normalize the path before doing a comparison.
+    return path == preferredPath;
+}
+
+void PluginDatabase::getPluginPathsInDirectories(HashSet<String>& paths) const
+{
+    // FIXME: This should be a case insensitive set.
+    HashSet<String> uniqueFilenames;
+
+#if defined(XP_UNIX)
+    String fileNameFilter("*.so");
+#else
+    String fileNameFilter("");
+#endif
+
+    Vector<String>::const_iterator dirsEnd = m_pluginDirectories.end();
+    for (Vector<String>::const_iterator dIt = m_pluginDirectories.begin(); dIt != dirsEnd; ++dIt) {
+        Vector<String> pluginPaths = listDirectory(*dIt, fileNameFilter);
+        Vector<String>::const_iterator pluginsEnd = pluginPaths.end();
+        for (Vector<String>::const_iterator pIt = pluginPaths.begin(); pIt != pluginsEnd; ++pIt) {
+            if (!fileExists(*pIt))
+                continue;
+
+            paths.add(*pIt);
+        }
+    }
+}
 
 #endif
 

@@ -1044,7 +1044,6 @@ webcore_sources += \
 
 webcoregtk_sources += \
 	WebCore/plugins/gtk/PluginDataGtk.cpp \
-	WebCore/plugins/gtk/PluginDatabaseGtk.cpp \
 	WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	WebCore/plugins/gtk/PluginViewGtk.cpp
 

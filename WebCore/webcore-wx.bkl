@@ -95,7 +95,6 @@ wxWebCore port Bakefile project file.
             platform/network/curl/ResourceHandleCurl.cpp
             platform/network/curl/ResourceHandleManager.cpp
             
-            plugins/wx/PluginDatabaseWx.cpp
             plugins/wx/PluginDataWx.cpp
             plugins/wx/PluginPackageWx.cpp
             plugins/wx/PluginViewWx.cpp

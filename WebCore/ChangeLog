@@ -1,3 +1,27 @@
+2008-07-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Move duplicated code from each PluginDatabaseXX-implementation
+        to PluginDabase.cpp -- ifdefed based on the XP_PLATFORM we are
+        compiling plugins for.
+
+        This make the code cleaner and we can share common patterns.
+        The only implementation left which is specific is the Win
+        implementation (also used by QtWebKit/Win), but we might
+        want to move that too.
+
+        * GNUmakefile.am: Removed PluginDatabaseGtk.cpp from the build.
+        * WebCore.pro: Removed PluginDatabaseQt.cpp from the build.
+        * plugins/PluginDatabase.cpp:
+        (WebCore::PluginDatabase::defaultPluginDirectories):
+        (WebCore::PluginDatabase::isPreferredPluginDirectory):
+        (WebCore::PluginDatabase::getPluginPathsInDirectories):
+        * plugins/gtk/PluginDatabaseGtk.cpp: Removed.
+        * plugins/qt/PluginDatabaseQt.cpp: Removed.
+        * plugins/wx/PluginDatabaseWx.cpp: Removed.
+        * webcore-wx.bkl: Removed PluginDatabaseWx.cpp from the build.
+
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Wx build.

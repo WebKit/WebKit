@@ -1049,7 +1049,6 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
         unix:!mac {
             SOURCES += \
                 plugins/qt/PluginPackageQt.cpp \
-                plugins/qt/PluginDatabaseQt.cpp \
                 plugins/qt/PluginViewQt.cpp
     }
 
