@@ -37,4 +37,11 @@ String homeDirectoryPath()
     return NSHomeDirectory();
 }
 
+Vector<String> listDirectory(const String& path, const String& filter)
+{
+    Vector<String> entries;
+    notImplemented();
+    return entries;
+}
+
 } // namespace WebCore

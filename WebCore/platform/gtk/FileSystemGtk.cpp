@@ -146,6 +146,28 @@ String directoryName(const String& path)
     return String();
 }
 
+Vector<String> listDirectory(const String& path, const String& filter)
+{
+    Vector<String> entries;
+
+    GDir* dir = g_dir_open((path.utf8()).data(), 0, 0);
+    if (!dir)
+        return entries;
+
+    GPatternSpec *pspec = g_pattern_spec_new((filter.utf8()).data());
+    while (const char* name = g_dir_read_name(dir)) {
+        if (!g_pattern_match_string(pspec, name))
+            continue;
+
+        gchar* entry = g_build_filename((path.utf8()).data(), name, NULL);
+        entries.append(entry);
+        g_free(entry);
+    }
+    g_dir_close(dir);
+
+    return entries;
+}
+
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
     gchar* filename = g_strdup_printf("%sXXXXXX", prefix);

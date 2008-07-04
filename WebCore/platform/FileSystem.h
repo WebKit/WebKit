@@ -44,13 +44,15 @@
 #include <time.h>
 
 #include <wtf/Platform.h>
+#include <wtf/Vector.h>
+
+#include "PlatformString.h"
 
 typedef const struct __CFData* CFDataRef;
 
 namespace WebCore {
 
 class CString;
-class String;
 
 #if PLATFORM(WIN)
 typedef HANDLE PlatformFileHandle;
@@ -124,6 +126,8 @@ bool makeAllDirectories(const String& path);
 String homeDirectoryPath();
 String pathGetFileName(const String&);
 String directoryName(const String&);
+
+Vector<String> listDirectory(const String& path, const String& filter = String());
 
 CString fileSystemRepresentation(const String&);
 

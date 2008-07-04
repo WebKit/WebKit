@@ -100,6 +100,19 @@ String directoryName(const String& path)
     return String(QFileInfo(path).baseName());
 }
 
+Vector<String> listDirectory(const String& path, const String& filter)
+{
+    Vector<String> entries;
+
+    QFileInfoList fileInfoList = QDir(path).entryInfoList(QStringList(filter));
+    foreach (const QFileInfo fileInfo, fileInfoList) {
+        String entry = String(fileInfo.absoluteFilePath());
+        entries.append(entry);
+    }
+
+    return entries;
+}
+
 CString openTemporaryFile(const char* prefix, PlatformFileHandle& handle)
 {
     QFile *temp = new QTemporaryFile(QString(prefix));
