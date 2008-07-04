@@ -26,62 +26,45 @@
 
 namespace WebCore {
 
-SVGFEColorMatrix::SVGFEColorMatrix(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_type(SVG_FECOLORMATRIX_TYPE_UNKNOWN)
+FEColorMatrix::FEColorMatrix(FilterEffect* in, ColorMatrixType type, const Vector<float>& values)
+    : FilterEffect()
+    , m_in(in)
+    , m_type(type)
+    , m_values(values)
 {
 }
 
-PassRefPtr<SVGFEColorMatrix> SVGFEColorMatrix::create(SVGResourceFilter* filter)
+PassRefPtr<FEColorMatrix> FEColorMatrix::create(FilterEffect* in, ColorMatrixType type, const Vector<float>& values)
 {
-    return adoptRef(new SVGFEColorMatrix(filter));
+    return adoptRef(new FEColorMatrix(in, type, values));
 }
 
-SVGColorMatrixType SVGFEColorMatrix::type() const
+ColorMatrixType FEColorMatrix::type() const
 {
     return m_type;
 }
 
-void SVGFEColorMatrix::setType(SVGColorMatrixType type)
+void FEColorMatrix::setType(ColorMatrixType type)
 {
     m_type = type;
 }
 
-const Vector<float>& SVGFEColorMatrix::values() const
+const Vector<float>& FEColorMatrix::values() const
 {
     return m_values;
 }
 
-void SVGFEColorMatrix::setValues(const Vector<float> &values)
+void FEColorMatrix::setValues(const Vector<float> &values)
 {
     m_values = values;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGColorMatrixType t)
+void FEColorMatrix::apply()
 {
-    switch (t)
-    {
-        case SVG_FECOLORMATRIX_TYPE_UNKNOWN:
-            ts << "UNKNOWN"; break;
-        case SVG_FECOLORMATRIX_TYPE_MATRIX:
-            ts << "CMT_MATRIX"; break;
-        case SVG_FECOLORMATRIX_TYPE_SATURATE:
-            ts << "CMT_SATURATE"; break;
-        case SVG_FECOLORMATRIX_TYPE_HUEROTATE:
-            ts << "HUE-ROTATE"; break;
-        case SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
-            ts << "LUMINANCE-TO-ALPHA"; break;
-    }
-    return ts;
 }
 
-TextStream& SVGFEColorMatrix::externalRepresentation(TextStream& ts) const
+void FEColorMatrix::dump()
 {
-    ts << "[type=COLOR-MATRIX] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    ts << " [color matrix type=" << type() << "]"
-        << " [values=" << values() << "]";
-    return ts;
 }
 
 } // namespace WebCore

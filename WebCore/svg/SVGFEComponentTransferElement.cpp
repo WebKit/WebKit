@@ -57,26 +57,39 @@ void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEComponentTransfer* SVGFEComponentTransferElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFEComponentTransferElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEComponentTransfer::create(filter);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+bool SVGFEComponentTransferElement::build(FilterBuilder* builder)
+{
+    FilterEffect* input1 = builder->getEffectById(in1());
     
-    m_filterEffect->setIn(in1());
-    setStandardAttributes(m_filterEffect.get());
+    if(!input1)
+        return false;
+
+    ComponentTransferFunction red;
+    ComponentTransferFunction green;
+    ComponentTransferFunction blue;
+    ComponentTransferFunction alpha;
     
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
         if (n->hasTagName(SVGNames::feFuncRTag))
-            m_filterEffect->setRedFunction(static_cast<SVGFEFuncRElement*>(n)->transferFunction());
+            red = static_cast<SVGFEFuncRElement*>(n)->transferFunction();
         else if (n->hasTagName(SVGNames::feFuncGTag))
-            m_filterEffect->setGreenFunction(static_cast<SVGFEFuncGElement*>(n)->transferFunction());
+            green = static_cast<SVGFEFuncGElement*>(n)->transferFunction();
         else if (n->hasTagName(SVGNames::feFuncBTag))
-            m_filterEffect->setBlueFunction(static_cast<SVGFEFuncBElement*>(n)->transferFunction());
+           blue = static_cast<SVGFEFuncBElement*>(n)->transferFunction();
         else if (n->hasTagName(SVGNames::feFuncATag))
-            m_filterEffect->setAlphaFunction(static_cast<SVGFEFuncAElement*>(n)->transferFunction());
+            alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
-
-    return m_filterEffect.get();
+    
+    RefPtr<FilterEffect> addedEffect = FEComponentTransfer::create(input1, red, green, blue, alpha);
+    builder->add(result(), addedEffect.release());
+    
+    return true;
 }
 
 }

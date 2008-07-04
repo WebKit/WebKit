@@ -23,93 +23,84 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEComposite.h"
-#include "TextStream.h"
 
 namespace WebCore {
 
-SVGFEComposite::SVGFEComposite(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_operation(SVG_FECOMPOSITE_OPERATOR_UNKNOWN)
-    , m_k1(0.0f)
-    , m_k2(0.0f)
-    , m_k3(0.0f)
-    , m_k4(0.0f)
+FEComposite::FEComposite(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
+    const float& k1, const float& k2, const float& k3, const float& k4)
+    : FilterEffect()
+    , m_in(in)
+    , m_in2(in2)
+    , m_type(type)
+    , m_k1(k1)
+    , m_k2(k2)
+    , m_k3(k3)
+    , m_k4(k4)
 {
 }
 
-PassRefPtr<SVGFEComposite> SVGFEComposite::create(SVGResourceFilter* filter)
+PassRefPtr<FEComposite> FEComposite::create(FilterEffect* in, FilterEffect* in2, const CompositeOperationType& type,
+    const float& k1, const float& k2, const float& k3, const float& k4)
 {
-    return adoptRef(new SVGFEComposite(filter));
+    return adoptRef(new FEComposite(in, in2, type, k1, k2, k3, k4));
 }
 
-String SVGFEComposite::in2() const
+CompositeOperationType FEComposite::operation() const
 {
-    return m_in2;
+    return m_type;
 }
 
-void SVGFEComposite::setIn2(const String& in2)
+void FEComposite::setOperation(CompositeOperationType type)
 {
-    m_in2 = in2;
+    m_type = type;
 }
 
-SVGCompositeOperationType SVGFEComposite::operation() const
-{
-    return m_operation;
-}
-
-void SVGFEComposite::setOperation(SVGCompositeOperationType oper)
-{
-    m_operation = oper;
-}
-
-float SVGFEComposite::k1() const
+float FEComposite::k1() const
 {
     return m_k1;
 }
 
-void SVGFEComposite::setK1(float k1)
+void FEComposite::setK1(float k1)
 {
     m_k1 = k1;
 }
 
-float SVGFEComposite::k2() const
+float FEComposite::k2() const
 {
     return m_k2;
 }
 
-void SVGFEComposite::setK2(float k2)
+void FEComposite::setK2(float k2)
 {
     m_k2 = k2;
 }
 
-float SVGFEComposite::k3() const
+float FEComposite::k3() const
 {
     return m_k3;
 }
 
-void SVGFEComposite::setK3(float k3)
+void FEComposite::setK3(float k3)
 {
     m_k3 = k3;
 }
 
-float SVGFEComposite::k4() const
+float FEComposite::k4() const
 {
     return m_k4;
 }
 
-void SVGFEComposite::setK4(float k4)
+void FEComposite::setK4(float k4)
 {
     m_k4 = k4;
 }
 
-TextStream& SVGFEComposite::externalRepresentation(TextStream& ts) const
+void FEComposite::apply()
 {
-    ts << "[type=COMPOSITE] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    if (!in2().isEmpty())
-        ts << " [in2=\"" << in2() << "\"]";
-    ts << " [k1=" << k1() << " k2=" << k2() << " k3=" << k3() << " k4=" << k4() << "]";
-    return ts;
+}
+
+void FEComposite::dump()
+{
 }
 
 } // namespace WebCore

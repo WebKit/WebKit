@@ -1,3 +1,86 @@
+2008-07-03  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 19835: WebKit needs cross-platform filter system
+        <https://bugs.webkit.org/show_bug.cgi?id=19835>
+
+        More class refactoring in preparation for cross-platform filter
+        implementation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/FilterEffect.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement):
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute):
+        (WebCore::SVGComponentTransferFunctionElement::transferFunction):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::SVGFEColorMatrixElement):
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute):
+        (WebCore::SVGFEColorMatrixElement::filterEffect):
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::filterEffect):
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::SVGFECompositeElement):
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        (WebCore::SVGFECompositeElement::filterEffect):
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFECompositeElement.h:
+        * svg/graphics/filters/SVGFEBlend.cpp:
+        * svg/graphics/filters/SVGFEBlend.h:
+        * svg/graphics/filters/SVGFEColorMatrix.cpp:
+        (WebCore::FEColorMatrix::FEColorMatrix):
+        (WebCore::FEColorMatrix::create):
+        (WebCore::FEColorMatrix::type):
+        (WebCore::FEColorMatrix::setType):
+        (WebCore::FEColorMatrix::values):
+        (WebCore::FEColorMatrix::setValues):
+        (WebCore::FEColorMatrix::apply):
+        (WebCore::FEColorMatrix::dump):
+        * svg/graphics/filters/SVGFEColorMatrix.h:
+        (WebCore::):
+        * svg/graphics/filters/SVGFEComponentTransfer.cpp:
+        (WebCore::FEComponentTransfer::FEComponentTransfer):
+        (WebCore::FEComponentTransfer::create):
+        (WebCore::FEComponentTransfer::redFunction):
+        (WebCore::FEComponentTransfer::setRedFunction):
+        (WebCore::FEComponentTransfer::greenFunction):
+        (WebCore::FEComponentTransfer::setGreenFunction):
+        (WebCore::FEComponentTransfer::blueFunction):
+        (WebCore::FEComponentTransfer::setBlueFunction):
+        (WebCore::FEComponentTransfer::alphaFunction):
+        (WebCore::FEComponentTransfer::setAlphaFunction):
+        (WebCore::FEComponentTransfer::apply):
+        (WebCore::FEComponentTransfer::dump):
+        * svg/graphics/filters/SVGFEComponentTransfer.h:
+        (WebCore::):
+        (WebCore::ComponentTransferFunction::ComponentTransferFunction):
+        * svg/graphics/filters/SVGFEComposite.cpp:
+        (WebCore::FEComposite::FEComposite):
+        (WebCore::FEComposite::create):
+        (WebCore::FEComposite::operation):
+        (WebCore::FEComposite::setOperation):
+        (WebCore::FEComposite::k1):
+        (WebCore::FEComposite::setK1):
+        (WebCore::FEComposite::k2):
+        (WebCore::FEComposite::setK2):
+        (WebCore::FEComposite::k3):
+        (WebCore::FEComposite::setK3):
+        (WebCore::FEComposite::k4):
+        (WebCore::FEComposite::setK4):
+        (WebCore::FEComposite::apply):
+        (WebCore::FEComposite::dump):
+        * svg/graphics/filters/SVGFEComposite.h:
+        (WebCore::):
+        * svg/graphics/filters/cg/SVGFEColorMatrixCg.mm: Removed.
+        * svg/graphics/filters/cg/SVGFEComponentTransferCg.mm: Removed.
+        * svg/graphics/filters/cg/SVGFECompositeCg.mm: Removed.
+
 2008-07-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

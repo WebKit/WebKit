@@ -41,7 +41,7 @@ namespace WebCore
         // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute* attr);
         
-        SVGComponentTransferFunction transferFunction() const;
+        ComponentTransferFunction transferFunction() const;
 
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)

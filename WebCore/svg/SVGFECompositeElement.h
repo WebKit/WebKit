@@ -24,6 +24,7 @@
 #define SVGFECompositeElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#include "FilterBuilder.h"
 #include "SVGFEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
@@ -37,7 +38,8 @@ namespace WebCore
         virtual ~SVGFECompositeElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFEComposite* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -51,7 +53,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K3, k3)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFECompositeElement, float, float, K4, k4)
 
-        mutable RefPtr<SVGFEComposite> m_filterEffect;
+        mutable RefPtr<FEComposite> m_filterEffect;
     };
 
 } // namespace WebCore

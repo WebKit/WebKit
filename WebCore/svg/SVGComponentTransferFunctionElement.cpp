@@ -33,7 +33,7 @@ namespace WebCore {
 
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_type(SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN)
+    , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
     , m_tableValues(SVGNumberList::create(SVGNames::tableValuesAttr))
     , m_slope(1.0f)
     , m_intercept(0.0f)
@@ -61,15 +61,15 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* 
     if (attr->name() == SVGNames::typeAttr)
     {
         if (value == "identity")
-            setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY);
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_IDENTITY);
         else if (value == "table")
-            setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_TABLE);
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_TABLE);
         else if (value == "discrete")
-            setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE);
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_DISCRETE);
         else if (value == "linear")
-            setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_LINEAR);
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_LINEAR);
         else if (value == "gamma")
-            setTypeBaseValue(SVG_FECOMPONENTTRANSFER_TYPE_GAMMA);
+            setTypeBaseValue(FECOMPONENTTRANSFER_TYPE_GAMMA);
     }
     else if (attr->name() == SVGNames::tableValuesAttr)
         tableValuesBaseValue()->parse(value);
@@ -87,10 +87,10 @@ void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* 
         SVGElement::parseMappedAttribute(attr);
 }
 
-SVGComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
+ComponentTransferFunction SVGComponentTransferFunctionElement::transferFunction() const
 {
-    SVGComponentTransferFunction func;
-    func.type = (SVGComponentTransferType) type();
+    ComponentTransferFunction func;
+    func.type = (ComponentTransferType) type();
     func.slope = slope();
     func.intercept = intercept();
     func.amplitude = amplitude();

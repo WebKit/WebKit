@@ -23,123 +23,72 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEComponentTransfer.h"
-#include "TextStream.h"
 
 namespace WebCore {
 
-SVGFEComponentTransfer::SVGFEComponentTransfer(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
+FEComponentTransfer::FEComponentTransfer(FilterEffect* in, const ComponentTransferFunction& redFunc, 
+    const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
+    : FilterEffect()
+    , m_in(in)
+    , m_redFunc(redFunc)
+    , m_greenFunc(greenFunc)
+    , m_blueFunc(blueFunc)
+    , m_alphaFunc(alphaFunc)
 {
 }
 
-PassRefPtr<SVGFEComponentTransfer> SVGFEComponentTransfer::create(SVGResourceFilter* filter)
+PassRefPtr<FEComponentTransfer> FEComponentTransfer::create(FilterEffect* in, const ComponentTransferFunction& redFunc, 
+    const ComponentTransferFunction& greenFunc, const ComponentTransferFunction& blueFunc, const ComponentTransferFunction& alphaFunc)
 {
-    return adoptRef(new SVGFEComponentTransfer(filter));
+    return adoptRef(new FEComponentTransfer(in, redFunc, greenFunc, blueFunc, alphaFunc));
 }
 
-SVGComponentTransferFunction SVGFEComponentTransfer::redFunction() const
+ComponentTransferFunction FEComponentTransfer::redFunction() const
 {
     return m_redFunc;
 }
 
-void SVGFEComponentTransfer::setRedFunction(const SVGComponentTransferFunction& func)
+void FEComponentTransfer::setRedFunction(const ComponentTransferFunction& func)
 {
     m_redFunc = func;
 }
 
-SVGComponentTransferFunction SVGFEComponentTransfer::greenFunction() const
+ComponentTransferFunction FEComponentTransfer::greenFunction() const
 {
     return m_greenFunc;
 }
 
-void SVGFEComponentTransfer::setGreenFunction(const SVGComponentTransferFunction& func)
+void FEComponentTransfer::setGreenFunction(const ComponentTransferFunction& func)
 {
     m_greenFunc = func;
 }
 
-SVGComponentTransferFunction SVGFEComponentTransfer::blueFunction() const
+ComponentTransferFunction FEComponentTransfer::blueFunction() const
 {
     return m_blueFunc;
 }
 
-void SVGFEComponentTransfer::setBlueFunction(const SVGComponentTransferFunction& func)
+void FEComponentTransfer::setBlueFunction(const ComponentTransferFunction& func)
 {
     m_blueFunc = func;
 }
 
-SVGComponentTransferFunction SVGFEComponentTransfer::alphaFunction() const
+ComponentTransferFunction FEComponentTransfer::alphaFunction() const
 {
     return m_alphaFunc;
 }
 
-void SVGFEComponentTransfer::setAlphaFunction(const SVGComponentTransferFunction& func)
+void FEComponentTransfer::setAlphaFunction(const ComponentTransferFunction& func)
 {
     m_alphaFunc = func;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGComponentTransferType t)
+void FEComponentTransfer::apply()
 {
-    switch (t)
-    {
-        case SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN:
-            ts << "UNKNOWN"; break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY:
-            ts << "IDENTITY"; break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_TABLE:
-            ts << "TABLE"; break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE:
-            ts << "DISCRETE"; break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_LINEAR:
-            ts << "LINEAR"; break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_GAMMA:
-            ts << "GAMMA"; break;
-    }
-    return ts;
 }
 
-static TextStream& operator<<(TextStream& ts, const SVGComponentTransferFunction &func)
+void FEComponentTransfer::dump()
 {
-    ts << "[type=" << func.type << "]";
-    switch (func.type) {
-        case SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN:
-        case SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY:
-            break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_TABLE:
-        case SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE:
-        {
-            ts << " [table values=";
-            Vector<float>::const_iterator itr=func.tableValues.begin();
-            if (itr != func.tableValues.end()) {
-                ts << *itr++;
-                for (; itr!=func.tableValues.end(); itr++) {
-                    ts << " " << *itr;
-                }
-            }
-            ts << "]";
-            break;
-        }
-        case SVG_FECOMPONENTTRANSFER_TYPE_LINEAR:
-            ts << " [slope=" << func.slope << "]"
-               << " [intercept=" << func.intercept << "]";
-            break;
-        case SVG_FECOMPONENTTRANSFER_TYPE_GAMMA:
-            ts << " [amplitude=" << func.amplitude << "]"
-               << " [exponent=" << func.exponent << "]"
-               << " [offset=" << func.offset << "]";
-            break;
-    }
-    return ts;
-}
-
-TextStream& SVGFEComponentTransfer::externalRepresentation(TextStream& ts) const
-{
-    ts << "[type=COMPONENT-TRANSFER] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    ts << " [red func=" << redFunction() << "]"
-        << " [green func=" << greenFunction() << "]"
-        << " [blue func=" << blueFunction() << "]"
-        << " [alpha func=" << alphaFunction() << "]";
-    return ts;
 }
 
 } // namespace WebCore

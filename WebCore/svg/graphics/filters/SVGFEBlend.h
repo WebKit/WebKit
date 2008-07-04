@@ -24,7 +24,6 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "FilterEffect.h"
-#include "SVGFilterEffect.h"
 
 namespace WebCore {
 

@@ -23,87 +23,74 @@
 #define SVGFEComponentTransfer_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include <wtf/Vector.h>
-
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 #include "SVGFEDisplacementMap.h"
 
-#if PLATFORM(CI)
-#ifdef __OBJC__
-@class CIImage;
-@class CIFilter;
-#else
-class CIImage;
-class CIFilter;
-#endif
-#endif
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum SVGComponentTransferType {
-    SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0,
-    SVG_FECOMPONENTTRANSFER_TYPE_IDENTITY = 1,
-    SVG_FECOMPONENTTRANSFER_TYPE_TABLE    = 2,
-    SVG_FECOMPONENTTRANSFER_TYPE_DISCRETE = 3,
-    SVG_FECOMPONENTTRANSFER_TYPE_LINEAR   = 4,
-    SVG_FECOMPONENTTRANSFER_TYPE_GAMMA    = 5
-};
+    enum ComponentTransferType {
+        FECOMPONENTTRANSFER_TYPE_UNKNOWN  = 0,
+        FECOMPONENTTRANSFER_TYPE_IDENTITY = 1,
+        FECOMPONENTTRANSFER_TYPE_TABLE    = 2,
+        FECOMPONENTTRANSFER_TYPE_DISCRETE = 3,
+        FECOMPONENTTRANSFER_TYPE_LINEAR   = 4,
+        FECOMPONENTTRANSFER_TYPE_GAMMA    = 5
+    };
 
-struct SVGComponentTransferFunction {
-    SVGComponentTransferFunction()
-        : type(SVG_FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-        , slope(0.0f)
-        , intercept(0.0f)
-        , amplitude(0.0f)
-        , exponent(0.0f)
-        , offset(0.0f)
-    {
-    }
+    struct ComponentTransferFunction {
+        ComponentTransferFunction()
+            : type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
+            , slope(0.0f)
+            , intercept(0.0f)
+            , amplitude(0.0f)
+            , exponent(0.0f)
+            , offset(0.0f)
+        {
+        }
 
-    SVGComponentTransferType type;
+        ComponentTransferType type;
 
-    float slope;
-    float intercept;
-    float amplitude;
-    float exponent;
-    float offset;
+        float slope;
+        float intercept;
+        float amplitude;
+        float exponent;
+        float offset;
 
-    Vector<float> tableValues;
-};
+        Vector<float> tableValues;
+    };
 
-class SVGFEComponentTransfer : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEComponentTransfer> create(SVGResourceFilter*);
+    class FEComponentTransfer : public FilterEffect {
+    public:
+        static PassRefPtr<FEComponentTransfer> create(FilterEffect*, const ComponentTransferFunction&, 
+                const ComponentTransferFunction&, const ComponentTransferFunction&, const ComponentTransferFunction&);
 
-    SVGComponentTransferFunction redFunction() const;
-    void setRedFunction(const SVGComponentTransferFunction&);
+        ComponentTransferFunction redFunction() const;
+        void setRedFunction(const ComponentTransferFunction&);
 
-    SVGComponentTransferFunction greenFunction() const;
-    void setGreenFunction(const SVGComponentTransferFunction&);
+        ComponentTransferFunction greenFunction() const;
+        void setGreenFunction(const ComponentTransferFunction&);
 
-    SVGComponentTransferFunction blueFunction() const;
-    void setBlueFunction(const SVGComponentTransferFunction&);
+        ComponentTransferFunction blueFunction() const;
+        void setBlueFunction(const ComponentTransferFunction&);
 
-    SVGComponentTransferFunction alphaFunction() const;
-    void setAlphaFunction(const SVGComponentTransferFunction&);
+        ComponentTransferFunction alphaFunction() const;
+        void setAlphaFunction(const ComponentTransferFunction&);
+        
+        virtual void apply();
+        virtual void dump();
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+    private:
+        FEComponentTransfer(FilterEffect*,const ComponentTransferFunction&, const ComponentTransferFunction&,
+                const ComponentTransferFunction&, const ComponentTransferFunction&);
 
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-
-private:
-    CIFilter* getFunctionFilter(SVGChannelSelectorType, CIImage* inputImage) const;
-#endif
-
-private:
-    SVGFEComponentTransfer(SVGResourceFilter*);
-
-    SVGComponentTransferFunction m_redFunc;
-    SVGComponentTransferFunction m_greenFunc;
-    SVGComponentTransferFunction m_blueFunc;
-    SVGComponentTransferFunction m_alphaFunc;
-};
+        RefPtr<FilterEffect> m_in;
+        ComponentTransferFunction m_redFunc;
+        ComponentTransferFunction m_greenFunc;
+        ComponentTransferFunction m_blueFunc;
+        ComponentTransferFunction m_alphaFunc;
+    };
 
 } // namespace WebCore
 

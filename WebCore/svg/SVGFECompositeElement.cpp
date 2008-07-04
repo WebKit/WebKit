@@ -32,7 +32,7 @@ namespace WebCore {
 
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m__operator(SVG_FECOMPOSITE_OPERATOR_OVER)
+    , m__operator(FECOMPOSITE_OPERATOR_OVER)
     , m_k1(0.0f)
     , m_k2(0.0f)
     , m_k3(0.0f)
@@ -58,17 +58,17 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr) {
         if (value == "over")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OVER);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_OVER);
         else if (value == "in")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_IN);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_IN);
         else if (value == "out")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_OUT);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_OUT);
         else if (value == "atop")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ATOP);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_ATOP);
         else if (value == "xor")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_XOR);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_XOR);
         else if (value == "arithmetic")
-            set_operatorBaseValue(SVG_FECOMPOSITE_OPERATOR_ARITHMETIC);
+            set_operatorBaseValue(FECOMPOSITE_OPERATOR_ARITHMETIC);
     }
     else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
@@ -86,21 +86,25 @@ void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEComposite* SVGFECompositeElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFECompositeElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEComposite::create(filter);
-    
-    m_filterEffect->setOperation((SVGCompositeOperationType) _operator());
-    m_filterEffect->setIn(in1());
-    m_filterEffect->setIn2(in2());
-    m_filterEffect->setK1(k1());
-    m_filterEffect->setK2(k2());
-    m_filterEffect->setK3(k3());
-    m_filterEffect->setK4(k4());
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
-    setStandardAttributes(m_filterEffect.get());
-    return m_filterEffect.get();
+bool SVGFECompositeElement::build(FilterBuilder* builder)
+{
+    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input2 = builder->getEffectById(in2());
+    
+    if(!input1 || !input2)
+        return false;
+    
+    RefPtr<FilterEffect> addedEffect = FEComposite::create(input1, input2, static_cast<CompositeOperationType> (_operator()),
+        k1(), k2(), k3(), k4());
+    builder->add(result(), addedEffect.release());
+
+    return true;
 }
 
 }
