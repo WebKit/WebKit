@@ -1,3 +1,15 @@
+2008-07-03  Mark Rowe  <mrowe@apple.com>
+
+        Follow-up to the 64-bit build fix.  Use intptr_t rather than ssize_t as
+        the latter is non-standard and does not exist on Windows.
+
+        * kjs/JSLock.cpp:
+        (KJS::JSLock::lockCount):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::JSLock::DropAllLocks::DropAllLocks):
+        * kjs/JSLock.h:
+
 2008-07-02  Mark Rowe  <mrowe@apple.com>
 
         Fix the 64-bit build.  pthread_getspecific works with pointer-sized values,
