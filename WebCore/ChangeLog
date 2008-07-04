@@ -1,5 +1,11 @@
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Gtk build, adapt to renamed files.
+
+        * GNUmakefile.am:
+
+2008-07-04  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build, adapt to renamed files.
 
         * WebCore.pro:

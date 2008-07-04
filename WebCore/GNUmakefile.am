@@ -903,6 +903,10 @@ webcore_sources += \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragImage.cpp \
 	WebCore/platform/FileChooser.cpp \
+	WebCore/platform/graphics/filters/FEBlend.cpp \
+	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
+	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
+	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/platform/graphics/AffineTransform.cpp \
 	WebCore/platform/graphics/BitmapImage.cpp \
 	WebCore/platform/graphics/Color.cpp \
@@ -2024,10 +2028,6 @@ webcore_sources += \
 	WebCore/svg/animation/SMILTime.cpp \
 	WebCore/svg/animation/SMILTimeContainer.cpp \
 	WebCore/svg/animation/SVGSMILElement.cpp \
-	WebCore/svg/graphics/filters/SVGFEBlend.cpp \
-	WebCore/svg/graphics/filters/SVGFEColorMatrix.cpp \
-	WebCore/svg/graphics/filters/SVGFEComponentTransfer.cpp \
-	WebCore/svg/graphics/filters/SVGFEComposite.cpp \
 	WebCore/svg/graphics/filters/SVGFEConvolveMatrix.cpp \
 	WebCore/svg/graphics/filters/SVGFEDiffuseLighting.cpp \
 	WebCore/svg/graphics/filters/SVGFEDisplacementMap.cpp \
