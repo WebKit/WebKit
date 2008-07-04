@@ -28,6 +28,7 @@
 #import "config.h"
 #import "FileSystem.h"
 
+#import "NotImplemented.h"
 #import "PlatformString.h"
 
 namespace WebCore {
