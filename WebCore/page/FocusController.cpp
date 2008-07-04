@@ -299,7 +299,7 @@ void FocusController::setActive(bool active)
     // FIXME: It would be nice to make Mac use this implementation someday.
     // Right now Mac calls updateControlTints from within WebKit, and moving
     // the call to here is not simple.
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !PLATFORM(WX)
     if (FrameView* view = m_page->mainFrame()->view()) {
         view->layoutIfNeededRecursive();
         view->updateControlTints();

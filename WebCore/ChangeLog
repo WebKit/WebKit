@@ -1,5 +1,15 @@
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Wx build.
+
+        * WebCoreSources.bkl: Add plugins/PluginMainThreadScheduler.cpp to the
+        build.
+        * page/FocusController.cpp:
+        (WebCore::FocusController::setActive): Extend MAC #ifdef to WX as
+        layoutIfNeededRecursive does not exist for the Wx port.
+
+2008-07-04  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Gtk build, adapt to renamed files.
 
         * GNUmakefile.am:
