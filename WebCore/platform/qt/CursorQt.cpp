@@ -39,6 +39,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#undef CopyCursor
+
 namespace WebCore {
 
 Cursor::Cursor(PlatformCursor p)

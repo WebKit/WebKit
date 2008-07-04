@@ -73,9 +73,6 @@
 using namespace WebCore;
 
 #if !defined(Q_WS_X11)
-void PluginDatabase::getPluginPathsInDirectories(HashSet<String>&) const { notImplemented(); }
-Vector<String> PluginDatabase::defaultPluginDirectories() { notImplemented(); return Vector<String>(); }
-bool PluginDatabase::isPreferredPluginDirectory(const String&) { notImplemented(); return false; }
 void PluginView::setNPWindowRect(const IntRect&) { notImplemented(); }
 const char* PluginView::userAgent() { notImplemented(); return 0; }
 void PluginView::invalidateRect(NPRect*) { notImplemented(); }

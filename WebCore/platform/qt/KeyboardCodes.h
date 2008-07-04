@@ -28,8 +28,11 @@
 #ifndef KeyboardCodes_h
 #define KeyboardCodes_h
 
+#include <wtf/Platform.h>
+
 namespace WebCore {
 
+#if !PLATFORM(WIN_OS)
 // VK_LBUTTON (01) Left mouse button
 // VK_RBUTTON (02) Right mouse button
 // VK_CANCEL (03) Control-break processing
@@ -146,6 +149,8 @@ const int VK_DELETE = 0x2E;
 // VK_HELP (2F) HELP key
 const int VK_HELP = 0x2F;
 
+#endif // PLATFORM(WIN_OS)
+
 // (30) 0 key
 const int VK_0 = 0x30;
 
@@ -254,6 +259,8 @@ const int VK_Y = 0x59;
 
 // (5A) Z key
 const int VK_Z = 0x5A;
+
+#if !PLATFORM(WIN_OS)
 
 // VK_LWIN (5B) Left Windows key (Microsoft Natural keyboard)
 const int VK_LWIN = 0x5B;
@@ -538,6 +545,8 @@ const int VK_PA1 = 0xFD;
 const int VK_OEM_CLEAR = 0xFE;
 
 const int VK_UNKNOWN = 0;
+
+#endif // PLATFORM(WIN_OS)
 
 }
 

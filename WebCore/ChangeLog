@@ -1,5 +1,18 @@
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Qt/Windows build.
+
+        * WebCore.pro: Moved PluginMainThreadScheduler.cpp to the main
+        sources, so that it is always compiled.
+        * platform/qt/CursorQt.cpp: #undef CopyCursor, as it's defined by some
+        Windows header.
+        * platform/qt/KeyboardCodes.h: Don't re-define some of the keycodes
+        that are defined by Windows already.
+        * platform/qt/TemporaryLinkStubs.cpp: Removed the PluginDatabase stubs
+        that are now platform-independent in plugin/PluginDatabase.cpp.
+
+2008-07-04  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Mac build for real, don't define listDirectory() twice.
 
         * platform/mac/FileSystemMac.mm:

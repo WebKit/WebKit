@@ -768,6 +768,7 @@ SOURCES += \
     plugins/PluginData.cpp \
     plugins/PluginArray.cpp \
     plugins/Plugin.cpp \
+    plugins/PluginMainThreadScheduler.cpp \
     plugins/MimeType.cpp \
     plugins/MimeTypeArray.cpp \
     platform/Arena.cpp \
@@ -1043,8 +1044,7 @@ SOURCES += \
 
 contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 
-        SOURCES += plugins/npapi.cpp \
-                   plugins/PluginMainThreadScheduler.cpp
+        SOURCES += plugins/npapi.cpp
 
         unix:!mac {
             SOURCES += \
