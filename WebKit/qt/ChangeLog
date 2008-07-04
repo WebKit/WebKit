@@ -1,3 +1,11 @@
+2008-07-04  Benjamin C Meyer  <ben@meyerhome.net>
+
+        Reviewed by Simon.
+
+        Update the webkit version in the QtWebKit useragent string to match trunk
+
+        * Api/qwebpage.cpp:
+
 2008-07-02  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix.
