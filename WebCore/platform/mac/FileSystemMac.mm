@@ -28,7 +28,6 @@
 #import "config.h"
 #import "FileSystem.h"
 
-#import "NotImplemented.h"
 #import "PlatformString.h"
 
 namespace WebCore {
@@ -36,13 +35,6 @@ namespace WebCore {
 String homeDirectoryPath()
 {
     return NSHomeDirectory();
-}
-
-Vector<String> listDirectory(const String& path, const String& filter)
-{
-    Vector<String> entries;
-    notImplemented();
-    return entries;
 }
 
 } // namespace WebCore

@@ -1,5 +1,11 @@
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix the Mac build for real, don't define listDirectory() twice.
+
+        * platform/mac/FileSystemMac.mm:
+
+2008-07-04  Simon Hausmann  <hausmann@webkit.org>
+
         Prospective Mac build fix.
 
         * platform/mac/FileSystemMac.mm: Include NotImplemented.h.
