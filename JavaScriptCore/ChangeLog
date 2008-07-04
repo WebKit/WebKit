@@ -1,5 +1,15 @@
 2008-07-03  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Fix output path of recently-added script phase to reference the correct file.
+        This prevents Xcode from running the script phase unnecessarily, which caused
+        the generated header to be recreated and lead to AllInOneFile.cpp rebuilding.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-07-03  Mark Rowe  <mrowe@apple.com>
+
         Follow-up to the 64-bit build fix.  Use intptr_t rather than ssize_t as
         the latter is non-standard and does not exist on Windows.
 

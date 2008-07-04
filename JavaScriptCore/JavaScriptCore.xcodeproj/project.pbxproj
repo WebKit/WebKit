@@ -1628,7 +1628,7 @@
 			);
 			name = "Generate DTrace header";
 			outputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/Tracing.h",
+				"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/TracingDtrace.h",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
