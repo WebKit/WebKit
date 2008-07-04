@@ -34,27 +34,27 @@
 extern "C" {
 #endif
 
-extern void _NPN_ReleaseVariantValue(NPVariant *variant);
-extern NPIdentifier _NPN_GetStringIdentifier(const NPUTF8 *name);
-extern void _NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
-extern NPIdentifier _NPN_GetIntIdentifier(int32_t intid);
-extern bool _NPN_IdentifierIsString(NPIdentifier identifier);
-extern NPUTF8 *_NPN_UTF8FromIdentifier(NPIdentifier identifier);
-extern int32_t _NPN_IntFromIdentifier(NPIdentifier identifier);    
-extern NPObject *_NPN_CreateObject(NPP npp, NPClass *aClass);
-extern NPObject *_NPN_RetainObject(NPObject *obj);
-extern void _NPN_ReleaseObject(NPObject *obj);
-extern void _NPN_DeallocateObject(NPObject *obj);
-extern bool _NPN_Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result);
-extern bool _NPN_InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
-extern bool _NPN_Evaluate(NPP npp, NPObject *npobj, NPString *script, NPVariant *result);
-extern bool _NPN_GetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, NPVariant *result);
-extern bool _NPN_SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName, const NPVariant *value);
-extern bool _NPN_RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName);
-extern bool _NPN_HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName);
-extern bool _NPN_HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName);
-extern void _NPN_SetException(NPObject *obj, const NPUTF8 *message);
-extern bool _NPN_Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier, uint32_t *count);
+extern void _NPN_ReleaseVariantValue(NPVariant*);
+extern NPIdentifier _NPN_GetStringIdentifier(const NPUTF8*);
+extern void _NPN_GetStringIdentifiers(const NPUTF8** names, int32_t nameCount, NPIdentifier* identifiers);
+extern NPIdentifier _NPN_GetIntIdentifier(int32_t);
+extern bool _NPN_IdentifierIsString(NPIdentifier);
+extern NPUTF8* _NPN_UTF8FromIdentifier(NPIdentifier);
+extern int32_t _NPN_IntFromIdentifier(NPIdentifier);    
+extern NPObject* _NPN_CreateObject(NPP, NPClass*);
+extern NPObject* _NPN_RetainObject(NPObject*);
+extern void _NPN_ReleaseObject(NPObject*);
+extern void _NPN_DeallocateObject(NPObject*);
+extern bool _NPN_Invoke(NPP, NPObject*, NPIdentifier methodName, const NPVariant* args, uint32_t argCount, NPVariant* result);
+extern bool _NPN_InvokeDefault(NPP, NPObject*, const NPVariant* args, uint32_t argCount, NPVariant* result);
+extern bool _NPN_Evaluate(NPP, NPObject*, NPString*, NPVariant* result);
+extern bool _NPN_GetProperty(NPP, NPObject*, NPIdentifier, NPVariant* result);
+extern bool _NPN_SetProperty(NPP, NPObject*, NPIdentifier, const NPVariant*);
+extern bool _NPN_RemoveProperty(NPP, NPObject*, NPIdentifier);
+extern bool _NPN_HasProperty(NPP, NPObject*, NPIdentifier);
+extern bool _NPN_HasMethod(NPP, NPObject*, NPIdentifier);
+extern void _NPN_SetException(NPObject*, const NPUTF8*);
+extern bool _NPN_Enumerate(NPP, NPObject*, NPIdentifier**, uint32_t* count);
 
 #ifdef __cplusplus
 }  /* end extern "C" */

@@ -1,3 +1,27 @@
+2008-07-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Eric Seidel.
+
+        Bring our implementation of the Netscape plugin API closer to current
+        code style guidelines.
+
+        * bridge/NP_jsobject.cpp:
+        (getListFromVariantArgs):
+        (jsAllocate):
+        (jsDeallocate):
+        (_NPN_CreateScriptObject):
+        (_NPN_CreateNoScriptObject):
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+        * bridge/npruntime_impl.h:
+
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt/Windows build.
