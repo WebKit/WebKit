@@ -1,3 +1,9 @@
+2008-07-04  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, adapt to renamed files.
+
+        * WebCore.pro:
+
 2008-07-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Eric Seidel.

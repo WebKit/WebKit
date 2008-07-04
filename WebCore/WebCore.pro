@@ -30,7 +30,7 @@ INCLUDEPATH += $$GENERATED_SOURCES_DIR
 }
 
 DEPENDPATH += css dom loader editing history html \
-    loader/icon page platform platform/graphics platform/network platform/text plugins rendering rendering/style xml \
+    loader/icon page platform platform/graphics platform/graphics/filters platform/network platform/text plugins rendering rendering/style xml \
     bindings/js bridge bridge/c bridge/qt
 
 include($$OUTPUT_DIR/config.pri)
@@ -131,6 +131,7 @@ RESOURCES += \
 INCLUDEPATH += \
     $$PWD/platform/qt \
     $$PWD/platform/network/qt \
+    $$PWD/platform/graphics/filters \
     $$PWD/platform/graphics/qt \
     $$PWD/svg/graphics/qt \
     $$PWD/loader/qt \
@@ -1525,10 +1526,10 @@ contains(DEFINES, ENABLE_SVG=1) {
         svg/animation/SMILTime.cpp \
         svg/animation/SMILTimeContainer.cpp \
         svg/animation/SVGSMILElement.cpp \
-        svg/graphics/filters/SVGFEBlend.cpp \
-        svg/graphics/filters/SVGFEColorMatrix.cpp \
-        svg/graphics/filters/SVGFEComponentTransfer.cpp \
-        svg/graphics/filters/SVGFEComposite.cpp \
+        platform/graphics/filters/FEBlend.cpp \
+        platform/graphics/filters/FEColorMatrix.cpp \
+        platform/graphics/filters/FEComponentTransfer.cpp \
+        platform/graphics/filters/FEComposite.cpp \
         svg/graphics/filters/SVGFEConvolveMatrix.cpp \
         svg/graphics/filters/SVGFEDiffuseLighting.cpp \
         svg/graphics/filters/SVGFEDisplacementMap.cpp \
