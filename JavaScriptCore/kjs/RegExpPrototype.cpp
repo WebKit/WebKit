@@ -28,6 +28,7 @@
 #include "JSString.h"
 #include "JSValue.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 #include "RegExpObject.h"
 #include "regexp.h"
 

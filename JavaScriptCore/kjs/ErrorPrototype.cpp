@@ -22,8 +22,8 @@
 #include "ErrorPrototype.h"
 
 #include "FunctionPrototype.h"
-#include "JSFunction.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 #include "ustring.h"
 
 namespace KJS {

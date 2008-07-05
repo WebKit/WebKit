@@ -22,8 +22,8 @@
 #include "BooleanPrototype.h"
 
 #include "FunctionPrototype.h"
-#include "JSFunction.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 
 namespace KJS {
 

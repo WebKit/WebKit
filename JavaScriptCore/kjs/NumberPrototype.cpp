@@ -23,8 +23,8 @@
 #include "NumberPrototype.h"
 
 #include "FunctionPrototype.h"
-#include "JSFunction.h"
 #include "ObjectPrototype.h"
+#include "PrototypeFunction.h"
 #include "dtoa.h"
 #include "operations.h"
 #include <wtf/Assertions.h>
@@ -32,7 +32,6 @@
 #include <wtf/Vector.h>
 
 namespace KJS {
-
 
 static JSValue* numberProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* numberProtoFuncToLocaleString(ExecState*, JSObject*, JSValue*, const ArgList&);

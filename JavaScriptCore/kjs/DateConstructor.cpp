@@ -22,13 +22,13 @@
 #include "config.h"
 #include "DateConstructor.h"
 
+#include "DateInstance.h"
 #include "DateMath.h"
 #include "DatePrototype.h"
-#include "JSFunction.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
-#include "DateInstance.h"
+#include "PrototypeFunction.h"
 #include <math.h>
 #include <time.h>
 #include <wtf/MathExtras.h>

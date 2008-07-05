@@ -20,6 +20,8 @@
 #include "config.h"
 #include "lookup.h"
 
+#include "PrototypeFunction.h"
+
 namespace KJS {
 
 void HashTable::createTable(JSGlobalData* globalData) const

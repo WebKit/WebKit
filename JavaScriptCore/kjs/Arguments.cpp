@@ -25,9 +25,10 @@
 #include "config.h"
 #include "Arguments.h"
 
+#include "JSActivation.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSActivation.h"
+#include "ObjectPrototype.h"
 
 namespace KJS {
 

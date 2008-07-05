@@ -1,5 +1,20 @@
 2008-07-05  Sam Weinig  <sam@webkit.org>
 
+        Fix build.
+
+        * kjs/Arguments.cpp:
+        * kjs/BooleanPrototype.cpp:
+        * kjs/DateConstructor.cpp:
+        * kjs/ErrorPrototype.cpp:
+        * kjs/FunctionPrototype.cpp:
+        * kjs/NumberPrototype.cpp:
+        * kjs/ObjectPrototype.cpp:
+        * kjs/RegExpPrototype.cpp:
+        * kjs/StringConstructor.cpp:
+        * kjs/lookup.cpp:
+
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne build.
 
         * kjs/JSGlobalObject.cpp:
