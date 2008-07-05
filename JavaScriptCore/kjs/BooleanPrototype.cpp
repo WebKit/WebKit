@@ -21,7 +21,9 @@
 #include "config.h"
 #include "BooleanPrototype.h"
 
+#include "Error.h"
 #include "FunctionPrototype.h"
+#include "JSString.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
 

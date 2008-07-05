@@ -22,7 +22,9 @@
 #include "config.h"
 #include "NumberPrototype.h"
 
+#include "Error.h"
 #include "FunctionPrototype.h"
+#include "JSString.h"
 #include "ObjectPrototype.h"
 #include "PrototypeFunction.h"
 #include "dtoa.h"
