@@ -25,9 +25,9 @@
 #include "config.h"
 #include "IndexToNameMap.h"
 
-#include "Identifier.h"
-#include "list.h"
 #include "JSFunction.h"
+#include "identifier.h"
+#include "list.h"
 
 namespace KJS {
 

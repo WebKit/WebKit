@@ -1,5 +1,11 @@
 2008-07-05  Sam Weinig  <sam@webkit.org>
 
+        Fix build on case-sensitive build systems.
+
+        * kjs/IndexToNameMap.cpp:
+
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
         Fix build.
 
         * kjs/Arguments.cpp:
