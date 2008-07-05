@@ -51,7 +51,7 @@
 
         Reviewed by Dan Bernstein.
 
-        Tests: webarchive/archive-empty-frame-dom-expected.txt
+        Tests: webarchive/archive-empty-frame-dom.html
                webarchive/doctype.html
 
         * editing/markup.cpp:
