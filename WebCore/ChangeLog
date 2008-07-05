@@ -1,3 +1,9 @@
+2008-07-04  Oliver Hunt  <oliver@apple.com>
+
+        Fix windows build
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
         Fix Qt build.
