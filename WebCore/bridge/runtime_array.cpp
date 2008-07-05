@@ -27,6 +27,7 @@
 #include "runtime_array.h"
 
 #include <kjs/ArrayPrototype.h>
+#include <kjs/Error.h>
 
 using namespace KJS;
 

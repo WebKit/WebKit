@@ -93,6 +93,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/DatePrototype.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
+	JavaScriptCore/kjs/Error.cpp \
 	JavaScriptCore/kjs/ErrorConstructor.cpp \
 	JavaScriptCore/kjs/ErrorInstance.cpp \
 	JavaScriptCore/kjs/ErrorPrototype.cpp \

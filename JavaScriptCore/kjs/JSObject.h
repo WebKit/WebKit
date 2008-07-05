@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -21,9 +20,10 @@
  *
  */
 
-#ifndef KJS_OBJECT_H
-#define KJS_OBJECT_H
+#ifndef JSObject_h
+#define JSObject_h
 
+#include "ClassInfo.h"
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
 #include "JSNumberCell.h"
@@ -37,7 +37,6 @@ namespace KJS {
 
   class InternalFunction;
   class PropertyNameArray;
-
   struct HashEntry;
   struct HashTable;
 
@@ -50,62 +49,6 @@ namespace KJS {
                    Function     = 1 << 4, // property is a function - only used by static hashtables
                    IsGetterSetter = 1 << 5 }; // property is a getter or setter
 
-  /**
-   * Class Information
-   */
-  struct ClassInfo {
-    /**
-     * A string denoting the class name. Example: "Window".
-     */
-    const char* className;
-    /**
-     * Pointer to the class information of the base class.
-     * 0L if there is none.
-     */
-    const ClassInfo* parentClass;
-    /**
-     * Static hash-table of properties.
-     * For classes that can be used from multiple threads, it is accessed via a getter function that would typically return a pointer to thread-specific value.
-     */
-    const HashTable* propHashTable(ExecState* exec) const
-    {
-        if (classPropHashTableGetterFunction)
-            return classPropHashTableGetterFunction(exec);
-        return staticPropHashTable;
-    }
-
-    const HashTable* staticPropHashTable;
-    typedef const HashTable* (*ClassPropHashTableGetterFunction)(ExecState*);
-    const ClassPropHashTableGetterFunction classPropHashTableGetterFunction;
-  };
-  
-  // This is an internal value object which stores getter and setter functions
-  // for a property.
-  class GetterSetter : public JSCell {
-  public:
-    JSType type() const { return GetterSetterType; }
-      
-    GetterSetter() : m_getter(0), m_setter(0) { }
-      
-    virtual void mark();
-      
-    JSObject* getter() const { return m_getter; }
-    void setGetter(JSObject* getter) { m_getter = getter; }
-    JSObject* setter() const { return m_setter; }
-    void setSetter(JSObject* setter) { m_setter = setter; }
-      
-  private:
-    virtual JSValue* toPrimitive(ExecState*, JSType preferred) const;
-    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-    virtual bool toBoolean(ExecState*) const;
-    virtual double toNumber(ExecState*) const;
-    virtual UString toString(ExecState*) const;
-    virtual JSObject* toObject(ExecState*) const;
-
-    JSObject* m_getter;
-    JSObject* m_setter;  
-  };
-  
   class JSObject : public JSCell {
   public:
     /**
@@ -390,43 +333,7 @@ namespace KJS {
     JSValue *_proto;
   };
 
-    JSObject* constructEmptyObject(ExecState*);
-
-  /**
-   * Types of Native Errors available. For custom errors, GeneralError
-   * should be used.
-   */
-  enum ErrorType { GeneralError   = 0,
-                   EvalError      = 1,
-                   RangeError     = 2,
-                   ReferenceError = 3,
-                   SyntaxError    = 4,
-                   TypeError      = 5,
-                   URIError       = 6};
-
-  /**
-   * @short Factory methods for error objects.
-   */
-  class Error {
-  public:
-    /**
-     * Factory method for error objects.
-     *
-     * @param exec The current execution state
-     * @param errtype Type of error.
-     * @param message Optional error message.
-     * @param lineNumber Optional line number.
-     * @param sourceId Optional source id.
-     * @param sourceURL Optional source URL.
-     */
-    static JSObject *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
-    static JSObject *create(ExecState *, ErrorType, const char *message);
-  };
-
-JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
-JSObject *throwError(ExecState *, ErrorType, const UString &message);
-JSObject *throwError(ExecState *, ErrorType, const char *message);
-JSObject *throwError(ExecState *, ErrorType);
+  JSObject* constructEmptyObject(ExecState*);
 
 inline JSObject::JSObject(JSValue* proto)
     : _proto(proto)
@@ -643,6 +550,6 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue* value)
     asCell()->put(exec, propertyName, value);
 }
 
-} // namespace
+} // namespace KJS
 
-#endif // KJS_OBJECT_H
+#endif // JSObject_h

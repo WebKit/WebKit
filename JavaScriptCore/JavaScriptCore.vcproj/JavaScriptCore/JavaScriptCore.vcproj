@@ -313,6 +313,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\ClassInfo.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\collector.cpp"
 				>
 			</File>
@@ -381,6 +385,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\Error.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\Error.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\ErrorConstructor.cpp"
 				>
 			</File>
@@ -430,6 +442,10 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\GetterSetter.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\GetterSetter.h"
 				>
 			</File>
 			<File

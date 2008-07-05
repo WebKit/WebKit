@@ -26,6 +26,7 @@
  */
 
 #include "APICast.h"
+#include "Error.h"
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"

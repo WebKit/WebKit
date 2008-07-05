@@ -21,7 +21,7 @@
  */
 
 #include "config.h"
-#include "JSObject.h"
+#include "GetterSetter.h"
 
 #include <wtf/Assertions.h>
 
@@ -75,4 +75,4 @@ JSObject* GetterSetter::toObject(ExecState* exec) const
     return jsNull()->toObject(exec);
 }
 
-}
+} // namespace KJS

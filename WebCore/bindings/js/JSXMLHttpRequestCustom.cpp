@@ -40,6 +40,7 @@
 #include "JSEvent.h"
 #include "JSEventListener.h"
 #include "XMLHttpRequest.h"
+#include <kjs/Error.h>
 
 using namespace KJS;
 

@@ -28,8 +28,9 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-#include <kjs/JSObject.h>
 #include "objc_header.h"
+#include <kjs/Error.h>
+#include <kjs/JSObject.h>
 
 #ifdef __OBJC__
 @class NSString;

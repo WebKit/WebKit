@@ -77,6 +77,7 @@ SOURCES += \
     kjs/DatePrototype.cpp \
     kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
+    kjs/Error.cpp \
     kjs/ErrorConstructor.cpp \
     kjs/ErrorInstance.cpp \
     kjs/ErrorPrototype.cpp \

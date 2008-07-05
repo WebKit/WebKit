@@ -39,6 +39,7 @@
 #include "PlatformString.h"
 #include "StringHash.h"
 #include <kjs/ArrayPrototype.h>
+#include <kjs/Error.h>
 #include <wtf/HashSet.h>
 
 using namespace KJS;

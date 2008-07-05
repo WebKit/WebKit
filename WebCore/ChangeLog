@@ -1,3 +1,27 @@
+2008-07-04  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Split Error and GetterSetter out of JSObject.h.
+
+        * ForwardingHeaders/kjs/Error.h: Added.
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * bindings/js/JSClipboardCustom.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSEventTargetBase.cpp:
+        * bindings/js/JSHTMLDocumentCustom.cpp:
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        * bridge/jni/jni_instance.cpp:
+        * bridge/jni/jni_runtime.cpp:
+        * bridge/objc/objc_instance.mm:
+        * bridge/objc/objc_runtime.mm:
+        * bridge/objc/objc_utility.h:
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_method.cpp:
+        * bridge/runtime_object.cpp:
+
 2008-07-04  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives

@@ -26,6 +26,7 @@
 #ifndef NODES_H_
 #define NODES_H_
 
+#include "Error.h"
 #include "JSString.h"
 #include "LabelStack.h"
 #include "Opcode.h"

@@ -55,11 +55,12 @@
 #include "PluginInfoStore.h"
 #include "RenderView.h"
 #include "ScheduledAction.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
 #include "htmlediting.h"
-#include "ScriptController.h"
+#include <kjs/Error.h>
 #include <kjs/JSLock.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>

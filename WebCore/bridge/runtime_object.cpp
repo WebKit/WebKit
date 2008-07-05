@@ -28,6 +28,7 @@
 
 #include "runtime_method.h"
 #include "runtime_root.h"
+#include <kjs/Error.h>
 
 using namespace KJS;
 using namespace Bindings;

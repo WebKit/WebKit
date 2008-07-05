@@ -28,8 +28,9 @@
 #include "JSEventTargetBase.h"
 
 #include "JSDOMWindow.h"
-#include "JSEventTargetNode.h"
 #include "JSEventListener.h"
+#include "JSEventTargetNode.h"
+#include <kjs/Error.h>
 
 #if ENABLE(SVG)
 #include "JSSVGElementInstance.h"

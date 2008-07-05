@@ -26,8 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSObject_h
-#define JSObject_h
+#ifndef JSGlue_JSObject_h
+#define JSGlue_JSObject_h
 
 #include "JSBase.h"
 #include "JSUtils.h"
@@ -58,4 +58,4 @@ class JSUserObject : public JSBase {
                 int fDataType;
 };
 
-#endif
+#endif // JSGlue_JSObject_h

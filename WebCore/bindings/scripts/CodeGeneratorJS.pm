@@ -1206,6 +1206,8 @@ sub GenerateImplementation
             push(@implContent, "JSValue* ${functionName}(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)\n");
             push(@implContent, "{\n");
 
+            $implKJSInclude{"Error.h"} = 1;
+
             if ($interfaceName eq "DOMWindow") {
                 push(@implContent, "    $className* castedThisObj = toJSDOMWindow(thisValue);\n");
                 push(@implContent, "    if (!castedThisObj)\n");

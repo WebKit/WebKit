@@ -29,16 +29,17 @@
 
 #include "NP_jsobject.h"
 
-#include <kjs/JSGlobalObject.h>
-#include <kjs/JSLock.h>
-#include <kjs/PropertyNameArray.h>
-#include "c_utility.h"
-#include <kjs/completion.h>
-#include <kjs/interpreter.h>
 #include "PlatformString.h"
+#include "c_utility.h"
 #include "npruntime_impl.h"
 #include "npruntime_priv.h"
 #include "runtime_root.h"
+#include <kjs/Error.h>
+#include <kjs/JSGlobalObject.h>
+#include <kjs/JSLock.h>
+#include <kjs/PropertyNameArray.h>
+#include <kjs/completion.h>
+#include <kjs/interpreter.h>
 
 using WebCore::String;
 using namespace KJS;

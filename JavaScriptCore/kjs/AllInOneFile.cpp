@@ -72,6 +72,7 @@
 #include "nodes.cpp"
 #include "nodes2string.cpp"
 #include "JSObject.cpp"
+#include "Error.cpp"
 #include "JSGlobalObject.cpp"
 #include "ObjectConstructor.cpp"
 #include "ObjectPrototype.cpp"

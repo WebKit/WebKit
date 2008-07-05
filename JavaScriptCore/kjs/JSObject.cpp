@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
@@ -27,6 +26,7 @@
 
 #include "DatePrototype.h"
 #include "ErrorConstructor.h"
+#include "GetterSetter.h"
 #include "JSGlobalObject.h"
 #include "NativeErrorConstructor.h"
 #include "ObjectPrototype.h"
@@ -41,8 +41,6 @@
 #define JAVASCRIPT_MARK_TRACING 0
 
 namespace KJS {
-
-// ------------------------------ JSObject ------------------------------------
 
 void JSObject::mark()
 {
@@ -477,97 +475,6 @@ void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)
         slot.setGetterSlot(getterFunc);
     else
         slot.setUndefined();
-}
-
-// ------------------------------ Error ----------------------------------------
-
-JSObject* Error::create(ExecState* exec, ErrorType errtype, const UString& message,
-    int lineno, int sourceId, const UString& sourceURL)
-{
-  JSObject* cons;
-  const char* name;
-  switch (errtype) {
-  case EvalError:
-    cons = exec->lexicalGlobalObject()->evalErrorConstructor();
-    name = "Evaluation error";
-    break;
-  case RangeError:
-    cons = exec->lexicalGlobalObject()->rangeErrorConstructor();
-    name = "Range error";
-    break;
-  case ReferenceError:
-    cons = exec->lexicalGlobalObject()->referenceErrorConstructor();
-    name = "Reference error";
-    break;
-  case SyntaxError:
-    cons = exec->lexicalGlobalObject()->syntaxErrorConstructor();
-    name = "Syntax error";
-    break;
-  case TypeError:
-    cons = exec->lexicalGlobalObject()->typeErrorConstructor();
-    name = "Type error";
-    break;
-  case URIError:
-    cons = exec->lexicalGlobalObject()->URIErrorConstructor();
-    name = "URI error";
-    break;
-  default:
-    cons = exec->lexicalGlobalObject()->errorConstructor();
-    name = "Error";
-    break;
-  }
-
-  ArgList args;
-  if (message.isEmpty())
-    args.append(jsString(exec, name));
-  else
-    args.append(jsString(exec, message));
-  ConstructData constructData;
-  ConstructType constructType = cons->getConstructData(constructData);
-  JSObject* err = construct(exec, cons, constructType, constructData, args);
-
-  if (lineno != -1)
-    err->put(exec, Identifier(exec, "line"), jsNumber(exec, lineno));
-  if (sourceId != -1)
-    err->put(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId));
-
-  if(!sourceURL.isNull())
-    err->put(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL));
- 
-  return err;
-}
-
-JSObject *Error::create(ExecState *exec, ErrorType type, const char *message)
-{
-    return create(exec, type, message, -1, -1, NULL);
-}
-
-JSObject *throwError(ExecState *exec, ErrorType type)
-{
-    JSObject *error = Error::create(exec, type, UString(), -1, -1, NULL);
-    exec->setException(error);
-    return error;
-}
-
-JSObject *throwError(ExecState *exec, ErrorType type, const UString &message)
-{
-    JSObject *error = Error::create(exec, type, message, -1, -1, NULL);
-    exec->setException(error);
-    return error;
-}
-
-JSObject *throwError(ExecState *exec, ErrorType type, const char *message)
-{
-    JSObject *error = Error::create(exec, type, message, -1, -1, NULL);
-    exec->setException(error);
-    return error;
-}
-
-JSObject *throwError(ExecState *exec, ErrorType type, const UString &message, int line, int sourceId, const UString &sourceURL)
-{
-    JSObject *error = Error::create(exec, type, message, line, sourceId, sourceURL);
-    exec->setException(error);
-    return error;
 }
 
 JSObject* constructEmptyObject(ExecState* exec)

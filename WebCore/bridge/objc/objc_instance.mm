@@ -28,6 +28,7 @@
 
 #import "FoundationExtras.h"
 #import "WebScriptObject.h"
+#include <kjs/Error.h>
 #include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 

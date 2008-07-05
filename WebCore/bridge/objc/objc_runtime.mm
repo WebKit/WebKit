@@ -26,10 +26,11 @@
 #include "config.h"
 #include "objc_runtime.h"
 
+#include "WebScriptObject.h"
 #include "objc_instance.h"
 #include "runtime_array.h"
 #include "runtime_object.h"
-#include "WebScriptObject.h"
+#include <kjs/Error.h>
 #include <kjs/JSLock.h>
 #include <wtf/RetainPtr.h>
 

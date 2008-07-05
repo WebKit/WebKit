@@ -1,3 +1,25 @@
+2008-07-04  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Dan Bernstein.
+
+        Split Error and GetterSetter out of JSObject.h.
+
+        * API/JSCallbackObjectFunctions.h:
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ClassInfo.h: Copied from JavaScriptCore/kjs/JSObject.h.
+        * kjs/Error.cpp: Copied from JavaScriptCore/kjs/JSObject.cpp.
+        * kjs/Error.h: Copied from JavaScriptCore/kjs/JSObject.h.
+        * kjs/GetterSetter.cpp:
+        * kjs/GetterSetter.h: Copied from JavaScriptCore/kjs/JSObject.h.
+        * kjs/JSObject.cpp:
+        * kjs/JSObject.h:
+        * kjs/nodes.h:
+
 2008-07-04  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Wx build, added TreeProfile.cpp to the build.

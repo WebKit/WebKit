@@ -26,8 +26,9 @@
 #include "config.h"
 #include "runtime_method.h"
 
-#include <kjs/JSGlobalObject.h>
 #include "runtime_object.h"
+#include <kjs/Error.h>
+#include <kjs/JSGlobalObject.h>
 
 namespace KJS {
 
