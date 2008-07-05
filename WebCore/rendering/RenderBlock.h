@@ -33,13 +33,13 @@
 
 namespace WebCore {
 
-class BidiIterator;
+class InlineIterator;
 class BidiRun;
 class Position;
 class RootInlineBox;
 
 template <class Iterator, class Run> class BidiResolver;
-typedef BidiResolver<BidiIterator, BidiRun> BidiState;
+typedef BidiResolver<InlineIterator, BidiRun> InlineBidiResolver;
 
 enum CaretType { CursorCaret, DragCaret };
 
@@ -137,18 +137,18 @@ public:
         IntRect rect;
     };
 
-    void bidiReorderLine(BidiState&, const BidiIterator& end);
-    RootInlineBox* determineStartPosition(bool& fullLayout, BidiState&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
-    RootInlineBox* determineEndPosition(RootInlineBox* startBox, BidiIterator& cleanLineStart,
+    void bidiReorderLine(InlineBidiResolver&, const InlineIterator& end);
+    RootInlineBox* determineStartPosition(bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats);
+    RootInlineBox* determineEndPosition(RootInlineBox* startBox, InlineIterator& cleanLineStart,
                                         BidiStatus& cleanLineBidiStatus,
                                         int& yPos);
-    bool matchedEndLine(const BidiState&, const BidiIterator& endLineStart, const BidiStatus& endLineStatus,
+    bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
     bool generatesLineBoxesForInlineChild(RenderObject*);
-    int skipWhitespace(BidiIterator&);
-    int skipWhitespace(BidiState&);
+    int skipWhitespace(InlineIterator&);
+    int skipWhitespace(InlineBidiResolver&);
     void fitBelowFloats(int widthToFit, int& availableWidth);
-    BidiIterator findNextLineBreak(BidiState&, EClear* clear = 0);
+    InlineIterator findNextLineBreak(InlineBidiResolver&, EClear* clear = 0);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);
     InlineFlowBox* createLineBoxes(RenderObject*);
     void computeHorizontalPositionsForLine(RootInlineBox*, BidiRun* firstRun, BidiRun* trailingSpaceRun, bool reachedEnd);

@@ -1,3 +1,44 @@
+2008-07-05  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - rename BidiIterator and BidiState
+
+        Renamed BidiIterator to InlineIterator and BidiState
+        to InlineBidiResolver. Renamed variables of type InlineBidiResolver{*,&}
+        to "resolver".
+
+        * rendering/RenderBlock.h:
+        * rendering/RootInlineBox.h:
+        * rendering/bidi.cpp:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        (WebCore::bidiNext):
+        (WebCore::bidiFirst):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineBidiResolver::increment):
+        (WebCore::InlineIterator::atEnd):
+        (WebCore::InlineIterator::current):
+        (WebCore::InlineIterator::direction):
+        (WebCore::chopMidpointsAt):
+        (WebCore::checkMidpoints):
+        (WebCore::addMidpoint):
+        (WebCore::appendRunsForObject):
+        (WebCore::InlineBidiResolver::appendRun):
+        (WebCore::RenderBlock::bidiReorderLine):
+        (WebCore::buildCompactRuns):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::skipNonBreakingSpace):
+        (WebCore::requiresLineBox):
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild):
+        (WebCore::RenderBlock::skipWhitespace):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2008-07-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Rubber-stamped by Oliver Hunt

@@ -166,7 +166,7 @@ protected:
     Overflow* m_overflow;
 
     // Where this line ended.  The exact object and the position within that object are stored so that
-    // we can create a BidiIterator beginning just after the end of this line.
+    // we can create an InlineIterator beginning just after the end of this line.
     RenderObject* m_lineBreakObj;
     unsigned m_lineBreakPos;
     RefPtr<BidiContext> m_lineBreakContext;
