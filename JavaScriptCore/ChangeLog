@@ -1,5 +1,11 @@
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
+        Fix mac build.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-07-04  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne builds.
 
         * kjs/Error.cpp:

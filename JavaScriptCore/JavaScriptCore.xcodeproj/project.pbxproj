@@ -253,6 +253,7 @@
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
 		BC18C5300E16FCEB00B34460 /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* grammar.h */; };
+		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
@@ -645,7 +646,7 @@
 		BC337BDE0E1AF0B80076918A /* GetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetter.h; sourceTree = "<group>"; };
 		BC337BE20E1AF4410076918A /* Error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Error.h; sourceTree = "<group>"; };
 		BC337BEA0E1B00CB0076918A /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
-		BC337D760E1B6EB90076918A /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
+		BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
 		BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayConstructor.cpp; sourceTree = "<group>"; };
 		BC7952070E15E8A800A898AB /* ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.h; sourceTree = "<group>"; };
 		BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanConstructor.cpp; sourceTree = "<group>"; };
@@ -1058,7 +1059,7 @@
 				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
 				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
-				BC337D760E1B6EB90076918A /* ClassInfo.h */,
+				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
 				F692A8520255597D01FF60F7 /* collector.cpp */,
 				F692A8530255597D01FF60F7 /* collector.h */,
 				5DBD18A90C54018700C15EAE /* CollectorHeapIntrospector.cpp */,
@@ -1451,6 +1452,7 @@
 				95CD41B40E1BF6560085358E /* TreeProfile.h in Headers */,
 				5D53726F0E1C54880021E549 /* Tracing.h in Headers */,
 				5D53727E0E1C55EC0021E549 /* TracingDtrace.h in Headers */,
+				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
