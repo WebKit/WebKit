@@ -1,3 +1,9 @@
+2008-07-04  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix
+
+        * GNUmakefile.am:
+
 2008-07-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Eric Seidel.

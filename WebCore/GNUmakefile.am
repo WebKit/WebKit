@@ -13,6 +13,7 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform \
 	-I$(srcdir)/WebCore/platform/network \
 	-I$(srcdir)/WebCore/platform/graphics \
+	-I$(srcdir)/WebCore/platform/graphics/filters \
 	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \
@@ -903,10 +904,6 @@ webcore_sources += \
 	WebCore/platform/DragData.cpp \
 	WebCore/platform/DragImage.cpp \
 	WebCore/platform/FileChooser.cpp \
-	WebCore/platform/graphics/filters/FEBlend.cpp \
-	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
-	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
-	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/platform/graphics/AffineTransform.cpp \
 	WebCore/platform/graphics/BitmapImage.cpp \
 	WebCore/platform/graphics/Color.cpp \
@@ -1887,6 +1884,10 @@ webcore_sources += \
 	WebCore/css/SVGCSSComputedStyleDeclaration.cpp \
 	WebCore/css/SVGCSSParser.cpp \
 	WebCore/css/SVGCSSStyleSelector.cpp \
+	WebCore/platform/graphics/filters/FEBlend.cpp \
+	WebCore/platform/graphics/filters/FEColorMatrix.cpp \
+	WebCore/platform/graphics/filters/FEComponentTransfer.cpp \
+	WebCore/platform/graphics/filters/FEComposite.cpp \
 	WebCore/rendering/SVGRenderStyle.cpp \
 	WebCore/rendering/SVGRenderStyleDefs.cpp \
 	WebCore/rendering/SVGRenderTreeAsText.cpp \
