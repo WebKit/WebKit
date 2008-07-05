@@ -28,6 +28,7 @@
 #include "ErrorConstructor.h"
 #include "JSGlobalObject.h"
 #include "JSObject.h"
+#include "JSString.h"
 #include "NativeErrorConstructor.h"
 
 namespace KJS {

@@ -1,5 +1,14 @@
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
+        Fix non-AllInOne builds.
+
+        * kjs/Error.cpp:
+        * kjs/GetterSetter.cpp:
+        * kjs/JSImmediate.cpp:
+        * kjs/operations.cpp:
+
+2008-07-04  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Dan Bernstein.
 
         Split Error and GetterSetter out of JSObject.h.

@@ -23,6 +23,7 @@
 
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
+#include "Error.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "NumberConstructor.h"

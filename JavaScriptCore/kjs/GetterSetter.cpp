@@ -23,6 +23,7 @@
 #include "config.h"
 #include "GetterSetter.h"
 
+#include "JSObject.h"
 #include <wtf/Assertions.h>
 
 namespace KJS {
