@@ -1,5 +1,11 @@
 2008-07-05  Sam Weinig  <sam@webkit.org>
 
+        Fix non-AllInOne build.
+
+        * kjs/JSGlobalObject.cpp:
+
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Cameron Zwarich.
 
         Split Arguments, IndexToNameMap, PrototypeFunction, GlobalEvalFunction and 
