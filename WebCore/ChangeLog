@@ -1,5 +1,11 @@
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
+        Fix Qt build.
+
+        * bridge/qt/qt_instance.cpp:
+
+2008-07-04  Sam Weinig  <sam@webkit.org>
+
         Rubber-stamped by Dan Bernstein.
 
         Split Error and GetterSetter out of JSObject.h.
