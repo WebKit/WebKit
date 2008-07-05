@@ -76,7 +76,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas)
 
 void CanvasRenderingContext2D::ref()
 {
-m_canvas->ref();
+    m_canvas->ref();
 }
 
 void CanvasRenderingContext2D::deref()

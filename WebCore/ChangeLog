@@ -1,3 +1,11 @@
+2008-07-05  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Rubber-stamped by Oliver Hunt
+
+        Coding style fix
+
+        * html/CanvasRenderingContext2D.cpp: Indentation fix
+
 2008-07-04  Oliver Hunt  <oliver@apple.com>
 
         Fix windows build
