@@ -253,8 +253,13 @@
 		BC18C52C0E16FCD200B34460 /* RegExpObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52B0E16FCD200B34460 /* RegExpObject.lut.h */; };
 		BC18C52E0E16FCE100B34460 /* lexer.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52D0E16FCE100B34460 /* lexer.lut.h */; };
 		BC18C5300E16FCEB00B34460 /* grammar.h in Headers */ = {isa = PBXBuildFile; fileRef = BC18C52F0E16FCEB00B34460 /* grammar.h */; };
+		BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DE60E1F51C50016B6C9 /* Arguments.h */; };
+		BC257DEC0E1F52BA0016B6C9 /* IndexToNameMap.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */; };
+		BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */; };
+		BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC3046070E1F497F003232CF /* Error.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3046060E1F497F003232CF /* Error.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC7F8FB90E19D1C3008632C0 /* JSNumberCell.h in Headers */ = {isa = PBXBuildFile; fileRef = BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCD202C20E1706A7002C7E82 /* RegExpConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */; };
 		BCD202C40E1706A7002C7E82 /* RegExpPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD202C00E1706A7002C7E82 /* RegExpPrototype.h */; };
@@ -633,6 +638,14 @@
 		BC22A3980E16E14800AF21C8 /* JSObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObject.cpp; sourceTree = "<group>"; };
 		BC22A3990E16E14800AF21C8 /* JSObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObject.h; sourceTree = "<group>"; };
 		BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVariableObject.cpp; sourceTree = "<group>"; };
+		BC257DE50E1F51C50016B6C9 /* Arguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Arguments.cpp; sourceTree = "<group>"; };
+		BC257DE60E1F51C50016B6C9 /* Arguments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Arguments.h; sourceTree = "<group>"; };
+		BC257DE90E1F52BA0016B6C9 /* IndexToNameMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexToNameMap.cpp; sourceTree = "<group>"; };
+		BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IndexToNameMap.h; sourceTree = "<group>"; };
+		BC257DED0E1F52ED0016B6C9 /* GlobalEvalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GlobalEvalFunction.cpp; sourceTree = "<group>"; };
+		BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobalEvalFunction.h; sourceTree = "<group>"; };
+		BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PrototypeFunction.cpp; sourceTree = "<group>"; };
+		BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrototypeFunction.h; sourceTree = "<group>"; };
 		BC2680C00E16D4E900A06E92 /* FunctionConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionConstructor.cpp; sourceTree = "<group>"; };
 		BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionConstructor.h; sourceTree = "<group>"; };
 		BC2680C20E16D4E900A06E92 /* NumberConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NumberConstructor.cpp; sourceTree = "<group>"; };
@@ -648,6 +661,8 @@
 		BC337BDE0E1AF0B80076918A /* GetterSetter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GetterSetter.h; sourceTree = "<group>"; };
 		BC337BEA0E1B00CB0076918A /* Error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Error.cpp; sourceTree = "<group>"; };
 		BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
+		BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectFunctions.cpp; sourceTree = "<group>"; };
+		BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectFunctions.h; sourceTree = "<group>"; };
 		BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayConstructor.cpp; sourceTree = "<group>"; };
 		BC7952070E15E8A800A898AB /* ArrayConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayConstructor.h; sourceTree = "<group>"; };
 		BC7952320E15EB5600A898AB /* BooleanConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BooleanConstructor.cpp; sourceTree = "<group>"; };
@@ -1049,6 +1064,8 @@
 			isa = PBXGroup;
 			children = (
 				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
+				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
+				BC257DE60E1F51C50016B6C9 /* Arguments.h */,
 				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
 				BC7952070E15E8A800A898AB /* ArrayConstructor.h */,
 				F692A84D0255597D01FF60F7 /* ArrayPrototype.cpp */,
@@ -1098,8 +1115,12 @@
 				933A3499038AE7C6008635CE /* grammar.y */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
+				BC257DED0E1F52ED0016B6C9 /* GlobalEvalFunction.cpp */,
+				BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */,
 				933A349D038AE80F008635CE /* identifier.cpp */,
 				933A349A038AE7C6008635CE /* identifier.h */,
+				BC257DE90E1F52BA0016B6C9 /* IndexToNameMap.cpp */,
+				BC257DEA0E1F52BA0016B6C9 /* IndexToNameMap.h */,
 				E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */,
 				E178633F0D9BEC0000D74E75 /* InitializeThreading.h */,
 				BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */,
@@ -1118,6 +1139,8 @@
 				E18E3A560DF9278C00D90B34 /* JSGlobalData.h */,
 				14DE0D680D02431400AACCA2 /* JSGlobalObject.cpp */,
 				A8E894330CD0603F00367179 /* JSGlobalObject.h */,
+				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
+				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				14760863099C633800437128 /* JSImmediate.cpp */,
 				1483B589099BC1950016E4F0 /* JSImmediate.h */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
@@ -1168,6 +1191,8 @@
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				65621E6B089E859700760F35 /* PropertySlot.cpp */,
 				65621E6C089E859700760F35 /* PropertySlot.h */,
+				BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */,
+				BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */,
 				65C02FBB0637462A003E7EE6 /* protect.h */,
 				F692A87D0255597D01FF60F7 /* regexp.cpp */,
 				F692A87E0255597D01FF60F7 /* regexp.h */,
@@ -1455,6 +1480,11 @@
 				5D53727E0E1C55EC0021E549 /* TracingDtrace.h in Headers */,
 				BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */,
 				BC3046070E1F497F003232CF /* Error.h in Headers */,
+				BC257DE80E1F51C50016B6C9 /* Arguments.h in Headers */,
+				BC257DEC0E1F52BA0016B6C9 /* IndexToNameMap.h in Headers */,
+				BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */,
+				BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */,
+				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

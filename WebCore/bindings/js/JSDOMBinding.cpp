@@ -41,6 +41,7 @@
 #include "KURL.h"
 #include "RangeException.h"
 #include "XMLHttpRequestException.h"
+#include <kjs/PrototypeFunction.h>
 
 #if ENABLE(SVG)
 #include "JSSVGException.h"

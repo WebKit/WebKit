@@ -27,6 +27,7 @@
 #include "JSFunction.h"
 #include "nodes.h"
 #include "NodeInfo.h"
+#include "JSGlobalObjectFunctions.h"
 #include <ctype.h>
 #include <limits.h>
 #include <string.h>

@@ -24,9 +24,9 @@
 #include "config.h"
 #include "ustring.h"
 
+#include "JSGlobalObjectFunctions.h"
 #include "collector.h"
 #include "dtoa.h"
-#include "JSFunction.h"
 #include "identifier.h"
 #include "operations.h"
 #include <ctype.h>
@@ -35,8 +35,8 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <wtf/Assertions.h>
 #include <wtf/ASCIICType.h>
+#include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
 #include <wtf/unicode/UTF8.h>

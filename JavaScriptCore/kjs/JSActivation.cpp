@@ -29,6 +29,7 @@
 #include "config.h"
 #include "JSActivation.h"
 
+#include "Arguments.h"
 #include "CodeBlock.h"
 #include "Machine.h"
 #include "Register.h"

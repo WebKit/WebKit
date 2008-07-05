@@ -1,3 +1,13 @@
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Cameron Zwarich.
+
+        Split Arguments, IndexToNameMap, PrototypeFunction, GlobalEvalFunction and 
+        the functions on the global object out of JSFunction.h/cpp.
+
+        * ForwardingHeaders/kjs/PrototypeFunction.h: Added.
+        * bindings/js/JSDOMBinding.cpp:
+
 2008-07-05  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

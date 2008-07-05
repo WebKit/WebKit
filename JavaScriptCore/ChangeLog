@@ -1,3 +1,38 @@
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Cameron Zwarich.
+
+        Split Arguments, IndexToNameMap, PrototypeFunction, GlobalEvalFunction and 
+        the functions on the global object out of JSFunction.h/cpp.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.cpp:
+        * kjs/AllInOneFile.cpp:
+        * kjs/Arguments.cpp: Copied from JavaScriptCore/kjs/JSFunction.cpp.
+        * kjs/Arguments.h: Copied from JavaScriptCore/kjs/JSFunction.h.
+        * kjs/GlobalEvalFunction.cpp: Copied from JavaScriptCore/kjs/JSFunction.cpp.
+        * kjs/GlobalEvalFunction.h: Copied from JavaScriptCore/kjs/JSFunction.h.
+        * kjs/IndexToNameMap.cpp: Copied from JavaScriptCore/kjs/JSFunction.cpp.
+        * kjs/IndexToNameMap.h: Copied from JavaScriptCore/kjs/JSFunction.h.
+        * kjs/JSActivation.cpp:
+        * kjs/JSFunction.cpp:
+        * kjs/JSFunction.h:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObjectFunctions.cpp: Copied from JavaScriptCore/kjs/JSFunction.cpp.
+        * kjs/JSGlobalObjectFunctions.h: Copied from JavaScriptCore/kjs/JSFunction.h.
+        The functions on the global object should be in JSGlobalObject.cpp, but putting them there
+        was a 0.5% regression.
+
+        * kjs/PrototypeFunction.cpp: Copied from JavaScriptCore/kjs/JSFunction.cpp.
+        * kjs/PrototypeFunction.h: Copied from JavaScriptCore/kjs/JSFunction.h.
+        * kjs/Shell.cpp:
+        * kjs/lexer.cpp:
+        * kjs/ustring.cpp:
+
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
         Really fix the mac build.

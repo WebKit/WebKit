@@ -34,6 +34,7 @@
 #include "DebuggerCallFrame.h"
 #include "ExceptionHelpers.h"
 #include "ExecState.h"
+#include "GlobalEvalFunction.h"
 #include "JSActivation.h"
 #include "JSArray.h"
 #include "JSFunction.h"

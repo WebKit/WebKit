@@ -33,6 +33,7 @@
 #include "JSLock.h"
 #include "JSObject.h"
 #include "Parser.h"
+#include "PrototypeFunction.h"
 #include "collector.h"
 #include "completion.h"
 #include "interpreter.h"

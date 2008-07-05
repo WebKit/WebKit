@@ -61,9 +61,7 @@ SOURCES += \
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time
 SOURCES += \
-    kjs/JSFunction.cpp \
-    kjs/debugger.cpp \
-    kjs/JSArray.cpp \
+    kjs/Arguments.cpp \
     kjs/ArrayConstructor.cpp \
     kjs/ArrayPrototype.cpp \
     kjs/BooleanConstructor.cpp \
@@ -71,10 +69,11 @@ SOURCES += \
     kjs/BooleanPrototype.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
-    kjs/DateInstance.cpp \
     kjs/DateConstructor.cpp \
+    kjs/DateInstance.cpp \
     kjs/DateMath.cpp \
     kjs/DatePrototype.cpp \
+    kjs/debugger.cpp \
     kjs/DebuggerCallFrame.cpp \
     kjs/dtoa.cpp \
     kjs/Error.cpp \
@@ -85,14 +84,21 @@ SOURCES += \
     kjs/FunctionConstructor.cpp \
     kjs/FunctionPrototype.cpp \
     kjs/GetterSetter.cpp \
+    kjs/GlobalEvalFunction.cpp \
     kjs/identifier.cpp \
+    kjs/IndexToNameMap.cpp \
     kjs/InternalFunction.cpp \
     kjs/interpreter.cpp \
+    kjs/JSArray.cpp \
     kjs/JSCell.cpp \
+    kjs/JSFunction.cpp \
+    kjs/JSGlobalObjectFunctions.cpp \
     kjs/JSImmediate.cpp \
     kjs/JSLock.cpp \
     kjs/JSNumberCell.cpp \
+    kjs/JSObject.cpp \
     kjs/JSString.cpp \
+    kjs/JSValue.cpp \
     kjs/JSWrapperObject.cpp \
     kjs/LabelStack.cpp \
     kjs/lexer.cpp \
@@ -106,14 +112,14 @@ SOURCES += \
     kjs/NumberConstructor.cpp \
     kjs/NumberObject.cpp \
     kjs/NumberPrototype.cpp \
-    kjs/JSObject.cpp \
     kjs/ObjectConstructor.cpp \
     kjs/ObjectPrototype.cpp \
     kjs/operations.cpp \
     kjs/Parser.cpp \
     kjs/PropertyMap.cpp \
-    kjs/PropertySlot.cpp \
     kjs/PropertyNameArray.cpp \
+    kjs/PropertySlot.cpp \
+    kjs/PrototypeFunction.cpp \
     kjs/regexp.cpp \
     kjs/RegExpConstructor.cpp \
     kjs/RegExpObject.cpp \
@@ -123,9 +129,8 @@ SOURCES += \
     kjs/StringObject.cpp \
     kjs/StringPrototype.cpp \
     kjs/ustring.cpp \
-    kjs/JSValue.cpp \
-    profiler/ProfileNode.cpp \
     profiler/Profile.cpp \
+    profiler/ProfileNode.cpp \
     profiler/Profiler.cpp \
     profiler/TreeProfile.cpp \
     wtf/FastMalloc.cpp \

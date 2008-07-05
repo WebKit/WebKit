@@ -74,22 +74,17 @@ javascriptcore_built_sources += \
 	DerivedSources/grammar.cpp
 
 javascriptcore_sources += \
-	JavaScriptCore/kjs/CommonIdentifiers.cpp \
-	JavaScriptCore/kjs/DateMath.cpp \
-	JavaScriptCore/kjs/JSImmediate.cpp \
-	JavaScriptCore/kjs/JSLock.cpp \
-	JavaScriptCore/kjs/JSWrapperObject.cpp \
-	JavaScriptCore/kjs/Parser.cpp \
-	JavaScriptCore/kjs/PropertyNameArray.cpp \
-	JavaScriptCore/kjs/JSArray.cpp \
+	JavaScriptCore/kjs/Arguments.cpp \
 	JavaScriptCore/kjs/ArrayConstructor.cpp \
 	JavaScriptCore/kjs/ArrayPrototype.cpp \
 	JavaScriptCore/kjs/BooleanConstructor.cpp \
 	JavaScriptCore/kjs/BooleanObject.cpp \
 	JavaScriptCore/kjs/BooleanPrototype.cpp \
 	JavaScriptCore/kjs/collector.cpp \
-	JavaScriptCore/kjs/DateInstance.cpp \
+	JavaScriptCore/kjs/CommonIdentifiers.cpp \
 	JavaScriptCore/kjs/DateConstructor.cpp \
+	JavaScriptCore/kjs/DateInstance.cpp \
+	JavaScriptCore/kjs/DateMath.cpp \
 	JavaScriptCore/kjs/DatePrototype.cpp \
 	JavaScriptCore/kjs/debugger.cpp \
 	JavaScriptCore/kjs/dtoa.cpp \
@@ -97,36 +92,47 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/ErrorConstructor.cpp \
 	JavaScriptCore/kjs/ErrorInstance.cpp \
 	JavaScriptCore/kjs/ErrorPrototype.cpp \
-	JavaScriptCore/kjs/GetterSetter.cpp \
-	JavaScriptCore/kjs/JSCell.cpp \
-	JavaScriptCore/kjs/JSFunction.cpp \
-	JavaScriptCore/kjs/JSNumberCell.cpp \
-	JavaScriptCore/kjs/JSString.cpp \
-	JavaScriptCore/kjs/JSVariableObject.cpp \
 	JavaScriptCore/kjs/FunctionConstructor.cpp \
 	JavaScriptCore/kjs/FunctionPrototype.cpp \
+	JavaScriptCore/kjs/GetterSetter.cpp \
+	JavaScriptCore/kjs/GlobalEvalFunction.cpp \
 	JavaScriptCore/kjs/identifier.cpp \
+	JavaScriptCore/kjs/IndexToNameMap.cpp \
 	JavaScriptCore/kjs/InternalFunction.cpp \
 	JavaScriptCore/kjs/interpreter.cpp \
+	JavaScriptCore/kjs/JSArray.cpp \
+	JavaScriptCore/kjs/JSCell.cpp \
+	JavaScriptCore/kjs/JSFunction.cpp \
+	JavaScriptCore/kjs/JSGlobalObject.cpp \
+	JavaScriptCore/kjs/JSGlobalObjectFunctions.cpp \
+	JavaScriptCore/kjs/JSImmediate.cpp \
+	JavaScriptCore/kjs/JSLock.cpp \
+	JavaScriptCore/kjs/JSNumberCell.cpp \
+	JavaScriptCore/kjs/JSObject.cpp \
+	JavaScriptCore/kjs/JSString.cpp \
+	JavaScriptCore/kjs/JSValue.cpp \
+	JavaScriptCore/kjs/JSVariableObject.cpp \
+	JavaScriptCore/kjs/JSWrapperObject.cpp \
 	JavaScriptCore/kjs/LabelStack.cpp \
 	JavaScriptCore/kjs/lexer.cpp \
 	JavaScriptCore/kjs/list.cpp \
 	JavaScriptCore/kjs/lookup.cpp \
 	JavaScriptCore/kjs/MathObject.cpp \
-	JavaScriptCore/kjs/nodes.cpp \
-	JavaScriptCore/kjs/nodes2string.cpp \
 	JavaScriptCore/kjs/NativeErrorConstructor.cpp \
 	JavaScriptCore/kjs/NativeErrorPrototype.cpp \
+	JavaScriptCore/kjs/nodes.cpp \
+	JavaScriptCore/kjs/nodes2string.cpp \
 	JavaScriptCore/kjs/NumberConstructor.cpp \
 	JavaScriptCore/kjs/NumberObject.cpp \
 	JavaScriptCore/kjs/NumberPrototype.cpp \
-	JavaScriptCore/kjs/JSObject.cpp \
-	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/ObjectConstructor.cpp \
 	JavaScriptCore/kjs/ObjectPrototype.cpp \
 	JavaScriptCore/kjs/operations.cpp \
+	JavaScriptCore/kjs/Parser.cpp \
 	JavaScriptCore/kjs/PropertyMap.cpp \
+	JavaScriptCore/kjs/PropertyNameArray.cpp \
 	JavaScriptCore/kjs/PropertySlot.cpp \
+	JavaScriptCore/kjs/PrototypeFunction.cpp \
 	JavaScriptCore/kjs/regexp.cpp \
 	JavaScriptCore/kjs/RegExpConstructor.cpp \
 	JavaScriptCore/kjs/RegExpObject.cpp \
@@ -136,7 +142,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/StringObject.cpp \
 	JavaScriptCore/kjs/StringPrototype.cpp \
 	JavaScriptCore/kjs/ustring.cpp \
-	JavaScriptCore/kjs/JSValue.cpp \
 	JavaScriptCore/wtf/FastMalloc.cpp \
 	JavaScriptCore/wtf/TCSystemAlloc.cpp \
 	JavaScriptCore/VM/CodeGenerator.cpp \

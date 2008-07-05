@@ -273,6 +273,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\Arguments.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\Arguments.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\ArrayConstructor.cpp"
 				>
 			</File>
@@ -449,11 +457,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\GlobalEvalFunction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\GlobalEvalFunction.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\identifier.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\kjs\identifier.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\IndexToNameMap.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\IndexToNameMap.h"
 				>
 			</File>
 			<File
@@ -526,6 +550,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSGlobalObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSGlobalObjectFunctions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSGlobalObjectFunctions.h"
 				>
 			</File>
 			<File
@@ -730,6 +762,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\protect.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\PrototypeFunction.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\PrototypeFunction.h"
 				>
 			</File>
 			<File

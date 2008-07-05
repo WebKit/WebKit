@@ -21,58 +21,32 @@
  *
  */
 
-#ifndef JSFunction_h
-#define JSFunction_h
+#ifndef Arguments_h
+#define Arguments_h
 
-#include "InternalFunction.h"
-#include "JSVariableObject.h"
-#include "SymbolTable.h"
-#include "nodes.h"
+#include "IndexToNameMap.h"
 #include "JSObject.h"
 
 namespace KJS {
 
-  class FunctionBodyNode;
-  class FunctionPrototype;
   class JSActivation;
-  class JSGlobalObject;
 
-  class JSFunction : public InternalFunction {
+  class Arguments : public JSObject {
   public:
-    JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
-
+    Arguments(ExecState*, JSFunction* func, const ArgList& args, JSActivation* act);
+    virtual void mark();
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-
-    JSObject* construct(ExecState*, const ArgList&);
-    JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
-
-    // Note: Returns a null identifier for any parameters that will never get set
-    // due to a later parameter with the same name.
-    const Identifier& getParameterName(int index);
-
-    static const ClassInfo info;
-
-    RefPtr<FunctionBodyNode> body;
-
-    void setScope(const ScopeChain& s) { _scope = s; }
-    ScopeChain& scope() { return _scope; }
-
-    virtual void mark();
-
-  private:
     virtual const ClassInfo* classInfo() const { return &info; }
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual CallType getCallData(CallData&);
+    static const ClassInfo info;
+  private:
+    static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
 
-    ScopeChain _scope;
-
-    static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+    JSActivation* _activationObject;
+    mutable IndexToNameMap indexToNameMap;
   };
 
-} // namespace kJS
+} // namespace KJS
 
-#endif // JSFunction_h
+#endif // Arguments_h
