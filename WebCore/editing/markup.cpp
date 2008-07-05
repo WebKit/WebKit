@@ -1187,7 +1187,12 @@ String createFullMarkup(const Node* node)
         return String();
 
     // FIXME: This is never "for interchange". Is that right?    
-    return frame->documentTypeString() + createMarkup(node, IncludeNode, 0);
+    String markupString = createMarkup(node, IncludeNode, 0);
+    Node::NodeType nodeType = node->nodeType();
+    if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
+        markupString = frame->documentTypeString() + markupString;
+
+    return markupString;
 }
 
 String createFullMarkup(const Range* range)

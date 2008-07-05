@@ -1,3 +1,17 @@
+2008-07-04  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives
+
+        <https://bugs.webkit.org/show_bug.cgi?id=15290>
+        <rdar://problem/5509173>
+
+        Reviewed by Dan Bernstein.
+
+        * webarchive/archive-empty-frame-dom-expected.txt: Updated test
+        results now that we don't emit two <!DOCTYPE> tags.
+        * webarchive/doctype-expected.txt: Added.
+        * webarchive/doctype.html: Added.
+
 2008-07-03  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

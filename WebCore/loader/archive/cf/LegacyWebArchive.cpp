@@ -415,7 +415,10 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(Node* node)
         return create();
         
     Vector<Node*> nodeList;
-    String markupString = frame->documentTypeString() + createMarkup(node, IncludeNode, &nodeList);
+    String markupString = createMarkup(node, IncludeNode, &nodeList);
+    Node::NodeType nodeType = node->nodeType();
+    if (nodeType != Node::DOCUMENT_NODE && nodeType != Node::DOCUMENT_TYPE_NODE)
+        markupString = frame->documentTypeString() + markupString;
 
     return create(markupString, frame, nodeList);
 }
