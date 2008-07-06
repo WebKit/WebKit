@@ -26,8 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebNSUserDefaultsExtras.h>
+#import "WebNSUserDefaultsExtras.h"
 
+#import "WebNSObjectExtras.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -37,7 +38,7 @@
 {
     // Look up the language code using CFBundle.
     NSString *languageCode = self;
-    NSString *preferredLanguageCode = [(id)WKCopyCFLocalizationPreferredName((CFStringRef)self) autorelease];
+    NSString *preferredLanguageCode = WebCFAutorelease(WKCopyCFLocalizationPreferredName((CFStringRef)self));
 
     if (preferredLanguageCode)
         languageCode = preferredLanguageCode;

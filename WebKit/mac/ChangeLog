@@ -1,3 +1,12 @@
+2008-07-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Don't leak the result of WKCopyCFLocalizationPreferredName when running under GC.
+
+        * Misc/WebNSUserDefaultsExtras.m:
+        (-[NSString _webkit_HTTPStyleLanguageCode]):
+
 2008-07-02  Alexey Proskuryakov  <ap@webkit.org>
 
         Inspired and reviewed by Mark Rowe.
