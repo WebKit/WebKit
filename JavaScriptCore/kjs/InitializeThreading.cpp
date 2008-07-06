@@ -71,4 +71,4 @@ void initializeThreading()
 #endif
 }
 
-}
+} // namespace KJS

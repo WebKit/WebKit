@@ -25,15 +25,16 @@
 
 namespace KJS {
 
-  class ArrayPrototype;
-  class FunctionPrototype;
+    class ArrayPrototype;
+    class FunctionPrototype;
 
-  class ArrayConstructor : public InternalFunction {
-  public:
-    ArrayConstructor(ExecState*, FunctionPrototype*, ArrayPrototype*);
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual CallType getCallData(CallData&);
-  };
+    class ArrayConstructor : public InternalFunction {
+    public:
+        ArrayConstructor(ExecState*, FunctionPrototype*, ArrayPrototype*);
+
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
+    };
 
 } // namespace KJS
 

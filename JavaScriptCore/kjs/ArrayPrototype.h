@@ -26,14 +26,15 @@
 
 namespace KJS {
 
- class ArrayPrototype : public JSArray {
-  public:
-    ArrayPrototype(ExecState*, ObjectPrototype*);
+    class ArrayPrototype : public JSArray {
+    public:
+        ArrayPrototype(ExecState*, ObjectPrototype*);
 
-    bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
+        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+    };
 
 } // namespace KJS
 

@@ -37,4 +37,4 @@ namespace KJS {
 
 }
 
-#endif
+#endif // KJS_InitializeThreading_h

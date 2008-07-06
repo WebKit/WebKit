@@ -38,7 +38,7 @@ namespace KJS {
     class Register;
     
     class JSActivation : public JSVariableObject {
-    typedef JSVariableObject Base;
+        typedef JSVariableObject Base;
     public:
         JSActivation(PassRefPtr<FunctionBodyNode>, Register*);
         virtual ~JSActivation();

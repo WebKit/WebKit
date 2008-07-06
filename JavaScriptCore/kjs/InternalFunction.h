@@ -24,29 +24,30 @@
 #ifndef InternalFunction_h
 #define InternalFunction_h
 
-#include "identifier.h"
 #include "JSObject.h"
+#include "identifier.h"
 
 namespace KJS {
 
-  class FunctionPrototype;
+    class FunctionPrototype;
 
-  class InternalFunction : public JSObject {
-  public:
-    static const ClassInfo info;
-    virtual const ClassInfo* classInfo() const { return &info; }
-    const Identifier& functionName() const { return m_name; }
+    class InternalFunction : public JSObject {
+    public:
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
 
-  protected:
-    InternalFunction();
-    InternalFunction(FunctionPrototype*, const Identifier&);
+        const Identifier& functionName() const { return m_name; }
 
-  private:
-    virtual CallType getCallData(CallData&) = 0;
-    virtual bool implementsHasInstance() const;
+    protected:
+        InternalFunction();
+        InternalFunction(FunctionPrototype*, const Identifier&);
 
-    Identifier m_name;
-  };
+    private:
+        virtual CallType getCallData(CallData&) = 0;
+        virtual bool implementsHasInstance() const;
+
+        Identifier m_name;
+    };
 
 } // namespace KJS
 

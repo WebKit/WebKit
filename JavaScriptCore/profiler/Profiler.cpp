@@ -160,7 +160,7 @@ CallIdentifier createCallIdentifierFromFunctionImp(JSFunction* functionImp)
     if (name.isEmpty())
         name = AnonymousFunction;
 
-    return CallIdentifier(name, functionImp->body->sourceURL(), functionImp->body->lineNo());
+    return CallIdentifier(name, functionImp->m_body->sourceURL(), functionImp->m_body->lineNo());
 }
 
 }   // namespace KJS

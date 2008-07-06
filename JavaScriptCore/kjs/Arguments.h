@@ -29,23 +29,27 @@
 
 namespace KJS {
 
-  class JSActivation;
+    class JSActivation;
 
-  class Arguments : public JSObject {
-  public:
-    Arguments(ExecState*, JSFunction* func, const ArgList& args, JSActivation* act);
-    virtual void mark();
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
-    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
-  private:
-    static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
+    class Arguments : public JSObject {
+    public:
+        Arguments(ExecState*, JSFunction*, const ArgList&, JSActivation*);
 
-    JSActivation* _activationObject;
-    mutable IndexToNameMap indexToNameMap;
-  };
+        virtual void mark();
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+
+    private:
+        static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
+
+        JSActivation* m_activationObject;
+        mutable IndexToNameMap m_indexToNameMap;
+    };
 
 } // namespace KJS
 

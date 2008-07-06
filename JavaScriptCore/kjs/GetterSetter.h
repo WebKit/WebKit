@@ -27,35 +27,39 @@
 
 namespace KJS {
 
-  class JSObject;
+    class JSObject;
 
-  // This is an internal value object which stores getter and setter functions
-  // for a property.
-  class GetterSetter : public JSCell {
-  public:
-    JSType type() const { return GetterSetterType; }
-      
-    GetterSetter() : m_getter(0), m_setter(0) { }
-      
-    virtual void mark();
-      
-    JSObject* getter() const { return m_getter; }
-    void setGetter(JSObject* getter) { m_getter = getter; }
-    JSObject* setter() const { return m_setter; }
-    void setSetter(JSObject* setter) { m_setter = setter; }
-      
-  private:
-    virtual JSValue* toPrimitive(ExecState*, JSType preferred) const;
-    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-    virtual bool toBoolean(ExecState*) const;
-    virtual double toNumber(ExecState*) const;
-    virtual UString toString(ExecState*) const;
-    virtual JSObject* toObject(ExecState*) const;
+    // This is an internal value object which stores getter and setter functions
+    // for a property.
+    class GetterSetter : public JSCell {
+    public:
+        GetterSetter()
+            : m_getter(0)
+            , m_setter(0)
+        {
+        }
 
-    JSObject* m_getter;
-    JSObject* m_setter;  
-  };
-  
+        JSType type() const { return GetterSetterType; }
+
+        virtual void mark();
+
+        JSObject* getter() const { return m_getter; }
+        void setGetter(JSObject* getter) { m_getter = getter; }
+        JSObject* setter() const { return m_setter; }
+        void setSetter(JSObject* setter) { m_setter = setter; }
+
+    private:
+        virtual JSValue* toPrimitive(ExecState*, JSType preferred) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
+        virtual bool toBoolean(ExecState*) const;
+        virtual double toNumber(ExecState*) const;
+        virtual UString toString(ExecState*) const;
+        virtual JSObject* toObject(ExecState*) const;
+
+        JSObject* m_getter;
+        JSObject* m_setter;  
+    };
+
 } // namespace KJS
 
 #endif // GetterSetter_h

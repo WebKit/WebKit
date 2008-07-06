@@ -27,17 +27,13 @@ namespace KJS {
 
     class ObjectPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of Date.prototype (and thus all objects created
-     * with the Date constructor
-     */
     class DatePrototype : public DateInstance {
     public:
-        DatePrototype(ExecState *, ObjectPrototype *);
-        virtual bool getOwnPropertySlot(ExecState *, const Identifier &, PropertySlot&);
-        virtual const ClassInfo *classInfo() const { return &info; }
+        DatePrototype(ExecState*, ObjectPrototype*);
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+
+        virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     };
 

@@ -33,91 +33,89 @@
 
 namespace KJS {
 
-JSObject* Error::create(ExecState* exec, ErrorType errtype, const UString& message,
-    int lineno, int sourceId, const UString& sourceURL)
+JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message, int lineNumber, int sourceId, const UString& sourceURL)
 {
-  JSObject* cons;
-  const char* name;
-  switch (errtype) {
-  case EvalError:
-    cons = exec->lexicalGlobalObject()->evalErrorConstructor();
-    name = "Evaluation error";
-    break;
-  case RangeError:
-    cons = exec->lexicalGlobalObject()->rangeErrorConstructor();
-    name = "Range error";
-    break;
-  case ReferenceError:
-    cons = exec->lexicalGlobalObject()->referenceErrorConstructor();
-    name = "Reference error";
-    break;
-  case SyntaxError:
-    cons = exec->lexicalGlobalObject()->syntaxErrorConstructor();
-    name = "Syntax error";
-    break;
-  case TypeError:
-    cons = exec->lexicalGlobalObject()->typeErrorConstructor();
-    name = "Type error";
-    break;
-  case URIError:
-    cons = exec->lexicalGlobalObject()->URIErrorConstructor();
-    name = "URI error";
-    break;
-  default:
-    cons = exec->lexicalGlobalObject()->errorConstructor();
-    name = "Error";
-    break;
-  }
+    JSObject* constructor;
+    const char* name;
+    switch (type) {
+        case EvalError:
+            constructor = exec->lexicalGlobalObject()->evalErrorConstructor();
+            name = "Evaluation error";
+            break;
+        case RangeError:
+            constructor = exec->lexicalGlobalObject()->rangeErrorConstructor();
+            name = "Range error";
+            break;
+        case ReferenceError:
+            constructor = exec->lexicalGlobalObject()->referenceErrorConstructor();
+            name = "Reference error";
+            break;
+        case SyntaxError:
+            constructor = exec->lexicalGlobalObject()->syntaxErrorConstructor();
+            name = "Syntax error";
+            break;
+        case TypeError:
+            constructor = exec->lexicalGlobalObject()->typeErrorConstructor();
+            name = "Type error";
+            break;
+        case URIError:
+            constructor = exec->lexicalGlobalObject()->URIErrorConstructor();
+            name = "URI error";
+            break;
+        default:
+            constructor = exec->lexicalGlobalObject()->errorConstructor();
+            name = "Error";
+            break;
+    }
 
-  ArgList args;
-  if (message.isEmpty())
-    args.append(jsString(exec, name));
-  else
-    args.append(jsString(exec, message));
-  ConstructData constructData;
-  ConstructType constructType = cons->getConstructData(constructData);
-  JSObject* err = construct(exec, cons, constructType, constructData, args);
+    ArgList args;
+    if (message.isEmpty())
+        args.append(jsString(exec, name));
+    else
+        args.append(jsString(exec, message));
+    ConstructData constructData;
+    ConstructType constructType = constructor->getConstructData(constructData);
+    JSObject* error = construct(exec, constructor, constructType, constructData, args);
 
-  if (lineno != -1)
-    err->put(exec, Identifier(exec, "line"), jsNumber(exec, lineno));
-  if (sourceId != -1)
-    err->put(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId));
+    if (lineNumber != -1)
+        error->put(exec, Identifier(exec, "line"), jsNumber(exec, lineNumber));
+    if (sourceId != -1)
+        error->put(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId));
+    if (!sourceURL.isNull())
+        error->put(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL));
 
-  if(!sourceURL.isNull())
-    err->put(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL));
- 
-  return err;
+    return error;
 }
 
-JSObject *Error::create(ExecState *exec, ErrorType type, const char *message)
+JSObject* Error::create(ExecState* exec, ErrorType type, const char* message)
 {
     return create(exec, type, message, -1, -1, NULL);
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type)
+JSObject* throwError(ExecState* exec, ErrorType type)
 {
-    JSObject *error = Error::create(exec, type, UString(), -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, UString(), -1, -1, NULL);
     exec->setException(error);
     return error;
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type, const UString &message)
+JSObject* throwError(ExecState* exec, ErrorType type, const UString& message)
 {
-    JSObject *error = Error::create(exec, type, message, -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, message, -1, -1, NULL);
     exec->setException(error);
     return error;
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type, const char *message)
+JSObject* throwError(ExecState* exec, ErrorType type, const char* message)
 {
-    JSObject *error = Error::create(exec, type, message, -1, -1, NULL);
+    JSObject* error = Error::create(exec, type, message, -1, -1, NULL);
     exec->setException(error);
     return error;
 }
 
-JSObject *throwError(ExecState *exec, ErrorType type, const UString &message, int line, int sourceId, const UString &sourceURL)
+JSObject* throwError(ExecState* exec, ErrorType type, const UString& message, int line, int sourceId, const UString& sourceURL)
 {
-    JSObject *error = Error::create(exec, type, message, line, sourceId, sourceURL);
+    JSObject* error = Error::create(exec, type, message, line, sourceId, sourceURL);
     exec->setException(error);
     return error;
 }

@@ -28,14 +28,10 @@ namespace KJS {
     class BooleanPrototype;
     class FunctionPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of the the global variable's "Boolean" property
-     */
     class BooleanConstructor : public InternalFunction {
     public:
         BooleanConstructor(ExecState*, FunctionPrototype*, BooleanPrototype*);
+
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

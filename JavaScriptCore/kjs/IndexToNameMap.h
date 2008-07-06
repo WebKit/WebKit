@@ -26,24 +26,24 @@
 
 namespace KJS {
 
-  class ArgList;
-  class ExecState;
-  class Identifier;
-  class JSFunction;
+    class ArgList;
+    class ExecState;
+    class Identifier;
+    class JSFunction;
 
-  class IndexToNameMap {
-  public:
-    IndexToNameMap(JSFunction*, const ArgList&);
-    ~IndexToNameMap();
-    
-    Identifier& operator[](const Identifier& index);
-    bool isMapped(const Identifier& index) const;
-    void unMap(ExecState* exec, const Identifier& index);
-    
-  private:
-    unsigned size;
-    Identifier* _map;
-  };
+    class IndexToNameMap {
+    public:
+        IndexToNameMap(JSFunction*, const ArgList&);
+        ~IndexToNameMap();
+
+        Identifier& operator[](const Identifier& index);
+        bool isMapped(const Identifier& index) const;
+        void unMap(ExecState* exec, const Identifier& index);
+
+    private:
+        unsigned m_size;
+        Identifier* m_map; // FIMXE: this should be an OwnArrayPtr
+    };
 
 } // namespace KJS
 

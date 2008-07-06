@@ -41,30 +41,30 @@ namespace KJS {
 
 const ClassInfo JSFunction::info = { "Function", &InternalFunction::info, 0, 0 };
 
-JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* b, ScopeChainNode* scopeChain)
-  : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), name)
-  , body(b)
-  , _scope(scopeChain)
+JSFunction::JSFunction(ExecState* exec, const Identifier& name, FunctionBodyNode* body, ScopeChainNode* scopeChainNode)
+    : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), name)
+    , m_body(body)
+    , m_scopeChain(scopeChainNode)
 {
 }
 
 void JSFunction::mark()
 {
     InternalFunction::mark();
-    body->mark();
-    _scope.mark();
+    m_body->mark();
+    m_scopeChain.mark();
 }
 
 CallType JSFunction::getCallData(CallData& callData)
 {
-    callData.js.functionBody = body.get();
-    callData.js.scopeChain = _scope.node();
+    callData.js.functionBody = m_body.get();
+    callData.js.scopeChain = m_scopeChain.node();
     return CallTypeJS;
 }
 
 JSValue* JSFunction::call(ExecState* exec, JSValue* thisValue, const ArgList& args)
 {
-    return exec->machine()->execute(body.get(), exec, this, thisValue->toThisObject(exec), args, _scope.node(), exec->exceptionSlot());
+    return exec->machine()->execute(m_body.get(), exec, this, thisValue->toThisObject(exec), args, m_scopeChain.node(), exec->exceptionSlot());
 }
 
 JSValue* JSFunction::argumentsGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
@@ -82,7 +82,7 @@ JSValue* JSFunction::callerGetter(ExecState* exec, const Identifier&, const Prop
 JSValue* JSFunction::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
 {
     JSFunction* thisObj = static_cast<JSFunction*>(slot.slotBase());
-    return jsNumber(exec, thisObj->body->parameters().size());
+    return jsNumber(exec, thisObj->m_body->parameters().size());
 }
 
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -128,18 +128,19 @@ bool JSFunction::deleteProperty(ExecState* exec, const Identifier& propertyName)
  */
 const Identifier& JSFunction::getParameterName(int index)
 {
-    Vector<Identifier>& parameters = body->parameters();
+    Vector<Identifier>& parameters = m_body->parameters();
 
-    if (static_cast<size_t>(index) >= body->parameters().size())
-        return _scope.globalObject()->globalData()->propertyNames->nullIdentifier;
+    if (static_cast<size_t>(index) >= m_body->parameters().size())
+        return m_scopeChain.globalObject()->globalData()->propertyNames->nullIdentifier;
   
     const Identifier& name = parameters[index];
 
     // Are there any subsequent parameters with the same name?
     size_t size = parameters.size();
-    for (size_t i = index + 1; i < size; ++i)
+    for (size_t i = index + 1; i < size; ++i) {
         if (parameters[i] == name)
-            return _scope.globalObject()->globalData()->propertyNames->nullIdentifier;
+            return m_scopeChain.globalObject()->globalData()->propertyNames->nullIdentifier;
+    }
 
     return name;
 }
@@ -147,8 +148,8 @@ const Identifier& JSFunction::getParameterName(int index)
 // ECMA 13.2.2 [[Construct]]
 ConstructType JSFunction::getConstructData(ConstructData& constructData)
 {
-    constructData.js.functionBody = body.get();
-    constructData.js.scopeChain = _scope.node();
+    constructData.js.functionBody = m_body.get();
+    constructData.js.scopeChain = m_scopeChain.node();
     return ConstructTypeJS;
 }
 
@@ -163,7 +164,7 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
 
     JSObject* thisObj = new (exec) JSObject(proto);
 
-    JSValue* result = exec->machine()->execute(body.get(), exec, this, thisObj, args, _scope.node(), exec->exceptionSlot());
+    JSValue* result = exec->machine()->execute(m_body.get(), exec, this, thisObj, args, m_scopeChain.node(), exec->exceptionSlot());
     if (exec->hadException() || !result->isObject())
         return thisObj;
     return static_cast<JSObject*>(result);

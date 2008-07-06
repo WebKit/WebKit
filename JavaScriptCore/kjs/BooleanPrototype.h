@@ -28,12 +28,6 @@ namespace KJS {
     class FunctionPrototype;
     class ObjectPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of Boolean.prototype (and thus all objects created
-     * with the Boolean constructor
-     */
     class BooleanPrototype : public BooleanObject {
     public:
         BooleanPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);

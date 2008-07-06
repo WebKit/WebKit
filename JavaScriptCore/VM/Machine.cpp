@@ -2699,8 +2699,8 @@ JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
 
     JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue);
     if (!activation) {
-        CodeBlock* codeBlock = &function->body->generatedCode();
-        activation = new (exec) JSActivation(function->body, callFrame + RegisterFile::CallFrameHeaderSize + codeBlock->numLocals);
+        CodeBlock* codeBlock = &function->m_body->generatedCode();
+        activation = new (exec) JSActivation(function->m_body, callFrame + RegisterFile::CallFrameHeaderSize + codeBlock->numLocals);
         callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue = activation;
     }
 

@@ -27,7 +27,7 @@ namespace KJS {
 
     class BooleanObject : public JSWrapperObject {
     public:
-        BooleanObject(JSObject* proto);
+        BooleanObject(JSObject* prototype);
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;

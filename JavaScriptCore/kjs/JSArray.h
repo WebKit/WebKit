@@ -26,83 +26,83 @@
 
 namespace KJS {
 
-  typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;
+    typedef HashMap<unsigned, JSValue*> SparseArrayValueMap;
 
-  struct ArrayStorage {
-      unsigned m_vectorLength;
-      unsigned m_numValuesInVector;
-      SparseArrayValueMap* m_sparseValueMap;
-      void* lazyCreationData; // A JSArray subclass can use this to fill the vector lazily.
-      JSValue* m_vector[1];
-  };
+    struct ArrayStorage {
+        unsigned m_vectorLength;
+        unsigned m_numValuesInVector;
+        SparseArrayValueMap* m_sparseValueMap;
+        void* lazyCreationData; // A JSArray subclass can use this to fill the vector lazily.
+        JSValue* m_vector[1];
+    };
 
-  class JSArray : public JSObject {
-  public:
-    JSArray(JSValue* prototype, unsigned initialLength);
-    JSArray(JSObject* prototype, const ArgList& initialValues);
-    virtual ~JSArray();
+    class JSArray : public JSObject {
+    public:
+        JSArray(JSValue* prototype, unsigned initialLength);
+        JSArray(JSObject* prototype, const ArgList& initialValues);
+        virtual ~JSArray();
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
-    virtual void put(ExecState*, unsigned propertyName, JSValue*); // FIXME: Make protected and add setItem.
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual void put(ExecState*, unsigned propertyName, JSValue*); // FIXME: Make protected and add setItem.
 
-    static const ClassInfo info;
+        static const ClassInfo info;
 
-    unsigned getLength() const { return m_length; }
-    void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
+        unsigned getLength() const { return m_length; }
+        void setLength(unsigned); // OK to use on new arrays, but not if it might be a RegExpMatchArray.
 
-    void sort(ExecState*);
-    void sort(ExecState*, JSValue* compareFunction, CallType, const CallData&);
+        void sort(ExecState*);
+        void sort(ExecState*, JSValue* compareFunction, CallType, const CallData&);
 
-    bool canGetIndex(unsigned i) { return i < m_fastAccessCutoff; }
-    JSValue* getIndex(unsigned i)
-    {
-        ASSERT(canGetIndex(i));
-        return m_storage->m_vector[i];
-    }
+        bool canGetIndex(unsigned i) { return i < m_fastAccessCutoff; }
+        JSValue* getIndex(unsigned i)
+        {
+            ASSERT(canGetIndex(i));
+            return m_storage->m_vector[i];
+        }
 
-    bool canSetIndex(unsigned i) { return i < m_fastAccessCutoff; }
-    JSValue* setIndex(unsigned i, JSValue* v)
-    {
-        ASSERT(canSetIndex(i));
-        return m_storage->m_vector[i] = v;
-    }
+        bool canSetIndex(unsigned i) { return i < m_fastAccessCutoff; }
+        JSValue* setIndex(unsigned i, JSValue* v)
+        {
+            ASSERT(canSetIndex(i));
+            return m_storage->m_vector[i] = v;
+        }
 
-  protected:
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
-    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-    virtual bool deleteProperty(ExecState*, unsigned propertyName);
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
-    virtual void mark();
+    protected:
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual bool deleteProperty(ExecState*, unsigned propertyName);
+        virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+        virtual void mark();
 
-    void* lazyCreationData();
-    void setLazyCreationData(void*);
+        void* lazyCreationData();
+        void setLazyCreationData(void*);
 
-  private:
-    virtual const ClassInfo* classInfo() const { return &info; }
+    private:
+        virtual const ClassInfo* classInfo() const { return &info; }
 
-    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
 
-    bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
-    void putSlowCase(ExecState*, unsigned propertyName, JSValue*);
+        bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
+        void putSlowCase(ExecState*, unsigned propertyName, JSValue*);
 
-    bool increaseVectorLength(unsigned newLength);
-    
-    unsigned compactForSorting();
+        bool increaseVectorLength(unsigned newLength);
+        
+        unsigned compactForSorting();
 
-    enum ConsistencyCheckType { NormalConsistencyCheck, DestructorConsistencyCheck, SortConsistencyCheck };
-    void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);
+        enum ConsistencyCheckType { NormalConsistencyCheck, DestructorConsistencyCheck, SortConsistencyCheck };
+        void checkConsistency(ConsistencyCheckType = NormalConsistencyCheck);
 
-    unsigned m_length;
-    unsigned m_fastAccessCutoff;
-    ArrayStorage* m_storage;
-  };
+        unsigned m_length;
+        unsigned m_fastAccessCutoff;
+        ArrayStorage* m_storage;
+    };
 
-  JSArray* constructEmptyArray(ExecState*);
-  JSArray* constructEmptyArray(ExecState*, unsigned initialLength);
-  JSArray* constructArray(ExecState*, JSValue* singleItemValue);
-  JSArray* constructArray(ExecState*, const ArgList& values);
+    JSArray* constructEmptyArray(ExecState*);
+    JSArray* constructEmptyArray(ExecState*, unsigned initialLength);
+    JSArray* constructArray(ExecState*, JSValue* singleItemValue);
+    JSArray* constructArray(ExecState*, const ArgList& values);
 
 } // namespace KJS
 
-#endif
+#endif // JSArray_h

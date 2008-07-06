@@ -833,4 +833,4 @@ JSArray* constructArray(ExecState* exec, const ArgList& values)
     return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), values);
 }
 
-}
+} // namespace KJS

@@ -41,56 +41,55 @@ namespace KJS {
 // isn't stored in the activation object.
 
 IndexToNameMap::IndexToNameMap(JSFunction* func, const ArgList& args)
+    : m_size(args.size())
+    , m_map(new Identifier[args.size()])
 {
-  _map = new Identifier[args.size()];
-  this->size = args.size();
-  
-  unsigned i = 0;
-  ArgList::const_iterator end = args.end();
-  for (ArgList::const_iterator it = args.begin(); it != end; ++i, ++it)
-    _map[i] = func->getParameterName(i); // null if there is no corresponding parameter
+    unsigned i = 0;
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++i, ++it)
+        m_map[i] = func->getParameterName(i); // null if there is no corresponding parameter
 }
 
 IndexToNameMap::~IndexToNameMap()
 {
-  delete [] _map;
+    delete [] m_map;
 }
 
 bool IndexToNameMap::isMapped(const Identifier& index) const
 {
-  bool indexIsNumber;
-  unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
-  
-  if (!indexIsNumber)
-    return false;
-  
-  if (indexAsNumber >= size)
-    return false;
+    bool indexIsNumber;
+    unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
 
-  if (_map[indexAsNumber].isNull())
-    return false;
-  
-  return true;
+    if (!indexIsNumber)
+        return false;
+
+    if (indexAsNumber >= m_size)
+        return false;
+
+    if (m_map[indexAsNumber].isNull())
+        return false;
+
+    return true;
 }
 
 void IndexToNameMap::unMap(ExecState* exec, const Identifier& index)
 {
-  bool indexIsNumber;
-  unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
+    bool indexIsNumber;
+    unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
 
-  ASSERT(indexIsNumber && indexAsNumber < size);
-  
-  _map[indexAsNumber] = exec->propertyNames().nullIdentifier;
+    ASSERT(indexIsNumber && indexAsNumber < m_size);
+
+    m_map[indexAsNumber] = exec->propertyNames().nullIdentifier;
 }
 
 Identifier& IndexToNameMap::operator[](const Identifier& index)
 {
-  bool indexIsNumber;
-  unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
+    bool indexIsNumber;
+    unsigned indexAsNumber = index.toStrictUInt32(&indexIsNumber);
 
-  ASSERT(indexIsNumber && indexAsNumber < size);
-  
-  return _map[indexAsNumber];
+    ASSERT(indexIsNumber && indexAsNumber < m_size);
+
+    return m_map[indexAsNumber];
 }
 
 } // namespace KJS

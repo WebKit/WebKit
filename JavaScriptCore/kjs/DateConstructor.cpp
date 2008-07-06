@@ -49,62 +49,64 @@ static JSValue* dateParse(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateNow(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateUTC(ExecState*, JSObject*, JSValue*, const ArgList&);
 
-DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* funcProto, DatePrototype* dateProto)
-  : InternalFunction(funcProto, Identifier(exec, dateProto->classInfo()->className))
+DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* functionPrototype, DatePrototype* datePrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, datePrototype->classInfo()->className))
 {
-  putDirect(exec->propertyNames().prototype, dateProto, DontEnum|DontDelete|ReadOnly);
-  putDirectFunction(new (exec) PrototypeFunction(exec, funcProto, 1, exec->propertyNames().parse, dateParse), DontEnum);
-  putDirectFunction(new (exec) PrototypeFunction(exec, funcProto, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
-  putDirectFunction(new (exec) PrototypeFunction(exec, funcProto, 0, exec->propertyNames().now, dateNow), DontEnum);
-  putDirect(exec, exec->propertyNames().length, 7, ReadOnly | DontEnum | DontDelete);
+      putDirect(exec->propertyNames().prototype, datePrototype, DontEnum|DontDelete|ReadOnly);
+
+      putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().parse, dateParse), DontEnum);
+      putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
+      putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().now, dateNow), DontEnum);
+
+      putDirect(exec, exec->propertyNames().length, 7, ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.9.3
 static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
 {
-  int numArgs = args.size();
+    int numArgs = args.size();
 
-  double value;
+    double value;
 
-  if (numArgs == 0) { // new Date() ECMA 15.9.3.3
-    value = getCurrentUTCTime();
-  } else if (numArgs == 1) {
-    if (args[0]->isObject(&DateInstance::info))
-      value = static_cast<DateInstance*>(args[0])->internalNumber();
-    else {
-      JSValue* primitive = args[0]->toPrimitive(exec);
-      if (primitive->isString())
-        value = parseDate(primitive->getString());
-      else
-        value = primitive->toNumber(exec);
-    }
-  } else {
-    if (isnan(args[0]->toNumber(exec))
-        || isnan(args[1]->toNumber(exec))
-        || (numArgs >= 3 && isnan(args[2]->toNumber(exec)))
-        || (numArgs >= 4 && isnan(args[3]->toNumber(exec)))
-        || (numArgs >= 5 && isnan(args[4]->toNumber(exec)))
-        || (numArgs >= 6 && isnan(args[5]->toNumber(exec)))
-        || (numArgs >= 7 && isnan(args[6]->toNumber(exec)))) {
-      value = NaN;
+    if (numArgs == 0) // new Date() ECMA 15.9.3.3
+        value = getCurrentUTCTime();
+    else if (numArgs == 1) {
+        if (args[0]->isObject(&DateInstance::info))
+            value = static_cast<DateInstance*>(args[0])->internalNumber();
+        else {
+            JSValue* primitive = args[0]->toPrimitive(exec);
+            if (primitive->isString())
+                value = parseDate(primitive->getString());
+            else
+                value = primitive->toNumber(exec);
+        }
     } else {
-      GregorianDateTime t;
-      int year = args[0]->toInt32(exec);
-      t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-      t.month = args[1]->toInt32(exec);
-      t.monthDay = (numArgs >= 3) ? args[2]->toInt32(exec) : 1;
-      t.hour = args[3]->toInt32(exec);
-      t.minute = args[4]->toInt32(exec);
-      t.second = args[5]->toInt32(exec);
-      t.isDST = -1;
-      double ms = (numArgs >= 7) ? args[6]->toNumber(exec) : 0;
-      value = gregorianDateTimeToMS(t, ms, false);
+        if (isnan(args[0]->toNumber(exec))
+                || isnan(args[1]->toNumber(exec))
+                || (numArgs >= 3 && isnan(args[2]->toNumber(exec)))
+                || (numArgs >= 4 && isnan(args[3]->toNumber(exec)))
+                || (numArgs >= 5 && isnan(args[4]->toNumber(exec)))
+                || (numArgs >= 6 && isnan(args[5]->toNumber(exec)))
+                || (numArgs >= 7 && isnan(args[6]->toNumber(exec))))
+            value = NaN;
+        else {
+          GregorianDateTime t;
+          int year = args[0]->toInt32(exec);
+          t.year = (year >= 0 && year <= 99) ? year : year - 1900;
+          t.month = args[1]->toInt32(exec);
+          t.monthDay = (numArgs >= 3) ? args[2]->toInt32(exec) : 1;
+          t.hour = args[3]->toInt32(exec);
+          t.minute = args[4]->toInt32(exec);
+          t.second = args[5]->toInt32(exec);
+          t.isDST = -1;
+          double ms = (numArgs >= 7) ? args[6]->toNumber(exec) : 0;
+          value = gregorianDateTimeToMS(t, ms, false);
+        }
     }
-  }
-  
-  DateInstance* ret = new (exec) DateInstance(exec->lexicalGlobalObject()->datePrototype());
-  ret->setInternalValue(jsNumber(exec, timeClip(value)));
-  return ret;
+
+    DateInstance* ret = new (exec) DateInstance(exec->lexicalGlobalObject()->datePrototype());
+    ret->setInternalValue(jsNumber(exec, timeClip(value)));
+    return ret;
 }
 
 ConstructType DateConstructor::getConstructData(ConstructData& constructData)
@@ -148,9 +150,8 @@ static JSValue* dateUTC(ExecState* exec, JSObject*, JSValue*, const ArgList& arg
             || (n >= 4 && isnan(args[3]->toNumber(exec)))
             || (n >= 5 && isnan(args[4]->toNumber(exec)))
             || (n >= 6 && isnan(args[5]->toNumber(exec)))
-            || (n >= 7 && isnan(args[6]->toNumber(exec)))) {
+            || (n >= 7 && isnan(args[6]->toNumber(exec))))
         return jsNaN(exec);
-    }
 
     GregorianDateTime t;
     int year = args[0]->toInt32(exec);

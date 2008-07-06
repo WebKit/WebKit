@@ -28,9 +28,9 @@
 #include "ObjectPrototype.h"
 #include "lookup.h"
 #include "operations.h"
+#include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/HashSet.h>
-#include <algorithm> // for std::min
 
 namespace KJS {
 
@@ -89,8 +89,8 @@ const ClassInfo ArrayPrototype::info = {"Array", &JSArray::info, 0, ExecState::a
 */
 
 // ECMA 15.4.4
-ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objProto)
-    : JSArray(objProto, 0)
+ArrayPrototype::ArrayPrototype(ExecState*, ObjectPrototype* objectPrototype)
+    : JSArray(objectPrototype, 0)
 {
 }
 
@@ -774,4 +774,4 @@ JSValue* arrayProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue* thisValu
     return jsNumber(exec, -1);
 }
 
-}
+} // namespace KJS

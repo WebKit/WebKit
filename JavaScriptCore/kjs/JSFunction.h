@@ -32,46 +32,48 @@
 
 namespace KJS {
 
-  class FunctionBodyNode;
-  class FunctionPrototype;
-  class JSActivation;
-  class JSGlobalObject;
+    class FunctionBodyNode;
+    class FunctionPrototype;
+    class JSActivation;
+    class JSGlobalObject;
 
-  class JSFunction : public InternalFunction {
-  public:
-    JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
+    class JSFunction : public InternalFunction {
+    public:
+        JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
-    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
-    JSObject* construct(ExecState*, const ArgList&);
-    JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
+        JSObject* construct(ExecState*, const ArgList&);
+        JSValue* call(ExecState*, JSValue* thisValue, const ArgList&);
 
-    // Note: Returns a null identifier for any parameters that will never get set
-    // due to a later parameter with the same name.
-    const Identifier& getParameterName(int index);
+        // Note: Returns a null identifier for any parameters that will never get set
+        // due to a later parameter with the same name.
+        const Identifier& getParameterName(int index);
 
-    static const ClassInfo info;
+        void setScope(const ScopeChain& scopeChain) { m_scopeChain = scopeChain; }
+        ScopeChain& scope() { return m_scopeChain; }
 
-    RefPtr<FunctionBodyNode> body;
+        virtual void mark();
 
-    void setScope(const ScopeChain& s) { _scope = s; }
-    ScopeChain& scope() { return _scope; }
+        static const ClassInfo info;
 
-    virtual void mark();
+        // FIXME: This should be private
+        RefPtr<FunctionBodyNode> m_body;
 
-  private:
-    virtual const ClassInfo* classInfo() const { return &info; }
-    virtual ConstructType getConstructData(ConstructData&);
-    virtual CallType getCallData(CallData&);
+    private:
+        virtual const ClassInfo* classInfo() const { return &info; }
 
-    ScopeChain _scope;
+        virtual ConstructType getConstructData(ConstructData&);
+        virtual CallType getCallData(CallData&);
 
-    static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
-    static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
-  };
+        static JSValue* argumentsGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValue* callerGetter(ExecState*, const Identifier&, const PropertySlot&);
+        static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
+
+        ScopeChain m_scopeChain;
+    };
 
 } // namespace kJS
 

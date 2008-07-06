@@ -28,9 +28,9 @@
 
 namespace KJS {
 
-  class ExecState;
-  class FunctionPrototype;
-  class JSGlobalObject;
+    class ExecState;
+    class FunctionPrototype;
+    class JSGlobalObject;
 
     class GlobalEvalFunction : public PrototypeFunction {
     public:

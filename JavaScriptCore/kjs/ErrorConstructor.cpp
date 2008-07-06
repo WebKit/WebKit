@@ -29,12 +29,12 @@
 
 namespace KJS {
 
-ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* funcProto, ErrorPrototype* errorProto)
-    : InternalFunction(funcProto, Identifier(exec, errorProto->classInfo()->className))
+ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* functionPrototype, ErrorPrototype* errorPrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, errorPrototype->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
-    putDirect(exec->propertyNames().prototype, errorProto, DontEnum|DontDelete|ReadOnly);
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete|ReadOnly|DontEnum);
+    putDirect(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum);
 }
 
 // ECMA 15.9.3

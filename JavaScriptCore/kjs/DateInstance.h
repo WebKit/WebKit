@@ -40,7 +40,7 @@ namespace KJS {
         bool getUTCTime(GregorianDateTime&) const;
         bool getTime(double& milliseconds, int& offset) const;
         bool getUTCTime(double& milliseconds) const;
-        
+
         static const ClassInfo info;
 
         void msToGregorianDateTime(double, bool outputIsUTC, GregorianDateTime&) const;

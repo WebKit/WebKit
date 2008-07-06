@@ -25,45 +25,34 @@
 
 namespace KJS {
 
-  class ExecState;
-  class JSObject;
-  class UString;
+    class ExecState;
+    class JSObject;
+    class UString;
 
-  /**
-   * Types of Native Errors available. For custom errors, GeneralError
-   * should be used.
-   */
-  enum ErrorType { GeneralError   = 0,
-                   EvalError      = 1,
-                   RangeError     = 2,
-                   ReferenceError = 3,
-                   SyntaxError    = 4,
-                   TypeError      = 5,
-                   URIError       = 6};
-
-  /**
-   * @short Factory methods for error objects.
-   */
-  class Error {
-  public:
     /**
-     * Factory method for error objects.
-     *
-     * @param exec The current execution state
-     * @param errtype Type of error.
-     * @param message Optional error message.
-     * @param lineNumber Optional line number.
-     * @param sourceId Optional source id.
-     * @param sourceURL Optional source URL.
+     * Types of Native Errors available. For custom errors, GeneralError
+     * should be used.
      */
-    static JSObject *create(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
-    static JSObject *create(ExecState *, ErrorType, const char *message);
-  };
+    enum ErrorType {
+        GeneralError   = 0,
+        EvalError      = 1,
+        RangeError     = 2,
+        ReferenceError = 3,
+        SyntaxError    = 4,
+        TypeError      = 5,
+        URIError       = 6
+    };
 
-JSObject *throwError(ExecState *, ErrorType, const UString &message, int lineNumber, int sourceId, const UString &sourceURL);
-JSObject *throwError(ExecState *, ErrorType, const UString &message);
-JSObject *throwError(ExecState *, ErrorType, const char *message);
-JSObject *throwError(ExecState *, ErrorType);
+    class Error {
+    public:
+        static JSObject* create(ExecState*, ErrorType, const UString& message, int lineNumber, int sourceId, const UString& sourceURL);
+        static JSObject* create(ExecState*, ErrorType, const char* message);
+    };
+
+    JSObject* throwError(ExecState*, ErrorType, const UString& message, int lineNumber, int sourceId, const UString& sourceURL);
+    JSObject* throwError(ExecState*, ErrorType, const UString& message);
+    JSObject* throwError(ExecState*, ErrorType, const char* message);
+    JSObject* throwError(ExecState*, ErrorType);
 
 } // namespace KJS
 

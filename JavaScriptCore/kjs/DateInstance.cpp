@@ -37,9 +37,9 @@ struct DateInstance::Cache {
 
 const ClassInfo DateInstance::info = {"Date", 0, 0, 0};
 
-DateInstance::DateInstance(JSObject *proto)
-  : JSWrapperObject(proto)
-  , m_cache(0)
+DateInstance::DateInstance(JSObject* prototype)
+    : JSWrapperObject(prototype)
+    , m_cache(0)
 {
 }
 
@@ -71,7 +71,7 @@ void DateInstance::msToGregorianDateTime(double milli, bool outputIsUTC, Gregori
     }
 }
 
-bool DateInstance::getTime(GregorianDateTime &t, int &offset) const
+bool DateInstance::getTime(GregorianDateTime& t, int& offset) const
 {
     double milli = internalNumber();
     if (isnan(milli))
@@ -82,7 +82,7 @@ bool DateInstance::getTime(GregorianDateTime &t, int &offset) const
     return true;
 }
 
-bool DateInstance::getUTCTime(GregorianDateTime &t) const
+bool DateInstance::getUTCTime(GregorianDateTime& t) const
 {
     double milli = internalNumber();
     if (isnan(milli))
@@ -92,7 +92,7 @@ bool DateInstance::getUTCTime(GregorianDateTime &t) const
     return true;
 }
 
-bool DateInstance::getTime(double &milli, int &offset) const
+bool DateInstance::getTime(double& milli, int& offset) const
 {
     milli = internalNumber();
     if (isnan(milli))
@@ -104,7 +104,7 @@ bool DateInstance::getTime(double &milli, int &offset) const
     return true;
 }
 
-bool DateInstance::getUTCTime(double &milli) const
+bool DateInstance::getUTCTime(double& milli) const
 {
     milli = internalNumber();
     if (isnan(milli))

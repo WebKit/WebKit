@@ -122,7 +122,7 @@ static CFDateFormatterStyle styleFromArgString(const UString& string, CFDateForm
     return defaultStyle;
 }
 
-static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, bool includeTime, const ArgList& args)
+static UString formatLocaleDate(ExecState* exec, double time, bool includeDate, bool includeTime, const ArgList& args)
 {
     CFDateFormatterStyle dateStyle = (includeDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
     CFDateFormatterStyle timeStyle = (includeTime ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
@@ -137,11 +137,10 @@ static UString formatLocaleDate(ExecState *exec, double time, bool includeDate, 
     } else if (includeDate && includeTime && !args[1]->isUndefined()) {
         dateStyle = styleFromArgString(arg0String, dateStyle);
         timeStyle = styleFromArgString(args[1]->toString(exec), timeStyle);
-    } else if (includeDate && !args[0]->isUndefined()) {
+    } else if (includeDate && !args[0]->isUndefined())
         dateStyle = styleFromArgString(arg0String, dateStyle);
-    } else if (includeTime && !args[0]->isUndefined()) {
+    else if (includeTime && !args[0]->isUndefined())
         timeStyle = styleFromArgString(arg0String, timeStyle);
-    }
 
     CFLocaleRef locale = CFLocaleCopyCurrent();
     CFDateFormatterRef formatter = CFDateFormatterCreate(0, locale, dateStyle, timeStyle);
@@ -184,16 +183,15 @@ static JSCell* formatLocaleDate(ExecState* exec, const GregorianDateTime& gdt, c
     struct tm localTM = gdt;
     int year = gdt.year + 1900;
     bool yearNeedsOffset = year < 1900 || year > 2038;
-    if (yearNeedsOffset) {
+    if (yearNeedsOffset)
         localTM.tm_year = equivalentYearForDST(year) - 1900;
-     }
  
     // Do the formatting
-    const int bufsize=128;
+    const int bufsize = 128;
     char timebuffer[bufsize];
     size_t ret = strftime(timebuffer, bufsize, formatStrings[format], &localTM);
  
-    if ( ret == 0 )
+    if (ret == 0)
         return jsString(exec, "");
  
     // Copy original into the buffer
@@ -292,10 +290,6 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, const ArgList& args, in
     return ok;
 }
 
-
-
-
-
 const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState::dateTable};
 
 /* Source for DatePrototype.lut.h
@@ -349,8 +343,8 @@ const ClassInfo DatePrototype::info = {"Date", &DateInstance::info, 0, ExecState
 */
 // ECMA 15.9.4
 
-DatePrototype::DatePrototype(ExecState* exec, ObjectPrototype* objectProto)
-    : DateInstance(objectProto)
+DatePrototype::DatePrototype(ExecState* exec, ObjectPrototype* objectPrototype)
+    : DateInstance(objectPrototype)
 {
     setInternalValue(jsNaN(exec));
     // The constructor will be added later, after DateConstructor has been built.
