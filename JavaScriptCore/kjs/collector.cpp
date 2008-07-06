@@ -21,12 +21,12 @@
 #include "config.h"
 #include "collector.h"
 
+#include "ArgList.h"
 #include "ExecState.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
 #include "JSString.h"
 #include "JSValue.h"
-#include "list.h"
 #include "Machine.h"
 #include "Tracing.h"
 #include <algorithm>

@@ -1,5 +1,28 @@
 2008-07-05  Sam Weinig  <sam@webkit.org>
 
+        Rubber-stamped by Cameron Zwarich.
+
+        Rename list.h/cpp to ArgList.h/cpp.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * VM/Machine.h:
+        * kjs/AllInOneFile.cpp:
+        * kjs/ArgList.cpp: Copied from JavaScriptCore/kjs/list.cpp.
+        * kjs/ArgList.h: Copied from JavaScriptCore/kjs/list.h.
+        * kjs/IndexToNameMap.cpp:
+        * kjs/JSGlobalData.cpp:
+        * kjs/JSGlobalData.h:
+        * kjs/JSObject.h:
+        * kjs/collector.cpp:
+        * kjs/list.cpp: Removed.
+        * kjs/list.h: Removed.
+
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
         Fix non-AllInOne builds again.
 
         * kjs/BooleanPrototype.cpp:

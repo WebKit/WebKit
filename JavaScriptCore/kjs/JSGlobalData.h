@@ -29,7 +29,7 @@
 #ifndef JSGlobalData_h
 #define JSGlobalData_h
 
-#include "list.h"
+#include "ArgList.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>

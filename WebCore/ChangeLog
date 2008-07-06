@@ -2,6 +2,18 @@
 
         Rubber-stamped by Cameron Zwarich.
 
+        Rename list.h/cpp to ArgList.h/cpp.
+
+        * ForwardingHeaders/kjs/ArgList.h: Copied from WebCore/ForwardingHeaders/kjs/list.h.
+        * ForwardingHeaders/kjs/list.h: Removed.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bridge/qt/qt_instance.cpp:
+        * page/Console.cpp:
+
+2008-07-05  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Cameron Zwarich.
+
         Split Arguments, IndexToNameMap, PrototypeFunction, GlobalEvalFunction and 
         the functions on the global object out of JSFunction.h/cpp.
 

@@ -61,6 +61,7 @@ SOURCES += \
 # AllInOneFile.cpp helps gcc analize and optimize code
 # Other compilers may be able to do this at link time
 SOURCES += \
+    kjs/ArgList.cpp \
     kjs/Arguments.cpp \
     kjs/ArrayConstructor.cpp \
     kjs/ArrayPrototype.cpp \
@@ -102,7 +103,6 @@ SOURCES += \
     kjs/JSWrapperObject.cpp \
     kjs/LabelStack.cpp \
     kjs/lexer.cpp \
-    kjs/list.cpp \
     kjs/lookup.cpp \
     kjs/MathObject.cpp \
     kjs/NativeErrorConstructor.cpp \

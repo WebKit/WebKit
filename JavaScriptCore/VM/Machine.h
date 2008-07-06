@@ -29,11 +29,11 @@
 #ifndef Machine_h
 #define Machine_h
 
+#include "ArgList.h"
 #include "JSCell.h"
 #include "JSValue.h"
 #include "Opcode.h"
 #include "RegisterFile.h"
-#include <kjs/list.h>
 #include <wtf/HashMap.h>
 
 namespace KJS {

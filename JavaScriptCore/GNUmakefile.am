@@ -74,6 +74,7 @@ javascriptcore_built_sources += \
 	DerivedSources/grammar.cpp
 
 javascriptcore_sources += \
+	JavaScriptCore/kjs/ArgList.cpp \
 	JavaScriptCore/kjs/Arguments.cpp \
 	JavaScriptCore/kjs/ArrayConstructor.cpp \
 	JavaScriptCore/kjs/ArrayPrototype.cpp \
@@ -115,7 +116,6 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSWrapperObject.cpp \
 	JavaScriptCore/kjs/LabelStack.cpp \
 	JavaScriptCore/kjs/lexer.cpp \
-	JavaScriptCore/kjs/list.cpp \
 	JavaScriptCore/kjs/lookup.cpp \
 	JavaScriptCore/kjs/MathObject.cpp \
 	JavaScriptCore/kjs/NativeErrorConstructor.cpp \

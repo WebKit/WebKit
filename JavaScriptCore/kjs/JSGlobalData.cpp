@@ -29,15 +29,15 @@
 #include "config.h"
 #include "JSGlobalData.h"
 
-#include "collector.h"
+#include "ArgList.h"
 #include "CommonIdentifiers.h"
 #include "JSLock.h"
-#include "lexer.h"
-#include "list.h"
-#include "lookup.h"
 #include "Machine.h"
-#include "nodes.h"
 #include "Parser.h"
+#include "collector.h"
+#include "lexer.h"
+#include "lookup.h"
+#include "nodes.h"
 
 #if USE(MULTIPLE_THREADS)
 #include <wtf/Threading.h>

@@ -20,9 +20,9 @@
 #include "config.h"
 #include "qt_instance.h"
 
+#include "ArgList.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"
-#include "list.h"
 #include "qt_class.h"
 #include "qt_runtime.h"
 #include "PropertyNameArray.h"

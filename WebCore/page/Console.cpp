@@ -38,9 +38,9 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
-#include <kjs/JSObject.h>
+#include <kjs/ArgList.h>
 #include <kjs/interpreter.h>
-#include <kjs/list.h>
+#include <kjs/JSObject.h>
 #include <stdio.h>
 
 using namespace KJS;

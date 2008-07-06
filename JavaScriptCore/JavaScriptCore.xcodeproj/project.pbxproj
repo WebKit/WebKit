@@ -178,7 +178,6 @@
 		BC18C42F0E16F5CD00B34460 /* LabelID.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B20D70D8A0891009CB8C7 /* LabelID.h */; };
 		BC18C4300E16F5CD00B34460 /* LabelStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 65B813A80CD1D01900DF59D6 /* LabelStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4310E16F5CD00B34460 /* lexer.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8660255597D01FF60F7 /* lexer.h */; };
-		BC18C4330E16F5CD00B34460 /* list.h in Headers */ = {isa = PBXBuildFile; fileRef = 931C6CEF038EE8DE008635CE /* list.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 657EB7450B708F540063461B /* ListHashSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 148A1626095D16BB00666D0D /* ListRefPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4360E16F5CD00B34460 /* Locker.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79270D6C964500FEA3BA /* Locker.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -267,6 +266,7 @@
 		BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203460E17135E002C7E82 /* DateConstructor.h */; };
 		BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203480E17135E002C7E82 /* DatePrototype.h */; };
 		BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */; };
+		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E178636D0D9BEEC300D74E75 /* InitializeThreading.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E178636C0D9BEEC300D74E75 /* InitializeThreading.cpp */; };
 		E18E3A590DF9278C00D90B34 /* JSGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E3A570DF9278C00D90B34 /* JSGlobalData.cpp */; };
 		E1A862A90D7EBB76001EC6AA /* CollatorICU.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1A862A80D7EBB76001EC6AA /* CollatorICU.cpp */; settings = {COMPILER_FLAGS = "-fno-strict-aliasing"; }; };
@@ -558,8 +558,6 @@
 		930754BF08B0F68000AB3056 /* pcre_compile.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_compile.cpp; path = pcre/pcre_compile.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		930754CE08B0F74500AB3056 /* pcre_tables.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_tables.cpp; path = pcre/pcre_tables.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		930754E908B0F78500AB3056 /* pcre_exec.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; name = pcre_exec.cpp; path = pcre/pcre_exec.cpp; sourceTree = "<group>"; tabWidth = 8; };
-		931C6CEF038EE8DE008635CE /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; tabWidth = 8; };
-		931C6CF0038EE8DE008635CE /* list.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = list.cpp; sourceTree = "<group>"; tabWidth = 8; };
 		9322A00306C341D3009067BB /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		932F5BD80822A1C700736975 /* Info.plist */ = {isa = PBXFileReference; indentWidth = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; tabWidth = 8; usesTabs = 1; };
 		932F5BD90822A1C700736975 /* JavaScriptCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -683,6 +681,8 @@
 		BCD203470E17135E002C7E82 /* DatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatePrototype.cpp; sourceTree = "<group>"; };
 		BCD203480E17135E002C7E82 /* DatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.h; sourceTree = "<group>"; };
 		BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.lut.h; sourceTree = "<group>"; };
+		BCF605110E203EF800B9A64D /* ArgList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgList.cpp; sourceTree = "<group>"; };
+		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
 		D21202280AD4310C00ED79B6 /* DateMath.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DateMath.cpp; sourceTree = "<group>"; };
 		D21202290AD4310C00ED79B6 /* DateMath.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DateMath.h; sourceTree = "<group>"; };
@@ -1064,6 +1064,8 @@
 			isa = PBXGroup;
 			children = (
 				659126BC0BDD1728001921FB /* AllInOneFile.cpp */,
+				BCF605110E203EF800B9A64D /* ArgList.cpp */,
+				BCF605120E203EF800B9A64D /* ArgList.h */,
 				BC257DE50E1F51C50016B6C9 /* Arguments.cpp */,
 				BC257DE60E1F51C50016B6C9 /* Arguments.h */,
 				BC7952060E15E8A800A898AB /* ArrayConstructor.cpp */,
@@ -1163,8 +1165,6 @@
 				93F1981A08245AAE001E9ABC /* keywords.table */,
 				BC02E9B70E1844CF000F9297 /* LabelStack.cpp */,
 				65B813A80CD1D01900DF59D6 /* LabelStack.h */,
-				931C6CF0038EE8DE008635CE /* list.cpp */,
-				931C6CEF038EE8DE008635CE /* list.h */,
 				F692A8680255597D01FF60F7 /* lookup.cpp */,
 				F692A8690255597D01FF60F7 /* lookup.h */,
 				F692A86A0255597D01FF60F7 /* MathObject.cpp */,
@@ -1384,7 +1384,6 @@
 				BC18C42F0E16F5CD00B34460 /* LabelID.h in Headers */,
 				BC18C4300E16F5CD00B34460 /* LabelStack.h in Headers */,
 				BC18C4310E16F5CD00B34460 /* lexer.h in Headers */,
-				BC18C4330E16F5CD00B34460 /* list.h in Headers */,
 				BC18C4340E16F5CD00B34460 /* ListHashSet.h in Headers */,
 				BC18C4350E16F5CD00B34460 /* ListRefPtr.h in Headers */,
 				BC18C4360E16F5CD00B34460 /* Locker.h in Headers */,
@@ -1485,6 +1484,7 @@
 				BC257DF00E1F52ED0016B6C9 /* GlobalEvalFunction.h in Headers */,
 				BC257DF40E1F53740016B6C9 /* PrototypeFunction.h in Headers */,
 				BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */,
+				BCF605140E203EF800B9A64D /* ArgList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

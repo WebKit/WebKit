@@ -66,7 +66,7 @@
 #include "JSLock.cpp"
 #include "JSWrapperObject.cpp"
 #include "lexer.cpp"
-#include "list.cpp"
+#include "ArgList.cpp"
 #include "lookup.cpp"
 #include "MathObject.cpp"
 #include "NativeErrorConstructor.cpp"

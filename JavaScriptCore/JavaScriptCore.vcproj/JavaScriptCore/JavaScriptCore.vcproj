@@ -269,7 +269,11 @@
 			Name="KJS"
 			>
 			<File
-				RelativePath="..\..\kjs\Activation.h"
+				RelativePath="..\..\kjs\ArgList.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ArgList.h"
 				>
 			</File>
 			<File
@@ -642,14 +646,6 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\LabelStack.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\list.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\list.h"
 				>
 			</File>
 			<File

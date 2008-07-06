@@ -43,6 +43,7 @@ Source files for JSCore.
     
     <set append="1" var="JSCORE_SOURCES_KJS">
         DerivedSources/JavaScriptCore/grammar.cpp
+        kjs/ArgList.cpp
         kjs/Arguments.cpp
         kjs/ArrayConstructor.cpp
         kjs/ArrayPrototype.cpp
@@ -90,7 +91,6 @@ Source files for JSCore.
         kjs/JSWrapperObject.cpp
         kjs/LabelStack.cpp
         kjs/lexer.cpp
-        kjs/list.cpp
         kjs/lookup.cpp
         kjs/MathObject.cpp
         kjs/NativeErrorConstructor.cpp
