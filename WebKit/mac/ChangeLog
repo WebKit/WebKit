@@ -2,6 +2,15 @@
 
         Reviewed by John Sullivan.
 
+        Remove WebSearchableTextView as it has been unused for some time now.
+
+        * Misc/WebSearchableTextView.h: Removed.
+        * Misc/WebSearchableTextView.m: Removed.
+
+2008-07-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
         Don't leak the result of WKCopyCFLocalizationPreferredName when running under GC.
 
         * Misc/WebNSUserDefaultsExtras.m:

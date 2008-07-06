@@ -1,3 +1,11 @@
+2008-07-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Remove WebSearchableTextView as it has been unused for some time now.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-06-26  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
