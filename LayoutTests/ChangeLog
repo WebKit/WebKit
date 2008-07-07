@@ -1,3 +1,14 @@
+2008-07-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Rename "Access-Contol-Origin" to "Origin" to match the latest
+        Access Control for Cross-Site Request draft. (Editor's Draft 25 May 2008)
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-data-url-expected.txt:
+        * http/tests/xmlhttprequest/access-control-basic-allow-access-control-origin-header-expected.txt:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi:
+
 2008-07-04  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 15290: REGRESSION (r14184-r14216): Duplicate DOCTYPE definitions when saving files as webarchives

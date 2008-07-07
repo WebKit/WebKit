@@ -1,3 +1,15 @@
+2008-07-06  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Rename "Access-Contol-Origin" to "Origin" to match the latest
+        Access Control for Cross-Site Request draft. (Editor's Draft 25 May 2008)
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+
 2008-07-06  Dan Bernstein  <mitz@apple.com>
 
         - try to fix the Windows build
