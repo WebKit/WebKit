@@ -1834,6 +1834,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // out the archived WebHTMLView and recreating a new one if needed. So close doesn't need to do anything in that case.
     if (!_private || _private->closed)
         return;
+
+    _private->closed = YES;
+
     [self _cancelUpdateMouseoverTimer];
     [self _cancelUpdateFocusedAndActiveStateTimer];
     [self _clearLastHitViewIfSelf];
@@ -1844,7 +1847,7 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
     // remove tooltips before clearing _private so removeTrackingRect: will work correctly
     [self removeAllToolTips];
     [_private clear];
-    _private->closed = YES;
+    
     Page* page = core([self _webView]);
     if (page)
         page->dragController()->setDraggingImageURL(KURL());

@@ -1,3 +1,19 @@
+2008-07-07  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Speculative fix for     
+        <rdar://problem/5839800>
+        CrashTracer: [USER] 5802 crashes in Safari at com.apple.WebKit: -[WebHTMLView(WebPrivate) _updateMouseoverWithFakeEvent] + 389
+        
+        Set _private->closed to YES before calling -[WebPluginController destroyAllPlugins].
+        
+        My theory is that the plug-in destruction callbacks could end up rescheduling timers or re-adding notifications.
+        This is usually protected by _private->closed, but in this case it might still be false.
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView close]):
+
 2008-07-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John Sullivan.
