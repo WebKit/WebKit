@@ -52,6 +52,8 @@ public:
 
     virtual FontData* getFontData(const FontDescription& fontDescription, const AtomicString& familyName);
     
+    void clearDocument() { m_document = 0; }
+
     void addFontFaceRule(const CSSFontFaceRule*);
 
     void fontLoaded(CSSSegmentedFontFace*);

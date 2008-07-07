@@ -387,6 +387,7 @@ void CSSStyleSelector::init()
 
 CSSStyleSelector::~CSSStyleSelector()
 {
+    m_fontSelector->clearDocument();
     delete m_medium;
     ::delete m_rootDefaultStyle;
     delete m_authorStyle;

@@ -83,7 +83,7 @@ bool CSSFontSelector::isEmpty() const
 
 DocLoader* CSSFontSelector::docLoader() const
 {
-    return m_document->docLoader();
+    return m_document ? m_document->docLoader() : 0;
 }
 
 void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
@@ -248,7 +248,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 #endif
 
         if (!item->isLocal()) {
-            if (item->isSupportedFormat()) {
+            if (item->isSupportedFormat() && m_document) {
                 CachedFont* cachedFont = m_document->docLoader()->requestFont(item->resource());
                 if (cachedFont) {
 #if ENABLE(SVG_FONTS)
@@ -360,7 +360,7 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
 
 void CSSFontSelector::fontLoaded(CSSSegmentedFontFace*)
 {
-    if (m_document->inPageCache() || !m_document->renderer())
+    if (!m_document || m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->recalcStyle(Document::Force);
     m_document->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
@@ -368,7 +368,7 @@ void CSSFontSelector::fontLoaded(CSSSegmentedFontFace*)
 
 void CSSFontSelector::fontCacheInvalidated()
 {
-    if (m_document->inPageCache() || !m_document->renderer())
+    if (!m_document || m_document->inPageCache() || !m_document->renderer())
         return;
     m_document->recalcStyle(Document::Force);
     m_document->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
@@ -376,6 +376,9 @@ void CSSFontSelector::fontCacheInvalidated()
 
 static FontData* fontDataForGenericFamily(Document* document, const FontDescription& fontDescription, const AtomicString& familyName)
 {
+    if (!document)
+        return 0;
+
     const Settings* settings = document->frame()->settings();
     AtomicString genericFamily;
     if (familyName == "-webkit-serif")

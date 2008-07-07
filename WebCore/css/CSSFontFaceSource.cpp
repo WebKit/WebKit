@@ -173,7 +173,8 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         }
     } else {
         // Kick off the load now.
-        m_font->beginLoadIfNeeded(fontSelector->docLoader());
+        if (DocLoader* docLoader = fontSelector->docLoader())
+            m_font->beginLoadIfNeeded(docLoader);
         // FIXME: m_string is a URL so it makes no sense to pass it as a family name.
         FontPlatformData* tempData = FontCache::getCachedFontPlatformData(fontDescription, m_string);
         if (!tempData)

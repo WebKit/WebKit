@@ -1,3 +1,25 @@
+2008-07-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6057650> REGRESSION (r35025): Crash beneath FontCache::invalidate() when activating Safari with no windows open
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData): Added a null check because
+        docLoader() can return 0 now.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::docLoader): Added a null check of m_document.
+        (WebCore::CSSFontSelector::addFontFaceRule): Ditto.
+        (WebCore::CSSFontSelector::fontLoaded): Ditto.
+        (WebCore::CSSFontSelector::fontCacheInvalidated): Ditto.
+        (WebCore::fontDataForGenericFamily): Added a null check of document.
+        * css/CSSFontSelector.h:
+        (WebCore::CSSFontSelector::clearDocument): Added.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::~CSSStyleSelector): Added a call to
+        CSSFontSelector::clearDocument(). When the style selector is destroyed,
+        there is no guarantee that the document will continue to exist.
+
 2008-07-07  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Not reviewed.
