@@ -1,5 +1,11 @@
 2008-07-06  Dan Bernstein  <mitz@apple.com>
 
+        - add missing brace
+
+        * platform/graphics/qt/FontCacheQt.cpp:
+
+2008-07-06  Dan Bernstein  <mitz@apple.com>
+
         - try to fix the Qt build
 
         * platform/graphics/qt/FontCacheQt.cpp:
