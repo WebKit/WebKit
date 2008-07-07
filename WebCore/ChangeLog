@@ -1,3 +1,12 @@
+2008-07-07  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Not reviewed.
+
+        No svg build fix.
+
+        * DerivedSources.make: Add JSSVGElementWrapperFactory.cpp target.
+        * svg/animation/SMILTimeContainer.cpp: Add ENABLE(SVG) guard.
+
 2008-07-07  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele.
