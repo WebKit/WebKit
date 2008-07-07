@@ -27,14 +27,14 @@
 
 namespace KJS {
 
-ObjectConstructor::ObjectConstructor(ExecState* exec, ObjectPrototype* objProto, FunctionPrototype* funcProto)
-  : InternalFunction(funcProto, Identifier(exec, "Object"))
+ObjectConstructor::ObjectConstructor(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, "Object"))
 {
-  // ECMA 15.2.3.1
-  putDirect(exec->propertyNames().prototype, objProto, DontEnum|DontDelete|ReadOnly);
+    // ECMA 15.2.3.1
+    putDirect(exec->propertyNames().prototype, objectPrototype, DontEnum | DontDelete | ReadOnly);
 
-  // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    // no. of arguments for constructor
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.2.2

@@ -31,10 +31,12 @@ namespace KJS {
     class NumberObject : public JSWrapperObject {
     public:
         NumberObject(JSObject* prototype);
+
         static const ClassInfo info;
 
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
+
         virtual JSValue* getJSNumber();
     };
 

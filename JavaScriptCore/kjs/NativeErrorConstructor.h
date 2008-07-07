@@ -32,16 +32,20 @@ namespace KJS {
     class NativeErrorConstructor : public InternalFunction {
     public:
         NativeErrorConstructor(ExecState*, FunctionPrototype*, NativeErrorPrototype*);
+
         virtual void mark();
+
         static const ClassInfo info;
+
         ErrorInstance* construct(ExecState*, const ArgList&);
 
     private:
-        virtual const ClassInfo* classInfo() const { return &info; }
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 
-        NativeErrorPrototype* proto;
+        virtual const ClassInfo* classInfo() const { return &info; }
+
+        NativeErrorPrototype* m_proto;
     };
 
 } // namespace KJS

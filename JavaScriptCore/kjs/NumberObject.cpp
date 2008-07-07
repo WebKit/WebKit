@@ -29,8 +29,8 @@ namespace KJS {
 
 const ClassInfo NumberObject::info = { "Number", 0, 0, 0 };
 
-NumberObject::NumberObject(JSObject* proto)
-    : JSWrapperObject(proto)
+NumberObject::NumberObject(JSObject* prototype)
+    : JSWrapperObject(prototype)
 {
 }
 

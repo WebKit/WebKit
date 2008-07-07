@@ -26,32 +26,32 @@
 
 namespace KJS {
 
-  class StringObject : public JSWrapperObject {
-  public:
-    StringObject(ExecState*, JSObject* prototype);
-    StringObject(ExecState*, JSObject* prototype, const UString&);
+    class StringObject : public JSWrapperObject {
+    public:
+        StringObject(ExecState*, JSObject* prototype);
+        StringObject(ExecState*, JSObject* prototype, const UString&);
 
-    static StringObject* create(ExecState*, JSString*);
+        static StringObject* create(ExecState*, JSString*);
 
-    virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*);
-    virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-    virtual void getPropertyNames(ExecState*, PropertyNameArray&);
+        virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+        virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-    virtual const ClassInfo* classInfo() const { return &info; }
-    static const ClassInfo info;
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
 
-    JSString* internalValue() const { return static_cast<JSString*>(JSWrapperObject::internalValue());}
+        JSString* internalValue() const { return static_cast<JSString*>(JSWrapperObject::internalValue());}
 
-  protected:
-    StringObject(JSObject* prototype, JSString*);
+    protected:
+        StringObject(JSObject* prototype, JSString*);
 
-  private:
-    virtual UString toString(ExecState*) const;
-    virtual UString toThisString(ExecState*) const;
-    virtual JSString* toThisJSString(ExecState*);
+    private:
+        virtual UString toString(ExecState*) const;
+        virtual UString toThisString(ExecState*) const;
+        virtual JSString* toThisJSString(ExecState*);
   };
 
 } // namespace KJS

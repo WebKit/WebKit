@@ -27,20 +27,35 @@
 namespace KJS {
 
     class FunctionPrototype;
-    class RegExpPrototype;
     class RegExp;
+    class RegExpPrototype;
     struct RegExpConstructorPrivate;
 
     class RegExpConstructor : public InternalFunction {
     public:
-        enum { Dollar1, Dollar2, Dollar3, Dollar4, Dollar5, Dollar6, Dollar7, Dollar8, Dollar9, 
-               Input, Multiline, LastMatch, LastParen, LeftContext, RightContext };
+        enum {
+            Dollar1,
+            Dollar2,
+            Dollar3,
+            Dollar4,
+            Dollar5,
+            Dollar6,
+            Dollar7,
+            Dollar8,
+            Dollar9,
+            Input,
+            Multiline,
+            LastMatch,
+            LastParen,
+            LeftContext,
+            RightContext
+        };
 
         RegExpConstructor(ExecState*, FunctionPrototype*, RegExpPrototype*);
 
-        virtual void put(ExecState*, const Identifier&, JSValue*);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
         void putValueProperty(ExecState*, int token, JSValue*);
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
 
         static const ClassInfo info;
@@ -52,6 +67,7 @@ namespace KJS {
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+
         virtual const ClassInfo* classInfo() const { return &info; }
 
         JSValue* getBackref(ExecState*, unsigned) const;
@@ -62,6 +78,6 @@ namespace KJS {
         OwnPtr<RegExpConstructorPrivate> d;
     };
 
-} // namespace
+} // namespace KJS
 
-#endif
+#endif // RegExpConstructor_h

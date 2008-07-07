@@ -90,7 +90,7 @@ namespace KJS {
         static JSGlobalData*& sharedInstanceInternal();
 
         struct DataInstance {
-            DataInstance() : m_data(0) {}
+            DataInstance() : m_data(0) { }
             ~DataInstance() { delete m_data; }
             operator JSGlobalData*&() { return m_data; }
 

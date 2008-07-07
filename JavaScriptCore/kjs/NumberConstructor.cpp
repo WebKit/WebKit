@@ -28,7 +28,6 @@
 
 namespace KJS {
 
-
 const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
 
 /* Source for NumberObject.lut.h
@@ -40,11 +39,11 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
   MIN_VALUE             NumberConstructor::MinValue       DontEnum|DontDelete|ReadOnly
 @end
 */
-NumberConstructor::NumberConstructor(ExecState* exec, FunctionPrototype* funcProto, NumberPrototype* numberProto)
-    : InternalFunction(funcProto, Identifier(exec, numberProto->info.className))
+NumberConstructor::NumberConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NumberPrototype* numberPrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
-    putDirect(exec->propertyNames().prototype, numberProto, DontEnum|DontDelete|ReadOnly);
+    putDirect(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);
 
     // no. of arguments for constructor
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);

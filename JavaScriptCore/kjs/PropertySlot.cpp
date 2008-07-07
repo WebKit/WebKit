@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2005, 2008 Apple Inc. All rights reserved.
  *
@@ -18,7 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  *
  */
-
 
 #include "config.h"
 #include "PropertySlot.h"

@@ -28,14 +28,10 @@ namespace KJS {
     class FunctionPrototype;
     class ObjectPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of the the global variable's "Object" property
-     */
     class ObjectConstructor : public InternalFunction {
     public:
         ObjectConstructor(ExecState*, ObjectPrototype*, FunctionPrototype*);
+
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

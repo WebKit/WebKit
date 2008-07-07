@@ -44,7 +44,10 @@ namespace KJS {
 
     class UStringSourceProvider : public SourceProvider {
     public:
-        static PassRefPtr<UStringSourceProvider> create(const UString& source) { return adoptRef(new UStringSourceProvider(source)); }
+        static PassRefPtr<UStringSourceProvider> create(const UString& source)
+        {
+            return adoptRef(new UStringSourceProvider(source));
+        }
 
         UString getRange(int start, int end) const { return m_source.substr(start, end - start); }
         const UChar* data() const { return m_source.data(); }

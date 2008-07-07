@@ -28,7 +28,6 @@
 
 namespace KJS {
 
-static const double D16 = 65536.0; // FIXME: This seems to be unused.
 static const double D32 = 4294967296.0;
 
 // ECMA 9.4

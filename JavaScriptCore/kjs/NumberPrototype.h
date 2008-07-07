@@ -29,12 +29,6 @@ namespace KJS {
     class FunctionPrototype;
     class ObjectPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of Number.prototype (and thus all objects created
-     * with the Number constructor
-     */
     class NumberPrototype : public NumberObject {
     public:
         NumberPrototype(ExecState*, ObjectPrototype*, FunctionPrototype*);

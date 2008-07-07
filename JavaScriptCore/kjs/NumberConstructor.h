@@ -29,11 +29,6 @@ namespace KJS {
     class FunctionPrototype;
     class NumberPrototype;
 
-    /**
-     * @internal
-     *
-     * The initial value of the the global variable's "Number" property
-     */
     class NumberConstructor : public InternalFunction {
     public:
         NumberConstructor(ExecState*, FunctionPrototype*, NumberPrototype*);
@@ -48,6 +43,7 @@ namespace KJS {
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+
         virtual const ClassInfo* classInfo() const { return &info; }
     };
 

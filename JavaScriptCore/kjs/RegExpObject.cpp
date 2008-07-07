@@ -42,10 +42,10 @@ const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 @end
 */
 
-RegExpObject::RegExpObject(RegExpPrototype* regexpProto, PassRefPtr<RegExp> regExp)
-  : JSObject(regexpProto)
-  , m_regExp(regExp)
-  , m_lastIndex(0)
+RegExpObject::RegExpObject(RegExpPrototype* regExpPrototype, PassRefPtr<RegExp> regExp)
+    : JSObject(regExpPrototype)
+    , m_regExp(regExp)
+    , m_lastIndex(0)
 {
 }
 
@@ -55,7 +55,7 @@ RegExpObject::~RegExpObject()
 
 bool RegExpObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-  return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, slot);
+    return getStaticValueSlot<RegExpObject, JSObject>(exec, ExecState::regExpTable(exec), this, propertyName, slot);
 }
 
 JSValue* RegExpObject::getValueProperty(ExecState* exec, int token) const
@@ -133,9 +133,9 @@ JSValue* RegExpObject::test(ExecState* exec, const ArgList& args)
 
 JSValue* RegExpObject::exec(ExecState* exec, const ArgList& args)
 {
-    return match(exec, args)
-        ? exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec)
-        :  jsNull();
+    if (match(exec, args))
+        return exec->lexicalGlobalObject()->regExpConstructor()->arrayOfMatches(exec);
+    return jsNull();
 }
 
 static JSValue* callRegExpObject(ExecState* exec, JSObject* function, JSValue*, const ArgList& args)

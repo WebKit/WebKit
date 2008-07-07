@@ -34,127 +34,125 @@
 
 namespace KJS {
 
-class ExecState;
-class Identifier;
-class JSCell;
-class JSObject;
-class JSString;
-class PropertySlot;
+    class ExecState;
+    class Identifier;
+    class JSCell;
+    class JSObject;
+    class JSString;
+    class PropertySlot;
 
-struct ClassInfo;
-struct Instruction;
+    struct ClassInfo;
+    struct Instruction;
 
-class JSNumberCell : public JSCell {
-    friend JSValue* jsNumberCell(ExecState*, double);
-public:
-    double value() const { return val; }
+    class JSNumberCell : public JSCell {
+        friend JSValue* jsNumberCell(ExecState*, double);
+    public:
+        double value() const { return m_value; }
 
-    virtual JSType type() const;
+        virtual JSType type() const;
 
-    virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
-    virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
-    virtual bool toBoolean(ExecState*) const;
-    virtual double toNumber(ExecState*) const;
-    virtual UString toString(ExecState*) const;
-    virtual JSObject* toObject(ExecState*) const;
+        virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
+        virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
+        virtual bool toBoolean(ExecState*) const;
+        virtual double toNumber(ExecState*) const;
+        virtual UString toString(ExecState*) const;
+        virtual JSObject* toObject(ExecState*) const;
 
-    virtual UString toThisString(ExecState*) const;
-    virtual JSObject* toThisObject(ExecState*) const;
-    virtual JSValue* getJSNumber();
+        virtual UString toThisString(ExecState*) const;
+        virtual JSObject* toThisObject(ExecState*) const;
+        virtual JSValue* getJSNumber();
 
-    void* operator new(size_t size, ExecState* exec)
+        void* operator new(size_t size, ExecState* exec)
+        {
+    #ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
+            return exec->heap()->inlineAllocateNumber(size);
+    #else
+            return exec->heap()->allocateNumber(size);
+    #endif
+        }
+
+    private:
+        JSNumberCell(double value)
+            : m_value(value)
+        {
+        }
+
+        virtual bool getUInt32(uint32_t&) const;
+        virtual bool getTruncatedInt32(int32_t&) const;
+        virtual bool getTruncatedUInt32(uint32_t&) const;
+
+        double m_value;
+    };
+
+    extern const double NaN;
+    extern const double Inf;
+
+    // Beware marking this function ALWAYS_INLINE: It takes a PIC branch, so
+    // inlining it may not always be a win.
+    inline JSValue* jsNumberCell(ExecState* exec, double d)
     {
-#ifdef JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE
-        return exec->heap()->inlineAllocateNumber(size);
-#else
-        return exec->heap()->allocateNumber(size);
-#endif
+        return new (exec) JSNumberCell(d);
     }
 
-private:
-    JSNumberCell(double v)
-        : val(v)
+    inline JSValue* jsNaN(ExecState* exec)
     {
+        return jsNumberCell(exec, NaN);
     }
 
-    virtual bool getUInt32(uint32_t&) const;
-    virtual bool getTruncatedInt32(int32_t&) const;
-    virtual bool getTruncatedUInt32(uint32_t&) const;
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, double d)
+    {
+        JSValue* v = JSImmediate::from(d);
+        return v ? v : jsNumberCell(exec, d);
+    }
 
-    double val;
-};
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, int i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, i);
+    }
 
-extern const double NaN;
-extern const double Inf;
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, i);
+    }
 
-// Beware marking this function ALWAYS_INLINE: It takes a PIC branch, so
-// inlining it may not always be a win.
-inline JSValue* jsNumberCell(ExecState* exec, double d)
-{
-    return new (exec) JSNumberCell(d);
-}
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, i);
+    }
 
-inline JSValue* jsNaN(ExecState* exec)
-{
-    return jsNumberCell(exec, NaN);
-}
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, i);
+    }
 
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, double d)
-{
-    JSValue* v = JSImmediate::from(d);
-    return v ? v : jsNumberCell(exec, d);
-}
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long long i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, static_cast<double>(i));
+    }
 
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, int i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, i);
-}
+    ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long long i)
+    {
+        JSValue* v = JSImmediate::from(i);
+        return v ? v : jsNumberCell(exec, static_cast<double>(i));
+    }
 
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, i);
-}
+    // --- JSValue inlines ----------------------------
 
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, i);
-}
+    inline double JSValue::uncheckedGetNumber() const
+    {
+        ASSERT(JSImmediate::isImmediate(this) || asCell()->isNumber());
+        return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : static_cast<const JSNumberCell*>(this)->value();
+    }
 
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, i);
-}
-
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, long long i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, static_cast<double>(i));
-}
-
-ALWAYS_INLINE JSValue* jsNumber(ExecState* exec, unsigned long long i)
-{
-    JSValue* v = JSImmediate::from(i);
-    return v ? v : jsNumberCell(exec, static_cast<double>(i));
-}
-
-// --- JSValue inlines ----------------------------
-
-inline double JSValue::uncheckedGetNumber() const
-{
-    ASSERT(JSImmediate::isImmediate(this) || asCell()->isNumber());
-    return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : static_cast<const JSNumberCell*>(this)->value();
-}
-
-ALWAYS_INLINE JSValue* JSValue::toJSNumber(ExecState* exec) const
-{
-    return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(exec, this->toNumber(exec));
-}
-
-// -------
+    ALWAYS_INLINE JSValue* JSValue::toJSNumber(ExecState* exec) const
+    {
+        return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(exec, this->toNumber(exec));
+    }
 
 } // namespace KJS
 

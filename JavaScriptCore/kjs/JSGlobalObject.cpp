@@ -176,7 +176,7 @@ void JSGlobalObject::reset(JSValue* prototype)
     // which would be wasteful -- or uninitialized pointers -- which would be
     // dangerous. (The allocations below may cause a GC.)
 
-    _prop.clear();
+    m_propertyMap.clear();
     symbolTable().clear();
     setRegisterArray(0, 0);
 

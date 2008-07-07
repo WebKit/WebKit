@@ -30,17 +30,17 @@ namespace KJS {
 
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
-NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototype* funcProto, NativeErrorPrototype* prot)
-    : InternalFunction(funcProto, Identifier(exec, prot->getDirect(exec->propertyNames().name)->getString()))
-    , proto(prot)
+NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NativeErrorPrototype* nativeErrorPrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name)->getString()))
+    , m_proto(nativeErrorPrototype)
 {
-    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete|ReadOnly|DontEnum); // ECMA 15.11.7.5
-    putDirect(exec->propertyNames().prototype, proto, DontDelete|ReadOnly|DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+    putDirect(exec->propertyNames().prototype, m_proto, DontDelete | ReadOnly | DontEnum);
 }
 
 ErrorInstance* NativeErrorConstructor::construct(ExecState* exec, const ArgList& args)
 {
-    ErrorInstance* object = new (exec) ErrorInstance(proto);
+    ErrorInstance* object = new (exec) ErrorInstance(m_proto);
     if (!args[0]->isUndefined())
         object->putDirect(exec->propertyNames().message, jsString(exec, args[0]->toString(exec)));
     return object;
@@ -71,8 +71,8 @@ CallType NativeErrorConstructor::getCallData(CallData& callData)
 void NativeErrorConstructor::mark()
 {
     JSObject::mark();
-    if (proto && !proto->marked())
-        proto->mark();
+    if (m_proto && !m_proto->marked())
+        m_proto->mark();
 }
 
 } // namespace KJS

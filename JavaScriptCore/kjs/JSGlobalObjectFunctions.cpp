@@ -48,89 +48,92 @@ using namespace Unicode;
 
 namespace KJS {
 
-static JSValue* encode(ExecState* exec, const ArgList& args, const char* do_not_escape)
+static JSValue* encode(ExecState* exec, const ArgList& args, const char* doNotEscape)
 {
-  UString r = "", s, str = args[0]->toString(exec);
-  CString cstr = str.UTF8String(true);
-  if (!cstr.c_str())
-    return throwError(exec, URIError, "String contained an illegal UTF-16 sequence.");
-  const char* p = cstr.c_str();
-  for (size_t k = 0; k < cstr.size(); k++, p++) {
-    char c = *p;
-    if (c && strchr(do_not_escape, c)) {
-      r.append(c);
-    } else {
-      char tmp[4];
-      sprintf(tmp, "%%%02X", (unsigned char)c);
-      r += tmp;
+    UString str = args[0]->toString(exec);
+    CString cstr = str.UTF8String(true);
+    if (!cstr.c_str())
+        return throwError(exec, URIError, "String contained an illegal UTF-16 sequence.");
+
+    UString result = "";
+    const char* p = cstr.c_str();
+    for (size_t k = 0; k < cstr.size(); k++, p++) {
+        char c = *p;
+        if (c && strchr(doNotEscape, c))
+            result.append(c);
+        else {
+            char tmp[4];
+            sprintf(tmp, "%%%02X", static_cast<unsigned char>(c));
+            result += tmp;
+        }
     }
-  }
-  return jsString(exec, r);
+    return jsString(exec, result);
 }
 
-static JSValue* decode(ExecState* exec, const ArgList& args, const char* do_not_unescape, bool strict)
+static JSValue* decode(ExecState* exec, const ArgList& args, const char* doNotUnescape, bool strict)
 {
-  UString s = "", str = args[0]->toString(exec);
-  int k = 0, len = str.size();
-  const UChar* d = str.data();
-  UChar u = 0;
-  while (k < len) {
-    const UChar* p = d + k;
-    UChar c = *p;
-    if (c == '%') {
-      int charLen = 0;
-      if (k <= len - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
-        const char b0 = Lexer::convertHex(p[1], p[2]);
-        const int sequenceLen = UTF8SequenceLength(b0);
-        if (sequenceLen != 0 && k <= len - sequenceLen * 3) {
-          charLen = sequenceLen * 3;
-          char sequence[5];
-          sequence[0] = b0;
-          for (int i = 1; i < sequenceLen; ++i) {
-            const UChar* q = p + i * 3;
-            if (q[0] == '%' && isASCIIHexDigit(q[1]) && isASCIIHexDigit(q[2]))
-              sequence[i] = Lexer::convertHex(q[1], q[2]);
-            else {
-              charLen = 0;
-              break;
+    UString result = "";
+    UString str = args[0]->toString(exec);
+    int k = 0;
+    int len = str.size();
+    const UChar* d = str.data();
+    UChar u = 0;
+    while (k < len) {
+        const UChar* p = d + k;
+        UChar c = *p;
+        if (c == '%') {
+            int charLen = 0;
+            if (k <= len - 3 && isASCIIHexDigit(p[1]) && isASCIIHexDigit(p[2])) {
+                const char b0 = Lexer::convertHex(p[1], p[2]);
+                const int sequenceLen = UTF8SequenceLength(b0);
+                if (sequenceLen != 0 && k <= len - sequenceLen * 3) {
+                    charLen = sequenceLen * 3;
+                    char sequence[5];
+                    sequence[0] = b0;
+                    for (int i = 1; i < sequenceLen; ++i) {
+                        const UChar* q = p + i * 3;
+                        if (q[0] == '%' && isASCIIHexDigit(q[1]) && isASCIIHexDigit(q[2]))
+                            sequence[i] = Lexer::convertHex(q[1], q[2]);
+                        else {
+                            charLen = 0;
+                            break;
+                        }
+                    }
+                    if (charLen != 0) {
+                        sequence[sequenceLen] = 0;
+                        const int character = decodeUTF8Sequence(sequence);
+                        if (character < 0 || character >= 0x110000)
+                            charLen = 0;
+                        else if (character >= 0x10000) {
+                            // Convert to surrogate pair.
+                            result.append(static_cast<UChar>(0xD800 | ((character - 0x10000) >> 10)));
+                            u = static_cast<UChar>(0xDC00 | ((character - 0x10000) & 0x3FF));
+                        } else
+                            u = static_cast<UChar>(character);
+                    }
+                }
             }
-          }
-          if (charLen != 0) {
-            sequence[sequenceLen] = 0;
-            const int character = decodeUTF8Sequence(sequence);
-            if (character < 0 || character >= 0x110000) {
-              charLen = 0;
-            } else if (character >= 0x10000) {
-              // Convert to surrogate pair.
-              s.append(static_cast<UChar>(0xD800 | ((character - 0x10000) >> 10)));
-              u = static_cast<UChar>(0xDC00 | ((character - 0x10000) & 0x3FF));
-            } else {
-              u = static_cast<UChar>(character);
+            if (charLen == 0) {
+                if (strict)
+                    return throwError(exec, URIError);
+                // The only case where we don't use "strict" mode is the "unescape" function.
+                // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
+                if (k <= len - 6 && p[1] == 'u'
+                        && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
+                        && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
+                    charLen = 6;
+                    u = Lexer::convertUnicode(p[2], p[3], p[4], p[5]);
+                }
             }
-          }
+            if (charLen && (u == 0 || u >= 128 || !strchr(doNotUnescape, u))) {
+                c = u;
+                k += charLen - 1;
+            }
         }
-      }
-      if (charLen == 0) {
-        if (strict)
-          return throwError(exec, URIError);
-        // The only case where we don't use "strict" mode is the "unescape" function.
-        // For that, it's good to support the wonky "%u" syntax for compatibility with WinIE.
-        if (k <= len - 6 && p[1] == 'u'
-            && isASCIIHexDigit(p[2]) && isASCIIHexDigit(p[3])
-            && isASCIIHexDigit(p[4]) && isASCIIHexDigit(p[5])) {
-          charLen = 6;
-          u = Lexer::convertUnicode(p[2], p[3], p[4], p[5]);
-        }
-      }
-      if (charLen && (u == 0 || u >= 128 || !strchr(do_not_unescape, u))) {
-        c = u;
-        k += charLen - 1;
-      }
+        k++;
+        result.append(c);
     }
-    k++;
-    s.append(c);
-  }
-  return jsString(exec, s);
+    return jsString(exec, result);
 }
 
 static bool isStrWhiteSpace(unsigned short c)
@@ -155,13 +158,12 @@ static int parseDigit(unsigned short c, int radix)
 {
     int digit = -1;
 
-    if (c >= '0' && c <= '9') {
+    if (c >= '0' && c <= '9')
         digit = c - '0';
-    } else if (c >= 'A' && c <= 'Z') {
+    else if (c >= 'A' && c <= 'Z')
         digit = c - 'A' + 10;
-    } else if (c >= 'a' && c <= 'z') {
+    else if (c >= 'a' && c <= 'z')
         digit = c - 'a' + 10;
-    }
 
     if (digit >= radix)
         return -1;
@@ -195,15 +197,14 @@ static double parseInt(const UString& s, int radix)
     int length = s.size();
     int p = 0;
 
-    while (p < length && isStrWhiteSpace(s[p])) {
+    while (p < length && isStrWhiteSpace(s[p]))
         ++p;
-    }
 
     double sign = 1;
     if (p < length) {
-        if (s[p] == '+') {
+        if (s[p] == '+')
             ++p;
-        } else if (s[p] == '-') {
+        else if (s[p] == '-') {
             sign = -1;
             ++p;
         }
@@ -254,17 +255,16 @@ static double parseFloat(const UString& s)
     // Need to skip any whitespace and then one + or - sign.
     int length = s.size();
     int p = 0;
-    while (p < length && isStrWhiteSpace(s[p])) {
+    while (p < length && isStrWhiteSpace(s[p]))
         ++p;
-    }
-    if (p < length && (s[p] == '+' || s[p] == '-')) {
-        ++p;
-    }
-    if (length - p >= 2 && s[p] == '0' && (s[p + 1] == 'x' || s[p + 1] == 'X')) {
-        return 0;
-    }
 
-    return s.toDouble( true /*tolerant*/, false /* NaN for empty string */ );
+    if (p < length && (s[p] == '+' || s[p] == '-'))
+        ++p;
+
+    if (length - p >= 2 && s[p] == '0' && (s[p + 1] == 'x' || s[p + 1] == 'X'))
+        return 0;
+
+    return s.toDouble(true /*tolerant*/, false /* NaN for empty string */);
 }
 
 JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
@@ -277,15 +277,15 @@ JSValue* globalFuncEval(ExecState* exec, JSObject* function, JSValue* thisValue,
     JSValue* x = args[0];
     if (!x->isString())
         return x;
-    
+
     UString s = x->toString(exec);
-    
+
     int sourceId;
     int errLine;
     UString errMsg;
 
     RefPtr<EvalNode> evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(s), &sourceId, &errLine, &errMsg);
-    
+
     if (!evalNode)
         return throwError(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
 
@@ -356,7 +356,9 @@ JSValue* globalFuncEscape(ExecState* exec, JSObject*, JSValue*, const ArgList& a
         "0123456789"
         "*+-./@_";
 
-    UString r = "", s, str = args[0]->toString(exec);
+    UString result = "";
+    UString s;
+    UString str = args[0]->toString(exec);
     const UChar* c = str.data();
     for (int k = 0; k < str.size(); k++, c++) {
         int u = c[0];
@@ -364,23 +366,25 @@ JSValue* globalFuncEscape(ExecState* exec, JSObject*, JSValue*, const ArgList& a
             char tmp[7];
             sprintf(tmp, "%%u%04X", u);
             s = UString(tmp);
-        } else if (u != 0 && strchr(do_not_escape, (char)u))
+        } else if (u != 0 && strchr(do_not_escape, static_cast<char>(u)))
             s = UString(c, 1);
         else {
             char tmp[4];
             sprintf(tmp, "%%%02X", u);
             s = UString(tmp);
         }
-        r += s;
+        result += s;
     }
 
-    return jsString(exec, r);
+    return jsString(exec, result);
 }
 
 JSValue* globalFuncUnescape(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    UString s = "", str = args[0]->toString(exec);
-    int k = 0, len = str.size();
+    UString result = "";
+    UString str = args[0]->toString(exec);
+    int k = 0;
+    int len = str.size();
     while (k < len) {
         const UChar* c = str.data() + k;
         UChar u;
@@ -396,10 +400,10 @@ JSValue* globalFuncUnescape(ExecState* exec, JSObject*, JSValue*, const ArgList&
             k += 2;
         }
         k++;
-        s.append(*c);
+        result.append(*c);
     }
 
-    return jsString(exec, s);
+    return jsString(exec, result);
 }
 
 #ifndef NDEBUG

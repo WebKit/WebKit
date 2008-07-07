@@ -27,8 +27,8 @@
 
 namespace KJS {
 
-NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorProto, const UString& name, const UString& message)
-    : JSObject(errorProto)
+NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorPrototype, const UString& name, const UString& message)
+    : JSObject(errorPrototype)
 {
     putDirect(exec->propertyNames().name, jsString(exec, name), 0);
     putDirect(exec->propertyNames().message, jsString(exec, message), 0);

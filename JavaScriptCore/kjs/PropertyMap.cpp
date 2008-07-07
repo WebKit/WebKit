@@ -63,7 +63,9 @@ static int numCollisions;
 static int numRehashes;
 static int numRemoves;
 
-struct PropertyMapStatisticsExitLogger { ~PropertyMapStatisticsExitLogger(); };
+struct PropertyMapStatisticsExitLogger {
+    ~PropertyMapStatisticsExitLogger();
+};
 
 static PropertyMapStatisticsExitLogger logger;
 
@@ -85,7 +87,10 @@ struct PropertyMapEntry {
     unsigned index;
 
     PropertyMapEntry(UString::Rep* k, JSValue* v, int a)
-        : key(k), value(v), attributes(a), index(0)
+        : key(k)
+        , value(v)
+        , attributes(a)
+        , index(0)
     {
     }
 };
@@ -142,7 +147,7 @@ PropertyMap::~PropertyMap()
 #endif
         return;
     }
-    
+
     unsigned entryCount = m_u.table->keyCount + m_u.table->deletedSentinelCount;
     for (unsigned i = 1; i <= entryCount; i++) {
         if (UString::Rep* key = m_u.table->entries()[i].key)
@@ -174,12 +179,12 @@ void PropertyMap::clear()
     m_u.table->deletedSentinelCount = 0;
 }
 
-JSValue* PropertyMap::get(const Identifier& name, unsigned& attributes) const
+JSValue* PropertyMap::get(const Identifier& propertyName, unsigned& attributes) const
 {
-    ASSERT(!name.isNull());
-    
-    UString::Rep* rep = name._ustring.rep();
-    
+    ASSERT(!propertyName.isNull());
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
         if (rep == m_singleEntryKey) {
@@ -189,7 +194,7 @@ JSValue* PropertyMap::get(const Identifier& name, unsigned& attributes) const
 #endif
         return 0;
     }
-    
+
     unsigned i = rep->computedHash();
 
 #if DUMP_PROPERTYMAP_STATS
@@ -229,12 +234,12 @@ JSValue* PropertyMap::get(const Identifier& name, unsigned& attributes) const
     }
 }
 
-JSValue* PropertyMap::get(const Identifier& name) const
+JSValue* PropertyMap::get(const Identifier& propertyName) const
 {
-    ASSERT(!name.isNull());
-    
-    UString::Rep* rep = name._ustring.rep();
-    
+    ASSERT(!propertyName.isNull());
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
         if (rep == m_singleEntryKey)
@@ -242,7 +247,7 @@ JSValue* PropertyMap::get(const Identifier& name) const
 #endif
         return 0;
     }
-    
+
     unsigned i = rep->computedHash();
 
 #if DUMP_PROPERTYMAP_STATS
@@ -278,12 +283,12 @@ JSValue* PropertyMap::get(const Identifier& name) const
     }
 }
 
-JSValue** PropertyMap::getLocation(const Identifier& name)
+JSValue** PropertyMap::getLocation(const Identifier& propertyName)
 {
-    ASSERT(!name.isNull());
-    
-    UString::Rep* rep = name._ustring.rep();
-    
+    ASSERT(!propertyName.isNull());
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
         if (rep == m_singleEntryKey)
@@ -291,7 +296,7 @@ JSValue** PropertyMap::getLocation(const Identifier& name)
 #endif
         return 0;
     }
-    
+
     unsigned i = rep->computedHash();
 
 #if DUMP_PROPERTYMAP_STATS
@@ -327,12 +332,12 @@ JSValue** PropertyMap::getLocation(const Identifier& name)
     }
 }
 
-JSValue** PropertyMap::getLocation(const Identifier& name, bool& isWriteable)
+JSValue** PropertyMap::getLocation(const Identifier& propertyName, bool& isWriteable)
 {
-    ASSERT(!name.isNull());
-    
-    UString::Rep* rep = name._ustring.rep();
-    
+    ASSERT(!propertyName.isNull());
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY
         if (rep == m_singleEntryKey) {
@@ -342,7 +347,7 @@ JSValue** PropertyMap::getLocation(const Identifier& name, bool& isWriteable)
 #endif
         return 0;
     }
-    
+
     unsigned i = rep->computedHash();
 
 #if DUMP_PROPERTYMAP_STATS
@@ -382,15 +387,15 @@ JSValue** PropertyMap::getLocation(const Identifier& name, bool& isWriteable)
     }
 }
 
-void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attributes, bool checkReadOnly)
+void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned attributes, bool checkReadOnly)
 {
-    ASSERT(!name.isNull());
+    ASSERT(!propertyName.isNull());
     ASSERT(value);
-    
+
     checkConsistency();
 
-    UString::Rep* rep = name._ustring.rep();
-    
+    UString::Rep* rep = propertyName._ustring.rep();
+
 #if USE_SINGLE_ENTRY
     if (!m_usingTable) {
         if (!m_singleEntryKey) {
@@ -428,7 +433,7 @@ void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attribute
             break;
 
         if (m_u.table->entries()[entryIndex - 1].key == rep) {
-            if (checkReadOnly && (m_u.table->entries()[entryIndex - 1].attributes & ReadOnly)) 
+            if (checkReadOnly && (m_u.table->entries()[entryIndex - 1].attributes & ReadOnly))
                 return;
             // Put a new value in an existing hash table entry.
             m_u.table->entries()[entryIndex - 1].value = value;
@@ -466,10 +471,8 @@ void PropertyMap::put(const Identifier& name, JSValue* value, unsigned attribute
         // the end that we were planning on using, so search backwards for the empty
         // slot that we can use. We know it will be there because we did at least one
         // deletion in the past that left an entry empty.
-        while (m_u.table->entries()[--entryIndex - 1].key)
-            ;
+        while (m_u.table->entries()[--entryIndex - 1].key) { }
     }
-
 
     // Create a new hash table entry.
     m_u.table->entryIndicies[i & m_u.table->sizeMask] = entryIndex;
@@ -573,7 +576,7 @@ void PropertyMap::rehash(unsigned newTableSize)
     checkConsistency();
 
     Table* oldTable = m_u.table;
-    
+
     m_u.table = static_cast<Table*>(fastZeroedMalloc(Table::allocationSize(newTableSize)));
     m_u.table->size = newTableSize;
     m_u.table->sizeMask = newTableSize - 1;
@@ -593,13 +596,13 @@ void PropertyMap::rehash(unsigned newTableSize)
     checkConsistency();
 }
 
-void PropertyMap::remove(const Identifier& name)
+void PropertyMap::remove(const Identifier& propertyName)
 {
-    ASSERT(!name.isNull());
-    
+    ASSERT(!propertyName.isNull());
+
     checkConsistency();
 
-    UString::Rep* rep = name._ustring.rep();
+    UString::Rep* rep = propertyName._ustring.rep();
 
     if (!m_usingTable) {
 #if USE_SINGLE_ENTRY

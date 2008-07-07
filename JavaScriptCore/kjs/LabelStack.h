@@ -1,8 +1,7 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,64 +20,52 @@
  *
  */
 
-#ifndef KJS_LABEL_STACK_H
-#define KJS_LABEL_STACK_H
+#ifndef LabelStack_h
+#define LabelStack_h
 
 #include "identifier.h"
 #include <wtf/Noncopyable.h>
 
 namespace KJS {
-  /**
-   * @short The "label set" in Ecma-262 spec
-   */
-  class LabelStack : Noncopyable {
-  public:
-    LabelStack()
-      : tos(0)
-    {
-    }
-    ~LabelStack();
 
-    /**
-     * If id is not empty and is not in the stack already, puts it on top of
-     * the stack and returns true, otherwise returns false
-     */
-    bool push(const Identifier &id);
-    /**
-     * Is the id in the stack?
-     */
-    bool contains(const Identifier &id) const;
-    /**
-     * Removes from the stack the last pushed id (what else?)
-     */
-    void pop();
+    class LabelStack : Noncopyable {
+    public:
+        LabelStack()
+            : m_topOfStack(0)
+        {
+        }
+        ~LabelStack();
 
-  private:
-    struct StackElem {
-      Identifier id;
-      StackElem *prev;
+        bool push(const Identifier &id);
+        bool contains(const Identifier &id) const;
+        void pop();
+
+    private:
+        struct StackElem {
+            Identifier id;
+            StackElem* prev;
+        };
+
+        StackElem* m_topOfStack;
     };
 
-    StackElem *tos;
-  };
-
-inline LabelStack::~LabelStack()
-{
-    StackElem *prev;
-    for (StackElem *e = tos; e; e = prev) {
-        prev = e->prev;
-        delete e;
+    inline LabelStack::~LabelStack()
+    {
+        StackElem* prev;
+        for (StackElem* e = m_topOfStack; e; e = prev) {
+            prev = e->prev;
+            delete e;
+        }
     }
-}
 
-inline void LabelStack::pop()
-{
-    if (StackElem *e = tos) {
-        tos = e->prev;
-        delete e;
+    inline void LabelStack::pop()
+    {
+        if (StackElem* e = m_topOfStack) {
+            m_topOfStack = e->prev;
+            delete e;
+        }
     }
-}
 
-}
+} // namespace KJS
 
-#endif // KJS_LABEL_STACK_H
+#endif // LabelStack_h

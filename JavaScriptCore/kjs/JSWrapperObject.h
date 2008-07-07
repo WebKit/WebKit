@@ -1,7 +1,6 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2006 Maks Orlovich
- *  Copyright (C) 2006 Apple Computer, Inc.
+ *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -28,8 +27,8 @@
 namespace KJS {
     
     /** 
-        This class is used as a base for classes such as String,
-        Number, Boolean and Date which which are wrappers for primitive
+       This class is used as a base for classes such as String,
+       Number, Boolean and Date which which are wrappers for primitive
        types. These classes stores the internal value, which is the
        actual value represented by the wrapper objects.
     */ 
@@ -37,24 +36,8 @@ namespace KJS {
     public:
         JSWrapperObject(JSValue* proto);
         
-        /**
-         * Returns the internal value of the object. This is used for objects such
-         * as String and Boolean which are wrappers for native types. The interal
-         * value is the actual value represented by the wrapper objects.
-         *
-         * @see ECMA 8.6.2
-         * @return The internal value of the object
-         */
         JSValue* internalValue() const;
-        
-        /**
-         * Sets the internal value of the object
-         *
-         * @see internalValue()
-         *
-         * @param v The new internal value
-         */
-        void setInternalValue(JSValue* v);
+        void setInternalValue(JSValue*);
         
         virtual void mark();
         
@@ -73,10 +56,10 @@ namespace KJS {
         return m_internalValue;
     }
     
-    inline void JSWrapperObject::setInternalValue(JSValue* v)
+    inline void JSWrapperObject::setInternalValue(JSValue* value)
     {
-        ASSERT(v);
-        m_internalValue = v;
+        ASSERT(value);
+        m_internalValue = value;
     }
 
 } // namespace KJS

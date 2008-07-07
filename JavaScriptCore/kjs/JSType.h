@@ -23,20 +23,20 @@
 #define KJS_JSTYPE_H
 
 namespace KJS {
-    
-/**
- * Primitive types
- */
-enum JSType {
-    UnspecifiedType   = 0,
-    UndefinedType     = 1,
-    BooleanType       = 2,
-    NumberType        = 3,
-    NullType          = 4,
-    StringType        = 5,
-    ObjectType        = 6,
-    GetterSetterType  = 7
-};
+
+    /**
+     * Primitive types
+     */
+    enum JSType {
+        UnspecifiedType   = 0,
+        UndefinedType     = 1,
+        BooleanType       = 2,
+        NumberType        = 3,
+        NullType          = 4,
+        StringType        = 5,
+        ObjectType        = 6,
+        GetterSetterType  = 7
+    };
 
 } // namespace KJS
 

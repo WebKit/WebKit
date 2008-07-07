@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
@@ -20,8 +19,8 @@
  *
  */
 
-#ifndef KJS_GlobalObject_h
-#define KJS_GlobalObject_h
+#ifndef JSGlobalObject_h
+#define JSGlobalObject_h
 
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
@@ -296,4 +295,4 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif // KJS_GlobalObject_h
+#endif // JSGlobalObject_h

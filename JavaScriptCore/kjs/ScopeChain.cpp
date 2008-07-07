@@ -1,5 +1,4 @@
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 2003, 2006, 2008 Apple Inc.
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,9 +21,9 @@
 #include "config.h"
 #include "ScopeChain.h"
 
-#include "PropertyNameArray.h"
-#include "JSObject.h"
 #include "JSGlobalObject.h"
+#include "JSObject.h"
+#include "PropertyNameArray.h"
 #include <stdio.h>
 
 namespace KJS {

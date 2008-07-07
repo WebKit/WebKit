@@ -85,8 +85,8 @@ namespace KJS {
         {
         }
 
-        JSVariableObject(JSValue* proto, JSVariableObjectData* data)
-            : JSObject(proto)
+        JSVariableObject(JSValue* prototype, JSVariableObjectData* data)
+            : JSObject(prototype)
             , d(data) // Subclass owns this pointer.
         {
         }

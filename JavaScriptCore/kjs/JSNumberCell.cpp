@@ -41,33 +41,33 @@ JSValue* JSNumberCell::toPrimitive(ExecState*, JSType) const
 
 bool JSNumberCell::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)
 {
-    number = val;
+    number = m_value;
     value = this;
     return true;
 }
 
-bool JSNumberCell::toBoolean(ExecState *) const
+bool JSNumberCell::toBoolean(ExecState*) const
 {
-  return val < 0.0 || val > 0.0; // false for NaN
+    return m_value < 0.0 || m_value > 0.0; // false for NaN
 }
 
-double JSNumberCell::toNumber(ExecState *) const
+double JSNumberCell::toNumber(ExecState*) const
 {
-  return val;
+  return m_value;
 }
 
 UString JSNumberCell::toString(ExecState*) const
 {
-    if (val == 0.0) // +0.0 or -0.0
+    if (m_value == 0.0) // +0.0 or -0.0
         return "0";
-    return UString::from(val);
+    return UString::from(m_value);
 }
 
 UString JSNumberCell::toThisString(ExecState*) const
 {
-    if (val == 0.0) // +0.0 or -0.0
+    if (m_value == 0.0) // +0.0 or -0.0
         return "0";
-    return UString::from(val);
+    return UString::from(m_value);
 }
 
 JSObject* JSNumberCell::toObject(ExecState* exec) const
@@ -82,23 +82,23 @@ JSObject* JSNumberCell::toThisObject(ExecState* exec) const
 
 bool JSNumberCell::getUInt32(uint32_t& uint32) const
 {
-    uint32 = static_cast<uint32_t>(val);
-    return uint32 == val;
+    uint32 = static_cast<uint32_t>(m_value);
+    return uint32 == m_value;
 }
 
 bool JSNumberCell::getTruncatedInt32(int32_t& int32) const
 {
-    if (!(val >= -2147483648.0 && val < 2147483648.0))
+    if (!(m_value >= -2147483648.0 && m_value < 2147483648.0))
         return false;
-    int32 = static_cast<int32_t>(val);
+    int32 = static_cast<int32_t>(m_value);
     return true;
 }
 
 bool JSNumberCell::getTruncatedUInt32(uint32_t& uint32) const
 {
-    if (!(val >= 0.0 && val < 4294967296.0))
+    if (!(m_value >= 0.0 && m_value < 4294967296.0))
         return false;
-    uint32 = static_cast<uint32_t>(val);
+    uint32 = static_cast<uint32_t>(m_value);
     return true;
 }
 

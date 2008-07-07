@@ -32,7 +32,7 @@ namespace KJS {
 
 JSValue* JSString::toPrimitive(ExecState*, JSType) const
 {
-  return const_cast<JSString*>(this);
+    return const_cast<JSString*>(this);
 }
 
 bool JSString::getPrimitiveNumber(ExecState*, double& number, JSValue*& value)

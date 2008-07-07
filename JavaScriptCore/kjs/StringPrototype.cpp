@@ -77,122 +77,122 @@ const ClassInfo StringPrototype::info = { "String", &StringObject::info, 0, Exec
 
 /* Source for StringPrototype.lut.h
 @begin stringTable 26
-  toString              stringProtoFuncToString          DontEnum|Function       0
-  valueOf               stringProtoFuncToString          DontEnum|Function       0
-  charAt                stringProtoFuncCharAt            DontEnum|Function       1
-  charCodeAt            stringProtoFuncCharCodeAt        DontEnum|Function       1
-  concat                stringProtoFuncConcat            DontEnum|Function       1
-  indexOf               stringProtoFuncIndexOf           DontEnum|Function       1
-  lastIndexOf           stringProtoFuncLastIndexOf       DontEnum|Function       1
-  match                 stringProtoFuncMatch             DontEnum|Function       1
-  replace               stringProtoFuncReplace           DontEnum|Function       2
-  search                stringProtoFuncSearch            DontEnum|Function       1
-  slice                 stringProtoFuncSlice             DontEnum|Function       2
-  split                 stringProtoFuncSplit             DontEnum|Function       2
-  substr                stringProtoFuncSubstr            DontEnum|Function       2
-  substring             stringProtoFuncSubstring         DontEnum|Function       2
-  toLowerCase           stringProtoFuncToLowerCase       DontEnum|Function       0
-  toUpperCase           stringProtoFuncToUpperCase       DontEnum|Function       0
-  toLocaleLowerCase     stringProtoFuncToLocaleLowerCase DontEnum|Function       0
-  toLocaleUpperCase     stringProtoFuncToLocaleUpperCase DontEnum|Function       0
-  localeCompare         stringProtoFuncLocaleCompare     DontEnum|Function       1
+    toString              stringProtoFuncToString          DontEnum|Function       0
+    valueOf               stringProtoFuncToString          DontEnum|Function       0
+    charAt                stringProtoFuncCharAt            DontEnum|Function       1
+    charCodeAt            stringProtoFuncCharCodeAt        DontEnum|Function       1
+    concat                stringProtoFuncConcat            DontEnum|Function       1
+    indexOf               stringProtoFuncIndexOf           DontEnum|Function       1
+    lastIndexOf           stringProtoFuncLastIndexOf       DontEnum|Function       1
+    match                 stringProtoFuncMatch             DontEnum|Function       1
+    replace               stringProtoFuncReplace           DontEnum|Function       2
+    search                stringProtoFuncSearch            DontEnum|Function       1
+    slice                 stringProtoFuncSlice             DontEnum|Function       2
+    split                 stringProtoFuncSplit             DontEnum|Function       2
+    substr                stringProtoFuncSubstr            DontEnum|Function       2
+    substring             stringProtoFuncSubstring         DontEnum|Function       2
+    toLowerCase           stringProtoFuncToLowerCase       DontEnum|Function       0
+    toUpperCase           stringProtoFuncToUpperCase       DontEnum|Function       0
+    toLocaleLowerCase     stringProtoFuncToLocaleLowerCase DontEnum|Function       0
+    toLocaleUpperCase     stringProtoFuncToLocaleUpperCase DontEnum|Function       0
+    localeCompare         stringProtoFuncLocaleCompare     DontEnum|Function       1
 
-  big                   stringProtoFuncBig               DontEnum|Function       0
-  small                 stringProtoFuncSmall             DontEnum|Function       0
-  blink                 stringProtoFuncBlink             DontEnum|Function       0
-  bold                  stringProtoFuncBold              DontEnum|Function       0
-  fixed                 stringProtoFuncFixed             DontEnum|Function       0
-  italics               stringProtoFuncItalics           DontEnum|Function       0
-  strike                stringProtoFuncStrike            DontEnum|Function       0
-  sub                   stringProtoFuncSub               DontEnum|Function       0
-  sup                   stringProtoFuncSup               DontEnum|Function       0
-  fontcolor             stringProtoFuncFontcolor         DontEnum|Function       1
-  fontsize              stringProtoFuncFontsize          DontEnum|Function       1
-  anchor                stringProtoFuncAnchor            DontEnum|Function       1
-  link                  stringProtoFuncLink              DontEnum|Function       1
+    big                   stringProtoFuncBig               DontEnum|Function       0
+    small                 stringProtoFuncSmall             DontEnum|Function       0
+    blink                 stringProtoFuncBlink             DontEnum|Function       0
+    bold                  stringProtoFuncBold              DontEnum|Function       0
+    fixed                 stringProtoFuncFixed             DontEnum|Function       0
+    italics               stringProtoFuncItalics           DontEnum|Function       0
+    strike                stringProtoFuncStrike            DontEnum|Function       0
+    sub                   stringProtoFuncSub               DontEnum|Function       0
+    sup                   stringProtoFuncSup               DontEnum|Function       0
+    fontcolor             stringProtoFuncFontcolor         DontEnum|Function       1
+    fontsize              stringProtoFuncFontsize          DontEnum|Function       1
+    anchor                stringProtoFuncAnchor            DontEnum|Function       1
+    link                  stringProtoFuncLink              DontEnum|Function       1
 @end
 */
 
 // ECMA 15.5.4
-StringPrototype::StringPrototype(ExecState* exec, ObjectPrototype* objProto)
-  : StringObject(exec, objProto)
+StringPrototype::StringPrototype(ExecState* exec, ObjectPrototype* objectPrototype)
+    : StringObject(exec, objectPrototype)
 {
-  // The constructor will be added later, after StringConstructor has been built
-  putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
+    // The constructor will be added later, after StringConstructor has been built
+    putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 }
 
-bool StringPrototype::getOwnPropertySlot(ExecState *exec, const Identifier& propertyName, PropertySlot &slot)
+bool StringPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-  return getStaticFunctionSlot<StringObject>(exec, ExecState::stringTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<StringObject>(exec, ExecState::stringTable(exec), this, propertyName, slot);
 }
 
 // ------------------------------ Functions --------------------------
 
 static inline UString substituteBackreferences(const UString& replacement, const UString& source, const int* ovector, RegExp* reg)
 {
-  UString substitutedReplacement;
-  int offset = 0;
-  int i = -1;
-  while ((i = replacement.find('$', i + 1)) != -1) {
-    if (i + 1 == replacement.size())
-        break;
+    UString substitutedReplacement;
+    int offset = 0;
+    int i = -1;
+    while ((i = replacement.find('$', i + 1)) != -1) {
+        if (i + 1 == replacement.size())
+            break;
 
-    unsigned short ref = replacement[i + 1];
-    if (ref == '$') {
-        // "$$" -> "$"
-        ++i;
-        substitutedReplacement.append(replacement.data() + offset, i - offset);
+        unsigned short ref = replacement[i + 1];
+        if (ref == '$') {
+            // "$$" -> "$"
+            ++i;
+            substitutedReplacement.append(replacement.data() + offset, i - offset);
+            offset = i + 1;
+            substitutedReplacement.append('$');
+            continue;
+        }
+
+        int backrefStart;
+        int backrefLength;
+        int advance = 0;
+        if (ref == '&') {
+            backrefStart = ovector[0];
+            backrefLength = ovector[1] - backrefStart;
+        } else if (ref == '`') {
+            backrefStart = 0;
+            backrefLength = ovector[0];
+        } else if (ref == '\'') {
+            backrefStart = ovector[1];
+            backrefLength = source.size() - backrefStart;
+        } else if (ref >= '0' && ref <= '9') {
+            // 1- and 2-digit back references are allowed
+            unsigned backrefIndex = ref - '0';
+            if (backrefIndex > reg->numSubpatterns())
+                continue;
+            if (replacement.size() > i + 2) {
+                ref = replacement[i + 2];
+                if (ref >= '0' && ref <= '9') {
+                    backrefIndex = 10 * backrefIndex + ref - '0';
+                    if (backrefIndex > reg->numSubpatterns())
+                        backrefIndex = backrefIndex / 10;   // Fall back to the 1-digit reference
+                    else
+                        advance = 1;
+                }
+            }
+            backrefStart = ovector[2 * backrefIndex];
+            backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
+        } else
+            continue;
+
+        if (i - offset)
+            substitutedReplacement.append(replacement.data() + offset, i - offset);
+        i += 1 + advance;
         offset = i + 1;
-        substitutedReplacement.append('$');
-        continue;
+        substitutedReplacement.append(source.data() + backrefStart, backrefLength);
     }
 
-    int backrefStart;
-    int backrefLength;
-    int advance = 0;
-    if (ref == '&') {
-        backrefStart = ovector[0];
-        backrefLength = ovector[1] - backrefStart;
-    } else if (ref == '`') {
-        backrefStart = 0;
-        backrefLength = ovector[0];
-    } else if (ref == '\'') {
-        backrefStart = ovector[1];
-        backrefLength = source.size() - backrefStart;
-    } else if (ref >= '0' && ref <= '9') {
-        // 1- and 2-digit back references are allowed
-        unsigned backrefIndex = ref - '0';
-        if (backrefIndex > reg->numSubpatterns())
-            continue;
-        if (replacement.size() > i + 2) {
-            ref = replacement[i + 2];
-            if (ref >= '0' && ref <= '9') {
-                backrefIndex = 10 * backrefIndex + ref - '0';
-                if (backrefIndex > reg->numSubpatterns())
-                    backrefIndex = backrefIndex / 10;   // Fall back to the 1-digit reference
-                else
-                    advance = 1;
-            }
-        }
-        backrefStart = ovector[2 * backrefIndex];
-        backrefLength = ovector[2 * backrefIndex + 1] - backrefStart;
-    } else
-        continue;
+    if (!offset)
+        return replacement;
 
-    if (i - offset)
-        substitutedReplacement.append(replacement.data() + offset, i - offset);
-    i += 1 + advance;
-    offset = i + 1;
-    substitutedReplacement.append(source.data() + backrefStart, backrefLength);
-  }
+    if (replacement.size() - offset)
+        substitutedReplacement.append(replacement.data() + offset, replacement.size() - offset);
 
-  if (!offset)
-    return replacement;
-
-  if (replacement.size() - offset)
-    substitutedReplacement.append(replacement.data() + offset, replacement.size() - offset);
-
-  return substitutedReplacement;
+    return substitutedReplacement;
 }
 
 static inline int localeCompare(const UString& a, const UString& b)
@@ -202,103 +202,102 @@ static inline int localeCompare(const UString& a, const UString& b)
 
 JSValue* stringProtoFuncReplace(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-  JSString* sourceVal = thisValue->toThisJSString(exec);
-  const UString& source = sourceVal->value();
+    JSString* sourceVal = thisValue->toThisJSString(exec);
+    const UString& source = sourceVal->value();
 
-  JSValue* pattern = args[0];
+    JSValue* pattern = args[0];
 
-  JSValue* replacement = args[1];
-  UString replacementString;
-  CallData callData;
-  CallType callType = replacement->getCallData(callData);
-  if (callType == CallTypeNone)
-    replacementString = replacement->toString(exec);
+    JSValue* replacement = args[1];
+    UString replacementString;
+    CallData callData;
+    CallType callType = replacement->getCallData(callData);
+    if (callType == CallTypeNone)
+        replacementString = replacement->toString(exec);
 
-  if (pattern->isObject(&RegExpObject::info)) {
-    RegExp* reg = static_cast<RegExpObject*>(pattern)->regExp();
-    bool global = reg->global();
+    if (pattern->isObject(&RegExpObject::info)) {
+        RegExp* reg = static_cast<RegExpObject*>(pattern)->regExp();
+        bool global = reg->global();
 
-    RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
+        RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
 
-    int lastIndex = 0;
-    int startPosition = 0;
+        int lastIndex = 0;
+        int startPosition = 0;
 
-    Vector<UString::Range, 16> sourceRanges;
-    Vector<UString, 16> replacements;
+        Vector<UString::Range, 16> sourceRanges;
+        Vector<UString, 16> replacements;
 
-    // This is either a loop (if global is set) or a one-way (if not).
-    do {
-      int matchIndex;
-      int matchLen;
-      int* ovector;
-      regExpObj->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
-      if (matchIndex < 0)
-        break;
+        // This is either a loop (if global is set) or a one-way (if not).
+        do {
+            int matchIndex;
+            int matchLen;
+            int* ovector;
+            regExpObj->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+            if (matchIndex < 0)
+                break;
 
-      sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
+            sourceRanges.append(UString::Range(lastIndex, matchIndex - lastIndex));
 
-      if (callType != CallTypeNone) {
-          int completeMatchStart = ovector[0];
-          ArgList args;
+            if (callType != CallTypeNone) {
+                int completeMatchStart = ovector[0];
+                ArgList args;
 
-          for (unsigned i = 0; i < reg->numSubpatterns() + 1; i++) {
-              int matchStart = ovector[i * 2];
-              int matchLen = ovector[i * 2 + 1] - matchStart;
+                for (unsigned i = 0; i < reg->numSubpatterns() + 1; ++i) {
+                    int matchStart = ovector[i * 2];
+                    int matchLen = ovector[i * 2 + 1] - matchStart;
 
-              if (matchStart < 0)
-                args.append(jsUndefined());
-              else
-                args.append(jsString(exec, source.substr(matchStart, matchLen)));
-          }
-          
-          args.append(jsNumber(exec, completeMatchStart));
-          args.append(sourceVal);
+                    if (matchStart < 0)
+                        args.append(jsUndefined());
+                    else
+                        args.append(jsString(exec, source.substr(matchStart, matchLen)));
+                }
 
-          replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec));
-      } else
-          replacements.append(substituteBackreferences(replacementString, source, ovector, reg));
+                args.append(jsNumber(exec, completeMatchStart));
+                args.append(sourceVal);
 
-      lastIndex = matchIndex + matchLen;
-      startPosition = lastIndex;
+                replacements.append(call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec));
+            } else
+                replacements.append(substituteBackreferences(replacementString, source, ovector, reg));
 
-      // special case of empty match
-      if (matchLen == 0) {
-        startPosition++;
-        if (startPosition > source.size())
-          break;
-      }
-    } while (global);
+            lastIndex = matchIndex + matchLen;
+            startPosition = lastIndex;
 
-    if (lastIndex < source.size())
-      sourceRanges.append(UString::Range(lastIndex, source.size() - lastIndex));
+            // special case of empty match
+            if (matchLen == 0) {
+                startPosition++;
+                if (startPosition > source.size())
+                    break;
+            }
+        } while (global);
 
-    UString result = source.spliceSubstringsWithSeparators(sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
+        if (lastIndex < source.size())
+            sourceRanges.append(UString::Range(lastIndex, source.size() - lastIndex));
 
-    if (result == source)
-      return sourceVal;
+        UString result = source.spliceSubstringsWithSeparators(sourceRanges.data(), sourceRanges.size(), replacements.data(), replacements.size());
 
-    return jsString(exec, result);
-  }
-  
-  // First arg is a string
-  UString patternString = pattern->toString(exec);
-  int matchPos = source.find(patternString);
-  int matchLen = patternString.size();
-  // Do the replacement
-  if (matchPos == -1)
-    return sourceVal;
-  
-  if (callType != CallTypeNone) {
-      ArgList args;
-      
-      args.append(jsString(exec, source.substr(matchPos, matchLen)));
-      args.append(jsNumber(exec, matchPos));
-      args.append(sourceVal);
-      
-      replacementString = call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec);
-  }
+        if (result == source)
+            return sourceVal;
 
-  return jsString(exec, source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));
+        return jsString(exec, result);
+    }
+
+    // First arg is a string
+    UString patternString = pattern->toString(exec);
+    int matchPos = source.find(patternString);
+    int matchLen = patternString.size();
+    // Do the replacement
+    if (matchPos == -1)
+        return sourceVal;
+
+    if (callType != CallTypeNone) {
+        ArgList args;
+        args.append(jsString(exec, source.substr(matchPos, matchLen)));
+        args.append(jsNumber(exec, matchPos));
+        args.append(sourceVal);
+
+        replacementString = call(exec, replacement, callType, callData, exec->globalThisValue(), args)->toString(exec);
+    }
+
+    return jsString(exec, source.substr(0, matchPos) + replacementString + source.substr(matchPos + matchLen));
 }
 
 JSValue* stringProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
@@ -323,9 +322,9 @@ JSValue* stringProtoFuncCharAt(ExecState* exec, JSObject*, JSValue* thisValue, c
     JSValue* a0 = args[0];
     double dpos = a0->toInteger(exec);
     if (dpos >= 0 && dpos < len)
-      u = s.substr(static_cast<int>(dpos), 1);
+        u = s.substr(static_cast<int>(dpos), 1);
     else
-      u = "";
+        u = "";
     return jsString(exec, u);
 }
 
@@ -339,9 +338,9 @@ JSValue* stringProtoFuncCharCodeAt(ExecState* exec, JSObject*, JSValue* thisValu
     JSValue* a0 = args[0];
     double dpos = a0->toInteger(exec);
     if (dpos >= 0 && dpos < len)
-      result = jsNumber(exec, s[static_cast<int>(dpos)]);
+        result = jsNumber(exec, s[static_cast<int>(dpos)]);
     else
-      result = jsNaN(exec);
+        result = jsNaN(exec);
     return result;
 }
 
@@ -350,9 +349,8 @@ JSValue* stringProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, c
     UString s = thisValue->toThisString(exec);
 
     ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++it) {
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
         s += (*it)->toString(exec);
-    }
     return jsString(exec, s);
 }
 
@@ -379,7 +377,7 @@ JSValue* stringProtoFuncLastIndexOf(ExecState* exec, JSObject*, JSValue* thisVal
 
     JSValue* a0 = args[0];
     JSValue* a1 = args[1];
-    
+
     UString u2 = a0->toString(exec);
     double dpos = a1->toIntegerPreserveNaN(exec);
     if (dpos < 0)
@@ -398,49 +396,46 @@ JSValue* stringProtoFuncMatch(ExecState* exec, JSObject*, JSValue* thisValue, co
     UString u = s;
     RefPtr<RegExp> reg;
     RegExpObject* imp = 0;
-    if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpObject::info)) {
-      reg = static_cast<RegExpObject *>(a0)->regExp();
-    } else { 
-      /*
-       *  ECMA 15.5.4.12 String.prototype.search (regexp)
-       *  If regexp is not an object whose [[Class]] property is "RegExp", it is
-       *  replaced with the result of the expression new RegExp(regexp).
-       */
-      reg = RegExp::create(a0->toString(exec));
+    if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpObject::info))
+        reg = static_cast<RegExpObject *>(a0)->regExp();
+    else {
+        /*
+         *  ECMA 15.5.4.12 String.prototype.search (regexp)
+         *  If regexp is not an object whose [[Class]] property is "RegExp", it is
+         *  replaced with the result of the expression new RegExp(regexp).
+         */
+        reg = RegExp::create(a0->toString(exec));
     }
     RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength;
     regExpObj->performMatch(reg.get(), u, 0, pos, matchLength);
-    JSValue* result;
     if (!(reg->global())) {
-      // case without 'g' flag is handled like RegExp.prototype.exec
-      if (pos < 0)
-        result = jsNull();
-      else
-        result = regExpObj->arrayOfMatches(exec);
-    } else {
-      // return array of matches
-      ArgList list;
-      int lastIndex = 0;
-      while (pos >= 0) {
+        // case without 'g' flag is handled like RegExp.prototype.exec
+        if (pos < 0)
+            return jsNull();
+        return regExpObj->arrayOfMatches(exec);
+    }
+
+    // return array of matches
+    ArgList list;
+    int lastIndex = 0;
+    while (pos >= 0) {
         list.append(jsString(exec, u.substr(pos, matchLength)));
         lastIndex = pos;
         pos += matchLength == 0 ? 1 : matchLength;
         regExpObj->performMatch(reg.get(), u, pos, pos, matchLength);
-      }
-      if (imp)
+    }
+    if (imp)
         imp->setLastIndex(lastIndex);
-      if (list.isEmpty()) {
+    if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
         // Null instead of an empty array, because this matches
         // other browsers and because Null is a false value.
-        result = jsNull();
-      } else {
-        result = constructArray(exec, list);
-      }
+        return jsNull();
     }
-    return result;
+
+    return constructArray(exec, list);
 }
 
 JSValue* stringProtoFuncSearch(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
@@ -451,15 +446,15 @@ JSValue* stringProtoFuncSearch(ExecState* exec, JSObject*, JSValue* thisValue, c
 
     UString u = s;
     RefPtr<RegExp> reg;
-    if (a0->isObject() && static_cast<JSObject*>(a0)->inherits(&RegExpObject::info)) {
-      reg = static_cast<RegExpObject*>(a0)->regExp();
-    } else { 
-      /*
-       *  ECMA 15.5.4.12 String.prototype.search (regexp)
-       *  If regexp is not an object whose [[Class]] property is "RegExp", it is
-       *  replaced with the result of the expression new RegExp(regexp).
-       */
-      reg = RegExp::create(a0->toString(exec));
+    if (a0->isObject() && static_cast<JSObject*>(a0)->inherits(&RegExpObject::info))
+        reg = static_cast<RegExpObject*>(a0)->regExp();
+    else { 
+        /*
+         *  ECMA 15.5.4.12 String.prototype.search (regexp)
+         *  If regexp is not an object whose [[Class]] property is "RegExp", it is
+         *  replaced with the result of the expression new RegExp(regexp).
+         */
+        reg = RegExp::create(a0->toString(exec));
     }
     RegExpConstructor* regExpObj = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -507,55 +502,56 @@ JSValue* stringProtoFuncSplit(ExecState* exec, JSObject*, JSValue* thisValue, co
     int p0 = 0;
     uint32_t limit = a1->isUndefined() ? 0xFFFFFFFFU : a1->toUInt32(exec);
     if (a0->isObject() && static_cast<JSObject *>(a0)->inherits(&RegExpObject::info)) {
-      RegExp *reg = static_cast<RegExpObject *>(a0)->regExp();
-      if (u.isEmpty() && reg->match(u, 0) >= 0) {
-        // empty string matched by regexp -> empty array
-        res->put(exec, exec->propertyNames().length, jsNumber(exec, 0));
-        return result;
-      }
-      pos = 0;
-      while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
-        OwnArrayPtr<int> ovector;
-        int mpos = reg->match(u, pos, &ovector);
-        if (mpos < 0)
-          break;
-        int mlen = ovector[1] - ovector[0];
-        pos = mpos + (mlen == 0 ? 1 : mlen);
-        if (mpos != p0 || mlen) {
-          res->put(exec,i, jsString(exec, u.substr(p0, mpos-p0)));
-          p0 = mpos + mlen;
-          i++;
+        RegExp *reg = static_cast<RegExpObject *>(a0)->regExp();
+        if (u.isEmpty() && reg->match(u, 0) >= 0) {
+            // empty string matched by regexp -> empty array
+            res->put(exec, exec->propertyNames().length, jsNumber(exec, 0));
+            return result;
         }
-        for (unsigned si = 1; si <= reg->numSubpatterns(); ++si) {
-          int spos = ovector[si * 2];
-          if (spos < 0)
-            res->put(exec, i++, jsUndefined());
-          else
-            res->put(exec, i++, jsString(exec, u.substr(spos, ovector[si * 2 + 1] - spos)));
+        pos = 0;
+        while (static_cast<uint32_t>(i) != limit && pos < u.size()) {
+            OwnArrayPtr<int> ovector;
+            int mpos = reg->match(u, pos, &ovector);
+            if (mpos < 0)
+                break;
+            int mlen = ovector[1] - ovector[0];
+            pos = mpos + (mlen == 0 ? 1 : mlen);
+            if (mpos != p0 || mlen) {
+                res->put(exec,i, jsString(exec, u.substr(p0, mpos - p0)));
+                p0 = mpos + mlen;
+                i++;
+            }
+            for (unsigned si = 1; si <= reg->numSubpatterns(); ++si) {
+                int spos = ovector[si * 2];
+                if (spos < 0)
+                    res->put(exec, i++, jsUndefined());
+                else
+                    res->put(exec, i++, jsString(exec, u.substr(spos, ovector[si * 2 + 1] - spos)));
+            }
         }
-      }
     } else {
-      UString u2 = a0->toString(exec);
-      if (u2.isEmpty()) {
-        if (u.isEmpty()) {
-          // empty separator matches empty string -> empty array
-          res->put(exec, exec->propertyNames().length, jsNumber(exec, 0));
-          return result;
+        UString u2 = a0->toString(exec);
+        if (u2.isEmpty()) {
+            if (u.isEmpty()) {
+                // empty separator matches empty string -> empty array
+                res->put(exec, exec->propertyNames().length, jsNumber(exec, 0));
+                return result;
+            } else {
+                while (static_cast<uint32_t>(i) != limit && i < u.size() - 1)
+                    res->put(exec, i++, jsString(exec, u.substr(p0++, 1)));
+            }
         } else {
-          while (static_cast<uint32_t>(i) != limit && i < u.size()-1)
-            res->put(exec, i++, jsString(exec, u.substr(p0++, 1)));
+            while (static_cast<uint32_t>(i) != limit && (pos = u.find(u2, p0)) >= 0) {
+                res->put(exec, i, jsString(exec, u.substr(p0, pos - p0)));
+                p0 = pos + u2.size();
+                i++;
+            }
         }
-      } else {
-        while (static_cast<uint32_t>(i) != limit && (pos = u.find(u2, p0)) >= 0) {
-          res->put(exec, i, jsString(exec, u.substr(p0, pos - p0)));
-          p0 = pos + u2.size();
-          i++;
-        }
-      }
     }
+
     // add remaining string, if any
     if (static_cast<uint32_t>(i) != limit)
-      res->put(exec, i++, jsString(exec, u.substr(p0)));
+        res->put(exec, i++, jsString(exec, u.substr(p0)));
     res->put(exec, exec->propertyNames().length, jsNumber(exec, i));
     return result;
 }
@@ -571,16 +567,16 @@ JSValue* stringProtoFuncSubstr(ExecState* exec, JSObject*, JSValue* thisValue, c
     double start = a0->toInteger(exec);
     double length = a1->isUndefined() ? len : a1->toInteger(exec);
     if (start >= len)
-      return jsString(exec, "");
+        return jsString(exec, "");
     if (length < 0)
-      return jsString(exec, "");
+        return jsString(exec, "");
     if (start < 0) {
-      start += len;
-      if (start < 0)
-        start = 0;
+        start += len;
+        if (start < 0)
+            start = 0;
     }
     if (length > len)
-      length = len;
+        length = len;
     return jsString(exec, s.substr(static_cast<int>(start), static_cast<int>(length)));
 }
 
@@ -595,25 +591,25 @@ JSValue* stringProtoFuncSubstring(ExecState* exec, JSObject*, JSValue* thisValue
     double start = a0->toNumber(exec);
     double end = a1->toNumber(exec);
     if (isnan(start))
-      start = 0;
+        start = 0;
     if (isnan(end))
-      end = 0;
+        end = 0;
     if (start < 0)
-      start = 0;
+        start = 0;
     if (end < 0)
-      end = 0;
+        end = 0;
     if (start > len)
-      start = len;
+        start = len;
     if (end > len)
-      end = len;
+        end = len;
     if (a1->isUndefined())
-      end = len;
+        end = len;
     if (start > end) {
-      double temp = end;
-      end = start;
-      start = temp;
+        double temp = end;
+        end = start;
+        start = temp;
     }
-    return jsString(exec, s.substr((int)start, (int)end-(int)start));
+    return jsString(exec, s.substr(static_cast<int>(start), (static_cast<int>(end) - static_cast<int>(start))));
 }
 
 JSValue* stringProtoFuncToLowerCase(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

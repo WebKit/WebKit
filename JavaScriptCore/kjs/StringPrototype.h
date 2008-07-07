@@ -25,21 +25,17 @@
 
 namespace KJS {
 
-  class ObjectPrototype;
+    class ObjectPrototype;
 
-  /**
-   * @internal
-   *
-   * The initial value of String.prototype (and thus all objects created
-   * with the String constructor
-   */
-  class StringPrototype : public StringObject {
-  public:
-    StringPrototype(ExecState* exec, ObjectPrototype*);
-    virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
-    virtual const ClassInfo *classInfo() const { return &info; }
-    static const ClassInfo info;
-  };
+    class StringPrototype : public StringObject {
+    public:
+        StringPrototype(ExecState*, ObjectPrototype*);
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+
+        virtual const ClassInfo* classInfo() const { return &info; }
+        static const ClassInfo info;
+    };
 
 } // namespace KJS
 

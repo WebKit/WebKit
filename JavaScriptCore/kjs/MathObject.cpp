@@ -104,22 +104,22 @@ bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
 JSValue* MathObject::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
-    case Euler:
-        return jsNumber(exec, exp(1.0));
-    case Ln2:
-        return jsNumber(exec, log(2.0));
-    case Ln10:
-        return jsNumber(exec, log(10.0));
-    case Log2E:
-        return jsNumber(exec, 1.0 / log(2.0));
-    case Log10E:
-        return jsNumber(exec, 1.0 / log(10.0));
-    case Pi:
-        return jsNumber(exec, piDouble);
-    case Sqrt1_2:
-        return jsNumber(exec, sqrt(0.5));
-    case Sqrt2:
-        return jsNumber(exec, sqrt(2.0));
+        case Euler:
+            return jsNumber(exec, exp(1.0));
+        case Ln2:
+            return jsNumber(exec, log(2.0));
+        case Ln10:
+            return jsNumber(exec, log(10.0));
+        case Log2E:
+            return jsNumber(exec, 1.0 / log(2.0));
+        case Log10E:
+            return jsNumber(exec, 1.0 / log(10.0));
+        case Pi:
+            return jsNumber(exec, piDouble);
+        case Sqrt1_2:
+            return jsNumber(exec, sqrt(0.5));
+        case Sqrt2:
+            return jsNumber(exec, sqrt(2.0));
     }
 
     ASSERT_NOT_REACHED();

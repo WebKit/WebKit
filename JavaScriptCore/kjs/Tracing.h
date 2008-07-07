@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef Tracing_h
+#define Tracing_h
+
 #if HAVE(DTRACE)
 #include "TracingDtrace.h"
 #else
@@ -37,3 +40,5 @@
 #define JAVASCRIPTCORE_GC_MARKED_ENABLED() 0
 
 #endif
+
+#endif // Tracing_h

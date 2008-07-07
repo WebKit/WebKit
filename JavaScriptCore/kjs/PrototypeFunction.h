@@ -29,16 +29,16 @@
 
 namespace KJS {
 
-  class PrototypeFunction : public InternalFunction {
-  public:
-    PrototypeFunction(ExecState*, int len, const Identifier&, NativeFunction);
-    PrototypeFunction(ExecState*, FunctionPrototype*, int len, const Identifier&, NativeFunction);
+    class PrototypeFunction : public InternalFunction {
+    public:
+        PrototypeFunction(ExecState*, int length, const Identifier&, NativeFunction);
+        PrototypeFunction(ExecState*, FunctionPrototype*, int length, const Identifier&, NativeFunction);
 
-  private:
-    virtual CallType getCallData(CallData&);
+    private:
+        virtual CallType getCallData(CallData&);
 
-    const NativeFunction m_function;
-  };
+        const NativeFunction m_function;
+    };
 
 } // namespace KJS
 

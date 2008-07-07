@@ -64,6 +64,6 @@ namespace KJS {
         unsigned m_numSubpatterns;
     };
 
-} // namespace
+} // namespace KJS
 
-#endif
+#endif // KJS_REGEXP_H

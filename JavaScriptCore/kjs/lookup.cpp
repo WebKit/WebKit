@@ -65,4 +65,4 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     slot.setValueSlot(thisObj->getDirectLocation(propertyName));
 }
 
-}
+} // namespace KJS

@@ -26,14 +26,17 @@
 
 namespace KJS {
 
-  // WebCore uses this to make style.filter undetectable
-  class StringObjectThatMasqueradesAsUndefined : public StringObject {
-  public:
-      StringObjectThatMasqueradesAsUndefined(ExecState* exec, JSObject* proto, const UString& string)
-          : StringObject(exec, proto, string) { }
-      virtual bool masqueradeAsUndefined() const { return true; }
-      virtual bool toBoolean(ExecState*) const { return false; }
-  };
+    // WebCore uses this to make style.filter undetectable
+    class StringObjectThatMasqueradesAsUndefined : public StringObject {
+    public:
+        StringObjectThatMasqueradesAsUndefined(ExecState* exec, JSObject* prototype, const UString& string)
+            : StringObject(exec, prototype, string)
+        {
+        }
+
+        virtual bool masqueradeAsUndefined() const { return true; }
+        virtual bool toBoolean(ExecState*) const { return false; }
+    };
  
 } // namespace KJS
 

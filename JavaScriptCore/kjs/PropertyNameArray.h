@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  *
@@ -34,8 +33,15 @@ namespace KJS {
         typedef Identifier ValueType;
         typedef Vector<Identifier>::const_iterator const_iterator;
 
-        PropertyNameArray(JSGlobalData* globalData) : m_globalData(globalData) {}
-        PropertyNameArray(ExecState* exec) : m_globalData(&exec->globalData()) {}
+        PropertyNameArray(JSGlobalData* globalData)
+            : m_globalData(globalData)
+        {
+        }
+
+        PropertyNameArray(ExecState* exec)
+            : m_globalData(&exec->globalData())
+        {
+        }
 
         JSGlobalData* globalData() { return m_globalData; }
 

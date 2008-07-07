@@ -41,9 +41,9 @@ namespace KJS {
         JSValue* test(ExecState*, const ArgList&);
         JSValue* exec(ExecState*, const ArgList&);
 
-        bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         JSValue* getValueProperty(ExecState*, int token) const;
-        void put(ExecState*, const Identifier&, JSValue*);
+        void put(ExecState*, const Identifier& propertyName, JSValue*);
         void putValueProperty(ExecState*, int token, JSValue*);
 
         virtual const ClassInfo* classInfo() const { return &info; }

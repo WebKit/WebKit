@@ -36,7 +36,7 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
         UChar* p = buf;
         ArgList::const_iterator end = args.end();
         for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-          *p++ = static_cast<UChar>((*it)->toUInt32(exec));
+            *p++ = static_cast<UChar>((*it)->toUInt32(exec));
         s = UString(buf, args.size(), false);
     } else
         s = "";
@@ -44,17 +44,17 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
     return jsString(exec, s);
 }
 
-StringConstructor::StringConstructor(ExecState* exec, FunctionPrototype* funcProto, StringPrototype* stringProto)
-  : InternalFunction(funcProto, Identifier(exec, stringProto->classInfo()->className))
+StringConstructor::StringConstructor(ExecState* exec, FunctionPrototype* functionPrototype, StringPrototype* stringPrototype)
+    : InternalFunction(functionPrototype, Identifier(exec, stringPrototype->classInfo()->className))
 {
-  // ECMA 15.5.3.1 String.prototype
-  putDirect(exec->propertyNames().prototype, stringProto, ReadOnly | DontEnum | DontDelete);
+    // ECMA 15.5.3.1 String.prototype
+    putDirect(exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
 
-  // ECMA 15.5.3.2 fromCharCode()
-  putDirectFunction(new (exec) PrototypeFunction(exec, funcProto, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
+    // ECMA 15.5.3.2 fromCharCode()
+    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 
-  // no. of arguments for constructor
-  putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
+    // no. of arguments for constructor
+    putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.5.2

@@ -27,22 +27,22 @@ namespace KJS {
 
 const ClassInfo StringObject::info = { "String", 0, 0, 0 };
 
-StringObject::StringObject(ExecState* exec, JSObject* proto)
-  : JSWrapperObject(proto)
+StringObject::StringObject(ExecState* exec, JSObject* prototype)
+    : JSWrapperObject(prototype)
 {
-  setInternalValue(jsString(exec, ""));
+    setInternalValue(jsString(exec, ""));
 }
 
-StringObject::StringObject(JSObject* proto, JSString* string)
-  : JSWrapperObject(proto)
+StringObject::StringObject(JSObject* prototype, JSString* string)
+    : JSWrapperObject(prototype)
 {
-  setInternalValue(string);
+    setInternalValue(string);
 }
 
-StringObject::StringObject(ExecState* exec, JSObject* proto, const UString& string)
-  : JSWrapperObject(proto)
+StringObject::StringObject(ExecState* exec, JSObject* prototype, const UString& string)
+    : JSWrapperObject(prototype)
 {
-  setInternalValue(jsString(exec, string));
+    setInternalValue(jsString(exec, string));
 }
 
 bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -66,19 +66,19 @@ void StringObject::put(ExecState* exec, const Identifier& propertyName, JSValue*
     JSObject::put(exec, propertyName, value);
 }
 
-bool StringObject::deleteProperty(ExecState *exec, const Identifier &propertyName)
+bool StringObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
-  if (propertyName == exec->propertyNames().length)
-    return false;
-  return JSObject::deleteProperty(exec, propertyName);
+    if (propertyName == exec->propertyNames().length)
+        return false;
+    return JSObject::deleteProperty(exec, propertyName);
 }
 
 void StringObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-  int size = internalValue()->value().size();
-  for (int i = 0; i < size; i++)
-    propertyNames.add(Identifier(exec, UString::from(i)));
-  return JSObject::getPropertyNames(exec, propertyNames);
+    int size = internalValue()->value().size();
+    for (int i = 0; i < size; ++i)
+        propertyNames.add(Identifier(exec, UString::from(i)));
+    return JSObject::getPropertyNames(exec, propertyNames);
 }
 
 UString StringObject::toString(ExecState*) const

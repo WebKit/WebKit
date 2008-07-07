@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
@@ -23,15 +22,12 @@
 #define PropertyMap_h
 
 #include "identifier.h"
-#include "protect.h"
-#include <wtf/OwnArrayPtr.h>
 
 namespace KJS {
 
     class JSObject;
     class JSValue;
     class PropertyNameArray;
-    
     struct PropertyMapEntry;
     struct PropertyMapHashTable;
 
@@ -39,15 +35,15 @@ namespace KJS {
     public:
         PropertyMap();
         ~PropertyMap();
-        
+
         void clear();
-        
-        void put(const Identifier&, JSValue*, unsigned attributes, bool checkReadOnly = false);
-        void remove(const Identifier&);
-        JSValue* get(const Identifier&) const;
-        JSValue* get(const Identifier&, unsigned& attributes) const;
-        JSValue** getLocation(const Identifier& name);
-        JSValue** getLocation(const Identifier& name, bool& isWriteable);
+
+        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly = false);
+        void remove(const Identifier& propertyName);
+        JSValue* get(const Identifier& propertyName) const;
+        JSValue* get(const Identifier& propertyName, unsigned& attributes) const;
+        JSValue** getLocation(const Identifier& propertyName);
+        JSValue** getLocation(const Identifier& propertyName, bool& isWriteable);
 
         void mark() const;
         void getEnumerablePropertyNames(PropertyNameArray&) const;
@@ -89,6 +85,7 @@ namespace KJS {
 
     {
     }
-} // namespace
 
-#endif // _KJS_PROPERTY_MAP_H_
+} // namespace KJS
+
+#endif // PropertyMap_h

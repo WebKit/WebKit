@@ -31,20 +31,20 @@
 
 namespace KJS {
 
-PrototypeFunction::PrototypeFunction(ExecState* exec, int len, const Identifier& name, NativeFunction function)
+PrototypeFunction::PrototypeFunction(ExecState* exec, int length, const Identifier& name, NativeFunction function)
     : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(exec, len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
 }
 
-PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, NativeFunction function)
+PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int length, const Identifier& name, NativeFunction function)
     : InternalFunction(functionPrototype, name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);
-    putDirect(exec->propertyNames().length, jsNumber(exec, len), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->propertyNames().length, jsNumber(exec, length), DontDelete | ReadOnly | DontEnum);
 }
 
 CallType PrototypeFunction::getCallData(CallData& callData)
