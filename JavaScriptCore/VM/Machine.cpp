@@ -2159,7 +2159,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            that global object's original global eval function, then
            perform the eval operator in local scope (interpreting
            the argument registers as for the "call"
-           opcode). Otherwise, act exacty as the "call" opcode.
+           opcode). Otherwise, act exactly as the "call" opcode would.
          */
 
         int dst = (++vPC)->u.operand;

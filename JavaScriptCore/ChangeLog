@@ -1,3 +1,10 @@
+2008-07-07  Darin Adler  <darin@apple.com>
+
+        Rubber stamped by Adele.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute): Fix a typo in a comment.
+
 2008-07-07  Steve Falkenburg  <sfalken@apple.com>
 
         Build fixes.
