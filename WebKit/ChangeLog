@@ -1,3 +1,10 @@
+2008-07-07  Mark Rowe  <mrowe@apple.com>
+
+        Fix references to WebRenderNode.h and WebRenderNode.mm in Xcode project
+        so that they don't have an unnecessary ".." in the path.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-07-05  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by John Sullivan.
