@@ -123,6 +123,7 @@ bool _NPN_InvokeDefault(NPP, NPObject* o, const NPVariant* args, uint32_t argCou
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
+        exec->clearException();
         return true;        
     }
 
@@ -171,6 +172,7 @@ bool _NPN_Invoke(NPP npp, NPObject* o, NPIdentifier methodName, const NPVariant*
 
         // Convert and return the result of the function call.
         convertValueToNPVariant(exec, resultV, result);
+        exec->clearException();
         return true;
     }
 
@@ -208,7 +210,7 @@ bool _NPN_Evaluate(NPP, NPObject* o, NPString* s, NPVariant* variant)
             result = jsUndefined();
 
         convertValueToNPVariant(exec, result, variant);
-    
+        exec->clearException();
         return true;
     }
 
@@ -236,6 +238,7 @@ bool _NPN_GetProperty(NPP, NPObject* o, NPIdentifier propertyName, NPVariant* va
             result = obj->imp->get(exec, i->value.number);
 
         convertValueToNPVariant(exec, result, variant);
+        exec->clearException();
         return true;
     }
 
@@ -265,6 +268,7 @@ bool _NPN_SetProperty(NPP, NPObject* o, NPIdentifier propertyName, const NPVaria
             obj->imp->put(exec, identifierFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant, rootObject));
         else
             obj->imp->put(exec, i->value.number, convertNPVariantToValue(exec, variant, rootObject));
+        exec->clearException();
         return true;
     }
 
@@ -286,11 +290,15 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
         ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
         if (i->isString) {
-            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string)))
+            if (!obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string))) {
+                exec->clearException();
                 return false;
+            }
         } else {
-            if (!obj->imp->hasProperty(exec, i->value.number))
+            if (!obj->imp->hasProperty(exec, i->value.number)) {
+                exec->clearException();
                 return false;
+            }
         }
 
         JSLock lock(false);
@@ -298,7 +306,8 @@ bool _NPN_RemoveProperty(NPP, NPObject* o, NPIdentifier propertyName)
             obj->imp->deleteProperty(exec, identifierFromNPIdentifier(i->value.string));
         else
             obj->imp->deleteProperty(exec, i->value.number);
-        
+
+        exec->clearException();
         return true;
     }
     return false;
@@ -316,9 +325,15 @@ bool _NPN_HasProperty(NPP, NPObject* o, NPIdentifier propertyName)
         ExecState* exec = rootObject->globalObject()->globalExec();
         PrivateIdentifier* i = static_cast<PrivateIdentifier*>(propertyName);
         JSLock lock(false);
-        if (i->isString)
-            return obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string));
-        return obj->imp->hasProperty(exec, i->value.number);
+        if (i->isString) {
+            bool result = obj->imp->hasProperty(exec, identifierFromNPIdentifier(i->value.string));
+            exec->clearException();
+            return result;
+        }
+
+        bool result = obj->imp->hasProperty(exec, i->value.number);
+        exec->clearException();
+        return result;
     }
 
     if (o->_class->hasProperty)
@@ -343,6 +358,7 @@ bool _NPN_HasMethod(NPP, NPObject* o, NPIdentifier methodName)
         ExecState* exec = rootObject->globalObject()->globalExec();
         JSLock lock(false);
         JSValue* func = obj->imp->get(exec, identifierFromNPIdentifier(i->value.string));
+        exec->clearException();
         return !func->isUndefined();
     }
     
@@ -382,7 +398,8 @@ bool _NPN_Enumerate(NPP, NPObject* o, NPIdentifier** identifier, uint32_t* count
 
         *identifier = identifiers;
         *count = size;
-        
+
+        exec->clearException();
         return true;
     }
     

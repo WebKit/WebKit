@@ -1,3 +1,31 @@
+2008-07-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff.
+
+        Bug 19907: REGRESSION(r34824-r34941): Reproducible crash trying to log in to MediaTemple.net Account Center
+        <https://bugs.webkit.org/show_bug.cgi?id=19907>
+
+        Clear exceptions set on ExecStates before returning from NPAPI
+        callbacks, in order to avoid causing problems for the next script that
+        executes.
+
+        While fixing this bug, the question was raised of whether we are
+        correctly propagating exception information back to the caller:
+
+        Bug 19936: Correctly propagate exception information from NPAPI callbacks
+        <https://bugs.webkit.org/show_bug.cgi?id=19936>
+
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+
 2008-07-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
