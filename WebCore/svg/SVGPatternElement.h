@@ -63,15 +63,15 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS_REFCOUNTED(SVGFitToViewBox, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternUnits, patternUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, int, PatternContentUnits, patternContentUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGTransformList*, RefPtr<SVGTransformList>, PatternTransform, patternTransform)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, PatternUnits, patternUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPatternElement, int, PatternContentUnits, patternContentUnits)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGPatternElement, SVGTransformList, PatternTransform, patternTransform)
 
         mutable RefPtr<SVGPaintServerPattern> m_resource;
 

@@ -57,14 +57,14 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, FilterUnits, filterUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, int, PrimitiveUnits, primitiveUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResX, filterResX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, long, FilterResY, filterResY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, FilterUnits, filterUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, PrimitiveUnits, primitiveUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, FilterResX, filterResX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, FilterResY, filterResY)
 
         RefPtr<SVGResourceFilter> m_filter;
     };

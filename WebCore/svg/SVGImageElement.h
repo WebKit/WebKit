@@ -68,11 +68,11 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGPreserveAspectRatio*, RefPtr<SVGPreserveAspectRatio>, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGImageElement, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         SVGImageLoader m_imageLoader;
     };

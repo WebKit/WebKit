@@ -49,12 +49,12 @@ SVGRectElement::~SVGRectElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Rx, rx, SVGNames::rxAttr, m_rx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Length, length, Ry, ry, SVGNames::ryAttr, m_ry)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, X, x, SVGNames::xAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Y, y, SVGNames::yAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Width, width, SVGNames::widthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Height, height, SVGNames::heightAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Rx, rx, SVGNames::rxAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Ry, ry, SVGNames::ryAttr)
 
 void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 {

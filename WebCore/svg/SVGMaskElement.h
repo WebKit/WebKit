@@ -57,13 +57,13 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
             
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, int, MaskUnits, maskUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, int, MaskContentUnits, maskContentUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, MaskUnits, maskUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, int, MaskContentUnits, maskContentUnits)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMaskElement, SVGLength, Height, height)
 
         virtual const SVGElement* contextElement() const { return this; }
 

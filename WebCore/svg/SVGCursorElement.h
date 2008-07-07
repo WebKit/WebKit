@@ -57,8 +57,8 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGCursorElement, SVGLength, Y, y)
 
         HashSet<SVGElement*> m_clients;
     };

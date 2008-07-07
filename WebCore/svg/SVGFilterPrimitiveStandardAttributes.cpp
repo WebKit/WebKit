@@ -54,11 +54,11 @@ SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, String, String, string, Result, result, SVGNames::resultAttr, m_result)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, X, x, SVGNames::xAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Y, y, SVGNames::yAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Width, width, SVGNames::widthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Height, height, SVGNames::heightAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, String, Result, result, SVGNames::resultAttr)
 
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute* attr)
 {

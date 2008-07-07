@@ -56,13 +56,13 @@ SVGMarkerElement::~SVGMarkerElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefX, refX, SVGNames::refXAttr, m_refX)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, RefY, refY, SVGNames::refYAttr, m_refY)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, Enumeration, enumeration, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr, m_markerUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerWidth, markerWidth, SVGNames::markerWidthAttr, m_markerWidth)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, Length, length, MarkerHeight, markerHeight, SVGNames::markerHeightAttr, m_markerHeight)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, int, Enumeration, enumeration, OrientType, orientType, SVGNames::orientAttr, "orientType", m_orientType)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, SVGAngle*, Angle, angle, OrientAngle, orientAngle, SVGNames::orientAttr, "orientAngle", m_orientAngle.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, RefX, refX, SVGNames::refXAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, RefY, refY, SVGNames::refYAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, int, MarkerUnits, markerUnits, SVGNames::markerUnitsAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, MarkerWidth, markerWidth, SVGNames::markerWidthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMarkerElement, SVGLength, MarkerHeight, markerHeight, SVGNames::markerHeightAttr)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, int, OrientType, orientType, SVGNames::orientAttr, "orientType")
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED_WITH_CUSTOM_IDENTIFIER(SVGMarkerElement, SVGAngle, OrientAngle, orientAngle, SVGNames::orientAttr, "orientAngle")
 
 void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
 {

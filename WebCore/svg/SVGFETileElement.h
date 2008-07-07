@@ -42,7 +42,7 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETileElement, String, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETileElement, String, In1, in1)
 
         mutable RefPtr<SVGFETile> m_filterEffect;
     };

@@ -71,7 +71,8 @@ namespace WebCore {
         static int cssPropertyIdForSVGAttributeName(const QualifiedName&);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, String, ClassName, className)
+        ANIMATED_PROPERTY_START_DECLARATIONS
+        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledElement, String, ClassName, className)
 
         void updateElementInstance(SVGDocumentExtensions*) const;
     };

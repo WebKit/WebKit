@@ -145,14 +145,18 @@ namespace WebCore {
         const QualifiedName& m_associatedAttributeName;
     };
 
+    typedef void (*AnimatedPropertySynchronizer)(const SVGElement*);
+
     template <class Type, class SVGElementSubClass>
-    PassRefPtr<Type> lookupOrCreateWrapper(const SVGElementSubClass* element, const QualifiedName& domAttrName, const AtomicString& attrIdentifier)
+    PassRefPtr<Type> lookupOrCreateWrapper(const SVGElementSubClass* element, const QualifiedName& domAttrName,
+                                           const AtomicString& attrIdentifier, AnimatedPropertySynchronizer synchronizer)
     {
         SVGAnimatedTypeWrapperKey key(element, attrIdentifier);
         RefPtr<Type> wrapper = static_cast<Type*>(Type::wrapperCache()->get(key));
 
         if (!wrapper) {
             wrapper = Type::create(element, domAttrName);
+            element->addSVGPropertySynchronizer(domAttrName, synchronizer);
             Type::wrapperCache()->set(key, wrapper.get());
         }
 

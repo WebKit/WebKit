@@ -59,7 +59,8 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     protected:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGStyledTransformableElement, SVGTransformList, Transform, transform)
+
     private:
         // Used by <animateMotion>
         OwnPtr<AffineTransform> m_supplementalTransform;

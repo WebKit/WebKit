@@ -42,9 +42,9 @@ SVGFEOffsetElement::~SVGFEOffsetElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Number, number, Dx, dx, SVGNames::dxAttr, m_dx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Number, number, Dy, dy, SVGNames::dyAttr, m_dy)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, String, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Dx, dx, SVGNames::dxAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Dy, dy, SVGNames::dyAttr)
 
 void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
 {

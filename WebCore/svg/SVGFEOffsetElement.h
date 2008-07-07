@@ -43,9 +43,9 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, float, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, float, Dy, dy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, Dx, dx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEOffsetElement, float, Dy, dy)
 
         mutable RefPtr<SVGFEOffset> m_filterEffect;
     };

@@ -45,9 +45,9 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, float, StdDeviationX, stdDeviationX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, float, StdDeviationY, stdDeviationY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, StdDeviationX, stdDeviationX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, StdDeviationY, stdDeviationY)
 
         mutable RefPtr<SVGFEGaussianBlur> m_filterEffect;
     };

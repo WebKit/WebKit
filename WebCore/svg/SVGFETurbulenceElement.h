@@ -48,12 +48,12 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, float, BaseFrequencyX, baseFrequencyX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, float, BaseFrequencyY, baseFrequencyY)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, long, long, NumOctaves, numOctaves)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, float, Seed, seed)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, StitchTiles, stitchTiles)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, BaseFrequencyX, baseFrequencyX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, BaseFrequencyY, baseFrequencyY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, long, NumOctaves, numOctaves)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, float, Seed, seed)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, StitchTiles, stitchTiles)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, Type, type)
 
         mutable RefPtr<SVGFETurbulence> m_filterEffect;
     };

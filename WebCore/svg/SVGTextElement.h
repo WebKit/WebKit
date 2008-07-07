@@ -55,7 +55,7 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextElement, SVGTransformList*, RefPtr<SVGTransformList>, Transform, transform)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextElement, SVGTransformList, Transform, transform)
        
        // Used by <animateMotion>
        OwnPtr<AffineTransform> m_supplementalTransform;

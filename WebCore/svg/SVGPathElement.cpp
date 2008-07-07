@@ -56,7 +56,7 @@ SVGPathElement::~SVGPathElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGPathElement, float, Number, number, PathLength, pathLength, SVGNames::pathLengthAttr, m_pathLength)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPathElement, float, PathLength, pathLength, SVGNames::pathLengthAttr)
 
 float SVGPathElement::getTotalLength()
 {

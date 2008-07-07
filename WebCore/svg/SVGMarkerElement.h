@@ -34,7 +34,7 @@ namespace WebCore {
 
     class Document;
     class SVGAngle;
-    
+
     class SVGMarkerElement : public SVGStyledElement,
                              public SVGLangSpace,
                              public SVGExternalResourcesRequired,
@@ -71,15 +71,15 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired) 
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, SVGPreserveAspectRatio*, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_FORWARD_DECLARATIONS_REFCOUNTED(SVGFitToViewBox, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, RefX, refX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, RefY, refY)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, MarkerWidth, markerWidth)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, SVGLength, MarkerHeight, markerHeight)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, MarkerUnits, markerUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, int, OrientType, orientType)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGAngle*, RefPtr<SVGAngle>, OrientAngle, orientAngle)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, RefX, refX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, RefY, refY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, MarkerWidth, markerWidth)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, SVGLength, MarkerHeight, markerHeight)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, MarkerUnits, markerUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGMarkerElement, int, OrientType, orientType)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGMarkerElement, SVGAngle, OrientAngle, orientAngle)
 
         RefPtr<SVGResourceMarker> m_marker;
     };

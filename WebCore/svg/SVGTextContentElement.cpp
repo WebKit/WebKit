@@ -55,8 +55,8 @@ SVGTextContentElement::~SVGTextContentElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, SVGLength, Length, length, TextLength, textLength, SVGNames::textLengthAttr, m_textLength)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, Enumeration, enumeration, LengthAdjust, lengthAdjust, SVGNames::lengthAdjustAttr, m_lengthAdjust)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, SVGLength, TextLength, textLength, SVGNames::textLengthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, LengthAdjust, lengthAdjust, SVGNames::lengthAdjustAttr)
 
 static inline float cumulativeCharacterRangeLength(const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end, SVGInlineTextBox* textBox,
                                                    int startOffset, long startPosition, long length, bool isVerticalText, long& atCharacter)

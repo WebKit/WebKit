@@ -40,7 +40,7 @@ SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, Boolean, boolean, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr, m_externalResourcesRequired)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr)
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {

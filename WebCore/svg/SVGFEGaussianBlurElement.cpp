@@ -43,9 +43,9 @@ SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, Number, number, StdDeviationX, stdDeviationX, SVGNames::stdDeviationAttr, "stdDeviationX", m_stdDeviationX)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, Number, number, StdDeviationY, stdDeviationY, SVGNames::stdDeviationAttr, "stdDeviationY", m_stdDeviationY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, StdDeviationX, stdDeviationX, SVGNames::stdDeviationAttr, "stdDeviationX")
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, StdDeviationY, stdDeviationY, SVGNames::stdDeviationAttr, "stdDeviationY")
 
 void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDeviationY)
 {

@@ -44,13 +44,14 @@ namespace WebCore
         ComponentTransferFunction transferFunction() const;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGNumberList*, RefPtr<SVGNumberList>, TableValues, tableValues)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Slope, slope)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Intercept, intercept)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Amplitude, amplitude)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Exponent, exponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, float, Offset, offset)
+        ANIMATED_PROPERTY_START_DECLARATIONS
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGComponentTransferFunctionElement, SVGNumberList, TableValues, tableValues)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Slope, slope)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Intercept, intercept)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Amplitude, amplitude)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Exponent, exponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Offset, offset)
     };
 
 } // namespace WebCore

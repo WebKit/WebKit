@@ -54,7 +54,7 @@ SVGStyledElement::~SVGStyledElement()
     SVGResource::removeClient(this);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, String, string, ClassName, className, HTMLNames::classAttr, m_className)
+ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, ClassName, className, HTMLNames::classAttr)
 
 bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
 {

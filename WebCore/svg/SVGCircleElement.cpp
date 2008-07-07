@@ -27,6 +27,7 @@
 
 #include "FloatPoint.h"
 #include "RenderPath.h"
+#include "SVGLength.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -36,9 +37,9 @@ SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(SVGLength(this, LengthModeWidth))
-    , m_cy(SVGLength(this, LengthModeHeight))
-    , m_r(SVGLength(this, LengthModeOther))
+    , m_cx(this, LengthModeWidth)
+    , m_cy(this, LengthModeHeight)
+    , m_r(this, LengthModeOther)
 {
 }
 
@@ -46,9 +47,9 @@ SVGCircleElement::~SVGCircleElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, Cx, cx, SVGNames::cxAttr, m_cx)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, Cy, cy, SVGNames::cyAttr, m_cy)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Length, length, R, r, SVGNames::rAttr, m_r)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Cx, cx, SVGNames::cxAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Cy, cy, SVGNames::cyAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, R, r, SVGNames::rAttr)
 
 void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 {

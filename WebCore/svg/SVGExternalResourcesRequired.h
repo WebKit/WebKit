@@ -53,7 +53,7 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const = 0;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

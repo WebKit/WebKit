@@ -47,13 +47,13 @@ SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr, m_type)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, SVGNumberList*, NumberList, numberList, TableValues, tableValues, SVGNames::tableValuesAttr, m_tableValues.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Slope, slope, SVGNames::slopeAttr, m_slope)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Intercept, intercept, SVGNames::interceptAttr, m_intercept)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Amplitude, amplitude, SVGNames::amplitudeAttr, m_amplitude)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Exponent, exponent, SVGNames::exponentAttr, m_exponent)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Number, number, Offset, offset, SVGNames::offsetAttr, m_offset)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, int, Type, type, SVGNames::typeAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGComponentTransferFunctionElement, SVGNumberList, TableValues, tableValues, SVGNames::tableValuesAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Slope, slope, SVGNames::slopeAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Intercept, intercept, SVGNames::interceptAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Amplitude, amplitude, SVGNames::amplitudeAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Exponent, exponent, SVGNames::exponentAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Offset, offset, SVGNames::offsetAttr)
 
 void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* attr)
 {

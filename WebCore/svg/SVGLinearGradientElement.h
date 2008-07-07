@@ -49,10 +49,10 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, SVGLength, X1, x1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, SVGLength, Y1, y1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, SVGLength, X2, x2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, SVGLength, Y2, y2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, X1, x1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, Y1, y1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, X2, x2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGLinearGradientElement, SVGLength, Y2, y2)
     };
 
 } // namespace WebCore

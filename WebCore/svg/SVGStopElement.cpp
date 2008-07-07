@@ -42,7 +42,7 @@ SVGStopElement::~SVGStopElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, float, Number, number, Offset, offset, SVGNames::offsetAttr, m_offset)
+ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, float, Offset, offset, SVGNames::offsetAttr)
 
 void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 {

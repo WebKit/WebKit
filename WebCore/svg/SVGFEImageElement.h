@@ -58,7 +58,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGPreserveAspectRatio*, RefPtr<SVGPreserveAspectRatio>, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGFEImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         CachedImage* m_cachedImage;
         mutable RefPtr<SVGFEImage> m_filterEffect;

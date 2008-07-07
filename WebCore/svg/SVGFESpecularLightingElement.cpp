@@ -48,12 +48,12 @@ SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularConstant, specularConstant, SVGNames::specularConstantAttr, m_specularConstant)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SpecularExponent, specularExponent, SVGNames::specularExponentAttr, m_specularExponent)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr, m_surfaceScale)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX", m_kernelUnitLengthX)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, Number, number, KernelUnitLengthY, kernelUnitLengthY, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY", m_kernelUnitLengthY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, In1, in1, SVGNames::in)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SpecularConstant, specularConstant, SVGNames::specularConstant)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SpecularExponent, specularExponent, SVGNames::specularExponent)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SurfaceScale, surfaceScale, SVGNames::surfaceScale)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX")
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY")
 
 void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 {    

@@ -68,12 +68,12 @@ SVGMaskElement::~SVGMaskElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskUnits, maskUnits, SVGNames::maskUnitsAttr, m_maskUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, Enumeration, enumeration, MaskContentUnits, maskContentUnits, SVGNames::maskContentUnitsAttr, m_maskContentUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, MaskUnits, maskUnits, SVGNames::maskUnitsAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, MaskContentUnits, maskContentUnits, SVGNames::maskContentUnitsAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, X, x, SVGNames::xAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Y, y, SVGNames::yAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Width, width, SVGNames::widthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Height, height, SVGNames::heightAttr)
 
 void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
 {

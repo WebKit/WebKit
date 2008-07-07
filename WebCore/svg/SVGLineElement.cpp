@@ -48,10 +48,10 @@ SVGLineElement::~SVGLineElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X1, x1, SVGNames::x1Attr, m_x1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y1, y1, SVGNames::y1Attr, m_y1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, X2, x2, SVGNames::x2Attr, m_x2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Length, length, Y2, y2, SVGNames::y2Attr, m_y2)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, X1, x1, SVGNames::x1Attr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Y1, y1, SVGNames::y1Attr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, X2, x2, SVGNames::x2Attr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Y2, y2, SVGNames::y2Attr)
 
 void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {

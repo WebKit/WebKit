@@ -40,9 +40,9 @@ SVGFEBlendElement::~SVGFEBlendElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, String, string, In2, in2, SVGNames::in2Attr, m_in2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Enumeration, enumeration, Mode, mode, SVGNames::modeAttr, m_mode)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, In2, in2, SVGNames::in2Attr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Mode, mode, SVGNames::modeAttr)
 
 void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 {

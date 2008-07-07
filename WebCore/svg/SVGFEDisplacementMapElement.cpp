@@ -40,11 +40,11 @@ SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, String, string, In2, in2, SVGNames::in2Attr, m_in2)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr, m_xChannelSelector)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, Enumeration, enumeration, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr, m_yChannelSelector)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Number, number, Scale, scale, SVGNames::scaleAttr, m_scale)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, In2, in2, SVGNames::in2Attr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Scale, scale, SVGNames::scaleAttr)
 
 SVGChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {

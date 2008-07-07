@@ -71,9 +71,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, SpreadMethod, spreadMethod)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, int, GradientUnits, gradientUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, SVGTransformList*, RefPtr<SVGTransformList>, GradientTransform, gradientTransform)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, SpreadMethod, spreadMethod)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGGradientElement, int, GradientUnits, gradientUnits)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGGradientElement, SVGTransformList, GradientTransform, gradientTransform)
     };
 
 } // namespace WebCore

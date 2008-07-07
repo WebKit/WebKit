@@ -66,8 +66,8 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, SVGLength, SVGLength, TextLength, textLength)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, int, int, LengthAdjust, lengthAdjust)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, SVGLength, TextLength, textLength)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, int, LengthAdjust, lengthAdjust)
     };
 
 } // namespace WebCore

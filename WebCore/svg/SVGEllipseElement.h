@@ -53,10 +53,10 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
  
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cx, cx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Cy, cy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Rx, rx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, SVGLength, Ry, ry)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, Cx, cx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, Cy, cy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, Rx, rx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGEllipseElement, SVGLength, Ry, ry)
     };
 
 } // namespace WebCore

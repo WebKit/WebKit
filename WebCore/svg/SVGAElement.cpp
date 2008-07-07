@@ -65,7 +65,7 @@ String SVGAElement::title() const
     return getAttribute(XLinkNames::titleAttr);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGAElement, String, String, string, Target, target, SVGNames::targetAttr, m_target)
+ANIMATED_PROPERTY_DEFINITIONS(SVGAElement, String, Target, target, SVGNames::targetAttr)
 
 void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
 {

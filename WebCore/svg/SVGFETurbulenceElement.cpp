@@ -46,12 +46,12 @@ SVGFETurbulenceElement::~SVGFETurbulenceElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, Number, number, BaseFrequencyX, baseFrequencyX, SVGNames::baseFrequencyAttr, "baseFrequencyX", m_baseFrequencyX)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, Number, number, BaseFrequencyY, baseFrequencyY, SVGNames::baseFrequencyAttr, "baseFrequencyY", m_baseFrequencyY)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, float, Number, number, Seed, seed, SVGNames::seedAttr, m_seed)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, long, Integer, integer, NumOctaves, numOctaves, SVGNames::numOctavesAttr, m_numOctaves)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr, m_stitchTiles)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Enumeration, enumeration, Type, type, SVGNames::typeAttr, m_type)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, BaseFrequencyX, baseFrequencyX, SVGNames::baseFrequencyAttr, "baseFrequencyX")
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, BaseFrequencyY, baseFrequencyY, SVGNames::baseFrequencyAttr, "baseFrequencyY")
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, float, Seed, seed, SVGNames::seedAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, long, NumOctaves, numOctaves, SVGNames::numOctavesAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Type, type, SVGNames::typeAttr)
 
 void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
 {

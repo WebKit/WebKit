@@ -43,12 +43,12 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SpecularConstant, specularConstant)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SpecularExponent, specularExponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, KernelUnitLengthX, kernelUnitLengthX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, float, KernelUnitLengthY, kernelUnitLengthY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, SpecularConstant, specularConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, SpecularExponent, specularExponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFESpecularLightingElement, float, KernelUnitLengthY, kernelUnitLengthY)
 
         mutable RefPtr<SVGFESpecularLighting> m_filterEffect;
         

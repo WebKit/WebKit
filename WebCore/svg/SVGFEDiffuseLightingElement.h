@@ -42,11 +42,11 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, DiffuseConstant, diffuseConstant)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, SurfaceScale, surfaceScale)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, KernelUnitLengthX, kernelUnitLengthX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, float, KernelUnitLengthY, kernelUnitLengthY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, DiffuseConstant, diffuseConstant)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, SurfaceScale, surfaceScale)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, KernelUnitLengthX, kernelUnitLengthX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, KernelUnitLengthY, kernelUnitLengthY)
 
         mutable RefPtr<SVGFEDiffuseLighting> m_filterEffect;
         

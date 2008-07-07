@@ -71,13 +71,13 @@ SVGPatternElement::~SVGPatternElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternUnits, patternUnits, SVGNames::patternUnitsAttr, m_patternUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, Enumeration, enumeration, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr, m_patternContentUnits)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, X, x, SVGNames::xAttr, m_x)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Y, y, SVGNames::yAttr, m_y)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Width, width, SVGNames::widthAttr, m_width)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Length, length, Height, height, SVGNames::heightAttr, m_height)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGTransformList*, TransformList, transformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr, m_patternTransform.get())
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, PatternUnits, patternUnits, SVGNames::patternUnitsAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, X, x, SVGNames::xAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Y, y, SVGNames::yAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Width, width, SVGNames::widthAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Height, height, SVGNames::heightAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGPatternElement, SVGTransformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr)
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {

@@ -46,7 +46,7 @@ SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGStyledTransformableElement, SVGTransformList*, TransformList, transformList, Transform, transform, SVGNames::transformAttr, m_transform.get())
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGStyledTransformableElement, SVGTransformList, Transform, transform, SVGNames::transformAttr)
 
 AffineTransform SVGStyledTransformableElement::getCTM() const
 {

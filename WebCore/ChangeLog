@@ -1,5 +1,141 @@
 2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Antti.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)
+
+        Revised version of the patch, not using pointer-to-member function callbacks anymore - after discussion with Adam Roben.
+        Remove unneccessary parameters of all macros.
+
+        SVG Errata states: "All SVG DOM objects that directly correspond to an
+        attribute, e.g. the SVGAnimatedLength 'ry' in an SVGRectElement, are live. This
+        means that any changes made to the attribute are immediately reflected in the
+        corresponding SVG DOM object." (see linked URL on bug report)
+
+        Until now only XML -> SVG DOM changes took affect, aka. changing the 'rx' attribute of a <rect>
+        element resuted in changes when accessing 'rx' through SVG DOM (rx.baseVal.value).
+
+        Add a new synchronization layer to handle SVG DOM -> XML changes.
+
+        Added test: svg/custom/svg-xml-dom-sync.html
+        Fixed test: svg/hixie/dynamic/005-broken.xml (renamed to 005.xml)
+
+        * dom/Element.cpp:
+        (WebCore::Element::Element): Initialize the two new bits.
+        (WebCore::Element::attributes): Add hooks to call into SVG attribute synchronization code, wrapped in ENABLE(SVG) blocks.
+        (WebCore::Element::getAttribute): Ditto.
+        (WebCore::Element::hasAttributes): Ditto.
+        * dom/Element.h: Add two bits: m_areSVGAttributesValid/m_synchronizingSVGAttributes, to track synchronization status.
+        (WebCore::Element::updateAnimatedSVGAttribute): New virtual function, handling the synronication, similar to updateStyleAttribute.
+        * dom/NamedAttrMap.h: Make addAttribute/removeAttribute protected, from use within the ANIMATED_* macros.
+        * svg/SVGAElement.cpp:
+        * svg/SVGAElement.h:
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::lookupOrCreateWrapper): Take new AnimatedPropertySynchronizer callback as parameter, and associate it with the wrappers.
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        * svg/SVGCursorElement.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::updateAnimatedSVGAttribute): Override virtual function from Element, to handle SVG<->XML DOM synchronization.
+        (WebCore::SVGElement::setSynchronizedSVGAttributes):
+        * svg/SVGElement.h:
+        (WebCore::SVGElement::invokeSVGPropertySynchronizer):
+        (WebCore::SVGElement::invokeAllSVGPropertySynchronizers):
+        (WebCore::SVGElement::addSVGPropertySynchronizer):
+        * svg/SVGEllipseElement.cpp:
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        * svg/SVGExternalResourcesRequired.h:
+        * svg/SVGFEBlendElement.cpp:
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFitToViewBox.cpp:
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGForeignObjectElement.cpp:
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGradientElement.cpp:
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        * svg/SVGImageElement.h:
+        * svg/SVGLineElement.cpp:
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMarkerElement.cpp:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.cpp:
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        * svg/SVGSVGElement.h:
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.cpp:
+        * svg/SVGStopElement.h:
+        * svg/SVGStyledElement.cpp:
+        * svg/SVGStyledElement.h:
+        * svg/SVGStyledTransformableElement.cpp:
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTextContentElement.cpp:
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGURIReference.cpp:
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.h:
+        * svg/SynchronizableTypeWrapper.h: Added.
+
+2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Working on: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)

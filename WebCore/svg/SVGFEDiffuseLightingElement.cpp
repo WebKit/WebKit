@@ -48,11 +48,11 @@ SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, String, String, string, In1, in1, SVGNames::inAttr, m_in1)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, Number, number, DiffuseConstant, diffuseConstant, SVGNames::diffuseConstantAttr, m_diffuseConstant)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, Number, number, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr, m_surfaceScale)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, Number, number, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX", m_kernelUnitLengthX)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, Number, number, KernelUnitLengthY, kernelUnitLengthY, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY", m_kernelUnitLengthY)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, string, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, DiffuseConstant, diffuseConstant, SVGNames::diffuseConstantAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr)
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX")
+ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, KernelUnitLengthY, kernelUnitLengthY, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY")
 
 void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {

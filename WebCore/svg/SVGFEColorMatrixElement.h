@@ -46,9 +46,9 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, String, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, int, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, SVGNumberList*, RefPtr<SVGNumberList>, Values, values)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEColorMatrixElement, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGFEColorMatrixElement, SVGNumberList, Values, values)
 
         mutable RefPtr<FEColorMatrix> m_filterEffect;
     };

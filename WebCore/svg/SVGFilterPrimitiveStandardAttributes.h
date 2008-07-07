@@ -50,11 +50,11 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, String, String, Result, result)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterPrimitiveStandardAttributes, String, Result, result)
     };
 
 } // namespace WebCore

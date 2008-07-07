@@ -45,11 +45,11 @@ SVGTextPositioningElement::~SVGTextPositioningElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, X, x, SVGNames::xAttr, m_x.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Y, y, SVGNames::yAttr, m_y.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Dx, dx, SVGNames::dxAttr, m_dx.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGLengthList*, LengthList, lengthList, Dy, dy, SVGNames::dyAttr, m_dy.get())
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPositioningElement, SVGNumberList*, NumberList, numberList, Rotate, rotate, SVGNames::rotateAttr, m_rotate.get())
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, X, x, SVGNames::xAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Y, y, SVGNames::yAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dx, dx, SVGNames::dxAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dy, dy, SVGNames::dyAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGNumberList, Rotate, rotate, SVGNames::rotateAttr)
 
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 {

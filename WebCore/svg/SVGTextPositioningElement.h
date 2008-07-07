@@ -41,11 +41,11 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGLengthList*, RefPtr<SVGLengthList>, Dy, dy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGNumberList*, RefPtr<SVGNumberList>, Rotate, rotate)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dx, dx)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dy, dy)
+        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGNumberList, Rotate, rotate)
     };
 
 } // namespace WebCore
