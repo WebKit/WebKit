@@ -1,3 +1,21 @@
+2008-07-07  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele.
+
+        Test suite for :read-only and :read-write pseudoclasses, imported from
+        Opera.
+
+        * fast/css/readonly-pseudoclass-opera-001-expected.txt: Added.
+        * fast/css/readonly-pseudoclass-opera-001.html: Added.
+        * fast/css/readonly-pseudoclass-opera-002-expected.txt: Added.
+        * fast/css/readonly-pseudoclass-opera-002.html: Added.
+        * fast/css/readonly-pseudoclass-opera-003-expected.txt: Added.
+        * fast/css/readonly-pseudoclass-opera-003.html: Added.
+        * fast/css/readonly-pseudoclass-opera-004-expected.txt: Added.
+        * fast/css/readonly-pseudoclass-opera-004.html: Added.
+        * fast/css/readonly-pseudoclass-opera-005-expected.txt: Added.
+        * fast/css/readonly-pseudoclass-opera-005.html: Added.
+
 2008-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

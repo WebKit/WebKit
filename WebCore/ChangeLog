@@ -1,3 +1,25 @@
+2008-07-07  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele.
+
+        Support for CSS3 :read-only and :read-write pseudoclasses for readonly text controls.
+
+        URL: http://www.w3.org/TR/web-forms-2/#relation
+
+        Tests: fast/css/readonly-pseudoclass-opera-001.html
+               fast/css/readonly-pseudoclass-opera-002.html
+               fast/css/readonly-pseudoclass-opera-003.html
+               fast/css/readonly-pseudoclass-opera-004.html
+               fast/css/readonly-pseudoclass-opera-005.html
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType):
+        Added "read-only" and "read-write" values for PseudoType extraction.
+        * css/CSSSelector.h: (WebCore::CSSSelector::):
+        Added PseudoReadOnly and PseudoReadWrite entries in PseudoType enum.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Checks to determine whether to match :read-only and :read-write pseudoclasses on
+        text controls.
+
 2008-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.
