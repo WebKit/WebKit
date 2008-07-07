@@ -15766,7 +15766,7 @@
 						>
 					</File>
 					<File
-						RelativePath="..\svg\graphics\filters\FEConvolveMatrix.cpp"
+						RelativePath="..\svg\graphics\filters\SVGFEConvolveMatrix.cpp"
 						>
 					</File>
 					<File

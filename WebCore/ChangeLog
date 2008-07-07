@@ -1,5 +1,11 @@
 2008-07-06  Dan Bernstein  <mitz@apple.com>
 
+        - try to fix the Windows build
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-07-06  Dan Bernstein  <mitz@apple.com>
+
         - add missing brace
 
         * platform/graphics/qt/FontCacheQt.cpp:
