@@ -22,16 +22,14 @@
 #define SVGAnimatedTemplate_h
 
 #if ENABLE(SVG)
-#include <wtf/RefCounted.h>
 #include "AtomicString.h"
-#include "Attribute.h"
+#include "FloatRect.h"
+#include "SVGLength.h"
 
 namespace WebCore {
-
-    class FloatRect;
+   
     class SVGAngle;
     class SVGElement;
-    class SVGLength;
     class SVGLengthList;
     class SVGNumberList;
     class SVGPreserveAspectRatio;
@@ -45,17 +43,18 @@ namespace WebCore {
             : element(0)
             , attributeName(0)
         { }
-        
+
         // Deleted value
         SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValueType)
             : element(reinterpret_cast<SVGElement*>(-1))
         {
         }
+
         bool isHashTableDeletedValue() const
         {
             return element == reinterpret_cast<SVGElement*>(-1);
         }
-        
+
         SVGAnimatedTypeWrapperKey(const SVGElement* _element, const AtomicString& _attributeName)
             : element(_element)
             , attributeName(_attributeName.impl())
@@ -63,12 +62,12 @@ namespace WebCore {
             ASSERT(element);
             ASSERT(attributeName);
         }
-        
+
         bool operator==(const SVGAnimatedTypeWrapperKey& other) const
         {
             return element == other.element && attributeName == other.attributeName;
         }
-        
+
         const SVGElement* element;
         AtomicStringImpl* attributeName;
     };
@@ -78,7 +77,7 @@ namespace WebCore {
         {
             return StringImpl::computeHash(reinterpret_cast<const UChar*>(&key), sizeof(SVGAnimatedTypeWrapperKey) / sizeof(UChar));
         }
-            
+
         static bool equal(const SVGAnimatedTypeWrapperKey& a, const SVGAnimatedTypeWrapperKey& b)
         {
             return a == b;
@@ -86,30 +85,31 @@ namespace WebCore {
 
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    
+
     struct SVGAnimatedTypeWrapperKeyHashTraits : WTF::GenericHashTraits<SVGAnimatedTypeWrapperKey> {
         static const bool emptyValueIsZero = true;
-        
+
         static void constructDeletedValue(SVGAnimatedTypeWrapperKey& slot)
         {
             new (&slot) SVGAnimatedTypeWrapperKey(WTF::HashTableDeletedValue);
         }
+
         static bool isDeletedValue(const SVGAnimatedTypeWrapperKey& value)
         {
             return value.isHashTableDeletedValue();
         }
     };
-    
+ 
     template<typename BareType>
     class SVGAnimatedTemplate : public RefCounted<SVGAnimatedTemplate<BareType> > {
     public:
         virtual ~SVGAnimatedTemplate() { forgetWrapper(this); }
 
         virtual BareType baseVal() const = 0;
-        virtual void setBaseVal(BareType newBaseVal) = 0;
+        virtual void setBaseVal(BareType) = 0;
 
         virtual BareType animVal() const = 0;
-        virtual void setAnimVal(BareType newAnimVal) = 0;
+        virtual void setAnimVal(BareType) = 0;
 
         typedef HashMap<SVGAnimatedTypeWrapperKey, SVGAnimatedTemplate<BareType>*, SVGAnimatedTypeWrapperKeyHash, SVGAnimatedTypeWrapperKeyHashTraits > ElementToWrapperMap;
         typedef typename ElementToWrapperMap::const_iterator ElementToWrapperMapIterator;
@@ -119,7 +119,7 @@ namespace WebCore {
             static ElementToWrapperMap* s_wrapperCache = new ElementToWrapperMap;                
             return s_wrapperCache;
         }
-        
+
         static void forgetWrapper(SVGAnimatedTemplate<BareType>* wrapper)
         {
             ElementToWrapperMap* cache = wrapperCache();
@@ -133,7 +133,7 @@ namespace WebCore {
             }
         }
 
-       const QualifiedName& associatedAttributeName() const { return m_associatedAttributeName; }
+        const QualifiedName& associatedAttributeName() const { return m_associatedAttributeName; }
 
     protected:
         SVGAnimatedTemplate(const QualifiedName& attributeName)
@@ -142,7 +142,7 @@ namespace WebCore {
         }
 
     private:
-       const QualifiedName& m_associatedAttributeName;
+        const QualifiedName& m_associatedAttributeName;
     };
 
     template <class Type, class SVGElementSubClass>
@@ -150,12 +150,63 @@ namespace WebCore {
     {
         SVGAnimatedTypeWrapperKey key(element, attrIdentifier);
         RefPtr<Type> wrapper = static_cast<Type*>(Type::wrapperCache()->get(key));
+
         if (!wrapper) {
             wrapper = Type::create(element, domAttrName);
             Type::wrapperCache()->set(key, wrapper.get());
         }
+
         return wrapper.release();
     }
+
+    // Default implementation for pointer types
+    template<typename Type>
+    struct SVGAnimatedTypeValue : Noncopyable {
+        static Type null() { return 0; }
+        static AtomicString toString(Type type) { return type ? AtomicString(type->valueAsString()) : nullAtom; }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<bool> : Noncopyable {
+        static bool null() { return false; }
+        static AtomicString toString(bool type) { return type ? "true" : "false"; }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<int> : Noncopyable {
+        static int null() { return 0; }
+        static AtomicString toString(int type) { return String::number(type); }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<long> : Noncopyable {
+        static long null() { return 0l; }
+        static AtomicString toString(long type) { return String::number(type); }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<SVGLength> : Noncopyable {
+        static SVGLength null() { return SVGLength(); }
+        static AtomicString toString(const SVGLength& type) { return type.valueAsString(); }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<float> : Noncopyable {
+        static float null() { return 0.0f; }
+        static AtomicString toString(float type) { return String::number(type); }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<FloatRect> : Noncopyable {
+        static FloatRect null() { return FloatRect(); }
+        static AtomicString toString(const FloatRect& type) { return String::format("%f %f %f %f", type.x(), type.y(), type.width(), type.height()); }
+    };
+
+    template<>
+    struct SVGAnimatedTypeValue<String> : Noncopyable {
+        static String null() { return String(); }
+        static AtomicString toString(const String& type) { return type; }
+    };
 
     // Common type definitions, to ease IDL generation.
     typedef SVGAnimatedTemplate<SVGAngle*> SVGAnimatedAngle;
@@ -170,6 +221,7 @@ namespace WebCore {
     typedef SVGAnimatedTemplate<FloatRect> SVGAnimatedRect;
     typedef SVGAnimatedTemplate<String> SVGAnimatedString;
     typedef SVGAnimatedTemplate<SVGTransformList*> SVGAnimatedTransformList;
+
 }
 
 #endif // ENABLE(SVG)

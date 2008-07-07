@@ -1,3 +1,36 @@
+2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Working on: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)
+
+        Splitting up large patch in small chunk: Land valueAsString() implementation on it's own.
+
+        Added valueAsString() conversion for all SVG primitive types, needed by the SVG<->XML synchronization layer.
+        Unify "null value for a SVG animated type" concept, which was implemented in SVGDocumentExtensions before,
+        in SVGAnimatedTemplate.
+
+        * svg/SVGAnimatedTemplate.h:
+        (WebCore::SVGAnimatedTemplate::associatedAttributeName):
+        (WebCore::lookupOrCreateWrapper):
+        (WebCore::SVGAnimatedTypeValue::null):
+        (WebCore::SVGAnimatedTypeValue::toString):
+        (WebCore::):
+        * svg/SVGDocumentExtensions.h:
+        (WebCore::SVGDocumentExtensions::baseValue):
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::valueAsString):
+        * svg/SVGLengthList.h:
+        * svg/SVGNumberList.cpp:
+        (WebCore::SVGNumberList::valueAsString):
+        * svg/SVGNumberList.h:
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::valueAsString):
+        * svg/SVGPreserveAspectRatio.h:
+        * svg/SVGTransformList.cpp:
+        (SVGTransformList::valueAsString):
+        * svg/SVGTransformList.h:
+
 2008-07-06  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
