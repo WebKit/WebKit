@@ -1,3 +1,12 @@
+2008-07-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz and Geoff
+
+        Test the fix for https://bugs.webkit.org/show_bug.cgi?id=18951 and <rdar://problem/5921760>
+
+        * fast/loader/empty-ref-versus-no-ref-expected.txt: Added.
+        * fast/loader/empty-ref-versus-no-ref.html: Added.
+
 2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Antti.

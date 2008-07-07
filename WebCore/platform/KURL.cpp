@@ -705,7 +705,7 @@ void KURL::setRef(const String& s)
 {
     if (!m_isValid)
         return;
-    parse(m_string.left(m_queryEnd) + (s.isEmpty() ? "" : "#" + s));
+    parse(m_string.left(m_queryEnd) + (s.isNull() ? "" : "#" + s));
 }
 
 void KURL::setQuery(const String& query)

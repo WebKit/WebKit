@@ -1,3 +1,21 @@
+2008-07-07  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz and Geoff
+
+        Test: fast/loader/empty-ref-versus-no-ref.html
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=18951 and <rdar://problem/5921760>
+        "all DOM operations stop working when location.hash set to '#'"
+
+        The underlying problem is that KURL didn't really know the difference between "empty ref"
+        and "no ref at all" when changing the ref.  So changing to the empty ref in JS ended up 
+        affecting removal of the ref, which ended up causing an infinite load load, also killing
+        javascript.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::setRef):  Changed "isEmpty()" to "isNull()", since NULL has the special 
+          meaning of "no ref at all" while empty means "empty ref"
+
 2008-07-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
