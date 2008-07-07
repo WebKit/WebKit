@@ -1,5 +1,17 @@
 2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Build fix.
+
+        Fix --svg-filters build (affects Qt build, mac/win don't have it on by default)
+
+        * svg/SVGFEColorMatrixElement.cpp:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        * svg/SVGFEImageElement.cpp:
+        * svg/SVGFELightElement.cpp:
+        * svg/SVGFESpecularLightingElement.cpp:
+
+2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Antti.
 
         Fixes: http://bugs.webkit.org/show_bug.cgi?id=17779 (SVG 1.1 Errata demands "SVG JavaScript Liveness" support)

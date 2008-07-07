@@ -51,7 +51,6 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Azimuth, azimuth, SVGNam
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Elevation, elevation, SVGNames::elevationAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, X, x, SVGNames::xAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Y, y, SVGNames::yAttr)
-
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Z, z, SVGNames::zAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, PointsAtX, pointsAtX, SVGNames::pointsAtXAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, PointsAtY, pointsAtY, SVGNames::pointsAtYAttr)

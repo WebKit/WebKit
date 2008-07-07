@@ -48,7 +48,7 @@ SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, string, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, String, In1, in1, SVGNames::inAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, DiffuseConstant, diffuseConstant, SVGNames::diffuseConstantAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr)
 ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX")

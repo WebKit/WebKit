@@ -43,7 +43,7 @@ SVGFEColorMatrixElement::~SVGFEColorMatrixElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, string, In1, in1, SVGNames::inAttr)
+ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, String, In1, in1, SVGNames::inAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEColorMatrixElement, int, Type, type, SVGNames::typeAttr)
 ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGFEColorMatrixElement, SVGNumberList, Values, values, SVGNames::valuesAttr)
 

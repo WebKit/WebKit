@@ -53,7 +53,7 @@ SVGFEImageElement::~SVGFEImageElement()
         m_cachedImage->removeClient(this);
 }
 
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGFEImageElement, SVGPreserveAspectRatio, SVGNames::preserveAspectRatioAttr)
+ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGFEImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr)
 
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
