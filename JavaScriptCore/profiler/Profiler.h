@@ -29,13 +29,25 @@
 #ifndef Profiler_h
 #define Profiler_h
 
-#include "Profile.h"
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace KJS {
 
     class ExecState;
     class JSObject;
+    class Profile;
+    class ProfileGenerator;
+    class UString;
+
+    class ProfilerClient {
+    public:
+        virtual void finishedProfiling(PassRefPtr<Profile>) = 0;
+
+    protected:
+        virtual ~ProfilerClient() {}
+    };
 
     class Profiler {
     public:
@@ -55,20 +67,12 @@ namespace KJS {
         void didExecute(ExecState*, JSObject* calledFunction);
         void didExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
 
-        const Vector<RefPtr<Profile> >& currentProfiles() { return m_currentProfiles; };
+        const Vector<RefPtr<ProfileGenerator> >& currentProfiles() { return m_currentProfiles; };
 
     private:
-        Vector<RefPtr<Profile> > m_currentProfiles;
+        Vector<RefPtr<ProfileGenerator> > m_currentProfiles;
         static Profiler* s_sharedProfiler;
         static Profiler* s_sharedEnabledProfilerReference;
-    };
-
-    class ProfilerClient {
-    public:
-        virtual void finishedProfiling(PassRefPtr<Profile>) = 0;
-
-    protected:
-        virtual ~ProfilerClient() { }
     };
 
 } // namespace KJS

@@ -27,32 +27,23 @@
 #define Profile_h
 
 #include "ProfileNode.h"
+#include <kjs/ustring.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace KJS {
 
     class ExecState;
-    class ProfilerClient;
 
     class Profile : public RefCounted<Profile> {
     public:
-        static PassRefPtr<Profile> create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
+        static PassRefPtr<Profile> create(const UString& title);
         virtual ~Profile();
 
-        void willExecute(const CallIdentifier&);
-        void didExecute(const CallIdentifier&);
-        void stopProfiling();
-        bool didFinishAllExecution();
-
-        const UString& title() const { return m_title; };
-        ProfileNode* callTree() const { return m_head.get(); };
-
+        const UString& title() const { return m_title; }
+        ProfileNode* callTree() const { return m_head.get(); }
+        void setHead(PassRefPtr<ProfileNode> head) { m_head = head; }
         double totalTime() const { return m_head->totalTime(); }
-
-        ExecState* originatingGlobalExec() const { return m_originatingGlobalExec; }
-        unsigned pageGroupIdentifier() const { return m_pageGroupIdentifier; }
-        ProfilerClient* client() { return m_client; }
 
         void forEach(void (ProfileNode::*)());
         void sortTotalTimeDescending() { forEach(&ProfileNode::sortTotalTimeDescending); }
@@ -64,11 +55,9 @@ namespace KJS {
         void sortFunctionNameDescending() { forEach(&ProfileNode::sortFunctionNameDescending); }
         void sortFunctionNameAscending() { forEach(&ProfileNode::sortFunctionNameAscending); }
 
-        void focus(const ProfileNode* profileNode);
-        void exclude(const ProfileNode* profileNode);
+        void focus(const ProfileNode*);
+        void exclude(const ProfileNode*);
         void restoreAll();
-
-        bool stoppedProfiling() { return m_stoppedProfiling; }
 
         virtual Profile* heavyProfile() = 0;
         virtual Profile* treeProfile() = 0; 
@@ -77,25 +66,18 @@ namespace KJS {
         void debugPrintData() const;
         void debugPrintDataSampleStyle() const;
 #endif
-        typedef void (Profile::*ProfileFunction)(const CallIdentifier& callIdentifier);
 
     protected:
-        Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient*);
+        Profile(const UString& title);
 
     private:
         void removeProfileStart();
         void removeProfileEnd();
 
         UString m_title;
-        ExecState* m_originatingGlobalExec;
-        unsigned m_pageGroupIdentifier;
-        unsigned m_stoppedCallDepth;
         RefPtr<ProfileNode> m_head;
-        RefPtr<ProfileNode> m_currentNode;
-        ProfilerClient* m_client;
-        bool m_stoppedProfiling;
     };
 
 } // namespace KJS
 
-#endif // Profiler_h
+#endif // Profile_h

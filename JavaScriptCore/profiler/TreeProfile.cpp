@@ -28,13 +28,13 @@
 
 namespace KJS {
 
-PassRefPtr<TreeProfile> TreeProfile::create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
+PassRefPtr<TreeProfile> TreeProfile::create(const UString& title)
 {
-    return adoptRef(new TreeProfile(title, originatingGlobalExec, pageGroupIdentifier, client));
+    return adoptRef(new TreeProfile(title));
 }
 
-TreeProfile::TreeProfile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
-    : Profile(title, originatingGlobalExec, pageGroupIdentifier, client)
+TreeProfile::TreeProfile(const UString& title)
+    : Profile(title)
 {
 }
 

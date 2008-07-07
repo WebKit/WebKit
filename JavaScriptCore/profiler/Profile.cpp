@@ -26,154 +26,30 @@
 #include "config.h"
 #include "Profile.h"
 
-#include "ExecState.h"
-#include "JSFunction.h"
-#include "JSGlobalObject.h"
+//#include "ExecState.h"
+//#include "JSFunction.h"
+//#include "JSGlobalObject.h"
 #include "ProfileNode.h"
 #include "TreeProfile.h"
 #include <stdio.h>
 
 namespace KJS {
 
-static const char* NonJSExecution = "(idle)";
-
-PassRefPtr<Profile> Profile::create(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
+PassRefPtr<Profile> Profile::create(const UString& title)
 {
-    return TreeProfile::create(title, originatingGlobalExec, pageGroupIdentifier, client);
+    return TreeProfile::create(title);
 }
 
-Profile::Profile(const UString& title, ExecState* originatingGlobalExec, unsigned pageGroupIdentifier, ProfilerClient* client)
+Profile::Profile(const UString& title)
     : m_title(title)
-    , m_originatingGlobalExec(originatingGlobalExec)
-    , m_pageGroupIdentifier(pageGroupIdentifier)
-    , m_stoppedCallDepth(0)
-    , m_client(client)
-    , m_stoppedProfiling(false)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.
     m_head = ProfileNode::create(CallIdentifier("Thread_1", 0, 0), 0, 0);
-    m_currentNode = m_head;
 }
 
 Profile::~Profile()
 {
-}
-
-void Profile::stopProfiling()
-{
-    forEach(&ProfileNode::stopProfiling);
-    removeProfileStart();
-    removeProfileEnd();
-
-    ASSERT(m_currentNode);
-
-    // Set the current node to the parent, because we are in a call that
-    // will not get didExecute call.
-    m_currentNode = m_currentNode->parent();
-
-    m_stoppedProfiling = true;
-}
-
-bool Profile::didFinishAllExecution()
-{
-    if (!m_stoppedProfiling)
-        return false;
-
-    if (double headSelfTime = m_head->selfTime()) {
-        RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), m_head.get(), m_head.get());
-
-        idleNode->setTotalTime(headSelfTime);
-        idleNode->setSelfTime(headSelfTime);
-        idleNode->setVisible(true);
-
-        m_head->setSelfTime(0.0);
-        m_head->addChild(idleNode.release());
-    }
-
-    m_currentNode = 0;
-    m_originatingGlobalExec = 0;
-    return true;
-}
-
-// The console.profile that started this profile will be the first child.
-void Profile::removeProfileStart()
-{
-    ProfileNode* currentNode = 0;
-    for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
-        currentNode = next;
-
-    if (currentNode->callIdentifier().m_name != "profile")
-        return;
-
-    // Increment m_stoppedCallDepth to account for didExecute not being called for console.profile.
-    ++m_stoppedCallDepth;
-
-    // Attribute the time of the node aobut to be removed to the self time of its parent
-    currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
-
-    ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[0])->callIdentifier());
-    currentNode->parent()->removeChild(0);
-}
-
-// The console.profileEnd that stopped this profile will be the last child.
-void Profile::removeProfileEnd()
-{
-    ProfileNode* currentNode = 0;
-    for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
-        currentNode = next;
-
-    if (currentNode->callIdentifier().m_name != "profileEnd")
-        return;
-
-    // Attribute the time of the node aobut to be removed to the self time of its parent
-    currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
-
-    ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[currentNode->parent()->children().size() - 1])->callIdentifier());
-    currentNode->parent()->removeChild(currentNode->parent()->children().size() - 1);
-}
-
-void Profile::willExecute(const CallIdentifier& callIdentifier)
-{
-    if (m_stoppedProfiling) {
-        ++m_stoppedCallDepth;
-        return;
-    }
-
-    ASSERT(m_currentNode);
-    m_currentNode = m_currentNode->willExecute(callIdentifier);
-}
-
-void Profile::didExecute(const CallIdentifier& callIdentifier)
-{
-    if (!m_currentNode)
-        return;
-
-    if (m_stoppedProfiling && m_stoppedCallDepth > 0) {
-        --m_stoppedCallDepth;
-        return;
-    }
-
-    if (m_currentNode == m_head) {
-        m_currentNode = ProfileNode::create(callIdentifier, m_head.get(), m_head.get());
-        m_currentNode->setStartTime(m_head->startTime());
-        m_currentNode->didExecute();
-
-        if (m_stoppedProfiling) {
-            m_currentNode->setTotalTime(m_head->totalTime());
-            m_currentNode->setSelfTime(m_head->selfTime());
-            m_head->setSelfTime(0.0);
-        }
-
-        m_head->insertNode(m_currentNode.release());            
-        m_currentNode = m_stoppedProfiling ? 0 : m_head;
-
-        return;
-    }
-
-    // Set m_currentNode to the parent (which didExecute returns). If stopped, just set the
-    // m_currentNode to the parent and don't call didExecute.
-    m_currentNode = m_stoppedProfiling ? m_currentNode->parent() : m_currentNode->didExecute();
 }
 
 void Profile::forEach(void (ProfileNode::*function)())

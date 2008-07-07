@@ -1,3 +1,12 @@
+2008-07-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        Because profiler.h no longer #includes profile.h we need to explicitly
+        include it in console.cpp.
+
+        * page/Console.cpp:
+
 2008-07-07  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed. Build fix.

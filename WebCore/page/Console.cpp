@@ -41,6 +41,7 @@
 #include <kjs/ArgList.h>
 #include <kjs/interpreter.h>
 #include <kjs/JSObject.h>
+#include <profiler/Profile.h>
 #include <stdio.h>
 
 using namespace KJS;

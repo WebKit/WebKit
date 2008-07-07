@@ -1,3 +1,58 @@
+2008-07-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        When the profiler is running it gathers information and creates a
+        Profile.  After it finishes the Profile can be sorted and have other
+        data refinements run over it.  Both of these were done in the same class
+        before.  Now I split the gathering operations into a new class called
+        ProfileGenerator.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/Profile.cpp: Removed code related to the gather stage of a
+        Profile's creation.  
+        (KJS::Profile::create):
+        (KJS::Profile::Profile):
+        * profiler/Profile.h: Ditto.
+        (KJS::Profile::title):
+        (KJS::Profile::callTree):
+        (KJS::Profile::setHead):
+        * profiler/ProfileGenerator.cpp: Added. This is the class that will
+        handle the stage of creating a Profile.  Once the Profile is finished
+        being created, this class goes away.
+        (KJS::ProfileGenerator::create):
+        (KJS::ProfileGenerator::ProfileGenerator):
+        (KJS::ProfileGenerator::title):
+        (KJS::ProfileGenerator::willExecute):
+        (KJS::ProfileGenerator::didExecute):
+        (KJS::ProfileGenerator::stopProfiling):
+        (KJS::ProfileGenerator::didFinishAllExecution):
+        (KJS::ProfileGenerator::removeProfileStart):
+        (KJS::ProfileGenerator::removeProfileEnd):
+        * profiler/ProfileGenerator.h: Added.
+        (KJS::ProfileGenerator::profile):
+        (KJS::ProfileGenerator::originatingGlobalExec):
+        (KJS::ProfileGenerator::pageGroupIdentifier):
+        (KJS::ProfileGenerator::client):
+        (KJS::ProfileGenerator::stoppedProfiling):
+        * profiler/Profiler.cpp: Now operates with the ProfileGenerator instead
+        of the Profile.
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling):
+        (KJS::Profiler::didFinishAllExecution): It is here that the Profile is
+        handed off to its client and the Profile Generator is no longer needed.
+        (KJS::dispatchFunctionToProfiles):
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        * profiler/Profiler.h: Cleaned up the includes and subsequently the
+        forward declarations.  Also use the new ProfileGenerator.
+        (KJS::ProfilerClient::~ProfilerClient):
+        (KJS::Profiler::currentProfiles):
+        * profiler/TreeProfile.cpp: Use Profile's new interface.
+        (KJS::TreeProfile::create):
+        (KJS::TreeProfile::TreeProfile):
+        * profiler/TreeProfile.h:
+
 2008-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.
