@@ -1098,6 +1098,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\profiler\ProfileGenerator.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\profiler\ProfileNode.cpp"
 				>
 			</File>

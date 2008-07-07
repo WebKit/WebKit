@@ -1,3 +1,9 @@
+2008-07-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * DumpRenderTree/win/ImageDiff.vcproj:
+
 2008-07-02  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Allow tests to define JavaScript to execute when NPP_DestroyStream or

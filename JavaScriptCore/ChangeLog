@@ -1,3 +1,10 @@
+2008-07-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fixes.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+
 2008-07-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
