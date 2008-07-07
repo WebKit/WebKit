@@ -1,9 +1,7 @@
-// -*- c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006, 2007 Apple Inc.
+ *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,8 +23,8 @@
 #ifndef Parser_h
 #define Parser_h
 
-#include "nodes.h"
 #include "SourceProvider.h"
+#include "nodes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
@@ -38,7 +36,8 @@ namespace KJS {
     class ProgramNode;
     class UString;
 
-    template <typename T> struct ParserRefCountedData : ParserRefCounted {
+    template <typename T>
+    struct ParserRefCountedData : ParserRefCounted {
         ParserRefCountedData(JSGlobalData* globalData)
             : ParserRefCounted(globalData)
         {
@@ -50,8 +49,7 @@ namespace KJS {
     class Parser : Noncopyable {
     public:
         template <class ParsedNode>
-        PassRefPtr<ParsedNode> parse(ExecState*, const UString& sourceURL, int startingLineNumber,
-                                     PassRefPtr<SourceProvider> source,
+        PassRefPtr<ParsedNode> parse(ExecState*, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> source,
                                      int* sourceId = 0, int* errLine = 0, UString* errMsg = 0);
 
         UString sourceURL() const { return m_sourceURL; }
@@ -78,8 +76,7 @@ namespace KJS {
     };
 
     template <class ParsedNode>
-    PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber,
-                                         PassRefPtr<SourceProvider> source,
+    PassRefPtr<ParsedNode> Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> source,
                                          int* sourceId, int* errLine, UString* errMsg)
     {
         m_sourceURL = sourceURL;

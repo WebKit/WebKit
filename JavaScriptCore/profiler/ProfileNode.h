@@ -30,7 +30,6 @@
 #define ProfileNode_h
 
 #include "CallIdentifier.h"
-
 #include <wtf/Vector.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
@@ -44,8 +43,10 @@ namespace KJS {
 
     class ProfileNode : public RefCounted<ProfileNode> {
     public:
-        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode) {
-            return adoptRef(new ProfileNode(callIdentifier, headNode, parentNode)); }
+        static PassRefPtr<ProfileNode> create(const CallIdentifier& callIdentifier, ProfileNode* headNode, ProfileNode* parentNode)
+        {
+            return adoptRef(new ProfileNode(callIdentifier, headNode, parentNode));
+        }
 
         bool operator==(ProfileNode* node) { return m_callIdentifier == node->callIdentifier(); }
 
@@ -127,8 +128,10 @@ namespace KJS {
 
     private:
         ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
+
         void startTimer();
         void resetChildrensSiblings();
+
         RefPtr<ProfileNode>* childrenBegin() { return m_children.begin(); }
         RefPtr<ProfileNode>* childrenEnd() { return m_children.end(); }
 

@@ -208,7 +208,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     RegisterFile* registerFile = &exec->globalData().machine->registerFile();
     
     // Shift register indexes in generated code to elide registers allocated by intermediate stack frames.
-    m_globalVarStorageOffset =  -1 - RegisterFile::CallFrameHeaderSize - registerFile->size();
+    m_globalVarStorageOffset = -1 - RegisterFile::CallFrameHeaderSize - registerFile->size();
 
     // Add previously defined symbols to bookkeeping.
     m_locals.resize(symbolTable->size());
@@ -385,7 +385,6 @@ RegisterID* CodeGenerator::newTemporary()
     return &m_temporaries.last();
 }
 
-
 RegisterID* CodeGenerator::highestUsedRegister()
 {
     while (m_temporaries.size() < static_cast<unsigned>(m_codeBlock->numTemporaries))
@@ -448,9 +447,9 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
         int dstIndex;
         int src1Index;
         int src2Index;
-        
+
         retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
-        
+
         if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
             rewindBinaryOp();
             emitOpcode(target->isForwardLabel() ? op_jless : op_loop_if_less);
@@ -460,7 +459,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
             return target;
         }
     }
-    
+
     emitOpcode(target->isForwardLabel() ? op_jtrue : op_loop_if_true);
     instructions().append(cond->index());
     instructions().append(target->offsetFrom(instructions().size()));
@@ -470,14 +469,14 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
 PassRefPtr<LabelID> CodeGenerator::emitJumpIfFalse(RegisterID* cond, LabelID* target)
 {
     ASSERT(target->isForwardLabel());
-    
+
     if (m_lastOpcodeID == op_less) {
         int dstIndex;
         int src1Index;
         int src2Index;
-        
+
         retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
-        
+
         if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
             rewindBinaryOp();
             emitOpcode(op_jnless);
@@ -487,7 +486,7 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfFalse(RegisterID* cond, LabelID* ta
             return target;
         }
     }
-    
+
     emitOpcode(op_jfalse);
     instructions().append(cond->index());
     instructions().append(target->offsetFrom(instructions().size()));

@@ -42,10 +42,10 @@ namespace KJS {
     
     class DebuggerCallFrame {
     public:
-        typedef enum {
+        enum Type {
             ProgramType,
             FunctionType
-        } Type;
+        };
 
         DebuggerCallFrame(JSGlobalObject* dynamicGlobalObject, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, JSValue* exception)
             : m_dynamicGlobalObject(dynamicGlobalObject)

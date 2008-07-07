@@ -29,9 +29,8 @@
 #include "config.h"
 #include "ProfileNode.h"
 
-#include "Profiler.h"
 #include "DateMath.h"
-
+#include "Profiler.h"
 #include <stdio.h>
 
 #if PLATFORM(WIN_OS)
@@ -79,7 +78,7 @@ ProfileNode* ProfileNode::willExecute(const CallIdentifier& callIdentifier)
         }
     }
 
-    RefPtr<ProfileNode> newChild = ProfileNode::create(callIdentifier, m_head ? m_head : this, this);   // If this ProfileNode has no head it is the head.
+    RefPtr<ProfileNode> newChild = ProfileNode::create(callIdentifier, m_head ? m_head : this, this); // If this ProfileNode has no head it is the head.
     if (m_children.size())
         m_children.last()->setNextSibling(newChild.get());
     m_children.append(newChild.release());
@@ -316,4 +315,4 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
 }
 #endif
 
-}   // namespace KJS
+} // namespace KJS

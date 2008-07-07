@@ -103,9 +103,10 @@ void Profiler::didFinishAllExecution(ExecState* exec)
 
 static inline void dispatchFunctionToProfiles(const Vector<RefPtr<Profile> >& profiles, Profile::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentPageGroupIdentifier)
 {
-    for (size_t i = 0; i < profiles.size(); ++i)
+    for (size_t i = 0; i < profiles.size(); ++i) {
         if (profiles[i]->pageGroupIdentifier() == currentPageGroupIdentifier)
             (profiles[i].get()->*function)(callIdentifier);
+    }
 }
 
 void Profiler::willExecute(ExecState* exec, JSObject* calledFunction)
@@ -163,4 +164,4 @@ CallIdentifier createCallIdentifierFromFunctionImp(JSFunction* functionImp)
     return CallIdentifier(name, functionImp->m_body->sourceURL(), functionImp->m_body->lineNo());
 }
 
-}   // namespace KJS
+} // namespace KJS

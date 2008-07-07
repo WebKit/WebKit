@@ -1,9 +1,7 @@
-// -*- c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2006, 2007 Apple Inc.
+ *  Copyright (C) 2003, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,8 +22,8 @@
 
 #include "config.h"
 #include "Parser.h"
-#include "debugger.h"
 
+#include "debugger.h"
 #include "lexer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
@@ -39,16 +37,15 @@ Parser::Parser()
 {
 }
 
-void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber,
-                   PassRefPtr<SourceProvider> prpSource,
+void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> prpSource,
                    int* sourceId, int* errLine, UString* errMsg)
 {
     ASSERT(!m_sourceElements);
-    
+
     int defaultSourceId;
     int defaultErrLine;
     UString defaultErrMsg;
-    
+
     RefPtr<SourceProvider> source = prpSource;
 
     if (!sourceId)
@@ -60,7 +57,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
 
     *errLine = -1;
     *errMsg = 0;
-        
+
     Lexer& lexer = *exec->lexer();
 
     if (startingLineNumber <= 0)
@@ -80,7 +77,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
         *errMsg = "Parse error";
         m_sourceElements.clear();
     }
-    
+
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger())
         debugger->sourceParsed(exec, *sourceId, sourceURL, *source, startingLineNumber, *errLine, *errMsg);
 }

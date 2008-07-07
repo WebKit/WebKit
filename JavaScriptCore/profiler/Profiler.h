@@ -50,10 +50,10 @@ namespace KJS {
         void stopProfiling(ExecState*, const UString& title);
         void didFinishAllExecution(ExecState*);
 
-        void willExecute(ExecState* exec, JSObject* calledFunction);
-        void willExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber);
-        void didExecute(ExecState* exec, JSObject* calledFunction);
-        void didExecute(ExecState* exec, const UString& sourceURL, int startingLineNumber);
+        void willExecute(ExecState*, JSObject* calledFunction);
+        void willExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
+        void didExecute(ExecState*, JSObject* calledFunction);
+        void didExecute(ExecState*, const UString& sourceURL, int startingLineNumber);
 
         const Vector<RefPtr<Profile> >& currentProfiles() { return m_currentProfiles; };
 
@@ -68,7 +68,7 @@ namespace KJS {
         virtual void finishedProfiling(PassRefPtr<Profile>) = 0;
 
     protected:
-        virtual ~ProfilerClient() {}
+        virtual ~ProfilerClient() { }
     };
 
 } // namespace KJS

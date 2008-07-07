@@ -93,6 +93,7 @@ namespace KJS {
                 grow(size);
             ASSERT(size == m_size);
         }
+
     private:
         void shrink(size_t size)
         {
@@ -161,6 +162,7 @@ namespace KJS {
         Segment m_inlineSegment;
         Vector<Segment*, 32> m_segments;
     };
-}
+
+} // namespace KJS
 
 #endif // SegmentedVector_h

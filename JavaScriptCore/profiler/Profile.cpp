@@ -31,7 +31,6 @@
 #include "JSGlobalObject.h"
 #include "ProfileNode.h"
 #include "TreeProfile.h"
-
 #include <stdio.h>
 
 namespace KJS {
@@ -98,7 +97,8 @@ bool Profile::didFinishAllExecution()
 }
 
 // The console.profile that started this profile will be the first child.
-void Profile::removeProfileStart() {
+void Profile::removeProfileStart()
+{
     ProfileNode* currentNode = 0;
     for (ProfileNode* next = m_head.get(); next; next = next->firstChild())
         currentNode = next;
@@ -117,7 +117,8 @@ void Profile::removeProfileStart() {
 }
 
 // The console.profileEnd that stopped this profile will be the last child.
-void Profile::removeProfileEnd() {
+void Profile::removeProfileEnd()
+{
     ProfileNode* currentNode = 0;
     for (ProfileNode* next = m_head.get(); next; next = next->lastChild())
         currentNode = next;
@@ -256,4 +257,4 @@ void Profile::debugPrintDataSampleStyle() const
 }
 #endif
 
-}   // namespace KJS
+} // namespace KJS

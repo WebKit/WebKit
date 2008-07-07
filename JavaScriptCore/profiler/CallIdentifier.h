@@ -54,7 +54,7 @@ namespace KJS {
         inline bool operator!=(const CallIdentifier& ci) const { return !(*this == ci); }
 
 #ifndef NDEBUG
-        operator const char* () const { return c_str(); }
+        operator const char*() const { return c_str(); }
         const char* c_str() const { return m_name.UTF8String().c_str(); }
 #endif
     };

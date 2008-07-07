@@ -43,5 +43,4 @@ Profile* TreeProfile::heavyProfile()
     return this;    // FIXME: When you've implemented heavy profiles replace this.
 }
 
-}   // namespace KJS
-
+} // namespace KJS

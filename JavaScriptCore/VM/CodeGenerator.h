@@ -327,7 +327,6 @@ namespace KJS {
         // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
         bool addVar(const Identifier&, bool isConstant, RegisterID*&);
 
-
         // Returns the RegisterID corresponding to ident.
         RegisterID* addGlobalVar(const Identifier& ident, bool isConstant)
         {
