@@ -233,12 +233,12 @@ module core {
 #endif
 
         // HTML 5
-        NodeList            getElementsByClassName(in DOMString tagname);
+        NodeList getElementsByClassName(in DOMString tagname);
 
-        // DocumentSelector - Selector API
-        Element             querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        // NodeSelector - Selector API
+        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
-        NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
     };
 

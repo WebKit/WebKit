@@ -36,6 +36,8 @@
 #include "HTMLNames.h"
 #include "JSAttr.h"
 #include "JSHTMLElementWrapperFactory.h"
+#include "JSNodeList.h"
+#include "NodeList.h"
 
 #if ENABLE(SVG)
 #include "JSSVGElementWrapperFactory.h"
@@ -125,7 +127,34 @@ JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const ArgList& args)
     return result;
 }
 
-    
+JSValue* JSElement::querySelector(ExecState* exec, const ArgList& args)
+{
+    if (!args[1]->isUndefinedOrNull()) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Element* imp = impl();
+    ExceptionCode ec = 0;
+    JSValue* result = toJS(exec, imp->querySelector(valueToStringWithUndefinedOrNullCheck(exec, args[0]), ec));
+    setDOMException(exec, ec);
+    return result;
+}
+
+JSValue* JSElement::querySelectorAll(ExecState* exec, const ArgList& args)
+{
+    if (!args[1]->isUndefinedOrNull()) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Element* imp = impl();
+    ExceptionCode ec = 0;
+    JSValue* result = toJS(exec, imp->querySelectorAll(valueToStringWithUndefinedOrNullCheck(exec, args[0]), ec));
+    setDOMException(exec, ec);
+    return result;
+}
+
 JSValue* toJSNewlyCreated(ExecState* exec, Element* element)
 {
     if (!element)

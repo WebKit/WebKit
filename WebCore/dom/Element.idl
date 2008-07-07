@@ -103,10 +103,10 @@ module core {
         // HTML 5
         NodeList getElementsByClassName(in DOMString name);
 
-        // ElementSelector - Selector API
-        Element             querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        // NodeSelector - Selector API
+        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
-        NodeList            querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
             raises(DOMException);
 
         // ElementTraversal API

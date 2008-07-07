@@ -1,0 +1,49 @@
+<html>
+<head>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    log = function(msg)
+    {
+        document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+    }
+
+    onload = function()
+    {
+        try {
+            document.querySelector("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: Document.querySelector did not throw");
+        } catch(ex) {
+            log("PASS: Document.querySelector throws: " + ex);
+        }
+
+        try {
+            document.querySelectorAll("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: Document.querySelectorAll did not throw");
+        } catch(ex) {
+            log("PASS: Document.querySelectorAll throws: " + ex);
+        }
+
+        try {
+            document.body.querySelector("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: Element.querySelector did not throw");
+        } catch(ex) {
+            log("PASS: Element.querySelector throws: " + ex);
+        }
+
+        try {
+            document.body.querySelectorAll("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: Element.querySelectorAll did not throw");
+        } catch(ex) {
+            log("PASS: Element.querySelectorAll throws: " + ex);
+        }
+    }
+</script>
+</head>
+<body>
+    <p>This tests that we throw a NOT_SUPPORTED_ERR when passing a NSResolver to querySelector and querySelectorAll
+        since we do not support it.</p>
+    <pre id="console"></pre>
+</body>
+</html>

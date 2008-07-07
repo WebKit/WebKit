@@ -1,3 +1,24 @@
+2008-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19928
+        querySelectorAll should throw an exception if a NSResolver is passed in.
+
+        - Throw an NOT_SUPPORTED_ERR if a non-null or undefined parameter is passed
+          as the second argument to querySelector or querySelectorAll.
+
+        Test: fast/dom/SelectorAPI/not-supported-NSResolver.html
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::querySelector):
+        (WebCore::JSDocument::querySelectorAll):
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::querySelector):
+        (WebCore::JSElement::querySelectorAll):
+        * dom/Document.idl:
+        * dom/Element.idl:
+
 2008-07-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz and Geoff

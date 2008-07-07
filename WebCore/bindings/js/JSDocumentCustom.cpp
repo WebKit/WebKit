@@ -21,13 +21,16 @@
 #include "JSDocument.h"
 
 #include "DOMWindow.h"
+#include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
 #include "JSDOMWindowCustom.h"
 #include "JSHTMLDocument.h"
 #include "JSLocation.h"
+#include "JSNodeList.h"
 #include "Location.h"
+#include "NodeList.h"
 #include "ScriptController.h"
 
 #if ENABLE(SVG)
@@ -70,6 +73,34 @@ void JSDocument::setLocation(ExecState* exec, JSValue* value)
 
     bool userGesture = activeFrame->script()->processingUserGesture();
     frame->loader()->scheduleLocationChange(str, activeFrame->loader()->outgoingReferrer(), false, userGesture);
+}
+
+JSValue* JSDocument::querySelector(ExecState* exec, const ArgList& args)
+{
+    if (!args[1]->isUndefinedOrNull()) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Document* imp = impl();
+    ExceptionCode ec = 0;
+    JSValue* result = toJS(exec, imp->querySelector(valueToStringWithUndefinedOrNullCheck(exec, args[0]), ec));
+    setDOMException(exec, ec);
+    return result;
+}
+
+JSValue* JSDocument::querySelectorAll(ExecState* exec, const ArgList& args)
+{
+    if (!args[1]->isUndefinedOrNull()) {
+        setDOMException(exec, NOT_SUPPORTED_ERR);
+        return jsUndefined();
+    }
+
+    Document* imp = impl();
+    ExceptionCode ec = 0;
+    JSValue* result = toJS(exec, imp->querySelectorAll(valueToStringWithUndefinedOrNullCheck(exec, args[0]), ec));
+    setDOMException(exec, ec);
+    return result;
 }
 
 JSValue* toJS(ExecState* exec, Document* doc)

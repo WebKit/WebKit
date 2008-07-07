@@ -1,3 +1,13 @@
+2008-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19928
+        querySelectorAll should throw an exception if a NSResolver is passed in.
+
+        * fast/dom/SelectorAPI/not-supported-NSResolver-expected.txt: Added.
+        * fast/dom/SelectorAPI/not-supported-NSResolver.html: Added.
+
 2008-07-07  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz and Geoff

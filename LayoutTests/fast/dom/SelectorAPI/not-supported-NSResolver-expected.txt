@@ -1,0 +1,7 @@
+This tests that we throw a NOT_SUPPORTED_ERR when passing a NSResolver to querySelector and querySelectorAll since we do not support it.
+
+PASS: Document.querySelector throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+PASS: Document.querySelectorAll throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+PASS: Element.querySelector throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+PASS: Element.querySelectorAll throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+
