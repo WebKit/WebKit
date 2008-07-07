@@ -43,6 +43,9 @@ public:
     JSStringRef attributesOfLinkedUIElementsForFocusedElement();
     double widthOfFocusedElement();
     double heightOfFocusedElement();
+    float intValueOfFocusedElement();
+    float minValueOfFocusedElement();
+    float maxValueOfFocusedElement();
     
 private:
     static JSClassRef getJSClass();

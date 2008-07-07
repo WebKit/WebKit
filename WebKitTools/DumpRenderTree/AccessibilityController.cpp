@@ -84,6 +84,27 @@ static JSValueRef heightOfFocusedElementCallback(JSContextRef context, JSObjectR
     return JSValueMakeNumber(context, height);
 }
 
+static JSValueRef intValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    float value = controller->intValueOfFocusedElement();
+    return JSValueMakeNumber(context, value);
+}
+
+static JSValueRef minValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    float value = controller->minValueOfFocusedElement();
+    return JSValueMakeNumber(context, value);
+}
+
+static JSValueRef maxValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    float value = controller->maxValueOfFocusedElement();
+    return JSValueMakeNumber(context, value);
+}
+
 // Object Creation
 
 void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception)
@@ -120,6 +141,9 @@ JSStaticFunction* AccessibilityController::staticFunctions()
         { "attributesOfLinkedUIElementsForFocusedElement", attributesOfLinkedUIElementsForFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "widthOfFocusedElement", widthOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "heightOfFocusedElement", heightOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "intValueOfFocusedElement", intValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "minValueOfFocusedElement", minValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "maxValueOfFocusedElement", maxValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

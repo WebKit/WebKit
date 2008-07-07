@@ -1,3 +1,21 @@
+2008-07-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders.
+
+        This patch extends DRT accessibility tests to add the ability to 
+        query the intValue, minValue, and maxValue of the focused element.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (intValueOfFocusedElementCallback):
+        (minValueOfFocusedElementCallback):
+        (maxValueOfFocusedElementCallback):
+        (AccessibilityController::staticFunctions):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::intValueOfFocusedElement):
+        (AccessibilityController::minValueOfFocusedElement):
+        (AccessibilityController::maxValueOfFocusedElement):
+
 2008-07-07  Steve Falkenburg  <sfalken@apple.com>
 
         Fix build.

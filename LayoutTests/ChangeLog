@@ -1,3 +1,13 @@
+2008-07-07  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders.
+
+        New test that uses the ability to query int value, min value, and 
+        max value in the accessibility tests.
+
+        * accessibility/aria-range-value-expected.txt: Added.
+        * accessibility/aria-range-value.html: Added.
+
 2008-07-07  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele.

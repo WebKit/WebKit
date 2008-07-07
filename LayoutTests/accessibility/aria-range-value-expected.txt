@@ -1,0 +1,5 @@
+In accessibility, the following should be a progress indicator:
+
+X
+
+This test PASSES in DumpRenderTree. The value is 5, the minValue is 0, and the max value is 10.

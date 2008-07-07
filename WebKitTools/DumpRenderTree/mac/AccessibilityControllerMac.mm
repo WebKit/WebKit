@@ -186,3 +186,33 @@ double AccessibilityController::heightOfFocusedElement()
     NSValue* sizeValue = [accessibilityObject accessibilityAttributeValue:@"AXSize"];
     return (double)[sizeValue sizeValue].height;
 }
+
+float AccessibilityController::intValueOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    id value = [accessibilityObject accessibilityAttributeValue:@"AXValue"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber*)value floatValue]; 
+    return 0.0f;
+}
+
+float AccessibilityController::minValueOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    id value = [accessibilityObject accessibilityAttributeValue:@"AXMinValue"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber*)value floatValue]; 
+    return 0.0f;
+}
+
+float AccessibilityController::maxValueOfFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    id value = [accessibilityObject accessibilityAttributeValue:@"AXMaxValue"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber*)value floatValue]; 
+    return 0.0f;
+}
