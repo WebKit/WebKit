@@ -71,6 +71,12 @@ public:
     static SimpleFontData* getCachedFontData(const FontPlatformData*);
     static FontPlatformData* getLastResortFallbackFont(const FontDescription&);
 
+    static void addClient(FontSelector*);
+    static void removeClient(FontSelector*);
+
+    static unsigned generation();
+    static void invalidate();
+
     static size_t fontDataCount();
     static size_t inactiveFontDataCount();
     static void purgeInactiveFontData(int count = INT_MAX);

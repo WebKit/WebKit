@@ -347,7 +347,8 @@ bool Font::operator==(const Font& other) const
     return first == second
            && m_fontDescription == other.m_fontDescription
            && m_letterSpacing == other.m_letterSpacing
-           && m_wordSpacing == other.m_wordSpacing;
+           && m_wordSpacing == other.m_wordSpacing
+           && (m_fontList ? m_fontList->generation() : 0) == (other.m_fontList ? other.m_fontList->generation() : 0);
 }
 
 const GlyphData& Font::glyphDataForCharacter(UChar32 c, bool mirror, bool forceSmallCaps) const

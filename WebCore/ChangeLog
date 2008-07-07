@@ -1,3 +1,57 @@
+2008-07-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5735163> WebCore caching makes text look wrong after font changes; need to respond appropriately instead
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::CSSFontSelector): Added a call to
+        FontCache::addClient().
+        (WebCore::CSSFontSelector::~CSSFontSelector): Added a call to
+        FontCache::removeClient().
+        (WebCore::CSSFontSelector::fontCacheInvalidated): Added. Called by the
+        font cache when it is invalidated, and ensures that the document is
+        updated.
+
+        * css/CSSFontSelector.h:
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::operator==): Added code to compare the font fallback
+        lists' font cache generations.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::addClient): Added.
+        (WebCore::FontCache::removeClient): Added.
+        (WebCore::FontCache::generation): Added.
+        (WebCore::FontCache::invalidate): Added. Deletes the platform data
+        cache, increments the generation counter, and notifies all clients.
+
+        * platform/graphics/FontCache.h:
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::FontFallbackList): Added initialization of
+        m_generation.
+        (WebCore::FontFallbackList::invalidate): Added code to reset
+        m_generation.
+        (WebCore::FontFallbackList::fontDataAt): Added an assertion.
+        (WebCore::FontFallbackList::fontDataForCharacters): Ditto.
+        (WebCore::FontFallbackList::setPlatformFont): Ditto.
+
+        * platform/graphics/FontFallbackList.h:
+        (WebCore::FontFallbackList::generation): Added. Returns the font cache
+        generation used to populate the list.
+
+        * platform/graphics/FontSelector.h:
+        (WebCore::FontSelector::fontCacheInvalidated): Added.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::fontCacheATSNotificationCallback): Added. Calls
+        FontCache::invalidate().
+        (WebCore::FontCache::platformInit): Added code to register for ATS
+        notifications.
+
+        * svg/SVGFontFaceElement.cpp: Removed unneeded #inlcudes.
+
 2008-07-05  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Cameron Zwarich.

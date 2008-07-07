@@ -40,6 +40,7 @@ FontFallbackList::FontFallbackList()
     , m_pitch(UnknownPitch)
     , m_loadingCustomFonts(false)
     , m_fontSelector(0)
+    , m_generation(FontCache::generation())
 {
 }
 
@@ -51,6 +52,7 @@ void FontFallbackList::invalidate(PassRefPtr<FontSelector> fontSelector)
     m_pitch = UnknownPitch;
     m_loadingCustomFonts = false;
     m_fontSelector = fontSelector;
+    m_generation = FontCache::generation();
 }
 
 void FontFallbackList::releaseFontData()
@@ -94,6 +96,7 @@ const FontData* FontFallbackList::fontDataAt(const Font* font, unsigned realized
     // We are obtaining this font for the first time.  We keep track of the families we've looked at before
     // in |m_familyIndex|, so that we never scan the same spot in the list twice.  getFontData will adjust our
     // |m_familyIndex| as it scans for the right font to make.
+    ASSERT(FontCache::generation() == m_generation);
     const FontData* result = FontCache::getFontData(*font, m_familyIndex, m_fontSelector.get());
     if (result) {
         m_fontList.append(pair<const FontData*, bool>(result, result->isCustomFont()));
@@ -112,8 +115,10 @@ const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const 
     while (fontData && !fontData->containsCharacters(characters, length))
         fontData = fontDataAt(font, ++realizedFontIndex);
     
-    if (!fontData)
+    if (!fontData) {
+        ASSERT(FontCache::generation() == m_generation);
         fontData = FontCache::getFontDataForCharacters(*font, characters, length);
+    }
 
     return fontData;
 }
@@ -121,6 +126,7 @@ const FontData* FontFallbackList::fontDataForCharacters(const Font* font, const 
 void FontFallbackList::setPlatformFont(const FontPlatformData& platformData)
 {
     m_familyIndex = cAllFamiliesScanned;
+    ASSERT(FontCache::generation() == m_generation);
     const FontData* fontData = FontCache::getCachedFontData(&platformData);
     m_fontList.append(pair<const FontData*, bool>(fontData, fontData->isCustomFont()));
 }

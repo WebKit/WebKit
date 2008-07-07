@@ -347,4 +347,59 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
     return getCachedFontData(result);
 }
 
+static HashSet<FontSelector*>* gClients;
+
+void FontCache::addClient(FontSelector* client)
+{
+    if (!gClients)
+        gClients = new HashSet<FontSelector*>;
+
+    ASSERT(!gClients->contains(client));
+    gClients->add(client);
+}
+
+void FontCache::removeClient(FontSelector* client)
+{
+    ASSERT(gClients);
+    ASSERT(gClients->contains(client));
+
+    gClients->remove(client);
+}
+
+static unsigned gGeneration = 0;
+
+unsigned FontCache::generation()
+{
+    return gGeneration;
+}
+
+void FontCache::invalidate()
+{
+    if (!gClients) {
+        ASSERT(!gFontPlatformDataCache);
+        return;
+    }
+
+    if (gFontPlatformDataCache) {
+        deleteAllValues(*gFontPlatformDataCache);
+        delete gFontPlatformDataCache;
+        gFontPlatformDataCache = new FontPlatformDataCache;
+    }
+
+    gGeneration++;
+
+    Vector<RefPtr<FontSelector> > clients;
+    size_t numClients = gClients->size();
+    clients.reserveCapacity(numClients);
+    HashSet<FontSelector*>::iterator end = gClients->end();
+    for (HashSet<FontSelector*>::iterator it = gClients->begin(); it != end; ++it)
+        clients.append(*it);
+
+    ASSERT(numClients == clients.size());
+    for (size_t i = 0; i < numClients; ++i)
+        clients[i]->fontCacheInvalidated();
+
+    purgeInactiveFontData();
+}
+
 } // namespace WebCore

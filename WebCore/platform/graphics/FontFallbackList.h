@@ -52,6 +52,7 @@ public:
     bool loadingCustomFonts() const { return m_loadingCustomFonts; }
 
     FontSelector* fontSelector() const { return m_fontSelector.get(); }
+    unsigned generation() const { return m_generation; }
 
 private:
     FontFallbackList();
@@ -69,6 +70,7 @@ private:
     mutable Pitch m_pitch;
     mutable bool m_loadingCustomFonts;
     RefPtr<FontSelector> m_fontSelector;
+    unsigned m_generation;
 
     friend class Font;
 };

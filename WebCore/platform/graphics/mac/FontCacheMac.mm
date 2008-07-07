@@ -42,9 +42,16 @@ typedef int NSInteger;
 
 namespace WebCore {
 
+static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
+{
+    FontCache::invalidate();
+}
+
 void FontCache::platformInit()
 {
     wkSetUpFontCache();
+    // FIXME: Passing kATSFontNotifyOptionReceiveWhileSuspended may be an overkill and does not seem to work anyway.
+    ATSFontNotificationSubscribe(fontCacheATSNotificationCallback, kATSFontNotifyOptionReceiveWhileSuspended, 0, 0);
 }
 
 static int toAppKitFontWeight(FontWeight fontWeight)
