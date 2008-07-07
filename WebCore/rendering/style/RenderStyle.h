@@ -741,7 +741,7 @@ public:
     
     int loops; // -1 means infinite.
     
-    unsigned behavior : 3; // EMarqueeBehavior 
+    unsigned behavior : 2; // EMarqueeBehavior 
     EMarqueeDirection direction : 3; // not unsigned because EMarqueeDirection has negative values
     
 private:
@@ -1634,7 +1634,7 @@ protected:
         unsigned _list_style_type : 5 ; // EListStyleType
         unsigned _list_style_position : 1; // EListStylePosition
         unsigned _visibility : 2; // EVisibility
-        unsigned _text_align : 4; // ETextAlign
+        unsigned _text_align : 3; // ETextAlign
         unsigned _text_transform : 2; // ETextTransform
         unsigned _text_decorations : 4;
         unsigned _cursor_style : 6; // ECursor
@@ -1677,8 +1677,8 @@ protected:
         
         unsigned _effectiveDisplay : 5; // EDisplay
         unsigned _originalDisplay : 5; // EDisplay
-        unsigned _overflowX : 4; // EOverflow
-        unsigned _overflowY : 4; // EOverflow
+        unsigned _overflowX : 3; // EOverflow
+        unsigned _overflowY : 3; // EOverflow
         unsigned _vertical_align : 4; // EVerticalAlign
         unsigned _clear : 2; // EClear
         unsigned _position : 2; // EPosition

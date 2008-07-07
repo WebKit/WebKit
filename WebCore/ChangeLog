@@ -1,3 +1,25 @@
+2008-07-06  David Kilzer  <ddkilzer@apple.com>
+
+        Save a few more bits in RenderStyle
+
+        Reviewed by Darin.
+
+        No test cases added since there is no change in behavior.
+
+        This changes WebCore::StyleMarqueeData from using 6 bits to 5 bits,
+        WebCore::RenderStyle::inherited_flags from using 36 bits to 35 bits,
+        and WebCore::RenderStyle::noninherited_flags from using 49 bits to
+        47 bits.
+
+        * rendering/style/RenderStyle.h:
+        (WebCore::StyleMarqueeData::behavior): Reduce from 3 bits to 2 bits
+        since EMarqueeBehavior has 4 items.
+        (WebCore::RenderStyle::inherited_flags._text_align): Reduce from
+        4 bits to 3 bits since ETextAlign has 8 items.
+        (WebCore::RenderStyle::noninherited_flags._overflowX): Reduce from
+        4 bits to 3 bits since EOverflow has 6 items.
+        (WebCore::RenderStyle::noninherited_flags._overflowY): Ditto.
+
 2008-07-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
