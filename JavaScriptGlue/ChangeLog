@@ -1,3 +1,17 @@
+2008-07-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        <rdar://problem/6058368> REGRESSION: Crash occurs in KJS::Machine after launching
+        Apple Installer
+
+        The problem was that JSUserObject::getCallData() was setting call type to native, but
+        left callData.native.function uninitialized.
+
+        * JSObject.cpp:
+        (JSUserObject::getCallData): Initialize callData.native.function.
+        (nativeCallFunction): Call UserObjectImp::callAsFunction().
+
 2008-07-04  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.

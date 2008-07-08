@@ -29,6 +29,8 @@
 #include "config.h"
 #include "JSObject.h"
 
+#include "UserObjectImp.h"
+
 JSUserObject::JSUserObject(JSObjectCallBacksPtr callBacks, JSObjectMarkProcPtr markProc, void *data, int dataType)
     : JSBase(kJSObjectTypeID), fCallBacks(*callBacks), fMarkProc(markProc), fData(data), fDataType(dataType)
 {
@@ -71,9 +73,18 @@ void JSUserObject::SetProperty(CFStringRef propertyName, JSUserObject* value)
 
 }
 
-CallType JSUserObject::getCallData(CallData&)
+static JSValue* nativeCallFunction(ExecState* exec, JSObject* functionObject, JSValue* thisValue, const ArgList& args)
 {
-    return fCallBacks.callFunction ? CallTypeNative : CallTypeNone;
+    return static_cast<UserObjectImp*>(functionObject)->callAsFunction(exec, static_cast<JSObject*>(thisValue), args);
+}
+
+CallType JSUserObject::getCallData(CallData& callData)
+{
+    if (!fCallBacks.callFunction)
+        return CallTypeNone;
+
+    callData.native.function = nativeCallFunction;
+    return CallTypeNative;
 }
 
 JSUserObject* JSUserObject::CallFunction(JSUserObject* thisObj, CFArrayRef args)
