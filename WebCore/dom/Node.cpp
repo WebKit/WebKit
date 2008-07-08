@@ -1239,7 +1239,7 @@ static bool selectorNeedsNamespaceResolution(CSSSelector* selector)
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
 {
-    if (selectors.isNull() || selectors.isEmpty()) {
+    if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
         return 0;
     }
@@ -1285,7 +1285,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
 
 PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
 {
-    if (selectors.isNull() || selectors.isEmpty()) {
+    if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
         return 0;
     }
