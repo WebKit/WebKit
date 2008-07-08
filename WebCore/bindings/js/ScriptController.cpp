@@ -52,8 +52,8 @@ namespace WebCore {
 ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_handlerLineno(0)
-    , m_processingTimerCallback(0)
-    , m_processingInlineCode(0)
+    , m_sourceURL(0)
+    , m_processingTimerCallback(false)
     , m_paused(false)
 {
 }
@@ -68,7 +68,7 @@ ScriptController::~ScriptController()
     }
 }
 
-JSValue* ScriptController::evaluate(const String& filename, int baseLine, const String& str) 
+JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const String& str) 
 {
     // evaluate code. Returns the JS return value or 0
     // if there was none, an error occured or the type couldn't be converted.
@@ -79,7 +79,8 @@ JSValue* ScriptController::evaluate(const String& filename, int baseLine, const 
     // expected value in all cases.
     // See smart window.open policy for where this is used.
     ExecState* exec = m_windowShell->window()->globalExec();
-    m_processingInlineCode = filename.isNull();
+    const String* savedSourceURL = m_sourceURL;
+    m_sourceURL = &sourceURL;
 
     JSLock lock(false);
 
@@ -88,22 +89,22 @@ JSValue* ScriptController::evaluate(const String& filename, int baseLine, const 
     m_frame->keepAlive();
 
     m_windowShell->window()->startTimeoutCheck();
-    Completion comp = Interpreter::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), filename, baseLine, StringSourceProvider::create(str), m_windowShell);
+    Completion comp = Interpreter::evaluate(exec, exec->dynamicGlobalObject()->globalScopeChain(), sourceURL, baseLine, StringSourceProvider::create(str), m_windowShell);
     m_windowShell->window()->stopTimeoutCheck();
 
     if (comp.complType() == Normal || comp.complType() == ReturnValue) {
-        m_processingInlineCode = false;
+        m_sourceURL = savedSourceURL;
         return comp.value();
     }
 
     if (comp.complType() == Throw) {
         UString errorMessage = comp.value()->toString(exec);
         int lineNumber = comp.value()->toObject(exec)->get(exec, Identifier(exec, "line"))->toInt32(exec);
-        UString sourceURL = comp.value()->toObject(exec)->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, sourceURL);
+        UString exceptionSourceURL = comp.value()->toObject(exec)->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
+        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
     }
 
-    m_processingInlineCode = false;
+    m_sourceURL = savedSourceURL;
     return 0;
 }
 
@@ -187,7 +188,7 @@ bool ScriptController::processingUserGesture() const
             type == submitEvent)
             return true;
     } else { // no event
-        if (m_processingInlineCode && !m_processingTimerCallback) {
+        if (m_sourceURL && m_sourceURL->isNull() && !m_processingTimerCallback) {
             // This is the <a href="javascript:window.open('...')> case -> we let it through
             return true;
         }

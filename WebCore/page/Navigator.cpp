@@ -33,6 +33,7 @@
 #include "PlatformString.h"
 #include "PluginArray.h"
 #include "PluginData.h"
+#include "ScriptController.h"
 #include "Settings.h"
 
 #ifndef WEBCORE_NAVIGATOR_PLATFORM
@@ -99,13 +100,31 @@ String Navigator::appName() const
     return "Netscape";
 }
 
+// If this function returns true, we need to hide the substring "4." that would otherwise
+// appear in the appVersion string. This is to avoid problems with old versions of a
+// library called OpenCube QuickMenus, which as of this writing is still being used on
+// sites such as nwa.com -- the library thinks Safari is Netscape 4 if we don't do this!
+static bool shouldHideFourDot(Frame* frame)
+{
+    const String* sourceURL = frame->script()->sourceURL();
+    if (!sourceURL)
+        return false;
+    Settings* settings = frame->settings();
+    if (!settings)
+        return false;
+    return sourceURL->endsWith("/dqm_script.js") && settings->needsSiteSpecificQuirks();
+}
+
 String Navigator::appVersion() const
 {
     if (!m_frame)
         return String();
     // Version is everything in the user agent string past the "Mozilla/" prefix.
     const String& userAgent = m_frame->loader()->userAgent(m_frame->document() ? m_frame->document()->url() : KURL());
-    return userAgent.substring(userAgent.find('/') + 1);
+    String appVersion = userAgent.substring(userAgent.find('/') + 1);
+    if (shouldHideFourDot(m_frame))
+        appVersion.replace("4.", "4_");
+    return appVersion;
 }
 
 String Navigator::language() const

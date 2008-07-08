@@ -56,7 +56,7 @@ public:
         return m_windowShell->window();
     }
 
-    KJS::JSValue* evaluate(const String& filename, int baseLine, const String& code);
+    KJS::JSValue* evaluate(const String& sourceURL, int baseLine, const String& code);
     void clear();
     PassRefPtr<EventListener> createHTMLEventHandler(const String& functionName, const String& code, Node*);
 #if ENABLE(SVG)
@@ -78,6 +78,8 @@ public:
     void clearFormerWindow(JSDOMWindow* window) { m_liveFormerWindows.remove(window); }
     void updateDocument();
 
+    const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
+
 private:
     void initScriptIfNeeded()
     {
@@ -90,9 +92,9 @@ private:
     HashSet<JSDOMWindow*> m_liveFormerWindows;
     Frame* m_frame;
     int m_handlerLineno;
-    
+    const String* m_sourceURL;
+
     bool m_processingTimerCallback;
-    bool m_processingInlineCode;
     bool m_paused;
 };
 

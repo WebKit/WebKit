@@ -1,3 +1,36 @@
+2008-07-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix <rdar://problem/6020441> REGRESSION: Layers on NWA.com render ugly
+
+        The old version of the OpenCube QuickMenu library used on this site still has code
+        that detects Netscape 4 by checking appVersion to see if it has the substring "4."
+        in it. We decided to special-case the filename of the script and tweak the appVersion
+        for files with that name.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController): Replace m_processingInlineCode with
+        m_sourceURL. Use false instead of 0 to initialize a boolean.
+        (WebCore::ScriptController::evaluate): Call argument sourceURL, not filename.
+        Store current sourceURL in m_sourceURL. This fixes a mistake in the code that
+        maintained the value of m_processingInlineCode, since the old code set it to
+        false rather than restoring it. Renamed a local variable named sourceURL to
+        exceptionSourceURL for clarity.
+        (WebCore::ScriptController::processingUserGesture): Code that formerly used
+        m_processingInlineCode to detect that it was evaluating code with no URL now
+        uses m_sourceURL to do the same check.
+
+        * bindings/js/ScriptController.h: Renamed filename argument to sourceURL; it has always
+        been a URL, not a file path. Added a public sourceURL function and m_sourceURL and
+        removed m_processingInlineCode.
+
+        * page/Navigator.cpp:
+        (WebCore::shouldHideFourDot): Added. Returns true if the currently running script has
+        a source URL ending in "/dqm_script.js" and if the settings say we should do
+        site-specific quirks (really JavaScript-library-specific in this case).
+        (WebCore::Navigator::appVersion): Replace "4." with "4_" if shouldHideFourDot is true.
+
 2008-07-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Geoff.
