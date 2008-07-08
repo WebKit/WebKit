@@ -1,3 +1,19 @@
+2008-07-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Geoff.
+
+        Bug 19926: URL causes crash within a minute
+        <https://bugs.webkit.org/show_bug.cgi?id=19926>
+
+        Add a check that lastGlobalObject is non-null in Machine::execute()
+        before copying its globals to the current register file.
+
+        In theory, it is possible to make a test case for this, but it will
+        take a while to get it right.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::execute):
+
 2008-07-07  Darin Adler  <darin@apple.com>
 
         Rubber stamped by Adele.

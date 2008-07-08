@@ -709,7 +709,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
             (*profiler)->didFinishAllExecution(exec);
     }
 
-    if (m_reentryDepth && globalObject != lastGlobalObject)
+    if (m_reentryDepth && lastGlobalObject && globalObject != lastGlobalObject)
         lastGlobalObject->copyGlobalsTo(m_registerFile);
 
     m_registerFile.shrink(oldSize);
