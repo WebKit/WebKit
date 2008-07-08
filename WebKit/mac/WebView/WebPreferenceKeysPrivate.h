@@ -68,6 +68,7 @@
 #define WebKitLocalStorageDatabasePathPreferenceKey @"WebKitLocalStorageDatabasePathPreferenceKey"
 #define WebKitEnableFullDocumentTeardownPreferenceKey @"WebKitEnableFullDocumentTeardown"
 #define WebKitOfflineWebApplicationCacheEnabledPreferenceKey @"WebKitOfflineWebApplicationCacheEnabled"
+#define WebKitUpdatesWhenOffscreenPreferenceKey @"WebKitUpdatesWhenOffscreen"
 
 // These are private both because callers should be using the cover methods and because the
 // cover methods themselves are private.

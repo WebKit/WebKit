@@ -1,3 +1,13 @@
+2008-07-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKitSystemInterface part of <rdar://problem/6008409> Need a way to disable updates in offscreen views
+
+        * WebKitSystemInterface.h: Added WKWindowWillOrderOnScreenNotification.
+        * libWebKitSystemInterfaceLeopard.a: Updated.
+        * libWebKitSystemInterfaceTiger.a: Updated.
+
 2008-07-01  Steve Falkenburg  <sfalken@apple.com>
 
         Bump version numbers.

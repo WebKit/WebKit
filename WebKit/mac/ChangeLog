@@ -1,3 +1,27 @@
+2008-07-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit part of <rdar://problem/6008409> Need a way to disable updates in offscreen views
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView addWindowObservers]): Added code to observe when the
+        window goes onscreen.
+        (-[WebHTMLView removeWindowObservers]): Added.
+        (-[WebHTMLView windowWillOrderOnScreen:]): Added. If the view is set to
+        not update when offscreen, calls -setNeedsDisplay: just before it comes
+        onscreen.
+        * WebView/WebPreferenceKeysPrivate.h: Added preference key.
+        * WebView/WebPreferences.m:
+        (+[WebPreferences initialize]): Made updates when offscreen on by
+        default.
+        (-[WebPreferences updatesWhenOffscreen]): Added.
+        (-[WebPreferences setUpdatesWhenOffscreen:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Added code to update the
+        updatesWhenOffscreen setting in WebCore.
+
 2008-07-07  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

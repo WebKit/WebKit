@@ -1,3 +1,30 @@
+2008-07-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebCore part of <rdar://problem/6008409> Need a way to disable updates in offscreen views
+
+        Added a setting, updatesWhenOffscreen(), which controls whether an
+        offscreen web view gets marked as needing update when its contents
+        change (the existing behavior) or not (a new behavior), in which case it
+        will be marked as needing update just before it goes on screen. The
+        existing behavior (updating while offscreen) remains the default.
+
+        * WebCore.base.exp: Added Settings::setUpdatesWhenOffscreen().
+        * page/FrameView.cpp:
+        (WebCore::FrameView::shouldUpdateWhenOffscreen): Added. Returns the
+        value from settings.
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::setUpdatesWhenOffscreen): Added.
+        * page/Settings.h:
+        (WebCore::Settings::updatesWhenOffscreen): Added.
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::updateContents): Added code to return early and
+        not call -setNeedsDisplayInRect: if the view is not in a visible window
+        and the setting is not to update when offscreen.
+
 2008-07-08  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the build with enabled SVG filters.

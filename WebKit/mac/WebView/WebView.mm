@@ -1024,6 +1024,7 @@ static bool debugWidget = true;
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings->disableRangeMutationForOldAppleMail(WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0));
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
+    settings->setUpdatesWhenOffscreen([preferences updatesWhenOffscreen]);
 }
 
 static inline IMP getMethod(id o, SEL s)

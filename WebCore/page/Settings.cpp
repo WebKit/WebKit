@@ -356,5 +356,10 @@ void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
     m_offlineWebApplicationCacheEnabled = enabled;
 }
     
+void Settings::setUpdatesWhenOffscreen(bool updates)
+{
+    m_updatesWhenOffscreen = updates;
+}
+    
 
 } // namespace WebCore

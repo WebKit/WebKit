@@ -178,9 +178,8 @@ extern "C" {
 
 // Need to declare these attribute names because AppKit exports them but does not make them available in API or SPI headers.
 
-extern NSString *NSMarkedClauseSegmentAttributeName; 
-extern NSString *NSTextInputReplacementRangeAttributeName; 
-
+extern NSString *NSMarkedClauseSegmentAttributeName;
+extern NSString *NSTextInputReplacementRangeAttributeName;
 }
 
 @interface NSView (WebNSViewDetails)
@@ -2624,6 +2623,8 @@ WEBCORE_COMMAND(yankAndSelect)
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:)
             name:NSWindowWillCloseNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillOrderOnScreen:)
+            name:WKWindowWillOrderOnScreenNotification() object:window];
     }
 }
 
@@ -2637,6 +2638,8 @@ WEBCORE_COMMAND(yankAndSelect)
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowWillCloseNotification object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:WKWindowWillOrderOnScreenNotification() object:window];
     }
 }
 
@@ -3029,6 +3032,12 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 {
     [_private->compController endRevertingChange:NO moveLeft:NO];
     [[self _pluginController] destroyAllPlugins];
+}
+
+- (void)windowWillOrderOnScreen:(NSNotification *)notification
+{
+    if (![[[self _webView] preferences] updatesWhenOffscreen])
+        [self setNeedsDisplay:YES];
 }
 
 - (void)scrollWheel:(NSEvent *)event

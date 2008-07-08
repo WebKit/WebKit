@@ -334,6 +334,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitUpdatesWhenOffscreenPreferenceKey,
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -775,6 +776,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
+}
+
+- (BOOL)updatesWhenOffscreen
+{
+    return [self _boolValueForKey:WebKitUpdatesWhenOffscreenPreferenceKey];
+}
+
+- (void)setUpdatesWhenOffscreen:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitUpdatesWhenOffscreenPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents
