@@ -25,6 +25,7 @@
 #ifndef NodeIterator_h
 #define NodeIterator_h
 
+#include "NodeFilter.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -41,8 +42,8 @@ namespace WebCore {
         }
         ~NodeIterator();
 
-        PassRefPtr<Node> nextNode(ExceptionCode&, KJS::JSValue*& exception);
-        PassRefPtr<Node> previousNode(ExceptionCode&, KJS::JSValue*& exception);
+        PassRefPtr<Node> nextNode(KJS::ExecState*, ExceptionCode&);
+        PassRefPtr<Node> previousNode(KJS::ExecState*, ExceptionCode&);
         void detach();
 
         Node* referenceNode() const { return m_referenceNode.node.get(); }
@@ -52,8 +53,8 @@ namespace WebCore {
         void nodeWillBeRemoved(Node*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        PassRefPtr<Node> nextNode(ExceptionCode& ec) { KJS::JSValue* exception; return nextNode(ec, exception); }
-        PassRefPtr<Node> previousNode(ExceptionCode& ec) { KJS::JSValue* exception; return previousNode(ec, exception); }
+        PassRefPtr<Node> nextNode(ExceptionCode& ec) { return nextNode(NodeFilter::execStateFromNode(referenceNode()), ec); }
+        PassRefPtr<Node> previousNode(ExceptionCode& ec) { return previousNode(NodeFilter::execStateFromNode(referenceNode()), ec); }
 
     private:
         NodeIterator(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);

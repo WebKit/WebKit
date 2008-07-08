@@ -28,7 +28,7 @@
 #include <wtf/RefCounted.h>
 
 namespace KJS {
-    class JSValue;
+    class ExecState;
 }
 
 namespace WebCore {
@@ -38,7 +38,7 @@ namespace WebCore {
     class NodeFilterCondition : public RefCounted<NodeFilterCondition> {
     public:
         virtual ~NodeFilterCondition() { }
-        virtual short acceptNode(Node*, KJS::JSValue*& exception) const = 0;
+        virtual short acceptNode(KJS::ExecState*, Node*) const = 0;
         virtual void mark() { }
     };
 

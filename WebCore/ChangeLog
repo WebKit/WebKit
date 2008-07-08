@@ -1,3 +1,30 @@
+2008-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19933
+        nodeIterator with filter fails on documents not in a frame
+
+        Tests: traversal/node-iterator-009.html
+               traversal/tree-walker-006.html
+
+        * bindings/js/JSNodeFilterCondition.cpp:
+        * bindings/js/JSNodeFilterCondition.h:
+        * bindings/js/JSNodeFilterCustom.cpp:
+        * bindings/js/JSNodeIteratorCustom.cpp:
+        * bindings/js/JSTreeWalkerCustom.cpp:
+        * bindings/objc/DOM.mm:
+        * dom/NodeFilter.cpp:
+        * dom/NodeFilter.h:
+        * dom/NodeFilterCondition.cpp:
+        * dom/NodeFilterCondition.h:
+        * dom/NodeIterator.cpp:
+        * dom/NodeIterator.h:
+        * dom/Traversal.cpp:
+        * dom/Traversal.h:
+        * dom/TreeWalker.cpp:
+        * dom/TreeWalker.h:
+
 2008-07-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

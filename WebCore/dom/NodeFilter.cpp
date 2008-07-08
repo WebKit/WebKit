@@ -25,14 +25,37 @@
 #include "config.h"
 #include "NodeFilter.h"
 
+#include "Document.h"
+#include "Frame.h"
+#include "Node.h"
+#include "ScriptController.h"
+
 using namespace KJS;
 
 namespace WebCore {
 
-short NodeFilter::acceptNode(Node* node, JSValue*& exception) const
+short NodeFilter::acceptNode(ExecState* exec, Node* node) const
 {
     // cast to short silences "enumeral and non-enumeral types in return" warning
-    return m_condition ? m_condition->acceptNode(node, exception) : static_cast<short>(FILTER_ACCEPT);
+    return m_condition ? m_condition->acceptNode(exec, node) : static_cast<short>(FILTER_ACCEPT);
 }
+
+ExecState* NodeFilter::execStateFromNode(Node* node)
+{
+    if (!node)
+        return 0;
+    Document* document = node->document();
+    if (!document)
+        return 0;
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+
+    if (!frame->script()->isEnabled())
+        return 0;
+
+    return frame->script()->globalObject()->globalExec();
+}
+
 
 } // namespace WebCore

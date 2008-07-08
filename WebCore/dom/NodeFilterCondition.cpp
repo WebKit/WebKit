@@ -31,7 +31,7 @@ using namespace KJS;
 
 namespace WebCore {
 
-short NodeFilterCondition::acceptNode(Node*, JSValue*&) const
+short NodeFilterCondition::acceptNode(ExecState*, Node*) const
 {
     return NodeFilter::FILTER_ACCEPT;
 }

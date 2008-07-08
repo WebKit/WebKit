@@ -697,7 +697,7 @@ public:
         return adoptRef(new ObjCNodeFilterCondition(filter));
     }
 
-    virtual short acceptNode(Node*, JSValue*& exception) const;
+    virtual short acceptNode(ExecState*, Node*) const;
 
 private:
     ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
@@ -708,7 +708,7 @@ private:
     RetainPtr<id <DOMNodeFilter> > m_filter;
 };
 
-short ObjCNodeFilterCondition::acceptNode(Node* node, JSValue*&) const
+short ObjCNodeFilterCondition::acceptNode(ExecState*, Node* node) const
 {
     if (!node)
         return NodeFilter::FILTER_REJECT;

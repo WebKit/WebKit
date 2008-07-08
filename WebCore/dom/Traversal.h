@@ -30,6 +30,7 @@
 
 namespace KJS {
     class JSValue;
+    class ExecState;
 }
 
 namespace WebCore {
@@ -46,7 +47,7 @@ namespace WebCore {
 
     protected:
         Traversal(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
-        short acceptNode(Node*, KJS::JSValue*& jsException) const;
+        short acceptNode(KJS::ExecState*, Node*) const;
 
     private:
         RefPtr<Node> m_root;

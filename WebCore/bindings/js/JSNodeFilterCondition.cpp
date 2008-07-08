@@ -20,25 +20,14 @@
 #include "config.h"
 #include "JSNodeFilterCondition.h"
 
-#include "Document.h"
-#include "Frame.h"
 #include "JSNode.h"
 #include "JSNodeFilter.h"
 #include "NodeFilter.h"
-#include "ScriptController.h"
 #include <kjs/JSLock.h>
 
 namespace WebCore {
 
 using namespace KJS;
-
-// FIXME: Add takeException as a member of ExecState?
-static JSValue* takeException(ExecState* exec)
-{
-    JSValue* exception = exec->exception();
-    exec->clearException();
-    return exception;
-}
 
 JSNodeFilterCondition::JSNodeFilterCondition(JSValue* filter)
     : m_filter(filter)
@@ -51,13 +40,8 @@ void JSNodeFilterCondition::mark()
         m_filter->mark();
 }
 
-short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) const
+short JSNodeFilterCondition::acceptNode(KJS::ExecState* exec, Node* filterNode) const
 {
-    // FIXME: It makes no sense for this to depend on the document being in a frame!
-    Frame* frame = filterNode->document()->frame();
-    if (!frame)
-        return NodeFilter::FILTER_REJECT;
-
     JSLock lock(false);
 
     CallData callData;
@@ -65,23 +49,28 @@ short JSNodeFilterCondition::acceptNode(Node* filterNode, JSValue*& exception) c
     if (callType == CallTypeNone)
         return NodeFilter::FILTER_ACCEPT;
 
-    ExecState* exec = frame->script()->globalObject()->globalExec();
+   // The exec argument here should only be null if this was called from a
+   // non-JavaScript language, and this is a JavaScript filter, and the document
+   // in question is not associated with the frame. In that case, we're going to
+   // behave incorrectly, and just reject nodes instead of calling the filter function.
+   // To fix that we'd need to come up with a way to find a suitable JavaScript
+   // execution context for the filter function to run in.
+    if (!exec)
+        return NodeFilter::FILTER_REJECT;
+
     ArgList args;
     args.append(toJS(exec, filterNode));
-    if (exec->hadException()) {
-        exception = takeException(exec);
+    if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
-    }
+
     JSValue* result = call(exec, m_filter, callType, callData, m_filter, args);
-    if (exec->hadException()) {
-        exception = takeException(exec);
+    if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
-    }
+
     int intResult = result->toInt32(exec);
-    if (exec->hadException()) {
-        exception = takeException(exec);
+    if (exec->hadException())
         return NodeFilter::FILTER_REJECT;
-    }
+
     return intResult;
 }
 

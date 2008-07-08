@@ -39,78 +39,57 @@ void JSTreeWalker::mark()
     
 JSValue* JSTreeWalker::parentNode(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->parentNode(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->parentNode(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::firstChild(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->firstChild(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->firstChild(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::lastChild(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->lastChild(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->lastChild(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::nextSibling(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->nextSibling(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->nextSibling(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::previousSibling(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->previousSibling(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->previousSibling(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::previousNode(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->previousNode(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->previousNode(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
     
 JSValue* JSTreeWalker::nextNode(ExecState* exec, const ArgList& args)
 {
-    JSValue* exception = 0;
-    Node* node = impl()->nextNode(exception);
-    if (exception) {
-        exec->setException(exception);
+    Node* node = impl()->nextNode(exec);
+    if (exec->hadException())
         return jsUndefined();
-    }
     return toJS(exec, node);
 }
 

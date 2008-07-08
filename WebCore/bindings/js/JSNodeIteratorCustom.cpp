@@ -40,32 +40,30 @@ void JSNodeIterator::mark()
 JSValue* JSNodeIterator::nextNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    JSValue* exception = 0;
-    RefPtr<Node> node = impl()->nextNode(ec, exception);
+    RefPtr<Node> node = impl()->nextNode(exec, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    if (exception) {
-        exec->setException(exception);
+
+    if (exec->hadException())
         return jsUndefined();
-    }
+
     return toJS(exec, node.get());
 }
 
 JSValue* JSNodeIterator::previousNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    JSValue* exception = 0;
-    RefPtr<Node> node = impl()->previousNode(ec, exception);
+    RefPtr<Node> node = impl()->previousNode(exec, ec);
     if (ec) {
         setDOMException(exec, ec);
         return jsUndefined();
     }
-    if (exception) {
-        exec->setException(exception);
+
+    if (exec->hadException())
         return jsUndefined();
-    }
+
     return toJS(exec, node.get());
 }
 

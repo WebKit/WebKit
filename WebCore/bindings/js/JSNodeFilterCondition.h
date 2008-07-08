@@ -41,7 +41,7 @@ namespace WebCore {
     private:
         JSNodeFilterCondition(KJS::JSValue* filter);
 
-        virtual short acceptNode(Node*, KJS::JSValue*& exception) const;
+        virtual short acceptNode(KJS::ExecState*, Node*) const;
         virtual void mark();
 
         KJS::JSValue* m_filter;

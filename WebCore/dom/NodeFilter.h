@@ -70,14 +70,18 @@ namespace WebCore {
             return adoptRef(new NodeFilter(condition));
         }
 
-        short acceptNode(Node*, KJS::JSValue*& exception) const;
+        short acceptNode(KJS::ExecState*, Node*) const;
         void mark() { m_condition->mark(); };
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        short acceptNode(Node* node) const { KJS::JSValue* exception; return acceptNode(node, exception); }
+        short acceptNode(Node* node) const { return acceptNode(execStateFromNode(node), node); }
+
+    public:
+        static KJS::ExecState* execStateFromNode(Node*);
 
     private:
         NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }
+
         RefPtr<NodeFilterCondition> m_condition;
     };
 

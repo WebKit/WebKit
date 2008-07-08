@@ -1,3 +1,15 @@
+2008-07-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=19933
+        nodeIterator with filter fails on documents not in a frame
+
+        * traversal/node-iterator-009-expected.txt: Added.
+        * traversal/node-iterator-009.html: Added.
+        * traversal/tree-walker-006-expected.txt: Added.
+        * traversal/tree-walker-006.html: Added.
+
 2008-07-07  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.
