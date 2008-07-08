@@ -127,6 +127,7 @@ Source files for JSCore.
         pcre/pcre_xclass.cpp
     </set>
     <set append="1" var="JSCORE_PROFILER_SOURCES">
+        profiler/ProfileGenerator.cpp
         profiler/ProfileNode.cpp
         profiler/Profile.cpp
         profiler/Profiler.cpp

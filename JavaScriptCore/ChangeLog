@@ -1,5 +1,12 @@
 2008-07-08  Simon Hausmann  <hausmann@webkit.org>
 
+        Prospective Gtk/Wx build fixes, add ProfileGenerator.cpp to the build.
+
+        * GNUmakefile.am:
+        * JavaScriptCoreSources.bkl:
+
+2008-07-08  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build, add ProfileGenerator.cpp to the build.
 
         * JavaScriptCore.pri:
