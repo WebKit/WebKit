@@ -1,5 +1,6 @@
 // Copyright (c) 2005, 2007, Google Inc.
 // All rights reserved.
+// Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 // 
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -196,11 +197,9 @@ void *fastRealloc(void* p, size_t n)
     return realloc(p, n);
 }
 
-} // namespace WTF
-
-extern "C" {
 void releaseFastMallocFreeMemory() { }
-}
+
+} // namespace WTF
 
 #if PLATFORM(DARWIN)
 // This symbol is present in the JavaScriptCore exports file even when FastMalloc is disabled.
@@ -208,7 +207,7 @@ void releaseFastMallocFreeMemory() { }
 extern "C" const int jscore_fastmalloc_introspection = 0;
 #endif
 
-#else
+#else // FORCE_SYSTEM_MALLOC
 
 #if HAVE(STDINT_H)
 #include <stdint.h>
@@ -3687,18 +3686,16 @@ void FastMallocZone::init()
     static FastMallocZone zone(pageheap, &thread_heaps, static_cast<TCMalloc_Central_FreeListPadded*>(central_cache));
 }
 
-extern "C" {
+#endif
+
 void releaseFastMallocFreeMemory()
 {
     SpinLockHolder h(&pageheap_lock);
     pageheap->ReleaseFreePages();
 }
-}
-
-#endif
 
 #if WTF_CHANGES
 } // namespace WTF
 #endif
 
-#endif // USE_SYSTEM_MALLOC
+#endif // FORCE_SYSTEM_MALLOC

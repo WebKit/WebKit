@@ -1,3 +1,18 @@
+2008-07-07  David Kilzer  <ddkilzer@apple.com>
+
+        releaseFastMallocFreeMemory() should always be defined
+
+        Reviewed by Darin.
+
+        * JavaScriptCore.exp: Changed to export C++ binding for
+        WTF::releaseFastMallocFreeMemory() instead of C binding for
+        releaseFastMallocFreeMemory().
+        * wtf/FastMalloc.cpp: Moved definitions of
+        releaseFastMallocFreeMemory() to be in the WTF namespace
+        regardless whether FORCE_SYSTEM_MALLOC is defined.
+        * wtf/FastMalloc.h: Moved releaseFastMallocFreeMemory() from
+        extern "C" binding to WTF::releaseFastMallocFreeMemory().
+
 2008-07-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Geoff.

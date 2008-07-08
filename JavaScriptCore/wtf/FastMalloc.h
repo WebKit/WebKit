@@ -1,7 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- *  This file is part of the KDE libraries
- *  Copyright (C) 2005 Apple Computer, Inc.
+ *  Copyright (C) 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -40,6 +38,8 @@ namespace WTF {
     void fastMallocAllow();
 #endif
 
+    void releaseFastMallocFreeMemory();
+
 } // namespace WTF
 
 using WTF::fastMalloc;
@@ -70,10 +70,6 @@ WTF_PRIVATE_INLINE void* operator new(size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete(void* p) { fastFree(p); }
 WTF_PRIVATE_INLINE void* operator new[](size_t s) { return fastMalloc(s); }
 WTF_PRIVATE_INLINE void operator delete[](void* p) { fastFree(p); }
-
-extern "C" {
-void releaseFastMallocFreeMemory();
-}
 #endif
 
 #endif // _CRTDBG_MAP_ALLOC
