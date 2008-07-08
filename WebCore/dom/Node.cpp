@@ -1226,6 +1226,17 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     return ClassNodeList::create(this, classNames, result.first->second);
 }
 
+static bool selectorNeedsNamespaceResolution(CSSSelector* selector)
+{
+    for (; selector; selector = selector->next()) {
+        if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom)
+            return true;
+        if (selector->hasAttribute() && selector->m_attr.prefix() != nullAtom && selector->m_attr.prefix() != starAtom)
+            return true;
+    }
+    return false;
+}
+
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
 {
     if (selectors.isNull() || selectors.isEmpty()) {
@@ -1240,16 +1251,24 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
 
-    CSSStyleSelector::SelectorChecker selectorChecker(document(), !document()->inCompatMode());
     CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
-    
+
+    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes, which we support in the engine
+    // but do not currently in the API due to lack of NSResolver support.
+    if (selectorNeedsNamespaceResolution(querySelector)) {
+        ec = NAMESPACE_ERR;
+        return 0;
+    }
+
     if (!querySelector->next() && querySelector->m_match == CSSSelector::Id) {
         Element* element = document()->getElementById(querySelector->m_value);
         if (element && (isDocumentNode() || element->isDescendantOf(this)))
             return element;
         return 0;
     }
-    
+
+    CSSStyleSelector::SelectorChecker selectorChecker(document(), !document()->inCompatMode());
+
     // FIXME: We can speed this up by implementing caching similar to the one use by getElementById
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         if (n->isElementNode()) {
@@ -1277,8 +1296,17 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         ec = SYNTAX_ERR;
         return 0;
     }
-    
-    return createSelectorNodeList(this, static_cast<CSSStyleRule*>(rule.get())->selector());
+
+    CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
+
+    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes, which we support in the engine
+    // but do not currently in the API due to lack of NSResolver support.
+    if (selectorNeedsNamespaceResolution(querySelector)) {
+        ec = NAMESPACE_ERR;
+        return 0;
+    }
+
+    return createSelectorNodeList(this, querySelector);
 }
 
 Document *Node::ownerDocument() const

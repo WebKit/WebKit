@@ -1,3 +1,20 @@
+2008-07-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19928
+        Use of CSS3 Namespaces syntax in Selectors API should throw an exception
+
+        - Throw an NAMESPACE_ERR exception if a non-null or "*" namespace is
+          used in a selector passed to querySelector or querySelectorAll.
+
+        Test: fast/dom/SelectorAPI/not-supported-namespace-in-selector.html
+
+        * dom/Node.cpp:
+        (WebCore::selectorNeedsNamespaceResolution):
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+
 2008-07-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin.
