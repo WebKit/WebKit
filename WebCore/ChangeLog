@@ -1,3 +1,9 @@
+2008-07-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Added manual test for the new heavy view.
+
+        * manual-tests/inspector/profiler-test-heavy-view.html: Added.
+
 2008-07-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Mitz.
