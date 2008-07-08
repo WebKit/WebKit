@@ -2,9 +2,9 @@
 <p>Test 'volume' attribute<p>
 <script src=video-test.js></script>
 <script>
+test("video.volume == 1.0");
+run("video.volume = 0.5");
 test("video.volume == 0.5");
-run("video.volume = 1");
-test("video.volume == 1");
 run("video.volume = 0");
 test("video.volume == 0");
 testException("video.volume = 1.5", "DOMException.INDEX_SIZE_ERR");

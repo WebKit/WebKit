@@ -49,7 +49,7 @@ namespace WebCore {
     , m_frameView(0)
     , m_visible(false)
     , m_rate(1.0f)
-    , m_volume(0.5f)
+    , m_volume(1.0f)
 {
 }
 

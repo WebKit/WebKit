@@ -1,3 +1,14 @@
+2008-07-07  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Beth.
+
+        Fix for <rdar://problem/5860507> <AUDIO> playback noticeably more quiet than QuickTime
+
+        Change default volume setting to 1.0.
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::HTMLMediaElement):
+        * platform/graphics/MediaPlayer.cpp: (WebCore::MediaPlayer::MediaPlayer):
+
 2008-07-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Mark Rowe.

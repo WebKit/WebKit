@@ -1,8 +1,8 @@
 Test 'volume' attribute
 
+TEST(video.volume == 1.0) OK
+RUN(video.volume = 0.5)
 TEST(video.volume == 0.5) OK
-RUN(video.volume = 1)
-TEST(video.volume == 1) OK
 RUN(video.volume = 0)
 TEST(video.volume == 0) OK
 TEST(video.volume = 1.5) THROWS(DOMException.INDEX_SIZE_ERR) OK
