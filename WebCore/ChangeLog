@@ -1,5 +1,15 @@
 2008-07-07  Adele Peterson  <adele@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19924
+        <rdar://problem/6057160> Disabled file input element updates its displayed file info when a file is dropped from the Finder.
+
+        * page/DragController.cpp: (WebCore::DragController::concludeDrag):
+        Check that the file control is enabled before taking dropped files.
+
+2008-07-07  Adele Peterson  <adele@apple.com>
+
         Reviewed by Beth.
 
         Fix for <rdar://problem/5860507> <AUDIO> playback noticeably more quiet than QuickTime
