@@ -1,3 +1,13 @@
+2008-07-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Mitz.
+
+        - fix <rdar://problem/6043731> REGRESSION (3-4): RedEnvelope.com
+          looks wrong due to OpenCube QuickMenu appVersion check
+
+        * page/Navigator.cpp:
+        (WebCore::shouldHideFourDot): Add dqm_loader.js as another filename.
+
 2008-07-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
