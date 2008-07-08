@@ -68,6 +68,7 @@ void InitializeLoggingChannelsIfNecessary()
     initializeWithUserDefault(LogStorageAPI);
     initializeWithUserDefault(LogMedia);
     initializeWithUserDefault(LogPlugin);
+    initializeWithUserDefault(LogArchives);
 }
 
 }
