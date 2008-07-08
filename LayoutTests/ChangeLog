@@ -1,3 +1,11 @@
+2008-07-08  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin.
+
+        Dean forgot to add this file needed for the tests.
+
+        * traversal/resources/node-iterator-009-data.xml: Added.
+
 2008-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
