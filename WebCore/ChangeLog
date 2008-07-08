@@ -1,3 +1,11 @@
+2008-07-08  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the build with enabled SVG filters.
+
+        * svg/SVGFESpecularLightingElement.cpp: The last argument to
+        ANIMATED_PROPERTY_DEFINITIONS has to be full class name, including
+        the attr suffix.
+
 2008-07-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

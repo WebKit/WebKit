@@ -130,6 +130,7 @@ SOURCES += \
     kjs/StringPrototype.cpp \
     kjs/ustring.cpp \
     profiler/Profile.cpp \
+    profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
     profiler/Profiler.cpp \
     profiler/TreeProfile.cpp \

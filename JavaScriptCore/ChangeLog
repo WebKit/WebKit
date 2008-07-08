@@ -1,3 +1,9 @@
+2008-07-08  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, add ProfileGenerator.cpp to the build.
+
+        * JavaScriptCore.pri:
+
 2008-07-07  David Kilzer  <ddkilzer@apple.com>
 
         releaseFastMallocFreeMemory() should always be defined
