@@ -118,6 +118,7 @@ static StreamMap& streams()
     notifyData = theNotifyData;
     sendNotification = flag;
     fileDescriptor = -1;
+    newStreamSuccessful = NO;
 
     streams().add(&stream, thePlugin);
     
@@ -278,6 +279,8 @@ static StreamMap& streams()
         return;
     }
 
+    newStreamSuccessful = YES;
+
     switch (transferMode) {
         case NP_NORMAL:
             LOG(Plugins, "Stream type: NP_NORMAL");
@@ -399,12 +402,14 @@ static StreamMap& streams()
             fileDescriptor = -1;
         }
 
-        NPError npErr;
-        WebBaseNetscapePluginView *pv = pluginView;
-        [pv willCallPlugInFunction];
-        npErr = NPP_DestroyStream(plugin, &stream, reason);
-        [pv didCallPlugInFunction];
-        LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
+        if (newStreamSuccessful) {
+            NPError npErr;
+            WebBaseNetscapePluginView *pv = pluginView;
+            [pv willCallPlugInFunction];
+            npErr = NPP_DestroyStream(plugin, &stream, reason);
+            [pv didCallPlugInFunction];
+            LOG(Plugins, "NPP_DestroyStream responseURL=%@ error=%d", responseURL, npErr);
+        }
 
         free(headers);
         headers = NULL;

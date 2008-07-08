@@ -1,3 +1,19 @@
+2008-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        Port r34988 to Mac: don't call NPP_DestroyStream if NPP_NewStream was
+        unsuccessful.
+
+        * Plugins/WebBaseNetscapePluginStream.h: Added new member,
+        newStreamSuccessful.
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:plugin:notifyData:sendNotification:]): Initialize new member.
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:headers:]): If NPP_NewStream is successful, set
+        newStreamSuccessful to YES.
+        (-[WebBaseNetscapePluginStream _destroyStream]): Only call
+        NPP_DestroyStream if newStreamSuccessful is true.
+
 2008-07-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

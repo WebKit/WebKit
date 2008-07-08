@@ -1,3 +1,19 @@
+2008-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Reviewed by Anders.
+
+        Port r34988 to Mac: allow tests to define JavaScript to execute when
+        NPP_DestroyStream or NPP_URLNotify is called.
+
+        * DumpRenderTree/TestNetscapePlugIn.subproj/main.cpp:
+        (NPP_New): Remove initialization that happens in pluginAllocate. Look
+        for new arguments onStreamDestroy and onURLNotify.
+        (NPP_Destroy): Free onStreamDestroy and onURLNotify.
+        (executeScript): Code moved from onStreamLoad.
+        (NPP_NewStream): Call executeScript.
+        (NPP_DestroyStream): Same.
+        (NPP_URLNotify): Same.
+
 2008-07-07  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders.
