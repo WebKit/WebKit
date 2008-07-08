@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
@@ -54,11 +54,11 @@ PlatformMouseEvent::PlatformMouseEvent(const wxMouseEvent& event, const wxPoint&
     else if (type == wxEVT_MOTION)
         m_eventType = MouseEventMoved;
 
-    if (event.Button(wxMOUSE_BTN_LEFT))
+    if (event.LeftIsDown() || event.Button(wxMOUSE_BTN_LEFT))
         m_button = LeftButton;
-    else if (event.Button(wxMOUSE_BTN_RIGHT))
+    else if (event.RightIsDown() || event.Button(wxMOUSE_BTN_RIGHT))
         m_button = RightButton;
-    else if (event.Button(wxMOUSE_BTN_MIDDLE))
+    else if (event.MiddleIsDown() || event.Button(wxMOUSE_BTN_MIDDLE))
         m_button = MiddleButton;
     else if (!m_eventType == MouseEventMoved)
         ASSERT_NOT_REACHED();

@@ -1,3 +1,14 @@
+2008-07-08  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Fix to previous patch for handling mouse up events.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18464
+
+        * platform/wx/MouseEventWx.cpp:
+        (WebCore::PlatformMouseEvent::PlatformMouseEvent):
+
 2008-07-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Brady Eidson.
