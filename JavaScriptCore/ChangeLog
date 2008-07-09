@@ -1,5 +1,11 @@
 2008-07-09  Kevin McCullough  <kmccullough@apple.com>
 
+        - Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
+2008-07-09  Kevin McCullough  <kmccullough@apple.com>
+
         - Build fix.
 
         * profiler/HeavyProfile.cpp:

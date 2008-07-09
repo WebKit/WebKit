@@ -1090,6 +1090,14 @@
 			Name="Profiler"
 			>
 			<File
+				RelativePath="..\..\profiler\HeavyProfile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\HeavyProfile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\profiler\Profile.cpp"
 				>
 			</File>
@@ -1099,6 +1107,10 @@
 			</File>
 			<File
 				RelativePath="..\..\profiler\ProfileGenerator.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\profiler\ProfileGenerator.h"
 				>
 			</File>
 			<File
