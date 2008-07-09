@@ -1,3 +1,11 @@
+2008-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Remove an unused instance variable.
+
+        * loader/DocumentLoader.h:
+
 2008-07-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
