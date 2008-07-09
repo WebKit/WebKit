@@ -28,14 +28,14 @@
 <script>
     var state = 0;
     var transitions = [
-        {className:"green", description:"instantly change into a green rectangle"},
-        {className:"", description:"instantly change into a small green square then animate to yellow over 5 seconds"},
-        {className:"square", description:"instantly change into a big yellow square"},
-        {className:"green", description:"instantly change into a green square and then animate to a rectangle over 2 seconds"},
-        {className:"", description:"instantly change into a small green square then animate to yellow over 5 seconds"},
-        {className:"green", description:"instantly change into a green rectangle"},
-        {className:"square", description:"instantly change into a green square then animate to yellow over 5 seconds"},
-        {className:"", description:"instantly change into a rectangle then animate into a square over 2 seconds"}
+        {className:"green", description:"instantly change into a rectangle and fade from yellow to green over 5 seconds"},
+        {className:"", description:"instantly change into a small yellow square"},
+        {className:"square", description:"instantly change into a yellow rectangle and then animate into a big yellow square over 2 seconds"},
+        {className:"green", description:"instantly change into a yellow rectangle and then animate to a green rectangle over 5 seconds"},
+        {className:"", description:"instantly change into a small yellow square"},
+        {className:"green", description:"instantly change into a yellow rectangle and fade from yellow to green over 5 seconds"},
+        {className:"square", description:"instantly change to a yellow rectangle and then animate into a large yellow square over 2 seconds"},
+        {className:"", description:"instantly change into a small yellow square"}
     ];
 
     document.getElementById("description").innerText = transitions[0].description;

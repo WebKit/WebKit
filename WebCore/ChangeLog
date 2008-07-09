@@ -1,3 +1,19 @@
+2008-07-09  David Hyatt  <hyatt@apple.com>
+
+        Switch transitions back to a "destination" model as far as choosing which transitions should apply on a style
+        change.  Preserve the behavior of allowing stale transitions (in the absence of property changes) to run to
+        completion.
+
+        Reviewed by Dean
+
+        * manual-tests/transitions.html:
+        * manual-tests/transitions2.html:
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::reset):
+        (WebCore::CompositeImplicitAnimation::animate):
+        (WebCore::AnimationControllerPrivate::get):
+        (WebCore::AnimationController::updateImplicitAnimations):
+
 2008-07-09  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele.

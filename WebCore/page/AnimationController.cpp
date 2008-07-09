@@ -148,10 +148,10 @@ void ImplicitAnimation::reset(RenderObject* renderer, RenderStyle* from, RenderS
     if (from || to)
         m_startTime = currentTime();
         
-    // If we are stale, attempt to update to a new transition using the new |from| style.  If we are able to find a new transition,
+    // If we are stale, attempt to update to a new transition using the new |to| style.  If we are able to find a new transition,
     // then we will unmark ourselves for death.
     if (stale() && from && to) {
-         for (const Transition* transition = from->transitions(); transition; transition = transition->next()) {
+         for (const Transition* transition = to->transitions(); transition; transition = transition->next()) {
             if (m_property != transition->property())
                 continue;
             int duration = transition->duration();
@@ -384,12 +384,20 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
 {
     const Transition* currentTransitions = currentStyle->transitions();
     const Transition* targetTransitions = targetStyle->transitions();
-    bool transitionsChanged = currentTransitions != targetTransitions && !(currentTransitions && targetTransitions && *currentTransitions == *targetTransitions);
+    bool transitionsChanged = m_animations.isEmpty() || (currentTransitions != targetTransitions && !(currentTransitions && targetTransitions && *currentTransitions == *targetTransitions));
 
-    if (m_animations.isEmpty()) {
-        // For each transition, we create a new animation unless one exists already (later occurrences of duplicate
-        // triggers in the layer list get ignored).
-        for (const Transition* transition = currentTransitions; transition; transition = transition->next()) {
+    if (transitionsChanged) {
+        HashMap<int, ImplicitAnimation*>::iterator end = m_animations.end();
+         
+        for (HashMap<int, ImplicitAnimation*>::iterator it = m_animations.begin(); it != end; ++it)
+            // Mark any running animations as stale if the set of transitions changed.  Stale animations continue
+            // to blend on a timer, and then remove themselves when finished.
+            it->second->setStale();
+
+        // If our transitions changed we need to add new animations for any transitions that
+        // don't exist yet.  If a new transition conflicts with a currently running stale transition, then we will not add it.
+        // The stale transition is responsible for updating itself to the new transition if it ever gets reset or finishes.
+        for (const Transition* transition = targetTransitions; transition; transition = transition->next()) {
             int property = transition->property();
             int duration = transition->duration();
             int repeatCount = transition->repeatCount();
@@ -399,7 +407,7 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
             }
         }
     }
-        
+
     // Now that we have animation objects ready, let them know about the new goal state.  We want them
     // to fill in a RenderStyle*& only if needed.
     RenderStyle* result = 0;
@@ -410,11 +418,7 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
     ImplicitAnimation* allAnimation = m_animations.get(cAnimateAll);
     if (allAnimation) {
         allAnimation->animate(this, renderer, currentStyle, targetStyle, result);
-        if (transitionsChanged)
-            // Mark the "all" animation as stale if the set of transitions changed.  Stale animations continue
-            // to blend on a timer, and then remove themselves when finished.
-            allAnimation->setStale();
-        
+
         // If the animation is done and we are marked as stale, then we can be removed after the
         // iteration of the hashmap is finished.
         if (allAnimation->finished() && allAnimation->stale())
@@ -428,11 +432,7 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
             continue;
         
         it->second->animate(this, renderer, currentStyle, targetStyle, result);
-        if (transitionsChanged)
-            // Mark any running animations as stale if the set of transitions changed.  Stale animations continue
-            // to blend on a timer, and then remove themselves when finished.
-            it->second->setStale();
-        
+
         // If the animation is done and we are marked as stale, then we can be removed after the
         // iteration of the hashmap is finished.
         if (it->second->finished() && it->second->stale())
@@ -445,21 +445,6 @@ RenderStyle* CompositeImplicitAnimation::animate(RenderObject* renderer, RenderS
         ImplicitAnimation* animation = m_animations.take(obsoleteTransitions[i]);
         animation->reset(renderer, 0, 0);
         delete animation;
-    }
-
-    if (transitionsChanged) {
-        // If our transitions changed we need to add new animations for any transitions that
-        // don't exist yet.  If a new transition conflicts with a currently running stale transition, then we will not add it.
-        // The stale transition is responsible for updating itself to the new transition if it ever gets reset or finishes.
-        for (const Transition* transition = targetTransitions; transition; transition = transition->next()) {
-            int property = transition->property();
-            int duration = transition->duration();
-            int repeatCount = transition->repeatCount();
-            if (property && duration && repeatCount && !m_animations.contains(property)) {
-                ImplicitAnimation* animation = new ImplicitAnimation(transition);
-                m_animations.set(property, animation);
-            }
-        }
     }
 
     if (result)
@@ -489,7 +474,7 @@ public:
     AnimationControllerPrivate(Frame*);
     ~AnimationControllerPrivate();
 
-    CompositeImplicitAnimation* get(RenderObject*);
+    CompositeImplicitAnimation* get(RenderObject*, RenderStyle*);
     bool clear(RenderObject*);
     
     void timerFired(Timer<AnimationControllerPrivate>*);
@@ -514,10 +499,10 @@ AnimationControllerPrivate::~AnimationControllerPrivate()
     deleteAllValues(m_animations);
 }
 
-CompositeImplicitAnimation* AnimationControllerPrivate::get(RenderObject* renderer)
+CompositeImplicitAnimation* AnimationControllerPrivate::get(RenderObject* renderer, RenderStyle* targetStyle)
 {
     CompositeImplicitAnimation* animation = m_animations.get(renderer);
-    if (!animation && renderer->style()->transitions()) {
+    if (!animation && targetStyle->transitions()) {
         animation = new CompositeImplicitAnimation();
         m_animations.set(renderer, animation);
     }
@@ -598,8 +583,8 @@ RenderStyle* AnimationController::updateImplicitAnimations(RenderObject* rendere
     // a new style.
     ASSERT(renderer->element()); // FIXME: We do not animate generated content yet.
 
-    CompositeImplicitAnimation* animation = m_data->get(renderer);
-    if (!animation)
+    CompositeImplicitAnimation* animation = m_data->get(renderer, newStyle);
+    if (!animation && !newStyle->transitions())
         return newStyle;
 
     RenderStyle* result = animation->animate(renderer, renderer->style(), newStyle);
