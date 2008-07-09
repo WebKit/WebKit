@@ -1,5 +1,6 @@
 # ------- missing features in DRT
 accessibility
+printing
 editing/selection/4975120.html
 editing/selection/5109817.html
 editing/selection/5354455-1.html
@@ -864,20 +865,6 @@ svg/hixie/viewbox/003.xml
 svg/hixie/viewbox/004.xml
 svg/hixie/viewbox/preserveAspectRatio/001.xml
 svg/hixie/viewbox/preserveAspectRatio/002.xml
-webarchive/archive-empty-frame-dom.html
-webarchive/archive-empty-frame-source.html
-webarchive/archive-with-unencoded-url.html
-webarchive/test-body-background.html
-webarchive/test-duplicate-resources.html
-webarchive/test-frameset.html
-webarchive/test-img-src.html
-webarchive/test-input-src.html
-webarchive/test-link-href.html
-webarchive/test-object-data.html
-webarchive/test-script-src.html
-webarchive/test-table-background.html
-webarchive/test-td-background.html
-webarchive/loading/test-loading-archive.html
 
 # ------- <video> support
 media

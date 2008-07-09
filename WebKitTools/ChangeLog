@@ -1,5 +1,20 @@
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by aroben.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (dumpAsPDFCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        (LayoutTestController::dumpAsPDF):
+        (LayoutTestController::setDumpAsPDF):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dumpFrameAsPDF):
+        (dump):
+
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
         Reviewed by weinig.
 
         Add Content-Type support to DumpRenderTree and run-webkit-tests

@@ -7,3 +7,4 @@ storage/success-callback.html
 http/tests/appcache
 # Missing AccessibilityController implementation
 accessibility
+printing

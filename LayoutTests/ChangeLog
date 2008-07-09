@@ -1,5 +1,16 @@
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by aroben.
+
+        * platform/mac/printing: Added.
+        * platform/mac/printing/media-queries-print-expected.txt: Added.
+        * platform/qt/Skipped: skip printing and webarchives
+        * platform/win/Skipped: skip printing tests
+        * printing: Added.
+        * printing/media-queries-print.html: Added.
+
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
         Reviewed by weinig.
 
         Add Content-Type support to DumpRenderTree and run-webkit-tests

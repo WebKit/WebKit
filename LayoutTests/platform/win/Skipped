@@ -407,3 +407,7 @@ http/tests/xmlhttprequest/access-control-basic-not-get-allow.html
 
 # Still need to implement AccessibilityController for DumpRenderTree on Windows
 accessibility
+
+# No support for print-to-pdf in Windows DRT
+printing
+

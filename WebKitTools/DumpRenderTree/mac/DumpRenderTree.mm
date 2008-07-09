@@ -606,6 +606,39 @@ static NSString *dumpFramesAsText(WebFrame *frame)
     return result;
 }
 
+static NSData *dumpFrameAsPDF(WebFrame *frame)
+{
+    if (!frame)
+        return nil;
+
+    // Sadly we have to dump to a file and then read from that file again
+    // +[NSPrintOperation PDFOperationWithView:insideRect:] requires a rect and prints to a single page
+    // likewise +[NSView dataWithPDFInsideRect:] also prints to a single continuous page
+    // The goal of this function is to test "real" printing across multiple pages.
+    // FIXME: It's possible there might be printing SPI to let us print a multi-page PDF to an NSData object
+    NSString *path = @"/tmp/test.pdf";
+
+    NSMutableDictionary *printInfoDict = [NSMutableDictionary dictionaryWithDictionary:[[NSPrintInfo sharedPrintInfo] dictionary]];
+    [printInfoDict setObject:NSPrintSaveJob forKey:NSPrintJobDisposition];
+    [printInfoDict setObject:path forKey:NSPrintSavePath];
+
+    NSPrintInfo *printInfo = [[NSPrintInfo alloc] initWithDictionary:printInfoDict];
+    [printInfo setHorizontalPagination:NSAutoPagination];
+    [printInfo setVerticalPagination:NSAutoPagination];
+    [printInfo setVerticallyCentered:NO];
+
+    NSPrintOperation *printOperation = [NSPrintOperation printOperationWithView:[frame frameView] printInfo:printInfo];
+    [printOperation setShowPanels:NO];
+    [printOperation runOperation];
+
+    [printInfo release];
+
+    NSData *pdfData = [NSData dataWithContentsOfFile:path];
+    [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
+
+    return pdfData;
+}
+
 static void convertMIMEType(NSMutableString *mimeType)
 {
     if ([mimeType isEqualToString:@"application/x-javascript"])
@@ -830,6 +863,9 @@ void dump()
         layoutTestController->setDumpAsText(dumpAsText);
         if (layoutTestController->dumpAsText()) {
             resultString = dumpFramesAsText(mainFrame);
+        } else if (layoutTestController->dumpAsPDF()) {
+            resultData = dumpFrameAsPDF(mainFrame);
+            resultMimeType = @"application/pdf";
         } else if (layoutTestController->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             resultString = serializeWebArchiveToXML(webArchive);
