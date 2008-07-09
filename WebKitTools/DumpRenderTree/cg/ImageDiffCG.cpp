@@ -147,7 +147,7 @@ static void compareImages(CGImageRef actualBitmap, CGImageRef baselineBitmap, un
         RetainPtr<CGImageDestinationRef> imageDest(AdoptCF, CGImageDestinationCreateWithData(imageData.get(), kUTTypePNG, 1, 0));
         CGImageDestinationAddImage(imageDest.get(), image.get(), 0);
         CGImageDestinationFinalize(imageDest.get());
-        printf("Content-length: %lu\n", CFDataGetLength(imageData.get()));
+        printf("Content-Length: %lu\n", CFDataGetLength(imageData.get()));
         fwrite(CFDataGetBytePtr(imageData.get()), 1, CFDataGetLength(imageData.get()), stdout);
         fprintf(stdout, "diff: %01.2f%% failed\n", percentage);
     } else
@@ -183,7 +183,7 @@ int main(int argc, const char* argv[])
         if (newLineCharacter)
             *newLineCharacter = '\0';
 
-        if (!strncmp("Content-length: ", buffer, 16)) {
+        if (!strncmp("Content-Length: ", buffer, 16)) {
             strtok(buffer, " ");
             int imageSize = strtol(strtok(0, " "), 0, 10);
 

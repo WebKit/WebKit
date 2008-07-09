@@ -5,20 +5,21 @@
 	<key>WebMainResource</key>
 	<dict>
 		<key>WebResourceData</key>
-		<data>
-		PD94bWwtc3R5bGVzaGVldCBocmVmPSJyZXNvdXJjZXMvdGVzdC14bWwtc3R5
-		bGVzaGVldC5jc3MiIHR5cGU9InRleHQvY3NzIj8+PGh0bWwgeG1sbnM9Imh0
-		dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiPgogIDxzY3JpcHQ+CiAgICBp
-		ZiAod2luZG93LmxheW91dFRlc3RDb250cm9sbGVyKQogICAgICAgIGxheW91
-		dFRlc3RDb250cm9sbGVyLmR1bXBET01Bc1dlYkFyY2hpdmUoKTsKICA8L3Nj
-		cmlwdD4KICA8c3R5bGU+CiAgICBkaXYgeyBiYWNrZ3JvdW5kOiByZWQ7IHdp
-		ZHRoOiAxMDBweDsgaGVpZ2h0OiAxMDBweDsgfQogIDwvc3R5bGU+CiAgPGRp
-		diBpZD0idGVzdCI+CiAgPC9kaXY+CjwvaHRtbD4=
-		</data>
+		<string>&lt;?xml-stylesheet href="resources/test-xml-stylesheet.css" type="text/css"?&gt;&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+  &lt;script&gt;
+    if (window.layoutTestController)
+        layoutTestController.dumpDOMAsWebArchive();
+  &lt;/script&gt;
+  &lt;style&gt;
+    div { background: red; width: 100px; height: 100px; }
+  &lt;/style&gt;
+  &lt;div id="test"&gt;
+  &lt;/div&gt;
+&lt;/html&gt;</string>
 		<key>WebResourceFrameName</key>
 		<string></string>
 		<key>WebResourceMIMEType</key>
-		<string>application/xml</string>
+		<string>text/xml</string>
 		<key>WebResourceTextEncodingName</key>
 		<string>UTF-8</string>
 		<key>WebResourceURL</key>

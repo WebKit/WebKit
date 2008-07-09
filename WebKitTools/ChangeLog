@@ -1,3 +1,21 @@
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by weinig.
+
+        Add Content-Type support to DumpRenderTree and run-webkit-tests
+        and move expected.txt files to expected.webarchive
+        
+        https://bugs.webkit.org/show_bug.cgi?id=15565
+
+        * DumpRenderTree/cg/ImageDiffCG.cpp:
+        (compareImages):
+        (main):
+        * DumpRenderTree/cg/PixelDumpSupportCG.cpp:
+        (printPNG):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (dump):
+        * Scripts/run-webkit-tests:
+
 2008-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

@@ -823,6 +823,7 @@ void dump()
     if (dumpTree) {
         NSString *resultString = nil;
         NSData *resultData = nil;
+        NSString *resultMimeType = @"text/plain";
 
         bool dumpAsText = layoutTestController->dumpAsText();
         dumpAsText |= [[[mainFrame dataSource] _responseMIMEType] isEqualToString:@"text/plain"];
@@ -832,9 +833,11 @@ void dump()
         } else if (layoutTestController->dumpDOMAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame DOMDocument] webArchive];
             resultString = serializeWebArchiveToXML(webArchive);
+            resultMimeType = @"application/x-webarchive";
         } else if (layoutTestController->dumpSourceAsWebArchive()) {
             WebArchive *webArchive = [[mainFrame dataSource] webArchive];
             resultString = serializeWebArchiveToXML(webArchive);
+            resultMimeType = @"application/x-webarchive";
         } else {
             sizeWebViewForCurrentTest();
             resultString = [mainFrame renderTreeAsExternalRepresentation];
@@ -842,6 +845,8 @@ void dump()
 
         if (resultString && !resultData)
             resultData = [resultString dataUsingEncoding:NSUTF8StringEncoding];
+
+        printf("Content-Type: %s\n", [resultMimeType UTF8String]);
 
         if (resultData) {
             fwrite([resultData bytes], 1, [resultData length], stdout);

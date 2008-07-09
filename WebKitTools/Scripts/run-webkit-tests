@@ -98,6 +98,7 @@ sub epiloguesAndPrologues($$);
 sub parseLeaksandPrintUniqueLeaks();
 sub readFromDumpToolWithTimer(*;$);
 sub setFileHandleNonBlocking(*$);
+sub writeToFile($$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
@@ -478,7 +479,7 @@ $SIG{"PIPE"} = "catch_pipe";
 print "Testing ", scalar @tests, " test cases.\n";
 my $overallStartTime = time;
 
-my %expectedResultDirectory;
+my %expectedResultPaths;
 
 # Reverse the tests
 @tests = reverse @tests if $reverseTests;
@@ -493,6 +494,7 @@ for my $test (@tests) {
     openDumpTool();
 
     my $base = stripExtension($test);
+    my $expectedExtension = ".txt";
     
     my $dir = $base;
     $dir =~ s|/[^/]+$||;
@@ -568,6 +570,9 @@ for my $test (@tests) {
     my $actual = $actualRead->{output};
     my $error = $errorRead->{output};
 
+    $expectedExtension = $actualRead->{extension};
+    my $expectedFileName = "$base-$expectedTag.$expectedExtension";
+
     unless ($actualRead->{status} eq "success" && $errorRead->{status} eq "success") {
         my $crashed = $actualRead->{status} eq "crashed" || $errorRead->{status} eq "crashed";
         testCrashedOrTimedOut($test, $base, $crashed, $actual, $error);
@@ -580,10 +585,10 @@ for my $test (@tests) {
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    my $expectedDir = expectedDirectoryForTest($base, $isText, 0);
-    $expectedResultDirectory{$base} = $expectedDir;
+    my $expectedDir = expectedDirectoryForTest($base, $isText, $expectedExtension);
+    $expectedResultPaths{$base} = "$expectedDir/$expectedFileName";
 
-    if (!$resetResults && open EXPECTED, "<", "$expectedDir/$base-$expectedTag.txt") {
+    if (!$resetResults && open EXPECTED, "<", "$expectedDir/$expectedFileName") {
         $expected = "";
         while (<EXPECTED>) {
             next if $stripEditingCallbacks && $_ =~ /^EDITING DELEGATE:/;
@@ -593,7 +598,7 @@ for my $test (@tests) {
     }
     my $expectedMac;
     if (!isOSX() && $strictTesting && !$isText) {
-      if (!$resetResults && open EXPECTED, "<", "$testDirectory/platform/mac/$base-$expectedTag.txt") {
+      if (!$resetResults && open EXPECTED, "<", "$testDirectory/platform/mac/$expectedFileName") {
         $expectedMac = "";
         while (<EXPECTED>) {
           $expectedMac .= $_;
@@ -612,7 +617,7 @@ for my $test (@tests) {
     my $diffResult = "passed";
     
     if ($pixelTests) {
-        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, 1);
+        my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
 
         my $actualHash = "";
         my $expectedHash = "";
@@ -624,7 +629,7 @@ for my $test (@tests) {
                 $actualHash = $1;
             } elsif (/BaselineHash: ([a-f0-9]{32})/) {
                 $expectedHash = $1;
-            } elsif (/Content-length: (\d+)\s*/) {
+            } elsif (/Content-Length: (\d+)\s*/) {
                 $actualPNGSize = $1;
                 read(IN, $actualPNG, $actualPNGSize);
             }
@@ -636,15 +641,15 @@ for my $test (@tests) {
             open EXPECTEDPNG, "$expectedPixelDir/$base-$expectedTag.png";
             read(EXPECTEDPNG, $expectedPNG, $expectedPNGSize);
 
-            print DIFFOUT "Content-length: $actualPNGSize\n";
+            print DIFFOUT "Content-Length: $actualPNGSize\n";
             print DIFFOUT $actualPNG;
 
-            print DIFFOUT "Content-length: $expectedPNGSize\n";
+            print DIFFOUT "Content-Length: $expectedPNGSize\n";
             print DIFFOUT $expectedPNG;
 
             while (<DIFFIN>) {
                 last if /^error/ || /^diff:/;
-                if (/Content-length: (\d+)\s*/) {
+                if (/Content-Length: (\d+)\s*/) {
                     read(DIFFIN, $diffPNG, $1);
                 }
             }
@@ -658,16 +663,12 @@ for my $test (@tests) {
 
         if ($actualPNGSize && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.png")) {
             mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
-            open EXPECTED, ">", "$expectedPixelDir/$base-expected.png" or die "could not create $expectedPixelDir/$base-expected.png\n";
-            print EXPECTED $actualPNG;
-            close EXPECTED;
+            writeToFile("$expectedPixelDir/$base-$expectedTag.png", $actualPNG);
         }
 
         # update the expected hash if the image diff said that there was no difference
         if ($actualHash ne "" && ($resetResults || !-f "$expectedPixelDir/$base-$expectedTag.checksum")) {
-            open EXPECTED, ">", "$expectedPixelDir/$base-$expectedTag.checksum" or die "could not create $expectedPixelDir/$base-$expectedTag.checksum\n";
-            print EXPECTED $actualHash;
-            close EXPECTED;
+            writeToFile("$expectedPixelDir/$base-$expectedTag.checksum", $actualHash);
         }
     }
 
@@ -708,12 +709,8 @@ for my $test (@tests) {
         $expectedMac =~ s/\s+"\n/"\n/g;
         
         if ($simplified_actual ne $expectedMac) {
-          open ACTUAL, ">", "/tmp/actual.txt" or die;
-          print ACTUAL $simplified_actual;
-          close ACTUAL;
-          open ACTUAL, ">", "/tmp/expected.txt" or die;
-          print ACTUAL $expectedMac;
-          close ACTUAL;
+          writeToFile("/tmp/actual.txt", $simplified_actual);
+          writeToFile("/tmp/expected.txt", $expectedMac);
           system "diff -u \"/tmp/expected.txt\" \"/tmp/actual.txt\" > \"/tmp/simplified.diff\"";
 
           $diffResult = "failed";
@@ -738,9 +735,7 @@ for my $test (@tests) {
 
         if ($generateNewResults || $resetResults) {
             mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
-            open EXPECTED, ">", "$expectedDir/$base-$expectedTag.txt" or die "could not create $expectedDir/$base-$expectedTag.txt\n";
-            print EXPECTED $actual;
-            close EXPECTED;
+            writeToFile("$expectedDir/$expectedFileName", $actual);
         }
         deleteExpectedAndActualResults($base);
         unless ($resetResults) {
@@ -773,10 +768,8 @@ for my $test (@tests) {
             my $expectedResultIsMaximallyPlatformSpecific = $expectedBase =~ m|^\Q$platformTestDirectory\E/|;
             if (!$testIsMaximallyPlatformSpecific && !$expectedResultIsMaximallyPlatformSpecific) {
                 mkpath catfile($platformTestDirectory, dirname($base));
-                my $expectedFile = catfile($platformTestDirectory, "$base-$expectedTag.txt");
-                open EXPECTED, ">", $expectedFile or die "could not create $expectedFile\n";
-                print EXPECTED $actual;
-                close EXPECTED;
+                my $expectedFile = catfile($platformTestDirectory, "$expectedFileName");
+                writeToFile("$expectedFile", $actual);
                 $message .= " (results generated in $platformTestDirectory)";
             }
         }
@@ -794,15 +787,10 @@ for my $test (@tests) {
         if ($pixelTests && $diffPNG && $diffPNG ne "") {
             $imagesPresent{$base} = 1;
 
-            open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.png" or die;
-            print ACTUAL $actualPNG;
-            close ACTUAL;
+            writeToFile("$testResultsDirectory/$base-$actualTag.png", $actualPNG);
+            writeToFile("$testResultsDirectory/$base-$diffsTag.png", $diffPNG);
 
-            open DIFF, ">", "$testResultsDirectory/$base-$diffsTag.png" or die;
-            print DIFF $diffPNG;
-            close DIFF;
-
-            my $expectedPixelDir = expectedDirectoryForTest($base, $isText, 1);
+            my $expectedPixelDir = expectedDirectoryForTest($base, $isText, "png");
             copy("$expectedPixelDir/$base-$expectedTag.png", "$testResultsDirectory/$base-$expectedTag.png");
 
             open DIFFHTML, ">$testResultsDirectory/$base-$diffsTag.html" or die;
@@ -855,9 +843,7 @@ for my $test (@tests) {
         $dir =~ s|/([^/]+)$|| or die "Failed to find test name from base\n";
         mkpath $dir;
         
-        open ERROR_OUT, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
-        print ERROR_OUT $error;
-        close ERROR_OUT;
+        writeToFile("$testResultsDirectory/$base-$errorTag.txt", $error);
         
         $counts{error}++;
         push @{$tests{error}}, $test;
@@ -1063,14 +1049,20 @@ sub countAndPrintLeaks($$$)
             print " + $count leaks ($bytes bytes) were found, details in $leaksFilePath\n";
         }
 
-        open LEAKS, ">", $leaksFilePath or die;
-        print LEAKS $leaksOutput;
-        close LEAKS;
+        writeToFile($leaksFilePath, $leaksOutput);
         
         push( @leaksFilenames, $leaksFilePath );
     }
 
     return $adjustedCount;
+}
+
+sub writeToFile($$)
+{
+    my ($filePath, $contents) = @_;
+    open NEWFILE, ">", "$filePath" or die "could not create $filePath\n";
+    print NEWFILE $contents;
+    close NEWFILE;
 }
 
 # Break up a path into the directory (with slash) and base name.
@@ -1357,21 +1349,15 @@ sub isTextOnlyTest($)
 
 sub expectedDirectoryForTest($;$;$)
 {
-    my ($base, $isText, $isPixelTest) = @_;
+    my ($base, $isText, $expectedExtension) = @_;
 
     my @directories = @platformHierarchy;
     push @directories, map { catdir($platformBaseDirectory, $_) } qw(mac-leopard mac) if isCygwin();
     push @directories, $expectedDirectory;
 
     # If we already have expected results, just return their location.
-    if ($isPixelTest) {
-        foreach my $directory (@directories) {
-            return $directory if (-f "$directory/$base-$expectedTag.png");
-        }
-    } else {
-        foreach my $directory (@directories) {
-            return $directory if (-f "$directory/$base-$expectedTag.txt");
-        }
+    foreach my $directory (@directories) {
+        return $directory if (-f "$directory/$base-$expectedTag.$expectedExtension");
     }
 
     # For platform-specific tests, the results should go right next to the test itself.
@@ -1426,9 +1412,7 @@ sub testCrashedOrTimedOut($$$$$) {
     deleteExpectedAndActualResults($base);
 
     if (defined($error) && length($error)) {
-        open CRASH, ">", "$testResultsDirectory/$base-$errorTag.txt" or die;
-        print CRASH $error;
-        close CRASH;
+        writeToFile("$testResultsDirectory/$base-$errorTag.txt", $error);
     }
 
     recordActualResultsAndDiff($base, $actual);
@@ -1552,9 +1536,12 @@ sub linksForExpectedAndActualResults($)
     my @links = ();
 
     return \@links unless -s "$testResultsDirectory/$base-$diffsTag.txt";
+    
+    my $expectedResultPath = $expectedResultPaths{$base};
+    my ($expectedResultFileName, $expectedResultsDirectory, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
 
-    push @links, { href => "$base-$expectedTag.txt", text => "expected" };
-    push @links, { href => "$base-$actualTag.txt", text => "actual" };
+    push @links, { href => "$base-$expectedTag$expectedResultExtension", text => "expected" };
+    push @links, { href => "$base-$actualTag$expectedResultExtension", text => "actual" };
     push @links, { href => "$base-$diffsTag.txt", text => "diffs" };
 
     return \@links;
@@ -1599,11 +1586,12 @@ sub linksForNewTest
     my @links = ();
 
     my $base = stripExtension($test);
-    my $expectedDir = $expectedResultDirectory{$base};
+    my $expectedResultPath = $expectedResultPaths{$base};
+    my $expectedResultPathMinusExtension = stripExtension($expectedResultPath);
 
-    push @links, { href => toURL("$expectedDir/$base-$expectedTag.txt"), text => "results" };
-    if ($pixelTests && -f "$expectedDir/$base-$expectedTag.png") {
-        push @links, { href => toURL("$expectedDir/$base-$expectedTag.png"), text => "image" };
+    push @links, { href => toURL($expectedResultPath), text => "results" };
+    if ($pixelTests && -f "$expectedResultPathMinusExtension.png") {
+        push @links, { href => toURL("$expectedResultPathMinusExtension.png"), text => "image" };
     }
 
     return \@links;
@@ -1620,18 +1608,19 @@ sub deleteExpectedAndActualResults($)
 
 sub recordActualResultsAndDiff($$)
 {
-    my ($base, $actual) = @_;
+    my ($base, $actualResults) = @_;
 
-    return unless defined($actual) && length($actual);
+    return unless defined($actualResults) && length($actualResults);
+    
+    my $expectedResultPath = $expectedResultPaths{$base};
+    my ($expectedResultFileNameMinusExtension, $expectedResultDirectoryPath, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
+    my $expectedResultFileName = "$expectedResultFileNameMinusExtension$expectedResultExtension";
 
-    open ACTUAL, ">", "$testResultsDirectory/$base-$actualTag.txt" or die "Couldn't open actual results file for $base";
-    print ACTUAL $actual;
-    close ACTUAL;
+    my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
+    writeToFile("$actualResultsPath", $actualResults);
+    copy("$expectedResultPath", "$testResultsDirectory/$expectedResultFileName");
 
-    my $expectedDir = $expectedResultDirectory{$base};
-    copy("$expectedDir/$base-$expectedTag.txt", "$testResultsDirectory/$base-$expectedTag.txt");
-
-    system "diff -u \"$testResultsDirectory/$base-$expectedTag.txt\" \"$testResultsDirectory/$base-$actualTag.txt\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+    system "diff -u \"$testResultsDirectory/$expectedResultFileName\" \"$actualResultsPath\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 }
 
 sub buildPlatformHierarchy()
@@ -1707,6 +1696,18 @@ sub parseLeaksandPrintUniqueLeaks() {
     
 }
 
+sub extensionForMimeType($)
+{
+    my ($mimeType) = @_;
+
+    if ($mimeType eq "application/x-webarchive") {
+        return "webarchive";
+    } elsif ($mimeType eq "application/pdf") {
+        return "pdf";
+    }
+    return "txt";
+}
+
 sub readFromDumpToolWithTimer(*;$)
 {
     my ($fh, $dontWaitForTimeOut) = @_;
@@ -1721,6 +1722,10 @@ sub readFromDumpToolWithTimer(*;$)
 
     my @output = ();
     my $status = "success";
+    my $mimeType = "text/plain";
+    # We don't have a very good way to know when the "headers" stop
+    # and the content starts, so we use this as a hack:
+    my $haveSeenContentType = 0;
 
     while (1) {
         if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
@@ -1744,14 +1749,25 @@ sub readFromDumpToolWithTimer(*;$)
             next;
         }
 
-        last if $line =~ /#EOF/;
-
-        push @output, $line;
         $timeOfLastSuccessfulRead = time;
+        
+        if (!$haveSeenContentType && $line =~ /^Content-Type: (\S+)$/) {
+            $mimeType = $1;
+            $haveSeenContentType = 1;
+            next;
+        }
+        last  if ($line =~ /#EOF/);
+        
+        push @output, $line;
     }
 
     setFileHandleNonBlocking($fh, 0);
-    return { output => join("", @output), status => $status };
+    return {
+        output => join("", @output),
+        status => $status,
+        mimeType => $mimeType,
+        extension => extensionForMimeType($mimeType)
+    };
 }
 
 sub setFileHandleNonBlocking(*$)
