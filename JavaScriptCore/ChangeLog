@@ -1,5 +1,12 @@
 2008-07-09  Kevin McCullough  <kmccullough@apple.com>
 
+        - Build fix.
+
+        * profiler/HeavyProfile.cpp:
+        (KJS::HeavyProfile::mergeProfiles):
+
+2008-07-09  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Geoff and Adam.
 
         <rdar://problem/5951532> JSProfiler: Implement Bottom-Up view (19228)
