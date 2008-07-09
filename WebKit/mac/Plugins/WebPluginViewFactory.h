@@ -59,6 +59,15 @@ extern NSString *WebPlugInContainerKey;
 extern NSString *WebPlugInContainingElementKey;
 
 /*!
+ @constant WebPlugInShouldLoadMainResourceKey REQUIRED. NSNumber (BOOL) indicating whether the plug-in should load its
+ own main resource (the "src" URL, in most cases). If YES, the plug-in should load its own main resource. If NO, the
+ plug-in should use the data provided by WebKit. See -webPlugInMainResourceReceivedData: in WebPluginPrivate.h.
+ For compatibility with older versions of WebKit, the plug-in should assume that the value for
+ WebPlugInShouldLoadMainResourceKey is NO if it is absent from the arguments dictionary.
+ */
+extern NSString *WebPlugInShouldLoadMainResourceKey;
+
+/*!
     @protocol WebPlugInViewFactory
     @discussion WebPlugInViewFactory are used to create the NSView for a plug-in.
     The principal class of the plug-in bundle must implement this protocol.

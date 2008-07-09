@@ -1,3 +1,14 @@
+2008-07-09  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Make some WebPlugin and WebPluginFactory SPI public.
+        
+        * Plugins/WebPlugin.h:
+        * Plugins/WebPluginPrivate.h:
+        * Plugins/WebPluginViewFactory.h:
+        * Plugins/WebPluginViewFactoryPrivate.h:
+
 2008-07-08  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Reviewed by Anders.

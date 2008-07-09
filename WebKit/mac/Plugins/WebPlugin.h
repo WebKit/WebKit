@@ -92,4 +92,40 @@
 */
 - (id)objectForWebScript;
 
+/*!
+    @method webPlugInMainResourceDidReceiveResponse:
+    @abstract Called on the plug-in when WebKit receives -connection:didReceiveResponse:
+    for the plug-in's main resource.
+    @discussion This method is only sent to the plug-in if the
+    WebPlugInShouldLoadMainResourceKey argument passed to the plug-in was NO.
+*/
+- (void)webPlugInMainResourceDidReceiveResponse:(NSURLResponse *)response;
+
+/*!
+    @method webPlugInMainResourceDidReceiveData:
+    @abstract Called on the plug-in when WebKit recieves -connection:didReceiveData:
+    for the plug-in's main resource.
+    @discussion This method is only sent to the plug-in if the
+    WebPlugInShouldLoadMainResourceKey argument passed to the plug-in was NO.
+*/
+- (void)webPlugInMainResourceDidReceiveData:(NSData *)data;
+
+/*!
+    @method webPlugInMainResourceDidFailWithError:
+    @abstract Called on the plug-in when WebKit receives -connection:didFailWithError:
+    for the plug-in's main resource.
+    @discussion This method is only sent to the plug-in if the
+    WebPlugInShouldLoadMainResourceKey argument passed to the plug-in was NO.
+*/
+- (void)webPlugInMainResourceDidFailWithError:(NSError *)error;
+
+/*!
+    @method webPlugInMainResourceDidFinishLoading
+    @abstract Called on the plug-in when WebKit receives -connectionDidFinishLoading:
+    for the plug-in's main resource.
+    @discussion This method is only sent to the plug-in if the
+    WebPlugInShouldLoadMainResourceKey argument passed to the plug-in was NO.
+*/
+- (void)webPlugInMainResourceDidFinishLoading;
+
 @end
