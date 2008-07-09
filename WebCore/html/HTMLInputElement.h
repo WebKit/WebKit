@@ -78,6 +78,8 @@ public:
     
     bool readOnly() const { return isReadOnlyControl(); }
 
+    virtual bool isTextControl() const { return isTextField(); }
+
     bool isTextButton() const { return m_type == SUBMIT || m_type == RESET || m_type == BUTTON; }
     virtual bool isRadioButton() const { return m_type == RADIO; }
     bool isTextField() const { return m_type == TEXT || m_type == PASSWORD || m_type == SEARCH || m_type == ISINDEX; }

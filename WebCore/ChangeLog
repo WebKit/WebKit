@@ -1,3 +1,15 @@
+2008-07-09  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele.
+
+        Added the virtual function Node::isTextControl() in order to simplify text field and textarea checks.
+
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        Clean up in PseudoReadOnly and PseudoReadWrite cases removing unnecessary checks and casts in favor of the sole isTextControl() check.
+        * dom/Node.h: Added base isTextControl().
+        * html/HTMLInputElement.h: Added isTextControl() which wraps HTMLInputElement::isTextField().
+        * html/HTMLTextAreaElement.h: Added isTextControl().
+
 2008-07-09  Rob Buis  <buis@kde.org>
 
         Reviewed by Eric.

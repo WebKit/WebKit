@@ -50,6 +50,8 @@ public:
 
     bool readOnly() const { return isReadOnlyControl(); }
 
+    virtual bool isTextControl() const { return true; }
+
     int selectionStart();
     int selectionEnd();
 
