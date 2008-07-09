@@ -69,6 +69,21 @@ ProfileNode::ProfileNode(const CallIdentifier& callIdentifier, ProfileNode* head
     startTimer();
 }
 
+ProfileNode::ProfileNode(ProfileNode* headNode, ProfileNode* nodeToCopy)
+    : m_callIdentifier(nodeToCopy->callIdentifier())
+    , m_head(headNode)
+    , m_parent(nodeToCopy->parent())
+    , m_nextSibling(0)
+    , m_startTime(0.0)          // FIXME: For now we don't calculate time correctly for a HeavyProfile so just
+    , m_actualTotalTime(0.0)    // zero it out.  When we are ready to do this correctly, get the time from the
+    , m_visibleTotalTime(0.0)   // nodeToCopy.
+    , m_actualSelfTime(0.0)
+    , m_visibleSelfTime(0.0)
+    , m_numberOfCalls(0)
+    , m_visible(nodeToCopy->visible())
+{
+}
+
 ProfileNode* ProfileNode::willExecute(const CallIdentifier& callIdentifier)
 {
     for (StackIterator currentChild = m_children.begin(); currentChild != m_children.end(); ++currentChild) {
@@ -102,6 +117,9 @@ void ProfileNode::addChild(PassRefPtr<ProfileNode> prpChild)
 
 ProfileNode* ProfileNode::findChild(ProfileNode* node) const
 {
+    if (!node)
+        return 0;
+
     for (size_t i = 0; i < m_children.size(); ++i) {
         if (*node == m_children[i].get())
             return m_children[i].get();

@@ -1,3 +1,52 @@
+2008-07-09  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Adam.
+
+        <rdar://problem/5951532> JSProfiler: Implement Bottom-Up view (19228)
+        - This is the plumbing for bottom-up, but does not include calculating
+        time, mostly because I'm still undclear about what the end result should
+        look like.
+        - This, obviously, does not include the UI to expose this in the
+        inspector yet.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * profiler/CallIdentifier.h:
+        (KJS::CallIdentifier::CallIdentifier):
+        (WTF::): Added HashTraits for CallIdentifiers to be used by a HashMap.
+        * profiler/HeavyProfile.cpp: Added.
+        (KJS::HeavyProfile::HeavyProfile):
+        (KJS::HeavyProfile::generateHeavyStructure):
+        (KJS::HeavyProfile::addNode):
+        (KJS::HeavyProfile::mergeProfiles):
+        (KJS::HeavyProfile::addAncestorsAsChildren):
+        * profiler/HeavyProfile.h: Added.
+        (KJS::HeavyProfile::create):
+        (KJS::HeavyProfile::heavyProfile):
+        (KJS::HeavyProfile::treeProfile):
+        * profiler/Profile.cpp: Removed old commented out includes.
+        * profiler/Profile.h: The m_head is needed by the HeavyProfile so it
+        is now protected as opposed to private.
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::ProfileNode): Created a constructor to copy
+        ProfileNodes.
+        (KJS::ProfileNode::findChild): Added a null check to make HeavyProfile
+        children finding easier and avoid a potential crasher.
+        * profiler/ProfileNode.h: Mostly moved things around but also added some
+        functionality needed by HeavyProfile.
+        (KJS::ProfileNode::create):
+        (KJS::ProfileNode::functionName):
+        (KJS::ProfileNode::url):
+        (KJS::ProfileNode::lineNumber):
+        (KJS::ProfileNode::head):
+        (KJS::ProfileNode::setHead):
+        (KJS::ProfileNode::setNextSibling):
+        (KJS::ProfileNode::actualTotalTime):
+        (KJS::ProfileNode::actualSelfTime):
+        * profiler/TreeProfile.cpp: Implemented the ability to get a
+        HeavyProfile.
+        (KJS::TreeProfile::heavyProfile):
+        * profiler/TreeProfile.h:
+
 2008-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

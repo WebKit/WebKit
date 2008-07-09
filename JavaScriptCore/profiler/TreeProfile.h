@@ -31,6 +31,7 @@
 namespace KJS {
 
     class ExecState;
+    class HeavyProfile;
     class ProfilerClient;
     class UString;
 
@@ -43,6 +44,7 @@ namespace KJS {
 
     private:
         TreeProfile(const UString& title);
+        RefPtr<HeavyProfile> m_heavyProfile;
     };
 
 } // namespace KJS

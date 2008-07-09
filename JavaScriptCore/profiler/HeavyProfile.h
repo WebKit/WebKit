@@ -22,30 +22,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#ifndef HeavyProfile_h
+#define HeavyProfile_h
 
-#include "config.h"
+#include "Profile.h"
+#include "ProfileNode.h"
 #include "TreeProfile.h"
-
-#include "HeavyProfile.h"
 
 namespace KJS {
 
-PassRefPtr<TreeProfile> TreeProfile::create(const UString& title)
-{
-    return adoptRef(new TreeProfile(title));
-}
+    class ExecState;
+    class ProfilerClient;
+    class UString;
 
-TreeProfile::TreeProfile(const UString& title)
-    : Profile(title)
-{
-}
+    class HeavyProfile : public Profile {
+    public:
+        static PassRefPtr<HeavyProfile> create(TreeProfile* treeProfile)
+        {
+            return adoptRef(new HeavyProfile(treeProfile));
+        }
 
-Profile* TreeProfile::heavyProfile()
-{
-    if (!m_heavyProfile)
-        m_heavyProfile = HeavyProfile::create(this);
+        virtual Profile* heavyProfile() { return this; }
+        virtual Profile* treeProfile()
+        {
+            return m_treeProfile;
+        }
 
-    return m_heavyProfile.get();
-}
+
+    private:
+        HeavyProfile(TreeProfile*);
+        void generateHeavyStructure();
+        ProfileNode* addNode(ProfileNode*);
+        void mergeProfiles(ProfileNode* heavyProfileHead, ProfileNode* treeProfileHead);
+        void addAncestorsAsChildren(ProfileNode* getFrom, ProfileNode* addTo);
+
+        TreeProfile* m_treeProfile;
+    };
 
 } // namespace KJS
+
+#endif // HeavyProfile_h

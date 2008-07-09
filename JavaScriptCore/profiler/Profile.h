@@ -70,12 +70,13 @@ namespace KJS {
     protected:
         Profile(const UString& title);
 
+        RefPtr<ProfileNode> m_head;
+
     private:
         void removeProfileStart();
         void removeProfileEnd();
 
         UString m_title;
-        RefPtr<ProfileNode> m_head;
     };
 
 } // namespace KJS

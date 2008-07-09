@@ -47,6 +47,10 @@ namespace KJS {
         {
             return adoptRef(new ProfileNode(callIdentifier, headNode, parentNode));
         }
+        static PassRefPtr<ProfileNode> create(ProfileNode* headNode, ProfileNode* node)
+        {
+            return adoptRef(new ProfileNode(headNode, node));
+        }
 
         bool operator==(ProfileNode* node) { return m_callIdentifier == node->callIdentifier(); }
 
@@ -57,22 +61,28 @@ namespace KJS {
 
         // CallIdentifier members
         const CallIdentifier& callIdentifier() const { return m_callIdentifier; }
+        const UString& functionName() const { return m_callIdentifier.m_name; }
+        const UString& url() const { return m_callIdentifier.m_url; }
+        unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }
+
+        // Relationships
+        ProfileNode* head() const { return m_head; }
+        void setHead(ProfileNode* head) { m_head = head; }
         ProfileNode* parent() const { return m_parent; }
         void setParent(ProfileNode* parent) { m_parent = parent; }
         ProfileNode* nextSibling() const { return m_nextSibling; }
         void setNextSibling(ProfileNode* nextSibling) { m_nextSibling = nextSibling; }
-        UString functionName() const { return m_callIdentifier.m_name; }
-        UString url() const { return m_callIdentifier.m_url; }
-        unsigned lineNumber() const { return m_callIdentifier.m_lineNumber; }
 
         // Time members
         double startTime() const { return m_startTime; }
         void setStartTime(double startTime) { m_startTime = startTime; }
         double totalTime() const { return m_visibleTotalTime; }
+        double actualTotalTime() const { return m_actualTotalTime; }
         void setTotalTime(double time) { m_actualTotalTime = time; m_visibleTotalTime = time; }
         void setActualTotalTime(double time) { m_actualTotalTime = time; }
         void setVisibleTotalTime(double time) { m_visibleTotalTime = time; }
         double selfTime() const { return m_visibleSelfTime; }
+        double actualSelfTime() const { return m_actualSelfTime; }
         void setSelfTime(double time) {m_actualSelfTime = time; m_visibleSelfTime = time; }
         void setActualSelfTime(double time) { m_actualSelfTime = time; }
         void setVisibleSelfTime(double time) { m_visibleSelfTime = time; }
@@ -128,6 +138,7 @@ namespace KJS {
 
     private:
         ProfileNode(const CallIdentifier&, ProfileNode* headNode, ProfileNode* parentNode);
+        ProfileNode(ProfileNode* headNode, ProfileNode* nodeToCopy);
 
         void startTimer();
         void resetChildrensSiblings();

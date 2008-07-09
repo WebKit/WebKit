@@ -26,9 +26,6 @@
 #include "config.h"
 #include "Profile.h"
 
-//#include "ExecState.h"
-//#include "JSFunction.h"
-//#include "JSGlobalObject.h"
 #include "ProfileNode.h"
 #include "TreeProfile.h"
 #include <stdio.h>

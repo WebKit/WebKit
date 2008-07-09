@@ -50,6 +50,13 @@ namespace KJS {
         {
         }
 
+        CallIdentifier()
+            : m_name("")
+            , m_url("")
+            , m_lineNumber(0)
+        {
+        }
+
         inline bool operator==(const CallIdentifier& ci) const { return ci.m_lineNumber == m_lineNumber && ci.m_name == m_name && ci.m_url == m_url; }
         inline bool operator!=(const CallIdentifier& ci) const { return !(*this == ci); }
 
@@ -61,4 +68,31 @@ namespace KJS {
 
 } // namespace KJS
 
-#endif // CallIdentifier_h
+namespace WTF {
+    template<> struct IntHash<KJS::CallIdentifier> {
+        static unsigned hash(const KJS::CallIdentifier& key)
+        {
+            unsigned hashCodes[3] = {
+                key.m_name.rep()->hash(),
+                key.m_url.rep()->hash(),
+                key.m_lineNumber
+            };
+            return KJS::UString::Rep::computeHash(reinterpret_cast<UChar*>(hashCodes), sizeof(hashCodes) / sizeof(UChar));
+        }
+
+        static bool equal(const KJS::CallIdentifier& a, const KJS::CallIdentifier& b) { return a == b; }
+        static const bool safeToCompareToEmptyOrDeleted = true;
+    };
+    template<> struct DefaultHash<KJS::CallIdentifier> { typedef IntHash<KJS::CallIdentifier> Hash; };
+
+    template<> struct HashTraits<KJS::CallIdentifier> : GenericHashTraits<KJS::CallIdentifier> {
+        static const bool emptyValueIsZero = false;
+        static KJS::CallIdentifier emptyValue() { return KJS::CallIdentifier(KJS::UString(), KJS::UString(), 0); }
+        static const bool needsDestruction = false;
+        static void constructDeletedValue(KJS::CallIdentifier& slot) { new (&slot) KJS::CallIdentifier(KJS::UString(), KJS::UString(), 0); }
+        static bool isDeletedValue(const KJS::CallIdentifier& value) { return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == 0; }
+    };
+} // namespace WTF
+
+#endif  // CallIdentifier_h
+
