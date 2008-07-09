@@ -29,11 +29,9 @@
 #include "config.h"
 #include "CachedXSLStyleSheet.h"
 
-#include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "TextResourceDecoder.h"
-#include "loader.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

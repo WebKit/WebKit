@@ -27,7 +27,6 @@
 #include "XSLTProcessor.h"
 
 #include "CString.h"
-#include "Cache.h"
 #include "Console.h"
 #include "DOMImplementation.h"
 #include "DOMWindow.h"

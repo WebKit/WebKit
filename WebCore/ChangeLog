@@ -1,3 +1,18 @@
+2008-07-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - remove unused #includes
+
+        * dom/XMLTokenizer.cpp:
+        * html/PreloadScanner.cpp:
+        * loader/CachedCSSStyleSheet.cpp:
+        * loader/CachedScript.cpp:
+        * loader/CachedXBLDocument.cpp:
+        * loader/CachedXSLStyleSheet.cpp:
+        * page/mac/FrameMac.mm:
+        * xml/XSLTProcessor.cpp:
+
 2008-07-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -26,7 +26,6 @@
 
 #include "CDATASection.h"
 #include "CString.h"
-#include "Cache.h"
 #include "CachedScript.h"
 #include "Comment.h"
 #include "DocLoader.h"

@@ -29,10 +29,8 @@
 #include "config.h"
 #include "CachedScript.h"
 
-#include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
-#include "loader.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

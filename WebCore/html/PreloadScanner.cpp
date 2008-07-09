@@ -27,7 +27,6 @@
 #include "PreloadScanner.h"
 
 #include "AtomicString.h"
-#include "Cache.h"
 #include "CachedCSSStyleSheet.h"
 #include "CachedImage.h"
 #include "CachedResource.h"

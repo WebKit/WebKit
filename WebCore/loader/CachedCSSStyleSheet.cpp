@@ -27,7 +27,6 @@
 #include "config.h"
 #include "CachedCSSStyleSheet.h"
 
-#include "Cache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "TextResourceDecoder.h"

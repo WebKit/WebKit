@@ -32,10 +32,8 @@
 
 #include "CachedXBLDocument.h"
 
-#include "Cache.h"
 #include "CachedResourceClientWalker.h"
 #include "TextResourceDecoder.h"
-#include "loader.h"
 #include <wtf/Vector.h>
 
 namespace WebCore {

@@ -32,7 +32,6 @@
 #import "BeforeUnloadEvent.h"
 #import "BlockExceptions.h"
 #import "CSSHelper.h"
-#import "Cache.h"
 #import "Chrome.h"
 #import "ClipboardEvent.h"
 #import "ClipboardMac.h"
