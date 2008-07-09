@@ -2055,9 +2055,9 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     return !e->isEnabled();                    
                 break;
             case CSSSelector::PseudoReadOnly:
-                return e & e->isTextControl() && e->isReadOnlyControl();
+                return e && e->isTextControl() && e->isReadOnlyControl();
             case CSSSelector::PseudoReadWrite:
-                return e & e->isTextControl() && !e->isReadOnlyControl();
+                return e && e->isTextControl() && !e->isReadOnlyControl();
             case CSSSelector::PseudoChecked:
                 // Even though WinIE allows checked and indeterminate to co-exist, the CSS selector spec says that
                 // you can't be both checked and indeterminate.  We will behave like WinIE behind the scenes and just
