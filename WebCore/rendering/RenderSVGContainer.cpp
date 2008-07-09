@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2004, 2005, 2007 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2007 Rob Buis <buis@kde.org>
+                  2004, 2005, 2007, 2008 Rob Buis <buis@kde.org>
                   2007 Eric Seidel <eric@webkit.org>
 
     This file is part of the KDE project
@@ -315,8 +315,7 @@ bool RenderSVGContainer::selfWillPaint() const
 {
 #if ENABLE(SVG_FILTERS)
     const SVGRenderStyle* svgStyle = style()->svgStyle();
-    AtomicString filterId(SVGURIReference::getTarget(svgStyle->filter()));
-    SVGResourceFilter* filter = getFilterById(document(), filterId);
+    SVGResourceFilter* filter = getFilterById(document(), svgStyle->filter());
     if (filter)
         return true;
 #endif
@@ -373,7 +372,7 @@ IntRect RenderSVGContainer::absoluteClippedOverflowRect()
 
 #if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
+    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 #endif

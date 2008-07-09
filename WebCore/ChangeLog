@@ -1,3 +1,31 @@
+2008-07-09  Rob Buis  <buis@kde.org>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=15431
+        SVGRenderStyle should store pre-modified resource URIs
+
+        Store pre-modified resource URIs to decrease string
+        operations during layout/rendering.
+
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * rendering/RenderPath.cpp:
+        (WebCore::RenderPath::absoluteClippedOverflowRect):
+        (WebCore::RenderPath::drawMarkersIfNeeded):
+        * rendering/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::selfWillPaint):
+        (WebCore::RenderSVGContainer::absoluteClippedOverflowRect):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::calculateAbsoluteBounds):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+        (WebCore::RenderSVGRoot::absoluteClippedOverflowRect):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteClippedOverflowRect):
+        * rendering/SVGRenderSupport.cpp:
+        (WebCore::prepareToRenderSVGContent):
+
 2008-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.

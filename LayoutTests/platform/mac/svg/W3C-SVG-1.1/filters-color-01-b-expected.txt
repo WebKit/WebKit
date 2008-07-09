@@ -17,19 +17,19 @@ layer at (0,0) size 480x360
           RenderSVGText {text} at (20,95) size 196x48 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-40) size 196x48
               chunk 1 text run 1 at (20.00,95.00) startOffset 0 endOffset 10 width 196.00: "Unfiltered"
-          RenderPath {rect} at (19.60,74.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Matrix] [data="M20.00,120.00 L780.00,120.00 L780.00,160.00 L20.00,160.00"]
+          RenderPath {rect} at (19.60,74.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=Matrix] [data="M20.00,120.00 L780.00,120.00 L780.00,160.00 L20.00,160.00"]
           RenderSVGText {text} at (20,195) size 675x48 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-40) size 675x48
               chunk 1 text run 1 at (20.00,195.00) startOffset 0 endOffset 32 width 675.00: "type=\"matrix\" (grayscale matrix)"
-          RenderPath {rect} at (19.60,132.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#Saturate40] [data="M20.00,220.00 L780.00,220.00 L780.00,260.00 L20.00,260.00"]
+          RenderPath {rect} at (19.60,132.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=Saturate40] [data="M20.00,220.00 L780.00,220.00 L780.00,260.00 L20.00,260.00"]
           RenderSVGText {text} at (20,295) size 577x48 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-40) size 577x48
               chunk 1 text run 1 at (20.00,295.00) startOffset 0 endOffset 27 width 577.00: "type=\"saturate\" values=\".4\""
-          RenderPath {rect} at (19.60,190.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#HueRotate90] [data="M20.00,320.00 L780.00,320.00 L780.00,360.00 L20.00,360.00"]
+          RenderPath {rect} at (19.60,190.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=HueRotate90] [data="M20.00,320.00 L780.00,320.00 L780.00,360.00 L20.00,360.00"]
           RenderSVGText {text} at (20,395) size 626x48 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-40) size 626x48
               chunk 1 text run 1 at (20.00,395.00) startOffset 0 endOffset 28 width 626.00: "type=\"hueRotate\" values=\"90\""
-          RenderPath {rect} at (19.60,248.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=#LuminanceToAlpha] [data="M20.00,420.00 L780.00,420.00 L780.00,460.00 L20.00,460.00"]
+          RenderPath {rect} at (19.60,248.60) size 440.80x23.20 [fill={[type=LINEAR-GRADIENT] [stops=[(0.00,#DD00DD), (0.33,#22CC22), (0.67,#400000), (1.00,#A0A0FF)]] [bounding box mode=0] [start=(20,0)] [end=(760,0)]}] [filter=LuminanceToAlpha] [data="M20.00,420.00 L780.00,420.00 L780.00,460.00 L20.00,460.00"]
           RenderSVGText {text} at (20,495) size 524x48 contains 1 chunk(s)
             RenderSVGInlineText {#text} at (0,-40) size 524x48
               chunk 1 text run 1 at (20.00,495.00) startOffset 0 endOffset 23 width 524.00: "type=\"luminanceToAlpha\""

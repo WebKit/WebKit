@@ -5,6 +5,7 @@
  *               2006 Alexander Kellett <lypanov@kde.org>
  *               2006 Oliver Hunt <ojh16@student.canterbury.ac.nz>
  *               2007 Nikolas Zimmermann <zimmermann@kde.org>
+ *               2008 Rob Buis <buis@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,7 +54,7 @@ IntRect RenderSVGText::absoluteClippedOverflowRect()
 
 #if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
+    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
     if (filter)
         repaintRect.unite(filter->filterBBoxForItemBBox(repaintRect));
 #endif

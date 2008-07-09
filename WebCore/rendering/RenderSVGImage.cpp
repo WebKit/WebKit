@@ -2,7 +2,7 @@
     Copyright (C) 2006 Alexander Kellett <lypanov@kde.org>
     Copyright (C) 2006 Apple Computer, Inc.
     Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
-    Copyright (C) 2007 Rob Buis <buis@kde.org>
+    Copyright (C) 2007, 2008 Rob Buis <buis@kde.org>
 
     This file is part of the WebKit project
 
@@ -241,7 +241,7 @@ void RenderSVGImage::calculateAbsoluteBounds()
 
 #if ENABLE(SVG_FILTERS)
     // Filters can expand the bounding box
-    SVGResourceFilter* filter = getFilterById(document(), SVGURIReference::getTarget(style()->svgStyle()->filter()));
+    SVGResourceFilter* filter = getFilterById(document(), style()->svgStyle()->filter());
     if (filter)
         absoluteRect.unite(filter->filterBBoxForItemBBox(absoluteRect));
 #endif
