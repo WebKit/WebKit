@@ -176,20 +176,29 @@ void ScriptInterpreter::forgetAllDOMNodesForDocument(Document* document)
 
 void ScriptInterpreter::markDOMNodesForDocument(Document* doc)
 {
+    // If a node's JS wrapper holds custom properties, those properties must
+    // persist every time the node is fetched from the DOM. So, we keep JS
+    // wrappers like that from being garbage collected.
+
     JSWrapperCache& nodeDict = doc->wrapperCache();
     JSWrapperCache::iterator nodeEnd = nodeDict.end();
     for (JSWrapperCache::iterator nodeIt = nodeDict.begin(); nodeIt != nodeEnd; ++nodeIt) {
         JSNode* jsNode = nodeIt->second;
         WebCore::Node* node = jsNode->impl();
-        
-        // don't mark wrappers for nodes that are no longer in the
-        // document - they should not be saved if the node is not
-        // otherwise reachable from JS.
-        // However, image elements that aren't in the document are also
-        // marked, if they are not done loading yet.
-        if (!jsNode->marked() && (node->inDocument() || (node->hasTagName(imgTag) &&
-                                                         !static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())))
-            jsNode->mark();
+
+        if (jsNode->marked())
+            continue;
+
+        // No need to preserve a wrapper that has no custom properties or is no
+        // longer fetchable through the DOM.
+        if (!jsNode->hasCustomProperties() || !node->inDocument())
+            //... unless the wrapper wraps a loading image, since the "new Image"
+            // syntax allows an orphan image wrapper to be the last reference
+            // to a loading image, whose load event might have important side-effects.
+            if (!node->hasTagName(imgTag) || static_cast<HTMLImageElement*>(node)->haveFiredLoadEvent())
+                continue;
+
+        jsNode->mark();
     }
 }
 

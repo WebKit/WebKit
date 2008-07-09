@@ -37,6 +37,7 @@ namespace KJS {
         ~PropertyMap();
 
         void clear();
+        bool isEmpty() { return !m_usingTable & !m_singleEntryKey; }
 
         void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly = false);
         void remove(const Identifier& propertyName);

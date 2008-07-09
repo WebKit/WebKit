@@ -1,3 +1,10 @@
+2008-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Added support for checking if an object has custom properties in its
+        property map. WebCore uses this to optimize marking DOM wrappers.
+
 2008-07-08  Simon Hausmann  <hausmann@webkit.org>
 
         Prospective Gtk/Wx build fixes, add ProfileGenerator.cpp to the build.

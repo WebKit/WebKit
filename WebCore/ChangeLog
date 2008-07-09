@@ -1,3 +1,16 @@
+2008-07-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Only artificially mark JS DOM wrappers if they have custom properties.
+        
+        21X speedup on http://nerget.com/jstests/dom-mandelbrot.html.
+        
+        No, that is not a typo.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::ScriptInterpreter::markDOMNodesForDocument):
+
 2008-07-08  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.
