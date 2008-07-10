@@ -249,7 +249,7 @@ void RenderImage::imageChanged(WrappedImagePtr newImage)
     if (documentBeingDestroyed())
         return;
 
-    if (hasBoxDecorations())
+    if (hasBoxDecorations() || hasMask())
         RenderReplaced::imageChanged(newImage);
     
     if (newImage != imagePtr() || !newImage)

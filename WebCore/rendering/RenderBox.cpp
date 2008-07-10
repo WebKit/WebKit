@@ -538,52 +538,66 @@ IntSize RenderBox::calculateBackgroundSize(const FillLayer* bgLayer, int scaledW
 
 void RenderBox::imageChanged(WrappedImagePtr image)
 {
-    if (isInlineFlow() || style()->borderImage().image() && style()->borderImage().image()->data() == image ||
+    if (isInlineFlow() ||
+        style()->borderImage().image() && style()->borderImage().image()->data() == image ||
         style()->maskBoxImage().image() && style()->maskBoxImage().image()->data() == image) {
         repaint();
         return;
     }
 
-    bool didFullRepaint = false;
-    IntRect absoluteRect;
-    RenderBox* backgroundRenderer;
-
-    if (isRoot() || (isBody() && document()->isHTMLDocument() && !document()->documentElement()->renderer()->style()->hasBackground())) {
-        // Our background propagates to the root.
-        backgroundRenderer = view();
-
-        int rw;
-        int rh;
-
-        if (FrameView* frameView = static_cast<RenderView*>(backgroundRenderer)->frameView()) {
-            rw = frameView->contentsWidth();
-            rh = frameView->contentsHeight();
-        } else {
-            rw = backgroundRenderer->width();
-            rh = backgroundRenderer->height();
-        }
-        absoluteRect = IntRect(-backgroundRenderer->marginLeft(),
-            -backgroundRenderer->marginTop(),
-            max(backgroundRenderer->width() + backgroundRenderer->marginLeft() + backgroundRenderer->marginRight() + backgroundRenderer->borderLeft() + backgroundRenderer->borderRight(), rw),
-            max(backgroundRenderer->height() + backgroundRenderer->marginTop() + backgroundRenderer->marginBottom() + backgroundRenderer->borderTop() + backgroundRenderer->borderBottom(), rh));
-    } else {
-        backgroundRenderer = this;
-        absoluteRect = borderBox();
+    bool didFullRepaint = repaintLayerRectsForImage(image, style()->backgroundLayers(), true);
+    if (!didFullRepaint) {
+        repaintLayerRectsForImage(image, style()->maskLayers(), false);
     }
+}
 
-    backgroundRenderer->computeAbsoluteRepaintRect(absoluteRect);
+bool RenderBox::repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground)
+{
+    IntRect absoluteRect;
+    RenderBox* layerRenderer = 0;
 
-    for (const FillLayer* bgLayer = style()->backgroundLayers(); bgLayer && !didFullRepaint; bgLayer = bgLayer->next()) {
-        if (bgLayer->image() && image == bgLayer->image()->data()) {
+    for (const FillLayer* curLayer = layers; curLayer; curLayer = curLayer->next()) {
+        if (curLayer->image() && image == curLayer->image()->data()) {
+        
+            // Now that we know this image is being used, compute the renderer and the rect
+            // if we haven't already
+            if (!layerRenderer) {
+                bool drawingRootBackground = drawingBackground && (isRoot() || (isBody() && document()->isHTMLDocument() && !document()->documentElement()->renderer()->style()->hasBackground()));
+                if (drawingRootBackground) {
+                    layerRenderer = view();
+
+                    int rw;
+                    int rh;
+
+                    if (FrameView* frameView = static_cast<RenderView*>(layerRenderer)->frameView()) {
+                        rw = frameView->contentsWidth();
+                        rh = frameView->contentsHeight();
+                    } else {
+                        rw = layerRenderer->width();
+                        rh = layerRenderer->height();
+                    }
+                    absoluteRect = IntRect(-layerRenderer->marginLeft(),
+                        -layerRenderer->marginTop(),
+                        max(layerRenderer->width() + layerRenderer->marginLeft() + layerRenderer->marginRight() + layerRenderer->borderLeft() + layerRenderer->borderRight(), rw),
+                        max(layerRenderer->height() + layerRenderer->marginTop() + layerRenderer->marginBottom() + layerRenderer->borderTop() + layerRenderer->borderBottom(), rh));
+                } else {
+                    layerRenderer = this;
+                    absoluteRect = borderBox();
+                }
+
+                layerRenderer->computeAbsoluteRepaintRect(absoluteRect);
+            }
+
             IntRect repaintRect;
             IntPoint phase;
             IntSize tileSize;
-            backgroundRenderer->calculateBackgroundImageGeometry(bgLayer, absoluteRect.x(), absoluteRect.y(), absoluteRect.width(), absoluteRect.height(), repaintRect, phase, tileSize);
+            layerRenderer->calculateBackgroundImageGeometry(curLayer, absoluteRect.x(), absoluteRect.y(), absoluteRect.width(), absoluteRect.height(), repaintRect, phase, tileSize);
             view()->repaintViewRectangle(repaintRect);
             if (repaintRect == absoluteRect)
-                didFullRepaint = true;
+                return true;
         }
     }
+    return false;
 }
 
 void RenderBox::calculateBackgroundImageGeometry(const FillLayer* bgLayer, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize)

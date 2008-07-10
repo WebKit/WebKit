@@ -183,6 +183,8 @@ protected:
 
 private:
     void paintRootBoxDecorations(PaintInfo&, int tx, int ty);
+    // Returns true if we did a full repaint
+    bool repaintLayerRectsForImage(WrappedImagePtr image, const FillLayer* layers, bool drawingBackground);
 
     void calculateBackgroundImageGeometry(const FillLayer*, int tx, int ty, int w, int h, IntRect& destRect, IntPoint& phase, IntSize& tileSize);
     

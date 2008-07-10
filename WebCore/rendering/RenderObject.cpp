@@ -3100,7 +3100,7 @@ AnimationController* RenderObject::animation() const
 
 void RenderObject::imageChanged(CachedImage* image)
 {
-    return imageChanged(static_cast<WrappedImagePtr>(image));
+    imageChanged(static_cast<WrappedImagePtr>(image));
 }
 
 IntRect RenderObject::reflectionBox() const
