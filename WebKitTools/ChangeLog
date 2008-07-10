@@ -1,5 +1,22 @@
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mark Rowe.
+        
+        Print <div> backgrounds when printing from DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix copying of expected results to correct location
+
+        * Scripts/run-webkit-tests:
+
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
         Reviewed by aroben.
 
         * DumpRenderTree/LayoutTestController.cpp:

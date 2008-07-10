@@ -1,5 +1,13 @@
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mark Rowe.
+        
+        Print <div> backgrounds when printing from DRT.
+
+        * printing/media-queries-print-expected.pdf:
+
+2008-07-09  Eric Seidel  <eric@webkit.org>
+
         Reviewed by aroben.
 
         * platform/mac/printing: Added.

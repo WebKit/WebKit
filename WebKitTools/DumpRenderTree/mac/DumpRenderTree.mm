@@ -335,6 +335,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];
+    [preferences setShouldPrintBackgrounds:YES];
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
     // So, turn it off for now, but we might want to turn it back on some day.

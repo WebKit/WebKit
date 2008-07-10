@@ -1611,16 +1611,15 @@ sub recordActualResultsAndDiff($$)
     my ($base, $actualResults) = @_;
 
     return unless defined($actualResults) && length($actualResults);
-    
+
     my $expectedResultPath = $expectedResultPaths{$base};
     my ($expectedResultFileNameMinusExtension, $expectedResultDirectoryPath, $expectedResultExtension) = fileparse($expectedResultPath, qr{\.[^.]+$});
-    my $expectedResultFileName = "$expectedResultFileNameMinusExtension$expectedResultExtension";
-
     my $actualResultsPath = "$testResultsDirectory/$base-$actualTag$expectedResultExtension";
+    my $copiedExpectedResultsPath = "$testResultsDirectory/$base-$expectedTag$expectedResultExtension";
     writeToFile("$actualResultsPath", $actualResults);
-    copy("$expectedResultPath", "$testResultsDirectory/$expectedResultFileName");
+    copy("$expectedResultPath", "$copiedExpectedResultsPath");
 
-    system "diff -u \"$testResultsDirectory/$expectedResultFileName\" \"$actualResultsPath\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
+    system "diff -u \"$copiedExpectedResultsPath\" \"$actualResultsPath\" > \"$testResultsDirectory/$base-$diffsTag.txt\"";
 }
 
 sub buildPlatformHierarchy()
