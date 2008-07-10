@@ -1,0 +1,47 @@
+/*
+ * Copyright (C) 2008 Apple Computer, Inc.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this library; see the file COPYING.LIB.  If not, write to
+ * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+module css {
+
+    interface [
+            GenerateConstructor,
+            HasIndexGetter
+            InterfaceUUID=303fe632-5dcf-4472-b977-33a5481e1d12,
+            ImplementationUUID=eb49e5c6-6075-45b8-b5c4-7e775c01e7c4
+    ] WebKitCSSTransformValue : CSSValueList {
+
+        // OperationTypes
+
+        // Note there are gaps because the proposed specification
+        // has other types that are not implemented yet
+        const unsigned short CSS_MATRIX      = 1;
+        const unsigned short CSS_ROTATE      = 3;
+        const unsigned short CSS_TRANSLATE   = 5;
+        const unsigned short CSS_SCALE       = 7;
+        const unsigned short CSS_SKEWX       = 9;
+        const unsigned short CSS_SKEWY       = 10;
+        const unsigned short CSS_TRANSLATEX  = 16;
+        const unsigned short CSS_TRANSLATEY  = 17;
+        const unsigned short CSS_SCALEX      = 19;
+        const unsigned short CSS_SCALEY      = 20;
+
+        readonly attribute unsigned short operationType;
+    };
+
+}

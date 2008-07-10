@@ -147,6 +147,7 @@
 #import "DOMTextInternal.h"
 #import "DOMTreeWalkerInternal.h"
 #import "DOMUIEventInternal.h"
+#import "DOMWebKitCSSTransformValueInternal.h"
 #import "DOMWheelEventInternal.h"
 
 #if ENABLE(SVG)

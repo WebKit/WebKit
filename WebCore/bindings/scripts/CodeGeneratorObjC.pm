@@ -401,7 +401,7 @@ sub GetBaseClass
 
     return $parent if $parent eq "Object" or IsBaseType($parent);
     return "Event" if $parent eq "UIEvent";
-    return "CSSValue" if $parent eq "SVGColor";
+    return "CSSValue" if $parent eq "SVGColor" or $parent eq "CSSValueList";
     return "Node";
 }
 

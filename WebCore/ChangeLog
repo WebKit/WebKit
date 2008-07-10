@@ -1,3 +1,24 @@
+2008-07-09  Dean Jackson  <dino@apple.com>
+
+        Add DOM interface for WebKitCSSTransformValue.
+        https://bugs.webkit.org/show_bug.cgi?id=19863
+
+        Reviewed by Hyatt.
+
+        * bindings/objc/DOMInternal.h:
+        * css/WebKitCSSTransformValue.idl: Added.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+            make sure new class inherits from CSSValue not Node
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            Adding new generated files
+
 2008-07-09  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.

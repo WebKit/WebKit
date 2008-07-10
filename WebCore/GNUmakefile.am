@@ -205,6 +205,7 @@ webcore_built_sources += \
 	DerivedSources/JSTextEvent.h \
 	DerivedSources/JSTreeWalker.h \
 	DerivedSources/JSUIEvent.h \
+	DerivedSources/JSWebKitCSSTransformValue.h \
 	DerivedSources/JSWheelEvent.h \
 	DerivedSources/JSXMLHttpRequest.h \
 	DerivedSources/JSXMLHttpRequestException.h \
@@ -345,6 +346,7 @@ webcore_built_sources += \
 	DerivedSources/JSTextEvent.cpp \
 	DerivedSources/JSTreeWalker.cpp \
 	DerivedSources/JSUIEvent.cpp \
+	DerivedSources/JSWebKitCSSTransformValue.cpp \
 	DerivedSources/JSWheelEvent.cpp \
 	DerivedSources/JSXMLHttpRequest.cpp \
 	DerivedSources/JSXMLHttpRequestException.cpp \
@@ -373,6 +375,7 @@ IDL_BINDINGS +=  \
 	WebCore/css/Rect.idl \
 	WebCore/css/StyleSheet.idl \
 	WebCore/css/StyleSheetList.idl \
+	WebCore/css/WebKitCSSTransformValue.idl \
 	WebCore/dom/Attr.idl \
 	WebCore/dom/CharacterData.idl \
 	WebCore/dom/Clipboard.idl \

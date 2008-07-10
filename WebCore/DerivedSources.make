@@ -341,6 +341,7 @@ DOM_CLASSES = \
     TreeWalker \
     UIEvent \
     VoidCallback \
+    WebKitCSSTransformValue \
     WheelEvent \
     XMLHttpRequest \
     XMLHttpRequestException \
