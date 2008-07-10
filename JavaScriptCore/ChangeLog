@@ -1,3 +1,9 @@
+2008-07-09  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx biuld fix. Add HeavyProfile.cpp to build files.
+
+        * JavaScriptCoreSources.bkl:
+
 2008-07-09  Kevin McCullough  <kmccullough@apple.com>
 
         - Windows build fix.
