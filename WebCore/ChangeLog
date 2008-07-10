@@ -1,3 +1,16 @@
+2008-07-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        <rdar://problem/6067135>
+        WebKit should respond true to a query for NPNVSupportsWindowless.
+        
+        Handle NPNVSupportsWindowless and return true.
+        
+        * bridge/npapi.h:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::getValue):
+
 2008-07-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

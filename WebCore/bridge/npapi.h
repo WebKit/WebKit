@@ -367,7 +367,9 @@ typedef enum {
     NPNVWindowNPObject = 15,
 
     /* Get the NPObject wrapper for the plugins DOM element. */
-    NPNVPluginElementNPObject
+    NPNVPluginElementNPObject = 16,
+
+    NPNVSupportsWindowless = 17,
 
 #ifdef XP_MACOSX
     , NPNVpluginDrawingModel = 1000 /* The NPDrawingModel specified by the plugin */

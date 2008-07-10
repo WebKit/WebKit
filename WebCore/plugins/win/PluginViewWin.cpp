@@ -691,6 +691,15 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 
             return NPERR_NO_ERROR;
         }
+
+        case NPNVSupportsWindowless: {
+            NPBool *result = reinterpret_cast<NPBool*>(value);
+
+            *result = TRUE;
+            
+            return NPERR_NO_ERROR;
+        }
+
         default:
             return NPERR_GENERIC_ERROR;
     }
