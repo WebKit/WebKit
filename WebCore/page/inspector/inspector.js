@@ -962,8 +962,12 @@ WebInspector.performSearch = function(query)
                 // ignore any exceptions. the query might be malformed, but we allow that.
             }
 
-            var result = InspectorController.inspectedWindow().Document.prototype.querySelectorAll.call(doc, query);
-            addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
+            try {
+                var result = InspectorController.inspectedWindow().Document.prototype.querySelectorAll.call(doc, query);
+                addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
+            } catch(err)
+                // ignore any exceptions. the query isn't necessarily a valid selector.
+            }
 
             cleanUpDOMResultsNodes();
         }
