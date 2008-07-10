@@ -3594,6 +3594,7 @@
 		BC1A37BE097C715F0019F3D8 /* DOMTraversal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC1A37BF097C715F0019F3D8 /* DOMUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */; };
 		BC1A37C0097C715F0019F3D8 /* DOMViews.h in Headers */ = {isa = PBXBuildFile; fileRef = BC1A37AA097C715F0019F3D8 /* DOMViews.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */; };
 		BC20FB7F0C0E8E6C00D1447F /* JSCSSValueCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */; };
 		BC23E4E10DAACE0F009FDC91 /* CSSGradientValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC23E4E00DAACE0F009FDC91 /* CSSGradientValue.cpp */; };
 		BC23E76C0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */; };
@@ -7946,6 +7947,7 @@
 		BC1A37A8097C715F0019F3D8 /* DOMTraversal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMTraversal.h; sourceTree = "<group>"; };
 		BC1A37A9097C715F0019F3D8 /* DOMUtility.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMUtility.mm; sourceTree = "<group>"; };
 		BC1A37AA097C715F0019F3D8 /* DOMViews.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMViews.h; sourceTree = "<group>"; };
+		BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDocumentFragmentCustom.cpp; sourceTree = "<group>"; };
 		BC20FB7E0C0E8E6C00D1447F /* JSCSSValueCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSCSSValueCustom.cpp; sourceTree = "<group>"; };
 		BC23E4E00DAACE0F009FDC91 /* CSSGradientValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSGradientValue.cpp; sourceTree = "<group>"; };
 		BC23E76B0DAE88A9009FDC91 /* CSSImageGeneratorValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSImageGeneratorValue.cpp; sourceTree = "<group>"; };
@@ -12361,6 +12363,7 @@
 				1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */,
 				1AE830420CAB0ED1002237AE /* JSDatabaseCustom.cpp */,
 				929264760B61FC7200B41D34 /* JSDocumentCustom.cpp */,
+				BC1DEA4E0E268EB60083A73F /* JSDocumentFragmentCustom.cpp */,
 				1AC226160DB69F740089B669 /* JSDOMApplicationCacheCustom.cpp */,
 				BCD9C25E0C17AA67005C90A2 /* JSDOMWindowCustom.cpp */,
 				652FBBBB0DE27CB60001D386 /* JSDOMWindowCustom.h */,
@@ -17032,6 +17035,7 @@
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
 				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
+				BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */,
 			);

@@ -1244,7 +1244,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
     RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
-    CSSParser p(true);
+    CSSParser p(document()->inStrictMode());
     RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;
@@ -1260,7 +1260,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
         return 0;
     }
 
-    if (!querySelector->next() && querySelector->m_match == CSSSelector::Id) {
+    if (inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id) {
         Element* element = document()->getElementById(querySelector->m_value);
         if (element && (isDocumentNode() || element->isDescendantOf(this)))
             return element;
@@ -1290,7 +1290,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
         return 0;
     }
     RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
-    CSSParser p(true);
+    CSSParser p(document()->inStrictMode());
     RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;

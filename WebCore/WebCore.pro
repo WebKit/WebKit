@@ -385,6 +385,7 @@ SOURCES += \
     bindings/js/JSCustomVoidCallback.cpp \
     bindings/js/JSCustomXPathNSResolver.cpp \
     bindings/js/JSDocumentCustom.cpp \
+    bindings/js/JSDocumentFragmentCustom.cpp \
     bindings/js/JSDOMWindowBase.cpp \
     bindings/js/JSDOMWindowCustom.cpp \
     bindings/js/JSDOMWindowShell.cpp \

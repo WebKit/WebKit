@@ -38,6 +38,22 @@
         } catch(ex) {
             log("PASS: Element.querySelectorAll throws: " + ex);
         }
+
+        var fragement = document.createDocumentFragment();
+
+        try {
+            fragement.querySelector("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: DocumentFragment.querySelector did not throw");
+        } catch(ex) {
+            log("PASS: DocumentFragment.querySelector throws: " + ex);
+        }
+
+        try {
+            fragement.querySelectorAll("bbb|pre", function(prefix) { return "aaa"; });
+            log("FAIL: DocumentFragment.querySelectorAll did not throw");
+        } catch(ex) {
+            log("PASS: DocumentFragment.querySelectorAll throws: " + ex);
+        }
     }
 </script>
 </head>

@@ -1,3 +1,20 @@
+2008-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt and Darin Adler,
+
+        Add support for calling querySelector and querySelectorAll on DocumentFragments
+
+        - Add test for nodes not in the document tree.
+
+        * fast/dom/SelectorAPI/detached-element-expected.txt: Added.
+        * fast/dom/SelectorAPI/detached-element.html: Added.
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/dom/SelectorAPI/dumpNodeList.html:
+        * fast/dom/SelectorAPI/not-supported-NSResolver-expected.txt:
+        * fast/dom/SelectorAPI/not-supported-NSResolver.html:
+        * fast/dom/SelectorAPI/resources/detached-element.js: Added.
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

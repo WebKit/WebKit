@@ -4,4 +4,6 @@ PASS: Document.querySelector throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 PASS: Document.querySelectorAll throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 PASS: Element.querySelector throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 PASS: Element.querySelectorAll throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+PASS: DocumentFragment.querySelector throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
+PASS: DocumentFragment.querySelectorAll throws: Error: NOT_SUPPORTED_ERR: DOM Exception 9
 

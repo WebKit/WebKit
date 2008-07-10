@@ -1,3 +1,36 @@
+2008-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dave Hyatt and Darin Adler.
+
+        Add support for calling querySelector and querySelectorAll on DocumentFragments
+
+        - Fixes bug where nodes not in the document tree would not match based on ID due
+          to over optimization.
+
+        Test: fast/dom/SelectorAPI/detached-element.html
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSDocumentFragmentCustom.cpp: Added.
+        (WebCore::JSDocumentFragment::querySelector): Add custom code matching JSElement
+        and JSDocument that checks for a 2nd arguments and throws an exception indicating
+        we do not currently support the optional NSResolver part of the Selectors API spec.
+        (WebCore::JSDocumentFragment::querySelectorAll): Ditto.
+        * dom/DocumentFragment.idl: Add querySelector and querySelectorAll declarations.
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector): Make the CSS parser parse the selector
+        according to the strictness of the document so that mixed case ID selectors
+        match in quirks mode.  Also, don't use the fast ID path if the root is not
+        in the DOM tree, as it won't work.
+        (WebCore::Node::querySelectorAll): Ditto.
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList): Don't use the fast ID path if the root is not
+        in the DOM tree, as it won't work.
+
 2008-07-10  Anthony Ricaud  <rik24d@gmail.com>
 
         Bug 19389: querySelectorAll exception while searching invalid CSS selector

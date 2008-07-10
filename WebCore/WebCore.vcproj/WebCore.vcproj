@@ -13759,6 +13759,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSDocumentFragmentCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSDOMApplicationCacheCustom.cpp"
 					>
 				</File>

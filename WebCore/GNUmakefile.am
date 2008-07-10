@@ -510,6 +510,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSCustomVoidCallback.cpp \
 	WebCore/bindings/js/JSCustomXPathNSResolver.cpp \
 	WebCore/bindings/js/JSDocumentCustom.cpp \
+	WebCore/bindings/js/JSDocumentFragmentCustom.cpp \
 	WebCore/bindings/js/JSDOMWindowBase.cpp \
 	WebCore/bindings/js/JSDOMWindowCustom.cpp \
 	WebCore/bindings/js/JSDOMWindowShell.cpp \

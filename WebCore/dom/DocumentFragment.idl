@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -24,6 +24,11 @@ module core {
         InterfaceUUID=F5C8DAF0-D728-4b2b-9D9C-630621B07D35,
         ImplementationUUID=E57BF71F-3FAA-495c-A307-E288F8E5B2EC
     ] DocumentFragment : EventTargetNode {
+        // NodeSelector - Selector API
+        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
+        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
     };
 
 }

@@ -1,18 +1,26 @@
 <html>
 <body>
-<div class="one">Line 1<div class="two">Line 2</div><p>Line <i>3</i></p></div>
-<div id="test" class="one two"><div id="dupe"></div><div id="dupe"></div>
-<div id="test2" class="one two">line 4</div><p class="two">line 5</p></div>
-<p><ol id="console"></ol></p>
+<div class="one">
+    Line 1
+    <div class="two">Line 2</div>
+    <p>Line <i>3</i></p>
+</div>
+<div id="test" class="one two">
+    <div id="me"></div>
+    <div id="dupe"></div>
+    <div id="dupe"></div>
+    <div id="test2" class="one two">line 4</div>
+    <p class="two">line 5</p>
+</div>
+
+<pre id="console"></pre>
 <script type="text/javascript">
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
 
     function log(message)
     {
-        var item = document.createElement("li");
-        item.appendChild(document.createTextNode(message));
-        document.getElementById("console").appendChild(item);
+        document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
     }
     
     Element.prototype.dump = function()
@@ -30,58 +38,118 @@
         return result;
     }
 
-    try {
-        var elm = document.getElementById("test");
-        
-        try { log(document.querySelectorAll("#test").dump());      } catch (e) { log(e) }
-        try { log(document.querySelectorAll("#notthere").dump());  } catch (e) { log(e) }
-        try { log(document.querySelectorAll("#dupe").dump());      } catch (e) { log(e) }
-        try { log(document.querySelectorAll(".two").dump());       } catch (e) { log(e) }
-        try { log(document.querySelectorAll(".one, .two").dump()); } catch (e) { log(e) }
-        try { log(document.querySelectorAll("@font-face").dump()); } catch (e) { log(e) }
-        try { log(document.querySelectorAll("").dump());           } catch (e) { log(e) }
-        try { log(document.querySelectorAll().dump());             } catch (e) { log(e) }
-        try { log(document.querySelectorAll(null).dump());         } catch (e) { log(e) }
-        try { log(document.querySelectorAll(undefined).dump());    } catch (e) { log(e) }
-        try { log(document.querySelectorAll("#test>div").dump());  } catch (e) { log(e) }
-
-        try { log(elm.querySelectorAll("#test").dump());           } catch (e) { log(e) }
-        try { log(elm.querySelectorAll("#test2").dump());          } catch (e) { log(e) }       
-        try { log(elm.querySelectorAll("#notthere").dump());       } catch (e) { log(e) }
-        try { log(elm.querySelectorAll("#dupe").dump());           } catch (e) { log(e) }
-        try { log(elm.querySelectorAll(".two").dump());            } catch (e) { log(e) }
-        try { log(elm.querySelectorAll(".one, .two").dump());      } catch (e) { log(e) }
-        try { log(elm.querySelectorAll("@font-face").dump());      } catch (e) { log(e) }
-        try { log(elm.querySelectorAll("").dump());                } catch (e) { log(e) }
-        try { log(elm.querySelectorAll().dump());                  } catch (e) { log(e) }
-        try { log(elm.querySelectorAll(null).dump());              } catch (e) { log(e) }
-        try { log(elm.querySelectorAll(undefined).dump());         } catch (e) { log(e) }
-
-        try { log(document.querySelector("#test").dump());         } catch (e) { log(e) }
-        try { log(document.querySelector("#notthere").dump());     } catch (e) { log(e) }
-        try { log(document.querySelector("#dupe").dump());         } catch (e) { log(e) }
-        try { log(document.querySelector(".two").dump());          } catch (e) { log(e) }
-        try { log(document.querySelector(".one, .two").dump());    } catch (e) { log(e) }
-        try { log(document.querySelector("@font-face").dump());    } catch (e) { log(e) }
-        try { log(document.querySelector("").dump());              } catch (e) { log(e) }
-        try { log(document.querySelector().dump());                } catch (e) { log(e) }
-        try { log(document.querySelector(null).dump());            } catch (e) { log(e) }
-        try { log(document.querySelector(undefined).dump());       } catch (e) { log(e) }
-
-        try { log(elm.querySelector("#test").dump());              } catch (e) { log(e) }
-        try { log(elm.querySelector("#test2").dump());             } catch (e) { log(e) }
-        try { log(elm.querySelector("#notthere").dump());          } catch (e) { log(e) }
-        try { log(elm.querySelector("#dupe").dump());              } catch (e) { log(e) }
-        try { log(elm.querySelector(".two").dump());               } catch (e) { log(e) }
-        try { log(elm.querySelector(".one, .two").dump());         } catch (e) { log(e) }
-        try { log(elm.querySelector("@font-face").dump());         } catch (e) { log(e) }
-        try { log(elm.querySelector("").dump());                   } catch (e) { log(e) }
-        try { log(elm.querySelector().dump());                     } catch (e) { log(e) }
-        try { log(elm.querySelector(null).dump());                 } catch (e) { log(e) }
-        try { log(elm.querySelector(undefined).dump());            } catch (e) { log(e) }
-    } catch (ex) {
-        log("Exception: " + ex.description);
+    testQuerySelectorAll = function(node, selectorString)
+    {
+        try {
+            log(node.querySelectorAll(selectorString).dump());
+        } catch (e) {
+            log(e);
+        }
     }
+
+    testQuerySelector = function(node, selectorString)
+    {
+        try {
+            log(node.querySelector(selectorString).dump());
+        } catch (e) {
+            log(e);
+        }
+    }
+
+    var elm = document.getElementById("test");
+
+    var tagString = elm.outerHTML;
+    var range = document.createRange();
+    range.selectNode(elm);
+    var frag = range.createContextualFragment(tagString);
+
+    log("Document.querySelectorAll");
+    log("");
+
+    testQuerySelectorAll(document, "#testQuerySelectorAll");
+    testQuerySelectorAll(document, "#notthere");
+    testQuerySelectorAll(document, "#dupe");
+    testQuerySelectorAll(document, ".two");
+    testQuerySelectorAll(document, ".one, .two");
+    testQuerySelectorAll(document, "@font-face");
+    testQuerySelectorAll(document, "");
+    testQuerySelectorAll(document, null);
+    testQuerySelectorAll(document, undefined);
+    testQuerySelectorAll(document, "#testQuerySelectorAll>div");
+
+    log("");
+    log("Element.querySelectorAll");
+    log("");
+
+    testQuerySelectorAll(elm, "#testQuerySelectorAll");
+    testQuerySelectorAll(elm, "#testQuerySelectorAll2");
+    testQuerySelectorAll(elm, "#notthere");
+    testQuerySelectorAll(elm, "#dupe");
+    testQuerySelectorAll(elm, ".two");
+    testQuerySelectorAll(elm, ".one, .two");
+    testQuerySelectorAll(elm, "@font-face");
+    testQuerySelectorAll(elm, "");
+    testQuerySelectorAll(elm, null);
+    testQuerySelectorAll(elm, undefined);
+
+    log("");
+    log("DocumentFragment.querySelectorAll");
+    log("");
+
+    testQuerySelectorAll(frag, "#testQuerySelectorAll");
+    testQuerySelectorAll(frag, "#testQuerySelectorAll2");
+    testQuerySelectorAll(frag, "#notthere");
+    testQuerySelectorAll(frag, "#dupe");
+    testQuerySelectorAll(frag, ".two");
+    testQuerySelectorAll(frag, ".one, .two");
+    testQuerySelectorAll(frag, "@font-face");
+    testQuerySelectorAll(frag, "");
+    testQuerySelectorAll(frag, null);
+    testQuerySelectorAll(frag, undefined);
+
+    log("");
+    log("Document.querySelector");
+    log("");
+
+    testQuerySelector(document, "#testQuerySelector");
+    testQuerySelector(document, "#notthere");
+    testQuerySelector(document, "#dupe");
+    testQuerySelector(document, ".two");
+    testQuerySelector(document, ".one, .two");
+    testQuerySelector(document, "@font-face");
+    testQuerySelector(document, "");
+    testQuerySelector(document, null);
+    testQuerySelector(document, undefined);
+
+    log("");
+    log("Element.querySelector");
+    log("");
+
+    testQuerySelector(elm, "#testQuerySelector");
+    testQuerySelector(elm, "#testQuerySelector2");
+    testQuerySelector(elm, "#notthere");
+    testQuerySelector(elm, "#dupe");
+    testQuerySelector(elm, ".two");
+    testQuerySelector(elm, ".one, .two");
+    testQuerySelector(elm, "@font-face");
+    testQuerySelector(elm, "");
+    testQuerySelector(elm, null);
+    testQuerySelector(elm, undefined);
+
+    log("");
+    log("DocumentFragment.querySelector");
+    log("");
+
+    testQuerySelector(frag, "#testQuerySelector");
+    testQuerySelector(frag, "#testQuerySelector2");
+    testQuerySelector(frag, "#notthere");
+    testQuerySelector(frag, "#dupe");
+    testQuerySelector(frag, ".two");
+    testQuerySelector(frag, ".one, .two");
+    testQuerySelector(frag, "@font-face");
+    testQuerySelector(frag, "");
+    testQuerySelector(frag, null);
+    testQuerySelector(frag, undefined);
 </script>
 </body>
 </html>
