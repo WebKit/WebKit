@@ -26,12 +26,6 @@
 
 namespace WebCore {
 
-void CSSSelector::print()
-{
-    if (m_tagHistory)
-        m_tagHistory->print();
-}
-
 unsigned int CSSSelector::specificity()
 {
     // FIXME: Pseudo-elements and pseudo-classes do not have the same specificity. This function
