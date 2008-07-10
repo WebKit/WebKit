@@ -83,7 +83,7 @@ HTMLFormElement::~HTMLFormElement()
 {
     delete m_elementAliases;
     delete collectionInfo;
-    
+
     for (unsigned i = 0; i < formElements.size(); ++i)
         formElements[i]->formDestroyed();
     for (unsigned i = 0; i < imgElements.size(); ++i)
