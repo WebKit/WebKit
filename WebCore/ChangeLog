@@ -1,3 +1,16 @@
+2008-07-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Transforms create a containing block, so
+        RenderLayer::shouldBeOverflowOnly() needs to look for transforms.
+        <https://bugs.webkit.org/show_bug.cgi?id=18886>
+        
+        Reviewed by Dave Hyatt
+
+        Test: fast/transforms/transform-overflow.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::shouldBeOverflowOnly):
+
 2008-07-09  Alex Mathews  <possessedpenguinbob@gmail.com>
 
         Reviewed by Oliver Hunt.

@@ -2333,6 +2333,7 @@ bool RenderLayer::shouldBeOverflowOnly() const
     return (renderer()->hasOverflowClip() || renderer()->hasReflection()) && 
            !renderer()->isPositioned() &&
            !renderer()->isRelPositioned() &&
+           !renderer()->hasTransform() &&
            !isTransparent();
 }
 
