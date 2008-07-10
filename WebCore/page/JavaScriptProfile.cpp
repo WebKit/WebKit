@@ -67,7 +67,7 @@ static JSValueRef getHeadCallback(JSContextRef ctx, JSObjectRef thisObject, JSSt
         return JSValueMakeUndefined(ctx);
 
     Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
-    return toRef(toJS(toJS(ctx), profile->callTree()));
+    return toRef(toJS(toJS(ctx), profile->head()));
 }
 
 static JSValueRef focus(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)

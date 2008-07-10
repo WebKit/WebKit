@@ -34,14 +34,14 @@ HeavyProfile::HeavyProfile(TreeProfile* treeProfile)
     : Profile(treeProfile->title())
 {
     m_treeProfile = treeProfile;
-    m_head->setTotalTime(m_treeProfile->callTree()->actualTotalTime());
-    m_head->setSelfTime(m_treeProfile->callTree()->actualSelfTime());
+    head()->setTotalTime(m_treeProfile->head()->actualTotalTime());
+    head()->setSelfTime(m_treeProfile->head()->actualSelfTime());
     generateHeavyStructure();
 }
 
 void HeavyProfile::generateHeavyStructure()
 {
-    ProfileNode* treeHead = m_treeProfile->callTree();
+    ProfileNode* treeHead = m_treeProfile->head();
     ProfileNode* currentNode = treeHead->firstChild();
     for (ProfileNode* nextNode = currentNode; nextNode; nextNode = nextNode->firstChild())
         currentNode = nextNode;
@@ -63,8 +63,8 @@ void HeavyProfile::generateHeavyStructure()
 
 ProfileNode* HeavyProfile::addNode(ProfileNode* currentNode)
 {
-    RefPtr<ProfileNode> node = ProfileNode::create(m_head.get(), currentNode);
-    m_head->addChild(node);
+    RefPtr<ProfileNode> node = ProfileNode::create(head(), currentNode);
+    head()->addChild(node);
 
     addAncestorsAsChildren(currentNode->parent(), node.get());
     return node.get();

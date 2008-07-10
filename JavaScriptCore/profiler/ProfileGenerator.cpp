@@ -46,7 +46,7 @@ ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingG
     , m_stoppedCallDepth(0)
 {
     m_profile = Profile::create(title);
-    m_currentNode = m_head = m_profile->callTree();
+    m_currentNode = m_head = m_profile->head();
 }
 
 const UString& ProfileGenerator::title() const

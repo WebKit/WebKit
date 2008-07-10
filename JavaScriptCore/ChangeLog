@@ -1,3 +1,19 @@
+2008-07-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        -Minor cleanup. Renamed callTree() to head() and no longer use m_head
+        directly but instead keep it private and access via a method().
+
+        * profiler/HeavyProfile.cpp:
+        (KJS::HeavyProfile::HeavyProfile):
+        (KJS::HeavyProfile::generateHeavyStructure):
+        (KJS::HeavyProfile::addNode):
+        * profiler/Profile.h:
+        (KJS::Profile::head):
+        * profiler/ProfileGenerator.cpp:
+        (KJS::ProfileGenerator::ProfileGenerator):
+
 2008-07-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Mark Rowe.

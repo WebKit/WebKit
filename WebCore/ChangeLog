@@ -1,3 +1,13 @@
+2008-07-10  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        -Minor cleanup. Renamed callTree() to head() and no longer use m_head
+        directly but instead keep it private and access via a method().
+
+        * page/JavaScriptProfile.cpp:
+        (WebCore::getHeadCallback):
+
 2008-07-10  Simon Fraser  <simon.fraser@apple.com>
 
         When a mask image changes, ensure that elements
