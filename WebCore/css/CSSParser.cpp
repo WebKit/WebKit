@@ -49,7 +49,6 @@
 #include "CSSSelector.h"
 #include "CSSStyleRule.h"
 #include "CSSStyleSheet.h"
-#include "CSSTransformValue.h"
 #include "CSSUnicodeRangeValue.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -66,6 +65,7 @@
 #include "Pair.h"
 #include "Rect.h"
 #include "ShadowValue.h"
+#include "WebKitCSSTransformValue.h"
 #include <kjs/dtoa.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -3828,7 +3828,7 @@ bool CSSParser::parseCanvas(RefPtr<CSSValue>& canvas)
 class TransformOperationInfo {
 public:
     TransformOperationInfo(const CSSParserString& name)
-    : m_type(CSSTransformValue::UnknownTransformOperation)
+    : m_type(WebKitCSSTransformValue::UnknownTransformOperation)
     , m_argCount(1)
     , m_allowSingleArgument(false)
     , m_unit(CSSParser::FUnknown)
@@ -3836,32 +3836,32 @@ public:
         if (equalIgnoringCase(name, "scale(") || equalIgnoringCase(name, "scalex(") || equalIgnoringCase(name, "scaley(")) {
             m_unit = CSSParser::FNumber;
             if (equalIgnoringCase(name, "scale("))
-                m_type = CSSTransformValue::ScaleTransformOperation;
+                m_type = WebKitCSSTransformValue::ScaleTransformOperation;
             else if (equalIgnoringCase(name, "scalex("))
-                m_type = CSSTransformValue::ScaleXTransformOperation;
+                m_type = WebKitCSSTransformValue::ScaleXTransformOperation;
             else
-                m_type = CSSTransformValue::ScaleYTransformOperation;
+                m_type = WebKitCSSTransformValue::ScaleYTransformOperation;
         } else if (equalIgnoringCase(name, "rotate(")) {
-            m_type = CSSTransformValue::RotateTransformOperation;
+            m_type = WebKitCSSTransformValue::RotateTransformOperation;
             m_unit = CSSParser::FAngle;
         } else if (equalIgnoringCase(name, "skew(") || equalIgnoringCase(name, "skewx(") || equalIgnoringCase(name, "skewy(")) {
             m_unit = CSSParser::FAngle;
             if (equalIgnoringCase(name, "skew("))
-                m_type = CSSTransformValue::SkewTransformOperation;
+                m_type = WebKitCSSTransformValue::SkewTransformOperation;
             else if (equalIgnoringCase(name, "skewx("))
-                m_type = CSSTransformValue::SkewXTransformOperation;
+                m_type = WebKitCSSTransformValue::SkewXTransformOperation;
             else
-                m_type = CSSTransformValue::SkewYTransformOperation;
+                m_type = WebKitCSSTransformValue::SkewYTransformOperation;
         } else if (equalIgnoringCase(name, "translate(") || equalIgnoringCase(name, "translatex(") || equalIgnoringCase(name, "translatey(")) {
             m_unit = CSSParser::FLength | CSSParser::FPercent;
             if (equalIgnoringCase(name, "translate("))
-                m_type = CSSTransformValue::TranslateTransformOperation;
+                m_type = WebKitCSSTransformValue::TranslateTransformOperation;
             else if (equalIgnoringCase(name, "translatex("))
-                m_type = CSSTransformValue::TranslateXTransformOperation;
+                m_type = WebKitCSSTransformValue::TranslateXTransformOperation;
             else
-                m_type = CSSTransformValue::TranslateYTransformOperation;
+                m_type = WebKitCSSTransformValue::TranslateYTransformOperation;
         } else if (equalIgnoringCase(name, "matrix(")) {
-            m_type = CSSTransformValue::MatrixTransformOperation;
+            m_type = WebKitCSSTransformValue::MatrixTransformOperation;
             m_argCount = 11;
             m_unit = CSSParser::FNumber;
         }
@@ -3872,15 +3872,15 @@ public:
         }
     }
     
-    CSSTransformValue::TransformOperationType type() const { return m_type; }
+    WebKitCSSTransformValue::TransformOperationType type() const { return m_type; }
     unsigned argCount() const { return m_argCount; }
     CSSParser::Units unit() const { return m_unit; }
 
-    bool unknown() const { return m_type == CSSTransformValue::UnknownTransformOperation; }
+    bool unknown() const { return m_type == WebKitCSSTransformValue::UnknownTransformOperation; }
     bool hasCorrectArgCount(unsigned argCount) { return m_argCount == argCount || (m_allowSingleArgument && argCount == 1); }
 
 private:
-    CSSTransformValue::TransformOperationType m_type;
+    WebKitCSSTransformValue::TransformOperationType m_type;
     unsigned m_argCount;
     bool m_allowSingleArgument;
     CSSParser::Units m_unit;
@@ -3892,7 +3892,7 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
         return 0;
 
     // The transform is a list of functional primitives that specify transform operations.
-    // We collect a list of CSSTransformValues, where each value specifies a single operation.
+    // We collect a list of WebKitCSSTransformValues, where each value specifies a single operation.
     RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
     for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
         if (value->unit != CSSParserValue::Function || !value->function)
@@ -3911,8 +3911,8 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
         if (!info.hasCorrectArgCount(args->size()))
             return 0;
 
-        // Create the new CSSTransformValue for this operation and add it to our list.
-        RefPtr<CSSTransformValue> transformValue = CSSTransformValue::create(info.type());
+        // Create the new WebKitCSSTransformValue for this operation and add it to our list.
+        RefPtr<WebKitCSSTransformValue> transformValue = WebKitCSSTransformValue::create(info.type());
         list->append(transformValue);
 
         // Snag our values.
@@ -3925,7 +3925,7 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
                 return 0;
             
             // Add the value to the current transform operation.
-            transformValue->addValue(CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit));
+            transformValue->append(CSSPrimitiveValue::create(a->fValue, (CSSPrimitiveValue::UnitTypes) a->unit));
 
             a = args->next();
             if (!a)

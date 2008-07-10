@@ -607,7 +607,6 @@ webcore_sources += \
 	WebCore/css/CSSStyleSelector.cpp \
 	WebCore/css/CSSStyleSheet.cpp \
 	WebCore/css/CSSTimingFunctionValue.cpp \
-	WebCore/css/CSSTransformValue.cpp \
 	WebCore/css/CSSUnicodeRangeValue.cpp \
 	WebCore/css/CSSValueList.cpp \
 	WebCore/css/CSSVariableDependentValue.cpp \
@@ -625,6 +624,7 @@ webcore_sources += \
 	WebCore/css/StyleList.cpp \
 	WebCore/css/StyleSheet.cpp \
 	WebCore/css/StyleSheetList.cpp \
+	WebCore/css/WebKitCSSTransformValue.cpp \
 	WebCore/dom/Attr.cpp \
 	WebCore/dom/Attribute.cpp \
 	WebCore/dom/BeforeTextInsertedEvent.cpp \

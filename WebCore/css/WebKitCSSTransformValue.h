@@ -23,15 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "CSSValue.h"
+#ifndef WebKitCSSTransformValue_h
+#define WebKitCSSTransformValue_h
+
+#include "CSSValueList.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class CSSValueList;
-
-class CSSTransformValue : public CSSValue {
+class WebKitCSSTransformValue : public CSSValueList {
 public:
     enum TransformOperationType {
         UnknownTransformOperation,
@@ -48,25 +49,23 @@ public:
         MatrixTransformOperation
     };
 
-    static PassRefPtr<CSSTransformValue> create(TransformOperationType type)
+    static PassRefPtr<WebKitCSSTransformValue> create(TransformOperationType type)
     {
-        return adoptRef(new CSSTransformValue(type));
+        return adoptRef(new WebKitCSSTransformValue(type));
     }
 
-    virtual ~CSSTransformValue();
+    virtual ~WebKitCSSTransformValue();
 
-    void addValue(PassRefPtr<CSSValue>);
-    
     virtual String cssText() const;
  
-    TransformOperationType type() const { return m_type; }
-    CSSValueList* values() const { return m_values.get(); }
+    TransformOperationType operationType() const { return m_type; }
     
 private:
-    CSSTransformValue(TransformOperationType);
+    WebKitCSSTransformValue(TransformOperationType);
 
     TransformOperationType m_type;
-    RefPtr<CSSValueList> m_values;
 };
 
 }
+
+#endif

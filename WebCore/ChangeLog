@@ -1,3 +1,28 @@
+2008-07-09  Dean Jackson  <dino@apple.com>
+
+        Rename CSSTransformValue to WebKitCSSTransformValue as it is non-standard for
+        the moment. Also, WebKitCSSTransformValue is a CSSValueList (comma sep)
+        https://bugs.webkit.org/show_bug.cgi?id=19861
+
+        Reviewed by Hyatt
+
+        * css/CSSParser.cpp:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSTransformValue.cpp: Removed.
+        * css/CSSTransformValue.h: Removed.
+        * css/CSSValueList.h:
+        * css/WebKitCSSTransformValue.cpp: Added.
+        * css/WebKitCSSTransformValue.h: Added.
+
+        * GNUmakefile.am:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            updated for new file names
+        
+
 2008-07-09  David Hyatt  <hyatt@apple.com>
 
         Switch transitions back to a "destination" model as far as choosing which transitions should apply on a style

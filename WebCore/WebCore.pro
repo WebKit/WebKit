@@ -483,7 +483,6 @@ SOURCES += \
     css/CSSStyleSelector.cpp \
     css/CSSStyleSheet.cpp \
     css/CSSTimingFunctionValue.cpp \
-    css/CSSTransformValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
     css/CSSVariableDependentValue.cpp \
@@ -501,6 +500,7 @@ SOURCES += \
     css/StyleList.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
+    css/WebKitCSSTransformValue.cpp \
     dom/Attr.cpp \
     dom/Attribute.cpp \
     dom/BeforeTextInsertedEvent.cpp \

@@ -8570,22 +8570,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\CSSTransformValue.cpp"
-				>
-				<FileConfiguration
-					Name="Release_PGO|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						WholeProgramOptimization="true"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\css\CSSTransformValue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSUnicodeRangeValue.cpp"
 				>
 				<FileConfiguration
@@ -8924,6 +8908,22 @@
 						WholeProgramOptimization="true"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSTransformValue.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSTransformValue.h"
+				>
 			</File>
 			<File
 				RelativePath="..\css\tokenizer.flex"
