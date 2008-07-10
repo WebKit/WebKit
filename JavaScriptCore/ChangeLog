@@ -1,3 +1,7 @@
+2008-07-09  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.pri: Fix Qt build by adding HeavyProfile.cpp.
+
 2008-07-09  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx biuld fix. Add HeavyProfile.cpp to build files.

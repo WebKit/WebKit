@@ -129,6 +129,7 @@ SOURCES += \
     kjs/StringObject.cpp \
     kjs/StringPrototype.cpp \
     kjs/ustring.cpp \
+    profiler/HeavyProfile.cpp \
     profiler/Profile.cpp \
     profiler/ProfileGenerator.cpp \
     profiler/ProfileNode.cpp \
