@@ -33,9 +33,9 @@ namespace KJS {
 HeavyProfile::HeavyProfile(TreeProfile* treeProfile)
     : Profile(treeProfile->title())
 {
-    // FIXME: Find a way to calculate time for a HeavyProfile.
-    // We will need to copy the time information from the m_treeProfile's head to our m_head.
     m_treeProfile = treeProfile;
+    m_head->setTotalTime(m_treeProfile->callTree()->actualTotalTime());
+    m_head->setSelfTime(m_treeProfile->callTree()->actualSelfTime());
     generateHeavyStructure();
 }
 
@@ -75,17 +75,19 @@ void HeavyProfile::mergeProfiles(ProfileNode* heavyProfileHead, ProfileNode* tre
     ASSERT_ARG(heavyProfileHead, heavyProfileHead);
     ASSERT_ARG(treeProfileHead, treeProfileHead);
 
-    ProfileNode* currentHeavyNode = heavyProfileHead;
     ProfileNode* currentTreeNode = treeProfileHead;
+    ProfileNode* currentHeavyNode = heavyProfileHead;
     ProfileNode* previousHeavyNode = 0;
     
     while (currentHeavyNode) {
         previousHeavyNode = currentHeavyNode;
 
+        currentHeavyNode->setTotalTime(currentHeavyNode->actualTotalTime() + currentTreeNode->actualTotalTime());
+        currentHeavyNode->setSelfTime(currentHeavyNode->actualSelfTime() + currentTreeNode->actualSelfTime());
+        currentHeavyNode->setNumberOfCalls(currentHeavyNode->numberOfCalls() + currentTreeNode->numberOfCalls());
+
         currentTreeNode = currentTreeNode->parent();
         currentHeavyNode = currentHeavyNode->findChild(currentTreeNode);
-        // FIXME: Find a way to calculate time for a HeavyProfile.
-        // We must sum self & total time, but maybe only for the leaf nodes.
     }
 
     // If currentTreeNode is null then we already have the whole tree we wanted to copy.

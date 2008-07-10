@@ -74,12 +74,12 @@ ProfileNode::ProfileNode(ProfileNode* headNode, ProfileNode* nodeToCopy)
     , m_head(headNode)
     , m_parent(nodeToCopy->parent())
     , m_nextSibling(0)
-    , m_startTime(0.0)          // FIXME: For now we don't calculate time correctly for a HeavyProfile so just
-    , m_actualTotalTime(0.0)    // zero it out.  When we are ready to do this correctly, get the time from the
-    , m_visibleTotalTime(0.0)   // nodeToCopy.
-    , m_actualSelfTime(0.0)
-    , m_visibleSelfTime(0.0)
-    , m_numberOfCalls(0)
+    , m_startTime(0.0)
+    , m_actualTotalTime(nodeToCopy->actualTotalTime())
+    , m_visibleTotalTime(nodeToCopy->totalTime())
+    , m_actualSelfTime(nodeToCopy->actualSelfTime())
+    , m_visibleSelfTime(nodeToCopy->selfTime())
+    , m_numberOfCalls(nodeToCopy->numberOfCalls())
     , m_visible(nodeToCopy->visible())
 {
 }

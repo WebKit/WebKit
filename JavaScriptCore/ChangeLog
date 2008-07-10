@@ -1,3 +1,22 @@
+2008-07-09  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5951532> JSProfiler: Implement heavy (or bottom-up)
+        view (19228)
+        - Implemented the time and call count portionof heavy.  Now all that we
+        need is some UI.
+
+        * profiler/CallIdentifier.h: Removed an unused constructor.
+        * profiler/HeavyProfile.cpp: 
+        (KJS::HeavyProfile::HeavyProfile): Set the initial time of the head
+        node so that percentages work correctly.
+        (KJS::HeavyProfile::mergeProfiles): Sum the times and call count of
+        nodes being merged.
+        * profiler/ProfileNode.cpp: Set the intital values of time and call
+        count when copying ProfileNodes.
+        (KJS::ProfileNode::ProfileNode):
+
 2008-07-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix.

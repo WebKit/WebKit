@@ -50,13 +50,6 @@ namespace KJS {
         {
         }
 
-        CallIdentifier()
-            : m_name("")
-            , m_url("")
-            , m_lineNumber(0)
-        {
-        }
-
         inline bool operator==(const CallIdentifier& ci) const { return ci.m_lineNumber == m_lineNumber && ci.m_name == m_name && ci.m_url == m_url; }
         inline bool operator!=(const CallIdentifier& ci) const { return !(*this == ci); }
 
