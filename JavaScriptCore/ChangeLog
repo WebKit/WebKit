@@ -1,3 +1,9 @@
+2008-07-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix.
+
+        * GNUmakefile.am: Add HeavyProfile.cpp
+
 2008-07-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.
