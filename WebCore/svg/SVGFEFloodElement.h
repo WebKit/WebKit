@@ -36,13 +36,14 @@ namespace WebCore
         virtual ~SVGFEFloodElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFEFlood* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable RefPtr<SVGFEFlood> m_filterEffect;
+        mutable RefPtr<FEFlood> m_filterEffect;
     };
 
 } // namespace WebCore

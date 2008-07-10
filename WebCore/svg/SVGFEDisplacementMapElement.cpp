@@ -29,8 +29,8 @@ namespace WebCore {
 
 SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_xChannelSelector(SVG_CHANNEL_A)
-    , m_yChannelSelector(SVG_CHANNEL_A)
+    , m_xChannelSelector(CHANNEL_A)
+    , m_yChannelSelector(CHANNEL_A)
     , m_scale(0.0f)
     , m_filterEffect(0)
 {
@@ -46,18 +46,18 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, XChannelSelector
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Scale, scale, SVGNames::scaleAttr)
 
-SVGChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
+ChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {
     if (key == "R")
-        return SVG_CHANNEL_R;
+        return CHANNEL_R;
     else if (key == "G")
-        return SVG_CHANNEL_G;
+        return CHANNEL_G;
     else if (key == "B")
-        return SVG_CHANNEL_B;
+        return CHANNEL_B;
     else if (key == "A")
-        return SVG_CHANNEL_A;
+        return CHANNEL_A;
 
-    return SVG_CHANNEL_UNKNOWN;
+    return CHANNEL_UNKNOWN;
 }
 
 void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
@@ -77,19 +77,26 @@ void SVGFEDisplacementMapElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEDisplacementMap* SVGFEDisplacementMapElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFEDisplacementMapElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEDisplacementMap::create(filter);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
-    m_filterEffect->setXChannelSelector((SVGChannelSelectorType) xChannelSelector());
-    m_filterEffect->setYChannelSelector((SVGChannelSelectorType) yChannelSelector());
-    m_filterEffect->setIn(in1());
-    m_filterEffect->setIn2(in2());
-    m_filterEffect->setScale(scale());
-
-    setStandardAttributes(m_filterEffect.get());
-    return m_filterEffect.get();
+bool SVGFEDisplacementMapElement::build(FilterBuilder* builder)
+{
+    FilterEffect* input1 = builder->getEffectById(in1());
+    FilterEffect* input2 = builder->getEffectById(in2());
+    
+    if(!input1 || !input2)
+        return false;
+        
+    
+    RefPtr<FilterEffect> addedEffect = FEDisplacementMap::create(input1, input2, static_cast<ChannelSelectorType> (xChannelSelector()), 
+                                        static_cast<ChannelSelectorType> (yChannelSelector()), scale());
+    builder->add(result(), addedEffect.release());
+    
+    return true;
 }
 
 }

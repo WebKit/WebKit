@@ -42,7 +42,8 @@ namespace WebCore
         virtual ~SVGFETurbulenceElement();
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFETurbulence* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -55,7 +56,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, StitchTiles, stitchTiles)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFETurbulenceElement, int, Type, type)
 
-        mutable RefPtr<SVGFETurbulence> m_filterEffect;
+        mutable RefPtr<FETurbulence> m_filterEffect;
     };
 
 } // namespace WebCore

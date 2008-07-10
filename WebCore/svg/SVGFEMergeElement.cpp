@@ -40,21 +40,28 @@ SVGFEMergeElement::~SVGFEMergeElement()
 {
 }
 
-SVGFEMerge* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFEMergeElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEMerge::create(filter);
-        
-    setStandardAttributes(m_filterEffect.get());
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
-    Vector<String> mergeInputs;
+bool SVGFEMergeElement::build(FilterBuilder* builder)
+{
+    Vector<FilterEffect*> mergeInputs;
     for (Node* n = firstChild(); n != 0; n = n->nextSibling()) {
-        if (n->hasTagName(SVGNames::feMergeNodeTag))
-            mergeInputs.append(static_cast<SVGFEMergeNodeElement*>(n)->in1());
+        if (n->hasTagName(SVGNames::feMergeNodeTag)) {
+            FilterEffect* mergeEffect = builder->getEffectById(static_cast<SVGFEMergeNodeElement*>(n)->in1());
+            mergeInputs.append(mergeEffect);
+        }
     }
 
-    m_filterEffect->setMergeInputs(mergeInputs);
-    return m_filterEffect.get();
+    if(mergeInputs.isEmpty())
+        return false;
+
+    builder->add(result(), FEMerge::create(mergeInputs));
+
+    return true;
 }
 
 }

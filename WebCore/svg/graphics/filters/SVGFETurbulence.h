@@ -23,50 +23,54 @@
 #define SVGFETurbulence_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-enum SVGTurbulanceType {
-    SVG_TURBULENCE_TYPE_UNKNOWN      = 0,
-    SVG_TURBULENCE_TYPE_FRACTALNOISE = 1,
-    SVG_TURBULENCE_TYPE_TURBULENCE   = 2
-};
+    enum TurbulanceType {
+        FETURBULENCE_TYPE_UNKNOWN      = 0,
+        FETURBULENCE_TYPE_FRACTALNOISE = 1,
+        FETURBULENCE_TYPE_TURBULENCE   = 2
+    };
 
-class SVGFETurbulence : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFETurbulence> create(SVGResourceFilter*);
+    class FETurbulence : public FilterEffect {
+    public:
+        static PassRefPtr<FETurbulence> create(TurbulanceType, const float&, const float&, const int&, const float&,
+                bool);
 
-    SVGTurbulanceType type() const;
-    void setType(SVGTurbulanceType);
+        TurbulanceType type() const;
+        void setType(TurbulanceType);
 
-    float baseFrequencyY() const;
-    void setBaseFrequencyY(float);
+        float baseFrequencyY() const;
+        void setBaseFrequencyY(float);
 
-    float baseFrequencyX() const;
-    void setBaseFrequencyX(float);
+        float baseFrequencyX() const;
+        void setBaseFrequencyX(float);
 
-    float seed() const;
-    void setSeed(float);
+        float seed() const;
+        void setSeed(float);
 
-    int numOctaves() const;
-    void setNumOctaves(bool);
+        int numOctaves() const;
+        void setNumOctaves(bool);
 
-    bool stitchTiles() const;
-    void setStitchTiles(bool);
+        bool stitchTiles() const;
+        void setStitchTiles(bool);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-private:
-    SVGFETurbulence(SVGResourceFilter*);
+    private:
+        FETurbulence(TurbulanceType, const float&, const float&, const int&, const float&,
+                bool);
 
-    float m_baseFrequencyX;
-    float m_baseFrequencyY;
-    int m_numOctaves;
-    float m_seed;
-    bool m_stitchTiles;
-    SVGTurbulanceType m_type;
-};
+        TurbulanceType m_type;
+        float m_baseFrequencyX;
+        float m_baseFrequencyY;
+        int m_numOctaves;
+        float m_seed;
+        bool m_stitchTiles;
+    };
 
 } // namespace WebCore
 

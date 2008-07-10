@@ -24,6 +24,7 @@
 #define SVGFilterPrimitiveStandardAttributes_h
 
 #if ENABLE(SVG)
+#include "FilterBuilder.h"
 #include "SVGStyledElement.h"
 
 namespace WebCore {

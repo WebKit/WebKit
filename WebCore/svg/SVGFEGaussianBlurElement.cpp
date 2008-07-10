@@ -66,17 +66,22 @@ void SVGFEGaussianBlurElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFEGaussianBlur* SVGFEGaussianBlurElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFEGaussianBlurElement::filterEffect(SVGResourceFilter* filter) const
 {
-    if (!m_filterEffect)
-        m_filterEffect = SVGFEGaussianBlur::create(filter);
-    
-    m_filterEffect->setIn(in1());
-    m_filterEffect->setStdDeviationX(stdDeviationX());
-    m_filterEffect->setStdDeviationY(stdDeviationY());
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
-    setStandardAttributes(m_filterEffect.get()); 
-    return m_filterEffect.get();
+bool SVGFEGaussianBlurElement::build(FilterBuilder* builder)
+{
+    FilterEffect* input1 = builder->getEffectById(in1());
+
+    if(!input1)
+        return false;
+
+    builder->add(result(), FEGaussianBlur::create(input1, stdDeviationX(), stdDeviationY()));
+
+    return true;
 }
 
 }

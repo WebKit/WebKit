@@ -1,3 +1,269 @@
+2008-07-09  Alex Mathews  <possessedpenguinbob@gmail.com>
+
+        Reviewed by Oliver Hunt.
+
+        bug 19835: WebKit needs cross-platform filter system
+        <https://bugs.webkit.org/show_bug.cgi?id=19835>
+
+        More class refactoring in preparation for cross-platform filter 
+        implementation.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/SVGRenderTreeAsText.h:
+        (WebCore::operator<<):
+        * svg/FilterEffect.cpp:
+        (WebCore::FilterEffect::externalRepresentation):
+        * svg/FilterEffect.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::build):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::build):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::build):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::build):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::filterEffect):
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        (WebCore::SVGFEDiffuseLightingElement::findLights):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::SVGFEDisplacementMapElement):
+        (WebCore::SVGFEDisplacementMapElement::stringToChannel):
+        (WebCore::SVGFEDisplacementMapElement::filterEffect):
+        (WebCore::SVGFEDisplacementMapElement::build):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::filterEffect):
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFEFloodElement.h:
+        (WebCore::SVGFEFloodElement::contextElement):
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::filterEffect):
+        (WebCore::SVGFEGaussianBlurElement::build):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::filterEffect):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFEMergeElement.cpp:
+        (WebCore::SVGFEMergeElement::filterEffect):
+        (WebCore::SVGFEMergeElement::build):
+        * svg/SVGFEMergeElement.h:
+        (WebCore::SVGFEMergeElement::contextElement):
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::filterEffect):
+        (WebCore::SVGFEOffsetElement::build):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::filterEffect):
+        (WebCore::SVGFESpecularLightingElement::findLights):
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::filterEffect):
+        (WebCore::SVGFETileElement::build):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::SVGFETurbulenceElement):
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        (WebCore::SVGFETurbulenceElement::filterEffect):
+        (WebCore::SVGFETurbulenceElement::build):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/graphics/filters/SVGFEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::FEConvolveMatrix):
+        (WebCore::FEConvolveMatrix::create):
+        (WebCore::FEConvolveMatrix::kernelSize):
+        (WebCore::FEConvolveMatrix::setKernelSize):
+        (WebCore::FEConvolveMatrix::kernel):
+        (WebCore::FEConvolveMatrix::setKernel):
+        (WebCore::FEConvolveMatrix::divisor):
+        (WebCore::FEConvolveMatrix::setDivisor):
+        (WebCore::FEConvolveMatrix::bias):
+        (WebCore::FEConvolveMatrix::setBias):
+        (WebCore::FEConvolveMatrix::targetOffset):
+        (WebCore::FEConvolveMatrix::setTargetOffset):
+        (WebCore::FEConvolveMatrix::edgeMode):
+        (WebCore::FEConvolveMatrix::setEdgeMode):
+        (WebCore::FEConvolveMatrix::kernelUnitLength):
+        (WebCore::FEConvolveMatrix::setKernelUnitLength):
+        (WebCore::FEConvolveMatrix::preserveAlpha):
+        (WebCore::FEConvolveMatrix::setPreserveAlpha):
+        (WebCore::FEConvolveMatrix::apply):
+        (WebCore::FEConvolveMatrix::dump):
+        (WebCore::operator<<):
+        (WebCore::FEConvolveMatrix::externalRepresentation):
+        * svg/graphics/filters/SVGFEConvolveMatrix.h:
+        (WebCore::):
+        * svg/graphics/filters/SVGFEDiffuseLighting.cpp:
+        (WebCore::FEDiffuseLighting::FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::create):
+        (WebCore::FEDiffuseLighting::~FEDiffuseLighting):
+        (WebCore::FEDiffuseLighting::lightingColor):
+        (WebCore::FEDiffuseLighting::setLightingColor):
+        (WebCore::FEDiffuseLighting::surfaceScale):
+        (WebCore::FEDiffuseLighting::setSurfaceScale):
+        (WebCore::FEDiffuseLighting::diffuseConstant):
+        (WebCore::FEDiffuseLighting::setDiffuseConstant):
+        (WebCore::FEDiffuseLighting::kernelUnitLengthX):
+        (WebCore::FEDiffuseLighting::setKernelUnitLengthX):
+        (WebCore::FEDiffuseLighting::kernelUnitLengthY):
+        (WebCore::FEDiffuseLighting::setKernelUnitLengthY):
+        (WebCore::FEDiffuseLighting::lightSource):
+        (WebCore::FEDiffuseLighting::setLightSource):
+        (WebCore::FEDiffuseLighting::apply):
+        (WebCore::FEDiffuseLighting::dump):
+        (WebCore::FEDiffuseLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFEDiffuseLighting.h:
+        * svg/graphics/filters/SVGFEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::FEDisplacementMap):
+        (WebCore::FEDisplacementMap::create):
+        (WebCore::FEDisplacementMap::xChannelSelector):
+        (WebCore::FEDisplacementMap::setXChannelSelector):
+        (WebCore::FEDisplacementMap::yChannelSelector):
+        (WebCore::FEDisplacementMap::setYChannelSelector):
+        (WebCore::FEDisplacementMap::scale):
+        (WebCore::FEDisplacementMap::setScale):
+        (WebCore::FEDisplacementMap::apply):
+        (WebCore::FEDisplacementMap::dump):
+        (WebCore::operator<<):
+        (WebCore::FEDisplacementMap::externalRepresentation):
+        * svg/graphics/filters/SVGFEDisplacementMap.h:
+        (WebCore::):
+        * svg/graphics/filters/SVGFEFlood.cpp:
+        (WebCore::FEFlood::FEFlood):
+        (WebCore::FEFlood::create):
+        (WebCore::FEFlood::floodColor):
+        (WebCore::FEFlood::setFloodColor):
+        (WebCore::FEFlood::floodOpacity):
+        (WebCore::FEFlood::setFloodOpacity):
+        (WebCore::FEFlood::apply):
+        (WebCore::FEFlood::dump):
+        (WebCore::FEFlood::externalRepresentation):
+        * svg/graphics/filters/SVGFEFlood.h:
+        * svg/graphics/filters/SVGFEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::FEGaussianBlur):
+        (WebCore::FEGaussianBlur::create):
+        (WebCore::FEGaussianBlur::stdDeviationX):
+        (WebCore::FEGaussianBlur::setStdDeviationX):
+        (WebCore::FEGaussianBlur::stdDeviationY):
+        (WebCore::FEGaussianBlur::setStdDeviationY):
+        (WebCore::FEGaussianBlur::apply):
+        (WebCore::FEGaussianBlur::dump):
+        (WebCore::FEGaussianBlur::externalRepresentation):
+        * svg/graphics/filters/SVGFEGaussianBlur.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::create):
+        (WebCore::FEImage::~FEImage):
+        (WebCore::FEImage::cachedImage):
+        (WebCore::FEImage::apply):
+        (WebCore::FEImage::dump):
+        (WebCore::FEImage::externalRepresentation):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFEMerge.cpp:
+        (WebCore::FEMerge::FEMerge):
+        (WebCore::FEMerge::create):
+        (WebCore::FEMerge::mergeInputs):
+        (WebCore::FEMerge::setMergeInputs):
+        (WebCore::FEMerge::apply):
+        (WebCore::FEMerge::dump):
+        (WebCore::FEMerge::externalRepresentation):
+        * svg/graphics/filters/SVGFEMerge.h:
+        * svg/graphics/filters/SVGFEMorphology.cpp:
+        (WebCore::FEMorphology::FEMorphology):
+        (WebCore::FEMorphology::create):
+        (WebCore::FEMorphology::morphologyOperator):
+        (WebCore::FEMorphology::setMorphologyOperator):
+        (WebCore::FEMorphology::radiusX):
+        (WebCore::FEMorphology::setRadiusX):
+        (WebCore::FEMorphology::radiusY):
+        (WebCore::FEMorphology::setRadiusY):
+        (WebCore::FEMorphology::apply):
+        (WebCore::FEMorphology::dump):
+        (WebCore::operator<<):
+        (WebCore::FEMorphology::externalRepresentation):
+        * svg/graphics/filters/SVGFEMorphology.h:
+        (WebCore::):
+        * svg/graphics/filters/SVGFEOffset.cpp:
+        (WebCore::FEOffset::FEOffset):
+        (WebCore::FEOffset::create):
+        (WebCore::FEOffset::dx):
+        (WebCore::FEOffset::setDx):
+        (WebCore::FEOffset::dy):
+        (WebCore::FEOffset::setDy):
+        (WebCore::FEOffset::apply):
+        (WebCore::FEOffset::dump):
+        (WebCore::FEOffset::externalRepresentation):
+        * svg/graphics/filters/SVGFEOffset.h:
+        * svg/graphics/filters/SVGFESpecularLighting.cpp:
+        (WebCore::FESpecularLighting::FESpecularLighting):
+        (WebCore::FESpecularLighting::create):
+        (WebCore::FESpecularLighting::~FESpecularLighting):
+        (WebCore::FESpecularLighting::lightingColor):
+        (WebCore::FESpecularLighting::setLightingColor):
+        (WebCore::FESpecularLighting::surfaceScale):
+        (WebCore::FESpecularLighting::setSurfaceScale):
+        (WebCore::FESpecularLighting::specularConstant):
+        (WebCore::FESpecularLighting::setSpecularConstant):
+        (WebCore::FESpecularLighting::specularExponent):
+        (WebCore::FESpecularLighting::setSpecularExponent):
+        (WebCore::FESpecularLighting::kernelUnitLengthX):
+        (WebCore::FESpecularLighting::setKernelUnitLengthX):
+        (WebCore::FESpecularLighting::kernelUnitLengthY):
+        (WebCore::FESpecularLighting::setKernelUnitLengthY):
+        (WebCore::FESpecularLighting::lightSource):
+        (WebCore::FESpecularLighting::setLightSource):
+        (WebCore::FESpecularLighting::apply):
+        (WebCore::FESpecularLighting::dump):
+        (WebCore::FESpecularLighting::externalRepresentation):
+        * svg/graphics/filters/SVGFESpecularLighting.h:
+        * svg/graphics/filters/SVGFETile.cpp:
+        (WebCore::FETile::FETile):
+        (WebCore::FETile::create):
+        (WebCore::FETile::apply):
+        (WebCore::FETile::dump):
+        (WebCore::FETile::externalRepresentation):
+        * svg/graphics/filters/SVGFETile.h:
+        * svg/graphics/filters/SVGFETurbulence.cpp:
+        (WebCore::FETurbulence::FETurbulence):
+        (WebCore::FETurbulence::create):
+        (WebCore::FETurbulence::type):
+        (WebCore::FETurbulence::setType):
+        (WebCore::FETurbulence::baseFrequencyY):
+        (WebCore::FETurbulence::setBaseFrequencyY):
+        (WebCore::FETurbulence::baseFrequencyX):
+        (WebCore::FETurbulence::setBaseFrequencyX):
+        (WebCore::FETurbulence::seed):
+        (WebCore::FETurbulence::setSeed):
+        (WebCore::FETurbulence::numOctaves):
+        (WebCore::FETurbulence::setNumOctaves):
+        (WebCore::FETurbulence::stitchTiles):
+        (WebCore::FETurbulence::setStitchTiles):
+        (WebCore::FETurbulence::apply):
+        (WebCore::FETurbulence::dump):
+        (WebCore::operator<<):
+        (WebCore::FETurbulence::externalRepresentation):
+        * svg/graphics/filters/SVGFETurbulence.h:
+        (WebCore::):
+        * svg/graphics/filters/cg/SVGFEDiffuseLightingCg.mm:
+        * svg/graphics/filters/cg/SVGFEDisplacementMapCg.mm:
+        * svg/graphics/filters/cg/SVGFEFloodCg.mm:
+        * svg/graphics/filters/cg/SVGFEGaussianBlurCg.mm:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.h:
+        * svg/graphics/filters/cg/SVGFEHelpersCg.mm:
+        (WebCore::getVectorForChannel):
+        * svg/graphics/filters/cg/SVGFEImageCg.mm:
+        * svg/graphics/filters/cg/SVGFEMergeCg.mm:
+        * svg/graphics/filters/cg/SVGFEOffsetCg.mm:
+        * svg/graphics/filters/cg/SVGFESpecularLightingCg.mm:
+        * svg/graphics/filters/cg/SVGFETileCg.mm:
+
 2008-07-09  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Geoff Garen.

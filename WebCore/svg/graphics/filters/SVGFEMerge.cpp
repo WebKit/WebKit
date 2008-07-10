@@ -23,34 +23,43 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEMerge.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEMerge::SVGFEMerge(SVGResourceFilter* filter) 
-    : SVGFilterEffect(filter) 
+FEMerge::FEMerge(const Vector<FilterEffect*>& mergeInputs) 
+    : FilterEffect()
+    , m_mergeInputs(mergeInputs)
 {
 }
 
-PassRefPtr<SVGFEMerge> SVGFEMerge::create(SVGResourceFilter* filter)
+PassRefPtr<FEMerge> FEMerge::create(const Vector<FilterEffect*>& mergeInputs)
 {
-    return adoptRef(new SVGFEMerge(filter));
+    return adoptRef(new FEMerge(mergeInputs));
 }
 
-const Vector<String>& SVGFEMerge::mergeInputs() const
+const Vector<FilterEffect*>& FEMerge::mergeInputs() const
 {
     return m_mergeInputs;
 }
 
-void SVGFEMerge::setMergeInputs(const Vector<String>& mergeInputs)
+void FEMerge::setMergeInputs(const Vector<FilterEffect*>& mergeInputs)
 {
     m_mergeInputs = mergeInputs;
 }
 
-TextStream& SVGFEMerge::externalRepresentation(TextStream& ts) const
+void FEMerge::apply()
+{
+}
+
+void FEMerge::dump()
+{
+}
+
+TextStream& FEMerge::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=MERGE] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << "[merge inputs=[";
     unsigned x = 0;
     unsigned size = m_mergeInputs.size();

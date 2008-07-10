@@ -23,36 +23,40 @@
 #define SVGFEMorphology_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-enum SVGMorphologyOperatorType {
-    SVG_MORPHOLOGY_OPERATOR_UNKNOWN = 0,
-    SVG_MORPHOLOGY_OPERATOR_ERODE   = 1,
-    SVG_MORPHOLOGY_OPERATOR_DIALATE = 2
-};
+    enum MorphologyOperatorType {
+        FEMORPHOLOGY_OPERATOR_UNKNOWN = 0,
+        FEMORPHOLOGY_OPERATOR_ERODE   = 1,
+        FEMORPHOLOGY_OPERATOR_DIALATE = 2
+    };
 
-class SVGFEMorphology : public SVGFilterEffect {
-public:
-    SVGFEMorphology(SVGResourceFilter*);
+    class FEMorphology : public FilterEffect {
+    public:
+        PassRefPtr<FEMorphology> create(FilterEffect*, MorphologyOperatorType, const float&, const float&);  
+        MorphologyOperatorType morphologyOperator() const;
+        void setMorphologyOperator(MorphologyOperatorType);
 
-    SVGMorphologyOperatorType morphologyOperator() const;
-    void setMorphologyOperator(SVGMorphologyOperatorType);
+        float radiusX() const;
+        void setRadiusX(float);
 
-    float radiusX() const;
-    void setRadiusX(float);
+        float radiusY() const;
+        void setRadiusY(float);
 
-    float radiusY() const;
-    void setRadiusY(float);
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
-
-private:
-    SVGMorphologyOperatorType m_operator;
-    float m_radiusX;
-    float m_radiusY;
-};
+    private:
+        FEMorphology(FilterEffect*, MorphologyOperatorType, const float&, const float&);
+        
+        RefPtr<FilterEffect> m_in;
+        MorphologyOperatorType m_type;
+        float m_radiusX;
+        float m_radiusY;
+    };
 
 } // namespace WebCore
 

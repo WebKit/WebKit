@@ -101,7 +101,7 @@ bool SVGFECompositeElement::build(FilterBuilder* builder)
         return false;
     
     RefPtr<FilterEffect> addedEffect = FEComposite::create(input1, input2, static_cast<CompositeOperationType> (_operator()),
-        k1(), k2(), k3(), k4());
+                                        k1(), k2(), k3(), k4());
     builder->add(result(), addedEffect.release());
 
     return true;

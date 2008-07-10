@@ -24,7 +24,6 @@
 #define SVGFECompositeElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "FilterBuilder.h"
 #include "FEComposite.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

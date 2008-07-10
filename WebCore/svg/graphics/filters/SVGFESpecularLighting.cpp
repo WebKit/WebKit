@@ -23,105 +23,119 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFESpecularLighting.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFESpecularLighting::SVGFESpecularLighting(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_lightingColor()
-    , m_surfaceScale(0.0f)
-    , m_specularConstant(0.0f)
-    , m_specularExponent(0.0f)
-    , m_kernelUnitLengthX(0.0f)
-    , m_kernelUnitLengthY(0.0f)
-    , m_lightSource(0)
+FESpecularLighting::FESpecularLighting(FilterEffect* in, const Color& lightingColor, const float& surfaceScale,
+    const float& specularConstant, const float& specularExponent, const float& kernelUnitLengthX,
+    const float& kernelUnitLengthY, LightSource* lightSource)
+    : FilterEffect()
+    , m_in(in)
+    , m_lightingColor(lightingColor)
+    , m_surfaceScale(surfaceScale)
+    , m_specularConstant(specularConstant)
+    , m_specularExponent(specularExponent)
+    , m_kernelUnitLengthX(kernelUnitLengthX)
+    , m_kernelUnitLengthY(kernelUnitLengthY)
+    , m_lightSource(lightSource)
 {
 }
 
-PassRefPtr<SVGFESpecularLighting> SVGFESpecularLighting::create(SVGResourceFilter* filter)
+PassRefPtr<FESpecularLighting> FESpecularLighting::create(FilterEffect* in, const Color& lightingColor,
+    const float& surfaceScale, const float& specularConstant, const float& specularExponent,
+    const float& kernelUnitLengthX, const float& kernelUnitLengthY, LightSource* lightSource)
 {
-    return adoptRef(new SVGFESpecularLighting(filter));
+    return adoptRef(new FESpecularLighting(in, lightingColor, surfaceScale, specularConstant, specularExponent,
+        kernelUnitLengthX, kernelUnitLengthY, lightSource));
 }
 
-SVGFESpecularLighting::~SVGFESpecularLighting()
+FESpecularLighting::~FESpecularLighting()
 {
 }
 
-Color SVGFESpecularLighting::lightingColor() const
+Color FESpecularLighting::lightingColor() const
 {
     return m_lightingColor;
 }
 
-void SVGFESpecularLighting::setLightingColor(const Color& lightingColor)
+void FESpecularLighting::setLightingColor(const Color& lightingColor)
 {
     m_lightingColor = lightingColor;
 }
 
-float SVGFESpecularLighting::surfaceScale() const
+float FESpecularLighting::surfaceScale() const
 {
     return m_surfaceScale;
 }
 
-void SVGFESpecularLighting::setSurfaceScale(float surfaceScale)
+void FESpecularLighting::setSurfaceScale(float surfaceScale)
 {
     m_surfaceScale = surfaceScale;
 }
 
-float SVGFESpecularLighting::specularConstant() const
+float FESpecularLighting::specularConstant() const
 {
     return m_specularConstant;
 }
 
-void SVGFESpecularLighting::setSpecularConstant(float specularConstant)
+void FESpecularLighting::setSpecularConstant(float specularConstant)
 {
     m_specularConstant = specularConstant;
 }
 
-float SVGFESpecularLighting::specularExponent() const
+float FESpecularLighting::specularExponent() const
 {
     return m_specularExponent;
 }
 
-void SVGFESpecularLighting::setSpecularExponent(float specularExponent)
+void FESpecularLighting::setSpecularExponent(float specularExponent)
 {
     m_specularExponent = specularExponent;
 }
 
-float SVGFESpecularLighting::kernelUnitLengthX() const
+float FESpecularLighting::kernelUnitLengthX() const
 {
     return m_kernelUnitLengthX;
 }
 
-void SVGFESpecularLighting::setKernelUnitLengthX(float kernelUnitLengthX)
+void FESpecularLighting::setKernelUnitLengthX(float kernelUnitLengthX)
 {
     m_kernelUnitLengthX = kernelUnitLengthX;
 }
 
-float SVGFESpecularLighting::kernelUnitLengthY() const
+float FESpecularLighting::kernelUnitLengthY() const
 {
     return m_kernelUnitLengthY;
 }
 
-void SVGFESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
+void FESpecularLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 {
     m_kernelUnitLengthY = kernelUnitLengthY;
 }
 
-const LightSource* SVGFESpecularLighting::lightSource() const
+const LightSource* FESpecularLighting::lightSource() const
 {
     return m_lightSource.get();
 }
 
-void SVGFESpecularLighting::setLightSource(LightSource* lightSource)
+void FESpecularLighting::setLightSource(LightSource* lightSource)
 {
     m_lightSource = lightSource;
 }
 
-TextStream& SVGFESpecularLighting::externalRepresentation(TextStream& ts) const
+void FESpecularLighting::apply()
+{
+}
+
+void FESpecularLighting::dump()
+{
+}
+
+TextStream& FESpecularLighting::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=SPECULAR-LIGHTING] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << " [surface scale=" << m_surfaceScale << "]"
         << " [specual constant=" << m_specularConstant << "]"
         << " [specular exponent=" << m_specularExponent << "]";

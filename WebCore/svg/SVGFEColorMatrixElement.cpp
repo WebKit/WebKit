@@ -77,10 +77,10 @@ SVGFilterEffect* SVGFEColorMatrixElement::filterEffect(SVGResourceFilter* filter
 bool SVGFEColorMatrixElement::build(FilterBuilder* builder)
 {
     FilterEffect* input1 = builder->getEffectById(in1());
-    
+
     if(!input1)
         return false;
-    
+
     Vector<float> _values;
     SVGNumberList* numbers = values();
 
@@ -89,8 +89,7 @@ bool SVGFEColorMatrixElement::build(FilterBuilder* builder)
     for (unsigned int i = 0;i < nr;i++)
         _values.append(numbers->getItem(i, ec));
 
-    RefPtr<FilterEffect> addedEffect = FEColorMatrix::create(input1, static_cast<ColorMatrixType> (type()), _values);
-    builder->add(result(), addedEffect.release());
+    builder->add(result(), FEColorMatrix::create(input1, static_cast<ColorMatrixType> (type()), _values));
     
     return true;
 }

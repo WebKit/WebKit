@@ -24,7 +24,6 @@
 #define SVGFEComponentTransferElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "FilterBuilder.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "FEComponentTransfer.h"
 

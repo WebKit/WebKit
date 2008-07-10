@@ -39,7 +39,8 @@ namespace WebCore
         void setStdDeviation(float stdDeviationX, float stdDeviationY);
 
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFEGaussianBlur* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -49,7 +50,7 @@ namespace WebCore
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, StdDeviationX, stdDeviationX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEGaussianBlurElement, float, StdDeviationY, stdDeviationY)
 
-        mutable RefPtr<SVGFEGaussianBlur> m_filterEffect;
+        mutable RefPtr<FEGaussianBlur> m_filterEffect;
     };
 
 } // namespace WebCore

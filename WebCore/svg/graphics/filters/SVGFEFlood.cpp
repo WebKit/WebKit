@@ -22,47 +22,55 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGRenderTreeAsText.h"
 #include "SVGFEFlood.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEFlood::SVGFEFlood(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_floodColor()
-    , m_floodOpacity(0.0f)
+FEFlood::FEFlood(const Color& floodColor, const float& floodOpacity)
+    : FilterEffect()
+    , m_floodColor(floodColor)
+    , m_floodOpacity(floodOpacity)
 {
 }
 
-PassRefPtr<SVGFEFlood> SVGFEFlood::create(SVGResourceFilter* filter)
+PassRefPtr<FEFlood> FEFlood::create(const Color& floodColor, const float& floodOpacity)
 {
-    return adoptRef(new SVGFEFlood(filter));
+    return adoptRef(new FEFlood(floodColor, floodOpacity));
 }
 
-Color SVGFEFlood::floodColor() const
+Color FEFlood::floodColor() const
 {
     return m_floodColor;
 }
 
-void SVGFEFlood::setFloodColor(const Color& color)
+void FEFlood::setFloodColor(const Color& color)
 {
     m_floodColor = color;
 }
 
-float SVGFEFlood::floodOpacity() const
+float FEFlood::floodOpacity() const
 {
     return m_floodOpacity;
 }
 
-void SVGFEFlood::setFloodOpacity(float floodOpacity)
+void FEFlood::setFloodOpacity(float floodOpacity)
 {
     m_floodOpacity = floodOpacity;
 }
 
-TextStream& SVGFEFlood::externalRepresentation(TextStream& ts) const
+void FEFlood::apply()
+{
+}
+
+void FEFlood::dump()
+{
+}
+
+TextStream& FEFlood::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=FLOOD] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << " [color=" << floodColor() << "]"
         << " [opacity=" << floodOpacity() << "]";
     return ts;

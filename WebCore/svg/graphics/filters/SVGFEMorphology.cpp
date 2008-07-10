@@ -23,68 +23,82 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEMorphology.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEMorphology::SVGFEMorphology(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_operator(SVG_MORPHOLOGY_OPERATOR_UNKNOWN)
-    , m_radiusX(0.0f)
-    , m_radiusY(0.0f)
+FEMorphology::FEMorphology(FilterEffect* in, MorphologyOperatorType type, const float& radiusX, const float& radiusY)
+    : FilterEffect()
+    , m_in(in)
+    , m_type(type)
+    , m_radiusX(radiusX)
+    , m_radiusY(radiusY)
 {
 }
 
-SVGMorphologyOperatorType SVGFEMorphology::morphologyOperator() const
+PassRefPtr<FEMorphology> FEMorphology::create(FilterEffect* in, MorphologyOperatorType type, const float& radiusX, const float& radiusY)
 {
-    return m_operator;
+    return adoptRef(new FEMorphology(in, type, radiusX, radiusY));
 }
 
-void SVGFEMorphology::setMorphologyOperator(SVGMorphologyOperatorType _operator)
+MorphologyOperatorType FEMorphology::morphologyOperator() const
 {
-    m_operator = _operator;
+    return m_type;
 }
 
-float SVGFEMorphology::radiusX() const
+void FEMorphology::setMorphologyOperator(MorphologyOperatorType type)
+{
+    m_type = type;
+}
+
+float FEMorphology::radiusX() const
 {
     return m_radiusX;
 }
 
-void SVGFEMorphology::setRadiusX(float radiusX)
+void FEMorphology::setRadiusX(float radiusX)
 {
     m_radiusX = radiusX;
 }
 
-float SVGFEMorphology::radiusY() const
+float FEMorphology::radiusY() const
 {
     return m_radiusY;
 }
 
-void SVGFEMorphology::setRadiusY(float radiusY)
+void FEMorphology::setRadiusY(float radiusY)
 {
     m_radiusY = radiusY;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGMorphologyOperatorType t)
+void FEMorphology::apply()
+{
+}
+
+void FEMorphology::dump()
+{
+}
+
+static TextStream& operator<<(TextStream& ts, MorphologyOperatorType t)
 {
     switch (t)
     {
-        case SVG_MORPHOLOGY_OPERATOR_UNKNOWN:
+        case FEMORPHOLOGY_OPERATOR_UNKNOWN:
             ts << "UNKNOWN"; break;
-        case SVG_MORPHOLOGY_OPERATOR_ERODE:
+        case FEMORPHOLOGY_OPERATOR_ERODE:
             ts << "ERODE"; break;
-        case SVG_MORPHOLOGY_OPERATOR_DIALATE:
+        case FEMORPHOLOGY_OPERATOR_DIALATE:
             ts << "DIALATE"; break;
     }
     return ts;
 }
 
-TextStream& SVGFEMorphology::externalRepresentation(TextStream& ts) const
+TextStream& FEMorphology::externalRepresentation(TextStream& ts) const
 {
-    ts << "[type=MORPHOLOGY-OPERATOR] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    ts << "[type=MORPHOLOGY] ";
+    FilterEffect::externalRepresentation(ts);
     ts << " [operator type=" << morphologyOperator() << "]"
-        << " [radius x=" << radiusX() << " y=" << radiusY() << "]";
+        << " [radius x=" << radiusX() << " y=" << radiusY() << "]";        
     return ts;
 }
 

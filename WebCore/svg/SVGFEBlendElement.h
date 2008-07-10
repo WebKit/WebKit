@@ -24,7 +24,6 @@
 #define SVGFEBlendElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "FilterBuilder.h"
 #include "FEBlend.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

@@ -33,7 +33,7 @@ class LightSource;
 
 namespace WebCore {
 
-CIVector* getVectorForChannel(SVGChannelSelectorType channel);
+CIVector* getVectorForChannel(ChannelSelectorType channel);
 CIColor* ciColor(const Color& c);
 
 // Lighting

@@ -23,46 +23,56 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEOffset.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEOffset::SVGFEOffset(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_dx(0.0f)
-    , m_dy(0.0f)
+FEOffset::FEOffset(FilterEffect* in, const float& dx, const float& dy)
+    : FilterEffect()
+    , m_in(in)
+    , m_dx(dx)
+    , m_dy(dy)
 {
 }
 
-PassRefPtr<SVGFEOffset> SVGFEOffset::create(SVGResourceFilter* filter)
+PassRefPtr<FEOffset> FEOffset::create(FilterEffect* in, const float& dx, const float& dy)
 {
-    return adoptRef(new SVGFEOffset(filter));
+    return adoptRef(new FEOffset(in, dx, dy));
 }
 
-float SVGFEOffset::dx() const
+float FEOffset::dx() const
 {
     return m_dx;
 }
 
-void SVGFEOffset::setDx(float dx)
+void FEOffset::setDx(float dx)
 {
     m_dx = dx;
 }
 
-float SVGFEOffset::dy() const
+float FEOffset::dy() const
 {
     return m_dy;
 }
 
-void SVGFEOffset::setDy(float dy)
+void FEOffset::setDy(float dy)
 {
     m_dy = dy;
 }
 
-TextStream& SVGFEOffset::externalRepresentation(TextStream& ts) const
+void FEOffset::apply()
 {
-    ts << "[type=OFFSET] "; SVGFilterEffect::externalRepresentation(ts)
-        << " [dx=" << dx() << " dy=" << dy() << "]";
+}
+
+void FEOffset::dump()
+{
+}
+
+TextStream& FEOffset::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=OFFSET] "; 
+    FilterEffect::externalRepresentation(ts);
+    ts << " [dx=" << dx() << " dy=" << dy() << "]";
     return ts;
 }
 

@@ -32,6 +32,11 @@ FilterEffect::~FilterEffect()
 {
 }
 
+TextStream& FilterEffect::externalRepresentation(TextStream& ts) const
+{
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)

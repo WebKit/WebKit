@@ -24,7 +24,6 @@
 #define SVGFEColorMatrixElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "FilterBuilder.h"
 #include "FEColorMatrix.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 

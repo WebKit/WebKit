@@ -23,59 +23,70 @@
 #define SVGFEConvolveMatrix_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
+#include "FloatPoint.h"
+#include "FloatSize.h"
+
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
-enum SVGEdgeModeType {
-    SVG_EDGEMODE_UNKNOWN   = 0,
-    SVG_EDGEMODE_DUPLICATE = 1,
-    SVG_EDGEMODE_WRAP      = 2,
-    SVG_EDGEMODE_NONE      = 3
-};
+    enum EdgeModeType {
+        EDGEMODE_UNKNOWN   = 0,
+        EDGEMODE_DUPLICATE = 1,
+        EDGEMODE_WRAP      = 2,
+        EDGEMODE_NONE      = 3
+    };
 
-class SVGFEConvolveMatrix : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEConvolveMatrix> create(SVGResourceFilter*);
+    class FEConvolveMatrix : public FilterEffect {
+    public:
+        static PassRefPtr<FEConvolveMatrix> create(FilterEffect*, FilterEffect*, const FloatSize&, 
+                const float&, const float&, const FloatSize&, EdgeModeType, const FloatPoint&,
+                bool, const Vector<float>&);
 
-    FloatSize kernelSize() const;
-    void setKernelSize(FloatSize);
+        FloatSize kernelSize() const;
+        void setKernelSize(FloatSize);
 
-    const Vector<float>& kernel() const;
-    void setKernel(const Vector<float>&);
+        const Vector<float>& kernel() const;
+        void setKernel(const Vector<float>&);
 
-    float divisor() const;
-    void setDivisor(float);
+        float divisor() const;
+        void setDivisor(float);
 
-    float bias() const;
-    void setBias(float);
+        float bias() const;
+        void setBias(float);
 
-    FloatSize targetOffset() const;
-    void setTargetOffset(FloatSize);
+        FloatSize targetOffset() const;
+        void setTargetOffset(FloatSize);
 
-    SVGEdgeModeType edgeMode() const;
-    void setEdgeMode(SVGEdgeModeType);
+        EdgeModeType edgeMode() const;
+        void setEdgeMode(EdgeModeType);
 
-    FloatPoint kernelUnitLength() const;
-    void setKernelUnitLength(FloatPoint);
+        FloatPoint kernelUnitLength() const;
+        void setKernelUnitLength(FloatPoint);
 
-    bool preserveAlpha() const;
-    void setPreserveAlpha(bool);
+        bool preserveAlpha() const;
+        void setPreserveAlpha(bool);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-private:
-    SVGFEConvolveMatrix(SVGResourceFilter*);
+    private:
+        FEConvolveMatrix(FilterEffect*, FilterEffect*, const FloatSize&, const float&, const float&,
+                const FloatSize&, EdgeModeType, const FloatPoint&, bool, const Vector<float>&);
 
-    FloatSize m_kernelSize;
-    float m_divisor;
-    float m_bias;
-    FloatSize m_targetOffset;
-    SVGEdgeModeType m_edgeMode;
-    FloatPoint m_kernelUnitLength;
-    bool m_preserveAlpha;
-    Vector<float> m_kernelMatrix; // maybe should be a real matrix?
-};
+        RefPtr<FilterEffect> m_in;
+        RefPtr<FilterEffect> m_in2;
+        FloatSize m_kernelSize;
+        float m_divisor;
+        float m_bias;
+        FloatSize m_targetOffset;
+        EdgeModeType m_edgeMode;
+        FloatPoint m_kernelUnitLength;
+        bool m_preserveAlpha;
+        Vector<float> m_kernelMatrix;
+    };
 
 } // namespace WebCore
 

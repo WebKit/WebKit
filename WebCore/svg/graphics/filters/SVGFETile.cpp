@@ -21,17 +21,34 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFETile.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFETile::SVGFETile(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
+FETile::FETile(FilterEffect* in)
+    : FilterEffect()
+    , m_in(in)
 {
 }
 
-PassRefPtr<SVGFETile> SVGFETile::create(SVGResourceFilter* filter)
+PassRefPtr<FETile> FETile::create(FilterEffect* in)
 {
-    return adoptRef(new SVGFETile(filter));
+    return adoptRef(new FETile(in));
+}
+
+void FETile::apply()
+{
+}
+
+void FETile::dump()
+{
+}
+
+TextStream& FETile::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=TILE]";
+    FilterEffect::externalRepresentation(ts);
+    return ts;
 }
 
 } // namespace WebCore

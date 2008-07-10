@@ -23,32 +23,31 @@
 #define SVGFEOffset_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-class SVGFEOffset : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEOffset> create(SVGResourceFilter*);
+    class FEOffset : public FilterEffect {
+    public:
+        static PassRefPtr<FEOffset> create(FilterEffect*, const float&, const float&);
 
-    float dx() const;
-    void setDx(float);
+        float dx() const;
+        void setDx(float);
 
-    float dy() const;
-    void setDy(float);
+        float dy() const;
+        void setDy(float);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
+    private:
+        FEOffset(FilterEffect*, const float&, const float&);
 
-private:
-    SVGFEOffset(SVGResourceFilter*);
-
-    float m_dx;
-    float m_dy;
-};
+        RefPtr<FilterEffect> m_in;
+        float m_dx;
+        float m_dy;
+    };
 
 } // namespace WebCore
 

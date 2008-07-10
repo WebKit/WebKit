@@ -22,89 +22,90 @@
 #include "config.h"
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGRenderTreeAsText.h"
 #include "SVGFEDisplacementMap.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEDisplacementMap::SVGFEDisplacementMap(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_xChannelSelector(SVG_CHANNEL_UNKNOWN)
-    , m_yChannelSelector(SVG_CHANNEL_UNKNOWN)
-    , m_scale(0)
+FEDisplacementMap::FEDisplacementMap(FilterEffect* in, FilterEffect* in2, ChannelSelectorType xChannelSelector,
+    ChannelSelectorType yChannelSelector, const float& scale)
+    : FilterEffect()
+    , m_in(in)
+    , m_in2(in2)
+    , m_xChannelSelector(xChannelSelector)
+    , m_yChannelSelector(yChannelSelector)
+    , m_scale(scale)
 {
 }
 
-PassRefPtr<SVGFEDisplacementMap> SVGFEDisplacementMap::create(SVGResourceFilter* filter)
+PassRefPtr<FEDisplacementMap> FEDisplacementMap::create(FilterEffect* in, FilterEffect* in2,
+    ChannelSelectorType xChannelSelector, ChannelSelectorType yChannelSelector, const float& scale)
 {
-    return adoptRef(new SVGFEDisplacementMap(filter));
+    return adoptRef(new FEDisplacementMap(in, in2, xChannelSelector, yChannelSelector, scale));
 }
 
-String SVGFEDisplacementMap::in2() const
-{
-    return m_in2;
-}
-
-void SVGFEDisplacementMap::setIn2(const String &in2)
-{
-    m_in2 = in2;
-}
-
-SVGChannelSelectorType SVGFEDisplacementMap::xChannelSelector() const
+ChannelSelectorType FEDisplacementMap::xChannelSelector() const
 {
     return m_xChannelSelector;
 }
 
-void SVGFEDisplacementMap::setXChannelSelector(const SVGChannelSelectorType xChannelSelector)
+void FEDisplacementMap::setXChannelSelector(const ChannelSelectorType xChannelSelector)
 {
     m_xChannelSelector = xChannelSelector;
 }
 
-SVGChannelSelectorType SVGFEDisplacementMap::yChannelSelector() const
+ChannelSelectorType FEDisplacementMap::yChannelSelector() const
 {
     return m_yChannelSelector;
 }
 
-void SVGFEDisplacementMap::setYChannelSelector(const SVGChannelSelectorType yChannelSelector)
+void FEDisplacementMap::setYChannelSelector(const ChannelSelectorType yChannelSelector)
 {
     m_yChannelSelector = yChannelSelector;
 }
 
-float SVGFEDisplacementMap::scale() const
+float FEDisplacementMap::scale() const
 {
     return m_scale;
 }
 
-void SVGFEDisplacementMap::setScale(float scale)
+void FEDisplacementMap::setScale(float scale)
 {
     m_scale = scale;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGChannelSelectorType t)
+void FEDisplacementMap::apply()
+{
+}
+
+void FEDisplacementMap::dump()
+{
+}
+
+static TextStream& operator<<(TextStream& ts, ChannelSelectorType t)
 {
     switch (t)
     {
-        case SVG_CHANNEL_UNKNOWN:
+        case CHANNEL_UNKNOWN:
             ts << "UNKNOWN"; break;
-        case SVG_CHANNEL_R:
+        case CHANNEL_R:
             ts << "RED"; break;
-        case SVG_CHANNEL_G:
+        case CHANNEL_G:
             ts << "GREEN"; break;
-        case SVG_CHANNEL_B:
+        case CHANNEL_B:
             ts << "BLUE"; break;
-        case SVG_CHANNEL_A:
+        case CHANNEL_A:
             ts << "ALPHA"; break;
     }
     return ts;
 }
 
-TextStream& SVGFEDisplacementMap::externalRepresentation(TextStream& ts) const
+TextStream& FEDisplacementMap::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=DISPLACEMENT-MAP] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    if (!in2().isEmpty())
-        ts << " [in2=" << in2() << "]";
-    ts << " [scale=" << m_scale << "]"
+    FilterEffect::externalRepresentation(ts);
+    ts << " [in2=" << m_in2.get() << "]"
+        << " [scale=" << m_scale << "]"
         << " [x channel selector=" << m_xChannelSelector << "]"
         << " [y channel selector=" << m_yChannelSelector << "]";
     return ts;

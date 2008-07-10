@@ -35,13 +35,14 @@ namespace WebCore
         SVGFEMergeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeElement();
 
-        virtual SVGFEMerge* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        mutable RefPtr<SVGFEMerge> m_filterEffect;
+        mutable RefPtr<FEMerge> m_filterEffect;
     };
 
 } // namespace WebCore

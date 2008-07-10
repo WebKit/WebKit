@@ -23,111 +23,121 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFETurbulence.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFETurbulence::SVGFETurbulence(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_baseFrequencyX(0.0f)
-    , m_baseFrequencyY(0.0f)
-    , m_numOctaves(0)
-    , m_seed(0)
-    , m_stitchTiles(false)
-    , m_type(SVG_TURBULENCE_TYPE_UNKNOWN)
+FETurbulence::FETurbulence(TurbulanceType type, const float& baseFrequencyX, const float& baseFrequencyY,
+    const int& numOctaves, const float& seed, bool stitchTiles)
+    : FilterEffect()
+    , m_type(type)
+    , m_baseFrequencyX(baseFrequencyX)
+    , m_baseFrequencyY(baseFrequencyY)
+    , m_numOctaves(numOctaves)
+    , m_seed(seed)
+    , m_stitchTiles(stitchTiles)
 {
 }
 
-PassRefPtr<SVGFETurbulence> SVGFETurbulence::create(SVGResourceFilter* filter)
+PassRefPtr<FETurbulence> FETurbulence::create(TurbulanceType type, const float& baseFrequencyX, const float& baseFrequencyY,
+    const int& numOctaves, const float& seed, bool stitchTiles)
 {
-    return adoptRef(new SVGFETurbulence(filter));
+    return adoptRef(new FETurbulence(type, baseFrequencyX, baseFrequencyY, numOctaves, seed, stitchTiles));
 }
 
-SVGTurbulanceType SVGFETurbulence::type() const
+TurbulanceType FETurbulence::type() const
 {
     return m_type;
 }
 
-void SVGFETurbulence::setType(SVGTurbulanceType type)
+void FETurbulence::setType(TurbulanceType type)
 {
     m_type = type;
 }
 
-float SVGFETurbulence::baseFrequencyY() const
+float FETurbulence::baseFrequencyY() const
 {
     return m_baseFrequencyY;
 }
 
-void SVGFETurbulence::setBaseFrequencyY(float baseFrequencyY)
+void FETurbulence::setBaseFrequencyY(float baseFrequencyY)
 {
     m_baseFrequencyY = baseFrequencyY;
 }
 
-float SVGFETurbulence::baseFrequencyX() const
+float FETurbulence::baseFrequencyX() const
 {
     return m_baseFrequencyX;
 }
 
-void SVGFETurbulence::setBaseFrequencyX(float baseFrequencyX)
+void FETurbulence::setBaseFrequencyX(float baseFrequencyX)
 {
        m_baseFrequencyX = baseFrequencyX;
 }
 
-float SVGFETurbulence::seed() const
+float FETurbulence::seed() const
 {
     return m_seed; 
 }
 
-void SVGFETurbulence::setSeed(float seed)
+void FETurbulence::setSeed(float seed)
 {
     m_seed = seed;
 }
 
-int SVGFETurbulence::numOctaves() const
+int FETurbulence::numOctaves() const
 {
     return m_numOctaves;
 }
 
-void SVGFETurbulence::setNumOctaves(bool numOctaves)
+void FETurbulence::setNumOctaves(bool numOctaves)
 {
     m_numOctaves = numOctaves;
 }
 
-bool SVGFETurbulence::stitchTiles() const
+bool FETurbulence::stitchTiles() const
 {
     return m_stitchTiles;
 }
 
-void SVGFETurbulence::setStitchTiles(bool stitch)
+void FETurbulence::setStitchTiles(bool stitch)
 {
     m_stitchTiles = stitch;
 }
 
-static TextStream& operator<<(TextStream& ts, SVGTurbulanceType t)
+void FETurbulence::apply()
+{
+}
+
+void FETurbulence::dump()
+{
+}
+
+static TextStream& operator<<(TextStream& ts, TurbulanceType t)
 {
     switch (t)
     {
-        case SVG_TURBULENCE_TYPE_UNKNOWN:
+        case FETURBULENCE_TYPE_UNKNOWN:
             ts << "UNKNOWN"; break;
-        case SVG_TURBULENCE_TYPE_TURBULENCE:
+        case FETURBULENCE_TYPE_TURBULENCE:
             ts << "TURBULANCE"; break;
-        case SVG_TURBULENCE_TYPE_FRACTALNOISE:
+        case FETURBULENCE_TYPE_FRACTALNOISE:
             ts << "NOISE"; break;
     }
     return ts;
 }
 
-TextStream& SVGFETurbulence::externalRepresentation(TextStream& ts) const
+TextStream& FETurbulence::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=TURBULENCE] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << " [turbulence type=" << type() << "]"
         << " [base frequency x=" << baseFrequencyX() << " y=" << baseFrequencyY() << "]"
         << " [seed=" << seed() << "]"
         << " [num octaves=" << numOctaves() << "]"
         << " [stitch tiles=" << stitchTiles() << "]";
-    return ts;
 
+    return ts;
 }
 
 } // namespace WebCore

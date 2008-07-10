@@ -23,46 +23,55 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEGaussianBlur.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEGaussianBlur::SVGFEGaussianBlur(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_x(0.0f)
-    , m_y(0.0f)
+FEGaussianBlur::FEGaussianBlur(FilterEffect* in, const float& x, const float& y)
+    : FilterEffect()
+    , m_in(in)
+    , m_x(x)
+    , m_y(y)
 {
 }
 
-PassRefPtr<SVGFEGaussianBlur> SVGFEGaussianBlur::create(SVGResourceFilter* filter)
+PassRefPtr<FEGaussianBlur> FEGaussianBlur::create(FilterEffect* in, const float& x, const float& y)
 {
-    return adoptRef(new SVGFEGaussianBlur(filter));
+    return adoptRef(new FEGaussianBlur(in, x, y));
 }
 
-float SVGFEGaussianBlur::stdDeviationX() const
+float FEGaussianBlur::stdDeviationX() const
 {
     return m_x;
 }
 
-void SVGFEGaussianBlur::setStdDeviationX(float x)
+void FEGaussianBlur::setStdDeviationX(float x)
 {
     m_x = x;
 }
 
-float SVGFEGaussianBlur::stdDeviationY() const
+float FEGaussianBlur::stdDeviationY() const
 {
     return m_y;
 }
 
-void SVGFEGaussianBlur::setStdDeviationY(float y)
+void FEGaussianBlur::setStdDeviationY(float y)
 {
     m_y = y;
 }
 
-TextStream& SVGFEGaussianBlur::externalRepresentation(TextStream& ts) const
+void FEGaussianBlur::apply()
+{
+}
+
+void FEGaussianBlur::dump()
+{
+}
+
+TextStream& FEGaussianBlur::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=GAUSSIAN-BLUR] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << " [std dev. x=" << stdDeviationX() << " y=" << stdDeviationY() << "]";
     return ts;
 }

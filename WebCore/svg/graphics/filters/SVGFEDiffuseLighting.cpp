@@ -24,94 +24,106 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGLightSource.h"
 #include "SVGFEDiffuseLighting.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEDiffuseLighting::SVGFEDiffuseLighting(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_lightingColor()
-    , m_surfaceScale(0.0f)
-    , m_diffuseConstant(0.0f)
-    , m_kernelUnitLengthX(0.0f)
-    , m_kernelUnitLengthY(0.0f)
-    , m_lightSource(0)
+FEDiffuseLighting::FEDiffuseLighting(FilterEffect* in , const Color& lightingColor, const float& surfaceScale,
+    const float& diffuseConstant, const float& kernelUnitLengthX, const float& kernelUnitLengthY, LightSource* lightSource)
+    : FilterEffect()
+    , m_in(in)
+    , m_lightingColor(lightingColor)
+    , m_surfaceScale(surfaceScale)
+    , m_diffuseConstant(diffuseConstant)
+    , m_kernelUnitLengthX(kernelUnitLengthX)
+    , m_kernelUnitLengthY(kernelUnitLengthY)
+    , m_lightSource(lightSource)
 {
 }
 
-PassRefPtr<SVGFEDiffuseLighting> SVGFEDiffuseLighting::create(SVGResourceFilter* filter)
+PassRefPtr<FEDiffuseLighting> FEDiffuseLighting::create(FilterEffect* in , const Color& lightingColor,
+    const float& surfaceScale, const float& diffuseConstant, const float& kernelUnitLengthX,
+    const float& kernelUnitLengthY, LightSource* lightSource)
 {
-    return adoptRef(new SVGFEDiffuseLighting(filter));
+    return adoptRef(new FEDiffuseLighting(in, lightingColor, surfaceScale, diffuseConstant, kernelUnitLengthX, kernelUnitLengthY, lightSource));
 }
 
-SVGFEDiffuseLighting::~SVGFEDiffuseLighting()
+FEDiffuseLighting::~FEDiffuseLighting()
 {
 }
 
-Color SVGFEDiffuseLighting::lightingColor() const
+Color FEDiffuseLighting::lightingColor() const
 {
     return m_lightingColor;
 }
 
-void SVGFEDiffuseLighting::setLightingColor(const Color& lightingColor)
+void FEDiffuseLighting::setLightingColor(const Color& lightingColor)
 {
     m_lightingColor = lightingColor;
 }
 
-float SVGFEDiffuseLighting::surfaceScale() const 
+float FEDiffuseLighting::surfaceScale() const 
 {
     return m_surfaceScale;
 }
 
-void SVGFEDiffuseLighting::setSurfaceScale(float surfaceScale)
+void FEDiffuseLighting::setSurfaceScale(float surfaceScale)
 {
     m_surfaceScale = surfaceScale;
 }
 
-float SVGFEDiffuseLighting::diffuseConstant() const
+float FEDiffuseLighting::diffuseConstant() const
 {
     return m_diffuseConstant;
 }
 
-void SVGFEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
+void FEDiffuseLighting::setDiffuseConstant(float diffuseConstant)
 {
     m_diffuseConstant = diffuseConstant;
 }
 
-float SVGFEDiffuseLighting::kernelUnitLengthX() const
+float FEDiffuseLighting::kernelUnitLengthX() const
 {
     return m_kernelUnitLengthX;
 }
 
-void SVGFEDiffuseLighting::setKernelUnitLengthX(float kernelUnitLengthX)
+void FEDiffuseLighting::setKernelUnitLengthX(float kernelUnitLengthX)
 {
     m_kernelUnitLengthX = kernelUnitLengthX;
 }
 
-float SVGFEDiffuseLighting::kernelUnitLengthY() const
+float FEDiffuseLighting::kernelUnitLengthY() const
 {
     return m_kernelUnitLengthY;
 }
 
-void SVGFEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
+void FEDiffuseLighting::setKernelUnitLengthY(float kernelUnitLengthY)
 {
     m_kernelUnitLengthY = kernelUnitLengthY;
 }
 
-const LightSource* SVGFEDiffuseLighting::lightSource() const
+const LightSource* FEDiffuseLighting::lightSource() const
 {
     return m_lightSource.get();
 }
 
-void SVGFEDiffuseLighting::setLightSource(LightSource* lightSource)
+void FEDiffuseLighting::setLightSource(LightSource* lightSource)
 {    
     m_lightSource = lightSource;
 }
 
-TextStream& SVGFEDiffuseLighting::externalRepresentation(TextStream& ts) const
+void FEDiffuseLighting::apply()
+{
+}
+
+void FEDiffuseLighting::dump()
+{
+}
+
+TextStream& FEDiffuseLighting::externalRepresentation(TextStream& ts) const
 {
     ts << "[type=DIFFUSE-LIGHTING] ";
-    SVGFilterEffect::externalRepresentation(ts);
+    FilterEffect::externalRepresentation(ts);
     ts << " [surface scale=" << m_surfaceScale << "]"
         << " [diffuse constant=" << m_diffuseConstant << "]"
         << " [kernel unit length " << m_kernelUnitLengthX << ", " << m_kernelUnitLengthY << "]";

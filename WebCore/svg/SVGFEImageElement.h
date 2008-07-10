@@ -47,9 +47,10 @@ namespace WebCore {
         virtual void notifyFinished(CachedResource*);
 
         virtual void getSubresourceAttributeStrings(Vector<String>&) const;
+        bool build(FilterBuilder*);
 
     protected:
-        virtual SVGFEImage* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -61,7 +62,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGFEImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
         CachedImage* m_cachedImage;
-        mutable RefPtr<SVGFEImage> m_filterEffect;
+        mutable RefPtr<FEImage> m_filterEffect;
     };
 
 } // namespace WebCore

@@ -37,7 +37,7 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
     , m_numOctaves(1)
     , m_seed(0.0f)
     , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
-    , m_type(SVG_TURBULENCE_TYPE_TURBULENCE)
+    , m_type(FETURBULENCE_TYPE_TURBULENCE)
     , m_filterEffect(0)
 {
 }
@@ -58,9 +58,9 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {
         if (value == "fractalNoise")
-            setTypeBaseValue(SVG_TURBULENCE_TYPE_FRACTALNOISE);
+            setTypeBaseValue(FETURBULENCE_TYPE_FRACTALNOISE);
         else if (value == "turbulence")
-            setTypeBaseValue(SVG_TURBULENCE_TYPE_TURBULENCE);
+            setTypeBaseValue(FETURBULENCE_TYPE_TURBULENCE);
     } else if (attr->name() == SVGNames::stitchTilesAttr) {
         if (value == "stitch")
             setStitchTilesBaseValue(SVG_STITCHTYPE_STITCH);
@@ -80,21 +80,19 @@ void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
 }
 
-SVGFETurbulence* SVGFETurbulenceElement::filterEffect(SVGResourceFilter* filter) const
+SVGFilterEffect* SVGFETurbulenceElement::filterEffect(SVGResourceFilter* filter) const
 {
-    
-    if (!m_filterEffect)
-        m_filterEffect = SVGFETurbulence::create(filter);
-    
-    m_filterEffect->setType((SVGTurbulanceType) type());
-    m_filterEffect->setBaseFrequencyX(baseFrequencyX());
-    m_filterEffect->setBaseFrequencyY(baseFrequencyY());
-    m_filterEffect->setNumOctaves(numOctaves());
-    m_filterEffect->setSeed(seed());
-    m_filterEffect->setStitchTiles(stitchTiles() == SVG_STITCHTYPE_STITCH);
+    ASSERT_NOT_REACHED();
+    return 0;
+}
 
-    setStandardAttributes(m_filterEffect.get()); 
-    return m_filterEffect.get();
+bool SVGFETurbulenceElement::build(FilterBuilder* builder)
+{
+    RefPtr<FilterEffect> addedEffect = FETurbulence::create(static_cast<TurbulanceType> (type()), baseFrequencyX(), 
+                                        baseFrequencyY(), numOctaves(), seed(), stitchTiles() == SVG_STITCHTYPE_STITCH);
+    builder->add(result(), addedEffect.release());
+
+    return true;
 }
 
 }

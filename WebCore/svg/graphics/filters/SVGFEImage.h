@@ -25,34 +25,30 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "CachedImage.h"
 #include "CachedResourceClient.h"
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-class SVGFEImage : public SVGFilterEffect
-                 , public CachedResourceClient {
-public:
-    static PassRefPtr<SVGFEImage> create(SVGResourceFilter*);
-    virtual ~SVGFEImage();
+    class FEImage : public FilterEffect
+                     , public CachedResourceClient {
+    public:
+        static PassRefPtr<FEImage> create(CachedImage*);
+        virtual ~FEImage();
 
-    // FIXME: We need to support <svg> (RenderObject*) as well as image data.
+        // FIXME: We need to support <svg> (RenderObject*) as well as image data.
 
-    CachedImage* cachedImage() const;
-    void setCachedImage(CachedImage*);
+        CachedImage* cachedImage() const;
+        void setCachedImage(CachedImage*);
+        
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
+        
+    private:
+        FEImage(CachedImage*);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
-
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
-
-    virtual void imageChanged(CachedImage*);
-    
-private:
-    SVGFEImage(SVGResourceFilter*);
-
-    CachedImage* m_cachedImage;
-};
+        CachedImage* m_cachedImage;
+    };
 
 } // namespace WebCore
 

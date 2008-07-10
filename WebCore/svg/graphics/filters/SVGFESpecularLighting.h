@@ -25,53 +25,54 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "Color.h"
 #include "SVGLightSource.h"
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-class SVGFESpecularLighting : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFESpecularLighting> create(SVGResourceFilter*);
-    virtual ~SVGFESpecularLighting();
+    class FESpecularLighting : public FilterEffect {
+    public:
+        static PassRefPtr<FESpecularLighting> create(FilterEffect*, const Color&, const float&, const float&,
+            const float&, const float&, const float&, LightSource*);
+        virtual ~FESpecularLighting();
 
-    Color lightingColor() const;
-    void setLightingColor(const Color&);
+        Color lightingColor() const;
+        void setLightingColor(const Color&);
 
-    float surfaceScale() const;
-    void setSurfaceScale(float);
+        float surfaceScale() const;
+        void setSurfaceScale(float);
 
-    float specularConstant() const;
-    void setSpecularConstant(float);
+        float specularConstant() const;
+        void setSpecularConstant(float);
 
-    float specularExponent() const;
-    void setSpecularExponent(float);
+        float specularExponent() const;
+        void setSpecularExponent(float);
 
-    float kernelUnitLengthX() const;
-    void setKernelUnitLengthX(float);
+        float kernelUnitLengthX() const;
+        void setKernelUnitLengthX(float);
 
-    float kernelUnitLengthY() const;
-    void setKernelUnitLengthY(float);
+        float kernelUnitLengthY() const;
+        void setKernelUnitLengthY(float);
 
-    const LightSource* lightSource() const;
-    void setLightSource(LightSource*);
+        const LightSource* lightSource() const;
+        void setLightSource(LightSource*);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
+    private:
+        FESpecularLighting(FilterEffect*, const Color&, const float&, const float&, const float&,
+            const float&, const float&, LightSource*);
 
-private:
-    SVGFESpecularLighting(SVGResourceFilter*);
-
-    Color m_lightingColor;
-    float m_surfaceScale;
-    float m_specularConstant;
-    float m_specularExponent;
-    float m_kernelUnitLengthX;
-    float m_kernelUnitLengthY;
-    RefPtr<LightSource> m_lightSource;
-};
+        RefPtr<FilterEffect> m_in;
+        Color m_lightingColor;
+        float m_surfaceScale;
+        float m_specularConstant;
+        float m_specularExponent;
+        float m_kernelUnitLengthX;
+        float m_kernelUnitLengthY;
+        RefPtr<LightSource> m_lightSource;
+    };
 
 } // namespace WebCore
 

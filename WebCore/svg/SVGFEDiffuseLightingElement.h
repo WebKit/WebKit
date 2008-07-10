@@ -23,10 +23,11 @@
 #define SVGFEDiffuseLightingElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#include "SVGFELightElement.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 
 namespace WebCore {
-    class SVGFEDiffuseLighting;
+    class FEDiffuseLighting;
     class SVGColor;
 
     class SVGFEDiffuseLightingElement : public SVGFilterPrimitiveStandardAttributes
@@ -37,6 +38,7 @@ namespace WebCore {
 
         virtual void parseMappedAttribute(MappedAttribute*);
         virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -48,9 +50,9 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, KernelUnitLengthX, kernelUnitLengthX)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDiffuseLightingElement, float, KernelUnitLengthY, kernelUnitLengthY)
 
-        mutable RefPtr<SVGFEDiffuseLighting> m_filterEffect;
+        LightSource* findLights() const;
         
-        void updateLights() const;
+        mutable RefPtr<FEDiffuseLighting> m_filterEffect;
     };
 
 } // namespace WebCore

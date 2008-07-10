@@ -23,20 +23,22 @@
 #define SVGFETile_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
     
-    class SVGFETile : public SVGFilterEffect {
+    class FETile : public FilterEffect {
     public:
-        static PassRefPtr<SVGFETile> create(SVGResourceFilter*);
+        static PassRefPtr<FETile> create(FilterEffect*);
 
-    #if PLATFORM(CI)
-        virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-    #endif
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
+        
     private:
-        SVGFETile(SVGResourceFilter*);
-
+        FETile(FilterEffect*);
+        
+        RefPtr<FilterEffect> m_in;
     };
 
 } // namespace WebCore

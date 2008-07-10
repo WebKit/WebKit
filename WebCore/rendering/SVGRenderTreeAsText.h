@@ -97,6 +97,13 @@ TextStream& operator<<(TextStream& ts, const Vector<Item>& v)
     return ts;
 }
 
+template<typename Pointer>
+TextStream& operator<<(TextStream& ts, Pointer* t)
+{
+    ts << reinterpret_cast<intptr_t>(t);
+    return ts;
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

@@ -23,48 +23,47 @@
 #define SVGFEDisplacementMap_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
-#include "SVGFilterEffect.h"
+#include "PlatformString.h"
+#include "FilterEffect.h"
 
 namespace WebCore {
 
-enum SVGChannelSelectorType {
-    SVG_CHANNEL_UNKNOWN = 0,
-    SVG_CHANNEL_R       = 1,
-    SVG_CHANNEL_G       = 2,
-    SVG_CHANNEL_B       = 3,
-    SVG_CHANNEL_A       = 4
-};
+    enum ChannelSelectorType {
+        CHANNEL_UNKNOWN = 0,
+        CHANNEL_R       = 1,
+        CHANNEL_G       = 2,
+        CHANNEL_B       = 3,
+        CHANNEL_A       = 4
+    };
+    
+    class FEDisplacementMap : public FilterEffect {
+    public:
+        static PassRefPtr<FEDisplacementMap> create(FilterEffect*, FilterEffect*, ChannelSelectorType,
+                ChannelSelectorType, const float&);
 
-class SVGFEDisplacementMap : public SVGFilterEffect {
-public:
-    static PassRefPtr<SVGFEDisplacementMap> create(SVGResourceFilter*);
+        ChannelSelectorType xChannelSelector() const;
+        void setXChannelSelector(const ChannelSelectorType);
 
-    String in2() const;
-    void setIn2(const String&);
+        ChannelSelectorType yChannelSelector() const;
+        void setYChannelSelector(const ChannelSelectorType);
 
-    SVGChannelSelectorType xChannelSelector() const;
-    void setXChannelSelector(const SVGChannelSelectorType);
+        float scale() const;
+        void setScale(float scale);
 
-    SVGChannelSelectorType yChannelSelector() const;
-    void setYChannelSelector(const SVGChannelSelectorType);
+        virtual void apply();
+        virtual void dump();
+        TextStream& externalRepresentation(TextStream& ts) const;
 
-    float scale() const;
-    void setScale(float scale);
+    private:
+        FEDisplacementMap(FilterEffect*, FilterEffect*, ChannelSelectorType,
+            ChannelSelectorType, const float&);
 
-    virtual TextStream& externalRepresentation(TextStream&) const;
-
-#if PLATFORM(CI)
-    virtual CIFilter* getCIFilter(const FloatRect& bbox) const;
-#endif
-
-private:
-    SVGFEDisplacementMap(SVGResourceFilter*);
-
-    SVGChannelSelectorType m_xChannelSelector;
-    SVGChannelSelectorType m_yChannelSelector;
-    float m_scale;
-    String m_in2;
-};
+        RefPtr<FilterEffect> m_in;
+        RefPtr<FilterEffect> m_in2;
+        ChannelSelectorType m_xChannelSelector;
+        ChannelSelectorType m_yChannelSelector;
+        float m_scale;
+    };
 
 } // namespace WebCore
 

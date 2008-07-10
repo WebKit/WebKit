@@ -31,10 +31,11 @@ namespace WebCore {
         SVGFEDisplacementMapElement(const QualifiedName& tagName, Document*);
         virtual ~SVGFEDisplacementMapElement();
         
-        static SVGChannelSelectorType stringToChannel(const String&);
+        static ChannelSelectorType stringToChannel(const String&);
         
         virtual void parseMappedAttribute(MappedAttribute*);
-        virtual SVGFEDisplacementMap* filterEffect(SVGResourceFilter*) const;
+        virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
+        bool build(FilterBuilder*);
         
     protected:
         virtual const SVGElement* contextElement() const { return this; }
@@ -46,7 +47,7 @@ namespace WebCore {
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, int, YChannelSelector, yChannelSelector)
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEDisplacementMapElement, float, Scale, scale)
 
-        mutable RefPtr<SVGFEDisplacementMap> m_filterEffect;
+        mutable RefPtr<FEDisplacementMap> m_filterEffect;
     };
 
 } // namespace WebCore

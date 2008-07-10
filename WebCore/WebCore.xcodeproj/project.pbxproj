@@ -3015,17 +3015,8 @@
 		B25599330D00D8BA00BB825C /* SVGResourceClipperCg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B25598970D00D8B800BB825C /* SVGResourceClipperCg.cpp */; };
 		B25599350D00D8BA00BB825C /* SVGResourceFilterCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */; };
 		B25599370D00D8BA00BB825C /* SVGResourceMaskerCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B255989B0D00D8B800BB825C /* SVGResourceMaskerCg.mm */; };
-		B255993C0D00D8BA00BB825C /* SVGFEDiffuseLightingCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A20D00D8B800BB825C /* SVGFEDiffuseLightingCg.mm */; };
-		B255993D0D00D8BA00BB825C /* SVGFEDisplacementMapCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A30D00D8B800BB825C /* SVGFEDisplacementMapCg.mm */; };
-		B255993E0D00D8BA00BB825C /* SVGFEFloodCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A40D00D8B800BB825C /* SVGFEFloodCg.mm */; };
-		B255993F0D00D8BA00BB825C /* SVGFEGaussianBlurCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A50D00D8B800BB825C /* SVGFEGaussianBlurCg.mm */; };
 		B25599400D00D8BA00BB825C /* SVGFEHelpersCg.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598A60D00D8B800BB825C /* SVGFEHelpersCg.h */; };
 		B25599410D00D8BA00BB825C /* SVGFEHelpersCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A70D00D8B800BB825C /* SVGFEHelpersCg.mm */; };
-		B25599420D00D8BA00BB825C /* SVGFEImageCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A80D00D8B800BB825C /* SVGFEImageCg.mm */; };
-		B25599430D00D8BA00BB825C /* SVGFEMergeCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598A90D00D8B800BB825C /* SVGFEMergeCg.mm */; };
-		B25599440D00D8BA00BB825C /* SVGFEOffsetCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598AA0D00D8B800BB825C /* SVGFEOffsetCg.mm */; };
-		B25599450D00D8BA00BB825C /* SVGFESpecularLightingCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598AB0D00D8B800BB825C /* SVGFESpecularLightingCg.mm */; };
-		B25599460D00D8BA00BB825C /* SVGFETileCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598AC0D00D8B800BB825C /* SVGFETileCg.mm */; };
 		B25599470D00D8BA00BB825C /* SVGFilterEffectCg.mm in Sources */ = {isa = PBXBuildFile; fileRef = B25598AD0D00D8B800BB825C /* SVGFilterEffectCg.mm */; };
 		B25599480D00D8BA00BB825C /* WKArithmeticFilter.cikernel in Resources */ = {isa = PBXBuildFile; fileRef = B25598AE0D00D8B900BB825C /* WKArithmeticFilter.cikernel */; };
 		B25599490D00D8BA00BB825C /* WKArithmeticFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = B25598AF0D00D8B900BB825C /* WKArithmeticFilter.h */; };
@@ -7369,17 +7360,8 @@
 		B25598970D00D8B800BB825C /* SVGResourceClipperCg.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SVGResourceClipperCg.cpp; sourceTree = "<group>"; };
 		B25598990D00D8B800BB825C /* SVGResourceFilterCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceFilterCg.mm; sourceTree = "<group>"; };
 		B255989B0D00D8B800BB825C /* SVGResourceMaskerCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGResourceMaskerCg.mm; sourceTree = "<group>"; };
-		B25598A20D00D8B800BB825C /* SVGFEDiffuseLightingCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEDiffuseLightingCg.mm; sourceTree = "<group>"; };
-		B25598A30D00D8B800BB825C /* SVGFEDisplacementMapCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEDisplacementMapCg.mm; sourceTree = "<group>"; };
-		B25598A40D00D8B800BB825C /* SVGFEFloodCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEFloodCg.mm; sourceTree = "<group>"; };
-		B25598A50D00D8B800BB825C /* SVGFEGaussianBlurCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEGaussianBlurCg.mm; sourceTree = "<group>"; };
 		B25598A60D00D8B800BB825C /* SVGFEHelpersCg.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SVGFEHelpersCg.h; sourceTree = "<group>"; };
 		B25598A70D00D8B800BB825C /* SVGFEHelpersCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEHelpersCg.mm; sourceTree = "<group>"; };
-		B25598A80D00D8B800BB825C /* SVGFEImageCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEImageCg.mm; sourceTree = "<group>"; };
-		B25598A90D00D8B800BB825C /* SVGFEMergeCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEMergeCg.mm; sourceTree = "<group>"; };
-		B25598AA0D00D8B800BB825C /* SVGFEOffsetCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFEOffsetCg.mm; sourceTree = "<group>"; };
-		B25598AB0D00D8B800BB825C /* SVGFESpecularLightingCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFESpecularLightingCg.mm; sourceTree = "<group>"; };
-		B25598AC0D00D8B800BB825C /* SVGFETileCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFETileCg.mm; sourceTree = "<group>"; };
 		B25598AD0D00D8B800BB825C /* SVGFilterEffectCg.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = SVGFilterEffectCg.mm; sourceTree = "<group>"; };
 		B25598AE0D00D8B900BB825C /* WKArithmeticFilter.cikernel */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = WKArithmeticFilter.cikernel; sourceTree = "<group>"; };
 		B25598AF0D00D8B900BB825C /* WKArithmeticFilter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WKArithmeticFilter.h; sourceTree = "<group>"; };
@@ -11962,17 +11944,8 @@
 		B255989D0D00D8B800BB825C /* cg */ = {
 			isa = PBXGroup;
 			children = (
-				B25598A20D00D8B800BB825C /* SVGFEDiffuseLightingCg.mm */,
-				B25598A30D00D8B800BB825C /* SVGFEDisplacementMapCg.mm */,
-				B25598A40D00D8B800BB825C /* SVGFEFloodCg.mm */,
-				B25598A50D00D8B800BB825C /* SVGFEGaussianBlurCg.mm */,
 				B25598A60D00D8B800BB825C /* SVGFEHelpersCg.h */,
 				B25598A70D00D8B800BB825C /* SVGFEHelpersCg.mm */,
-				B25598A80D00D8B800BB825C /* SVGFEImageCg.mm */,
-				B25598A90D00D8B800BB825C /* SVGFEMergeCg.mm */,
-				B25598AA0D00D8B800BB825C /* SVGFEOffsetCg.mm */,
-				B25598AB0D00D8B800BB825C /* SVGFESpecularLightingCg.mm */,
-				B25598AC0D00D8B800BB825C /* SVGFETileCg.mm */,
 				B25598AD0D00D8B800BB825C /* SVGFilterEffectCg.mm */,
 				B25598AE0D00D8B900BB825C /* WKArithmeticFilter.cikernel */,
 				B25598AF0D00D8B900BB825C /* WKArithmeticFilter.h */,
@@ -16591,41 +16564,32 @@
 				B22279D00D00BF220071B782 /* SVGFECompositeElement.cpp in Sources */,
 				B255997A0D00D8BA00BB825C /* SVGFEConvolveMatrix.cpp in Sources */,
 				B255997C0D00D8BA00BB825C /* SVGFEDiffuseLighting.cpp in Sources */,
-				B255993C0D00D8BA00BB825C /* SVGFEDiffuseLightingCg.mm in Sources */,
 				B22279D30D00BF220071B782 /* SVGFEDiffuseLightingElement.cpp in Sources */,
 				B255997E0D00D8BA00BB825C /* SVGFEDisplacementMap.cpp in Sources */,
-				B255993D0D00D8BA00BB825C /* SVGFEDisplacementMapCg.mm in Sources */,
 				B22279D60D00BF220071B782 /* SVGFEDisplacementMapElement.cpp in Sources */,
 				B22279D90D00BF220071B782 /* SVGFEDistantLightElement.cpp in Sources */,
 				B25599800D00D8BA00BB825C /* SVGFEFlood.cpp in Sources */,
-				B255993E0D00D8BA00BB825C /* SVGFEFloodCg.mm in Sources */,
 				B22279DC0D00BF220071B782 /* SVGFEFloodElement.cpp in Sources */,
 				B22279DF0D00BF220071B782 /* SVGFEFuncAElement.cpp in Sources */,
 				B22279E20D00BF220071B782 /* SVGFEFuncBElement.cpp in Sources */,
 				B22279E50D00BF220071B782 /* SVGFEFuncGElement.cpp in Sources */,
 				B22279E80D00BF220071B782 /* SVGFEFuncRElement.cpp in Sources */,
 				B25599820D00D8BA00BB825C /* SVGFEGaussianBlur.cpp in Sources */,
-				B255993F0D00D8BA00BB825C /* SVGFEGaussianBlurCg.mm in Sources */,
 				B22279EB0D00BF220071B782 /* SVGFEGaussianBlurElement.cpp in Sources */,
 				B25599410D00D8BA00BB825C /* SVGFEHelpersCg.mm in Sources */,
 				B25599840D00D8BA00BB825C /* SVGFEImage.cpp in Sources */,
-				B25599420D00D8BA00BB825C /* SVGFEImageCg.mm in Sources */,
 				B22279EE0D00BF220071B782 /* SVGFEImageElement.cpp in Sources */,
 				B22279F10D00BF220071B782 /* SVGFELightElement.cpp in Sources */,
 				B25599860D00D8BA00BB825C /* SVGFEMerge.cpp in Sources */,
-				B25599430D00D8BA00BB825C /* SVGFEMergeCg.mm in Sources */,
 				B22279F30D00BF220071B782 /* SVGFEMergeElement.cpp in Sources */,
 				B22279F60D00BF220071B782 /* SVGFEMergeNodeElement.cpp in Sources */,
 				B25599880D00D8BA00BB825C /* SVGFEMorphology.cpp in Sources */,
 				B255998A0D00D8BA00BB825C /* SVGFEOffset.cpp in Sources */,
-				B25599440D00D8BA00BB825C /* SVGFEOffsetCg.mm in Sources */,
 				B22279F90D00BF220071B782 /* SVGFEOffsetElement.cpp in Sources */,
 				B22279FC0D00BF220071B782 /* SVGFEPointLightElement.cpp in Sources */,
 				B255998C0D00D8BA00BB825C /* SVGFESpecularLighting.cpp in Sources */,
-				B25599450D00D8BA00BB825C /* SVGFESpecularLightingCg.mm in Sources */,
 				B22279FF0D00BF220071B782 /* SVGFESpecularLightingElement.cpp in Sources */,
 				B2227A020D00BF220071B782 /* SVGFESpotLightElement.cpp in Sources */,
-				B25599460D00D8BA00BB825C /* SVGFETileCg.mm in Sources */,
 				B2227A050D00BF220071B782 /* SVGFETileElement.cpp in Sources */,
 				B255998F0D00D8BA00BB825C /* SVGFETurbulence.cpp in Sources */,
 				B2227A080D00BF220071B782 /* SVGFETurbulenceElement.cpp in Sources */,

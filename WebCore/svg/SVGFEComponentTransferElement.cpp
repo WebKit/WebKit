@@ -86,8 +86,7 @@ bool SVGFEComponentTransferElement::build(FilterBuilder* builder)
             alpha = static_cast<SVGFEFuncAElement*>(n)->transferFunction();
     }
     
-    RefPtr<FilterEffect> addedEffect = FEComponentTransfer::create(input1, red, green, blue, alpha);
-    builder->add(result(), addedEffect.release());
+    builder->add(result(), FEComponentTransfer::create(input1, red, green, blue, alpha));
     
     return true;
 }

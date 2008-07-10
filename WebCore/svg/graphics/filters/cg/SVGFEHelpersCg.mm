@@ -39,18 +39,18 @@
 
 namespace WebCore {
 
-CIVector* getVectorForChannel(SVGChannelSelectorType channel)
+CIVector* getVectorForChannel(ChannelSelectorType channel)
 {
     switch (channel) {
-    case SVG_CHANNEL_UNKNOWN:
+    case CHANNEL_UNKNOWN:
         return nil;    
-    case SVG_CHANNEL_R:
+    case CHANNEL_R:
         return [CIVector vectorWithX:1.0f Y:0.0f Z:0.0f W:0.0f];
-    case SVG_CHANNEL_G:
+    case CHANNEL_G:
         return [CIVector vectorWithX:0.0f Y:1.0f Z:0.0f W:0.0f];
-    case SVG_CHANNEL_B:
+    case CHANNEL_B:
         return [CIVector vectorWithX:0.0f Y:0.0f Z:1.0f W:0.0f];
-    case SVG_CHANNEL_A:
+    case CHANNEL_A:
         return [CIVector vectorWithX:0.0f Y:0.0f Z:0.0f W:1.0f];
     default:
         return [CIVector vectorWithX:0.0f Y:0.0f Z:0.0f W:0.0f];

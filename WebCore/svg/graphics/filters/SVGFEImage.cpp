@@ -23,35 +23,33 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFEImage.h"
-
-#include "SVGResourceFilter.h"
-#include "TextStream.h"
+#include "SVGRenderTreeAsText.h"
 
 namespace WebCore {
 
-SVGFEImage::SVGFEImage(SVGResourceFilter* filter)
-    : SVGFilterEffect(filter)
-    , m_cachedImage(0)
+FEImage::FEImage(CachedImage* cachedImage)
+    : FilterEffect()
+    , m_cachedImage(cachedImage)
 {
 }
 
-PassRefPtr<SVGFEImage> SVGFEImage::create(SVGResourceFilter* filter)
+PassRefPtr<FEImage> FEImage::create(CachedImage* cachedImage)
 {
-    return adoptRef(new SVGFEImage(filter));
+    return adoptRef(new FEImage(cachedImage));
 }
 
-SVGFEImage::~SVGFEImage()
+FEImage::~FEImage()
 {
     if (m_cachedImage)
         m_cachedImage->removeClient(this);
 }
 
-CachedImage* SVGFEImage::cachedImage() const
+CachedImage* FEImage::cachedImage() const
 {
     return m_cachedImage;
 }
 
-void SVGFEImage::setCachedImage(CachedImage* image)
+void FEImage::setCachedImage(CachedImage* image)
 {
     if (m_cachedImage == image)
         return;
@@ -65,19 +63,20 @@ void SVGFEImage::setCachedImage(CachedImage* image)
         m_cachedImage->addClient(this);
 }
 
-TextStream& SVGFEImage::externalRepresentation(TextStream& ts) const
+void FEImage::apply()
 {
-    ts << "[type=IMAGE] ";
-    SVGFilterEffect::externalRepresentation(ts);
-    // FIXME: should this dump also object returned by SVGFEImage::image() ?
-    return ts;
-
 }
 
-void SVGFEImage::imageChanged(CachedImage*)
+void FEImage::dump()
 {
-    if (SVGResourceFilter* filterResource = filter())
-        filterResource->invalidate();
+}
+
+TextStream& FEImage::externalRepresentation(TextStream& ts) const
+{
+    ts << "[type=IMAGE] ";
+    FilterEffect::externalRepresentation(ts);
+    // FIXME: should this dump also object returned by SVGFEImage::image() ?
+    return ts;
 }
 
 } // namespace WebCore
