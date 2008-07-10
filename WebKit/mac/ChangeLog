@@ -1,3 +1,34 @@
+2008-07-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5823684> - Crash manipulating frame tree of a new frame before the new frame
+        has been installed in a frame tree.
+
+        The root of this problem was that calling init() on a new frame could end up calling arbitrary
+        javascript that might end up removing the frame from the tree.  This opened up a small can of worms
+        such as the frame not having yet been installed in its frame tree, and other assumed behavior while
+        destroying the frame.
+
+        Note that each platforms WebKit API layer needs to make this new guarantee:
+        "The new Frame must be installed in its FrameTree before newCoreFrame->init() is called"
+        I am fixing Mac, and Windows and GTK already have this property.  Wx currently has subframes disabled
+        but will need to add this guarantee when re-enabling, and Qt is currently vulnerable to this same bug.
+
+        Alternately, the way frames are created right now is roundabout and asinine, and this is a key
+        architectural improvement we can make in the future so the individual platform clients are no longer
+        vulnerable to this problem, which should really have been a WebCore issue.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::createFrame):  Don't bother null checking the newCoreFrame - can't be NULL.
+          Don't appendChild() the new frame here.
+          Null-check the new frame's page before loading the URL into it, as it might already have been
+          removed from the page.
+
+        * WebView/WebFrame.mm:
+        (+[WebFrame _createFrameWithPage:frameName:frameView:ownerElement:]):  If there is an ownerElement,
+          go ahead and install the new frame in the frame tree *before* calling init() on it.
+
 2008-07-09  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

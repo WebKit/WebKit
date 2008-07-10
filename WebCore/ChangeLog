@@ -1,3 +1,24 @@
+2008-07-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        <rdar://problem/5823684> - Crash manipulating frame tree of a new frame before the new frame
+        has been installed in a frame tree.
+
+        The root of this problem was that calling init() on a new frame could end up calling arbitrary
+        javascript that might end up removing the frame from the tree.  This opened up a small can of worms
+        such as the frame not having yet been installed in its frame tree, and other assumed behavior while
+        destroying the frame.
+
+        Test: fast/loader/frame-creation-removal.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::endIfNotLoadingMainResource):  If the frame doesn't have a page, don't close up
+          the document and parser because they don't exist, and this frame is on its way out.
+        (WebCore::FrameLoader::finishedParsing):  We can't rely on the refCount check to discover "am I being deleted?"
+          because we no longer store refCounts of 0.  The new check is "do I have a FrameView?" while will always be
+          false if the Frame is being destroyed.
+
 2008-07-09  Dean Jackson  <dino@apple.com>
 
         Changed to use the correct license in header comment (via Darin)

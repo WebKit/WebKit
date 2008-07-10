@@ -1,3 +1,13 @@
+2008-07-09  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin
+
+        Test for <rdar://problem/5823684>
+
+        * fast/loader/frame-creation-removal-expected.txt: Added.
+        * fast/loader/frame-creation-removal.html: Added.
+        * fast/loader/resources/frame-creation-removal-iframe.html: Added.
+
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.

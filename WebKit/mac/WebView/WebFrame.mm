@@ -285,6 +285,11 @@ WebView *getWebView(WebFrame *webFrame)
     frame->_private->coreFrame = coreFrame.get();
 
     coreFrame->tree()->setName(name);
+    if (ownerElement) {
+        ASSERT(ownerElement->document()->frame());
+        ownerElement->document()->frame()->tree()->appendChild(coreFrame.get());
+    }
+
     coreFrame->init();
 
     [webView _setZoomMultiplier:[webView _realZoomMultiplier] isTextOnly:[webView _realZoomMultiplierIsTextOnly]];

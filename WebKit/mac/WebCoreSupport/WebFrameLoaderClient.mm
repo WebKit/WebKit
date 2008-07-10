@@ -1077,15 +1077,15 @@ PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& url, const Strin
 
     [childView release];
 
-    if (!newCoreFrame)
-        return 0;
-
     WebFrame *newFrame = kit(newCoreFrame.get());
 
-    core(m_webFrame.get())->tree()->appendChild(newCoreFrame);
     if ([newFrame _dataSource])
         [[newFrame _dataSource] _documentLoader]->setOverrideEncoding([[m_webFrame.get() _dataSource] _documentLoader]->overrideEncoding());  
 
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    if (!newCoreFrame->page())
+        return 0;
+ 
     core(m_webFrame.get())->loader()->loadURLIntoChildFrame(url, referrer, newCoreFrame.get());
 
     // The frame's onload handler may have removed it from the document.

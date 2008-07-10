@@ -1048,7 +1048,7 @@ void FrameLoader::end()
 
 void FrameLoader::endIfNotLoadingMainResource()
 {
-    if (m_isLoadingMainResource)
+    if (m_isLoadingMainResource || !m_frame->page())
         return;
 
     // http://bugs.webkit.org/show_bug.cgi?id=10854
@@ -1228,7 +1228,8 @@ void FrameLoader::finishedParsing()
 
     // This can be called from the Frame's destructor, in which case we shouldn't protect ourselves
     // because doing so will cause us to re-enter the destructor when protector goes out of scope.
-    RefPtr<Frame> protector = m_frame->refCount() > 0 ? m_frame : 0;
+    // Null-checking the FrameView indicates whether or not we're in the destructor.
+    RefPtr<Frame> protector = m_frame->view() ? m_frame : 0;
 
     checkCompleted();
 
