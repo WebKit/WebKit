@@ -349,6 +349,11 @@ WebCore::ScrollbarMode ScrollView::vScrollbarMode() const
     return m_data->vScrollbarMode;
 }
 
+bool ScrollView::isScrollable() 
+{ 
+    return true; // FIXME : return wether or not the view is scrollable
+}
+
 void ScrollView::setScrollbarsMode(ScrollbarMode newMode)
 {
     bool needsAdjust = false;

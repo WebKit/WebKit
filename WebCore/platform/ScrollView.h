@@ -85,11 +85,13 @@ namespace WebCore {
         ScrollbarMode vScrollbarMode() const;
         ScrollbarMode hScrollbarMode() const;
 
+        bool isScrollable();
         void addChild(Widget*);
         void removeChild(Widget*);
 
         virtual void resizeContents(int w, int h);
         void updateContents(const IntRect&, bool now = false);
+        void updateWindowRect(const IntRect&, bool now = false);
         void update();
 
         // Event coordinates are assumed to be in the coordinate space of a window that contains
@@ -173,6 +175,9 @@ namespace WebCore {
         virtual void attachToWindow();
         virtual void detachFromWindow();
         bool isAttachedToWindow() const;
+        
+        void printPanScrollIcon(const IntPoint&);
+        void removePanScrollIcon();
 
         virtual void show();
         virtual void hide();

@@ -145,6 +145,8 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         idr = IDR_URL_ICON;
     else if (!strcmp(name, "nullPlugin"))
         idr = IDR_NULL_PLUGIN;
+    else if (!strcmp(name, "panIcon"))
+        idr = IDR_PAN_SCROLL_ICON;
     else if (!strcmp(name, "zoomInCursor"))
         idr = IDR_ZOOM_IN_CURSOR;
     else if (!strcmp(name, "zoomOutCursor"))

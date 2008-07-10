@@ -1,3 +1,60 @@
+2008-07-09  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+
+        http://bugs.webkit.org/show_bug.cgi?id=14227
+        Add the middle click panning feature to the windows release.
+        Details on almost each method below.
+        Manual test is included in the patch.
+
+        * ChangeLog:
+        * WebCore.vcproj/WebCore.vcproj:
+        * manual-tests/panScroll.html: Added.
+        * manual-tests/resources/big-page.html: Added.
+        * page/EventHandler.cpp: Added the panScroll start/stop handlers and adapted the autoscroll for both to share some functions.
+        (WebCore::EventHandler::EventHandler): Initialize the new class members for the panScroll
+        (WebCore::EventHandler::handleMouseDraggedEvent): Prevent the autoscroll to trigger if the panScroll is in progress
+        (WebCore::EventHandler::handleMouseReleaseEvent): Prevent the autoscroll to stop the panScroll on mouse release
+        (WebCore::EventHandler::handleAutoscroll): Added the specific calls for the panScroll (save mouse position, draw the panScroll icon) to the shared code
+        (WebCore::EventHandler::autoscrollTimerFired): Specify the calls to perform for each function (autoscroll and panScroll)
+        (WebCore::EventHandler::stopAutoscrollTimer): Specify the calls to perform for each function (autoscroll and panScroll)
+        (WebCore::EventHandler::handleMousePressEvent): Trigger for the panScroll. Test is the button is the middle button and try to find a renderer where the panScroll is possible. If it finds one, it calls the handleAutoscroll method.
+        * page/EventHandler.h:
+        (WebCore::EventHandler::panScrollInProgress): Getter used by the sub frames's EventHandler to notice the main frame EventHandler
+        (WebCore::EventHandler::setPanScrollInProgress): Setter used by the sub frames's EventHandler to notice the main frame EventHandler
+        * platform/ScrollView.h: Added a method used by the RenderObject to test if the view can be scrolled. Added the print/remove panScroll icon methods between the windows platform flags
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::isScrollable): Not implemented : returns true
+        * platform/mac/ScrollViewMac.mm: Implemented because it was useful for the autoscroll feature.
+        (WebCore::ScrollView::isScrollable):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::isScrollable): Not implemented : returns true
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::ScrollViewPrivate): Added a boolean and an IntPoint to draw the icon.
+        (WebCore::ScrollView::ScrollViewPrivate::scrollBackingStore): If the icon must be drawn, define the rect to invalidate to erase the previous icon and to display the new one.
+        (WebCore::ScrollView::updateContents): I split this method to be able to invalidate a rect with window coordinates instead of contents coordinates. This function now converts the contents coord in window coord and calls the new updateWindowRect() method  
+        (WebCore::ScrollView::updateWindowRect): New method which performs the work that was doing the end of the old updateContents : invalidate a rect with window coordinates
+        (WebCore::ScrollView::isScrollable): checks is the view has scrollbars
+        (WebCore::ScrollView::printPanScrollIcon): sets the boolean and the IntPoint for the icon. Invalidate his rect and ask for repaint.
+        (WebCore::ScrollView::removePanScrollIcon): sets the boolean to false. Invalidate his rect and ask for repaint.
+        (WebCore::ScrollView::paint): Modified to draw the icon if needed.
+        * platform/wx/ScrollViewWx.cpp:
+        (WebCore::ScrollView::isScrollable): Not implemented : returns true
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint): Receives the Middle click location and retrieves the currentMouse position from the EventHandler. With these informations it computes the direction to scroll to and the speed then calls for the final scroll.
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp: Adapt the panScroll to the ListBox object to scroll by lines instead of pixels
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::scrollToward):
+        (WebCore::RenderListBox::autoscroll):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::shouldPanScroll):
+        * rendering/RenderObject.cpp: 
+        (WebCore::RenderObject::shouldAutoscroll): Improved the verification to avoid triggering the autoscroll/panScroll when the root object can't scroll
+        (WebCore::RenderObject::panScroll): Calls the RenderLayer's panScrollFromPoint() method
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::stopPanScroll): 
+
 2008-07-09  Dean Jackson  <dino@apple.com>
 
         Rename CSSTransformValue to WebKitCSSTransformValue as it is non-standard for

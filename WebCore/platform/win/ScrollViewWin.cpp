@@ -63,6 +63,8 @@ public:
         , m_hScrollbarMode(ScrollbarAuto)
         , m_visible(false)
         , m_attachedToWindow(false)
+        , m_panScrollIconPoint(0,0)
+        , m_drawPanScrollIcon(false)
     {
     }
 
@@ -99,7 +101,11 @@ public:
     HashSet<Widget*> m_children;
     bool m_visible;
     bool m_attachedToWindow;
+    IntPoint m_panScrollIconPoint;
+    bool m_drawPanScrollIcon;
 };
+
+const int panIconSizeLength = 20;
 
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
@@ -160,6 +166,14 @@ void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelt
     updateRect.intersect(scrollViewRect);
     RECT r = updateRect;
     ::InvalidateRect(containingWindowHandle, &r, false);
+
+    if (m_drawPanScrollIcon) {
+        int panIconDirtySquareSizeLength = 2 * (panIconSizeLength + max(abs(scrollDelta.width()), abs(scrollDelta.height()))); // We only want to repaint what's necessary
+        IntPoint panIconDirtySquareLocation = IntPoint(m_panScrollIconPoint.x() - (panIconDirtySquareSizeLength / 2), m_panScrollIconPoint.y() - (panIconDirtySquareSizeLength / 2));
+        IntRect panScrollIconDirtyRect = IntRect(panIconDirtySquareLocation , IntSize(panIconDirtySquareSizeLength, panIconDirtySquareSizeLength));
+        
+        m_view->updateWindowRect(panScrollIconDirtyRect);
+    }
 
     if (!m_hasStaticBackground) // The main frame can just blit the WebView window
        // FIXME: Find a way to blit subframes without blitting overlapping content
@@ -230,13 +244,18 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     IntRect containingWindowRect = rect;
     containingWindowRect.setLocation(windowPoint);
 
-    RECT containingWindowRectWin = containingWindowRect;
+    updateWindowRect(containingWindowRect, now);
+}
+
+void ScrollView::updateWindowRect(const IntRect& rect, bool now)
+{
+    RECT containingWindowRectWin = rect;
     HWND containingWindowHandle = containingWindow();
 
     ::InvalidateRect(containingWindowHandle, &containingWindowRectWin, false);
-
+      
     // Cache the dirty spot.
-    addToDirtyRegion(containingWindowRect);
+    addToDirtyRegion(rect);
 
     if (now)
         ::UpdateWindow(containingWindowHandle);
@@ -391,6 +410,11 @@ WebCore::ScrollbarMode ScrollView::hScrollbarMode() const
 WebCore::ScrollbarMode ScrollView::vScrollbarMode() const
 {
     return m_data->m_vScrollbarMode;
+}
+
+bool ScrollView::isScrollable() 
+{ 
+    return m_data->m_vBar != 0 || m_data->m_hBar != 0;
 }
 
 void ScrollView::suppressScrollbars(bool suppressed, bool repaintOnSuppress)
@@ -600,6 +624,21 @@ void ScrollView::removeChild(Widget* child)
     m_data->m_children.remove(child);
 }
 
+void ScrollView::printPanScrollIcon(const IntPoint& iconPosition)
+{
+    m_data->m_drawPanScrollIcon = true;    
+    m_data->m_panScrollIconPoint = IntPoint(iconPosition.x() - panIconSizeLength / 2 , iconPosition.y() - panIconSizeLength / 2) ;
+
+    updateWindowRect(IntRect(m_data->m_panScrollIconPoint, IntSize(panIconSizeLength,panIconSizeLength)), true);    
+}
+
+void ScrollView::removePanScrollIcon()
+{
+    m_data->m_drawPanScrollIcon = false; 
+
+    updateWindowRect(IntRect(m_data->m_panScrollIconPoint, IntSize(panIconSizeLength, panIconSizeLength)), true);
+}
+
 void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 {
     // FIXME: This code is here so we don't have to fork FrameView.h/.cpp.
@@ -659,6 +698,14 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         }
 
         context->restore();
+    }
+
+    //Paint the panScroll Icon
+    static Image* panScrollIcon;
+    if (m_data->m_drawPanScrollIcon) {
+        if (!panScrollIcon)
+            panScrollIcon = Image::loadPlatformResource("panIcon");
+        context->drawImage(panScrollIcon, m_data->m_panScrollIconPoint);
     }
 }
 

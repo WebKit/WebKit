@@ -690,6 +690,52 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     y += yPos();
 }
 
+void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint) 
+{
+   const int sensitivityScale = 250;
+    const int iconRadius = 10;
+    const int speedReducer = 3;
+    Frame* frame = renderer()->document()->frame();
+    if (!frame)
+        return;
+    
+    IntPoint currentMousePosition = frame->eventHandler()->currentMousePosition();
+    
+    // We need to check if the current mouse position is out of the window. When the mouse is out of the window, the position is incoherent
+    static IntPoint previousMousePosition;
+    if (currentMousePosition.x() < 0 || currentMousePosition.y() < 0)
+        currentMousePosition = previousMousePosition;
+    else
+        previousMousePosition = currentMousePosition;
+
+    int xDelta = currentMousePosition.x() - sourcePoint.x();
+    int yDelta = currentMousePosition.y() - sourcePoint.y();
+    
+   // If the point is too far from the center we limit the speed
+    xDelta = max(min(xDelta, sensitivityScale), -sensitivityScale);
+    yDelta = max(min(yDelta, sensitivityScale), -sensitivityScale);
+
+   if(abs(xDelta) < iconRadius) // at the center we let the space for the icon
+        xDelta = 0;
+    if(abs(yDelta) < iconRadius)
+        yDelta = 0;
+
+    // Let's attenuate the speed
+    xDelta /= speedReducer;
+    yDelta /= speedReducer;
+
+    bool restrictedByLineClamp = false;
+    if (m_object->parent())
+        restrictedByLineClamp = m_object->parent()->style()->lineClamp() >= 0;
+
+    if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
+        int newOffsetX = max(0, scrollXOffset() + xDelta);
+        int newOffsetY = max(0, scrollYOffset() + yDelta);
+        scrollToOffset(newOffsetX, newOffsetY); 
+    } else if (m_object->view()->frameView())
+        m_object->view()->frameView()->scrollBy(xDelta, yDelta);
+}
+
 void
 RenderLayer::scrollOffset(int& x, int& y)
 {

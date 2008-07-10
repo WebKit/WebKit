@@ -89,6 +89,9 @@ public:
     Node* mousePressNode() const;
     void setMousePressNode(PassRefPtr<Node>);
 
+    bool panScrollInProgress() { return m_panScrollInProgress; }
+    void setPanScrollInProgress(bool inProgress) { m_panScrollInProgress = inProgress; }
+
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
 
@@ -220,7 +223,6 @@ private:
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
     void setAutoscrollRenderer(RenderObject*);
-
     void autoscrollTimerFired(Timer<EventHandler>*);
 
     void invalidateClick();
@@ -291,10 +293,14 @@ private:
 
     IntPoint m_dragStartPos;
 
+    IntPoint m_panScrollStartPos;
+    bool m_panScrollInProgress;
+
     Timer<EventHandler> m_hoverTimer;
     
     Timer<EventHandler> m_autoscrollTimer;
     RenderObject* m_autoscrollRenderer;
+    bool m_autoscrollInProgress;
     bool m_mouseDownMayStartAutoscroll;
     bool m_mouseDownWasInSubframe;
 #if ENABLE(SVG)

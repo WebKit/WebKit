@@ -406,31 +406,84 @@ int RenderListBox::listIndexAtOffset(int offsetX, int offsetY)
     return newOffset < numItems() ? newOffset : -1;
 }
 
+void RenderListBox::panScroll(const IntPoint& panStartMousePosition)
+{
+    const int maxSpeed = 20;
+    const int iconRadius = 7;
+    const int speedReducer = 4;
+
+    int offsetX = 0, offsetY = windowClipRect().y();
+    absolutePosition(offsetX, offsetY);
+
+    IntPoint currentMousePosition = document()->frame()->eventHandler()->currentMousePosition();
+    // We need to check if the current mouse position is out of the window. When the mouse is out of the window, the position is incoherent
+    static IntPoint previousMousePosition;
+    if (currentMousePosition.y() < 0)
+        currentMousePosition = previousMousePosition;
+    else
+        previousMousePosition = currentMousePosition;
+
+    int yDelta = currentMousePosition.y() - panStartMousePosition.y();
+
+   // If the point is too far from the center we limit the speed
+    yDelta = max(min(yDelta, maxSpeed), -maxSpeed);
+    
+    if(abs(yDelta) < iconRadius) // at the center we let the space for the icon
+        return;
+
+    if (yDelta > 0)
+        //offsetY = view()->viewHeight();
+        offsetY += listHeight();
+   else if (yDelta < 0)
+       yDelta--;
+
+    // Let's attenuate the speed
+    yDelta /= speedReducer;
+
+    IntPoint scrollPoint(0,0);
+    scrollPoint.setY(offsetY + yDelta);
+    int newOffset = scrollToward(scrollPoint);
+    if (newOffset < 0) 
+        return;
+
+    m_inAutoscroll = true;
+    HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
+    select->updateListBoxSelection(!select->multiple());
+    m_inAutoscroll = false;
+}
+
+int RenderListBox::scrollToward(const IntPoint& destination)
+{
+    int rx = 0;
+    int ry = 0;
+    absolutePosition(rx, ry);
+    int offsetX = destination.x() - rx;
+    int offsetY = destination.y() - ry;
+
+    int rows = numVisibleItems();
+    int offset = m_indexOffset;
+    
+    if (offsetY < borderTop() + paddingTop() && scrollToRevealElementAtListIndex(offset - 1))
+        return offset - 1;
+    
+    if (offsetY > height() - paddingBottom() - borderBottom() && scrollToRevealElementAtListIndex(offset + rows))
+        return offset + rows - 1;
+    
+    return listIndexAtOffset(offsetX, offsetY);
+}
+
 void RenderListBox::autoscroll()
 {
     IntPoint pos = document()->frame()->view()->windowToContents(document()->frame()->eventHandler()->currentMousePosition());
 
-    int rx = 0;
-    int ry = 0;
-    absolutePosition(rx, ry);
-    int offsetX = pos.x() - rx;
-    int offsetY = pos.y() - ry;
-    
-    int endIndex = -1;
-    int rows = numVisibleItems();
-    int offset = m_indexOffset;
-    if (offsetY < borderTop() + paddingTop() && scrollToRevealElementAtListIndex(offset - 1))
-        endIndex = offset - 1;
-    else if (offsetY > height() - paddingBottom() - borderBottom() && scrollToRevealElementAtListIndex(offset + rows))
-        endIndex = offset + rows - 1;
-    else
-        endIndex = listIndexAtOffset(offsetX, offsetY);
-
+    int endIndex = scrollToward(pos);
     if (endIndex >= 0) {
         HTMLSelectElement* select = static_cast<HTMLSelectElement*>(node());
         m_inAutoscroll = true;
+
         if (!select->multiple())
             select->setActiveSelectionAnchorIndex(endIndex);
+
         select->setActiveSelectionEndIndex(endIndex);
         select->updateListBoxSelection(!select->multiple());
         m_inAutoscroll = false;

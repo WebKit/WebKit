@@ -69,4 +69,5 @@ IDR_DELETE_BUTTON_PRESSED        PNG                     "deleteButtonPressed.pn
 IDR_ZOOM_IN_CURSOR               PNG                     "zoomInCursor.png"
 IDR_ZOOM_OUT_CURSOR              PNG                     "zoomOutCursor.png"
 IDR_VERTICAL_TEXT_CURSOR         PNG                     "verticalTextCursor.png"
+IDR_PAN_SCROLL_ICON              PNG                     "panIcon.png"
 

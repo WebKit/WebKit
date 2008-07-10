@@ -147,6 +147,14 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& r)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
+bool ScrollView::isScrollable() 
+{ 
+    BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    return [scrollView() hasHorizontalScroller] || [scrollView() hasVerticalScroller];
+    END_BLOCK_OBJC_EXCEPTIONS;
+    return true;
+}
+
 void ScrollView::setContentsPos(int x, int y)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

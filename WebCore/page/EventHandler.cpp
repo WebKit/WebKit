@@ -99,9 +99,11 @@ EventHandler::EventHandler(Frame* frame)
     , m_mouseDownMayStartDrag(false)
     , m_mouseDownWasSingleClickInSelection(false)
     , m_beganSelectingText(false)
+    , m_panScrollInProgress(false)
     , m_hoverTimer(this, &EventHandler::hoverTimerFired)
     , m_autoscrollTimer(this, &EventHandler::autoscrollTimerFired)
     , m_autoscrollRenderer(0)
+    , m_autoscrollInProgress(false)
     , m_mouseDownMayStartAutoscroll(false)
     , m_mouseDownWasInSubframe(false)
 #if ENABLE(SVG)
@@ -370,14 +372,16 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
 
     m_mouseDownMayStartDrag = false;
 
-    if (m_mouseDownMayStartAutoscroll) {            
+    if (m_mouseDownMayStartAutoscroll && !m_panScrollInProgress) {            
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
         RenderObject* renderer = targetNode->renderer();
         while (renderer && !renderer->shouldAutoscroll())
             renderer = renderer->parent();
-        if (renderer)
+        if (renderer) {
+            m_autoscrollInProgress = true;
             handleAutoscroll(renderer);
+        }
     }
     
     updateSelectionForMouseDrag(targetNode, event.localPoint());
@@ -489,7 +493,8 @@ bool EventHandler::handleMouseUp(const MouseEventWithHitTestResults& event)
 
 bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& event)
 {
-    stopAutoscrollTimer();
+    if (m_autoscrollInProgress)
+        stopAutoscrollTimer();
 
     if (handleMouseUp(event))
         return true;
@@ -532,20 +537,49 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
 
 void EventHandler::handleAutoscroll(RenderObject* renderer)
 {
+    // We don't want to trigger the autoscroll or the panScroll if it's already active
     if (m_autoscrollTimer.isActive())
-        return;
+        return;     
+
     setAutoscrollRenderer(renderer);
+
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+    if (m_panScrollInProgress) {
+        m_panScrollStartPos = currentMousePosition();
+        m_frame->view()->printPanScrollIcon(m_panScrollStartPos);
+        // If we're not in the top frame we notify it that we are using the panScroll
+        if (m_frame != m_frame->page()->mainFrame())
+            m_frame->page()->mainFrame()->eventHandler()->setPanScrollInProgress(true);
+    }
+#endif
+
     startAutoscrollTimer();
 }
 
 void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
 {
-    if (!m_mousePressed) {
+    RenderObject* r = autoscrollRenderer();
+    if (!r) {
         stopAutoscrollTimer();
         return;
     }
-    if (RenderObject* r = autoscrollRenderer())
+
+    if (m_autoscrollInProgress) {
+        if (!m_mousePressed) {
+            stopAutoscrollTimer();
+            return;
+        }
         r->autoscroll();
+    } else {
+        // we verify that the main frame hasn't received the order to stop the panScroll
+        if (!m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress()) {
+            stopAutoscrollTimer();
+            return;
+        }
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+        r->panScroll(m_panScrollStartPos);
+#endif
+    }
 }
 
 RenderObject* EventHandler::autoscrollRenderer() const
@@ -609,16 +643,33 @@ void EventHandler::startAutoscrollTimer()
 
 void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 {
-    if (m_mouseDownWasInSubframe) {
-        if (Frame* subframe = subframeForTargetNode(m_mousePressNode.get()))
-            subframe->eventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
-        return;
+    if (m_autoscrollInProgress) {
+        if (m_mouseDownWasInSubframe) {
+            if (Frame* subframe = subframeForTargetNode(m_mousePressNode.get()))
+                subframe->eventHandler()->stopAutoscrollTimer(rendererIsBeingDestroyed);
+            return;
+        }
     }
 
-    if (!rendererIsBeingDestroyed && autoscrollRenderer())
-        autoscrollRenderer()->stopAutoscroll();
-    setAutoscrollRenderer(0);
+    if (autoscrollRenderer()) {
+        if (!rendererIsBeingDestroyed && (m_autoscrollInProgress || m_panScrollInProgress))
+            autoscrollRenderer()->stopAutoscroll();
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+        if (m_panScrollInProgress) {
+            m_frame->view()->removePanScrollIcon();
+        }
+#endif
+
+        setAutoscrollRenderer(0);
+    }
+
     m_autoscrollTimer.stop();
+
+    m_panScrollInProgress = false;
+    // If we're not in the top frame we notify it that we are not using the panScroll anymore
+    if (m_frame != m_frame->page()->mainFrame())
+            m_frame->page()->mainFrame()->eventHandler()->setPanScrollInProgress(false);
+    m_autoscrollInProgress = false;
 }
 
 Node* EventHandler::mousePressNode() const
@@ -858,6 +909,24 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         invalidateClick();
         return true;
     }
+ 
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+    if (m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
+        stopAutoscrollTimer();
+    } else if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {
+        RenderObject* renderer = mev.targetNode()->renderer();
+
+        while (renderer && !renderer->shouldAutoscroll())
+            renderer = renderer->parent();
+
+        if (renderer) {
+            m_panScrollInProgress = true;
+            handleAutoscroll(renderer);
+            invalidateClick();
+            return true;
+        }
+   }
+#endif
 
     m_clickCount = mouseEvent.clickCount();
     m_clickNode = mev.targetNode();

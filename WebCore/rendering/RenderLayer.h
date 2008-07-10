@@ -244,6 +244,8 @@ public:
     int scrollWidth();
     int scrollHeight();
 
+    void panScrollFromPoint(const IntPoint&);
+
     // Scrolling methods for layers that can scroll their overflow.
     void scrollOffset(int& x, int& y);
     void subtractScrollOffset(int& x, int& y);
