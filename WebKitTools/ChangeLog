@@ -1,3 +1,9 @@
+2008-07-10  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-07-09  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.
