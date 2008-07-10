@@ -313,6 +313,5 @@ __ZTVN3KJS15JSWrapperObjectE
 __ZTVN3KJS16InternalFunctionE
 __ZTVN3KJS16JSVariableObjectE
 __ZTVN3KJS8JSObjectE
-_jscore_collector_introspection
 _jscore_fastmalloc_introspection
 _kJSClassDefinitionEmpty

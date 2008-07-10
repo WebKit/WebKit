@@ -1,3 +1,26 @@
+2008-07-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Eliminate CollectorHeapIntrospector.
+
+        CollectorHeapIntrospector was added primarily in the hopes to improve leaks tool output,
+        a result that it didn't deliver. Also, it helped by labeling JSC heap regions as reported by
+        vmmap tool, but at the same time, it made them mislabeled as malloc'd ones - the correct
+        way to label mapped regions is to use a VM tag.
+
+        So, it makes more sense to remove it completely than to make it work with multiple heaps.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/AllInOneFile.cpp:
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreading):
+        * kjs/collector.cpp:
+        * kjs/collector.h:
+        * kjs/CollectorHeapIntrospector.cpp: Removed.
+        * kjs/CollectorHeapIntrospector.h: Removed.
+
 2008-07-09  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.

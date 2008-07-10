@@ -49,8 +49,6 @@
 #include <mach/thread_act.h>
 #include <mach/vm_map.h>
 
-#include "CollectorHeapIntrospector.h"
-
 #elif PLATFORM(WIN_OS)
 
 #include <windows.h>
@@ -117,8 +115,9 @@ Heap::~Heap()
 
 static NEVER_INLINE CollectorBlock* allocateBlock()
 {
-#if PLATFORM(DARWIN)    
+#if PLATFORM(DARWIN)
     vm_address_t address = 0;
+    // FIXME: tag the region as a JavaScriptCore heap when we get a registered VM tag: <rdar://problem/6054788>.
     vm_map(current_task(), &address, BLOCK_SIZE, BLOCK_OFFSET_MASK, VM_FLAGS_ANYWHERE, MEMORY_OBJECT_NULL, 0, FALSE, VM_PROT_DEFAULT, VM_PROT_DEFAULT, VM_INHERIT_DEFAULT);
 #elif PLATFORM(WIN_OS)
      // windows virtual address granularity is naturally 64k
@@ -488,13 +487,6 @@ void Heap::registerThread()
     }
 }
 
-#if PLATFORM(DARWIN)
-void Heap::initializeHeapIntrospector()
-{
-    ASSERT(pthread_main_np());
-    CollectorHeapIntrospector::init(&primaryHeap, &numberHeap);
-}
-#endif
 #endif
 
 #define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char*) - 1)) == 0)

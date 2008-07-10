@@ -90,10 +90,6 @@ namespace KJS {
 
         static void registerThread(); // Should only be called by clients that can use the same heap from multiple threads.
 
-#if PLATFORM(DARWIN) && USE(MULTIPLE_THREADS)
-        void initializeHeapIntrospector();
-#endif
-
         static bool isCellMarked(const JSCell*);
         static void markCell(JSCell*);
 

@@ -40,9 +40,6 @@
 #include "BooleanObject.cpp"
 #include "BooleanPrototype.cpp"
 #include "collector.cpp"
-#if PLATFORM(DARWIN)
-#include "CollectorHeapIntrospector.cpp"
-#endif
 #include "CommonIdentifiers.cpp"
 #include "DateConstructor.cpp"
 #include "DateMath.cpp"
