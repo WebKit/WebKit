@@ -1,3 +1,9 @@
+2008-07-10  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * bridge/npapi.h: Remove extra comma.
+
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
