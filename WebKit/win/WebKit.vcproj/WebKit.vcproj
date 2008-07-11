@@ -1110,7 +1110,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1118,7 +1118,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1126,7 +1126,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1134,7 +1134,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1142,7 +1142,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1150,7 +1150,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -1158,7 +1158,7 @@
 					>
 					<Tool
 						Name="VCResourceCompilerTool"
-						AdditionalIncludeDirectories="$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces"
+						AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\lib&quot;;&quot;$(WebKitOutputDir)\obj\$(ProjectName)\Interfaces&quot;"
 					/>
 				</FileConfiguration>
 			</File>
