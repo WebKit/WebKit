@@ -1,3 +1,16 @@
+2008-07-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/6067178> REGRESSION: Start profile button in profiler
+        now profiles inspector rather than actual page (19833)
+        - The JSQuarantinedObjectWrapper should use the wrapped exec state
+        so that calls to it execute in its quarantined world.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::construct):
+        (WebCore::JSQuarantinedObjectWrapper::call):
+
 2008-07-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
