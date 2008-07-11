@@ -1,3 +1,17 @@
+2008-07-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix popularity tracking for cached resources, which regressed in r23923
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource): Changed to increase the access count
+        whenever this function returns a CachedResource and the cache is
+        enabled, instead of only when creating a new CachedResources. The
+        incorrect behavior resulted in all resources in the cache having an
+        access count of exactly 1 at all times.
+        (WebCore::Cache::requestUserCSSStyleSheet): Ditto.
+
 2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
