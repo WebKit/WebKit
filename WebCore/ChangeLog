@@ -1,3 +1,10 @@
+2008-07-11  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt/Windows build, include windows.h for HWND directly
+        instead of implicit inclusion through Timer.h.
+
+        * plugins/win/PluginMessageThrottlerWin.h:
+
 2008-07-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

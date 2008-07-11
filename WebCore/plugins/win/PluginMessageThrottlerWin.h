@@ -29,6 +29,8 @@
 
 #include "Timer.h"
 
+#include <windows.h>
+
 namespace WebCore {
     class PluginView;
 
