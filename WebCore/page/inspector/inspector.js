@@ -965,7 +965,7 @@ WebInspector.performSearch = function(query)
             try {
                 var result = InspectorController.inspectedWindow().Document.prototype.querySelectorAll.call(doc, query);
                 addNodesToDOMResults(result, result.length, function(l, i) { return l.item(i); });
-            } catch(err)
+            } catch(err) {
                 // ignore any exceptions. the query isn't necessarily a valid selector.
             }
 
