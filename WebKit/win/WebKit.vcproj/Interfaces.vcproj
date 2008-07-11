@@ -38,7 +38,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
-				TypeLibraryName="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)\WebKit.tlb"
+				TypeLibraryName="$(WebKitOutputDir)\lib\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
 			/>
 			<Tool
@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\WebKit\DerivedSources&quot;;..\Interfaces;&quot;$(IntDir)\include&quot;"
-				TypeLibraryName="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)\WebKit.tlb"
+				TypeLibraryName="$(WebKitOutputDir)\lib\WebKit.tlb"
 				OutputDirectory="$(WebKitOutputDir)\obj\WebKit\$(ProjectName)"
 			/>
 			<Tool
