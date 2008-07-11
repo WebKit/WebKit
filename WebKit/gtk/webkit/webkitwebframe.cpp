@@ -248,7 +248,7 @@ WebKitWebFrame* webkit_web_frame_init_with_web_view(WebKitWebView* webView, HTML
  *
  * Return value: the title of @frame
  */
-const gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
+G_CONST_RETURN gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
@@ -264,7 +264,7 @@ const gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
  *
  * Return value: the URI of @frame
  */
-const gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
+G_CONST_RETURN gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 
@@ -299,7 +299,7 @@ WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
  *
  * Return value: the name of @frame
  */
-const gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
+G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
 

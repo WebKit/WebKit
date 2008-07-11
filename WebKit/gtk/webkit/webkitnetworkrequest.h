@@ -55,7 +55,7 @@ WEBKIT_API void
 webkit_network_request_set_uri  (WebKitNetworkRequest *request,
                                  const gchar*          uri);
 
-WEBKIT_API const gchar *
+WEBKIT_API G_CONST_RETURN gchar *
 webkit_network_request_get_uri  (WebKitNetworkRequest *request);
 
 G_END_DECLS

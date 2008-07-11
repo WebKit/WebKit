@@ -1,3 +1,17 @@
+2008-07-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Christian Dywan.
+
+        Replace 'const' with G_CONST_RETURN macro to make it flexible to
+        disable constness
+
+        * webkit/webkitnetworkrequest.cpp:
+        * webkit/webkitnetworkrequest.h:
+        * webkit/webkitwebframe.cpp:
+        * webkit/webkitwebframe.h:
+        * webkit/webkitwebhistoryitem.cpp:
+        * webkit/webkitwebhistoryitem.h:
+
 2008-06-18  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.

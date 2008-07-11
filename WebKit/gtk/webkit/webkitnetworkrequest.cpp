@@ -77,7 +77,7 @@ void webkit_network_request_set_uri(WebKitNetworkRequest* request, const gchar* 
     priv->uri = g_strdup(uri);
 }
 
-const gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
+G_CONST_RETURN gchar* webkit_network_request_get_uri(WebKitNetworkRequest* request)
 {
     g_return_val_if_fail(WEBKIT_IS_NETWORK_REQUEST(request), NULL);
 

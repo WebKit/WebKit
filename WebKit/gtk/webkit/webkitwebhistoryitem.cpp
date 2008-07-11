@@ -313,7 +313,7 @@ WebKitWebHistoryItem* webkit_web_history_item_new_with_data(const gchar* uri, co
  *
  * Returns the page title of @webHistoryItem
  */
-const gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* webHistoryItem)
+G_CONST_RETURN gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
@@ -337,7 +337,7 @@ const gchar* webkit_web_history_item_get_title(WebKitWebHistoryItem* webHistoryI
  *
  * Return value: the alternate title of @webHistoryItem
  */
-const gchar* webkit_web_history_item_get_alternate_title(WebKitWebHistoryItem* webHistoryItem)
+G_CONST_RETURN gchar* webkit_web_history_item_get_alternate_title(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
@@ -378,7 +378,7 @@ void webkit_web_history_item_set_alternate_title(WebKitWebHistoryItem* webHistor
  *
  * Return value: the URI of @webHistoryItem
  */
-const gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webHistoryItem)
+G_CONST_RETURN gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
@@ -402,7 +402,7 @@ const gchar* webkit_web_history_item_get_uri(WebKitWebHistoryItem* webHistoryIte
  *
  * Return value: the original URI of @webHistoryITem
  */
-const gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryItem* webHistoryItem)
+G_CONST_RETURN gchar* webkit_web_history_item_get_original_uri(WebKitWebHistoryItem* webHistoryItem)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_HISTORY_ITEM(webHistoryItem), NULL);
 
