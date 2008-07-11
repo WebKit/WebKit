@@ -32,7 +32,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) 
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
 typedef struct HINSTANCE__* HINSTANCE;
 #endif
 
@@ -153,7 +153,7 @@ namespace WebCore {
         void setDebugger(KJS::Debugger*);
         KJS::Debugger* debugger() const { return m_debugger; }
 
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS)) || (PLATFORM(QT) && defined(Q_WS_WIN))
         // The global DLL or application instance used for all windows.
         static void setInstanceHandle(HINSTANCE instanceHandle) { s_instanceHandle = instanceHandle; }
         static HINSTANCE instanceHandle() { return s_instanceHandle; }
@@ -214,7 +214,7 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         RefPtr<SessionStorage> m_sessionStorage;
 #endif
-#if PLATFORM(WIN) || (PLATFORM(WX) && defined(__WXMSW__))
+#if PLATFORM(WIN) || (PLATFORM(WX) && defined(__WXMSW__)) || (PLATFORM(QT) && defined(Q_WS_WIN))
         static HINSTANCE s_instanceHandle;
 #endif
     };

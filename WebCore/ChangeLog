@@ -1,3 +1,48 @@
+2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Enable Netscape plugins for the Qt/Windows build.
+
+        This required various smaller fixes across a wider set of
+        files described below.
+
+        * WebCore.pro: Add various windows specific files to the build.
+        * page/Page.h: Extend the #ifdeffery for windows types to include the
+        Qt/Windows build.
+        * platform/graphics/GraphicsContext.h: Added inTransparencyLayer() for
+        the Qt port, as PluginViewWin.cpp uses it.
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::inTransparencyLayer): Implemented function.
+        * platform/qt/TemporaryLinkStubs.cpp: Mask out some stubs as they
+        are now implemented through *Win.cpp files.
+        * plugins/PluginDatabase.cpp: Change PLATFORM(WIN) to WIN_OS.
+        * plugins/PluginView.cpp: Change PLATFORM(WIN) to WIN_OS.
+        (WebCore::PluginView::setFrameGeometry): Ditto.
+        (WebCore::PluginView::PluginView): Ditto.
+        * plugins/PluginView.h: Introduce the PlatformPluginWidget typedef,
+        which expands to HWND directly for the Qt/Windows build and
+        PlatformWidget for the remaining platforms. That is because
+        PlatformWidget is QWidget* for the Qt build but for the plugin
+        window we need a native window, aka HWND.
+        * plugins/win/PluginPackageWin.cpp: Fix compilation, include shlwapi.h
+        after config.h.
+        * plugins/win/PluginViewWin.cpp:
+        (windowHandleForPlatformWidget): Added a little helper function to
+        determine the HWND from a PlatformWidget.
+        (WebCore::registerPluginView): For the Qt port we need to set the
+        global application instance handle here in the library, as the
+        browser doesn't do it.
+        (WebCore::PluginView::handleMouseEvent): Mask out
+        ignoreNextSetCursor/lastSetCursor for the Qt port, it's not used.
+        (WebCore::PluginView::invalidateRect): Convert from IntRect to RECT
+        manually just here to avoid compiling in IntRectWin.cpp.
+        (WebCore::PluginView::invalidateRegion): Ditto.
+        (WebCore::PluginView::forceRedraw): Call windowHandleForPlatformWidget
+        on containingWindow() to get the correct HWND for the Qt port.
+        (WebCore::PluginView::init): Determine the parent HWND for m_window
+        using windowHandleForPlatformWidget.
+
 2008-07-11  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Holger.

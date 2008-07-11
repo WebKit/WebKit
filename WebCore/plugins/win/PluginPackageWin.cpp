@@ -24,7 +24,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <shlwapi.h>
 
 #include "config.h"
 #include "PluginPackage.h"
@@ -37,6 +36,7 @@
 #include "npruntime_impl.h"
 #include <string.h>
 #include <wtf/OwnArrayPtr.h>
+#include <shlwapi.h>
 
 namespace WebCore {
 

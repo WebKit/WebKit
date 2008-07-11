@@ -529,6 +529,11 @@ void GraphicsContext::addPath(const Path& path)
     m_data->currentPath = *(path.platformPath());
 }
 
+bool GraphicsContext::inTransparencyLayer() const
+{
+    return !m_data->layers.isEmpty();
+}
+
 void GraphicsContext::setFillRule(WindRule rule)
 {
     m_data->currentPath.setFillRule(rule == RULE_EVENODD ? Qt::OddEvenFill : Qt::WindingFill);

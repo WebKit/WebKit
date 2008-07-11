@@ -25,6 +25,7 @@
  */
 
 #include "config.h"
+
 #include "PluginView.h"
 
 #include "Document.h"
@@ -65,6 +66,19 @@
 #include <kjs/JSValue.h>
 #include <wtf/ASCIICType.h>
 
+#if PLATFORM(QT)
+#include <QWidget.h>
+#endif
+
+static inline HWND windowHandleForPlatformWidget(PlatformWidget widget)
+{
+#if PLATFORM(QT)
+    return widget->winId();
+#else
+    return widget;
+#endif
+}
+
 using KJS::ExecState;
 using KJS::JSLock;
 using KJS::JSObject;
@@ -92,6 +106,10 @@ static bool registerPluginView()
         return true;
 
     haveRegisteredWindowClass = true;
+
+#if PLATFORM(QT)
+    Page::setInstanceHandle((HINSTANCE)(qWinAppInst()));
+#endif
 
     ASSERT(Page::instanceHandle());
 
@@ -457,10 +475,12 @@ void PluginView::handleMouseEvent(MouseEvent* event)
     if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
+#if !PLATFORM(QT)
     // Currently, Widget::setCursor is always called after this function in EventHandler.cpp
     // and since we don't want that we set ignoreNextSetCursor to true here to prevent that.
     ignoreNextSetCursor = true;     
     lastSetCursor = ::GetCursor();
+#endif
 }
 
 void PluginView::setParent(ScrollView* parent)
@@ -713,7 +733,7 @@ void PluginView::invalidateRect(NPRect* rect)
     IntRect r(rect->left, rect->top, rect->right - rect->left, rect->bottom - rect->top);
 
     if (m_isWindowed) {
-        RECT invalidRect(r);
+        RECT invalidRect = { r.x(), r.y(), r.right(), r.bottom() };
         InvalidateRect(m_window, &invalidRect, FALSE);
     } else {
         if (m_plugin->quirks().contains(PluginQuirkThrottleInvalidate)) {
@@ -737,7 +757,8 @@ void PluginView::invalidateRegion(NPRegion region)
         return;
     }
 
-    Widget::invalidateRect(r);
+    IntRect rect(IntPoint(r.left, r.top), IntSize(r.right-r.left, r.bottom-r.top));
+    Widget::invalidateRect(rect);
 }
 
 void PluginView::forceRedraw()
@@ -745,7 +766,7 @@ void PluginView::forceRedraw()
     if (m_isWindowed)
         ::UpdateWindow(m_window);
     else
-        ::UpdateWindow(containingWindow());
+        ::UpdateWindow(windowHandleForPlatformWidget(containingWindow()));
 }
 
 PluginView::~PluginView()
@@ -795,8 +816,9 @@ void PluginView::init()
         if (m_isVisible)
             flags |= WS_VISIBLE;
 
-        m_window = CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
-                                  0, 0, 0, 0, m_parentFrame->view()->containingWindow(), 0, Page::instanceHandle(), 0);
+        HWND parentWindowHandle = windowHandleForPlatformWidget(m_parentFrame->view()->containingWindow());
+        m_window = ::CreateWindowEx(0, kWebPluginViewdowClassName, 0, flags,
+                                    0, 0, 0, 0, parentWindowHandle, 0, Page::instanceHandle(), 0);
 
         // Calling SetWindowLongPtrA here makes the window proc ASCII, which is required by at least
         // the Shockwave Director plug-in.

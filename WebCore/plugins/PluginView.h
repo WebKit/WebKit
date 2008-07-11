@@ -44,6 +44,13 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
+#if PLATFORM(WIN_OS) && PLATFORM(QT)
+typedef struct HWND__* HWND;
+typedef HWND PlatformPluginWidget;
+#else
+typedef PlatformWidget PlatformPluginWidget;
+#endif
+
 namespace KJS {
     namespace Bindings {
         class Instance;
@@ -242,7 +249,7 @@ namespace WebCore {
         bool m_isCallingPluginWndProc;
 #endif
 
-        PlatformWidget m_window; // for windowed plug-ins
+        PlatformPluginWidget m_window; // for windowed plug-ins
         mutable IntRect m_clipRect; // The clip rect to apply to a windowed plug-in
         mutable IntRect m_windowRect; // Our window rect.
 
