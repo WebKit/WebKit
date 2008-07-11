@@ -1,3 +1,13 @@
+2008-07-11  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Holger.
+
+        Enable Database and Icondatabase functionality for the Qt/Windows
+        build when building inside Qt, as we can use the builtin copy of
+        sqlite then.
+
+        * WebCore.pro:
+
 2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Adam Roben.
