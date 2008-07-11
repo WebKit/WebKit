@@ -85,8 +85,6 @@ const LPCWSTR kWebPluginViewProperty = L"WebPluginViewProperty";
 
 static const char* MozillaUserAgent = "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1) Gecko/20061010 Firefox/2.0";
 
-static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
 static bool registerPluginView()
 {
     static bool haveRegisteredWindowClass = false;
@@ -116,7 +114,7 @@ static bool registerPluginView()
     return !!RegisterClassEx(&wcex);
 }
 
-static LRESULT CALLBACK PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK PluginView::PluginViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     PluginView* pluginView = reinterpret_cast<PluginView*>(GetProp(hWnd, kWebPluginViewProperty));
 

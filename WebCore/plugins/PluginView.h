@@ -56,7 +56,7 @@ namespace WebCore {
     class KeyboardEvent;
     class MouseEvent;
     class KURL;
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
     class PluginMessageThrottlerWin;
 #endif
     class PluginPackage;
@@ -91,10 +91,6 @@ namespace WebCore {
     };
 
     class PluginView : public Widget, private PluginStreamClient {
-#if PLATFORM(WIN)
-    friend static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
-#endif
-
     public:
         static PluginView* create(Frame* parentFrame, const IntSize&, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
         virtual ~PluginView();
@@ -156,7 +152,8 @@ namespace WebCore {
 
         virtual bool isPluginView() const { return true; }
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
+        static LRESULT CALLBACK PluginViewWndProc(HWND, UINT, WPARAM, LPARAM);
         LRESULT wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
         WNDPROC pluginWndProc() const { return m_pluginWndProc; }
 #endif
@@ -238,7 +235,7 @@ namespace WebCore {
         bool m_needsXEmbed;
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
         OwnPtr<PluginMessageThrottlerWin> m_messageThrottler;
         WNDPROC m_pluginWndProc;
         unsigned m_lastMessage;

@@ -1,5 +1,14 @@
 2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
+        Reviewed by Adam Roben.
+
+        Fix compile with MinGW since it does not like friend static function.
+
+        * plugins/PluginView.h:
+        * plugins/win/PluginViewWin.cpp:
+
+2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
         Reviewed by Simon.
 
         Fix Qt/Win32 build.
