@@ -1,3 +1,10 @@
+2008-07-10  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * WebCore.vcproj/QTMovieWin.vcproj: Add
+        OSXCompatibilityHeaders[/GNUCompatibility] to the include path.
+
 2008-07-10  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Dan Bernstein
