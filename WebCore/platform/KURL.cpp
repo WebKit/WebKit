@@ -710,7 +710,9 @@ void KURL::setRef(const String& s)
 
 void KURL::removeRef()
 {
-    setRef(String());
+    if (!m_isValid)
+        return;
+    parse(m_string.left(m_queryEnd));
 }
     
 void KURL::setQuery(const String& query)

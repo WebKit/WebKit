@@ -1,3 +1,18 @@
+2008-07-11  Jacob Refstrup  <jacob.refstrup@hp.com>
+
+        Reviewed by Darin Adler
+
+        http://bugs.webkit.org/show_bug.cgi?id=19978
+        GTK port always ends up with # at the end of resource URLs (and hence can't load files)
+
+        - Optimized KURL::removeRef() and used it rather than setRef("")
+          which after r35040 does the wrong thing.
+
+        * platform/KURL.cpp:
+        (WebCore::KURL::removeRef):
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::initializeHandle):
+
 2008-07-11  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt/Windows build, include windows.h for HWND directly
