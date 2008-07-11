@@ -2,6 +2,18 @@
 
         Reviewed by Dave Hyatt
 
+        StyleRareNonInheritedData needs to initialize and compare
+        m_maskBoxImage.
+        <https://bugs.webkit.org/show_bug.cgi?id=20005>
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+
+2008-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         Bug 18885: RenderLayer::enclosingPositionedAncestor() should
         look for transforms, since transforms create containing
         blocks.

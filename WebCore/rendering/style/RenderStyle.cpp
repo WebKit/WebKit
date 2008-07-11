@@ -813,6 +813,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_boxReflect(o.m_boxReflect)
     , m_transition(o.m_transition ? new Transition(*o.m_transition) : 0)
     , m_mask(o.m_mask)
+    , m_maskBoxImage(o.m_maskBoxImage)
 #if ENABLE(XBL)
     , bindingURI(o.bindingURI ? o.bindingURI->copy() : 0)
 #endif
@@ -866,6 +867,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && reflectionDataEquivalent(o)
         && transitionDataEquivalent(o)
         && m_mask == o.m_mask
+        && m_maskBoxImage == o.m_maskBoxImage
 #if ENABLE(XBL)
         && bindingsEquivalent(o)
 #endif
