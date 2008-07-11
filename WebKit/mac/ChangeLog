@@ -1,3 +1,13 @@
+2008-07-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the Tiger build by omitting annotations from methods declared in categories when using old versions of GCC.
+
+        * Plugins/WebPlugin.h: Wrap annotations on methods declared in categories in the WEBKIT_CATEGORY_METHOD_ANNOTATION macro.
+        * WebView/WebFrameLoadDelegate.h: Ditto.
+        * WebView/WebUIDelegate.h: Ditto.
+
 2008-07-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.

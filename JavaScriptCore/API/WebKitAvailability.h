@@ -43,6 +43,17 @@
 #define WEBKIT_VERSION_LATEST 0x9999
 
 
+/* The versions of GCC that shipped with Xcode prior to 3.0 (GCC build number < 5400) did not support attributes on methods
+   declared in a category.  If we are building with one of these versions, we need to omit the attribute.  We achieve this
+   by wrapping the annotation in WEBKIT_CATEGORY_METHOD_ANNOTATION, which will remove the annotation when an old version
+   of GCC is in use and will otherwise expand to the annotation.
+*/
+#if defined(__APPLE_CC__) && __APPLE_CC__ < 5400
+    #define WEBKIT_CATEGORY_METHOD_ANNOTATION(ANNOTATION)
+#else
+    #define WEBKIT_CATEGORY_METHOD_ANNOTATION(ANNOTATION) ANNOTATION
+#endif
+
 
 /* If minimum WebKit version is not specified, assume the version that shipped with the target Mac OS X version */
 #ifndef WEBKIT_VERSION_MIN_REQUIRED

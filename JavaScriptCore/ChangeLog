@@ -1,3 +1,11 @@
+2008-07-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix the Tiger build by omitting annotations from methods declared in categories when using old versions of GCC.
+
+        * API/WebKitAvailability.h:
+
 2008-07-10  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin.
