@@ -1,3 +1,11 @@
+2008-07-11  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix Qt/Win32 build.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
