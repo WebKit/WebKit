@@ -1,3 +1,13 @@
+2008-07-11  Dean Jackson  <dino@apple.com>
+
+        Updated test results for
+        https://bugs.webkit.org/show_bug.cgi?id=19864
+
+        * css3/transform-computed-style-001-expected.txt:
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

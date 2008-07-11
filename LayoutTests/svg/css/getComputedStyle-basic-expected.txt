@@ -268,6 +268,12 @@ rect: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 rect: style.getPropertyCSSValue(-webkit-text-stroke-color) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 rect: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-transform) : matrix(1, 0, 0, 1, 0, 0)
+rect: style.getPropertyCSSValue(-webkit-transform) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-transform-origin-x) : 0px
+rect: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-transform-origin-y) : 0px
+rect: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-modify) : read-only
@@ -630,6 +636,12 @@ g: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 g: style.getPropertyCSSValue(-webkit-text-stroke-color) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 g: style.getPropertyCSSValue(-webkit-text-stroke-width) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-transform) : matrix(1, 0, 0, 1, 0, 0)
+g: style.getPropertyCSSValue(-webkit-transform) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-transform-origin-x) : 0px
+g: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-transform-origin-y) : 0px
+g: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-modify) : read-only
