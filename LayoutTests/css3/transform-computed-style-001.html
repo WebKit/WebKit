@@ -1,0 +1,57 @@
+<html> 
+<head>
+<title>Computed Style of Transforms Test</title> 
+<style type="text/css" media="screen">
+.box {
+    height: 200px;
+    width: 200px;
+    background-color: #00a0a0;
+}
+</style>
+</head> 
+<body>
+
+  <h2>Transformed elements:</h2>
+
+  <script type="text/javascript" charset="utf-8">
+  if (window.layoutTestController)
+      layoutTestController.dumpAsText();
+  </script>
+
+  <div id="a" class="box" style="position: absolute; left: 100px; top: 200px; -webkit-transform: scale(1.5, 0.75)">
+    <p>
+    <script type="text/javascript" charset="utf-8">
+      document.write(window.getComputedStyle(document.getElementById("a")).webkitTransform);
+    </script>
+  </div>
+
+  <div id="b" class="box" style="position: absolute; left: 400px; top: 200px; -webkit-transform: rotate(30deg)">
+    <p>
+    <script type="text/javascript" charset="utf-8">
+      document.write(window.getComputedStyle(document.getElementById("b")).webkitTransform);
+    </script>
+  </div>
+
+  <div id="c" class="box" style="position: absolute; left: 100px; top: 400px; -webkit-transform: translate(50px, 80px)">
+    <p>
+    <script type="text/javascript" charset="utf-8">
+      document.write(window.getComputedStyle(document.getElementById("c")).webkitTransform);
+    </script>
+  </div>
+
+  <div id="d" class="box" style="position: absolute; left: 400px; top: 400px; -webkit-transform: translate(10px, 50px) scale(0.8) rotate(-10deg)">
+    <p>
+    <script type="text/javascript" charset="utf-8">
+      document.write(window.getComputedStyle(document.getElementById("d")).webkitTransform);
+    </script>
+  </div>
+
+  <div id="e" class="box" style="position: absolute; left: 100px; top: 600px; -webkit-transform: translate(0)">
+    <p>
+    <script type="text/javascript" charset="utf-8">
+      document.write(window.getComputedStyle(document.getElementById("e")).webkitTransform);
+    </script>
+  </div>
+  
+</body>
+</html>

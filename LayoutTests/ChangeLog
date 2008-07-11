@@ -1,3 +1,13 @@
+2008-07-10  Dean Jackson  <dino@apple.com>
+
+        Reviewed by hyatt.
+        
+        Testing the computed style of -webkit-transform
+        https://bugs.webkit.org/show_bug.cgi?id=19864
+
+        * css3/transform-computed-style-001-expected.txt: Added.
+        * css3/transform-computed-style-001.html: Added.
+
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dave Hyatt and Darin Adler,

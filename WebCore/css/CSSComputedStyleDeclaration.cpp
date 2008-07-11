@@ -37,6 +37,7 @@
 #include "Rect.h"
 #include "RenderObject.h"
 #include "ShadowValue.h"
+#include "WebKitCSSTransformValue.h"
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -183,6 +184,9 @@ static const int computedProperties[] = {
     CSSPropertyWebkitTextSecurity,
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
+    CSSPropertyWebkitTransform,
+    CSSPropertyWebkitTransformOriginX,
+    CSSPropertyWebkitTransformOriginY,
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
@@ -381,6 +385,31 @@ static PassRefPtr<CSSValue> getBorderRadiusCornerValue(IntSize radius)
 static IntRect sizingBox(RenderObject* renderer)
 {
     return renderer->style()->boxSizing() == CONTENT_BOX ? renderer->contentBox() : renderer->borderBox();
+}
+
+static PassRefPtr<CSSValueList> computedTransform(RenderObject* renderer)
+{
+    if (!renderer)
+        return 0;
+
+    IntRect box = sizingBox(renderer);
+
+    AffineTransform transform;
+    renderer->style()->applyTransform(transform, box.size());
+
+    RefPtr<WebKitCSSTransformValue> transformVal = WebKitCSSTransformValue::create(WebKitCSSTransformValue::MatrixTransformOperation);
+
+    transformVal->append(CSSPrimitiveValue::create(transform.a(), CSSPrimitiveValue::CSS_NUMBER));
+    transformVal->append(CSSPrimitiveValue::create(transform.b(), CSSPrimitiveValue::CSS_NUMBER));
+    transformVal->append(CSSPrimitiveValue::create(transform.c(), CSSPrimitiveValue::CSS_NUMBER));
+    transformVal->append(CSSPrimitiveValue::create(transform.d(), CSSPrimitiveValue::CSS_NUMBER));
+    transformVal->append(CSSPrimitiveValue::create(transform.e(), CSSPrimitiveValue::CSS_NUMBER));
+    transformVal->append(CSSPrimitiveValue::create(transform.f(), CSSPrimitiveValue::CSS_NUMBER));
+
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
+    list->append(transformVal);
+
+    return list.release();
 }
 
 CSSComputedStyleDeclaration::CSSComputedStyleDeclaration(PassRefPtr<Node> n)
@@ -1010,6 +1039,22 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             }
             return 0;
         }
+        case CSSPropertyWebkitTransform:
+            return computedTransform(renderer);
+        case CSSPropertyWebkitTransformOriginX:
+            if (renderer) {
+                IntRect box = sizingBox(renderer);
+                return CSSPrimitiveValue::create(style->transformOriginX().calcMinValue(box.width()), CSSPrimitiveValue::CSS_PX);
+            }
+            else
+                return CSSPrimitiveValue::create(style->transformOriginX());
+        case CSSPropertyWebkitTransformOriginY:
+            if (renderer) {
+                IntRect box = sizingBox(renderer);
+                return CSSPrimitiveValue::create(style->transformOriginY().calcMinValue(box.height()), CSSPrimitiveValue::CSS_PX);
+            }
+            else
+                return CSSPrimitiveValue::create(style->transformOriginY());
         case CSSPropertyBackground:
         case CSSPropertyBorder:
         case CSSPropertyBorderBottom:
@@ -1067,10 +1112,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMask:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitTextStroke:
-        case CSSPropertyWebkitTransform:
-        case CSSPropertyWebkitTransformOrigin:
-        case CSSPropertyWebkitTransformOriginX:
-        case CSSPropertyWebkitTransformOriginY:
         case CSSPropertyWebkitTransition:
         case CSSPropertyWebkitTransitionDuration:
         case CSSPropertyWebkitTransitionProperty:
