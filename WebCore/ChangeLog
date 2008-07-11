@@ -1,3 +1,11 @@
+2008-07-11  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam
+
+        Removed unneeded export
+
+        * WebCore.base.exp:
+
 2008-07-11  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
