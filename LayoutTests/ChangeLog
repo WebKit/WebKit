@@ -1,3 +1,12 @@
+2008-07-11  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by cpst.
+        
+        Update results to match the buildbot (even though this now fails on my machine)
+        I think the failure for me is possibly leopard vs. tiger or git vs. svn.
+
+        * webarchive/test-xml-stylesheet-expected.webarchive:
+
 2008-07-11  Dean Jackson  <dino@apple.com>
 
         Updated test results for
