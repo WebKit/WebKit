@@ -2,6 +2,14 @@
 
         Reviewed by Sam Weinig.
 
+        Define WEBKIT_VERSION_MIN_REQUIRED=WEBKIT_VERSION_LATEST when building WebKit to ensure that no symbols end up with the weak_import attribute.
+
+        * Configurations/WebKit.xcconfig:
+
+2008-07-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Fix the Tiger build by omitting annotations from methods declared in categories when using old versions of GCC.
 
         * Plugins/WebPlugin.h: Wrap annotations on methods declared in categories in the WEBKIT_CATEGORY_METHOD_ANNOTATION macro.
