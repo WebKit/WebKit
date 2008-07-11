@@ -1,3 +1,12 @@
+2008-07-11  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Import Selectors API test from http://ejohn.org/apps/selectortest/.
+
+        * fast/dom/SelectorAPI/ressig-SelectorsAPI-test-expected.txt: Added.
+        * fast/dom/SelectorAPI/ressig-SelectorsAPI-test.xhtml: Added.
+
 2008-07-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by cpst.
