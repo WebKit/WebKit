@@ -30,6 +30,7 @@
 #include "Document.h"
 #include "EventException.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
 #include "JSDOMCoreException.h"
@@ -40,6 +41,7 @@
 #include "JSXMLHttpRequestException.h"
 #include "KURL.h"
 #include "RangeException.h"
+#include "ScriptController.h"
 #include "XMLHttpRequestException.h"
 #include <kjs/PrototypeFunction.h>
 
@@ -353,6 +355,21 @@ JSValue* nonCachingStaticFunctionGetter(ExecState* exec, const Identifier& prope
 JSValue* objectToStringFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot&)
 {
     return new (exec) PrototypeFunction(exec, 0, propertyName, objectProtoFuncToString);
+}
+
+ExecState* execStateFromNode(Node* node)
+{
+    if (!node)
+        return 0;
+    Document* document = node->document();
+    if (!document)
+        return 0;
+    Frame* frame = document->frame();
+    if (!frame)
+        return 0;
+    if (!frame->script()->isEnabled())
+        return 0;
+    return frame->script()->globalObject()->globalExec();
 }
 
 } // namespace WebCore

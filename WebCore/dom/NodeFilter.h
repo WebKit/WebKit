@@ -25,6 +25,7 @@
 #ifndef NodeFilter_h
 #define NodeFilter_h
 
+#include "JSDOMBinding.h"
 #include "NodeFilterCondition.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -75,9 +76,6 @@ namespace WebCore {
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
         short acceptNode(Node* node) const { return acceptNode(execStateFromNode(node), node); }
-
-    public:
-        static KJS::ExecState* execStateFromNode(Node*);
 
     private:
         NodeFilter(PassRefPtr<NodeFilterCondition> condition) : m_condition(condition) { }

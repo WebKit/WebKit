@@ -1,0 +1,71 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:math="http://www.w3.org/1998/Math/MathML"
+      xml:lang="en">
+<head>
+    <script>
+        if (window.layoutTestController)
+            layoutTestController.dumpAsText();
+
+        log = function(message)
+        {
+            document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+        }
+
+        function resolverFunction(prefix) {
+            // Default namespace
+            if (!prefix) {
+                return "http://www.w3.org/1999/xhtml";
+            }
+
+            var ns = {
+                "xh"  :"http://www.w3.org/1999/xhtml",
+                "xbl" :"http://www.w3.org/ns/xbl",
+                "svg" :"http://www.w3.org/2000/svg",
+                "math":"http://www.w3.org/1998/Math/MathML"
+            };
+            return ns[prefix.toLowerCase()];
+        }
+
+        test = function(selectorString)
+        {
+            log(selectorString);
+            var svgImages = document.querySelectorAll(selectorString, resolverFunction);
+            log("Length: " + svgImages.length);
+            
+            for (var i = 0; i &lt; svgImages.length; ++i) {
+                log(svgImages[i].textContent);
+            }
+
+            log("");
+        }
+
+        onload = function()
+        {
+            log(document.body.outerHTML);
+            log("");
+
+            test("xh|p SVG|svg");
+            test("xh|p SVG|svg, p *|math");
+            test("xh|p[svg|attr] SVG|svg");
+            test("p SVG|svg");
+            test("xh|p[svg|attr] SVG|svg");
+            test("xh|p |svg");
+            test("xh|p *|*:not(SVG|svg)");
+            test("xh|p *|*:not(SVG|svg):not(xh|div):not(|svg)");
+        }
+    </script>
+</head>
+<body>
+    <pre id="console"></pre>
+
+    <div><svg:svg> Item 1 </svg:svg></div>
+    <p><svg:svg> Item 2 </svg:svg></p>
+    <p svg:attr="value"><svg:svg> Item 3 </svg:svg></p>
+    <p><svg xmlns="http://www.w3.org/2000/svg"> Item 4 </svg></p>
+    <p><svg xmlns=""> Item 5 </svg></p>
+    <p><math:math> Item 6 </math:math></p>
+    <p><div> Item 7 </div></p>
+    <p><math:math svg:attr="value"> Item 8 </math:math></p>
+</body>
+</html>

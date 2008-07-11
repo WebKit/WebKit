@@ -24,48 +24,65 @@
  */
 
 #include "config.h"
-#include "JSDocumentFragment.h"
-
-#include "DocumentFragment.h"
-#include "Element.h"
-#include "ExceptionCode.h"
-#include "JSElement.h"
 #include "JSNSResolver.h"
-#include "JSNodeList.h"
-#include "NodeList.h"
+
+#include "JSDOMBinding.h"
+#include "PlatformString.h"
+#include <kjs/JSLock.h>
+#include <kjs/JSValue.h>
+#include <kjs/JSString.h>
 
 using namespace KJS;
 
 namespace WebCore {
 
-JSValue* JSDocumentFragment::querySelector(ExecState* exec, const ArgList& args)
+JSNSResolver::JSNSResolver(JSValue* resolver)
+    : m_resolver(resolver)
 {
-    DocumentFragment* imp = static_cast<DocumentFragment*>(impl());
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
-
-    RefPtr<Element> element = imp->querySelector(selectors, resolver.get(), ec, exec);
-    if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, element.get());
-    setDOMException(exec, ec);
-    return result;
 }
 
-JSValue* JSDocumentFragment::querySelectorAll(ExecState* exec, const ArgList& args)
+void JSNSResolver::mark()
 {
-    DocumentFragment* imp = static_cast<DocumentFragment*>(impl());
-    ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
+    if (!m_resolver->marked())
+        m_resolver->mark();
+}
 
-    RefPtr<NodeList> nodeList = imp->querySelectorAll(selectors, resolver.get(), ec, exec);
+String JSNSResolver::lookupNamespaceURI(ExecState* exec, const String& prefix)
+{
+    JSLock lock(false);
+
+    JSValue* function = m_resolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
     if (exec->hadException())
-        return jsUndefined();
-    JSValue* result = toJS(exec, nodeList.get());
-    setDOMException(exec, ec);
-    return result;
+        return String();
+
+    CallData callData;
+    CallType callType = function->getCallData(callData);
+    if (callType == CallTypeNone) {
+        callType = m_resolver->getCallData(callData);
+        if (callType == CallTypeNone)
+            return String();
+        function = m_resolver;
+    }
+
+    ArgList args;
+    args.append(jsStringOrNull(exec, prefix));
+
+    RefPtr<JSNSResolver> selfProtector(this);
+
+    JSValue* result = call(exec, function, callType, callData, m_resolver, args);
+    if (exec->hadException())
+        return String();
+
+    String stringResult = valueToStringWithUndefinedOrNullCheck(exec, result);
+    if (exec->hadException())
+        return String();
+
+    return stringResult;
+}
+
+PassRefPtr<NSResolver> toNSResolver(JSValue* value)
+{
+    return JSNSResolver::create(value);
 }
 
 } // namespace WebCore

@@ -1,3 +1,95 @@
+2008-07-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Add support for NSResolver to resolve namespaces for querySelector 
+        and querySelectorAll.
+
+        - Namespace resolution is done after parsing by iterating over all the
+          parts of the CSSSelector.
+
+        Tests: fast/dom/SelectorAPI/NSResolver-basic.xhtml
+               fast/dom/SelectorAPI/NSResolver-exceptions.xhtml
+
+        * GNUmakefile.am: Updated with new files.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Ditto.
+
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::execStateFromNode):
+        * bindings/js/JSDOMBinding.h:
+        Move execStateFromNode here from NodeFilter.
+
+        * bindings/js/JSDocumentCustom.cpp:
+        (WebCore::JSDocument::querySelector): Don't throw a NOT_SUPPORTED_ERR for NSResolver
+        and instead create one if the argument is not undefined or null.
+        (WebCore::JSDocument::querySelectorAll): Ditto.
+        * bindings/js/JSDocumentFragmentCustom.cpp:
+        (WebCore::JSDocumentFragment::querySelector): Ditto.
+        (WebCore::JSDocumentFragment::querySelectorAll): Ditto.
+        * bindings/js/JSElementCustom.cpp:
+        (WebCore::JSElement::querySelector): Ditto.
+        (WebCore::JSElement::querySelectorAll): Ditto.
+
+        * bindings/js/JSNSResolver.cpp: Added.
+        (WebCore::JSNSResolver::JSNSResolver):
+        (WebCore::JSNSResolver::mark):
+        (WebCore::JSNSResolver::lookupNamespaceURI): Try and get the function
+        from the passed in argument, either the value itself, or the result of
+        getting the lookupNamespaceURI property, and call it.
+        (WebCore::toNSResolver):
+        * bindings/js/JSNSResolver.h: Added.
+        (WebCore::JSNSResolver::create):
+
+        * dom/Document.idl: Update with NSResolver parameter.
+        * dom/DocumentFragment.idl: Ditto.
+        * dom/Element.idl: Ditto.
+
+        * dom/NSResolver.h: Added.
+        (WebCore::NSResolver::~NSResolver):
+        (WebCore::NSResolver::mark):
+        Abstract base class.
+
+        * dom/NSResolver.idl: Added.
+
+        * dom/Node.cpp:
+        (WebCore::forEachTagSelector):
+        (WebCore::forEachSelector):
+        Functions to iterate over all parts of the selector.
+
+        (WebCore::SelectorNeedsNamespaceResolutionFunctor::operator()):
+        Functor to be passed to forEachSelector to determine if a selector
+        needs namespace resolution, for the case when no NSResolver is passed
+        and we need to determine whether to throw a NAMESPACE_ERR.
+
+        (WebCore::ResolveNamespaceFunctor::ResolveNamespaceFunctor):
+        (WebCore::ResolveNamespaceFunctor::operator()):
+        Functor to resolve namespaces for the selector.
+
+        (WebCore::selectorNeedsNamespaceResolution):
+        (WebCore::resolveNamespacesForSelector):
+        (WebCore::Node::querySelector): Resolve namepspaces, including the defaultNamespace
+        if a NSResolver is passed in.
+        (WebCore::Node::querySelectorAll): Ditto.
+        * dom/Node.h:
+
+        * dom/NodeFilter.cpp:
+        * dom/NodeFilter.h:
+        * dom/NodeIterator.h:
+        (WebCore::NodeIterator::nextNode):
+        (WebCore::NodeIterator::previousNode):
+        * dom/TreeWalker.h:
+        (WebCore::TreeWalker::parentNode):
+        (WebCore::TreeWalker::firstChild):
+        (WebCore::TreeWalker::lastChild):
+        (WebCore::TreeWalker::previousSibling):
+        (WebCore::TreeWalker::nextSibling):
+        (WebCore::TreeWalker::previousNode):
+        (WebCore::TreeWalker::nextNode):
+        Use the version of execStateFromNode in JSDOMBinding.
+
 2008-07-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

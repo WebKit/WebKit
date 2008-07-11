@@ -236,10 +236,19 @@ module core {
         NodeList getElementsByClassName(in DOMString tagname);
 
         // NodeSelector - Selector API
-        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+#if defined(LANGUAGE_JAVASCRIPT)
+        [Custom] Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors, in NSResolver resolver)
             raises(DOMException);
-        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+        [Custom] NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors, in NSResolver resolver)
             raises(DOMException);
+#else
+        // FIXME: add support for NSResolver in languages other than JS
+        Element querySelector(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
+        NodeList querySelectorAll(in [ConvertUndefinedOrNullToNullString] DOMString selectors)
+            raises(DOMException);
+#endif
+
     };
 
 }

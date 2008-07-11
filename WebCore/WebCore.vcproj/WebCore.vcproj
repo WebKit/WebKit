@@ -11452,6 +11452,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\NSResolver.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\OverflowEvent.cpp"
 				>
 				<FileConfiguration
@@ -13980,6 +13984,14 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSNodeListCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSNSResolver.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSNSResolver.h"
 					>
 				</File>
 				<File

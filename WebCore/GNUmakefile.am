@@ -547,6 +547,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSNodeFilterCustom.cpp \
 	WebCore/bindings/js/JSNodeIteratorCustom.cpp \
 	WebCore/bindings/js/JSNodeListCustom.cpp \
+	WebCore/bindings/js/JSNSResolver.cpp \
 	WebCore/bindings/js/JSQuarantinedObjectWrapper.cpp \
 	WebCore/bindings/js/JSRGBColor.cpp \
 	WebCore/bindings/js/JSPluginArrayCustom.cpp \

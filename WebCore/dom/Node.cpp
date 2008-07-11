@@ -41,18 +41,21 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "HTMLNames.h"
+#include "JSDOMBinding.h"
 #include "Logging.h"
+#include "NSResolver.h"
 #include "NameNodeList.h"
 #include "NamedAttrMap.h"
 #include "ProcessingInstruction.h"
 #include "RenderObject.h"
+#include "ScriptController.h"
 #include "SelectorNodeList.h"
 #include "StringBuilder.h"
 #include "TagNodeList.h"
 #include "Text.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
-#include "JSDOMBinding.h"
+#include <kjs/ExecState.h>
 #include <kjs/JSLock.h>
 
 namespace WebCore {
@@ -1226,18 +1229,112 @@ PassRefPtr<NodeList> Node::getElementsByClassName(const String& classNames)
     return ClassNodeList::create(this, classNames, result.first->second);
 }
 
-static bool selectorNeedsNamespaceResolution(CSSSelector* selector)
+template <typename Functor>
+static bool forEachTagSelector(Functor& functor, CSSSelector* selector)
+{
+    ASSERT(selector);
+
+    do {
+        if (functor(selector))
+            return true;
+        if (CSSSelector* simpleSelector = selector->m_simpleSelector) {
+            if (forEachTagSelector(functor, simpleSelector))
+                return true;
+        }
+    } while ((selector = selector->m_tagHistory));
+
+    return false;
+}
+
+template <typename Functor>
+static bool forEachSelector(Functor& functor, CSSSelector* selector)
 {
     for (; selector; selector = selector->next()) {
+        if (forEachTagSelector(functor, selector))
+            return true;
+    }
+
+    return false;
+}
+
+class SelectorNeedsNamespaceResolutionFunctor {
+public:
+    bool operator()(CSSSelector* selector)
+    {
         if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom)
             return true;
         if (selector->hasAttribute() && selector->m_attr.prefix() != nullAtom && selector->m_attr.prefix() != starAtom)
             return true;
+        return false;
     }
-    return false;
+};
+
+class ResolveNamespaceFunctor {
+public:
+    ResolveNamespaceFunctor(NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+        : m_resolver(resolver)
+        , m_exceptionCode(ec)
+        , m_exec(exec)
+    {
+    }
+
+    bool operator()(CSSSelector* selector)
+    {
+        if (selector->hasTag() && selector->m_tag.prefix() != nullAtom && selector->m_tag.prefix() != starAtom) {
+            String resolvedNamespaceURI = m_resolver->lookupNamespaceURI(m_exec, selector->m_tag.prefix());
+            if (m_exec && m_exec->hadException())
+                return true;
+            if (resolvedNamespaceURI.isEmpty()) {
+                m_exceptionCode = NAMESPACE_ERR;
+                return true;
+            }
+            QualifiedName newQualifiedName(selector->m_tag.prefix(), selector->m_tag.localName(), resolvedNamespaceURI);
+            selector->m_tag = newQualifiedName;
+        }
+        if (selector->hasAttribute() && selector->m_attr.prefix() != nullAtom && selector->m_attr.prefix() != starAtom) {
+            String resolvedNamespaceURI = m_resolver->lookupNamespaceURI(m_exec, selector->m_attr.prefix());
+            if (m_exec && m_exec->hadException())
+                return true;
+            if (resolvedNamespaceURI.isEmpty()) {
+                m_exceptionCode = NAMESPACE_ERR;
+                return true;
+            }
+            QualifiedName newQualifiedName(selector->m_attr.prefix(), selector->m_attr.localName(), resolvedNamespaceURI);
+            selector->m_attr = newQualifiedName;
+        }
+
+        return false;
+    }
+
+private:
+    NSResolver* m_resolver;
+    ExceptionCode& m_exceptionCode;
+    KJS::ExecState* m_exec;
+};
+
+static bool selectorNeedsNamespaceResolution(CSSSelector* currentSelector)
+{
+    SelectorNeedsNamespaceResolutionFunctor functor;
+    return forEachSelector(functor, currentSelector);
+}
+
+static bool resolveNamespacesForSelector(CSSSelector* currentSelector, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+{
+    ResolveNamespaceFunctor functor(resolver, ec, exec);
+    return forEachSelector(functor, currentSelector);
 }
 
 PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& ec)
+{
+    return querySelector(selectors, 0, ec, execStateFromNode(this));
+}
+
+PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
+{
+    return querySelectorAll(selectors, 0, ec, execStateFromNode(this));
+}
+
+PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -1245,6 +1342,14 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     }
     RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(document()->inStrictMode());
+    if (resolver) {
+        String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
+        if (exec && exec->hadException())
+            return false;
+        if (!defaultNamespace.isEmpty())
+            p.m_defaultNamespace = defaultNamespace;
+    }
+
     RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;
@@ -1253,11 +1358,16 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
 
     CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
 
-    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes, which we support in the engine
-    // but do not currently in the API due to lack of NSResolver support.
-    if (selectorNeedsNamespaceResolution(querySelector)) {
-        ec = NAMESPACE_ERR;
-        return 0;
+    if (resolver) {
+        if (resolveNamespacesForSelector(querySelector, resolver, ec, exec))
+            return 0;
+    } else {
+        // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
+        // namespace prefixes.
+        if (selectorNeedsNamespaceResolution(querySelector)) {
+            ec = NAMESPACE_ERR;
+            return 0;
+        }
     }
 
     if (inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id) {
@@ -1283,7 +1393,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, ExceptionCode& 
     return 0;
 }
 
-PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCode& ec)
+PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -1291,6 +1401,14 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
     }
     RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(document()->inStrictMode());
+    if (resolver) {
+        String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
+        if (exec && exec->hadException())
+            return false;
+        if (!defaultNamespace.isEmpty())
+            p.m_defaultNamespace = defaultNamespace;
+    }
+
     RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
     if (!rule || !rule->isStyleRule()) {
         ec = SYNTAX_ERR;
@@ -1299,11 +1417,16 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
 
     CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
 
-    // Throw a NAMESPACE_ERR if the selector includes any namespace prefixes, which we support in the engine
-    // but do not currently in the API due to lack of NSResolver support.
-    if (selectorNeedsNamespaceResolution(querySelector)) {
-        ec = NAMESPACE_ERR;
-        return 0;
+    if (resolver) {
+        if (resolveNamespacesForSelector(querySelector, resolver, ec, exec))
+            return 0;
+    } else {
+        // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
+        // namespace prefixes.
+        if (selectorNeedsNamespaceResolution(querySelector)) {
+            ec = NAMESPACE_ERR;
+            return 0;
+        }
     }
 
     return createSelectorNodeList(this, querySelector);

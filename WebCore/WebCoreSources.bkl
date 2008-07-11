@@ -89,6 +89,7 @@ This file contains the list of files needed to build WebCore.
         bindings/js/JSNodeFilterCustom.cpp
         bindings/js/JSNodeIteratorCustom.cpp
         bindings/js/JSNodeListCustom.cpp
+        bindings/js/JSNSResolver.cpp
         bindings/js/JSPluginCustom.cpp
         bindings/js/JSPluginArrayCustom.cpp
         bindings/js/JSQuarantinedObjectWrapper.cpp

@@ -25,6 +25,7 @@
 #ifndef TreeWalker_h
 #define TreeWalker_h
 
+#include "JSDOMBinding.h"
 #include "NodeFilter.h"
 #include "Traversal.h"
 #include <wtf/PassRefPtr.h>
@@ -53,13 +54,13 @@ namespace WebCore {
         Node* nextNode(KJS::ExecState*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
-        Node* parentNode() { return parentNode(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* firstChild() { return firstChild(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* lastChild() { return lastChild(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* previousSibling() { return previousSibling(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* nextSibling() { return nextSibling(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* previousNode() { return previousNode(NodeFilter::execStateFromNode(m_current.get())); }
-        Node* nextNode() { return nextNode(NodeFilter::execStateFromNode(m_current.get())); }
+        Node* parentNode() { return parentNode(execStateFromNode(m_current.get())); }
+        Node* firstChild() { return firstChild(execStateFromNode(m_current.get())); }
+        Node* lastChild() { return lastChild(execStateFromNode(m_current.get())); }
+        Node* previousSibling() { return previousSibling(execStateFromNode(m_current.get())); }
+        Node* nextSibling() { return nextSibling(execStateFromNode(m_current.get())); }
+        Node* previousNode() { return previousNode(execStateFromNode(m_current.get())); }
+        Node* nextNode() { return nextNode(execStateFromNode(m_current.get())); }
 
     private:
         TreeWalker(PassRefPtr<Node>, unsigned whatToShow, PassRefPtr<NodeFilter>, bool expandEntityReferences);
