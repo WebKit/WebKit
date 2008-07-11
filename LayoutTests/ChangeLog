@@ -1,3 +1,13 @@
+2008-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Test for <https://bugs.webkit.org/show_bug.cgi?id=18885>
+        (requires visual inspection or pixel test).
+        
+        * fast/transforms/transform-positioned-ancestor.html: Added.
+        * platform/mac/fast/transforms/transform-positioned-ancestor-expected.txt: Added.
+
 2008-07-11  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Anders.

@@ -1,3 +1,19 @@
+2008-07-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Bug 18885: RenderLayer::enclosingPositionedAncestor() should
+        look for transforms, since transforms create containing
+        blocks.
+        <https://bugs.webkit.org/show_bug.cgi?id=18885>
+
+        Test: fast/transforms/transform-positioned-ancestor.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::stackingContext):
+        (WebCore::RenderLayer::enclosingPositionedAncestor):
+        (WebCore::RenderLayer::enclosingTransformedAncestor):
+
 2008-07-11  Jacob Refstrup  <jacob.refstrup@hp.com>
 
         Reviewed by Darin Adler
