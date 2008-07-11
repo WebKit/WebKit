@@ -143,7 +143,8 @@ public:
     void setQuery(const String&);
 
     void setRef(const String&);
-
+    void removeRef();
+    
     friend bool equalIgnoringRef(const KURL&, const KURL&);
 
     friend bool protocolHostAndPortAreEqual(const KURL&, const KURL&);

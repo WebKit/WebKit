@@ -973,7 +973,7 @@ AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
         return 0;
     
     // check if URL is the same as current URL
-    linkURL.setRef("");
+    linkURL.removeRef();
     if (m_renderer->document()->url() != linkURL)
         return 0;
     

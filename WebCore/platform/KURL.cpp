@@ -708,6 +708,11 @@ void KURL::setRef(const String& s)
     parse(m_string.left(m_queryEnd) + (s.isNull() ? "" : "#" + s));
 }
 
+void KURL::removeRef()
+{
+    setRef(String());
+}
+    
 void KURL::setQuery(const String& query)
 {
     if (!m_isValid)

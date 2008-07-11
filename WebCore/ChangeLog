@@ -1,3 +1,15 @@
+2008-07-10  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        <rdar://problem/6067408> AX: internal anchors broken
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+        * platform/KURL.cpp:
+        (WebCore::KURL::removeRef):
+        * platform/KURL.h:
+
 2008-07-10  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
