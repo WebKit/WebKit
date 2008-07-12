@@ -1,3 +1,18 @@
+2008-07-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=18088
+          <rdar://problem/6036232> white-space:nowrap; float:left; causing the misalignment issue
+
+        Test: fast/block/basic/min-pref-width-nowrap-floats.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::calcInlinePrefWidths): Fixed a case where a
+        float's width was added to the minimum preferred widths instead of just
+        acting as a lower bound on the minimum preferred width (since the float
+        can always be pushed down to be the only thing on the line).
+
 2008-07-12  David D. Kilzer  <ddkilzer@webkit.org>
 
         Bug 13067: Manually adding #hash to URL reloads entire page instead of jumping to #hash location in cached page

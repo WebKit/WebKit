@@ -3819,14 +3819,14 @@ void RenderBlock::calcInlinePrefWidths()
                 // Add our width to the max.
                 inlineMax += childMax;
 
-                if (!autoWrap || !canBreakReplacedElement)
-                    inlineMin += childMin;
-                else
-                    inlineMin = childMin;
-
-                if (autoWrap && canBreakReplacedElement) {
+                if (!autoWrap || !canBreakReplacedElement) {
+                    if (child->isFloating())
+                        m_minPrefWidth = max(childMin, m_minPrefWidth);
+                    else
+                        inlineMin += childMin;
+                } else {
                     // Now check our line.
-                    m_minPrefWidth = max(inlineMin, m_minPrefWidth);
+                    m_minPrefWidth = max(childMin, m_minPrefWidth);
 
                     // Now start a new line.
                     inlineMin = 0;

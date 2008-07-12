@@ -1,3 +1,15 @@
+2008-07-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=18088
+          <rdar://problem/6036232> white-space:nowrap; float:left; causing the misalignment issue
+
+        * fast/block/basic/min-pref-width-nowrap-floats.html: Added.
+        * platform/mac/fast/block/basic/min-pref-width-nowrap-floats-expected.checksum: Added.
+        * platform/mac/fast/block/basic/min-pref-width-nowrap-floats-expected.png: Added.
+        * platform/mac/fast/block/basic/min-pref-width-nowrap-floats-expected.txt: Added.
+
 2008-07-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
