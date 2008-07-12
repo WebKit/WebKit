@@ -9,8 +9,8 @@ PASS text.getSubStringLength(0,1) is 42
 PASS text.getSubStringLength(0,2) is 42+23
 PASS text.getSubStringLength(1,1) is 23
 PASS text.getSubStringLength(1,0) is 0
-PASS text.getSubStringLength(1, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS text.getSubStringLength(0, 4) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS text.getSubStringLength(1, 3) is 4734
+PASS text.getSubStringLength(0, 4) is 4776
 PASS text.getSubStringLength(3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS text.getSubStringLength(-17, 20) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS text.getStartPositionOfChar(0).x is 0

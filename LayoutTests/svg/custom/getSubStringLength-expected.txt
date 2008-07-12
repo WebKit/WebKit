@@ -1,7 +1,7 @@
 PASS svgText.getSubStringLength(-1, 2) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgText.getSubStringLength(-1, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgText.getSubStringLength(1, 3) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
-PASS svgText.getSubStringLength(0, 4) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
+PASS svgText.getSubStringLength(1, 3) is 40
+PASS svgText.getSubStringLength(0, 4) is 60
 PASS svgText.getSubStringLength(3, 0) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS svgText.getSubStringLength(0, 0) is 0
 PASS svgText.getSubStringLength(2, 0) is 0

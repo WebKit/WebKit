@@ -63,8 +63,8 @@
     shouldBe("text.getSubStringLength(0,2)", "42+23");
     shouldBe("text.getSubStringLength(1,1)", "23");
     shouldBe("text.getSubStringLength(1,0)", "0");
-    shouldThrow("text.getSubStringLength(1, 3)");
-    shouldThrow("text.getSubStringLength(0, 4)");
+    shouldBe("text.getSubStringLength(1, 3)", "4734");
+    shouldBe("text.getSubStringLength(0, 4)", "4776");
     shouldThrow("text.getSubStringLength(3, 0)");
     shouldThrow("text.getSubStringLength(-17, 20)");
     shouldBe("text.getStartPositionOfChar(0).x", "0");

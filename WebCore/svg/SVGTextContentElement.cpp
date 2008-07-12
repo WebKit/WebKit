@@ -385,19 +385,8 @@ float SVGTextContentElement::getSubStringLength(long charnum, long nchars, Excep
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
-    // Differences to SVG 1.1 spec, as the spec is clearly wrong. TODO: Raise SVG WG issue!
-    // #1: We accept a 'long nchars' parameter instead of 'unsigned long nchars' to be able
-    //     to catch cases where someone called us with a negative 'nchars' value - in those
-    //     cases we'll just throw a 'INDEX_SIZE_ERR' (acid3 implicitly agrees with us)
-    //
-    // #2: We only throw if 'charnum + nchars' is greater than the number of characters, not
-    //     if it's equal, as this really doesn't make any sense (no way to measure the last character!)
-    //
-    // #3: If 'charnum' is greater than or equal to 'numberOfChars', we're throwing an exception here
-    //     as the result is undefined for every other value of 'nchars' than '0'.
-
     long numberOfChars = getNumberOfChars();
-    if (charnum < 0 || nchars < 0 || numberOfChars <= charnum || charnum + nchars > numberOfChars) {
+    if (charnum < 0 || nchars < 0 || charnum >= numberOfChars) {
         ec = INDEX_SIZE_ERR;
         return 0.0f;
     }
@@ -463,7 +452,7 @@ long SVGTextContentElement::getCharNumAtPosition(const FloatPoint& point) const
 void SVGTextContentElement::selectSubString(long charnum, long nchars, ExceptionCode& ec) const
 {
     long numberOfChars = getNumberOfChars();
-    if (charnum < 0 || nchars < 0 || charnum > numberOfChars) {
+    if (charnum < 0 || nchars < 0 || charnum >= numberOfChars) {
         ec = INDEX_SIZE_ERR;
         return;
     }

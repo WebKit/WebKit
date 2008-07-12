@@ -11,8 +11,8 @@ svgRoot.appendChild(svgText);
 
 shouldThrow("svgText.getSubStringLength(-1, 2)");
 shouldThrow("svgText.getSubStringLength(-1, 0)");
-shouldThrow("svgText.getSubStringLength(1, 3)");
-shouldThrow("svgText.getSubStringLength(0, 4)");
+shouldBe("svgText.getSubStringLength(1, 3)", "40");
+shouldBe("svgText.getSubStringLength(0, 4)", "60");
 shouldThrow("svgText.getSubStringLength(3, 0)");
 
 shouldBe("svgText.getSubStringLength(0, 0)", "0");
@@ -23,7 +23,6 @@ shouldBe("svgText.getSubStringLength(1, 1)", "20");
 shouldBe("svgText.getSubStringLength(2, 1)", "20");
 shouldBe("svgText.getSubStringLength(0, 3)", "60");
 
-// We throw on negative values, unlike SVG 1.1, in agreement with Acid3.
 shouldThrow("svgText.getSubStringLength(1, -1)");
 shouldThrow("svgText.getSubStringLength(2, -1)");
 shouldThrow("svgText.getSubStringLength(3, -1)");
