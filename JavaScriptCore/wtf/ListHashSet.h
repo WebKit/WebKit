@@ -34,7 +34,7 @@ namespace WTF {
     // order - iterating it will always give back values in the order
     // in which they are added.
 
-    // In theory it would be possible to add prepend, insertAfter, insertBefore,
+    // In theory it would be possible to add prepend, insertAfter
     // and an append that moves the element to the end even if already present,
     // but unclear yet if these are needed.
 
@@ -91,9 +91,12 @@ namespace WTF {
         const_iterator find(const ValueType&) const;
         bool contains(const ValueType&) const;
 
-        // the return value is a pair of an interator to the new value's location, 
+        // the return value is a pair of an iterator to the new value's location, 
         // and a bool that is true if an new entry was added
         pair<iterator, bool> add(const ValueType&);
+
+        pair<iterator, bool> insertBefore(const ValueType& beforeValue, const ValueType& newValue);
+        pair<iterator, bool> insertBefore(iterator it, const ValueType&);
 
         void remove(const ValueType&);
         void remove(iterator);
@@ -102,6 +105,7 @@ namespace WTF {
     private:
         void unlinkAndDelete(Node*);
         void appendNode(Node*);
+        void insertNodeBefore(Node* beforeNode, Node* newNode);
         void deleteAllNodes();
         iterator makeIterator(Node*);
         const_iterator makeConstIterator(Node*) const;
@@ -469,6 +473,23 @@ namespace WTF {
     }
 
     template<typename T, typename U>
+    pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::insertBefore(iterator it, const ValueType& newValue)
+    {
+        typedef ListHashSetTranslator<ValueType, HashFunctions> Translator;
+        pair<typename ImplType::iterator, bool> result = m_impl.template add<ValueType, NodeAllocator*, Translator>(newValue, m_allocator.get());
+        if (result.second)
+            insertNodeBefore(it.node(), *result.first);
+        return std::make_pair(makeIterator(*result.first), result.second);
+
+    }
+
+    template<typename T, typename U>
+    pair<typename ListHashSet<T, U>::iterator, bool> ListHashSet<T, U>::insertBefore(const ValueType& beforeValue, const ValueType& newValue)
+    {
+        insertBefore(find(beforeValue), newValue); 
+    }
+
+    template<typename T, typename U>
     inline void ListHashSet<T, U>::remove(iterator it)
     {
         if (it == end())
@@ -529,6 +550,22 @@ namespace WTF {
         }
 
         m_tail = node;
+    }
+
+    template<typename T, typename U>
+    void ListHashSet<T, U>::insertNodeBefore(Node* beforeNode, Node* newNode)
+    {
+        if (!beforeNode)
+            return appendNode(newNode);
+        
+        newNode->m_next = beforeNode;
+        newNode->m_prev = beforeNode->m_prev;
+        if (beforeNode->m_prev)
+            beforeNode->m_prev->m_next = newNode;
+        beforeNode->m_prev = newNode;
+
+        if (!newNode->m_prev)
+            m_head = newNode;
     }
 
     template<typename T, typename U>

@@ -1,3 +1,14 @@
+2008-07-11  David Hyatt  <hyatt@apple.com>
+
+        Add an insertBefore method to ListHashSet to allow for insertions in the middle of the list (rather than just
+        at the end).
+
+        Reviewed by Anders
+
+        * wtf/ListHashSet.h:
+        (WTF::::insertBefore):
+        (WTF::::insertNodeBefore):
+
 2008-07-11  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Darin Adler.
