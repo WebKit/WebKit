@@ -1,3 +1,14 @@
+2008-07-11  David Hyatt  <hyatt@apple.com>
+
+        Implement the DOM level 3 compareDocumentPosition method on Node.
+
+        Reviewed by Darin
+
+        * dom/Node.cpp:
+        (WebCore::Node::compareDocumentPosition):
+        * dom/Node.h:
+        * dom/Node.idl:
+
 2008-07-11  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam

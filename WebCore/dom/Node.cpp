@@ -1770,6 +1770,98 @@ bool Node::offsetInCharacters() const
     return false;
 }
 
+unsigned short Node::compareDocumentPosition(Node* otherNode, ExceptionCode& ec)
+{
+    // It is not clear what should be done if |otherNode| is 0.
+    if (!otherNode)
+        return DOCUMENT_POSITION_DISCONNECTED;
+
+    if (otherNode == this)
+        return DOCUMENT_POSITION_EQUIVALENT;
+    
+    Attr* attr1 = nodeType() == ATTRIBUTE_NODE ? static_cast<Attr*>(this) : 0;
+    Attr* attr2 = otherNode->nodeType() == ATTRIBUTE_NODE ? static_cast<Attr*>(otherNode) : 0;
+    
+    Node* start1 = attr1 ? attr1->ownerElement() : this;
+    Node* start2 = attr2 ? attr2->ownerElement() : otherNode;
+    
+    // If either of start1 or start2 is null, then we are disconnected, since one of the nodes is
+    // an orphaned attribute node.
+    if (!start1 || !start2)
+        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+
+    Vector<Node*, 16> chain1;
+    Vector<Node*, 16> chain2;
+    if (attr1)
+        chain1.append(attr1);
+    if (attr2)
+        chain2.append(attr2);
+    
+    if (attr1 && attr2 && start1 == start2 && start1) {
+        // We are comparing two attributes on the same node.  Crawl our attribute map
+        // and see which one we hit first.
+        NamedAttrMap* map = attr1->ownerElement()->attributes(true);
+        unsigned length = map->length();
+        for (unsigned i = 0; i < length; ++i) {
+            // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 
+            // implementation-dependent order between the determining nodes is returned. This order is stable as long as no nodes of
+            // the same nodeType are inserted into or removed from the direct container. This would be the case, for example, 
+            // when comparing two attributes of the same element, and inserting or removing additional attributes might change 
+            // the order between existing attributes.
+            Attribute* attr = map->attributeItem(i);
+            if (attr1->attr() == attr)
+                return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_FOLLOWING;
+            if (attr2->attr() == attr)
+                return DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | DOCUMENT_POSITION_PRECEDING;
+        }
+        
+        ASSERT_NOT_REACHED();
+        return DOCUMENT_POSITION_DISCONNECTED;
+    }
+
+    // If one node is in the document and the other is not, we must be disconnected.
+    // If the nodes have different owning documents, they must be disconnected.  Note that we avoid
+    // comparing Attr nodes here, since they return false from inDocument() all the time (which seems like a bug).
+    if (start1->inDocument() != start2->inDocument() ||
+        start1->document() != start2->document())
+        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC;
+
+    // We need to find a common ancestor container, and then compare the indices of the two immediate children.
+    Node* current;
+    for (current = start1; current; current = current->parentNode())
+        chain1.append(current);
+    for (current = start2; current; current = current->parentNode())
+        chain2.append(current);
+   
+    // Walk the two chains backwards and look for the first difference.
+    unsigned index1 = chain1.size();
+    unsigned index2 = chain2.size();
+    for (unsigned i = std::min(index1, index2); i; --i) {
+        Node* child1 = chain1[--index1];
+        Node* child2 = chain2[--index2];
+        if (child1 != child2) {
+            // If one of the children is an attribute, it wins.
+            if (child1->nodeType() == ATTRIBUTE_NODE)
+                return DOCUMENT_POSITION_FOLLOWING;
+            if (child2->nodeType() == ATTRIBUTE_NODE)
+                return DOCUMENT_POSITION_PRECEDING;
+            
+            // Otherwise we need to see which node occurs first.  Crawl backwards from child2 looking for child1.
+            for (Node* child = child2->previousSibling(); child; child = child->previousSibling()) {
+                if (child == child1)
+                    return DOCUMENT_POSITION_FOLLOWING;
+            }
+            return DOCUMENT_POSITION_PRECEDING;
+        }
+    }
+    
+    // There was no difference between the two parent chains, i.e., one was a subset of the other.  The shorter
+    // chain is the ancestor.
+    return index1 < index2 ? 
+               DOCUMENT_POSITION_FOLLOWING | DOCUMENT_POSITION_CONTAINED_BY :
+               DOCUMENT_POSITION_PRECEDING | DOCUMENT_POSITION_CONTAINS;
+}
+
 #ifndef NDEBUG
 
 static void appendAttributeDesc(const Node* node, String& string, const QualifiedName& name, const char* attrDesc)

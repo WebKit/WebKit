@@ -1,5 +1,4 @@
 Test	http://www.w3.org/2001/DOM-Test-Suite/level3/core/nodecomparedocumentposition07
-Status	error
-Message	Line 104: TypeError
+Status	Success
 
 

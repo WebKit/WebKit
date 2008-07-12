@@ -63,6 +63,14 @@ typedef int ExceptionCode;
 
 enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange };
 
+const unsigned short      DOCUMENT_POSITION_EQUIVALENT   = 0x00;
+const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
+const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;
+const unsigned short      DOCUMENT_POSITION_FOLLOWING    = 0x04;
+const unsigned short      DOCUMENT_POSITION_CONTAINS     = 0x08;
+const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
+const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
+
 // this class implements nodes, which can have a parent but no children:
 class Node : public TreeShared<Node> {
     friend class Document;
@@ -82,7 +90,7 @@ public:
         NOTATION_NODE = 12,
         XPATH_NAMESPACE_NODE = 13
     };
-
+    
     static bool isSupported(const String& feature, const String& version);
 
     static void startIgnoringLeaks();
@@ -473,6 +481,8 @@ public:
     // FIXME: We should support the NSResolver interface for non-JS bindings.
     PassRefPtr<Element> querySelector(const String& selectors, ExceptionCode&);
     PassRefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
+
+    unsigned short compareDocumentPosition(Node*, ExceptionCode&);
 
 private: // members
     DocPtr<Document> m_document;

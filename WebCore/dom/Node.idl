@@ -101,7 +101,6 @@ module core {
         boolean            isDefaultNamespace(in [ConvertNullToNullString] DOMString namespaceURI);
         [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [ConvertNullToNullString] DOMString prefix);
 
-#if 0
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
         const unsigned short      DOCUMENT_POSITION_PRECEDING    = 0x02;
@@ -113,6 +112,7 @@ module core {
         unsigned short     compareDocumentPosition(in Node other)
             raises(DOMException);
 
+#if 0
         DOMObject          getFeature(in DOMString feature, 
                                       in DOMString version);
         DOMUserData        setUserData(in DOMString key, 
