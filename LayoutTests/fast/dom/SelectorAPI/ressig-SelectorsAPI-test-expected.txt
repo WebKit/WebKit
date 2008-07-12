@@ -2,7 +2,7 @@ Selectors API Test Suite
 
 Testrunner by John Resig, tests by John Resig, Disruptive Innovations, W3C CSS Working Group, jQuery JavaScript Library.
 
-99.1%: 4107 passed, 39 failed
+99.3%: 4117 passed, 29 failed
 PASS Element supports querySelector
 PASS Element supports querySelectorAll
 PASS Element.querySelectorAll Empty String
@@ -1198,9 +1198,9 @@ PASS Element: Broken Selector (#root3 &lt;)
 PASS Element: Broken Selector (#root3 ())
 PASS Element: Broken Selector (#root3 &lt;&gt;)
 PASS Element: Broken Selector (#root3 {})
-FAIL Element: ID Selector w/ Element (#root3 ul#first) Expected: [] Received: ['first']
+PASS Element: ID Selector w/ Element (#root3 ul#first)
 PASS Element: ID selector with existing ID descendant (#root3 #firstp #simon1)
-FAIL Element: ID selector with non-existant descendant (#root3 #firstp #foobar) Expected: [] Received: ['foobar']
+PASS Element: ID selector with non-existant descendant (#root3 #firstp #foobar)
 PASS Element: ID selector using UTF8 (#root3 #台北Táiběi)
 PASS Element: Multiple ID selectors using UTF8 (#root3 #台北Táiběi, #root3 #台北)
 PASS Element: Descendant ID selector using UTF8 (#root3 div #台北)
@@ -1212,11 +1212,11 @@ PASS Element: Descendant escaped ID (#root3 div #test\.foo\[5\]bar)
 PASS Element: Child escaped ID (#root3 form &gt; #foo\:bar)
 PASS Element: Child escaped ID (#root3 form &gt; #test\.foo\[5\]bar)
 PASS Element: ID Selector, child ID present (#root3 #form &gt; #radio1)
-FAIL Element: ID Selector, not an ancestor ID (#root3 #form #first) Expected: [] Received: ['first']
-FAIL Element: ID Selector, not a child ID (#root3 #form &gt; #option1a) Expected: [] Received: ['option1a']
+PASS Element: ID Selector, not an ancestor ID (#root3 #form #first)
+PASS Element: ID Selector, not a child ID (#root3 #form &gt; #option1a)
 PASS Element: All Children of ID (#root3 #foo &gt; *)
 PASS Element: All Children of ID with no children (#root3 #firstUL &gt; *)
-FAIL Element: ID selector with non-existant ancestor (#root3 #asdfasdf #foobar) Expected: [] Received: ['foobar']
+PASS Element: ID selector with non-existant ancestor (#root3 #asdfasdf #foobar)
 PASS Element: Class Selector (#root3 .blog)
 PASS Element: Class Selector (#root3 .blog.link)
 PASS Element: Class Selector w/ Element (#root3 a.blog)
@@ -4043,9 +4043,9 @@ PASS Document: Broken Selector (#root3 &lt;&gt;)
 PASS Document: Broken Selector (#root3 {})
 PASS Document: ID Selector (#body)
 PASS Document: ID Selector w/ Element (body#body)
-FAIL Document: ID Selector w/ Element (#root3 ul#first) Expected: [] Received: ['first']
+PASS Document: ID Selector w/ Element (#root3 ul#first)
 PASS Document: ID selector with existing ID descendant (#root3 #firstp #simon1)
-FAIL Document: ID selector with non-existant descendant (#root3 #firstp #foobar) Expected: [] Received: ['foobar']
+PASS Document: ID selector with non-existant descendant (#root3 #firstp #foobar)
 PASS Document: ID selector using UTF8 (#root3 #台北Táiběi)
 PASS Document: Multiple ID selectors using UTF8 (#root3 #台北Táiběi, #root3 #台北)
 PASS Document: Descendant ID selector using UTF8 (#root3 div #台北)
@@ -4057,11 +4057,11 @@ PASS Document: Descendant escaped ID (#root3 div #test\.foo\[5\]bar)
 PASS Document: Child escaped ID (#root3 form &gt; #foo\:bar)
 PASS Document: Child escaped ID (#root3 form &gt; #test\.foo\[5\]bar)
 PASS Document: ID Selector, child ID present (#root3 #form &gt; #radio1)
-FAIL Document: ID Selector, not an ancestor ID (#root3 #form #first) Expected: [] Received: ['first']
-FAIL Document: ID Selector, not a child ID (#root3 #form &gt; #option1a) Expected: [] Received: ['option1a']
+PASS Document: ID Selector, not an ancestor ID (#root3 #form #first)
+PASS Document: ID Selector, not a child ID (#root3 #form &gt; #option1a)
 PASS Document: All Children of ID (#root3 #foo &gt; *)
 PASS Document: All Children of ID with no children (#root3 #firstUL &gt; *)
-FAIL Document: ID selector with non-existant ancestor (#root3 #asdfasdf #foobar) Expected: [] Received: ['foobar']
+PASS Document: ID selector with non-existant ancestor (#root3 #asdfasdf #foobar)
 PASS Document: Class Selector (#root3 .blog)
 PASS Document: Class Selector (#root3 .blog.link)
 PASS Document: Class Selector w/ Element (#root3 a.blog)

@@ -42,7 +42,10 @@ PassRefPtr<StaticNodeList> createSelectorNodeList(PassRefPtr<Node> rootNode, CSS
     Document* document = rootNode->document();
     AtomicString selectorValue = querySelector->m_value;
 
-    if (rootNode->inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id && !document->containsMultipleElementsWithId(selectorValue)) {
+    if (rootNode->inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id
+            && !querySelector->hasTag() && !querySelector->hasAttribute() 
+            && !querySelector->m_tagHistory && !querySelector->m_simpleSelector
+            && !document->containsMultipleElementsWithId(selectorValue)) {
         Element* element = document->getElementById(selectorValue);
         if (element && (rootNode->isDocumentNode() || element->isDescendantOf(rootNode.get())))
             nodes.append(element);

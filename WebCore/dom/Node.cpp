@@ -1370,7 +1370,9 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
         }
     }
 
-    if (inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id) {
+    if (inDocument() && !querySelector->next() && querySelector->m_match == CSSSelector::Id
+            && !querySelector->hasTag() && !querySelector->hasAttribute()
+            && !querySelector->m_tagHistory && !querySelector->m_simpleSelector) {
         Element* element = document()->getElementById(querySelector->m_value);
         if (element && (isDocumentNode() || element->isDescendantOf(this)))
             return element;
