@@ -39,27 +39,14 @@
 #include "Page.h"
 #include <kjs/JSLock.h>
 #include <wtf/MainThread.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
     
 using namespace KJS;
     
 #ifndef NDEBUG
-
-WTFLogChannel LogWebCoreSQLLeaks = { 0x00000000, "", WTFLogChannelOn };
-
-struct JSCustomSQLTransactionCallbackCounter { 
-    static int count; 
-    ~JSCustomSQLTransactionCallbackCounter() 
-    { 
-        if (count)
-            LOG(WebCoreSQLLeaks, "LEAK: %d JSCustomSQLTransactionCallback\n", count);
-    }
-};
-
-int JSCustomSQLTransactionCallbackCounter::count = 0;
-static JSCustomSQLTransactionCallbackCounter counter;
-
+static WTF::RefCountedLeakCounter counter("JSCustomSQLTransactionCallback");
 #endif
 
 // We have to clean up the data on the main thread for two reasons:
@@ -83,7 +70,7 @@ JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback(JSObject* callbac
     : m_data(new Data(callback, frame))
 {
 #ifndef NDEBUG
-    ++JSCustomSQLTransactionCallbackCounter::count;
+    counter.increment();
 #endif
 }
 
@@ -97,7 +84,7 @@ JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback()
     callOnMainThread(deleteData, m_data);
 #ifndef NDEBUG
     m_data = 0;
-    --JSCustomSQLTransactionCallbackCounter::count;
+    counter.decrement();
 #endif
 }
 

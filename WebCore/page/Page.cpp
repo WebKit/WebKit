@@ -54,6 +54,7 @@
 #include <kjs/collector.h>
 #include <kjs/JSLock.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(DOM_STORAGE)
 #include "LocalStorage.h"
@@ -68,18 +69,7 @@ using namespace EventNames;
 static HashSet<Page*>* allPages;
 
 #ifndef NDEBUG
-WTFLogChannel LogWebCorePageLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct PageCounter { 
-    static int count; 
-    ~PageCounter() 
-    { 
-        if (count)
-            LOG(WebCorePageLeaks, "LEAK: %d Page\n", count);
-    }
-};
-int PageCounter::count = 0;
-static PageCounter pageCounter;
+static WTF::RefCountedLeakCounter pageCounter("Page");
 #endif
 
 static void networkStateChanged()
@@ -146,7 +136,7 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     JavaScriptDebugServer::shared().pageCreated(this);
 
 #ifndef NDEBUG
-    ++PageCounter::count;
+    pageCounter.increment();
 #endif
 }
 
@@ -166,7 +156,7 @@ Page::~Page()
     m_backForwardList->close();
 
 #ifndef NDEBUG
-    --PageCounter::count;
+    pageCounter.decrement();
 
     // Cancel keepAlive timers, to ensure we release all Frames before exiting.
     // It's safe to do this because we prohibit closing a Page while JavaScript

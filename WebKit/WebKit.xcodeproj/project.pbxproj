@@ -239,7 +239,7 @@
 		939810F20824BF01008DF038 /* WebFrame.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5143A370221DCCE01A80181 /* WebFrame.mm */; };
 		939810F30824BF01008DF038 /* WebHTMLRepresentation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.mm */; };
 		939810F40824BF01008DF038 /* WebHTMLView.mm in Sources */ = {isa = PBXBuildFile; fileRef = 35081D9502B6D4D80ACA2ACA /* WebHTMLView.mm */; };
-		939810F80824BF01008DF038 /* WebPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEBB3D024A527601C1A526 /* WebPreferences.m */; };
+		939810F80824BF01008DF038 /* WebPreferences.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5AEBB3D024A527601C1A526 /* WebPreferences.mm */; };
 		939810F90824BF01008DF038 /* WebRenderNode.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5F81C3A02B67C26018635CA /* WebRenderNode.mm */; };
 		939810FC0824BF01008DF038 /* WebFormDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2D81DAB303EB0B2D00A80166 /* WebFormDelegate.m */; };
 		939810FD0824BF01008DF038 /* CarbonWindowAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = F7EBEE9103F9DBA103CA0DE6 /* CarbonWindowAdapter.m */; };
@@ -560,7 +560,7 @@
 		F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A672B90263866E01000102 /* WebBaseNetscapePluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebBaseNetscapePluginStream.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5A672BA0263866E01000102 /* WebBaseNetscapePluginStream.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebBaseNetscapePluginStream.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		F5AEBB3D024A527601C1A526 /* WebPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = WebPreferences.m; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		F5AEBB3D024A527601C1A526 /* WebPreferences.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; indentWidth = 4; path = WebPreferences.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5B67130023EDF8901C1A525 /* url_icon.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = url_icon.tiff; sourceTree = "<group>"; };
 		F5B92B820223191D01C1A525 /* WebHistoryPrivate.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryPrivate.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		F5C283730284676D018635CA /* WebKitPrefix.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.h; name = WebKitPrefix.h; path = mac/WebKitPrefix.h; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
@@ -976,7 +976,7 @@
 				F5143A370221DCCE01A80181 /* WebFrame.mm */,
 				51A8B52F04282B5900CA2D3A /* WebFrameView.mm */,
 				51443F9B0429392B00CA2D3A /* WebPolicyDelegate.mm */,
-				F5AEBB3D024A527601C1A526 /* WebPreferences.m */,
+				F5AEBB3D024A527601C1A526 /* WebPreferences.mm */,
 				84311A1305EAAAF00088EDA4 /* WebResource.mm */,
 				7E6FEF0608985A7200C44C3F /* WebScriptDebugDelegate.mm */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
@@ -1577,7 +1577,7 @@
 				939810DC0824BF01008DF038 /* WebPluginPackage.m in Sources */,
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
 				939811080824BF01008DF038 /* WebPolicyDelegate.mm in Sources */,
-				939810F80824BF01008DF038 /* WebPreferences.m in Sources */,
+				939810F80824BF01008DF038 /* WebPreferences.mm in Sources */,
 				939810F90824BF01008DF038 /* WebRenderNode.mm in Sources */,
 				9398111A0824BF01008DF038 /* WebResource.mm in Sources */,
 				7E6FEF0908985A7200C44C3F /* WebScriptDebugDelegate.mm in Sources */,

@@ -40,6 +40,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/MathExtras.h>
+#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Threading.h>
 
 using namespace WTF;
@@ -49,64 +50,14 @@ namespace KJS {
 // ------------------------------ Node -----------------------------------------
 
 #ifndef NDEBUG
-
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
-
-static WTFLogChannel LogKJSNodeLeaks = { 0x00000000, "", WTFLogChannelOn };
-
-struct ParserRefCountedCounter {
-    ~ParserRefCountedCounter()
-    {
-        if (count)
-            LOG(KJSNodeLeaks, "LEAK: %u KJS::Node\n", count);
-    }
-
-    static void increment();
-    static void decrement();
-
-private:
-    static volatile int count;
-};
-
-volatile int ParserRefCountedCounter::count = 0;
-
-#if USE(MULTIPLE_THREADS)
-
-void ParserRefCountedCounter::increment()
-{
-    atomicIncrement(&count);
-}
-
-void ParserRefCountedCounter::decrement()
-{
-    atomicDecrement(&count);
-}
-
-#else
-
-void ParserRefCountedCounter::increment()
-{
-    ++count;
-}
-
-void ParserRefCountedCounter::decrement()
-{
-    --count;
-}
-
-#endif
-
-static ParserRefCountedCounter parserRefCountedCounter;
-
+static RefCountedLeakCounter parserRefCountedCounter("KJS::Node");
 #endif
 
 ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
     : m_globalData(globalData)
 {
 #ifndef NDEBUG
-    ParserRefCountedCounter::increment();
+    parserRefCountedCounter.increment();
 #endif
     if (!m_globalData->newParserObjects)
         m_globalData->newParserObjects = new HashSet<ParserRefCounted*>;
@@ -117,7 +68,7 @@ ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
 ParserRefCounted::~ParserRefCounted()
 {
 #ifndef NDEBUG
-    ParserRefCountedCounter::decrement();
+    parserRefCountedCounter.decrement();
 #endif
 }
 

@@ -1198,8 +1198,15 @@ sub closeDumpTool()
 
     close IN;
     close OUT;
-    close ERROR;
     waitpid $dumpToolPID, 0;
+    
+    # check for WebCore counter leaks.
+    if ($shouldCheckLeaks) {
+        while (<ERROR>) {
+            print;
+        }
+    }
+    close ERROR;
     $isDumpToolOpen = 0;
 }
 
@@ -1713,7 +1720,7 @@ sub readFromDumpToolWithTimer(*;$)
 
     setFileHandleNonBlocking($fh, 1);
 
-    my $maximumSecondsWithoutOutput = 30;
+    my $maximumSecondsWithoutOutput = 60;
     $maximumSecondsWithoutOutput *= 10 if $guardMalloc;
     my $microsecondsToWaitBeforeReadingAgain = 1000;
 

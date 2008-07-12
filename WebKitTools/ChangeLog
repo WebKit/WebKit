@@ -1,3 +1,16 @@
+2008-07-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make sure we read WebCore Leak messages.  Force full document teardown for DumpRenderTree.
+
+        Up timeout limit, some slower machines were timing out before crashtracer finished writing out to disk and quitting DRT.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (setDefaultsToConsistentValuesForTesting):
+        (resetWebViewToConsistentStateBeforeTesting):
+        * Scripts/run-webkit-tests:
+
 2008-07-10  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

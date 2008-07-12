@@ -34,6 +34,7 @@
 #include "ScriptController.h"
 #include <kjs/FunctionConstructor.h>
 #include <kjs/JSLock.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 using namespace KJS;
 
@@ -169,21 +170,7 @@ void JSUnprotectedEventListener::mark()
 }
 
 #ifndef NDEBUG
-#ifndef LOG_CHANNEL_PREFIX
-#define LOG_CHANNEL_PREFIX Log
-#endif
-WTFLogChannel LogWebCoreEventListenerLeaks = { 0x00000000, "", WTFLogChannelOn };
-
-struct EventListenerCounter {
-    static unsigned count;
-    ~EventListenerCounter()
-    {
-        if (count)
-            LOG(WebCoreEventListenerLeaks, "LEAK: %u EventListeners\n", count);
-    }
-};
-unsigned EventListenerCounter::count = 0;
-static EventListenerCounter eventListenerCounter;
+static WTF::RefCountedLeakCounter eventListenerCounter("EventListener");
 #endif
 
 // -------------------------------------------------------------------------
@@ -199,7 +186,7 @@ JSEventListener::JSEventListener(JSObject* listener, JSDOMWindow* window, bool i
         listeners.set(m_listener, this);
     }
 #ifndef NDEBUG
-    ++eventListenerCounter.count;
+    eventListenerCounter.increment();
 #endif
 }
 
@@ -211,7 +198,7 @@ JSEventListener::~JSEventListener()
         listeners.remove(m_listener);
     }
 #ifndef NDEBUG
-    --eventListenerCounter.count;
+    eventListenerCounter.decrement();
 #endif
 }
 

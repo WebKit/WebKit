@@ -76,6 +76,7 @@
 #include "runtime_root.h"
 #include "visible_units.h"
 #include <kjs/JSLock.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 #if FRAME_LOADS_USER_STYLESHEET
 #include "UserStyleSheetLoader.h"
@@ -99,19 +100,8 @@ using namespace HTMLNames;
 
 double Frame::s_currentPaintTimeStamp = 0.0;
 
-#ifndef NDEBUG
-WTFLogChannel LogWebCoreFrameLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct FrameCounter { 
-    static int count; 
-    ~FrameCounter() 
-    { 
-        if (count)
-            LOG(WebCoreFrameLeaks, "LEAK: %d Frame\n", count);
-    }
-};
-int FrameCounter::count = 0;
-static FrameCounter frameCounter;
+#ifndef NDEBUG    
+static WTF::RefCountedLeakCounter frameCounter("Frame");
 #endif
 
 static inline Frame* parentFromOwnerElement(HTMLFrameOwnerElement* ownerElement)
@@ -153,7 +143,7 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
     }
 
 #ifndef NDEBUG
-    ++FrameCounter::count;
+    frameCounter.increment();
 #endif
 }
 
@@ -168,7 +158,7 @@ Frame::~Frame()
     ASSERT(!d->m_lifeSupportTimer.isActive());
 
 #ifndef NDEBUG
-    --FrameCounter::count;
+    frameCounter.decrement();
 #endif
 
     if (d->m_script.haveWindowShell())

@@ -46,6 +46,7 @@
 #include "SystemTime.h"
 #include "ScriptController.h"
 #include <kjs/JSLock.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)
 #include "SVGDocumentExtensions.h"
@@ -56,18 +57,7 @@ using namespace KJS;
 namespace WebCore {
 
 #ifndef NDEBUG
-WTFLogChannel LogWebCoreCachedPageLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct CachedPageCounter { 
-    static int count; 
-    ~CachedPageCounter() 
-    { 
-        if (count)
-            LOG(WebCoreCachedPageLeaks, "LEAK: %d CachedPage\n", count);
-    }
-};
-int CachedPageCounter::count = 0;
-static CachedPageCounter cachedPageCounter;
+static WTF::RefCountedLeakCounter cachedPageCounter("CachedPage");
 #endif
 
 PassRefPtr<CachedPage> CachedPage::create(Page* page)
@@ -83,7 +73,7 @@ CachedPage::CachedPage(Page* page)
     , m_URL(page->mainFrame()->loader()->url())
 {
 #ifndef NDEBUG
-    ++CachedPageCounter::count;
+    cachedPageCounter.increment();
 #endif
     
     m_document->willSaveToCache(); 
@@ -105,7 +95,7 @@ CachedPage::CachedPage(Page* page)
 CachedPage::~CachedPage()
 {
 #ifndef NDEBUG
-    --CachedPageCounter::count;
+    cachedPageCounter.decrement();
 #endif
 
     clear();

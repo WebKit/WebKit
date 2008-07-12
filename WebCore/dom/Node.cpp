@@ -57,6 +57,7 @@
 #include "htmlediting.h"
 #include <kjs/ExecState.h>
 #include <kjs/JSLock.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
 
@@ -91,19 +92,7 @@ bool Node::isSupported(const String& feature, const String& version)
 }
 
 #ifndef NDEBUG
-WTFLogChannel LogWebCoreNodeLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct NodeCounter {
-    static unsigned count; 
-
-    ~NodeCounter() 
-    { 
-        if (count) 
-            LOG(WebCoreNodeLeaks, "LEAK: %u Node\n", count); 
-    }
-};
-unsigned NodeCounter::count = 0;
-static NodeCounter nodeCounter;
+static WTF::RefCountedLeakCounter nodeCounter("WebCoreNode");
 
 static bool shouldIgnoreLeaks = false;
 static HashSet<Node*> ignoreSet;
@@ -149,7 +138,7 @@ Node::Node(Document *doc)
     if (shouldIgnoreLeaks)
         ignoreSet.add(this);
     else
-        ++NodeCounter::count;
+        nodeCounter.increment();
 #endif
 }
 
@@ -176,7 +165,7 @@ Node::~Node()
     if (it != ignoreSet.end())
         ignoreSet.remove(it);
     else
-        --NodeCounter::count;
+        nodeCounter.decrement();
 #endif
 
     if (m_nodeLists && m_document)

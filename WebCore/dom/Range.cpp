@@ -39,6 +39,7 @@
 #include "markup.h"
 #include "visible_units.h"
 #include <stdio.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
 
@@ -46,17 +47,7 @@ using namespace std;
 using namespace HTMLNames;
 
 #ifndef NDEBUG
-class RangeCounter {
-public:
-    static unsigned count;
-    ~RangeCounter()
-    {
-        if (count)
-            fprintf(stderr, "LEAK: %u Range\n", count);
-    }
-};
-unsigned RangeCounter::count = 0;
-static RangeCounter rangeCounter;
+static WTF::RefCountedLeakCounter rangeCounter("Range");
 #endif
 
 inline Range::Range(PassRefPtr<Document> ownerDocument)
@@ -65,7 +56,7 @@ inline Range::Range(PassRefPtr<Document> ownerDocument)
     , m_end(m_ownerDocument)
 {
 #ifndef NDEBUG
-    ++RangeCounter::count;
+    rangeCounter.increment();
 #endif
 
     m_ownerDocument->attachRange(this);
@@ -82,7 +73,7 @@ inline Range::Range(PassRefPtr<Document> ownerDocument, PassRefPtr<Node> startCo
     , m_end(m_ownerDocument)
 {
 #ifndef NDEBUG
-    ++RangeCounter::count;
+    rangeCounter.increment();
 #endif
 
     m_ownerDocument->attachRange(this);
@@ -112,7 +103,7 @@ Range::~Range()
         m_ownerDocument->detachRange(this);
 
 #ifndef NDEBUG
-    --RangeCounter::count;
+    rangeCounter.decrement();
 #endif
 }
 

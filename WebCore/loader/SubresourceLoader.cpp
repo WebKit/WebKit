@@ -38,23 +38,12 @@
 #include "ResourceRequest.h"
 #include "SubresourceLoaderClient.h"
 #include "SharedBuffer.h"
+#include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
 
-#ifndef NDEBUG
-WTFLogChannel LogWebCoreSubresourceLoaderLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct SubresourceLoaderCounter {
-    static unsigned count; 
-
-    ~SubresourceLoaderCounter() 
-    { 
-        if (count) 
-            LOG(WebCoreSubresourceLoaderLeaks, "LEAK: %u SubresourceLoader\n", count); 
-    }
-};
-unsigned SubresourceLoaderCounter::count = 0;
-static SubresourceLoaderCounter subresourceLoaderCounter;
+#ifndef NDEBUG    
+static WTF::RefCountedLeakCounter subresourceLoaderCounter("SubresourceLoader");
 #endif
 
 SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* client, bool sendResourceLoadCallbacks, bool shouldContentSniff)
@@ -63,7 +52,7 @@ SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* clie
     , m_loadingMultipartContent(false)
 {
 #ifndef NDEBUG
-    ++SubresourceLoaderCounter::count;
+    subresourceLoaderCounter.increment();
 #endif
     m_documentLoader->addSubresourceLoader(this);
 }
@@ -71,7 +60,7 @@ SubresourceLoader::SubresourceLoader(Frame* frame, SubresourceLoaderClient* clie
 SubresourceLoader::~SubresourceLoader()
 {
 #ifndef NDEBUG
-    --SubresourceLoaderCounter::count;
+    subresourceLoaderCounter.decrement();
 #endif
 }
 

@@ -63,6 +63,7 @@
 #include "TextResourceDecoder.h"
 #include <algorithm>
 #include <stdio.h>
+#include <wtf/RefCountedLeakCounter.h>
 
 using namespace std;
 
@@ -157,13 +158,8 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
     return o;
 }
 
-#ifndef NDEBUG
-struct RenderObjectCounter {
-    static int count;
-    ~RenderObjectCounter() { if (count != 0) fprintf(stderr, "LEAK: %d RenderObject\n", count); }
-};
-int RenderObjectCounter::count;
-static RenderObjectCounter renderObjectCounter;
+#ifndef NDEBUG 
+static WTF::RefCountedLeakCounter renderObjectCounter("RenderObject");
 #endif
 
 RenderObject::RenderObject(Node* node)
@@ -200,7 +196,7 @@ RenderObject::RenderObject(Node* node)
     , m_everHadLayout(false)
 {
 #ifndef NDEBUG
-    ++RenderObjectCounter::count;
+    renderObjectCounter.increment();
 #endif
 }
 
@@ -209,7 +205,7 @@ RenderObject::~RenderObject()
     ASSERT(!node() || documentBeingDestroyed() || !document()->frame()->view() || document()->frame()->view()->layoutRoot() != this);
 #ifndef NDEBUG
     ASSERT(!m_hasAXObject);
-    --RenderObjectCounter::count;
+    renderObjectCounter.decrement();
 #endif
 }
 

@@ -1,3 +1,40 @@
+2008-07-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Darin Adler.
+
+        No Functionality Changed.  Change all the leak counting code to use the new WTF leak counter class.
+
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::JSCustomSQLTransactionCallback):
+        (WebCore::JSCustomSQLTransactionCallback::~JSCustomSQLTransactionCallback):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSEventListener::JSEventListener):
+        (WebCore::JSEventListener::~JSEventListener):
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        (WebCore::Node::~Node):
+        * dom/Range.cpp:
+        (WebCore::Range::Range):
+        (WebCore::Range::~Range):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::~CachedPage):
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::SubresourceLoader):
+        (WebCore::SubresourceLoader::~SubresourceLoader):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::~Page):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::RenderObject):
+        (WebCore::RenderObject::~RenderObject):
+        * rendering/bidi.cpp:
+        (WebCore::throw):
+        (WebCore::BidiRun::operator delete):
+
 2008-07-11  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
@@ -100,6 +137,7 @@
         * platform/network/curl/ResourceHandleManager.cpp:
         (WebCore::ResourceHandleManager::initializeHandle):
 
+>>>>>>> .r35147
 2008-07-11  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt/Windows build, include windows.h for HWND directly
@@ -193,6 +231,7 @@
 
         * platform/graphics/qt/GraphicsContextQt.cpp:
 
+>>>>>>> .r35134
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

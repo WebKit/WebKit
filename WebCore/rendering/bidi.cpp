@@ -34,6 +34,7 @@
 #include "RenderView.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
+#include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Vector.h>
 
 using namespace std;
@@ -108,18 +109,7 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
 }
 
 #ifndef NDEBUG
-WTFLogChannel LogWebCoreBidiRunLeaks =  { 0x00000000, "", WTFLogChannelOn };
-
-struct BidiRunCounter { 
-    static int count; 
-    ~BidiRunCounter() 
-    { 
-        if (count)
-            LOG(WebCoreBidiRunLeaks, "LEAK: %d BidiRun\n", count);
-    }
-};
-int BidiRunCounter::count = 0;
-static BidiRunCounter bidiRunCounter;
+static WTF::RefCountedLeakCounter bidiRunCounter("BidiRun");
 
 static bool inBidiRunDestroy;
 #endif
@@ -142,7 +132,7 @@ void BidiRun::destroy()
 void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
 {
 #ifndef NDEBUG
-    ++BidiRunCounter::count;
+    bidiRunCounter.increment();
 #endif
     return renderArena->allocate(sz);
 }
@@ -150,7 +140,7 @@ void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
 void BidiRun::operator delete(void* ptr, size_t sz)
 {
 #ifndef NDEBUG
-    --BidiRunCounter::count;
+    bidiRunCounter.decrement();
 #endif
     ASSERT(inBidiRunDestroy);
 

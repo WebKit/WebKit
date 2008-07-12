@@ -37,6 +37,7 @@
 #import "WebKitVersionChecks.h"
 #import "WebNSDictionaryExtras.h"
 #import "WebNSURLExtras.h"
+#import <wtf/RefCountedLeakCounter.h>
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 NSString *WebPreferencesRemovedNotification = @"WebPreferencesRemovedNotification";
@@ -335,6 +336,11 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUpdatesWhenOffscreenPreferenceKey,
+#ifndef NDEBUG
+        // In Release and Production we skip a lot of object teardown during quit to speed up shutdown time.  This breaks
+        // our RefCount Leak tracking, and so for Debug we will use the full document teardown.
+        [NSNumber numberWithBool:YES],  WebKitEnableFullDocumentTeardownPreferenceKey,
+#endif
         nil];
 
     // This value shouldn't ever change, which is assumed in the initialization of WebKitPDFDisplayModePreferenceKey above
@@ -871,7 +877,7 @@ static WebCacheModel cacheModelForMainBundle(void)
 
 - (WebKitEditableLinkBehavior)editableLinkBehavior
 {
-    WebKitEditableLinkBehavior value = [self _integerValueForKey:WebKitEditableLinkBehaviorPreferenceKey];
+    WebKitEditableLinkBehavior value = static_cast<WebKitEditableLinkBehavior> ([self _integerValueForKey:WebKitEditableLinkBehaviorPreferenceKey]);
     if (value != WebKitEditableLinkDefaultBehavior &&
         value != WebKitEditableLinkAlwaysLive &&
         value != WebKitEditableLinkNeverLive &&
@@ -1027,6 +1033,10 @@ static NSString *classIBCreatorID = nil;
 
 - (void)setFullDocumentTeardownEnabled:(BOOL)fullDocumentTeardownEnabled
 {
+#ifndef NDEBUG
+    WTF::setLogLeakMessages(fullDocumentTeardownEnabled);
+#endif
+    
     [self _setBoolValue:fullDocumentTeardownEnabled forKey:WebKitEnableFullDocumentTeardownPreferenceKey];
 }
 

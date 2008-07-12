@@ -127,6 +127,7 @@
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
+#import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
@@ -737,6 +738,9 @@ static bool debugWidget = true;
     //    1) plugins need to be destroyed and unloaded
     //    2) unload events need to be called
     if (applicationIsTerminating && !fullDocumentTeardown) {
+#ifndef NDEBUG
+        WTF::setLogLeakMessages(false);
+#endif
         [self _closeWithFastTeardown];
         return;
     }

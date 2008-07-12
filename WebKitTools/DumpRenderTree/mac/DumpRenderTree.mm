@@ -335,6 +335,7 @@ static void setDefaultsToConsistentValuesForTesting()
     [preferences setEditableLinkBehavior:WebKitEditableLinkOnlyLiveWithShiftKey];
     [preferences setTabsToLinks:NO];
     [preferences setDOMPasteAllowed:YES];
+    [preferences setFullDocumentTeardownEnabled:YES];
     [preferences setShouldPrintBackgrounds:YES];
 
     // The back/forward cache is causing problems due to layouts during transition from one page to another.
@@ -941,6 +942,7 @@ static void resetWebViewToConsistentStateBeforeTesting()
     [preferences setAuthorAndUserStylesEnabled:YES];
     [preferences setJavaScriptCanOpenWindowsAutomatically:YES];
     [preferences setOfflineWebApplicationCacheEnabled:YES];
+    [preferences setFullDocumentTeardownEnabled:YES];
     
     if (persistentUserStyleSheetLocation) {
         [preferences setUserStyleSheetLocation:[NSURL URLWithString:(NSString *)(persistentUserStyleSheetLocation.get())]];
