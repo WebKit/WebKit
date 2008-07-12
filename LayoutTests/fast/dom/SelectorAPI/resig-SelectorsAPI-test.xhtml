@@ -223,12 +223,14 @@
     .bar. { background: red; color: yellow; }
   </style>
   <script><![CDATA[
-    if (window.layoutTestController) {
-        layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
- 
+  if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+  }
+
 	window.onload = function(){
+        // if ( window.location.hash.indexOf("target") == -1 )
+        //  window.location.hash = "#target";
 
 		var root = document.getElementById("root");
 		var root2 = document.getElementById("root2");
@@ -555,7 +557,7 @@
 
 				var namespaced = /\|[^=]/.test( q );
 				var prepend = namespaced ? "xHTML|*#root3 " : "#root3 ";
-				q = (restrict === false ? "" : prepend) + q.replace(/,/g, ", " + prepend);
+				q = (restrict === false || restrict === ":root" ? "" : prepend) + q.replace(/,/g, ", " + prepend);
 				var nq = q.replace(/>/g, "&gt;").replace(/</g, "&lt;");
 
 				if ( namespaced ) {
@@ -649,7 +651,7 @@
 			t( "SVG", "div svg|svg", ["svg2","svg3"] );
 			t( "SVG", "xHTML|div svg|svg", ["svg2","svg3"] );
 			t( "SVG", "xHTML|div svg|svg *|circle", ["circle2","circle3"] );
-			t( "SVG", "xHTML|div svg *|circle", ["circle2","circle3"], true, ["circle1"] );
+			t( "SVG", "xHTML|div svg *|circle", ["circle1","circle2","circle3"], true, ["circle1"] );
 			t( "SVG", "xHTML|div svg|svg svg|circle", ["circle2","circle3"] );
 
 			t( "Element Selector", "xHTML|p", ["firstp","ap","sndp","en","sap","first"] );
@@ -669,6 +671,20 @@
 				if ( all[i].nodeType != 1 )
 					good = false;
 			assert( good, type + ": Select all elements, no comment nodes" );
+
+			if ( root == document ) {
+				t( ":root Selector", ":root", ["html"], false );
+			} else {
+				t( ":root Selector", ":root", [], ":root" );
+
+				if ( !root.parentNode ) {
+					t( ":root All Selector", ":root *", [], ":root" );
+				}
+			}
+
+			if ( root.parentNode || root == document ) {
+				assert( query(":root *").length == query("*").length - (root == document ? 1 : 0), type + ": :root All Selector" );
+			}
 
 			t( "Element Selector", "p", ["firstp","ap","sndp","en","sap","first"] );
 			t( "Element Selector", "body", ["body"], false );

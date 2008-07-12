@@ -1,3 +1,15 @@
+2008-07-12  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Update version of Selectors API test from http://ejohn.org/apps/selectortest/
+        and fix the spelling of the authors name.
+
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test-expected.txt: Copied from fast/dom/SelectorAPI/ressig-SelectorsAPI-test-expected.txt.
+        * fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml: Copied from fast/dom/SelectorAPI/ressig-SelectorsAPI-test.xhtml.
+        * fast/dom/SelectorAPI/ressig-SelectorsAPI-test-expected.txt: Removed.
+        * fast/dom/SelectorAPI/ressig-SelectorsAPI-test.xhtml: Removed.
+
 2008-07-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.

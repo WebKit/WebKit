@@ -2,7 +2,7 @@ Selectors API Test Suite
 
 Testrunner by John Resig, tests by John Resig, Disruptive Innovations, W3C CSS Working Group, jQuery JavaScript Library.
 
-99.3%: 4117 passed, 29 failed
+99.6%: 4135 passed, 17 failed
 PASS Element supports querySelector
 PASS Element supports querySelectorAll
 PASS Element.querySelectorAll Empty String
@@ -865,19 +865,19 @@ PASS Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -1186,6 +1186,8 @@ PASS Element: Nth-child Bad Resolver #10 (xHTML|*#root3 xHTML|*#form xHTML|*#sel
 PASS Element: Nth-child Bad Resolver #11 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Element: Select all
 PASS Element: Select all elements, no comment nodes
+PASS Element: :root Selector (:root)
+PASS Element: :root All Selector
 PASS Element: Element Selector (#root3 p)
 PASS Element: Parent Element (#root3 div p)
 PASS Element: Object/param as context
@@ -2046,19 +2048,19 @@ PASS Disconnected Element: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg
 PASS Disconnected Element: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Disconnected Element: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Disconnected Element: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Disconnected Element: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Disconnected Element: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Disconnected Element: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Disconnected Element: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Disconnected Element: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -2367,6 +2369,8 @@ PASS Disconnected Element: Nth-child Bad Resolver #10 (xHTML|*#root3 xHTML|*#for
 PASS Disconnected Element: Nth-child Bad Resolver #11 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Disconnected Element: Select all
 PASS Disconnected Element: Select all elements, no comment nodes
+PASS Disconnected Element: :root Selector (:root)
+PASS Disconnected Element: :root All Selector (:root *)
 PASS Disconnected Element: Element Selector (#root3 p)
 PASS Disconnected Element: Parent Element (#root3 div p)
 PASS Disconnected Element: Object/param as context
@@ -3706,19 +3710,19 @@ PASS Document: SVG Bad Resolver #10 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Bad Resolver #11 (xHTML|*#root3 xHTML|div svg|svg *|circle)
 PASS Document: SVG Good Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Document: SVG Good Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Document: SVG Good Resolver #3 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Document: SVG Good Resolver #4 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Document: SVG Good Resolver #5 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Document: SVG Good Resolver #6 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Document: SVG Good Resolver #7 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
-FAIL Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle) Expected: ['circle2','circle3'] Received: ['circle1','circle2','circle3']
+PASS Document: SVG Good Resolver #8 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Namespaces Resolved: xHTML
 PASS Document: SVG Bad Resolver #1 (xHTML|*#root3 xHTML|div svg *|circle)
 PASS Document: SVG Bad Resolver #2 (xHTML|*#root3 xHTML|div svg *|circle)
@@ -4027,6 +4031,8 @@ PASS Document: Nth-child Bad Resolver #10 (xHTML|*#root3 xHTML|*#form xHTML|*#se
 PASS Document: Nth-child Bad Resolver #11 (xHTML|*#root3 xHTML|*#form xHTML|*#select1 xHTML|option:nth-child(3))
 PASS Document: Select all
 PASS Document: Select all elements, no comment nodes
+PASS Document: :root Selector (:root)
+PASS Document: :root All Selector
 PASS Document: Element Selector (#root3 p)
 PASS Document: Element Selector (body)
 PASS Document: Element Selector (html)
