@@ -63,6 +63,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/Assertions.cpp \
 	JavaScriptCore/wtf/HashTable.cpp \
 	JavaScriptCore/wtf/MainThread.cpp \
+	JavaScriptCore/wtf/RefCountedLeakCounter.cpp \
 	JavaScriptCore/wtf/ThreadingGtk.cpp \
 	JavaScriptCore/wtf/gtk/MainThreadGtk.cpp \
 	JavaScriptCore/wtf/unicode/CollatorDefault.cpp \

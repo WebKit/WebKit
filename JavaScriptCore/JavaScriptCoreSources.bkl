@@ -150,6 +150,7 @@ Source files for JSCore.
         wtf/FastMalloc.cpp
         wtf/HashTable.cpp
         wtf/MainThread.cpp
+        wtf/RefCountedLeakCounter.cpp
         wtf/TCSystemAlloc.cpp
         wtf/ThreadingNone.cpp
         wtf/wx/MainThreadWx.cpp

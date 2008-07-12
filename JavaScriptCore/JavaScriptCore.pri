@@ -32,6 +32,7 @@ SOURCES += \
     wtf/Assertions.cpp \
     wtf/HashTable.cpp \
     wtf/MainThread.cpp \
+    wtf/RefCountedLeakCounter.cpp \
     wtf/unicode/CollatorDefault.cpp \
     wtf/unicode/icu/CollatorICU.cpp \
     wtf/unicode/UTF8.cpp \
