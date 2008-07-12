@@ -93,6 +93,8 @@
 #include "StringPrototype.cpp"
 #include "ustring.cpp"
 #include "JSValue.cpp"
+#include "CallData.cpp"
+#include "ConstructData.cpp"
 #include "JSCell.cpp"
 #include "JSVariableObject.cpp"
 #include "wtf/FastMalloc.cpp"

@@ -68,8 +68,10 @@ SOURCES += \
     kjs/BooleanConstructor.cpp \
     kjs/BooleanObject.cpp \
     kjs/BooleanPrototype.cpp \
+    kjs/CallData.cpp \
     kjs/collector.cpp \
     kjs/CommonIdentifiers.cpp \
+    kjs/ConstructData.cpp \
     kjs/DateConstructor.cpp \
     kjs/DateInstance.cpp \
     kjs/DateMath.cpp \

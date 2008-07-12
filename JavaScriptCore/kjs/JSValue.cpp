@@ -101,24 +101,4 @@ float JSValue::toFloat(ExecState* exec) const
     return static_cast<float>(toNumber(exec));
 }
 
-// Declared in CallData.h
-JSValue* call(ExecState* exec, JSValue* functionObject, CallType callType, const CallData& callData, JSValue* thisValue, const ArgList& args)
-{
-    if (callType == CallTypeNative)
-        return callData.native.function(exec, static_cast<JSObject*>(functionObject), thisValue, args);
-    ASSERT(callType == CallTypeJS);
-    // FIXME: Can this be done more efficiently using the callData?
-    return static_cast<JSFunction*>(functionObject)->call(exec, thisValue, args);
-}
-
-// Declared in ConstructData.h
-JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
-{
-    if (constructType == ConstructTypeNative)
-        return constructData.native.function(exec, static_cast<JSObject*>(object), args);
-    ASSERT(constructType == ConstructTypeJS);
-    // FIXME: Can this be done more efficiently using the constructData?
-    return static_cast<JSFunction*>(object)->construct(exec, args);
-}
-
 } // namespace KJS

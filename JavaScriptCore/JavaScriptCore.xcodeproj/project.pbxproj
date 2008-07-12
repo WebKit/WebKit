@@ -676,6 +676,8 @@
 		BC7F8FBA0E19D1EF008632C0 /* JSCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCell.cpp; sourceTree = "<group>"; };
 		BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConstructData.h; sourceTree = "<group>"; };
 		BC9BB95B0E19680600DF8855 /* InternalFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InternalFunction.cpp; sourceTree = "<group>"; };
+		BCA62DFE0E2826230004F30D /* CallData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallData.cpp; sourceTree = "<group>"; };
+		BCA62DFF0E2826310004F30D /* ConstructData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConstructData.cpp; sourceTree = "<group>"; };
 		BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpConstructor.cpp; sourceTree = "<group>"; };
 		BCD202BE0E1706A7002C7E82 /* RegExpConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegExpConstructor.h; sourceTree = "<group>"; };
 		BCD202BF0E1706A7002C7E82 /* RegExpPrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpPrototype.cpp; sourceTree = "<group>"; };
@@ -1083,6 +1085,7 @@
 				704FD35305697E6D003DBED9 /* BooleanObject.h */,
 				BC7952340E15EB5600A898AB /* BooleanPrototype.cpp */,
 				BC7952350E15EB5600A898AB /* BooleanPrototype.h */,
+				BCA62DFE0E2826230004F30D /* CallData.cpp */,
 				145C507F0D9DF63B0088F6B9 /* CallData.h */,
 				BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */,
 				F692A8520255597D01FF60F7 /* collector.cpp */,
@@ -1091,6 +1094,7 @@
 				65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */,
 				F5BB2BC5030F772101FCFE1D /* completion.h */,
 				F68EBB8C0255D4C601FF60F7 /* config.h */,
+				BCA62DFF0E2826310004F30D /* ConstructData.cpp */,
 				BC8F3CCF0DAF17BA00577A80 /* ConstructData.h */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				BCD203450E17135E002C7E82 /* DateConstructor.cpp */,

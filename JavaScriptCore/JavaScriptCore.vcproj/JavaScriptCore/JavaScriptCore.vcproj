@@ -325,6 +325,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\CallData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\CallData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\ClassInfo.h"
 				>
 			</File>
@@ -354,6 +362,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\config.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ConstructData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\ConstructData.h"
 				>
 			</File>
 			<File
