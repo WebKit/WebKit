@@ -516,6 +516,7 @@ namespace WebCore {
         void continueLoadAfterNewWindowPolicy(const ResourceRequest&, PassRefPtr<FormState>, const String& frameName, bool shouldContinue);
         static void callContinueFragmentScrollAfterNavigationPolicy(void*, const ResourceRequest&, PassRefPtr<FormState>, bool shouldContinue);
         void continueFragmentScrollAfterNavigationPolicy(const ResourceRequest&, bool shouldContinue);
+        bool shouldScrollToAnchor(bool isFormSubmission, FrameLoadType loadType, const KURL& url);
         void addHistoryItemForFragmentScroll();
 
         void stopPolicyCheck();

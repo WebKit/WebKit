@@ -1,3 +1,46 @@
+2008-07-12  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Bug 13067: Manually adding #hash to URL reloads entire page instead of jumping to #hash location in cached page
+
+        <https://bugs.webkit.org/show_bug.cgi?id=13067>
+
+        Reviewed by Darin.
+
+        Test: WebCore/manual-tests/hash-ref.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::load(const KURL& newURL, const String& referrer,
+             FrameLoadType newLoadType, const String& frameName, Event* event,
+             PassRefPtr<FormState> formState)): Extracted logic into
+        shouldScrollToAnchor() for determining when to scroll to an anchor.
+
+        (WebCore::FrameLoader::load(DocumentLoader* loader, FrameLoadType type,
+             PassRefPtr<FormState> formState)): Added check for
+        shouldScrollToAnchor() to catch cases when the user manually added a
+        hash ref to the URL in the address bar.  This is the bug fix.
+
+        (WebCore::FrameLoader::shouldReload): Simplified early return logic.
+        We only need to check if the destinationURL has a hash ref, not the
+        currentURL, per the comment in the method.
+
+        (WebCore::FrameLoader::shouldScrollToAnchor): Added.  Logic extracted
+        from the FrameLoader::load(const KURL& newURL, ...) method.  Fixed order
+        of arguments to shouldReload() since they were backwards, although the
+        previous logic in the method made this irrelevant.
+
+        (WebCore::FrameLoader::loadItem): Removed call to shouldReload().  Since
+        we're navigating to a HistoryItem, it doesn't make sense to ask whether
+        we need to reload the page or not.  Additionally, the logic at the end
+        of shouldReload() is also checked in urlsMatchItem(), so there's no need
+        to call the method.  This fixed the fast/css/target-fragment-match.html
+        test from continuously reloading after the other changes.
+
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::shouldScrollToAnchor): Added.
+
+        * manual-tests/hash-ref.html: Added.
+        * manual-tests/resources/hash-ref-test.html: Added.
+
 2008-07-11  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.

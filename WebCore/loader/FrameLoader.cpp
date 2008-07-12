@@ -2123,22 +2123,7 @@ void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType
     // Make sure to do scroll to anchor processing even if the URL is
     // exactly the same so pages with '#' links and DHTML side effects
     // work properly.
-    if (!isFormSubmission
-        && newLoadType != FrameLoadTypeReload
-        && newLoadType != FrameLoadTypeSame
-        && !shouldReload(newURL, url())
-        // We don't want to just scroll if a link from within a
-        // frameset is trying to reload the frameset into _top.
-        && !m_frame->isFrameSet()) {
-
-        // Just do anchor navigation within the existing content.
-        
-        // We don't do this if we are submitting a form, explicitly reloading,
-        // currently displaying a frameset, or if the new URL does not have a fragment.
-        // These rules are based on what KHTML was doing in KHTMLPart::openURL.
-        
-        // FIXME: What about load types other than Standard and Reload?
-        
+    if (shouldScrollToAnchor(isFormSubmission, newLoadType, newURL)) {
         oldDocumentLoader->setTriggeringAction(action);
         stopPolicyCheck();
         checkNavigationPolicy(request, oldDocumentLoader.get(), formState,
@@ -2238,14 +2223,27 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
 
     m_policyLoadType = type;
 
-    if (Frame* parent = m_frame->tree()->parent())
-        loader->setOverrideEncoding(parent->loader()->documentLoader()->overrideEncoding());
+    bool isFormSubmission = formState;
+    const KURL& newURL = loader->request().url();
 
-    stopPolicyCheck();
-    setPolicyDocumentLoader(loader);
+    if (shouldScrollToAnchor(isFormSubmission, m_policyLoadType, newURL)) {
+        RefPtr<DocumentLoader> oldDocumentLoader = m_documentLoader;
+        NavigationAction action(newURL, m_policyLoadType, isFormSubmission);
 
-    checkNavigationPolicy(loader->request(), loader, formState,
-        callContinueLoadAfterNavigationPolicy, this);
+        oldDocumentLoader->setTriggeringAction(action);
+        stopPolicyCheck();
+        checkNavigationPolicy(loader->request(), oldDocumentLoader.get(), formState,
+            callContinueFragmentScrollAfterNavigationPolicy, this);
+    } else {
+        if (Frame* parent = m_frame->tree()->parent())
+            loader->setOverrideEncoding(parent->loader()->documentLoader()->overrideEncoding());
+
+        stopPolicyCheck();
+        setPolicyDocumentLoader(loader);
+
+        checkNavigationPolicy(loader->request(), loader, formState,
+            callContinueLoadAfterNavigationPolicy, this);
+    }
 }
 
 // FIXME: It would be nice if we could collapse these into one or two functions.
@@ -2809,7 +2807,7 @@ bool FrameLoader::shouldReload(const KURL& currentURL, const KURL& destinationUR
     // This function implements the rule: "Don't reload if navigating by fragment within
     // the same URL, but do reload if going to a new URL or to the same URL with no
     // fragment identifier at all."
-    if (!currentURL.hasRef() && !destinationURL.hasRef())
+    if (!destinationURL.hasRef())
         return true;
     return !equalIgnoringRef(currentURL, destinationURL);
 }
@@ -3580,6 +3578,25 @@ void FrameLoader::continueFragmentScrollAfterNavigationPolicy(const ResourceRequ
     m_client->didFinishLoad();
 }
 
+bool FrameLoader::shouldScrollToAnchor(bool isFormSubmission, FrameLoadType loadType, const KURL& url)
+{
+    // Should we do anchor navigation within the existing content?
+
+    // We don't do this if we are submitting a form, explicitly reloading,
+    // currently displaying a frameset, or if the URL does not have a fragment.
+    // These rules were originally based on what KHTML was doing in KHTMLPart::openURL.
+
+    // FIXME: What about load types other than Standard and Reload?
+
+    return !isFormSubmission
+        && loadType != FrameLoadTypeReload
+        && loadType != FrameLoadTypeSame
+        && !shouldReload(this->url(), url)
+        // We don't want to just scroll if a link from within a
+        // frameset is trying to reload the frameset into _top.
+        && !m_frame->isFrameSet();
+}
+
 void FrameLoader::opened()
 {
     if (m_loadType == FrameLoadTypeStandard && m_documentLoader->isClientRedirect())
@@ -4162,7 +4179,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
     
-    if (!formData && !shouldReload(itemURL, currentURL) && urlsMatchItem(item)) {
+    if (!formData && urlsMatchItem(item)) {
         // Must do this maintenance here, since we don't go through a real page reload
         saveScrollPositionAndViewStateToItem(m_currentHistoryItem.get());
 
