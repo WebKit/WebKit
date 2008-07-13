@@ -50,7 +50,6 @@
         * kjs/ConstructData.cpp: Copied from kjs/JSValue.cpp.
         * kjs/JSValue.cpp:
 
->>>>>>> .r35147
 2008-07-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
@@ -3720,7 +3719,6 @@
         * API/NodeList.h:
         * API/testapi.c:
 
->>>>>>> .r34623
 2008-06-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Trying to fix Windows build.

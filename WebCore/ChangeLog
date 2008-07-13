@@ -195,7 +195,6 @@
         * platform/network/curl/ResourceHandleManager.cpp:
         (WebCore::ResourceHandleManager::initializeHandle):
 
->>>>>>> .r35147
 2008-07-11  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the Qt/Windows build, include windows.h for HWND directly
@@ -289,7 +288,6 @@
 
         * platform/graphics/qt/GraphicsContextQt.cpp:
 
->>>>>>> .r35134
 2008-07-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
