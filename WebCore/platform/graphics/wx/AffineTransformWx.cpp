@@ -157,4 +157,58 @@ AffineTransform::operator wxGraphicsMatrix() const
 }
 #endif
 
+double AffineTransform::a() const
+{
+    double a = 0;
+#if USE(WXGC)
+    m_transform.Get(&a);
+#endif
+    return a;
+}
+
+double AffineTransform::b() const
+{
+    double b = 0;
+#if USE(WXGC)
+    m_transform.Get(&b);
+#endif
+    return b;
+}
+
+double AffineTransform::c() const
+{
+    double c = 0;
+#if USE(WXGC)
+    m_transform.Get(&c);
+#endif
+    return c;
+}
+
+double AffineTransform::d() const
+{
+    double d = 0;
+#if USE(WXGC)
+    m_transform.Get(&d);
+#endif
+    return d;
+}
+
+double AffineTransform::e() const
+{
+    double e = 0;
+#if USE(WXGC)
+    m_transform.Get(&e);
+#endif
+    return e;
+}
+
+double AffineTransform::f() const
+{
+    double f = 0;
+#if USE(WXGC)
+    m_transform.Get(&f);
+#endif
+    return f;
+}
+
 }

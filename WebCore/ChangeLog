@@ -1,3 +1,15 @@
+2008-07-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix.
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+        (WebCore::AffineTransform::a):
+        (WebCore::AffineTransform::b):
+        (WebCore::AffineTransform::c):
+        (WebCore::AffineTransform::d):
+        (WebCore::AffineTransform::e):
+        (WebCore::AffineTransform::f):
+
 2008-07-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Oliver Hunt.
