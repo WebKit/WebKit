@@ -1,3 +1,10 @@
+2008-07-14  David Hyatt  <hyatt@apple.com>
+
+        Buidl fix.  Make sure the second insertBefore method returns a value.
+
+        * wtf/ListHashSet.h:
+        (WTF::::insertBefore):
+
 2008-07-14  Adam Roben  <aroben@apple.com>
 
         Windows build fix
