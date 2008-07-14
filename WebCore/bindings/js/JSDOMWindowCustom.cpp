@@ -86,6 +86,46 @@ bool JSDOMWindow::customGetPropertyNames(ExecState* exec, PropertyNameArray&)
     return false;
 }
 
+bool JSDOMWindow::getPropertyAttributes(KJS::ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
+{
+    // Only allow getting property attributes properties by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return false;
+    return Base::getPropertyAttributes(exec, propertyName, attributes);
+}
+
+void JSDOMWindow::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
+{
+    // Only allow defining getters by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return;
+    Base::defineGetter(exec, propertyName, getterFunction);
+}
+
+void JSDOMWindow::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
+{
+    // Only allow defining setters by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return;
+    Base::defineSetter(exec, propertyName, setterFunction);
+}
+
+JSValue* JSDOMWindow::lookupGetter(ExecState* exec, const Identifier& propertyName)
+{
+    // Only allow looking-up getters by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return jsUndefined();
+    return Base::lookupGetter(exec, propertyName);
+}
+
+JSValue* JSDOMWindow::lookupSetter(ExecState* exec, const Identifier& propertyName)
+{
+    // Only allow looking-up setters by frames in the same origin.
+    if (!allowsAccessFrom(exec))
+        return jsUndefined();
+    return Base::lookupSetter(exec, propertyName);
+}
+
 void JSDOMWindow::setLocation(ExecState* exec, JSValue* value)
 {
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();

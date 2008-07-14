@@ -469,6 +469,21 @@ sub GenerateHeader
     push(@headerContent, "    virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"});
     push(@headerContent, "    bool customGetPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
 
+    # Custom getPropertyAttributes function
+    push(@headerContent, "    virtual bool getPropertyAttributes(KJS::ExecState*, const KJS::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
+
+    # Custom defineGetter function
+    push(@headerContent, "    virtual void defineGetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* getterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
+
+    # Custom defineSetter function
+    push(@headerContent, "    virtual void defineSetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* setterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineSetter"};
+
+    # Custom lookupGetter function
+    push(@headerContent, "    virtual KJS::JSValue* lookupGetter(KJS::ExecState*, const KJS::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupGetter"};
+
+    # Custom lookupSetter function
+    push(@headerContent, "    virtual KJS::JSValue* lookupSetter(KJS::ExecState*, const KJS::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupSetter"};
+
     # Constructor object getter
     push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
 

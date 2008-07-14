@@ -1,3 +1,22 @@
+2008-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Fix for <rdar://problem/5769819>
+
+        Test: http/tests/security/cross-frame-access-object-prototype.html
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::getPropertyAttributes): Perform security check.
+        (WebCore::JSDOMWindow::defineGetter): Ditto.
+        (WebCore::JSDOMWindow::defineSetter): Ditto.
+        (WebCore::JSDOMWindow::lookupGetter): Ditto.
+        (WebCore::JSDOMWindow::lookupSetter): Ditto.
+        * bindings/scripts/CodeGeneratorJS.pm: Add support for custom versions
+        of all the core JSObject functionality.
+        * page/DOMWindow.idl: Override remaining core JSObject functionality,
+        to inject security checks.
+
 2008-07-14  Adam Roben  <aroben@apple.com>
 
         Windows build fixes

@@ -1,3 +1,13 @@
+2008-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Adele Peterson.
+
+        Test for <rdar://problem/5769819>
+
+        * http/tests/security/cross-frame-access-object-prototype-expected.txt: Added.
+        * http/tests/security/cross-frame-access-object-prototype.html: Added.
+        * http/tests/security/resources/cross-frame-iframe-for-object-prototype-test.html: Added.
+
 2008-07-12  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Oliver Hunt.
