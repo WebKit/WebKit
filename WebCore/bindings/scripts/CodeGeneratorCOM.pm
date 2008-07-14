@@ -900,7 +900,7 @@ sub GenerateCPPHeader
             foreach my $attribute (@attributeList) {
                 # Don't forward an attribute that this class redefines.
                 next if $attributeNameSet{$attribute->signature->name};
- 
+
                 AddForwardDeclarationsForTypeInCPPHeader($attribute->signature->type);
 
                 my %attributes = GenerateCPPAttributeSignature($attribute, $className, { "NewLines" => 0,

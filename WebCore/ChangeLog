@@ -1,3 +1,16 @@
+2008-07-14  Adam Roben  <aroben@apple.com>
+
+        Windows build fixes
+
+        * WebCore.vcproj/WebCore.vcproj: Add include/pthreads to the include
+        path.
+        * bindings/scripts/CodeGeneratorCOM.pm: Touched this to force COM
+        bindings to regenerate.
+        * loader/FTPDirectoryDocument.cpp:
+        * loader/FTPDirectoryParser.cpp:
+        Fixed some duplicate macro definitions now that we're including
+        pthread.h again.
+
 2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Kevin McCullough.

@@ -1,3 +1,11 @@
+2008-07-14  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount): Updated to match
+        -[WebCoreStatistics javaScriptsObjectCount].
+
 2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
