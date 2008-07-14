@@ -472,6 +472,12 @@ void Heap::unregisterThread()
     }
 }
 
+#else // USE(MULTIPLE_THREADS)
+
+void Heap::registerThread()
+{
+}
+
 #endif
 
 #define IS_POINTER_ALIGNED(p) (((intptr_t)(p) & (sizeof(char*) - 1)) == 0)
