@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\obj\WebKit\Interfaces\WebKit.tlb"
+				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
 				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
 			/>
 			<Tool
@@ -139,7 +139,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\obj\WebKit\Interfaces\WebKit.tlb"
+				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
 				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
 			/>
 			<Tool
@@ -211,7 +211,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
-				TypeLibraryFile="$(WebKitOutputDir)\obj\WebKit\Interfaces\WebKit.tlb"
+				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
 				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
 			/>
 			<Tool

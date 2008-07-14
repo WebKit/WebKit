@@ -1,3 +1,9 @@
+2008-07-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-07-14  Adam Roben  <aroben@apple.com>
 
         Attempted Windows build fix
