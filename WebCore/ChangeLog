@@ -1,3 +1,11 @@
+2008-07-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Sort interface extended attributes to appease *the* Mark Rowe.
+
+        * page/DOMWindow.idl:
+
 2008-07-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.
