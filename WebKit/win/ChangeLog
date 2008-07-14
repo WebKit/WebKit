@@ -1,3 +1,12 @@
+2008-07-14  Steve Falkenburg  <sfalken@apple.com>
+
+        Don't include autoversion.h in WebKitDLL.cpp.
+        autoversion.h changes for every build, so we don't want to include it unless necessary.        
+
+        Rubber stamped by Ada Chan.
+
+        * WebKitDLL.cpp:
+
 2008-07-14  Adam Roben  <aroben@apple.com>
 
         Windows build fix

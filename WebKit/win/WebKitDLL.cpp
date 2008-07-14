@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebKitDLL.h"
 
-#include "autoversion.h"
 #include "ForEachCoClass.h"
 #include "resource.h"
 #include "WebKit.h"
