@@ -759,6 +759,13 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Pla
             IntPoint hotSpot = (*cursors)[i].hotSpot;
             if (!cimage)
                 continue;
+            // Limit the size of cursors so that they cannot be used to cover UI elements in chrome.
+            IntSize size = cimage->image()->size();
+            if (size.width() > 128 || size.height() > 128)
+                continue;
+            // Do not let the hotspot be outside the bounds of the image. 
+            if (hotSpot.x() < 0 || hotSpot.y() < 0 || hotSpot.x() > size.width() || hotSpot.y() > size.height())
+                continue;
             if (cimage->image()->isNull())
                 break;
             if (!cimage->errorOccurred())

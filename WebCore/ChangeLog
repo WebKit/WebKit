@@ -1,3 +1,19 @@
+2008-07-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt and Dan Bernstein.
+
+        Fix for <rdar://problem/5888127>
+        https://bugs.webkit.org/show_bug.cgi?id=18699
+
+        - Match Firefox in restricting the size of custom cursor to images to
+          128x128 px.
+        - Restrict custom cursor hotspots to values within the bounds of the
+          cursor image.
+
+        * manual-tests/cursor-max-size.html: Added.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+
 2008-07-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.
