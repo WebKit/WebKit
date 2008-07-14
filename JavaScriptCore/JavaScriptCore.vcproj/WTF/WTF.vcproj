@@ -351,6 +351,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\RefCountedLeakCounter.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\RefPtr.h"
 			>
 		</File>

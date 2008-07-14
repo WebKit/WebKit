@@ -1,3 +1,9 @@
+2008-07-13  Ada Chan  <adachan@apple.com>
+
+        Windows build fix: Add wtf/RefCountedLeakCounter to the project.
+
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj:
+
 2008-07-12  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk, Qt and Wx build fix: Add wtf/RefCountedLeakCounter in the
