@@ -537,7 +537,7 @@ void RenderListBox::valueChanged(Scrollbar*)
         m_indexOffset = newOffset;
         repaint();
         // Fire the scroll DOM event.
-        EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, true, false);
+        EventTargetNodeCast(node())->dispatchHTMLEvent(scrollEvent, false, false);
     }
 }
 

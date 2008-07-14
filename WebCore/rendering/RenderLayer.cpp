@@ -805,7 +805,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     // Schedule the scroll DOM event.
     if (view) {
         if (FrameView* frameView = view->frameView())
-            frameView->scheduleEvent(Event::create(scrollEvent, true, false), EventTargetNodeCast(renderer()->element()), true);
+            frameView->scheduleEvent(Event::create(scrollEvent, false, false), EventTargetNodeCast(renderer()->element()), true);
     }
 }
 

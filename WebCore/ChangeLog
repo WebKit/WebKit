@@ -1,3 +1,18 @@
+2008-07-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/6073974>
+        https://bugs.webkit.org/show_bug.cgi?id=18106
+        The "onscroll" event bubbles, which is inconsistent with Firefox and IE
+
+        Don't bubble the scroll event.
+        
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollToOffset):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::valueChanged):
+
 2008-07-14  Adele Peterson  <adele@apple.com>
 
         Reviewed by Geoff.
