@@ -2170,11 +2170,10 @@ void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)
     ListHashSet<Node*>::iterator end = m_styleSheetCandidateNodes.end();
     ListHashSet<Node*>::iterator it = end;
     Node* followingNode = 0;
-    ExceptionCode ec;
     do {
         --it;
         Node* n = *it;
-        unsigned short position = n->compareDocumentPosition(node, ec);
+        unsigned short position = n->compareDocumentPosition(node);
         if (position == DOCUMENT_POSITION_FOLLOWING) {
             m_styleSheetCandidateNodes.insertBefore(followingNode, node);
             return;

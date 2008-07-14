@@ -482,7 +482,7 @@ public:
     PassRefPtr<Element> querySelector(const String& selectors, ExceptionCode&);
     PassRefPtr<NodeList> querySelectorAll(const String& selectors, ExceptionCode&);
 
-    unsigned short compareDocumentPosition(Node*, ExceptionCode&);
+    unsigned short compareDocumentPosition(Node*);
 
 private: // members
     DocPtr<Document> m_document;

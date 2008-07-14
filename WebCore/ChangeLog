@@ -1,3 +1,16 @@
+2008-07-14  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by David Hyatt.
+
+        Remove unused ExceptionCode parameter from compareDocumentPosition.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addStyleSheetCandidateNode):
+        * dom/Node.cpp:
+        (WebCore::Node::compareDocumentPosition):
+        * dom/Node.h:
+        * dom/Node.idl:
+
 2008-07-14  David Hyatt  <hyatt@apple.com>
 
         Fix for bugzilla bug 5476, link and style elements should be allowed outside the <head>.

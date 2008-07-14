@@ -109,8 +109,7 @@ module core {
         const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
         const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-        unsigned short     compareDocumentPosition(in Node other)
-            raises(DOMException);
+        unsigned short     compareDocumentPosition(in Node other);
 
 #if 0
         DOMObject          getFeature(in DOMString feature, 
