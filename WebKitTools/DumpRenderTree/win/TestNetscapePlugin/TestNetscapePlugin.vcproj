@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -39,7 +39,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 			/>
 			<Tool
@@ -108,7 +108,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 			/>
 			<Tool
@@ -176,7 +176,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\Include\WebCore\ForwardingHeaders&quot;;&quot;$(ProjectDir)..\..\TestNetscapePlugin.subproj&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_USRDLL;TESTNETSCAPEPLUGIN_EXPORTS;snprintf=_snprintf"
 				RuntimeLibrary="3"
 			/>
