@@ -26,54 +26,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AccessibilityListBoxOption_h
-#define AccessibilityListBoxOption_h
+#ifndef AccessibilityImageMapLink_h
+#define AccessibilityImageMapLink_h
 
 #include "AccessibilityObject.h"
-#include "HTMLElement.h"
+#include "HTMLAreaElement.h"
+#include "HTMLMapElement.h"
 
 namespace WebCore {
-
-class AccessibilityListBox;
-class Element;
-class HTMLElement;
-class HTMLSelectElement;
-class String;
     
-class AccessibilityListBoxOption : public AccessibilityObject {
-
+class AccessibilityImageMapLink : public AccessibilityObject {
+        
 private:
-    AccessibilityListBoxOption();
+    AccessibilityImageMapLink();
 public:
-    static PassRefPtr<AccessibilityListBoxOption> create();
-    virtual ~AccessibilityListBoxOption();
+    static PassRefPtr<AccessibilityImageMapLink> create();
+    virtual ~AccessibilityImageMapLink();
     
-    void setHTMLElement(HTMLElement* element) { m_optionElement = element; }
+    void setHTMLAreaElement(HTMLAreaElement* element) { m_areaElement = element; }
+    void setHTMLMapElement(HTMLMapElement* element) { m_mapElement = element; }
     
-    virtual AccessibilityRole roleValue() const { return ListBoxOptionRole; }
+    virtual AccessibilityRole roleValue() const { return WebCoreLinkRole; }
     virtual bool accessibilityIsIgnored() const { return false; }
-    virtual bool isSelected() const;
-    virtual bool isEnabled() const;
-    virtual String stringValue() const;
-    virtual Element* actionElement() const;
-    
-    virtual void setSelected(bool);
-    virtual bool canSetSelectedAttribute() const;
 
-    virtual IntRect elementRect() const;
-    virtual IntSize size() const;
     virtual AccessibilityObject* parentObject() const;
-    bool isListBoxOption() const { return true; };
+    virtual HTMLAnchorElement* anchorElement() const;
+    virtual bool isLink() const { return true; } 
+    virtual String title() const;
+    virtual String accessibilityDescription() const;
     
-private:
-    HTMLElement* m_optionElement;
-    
-    HTMLSelectElement* listBoxOptionParentNode() const;
-    int listBoxOptionIndex() const;
-    IntRect listBoxOptionRect() const;
-    AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement* element) const;
+    virtual IntSize size() const;
+    virtual IntRect elementRect() const;
+
+private:    
+    HTMLAreaElement* m_areaElement;
+    HTMLMapElement* m_mapElement;
 };
     
-} // namespace WebCore 
+} // namespace WebCore
 
-#endif // AccessibilityListBoxOption_h
+#endif // AccessibilityImageMapLink_h

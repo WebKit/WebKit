@@ -70,6 +70,13 @@ static JSValueRef attributesOfLinkedUIElementsForFocusedElementCallback(JSContex
     return JSValueMakeString(context, linkedUIDescription.get());
 }
 
+static JSValueRef attributesOfChildrenForFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
+    JSRetainPtr<JSStringRef> childrenDescription(Adopt, controller->attributesOfChildrenForFocusedElement());
+    return JSValueMakeString(context, childrenDescription.get());
+}
+
 static JSValueRef widthOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
@@ -139,6 +146,7 @@ JSStaticFunction* AccessibilityController::staticFunctions()
         { "titleOfFocusedElement", titleOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "descriptionOfFocusedElement", descriptionOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfLinkedUIElementsForFocusedElement", attributesOfLinkedUIElementsForFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfChildrenForFocusedElement", attributesOfChildrenForFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "widthOfFocusedElement", widthOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "heightOfFocusedElement", heightOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "intValueOfFocusedElement", intValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

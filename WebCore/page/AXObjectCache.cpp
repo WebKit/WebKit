@@ -31,6 +31,7 @@
 
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
+#include "AccessibilityImageMapLink.h"
 #include "AccessibilityRenderObject.h"
 #include "RenderObject.h"
 
@@ -87,6 +88,9 @@ AccessibilityObject* AXObjectCache::get(AccessibilityRole role)
     switch (role) {
         case ListBoxOptionRole:
             obj = AccessibilityListBoxOption::create();
+            break;
+        case ImageMapLinkRole:
+            obj = AccessibilityImageMapLink::create();
             break;
         default:
             obj = 0;

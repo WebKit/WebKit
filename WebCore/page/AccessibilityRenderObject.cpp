@@ -31,6 +31,7 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityListBox.h"
+#include "AccessibilityImageMapLink.h"
 #include "CharacterNames.h"
 #include "EventNames.h"
 #include "FloatRect.h"
@@ -161,9 +162,6 @@ AccessibilityObject* AccessibilityRenderObject::parentObject() const
     if (!m_renderer)
         return 0;
     
-    if (m_areaElement)
-        return m_renderer->document()->axObjectCache()->get(m_renderer);
-    
     RenderObject *parent = m_renderer->parent();
     if (!parent)
         return 0;
@@ -193,7 +191,7 @@ bool AccessibilityRenderObject::isImageButton() const
 
 bool AccessibilityRenderObject::isAnchor() const
 {
-    return m_areaElement || (!isNativeImage() && isLink());
+    return !isNativeImage() && isLink();
 }
 
 bool AccessibilityRenderObject::isNativeTextControl() const
@@ -437,9 +435,7 @@ HTMLAnchorElement* AccessibilityRenderObject::anchorElement() const
 {
     // FIXME: In XHTML 2.0, any HTML element can have an href attribute. We will need to implement this to fully
     // support ARIA links.
-    if (m_areaElement)
-        return m_areaElement.get();
-    
+
     // Search up the render tree for a RenderObject with a DOM node.  Defer to an earlier continuation, though.
     RenderObject* currRenderer;
     for (currRenderer = m_renderer; currRenderer && !currRenderer->element(); currRenderer = currRenderer->parent()) {
@@ -562,15 +558,6 @@ String AccessibilityRenderObject::helpText() const
     if (!m_renderer)
         return String();
     
-    if (m_areaElement) {
-        const AtomicString& summary = m_areaElement->getAttribute(summaryAttr);
-        if (!summary.isEmpty())
-            return summary;
-        const AtomicString& title = m_areaElement->getAttribute(titleAttr);
-        if (!title.isEmpty())
-            return title;
-    }
-    
     for (RenderObject* curr = m_renderer; curr; curr = curr->parent()) {
         if (curr->element() && curr->element()->isHTMLElement()) {
             const AtomicString& summary = static_cast<Element*>(curr->element())->getAttribute(summaryAttr);
@@ -623,7 +610,7 @@ bool AccessibilityRenderObject::hasIntValue() const
 
 int AccessibilityRenderObject::intValue() const
 {
-    if (!m_renderer || m_areaElement || isPasswordField())
+    if (!m_renderer || isPasswordField())
         return 0;
     
     if (isHeading())
@@ -670,7 +657,7 @@ float AccessibilityRenderObject::minValueForRange() const
 
 String AccessibilityRenderObject::stringValue() const
 {
-    if (!m_renderer || m_areaElement || isPasswordField())
+    if (!m_renderer || isPasswordField())
         return String();
     
     if (m_renderer->isText())
@@ -816,7 +803,7 @@ String AccessibilityRenderObject::title() const
 {
     AccessibilityRole ariaRole = ariaRoleAttribute();
     
-    if (!m_renderer || m_areaElement)
+    if (!m_renderer)
         return String();
 
     Node* node = m_renderer->element();
@@ -868,7 +855,7 @@ String AccessibilityRenderObject::ariaDescribedByAttribute() const
 
 String AccessibilityRenderObject::accessibilityDescription() const
 {
-    if (!m_renderer || m_areaElement)
+    if (!m_renderer)
         return String();
 
     String ariaDescription = ariaDescribedByAttribute();
@@ -945,9 +932,6 @@ IntRect AccessibilityRenderObject::checkboxOrRadioRect() const
 
 IntRect AccessibilityRenderObject::elementRect() const
 {
-    if (m_areaElement)
-        return m_areaElement->getRect(m_renderer);
-    
     // a checkbox or radio button should encompass its label
     if (isCheckboxOrRadio())
         return checkboxOrRadioRect();
@@ -1108,7 +1092,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
     if (isHeading())
         return false;
     
-    if (m_areaElement || isLink())
+    if (isLink())
         return false;
     
     // all controls are accessible
@@ -2013,8 +1997,6 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (ariaRole != UnknownRole)
         return ariaRole;
     
-    if (m_areaElement)
-        return WebCoreLinkRole;
     if (node && node->isLink()) {
         if (m_renderer->isImage())
             return ImageMapRole;
@@ -2101,6 +2083,7 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
     
     switch (roleValue()) {
         case WebCoreLinkRole:
+        case ImageMapLinkRole:
         case TextFieldRole:
         case TextAreaRole:
         case ButtonRole:
@@ -2218,17 +2201,18 @@ void AccessibilityRenderObject::addChildren()
     }
     
     // for a RenderImage, add the <area> elements as individual accessibility objects
-    if (m_renderer->isRenderImage() && !m_areaElement) {
+    if (m_renderer->isRenderImage()) {
         HTMLMapElement* map = static_cast<RenderImage*>(m_renderer)->imageMap();
         if (map) {
             for (Node* current = map->firstChild(); current; current = current->traverseNextNode(map)) {
+
                 // add an <area> element for this child if it has a link
-                // NOTE: can't cache these because they all have the same renderer, which is the cache key, right?
-                // plus there may be little reason to since they are being added to the handy array
                 if (current->isLink()) {
-                    RefPtr<AccessibilityRenderObject> obj = new AccessibilityRenderObject(m_renderer);
-                    obj->m_areaElement = static_cast<HTMLAreaElement*>(current);
-                    m_children.append(obj);
+                    AccessibilityObject* areaObject = m_renderer->document()->axObjectCache()->get(ImageMapLinkRole);
+                    static_cast<AccessibilityImageMapLink*>(areaObject)->setHTMLAreaElement(static_cast<HTMLAreaElement*>(current));
+                    static_cast<AccessibilityImageMapLink*>(areaObject)->setHTMLMapElement(map);
+
+                    m_children.append(areaObject);
                 }
             }
         }

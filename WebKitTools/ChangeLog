@@ -1,3 +1,17 @@
+2008-07-14  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Add support to get attributes of the AXChildren of an objecty
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (attributesOfChildrenForFocusedElementCallback):
+        (AccessibilityController::staticFunctions):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (descriptionOfValue):
+        (AccessibilityController::attributesOfChildrenForFocusedElement):
+
 2008-07-14  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

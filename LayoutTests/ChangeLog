@@ -1,3 +1,13 @@
+2008-07-14  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+        Tests for the accessibility of image maps (two variations)
+
+        * accessibility/image-map1-expected.txt: Added.
+        * accessibility/image-map1.html: Added.
+        * accessibility/image-map2-expected.txt: Added.
+        * accessibility/image-map2.html: Added.
+
 2008-07-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Geoff.

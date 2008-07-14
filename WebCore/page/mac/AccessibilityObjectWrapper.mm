@@ -732,8 +732,11 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 {
     unsigned length = vector.size();
     NSMutableArray* array = [NSMutableArray arrayWithCapacity: length];
-    for (unsigned i = 0; i < length; ++i)
-        [array addObject:vector[i]->wrapper()];
+    for (unsigned i = 0; i < length; ++i) {
+        ASSERT(vector[i]->wrapper());
+        if (vector[i]->wrapper())
+            [array addObject:vector[i]->wrapper()];
+    }
     return array;
 }
 
@@ -819,7 +822,8 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { DisclosureTriangleRole, NSAccessibilityDisclosureTriangleRole },
         { GridRole, NSAccessibilityGridRole },
 #endif
-        { WebCoreLinkRole, @"AXLink" }, // why isn't this just NSAccessibilityLinkRole ?
+        { WebCoreLinkRole, NSAccessibilityLinkRole }, 
+        { ImageMapLinkRole, NSAccessibilityLinkRole },
         { ImageMapRole, @"AXImageMap" },
         { ListMarkerRole, @"AXListMarker" },
         { WebAreaRole, @"AXWebArea" },

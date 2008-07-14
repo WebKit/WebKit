@@ -382,6 +382,8 @@
 		1CFCEED50AACC66900348750 /* DOMHTMLOptionsCollectionPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */; };
 		1CFCEEDF0AACC6A300348750 /* DOMHTMLPreElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEDA0AACC68300348750 /* DOMHTMLPreElementPrivate.h */; };
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
+		2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */; };
+		2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */; };
 		299984BD0DC8598500F8D261 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */; };
 		299984BE0DC8598500F8D261 /* AccessibilityRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */; };
 		2999869E0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */; };
@@ -4896,6 +4898,8 @@
 		1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLOptionsCollectionPrivate.h; sourceTree = "<group>"; };
 		1CFCEEDA0AACC68300348750 /* DOMHTMLPreElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLPreElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
+		2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityImageMapLink.h; sourceTree = "<group>"; };
+		2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityImageMapLink.cpp; sourceTree = "<group>"; };
 		299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityRenderObject.h; sourceTree = "<group>"; };
 		2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBoxOption.h; sourceTree = "<group>"; };
@@ -9106,6 +9110,8 @@
 				93C09A820B064F05005ABD4D /* mac */,
 				06693F450BFBC91600216072 /* inspector */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
+				2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */,
+				2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */,
 				2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */,
 				2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */,
 				2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */,
@@ -15281,6 +15287,7 @@
 				A75E8B8B0E1DE2D6007F2481 /* FEColorMatrix.h in Headers */,
 				A75E8B8D0E1DE2D6007F2481 /* FEComponentTransfer.h in Headers */,
 				A75E8B8F0E1DE2D6007F2481 /* FEComposite.h in Headers */,
+				2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */,
 				31611E5B0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h in Headers */,
 				31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */,
 				31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */,
@@ -17050,6 +17057,7 @@
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
 				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
+				2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */,
 				BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */,

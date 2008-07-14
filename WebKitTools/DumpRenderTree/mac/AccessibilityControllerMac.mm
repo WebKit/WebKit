@@ -68,7 +68,7 @@ static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObjec
         return [description substringFromIndex:range.location];
 
     // Strip pointer locations
-    if ([description rangeOfString:@": 0x"].length) {
+    if ([description rangeOfString:@"0x"].length) {
         NSString* role = [focusedAccessibilityObject accessibilityAttributeValue:@"AXRole"];
         NSString* title = [focusedAccessibilityObject accessibilityAttributeValue:@"AXTitle"];
         if ([title length])
@@ -95,6 +95,21 @@ JSStringRef AccessibilityController::attributesOfLinkedUIElementsForFocusedEleme
     return nsStringToJSStringRef(allElementString);
 }
 
+JSStringRef AccessibilityController::attributesOfChildrenForFocusedElement()
+{
+    WebHTMLView* view = [[mainFrame frameView] documentView];
+    id accessibilityObject = [view accessibilityFocusedUIElement];
+    
+    NSArray* children = [accessibilityObject accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
+    NSMutableString* allElementString = [NSMutableString string];
+    NSUInteger i = 0, count = [children count];
+    for (; i < count; ++i) {
+        NSString* attributes = attributesOfElement([children objectAtIndex:i]);
+        [allElementString appendFormat:@"%@\n------------\n",attributes];
+    }
+    
+    return nsStringToJSStringRef(allElementString);
+}
 
 JSStringRef AccessibilityController::allAttributesOfFocusedElement()
 {

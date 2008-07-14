@@ -1,3 +1,57 @@
+2008-07-14  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/6038106> AXChildren returned for this web area is null
+        Accessibility of image maps needed to be updated
+
+        Tests: accessibility/image-map1.html
+               accessibility/image-map2.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        * page/AccessibilityImageMapLink.cpp: Added.
+        (WebCore::AccessibilityImageMapLink::AccessibilityImageMapLink):
+        (WebCore::AccessibilityImageMapLink::~AccessibilityImageMapLink):
+        (WebCore::AccessibilityImageMapLink::create):
+        (WebCore::AccessibilityImageMapLink::parentObject):
+        (WebCore::AccessibilityImageMapLink::anchorElement):
+        (WebCore::AccessibilityImageMapLink::accessibilityDescription):
+        (WebCore::AccessibilityImageMapLink::title):
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        (WebCore::AccessibilityImageMapLink::size):
+        * page/AccessibilityImageMapLink.h: Added.
+        (WebCore::AccessibilityImageMapLink::setHTMLAreaElement):
+        (WebCore::AccessibilityImageMapLink::setHTMLMapElement):
+        (WebCore::AccessibilityImageMapLink::roleValue):
+        (WebCore::AccessibilityImageMapLink::accessibilityIsIgnored):
+        (WebCore::AccessibilityImageMapLink::isLink):
+        * page/AccessibilityListBoxOption.h:
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::selectedChildren):
+        (WebCore::AccessibilityObject::visibleChildren):
+        * page/AccessibilityObject.h:
+        (WebCore::):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::parentObject):
+        (WebCore::AccessibilityRenderObject::isAnchor):
+        (WebCore::AccessibilityRenderObject::anchorElement):
+        (WebCore::AccessibilityRenderObject::helpText):
+        (WebCore::AccessibilityRenderObject::intValue):
+        (WebCore::AccessibilityRenderObject::stringValue):
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+        (WebCore::AccessibilityRenderObject::elementRect):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::roleValue):
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        (WebCore::AccessibilityRenderObject::addChildren):
+        * page/AccessibilityRenderObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (convertToNSArray):
+        (RoleEntry::):
+
 2008-07-14  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by David Hyatt.

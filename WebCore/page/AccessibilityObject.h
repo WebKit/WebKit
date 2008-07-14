@@ -138,6 +138,7 @@ enum AccessibilityRole {
 
     // WebCore-specific roles
     WebCoreLinkRole,
+    ImageMapLinkRole,
     ImageMapRole,
     ListMarkerRole,
     WebAreaRole,
@@ -311,8 +312,8 @@ public:
     virtual const AccessibilityChildrenVector& children() { return m_children; }
     virtual void addChildren();
     virtual bool hasChildren() const { return m_haveChildren; };
-    virtual void selectedChildren(AccessibilityChildrenVector&) = 0;
-    virtual void visibleChildren(AccessibilityChildrenVector&) = 0;
+    virtual void selectedChildren(AccessibilityChildrenVector&);
+    virtual void visibleChildren(AccessibilityChildrenVector&);
     virtual bool shouldFocusActiveDescendant() const { return false; }
     virtual AccessibilityObject* activeDescendant() const { return 0; }    
     virtual void handleActiveDescendantChanged() { }

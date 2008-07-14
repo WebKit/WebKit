@@ -41,6 +41,8 @@ public:
     JSStringRef titleOfFocusedElement();
     JSStringRef descriptionOfFocusedElement(); 
     JSStringRef attributesOfLinkedUIElementsForFocusedElement();
+    JSStringRef attributesOfChildrenForFocusedElement();
+    
     double widthOfFocusedElement();
     double heightOfFocusedElement();
     float intValueOfFocusedElement();

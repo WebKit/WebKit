@@ -1,0 +1,93 @@
+Image map - test 1 - 3 Links
+----------------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 2>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 36}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink: 'Link1'>
+AXSize: NSSize: {123, 62}
+AXTitle: Link1
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 0
+AXWindow: <AXLink: 'Link1'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: (null)
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink: 'Link2'>
+AXSize: NSSize: {122, 14}
+AXTitle: Link2
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 0
+AXWindow: <AXLink: 'Link2'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: (null)
+
+------------
+AXRole: AXLink
+AXSubrole: (null)
+AXRoleDescription: link
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXLink: 'Link3'>
+AXSize: NSSize: {122, 14}
+AXTitle: Link3
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 0
+AXWindow: <AXLink: 'Link3'>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: (null)
+
+------------
+
+
+ 
