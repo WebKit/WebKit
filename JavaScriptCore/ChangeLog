@@ -1,3 +1,24 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Make JSGlobalData refcounted in preparation to adding a way to create contexts that share
+        global data.
+
+        * JavaScriptCore.exp:
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::create):
+        * kjs/JSGlobalData.h:
+        Made contructor private, and added a static create() method. Made the class inherit from
+        RefCounted.
+
+        * kjs/JSGlobalObject.h:
+        (KJS::JSGlobalObject::globalData):
+        JSGlobalData is now owned by JSGlobalObject (except for the shared one, and the common
+        WebCore one, which are never deleted).
+
+        * kjs/Shell.cpp: (main): Create JSGlobalData with create() method.
+
 2008-07-14  Simon Hausmann  <hausmann@webkit.org>
 
         Fix the single-threaded build.

@@ -1,3 +1,13 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Kevin McCullough.
+
+        Make JSGlobalData refcounted in preparation to adding a way to create contexts that share
+        global data.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData): Create JSGlobalData with create() method.
+
 2008-07-14  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

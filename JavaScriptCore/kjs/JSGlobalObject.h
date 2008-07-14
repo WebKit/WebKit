@@ -118,7 +118,7 @@ namespace KJS {
             SymbolTable symbolTable;
             unsigned pageGroupIdentifier;
 
-            JSGlobalData* globalData;
+            RefPtr<JSGlobalData> globalData;
 
             HashSet<ProgramCodeBlock*> codeBlocks;
 
@@ -228,7 +228,7 @@ namespace KJS {
         void copyGlobalsTo(RegisterFile&);
 
         // Per-JSGlobalData hash tables, cached on the global object for faster access.
-        JSGlobalData* globalData() { return d()->globalData; }
+        JSGlobalData* globalData() { return d()->globalData.get(); }
 
         void* operator new(size_t, JSGlobalData*);
 

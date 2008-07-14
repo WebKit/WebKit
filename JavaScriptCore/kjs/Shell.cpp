@@ -300,7 +300,7 @@ int main(int argc, char** argv)
 
     int res = 0;
     TRY
-        JSGlobalData* globalData = new JSGlobalData;
+        JSGlobalData* globalData = JSGlobalData::create().releaseRef();
         res = jscmain(argc, argv, globalData);
         delete globalData;
     EXCEPT(res = 3)
