@@ -313,7 +313,10 @@ namespace WTF {
         const_iterator& operator--()
         {
             ASSERT(m_position != m_set->m_head);
-            m_position = m_position->m_prev;
+            if (!m_position)
+                m_position = m_set->m_tail;
+            else
+                m_position = m_position->m_prev;
             return *this;
         }
 
