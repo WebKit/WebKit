@@ -1837,6 +1837,11 @@ unsigned short Node::compareDocumentPosition(Node* otherNode, ExceptionCode& ec)
             if (child2->nodeType() == ATTRIBUTE_NODE)
                 return DOCUMENT_POSITION_PRECEDING;
             
+            if (!child2->nextSibling())
+                return DOCUMENT_POSITION_FOLLOWING;
+            if (!child1->nextSibling())
+                return DOCUMENT_POSITION_PRECEDING;
+
             // Otherwise we need to see which node occurs first.  Crawl backwards from child2 looking for child1.
             for (Node* child = child2->previousSibling(); child; child = child->previousSibling()) {
                 if (child == child1)

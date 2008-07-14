@@ -113,9 +113,11 @@ static PassRefPtr<HTMLElement> baseConstructor(const AtomicString&, Document* do
     return new HTMLBaseElement(doc);
 }
 
-static PassRefPtr<HTMLElement> linkConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)
+static PassRefPtr<HTMLElement> linkConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool createdByParser)
 {
-    return new HTMLLinkElement(doc);
+    RefPtr<HTMLLinkElement> link = new HTMLLinkElement(doc);
+    link->setCreatedByParser(createdByParser);
+    return link.release();
 }
 
 static PassRefPtr<HTMLElement> metaConstructor(const AtomicString&, Document* doc, HTMLFormElement*, bool)

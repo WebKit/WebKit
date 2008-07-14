@@ -53,10 +53,15 @@ public:
     virtual bool offsetInCharacters() const;
     virtual int maxCharacterOffset() const;
 
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
+    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+    virtual void finishParsingChildren();
+
     // Other methods (not part of DOM)
     String localHref() const { return m_localHref; }
     StyleSheet* sheet() const { return m_sheet.get(); }
-    bool checkStyleSheet();
+    void checkStyleSheet();
     virtual void setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet*);
 #if ENABLE(XSLT)
     virtual void setXSLStyleSheet(const String& url, const String& sheet);
@@ -83,6 +88,7 @@ private:
     RefPtr<StyleSheet> m_sheet;
     bool m_loading;
     bool m_alternate;
+    bool m_createdByParser;
 #if ENABLE(XSLT)
     bool m_isXSL;
 #endif

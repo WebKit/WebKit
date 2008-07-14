@@ -2158,6 +2158,38 @@ void Document::updateStyleSelector()
     }
 }
 
+void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)
+{
+    if (createdByParser || m_styleSheetCandidateNodes.isEmpty()) {
+        m_styleSheetCandidateNodes.add(node);
+        return;
+    }
+
+    // Determine an appropriate insertion point.
+    ListHashSet<Node*>::iterator begin = m_styleSheetCandidateNodes.begin();
+    ListHashSet<Node*>::iterator end = m_styleSheetCandidateNodes.end();
+    ListHashSet<Node*>::iterator it = end;
+    Node* followingNode = 0;
+    ExceptionCode ec;
+    do {
+        --it;
+        Node* n = *it;
+        unsigned short position = n->compareDocumentPosition(node, ec);
+        if (position == DOCUMENT_POSITION_FOLLOWING) {
+            m_styleSheetCandidateNodes.insertBefore(followingNode, node);
+            return;
+        }
+        followingNode = n;
+    } while (it != begin);
+    
+    m_styleSheetCandidateNodes.insertBefore(followingNode, node);
+}
+
+void Document::removeStyleSheetCandidateNode(Node* node)
+{
+    m_styleSheetCandidateNodes.remove(node);
+}
+
 void Document::recalcStyleSelector()
 {
     if (!renderer() || !attached())
@@ -2169,8 +2201,13 @@ void Document::recalcStyleSelector()
     if (Settings* settings = this->settings())
         matchAuthorAndUserStyles = settings->authorAndUserStylesEnabled();
 
-    Node* n = matchAuthorAndUserStyles ? this : 0;
-    for ( ; n; n = n->traverseNextNode()) {
+    ListHashSet<Node*>::iterator begin = m_styleSheetCandidateNodes.begin();
+    ListHashSet<Node*>::iterator end = m_styleSheetCandidateNodes.end();
+    if (!matchAuthorAndUserStyles)
+        end = begin;
+    for (ListHashSet<Node*>::iterator it = begin; it != end; ++it) {
+        Node* n = *it;
+
         StyleSheet* sheet = 0;
 
         if (n->nodeType() == PROCESSING_INSTRUCTION_NODE) {
@@ -2269,11 +2306,6 @@ void Document::recalcStyleSelector()
 
         if (sheet)
             sheets.append(sheet);
-
-        // For HTML documents, stylesheets are not allowed within/after the <BODY> tag. So we
-        // can stop searching here.
-        if (isHTMLDocument() && n->hasTagName(bodyTag))
-            break;
     }
 
     m_styleSheets->swap(sheets);

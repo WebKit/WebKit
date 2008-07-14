@@ -105,16 +105,16 @@ bool ProcessingInstruction::childTypeAllowed(NodeType)
     return false;
 }
 
-bool ProcessingInstruction::checkStyleSheet()
+void ProcessingInstruction::checkStyleSheet()
 {
-    if (m_target == "xml-stylesheet") {
+    if (m_target == "xml-stylesheet" && document()->frame() && parentNode() == document()) {
         // see http://www.w3.org/TR/xml-stylesheet/
         // ### support stylesheet included in a fragment of this (or another) document
         // ### make sure this gets called when adding from javascript
         bool attrsOk;
         const HashMap<String, String> attrs = parseAttributes(m_data, attrsOk);
         if (!attrsOk)
-            return true;
+            return;
         HashMap<String, String>::const_iterator i = attrs.find("type");
         String type;
         if (i != attrs.end())
@@ -128,7 +128,7 @@ bool ProcessingInstruction::checkStyleSheet()
 #else
         if (!isCSS)
 #endif
-            return true;
+            return;
 
         String href = attrs.get("href");
         String alternate = attrs.get("alternate");
@@ -146,40 +146,31 @@ bool ProcessingInstruction::checkStyleSheet()
                     m_sheet = XSLStyleSheet::createEmbedded(this, m_localHref);
                     m_loading = false;
                 }
-                return !m_isXSL;
 #endif
             }
             else
             {
-                // FIXME: some validation on the URL?
-                if (document()->frame()) {
-                    m_loading = true;
-                    document()->addPendingSheet();
-                    if (m_cachedSheet)
-                        m_cachedSheet->removeClient(this);
+                m_loading = true;
+                document()->addPendingSheet();
+                if (m_cachedSheet)
+                    m_cachedSheet->removeClient(this);
 #if ENABLE(XSLT)
-                    if (m_isXSL)
-                        m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href).string());
-                    else
+                if (m_isXSL)
+                    m_cachedSheet = document()->docLoader()->requestXSLStyleSheet(document()->completeURL(href).string());
+                else
 #endif
-                    {
-                        String charset = attrs.get("charset");
-                        if (charset.isEmpty())
-                            charset = document()->frame()->loader()->encoding();
+                {
+                    String charset = attrs.get("charset");
+                    if (charset.isEmpty())
+                        charset = document()->frame()->loader()->encoding();
 
-                        m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href).string(), charset);
-                    }
-                    if (m_cachedSheet)
-                        m_cachedSheet->addClient(this);
-#if ENABLE(XSLT)
-                    return !m_isXSL;
-#endif
+                    m_cachedSheet = document()->docLoader()->requestCSSStyleSheet(document()->completeURL(href).string(), charset);
                 }
+                if (m_cachedSheet)
+                    m_cachedSheet->addClient(this);
             }
         }
     }
-    
-    return true;
 }
 
 bool ProcessingInstruction::isLoading() const
@@ -258,6 +249,31 @@ void ProcessingInstruction::getSubresourceAttributeStrings(Vector<String>& urls)
         return;
         
     urls.append(sheet()->href());
+}
+
+void ProcessingInstruction::insertedIntoDocument()
+{
+    ContainerNode::insertedIntoDocument();
+    document()->addStyleSheetCandidateNode(this, m_createdByParser);
+    checkStyleSheet();
+}
+
+void ProcessingInstruction::removedFromDocument()
+{
+    ContainerNode::removedFromDocument();
+
+    if (document()->renderer())
+        document()->removeStyleSheetCandidateNode(this);
+
+    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
+    if (m_cachedSheet)
+        document()->updateStyleSelector();
+}
+
+void ProcessingInstruction::finishParsingChildren()
+{
+    m_createdByParser = false;
+    ContainerNode::finishParsingChildren();
 }
 
 } // namespace

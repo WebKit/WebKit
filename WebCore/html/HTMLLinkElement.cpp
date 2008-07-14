@@ -46,6 +46,7 @@ HTMLLinkElement::HTMLLinkElement(Document *doc)
     , m_alternate(false)
     , m_isStyleSheet(false)
     , m_isIcon(false)
+    , m_createdByParser(false)
 {
 }
 
@@ -211,13 +212,25 @@ void HTMLLinkElement::process()
 void HTMLLinkElement::insertedIntoDocument()
 {
     HTMLElement::insertedIntoDocument();
+    document()->addStyleSheetCandidateNode(this, m_createdByParser);
     process();
 }
 
 void HTMLLinkElement::removedFromDocument()
 {
     HTMLElement::removedFromDocument();
-    process();
+
+    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
+    if (document()->renderer()) {
+        document()->removeStyleSheetCandidateNode(this);
+        document()->updateStyleSelector();
+    }
+}
+
+void HTMLLinkElement::finishParsingChildren()
+{
+    m_createdByParser = false;
+    HTMLElement::finishParsingChildren();
 }
 
 void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)

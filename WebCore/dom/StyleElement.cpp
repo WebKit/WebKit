@@ -47,6 +47,11 @@ void StyleElement::insertedIntoDocument(Document* document, Element* element)
 
 void StyleElement::removedFromDocument(Document* document)
 {
+    // If we're in document teardown, then we don't need to do any notification of our sheet's removal.
+    if (!document->renderer())
+        return;
+
+    // FIXME: It's terrible to do a synchronous update of the style selector just because a <style> or <link> element got removed.
     if (m_sheet)
         document->updateStyleSelector();
 }

@@ -319,6 +319,9 @@ public:
      */
     void addPendingSheet() { m_pendingStylesheets++; }
 
+    void addStyleSheetCandidateNode(Node*, bool createdByParser);
+    void removeStyleSheetCandidateNode(Node*);
+
     bool gotoAnchorNeededAfterStylesheetsLoad() { return m_gotoAnchorNeededAfterStylesheetsLoad; }
     void setGotoAnchorNeededAfterStylesheetsLoad(bool b) { m_gotoAnchorNeededAfterStylesheetsLoad = b; }
 
@@ -830,8 +833,10 @@ private:
     HashSet<Range*> m_ranges;
 
     unsigned short m_listenerTypes;
-    RefPtr<StyleSheetList> m_styleSheets;
-    
+
+    RefPtr<StyleSheetList> m_styleSheets; // All of the stylesheets that are currently in effect for our media type and stylesheet set.
+    ListHashSet<Node*> m_styleSheetCandidateNodes; // All of the nodes that could potentially provide stylesheets to the document (<link>, <style>, <?xml-stylesheet>)
+
     RegisteredEventListenerList m_windowEventListeners;
 
     typedef HashMap<FormElementKey, Vector<String>, FormElementKeyHash, FormElementKeyHashTraits> FormElementStateMap;

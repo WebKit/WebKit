@@ -1,3 +1,48 @@
+2008-07-14  David Hyatt  <hyatt@apple.com>
+
+        Fix for bugzilla bug 5476, link and style elements should be allowed outside the <head>.
+
+        Reviewed by Sam
+
+        Added fast/css/style-outside-head.html
+        Added fast/css/link-outside-head.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::addStyleSheetCandidateNode):
+        (WebCore::Document::removeStyleSheetCandidateNode):
+        (WebCore::Document::recalcStyleSelector):
+        * dom/Document.h:
+        * dom/Node.cpp:
+        (WebCore::Node::compareDocumentPosition):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        (WebCore::ProcessingInstruction::insertedIntoDocument):
+        (WebCore::ProcessingInstruction::removedFromDocument):
+        (WebCore::ProcessingInstruction::finishParsingChildren):
+        * dom/ProcessingInstruction.h:
+        (WebCore::ProcessingInstruction::setCreatedByParser):
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::removedFromDocument):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::processingInstruction):
+        (WebCore::):
+        * html/HTMLElementFactory.cpp:
+        (WebCore::linkConstructor):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::insertedIntoDocument):
+        (WebCore::HTMLLinkElement::removedFromDocument):
+        (WebCore::HTMLLinkElement::finishParsingChildren):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::setCreatedByParser):
+        * html/HTMLStyleElement.cpp:
+        (WebCore::HTMLStyleElement::insertedIntoDocument):
+        (WebCore::HTMLStyleElement::removedFromDocument):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::insertedIntoDocument):
+        (WebCore::SVGStyleElement::removedFromDocument):
+
 2008-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.

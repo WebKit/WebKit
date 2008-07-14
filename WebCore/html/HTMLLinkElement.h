@@ -96,6 +96,9 @@ public:
 
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
+    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
+    virtual void finishParsingChildren();
+
 protected:
     CachedCSSStyleSheet* m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
@@ -107,6 +110,7 @@ protected:
     bool m_alternate;
     bool m_isStyleSheet;
     bool m_isIcon;
+    bool m_createdByParser;
 };
 
 } //namespace
