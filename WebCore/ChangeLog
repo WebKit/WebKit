@@ -1,3 +1,41 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Eliminate per-thread JavaScript global data instance support and make arbitrary
+        global data/global object combinations possible.
+
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowBase.cpp: (WebCore::JSDOMWindowBase::commonJSGlobalData): Added.
+        WebCore uses its own instance of JSGlobalData, as JSC no longer provides a per-thread one.
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::operator new):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clear):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        Pass commonJSGlobalData() as an allocator.
+
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::identifierFromNPIdentifier):
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+        * storage/Database.cpp:
+        (WebCore::Database::Database):
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectNow):
+        Use JSDOMWindow::commonJSGlobalData().
+
+        * ForwardingHeaders/wtf/ThreadSpecific.h: Added (collector.h now includes this header, so
+        it need to be accesible outside of JSC).
+
+        * WebCore.base.exp: Export JSDOMWindowBase::commonJSGlobalData().
+
 2008-07-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

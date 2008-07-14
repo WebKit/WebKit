@@ -1,3 +1,17 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Eliminate per-thread JavaScript global data instance support and make arbitrary
+        global data/global object combinations possible.
+
+        * ForwardingHeaders/wtf/ThreadSpecific.h: Added.
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        * JSUtils.cpp:
+        (getThreadGlobalExecState):
+        Adapt to the new way of asking for shared JSGlobalData.
+
 2008-07-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

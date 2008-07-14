@@ -41,7 +41,6 @@
 
 #if USE(MULTIPLE_THREADS)
 #include <wtf/Threading.h>
-#include <wtf/ThreadSpecific.h>
 #endif
 
 using namespace WTF;
@@ -59,7 +58,7 @@ extern const HashTable stringTable;
 
 JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
-    , heap(new Heap(machine, isShared))
+    , heap(new Heap(this))
 #if USE(MULTIPLE_THREADS)
     , arrayTable(new HashTable(KJS::arrayTable))
     , dateTable(new HashTable(KJS::dateTable))
@@ -90,10 +89,12 @@ JSGlobalData::JSGlobalData(bool isShared)
 
 JSGlobalData::~JSGlobalData()
 {
-#if USE(MULTIPLE_THREADS)
     delete heap;
+    heap = 0; // zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
     delete machine;
+    machine = 0;
 
+#if USE(MULTIPLE_THREADS)
     delete[] arrayTable->table;
     delete[] dateTable->table;
     delete[] mathTable->table;
@@ -108,6 +109,7 @@ JSGlobalData::~JSGlobalData()
     delete regExpTable;
     delete regExpConstructorTable;
     delete stringTable;
+#endif
 
     delete parser;
     delete lexer;
@@ -117,25 +119,11 @@ JSGlobalData::~JSGlobalData()
 
     delete newParserObjects;
     delete parserObjectExtraRefCounts;
-#endif
-}
-
-bool JSGlobalData::threadInstanceExists()
-{
-    return threadInstanceInternal();
 }
 
 bool JSGlobalData::sharedInstanceExists()
 {
     return sharedInstanceInternal();
-}
-
-JSGlobalData& JSGlobalData::threadInstance()
-{
-    JSGlobalData*& instance = threadInstanceInternal();
-    if (!instance)
-        instance = new JSGlobalData;
-    return *instance;
 }
 
 JSGlobalData& JSGlobalData::sharedInstance()
@@ -144,17 +132,6 @@ JSGlobalData& JSGlobalData::sharedInstance()
     if (!instance)
         instance = new JSGlobalData(true);
     return *instance;
-}
-
-JSGlobalData*& JSGlobalData::threadInstanceInternal()
-{
-#if USE(MULTIPLE_THREADS)
-    static ThreadSpecific<DataInstance> threadInstance;
-    return *threadInstance;
-#else
-    static JSGlobalData* threadInstance;
-    return threadInstance;
-#endif
 }
 
 JSGlobalData*& JSGlobalData::sharedInstanceInternal()

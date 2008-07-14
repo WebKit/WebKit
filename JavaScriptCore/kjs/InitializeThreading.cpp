@@ -48,7 +48,6 @@ static void initializeThreadingOnce()
     WTF::initializeThreading();
 #if USE(MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
-    JSGlobalData::threadInstanceExists();
     UString::null();
     initDateMath();
 #endif

@@ -44,9 +44,9 @@ namespace KJS {
     // DropAllLocks object takes care to release the JSLock only if your
     // thread acquired it to begin with.
 
-    // For per-thread contexts, JSLock doesn't do any locking, but we
-    // still need to perform all the counting in order to keep debug
-    // assertions working, so that clients that use a shared context don't break.
+    // For contexts other than the single shared one, implicit locking is not done,
+    // but we still need to perform all the counting in order to keep debug
+    // assertions working, so that clients that use the shared context don't break.
 
     class ExecState;
 
@@ -58,19 +58,17 @@ namespace KJS {
             : m_lockingForReal(lockingForReal)
         {
 #ifdef NDEBUG
-            // For per-thread contexts, locking is a debug-only feature.
+            // Locking "not for real" is a debug-only feature.
             if (!lockingForReal)
                 return;
 #endif
             lock(lockingForReal);
-            if (lockingForReal)
-                registerThread();
         }
 
         ~JSLock()
         { 
 #ifdef NDEBUG
-            // For per-thread contexts, locking is a debug-only feature.
+            // Locking "not for real" is a debug-only feature.
             if (!m_lockingForReal)
                 return;
 #endif
@@ -84,8 +82,6 @@ namespace KJS {
 
         static intptr_t lockCount();
         static bool currentThreadIsHoldingLock();
-
-        static void registerThread();
 
         bool m_lockingForReal;
 

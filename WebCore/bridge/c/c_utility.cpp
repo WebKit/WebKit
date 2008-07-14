@@ -30,6 +30,7 @@
 
 #include "c_utility.h"
 
+#include "JSDOMWindow.h"
 #include "NP_jsobject.h"
 #include "c_instance.h"
 #include <kjs/JSGlobalObject.h>
@@ -147,7 +148,7 @@ String convertNPStringToUTF16(const NPString* string)
 
 Identifier identifierFromNPIdentifier(const NPUTF8* name)
 {
-    return Identifier(&JSGlobalData::threadInstance(), convertUTF8ToUTF16WithLatin1Fallback(name, -1));
+    return Identifier(WebCore::JSDOMWindow::commonJSGlobalData(), convertUTF8ToUTF16WithLatin1Fallback(name, -1));
 }
 
 } }

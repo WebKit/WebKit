@@ -63,14 +63,12 @@ JSLock::JSLock(ExecState* exec)
     : m_lockingForReal(exec->globalData().isSharedInstance)
 {
     lock(m_lockingForReal);
-    if (m_lockingForReal)
-        registerThread();
 }
 
 void JSLock::lock(bool lockForReal)
 {
 #ifdef NDEBUG
-    // For per-thread contexts, locking is a debug-only feature.
+    // Locking "not for real" is a debug-only feature.
     if (!lockForReal)
         return;
 #endif
@@ -91,7 +89,7 @@ void JSLock::unlock(bool lockForReal)
     ASSERT(lockCount());
 
 #ifdef NDEBUG
-    // For per-thread contexts, locking is a debug-only feature.
+    // Locking "not for real" is a debug-only feature.
     if (!lockForReal)
         return;
 #endif
@@ -119,11 +117,6 @@ bool JSLock::currentThreadIsHoldingLock()
 {
     pthread_once(&createJSLockCountOnce, createJSLockCount);
     return !!pthread_getspecific(JSLockCount);
-}
-
-void JSLock::registerThread()
-{
-    Heap::registerThread();
 }
 
 JSLock::DropAllLocks::DropAllLocks(ExecState* exec)

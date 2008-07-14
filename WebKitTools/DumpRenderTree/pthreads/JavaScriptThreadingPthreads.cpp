@@ -68,10 +68,11 @@ void* runJavaScriptThread(void* arg)
         JSEvaluateScript(ctx, scriptRef, 0, 0, 1, &exception);
         ASSERT(!exception);
 
+        JSGarbageCollect(ctx);
         JSGlobalContextRelease(ctx);
         JSStringRelease(scriptRef);
         
-        JSGarbageCollect(ctx);
+        JSGarbageCollect(0);
 
         pthread_mutex_lock(&javaScriptThreadsMutex);
 

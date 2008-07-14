@@ -116,7 +116,7 @@ void CachedPage::restore(Page* page)
             windowShell->setWindow(m_window.get());
             windowShell->window()->resumeTimeouts(m_pausedTimeouts.get());
         } else {
-            windowShell->setWindow(new JSDOMWindow(mainFrame->domWindow(), windowShell));
+            windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(mainFrame->domWindow(), windowShell));
             proxy->attachDebugger(page->debugger());
             windowShell->window()->setPageGroupIdentifier(page->group().identifier());
         }

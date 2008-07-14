@@ -123,6 +123,8 @@ namespace WebCore {
         virtual KJS::JSObject* toThisObject(KJS::ExecState*) const;
         JSDOMWindowShell* shell() const;
 
+        static KJS::JSGlobalData* commonJSGlobalData();
+
         enum {
             // Attributes
             Crypto, Event_,

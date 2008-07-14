@@ -43,12 +43,14 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 
     JSLock lock(true);
 
+    JSGlobalData* sharedGlobalData = &JSGlobalData::sharedInstance();
+
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = new (JSGlobalObject::Shared) JSGlobalObject;
+        JSGlobalObject* globalObject = new (sharedGlobalData) JSGlobalObject;
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 
-    JSGlobalObject* globalObject = new (JSGlobalObject::Shared) JSCallbackObject<JSGlobalObject>(globalObjectClass);
+    JSGlobalObject* globalObject = new (sharedGlobalData) JSCallbackObject<JSGlobalObject>(globalObjectClass);
     JSGlobalContextRef ctx = toGlobalRef(globalObject->globalExec());
     JSValue* prototype = globalObjectClass->prototype(ctx);
     if (!prototype)
@@ -60,7 +62,9 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
     JSLock lock(exec);
+
     gcProtect(exec->dynamicGlobalObject());
     return ctx;
 }
@@ -69,12 +73,14 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
     JSLock lock(exec);
+
     gcUnprotect(exec->dynamicGlobalObject());
 }
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
 
     // It is necessary to call toThisObject to get the wrapper object when used with WebCore.
     return toRef(exec->dynamicGlobalObject()->toThisObject(exec));

@@ -241,7 +241,7 @@
 		BC18C46E0E16F5CD00B34460 /* TCSpinLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */; };
 		BC18C46F0E16F5CD00B34460 /* TCSystemAlloc.h in Headers */ = {isa = PBXBuildFile; fileRef = 6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */; };
 		BC18C4700E16F5CD00B34460 /* Threading.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE79220D6C95CD00FEA3BA /* Threading.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */; };
+		BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */ = {isa = PBXBuildFile; fileRef = E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4720E16F5CD00B34460 /* ucpinternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 93E26BFC08B151D400F85226 /* ucpinternal.h */; };
 		BC18C4730E16F5CD00B34460 /* Unicode.h in Headers */ = {isa = PBXBuildFile; fileRef = E195679409E7CF1200B89D13 /* Unicode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4740E16F5CD00B34460 /* UnicodeIcu.h in Headers */ = {isa = PBXBuildFile; fileRef = E195678F09E7CF1200B89D13 /* UnicodeIcu.h */; settings = {ATTRIBUTES = (Private, ); }; };

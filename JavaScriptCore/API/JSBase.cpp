@@ -41,7 +41,9 @@ using namespace KJS;
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
     JSLock lock(exec);
+
     JSObject* jsThisObject = toJS(thisObject);
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
@@ -66,7 +68,9 @@ JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef th
 bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {
     ExecState* exec = toJS(ctx);
+    exec->globalData().heap->registerThread();
     JSLock lock(exec);
+
     UString::Rep* scriptRep = toJS(script);
     UString::Rep* sourceURLRep = sourceURL ? toJS(sourceURL) : &UString::Rep::null;
     Completion completion = Interpreter::checkSyntax(exec->dynamicGlobalObject()->globalExec(), UString(sourceURLRep), startingLineNumber, UString(scriptRep));
@@ -85,21 +89,26 @@ void JSGarbageCollect(JSContextRef ctx)
     if (!ctx)
         initializeThreading();
 
-    // It might seem that we have a context passed to this function, and can use toJS(ctx)->heap(), but the parameter is likely to be NULL,
-    // and it may actually be garbage for some clients (most likely, because of JSGarbageCollect being called after releasing the context).
+    // When using a shared heap, clients need to call JSGarbageCollect(0) after releasing the last reference to the context to avoid
+    // leaking protected objects. Because the function arguments were originally ignored, some clients may pass their released context here,
+    // in which case there is a risk of crashing if another thread performs GC on the same heap in between.
+    if (ctx) {
+        ExecState* exec = toJS(ctx);
+        JSGlobalData& globalData = exec->globalData();
+        Heap* heap = globalData.heap;
 
-    if (JSGlobalData::threadInstanceExists()) {
-        Heap* heap = JSGlobalData::threadInstance().heap;
+        JSLock lock(globalData.isSharedInstance);
+
         if (!heap->isBusy())
             heap->collect();
-    }
+    } else {
+        JSLock lock(true);
 
-    JSLock lock(true);
-
-    if (JSGlobalData::sharedInstanceExists()) {
-        Heap* heap = JSGlobalData::sharedInstance().heap;
-        if (!heap->isBusy())
-            heap->collect();
+        if (JSGlobalData::sharedInstanceExists()) {
+            Heap* heap = JSGlobalData::sharedInstance().heap;
+            if (!heap->isBusy())
+                heap->collect();
+        }
     }
 
     // FIXME: Perhaps we should trigger a second mark and sweep

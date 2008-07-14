@@ -1,3 +1,15 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Eliminate per-thread JavaScript global data instance support and make arbitrary
+        global data/global object combinations possible.
+
+        * DumpRenderTree/pthreads/JavaScriptThreadingPthreads.cpp:
+        (runJavaScriptThread): Don't pass a released context reference to JSGarbageCollect.
+        In this scenario, it was causing crashes after each 10-20 tests, because there was a large
+        chance for a different thread to cause GC after the context was released.
+
 2008-07-11  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.

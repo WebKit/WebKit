@@ -29,7 +29,6 @@
 
 #include "APICast.h"
 #include "JSStringRef.h"
-#include <kjs/JSLock.h>
 #include <kjs/ustring.h>
 #include <kjs/JSValue.h>
 

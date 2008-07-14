@@ -1,3 +1,19 @@
+2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Eliminate per-thread JavaScript global data instance support and make arbitrary
+        global data/global object combinations possible.
+
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        Ask WebCore for its instance of JSGlobalData, now that it is not in per-thread storage.
+
 2008-07-11  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Darin Adler.

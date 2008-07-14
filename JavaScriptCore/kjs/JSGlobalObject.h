@@ -150,7 +150,7 @@ namespace KJS {
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
         virtual void defineSetter(ExecState*, const Identifier& propertyName, JSObject* setterFunc);
 
-        // Per-thread linked list of all global objects.
+        // Linked list of all global objects that use the same JSGlobalData.
         JSGlobalObject*& head() { return d()->globalData->head; }
         JSGlobalObject* next() { return d()->next; }
 
@@ -227,12 +227,10 @@ namespace KJS {
         void copyGlobalsFrom(RegisterFile&);
         void copyGlobalsTo(RegisterFile&);
 
-        // Per-thread hash tables, cached on the global object for faster access.
+        // Per-JSGlobalData hash tables, cached on the global object for faster access.
         JSGlobalData* globalData() { return d()->globalData; }
 
-        enum SharedTag { Shared };
-        void* operator new(size_t);
-        void* operator new(size_t, SharedTag);
+        void* operator new(size_t, JSGlobalData*);
 
         void init(JSObject* thisValue);
         
@@ -253,6 +251,8 @@ namespace KJS {
         };
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
+    private:
+        void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 
     inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)

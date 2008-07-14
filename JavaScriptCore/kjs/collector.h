@@ -28,14 +28,17 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
+#if USE(MULTIPLE_THREADS)
+#include <wtf/ThreadSpecific.h>
+#endif
 
 namespace KJS {
 
     class ArgList;
     class CollectorBlock;
     class JSCell;
+    class JSGlobalData;
     class JSValue;
-    class Machine;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
 
@@ -88,7 +91,7 @@ namespace KJS {
         size_t protectedGlobalObjectCount();
         HashCountedSet<const char*>* protectedObjectTypeCounts();
 
-        static void registerThread(); // Should only be called by clients that can use the same heap from multiple threads.
+        void registerThread(); // Only needs to be called by clients that can use the same heap from multiple threads.
 
         static bool isCellMarked(const JSCell*);
         static void markCell(JSCell*);
@@ -97,7 +100,7 @@ namespace KJS {
 
         HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
 
-        bool isShared() const { return m_isShared; }
+        JSGlobalData* globalData() const { return m_globalData; }
 
     private:
         template <Heap::HeapType heapType> void* heapAllocate(size_t);
@@ -107,7 +110,7 @@ namespace KJS {
         static size_t cellOffset(const JSCell*);
 
         friend class JSGlobalData;
-        Heap(Machine*, bool isShared);
+        Heap(JSGlobalData*);
         ~Heap();
 
         void recordExtraCost(size_t);
@@ -127,9 +130,24 @@ namespace KJS {
 
         HashSet<ArgList*>* m_markListSet;
 
-        bool m_isShared;
-        
-        Machine* m_machine;
+#if USE(MULTIPLE_THREADS)
+        void unregisterThread();
+
+        class ThreadRegistrar : Noncopyable {
+        public:
+            ThreadRegistrar(Heap* heap) : m_heap(heap) {}
+            ~ThreadRegistrar() { m_heap->unregisterThread(); }
+
+        private:
+            Heap* m_heap;
+        };
+
+        Mutex m_registeredThreadsMutex;
+        Thread* m_registeredThreads;
+        WTF::ThreadSpecific<OwnPtr<ThreadRegistrar> > m_currentThreadRegistrar;
+#endif
+
+        JSGlobalData* m_globalData;
     };
 
     // tunable parameters

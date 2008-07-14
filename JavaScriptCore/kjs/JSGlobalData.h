@@ -48,14 +48,12 @@ namespace KJS {
     class UString;
     struct HashTable;
 
-    // This serves as a bottleneck for accessing per-thread data structures.
-    // Note that the effective instance may be different from the thread one in case of legacy
-    // JavaScriptCore clients, which all share a single JSGlobalData, and thus cannot run concurrently.
     struct JSGlobalData : Noncopyable {
-        static bool threadInstanceExists();
         static bool sharedInstanceExists();
-        static JSGlobalData& threadInstance();
         static JSGlobalData& sharedInstance();
+
+        JSGlobalData(bool isShared = false);
+        ~JSGlobalData();
 
         Machine* machine;
         Heap* heap;
@@ -83,10 +81,6 @@ namespace KJS {
         bool isSharedInstance;
 
     private:
-        JSGlobalData(bool isShared = false);
-        ~JSGlobalData();
-
-        static JSGlobalData*& threadInstanceInternal();
         static JSGlobalData*& sharedInstanceInternal();
 
         struct DataInstance {

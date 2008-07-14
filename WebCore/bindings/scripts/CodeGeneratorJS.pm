@@ -856,7 +856,7 @@ sub GenerateImplementation
     if ($interfaceName eq "DOMWindow") {
         push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
         push(@implContent, "{\n");
-        push(@implContent, "    return JSGlobalData::threadInstance().heap->allocate(size);\n");
+        push(@implContent, "    return JSDOMWindow::commonJSGlobalData()->heap->allocate(size);\n");
         push(@implContent, "}\n\n");
     }
     if ($numConstants > 0 || $numFunctions > 0) {

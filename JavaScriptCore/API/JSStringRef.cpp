@@ -66,7 +66,7 @@ void JSStringRelease(JSStringRef string)
     UString::Rep* rep = toJS(string);
     bool needsLocking = rep->identifierTable;
     if (needsLocking) {
-        // It is wasteful to take the lock for per-thread contexts, but we don't have a good way
+        // It is wasteful to take the lock for non-shared contexts, but we don't have a good way
         // to determine what the context is.
         JSLock lock(true);
         rep->deref();

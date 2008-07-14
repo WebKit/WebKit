@@ -285,7 +285,7 @@ JSValue* functionQuit(ExecState*, JSObject*, JSValue*, const ArgList&)
 #define EXCEPT(x)
 #endif
 
-int jscmain(int argc, char** argv);
+int jscmain(int argc, char** argv, JSGlobalData*);
 
 int main(int argc, char** argv)
 {
@@ -300,12 +300,9 @@ int main(int argc, char** argv)
 
     int res = 0;
     TRY
-        res = jscmain(argc, argv);
-#ifndef NDEBUG
-        JSLock::lock(false);
-        JSGlobalData::threadInstance().heap->collect();
-        JSLock::unlock(false);
-#endif
+        JSGlobalData* globalData = new JSGlobalData;
+        res = jscmain(argc, argv, globalData);
+        delete globalData;
     EXCEPT(res = 3)
     return res;
 }
@@ -446,7 +443,7 @@ static void parseArguments(int argc, char** argv, Options& options)
         options.arguments.append(argv[i]);
 }
 
-int jscmain(int argc, char** argv)
+int jscmain(int argc, char** argv, JSGlobalData* globalData)
 {
     KJS::initializeThreading();
 
@@ -455,7 +452,7 @@ int jscmain(int argc, char** argv)
     Options options;
     parseArguments(argc, argv, options);
 
-    GlobalObject* globalObject = new GlobalObject(options.arguments);
+    GlobalObject* globalObject = new (globalData) GlobalObject(options.arguments);
     bool success = runWithScripts(globalObject, options.fileNames, options.prettyPrint, options.dump);
     if (options.interactive && success)
         runInteractive(globalObject);

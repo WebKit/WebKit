@@ -37,6 +37,7 @@
 #import <WebCore/GCController.h>
 #import <WebCore/GlyphPageTreeNode.h>
 #import <WebCore/IconDatabase.h>
+#import <WebCore/JSDOMWindow.h>
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
 
@@ -53,25 +54,25 @@ using namespace WebCore;
 + (size_t)javaScriptObjectsCount
 {
     JSLock lock(false);
-    return JSGlobalData::threadInstance().heap->size();
+    return JSDOMWindow::commonJSGlobalData()->heap->size();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
     JSLock lock(false);
-    return JSGlobalData::threadInstance().heap->globalObjectCount();
+    return JSDOMWindow::commonJSGlobalData()->heap->globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
     JSLock lock(false);
-    return JSGlobalData::threadInstance().heap->protectedObjectCount();
+    return JSDOMWindow::commonJSGlobalData()->heap->protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
     JSLock lock(false);
-    return JSGlobalData::threadInstance().heap->protectedGlobalObjectCount();
+    return JSDOMWindow::commonJSGlobalData()->heap->protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
@@ -80,7 +81,7 @@ using namespace WebCore;
     
     NSCountedSet *result = [NSCountedSet set];
 
-    OwnPtr<HashCountedSet<const char*> > counts(JSGlobalData::threadInstance().heap->protectedObjectTypeCounts());
+    OwnPtr<HashCountedSet<const char*> > counts(JSDOMWindow::commonJSGlobalData()->heap->protectedObjectTypeCounts());
     HashCountedSet<const char*>::iterator end = counts->end();
     for (HashCountedSet<const char*>::iterator it = counts->begin(); it != end; ++it)
         for (unsigned i = 0; i < it->second; ++i)
@@ -180,7 +181,7 @@ using namespace WebCore;
 + (size_t)javaScriptReferencedObjectsCount
 {
     JSLock lock(false);
-    return JSGlobalData::threadInstance().heap->protectedObjectCount();
+    return JSDOMWindow::commonJSGlobalData()->heap->protectedObjectCount();
 }
 
 + (NSSet *)javaScriptRootObjectClasses

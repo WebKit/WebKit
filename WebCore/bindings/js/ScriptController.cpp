@@ -116,7 +116,7 @@ void ScriptController::clear()
     JSLock lock(false);
     m_windowShell->window()->clear();
     m_liveFormerWindows.add(m_windowShell->window());
-    m_windowShell->setWindow(new JSDOMWindow(m_frame->domWindow(), m_windowShell));
+    m_windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(m_frame->domWindow(), m_windowShell));
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
         m_windowShell->window()->setPageGroupIdentifier(page->group().identifier());
