@@ -33,6 +33,10 @@
 #include <windows.h>
 #include <shlwapi.h>
 
+#if COMPILER(MINGW)
+#define _countof(x) (sizeof(x)/sizeof(x[0]))
+#endif
+
 namespace WebCore {
 
 static inline void addPluginPathsFromRegistry(HKEY rootKey, HashSet<String>& paths)

@@ -159,7 +159,7 @@ namespace WebCore {
     inline SynchronizableTypeWrapper<RefPtr<StoredPointerType> >::SynchronizableTypeWrapper(const PassRefPtr<StoredPointerType>& type)
         : Base()
     {
-        m_value = type;
+        Base::m_value = type;
     }
 
     template<typename StoredPointerType>
@@ -172,7 +172,7 @@ namespace WebCore {
     template<typename StoredPointerType>
     inline SynchronizableTypeWrapper<RefPtr<StoredPointerType> >::operator StoredPointerType*() const
     {
-        return m_value.get();
+        return Base::m_value.get();
     }
 
 };

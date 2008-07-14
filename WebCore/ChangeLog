@@ -1,3 +1,16 @@
+2008-07-14  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        MinGW build fixes
+
+        * plugins/win/PluginDatabaseWin.cpp:
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        * svg/SynchronizableTypeWrapper.h:
+        (WebCore::::SynchronizableTypeWrapper):
+
 2008-07-13  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt and Dan Bernstein.
