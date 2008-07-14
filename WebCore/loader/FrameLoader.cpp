@@ -3351,7 +3351,7 @@ void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, bool mainRes
     }
     
     if (mainResource)
-        request.setHTTPAccept("text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
+        request.setHTTPAccept("application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5");
 }
 
 void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int length)

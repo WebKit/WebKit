@@ -1,3 +1,20 @@
+2008-07-14  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Geoff.
+
+        Fix for <rdar://problem/5784890> REGRESSION (Safari 3): Can't edit SpeedStream 4100 DSL modem settings
+
+        The web server on this particular piece of hardware doesn't handle "text/xml" in the 
+        Accept header if the headers are sent in a certain order.  Safari 2 used to send "*/*" in 
+        the Accept header.  Firefox 2 sent "text/xml" but in an acceptable order for the web 
+        server.  And Firefox 3 doesn't send "text/xml" at all in the Accept header since it 
+        is being deprecated in favor of "application/xml".  We decided that the best solution is 
+        to match Firefox 3 and stop sending "text/xml" in the Accept header.
+
+        No test.  There appears to be no way to get the raw headers in the original order in perl/php.
+
+        * loader/FrameLoader.cpp: (WebCore::FrameLoader::addExtraFieldsToRequest):
+
 2008-07-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Adele Peterson.
