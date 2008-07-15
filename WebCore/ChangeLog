@@ -1,5 +1,12 @@
 2008-07-14  Dan Bernstein  <mitz@apple.com>
 
+        - Tiger build fix
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+
+2008-07-14  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         - WebCore part of fixing <rdar://problem/6071850> Subviews not drawn correctly when using -cacheDisplayInRect:toBitmapImageRep:

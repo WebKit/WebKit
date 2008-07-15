@@ -221,12 +221,11 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
-    NSRect rect = [view convertRect:r fromView:[view superview]];
     NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
     if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
         // This is the common case of drawing into a window or printing.
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
-        [view displayRectIgnoringOpacity:rect];
+        [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
         END_BLOCK_OBJC_EXCEPTIONS;
     } else {
         // This is the case of drawing into a bitmap context other than a window backing store. It gets hit beneath
@@ -260,7 +259,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
 
         BEGIN_BLOCK_OBJC_EXCEPTIONS;
         NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
-        [view displayRectIgnoringOpacity:rect inContext:nsContext];
+        [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]] inContext:nsContext];
         END_BLOCK_OBJC_EXCEPTIONS;
 
         CGContextRestoreGState(cgContext);
