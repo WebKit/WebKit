@@ -3064,6 +3064,14 @@
 			Name="page"
 			>
 			<File
+				RelativePath="..\page\AccessibilityImageMapLink.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityImageMapLink.h"
+				>
+			</File>
+			<File
 				RelativePath="..\page\AccessibilityListBox.cpp"
 				>
 			</File>
