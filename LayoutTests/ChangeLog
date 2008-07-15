@@ -1,3 +1,15 @@
+2008-07-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for https://bugs.webkit.org/show_bug.cgi?id=19525
+          <rdar://problem/5961768> -webkit-box-reflect in hyperlink causes webkit to crash
+
+        * fast/reflections/inline-crash.html: Added.
+        * platform/mac/fast/reflections/inline-crash-expected.checksum: Added.
+        * platform/mac/fast/reflections/inline-crash-expected.png: Added.
+        * platform/mac/fast/reflections/inline-crash-expected.txt: Added.
+
 2008-07-15  Adele Peterson  <adele@apple.com>
 
         Updating results for my fix to <rdar://problem/5784890>.

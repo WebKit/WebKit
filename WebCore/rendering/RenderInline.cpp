@@ -45,6 +45,7 @@ void RenderInline::setStyle(RenderStyle* newStyle)
 {
     RenderFlow::setStyle(newStyle);
     setInline(true);
+    setHasReflection(false);
 
     // Ensure that all of the split inlines pick up the new style. We
     // only do this if we're an inline, since we don't want to propagate

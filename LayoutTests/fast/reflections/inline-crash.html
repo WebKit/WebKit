@@ -1,0 +1,25 @@
+<script>
+    onload = function()
+    {
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            layoutTestController.display();
+        }
+        setTimeout(changeColor, 0);
+    }
+
+    changeColor = function()
+    {
+        var span = document.getElementById("span");
+        getSelection().setBaseAndExtent(span, 0, span, 1);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+</script>
+<p>
+    Test for <i><a href="https://bugs.webkit.org/show_bug.cgi?id=19525">https://bugs.webkit.org/show_bug.cgi?id=19525</a>
+    -webkit-box-reflect in hyperlink causes webkit to crash</i>.
+</p>
+<p>
+    Because it is an inline flow, <span id="span" style="-webkit-box-reflect: below;">this span</span> should not have a reflection, and selecting it should not cause a crash.
+</p>

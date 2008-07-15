@@ -1,3 +1,16 @@
+2008-07-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19525
+          <rdar://problem/5961768> -webkit-box-reflect in hyperlink causes webkit to crash
+
+        Test: fast/reflections/inline-crash.html
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::setStyle): Added setHasReflection(false).
+        Inline flows never have reflections.
+
 2008-07-14  David Hyatt  <hyatt@apple.com>
 
         Allow <style> and <link> pretty much anywhere.  They will still be moved to the <head> if
