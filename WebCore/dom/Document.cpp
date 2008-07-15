@@ -2160,7 +2160,11 @@ void Document::updateStyleSelector()
 
 void Document::addStyleSheetCandidateNode(Node* node, bool createdByParser)
 {
-    if (createdByParser || m_styleSheetCandidateNodes.isEmpty()) {
+    // Until the <body> exists, we have no choice but to compare document positions,
+    // since styles outside of the body and head continue to be shunted into the head
+    // (and thus can shift to end up before dynamically added DOM content that is also
+    // outside the body).
+    if ((createdByParser && body()) || m_styleSheetCandidateNodes.isEmpty()) {
         m_styleSheetCandidateNodes.add(node);
         return;
     }

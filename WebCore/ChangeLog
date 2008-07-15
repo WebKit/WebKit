@@ -1,3 +1,15 @@
+2008-07-14  David Hyatt  <hyatt@apple.com>
+
+        Allow <style> and <link> pretty much anywhere.  They will still be moved to the <head> if
+        no <body> exists yet though.
+
+        Reviewed by Sam
+
+        Added fast/css/style-parsed-outside-of-head.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::inlineTagList):
+
 2008-07-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.

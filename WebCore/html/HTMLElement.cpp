@@ -845,6 +845,8 @@ HashSet<AtomicStringImpl*>* inlineTagList()
         tagList.add(basefontTag.localName().impl());
         tagList.add(brTag.localName().impl());
         tagList.add(scriptTag.localName().impl());
+        tagList.add(styleTag.localName().impl());
+        tagList.add(linkTag.localName().impl());
         tagList.add(mapTag.localName().impl());
         tagList.add(qTag.localName().impl());
         tagList.add(subTag.localName().impl());
