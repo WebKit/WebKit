@@ -1,3 +1,10 @@
+2008-07-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Build fix for the Gtk+ and Qt platform.
+
+        * GNUmakefile.am: Add AccessibilityImageMapLink.cpp to the build
+        * WebCore.pro: Add AccessibilityImageMapLink.cpp to the build
+
 2008-07-14  Dan Bernstein  <mitz@apple.com>
 
         - Tiger build fix
