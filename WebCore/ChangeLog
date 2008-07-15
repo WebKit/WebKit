@@ -1,3 +1,16 @@
+2008-07-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan.
+
+        <rdar://problem/5620273> REGRESSION: Apparent caching between form
+        submits twice (on Maconomy) (18401)
+
+        Frames did not set the createdByParser flag even when they were.
+
+        * html/HTMLElementFactory.cpp:
+        (WebCore::frameConstructor):
+        (WebCore::iframeConstructor):
+
 2008-07-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

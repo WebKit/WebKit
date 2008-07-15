@@ -1,3 +1,15 @@
+2008-07-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Dan.
+
+        <rdar://problem/5620273> REGRESSION: Apparent caching between form
+        submits twice (on Maconomy) (18401)
+
+        * fast/forms/form-and-frame-interaction-retains-values-expected.txt: Added.
+        * fast/forms/form-and-frame-interaction-retains-values.html: Added.
+        * fast/forms/resources/form-and-frame-interaction-retains-values-main.html: Added.
+        * fast/forms/resources/form-and-frame-interaction-retains-values-submit.html: Added.
+
 2008-07-15  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.
