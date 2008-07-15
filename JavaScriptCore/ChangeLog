@@ -1,3 +1,16 @@
+2008-07-14  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20037
+        Bug 20037: GCC 4.2 build broken due to strict aliasing violation.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::computeHash): Add a version of computeHash that takes a char* and explicit length.
+        * kjs/ustring.h:
+        * profiler/CallIdentifier.h:
+        (WTF::): Use new version of computeHash that takes a char* and explicit length to avoid unsafe aliasing.
+
 2008-07-14  David Hyatt  <hyatt@apple.com>
 
         Fix a crashing bug in ListHashSet's -- operator.  Make sure that end() can be -- by special-casing the null

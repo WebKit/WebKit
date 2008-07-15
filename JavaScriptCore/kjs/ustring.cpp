@@ -313,7 +313,7 @@ unsigned UString::Rep::computeHash(const UChar* s, int len)
 
 // Paul Hsieh's SuperFastHash
 // http://www.azillionmonkeys.com/qed/hash.html
-unsigned UString::Rep::computeHash(const char* s)
+unsigned UString::Rep::computeHash(const char* s, int l)
 {
     // This hash is designed to work on 16-bit chunks at a time. But since the normal case
     // (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they
@@ -321,7 +321,6 @@ unsigned UString::Rep::computeHash(const char* s)
 
     uint32_t hash = PHI;
     uint32_t tmp;
-    size_t l = strlen(s);
 
     size_t rem = l & 1;
     l >>= 1;

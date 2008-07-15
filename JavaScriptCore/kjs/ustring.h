@@ -24,12 +24,13 @@
 
 #include "collector.h"
 #include <stdint.h>
+#include <string.h>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/unicode/Unicode.h>
 #include <wtf/Vector.h>
+#include <wtf/unicode/Unicode.h>
 
 namespace KJS {
 
@@ -92,7 +93,8 @@ namespace KJS {
             unsigned computedHash() const { ASSERT(_hash); return _hash; } // fast path for Identifiers
 
             static unsigned computeHash(const UChar*, int length);
-            static unsigned computeHash(const char*);
+            static unsigned computeHash(const char*, int length);
+            static unsigned computeHash(const char* s) { return computeHash(s, strlen(s)); }
 
             Rep* ref() { ++rc; return this; }
             ALWAYS_INLINE void deref() { if (--rc == 0) destroy(); }
