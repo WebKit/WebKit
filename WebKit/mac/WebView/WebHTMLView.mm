@@ -185,6 +185,7 @@ extern NSString *NSTextInputReplacementRangeAttributeName;
 @interface NSView (WebNSViewDetails)
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView;
 - (NSRect)_dirtyRect;
 - (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
 - (void)_propagateDirtyRectsToOpaqueAncestors;
@@ -1213,6 +1214,19 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 
         [self _restoreSubviews];
     }
+}
+
+// Don't let AppKit even draw subviews. We take care of that.
+- (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView
+{
+#ifdef BUILDING_ON_TIGER
+    // Because Tiger does not have viewWillDraw we need to do layout here.
+    [self _web_layoutIfNeededRecursive];
+#endif
+
+    [self _setAsideSubviews];
+    [super _recursive:recurse displayRectIgnoringOpacity:displayRect inContext:context topView:topView];
+    [self _restoreSubviews];
 }
 
 - (BOOL)_insideAnotherHTMLView

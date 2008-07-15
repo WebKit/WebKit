@@ -221,9 +221,53 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
     if (p->paintingDisabled())
         return;
     NSView *view = getOuterView();
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
-    END_BLOCK_OBJC_EXCEPTIONS;
+    NSRect rect = [view convertRect:r fromView:[view superview]];
+    NSGraphicsContext *currentContext = [NSGraphicsContext currentContext];
+    if (currentContext == [[view window] graphicsContext] || ![currentContext isDrawingToScreen]) {
+        // This is the common case of drawing into a window or printing.
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        [view displayRectIgnoringOpacity:rect];
+        END_BLOCK_OBJC_EXCEPTIONS;
+    } else {
+        // This is the case of drawing into a bitmap context other than a window backing store. It gets hit beneath
+        // -cacheDisplayInRect:toBitmapImageRep:.
+
+        // Transparent subframes are in fact implemented with scroll views that return YES from -drawsBackground (whenever the WebView
+        // itself is in drawsBackground mode). In the normal drawing code path, the scroll views are never asked to draw the background,
+        // so this is not an issue, but in this code path they are, so the following code temporarily turns background drwaing off.
+        NSView *innerView = getView();
+        NSScrollView *scrollView = 0;
+        if ([innerView conformsToProtocol:@protocol(WebCoreFrameScrollView)]) {
+            ASSERT([innerView isKindOfClass:[NSScrollView class]]);
+            NSScrollView *scrollView = static_cast<NSScrollView *>(innerView);
+            // -copiesOnScroll will return NO whenever the content view is not fully opaque.
+            if ([scrollView drawsBackground] && ![[scrollView contentView] copiesOnScroll])
+                [scrollView setDrawsBackground:NO];
+            else
+                scrollView = 0;
+        }
+
+        CGContextRef cgContext = p->platformContext();
+        ASSERT(cgContext == [currentContext graphicsPort]);
+        CGContextSaveGState(cgContext);
+
+        NSRect viewFrame = [view frame];
+        NSRect viewBounds = [view bounds];
+        // Set up the translation and (flipped) orientation of the graphics context. In normal drawing, AppKit does it as it descends down
+        // the view hierarchy.
+        CGContextTranslateCTM(cgContext, viewFrame.origin.x - viewBounds.origin.x, viewFrame.origin.y + viewFrame.size.height + viewBounds.origin.y);
+        CGContextScaleCTM(cgContext, 1, -1);
+
+        BEGIN_BLOCK_OBJC_EXCEPTIONS;
+        NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
+        [view displayRectIgnoringOpacity:rect inContext:nsContext];
+        END_BLOCK_OBJC_EXCEPTIONS;
+
+        CGContextRestoreGState(cgContext);
+
+        if (scrollView)
+            [scrollView setDrawsBackground:YES];
+    }
 }
 
 void Widget::invalidate()

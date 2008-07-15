@@ -484,35 +484,38 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 window.clipRect.left + nPort.qdPort.portx, window.clipRect.top + nPort.qdPort.porty,
                 window.clipRect.right + nPort.qdPort.portx, window.clipRect.bottom + nPort.qdPort.porty);
             
-            // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
-            // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
-            if (forUpdate) {
-                RgnHandle viewClipRegion = NewRgn();
-                
-                // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
-                // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
-                // knows about the true set of dirty rects.
-                NSView *opaqueAncestor = [self opaqueAncestor];
-                const NSRect *dirtyRects;
-                NSInteger dirtyRectCount, dirtyRectIndex;
-                [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
+            // Clip to the dirty region if drawing to a window. When drawing to another bitmap context, do not clip.
+            if ([NSGraphicsContext currentContext] == [[self currentWindow] graphicsContext]) {
+                // Clip to dirty region so plug-in does not draw over already-drawn regions of the window that are
+                // not going to be redrawn this update.  This forces plug-ins to play nice with z-index ordering.
+                if (forUpdate) {
+                    RgnHandle viewClipRegion = NewRgn();
+                    
+                    // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
+                    // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
+                    // knows about the true set of dirty rects.
+                    NSView *opaqueAncestor = [self opaqueAncestor];
+                    const NSRect *dirtyRects;
+                    NSInteger dirtyRectCount, dirtyRectIndex;
+                    [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&dirtyRectCount];
 
-                for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
-                    NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
-                    if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
-                        // Create a region for this dirty rect
-                        RgnHandle dirtyRectRegion = NewRgn();
-                        SetRectRgn(dirtyRectRegion, static_cast<short>(NSMinX(dirtyRect)), static_cast<short>(NSMinY(dirtyRect)), static_cast<short>(NSMaxX(dirtyRect)), static_cast<short>(NSMaxY(dirtyRect)));
-                        
-                        // Union this dirty rect with the rest of the dirty rects
-                        UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
-                        DisposeRgn(dirtyRectRegion);
+                    for (dirtyRectIndex = 0; dirtyRectIndex < dirtyRectCount; dirtyRectIndex++) {
+                        NSRect dirtyRect = [self convertRect:dirtyRects[dirtyRectIndex] fromView:opaqueAncestor];
+                        if (!NSEqualSizes(dirtyRect.size, NSZeroSize)) {
+                            // Create a region for this dirty rect
+                            RgnHandle dirtyRectRegion = NewRgn();
+                            SetRectRgn(dirtyRectRegion, static_cast<short>(NSMinX(dirtyRect)), static_cast<short>(NSMinY(dirtyRect)), static_cast<short>(NSMaxX(dirtyRect)), static_cast<short>(NSMaxY(dirtyRect)));
+                            
+                            // Union this dirty rect with the rest of the dirty rects
+                            UnionRgn(viewClipRegion, dirtyRectRegion, viewClipRegion);
+                            DisposeRgn(dirtyRectRegion);
+                        }
                     }
+                
+                    // Intersect the dirty region with the clip region, so that we only draw over dirty parts
+                    SectRgn(clipRegion, viewClipRegion, clipRegion);
+                    DisposeRgn(viewClipRegion);
                 }
-            
-                // Intersect the dirty region with the clip region, so that we only draw over dirty parts
-                SectRgn(clipRegion, viewClipRegion, clipRegion);
-                DisposeRgn(viewClipRegion);
             }
 
             // Switch to the port and set it up.
@@ -556,19 +559,22 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
             // Save current graphics context's state; will be restored by -restorePortState:
             CGContextSaveGState(context);
-            
-            // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
-            // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
-            // knows about the true set of dirty rects.
-            NSView *opaqueAncestor = [self opaqueAncestor];
-            const NSRect *dirtyRects;
-            NSInteger count;
-            [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&count];
-            Vector<CGRect, 16> convertedDirtyRects;
-            convertedDirtyRects.resize(count);
-            for (int i = 0; i < count; ++i)
-                reinterpret_cast<NSRect&>(convertedDirtyRects[i]) = [self convertRect:dirtyRects[i] fromView:opaqueAncestor];
-            CGContextClipToRects(context, convertedDirtyRects.data(), count);
+
+            // Clip to the dirty region if drawing to a window. When drawing to another bitmap context, do not clip.
+            if ([NSGraphicsContext currentContext] == [[self currentWindow] graphicsContext]) {
+                // Get list of dirty rects from the opaque ancestor -- WebKit does some tricks with invalidation and
+                // display to enable z-ordering for NSViews; a side-effect of this is that only the WebHTMLView
+                // knows about the true set of dirty rects.
+                NSView *opaqueAncestor = [self opaqueAncestor];
+                const NSRect *dirtyRects;
+                NSInteger count;
+                [opaqueAncestor getRectsBeingDrawn:&dirtyRects count:&count];
+                Vector<CGRect, 16> convertedDirtyRects;
+                convertedDirtyRects.resize(count);
+                for (int i = 0; i < count; ++i)
+                    reinterpret_cast<NSRect&>(convertedDirtyRects[i]) = [self convertRect:dirtyRects[i] fromView:opaqueAncestor];
+                CGContextClipToRects(context, convertedDirtyRects.data(), count);
+            }
 
             break;
         }

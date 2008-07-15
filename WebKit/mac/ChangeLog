@@ -1,3 +1,21 @@
+2008-07-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebKit part of fixing <rdar://problem/6071850> Subviews not drawn correctly when using -cacheDisplayInRect:toBitmapImageRep:
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView saveAndSetNewPortStateForUpdate:]): Changed
+        to account for the case of being drawn into a bitmap context that is not
+        a window's backing store. In that case, there are no valid "rects being
+        drawn" to clip to.
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        Added an override of this NSView method which is used in for
+        -cacheDisplayInRect:toBitmapImageRep:. Like two existing NSView drawing
+        machinery overrides, it sets subviews aside before invoking the
+        superclass implementation. On Tiger, it also updates the layout.
+
 2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

@@ -1,3 +1,17 @@
+2008-07-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - WebCore part of fixing <rdar://problem/6071850> Subviews not drawn correctly when using -cacheDisplayInRect:toBitmapImageRep:
+
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint): Changed to account for the case of drawing
+        into a bitmap context that is not a window's backing store. In that
+        case, -displayRectIgnoringOpacity:inContext: is used to redirect the
+        drawing to the correct context, after setting up the right transform
+        on it. For subframes, additional code ensures that the scroll view will
+        not paint the background behind a transparent frame.
+
 2008-07-14  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
