@@ -1,3 +1,20 @@
+2008-07-15  Adam Roben  <aroben@apple.com>
+
+        Add WebKit[Set]ShouldUseFontSmoothing functions
+
+        <rdar://6059127>
+
+        Reviewed by John Sullivan.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        Export the new functions.
+        * WebKitGraphics.cpp:
+        (WebKitSetShouldUseFontSmoothing):
+        (WebKitShouldUseFontSmoothing):
+        Call through to the relevant WebCore functions.
+        * WebKitGraphics.h:
+
 2008-07-14  Steve Falkenburg  <sfalken@apple.com>
 
         Don't include autoversion.h in WebKitDLL.cpp.

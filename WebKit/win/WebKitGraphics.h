@@ -71,6 +71,9 @@ void FontMetrics(const WebFontDescription&, int* ascent, int* descent, int* line
 unsigned CenterTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
 unsigned RightTruncateStringToWidth(LPCTSTR text, int length, const WebFontDescription&, float width, WCHAR* buffer);
 
+void WebKitSetShouldUseFontSmoothing(bool);
+bool WebKitShouldUseFontSmoothing();
+
 }
 
 #endif // !defined(WebKitGraphics_h)

@@ -33,6 +33,8 @@
 
 namespace WebCore {
 
+static bool shouldUseFontSmoothing = true;
+
 static bool isOneLeftToRightRun(const TextRun& run)
 {
     for (int i = 0; i < run.length(); i++) {
@@ -101,6 +103,16 @@ void WebCoreDrawDoubledTextAtPoint(GraphicsContext& context, const String& text,
 float WebCoreTextFloatWidth(const String& text, const Font& font)
 {
     return StringTruncator::width(text, font, false);
+}
+
+void WebCoreSetShouldUseFontSmoothing(bool smooth)
+{
+    shouldUseFontSmoothing = smooth;
+}
+
+bool WebCoreShouldUseFontSmoothing()
+{
+    return shouldUseFontSmoothing;
 }
 
 } // namespace WebCore

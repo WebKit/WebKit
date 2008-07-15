@@ -35,4 +35,7 @@ namespace WebCore {
     void WebCoreDrawDoubledTextAtPoint(GraphicsContext&, const String&, const IntPoint&, const Font&, const Color& topColor, const Color& bottomColor, int underlinedIndex = -1);
     float WebCoreTextFloatWidth(const String&, const Font&);
 
+    void WebCoreSetShouldUseFontSmoothing(bool);
+    bool WebCoreShouldUseFontSmoothing();
+
 } // namespace WebCore

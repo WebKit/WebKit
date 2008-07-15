@@ -33,6 +33,7 @@
 #include "IntRect.h"
 #include "SimpleFontData.h"
 #include "UniscribeController.h"
+#include "WebCoreTextRenderer.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #include <wtf/MathExtras.h>
@@ -294,7 +295,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
 
     CGContextRef cgContext = graphicsContext->platformContext();
 
-    uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext, true);
+    uint32_t oldFontSmoothingStyle = wkSetFontSmoothingStyle(cgContext, WebCoreShouldUseFontSmoothing());
 
     const FontPlatformData& platformData = font->platformData();
 

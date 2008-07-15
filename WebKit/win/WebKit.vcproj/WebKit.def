@@ -98,6 +98,8 @@ EXPORTS
         TextFloatWidth
         CenterTruncateStringToWidth
         RightTruncateStringToWidth
+        WebKitSetShouldUseFontSmoothing
+        WebKitShouldUseFontSmoothing
         ?fastMalloc@WTF@@YAPAXI@Z
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
