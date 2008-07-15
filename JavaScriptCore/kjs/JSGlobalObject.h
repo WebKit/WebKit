@@ -116,7 +116,7 @@ namespace KJS {
             NativeErrorPrototype* URIErrorPrototype;
             
             SymbolTable symbolTable;
-            unsigned pageGroupIdentifier;
+            unsigned profileGroup;
 
             RefPtr<JSGlobalData> globalData;
 
@@ -191,8 +191,8 @@ namespace KJS {
         NativeErrorPrototype* typeErrorPrototype() const { return d()->typeErrorPrototype; }
         NativeErrorPrototype* URIErrorPrototype() const { return d()->URIErrorPrototype; }
 
-        void setPageGroupIdentifier(unsigned value) { d()->pageGroupIdentifier = value; }
-        unsigned pageGroupIdentifier() const { return d()->pageGroupIdentifier; }
+        void setProfileGroup(unsigned value) { d()->profileGroup = value; }
+        unsigned profileGroup() const { return d()->profileGroup; }
 
         void setTimeoutTime(unsigned timeoutTime);
         void startTimeoutCheck();

@@ -1,3 +1,18 @@
+2008-07-15  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        Rename pageGroupIdentifier to profileGroup to keep mention of a
+        pageGroup out of JavaScriptCore.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::allowsUnwrappedAccessFrom):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::clear):
+        (WebCore::ScriptController::initScript):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::restore):
+
 2008-07-15  Adam Roben  <aroben@apple.com>
 
         WebCore part of adding WebKit[Set]ShouldUseFontSmoothing functions

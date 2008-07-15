@@ -119,7 +119,7 @@ void ScriptController::clear()
     m_windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(m_frame->domWindow(), m_windowShell));
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
-        m_windowShell->window()->setPageGroupIdentifier(page->group().identifier());
+        m_windowShell->window()->setProfileGroup(page->group().identifier());
     }
 
     // There is likely to be a lot of garbage now.
@@ -163,7 +163,7 @@ void ScriptController::initScript()
 
     if (Page* page = m_frame->page()) {
         attachDebugger(page->debugger());
-        m_windowShell->window()->setPageGroupIdentifier(page->group().identifier());
+        m_windowShell->window()->setProfileGroup(page->group().identifier());
     }
 
     m_frame->loader()->dispatchWindowObjectAvailable();

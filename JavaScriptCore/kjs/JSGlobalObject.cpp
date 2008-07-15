@@ -121,7 +121,7 @@ void JSGlobalObject::init(JSObject* thisValue)
 
     d()->globalExec.set(new ExecState(this, thisValue, d()->globalScopeChain.node()));
 
-    d()->pageGroupIdentifier = 0;
+    d()->profileGroup = 0;
 
     reset(prototype());
 }
