@@ -1,3 +1,16 @@
+2008-07-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        http://trolltech.com/developer/task-tracker/index_html?method=entry&id=216179
+        Fix potential crash (on Qt for Windows port) when performing JavaScript date
+        conversion.
+
+        * kjs/DateMath.cpp:
+        (KJS::getLocalTime): For the Qt port, prefer to use Windows code, i.e.
+        localtime_s() instead of localtime() since the latter might crash (on Windows)
+        given a non-sensible, e.g. NaN, argument.
+
 2008-07-16  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Anders and Geoff.
