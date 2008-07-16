@@ -607,6 +607,7 @@ This file contains the list of files needed to build WebCore.
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_PAGE">
+        page/AccessibilityImageMapLink.cpp
         page/AccessibilityObject.cpp
         page/AccessibilityListBox.cpp
         page/AccessibilityListBoxOption.cpp
