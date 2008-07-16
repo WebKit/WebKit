@@ -456,16 +456,6 @@ UString::UString(const UChar* c, int length)
         m_rep = Rep::createCopying(c, length);
 }
 
-UString::UString(UChar* c, int length, bool copy)
-{
-    if (length == 0)
-        m_rep = &Rep::empty;
-    else if (copy)
-        m_rep = Rep::createCopying(c, length);
-    else
-        m_rep = Rep::create(c, length);
-}
-
 UString::UString(const Vector<UChar>& buffer)
 {
     if (!buffer.size())
@@ -528,6 +518,20 @@ UString::UString(const UString& a, const UString& b)
             m_rep->capacity = newCapacity;
         }
     }
+}
+
+UString UString::adopt(UChar* c, int length)
+{
+    if (length == 0)
+        return UString("");
+   return UString(Rep::create(c, length));
+}
+
+UString UString::adopt(Vector<UChar>& buffer)
+{
+    if (buffer.isEmpty())
+        return UString("");
+   return UString(Rep::create(buffer.releaseBuffer(), buffer.size()));
 }
 
 const UString& UString::null()

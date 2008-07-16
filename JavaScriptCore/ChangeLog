@@ -1,3 +1,25 @@
+2008-07-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Steve Falkenburg.
+
+        Replace adopting UString constructor in favor of explicit
+        static adopt method.
+
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        * kjs/StringConstructor.cpp:
+        (KJS::stringFromCharCode):
+        * kjs/StringPrototype.cpp:
+        (KJS::stringProtoFuncToLowerCase):
+        (KJS::stringProtoFuncToUpperCase):
+        (KJS::stringProtoFuncToLocaleLowerCase):
+        (KJS::stringProtoFuncToLocaleUpperCase):
+        * kjs/ustring.cpp:
+        (KJS::UString::adopt):
+        * kjs/ustring.h:
+        (KJS::UString::UString):
+        (KJS::UString::~UString):
+
 2008-07-16  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

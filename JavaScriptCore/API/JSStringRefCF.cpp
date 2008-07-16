@@ -44,7 +44,7 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
         UniChar* buffer = static_cast<UniChar*>(fastMalloc(sizeof(UniChar) * length));
         CFStringGetCharacters(string, CFRangeMake(0, length), buffer);
         COMPILE_ASSERT(sizeof(UniChar) == sizeof(UChar), unichar_and_uchar_must_be_same_size);
-        rep = UString(reinterpret_cast<UChar*>(buffer), length, false).rep()->ref();
+        rep = UString::adopt(reinterpret_cast<UChar*>(buffer), length).rep()->ref();
     }
     return toRef(rep);
 }
