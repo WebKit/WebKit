@@ -1,5 +1,17 @@
 2008-07-16  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Anders and Geoff.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20023
+        Failed assertion in PropertyNameArray.cpp
+
+        This is already tested by testapi.
+
+        * API/JSObjectRef.cpp: (JSPropertyNameAccumulatorAddName): Add the string to identifier
+        table to appeaase PropertyNameArray.
+
+2008-07-16  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoff.
 
         Dereference identifiers when deleting a hash table (fixes leaks with private JSGlobalData
