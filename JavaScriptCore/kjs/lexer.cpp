@@ -85,7 +85,7 @@ Lexer::Lexer(JSGlobalData* globalData)
 
 Lexer::~Lexer()
 {
-    delete [] m_mainTable.table;
+    m_mainTable.deleteTable();
 }
 
 void Lexer::setCode(int startingLineNumber, PassRefPtr<SourceProvider> source)

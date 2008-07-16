@@ -95,13 +95,13 @@ JSGlobalData::~JSGlobalData()
     machine = 0;
 
 #if USE(MULTIPLE_THREADS)
-    delete[] arrayTable->table;
-    delete[] dateTable->table;
-    delete[] mathTable->table;
-    delete[] numberTable->table;
-    delete[] regExpTable->table;
-    delete[] regExpConstructorTable->table;
-    delete[] stringTable->table;
+    arrayTable->deleteTable();
+    dateTable->deleteTable();
+    mathTable->deleteTable();
+    numberTable->deleteTable();
+    regExpTable->deleteTable();
+    regExpConstructorTable->deleteTable();
+    stringTable->deleteTable();
     delete arrayTable;
     delete dateTable;
     delete mathTable;

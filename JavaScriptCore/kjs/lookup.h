@@ -68,6 +68,8 @@ namespace KJS {
                 createTable(&exec->globalData());
         }
 
+        void deleteTable() const;
+
         // Find an entry in the table, and return the entry.
         ALWAYS_INLINE const HashEntry* entry(JSGlobalData* globalData, const Identifier& identifier) const
         {

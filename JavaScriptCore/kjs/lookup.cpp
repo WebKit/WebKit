@@ -42,6 +42,18 @@ void HashTable::createTable(JSGlobalData* globalData) const
     table = entries;
 }
 
+void HashTable::deleteTable() const
+{
+    if (table) {
+        for (int i = 0; i != hashSizeMask + 1; ++i) {
+            if (UString::Rep* key = table[i].key)
+                key->deref();
+        }
+        delete[] table;
+        table = 0;
+    }
+}
+
 JSValue* staticFunctionGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
     // Look for cached value in dynamic map of properties (in JSObject)

@@ -2,6 +2,20 @@
 
         Reviewed by Geoff.
 
+        Dereference identifiers when deleting a hash table (fixes leaks with private JSGlobalData
+        objects).
+
+        * kjs/JSGlobalData.cpp: (KJS::JSGlobalData::~JSGlobalData):
+        * kjs/lookup.cpp: (KJS::HashTable::deleteTable):
+        * kjs/lookup.h:
+        * kjs/lexer.cpp: (KJS::Lexer::~Lexer)
+        HashTable cannot have a destructor, because check-for-global-initializers complains about
+        having a global constructor then.
+
+2008-07-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
         Check pthread_key_create return value.
 
         This check was helpful when debugging a crash in run-webkit-tests --threaded that happened
