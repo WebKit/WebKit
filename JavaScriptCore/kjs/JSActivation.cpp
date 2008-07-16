@@ -163,7 +163,7 @@ JSObject* JSActivation::createArgumentsObject(ExecState* exec)
     int argc;
     exec->machine()->getArgumentsData(callFrame, function, argv, argc);
 
-    ArgList args(reinterpret_cast<JSValue**>(argv), argc);
+    ArgList args(argv, argc);
     return new (exec) Arguments(exec, function, args, this);
 }
 

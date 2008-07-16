@@ -44,9 +44,8 @@ IndexToNameMap::IndexToNameMap(JSFunction* func, const ArgList& args)
     : m_size(args.size())
     , m_map(new Identifier[args.size()])
 {
-    unsigned i = 0;
-    ArgList::const_iterator end = args.end();
-    for (ArgList::const_iterator it = args.begin(); it != end; ++i, ++it)
+    size_t size = args.size();
+    for (size_t i = 0; i < size; ++i)
         m_map[i] = func->getParameterName(i); // null if there is no corresponding parameter
 }
 

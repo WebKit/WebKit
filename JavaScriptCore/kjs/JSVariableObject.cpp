@@ -71,11 +71,9 @@ void JSVariableObject::mark()
         return;
     
     Register* end = d->registerArray.get() + d->registerArraySize;
-    for (Register* it = d->registerArray.get(); it != end; ++it) {
-        JSValue* v = (*it).u.jsValue;
-        if (!v->marked())
-            v->mark();
-    }
+    for (Register* it = d->registerArray.get(); it != end; ++it)
+        if (!(*it).marked())
+            (*it).mark();
 }
 
 bool JSVariableObject::isVariableObject() const

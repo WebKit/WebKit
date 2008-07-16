@@ -1,3 +1,48 @@
+2008-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        First step toward putting doubles in registers: Turned Register into a
+        proper abstraction layer. It is no longer possible to cast a Register
+        to a JSValue*, or a Register& to a JSValue*&, or to access the union
+        inside a Register directly.
+        
+        SunSpider reports no change.
+        
+        In support of this change, I had to make the following mechanical changes
+        in a lot of places:
+        
+        1. Clients now use explicit accessors to read data out of Registers, and
+        implicit copy constructors to write data into registers.
+        
+        So, assignment that used to look like
+        
+            x.u.jsValue = y;
+        
+        now looks like
+        
+            x = y;
+            
+        And access that used to look like
+        
+            x = y.u.jsValue;
+        
+        now looks like
+        
+            x = y.jsValue();
+
+        2. I made generic flow control specific in opcodes that made their flow
+        control generic by treating a Register& as a JSValue*&. This had the
+        added benefit of removing some exception checking branches from immediate
+        number code.
+
+        3. I beefed up PropertySlot to support storing a Register* in a property
+        slot. For now, only JSVariableObject's symbolTableGet and symbolTablePut
+        use this functionality, but I expect more clients to use it in the future.
+        
+        4. I changed ArgList to be a buffer of Registers, not JSValue*'s, and I
+        changed ArgList iterator clients to iterate Registers, not JSValue*'s.
+
 2008-07-16  Ada Chan  <adachan@apple.com>
 
         Fixed build.

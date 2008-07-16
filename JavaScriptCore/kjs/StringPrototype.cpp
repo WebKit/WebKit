@@ -350,7 +350,7 @@ JSValue* stringProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, c
 
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        s += (*it)->toString(exec);
+        s += (*it).toString(exec);
     return jsString(exec, s);
 }
 

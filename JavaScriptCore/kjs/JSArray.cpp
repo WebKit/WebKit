@@ -103,7 +103,7 @@ JSArray::JSArray(JSObject* prototype, const ArgList& list)
     size_t i = 0;
     ArgList::const_iterator end = list.end();
     for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        storage->m_vector[i] = *it;
+        storage->m_vector[i] = (*it).jsValue();
 
     m_storage = storage;
 

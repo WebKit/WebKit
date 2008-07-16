@@ -214,7 +214,7 @@ static bool NEVER_INLINE resolve(ExecState* exec, Instruction* vPC, Register* r,
             exceptionValue = exec->exception();
             if (exceptionValue)
                 return false;
-            r[dst].u.jsValue = result;
+            r[dst] = result;
             return true;
         }
     } while (++iter != end);
@@ -244,7 +244,7 @@ static bool NEVER_INLINE resolve_skip(ExecState* exec, Instruction* vPC, Registe
             exceptionValue = exec->exception();
             if (exceptionValue)
                 return false;
-            r[dst].u.jsValue = result;
+            r[dst] = result;
             return true;
         }
     } while (++iter != end);
@@ -269,7 +269,7 @@ static void NEVER_INLINE resolveBase(ExecState* exec, Instruction* vPC, Register
     while (true) {
         base = *iter;
         if (next == end || base->getPropertySlot(exec, ident, slot)) {
-            r[dst].u.jsValue = base;
+            r[dst] = base;
             return;
         }
         iter = next;
@@ -300,8 +300,8 @@ static bool NEVER_INLINE resolveBaseAndProperty(ExecState* exec, Instruction* vP
             exceptionValue = exec->exception();
             if (exceptionValue)
                 return false;
-            r[propDst].u.jsValue = result;
-            r[baseDst].u.jsValue = base;
+            r[propDst] = result;
+            r[baseDst] = base;
             return true;
         }
         ++iter;
@@ -343,8 +343,8 @@ static bool NEVER_INLINE resolveBaseAndFunc(ExecState* exec, Instruction* vPC, R
             if (exceptionValue)
                 return false;
 
-            r[baseDst].u.jsValue = thisObj;
-            r[funcDst].u.jsValue = result;
+            r[baseDst] = thisObj;
+            r[funcDst] = result;
             return true;
         }
         ++iter;
@@ -354,18 +354,18 @@ static bool NEVER_INLINE resolveBaseAndFunc(ExecState* exec, Instruction* vPC, R
     return false;
 }
 
-ALWAYS_INLINE void initializeCallFrame(Register* callFrame, CodeBlock* codeBlock, Instruction* vPC, ScopeChainNode* scopeChain, Register* r, int returnValueRegister, int argv, int argc, int calledAsConstructor, JSValue* function)
+ALWAYS_INLINE void Machine::initializeCallFrame(Register* callFrame, CodeBlock* codeBlock, Instruction* vPC, ScopeChainNode* scopeChain, Register* r, int returnValueRegister, int argv, int argc, int calledAsConstructor, JSValue* function)
 {
-    callFrame[RegisterFile::CallerCodeBlock].u.codeBlock = codeBlock;
-    callFrame[RegisterFile::ReturnVPC].u.vPC = vPC + 1;
-    callFrame[RegisterFile::CallerScopeChain].u.scopeChain = scopeChain;
-    callFrame[RegisterFile::CallerRegisters].u.r = r;
-    callFrame[RegisterFile::ReturnValueRegister].u.i = returnValueRegister;
-    callFrame[RegisterFile::ArgumentStartRegister].u.i = argv; // original argument vector (for the sake of the "arguments" object)
-    callFrame[RegisterFile::ArgumentCount].u.i = argc; // original argument count (for the sake of the "arguments" object)
-    callFrame[RegisterFile::CalledAsConstructor].u.i = calledAsConstructor;
-    callFrame[RegisterFile::Callee].u.jsValue = function;
-    callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue = 0;
+    callFrame[RegisterFile::CallerCodeBlock] = codeBlock;
+    callFrame[RegisterFile::ReturnVPC] = vPC + 1;
+    callFrame[RegisterFile::CallerScopeChain] = scopeChain;
+    callFrame[RegisterFile::CallerRegisters] = r;
+    callFrame[RegisterFile::ReturnValueRegister] = returnValueRegister;
+    callFrame[RegisterFile::ArgumentStartRegister] = argv; // original argument vector (for the sake of the "arguments" object)
+    callFrame[RegisterFile::ArgumentCount] = argc; // original argument count (for the sake of the "arguments" object)
+    callFrame[RegisterFile::CalledAsConstructor] = calledAsConstructor;
+    callFrame[RegisterFile::Callee] = function;
+    callFrame[RegisterFile::OptionalCalleeActivation] = 0;
 }
 
 ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* registerBase, Register* r, int argv, int argc, JSValue*& exceptionValue)
@@ -389,7 +389,7 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
         int omittedArgCount = newCodeBlock->numParameters - argc;
         Register* endOfParams = r - newCodeBlock->numVars;
         for (Register* it = endOfParams - omittedArgCount; it != endOfParams; ++it)
-            (*it).u.jsValue = jsUndefined();
+            (*it) = jsUndefined();
     } else { // too many arguments -- copy return info and expected arguments, leaving the extra arguments behind
         int shift = argc + RegisterFile::CallFrameHeaderSize;
         registerOffset += shift;
@@ -409,7 +409,7 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
     
     // initialize local variable slots
     for (Register* it = r - newCodeBlock->numVars; it != r; ++it)
-        (*it).u.jsValue = jsUndefined();
+        (*it) = jsUndefined();
 
     return r;
 }
@@ -418,7 +418,7 @@ ALWAYS_INLINE ScopeChainNode* scopeChainForCall(ExecState* exec, FunctionBodyNod
 {
     if (newCodeBlock->needsFullScopeChain) {
         JSActivation* activation = new (exec) JSActivation(functionBodyNode, r);
-        r[RegisterFile::OptionalCalleeActivation - RegisterFile::CallFrameHeaderSize - newCodeBlock->numLocals].u.jsValue = activation;
+        r[RegisterFile::OptionalCalleeActivation - RegisterFile::CallFrameHeaderSize - newCodeBlock->numLocals] = activation;
 
         return callDataScopeChain->copy()->push(activation);
     }
@@ -434,12 +434,12 @@ static NEVER_INLINE bool isNotObject(ExecState* exec, bool forInstanceOf, CodeBl
     return true;
 }
 
-NEVER_INLINE JSValue* callEval(ExecState* exec, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
+NEVER_INLINE JSValue* Machine::callEval(ExecState* exec, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile* registerFile, Register* r, int argv, int argc, JSValue*& exceptionValue)
 {
     if (argc < 2)
         return jsUndefined();
 
-    JSValue* program = r[argv + 1].u.jsValue;
+    JSValue* program = r[argv + 1].jsValue();
 
     if (!program->isString())
         return program;
@@ -514,30 +514,30 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
         it = registerFile->lastGlobal();
         end = it + registerFile->numGlobals();
         while (it != end) {
-            printf("[global var]               | %10p | %10p \n", it, (*it).u.jsValue);
+            printf("[global var]               | %10p | %10p \n", it, (*it).jsValue());
             ++it;
         }
         printf("----------------------------------------------------\n");
     }
     
     it = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-    printf("[CallerCodeBlock]          | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[ReturnVPC]                | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[CallerScopeChain]         | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[CallerRegisterOffset]     | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[ReturnValueRegister]      | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[ArgumentStartRegister]    | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[ArgumentCount]            | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[CalledAsConstructor]      | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[Callee]                   | %10p | %10p \n", it, (*it).u.jsValue); ++it;
-    printf("[OptionalCalleeActivation] | %10p | %10p \n", it, (*it).u.jsValue); ++it;
+    printf("[CallerCodeBlock]          | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[ReturnVPC]                | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[CallerScopeChain]         | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[CallerRegisterOffset]     | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[ReturnValueRegister]      | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[ArgumentStartRegister]    | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[ArgumentCount]            | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[CalledAsConstructor]      | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[Callee]                   | %10p | %10p \n", it, (*it).jsValue()); ++it;
+    printf("[OptionalCalleeActivation] | %10p | %10p \n", it, (*it).jsValue()); ++it;
     printf("----------------------------------------------------\n");
 
-    printf("[this]                     | %10p | %10p \n", it, (*it).u.jsValue); ++it;
+    printf("[this]                     | %10p | %10p \n", it, (*it).jsValue()); ++it;
     end = it + max(codeBlock->numParameters - 1, 0); // - 1 to skip "this"
     if (it != end) {
         do {
-            printf("[param]                    | %10p | %10p \n", it, (*it).u.jsValue);
+            printf("[param]                    | %10p | %10p \n", it, (*it).jsValue());
             ++it;
         } while (it != end);
     }
@@ -547,7 +547,7 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
         end = it + codeBlock->numVars;
         if (it != end) {
             do {
-                printf("[var]                      | %10p | %10p \n", it, (*it).u.jsValue);
+                printf("[var]                      | %10p | %10p \n", it, (*it).jsValue());
                 ++it;
             } while (it != end);
         printf("----------------------------------------------------\n");
@@ -557,7 +557,7 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
     end = it + codeBlock->numTemporaries;
     if (it != end) {
         do {
-            printf("[temp]                     | %10p | %10p \n", it, (*it).u.jsValue);
+            printf("[temp]                     | %10p | %10p \n", it, (*it).jsValue());
             ++it;
         } while (it != end);
     }
@@ -581,15 +581,15 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
 
     if (Debugger* debugger = exec->dynamicGlobalObject()->debugger()) {
         DebuggerCallFrame debuggerCallFrame(exec->dynamicGlobalObject(), codeBlock, scopeChain, r, exceptionValue);
-        if (callFrame[RegisterFile::Callee].u.jsObject)
+        if (callFrame[RegisterFile::Callee].jsValue())
             debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
         else
             debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->lastLine());
     }
 
     if (Profiler* profiler = *Profiler::enabledProfilerReference()) {
-        if (callFrame[RegisterFile::Callee].u.jsObject)
-            profiler->didExecute(exec, callFrame[RegisterFile::Callee].u.jsObject);
+        if (callFrame[RegisterFile::Callee].jsValue())
+            profiler->didExecute(exec, static_cast<JSObject*>(callFrame[RegisterFile::Callee].jsValue()));
         else
             profiler->didExecute(exec, codeBlock->ownerNode->sourceURL(), codeBlock->ownerNode->lineNo());
     }
@@ -598,20 +598,20 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
         scopeChain->deref();
 
     // If this call frame created an activation, tear it off.
-    if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue)) {
+    if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue())) {
         ASSERT(activation->isActivationObject());
         activation->copyRegisters();
     }
     
-    codeBlock = callFrame[RegisterFile::CallerCodeBlock].u.codeBlock;
+    codeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
     if (!codeBlock)
         return false;
 
     k = codeBlock->jsValues.data();
-    scopeChain = callFrame[RegisterFile::CallerScopeChain].u.scopeChain;
-    r = callFrame[RegisterFile::CallerRegisters].u.r;
+    scopeChain = callFrame[RegisterFile::CallerScopeChain].scopeChain();
+    r = callFrame[RegisterFile::CallerRegisters].r();
     exec->m_callFrame = r - oldCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-    vPC = callFrame[RegisterFile::ReturnVPC].u.vPC;
+    vPC = callFrame[RegisterFile::ReturnVPC].vPC();
 
     return true;
 }
@@ -688,7 +688,7 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     initializeCallFrame(callFrame, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     Register* r = callFrame + RegisterFile::CallFrameHeaderSize + codeBlock->numVars;
-    r[codeBlock->thisRegister].u.jsValue = thisObj;
+    r[codeBlock->thisRegister] = thisObj;
 
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
@@ -736,11 +736,11 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
 
     // put args in place, including "this"
     Register* dst = callFrame + RegisterFile::CallFrameHeaderSize;
-    (*dst).u.jsValue = thisObj;
+    (*dst) = thisObj;
 
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        (*++dst).u.jsValue = *it;
+        (*++dst) = *it;
 
     // a 0 codeBlock indicates a built-in caller
     initializeCallFrame(callFrame, 0, 0, 0, callFrame, 0, argv, argc, 0, function);
@@ -815,7 +815,7 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     initializeCallFrame(callFrame, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
     Register* r = callFrame + RegisterFile::CallFrameHeaderSize + codeBlock->numVars;
-    r[codeBlock->thisRegister].u.jsValue = thisObj;
+    r[codeBlock->thisRegister] = thisObj;
 
     if (codeBlock->needsFullScopeChain)
         scopeChain = scopeChain->copy();
@@ -1026,7 +1026,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        r[dst].u.jsValue = k[src];
+        r[dst] = k[src];
 
         ++vPC;
         NEXT_OPCODE;
@@ -1038,7 +1038,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            constructor, and puts the result in register dst.
         */
         int dst = (++vPC)->u.operand;
-        r[dst].u.jsValue = constructEmptyObject(exec);
+        r[dst] = constructEmptyObject(exec);
 
         ++vPC;
         NEXT_OPCODE;
@@ -1054,8 +1054,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int firstArg = (++vPC)->u.operand;
         int argCount = (++vPC)->u.operand;
-        ArgList args(reinterpret_cast<JSValue**>(r) + firstArg, argCount);
-        r[dst].u.jsValue = constructArray(exec, args);
+        ArgList args(r + firstArg, argCount);
+        r[dst] = constructArray(exec, args);
 
         ++vPC;
         NEXT_OPCODE;
@@ -1069,7 +1069,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int regExp = (++vPC)->u.operand;
-        r[dst].u.jsValue = new (exec) RegExpObject(scopeChain->globalObject()->regExpPrototype(), codeBlock->regexps[regExp]);
+        r[dst] = new (exec) RegExpObject(scopeChain->globalObject()->regExpPrototype(), codeBlock->regexps[regExp]);
 
         ++vPC;
         NEXT_OPCODE;
@@ -1093,17 +1093,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            as with the ECMAScript '==' operator, and puts the result
            as a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            result = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
+            r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
         else {
-            result = jsBoolean(equal(exec, src1, src2));
+            JSValue* result = jsBoolean(equal(exec, src1, src2));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1115,17 +1114,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            equal, as with the ECMAScript '!=' operator, and puts the
            result as a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            result = jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
+            r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
         else {
-            result = jsBoolean(!equal(exec, src1, src2));
+            JSValue* result = jsBoolean(!equal(exec, src1, src2));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1137,13 +1135,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            equal, as with the ECMAScript '===' operator, and puts the
            result as a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            dst = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
+            r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
         else
-            dst = jsBoolean(strictEqual(src1, src2));
+            r[dst] = jsBoolean(strictEqual(src1, src2));
 
         ++vPC;
         NEXT_OPCODE;
@@ -1155,13 +1153,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            strictly equal, as with the ECMAScript '!==' operator, and
            puts the result as a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            dst = jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
+            r[dst] = jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
         else
-            dst = jsBoolean(!strictEqual(src1, src2));
+            r[dst] = jsBoolean(!strictEqual(src1, src2));
 
         ++vPC;
         NEXT_OPCODE;
@@ -1173,12 +1171,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            with the ECMAScript '<' operator, and puts the result as
            a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         JSValue* result = jsBoolean(jsLess(exec, src1, src2));
         VM_CHECK_EXCEPTION();
-        dst = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1190,12 +1188,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            register src2, as with the ECMAScript '<=' operator, and
            puts the result as a boolean in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         JSValue* result = jsBoolean(jsLessEq(exec, src1, src2));
         VM_CHECK_EXCEPTION();
-        dst = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1207,14 +1205,14 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            back in register srcDst.
         */
         int srcDst = (++vPC)->u.operand;
-        JSValue* v = r[srcDst].u.jsValue;
-        JSValue* result;
+        JSValue* v = r[srcDst].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(v))
-            result = JSImmediate::incImmediateNumber(v);
-        else
-            result = jsNumber(exec, v->toNumber(exec) + 1);
-        VM_CHECK_EXCEPTION();
-        r[srcDst].u.jsValue = result;
+            r[srcDst] = JSImmediate::incImmediateNumber(v);
+        else {
+            JSValue* result = jsNumber(exec, v->toNumber(exec) + 1);
+            VM_CHECK_EXCEPTION();
+            r[srcDst] = result;
+        }
 
         ++vPC;
         NEXT_OPCODE;
@@ -1226,14 +1224,14 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            back in register srcDst.
         */
         int srcDst = (++vPC)->u.operand;
-        JSValue* v = r[srcDst].u.jsValue;
-        JSValue* result;
+        JSValue* v = r[srcDst].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(v))
-            result = JSImmediate::decImmediateNumber(v);
-        else
-            result = jsNumber(exec, v->toNumber(exec) - 1);
-        VM_CHECK_EXCEPTION();
-        r[srcDst].u.jsValue = result;
+            r[srcDst] = JSImmediate::decImmediateNumber(v);
+        else {
+            JSValue* result = jsNumber(exec, v->toNumber(exec) - 1);
+            VM_CHECK_EXCEPTION();
+            r[srcDst] = result;
+        }
 
         ++vPC;
         NEXT_OPCODE;
@@ -1247,20 +1245,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
-        JSValue* v = r[srcDst].u.jsValue;
-        JSValue* result;
-        JSValue* number;
+        JSValue* v = r[srcDst].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(v)) {
-            number = v;
-            result = JSImmediate::incImmediateNumber(v);
+            r[dst] = v;
+            r[srcDst] = JSImmediate::incImmediateNumber(v);
         } else {
-            number = r[srcDst].u.jsValue->toJSNumber(exec);
-            result = jsNumber(exec, number->uncheckedGetNumber() + 1);
+            JSValue* number = r[srcDst].jsValue()->toJSNumber(exec);
+            VM_CHECK_EXCEPTION();
+            r[dst] = number;
+            r[srcDst] = jsNumber(exec, number->uncheckedGetNumber() + 1);
         }
-        VM_CHECK_EXCEPTION();
-
-        r[dst].u.jsValue = number;
-        r[srcDst].u.jsValue = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1274,20 +1268,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int srcDst = (++vPC)->u.operand;
-        JSValue* v = r[srcDst].u.jsValue;
-        JSValue* result;
-        JSValue* number;
+        JSValue* v = r[srcDst].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(v)) {
-            number = v;
-            result = JSImmediate::decImmediateNumber(v);
+            r[dst] = v;
+            r[srcDst] = JSImmediate::decImmediateNumber(v);
         } else {
-            number = r[srcDst].u.jsValue->toJSNumber(exec);
-            result = jsNumber(exec, number->uncheckedGetNumber() - 1);
+            JSValue* number = r[srcDst].jsValue()->toJSNumber(exec);
+            VM_CHECK_EXCEPTION();
+            r[dst] = number;
+            r[srcDst] = jsNumber(exec, number->uncheckedGetNumber() - 1);
         }
-        VM_CHECK_EXCEPTION();
-
-        r[dst].u.jsValue = number;
-        r[srcDst].u.jsValue = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1300,10 +1290,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        JSValue* result = r[src].u.jsValue->toJSNumber(exec);
+        JSValue* result = r[src].jsValue()->toJSNumber(exec);
         VM_CHECK_EXCEPTION();
 
-        r[dst].u.jsValue = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1316,9 +1306,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        JSValue* result = jsNumber(exec, -r[src].u.jsValue->toNumber(exec));
+        JSValue* result = jsNumber(exec, -r[src].jsValue()->toNumber(exec));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1330,17 +1320,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            in register dst. (JS add may be string concatenation or
            numeric add, depending on the types of the operands.)
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(src1) && JSImmediate::canDoFastAdditiveOperations(src2))
-            result = JSImmediate::addImmediateNumbers(src1, src2);
+            r[dst] = JSImmediate::addImmediateNumbers(src1, src2);
         else {
-            result = jsAdd(exec, src1, src2);
+            JSValue* result = jsAdd(exec, src1, src2);
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1350,12 +1339,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            Multiplies register src1 and register src2 (converted to
            numbers), and puts the product in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         JSValue* result = jsNumber(exec, src1->toNumber(exec) * src2->toNumber(exec));
         VM_CHECK_EXCEPTION();
-        dst = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1370,9 +1359,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int dividend = (++vPC)->u.operand;
         int divisor = (++vPC)->u.operand;
-        JSValue* result = jsNumber(exec, r[dividend].u.jsValue->toNumber(exec) / r[divisor].u.jsValue->toNumber(exec));
+        JSValue* result = jsNumber(exec, r[dividend].jsValue()->toNumber(exec) / r[divisor].jsValue()->toNumber(exec));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1386,10 +1375,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int dividend = (++vPC)->u.operand;
         int divisor = (++vPC)->u.operand;
-        double d = r[dividend].u.jsValue->toNumber(exec);
-        JSValue* result = jsNumber(exec, fmod(d, r[divisor].u.jsValue->toNumber(exec)));
+        double d = r[dividend].jsValue()->toNumber(exec);
+        JSValue* result = jsNumber(exec, fmod(d, r[divisor].jsValue()->toNumber(exec)));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1400,17 +1389,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            src1 (converted to number), and puts the difference in
            register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::canDoFastAdditiveOperations(src1) && JSImmediate::canDoFastAdditiveOperations(src2))
-            result = JSImmediate::subImmediateNumbers(src1, src2);
+            r[dst] = JSImmediate::subImmediateNumbers(src1, src2);
         else {
-            result = jsNumber(exec, src1->toNumber(exec) - src2->toNumber(exec));
+            JSValue* result = jsNumber(exec, src1->toNumber(exec) - src2->toNumber(exec));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1421,17 +1409,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            register shift (converted to uint32), and puts the result
            in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* val = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* shift = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* val = r[(++vPC)->u.operand].jsValue();
+        JSValue* shift = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(val, shift))
-            result = jsNumber(exec, JSImmediate::getTruncatedInt32(val) << (JSImmediate::toTruncatedUInt32(shift) & 0x1f));
+            r[dst] = jsNumber(exec, JSImmediate::getTruncatedInt32(val) << (JSImmediate::toTruncatedUInt32(shift) & 0x1f));
         else {
-            result = jsNumber(exec, (val->toInt32(exec)) << (shift->toUInt32(exec) & 0x1f));
+            JSValue* result = jsNumber(exec, (val->toInt32(exec)) << (shift->toUInt32(exec) & 0x1f));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1443,17 +1430,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            to int32) by register shift (converted to
            uint32), and puts the result in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* val = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* shift = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* val = r[(++vPC)->u.operand].jsValue();
+        JSValue* shift = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(val, shift))
-            result = JSImmediate::rightShiftImmediateNumbers(val, shift);
+            r[dst] = JSImmediate::rightShiftImmediateNumbers(val, shift);
         else {
-            result = jsNumber(exec, (val->toInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
+            JSValue* result = jsNumber(exec, (val->toInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1465,17 +1451,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            to uint32) by register shift (converted to
            uint32), and puts the result in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* val = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* shift = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* val = r[(++vPC)->u.operand].jsValue();
+        JSValue* shift = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
-            result = JSImmediate::rightShiftImmediateNumbers(val, shift);
+            r[dst] = JSImmediate::rightShiftImmediateNumbers(val, shift);
         else {
-            result = jsNumber(exec, (val->toUInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
+            JSValue* result = jsNumber(exec, (val->toUInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1487,17 +1472,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            and register src2 (converted to int32), and puts the result
            in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            result = JSImmediate::andImmediateNumbers(src1, src2);
+            r[dst] = JSImmediate::andImmediateNumbers(src1, src2);
         else {
-            result = jsNumber(exec, src1->toInt32(exec) & src2->toInt32(exec));
+            JSValue* result = jsNumber(exec, src1->toInt32(exec) & src2->toInt32(exec));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1509,17 +1493,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            and register src2 (converted to int32), and puts the result
            in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            result = JSImmediate::xorImmediateNumbers(src1, src2);
+            r[dst] = JSImmediate::xorImmediateNumbers(src1, src2);
         else {
-            result = jsNumber(exec, src1->toInt32(exec) ^ src2->toInt32(exec));
+            JSValue* result = jsNumber(exec, src1->toInt32(exec) ^ src2->toInt32(exec));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1531,17 +1514,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            and register src2 (converted to int32), and puts the
            result in register dst.
         */
-        JSValue*& dst = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* result;
+        int dst = (++vPC)->u.operand;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         if (JSImmediate::areBothImmediateNumbers(src1, src2))
-            result = JSImmediate::orImmediateNumbers(src1, src2);
+            r[dst] = JSImmediate::orImmediateNumbers(src1, src2);
         else {
-            result = jsNumber(exec, src1->toInt32(exec) | src2->toInt32(exec));
+            JSValue* result = jsNumber(exec, src1->toInt32(exec) | src2->toInt32(exec));
             VM_CHECK_EXCEPTION();
+            r[dst] = result;
         }
-        dst = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1554,9 +1536,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        JSValue* result = jsNumber(exec, ~r[src].u.jsValue->toInt32(exec));
+        JSValue* result = jsNumber(exec, ~r[src].jsValue()->toInt32(exec));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1569,9 +1551,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        JSValue* result = jsBoolean(!r[src].u.jsValue->toBoolean(exec));
+        JSValue* result = jsBoolean(!r[src].jsValue()->toBoolean(exec));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
 
         ++vPC;
         NEXT_OPCODE;
@@ -1589,13 +1571,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int value = (++vPC)->u.operand;
         int base = (++vPC)->u.operand;
 
-        JSValue* baseVal = r[base].u.jsValue;
+        JSValue* baseVal = r[base].jsValue();
 
         if (isNotObject(exec, vPC, codeBlock, baseVal, exceptionValue))
             goto vm_throw;
 
         JSObject* baseObj = static_cast<JSObject*>(baseVal);
-        r[dst].u.jsValue = jsBoolean(baseObj->implementsHasInstance() ? baseObj->hasInstance(exec, r[value].u.jsValue) : false);
+        r[dst] = jsBoolean(baseObj->implementsHasInstance() ? baseObj->hasInstance(exec, r[value].jsValue()) : false);
 
         ++vPC;
         NEXT_OPCODE;
@@ -1608,7 +1590,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
-        r[dst].u.jsValue = jsTypeStringForValue(exec, r[src].u.jsValue);
+        r[dst] = jsTypeStringForValue(exec, r[src].jsValue());
 
         ++vPC;
         NEXT_OPCODE;
@@ -1626,21 +1608,21 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
         int base = (++vPC)->u.operand;
 
-        JSValue* baseVal = r[base].u.jsValue;
+        JSValue* baseVal = r[base].jsValue();
         if (isNotObject(exec, vPC, codeBlock, baseVal, exceptionValue))
             goto vm_throw;
 
         JSObject* baseObj = static_cast<JSObject*>(baseVal);
 
-        JSValue* propName = r[property].u.jsValue;
+        JSValue* propName = r[property].jsValue();
 
         uint32_t i;
         if (propName->getUInt32(i))
-            r[dst].u.jsValue = jsBoolean(baseObj->hasProperty(exec, i));
+            r[dst] = jsBoolean(baseObj->hasProperty(exec, i));
         else {
             Identifier property(exec, propName->toString(exec));
             VM_CHECK_EXCEPTION();
-            r[dst].u.jsValue = jsBoolean(baseObj->hasProperty(exec, property));
+            r[dst] = jsBoolean(baseObj->hasProperty(exec, property));
         }
 
         ++vPC;
@@ -1693,7 +1675,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
-        r[dst].u.jsValue = scope->valueAt(index);
+        r[dst] = scope->registerAt(index);
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1715,7 +1697,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         ASSERT((*iter)->isVariableObject());
         JSVariableObject* scope = static_cast<JSVariableObject*>(*iter);
-        scope->valueAt(index) = r[value].u.jsValue;
+        scope->registerAt(index) = r[value].jsValue();
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1783,9 +1765,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
 
         Identifier& ident = codeBlock->identifiers[property];
-        JSValue *result = r[base].u.jsValue->get(exec, ident);
+        JSValue *result = r[base].jsValue()->get(exec, ident);
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1803,7 +1785,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int value = (++vPC)->u.operand;
 
         Identifier& ident = codeBlock->identifiers[property];
-        r[base].u.jsValue->put(exec, ident, r[value].u.jsValue);
+        r[base].jsValue()->put(exec, ident, r[value].jsValue());
 
         VM_CHECK_EXCEPTION();
         ++vPC;
@@ -1821,12 +1803,12 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
 
-        JSObject* baseObj = r[base].u.jsValue->toObject(exec);
+        JSObject* baseObj = r[base].jsValue()->toObject(exec);
 
         Identifier& ident = codeBlock->identifiers[property];
         JSValue* result = jsBoolean(baseObj->deleteProperty(exec, ident));
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1842,8 +1824,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
 
-        JSValue* baseValue = r[base].u.jsValue;
-        JSValue* subscript = r[property].u.jsValue;
+        JSValue* baseValue = r[base].jsValue();
+        JSValue* subscript = r[property].jsValue();
 
         JSValue* result;
         unsigned i;
@@ -1866,7 +1848,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         }
 
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1885,8 +1867,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
         int value = (++vPC)->u.operand;
 
-        JSValue* baseValue = r[base].u.jsValue;
-        JSValue* subscript = r[property].u.jsValue;
+        JSValue* baseValue = r[base].jsValue();
+        JSValue* subscript = r[property].jsValue();
 
         unsigned i;
 
@@ -1895,15 +1877,15 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             if (isJSArray(baseValue)) {
                 JSArray* jsArray = static_cast<JSArray*>(baseValue);
                 if (jsArray->canSetIndex(i))
-                    jsArray->setIndex(i, r[value].u.jsValue);
+                    jsArray->setIndex(i, r[value].jsValue());
                 else
-                    jsArray->JSArray::put(exec, i, r[value].u.jsValue);
+                    jsArray->JSArray::put(exec, i, r[value].jsValue());
             } else
-                baseValue->put(exec, i, r[value].u.jsValue);
+                baseValue->put(exec, i, r[value].jsValue());
         } else {
             Identifier property(exec, subscript->toString(exec));
             if (!exec->hadException()) // Don't put to an object if toString threw an exception.
-                baseValue->put(exec, property, r[value].u.jsValue);
+                baseValue->put(exec, property, r[value].jsValue());
         }
 
         VM_CHECK_EXCEPTION();
@@ -1922,9 +1904,9 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
 
-        JSObject* baseObj = r[base].u.jsValue->toObject(exec); // may throw
+        JSObject* baseObj = r[base].jsValue()->toObject(exec); // may throw
 
-        JSValue* subscript = r[property].u.jsValue;
+        JSValue* subscript = r[property].jsValue();
         JSValue* result;
         uint32_t i;
         if (subscript->getUInt32(i))
@@ -1937,7 +1919,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         }
 
         VM_CHECK_EXCEPTION();
-        r[dst].u.jsValue = result;
+        r[dst] = result;
         ++vPC;
         NEXT_OPCODE;
     }
@@ -1957,7 +1939,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         unsigned property = (++vPC)->u.operand;
         int value = (++vPC)->u.operand;
 
-        r[base].u.jsObject->put(exec, property, r[value].u.jsValue);
+        r[base].jsValue()->put(exec, property, r[value].jsValue());
 
         ++vPC;
         NEXT_OPCODE;
@@ -2004,7 +1986,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
          */
         int cond = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
-        if (r[cond].u.jsValue->toBoolean(exec)) {
+        if (r[cond].jsValue()->toBoolean(exec)) {
             vPC += target;
             CHECK_FOR_TIMEOUT();
             NEXT_OPCODE;
@@ -2021,7 +2003,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int cond = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
-        if (r[cond].u.jsValue->toBoolean(exec)) {
+        if (r[cond].jsValue()->toBoolean(exec)) {
             vPC += target;
             NEXT_OPCODE;
         }
@@ -2037,7 +2019,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int cond = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
-        if (!r[cond].u.jsValue->toBoolean(exec)) {
+        if (!r[cond].jsValue()->toBoolean(exec)) {
             vPC += target;
             NEXT_OPCODE;
         }
@@ -2056,8 +2038,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            Additionally this loop instruction may terminate JS execution is
            the JS timeout is reached.
          */
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         int target = (++vPC)->u.operand;
         
         bool result = jsLess(exec, src1, src2);
@@ -2080,8 +2062,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            target from the current instruction, if and only if the 
            result of the comparison is true.
         */
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         int target = (++vPC)->u.operand;
 
         bool result = jsLess(exec, src1, src2);
@@ -2103,8 +2085,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            target from the current instruction, if and only if the 
            result of the comparison is false.
         */
-        JSValue* src1 = r[(++vPC)->u.operand].u.jsValue;
-        JSValue* src2 = r[(++vPC)->u.operand].u.jsValue;
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue();
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue();
         int target = (++vPC)->u.operand;
 
         bool result = jsLess(exec, src1, src2);
@@ -2129,7 +2111,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int func = (++vPC)->u.operand;
 
-        r[dst].u.jsValue = codeBlock->functions[func]->makeFunction(exec, scopeChain);
+        r[dst] = codeBlock->functions[func]->makeFunction(exec, scopeChain);
 
         ++vPC;
         NEXT_OPCODE;
@@ -2145,7 +2127,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int func = (++vPC)->u.operand;
 
-        r[dst].u.jsValue = codeBlock->functionExpressions[func]->makeFunction(exec, scopeChain);
+        r[dst] = codeBlock->functionExpressions[func]->makeFunction(exec, scopeChain);
 
         ++vPC;
         NEXT_OPCODE;
@@ -2168,16 +2150,16 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int firstArg = (++vPC)->u.operand;
         int argCount = (++vPC)->u.operand;
 
-        JSValue* funcVal = r[func].u.jsValue;
-        JSValue* baseVal = r[thisVal].u.jsValue;
+        JSValue* funcVal = r[func].jsValue();
+        JSValue* baseVal = r[thisVal].jsValue();
 
         if (baseVal == scopeChain->globalObject() && funcVal == scopeChain->globalObject()->evalFunction()) {
-            JSObject* thisObject = r[codeBlock->thisRegister].u.jsObject;
+            JSObject* thisObject = static_cast<JSObject*>(r[codeBlock->thisRegister].jsValue());
             JSValue* result = callEval(exec, thisObject, scopeChain, registerFile, r, firstArg, argCount, exceptionValue);
             if (exceptionValue)
                 goto vm_throw;
 
-            r[dst].u.jsValue = result;
+            r[dst] = result;
 
             ++vPC;
             NEXT_OPCODE;
@@ -2187,7 +2169,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         // this instruction as a normal function call, supplying the proper 'this'
         // value.
         vPC -= 5;
-        r[thisVal].u.jsValue = baseVal->toThisObject(exec);
+        r[thisVal] = baseVal->toThisObject(exec);
 
 #if HAVE(COMPUTED_GOTO)
         // Hack around gcc performance quirk by performing an indirect goto
@@ -2240,7 +2222,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int firstArg = (++vPC)->u.operand;
         int argCount = (++vPC)->u.operand;
 
-        JSValue* v = r[func].u.jsValue;
+        JSValue* v = r[func].jsValue();
 
         CallData callData;
         CallType callType = v->getCallData(callData);
@@ -2253,7 +2235,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             FunctionBodyNode* functionBodyNode = callData.js.functionBody;
             CodeBlock* newCodeBlock = &functionBodyNode->code(callDataScopeChain);
 
-            r[firstArg].u.jsValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].u.jsValue;
+            r[firstArg] = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].jsValue();
 
             Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
             initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, r, dst, firstArg, argCount, 0, v);
@@ -2279,13 +2261,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, static_cast<JSObject*>(v));
 
-            JSValue* thisValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].u.jsValue;
-            ArgList args(reinterpret_cast<JSValue**>(r) + firstArg + 1, argCount - 1);
+            JSValue* thisValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].jsValue();
+            ArgList args(r + firstArg + 1, argCount - 1);
 
             JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(v), thisValue, args);
             VM_CHECK_EXCEPTION();
 
-            r[dst].u.jsValue = returnValue;
+            r[dst] = returnValue;
 
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->didExecute(exec, static_cast<JSObject*>(v));
@@ -2312,35 +2294,35 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int result = (++vPC)->u.operand;
 
         Register* callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-        if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue)) {
+        if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue())) {
             ASSERT(!codeBlock->needsFullScopeChain || scopeChain->object == activation);
             ASSERT(activation->isActivationObject());
             activation->copyRegisters();
         }
 
         if (*enabledProfilerReference)
-            (*enabledProfilerReference)->didExecute(exec, callFrame[RegisterFile::Callee].u.jsObject);
+            (*enabledProfilerReference)->didExecute(exec, static_cast<JSObject*>(callFrame[RegisterFile::Callee].jsValue()));
 
         if (codeBlock->needsFullScopeChain)
             scopeChain->deref();
 
-        JSValue* returnValue = r[result].u.jsValue;
-        if (callFrame[RegisterFile::CalledAsConstructor].u.i && !returnValue->isObject()) {
-            JSValue* thisObject = callFrame[RegisterFile::CallFrameHeaderSize].u.jsValue;
+        JSValue* returnValue = r[result].jsValue();
+        if (callFrame[RegisterFile::CalledAsConstructor].i() && !returnValue->isObject()) {
+            JSValue* thisObject = callFrame[RegisterFile::CallFrameHeaderSize].jsValue();
             returnValue = thisObject;
         }
 
-        codeBlock = callFrame[RegisterFile::CallerCodeBlock].u.codeBlock;
+        codeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
         if (!codeBlock)
             return returnValue;
 
         k = codeBlock->jsValues.data();
-        vPC = callFrame[RegisterFile::ReturnVPC].u.vPC;
-        setScopeChain(exec, scopeChain, callFrame[RegisterFile::CallerScopeChain].u.scopeChain);
-        r = callFrame[RegisterFile::CallerRegisters].u.r;
+        vPC = callFrame[RegisterFile::ReturnVPC].vPC();
+        setScopeChain(exec, scopeChain, callFrame[RegisterFile::CallerScopeChain].scopeChain());
+        r = callFrame[RegisterFile::CallerRegisters].r();
         exec->m_callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-        int dst = callFrame[RegisterFile::ReturnValueRegister].u.i;
-        r[dst].u.jsValue = returnValue;
+        int dst = callFrame[RegisterFile::ReturnValueRegister].i();
+        r[dst] = returnValue;
 
         NEXT_OPCODE;
     }
@@ -2360,7 +2342,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int firstArg = (++vPC)->u.operand;
         int argCount = (++vPC)->u.operand;
 
-        JSValue* constrVal = r[constr].u.jsValue;
+        JSValue* constrVal = r[constr].jsValue();
 
         ConstructData constructData;
         ConstructType constructType = constrVal->getConstructData(constructData);
@@ -2384,7 +2366,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             FunctionBodyNode* functionBodyNode = constructData.js.functionBody;
             CodeBlock* newCodeBlock = &functionBodyNode->code(callDataScopeChain);
 
-            r[firstArg].u.jsValue = newObject; // "this" value
+            r[firstArg] = newObject; // "this" value
 
             Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
             initializeCallFrame(callFrame, codeBlock, vPC, scopeChain, r, dst, firstArg, argCount, 1, constructor);
@@ -2406,11 +2388,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->willExecute(exec, constructor);
 
-            ArgList args(reinterpret_cast<JSValue**>(r) + firstArg + 1, argCount - 1);
+            ArgList args(r + firstArg + 1, argCount - 1);
             JSValue* returnValue = constructData.native.function(exec, constructor, args);
 
             VM_CHECK_EXCEPTION();
-            r[dst].u.jsValue = returnValue;
+            r[dst] = returnValue;
 
             if (*enabledProfilerReference)
                 (*enabledProfilerReference)->didExecute(exec, constructor);
@@ -2431,7 +2413,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
            of the current scope chain.
         */
         int scope = (++vPC)->u.operand;
-        JSValue* v = r[scope].u.jsValue;
+        JSValue* v = r[scope].jsValue();
         JSObject* o = v->toObject(exec);
         VM_CHECK_EXCEPTION();
 
@@ -2461,7 +2443,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int base = (++vPC)->u.operand;
 
-        r[dst].u.jsPropertyNameIterator = JSPropertyNameIterator::create(exec, r[base].u.jsValue);
+        r[dst] = JSPropertyNameIterator::create(exec, r[base].jsValue());
         ++vPC;
         NEXT_OPCODE;
     }
@@ -2478,10 +2460,10 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int iter = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
 
-        JSPropertyNameIterator* it = r[iter].u.jsPropertyNameIterator;
+        JSPropertyNameIterator* it = r[iter].jsPropertyNameIterator();
         if (JSValue* temp = it->next(exec)) {
             CHECK_FOR_TIMEOUT();
-            r[dst].u.jsValue = temp;
+            r[dst] = temp;
             vPC += target;
             NEXT_OPCODE;
         }
@@ -2518,7 +2500,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ASSERT(exceptionValue);
         ASSERT(!exec->hadException());
         int ex = (++vPC)->u.operand;
-        r[ex].u.jsValue = exceptionValue;
+        r[ex] = exceptionValue;
         exceptionValue = 0;
 
         ++vPC;
@@ -2536,7 +2518,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
 
         int ex = (++vPC)->u.operand;
-        exceptionValue = r[ex].u.jsValue;
+        exceptionValue = r[ex].jsValue();
         handlerVPC = throwException(exec, exceptionValue, vPC, codeBlock, k, scopeChain, r);
         if (!handlerVPC) {
             *exception = exceptionValue;
@@ -2567,7 +2549,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int type = (++vPC)->u.operand;
         int message = (++vPC)->u.operand;
 
-        r[dst].u.jsValue = Error::create(exec, (ErrorType)type, k[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
+        r[dst] = Error::create(exec, (ErrorType)type, k[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
 
         ++vPC;
         NEXT_OPCODE;
@@ -2584,7 +2566,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             scopeChain->deref();
         }
         int result = (++vPC)->u.operand;
-        return r[result].u.jsValue;
+        return r[result].jsValue();
     }
     BEGIN_OPCODE(op_put_getter) {
         /* put_getter base(r) property(id) function(r)
@@ -2601,11 +2583,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
         int function = (++vPC)->u.operand;
 
-        ASSERT(r[base].u.jsValue->isObject());
-        JSObject* baseObj = static_cast<JSObject*>(r[base].u.jsValue);
+        ASSERT(r[base].jsValue()->isObject());
+        JSObject* baseObj = static_cast<JSObject*>(r[base].jsValue());
         Identifier& ident = codeBlock->identifiers[property];
-        ASSERT(r[function].u.jsValue->isObject());
-        baseObj->defineGetter(exec, ident, static_cast<JSObject* >(r[function].u.jsValue));
+        ASSERT(r[function].jsValue()->isObject());
+        baseObj->defineGetter(exec, ident, static_cast<JSObject*>(r[function].jsValue()));
 
         ++vPC;
         NEXT_OPCODE;
@@ -2625,11 +2607,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
         int function = (++vPC)->u.operand;
 
-        ASSERT(r[base].u.jsValue->isObject());
-        JSObject* baseObj = static_cast<JSObject*>(r[base].u.jsValue);
+        ASSERT(r[base].jsValue()->isObject());
+        JSObject* baseObj = static_cast<JSObject*>(r[base].jsValue());
         Identifier& ident = codeBlock->identifiers[property];
-        ASSERT(r[function].u.jsValue->isObject());
-        baseObj->defineSetter(exec, ident, static_cast<JSObject* >(r[function].u.jsValue));
+        ASSERT(r[function].jsValue()->isObject());
+        baseObj->defineSetter(exec, ident, static_cast<JSObject*>(r[function].jsValue()));
 
         ++vPC;
         NEXT_OPCODE;
@@ -2642,7 +2624,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         */
         int retAddrDst = (++vPC)->u.operand;
         int target = (++vPC)->u.operand;
-        r[retAddrDst].u.vPC = vPC + 1;
+        r[retAddrDst] = vPC + 1;
 
         vPC += target;
         NEXT_OPCODE;
@@ -2655,7 +2637,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
          register, not as an immediate.
         */
         int retAddrSrc = (++vPC)->u.operand;
-        vPC = r[retAddrSrc].u.vPC;
+        vPC = r[retAddrSrc].vPC();
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_debug) {
@@ -2697,11 +2679,11 @@ JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
     if (!callFrame)
         return jsNull();
 
-    JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue);
+    JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue());
     if (!activation) {
         CodeBlock* codeBlock = &function->m_body->generatedCode();
         activation = new (exec) JSActivation(function->m_body, callFrame + RegisterFile::CallFrameHeaderSize + codeBlock->numLocals);
-        callFrame[RegisterFile::OptionalCalleeActivation].u.jsValue = activation;
+        callFrame[RegisterFile::OptionalCalleeActivation] = activation;
     }
 
     return activation->get(exec, exec->propertyNames().arguments);
@@ -2713,12 +2695,12 @@ JSValue* Machine::retrieveCaller(ExecState* exec, JSFunction* function) const
     if (!callFrame)
         return jsNull();
 
-    CodeBlock* callerCodeBlock = callFrame[RegisterFile::CallerCodeBlock].u.codeBlock;
+    CodeBlock* callerCodeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
     if (!callerCodeBlock)
         return jsNull();
 
-    Register* callerCallFrame = callFrame[RegisterFile::CallerRegisters].u.r - callerCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
-    if (JSValue* caller = callerCallFrame[RegisterFile::Callee].u.jsValue)
+    Register* callerCallFrame = callFrame[RegisterFile::CallerRegisters].r() - callerCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+    if (JSValue* caller = callerCallFrame[RegisterFile::Callee].jsValue())
         return caller;
 
     return jsNull();
@@ -2736,26 +2718,26 @@ Register* Machine::callFrame(ExecState* exec, JSFunction* function) const
             callFrame = exec->m_callFrame;
         }
 
-        if (callFrame[RegisterFile::Callee].u.jsValue == function)
+        if (callFrame[RegisterFile::Callee].jsValue() == function)
             return callFrame;
 
-        CodeBlock* callerCodeBlock = callFrame[RegisterFile::CallerCodeBlock].u.codeBlock;
+        CodeBlock* callerCodeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
         if (!callerCodeBlock) {
             callFrame = 0;
             continue;
         }
         
-        callFrame = callFrame[RegisterFile::CallerRegisters].u.r - callerCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+        callFrame = callFrame[RegisterFile::CallerRegisters].r() - callerCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
     }
 }
 
 void Machine::getArgumentsData(Register* callFrame, JSFunction*& function, Register*& argv, int& argc)
 {
-    function = static_cast<JSFunction*>(callFrame[RegisterFile::Callee].u.jsValue);
+    function = static_cast<JSFunction*>(callFrame[RegisterFile::Callee].jsValue());
     ASSERT(function->inherits(&JSFunction::info));
 
-    argv = callFrame[RegisterFile::CallerRegisters].u.r + callFrame[RegisterFile::ArgumentStartRegister].u.i + 1; //  + 1 to skip "this"
-    argc = callFrame[RegisterFile::ArgumentCount].u.i - 1; // - 1 to skip "this"
+    argv = callFrame[RegisterFile::CallerRegisters].r() + callFrame[RegisterFile::ArgumentStartRegister].i() + 1; //  + 1 to skip "this"
+    argc = callFrame[RegisterFile::ArgumentCount].i() - 1; // - 1 to skip "this"
 }
 
 } // namespace KJS

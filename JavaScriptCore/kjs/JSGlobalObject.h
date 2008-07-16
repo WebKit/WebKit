@@ -268,7 +268,7 @@ namespace KJS {
             ASSERT(global.attributes & DontDelete);
             SymbolTableEntry newEntry(index, global.attributes);
             symbolTable().add(global.identifier.ustring().rep(), newEntry);
-            valueAt(index) = global.value;
+            registerAt(index) = global.value;
         }
     }
 

@@ -48,7 +48,7 @@ Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args,
     for (ArgList::const_iterator it = args.begin(); it != end; ++it, ++i) {
         Identifier name = Identifier::from(exec, i);
         if (!m_indexToNameMap.isMapped(name))
-            putDirect(name, *it, DontEnum);
+            putDirect(name, (*it).jsValue(), DontEnum);
     }
 }
 

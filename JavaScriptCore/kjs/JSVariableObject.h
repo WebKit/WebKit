@@ -55,7 +55,7 @@ namespace KJS {
 
         virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
 
-        JSValue*& valueAt(int index) const { return d->registers[index].u.jsValue; }
+        Register& registerAt(int index) const { return d->registers[index]; }
 
     protected:
         // Subclasses of JSVariableObject can subclass this struct to add data
@@ -106,7 +106,7 @@ namespace KJS {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.ustring().rep());
         if (!entry.isNull()) {
-            slot.setValueSlot(&valueAt(entry.getIndex()));
+            slot.setRegisterSlot(&registerAt(entry.getIndex()));
             return true;
         }
         return false;
@@ -116,7 +116,7 @@ namespace KJS {
     {
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.ustring().rep());
         if (!entry.isNull()) {
-            slot.setValueSlot(&valueAt(entry.getIndex()));
+            slot.setRegisterSlot(&registerAt(entry.getIndex()));
             slotIsWriteable = !entry.isReadOnly();
             return true;
         }
@@ -130,7 +130,7 @@ namespace KJS {
             return false;
         if (entry.isReadOnly())
             return true;
-        valueAt(entry.getIndex()) = value;
+        registerAt(entry.getIndex()) = value;
         return true;
     }
 
@@ -142,7 +142,7 @@ namespace KJS {
         SymbolTableEntry& entry = iter->second;
         ASSERT(!entry.isNull());
         entry.setAttributes(attributes);
-        valueAt(entry.getIndex()) = value;
+        registerAt(entry.getIndex()) = value;
         return true;
     }
 

@@ -36,7 +36,7 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
         UChar* p = buf;
         ArgList::const_iterator end = args.end();
         for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-            *p++ = static_cast<UChar>((*it)->toUInt32(exec));
+            *p++ = static_cast<UChar>((*it).toUInt32(exec));
         s = UString::adopt(buf, args.size());
     } else
         s = "";

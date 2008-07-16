@@ -25,6 +25,7 @@
 #define JSString_h
 
 #include "CommonIdentifiers.h"
+#include "ExecState.h"
 #include "JSCell.h"
 #include "PropertySlot.h"
 #include "identifier.h"

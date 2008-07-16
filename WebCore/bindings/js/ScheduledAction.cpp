@@ -42,7 +42,7 @@ ScheduledAction::ScheduledAction(JSValue* function, const ArgList& args)
 {
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-        m_args.append(*it);
+        m_args.append((*it).jsValue());
 }
 
 

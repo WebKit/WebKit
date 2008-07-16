@@ -25,7 +25,6 @@
 
 #include "CallData.h"
 #include "ConstructData.h"
-#include "ExecState.h"
 #include "JSImmediate.h"
 #include "ustring.h"
 #include <stddef.h> // for size_t
@@ -111,7 +110,7 @@ namespace KJS {
 
         // These are identical logic to above, and faster than jsNumber(number)->toInt32(exec)
         static int32_t toInt32(double);
-        static int32_t toUInt32(double);
+        static uint32_t toUInt32(double);
 
         // Floating point conversions.
         float toFloat(ExecState*) const;
@@ -218,7 +217,7 @@ namespace KJS {
         return static_cast<int32_t>(val);
     }
 
-    inline int32_t JSValue::toUInt32(double val)
+    inline uint32_t JSValue::toUInt32(double val)
     {
         if (!(val >= 0.0 && val < 4294967296.0)) {
             bool ignored;

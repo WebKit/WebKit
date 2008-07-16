@@ -274,7 +274,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, co
         }
         if (it == end)
             break;
-        curArg = *it;
+        curArg = (*it).jsValue();
         ++it;
     }
     arr->setLength(n);

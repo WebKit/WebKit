@@ -1,3 +1,13 @@
+2008-07-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Support for JavaScriptCore's first step toward putting doubles in
+        registers: Treat ArgList iterators as Register*'s, not JSValue*'s.
+
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::ScheduledAction):
+
 2008-07-15  Maxime Britto  <britto@apple.com>
 
         Reviewed by Eric.
