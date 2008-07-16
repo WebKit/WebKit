@@ -1,3 +1,9 @@
+2008-07-16  Ada Chan  <adachan@apple.com>
+
+        Fixed build.
+
+        * kjs/JSGlobalObject.cpp:
+
 2008-07-16  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Geoff.

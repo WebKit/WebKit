@@ -52,6 +52,7 @@
 #include "NumberPrototype.h"
 #include "ObjectConstructor.h"
 #include "ObjectPrototype.h"
+#include "Profiler.h"
 #include "PrototypeFunction.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
