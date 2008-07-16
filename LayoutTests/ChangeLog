@@ -1,3 +1,23 @@
+2008-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Update for refactored accessibility testing code.
+
+        * accessibility/aria-describedby-on-input.html:
+        * accessibility/aria-labelledby-on-input.html:
+        * accessibility/aria-range-value.html:
+        * accessibility/aria-range.html:
+        * accessibility/aria-roles.html:
+        * accessibility/aria-slider.html:
+        * accessibility/aria-spinbutton.html:
+        * accessibility/document-attributes.html:
+        * accessibility/image-map1.html:
+        * accessibility/image-map2.html:
+        * accessibility/internal-link-anchors.html:
+        * accessibility/radio-button-checkbox-size.html:
+        * accessibility/radio-button-group-members.html:
+
 2008-07-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Dan.

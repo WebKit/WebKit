@@ -42,25 +42,25 @@
             labeledItem.focus();
             result.innerText += "Radio group in a form\n";
             result.innerText += "----------------------\n";
-            result.innerText += accessibilityController.attributesOfLinkedUIElementsForFocusedElement() + "\n\n"; 
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
 
             result.innerText += "Radio group without a form\n";
             result.innerText += "----------------------\n";
             labeledItem = document.getElementById("test2");
             labeledItem.focus();
-            result.innerText += accessibilityController.attributesOfLinkedUIElementsForFocusedElement() + "\n\n"; 
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
 
             result.innerText += "Radio group with labels\n";
             result.innerText += "----------------------\n";
             labeledItem = document.getElementById("test3");
             labeledItem.focus();
-            result.innerText += accessibilityController.attributesOfLinkedUIElementsForFocusedElement() + "\n\n"; 
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
 
             result.innerText += "Radio button without a group\n";
             result.innerText += "----------------------\n";
             labeledItem = document.getElementById("test4");
             labeledItem.focus();
-            result.innerText += accessibilityController.attributesOfLinkedUIElementsForFocusedElement() + "\n\n"; 
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
         }
     </script>
 </body>

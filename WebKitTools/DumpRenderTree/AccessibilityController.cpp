@@ -25,91 +25,21 @@
 
 #include "AccessibilityController.h"
 
-#import <JavaScriptCore/JSRetainPtr.h>
+#include "AccessibilityUIElement.h"
+#include <JavaScriptCore/JSRetainPtr.h>
 
-AccessibilityController::AccessibilityController()
-{
-}
+// Static Value Getters
 
-AccessibilityController::~AccessibilityController()
-{
-}
-
-static JSValueRef allAttributesOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef getFocusedElementCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> attributes(Adopt, controller->allAttributesOfFocusedElement());
-    return JSValueMakeString(context, attributes.get());
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->focusedElement());
 }
 
-static JSValueRef roleOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef getRootElementCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
     AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> role(Adopt, controller->roleOfFocusedElement());
-    return JSValueMakeString(context, role.get());
-}
-
-static JSValueRef titleOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> title(Adopt, controller->titleOfFocusedElement());
-    return JSValueMakeString(context, title.get());
-}
-
-static JSValueRef descriptionOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> description(Adopt, controller->descriptionOfFocusedElement());
-    return JSValueMakeString(context, description.get());
-}
-
-static JSValueRef attributesOfLinkedUIElementsForFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> linkedUIDescription(Adopt, controller->attributesOfLinkedUIElementsForFocusedElement());
-    return JSValueMakeString(context, linkedUIDescription.get());
-}
-
-static JSValueRef attributesOfChildrenForFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> childrenDescription(Adopt, controller->attributesOfChildrenForFocusedElement());
-    return JSValueMakeString(context, childrenDescription.get());
-}
-
-static JSValueRef widthOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    double width = controller->widthOfFocusedElement();
-    return JSValueMakeNumber(context, width);
-}
-
-static JSValueRef heightOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    double height = controller->heightOfFocusedElement();
-    return JSValueMakeNumber(context, height);
-}
-
-static JSValueRef intValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    float value = controller->intValueOfFocusedElement();
-    return JSValueMakeNumber(context, value);
-}
-
-static JSValueRef minValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    float value = controller->minValueOfFocusedElement();
-    return JSValueMakeNumber(context, value);
-}
-
-static JSValueRef maxValueOfFocusedElementCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
-{
-    AccessibilityController* controller = reinterpret_cast<AccessibilityController*>(JSObjectGetPrivate(thisObject));
-    float value = controller->maxValueOfFocusedElement();
-    return JSValueMakeNumber(context, value);
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, controller->rootElement());
 }
 
 // Object Creation
@@ -123,37 +53,17 @@ void AccessibilityController::makeWindowObject(JSContextRef context, JSObjectRef
 
 JSClassRef AccessibilityController::getJSClass()
 {
-    static JSClassRef accessibilityControllerClass;
-
-    if (!accessibilityControllerClass) {
-        JSStaticFunction* staticFunctions = AccessibilityController::staticFunctions();
-        JSClassDefinition classDefinition = {
-            0, kJSClassAttributeNone, "AccessibilityController", 0, 0, staticFunctions,
-            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-        };
-
-        accessibilityControllerClass = JSClassCreate(&classDefinition);
-    }
-
-    return accessibilityControllerClass;
-}
-
-JSStaticFunction* AccessibilityController::staticFunctions()
-{
-    static JSStaticFunction staticFunctions[] = {
-        { "allAttributesOfFocusedElement", allAttributesOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "roleOfFocusedElement", roleOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "titleOfFocusedElement", titleOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "descriptionOfFocusedElement", descriptionOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "attributesOfLinkedUIElementsForFocusedElement", attributesOfLinkedUIElementsForFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "attributesOfChildrenForFocusedElement", attributesOfChildrenForFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "widthOfFocusedElement", widthOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "heightOfFocusedElement", heightOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "intValueOfFocusedElement", intValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "minValueOfFocusedElement", minValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "maxValueOfFocusedElement", maxValueOfFocusedElementCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { 0, 0, 0 }
+    static JSStaticValue staticValues[] = {
+        { "focusedElement", getFocusedElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "rootElement", getRootElementCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { 0, 0, 0, 0 }
     };
 
-    return staticFunctions;
+    static JSClassDefinition classDefinition = {
+        0, kJSClassAttributeNone, "AccessibilityController", 0, staticValues, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+    };
+
+    static JSClassRef accessibilityControllerClass = JSClassCreate(&classDefinition);
+    return accessibilityControllerClass;
 }

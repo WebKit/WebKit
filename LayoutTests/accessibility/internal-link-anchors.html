@@ -22,7 +22,7 @@
             labeledItem.focus();
             result.innerText += "Anchor connection\n";
             result.innerText += "----------------------\n";
-            result.innerText += accessibilityController.attributesOfLinkedUIElementsForFocusedElement() + "\n\n"; 
+            result.innerText += accessibilityController.focusedElement.attributesOfLinkedUIElements() + "\n\n"; 
         }
     </script>
 </body>

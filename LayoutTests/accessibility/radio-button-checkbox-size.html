@@ -23,8 +23,9 @@
             // radio button 1
             var r1 = document.getElementById("r1");
             r1.focus();
-            var width = accessibilityController.widthOfFocusedElement();
-            var height = accessibilityController.heightOfFocusedElement();
+            var focusedElement = accessibilityController.focusedElement;
+            var width = focusedElement.width;
+            var height = focusedElement.height;
 
             result.innerText += "Radio1: ";
             if (width <= 0 || height <= 0) {
@@ -37,8 +38,9 @@
             // check box 1
             var cb1 = document.getElementById("cb1");
             cb1.focus();
-            width = accessibilityController.widthOfFocusedElement();
-            height = accessibilityController.heightOfFocusedElement();
+            focusedElement = accessibilityController.focusedElement;
+            width = focusedElement.width;
+            height = focusedElement.height;
 
             result.innerText += "Checkbox1: ";
             if (width <= 0 || height <= 0) {
@@ -51,8 +53,9 @@
             // radio button with label (width should be more than 100 px)
             var cb1 = document.getElementById("r2");
             cb1.focus();
-            width = accessibilityController.widthOfFocusedElement();
-            height = accessibilityController.heightOfFocusedElement();
+            focusedElement = accessibilityController.focusedElement;
+            width = focusedElement.width;
+            height = focusedElement.height;
 
             result.innerText += "Radio2: ";
             if (width <= 100 || height <= 0) {
@@ -65,8 +68,9 @@
             // checkbox with label (width should be more than 100 px)
             var cb1 = document.getElementById("cb2");
             cb1.focus();
-            width = accessibilityController.widthOfFocusedElement();
-            height = accessibilityController.heightOfFocusedElement();
+            focusedElement = accessibilityController.focusedElement;
+            width = focusedElement.width;
+            height = focusedElement.height;
 
             result.innerText += "Checkbox2: ";
             if (width <= 100 || height <= 0) {

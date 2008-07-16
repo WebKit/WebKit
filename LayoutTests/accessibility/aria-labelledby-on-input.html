@@ -14,7 +14,7 @@
             var labeledItem = document.getElementById("time");
             labeledItem.focus();
             var result = document.getElementById("result");
-            result.innerText = "\nThe accessibility title is \"" + accessibilityController.titleOfFocusedElement() + "\"";
+            result.innerText = "\nThe accessibility title is \"" + accessibilityController.focusedElement.title + "\"";
         }
     </script>
 </body>

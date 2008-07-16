@@ -1,3 +1,65 @@
+2008-07-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Refactor accessibility testing code.
+
+        We now have:
+        - AccessibilityController
+          Controller which has access to the WebView and can provide the focused element, root element
+          and in the future, elementAtPoint.
+
+        - AccessibilityUIElement
+          Object which provides access to the data provided by the Accessibility APIs.
+
+        * DumpRenderTree/AccessibilityController.cpp:
+        (getFocusedElementCallback):
+        (getRootElementCallback):
+        (AccessibilityController::getJSClass):
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp: Added.
+        (allAttributesCallback):
+        (attributesOfLinkedUIElementsCallback):
+        (attributesOfChildrenCallback):
+        (getRoleCallback):
+        (getTitleCallback):
+        (getDescriptionCallback):
+        (getWidthCallback):
+        (getHeightCallback):
+        (getIntValueCallback):
+        (getMinValueCallback):
+        (getMaxValueCallback):
+        (finalize):
+        (AccessibilityUIElement::makeJSAccessibilityUIElement):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h: Added.
+        (AccessibilityUIElement::platformUIElement):
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::focusedElement):
+        (AccessibilityController::rootElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm: Added.
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (descriptionOfValue):
+        (attributesOfElement):
+        (nsStringToJSStringRef):
+        (concatenateAttributeAndValue):
+        (AccessibilityUIElement::getLinkedUIElements):
+        (AccessibilityUIElement::getChildren):
+        (AccessibilityUIElement::attributesOfLinkedUIElements):
+        (AccessibilityUIElement::attributesOfChildren):
+        (AccessibilityUIElement::allAttributes):
+        (AccessibilityUIElement::role):
+        (AccessibilityUIElement::title):
+        (AccessibilityUIElement::description):
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::intValue):
+        (AccessibilityUIElement::minValue):
+        (AccessibilityUIElement::maxValue):
+
 2008-07-14  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

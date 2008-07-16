@@ -19,10 +19,10 @@
             return;
         
         aria.focus();
-        var ariaRole = accessibilityController.roleOfFocusedElement();
+        var ariaRole = accessibilityController.focusedElement.role;
         
         real.focus();
-        var realRole = accessibilityController.roleOfFocusedElement();
+        var realRole = accessibilityController.focusedElement.role;
        
         if (ariaRole == realRole)
             result.innerText = "This test PASSES in DumpRenderTree. The role is " + ariaRole;

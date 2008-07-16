@@ -26,208 +26,29 @@
 #import "DumpRenderTree.h"
 #import "AccessibilityController.h"
 
+#import "AccessibilityUIElement.h"
 #import <Foundation/Foundation.h>
-#import <JavaScriptCore/JSStringRef.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebHTMLView.h>
-#import <WebKit/WebTypesInternal.h>
-#import <wtf/Vector.h>
-#import <wtf/RetainPtr.h>
 
-static JSStringRef nsStringToJSStringRef(NSString* string);
-static NSString* attributesOfElement(id accessibilityObject);
-
-static NSString* descriptionOfValue(id valueObject, id focusedAccessibilityObject)
+AccessibilityController::AccessibilityController()
 {
-    if (!valueObject)
-        return NULL;
-
-    if ([valueObject isKindOfClass:[NSArray class]])
-        return [NSString stringWithFormat:@"<array of size %d>", [(NSArray*)valueObject count]];
-
-    if ([valueObject isKindOfClass:[NSNumber class]])
-        return [(NSNumber*)valueObject stringValue];
-
-    if ([valueObject isKindOfClass:[NSValue class]]) {
-        NSString* type = [NSString stringWithCString:[valueObject objCType] encoding:NSASCIIStringEncoding];
-        NSValue* value = (NSValue*)valueObject;
-        if ([type rangeOfString:@"NSRect"].length > 0)
-            return [NSString stringWithFormat:@"NSRect: %@", NSStringFromRect([value rectValue])];
-        if ([type rangeOfString:@"NSPoint"].length > 0)
-            return [NSString stringWithFormat:@"NSPoint: %@", NSStringFromPoint([value pointValue])];
-        if ([type rangeOfString:@"NSSize"].length > 0)
-            return [NSString stringWithFormat:@"NSSize: %@", NSStringFromSize([value sizeValue])];
-        if ([type rangeOfString:@"NSRange"].length > 0)
-            return [NSString stringWithFormat:@"NSRange: %@", NSStringFromRange([value rangeValue])];
-    }
-
-    // Strip absolute URL paths
-    NSString* description = [valueObject description];
-    NSRange range = [description rangeOfString:@"LayoutTests"];
-    if (range.length)
-        return [description substringFromIndex:range.location];
-
-    // Strip pointer locations
-    if ([description rangeOfString:@"0x"].length) {
-        NSString* role = [focusedAccessibilityObject accessibilityAttributeValue:@"AXRole"];
-        NSString* title = [focusedAccessibilityObject accessibilityAttributeValue:@"AXTitle"];
-        if ([title length])
-            return [NSString stringWithFormat:@"<%@: '%@'>", role, title];
-        return [NSString stringWithFormat:@"<%@>", role];
-    }
-    
-    return [valueObject description];
 }
 
-JSStringRef AccessibilityController::attributesOfLinkedUIElementsForFocusedElement()
+AccessibilityController::~AccessibilityController()
 {
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-
-    NSArray* linkedElements = [accessibilityObject accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    NSMutableString* allElementString = [NSMutableString string];
-    NSUInteger i = 0, count = [linkedElements count];
-    for (; i < count; ++i) {
-        NSString* attributes = attributesOfElement([linkedElements objectAtIndex:i]);
-        [allElementString appendFormat:@"%@\n------------\n",attributes];
-    }
-    
-    return nsStringToJSStringRef(allElementString);
 }
 
-JSStringRef AccessibilityController::attributesOfChildrenForFocusedElement()
+AccessibilityUIElement* AccessibilityController::focusedElement()
 {
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    
-    NSArray* children = [accessibilityObject accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    NSMutableString* allElementString = [NSMutableString string];
-    NSUInteger i = 0, count = [children count];
-    for (; i < count; ++i) {
-        NSString* attributes = attributesOfElement([children objectAtIndex:i]);
-        [allElementString appendFormat:@"%@\n------------\n",attributes];
-    }
-    
-    return nsStringToJSStringRef(allElementString);
+    // FIXME: we could do some caching here.
+    id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityFocusedUIElement];
+    return new AccessibilityUIElement(accessibilityObject);
 }
 
-JSStringRef AccessibilityController::allAttributesOfFocusedElement()
+AccessibilityUIElement* AccessibilityController::rootElement()
 {
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    
-    NSString* attributes = attributesOfElement(accessibilityObject);
-    return nsStringToJSStringRef(attributes);
-}
-
-static NSString* attributesOfElement(id accessibilityObject)
-{
-    NSArray* supportedAttributes = [accessibilityObject accessibilityAttributeNames];
-
-    NSMutableString* attributesString = [NSMutableString string];
-    for (NSUInteger i = 0; i < [supportedAttributes count]; ++i) {
-        NSString* attribute = [supportedAttributes objectAtIndex:i];
-        
-        // Right now, position provides useless and screen-specific information, so we do not
-        // want to include it for the sake of universally passing tests.
-        if ([attribute isEqualToString:@"AXPosition"])
-            continue;
-        
-        id valueObject = [accessibilityObject accessibilityAttributeValue:attribute];
-        NSString* value = descriptionOfValue(valueObject, accessibilityObject);
-        [attributesString appendFormat:@"%@: %@\n",attribute,value];
-    }
-    
-    return attributesString;
-}
-        
-static JSStringRef nsStringToJSStringRef(NSString* string)
-{
-    Vector<UniChar> buffer([string length]);
-    [string getCharacters:buffer.data()];
-    return JSStringCreateWithCharacters(buffer.data(), buffer.size());
-}
-
-static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* value)
-{
-    Vector<UniChar> buffer([attribute length]);
-    [attribute getCharacters:buffer.data()];
-    buffer.append(':');
-    buffer.append(' ');
-
-    Vector<UniChar> valueBuffer([value length]);
-    [value getCharacters:valueBuffer.data()];
-    buffer.append(valueBuffer);
-
-    return JSStringCreateWithCharacters(buffer.data(), buffer.size());
-}
-
-JSStringRef AccessibilityController::roleOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    NSString* role = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXRole"], accessibilityObject);
-    return concatenateAttributeAndValue(@"AXRole", role);
-}
-
-JSStringRef AccessibilityController::titleOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    NSString* title = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXTitle"], accessibilityObject);
-    return concatenateAttributeAndValue(@"AXTitle", title);
-}
-
-JSStringRef AccessibilityController::descriptionOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    id description = descriptionOfValue([accessibilityObject accessibilityAttributeValue:@"AXDescription"], accessibilityObject);
-    return concatenateAttributeAndValue(@"AXDescription", description);
-}
-
-double AccessibilityController::widthOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    NSValue* sizeValue = [accessibilityObject accessibilityAttributeValue:@"AXSize"];
-    return (double)[sizeValue sizeValue].width;
-}
-
-double AccessibilityController::heightOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    NSValue* sizeValue = [accessibilityObject accessibilityAttributeValue:@"AXSize"];
-    return (double)[sizeValue sizeValue].height;
-}
-
-float AccessibilityController::intValueOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    id value = [accessibilityObject accessibilityAttributeValue:@"AXValue"];
-    if ([value isKindOfClass:[NSNumber class]])
-        return [(NSNumber*)value floatValue]; 
-    return 0.0f;
-}
-
-float AccessibilityController::minValueOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    id value = [accessibilityObject accessibilityAttributeValue:@"AXMinValue"];
-    if ([value isKindOfClass:[NSNumber class]])
-        return [(NSNumber*)value floatValue]; 
-    return 0.0f;
-}
-
-float AccessibilityController::maxValueOfFocusedElement()
-{
-    WebHTMLView* view = [[mainFrame frameView] documentView];
-    id accessibilityObject = [view accessibilityFocusedUIElement];
-    id value = [accessibilityObject accessibilityAttributeValue:@"AXMaxValue"];
-    if ([value isKindOfClass:[NSNumber class]])
-        return [(NSNumber*)value floatValue]; 
-    return 0.0f;
+    // FIXME: we could do some caching here.
+    id accessibilityObject = [[mainFrame frameView] documentView];
+    return new AccessibilityUIElement(accessibilityObject);
 }

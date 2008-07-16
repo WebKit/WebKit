@@ -23,26 +23,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef AccessibilityController_h
-#define AccessibilityController_h
+#ifndef AccessibilityUIElement_h
+#define AccessibilityUIElement_h
 
 #include <JavaScriptCore/JSObjectRef.h>
+#include <wtf/Vector.h>
+#include <wtf/Platform.h>
 
-class AccessibilityUIElement;
+#if PLATFORM(MAC)
+#ifdef __OBJC__
+typedef id PlatformUIElement;
+#else
+typedef struct objc_object* PlatformUIElement;
+#endif
+#else
+typedef void* PlatformUIElement;
+#endif
 
-class AccessibilityController {
+class AccessibilityUIElement {
 public:
-    AccessibilityController();
-    ~AccessibilityController();
+    AccessibilityUIElement(PlatformUIElement);
+    AccessibilityUIElement();
 
-    void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
+    PlatformUIElement platformUIElement() { return m_element; }
 
-    // Controller Methods - platfrom independant implementations
-    AccessibilityUIElement* rootElement();
-    AccessibilityUIElement* focusedElement();
+    static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, AccessibilityUIElement*);
+
+    void getLinkedUIElements(Vector<AccessibilityUIElement*>&);
+    void getChildren(Vector<AccessibilityUIElement*>&);
+
+    // Methods - platfrom independant implementations
+    JSStringRef allAttributes();
+    JSStringRef attributesOfLinkedUIElements();
+    JSStringRef attributesOfChildren();
+
+    // Attributes - platfrom independant implementations
+    JSStringRef role();
+    JSStringRef title();
+    JSStringRef description();
+    double width();
+    double height();
+    double intValue();
+    double minValue();
+    double maxValue();
 
 private:
     static JSClassRef getJSClass();
+
+    PlatformUIElement m_element;
 };
 
-#endif // AccessibilityController_h
+#endif // AccessibilityUIElement_h

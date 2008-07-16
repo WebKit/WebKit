@@ -12,7 +12,7 @@
     onload = function()
     {
         if (window.accessibilityController)
-            log(accessibilityController.allAttributesOfFocusedElement());
+            log(accessibilityController.focusedElement.allAttributes());
         else
             log("This test requires DumpRenderTree to run.")
     }

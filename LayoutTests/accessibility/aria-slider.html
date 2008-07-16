@@ -10,7 +10,7 @@
         
         var aria = document.getElementById("slider");
         aria.focus();
-        var ariaRole = accessibilityController.roleOfFocusedElement();
+        var ariaRole = accessibilityController.focusedElement.role;
        
         var result = document.getElementById("result");
         if (ariaRole == "AXRole: AXSlider")
