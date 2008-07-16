@@ -1,3 +1,15 @@
+2008-07-16  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff.
+
+        Check pthread_key_create return value.
+
+        This check was helpful when debugging a crash in run-webkit-tests --threaded that happened
+        because JSGlobalData objects were not deleted, and we were running out of pthread keys soon.
+        It also looks useful for production builds.
+
+        * wtf/ThreadSpecific.h: (WTF::::ThreadSpecific):
+
 2008-07-15  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
