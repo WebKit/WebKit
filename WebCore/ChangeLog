@@ -1,3 +1,38 @@
+2008-07-15  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17589
+        <rdar://problem/5770893>
+        Retrieve the wheel sensitivity setting from windows system settings for the horizontal and the vertical scrolling.
+        Allows the page scrolling with the wheel (if activated in windows settings) on both horizontal and vertical ways
+        For the other platforms, nothing is changed but if someone want to activate this feature 
+        he/she has to retrieve the settings and fill out the m_lineScrollSensitivity and/or m_charScrollSensitivity in his/her PlatformWheelEvent constructor.
+
+        * ChangeLog:
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent): static inline function to avoid copy/paste in the member functions
+        (WebCore::EventHandler::handleWheelEvent): Call to the above mentionned static inline function with the right parameters 
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::deltaX): Now returns the delta multiplied by the user settings for the number of lines to scroll
+        (WebCore::PlatformWheelEvent::deltaY): Now returns the delta multiplied by the user settings for the number of chars to scroll
+        (WebCore::PlatformWheelEvent::isPageXScrollModeEnabled):
+        (WebCore::PlatformWheelEvent::isPageYScrollModeEnabled):
+        * platform/gtk/WheelEventGtk.cpp: Add the values to avoid build break but the factors are initialized to 1 not to change the previous behavior
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/mac/WheelEventMac.mm: Add the values to avoid build break but the factors are initialized to 1 not to change the previous behavior
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/qt/WheelEventQt.cpp: Add the values to avoid build break but the factors are initialized to 1 not to change the previous behavior
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/win/ScrollViewWin.cpp: Added the page scroll (horiz/vertical) and reduced the number of pixels to scroll per line to keep the standard behavior with the factor
+        (WebCore::adjustDeltaForPageScrollMode): static inline function to avoid copy/paste in the member functions
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/win/WheelEventWin.cpp: Retrieves the new values by using the win32 API.
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/wx/MouseWheelEventWx.cpp: Add the values to avoid build break but the factors are initialized to 1 not to change the previous behavior
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+
 2008-07-15  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix - adding AccessibilityImageMapLink.cpp to the wx build.

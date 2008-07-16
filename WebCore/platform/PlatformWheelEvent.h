@@ -64,9 +64,11 @@ namespace WebCore {
         const IntPoint& pos() const { return m_position; }
         const IntPoint& globalPos() const { return m_globalPosition; }
 
-        float deltaX() const { return m_deltaX; }
-        float deltaY() const { return m_deltaY; }
+        float deltaX(bool withScrollSensibilityFactor = true) const { return (withScrollSensibilityFactor ? m_deltaX * m_charsToScrollPerDelta : m_deltaX); }
+        float deltaY(bool withScrollSensibilityFactor = true) const { return (withScrollSensibilityFactor ? m_deltaY * m_linesToScrollPerDelta : m_deltaY); }
 
+        bool isPageXScrollModeEnabled() const { return m_pageXScrollMode; }
+        bool isPageYScrollModeEnabled() const { return m_pageYScrollMode; }
         bool isAccepted() const { return m_isAccepted; }
         bool shiftKey() const { return m_shiftKey; }
         bool ctrlKey() const { return m_ctrlKey; }
@@ -106,6 +108,10 @@ namespace WebCore {
         IntPoint m_globalPosition;
         float m_deltaX;
         float m_deltaY;
+        int m_charsToScrollPerDelta;
+        int m_linesToScrollPerDelta;
+        bool m_pageXScrollMode;
+        bool m_pageYScrollMode;
         bool m_isAccepted;
         bool m_shiftKey;
         bool m_ctrlKey;

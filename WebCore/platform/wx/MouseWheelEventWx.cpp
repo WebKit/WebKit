@@ -45,7 +45,11 @@ PlatformWheelEvent::PlatformWheelEvent(const wxMouseEvent& event, const wxPoint&
     , m_continuousDeltaX(0)
     , m_continuousDeltaY(0)
 {
-
+    // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
+    m_charsToScrollPerDelta = 1;
+    m_linesToScrollPerDelta = 1;
+    m_pageXScrollMode = false;
+    m_pageYScrollMode = false;
 }
 
 }

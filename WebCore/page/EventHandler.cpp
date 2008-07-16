@@ -36,6 +36,7 @@
 #include "Editor.h"
 #include "EventNames.h"
 #include "FloatPoint.h"
+#include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -91,6 +92,23 @@ using namespace SVGNames;
 const double autoscrollInterval = 0.1;
 
 static Frame* subframeForTargetNode(Node* node);
+
+static inline void scrollAndAcceptEvent(int delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, bool pageScrollEnabled, PlatformWheelEvent& e, Node* node, float windowHeightOrWidth)
+{
+    if (!delta)
+        return;
+
+    int pixelsToScroll = abs(delta);
+    if (!e.isContinuous() && !pageScrollEnabled) {
+        if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByLine, pixelsToScroll))
+            e.accept();
+    } else {
+        if (pageScrollEnabled)
+            pixelsToScroll = windowHeightOrWidth; 
+        if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
+            e.accept();
+    }
+}
 
 EventHandler::EventHandler(Frame* frame)
     : m_frame(frame)
@@ -1435,12 +1453,9 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
             // a MacBook pro is an example of a 2-dimensional mouse wheel event (where both deltaX and deltaY can be set).
             float deltaX = e.isContinuous() ? e.continuousDeltaX() : e.deltaX();
             float deltaY = e.isContinuous() ? e.continuousDeltaY() : e.deltaY();
-            if (deltaX && node->renderer()->scroll(deltaX < 0 ? ScrollRight : ScrollLeft, e.isContinuous() ? ScrollByPixel : ScrollByLine,
-                                                       deltaX < 0 ? -deltaX : deltaX))
-                e.accept();
-            if (deltaY && node->renderer()->scroll(deltaY < 0 ? ScrollDown : ScrollUp, e.isContinuous() ? ScrollByPixel : ScrollByLine,
-                                                       deltaY < 0 ? -deltaY : deltaY))
-                e.accept();
+            
+            scrollAndAcceptEvent(deltaX, ScrollRight, ScrollLeft, e.isPageXScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().width());
+            scrollAndAcceptEvent(deltaY, ScrollUp, ScrollDown, e.isPageYScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().height());
         }
     }
 

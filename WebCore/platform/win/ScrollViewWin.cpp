@@ -51,6 +51,14 @@ using namespace std;
 
 namespace WebCore {
 
+#define LINE_STEP_WIN 15 // To keep the behavior we had before adding the scroll wheel sensitivity : <rdar://problem/5770893>
+
+static inline void adjustDeltaForPageScrollMode(float& delta, bool pageScrollEnabled, int visibleWidthOrHeight)
+{
+    if (pageScrollEnabled)
+        delta = (delta > 0 ? visibleWidthOrHeight : -visibleWidthOrHeight) / LINE_STEP_WIN;
+}
+
 class ScrollView::ScrollViewPrivate : public ScrollbarClient {
 public:
     ScrollViewPrivate(ScrollView* view)
@@ -555,7 +563,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_data->m_scrollbarsSuppressed)
             m_data->m_hBar->setSuppressInvalidation(true);
-        m_data->m_hBar->setSteps(LINE_STEP, pageStep);
+        m_data->m_hBar->setSteps(LINE_STEP_WIN, pageStep);
         m_data->m_hBar->setProportion(clientWidth, contentsWidth());
         m_data->m_hBar->setValue(scroll.width());
         if (m_data->m_scrollbarsSuppressed)
@@ -578,7 +586,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
         if (m_data->m_scrollbarsSuppressed)
             m_data->m_vBar->setSuppressInvalidation(true);
-        m_data->m_vBar->setSteps(LINE_STEP, pageStep);
+        m_data->m_vBar->setSteps(LINE_STEP_WIN, pageStep);
         m_data->m_vBar->setProportion(clientHeight, contentsHeight());
         m_data->m_vBar->setValue(scroll.height());
         if (m_data->m_scrollbarsSuppressed)
@@ -728,7 +736,11 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
         (e.deltaY() < 0 && maxScrollDelta.height() > 0) ||
         (e.deltaY() > 0 && scrollOffset().height() > 0)) {
         e.accept();
-        scrollBy(-e.deltaX() * LINE_STEP, -e.deltaY() * LINE_STEP);
+        float deltaX = e.deltaX(), deltaY = e.deltaY();
+        adjustDeltaForPageScrollMode(deltaX, e.isPageXScrollModeEnabled(), visibleWidth());
+        adjustDeltaForPageScrollMode(deltaY, e.isPageYScrollModeEnabled(), visibleHeight());
+
+        scrollBy(-deltaX * LINE_STEP_WIN, -deltaY * LINE_STEP_WIN);
     }
 }
 

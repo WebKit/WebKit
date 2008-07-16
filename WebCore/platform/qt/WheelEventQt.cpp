@@ -43,6 +43,12 @@ PlatformWheelEvent::PlatformWheelEvent(QWheelEvent* e)
         m_deltaX = 0;
         m_deltaY = (e->delta() / 120);
     }
+
+    // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
+    m_charsToScrollPerDelta = 1;
+    m_linesToScrollPerDelta = 1;
+    m_pageXScrollMode = false;
+    m_pageYScrollMode = false;
 }
 
 } // namespace WebCore

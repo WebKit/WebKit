@@ -70,6 +70,12 @@ PlatformWheelEvent::PlatformWheelEvent(GdkEventScroll* event)
     m_metaKey = false;
 #endif
     m_isContinuous = false;
+
+    // FIXME: retrieve the user setting for the number of lines to scroll on each wheel event
+    m_charsToScrollPerDelta = 1;
+    m_linesToScrollPerDelta = 1;
+    m_pageXScrollMode = false;
+    m_pageYScrollMode = false;
 }
 
 }
