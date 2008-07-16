@@ -50,18 +50,13 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(LengthModeWidth, "-10%")
+    , m_y(LengthModeHeight, "-10%")
+    , m_width(LengthModeWidth, "120%")
+    , m_height(LengthModeHeight, "120%")
 {
-    // Spec: If the attribute is not specified, the effect is as if a value of "-10%" were specified.
-    setXBaseValue(SVGLength(this, LengthModeWidth, "-10%"));
-    setYBaseValue(SVGLength(this, LengthModeHeight, "-10%"));
-  
-    // Spec: If the attribute is not specified, the effect is as if a value of "120%" were specified.
-    setWidthBaseValue(SVGLength(this, LengthModeWidth, "120%"));
-    setHeightBaseValue(SVGLength(this, LengthModeHeight, "120%"));
+    // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
+    // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
 }
 
 SVGMaskElement::~SVGMaskElement()
@@ -88,13 +83,13 @@ void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
         else if (attr->value() == "objectBoundingBox")
             setMaskContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;
@@ -150,10 +145,10 @@ auto_ptr<ImageBuffer> SVGMaskElement::drawMaskerContent(const FloatRect& targetR
         widthValue = width().valueAsPercentage() * targetRect.width();
         heightValue = height().valueAsPercentage() * targetRect.height();
     } else {
-        xValue = x().value();
-        yValue = y().value();
-        widthValue = width().value();
-        heightValue = height().value();
+        xValue = x().value(this);
+        yValue = y().value(this);
+        widthValue = width().value(this);
+        heightValue = height().value(this);
     } 
 
     IntSize imageSize(lroundf(widthValue), lroundf(heightValue));

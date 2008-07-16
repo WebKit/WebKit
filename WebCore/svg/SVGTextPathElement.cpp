@@ -38,7 +38,7 @@ namespace WebCore {
 SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* doc)
     : SVGTextContentElement(tagName, doc)
     , SVGURIReference()
-    , m_startOffset(this, LengthModeOther)
+    , m_startOffset(LengthModeOther)
     , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
     , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
 {
@@ -57,7 +57,7 @@ void SVGTextPathElement::parseMappedAttribute(MappedAttribute* attr)
     const String& value = attr->value();
 
     if (attr->name() == SVGNames::startOffsetAttr)
-        setStartOffsetBaseValue(SVGLength(this, LengthModeOther, value));
+        setStartOffsetBaseValue(SVGLength(LengthModeOther, value));
     else if (attr->name() == SVGNames::methodAttr) {
         if (value == "align")
             setSpacingBaseValue(SVG_TEXTPATH_METHODTYPE_ALIGN);

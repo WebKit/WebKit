@@ -37,10 +37,10 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(this, LengthModeWidth)
-    , m_cy(this, LengthModeHeight)
-    , m_rx(this, LengthModeWidth)
-    , m_ry(this, LengthModeHeight)
+    , m_cx(LengthModeWidth)
+    , m_cy(LengthModeHeight)
+    , m_rx(LengthModeWidth)
+    , m_ry(LengthModeHeight)
 {
 }    
 
@@ -56,16 +56,16 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Ry, ry, SVGNames::ry
 void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::rxAttr) {
-        setRxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
-        if (rx().value() < 0.0)
+        setRxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        if (rxBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <rx> is not allowed");
     } else if (attr->name() == SVGNames::ryAttr) {
-        setRyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
-        if (ry().value() < 0.0)
+        setRyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        if (ryBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <ry> is not allowed");
     } else {
         if (SVGTests::parseMappedAttribute(attr))
@@ -96,8 +96,8 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 
 Path SVGEllipseElement::toPathData() const
 {
-    return Path::createEllipse(FloatPoint(cx().value(), cy().value()),
-                               rx().value(), ry().value());
+    return Path::createEllipse(FloatPoint(cx().value(this), cy().value(this)),
+                                          rx().value(this), ry().value(this));
 }
  
 bool SVGEllipseElement::hasRelativeValues() const

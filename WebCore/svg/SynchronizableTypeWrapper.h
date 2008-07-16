@@ -47,8 +47,7 @@ namespace WebCore {
         typedef SynchronizableTypeWrapperBase<StoredType> Base;
         SynchronizableTypeWrapper();
  
-        // "Forwarding constructors" for primitive type assignment with more than one argument, for exampe SVGLength:
-        // Use m_syncWrapper(context, LengthMode, ..) instead of m_syncWrapper(SVGLength(context, LengthMode, ..)))
+        // "Forwarding constructors" for primitive type assignment with more than one argument, for exampe SVGLength
         template<typename T1> SynchronizableTypeWrapper(const T1&);
         template<typename T1, typename T2> SynchronizableTypeWrapper(const T1&, const T2&);
         template<typename T1, typename T2, typename T3> SynchronizableTypeWrapper(const T1&, const T2&, const T3&);

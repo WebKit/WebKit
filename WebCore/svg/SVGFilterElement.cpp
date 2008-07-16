@@ -42,20 +42,15 @@ SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
     , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(LengthModeWidth, "-10%")
+    , m_y(LengthModeHeight, "-10%")
+    , m_width(LengthModeWidth, "120%")
+    , m_height(LengthModeHeight, "120%")
     , m_filterResX(0)
     , m_filterResY(0)
 {
-    // Spec: If the attribute is not specified, the effect is as if a value of "-10%" were specified.
-    setXBaseValue(SVGLength(this, LengthModeWidth, "-10%"));
-    setYBaseValue(SVGLength(this, LengthModeHeight, "-10%"));
- 
-    // Spec: If the attribute is not specified, the effect is as if a value of "120%" were specified.
-    setWidthBaseValue(SVGLength(this, LengthModeWidth, "120%"));
-    setHeightBaseValue(SVGLength(this, LengthModeHeight, "120%"));
+    // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
+    // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
 }
 
 SVGFilterElement::~SVGFilterElement()
@@ -89,17 +84,20 @@ void SVGFilterElement::parseMappedAttribute(MappedAttribute* attr)
         else if (value == "objectBoundingBox")
             setPrimitiveUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
     } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, value));
+        setXBaseValue(SVGLength(LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, value));
+        setYBaseValue(SVGLength(LengthModeHeight, value));
     else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
+        setWidthBaseValue(SVGLength(LengthModeWidth, value));
     else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
+        setHeightBaseValue(SVGLength(LengthModeHeight, value));
     else {
-        if (SVGURIReference::parseMappedAttribute(attr)) return;
-        if (SVGLangSpace::parseMappedAttribute(attr)) return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)) return;
+        if (SVGURIReference::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
 
         SVGStyledElement::parseMappedAttribute(attr);
     }
@@ -127,10 +125,10 @@ SVGResource* SVGFilterElement::canvasResource()
         m_filter->setXBoundingBoxMode(x().unitType() == LengthTypePercentage);
         m_filter->setYBoundingBoxMode(y().unitType() == LengthTypePercentage);
 
-        _x = x().value();
-        _y = y().value();
-        _width = width().value();
-        _height = height().value();
+        _x = x().value(this);
+        _y = y().value(this);
+        _width = width().value(this);
+        _height = height().value(this);
     } 
 
     m_filter->setFilterRect(FloatRect(_x, _y, _width, _height));

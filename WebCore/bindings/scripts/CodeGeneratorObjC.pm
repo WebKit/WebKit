@@ -1153,6 +1153,11 @@ sub GenerateImplementation
                 $getterContentTail = "";
             }
 
+            # TODO: Handle special case for DOMSVGLength
+            if ($podType and $podType eq "SVGLength" and $attributeName eq "value") {
+                $getterContentHead = "IMPL->value(0 /* FIXME */";
+            }
+
             my $attributeTypeSansPtr = $attributeType;
             $attributeTypeSansPtr =~ s/ \*$//; # Remove trailing " *" from pointer types.
 
@@ -1369,9 +1374,10 @@ sub GenerateImplementation
                 $caller = "dv";
             }
 
-            # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGMatrixCustom.mm
+            # FIXME! We need [Custom] support for ObjC, to move these hacks into DOMSVGLength/MatrixCustom.mm
             my $svgMatrixRotateFromVector = ($podType and $podType eq "AffineTransform" and $functionName eq "rotateFromVector");
             my $svgMatrixInverse = ($podType and $podType eq "AffineTransform" and $functionName eq "inverse");
+            my $svgLengthConvertToSpecifiedUnits = ($podType and $podType eq "SVGLength" and $functionName eq "convertToSpecifiedUnits");
 
             push(@parameterNames, "ec") if $raisesExceptions and !($svgMatrixRotateFromVector || $svgMatrixInverse);
             my $content = $caller . "->" . $codeGenerator->WK_lcfirst($functionName) . "(" . join(", ", @parameterNames) . ")"; 
@@ -1390,6 +1396,8 @@ sub GenerateImplementation
                 push(@functionContent, "        ec = WebCore::SVGException::SVG_MATRIX_NOT_INVERTABLE;\n");
                 push(@functionContent, "    $exceptionRaiseOnError\n");
                 push(@functionContent, "    return [DOMSVGMatrix _wrapSVGMatrix:$content];\n");
+            } elsif ($svgLengthConvertToSpecifiedUnits) {
+                push(@functionContent, "    IMPL->convertToSpecifiedUnits(inUnitType, 0 /* FIXME */);\n");
             } elsif ($returnType eq "void") {
                 # Special case 'void' return type.
                 if ($raisesExceptions) {

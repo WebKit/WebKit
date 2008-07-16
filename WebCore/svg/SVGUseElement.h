@@ -86,7 +86,7 @@ namespace WebCore {
     private:
         // Instance tree handling
         void buildInstanceTree(SVGElement* target, SVGElementInstance* targetInstance, bool& foundCycle);
-        void handleDeepUseReferencing(SVGElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
+        void handleDeepUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, bool& foundCycle);
 
         // Shadow tree handling
         PassRefPtr<SVGSVGElement> buildShadowTreeForSymbolTag(SVGElement* target, SVGElementInstance* targetInstance);

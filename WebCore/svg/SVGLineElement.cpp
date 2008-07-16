@@ -37,10 +37,10 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x1(this, LengthModeWidth)
-    , m_y1(this, LengthModeHeight)
-    , m_x2(this, LengthModeWidth)
-    , m_y2(this, LengthModeHeight)
+    , m_x1(LengthModeWidth)
+    , m_y1(LengthModeHeight)
+    , m_x2(LengthModeWidth)
+    , m_y2(LengthModeHeight)
 {
 }
 
@@ -56,13 +56,13 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Y2, y2, SVGNames::y2Att
 void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setY1BaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
     else
     {
         if (SVGTests::parseMappedAttribute(attr))
@@ -93,8 +93,8 @@ void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)
 
 Path SVGLineElement::toPathData() const
 {
-    return Path::createLine(FloatPoint(x1().value(), y1().value()),
-                            FloatPoint(x2().value(), y2().value()));
+    return Path::createLine(FloatPoint(x1().value(this), y1().value(this)),
+                            FloatPoint(x2().value(this), y2().value(this)));
 }
 
 bool SVGLineElement::hasRelativeValues() const

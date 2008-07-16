@@ -30,7 +30,6 @@
 #include "RenderSVGImage.h"
 #include "SVGDocument.h"
 #include "SVGLength.h"
-#include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGSVGElement.h"
 #include "XLinkNames.h"
@@ -43,10 +42,10 @@ SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(LengthModeWidth)
+    , m_y(LengthModeHeight)
+    , m_width(LengthModeWidth)
+    , m_height(LengthModeHeight)
     , m_preserveAspectRatio(SVGPreserveAspectRatio::create())
     , m_imageLoader(this)
 {
@@ -61,26 +60,26 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Y, y, SVGNames::yAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Width, width, SVGNames::widthAttr)
 ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Height, height, SVGNames::heightAttr)
 ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr)
-
+ 
 void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
         const UChar* c = attr->value().characters();
         const UChar* end = c + attr->value().length();
         preserveAspectRatioBaseValue()->parsePreserveAspectRatio(c, end);
     } else if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
         addCSSProperty(attr, CSSPropertyWidth, attr->value());
-        if (width().value() < 0.0)
+        if (widthBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for image attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
         addCSSProperty(attr, CSSPropertyHeight, attr->value());
-        if (height().value() < 0.0)
+        if (heightBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for image attribute <height> is not allowed");
     } else {
         if (SVGTests::parseMappedAttribute(attr))

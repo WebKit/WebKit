@@ -36,8 +36,8 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(static_cast<SVGStyledElement*>(0), LengthModeWidth)
-    , m_y(static_cast<SVGStyledElement*>(0), LengthModeHeight)
+    , m_x(LengthModeWidth)
+    , m_y(LengthModeHeight)
 {
 }
 
@@ -51,9 +51,9 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Y, y, SVGNames::yAttr
 void SVGCursorElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(0, LengthModeWidth, attr->value()));
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(0, LengthModeHeight, attr->value()));
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

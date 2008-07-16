@@ -54,13 +54,13 @@ ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGNumberLis
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::xAttr)
-        xBaseValue()->parse(attr->value(), this, LengthModeWidth);
+        xBaseValue()->parse(attr->value(), LengthModeWidth);
     else if (attr->name() == SVGNames::yAttr)
-        yBaseValue()->parse(attr->value(), this, LengthModeHeight);
+        yBaseValue()->parse(attr->value(), LengthModeHeight);
     else if (attr->name() == SVGNames::dxAttr)
-        dxBaseValue()->parse(attr->value(), this, LengthModeWidth);
+        dxBaseValue()->parse(attr->value(), LengthModeWidth);
     else if (attr->name() == SVGNames::dyAttr)
-        dyBaseValue()->parse(attr->value(), this, LengthModeHeight);
+        dyBaseValue()->parse(attr->value(), LengthModeHeight);
     else if (attr->name() == SVGNames::rotateAttr)
         rotateBaseValue()->parse(attr->value());
     else

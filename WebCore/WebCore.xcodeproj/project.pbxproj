@@ -39,6 +39,7 @@
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
+		08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */; };
 		0A4844990CA44CB200B7BD48 /* SoftLinking.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A4844980CA44CB200B7BD48 /* SoftLinking.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1402645E0AFDC19B005919E2 /* LoggingMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1402645D0AFDC19B005919E2 /* LoggingMac.mm */; };
 		1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 1403B99509EB13AF00797C7F /* DOMWindow.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -4514,6 +4515,7 @@
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
 		06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LocalCurrentGraphicsContext.mm; sourceTree = "<group>"; };
+		08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGLengthCustom.cpp; sourceTree = "<group>"; };
 		0A4844980CA44CB200B7BD48 /* SoftLinking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoftLinking.h; sourceTree = "<group>"; };
 		1402645D0AFDC19B005919E2 /* LoggingMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = LoggingMac.mm; sourceTree = "<group>"; };
 		1403B90C09EB124500797C7F /* DOMWindow.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindow.idl; sourceTree = "<group>"; };
@@ -12415,6 +12417,7 @@
 				51D0C5150DAA90B7003B3831 /* JSStorageCustom.cpp */,
 				BC98A27C0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp */,
 				A84EBD770CB8C89200079609 /* JSStyleSheetListCustom.cpp */,
+				08E4FE450E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp */,
 				B25DFAAE0B2E2929000E6510 /* JSSVGMatrixCustom.cpp */,
 				B2C96D8C0B3AF2B7005E80EC /* JSSVGPathSegCustom.cpp */,
 				B297BC6F0B3C14CF0045A590 /* JSSVGPathSegListCustom.cpp */,
@@ -17057,6 +17060,7 @@
 				A75E8B8A0E1DE2D6007F2481 /* FEColorMatrix.cpp in Sources */,
 				A75E8B8C0E1DE2D6007F2481 /* FEComponentTransfer.cpp in Sources */,
 				A75E8B8E0E1DE2D6007F2481 /* FEComposite.cpp in Sources */,
+				08E4FE460E2BD41400F4CAE0 /* JSSVGLengthCustom.cpp in Sources */,
 				2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */,
 				BC1DEA4F0E268EB60083A73F /* JSDocumentFragmentCustom.cpp in Sources */,
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,

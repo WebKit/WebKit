@@ -14063,6 +14063,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\JSSVGLengthCustom.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\JSSVGMatrixCustom.cpp"
 					>
 				</File>

@@ -39,17 +39,15 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
-    , m_refX(this, LengthModeWidth)
-    , m_refY(this, LengthModeHeight)
-    , m_markerWidth(this, LengthModeWidth)
-    , m_markerHeight(this, LengthModeHeight) 
+    , m_refX(LengthModeWidth)
+    , m_refY(LengthModeHeight)
+    , m_markerWidth(LengthModeWidth, "3")
+    , m_markerHeight(LengthModeHeight, "3") 
     , m_markerUnits(SVG_MARKERUNITS_STROKEWIDTH)
     , m_orientType(0)
     , m_orientAngle(SVGAngle::create())
 {
-    // Spec: If the attribute is not specified, the effect is as if a value of "3" were specified.
-    setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, "3"));
-    setMarkerHeightBaseValue(SVGLength(this, LengthModeHeight, "3"));
+    // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
 }
 
 SVGMarkerElement::~SVGMarkerElement()
@@ -70,13 +68,13 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
         if (attr->value() == "userSpaceOnUse")
             setMarkerUnitsBaseValue(SVG_MARKERUNITS_USERSPACEONUSE);
     } else if (attr->name() == SVGNames::refXAttr)
-        setRefXBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setRefXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::refYAttr)
-        setRefYBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setRefYBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::markerWidthAttr)
-        setMarkerWidthBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setMarkerWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::markerHeightAttr)
-        setMarkerHeightBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setMarkerHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::orientAttr) {
         if (attr->value() == "auto")
             setOrientToAuto();
@@ -157,7 +155,7 @@ SVGResource* SVGMarkerElement::canvasResource()
     else
         m_marker->setAutoAngle();
 
-    m_marker->setRef(refX().value(), refY().value());
+    m_marker->setRef(refX().value(this), refY().value(this));
     m_marker->setUseStrokeWidth(markerUnits() == SVG_MARKERUNITS_STROKEWIDTH);
 
     return m_marker.get();

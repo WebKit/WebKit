@@ -65,8 +65,9 @@ namespace WebCore {
         
         static bool attributeIsCSS(const String& attributeName);
 
-protected:
-        
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
+ 
         enum CalcMode { CalcModeDiscrete, CalcModeLinear, CalcModePaced, CalcModeSpline };
         CalcMode calcMode() const;
         
@@ -95,7 +96,7 @@ protected:
         virtual void endedActiveInterval();
         
         ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-private:
+    private:
         virtual bool calculateFromAndToValues(const String& fromString, const String& toString) = 0;
         virtual bool calculateFromAndByValues(const String& fromString, const String& byString) = 0;
         virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
@@ -108,7 +109,7 @@ private:
         void currentValuesFromKeyPoints(float percent, float& effectivePercent, String& from, String& to) const;
         float calculatePercentForSpline(float percent, unsigned splineIndex) const;
         
-protected:
+    protected:
         bool m_animationValid;
 
         Vector<String> m_values;

@@ -41,16 +41,13 @@ namespace WebCore {
 
 SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_cx(this, LengthModeWidth)
-    , m_cy(this, LengthModeHeight)
-    , m_r(this, LengthModeOther)
-    , m_fx(this, LengthModeWidth)
-    , m_fy(this, LengthModeHeight)
+    , m_cx(LengthModeWidth, "50%")
+    , m_cy(LengthModeHeight, "50%")
+    , m_r(LengthModeOther, "50%")
+    , m_fx(LengthModeWidth)
+    , m_fy(LengthModeHeight)
 {
-    // Spec: If the attribute is not specified, the effect is as if a value of "50%" were specified.
-    setCxBaseValue(SVGLength(this, LengthModeWidth, "50%"));
-    setCyBaseValue(SVGLength(this, LengthModeHeight, "50%"));
-    setRBaseValue(SVGLength(this, LengthModeOther, "50%"));
+    // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
 }
 
 SVGRadialGradientElement::~SVGRadialGradientElement()
@@ -66,17 +63,17 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, R, r, SVGName
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::rAttr) {
-        setRBaseValue(SVGLength(this, LengthModeOther, attr->value()));
-        if (r().value() < 0.0)
+        setRBaseValue(SVGLength(LengthModeOther, attr->value()));
+        if (rBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
     } else if (attr->name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setFxBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setFyBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }

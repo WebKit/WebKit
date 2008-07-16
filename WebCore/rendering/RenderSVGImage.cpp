@@ -153,7 +153,7 @@ void RenderSVGImage::layout()
     calcHeight();
 
     SVGImageElement* image = static_cast<SVGImageElement*>(node());
-    m_localBounds = FloatRect(image->x().value(), image->y().value(), image->width().value(), image->height().value());
+    m_localBounds = FloatRect(image->x().value(image), image->y().value(image), image->width().value(image), image->height().value(image));
 
     calculateAbsoluteBounds();
 

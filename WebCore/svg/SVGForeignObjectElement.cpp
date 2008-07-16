@@ -39,10 +39,10 @@ SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, D
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(this, LengthModeWidth)
-    , m_y(this, LengthModeHeight)
-    , m_width(this, LengthModeWidth)
-    , m_height(this, LengthModeHeight)
+    , m_x(LengthModeWidth)
+    , m_y(LengthModeHeight)
+    , m_width(LengthModeWidth)
+    , m_height(LengthModeHeight)
 {
 }
 
@@ -59,13 +59,13 @@ void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute* attr)
 {
     const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(this, LengthModeWidth, value));
+        setXBaseValue(SVGLength(LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(this, LengthModeHeight, value));
+        setYBaseValue(SVGLength(LengthModeHeight, value));
     else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength(this, LengthModeWidth, value));
+        setWidthBaseValue(SVGLength(LengthModeWidth, value));
     else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength(this, LengthModeHeight, value));
+        setHeightBaseValue(SVGLength(LengthModeHeight, value));
     else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

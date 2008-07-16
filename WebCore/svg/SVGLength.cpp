@@ -33,7 +33,6 @@
 #include "RenderView.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
-#include "SVGStyledElement.h"
 
 #include <math.h>
 #include <wtf/Assertions.h>
@@ -114,10 +113,9 @@ inline SVGLengthType stringToLengthType(const String& string)
     return LengthTypeUnknown;
 }
 
-SVGLength::SVGLength(const SVGStyledElement* context, SVGLengthMode mode, const String& valueAsString)
+SVGLength::SVGLength(SVGLengthMode mode, const String& valueAsString)
     : m_valueInSpecifiedUnits(0.0f)
     , m_unit(storeUnit(mode, LengthTypeNumber))
-    , m_context(context)
 {
     setValueAsString(valueAsString);
 }
@@ -127,7 +125,7 @@ SVGLengthType SVGLength::unitType() const
     return extractType(m_unit);
 }
 
-float SVGLength::value() const
+float SVGLength::value(const SVGElement* context) const
 {
     SVGLengthType type = extractType(m_unit);
     if (type == LengthTypeUnknown)
@@ -137,13 +135,13 @@ float SVGLength::value() const
     case LengthTypeNumber:
         return m_valueInSpecifiedUnits;
     case LengthTypePercentage:
-        return SVGLength::PercentageOfViewport(m_valueInSpecifiedUnits / 100.0f, m_context, extractMode(m_unit));
+        return SVGLength::PercentageOfViewport(m_valueInSpecifiedUnits / 100.0f, context, extractMode(m_unit));
     case LengthTypeEMS:
     case LengthTypeEXS:
     {
         RenderStyle* style = 0;
-        if (m_context && m_context->renderer())
-            style = m_context->renderer()->style();
+        if (context && context->renderer())
+            style = context->renderer()->style();
         if (style) {
             float useSize = style->fontSize();
             ASSERT(useSize > 0);
@@ -268,16 +266,16 @@ void SVGLength::newValueSpecifiedUnits(unsigned short type, float value)
     m_valueInSpecifiedUnits = value;
 }
 
-void SVGLength::convertToSpecifiedUnits(unsigned short type)
+void SVGLength::convertToSpecifiedUnits(unsigned short type, const SVGElement* context)
 {
     ASSERT(type <= LengthTypePC);
 
-    float valueInUserUnits = value();
+    float valueInUserUnits = value(context);
     m_unit = storeUnit(extractMode(m_unit), (SVGLengthType) type);
     setValue(valueInUserUnits);
 }
 
-float SVGLength::PercentageOfViewport(float value, const SVGStyledElement* context, SVGLengthMode mode)
+float SVGLength::PercentageOfViewport(float value, const SVGElement* context, SVGLengthMode mode)
 {
     ASSERT(context);
 
@@ -298,8 +296,8 @@ float SVGLength::PercentageOfViewport(float value, const SVGStyledElement* conte
             width = svg->viewBox().width();
             height = svg->viewBox().height();
         } else {
-            width = svg->width().value();
-            height = svg->height().value();
+            width = svg->width().value(svg);
+            height = svg->height().value(svg);
         }
     } else if (context->parent() && !context->parent()->isSVGElement()) {
         if (RenderObject* renderer = context->renderer()) {

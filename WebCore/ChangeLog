@@ -1,3 +1,132 @@
+2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=10745 (SVGLength object needs some weight loss)
+        Don't store a context pointer in SVGLength, saving memory. Let the caller of the value() & convertToSpecifiedUnits() pass it.
+
+        Remove some uneeded contextElement() functions, by moving into approriate shared base classes.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSSVGLengthCustom.cpp: Added.
+        (WebCore::JSSVGLength::value):
+        (WebCore::JSSVGLength::convertToSpecifiedUnits):
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * rendering/RenderForeignObject.cpp:
+        (WebCore::RenderForeignObject::translationForAttributes):
+        * rendering/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::layout):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcViewport):
+        * rendering/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::layout):
+        * rendering/RenderSVGViewportContainer.cpp:
+        (WebCore::RenderSVGViewportContainer::calcViewport):
+        * rendering/SVGCharacterLayoutInfo.cpp:
+        (WebCore::SVGCharacterLayoutInfo::addLayoutInformation):
+        (WebCore::SVGCharacterLayoutInfo::addStackContent):
+        * rendering/SVGCharacterLayoutInfo.h:
+        * rendering/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::buildTextChunks):
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimationElement.h:
+        (WebCore::SVGAnimationElement::contextElement):
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::SVGCircleElement):
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        (WebCore::SVGCircleElement::toPathData):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::SVGCursorElement):
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::SVGEllipseElement):
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        (WebCore::SVGEllipseElement::toPathData):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::SVGFilterElement):
+        (WebCore::SVGFilterElement::parseMappedAttribute):
+        (WebCore::SVGFilterElement::canvasResource):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseMappedAttribute):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::setStandardAttributes):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::SVGForeignObjectElement):
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::SVGImageElement):
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::SVGLength):
+        (WebCore::SVGLength::value):
+        (WebCore::SVGLength::convertToSpecifiedUnits):
+        (WebCore::SVGLength::PercentageOfViewport):
+        * svg/SVGLength.h:
+        * svg/SVGLength.idl:
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse):
+        * svg/SVGLengthList.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::SVGLineElement):
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        (WebCore::SVGLineElement::toPathData):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::SVGLinearGradientElement):
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::canvasResource):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::SVGMaskElement):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::drawMaskerContent):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::SVGPatternElement):
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        (WebCore::SVGPatternElement::buildPattern):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::SVGRadialGradientElement):
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::SVGRectElement):
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        (WebCore::SVGRectElement::toPathData):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::viewport):
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        (WebCore::SVGSVGElement::getCTM):
+        (WebCore::SVGSVGElement::getScreenCTM):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::SVGTextContentElement):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::SVGTextPathElement):
+        (WebCore::SVGTextPathElement::parseMappedAttribute):
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::SVGUseElement):
+        (WebCore::SVGUseElement::parseMappedAttribute):
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::buildInstanceTree):
+        (WebCore::SVGUseElement::handleDeepUseReferencing):
+        (WebCore::SVGUseElement::alterShadowTreeForSVGTag):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        (WebCore::SVGUseElement::expandSymbolElementsInShadowTree):
+        * svg/SVGUseElement.h:
+        * svg/SynchronizableTypeWrapper.h:
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::size):
+
 2008-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1881,6 +1881,7 @@ webcore_cppflags += \
 	-I\$(top_srcdir)/WebCore/svg/graphics/filters
 
 webcore_sources += \
+	WebCore/bindings/js/JSSVGLengthCustom.cpp \
 	WebCore/bindings/js/JSSVGMatrixCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegCustom.cpp \
 	WebCore/bindings/js/JSSVGPathSegListCustom.cpp \

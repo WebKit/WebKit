@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
     Copyright (C) 2004, 2005 Rob Buis <buis@kde.org>
     Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
     Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
@@ -39,13 +39,14 @@ module svg {
         const unsigned short SVG_LENGTHTYPE_PC         = 10;
 
         readonly attribute unsigned short unitType;
-                 attribute float          value;
-                 attribute float          valueInSpecifiedUnits;
-                 attribute [ConvertNullToNullString] DOMString      valueAsString;
+        attribute [CustomGetter] float value;
+        attribute float valueInSpecifiedUnits;
+        attribute [ConvertNullToNullString] DOMString valueAsString;
 
         void newValueSpecifiedUnits(in unsigned short unitType, 
                                     in float valueInSpecifiedUnits);
-        void convertToSpecifiedUnits(in unsigned short unitType);
+
+        [Custom] void convertToSpecifiedUnits(in unsigned short unitType);
     };
 
 }

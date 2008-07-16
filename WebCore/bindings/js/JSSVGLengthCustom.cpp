@@ -1,8 +1,5 @@
 /*
-    Copyright (C) 2004, 2005, 2006, 2008 Nikolas Zimmermann <zimmermann@kde.org>
-                  2004, 2005, 2006 Rob Buis <buis@kde.org>
-
-    This file is part of the KDE project
+    Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -20,29 +17,32 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef SVGLengthList_h
-#define SVGLengthList_h
+#include "config.h"
 
 #if ENABLE(SVG)
-#include "SVGLength.h"
-#include "SVGList.h"
+#include "JSSVGLength.h"
+
+using namespace KJS;
 
 namespace WebCore {
 
-    class SVGLengthList : public SVGPODList<SVGLength> {
-    public:
-        static PassRefPtr<SVGLengthList> create(const QualifiedName& attributeName) { return adoptRef(new SVGLengthList(attributeName)); }
-        virtual ~SVGLengthList();
+JSValue* JSSVGLength::value(ExecState* exec) const
+{
+    SVGLength imp(*impl());
+    return jsNumber(exec, imp.value(context()));
+}
 
-        void parse(const String& value, SVGLengthMode mode);
- 
-        String valueAsString() const;
+JSValue* JSSVGLength::convertToSpecifiedUnits(ExecState* exec, const ArgList& args)
+{
+    JSSVGPODTypeWrapper<SVGLength>* wrapper = impl();
 
-    private:
-        SVGLengthList(const QualifiedName&);
-    };
+    SVGLength imp(*wrapper);
+    imp.convertToSpecifiedUnits(args[0]->toInt32(exec), context());
 
-} // namespace WebCore
+    wrapper->commitChange(imp, context());
+    return jsUndefined();
+}
+
+}
 
 #endif // ENABLE(SVG)
-#endif

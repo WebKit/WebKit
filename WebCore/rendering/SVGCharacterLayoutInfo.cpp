@@ -315,10 +315,10 @@ void SVGCharacterLayoutInfo::addLayoutInformation(SVGTextPositioningElement* ele
 
     float baselineShift = calculateBaselineShift(element->renderer());
 
-    addStackContent(XStack, element->x());
-    addStackContent(YStack, element->y());
-    addStackContent(DxStack, element->dx());
-    addStackContent(DyStack, element->dy());
+    addStackContent(XStack, element->x(), element);
+    addStackContent(YStack, element->y(), element);
+    addStackContent(DxStack, element->dx(), element);
+    addStackContent(DyStack, element->dy(), element);
     addStackContent(AngleStack, element->rotate());
     addStackContent(BaselineShiftStack, baselineShift);
 
@@ -352,7 +352,7 @@ void SVGCharacterLayoutInfo::addStackContent(StackType type, SVGNumberList* list
     addStackContent(type, newLayoutInfo);
 }
 
-void SVGCharacterLayoutInfo::addStackContent(StackType type, SVGLengthList* list)
+void SVGCharacterLayoutInfo::addStackContent(StackType type, SVGLengthList* list, const SVGElement* context)
 {
     unsigned length = list->numberOfItems();
     if (!length)
@@ -362,7 +362,7 @@ void SVGCharacterLayoutInfo::addStackContent(StackType type, SVGLengthList* list
 
     ExceptionCode ec = 0;
     for (unsigned i = 0; i < length; ++i) {
-        float value = list->getItem(i, ec).value();
+        float value = list->getItem(i, ec).value(context);
         ASSERT(ec == 0);
 
         newLayoutInfo.append(value);

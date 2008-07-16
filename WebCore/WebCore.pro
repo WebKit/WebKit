@@ -1402,6 +1402,7 @@ contains(DEFINES, ENABLE_SVG=1) {
 
     SOURCES += \
 # TODO: this-one-is-not-auto-added! FIXME! tmp/SVGElementFactory.cpp \
+        bindings/js/JSSVGLengthCustom.cpp \
         bindings/js/JSSVGMatrixCustom.cpp \
         bindings/js/JSSVGPathSegCustom.cpp \
         bindings/js/JSSVGPathSegListCustom.cpp \

@@ -38,13 +38,12 @@ namespace WebCore {
 
 SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_x1(this, LengthModeWidth)
-    , m_y1(this, LengthModeHeight)
-    , m_x2(this, LengthModeWidth)
-    , m_y2(this, LengthModeHeight)
+    , m_x1(LengthModeWidth)
+    , m_y1(LengthModeHeight)
+    , m_x2(LengthModeWidth, "100%")
+    , m_y2(LengthModeHeight)
 {
-    // Spec: If the attribute is not specified, the effect is as if a value of "100%" were specified.
-    setX2BaseValue(SVGLength(this, LengthModeWidth, "100%"));
+    // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
 }
 
 SVGLinearGradientElement::~SVGLinearGradientElement()
@@ -59,13 +58,13 @@ ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Y2, y2, SVGNa
 void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {
     if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setY1BaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength(this, LengthModeWidth, attr->value()));
+        setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength(this, LengthModeHeight, attr->value()));
+        setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
     else
         SVGGradientElement::parseMappedAttribute(attr);
 }
