@@ -1,3 +1,16 @@
+2008-07-16  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Geoff.
+
+        <rdar://problem/5958840> Navigating to another page while profiler is
+        attached results in slow JavaScript for all time.
+
+        - The UNLIKELY keeps this from being a sunspider performance regression.
+
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject): Stop the profiler associated
+        with this exec state.
+
 2008-07-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Steve Falkenburg.
