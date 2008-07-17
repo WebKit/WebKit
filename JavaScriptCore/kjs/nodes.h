@@ -71,7 +71,12 @@ namespace KJS {
         OpModEq,
         OpLShift,
         OpRShift,
-        OpURShift,
+        OpURShift
+    };
+    
+    enum LogicalOperator {
+        OpLogicalAnd,
+        OpLogicalOr
     };
 
     enum Precedence {
@@ -1446,40 +1451,24 @@ namespace KJS {
     /**
      * m_expr1 && m_expr2, m_expr1 || m_expr2
      */
-    class LogicalAndNode : public ExpressionNode {
+    class LogicalOpNode : public ExpressionNode {
     public:
-        LogicalAndNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
+        LogicalOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, LogicalOperator oper) KJS_FAST_CALL
             : ExpressionNode(globalData, BooleanType)
             , m_expr1(expr1)
             , m_expr2(expr2)
+            , m_operator(oper)
         {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecLogicalAnd; }
+        virtual Precedence precedence() const { return (m_operator == OpLogicalAnd) ? PrecLogicalAnd : PrecLogicalOr; }
 
     private:
         RefPtr<ExpressionNode> m_expr1;
         RefPtr<ExpressionNode> m_expr2;
-    };
-
-    class LogicalOrNode : public ExpressionNode {
-    public:
-        LogicalOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2) KJS_FAST_CALL
-            : ExpressionNode(globalData, BooleanType)
-            , m_expr1(expr1)
-            , m_expr2(expr2)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-        virtual Precedence precedence() const { return PrecLogicalOr; }
-
-    private:
-        RefPtr<ExpressionNode> m_expr1;
-        RefPtr<ExpressionNode> m_expr2;
+        LogicalOperator m_operator;
     };
 
     /**

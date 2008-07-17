@@ -614,35 +614,35 @@ BitwiseORExprNoBF:
 
 LogicalANDExpr:
     BitwiseORExpr
-  | LogicalANDExpr AND BitwiseORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | LogicalANDExpr AND BitwiseORExpr    { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExprNoIn:
     BitwiseORExprNoIn
   | LogicalANDExprNoIn AND BitwiseORExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalANDExprNoBF:
     BitwiseORExprNoBF
   | LogicalANDExprNoBF AND BitwiseORExpr
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalAndNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalAnd), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExpr:
     LogicalANDExpr
-  | LogicalORExpr OR LogicalANDExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | LogicalORExpr OR LogicalANDExpr     { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExprNoIn:
     LogicalANDExprNoIn
   | LogicalORExprNoIn OR LogicalANDExprNoIn
-                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+                                        { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 LogicalORExprNoBF:
     LogicalANDExprNoBF
-  | LogicalORExprNoBF OR LogicalANDExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOrNode(GLOBAL_DATA, $1.m_node, $3.m_node), $1.m_featureInfo | $3.m_featureInfo); }
+  | LogicalORExprNoBF OR LogicalANDExpr { $$ = createNodeFeatureInfo<ExpressionNode*>(new LogicalOpNode(GLOBAL_DATA, $1.m_node, $3.m_node, OpLogicalOr), $1.m_featureInfo | $3.m_featureInfo); }
 ;
 
 ConditionalExpr:

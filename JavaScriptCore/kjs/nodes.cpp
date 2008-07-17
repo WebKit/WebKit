@@ -808,26 +808,16 @@ RegisterID* ReverseBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* 
 
 // ------------------------------ Binary Logical Nodes ----------------------------
 
-RegisterID* LogicalAndNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* LogicalOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> temp = generator.tempDestination(dst);
     RefPtr<LabelID> target = generator.newLabel();
     
     generator.emitNode(temp.get(), m_expr1.get());
-    generator.emitJumpIfFalse(temp.get(), target.get());
-    generator.emitNode(temp.get(), m_expr2.get());
-    generator.emitLabel(target.get());
-
-    return generator.moveToDestinationIfNeeded(dst, temp.get());
-}
-
-RegisterID* LogicalOrNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> temp = generator.tempDestination(dst);
-    RefPtr<LabelID> target = generator.newLabel();
-    
-    generator.emitNode(temp.get(), m_expr1.get());
-    generator.emitJumpIfTrue(temp.get(), target.get());
+    if (m_operator == OpLogicalAnd)
+        generator.emitJumpIfFalse(temp.get(), target.get());
+    else
+        generator.emitJumpIfTrue(temp.get(), target.get());
     generator.emitNode(temp.get(), m_expr2.get());
     generator.emitLabel(target.get());
 
