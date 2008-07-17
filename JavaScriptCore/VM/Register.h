@@ -62,14 +62,14 @@ namespace KJS {
 
         Register(CodeBlock*);
         Register(ScopeChainNode*);
-        Register(int);
+        Register(intptr_t);
         Register(Register*);
         Register(Instruction*);
         Register(JSPropertyNameIterator*);
 
         CodeBlock* codeBlock() const;
         ScopeChainNode* scopeChain() const;
-        int i() const;
+        intptr_t i() const;
         Register* r() const;
         Instruction* vPC() const;
         JSPropertyNameIterator* jsPropertyNameIterator() const;
@@ -84,7 +84,7 @@ namespace KJS {
             ScopeChainNode* scopeChain;
             JSPropertyNameIterator* jsPropertyNameIterator;
             Register* r;
-            int i;
+            intptr_t i;
         } u;
 
 #ifndef NDEBUG
@@ -95,7 +95,7 @@ namespace KJS {
             ScopeChainNodeType, 
             JSPropertyNameIteratorType, 
             RegisterType, 
-            intType
+            IntType
         } m_type;
 #endif
     };
@@ -103,7 +103,7 @@ namespace KJS {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        *this = 0;
+        *this = 0L;
 #endif
     }
 
@@ -155,10 +155,10 @@ namespace KJS {
         u.r = r;
     }
 
-    ALWAYS_INLINE Register::Register(int i)
+    ALWAYS_INLINE Register::Register(intptr_t i)
     {
 #ifndef NDEBUG
-        m_type = intType;
+        m_type = IntType;
 #endif
         u.i = i;
     }
@@ -181,9 +181,9 @@ namespace KJS {
         return u.scopeChain;
     }
     
-    ALWAYS_INLINE int Register::i() const
+    ALWAYS_INLINE intptr_t Register::i() const
     {
-        ASSERT(m_type == intType);
+        ASSERT(m_type == IntType);
         return u.i;
     }
     

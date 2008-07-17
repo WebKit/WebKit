@@ -1,3 +1,17 @@
+2008-07-16  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        Fix JavaScript in 64-bit by using a pointer-sized integer
+        type in the Register union.  Also includes a rename of
+        the intType constant to IntType.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::initializeCallFrame):
+        * VM/Register.h:
+        (KJS::Register::):
+        (KJS::Register::Register):
+
 2008-07-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
