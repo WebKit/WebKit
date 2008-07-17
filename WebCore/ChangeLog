@@ -1,3 +1,17 @@
+2008-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        AnimationController needs to adjust z-index in the blended
+        style in case opacity or transform were changed by blending.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20047
+        
+        Test: transitions/opacity-transition-zindex.html
+
+        * page/AnimationController.cpp:
+        (WebCore::AnimationController::updateImplicitAnimations):
+
 2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Sam.

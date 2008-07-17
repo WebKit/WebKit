@@ -587,9 +587,17 @@ RenderStyle* AnimationController::updateImplicitAnimations(RenderObject* rendere
     if (!animation && !newStyle->transitions())
         return newStyle;
 
-    RenderStyle* result = animation->animate(renderer, renderer->style(), newStyle);
+    RenderStyle* blendedStyle = animation->animate(renderer, renderer->style(), newStyle);
     m_data->updateTimer();
-    return result;
+
+    if (blendedStyle != newStyle) {
+        // Do some of the work that CSSStyleSelector::adjustRenderStyle() does, to impose rules
+        // like opacity creating stacking context.
+        if (blendedStyle->hasAutoZIndex() && (blendedStyle->opacity() < 1.0f || blendedStyle->hasTransform()))
+            blendedStyle->setZIndex(0);
+    }
+
+    return blendedStyle;
 }
 
 void AnimationController::suspendAnimations()

@@ -1,3 +1,13 @@
+2008-07-16  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Hyatt.
+
+        Testcases for opacity transition.
+        https://bugs.webkit.org/show_bug.cgi?id=20047
+
+        * transitions/opacity-transition-zindex-expected.txt: Added.
+        * transitions/opacity-transition-zindex.html: Added.
+
 2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Eric.
