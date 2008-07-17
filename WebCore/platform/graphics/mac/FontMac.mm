@@ -1,6 +1,4 @@
-/**
- * This file is part of the html renderer for KDE.
- *
+/*
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
@@ -20,11 +18,12 @@
  * along with this library; see the file COPYING.LIB.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
- *
  */
 
 #import "config.h"
 #import "Font.h"
+
+#import <wtf/OwnArrayPtr.h>
 
 #import "BlockExceptions.h"
 #import "CharacterNames.h"
@@ -49,10 +48,6 @@
 using namespace std;
 
 namespace WebCore {
-
-// =================================================================
-// Font Class (Platform-Specific Portion)
-// =================================================================
 
 struct ATSULayoutParameters
 {
@@ -81,16 +76,18 @@ struct ATSULayoutParameters
     float m_padPerSpace;
 };
 
-// Be sure to free the array allocated by this function.
-static TextRun addDirectionalOverride(const TextRun& run, bool rtl)
+static TextRun copyRunForDirectionalOverrideIfNecessary(const TextRun& run, OwnArrayPtr<UChar>& charactersWithOverride)
 {
-    UChar* charactersWithOverride = new UChar[run.length() + 2];
-    charactersWithOverride[0] = rtl ? rightToLeftOverride : leftToRightOverride;
+    if (!run.directionalOverride())
+        return run;
+
+    charactersWithOverride.set(new UChar[run.length() + 2]);
+    charactersWithOverride[0] = run.rtl() ? rightToLeftOverride : leftToRightOverride;
     memcpy(&charactersWithOverride[1], run.data(0), sizeof(UChar) * run.length());
     charactersWithOverride[run.length() + 1] = popDirectionalFormatting;
 
     TextRun result = run;
-    result.setText(charactersWithOverride, run.length() + 2);
+    result.setText(charactersWithOverride.get(), run.length() + 2);
     return result;
 }
 
@@ -482,8 +479,9 @@ static void disposeATSULayoutParameters(ATSULayoutParameters *params)
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
-{        
-    TextRun adjustedRun = run.directionalOverride() ? addDirectionalOverride(run, run.rtl()) : run;
+{
+    OwnArrayPtr<UChar> charactersWithOverride;
+    TextRun adjustedRun = copyRunForDirectionalOverrideIfNecessary(run, charactersWithOverride);
     if (run.directionalOverride()) {
         from++;
         to++;
@@ -507,9 +505,6 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& 
     
     FloatRect rect(point.x() + floorf(beforeWidth), point.y(), roundf(afterWidth) - floorf(beforeWidth), h);
 
-    if (run.directionalOverride())
-        delete []adjustedRun.characters();
-
     return rect;
 }
 
@@ -518,7 +513,8 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
     OSStatus status;
     
     int drawPortionLength = to - from;
-    TextRun adjustedRun = run.directionalOverride() ? addDirectionalOverride(run, run.rtl()) : run;
+    OwnArrayPtr<UChar> charactersWithOverride;
+    TextRun adjustedRun = copyRunForDirectionalOverrideIfNecessary(run, charactersWithOverride);
     if (run.directionalOverride())
         from++;
 
@@ -573,9 +569,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
         graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
 
     disposeATSULayoutParameters(&params);
-    
-    if (run.directionalOverride())
-        delete []adjustedRun.characters();
 }
 
 float Font::floatWidthForComplexText(const TextRun& run) const
@@ -604,8 +597,9 @@ float Font::floatWidthForComplexText(const TextRun& run) const
 
 int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includePartialGlyphs) const
 {
-    TextRun adjustedRun = run.directionalOverride() ? addDirectionalOverride(run, run.rtl()) : run;
-    
+    OwnArrayPtr<UChar> charactersWithOverride;
+    TextRun adjustedRun = copyRunForDirectionalOverrideIfNecessary(run, charactersWithOverride);
+
     ATSULayoutParameters params(adjustedRun);
     params.initialize(this);
 
@@ -626,9 +620,6 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
         offset = 0;
 
     disposeATSULayoutParameters(&params);
-    
-    if (run.directionalOverride())
-        delete []adjustedRun.characters();
 
     return offset;
 }

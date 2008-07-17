@@ -1,5 +1,20 @@
 2008-07-16  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mitz.
+
+        Make ownership of copied UChar buffer clearer
+        (and more leak-proof) by using a OwnArrayPtr.
+
+        No functional changes, thus no tests.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::copyRunForDirectionalOverrideIfNecessary):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
+2008-07-16  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Split out TextRun into its own header file.
