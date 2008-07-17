@@ -527,31 +527,19 @@ RegisterID* PostfixBracketNode::emitCode(CodeGenerator& generator, RegisterID* d
 
 // ------------------------------ PostfixDotNode ----------------------------------
 
-RegisterID* PostIncDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* PostfixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     RefPtr<RegisterID> value = generator.emitGetById(generator.newTemporary(), base.get(), m_ident);
     RegisterID* oldValue;
     if (dst == ignoredResult()) {
         oldValue = 0;
-        generator.emitPreInc(value.get());
+        if (m_operator == OpPlusPlus)
+            generator.emitPreInc(value.get());
+        else
+            generator.emitPreDec(value.get());
     } else {
-        oldValue = generator.emitPostInc(generator.finalDestination(dst), value.get());
-    }
-    generator.emitPutById(base.get(), m_ident, value.get());
-    return oldValue;
-}
-
-RegisterID* PostDecDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
-    RefPtr<RegisterID> value = generator.emitGetById(generator.newTemporary(), base.get(), m_ident);
-    RegisterID* oldValue;
-    if (dst == ignoredResult()) {
-        oldValue = 0;
-        generator.emitPreDec(value.get());
-    } else {
-        oldValue = generator.emitPostDec(generator.finalDestination(dst), value.get());
+        oldValue = (m_operator == OpPlusPlus) ? generator.emitPostInc(generator.finalDestination(dst), value.get()) : generator.emitPostDec(generator.finalDestination(dst), value.get());
     }
     generator.emitPutById(base.get(), m_ident, value.get());
     return oldValue;
@@ -693,22 +681,15 @@ RegisterID* PrefixBracketNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ PrefixDotNode ----------------------------------
 
-RegisterID* PreIncDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* PrefixDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
     RegisterID* value = generator.emitGetById(propDst.get(), base.get(), m_ident);
-    generator.emitPreInc(value);
-    generator.emitPutById(base.get(), m_ident, value);
-    return generator.moveToDestinationIfNeeded(dst, propDst.get());
-}
-
-RegisterID* PreDecDotNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
-    RefPtr<RegisterID> propDst = generator.tempDestination(dst);
-    RegisterID* value = generator.emitGetById(propDst.get(), base.get(), m_ident);
-    generator.emitPreDec(value);
+    if (m_operator == OpPlusPlus)
+        generator.emitPreInc(value);
+    else
+        generator.emitPreDec(value);
     generator.emitPutById(base.get(), m_ident, value);
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
 }

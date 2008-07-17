@@ -1,5 +1,17 @@
 2008-07-17  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Merge pre&post dot nodes to simplify the parse tree.
+        Sunspider results show 0.6% progression (no performance change expected).
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+
+2008-07-17  Gavin Barraclough  <barraclough@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Merge pre&post resolve nodes to simplify the parse tree.

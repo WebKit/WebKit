@@ -1132,9 +1132,7 @@ static ExpressionNode* makePrefixNode(void* globalPtr, ExpressionNode* expr, Ope
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    if (op == OpPlusPlus)
-        return new PreIncDotNode(GLOBAL_DATA, dot->base(), dot->identifier());
-    return new PreDecDotNode(GLOBAL_DATA, dot->base(), dot->identifier());
+    return new PrefixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op);
 }
 
 static ExpressionNode* makePostfixNode(void* globalPtr, ExpressionNode* expr, Operator op)
@@ -1152,10 +1150,7 @@ static ExpressionNode* makePostfixNode(void* globalPtr, ExpressionNode* expr, Op
     }
     ASSERT(expr->isDotAccessorNode());
     DotAccessorNode* dot = static_cast<DotAccessorNode*>(expr);
-    
-    if (op == OpPlusPlus)
-        return new PostIncDotNode(GLOBAL_DATA, dot->base(), dot->identifier());
-    return new PostDecDotNode(GLOBAL_DATA, dot->base(), dot->identifier());
+    return new PostfixDotNode(GLOBAL_DATA, dot->base(), dot->identifier(), op);
 }
 
 static ExpressionNodeInfo makeFunctionCallNode(void* globalPtr, ExpressionNodeInfo func, ArgumentsNodeInfo args)

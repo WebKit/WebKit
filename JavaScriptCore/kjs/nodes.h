@@ -778,42 +778,22 @@ namespace KJS {
 
     class PostfixDotNode : public ExpressionNode {
     public:
-        PostfixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+        PostfixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper) KJS_FAST_CALL
             : ExpressionNode(globalData)
             , m_base(base)
             , m_ident(ident)
+            , m_operator(oper)
         {
         }
 
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
-    };
-
-    class PostIncDotNode : public PostfixDotNode {
-    public:
-        PostIncDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PostfixDotNode(globalData, base, ident)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    };
-
-    class PostDecDotNode : public PostfixDotNode {
-    public:
-        PostDecDotNode(JSGlobalData* globalData, ExpressionNode*  base, const Identifier& ident) KJS_FAST_CALL
-            : PostfixDotNode(globalData, base, ident)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        Operator m_operator;
     };
 
     class PostfixErrorNode : public ExpressionNode {
@@ -999,42 +979,22 @@ namespace KJS {
 
     class PrefixDotNode : public ExpressionNode {
     public:
-        PrefixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
+        PrefixDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident, Operator oper) KJS_FAST_CALL
             : ExpressionNode(globalData)
             , m_base(base)
             , m_ident(ident)
+            , m_operator(oper)
         {
         }
 
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
         RefPtr<ExpressionNode> m_base;
         Identifier m_ident;
-    };
-
-    class PreIncDotNode : public PrefixDotNode {
-    public:
-        PreIncDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PrefixDotNode(globalData, base, ident)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    };
-
-    class PreDecDotNode : public PrefixDotNode {
-    public:
-        PreDecDotNode(JSGlobalData* globalData, ExpressionNode* base, const Identifier& ident) KJS_FAST_CALL
-            : PrefixDotNode(globalData, base, ident)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        Operator m_operator;
     };
 
     class PrefixErrorNode : public ExpressionNode {
