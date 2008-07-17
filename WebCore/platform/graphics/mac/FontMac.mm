@@ -94,56 +94,69 @@ static TextRun copyRunForDirectionalOverrideIfNecessary(const TextRun& run, OwnA
     return result;
 }
 
+static bool fontHasMirroringInfo(ATSUFontID fontID)
+{
+    ByteCount propTableSize;
+    OSStatus status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
+    if (status == noErr)    // naively assume that if a 'prop' table exists then it contains mirroring info
+        return true;
+    else if (status != kATSInvalidFontTableAccess) // anything other than a missing table is logged as an error
+        LOG_ERROR("ATSFontGetTable failed (%d)", status);
+
+    return false;
+}
+
+static void disableLigatures(const SimpleFontData* fontData)
+{
+    // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
+    // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
+    // See bugzilla 5166.
+    if (![[fontData->m_font.font() coveredCharacterSet] characterIsMember:'a'])
+        return;
+
+    ATSUFontFeatureType featureTypes[] = { kLigaturesType };
+    ATSUFontFeatureSelector featureSelectors[] = { kCommonLigaturesOffSelector };
+    OSStatus status = ATSUSetFontFeatures(fontData->m_ATSUStyle, 1, featureTypes, featureSelectors);
+    if (status != noErr)
+        LOG_ERROR("ATSUSetFontFeatures failed (%d) -- ligatures remain enabled", status);
+}
+
 static void initializeATSUStyle(const SimpleFontData* fontData)
 {
-    if (!fontData->m_ATSUStyleInitialized) {
-        OSStatus status;
-        ByteCount propTableSize;
-        
-        status = ATSUCreateStyle(&fontData->m_ATSUStyle);
-        if (status != noErr)
-            LOG_ERROR("ATSUCreateStyle failed (%d)", status);
-    
-        ATSUFontID fontID = fontData->platformData().m_atsuFontID;
-        if (fontID == 0) {
-            ATSUDisposeStyle(fontData->m_ATSUStyle);
-            LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font());
-            return;
-        }
-        
-        CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
-        if (fontData->m_font.m_syntheticOblique)
-            transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0)); 
-        Fixed fontSize = FloatToFixed(fontData->platformData().m_size);
+    if (fontData->m_ATSUStyleInitialized)
+        return;
 
-        // Turn off automatic kerning until it is supported in the CG code path (6136 in bugzilla)
-        Fract kerningInhibitFactor = FloatToFract(1.0);
-        ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
-        ByteCount styleSizes[4] = { sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform), sizeof(Fract) };
-        ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
-        status = ATSUSetAttributes(fontData->m_ATSUStyle, 4, styleTags, styleSizes, styleValues);
-        if (status != noErr)
-            LOG_ERROR("ATSUSetAttributes failed (%d)", status);
-        status = ATSFontGetTable(fontID, 'prop', 0, 0, 0, &propTableSize);
-        if (status == noErr)    // naively assume that if a 'prop' table exists then it contains mirroring info
-            fontData->m_ATSUMirrors = true;
-        else if (status == kATSInvalidFontTableAccess)
-            fontData->m_ATSUMirrors = false;
-        else
-            LOG_ERROR("ATSFontGetTable failed (%d)", status);
-
-        // Turn off ligatures such as 'fi' to match the CG code path's behavior, until bugzilla 6135 is fixed.
-        // Don't be too aggressive: if the font doesn't contain 'a', then assume that any ligatures it contains are
-        // in characters that always go through ATSUI, and therefore allow them. Geeza Pro is an example.
-        // See bugzilla 5166.
-        if ([[fontData->m_font.font() coveredCharacterSet] characterIsMember:'a']) {
-            ATSUFontFeatureType featureTypes[] = { kLigaturesType };
-            ATSUFontFeatureSelector featureSelectors[] = { kCommonLigaturesOffSelector };
-            status = ATSUSetFontFeatures(fontData->m_ATSUStyle, 1, featureTypes, featureSelectors);
-        }
-
-        fontData->m_ATSUStyleInitialized = true;
+    ATSUFontID fontID = fontData->platformData().m_atsuFontID;
+    if (!fontID) {
+        LOG_ERROR("unable to get ATSUFontID for %@", fontData->m_font.font());
+        return;
     }
+
+    OSStatus status = ATSUCreateStyle(&fontData->m_ATSUStyle);
+    if (status != noErr)
+        // Who knows how many ATSU functions will crash when passed a NULL style...
+        LOG_ERROR("ATSUCreateStyle failed (%d)", status);
+
+    CGAffineTransform transform = CGAffineTransformMakeScale(1, -1);
+    if (fontData->m_font.m_syntheticOblique)
+        transform = CGAffineTransformConcat(transform, CGAffineTransformMake(1, 0, -tanf(SYNTHETIC_OBLIQUE_ANGLE * acosf(0) / 90), 1, 0, 0));
+    Fixed fontSize = FloatToFixed(fontData->platformData().m_size);
+    ByteCount styleSizes[4] = { sizeof(Fixed), sizeof(ATSUFontID), sizeof(CGAffineTransform), sizeof(Fract) };
+    // Turn off automatic kerning until it is supported in the CG code path (bug 6136)
+    Fract kerningInhibitFactor = FloatToFract(1.0);
+    
+    ATSUAttributeTag styleTags[4] = { kATSUSizeTag, kATSUFontTag, kATSUFontMatrixTag, kATSUKerningInhibitFactorTag };
+    ATSUAttributeValuePtr styleValues[4] = { &fontSize, &fontID, &transform, &kerningInhibitFactor };
+    status = ATSUSetAttributes(fontData->m_ATSUStyle, 4, styleTags, styleSizes, styleValues);
+    if (status != noErr)
+        LOG_ERROR("ATSUSetAttributes failed (%d)", status);
+
+    fontData->m_ATSUMirrors = fontHasMirroringInfo(fontID);
+
+    // Turn off ligatures such as 'fi' to match the CG code path's behavior, until bug 6135 is fixed.
+    disableLigatures(fontData);
+
+    fontData->m_ATSUStyleInitialized = true;
 }
 
 static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, URefCon iRefCon,

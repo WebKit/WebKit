@@ -11,6 +11,20 @@
 
 2008-07-16  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by mitz.
+
+        Attempt to make initializeATSUStyle human-readable by
+        splitting it out into better-named static inline functions.
+
+        No functional changes, thus no tests.
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::fontHasMirroringInfo):
+        (WebCore::disableLigatures):
+        (WebCore::initializeATSUStyle):
+
+2008-07-16  Eric Seidel  <eric@webkit.org>
+
         No review, build fix only.
 
         Attempt to fix Mac build
