@@ -309,17 +309,10 @@ double getCurrentUTCTimeWithMicroseconds()
 
 void getLocalTime(const time_t* localTime, struct tm* localTM)
 {
-#if PLATFORM(WIN_OS)
-#if COMPILER(MSVC7)
+#if COMPILER(MSVC7) || COMPILER(MINGW)
     *localTM = *localtime(localTime);
-#else
+#elif COMPILER(MSVC)
     localtime_s(localTM, localTime);
-#endif
-#elif PLATFORM(QT)
-#if USE(MULTIPLE_THREADS)
-#error Multiple threads are currently not supported in the Qt/mingw build
-#endif
-    *localTM = *localtime(localTime);
 #else
     localtime_r(localTime, localTM);
 #endif

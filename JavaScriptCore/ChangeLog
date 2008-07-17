@@ -1,3 +1,12 @@
+2008-07-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix MinGW build (broken in r35198) and simplify getLocalTime().
+
+        * kjs/DateMath.cpp:
+        (KJS::getLocalTime):
+
 2008-07-17  Gavin Barraclough  <barraclough@apple.com>
 
         Merge pre&post bracket nodes to simplify the parse tree.
