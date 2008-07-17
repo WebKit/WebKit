@@ -86,7 +86,7 @@ bool PluginPackage::isPluginBlacklisted()
 void PluginPackage::determineQuirks(const String& mimeType)
 {
     if (mimeType == "application/x-shockwave-flash") {
-        static const PlatformModuleVersion flashTenVersion(0x000a0000, 0x0000);
+        static const PlatformModuleVersion flashTenVersion(0x00000000, 0x000a0000);
 
         // Pre 10 Flash only requests windowless plugins if we return a mozilla user agent
         if (compareFileVersion(flashTenVersion) < 0)

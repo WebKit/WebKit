@@ -1,3 +1,14 @@
+2008-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION: Can't create windowless plug-in with Flash 9
+        https://bugs.webkit.org/show_bug.cgi?id=20070
+
+        Reviewed by Mark Rowe.
+
+        * plugins/win/PluginPackageWin.cpp:
+        (WebCore::PluginPackage::determineQuirks): Reverse argument order;
+        PlatformModuleVersion constructor takes leastSig, mostSig.
+
 2008-07-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by mitz.
