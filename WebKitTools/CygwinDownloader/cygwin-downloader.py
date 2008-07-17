@@ -116,7 +116,7 @@ package_names.sort()
 def add_package_and_dependencies(name):
         if name in names_to_download:
                 return
-	if not name in packages
+        if not name in packages:
                 return
         packages[name]["needs_download"] = True
         names_to_download.add(name)
