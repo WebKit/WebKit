@@ -36,6 +36,10 @@ namespace KJS {
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
 
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
+
         const Identifier& functionName() const { return m_name; }
 
     protected:
@@ -43,6 +47,7 @@ namespace KJS {
         InternalFunction(FunctionPrototype*, const Identifier&);
 
     private:
+        static JSValue* nameGetter(ExecState*, const Identifier&, const PropertySlot&);
         virtual CallType getCallData(CallData&) = 0;
         virtual bool implementsHasInstance() const;
 
