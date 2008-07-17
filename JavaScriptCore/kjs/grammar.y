@@ -1124,10 +1124,7 @@ static ExpressionNode* makePrefixNode(void* globalPtr, ExpressionNode* expr, Ope
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        if (op == OpPlusPlus)
-            return new PreIncResolveNode(GLOBAL_DATA, resolve->identifier());
-        else
-            return new PreDecResolveNode(GLOBAL_DATA, resolve->identifier());
+        return new PrefixResolveNode(GLOBAL_DATA, resolve->identifier(), op);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);
@@ -1147,10 +1144,7 @@ static ExpressionNode* makePostfixNode(void* globalPtr, ExpressionNode* expr, Op
     
     if (expr->isResolveNode()) {
         ResolveNode* resolve = static_cast<ResolveNode*>(expr);
-        if (op == OpPlusPlus)
-            return new PostIncResolveNode(GLOBAL_DATA, resolve->identifier());
-        else
-            return new PostDecResolveNode(GLOBAL_DATA, resolve->identifier());
+        return new PostfixResolveNode(GLOBAL_DATA, resolve->identifier(), op);
     }
     if (expr->isBracketAccessorNode()) {
         BracketAccessorNode* bracket = static_cast<BracketAccessorNode*>(expr);

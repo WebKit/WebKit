@@ -445,14 +445,9 @@ void FunctionCallDotNode::streamTo(SourceStream& s) const
     s << m_args;
 }
 
-void PostIncResolveNode::streamTo(SourceStream& s) const
+void PostfixResolveNode::streamTo(SourceStream& s) const
 {
-    s << m_ident << "++";
-}
-
-void PostDecResolveNode::streamTo(SourceStream& s) const
-{
-    s << m_ident << "--";
+    s << m_ident << operatorString(m_operator);
 }
 
 void PostfixBracketNode::streamTo(SourceStream& s) const
@@ -519,14 +514,9 @@ void TypeOfResolveNode::streamTo(SourceStream& s) const
     s << "typeof " << m_ident;
 }
 
-void PreIncResolveNode::streamTo(SourceStream& s) const
+void PrefixResolveNode::streamTo(SourceStream& s) const
 {
-    s << "++" << m_ident;
-}
-
-void PreDecResolveNode::streamTo(SourceStream& s) const
-{
-    s << "--" << m_ident;
+    s << operatorString(m_operator) << m_ident;
 }
 
 void PrefixBracketNode::streamTo(SourceStream& s) const

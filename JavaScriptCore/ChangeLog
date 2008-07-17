@@ -2,6 +2,18 @@
 
         Reviewed by Cameron Zwarich.
 
+        Merge pre&post resolve nodes to simplify the parse tree.
+        Sunspider results show no performance change.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+
+2008-07-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
         Merge logical nodes to simplify the parse tree.
         Sunspider results show 0.6% progression (no performance change expected).
 
