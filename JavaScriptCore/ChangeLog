@@ -1,3 +1,15 @@
+2008-07-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the 32-bit gcc builds, conversion from "long int" to Register is
+        ambiguous. Explicitly choose the intptr_t constructor.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::initializeCallFrame):
+        * VM/Register.h:
+        (KJS::Register::Register):
+
 2008-07-16  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Geoff Garen.

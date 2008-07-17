@@ -103,7 +103,7 @@ namespace KJS {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        *this = 0L;
+        *this = intptr_t(0L);
 #endif
     }
 
