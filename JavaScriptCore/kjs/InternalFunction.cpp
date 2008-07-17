@@ -24,6 +24,7 @@
 #include "InternalFunction.h"
 
 #include "FunctionPrototype.h"
+#include "JSString.h"
 
 namespace KJS {
 
