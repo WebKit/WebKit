@@ -11,6 +11,14 @@
 
 2008-07-16  Eric Seidel  <eric@webkit.org>
 
+        No review, build fix only.
+
+        Attempt to fix Mac build
+
+        * WebCore.xcodeproj/project.pbxproj: Make TextRun.h a private header.
+
+2008-07-16  Eric Seidel  <eric@webkit.org>
+
         Reviewed by mitz.
 
         Make ATSULayoutParameters a real C++ class
