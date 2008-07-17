@@ -538,7 +538,7 @@ RegisterID* PostDecResolveNode::emitCode(CodeGenerator& generator, RegisterID* d
 
 // ------------------------------ PostfixBracketNode ----------------------------------
 
-RegisterID* PostIncBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* PostfixBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     RefPtr<RegisterID> property = generator.emitNode(m_subscript.get());
@@ -546,25 +546,12 @@ RegisterID* PostIncBracketNode::emitCode(CodeGenerator& generator, RegisterID* d
     RegisterID* oldValue;
     if (dst == ignoredResult()) {
         oldValue = 0;
-        generator.emitPreInc(value.get());
+        if (m_operator == OpPlusPlus)
+            generator.emitPreInc(value.get());
+        else
+            generator.emitPreDec(value.get());
     } else {
-        oldValue = generator.emitPostInc(generator.finalDestination(dst), value.get());
-    }
-    generator.emitPutByVal(base.get(), property.get(), value.get());
-    return oldValue;
-}
-
-RegisterID* PostDecBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
-    RefPtr<RegisterID> property = generator.emitNode(m_subscript.get());
-    RefPtr<RegisterID> value = generator.emitGetByVal(generator.newTemporary(), base.get(), property.get());
-    RegisterID* oldValue;
-    if (dst == ignoredResult()) {
-        oldValue = 0;
-        generator.emitPreDec(value.get());
-    } else {
-        oldValue = generator.emitPostDec(generator.finalDestination(dst), value.get());
+        oldValue = (m_operator == OpPlusPlus) ? generator.emitPostInc(generator.finalDestination(dst), value.get()) : generator.emitPostDec(generator.finalDestination(dst), value.get());
     }
     generator.emitPutByVal(base.get(), property.get(), value.get());
     return oldValue;
@@ -752,25 +739,16 @@ RegisterID* PreDecResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
 // ------------------------------ PrefixBracketNode ----------------------------------
 
-RegisterID* PreIncBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+RegisterID* PrefixBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> base = generator.emitNode(m_base.get());
     RefPtr<RegisterID> property = generator.emitNode(m_subscript.get());
     RefPtr<RegisterID> propDst = generator.tempDestination(dst);
     RegisterID* value = generator.emitGetByVal(propDst.get(), base.get(), property.get());
-    generator.emitPreInc(value);
-    generator.emitPutByVal(base.get(), property.get(), value);
-    return generator.moveToDestinationIfNeeded(dst, propDst.get());
-}
-
-RegisterID* PreDecBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
-{
-    
-    RefPtr<RegisterID> base = generator.emitNode(m_base.get());
-    RefPtr<RegisterID> property = generator.emitNode(m_subscript.get());
-    RefPtr<RegisterID> propDst = generator.tempDestination(dst);
-    RegisterID* value = generator.emitGetByVal(propDst.get(), base.get(), property.get());
-    generator.emitPreDec(value);
+    if (m_operator == OpPlusPlus)
+        generator.emitPreInc(value);
+    else
+        generator.emitPreDec(value);
     generator.emitPutByVal(base.get(), property.get(), value);
     return generator.moveToDestinationIfNeeded(dst, propDst.get());
 }

@@ -762,42 +762,22 @@ namespace KJS {
 
     class PostfixBracketNode : public ExpressionNode {
     public:
-        PostfixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+        PostfixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper) KJS_FAST_CALL
             : ExpressionNode(globalData)
             , m_base(base)
             , m_subscript(subscript)
+            , m_operator(oper)
         {
         }
 
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPostfix; }
 
     protected:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
-    };
-
-    class PostIncBracketNode : public PostfixBracketNode {
-    public:
-        PostIncBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PostfixBracketNode(globalData, base, subscript)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    };
-
-    class PostDecBracketNode : public PostfixBracketNode {
-    public:
-        PostDecBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PostfixBracketNode(globalData, base, subscript)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        Operator m_operator;
     };
 
     class PostfixDotNode : public ExpressionNode {
@@ -1012,42 +992,22 @@ namespace KJS {
 
     class PrefixBracketNode : public ExpressionNode {
     public:
-        PrefixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
+        PrefixBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript, Operator oper) KJS_FAST_CALL
             : ExpressionNode(globalData)
             , m_base(base)
             , m_subscript(subscript)
+            , m_operator(oper)
         {
         }
 
+        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
+        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecUnary; }
 
     protected:
         RefPtr<ExpressionNode> m_base;
         RefPtr<ExpressionNode> m_subscript;
-    };
-
-    class PreIncBracketNode : public PrefixBracketNode {
-    public:
-        PreIncBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PrefixBracketNode(globalData, base, subscript)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
-    };
-
-    class PreDecBracketNode : public PrefixBracketNode {
-    public:
-        PreDecBracketNode(JSGlobalData* globalData, ExpressionNode* base, ExpressionNode* subscript) KJS_FAST_CALL
-            : PrefixBracketNode(globalData, base, subscript)
-        {
-        }
-
-        virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
-        virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
+        Operator m_operator;
     };
 
     class PrefixDotNode : public ExpressionNode {

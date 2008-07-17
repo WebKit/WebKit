@@ -455,16 +455,10 @@ void PostDecResolveNode::streamTo(SourceStream& s) const
     s << m_ident << "--";
 }
 
-void PostIncBracketNode::streamTo(SourceStream& s) const
+void PostfixBracketNode::streamTo(SourceStream& s) const
 {
     bracketNodeStreamTo(s, m_base, m_subscript);
-    s << "++";
-}
-
-void PostDecBracketNode::streamTo(SourceStream& s) const
-{
-    bracketNodeStreamTo(s, m_base, m_subscript);
-    s << "--";
+    s << operatorString(m_operator);
 }
 
 void PostIncDotNode::streamTo(SourceStream& s) const
@@ -535,15 +529,9 @@ void PreDecResolveNode::streamTo(SourceStream& s) const
     s << "--" << m_ident;
 }
 
-void PreIncBracketNode::streamTo(SourceStream& s) const
+void PrefixBracketNode::streamTo(SourceStream& s) const
 {
-    s << "++";
-    bracketNodeStreamTo(s, m_base, m_subscript);
-}
-
-void PreDecBracketNode::streamTo(SourceStream& s) const
-{
-    s << "--";
+    s << operatorString(m_operator);
     bracketNodeStreamTo(s, m_base, m_subscript);
 }
 

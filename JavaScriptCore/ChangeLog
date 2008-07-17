@@ -1,3 +1,15 @@
+2008-07-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Merge pre&post bracket nodes to simplify the parse tree.
+        Sunspider results show no performance change.
+
+        Reviewed by Sam Weinig.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+
 2008-07-17  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.
