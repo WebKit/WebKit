@@ -152,11 +152,13 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
     // Check to see if we are enclosed by a transparent layer.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.
-    Element* elt = document()->ownerElement();
-    if (view() && elt && elt->renderer()) {
+    Element* elt;
+    for (elt = document()->ownerElement(); view() && elt && elt->renderer(); elt = elt->document()->ownerElement()) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
-        if (layer->isTransparent() || layer->transparentAncestor())
+        if (layer->isTransparent() || layer->transparentAncestor()) {
             frameView()->setUseSlowRepaints();
+            break;
+        }
     }
 
     if (elt || (firstChild() && firstChild()->style()->visibility() == VISIBLE) || !view())

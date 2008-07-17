@@ -1,3 +1,14 @@
+2008-07-17  David Hyatt  <hyatt@apple.com>
+
+        Make sure the check to see if a frame/iframe is being rendered inside a transparency layer is
+        recursive (and checks for transparency layers all the way up the ancestor document chain back to
+        the top-level frame).
+
+        Reviewed by Dan
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2008-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION: Can't create windowless plug-in with Flash 9
