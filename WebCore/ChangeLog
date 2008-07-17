@@ -1,3 +1,18 @@
+2008-07-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Split out TextRun into its own header file.
+        Re-order members to place all bools together
+        (to allow compilers to better pack the struct)
+
+        No functional changes, thus no tests.
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/graphics/Font.h: Moved TextRun into its own file.
+        * platform/graphics/TextRun.h: Split out from Font.h
+
 2008-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

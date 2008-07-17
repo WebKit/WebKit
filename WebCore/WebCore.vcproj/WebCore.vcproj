@@ -5161,6 +5161,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\TextRun.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\UnitBezier.h"
 					>
 				</File>

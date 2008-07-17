@@ -2149,6 +2149,7 @@
 		A81872250977D3C0005826D9 /* ChildNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A818721A0977D3C0005826D9 /* ChildNodeList.cpp */; };
 		A8239E0009B3CF8A00B60641 /* Logging.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8239DFE09B3CF8A00B60641 /* Logging.cpp */; };
 		A8239E0109B3CF8A00B60641 /* Logging.h in Headers */ = {isa = PBXBuildFile; fileRef = A8239DFF09B3CF8A00B60641 /* Logging.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = A824B4640E2EF2EA0081A7B7 /* TextRun.h */; };
 		A826E8AE0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */; };
 		A826EC480A1B0CBE00CD1BB6 /* JSHTMLOptionElementConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */; };
 		A833C7CA0A2CF06B00D57664 /* SVGNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581E809D1508D000E61D7 /* SVGNames.cpp */; };
@@ -6480,6 +6481,7 @@
 		A818721A0977D3C0005826D9 /* ChildNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ChildNodeList.cpp; sourceTree = "<group>"; };
 		A8239DFE09B3CF8A00B60641 /* Logging.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Logging.cpp; sourceTree = "<group>"; };
 		A8239DFF09B3CF8A00B60641 /* Logging.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Logging.h; sourceTree = "<group>"; };
+		A824B4640E2EF2EA0081A7B7 /* TextRun.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextRun.h; sourceTree = "<group>"; };
 		A826E8AC0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLOptionElementConstructor.h; sourceTree = "<group>"; };
 		A826E8AD0A1A8F2300CD1BB6 /* JSHTMLOptionElementConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionElementConstructor.cpp; sourceTree = "<group>"; };
 		A833C7F60A2CF1D800D57664 /* xmlattrs.in */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = xmlattrs.in; sourceTree = "<group>"; };
@@ -12144,6 +12146,7 @@
 				B2C3DA540D006CD600EF6F26 /* SimpleFontData.h */,
 				B23540F00D00782E002382FA /* StringTruncator.cpp */,
 				B23540F10D00782E002382FA /* StringTruncator.h */,
+				A824B4640E2EF2EA0081A7B7 /* TextRun.h */,
 				E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */,
 			);
 			path = graphics;
@@ -15296,6 +15299,7 @@
 				31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */,
 				BC3A44DE0E26D20200C14DFA /* NSResolver.h in Headers */,
 				BC3A44E30E26D21B00C14DFA /* JSNSResolver.h in Headers */,
+				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
