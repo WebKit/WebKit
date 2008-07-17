@@ -1,3 +1,20 @@
+2008-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Fixed <rdar://problem/6081636> Functions calls use more temporary
+        registers than necessary
+        
+        Holding a reference to the last statement result register caused each
+        successive statement to output its result to an even higher register.
+        
+        Happily, statements don't actually need to return a result register
+        at all. I hope to make this clearer in a future cleanup patch,
+        but this change will fix the major bug for now.
+
+        * kjs/nodes.cpp:
+        (KJS::statementListEmitCode):
+
 2008-07-17  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

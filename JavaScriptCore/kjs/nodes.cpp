@@ -989,17 +989,13 @@ RegisterID* ConstStatementNode::emitCode(CodeGenerator& generator, RegisterID*)
 
 static inline RegisterID* statementListEmitCode(StatementVector& statements, CodeGenerator& generator, RegisterID* dst = 0)
 {
-    RefPtr<RegisterID> r0 = dst;
-
     StatementVector::iterator end = statements.end();
     for (StatementVector::iterator it = statements.begin(); it != end; ++it) {
         StatementNode* n = it->get();
         generator.emitDebugHook(WillExecuteStatement, n->firstLine(), n->lastLine());
-        if (RegisterID* r1 = generator.emitNode(dst, n))
-            r0 = r1;
+        generator.emitNode(dst, n);
     }
-    
-    return r0.get();
+    return 0;
 }
 
 static inline void statementListPushFIFO(StatementVector& statements, DeclarationStacks::NodeStack& stack)
