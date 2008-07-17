@@ -1,3 +1,12 @@
+2008-07-17  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19813
+        [GTK] WebKit crashes on invalid settings notify callback
+
+        * webkit/webkitwebview.cpp: Disconnect in webkit_web_view_finalize
+
 2008-07-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Christian Dywan.
