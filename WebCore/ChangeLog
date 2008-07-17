@@ -1,5 +1,22 @@
 2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Sam.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20052 
+        Prepare SVGAnimatedProperty introduction.
+
+        Export the tag & attribute names as string literals for SVGNames/XLinkNames and one property in HTMLNames. SVGAnimatedProperty
+        contains two string literal template parameters, and we're using these exported string literals from {SVG,HTML,XLink}Names as input paramters.
+        See https://bugs.webkit.org/show_bug.cgi?id=20051 for details.
+
+        * dom/make_names.pl: Handle new params "exportString" / "exportStrings".
+        * html/HTMLAttributeNames.in: Expose just the single "class" attribute, as string.
+        * svg/svgattrs.in: Export all SVG attributes as strings.
+        * svg/svgtags.in: Export all SVG tags as strings.
+        * svg/xlinkattrs.in: Expose all XLink attributes as strings.
+
+2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Eric.
 
         Fixes: https://bugs.webkit.org/show_bug.cgi?id=10745 (SVGLength object needs some weight loss)

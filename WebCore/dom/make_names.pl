@@ -86,12 +86,14 @@ if ($parameters{'generateWrapperFactory'}) {
 sub initializeTagPropertyHash
 {
     return ('upperCase' => upperCaseName($_[0]),
-            'applyAudioHack' => 0);
+            'applyAudioHack' => 0,
+            'exportString' => 0);
 }
 
 sub initializeAttrPropertyHash
 {
-    return ('upperCase' => upperCaseName($_[0]));
+    return ('upperCase' => upperCaseName($_[0]),
+            'exportString' => 0);
 }
 
 sub initializeParametersHash
@@ -105,7 +107,8 @@ sub initializeParametersHash
             'generateWrapperFactory' => 0,
             # The 2 nullNamespace properties are generated from the "nullNamespace" attribute with respect to the file parsed (attrs or tags).
             'tagsNullNamespace' => 0,
-            'attrsNullNamespace' => 0);
+            'attrsNullNamespace' => 0,
+            'exportStrings' => 0);
 }
 
 ### Parsing handlers
@@ -224,8 +227,14 @@ sub readNames
 sub printMacros
 {
     my ($F, $macro, $suffix, $namesRef) = @_;
+    my %names = %$namesRef;
+
     for my $name (sort keys %$namesRef) {
-        print F "    $macro $name","$suffix;\n";
+        print F "$macro $name","$suffix;\n";
+
+        if ($parameters{'exportStrings'} or $names{$name}{"exportString"}) { 
+            print F "extern char $name", "${suffix}String[];\n";
+        }
     }
 }
 
@@ -394,7 +403,6 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{'namesp
         print F "    *size = ", scalar(keys %tags), ";\n";
         print F "    return $parameters{'namespace'}Tags;\n";
         print F "}\n";
-        
     }
 
     if (keys %attrs) {
@@ -411,6 +419,14 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{'namesp
         print F "    *size = ", scalar(keys %attrs), ";\n";
         print F "    return $parameters{'namespace'}Attr;\n";
         print F "}\n";
+    }
+
+    if (keys %tags) {
+        printDefinitionStrings($F, \%tags, "tags");
+    }
+
+    if (keys %attrs) {
+        printDefinitionStrings($F, \%attrs, "attributes");
     }
 
 print F "\nvoid init()
@@ -466,6 +482,25 @@ sub printElementIncludes
     }
 }
 
+sub printDefinitionStrings
+{
+    my ($F, $namesRef, $type) = @_;
+    my $singularType = substr($type, 0, -1);
+    my $shortType = substr($singularType, 0, 4);
+    my $shortCamelType = ucfirst($shortType);
+    print F "\n// " . ucfirst($type) . " as strings\n";
+
+    my %names = %$namesRef;
+    for my $name (sort keys %$namesRef) {
+        next if (!$parameters{'exportStrings'} and !$names{$name}{"exportString"});
+
+        my $realName = $name;
+        $realName =~ s/_/-/g;
+
+        print F "char $name","${shortCamelType}String[] = \"$realName\";\n";
+    }
+} 
+
 sub printDefinitions
 {
     my ($F, $namesRef, $type, $namespaceURI) = @_;
@@ -476,23 +511,18 @@ sub printDefinitions
     
     print F "    // " . ucfirst($type) . "\n";
 
+    my %names = %$namesRef;
     for my $name (sort keys %$namesRef) {
-        print F "    const char *$name","${shortCamelType}String = \"$name\";\n";
+        next if ($parameters{'exportStrings'} or $names{$name}{"exportString"});
+
+        my $realName = $name;
+        $realName =~ s/_/-/g;
+        print F "    const char *$name","${shortCamelType}String = \"$realName\";\n\n";
     }
-        
-    for my $name (sort keys %$namesRef) {
-        if ($name =~ /_/) {
-            my $realName = $name;
-            $realName =~ s/_/-/g;
-            print F "    ${name}${shortCamelType}String = \"$realName\";\n";
-        }
-    }
-    print F "\n";
 
     for my $name (sort keys %$namesRef) {
         print F "    new ((void*)&$name","${shortCamelType}) QualifiedName(nullAtom, $name","${shortCamelType}String, $namespaceURI);\n";
     }
-
 }
 
 ## ElementFactory routines
