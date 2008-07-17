@@ -124,20 +124,20 @@ namespace KJS {
         UString();
         UString(const char*);
         UString(const UChar*, int length);
-        UString(const Vector<UChar>& buffer);
-
-        // Concatenation constructor. Makes operator+ more efficient.
-        UString(const UString&, const UString&);
+        UString(UChar*, int length, bool copy);
 
         UString(const UString& s)
             : m_rep(s.m_rep)
         {
         }
 
-        UString(PassRefPtr<Rep> r)
-            : m_rep(r)
+        UString(const Vector<UChar>& buffer);
+
+        // Concatenation constructor. Makes operator+ more efficient.
+        UString(const UString&, const UString&);
+
+        ~UString()
         {
-            ASSERT(m_rep);
         }
 
         // Special constructor for cases where we overwrite an object in place.
@@ -145,13 +145,6 @@ namespace KJS {
             : m_rep(PlacementNewAdopt)
         {
         }
-
-        ~UString()
-        {
-        }
-
-        static UString adopt(UChar*, int length);
-        static UString adopt(Vector<UChar>& buffer);
 
         static UString from(int);
         static UString from(unsigned int);
@@ -234,6 +227,12 @@ namespace KJS {
         static const UString& null();
 
         Rep* rep() const { return m_rep.get(); }
+
+        UString(PassRefPtr<Rep> r)
+            : m_rep(r)
+        {
+            ASSERT(m_rep);
+        }
 
         size_t cost() const;
 
