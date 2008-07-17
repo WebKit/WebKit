@@ -1,3 +1,13 @@
+2008-07-17  Jacob Refstrup  <jacob.refstrup@hp.com>
+
+        Reviewed by rwlbuis@gmail.com
+        
+        - added test case that tests that '@mediall' gets safely skipped
+
+        * ChangeLog:
+        * css2.1/atrule_longest_match-expected.txt: Added.
+        * css2.1/atrule_longest_match.html: Added.
+
 2008-07-16  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Hyatt.

@@ -122,6 +122,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_VARIABLES_SYM
 %token WEBKIT_VARIABLES_DECLS_SYM
+%token ATKEYWORD
 
 %token IMPORTANT_SYM
 %token MEDIA_ONLY
@@ -1256,10 +1257,10 @@ hexcolor:
 /* error handling rules */
 
 invalid_at:
-    '@' error invalid_block {
+    ATKEYWORD error invalid_block {
         $$ = 0;
     }
-  | '@' error ';' {
+  | ATKEYWORD error ';' {
         $$ = 0;
     }
     ;

@@ -62,6 +62,8 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "@-webkit-variables"    {yyTok = WEBKIT_VARIABLES_SYM; return yyTok; }
 "@-webkit-variables-decls" { yyTok = WEBKIT_VARIABLES_DECLS_SYM; return yyTok; }
 
+"@"{ident}              {yyTok = ATKEYWORD; return yyTok; }
+
 "!"{w}"important"       {yyTok = IMPORTANT_SYM; return yyTok;}
 
 {num}em                 {yyTok = EMS; return yyTok;}

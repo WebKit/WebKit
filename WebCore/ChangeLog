@@ -1,3 +1,21 @@
+2008-07-17  Jacob Refstrup  <jacob.refstrup@hp.com>
+
+        Reviewed by rwlbuis@gmail.com
+
+        https://bugs.webkit.org/show_bug.cgi?id=19965
+
+        - Added "@"{ident} rule (below other @-rules) to use flex for longest match
+          (if an earlier rule - e.g. @media - also matches then flex chooses that one
+           however, if a longer match - e.g. @mediaall matches flex will choose that)
+        - Updated grammar to defined ATKEYWORD token and to use that instead of '@'
+          in the error recovery grammar. 
+
+        Test: css2.1/atrule_longest_match.html
+
+        * ChangeLog:
+        * css/CSSGrammar.y:
+        * css/tokenizer.flex:
+
 2008-07-17  David Hyatt  <hyatt@apple.com>
 
         Make sure the check to see if a frame/iframe is being rendered inside a transparency layer is
