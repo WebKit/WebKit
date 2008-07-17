@@ -1,5 +1,15 @@
 2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Eric.
+        Update pixel test results for two tests that have been changed.
+
+        * platform/mac-leopard/svg/custom/acid3-test-77-expected.checksum:
+        * platform/mac-leopard/svg/custom/acid3-test-77-expected.png:
+        * platform/mac-leopard/svg/custom/getSubStringLength-expected.checksum:
+        * platform/mac-leopard/svg/custom/getSubStringLength-expected.png:
+
+2008-07-16  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Anders Carlsson.
 
         Add missing layout test results.
