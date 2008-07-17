@@ -862,9 +862,12 @@ RegisterID* CodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, Regis
 RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode)
 {
     ASSERT(opcodeID == op_call || opcodeID == op_call_eval);
-
-    RefPtr<RegisterID> refFunc = func;
-    RefPtr<RegisterID> refBase = base;
+    
+    // Ordinarily, we might ref "func" and "base", to avoid allocating new
+    // temporaries in the same registers. In this case, though, we actually
+    // want the call frame we allocate to overlap "func" and "base", if they're
+    // not otherwise referenced. op_call will read "func" and "base" before
+    // writing out the call frame, so this is safe.
 
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, RegisterFile::CallFrameHeaderSize> callFrame;
@@ -897,6 +900,12 @@ RegisterID* CodeGenerator::emitUnaryNoDstOp(OpcodeID opcode, RegisterID* src)
 
 RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, ArgumentsNode* argumentsNode)
 {
+    // Ordinarily, we might ref "func", to avoid allocating a new temporary in
+    // the same register. In this case, though, we actually want the call
+    // frame we allocate to overlap "func", if it's not otherwise referenced.
+    // op_construct will read "func" before writing out the call frame, so this
+    // is safe.
+
     // Reserve space for call frame.
     Vector<RefPtr<RegisterID>, RegisterFile::CallFrameHeaderSize> callFrame;
     for (int i = 0; i < RegisterFile::CallFrameHeaderSize; ++i)

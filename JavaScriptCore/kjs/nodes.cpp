@@ -399,8 +399,8 @@ RegisterID* ArgumentListNode::emitCode(CodeGenerator& generator, RegisterID* dst
 
 RegisterID* NewExprNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> r0 = generator.emitNode(m_expr.get());
-    return generator.emitConstruct(generator.finalDestination(dst), r0.get(), m_args.get());
+    RegisterID* r0 = generator.emitNode(m_expr.get());
+    return generator.emitConstruct(generator.finalDestination(dst), r0, m_args.get());
 }
 
 RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -413,8 +413,8 @@ RegisterID* EvalFunctionCallNode::emitCode(CodeGenerator& generator, RegisterID*
 
 RegisterID* FunctionCallValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    RefPtr<RegisterID> func = generator.emitNode(m_expr.get());
-    return generator.emitCall(generator.finalDestination(dst), func.get(), 0, m_args.get());
+    RegisterID* func = generator.emitNode(m_expr.get());
+    return generator.emitCall(generator.finalDestination(dst), func, 0, m_args.get());
 }
 
 RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)

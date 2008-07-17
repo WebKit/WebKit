@@ -1,3 +1,26 @@
+2008-07-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by John Sullivan and Oliver Hunt.
+        
+        A tiny bit of tidying in function call register allocation.
+        
+        This patch saves one register when invoking a function expression and/or
+        a new expression that is stored in a temporary.
+        
+        Since it's just one register, I can't make a testcase for it.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitCall): No need to ref the function we're calling
+        or its base. We'd like the call frame to overlap with them, if possible.
+        op_call will read the function and its base before writing the call frame,
+        so this is safe.
+
+        * kjs/nodes.cpp:
+        (KJS::NewExprNode::emitCode): No need to ref the function we're new-ing,
+        for the same reasons stated above.
+        
+        (KJS::FunctionCallValueNode::emitCode): ditto
+
 2008-07-17  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
