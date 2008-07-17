@@ -1,5 +1,15 @@
 2008-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
+        CygwinDownloader fails to install necessary packages
+        https://bugs.webkit.org/show_bug.cgi?id=20075
+
+        Reviewed by Mark Rowe.
+
+        * CygwinDownloader/cygwin-downloader.zip: Rebuilt after two broken
+        mirrors removed in r34116. Set MIME type to application/octet-stream.
+
+2008-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
+
         CygwinDownloader's make-zip.sh script fails
         https://bugs.webkit.org/show_bug.cgi?id=20074
 
