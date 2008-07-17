@@ -2,6 +2,24 @@
 
         Reviewed by mitz.
 
+        Make ATSULayoutParameters a real C++ class
+        (Give it a destructor to clean up after itself)
+        (Also use OwnArrayPtr instead of manual member cleanup)
+
+        * platform/graphics/mac/FontMac.mm:
+        (WebCore::ATSULayoutParameters::ATSULayoutParameters):
+        (WebCore::ATSULayoutParameters::~ATSULayoutParameters):
+        (WebCore::overrideLayoutOperation):
+        (WebCore::ATSULayoutParameters::initialize):
+        (WebCore::Font::selectionRectForComplexText):
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+
+2008-07-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by mitz.
+
         Make ownership of copied UChar buffer clearer
         (and more leak-proof) by using a OwnArrayPtr.
 

@@ -49,17 +49,20 @@ using namespace std;
 
 namespace WebCore {
 
-struct ATSULayoutParameters
+struct ATSULayoutParameters : Noncopyable
 {
     ATSULayoutParameters(const TextRun& run)
         : m_run(run)
         , m_font(0)
-        , m_fonts(0)
-        , m_charBuffer(0)
         , m_hasSyntheticBold(false)
         , m_syntheticBoldPass(false)
         , m_padPerSpace(0)
     {}
+
+    ~ATSULayoutParameters()
+    {
+        ATSUDisposeTextLayout(m_layout);
+    }
 
     void initialize(const Font*, const GraphicsContext* = 0);
 
@@ -68,9 +71,9 @@ struct ATSULayoutParameters
     const Font* m_font;
     
     ATSUTextLayout m_layout;
-    const SimpleFontData **m_fonts;
+    OwnArrayPtr<const SimpleFontData*> m_fonts;
     
-    UChar *m_charBuffer;
+    OwnArrayPtr<UChar> m_charBuffer;
     bool m_hasSyntheticBold;
     bool m_syntheticBoldPass;
     float m_padPerSpace;
@@ -93,8 +96,6 @@ static TextRun copyRunForDirectionalOverrideIfNecessary(const TextRun& run, OwnA
 
 static void initializeATSUStyle(const SimpleFontData* fontData)
 {
-    // The two NSFont calls in this method (pointSize and _atsFontID) do not raise exceptions.
-
     if (!fontData->m_ATSUStyleInitialized) {
         OSStatus status;
         ByteCount propTableSize;
@@ -148,7 +149,7 @@ static void initializeATSUStyle(const SimpleFontData* fontData)
 static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOperation, ATSULineRef iLineRef, URefCon iRefCon,
                                         void *iOperationCallbackParameterPtr, ATSULayoutOperationCallbackStatus *oCallbackStatus)
 {
-    ATSULayoutParameters *params = (ATSULayoutParameters *)iRefCon;
+    ATSULayoutParameters* params = reinterpret_cast<ATSULayoutParameters*>(iRefCon);
     OSStatus status;
     ItemCount count;
     ATSLayoutRecord *layoutRecords;
@@ -162,13 +163,12 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
         
         Fixed lastNativePos = 0;
         float lastAdjustedPos = 0;
-        const UChar* characters = params->m_charBuffer ? params->m_charBuffer : params->m_run.characters();
-        const SimpleFontData **renderers = params->m_fonts;
-        const SimpleFontData *renderer;
-        const SimpleFontData *lastRenderer = 0;
-        UChar ch, nextCh;
+        const UChar* characters = params->m_charBuffer ? params->m_charBuffer.get() : params->m_run.characters();
+        const SimpleFontData** renderers = params->m_fonts.get();
+        const SimpleFontData* renderer;
+        const SimpleFontData* lastRenderer = 0;
         ByteCount offset = layoutRecords[0].originalOffset;
-        nextCh = *(UChar *)(((char *)characters)+offset);
+        UChar nextCh = *(UChar *)(((char *)characters)+offset);
         bool shouldRound = false;
         bool syntheticBoldPass = params->m_syntheticBoldPass;
         Fixed syntheticBoldOffset = 0;
@@ -224,7 +224,7 @@ static OSStatus overrideLayoutOperation(ATSULayoutOperationSelector iCurrentOper
                 }
             }
 
-            ch = nextCh;
+            UChar ch = nextCh;
             offset = layoutRecords[i].originalOffset;
             // Use space for nextCh at the end of the loop so that we get inside the rounding hack code.
             // We won't actually round unless the other conditions are satisfied.
@@ -310,8 +310,9 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     m_font = font;
     
     const SimpleFontData* fontData = font->primaryFont();
-    m_fonts = new const SimpleFontData*[m_run.length()];
-    m_charBuffer = font->isSmallCaps() ? new UChar[m_run.length()] : 0;
+    m_fonts.set(new const SimpleFontData*[m_run.length()]);
+    if (font->isSmallCaps())
+        m_charBuffer.set(new UChar[m_run.length()]);
     
     ATSUTextLayout layout;
     OSStatus status;
@@ -323,12 +324,12 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
     // - \n, \t, and nonbreaking space render as a space.
 
     UniCharCount runLength = m_run.length();
-     
+
     if (m_charBuffer)
-        memcpy(m_charBuffer, m_run.characters(), runLength * sizeof(UChar));
+        memcpy(m_charBuffer.get(), m_run.characters(), runLength * sizeof(UChar));
     
     status = ATSUCreateTextLayoutWithTextPtr(
-            (m_charBuffer ? m_charBuffer : m_run.characters()),
+            (m_charBuffer ? m_charBuffer.get() : m_run.characters()),
             0,        // offset
             runLength,      // length
             runLength,    // total length
@@ -411,19 +412,19 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
             if (!shapedArabic && WTF::Unicode::isArabicChar(m_run[i]) && !r->shapesArabic()) {
                 shapedArabic = true;
                 if (!m_charBuffer) {
-                    m_charBuffer = new UChar[runLength];
-                    memcpy(m_charBuffer, m_run.characters(), i * sizeof(UChar));
-                    ATSUTextMoved(layout, m_charBuffer);
+                    m_charBuffer.set(new UChar[runLength]);
+                    memcpy(m_charBuffer.get(), m_run.characters(), i * sizeof(UChar));
+                    ATSUTextMoved(layout, m_charBuffer.get());
                 }
-                shapeArabic(m_run.characters(), m_charBuffer, runLength, i);
+                shapeArabic(m_run.characters(), m_charBuffer.get(), runLength, i);
             }
             if (m_run.rtl() && !r->m_ATSUMirrors) {
                 UChar mirroredChar = u_charMirror(m_run[i]);
                 if (mirroredChar != m_run[i]) {
                     if (!m_charBuffer) {
-                        m_charBuffer = new UChar[runLength];
-                        memcpy(m_charBuffer, m_run.characters(), runLength * sizeof(UChar));
-                        ATSUTextMoved(layout, m_charBuffer);
+                        m_charBuffer.set(new UChar[runLength]);
+                        memcpy(m_charBuffer.get(), m_run.characters(), runLength * sizeof(UChar));
+                        ATSUTextMoved(layout, m_charBuffer.get());
                     }
                     m_charBuffer[i] = mirroredChar;
                 }
@@ -471,13 +472,6 @@ void ATSULayoutParameters::initialize(const Font* font, const GraphicsContext* g
         m_padPerSpace = 0;
 }
 
-static void disposeATSULayoutParameters(ATSULayoutParameters *params)
-{
-    ATSUDisposeTextLayout(params->m_layout);
-    delete []params->m_charBuffer;
-    delete []params->m_fonts;
-}
-
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
 {
     OwnArrayPtr<UChar> charactersWithOverride;
@@ -498,7 +492,6 @@ FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& 
         static ATSTrapezoid zeroTrapezoid = { {0, 0}, {0, 0}, {0, 0}, {0, 0} };
         firstGlyphBounds = zeroTrapezoid;
     }
-    disposeATSULayoutParameters(&params);
     
     float beforeWidth = MIN(FixedToFloat(firstGlyphBounds.lowerLeft.x), FixedToFloat(firstGlyphBounds.upperLeft.x));
     float afterWidth = MAX(FixedToFloat(firstGlyphBounds.lowerRight.x), FixedToFloat(firstGlyphBounds.upperRight.x));
@@ -567,8 +560,6 @@ void Font::drawComplexText(GraphicsContext* graphicsContext, const TextRun& run,
 
     if (hasSimpleShadow)
         graphicsContext->setShadow(shadowSize, shadowBlur, shadowColor);
-
-    disposeATSULayoutParameters(&params);
 }
 
 float Font::floatWidthForComplexText(const TextRun& run) const
@@ -588,8 +579,6 @@ float Font::floatWidthForComplexText(const TextRun& run) const
         LOG_ERROR("ATSUGetGlyphBounds() failed(%d)", status);
     if (actualNumBounds != 1)
         LOG_ERROR("unexpected result from ATSUGetGlyphBounds(): actualNumBounds(%d) != 1", actualNumBounds);
-
-    disposeATSULayoutParameters(&params);
 
     return MAX(FixedToFloat(firstGlyphBounds.upperRight.x), FixedToFloat(firstGlyphBounds.lowerRight.x)) -
            MIN(FixedToFloat(firstGlyphBounds.upperLeft.x), FixedToFloat(firstGlyphBounds.lowerLeft.x));
@@ -618,8 +607,6 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
     } else
         // Failed to find offset!  Return 0 offset.
         offset = 0;
-
-    disposeATSULayoutParameters(&params);
 
     return offset;
 }
