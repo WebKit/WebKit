@@ -1,3 +1,9 @@
+2008-07-18  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fixed indentation of example code for C++ pointers/references!
+
+        * coding/coding-style.html:
+
 2008-07-18  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by David Kilzer.
