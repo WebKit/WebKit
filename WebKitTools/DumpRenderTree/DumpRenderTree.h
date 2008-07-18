@@ -46,7 +46,9 @@ extern CFRunLoopTimerRef waitToDumpWatchdog;
 
 #include <string>
 
+#if !PLATFORM(OPENBSD)
 std::wstring urlSuitableForTestResult(const std::wstring& url);
+#endif
 
 class LayoutTestController;
 

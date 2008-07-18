@@ -57,6 +57,13 @@
 #define WTF_PLATFORM_FREEBSD 1
 #endif
 
+/* PLATFORM(OPENBSD) */
+/* Operating system level dependencies for OpenBSD systems that */
+/* should be used regardless of operating environment */
+#ifdef __OpenBSD__
+#define WTF_PLATFORM_OPENBSD 1
+#endif
+
 /* PLATFORM(SOLARIS) */
 /* Operating system level dependencies for Solaris that should be used */
 /* regardless of operating environment */
@@ -170,6 +177,12 @@
    || defined(__ia64__) \
    || defined(_M_X64)
 #define WTF_PLATFORM_X86_64 1
+#endif
+
+/* PLATFORM(SPARC64) */
+#if defined(__sparc64__)
+#define WTF_PLATFORM_SPARC64 1
+#define WTF_PLATFORM_BIG_ENDIAN 1
 #endif
 
 /* Compiler */

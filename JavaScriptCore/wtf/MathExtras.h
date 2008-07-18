@@ -34,6 +34,11 @@
 #include <ieeefp.h>
 #endif
 
+#if PLATFORM(OPENBSD)
+#include <sys/types.h>
+#include <machine/ieee.h>
+#endif
+
 #if COMPILER(MSVC)
 
 #include <xmath.h>
@@ -71,6 +76,17 @@ inline bool isinf(double x) { return !finite(x) && !isnand(x); }
 #endif
 #ifndef signbit
 inline bool signbit(double x) { return x < 0.0; } // FIXME: Wrong for negative 0.
+#endif
+
+#endif
+
+#if PLATFORM(OPENBSD)
+
+#ifndef isfinite
+inline bool isfinite(double x) { return finite(x); }
+#endif
+#ifndef signbit
+inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x; return p->dbl_sign; }
 #endif
 
 #endif

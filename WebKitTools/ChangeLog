@@ -1,3 +1,13 @@
+2008-07-18  Landry Breuil  <landry@openbsd.org>
+
+        Bug 19975: [OpenBSD] Patches to enable build of WebKit
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19975>
+
+        Reviewed by David Kilzer.
+
+        * DumpRenderTree/DumpRenderTree.h: OpenBSD doesn't support wide characters.
+
 2008-07-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
         CygwinDownloader fails to install necessary packages

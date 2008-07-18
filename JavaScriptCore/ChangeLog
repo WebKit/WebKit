@@ -1,3 +1,20 @@
+2008-07-18  Landry Breuil  <landry@openbsd.org>
+
+        Bug 19975: [OpenBSD] Patches to enable build of WebKit
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19975>
+
+        Reviewed by David Kilzer.
+
+        Support for OpenBSD, mostly threading and libm tweaks.
+
+        * kjs/collector.cpp: #include <pthread.h>
+        (KJS::currentThreadStackBase): use pthread_stackseg_np() to get stack base
+        * kjs/config.h: OpenBSD also provides <pthread_np.h>
+        * wtf/MathExtras.h: #include <sys/types.h> and <machine/ieee.h>
+        (isfinite), (signbit): as long as we don't have those functions provide fallback implementations
+        * wtf/Platform.h: Add support for PLATFORM(OPENBSD) and PLATFORM(SPARC64) macro
+
 2008-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

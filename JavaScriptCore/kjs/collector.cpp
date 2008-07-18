@@ -63,6 +63,10 @@
 #include <thread.h>
 #endif
 
+#if PLATFORM(OPENBSD)
+#include <pthread.h>
+#endif
+
 #if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>
 #else
@@ -369,6 +373,11 @@ static inline void* currentThreadStackBase()
     stack_t s;
     thr_stksegment(&s);
     return s.ss_sp;
+#elif PLATFORM(OPENBSD)
+    pthread_t thread = pthread_self();
+    stack_t stack;
+    pthread_stackseg_np(thread, &stack);
+    return stack.ss_sp;
 #elif PLATFORM(UNIX)
     static void* stackBase = 0;
     static size_t stackSize = 0;
