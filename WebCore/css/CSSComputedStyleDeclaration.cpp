@@ -389,9 +389,8 @@ static IntRect sizingBox(RenderObject* renderer)
 
 static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer)
 {
-    if (!renderer || renderer->style()->transform().isEmpty()) {
+    if (!renderer || renderer->style()->transform().isEmpty())
         return CSSPrimitiveValue::createIdentifier(CSSValueNone);
-    }
     
     IntRect box = sizingBox(renderer);
 

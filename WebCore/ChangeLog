@@ -1,5 +1,14 @@
 2008-07-18  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by mitz
+
+        Remove braces around single-line conditional.
+        
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+
+2008-07-18  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dave Hyatt
 
         getComputedStyle() for -webkit-transform should return 
