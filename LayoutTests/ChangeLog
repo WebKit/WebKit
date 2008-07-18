@@ -1,3 +1,10 @@
+2008-07-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Update expected results for a recently added test to what is seen when running the
+        full test suite.
+
+        * fast/forms/form-and-frame-interaction-retains-values-expected.txt:
+
 2008-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by David Kilzer.
