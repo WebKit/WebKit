@@ -1,3 +1,16 @@
+2008-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        getComputedStyle() for -webkit-transform should return 
+        'none' for elements with no renderer, or those with no
+        transform.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20008
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+
 2008-07-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Update expected results for a recently added test to what is seen when running the

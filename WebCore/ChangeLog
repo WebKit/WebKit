@@ -2,6 +2,22 @@
 
         Reviewed by Dave Hyatt
 
+        getComputedStyle() for -webkit-transform should return 
+        'none' for elements with no renderer, or those with no
+        transform.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20008
+
+        Testcase: LayoutTests/fast/css/computed-style-without-renderer
+                  LayoutTests/fast/css/computed-style-expected.txt
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::computedTransform):
+
+2008-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
         Fix assertion about creating Length values with percentage types
         when blending transforms.
         https://bugs.webkit.org/show_bug.cgi?id=20086

@@ -387,11 +387,12 @@ static IntRect sizingBox(RenderObject* renderer)
     return renderer->style()->boxSizing() == CONTENT_BOX ? renderer->contentBox() : renderer->borderBox();
 }
 
-static PassRefPtr<CSSValueList> computedTransform(RenderObject* renderer)
+static PassRefPtr<CSSValue> computedTransform(RenderObject* renderer)
 {
-    if (!renderer)
-        return 0;
-
+    if (!renderer || renderer->style()->transform().isEmpty()) {
+        return CSSPrimitiveValue::createIdentifier(CSSValueNone);
+    }
+    
     IntRect box = sizingBox(renderer);
 
     AffineTransform transform;
