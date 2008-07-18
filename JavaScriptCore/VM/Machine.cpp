@@ -365,7 +365,7 @@ ALWAYS_INLINE void Machine::initializeCallFrame(Register* callFrame, CodeBlock* 
     callFrame[RegisterFile::ArgumentCount] = argc; // original argument count (for the sake of the "arguments" object)
     callFrame[RegisterFile::CalledAsConstructor] = calledAsConstructor;
     callFrame[RegisterFile::Callee] = function;
-    callFrame[RegisterFile::OptionalCalleeActivation] = intptr_t(0L);
+    callFrame[RegisterFile::OptionalCalleeActivation] = static_cast<intptr_t>(0);
 }
 
 ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* newCodeBlock, RegisterFile* registerFile, Register* registerBase, Register* r, int argv, int argc, JSValue*& exceptionValue)

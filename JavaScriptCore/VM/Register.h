@@ -106,7 +106,7 @@ namespace KJS {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        *this = intptr_t(0L);
+        *this = static_cast<intptr_t>(0);
 #endif
     }
 

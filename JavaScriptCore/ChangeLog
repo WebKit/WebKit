@@ -1,3 +1,15 @@
+2008-07-18  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        Fix some casts added in a previous build fix to match the style used
+        throughout WebKit.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::initializeCallFrame):
+        * VM/Register.h:
+        (KJS::Register::Register):
+
 2008-07-18  Landry Breuil  <landry@openbsd.org>
 
         Bug 19975: [OpenBSD] Patches to enable build of WebKit
