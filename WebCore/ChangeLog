@@ -1,3 +1,13 @@
+2008-07-18  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        I recently made a change to avoid fading media controls in and out if a video element actually only contains audio,
+        which broke the code that did the same thing for audio elements that contain video (but don't actually display that video).
+        This change will now check both the media element and the player to decide whether or not to make the controls persistent.
+
+        * rendering/RenderMedia.cpp: (WebCore::RenderMedia::updateControlVisibility):
+
 2008-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by mitz

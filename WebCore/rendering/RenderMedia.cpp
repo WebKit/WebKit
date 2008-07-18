@@ -308,10 +308,10 @@ void RenderMedia::updateControlVisibility()
     if (!m_panel || !m_panel->renderer())
         return;
     // Don't fade for audio controls.
-    if (player() && !player()->hasVideo())
+    HTMLMediaElement* media = mediaElement();
+    if (player() && !player()->hasVideo() || !media->isVideo())
         return;
     // do fading manually, css animations don't work well with shadow trees
-    HTMLMediaElement* media = mediaElement();
     bool visible = m_mouseOver || media->paused() || media->ended() || media->networkState() < HTMLMediaElement::LOADED_METADATA;
     if (visible == (m_opacityAnimationTo > 0))
         return;
