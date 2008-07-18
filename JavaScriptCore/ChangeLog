@@ -1,5 +1,14 @@
 2008-07-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Oliver Hunt.
+        
+        Next step toward putting doubles in registers: Store constant pool
+        entries as registers, not JSValue*s.
+        
+        SunSpider reports no change.
+
+2008-07-17  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by John Sullivan and Oliver Hunt.
         
         A tiny bit of tidying in function call register allocation.
@@ -140,7 +149,7 @@
         (KJS::Register::):
         (KJS::Register::Register):
 
-2008-07-16  Geoffrey Garen  <ggaren@apple.com>
+2008-07-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
         

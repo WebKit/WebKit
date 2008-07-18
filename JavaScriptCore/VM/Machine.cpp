@@ -574,7 +574,7 @@ bool Machine::isOpcode(Opcode opcode)
 #endif
 }
 
-NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionValue, const Instruction*& vPC, CodeBlock*& codeBlock, JSValue**& k, ScopeChainNode*& scopeChain, Register*& r)
+NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionValue, const Instruction*& vPC, CodeBlock*& codeBlock, Register*& k, ScopeChainNode*& scopeChain, Register*& r)
 {
     CodeBlock* oldCodeBlock = codeBlock;
     Register* callFrame = r - oldCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
@@ -607,7 +607,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     if (!codeBlock)
         return false;
 
-    k = codeBlock->jsValues.data();
+    k = codeBlock->registers.data();
     scopeChain = callFrame[RegisterFile::CallerScopeChain].scopeChain();
     r = callFrame[RegisterFile::CallerRegisters].r();
     exec->m_callFrame = r - oldCodeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
@@ -616,7 +616,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
     return true;
 }
 
-NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue* exceptionValue, const Instruction* vPC, CodeBlock*& codeBlock, JSValue**& k, ScopeChainNode*& scopeChain, Register*& r)
+NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue* exceptionValue, const Instruction* vPC, CodeBlock*& codeBlock, Register*& k, ScopeChainNode*& scopeChain, Register*& r)
 {
     // Set up the exception object
 
@@ -977,7 +977,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
     Register* registerBase = registerFile->base();
     Instruction* vPC = codeBlock->instructions.begin();
-    JSValue** k = codeBlock->jsValues.data();
+    Register* k = codeBlock->registers.data();
     Profiler** enabledProfilerReference = Profiler::enabledProfilerReference();
     unsigned tickCount = m_ticksUntilNextTimeoutCheck + 1;
 
@@ -2247,7 +2247,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             codeBlock = newCodeBlock;
             setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
-            k = codeBlock->jsValues.data();
+            k = codeBlock->registers.data();
             vPC = codeBlock->instructions.begin();
 
 #if DUMP_OPCODE_STATS
@@ -2316,7 +2316,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         if (!codeBlock)
             return returnValue;
 
-        k = codeBlock->jsValues.data();
+        k = codeBlock->registers.data();
         vPC = callFrame[RegisterFile::ReturnVPC].vPC();
         setScopeChain(exec, scopeChain, callFrame[RegisterFile::CallerScopeChain].scopeChain());
         r = callFrame[RegisterFile::CallerRegisters].r();
@@ -2378,7 +2378,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             codeBlock = newCodeBlock;
             setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
-            k = codeBlock->jsValues.data();
+            k = codeBlock->registers.data();
             vPC = codeBlock->instructions.begin();
 
             NEXT_OPCODE;
@@ -2549,7 +2549,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int type = (++vPC)->u.operand;
         int message = (++vPC)->u.operand;
 
-        r[dst] = Error::create(exec, (ErrorType)type, k[message]->toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
+        r[dst] = Error::create(exec, (ErrorType)type, k[message].toString(exec), codeBlock->lineNumberForVPC(vPC), codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
 
         ++vPC;
         NEXT_OPCODE;

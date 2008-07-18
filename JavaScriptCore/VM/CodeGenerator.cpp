@@ -521,9 +521,9 @@ unsigned CodeGenerator::addConstant(const Identifier& ident)
 
 unsigned CodeGenerator::addConstant(JSValue* v)
 {
-    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_codeBlock->jsValues.size());
+    pair<JSValueMap::iterator, bool> result = m_jsValueMap.add(v, m_codeBlock->registers.size());
     if (result.second) // new entry
-        m_codeBlock->jsValues.append(v);
+        m_codeBlock->registers.append(v);
 
     return result.first->second;
 }

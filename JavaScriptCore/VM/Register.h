@@ -52,8 +52,11 @@ namespace KJS {
         bool marked() const;
         void mark();
         
+        bool isString() const;
+        
         uint32_t toUInt32(ExecState*) const;
         UString toString(ExecState*) const;
+        
 
     private:
         friend class Machine;
@@ -215,6 +218,11 @@ namespace KJS {
         jsValue()->mark();
     }
     
+    ALWAYS_INLINE bool Register::isString() const
+    {
+        return jsValue()->isString();
+    }
+
     ALWAYS_INLINE uint32_t Register::toUInt32(ExecState* exec) const
     {
         return jsValue()->toUInt32(exec);
