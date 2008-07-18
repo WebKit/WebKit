@@ -1,3 +1,11 @@
+2008-07-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Optimized <= for immediate number cases.
+        
+        SunSpider reports no overall change, but a 10% speedup on access-nsieve.
+
 2008-07-18  Mark Rowe  <mrowe@apple.com>
 
         Rubber-stamped by Sam Weinig.
