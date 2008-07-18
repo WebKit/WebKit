@@ -121,6 +121,25 @@ switch (condition) {
 }
 </pre>
 </li>
+
+<li>Boolean expressions at the same nesting level that span multiple lines should
+have their operators on the left side of the line instead of the right side.
+
+<h4 class="right">Right:</h4>
+<pre class="code">
+return attr->name() == srcAttr
+    || attr->name() == lowsrcAttr
+    || (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+</pre>
+
+<h4 class="wrong">Wrong:</h4>
+<pre class="code">
+return attr->name() == srcAttr ||
+    attr->name() == lowsrcAttr ||
+    (attr->name() == usemapAttr && attr->value().domString()[0] != '#');
+</pre>
+</li>
+
 </ol>
 
 <h3>Spacing</h3>
