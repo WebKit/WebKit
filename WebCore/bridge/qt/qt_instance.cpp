@@ -98,7 +98,7 @@ ConstructType QtRuntimeObjectImp::getConstructData(ConstructData& constructData)
     switch (getCallData(callData)) {
     case CallTypeNone:
         break;
-    case CallTypeNative:
+    case CallTypeHost:
         type = ConstructTypeNative;
         break;
     case CallTypeJS:
@@ -271,7 +271,7 @@ CallType QtInstance::getCallData(CallData&)
     }
 
     // typeof object that implements call == function
-    return (m_defaultMethodIndex >= 0 ? CallTypeNative : CallTypeNone);
+    return (m_defaultMethodIndex >= 0 ? CallTypeHost : CallTypeNone);
 }
 
 JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)

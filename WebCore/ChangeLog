@@ -1,3 +1,13 @@
+2008-07-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Three renames:
+        
+        "CallTypeNative" => "CallTypeHost"
+        "code" => "byteCode"
+        "generatedCode" => "generatedByteCode"
+
 2008-07-18  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

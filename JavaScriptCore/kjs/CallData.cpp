@@ -32,7 +32,7 @@ namespace KJS {
 
 JSValue* call(ExecState* exec, JSValue* functionObject, CallType callType, const CallData& callData, JSValue* thisValue, const ArgList& args)
 {
-    if (callType == CallTypeNative)
+    if (callType == CallTypeHost)
         return callData.native.function(exec, static_cast<JSObject*>(functionObject), thisValue, args);
     ASSERT(callType == CallTypeJS);
     // FIXME: Can this be done more efficiently using the callData?

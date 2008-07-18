@@ -1,5 +1,15 @@
 2008-07-18  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Cameron Zwarich.
+        
+        Three renames:
+        
+        "CallTypeNative" => "CallTypeHost"
+        "code" => "byteCode"
+        "generatedCode" => "generatedByteCode"
+
+2008-07-18  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
         
         Optimized <= for immediate number cases.

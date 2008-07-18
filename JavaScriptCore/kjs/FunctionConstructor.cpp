@@ -61,7 +61,7 @@ static JSValue* callFunctionConstructor(ExecState* exec, JSObject*, JSValue*, co
 CallType FunctionConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callFunctionConstructor;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 // ECMA 15.3.2 The Function Constructor

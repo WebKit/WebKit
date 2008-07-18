@@ -63,7 +63,7 @@ static JSValue* callBooleanConstructor(ExecState* exec, JSObject*, JSValue*, con
 CallType BooleanConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callBooleanConstructor;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 JSObject* constructBooleanFromImmediateBoolean(ExecState* exec, JSValue* immediateBooleanValue)

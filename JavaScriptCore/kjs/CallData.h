@@ -40,7 +40,7 @@ namespace KJS {
 
     enum CallType {
         CallTypeNone,
-        CallTypeNative,
+        CallTypeHost,
         CallTypeJS
     };
 

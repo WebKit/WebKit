@@ -1,3 +1,17 @@
+2008-07-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Three renames:
+        
+        "CallTypeNative" => "CallTypeHost"
+        "code" => "byteCode"
+        "generatedCode" => "generatedByteCode"
+
+        * ChangeLog:
+        * JSObject.cpp:
+        (JSUserObject::getCallData):
+
 2008-07-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

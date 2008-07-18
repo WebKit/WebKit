@@ -303,7 +303,7 @@ CallType JSCallbackObject<Base>::getCallData(CallData& callData)
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsFunction) {
             callData.native.function = call;
-            return CallTypeNative;
+            return CallTypeHost;
         }
     }
     return CallTypeNone;

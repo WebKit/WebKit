@@ -50,7 +50,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functio
 CallType PrototypeFunction::getCallData(CallData& callData)
 {
     callData.native.function = m_function;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 } // namespace KJS

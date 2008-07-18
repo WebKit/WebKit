@@ -77,7 +77,7 @@ CallType ArrayConstructor::getCallData(CallData& callData)
 {
     // equivalent to 'new Array(....)'
     callData.native.function = callArrayConstructor;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 } // namespace KJS

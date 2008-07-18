@@ -148,7 +148,7 @@ CallType runtimeObjectGetCallData(HTMLElement* element, CallData& callData)
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callPlugin;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 #endif

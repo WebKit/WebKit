@@ -48,7 +48,7 @@ static JSValue* callNodeList(ExecState* exec, JSObject* function, JSValue*, cons
 CallType JSNodeList::getCallData(CallData& callData)
 {
     callData.native.function = callNodeList;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 bool JSNodeList::canGetItemsForName(ExecState*, NodeList* impl, const Identifier& propertyName)

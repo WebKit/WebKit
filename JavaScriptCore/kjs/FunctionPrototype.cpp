@@ -51,7 +51,7 @@ static JSValue* callFunctionPrototype(ExecState*, JSObject*, JSValue*, const Arg
 CallType FunctionPrototype::getCallData(CallData& callData)
 {
     callData.native.function = callFunctionPrototype;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 // Functions

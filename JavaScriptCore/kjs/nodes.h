@@ -2038,7 +2038,7 @@ namespace KJS {
     public:
         static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
-        ProgramCodeBlock& code(ScopeChainNode* scopeChain) KJS_FAST_CALL
+        ProgramCodeBlock& byteCode(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
             if (!m_code)
                 generateCode(scopeChain);
@@ -2061,7 +2061,7 @@ namespace KJS {
     public:
         static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
 
-        EvalCodeBlock& code(ScopeChainNode* scopeChain) KJS_FAST_CALL
+        EvalCodeBlock& byteCode(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
             if (!m_code)
                 generateCode(scopeChain);
@@ -2088,7 +2088,7 @@ namespace KJS {
         
         SymbolTable& symbolTable() { return m_symbolTable; } // FIXME: Remove this
         
-        CodeBlock& code(ScopeChainNode* scopeChain) KJS_FAST_CALL
+        CodeBlock& byteCode(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
             ASSERT(scopeChain);
             if (!m_code)
@@ -2096,7 +2096,7 @@ namespace KJS {
             return *m_code;
         }
 
-        CodeBlock& generatedCode() KJS_FAST_CALL
+        CodeBlock& generatedByteCode() KJS_FAST_CALL
         {
             ASSERT(m_code);
             return *m_code;

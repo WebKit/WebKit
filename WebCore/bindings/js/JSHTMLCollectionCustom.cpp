@@ -94,7 +94,7 @@ static JSValue* callHTMLCollection(ExecState* exec, JSObject* function, JSValue*
 CallType JSHTMLCollection::getCallData(CallData& callData)
 {
     callData.native.function = callHTMLCollection;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 bool JSHTMLCollection::canGetItemsForName(ExecState* exec, HTMLCollection* thisObj, const Identifier& propertyName)

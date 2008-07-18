@@ -268,7 +268,7 @@ CallType ObjcFallbackObjectImp::getCallData(CallData& callData)
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return CallTypeNone;
     callData.native.function = callObjCFallbackObject;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 bool ObjcFallbackObjectImp::deleteProperty(ExecState*, const Identifier&)

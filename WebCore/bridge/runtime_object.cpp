@@ -205,7 +205,7 @@ CallType RuntimeObjectImp::getCallData(CallData& callData)
     if (!instance || !instance->supportsInvokeDefaultMethod())
         return CallTypeNone;
     callData.native.function = callRuntimeObject;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 void RuntimeObjectImp::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)

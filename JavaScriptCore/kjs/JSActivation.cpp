@@ -51,7 +51,7 @@ JSActivation::~JSActivation()
 
 void JSActivation::copyRegisters()
 {
-    int numLocals = d()->functionBody->generatedCode().numLocals;
+    int numLocals = d()->functionBody->generatedByteCode().numLocals;
     if (!numLocals)
         return;
 
@@ -156,7 +156,7 @@ PropertySlot::GetValueFunc JSActivation::getArgumentsGetter()
 
 JSObject* JSActivation::createArgumentsObject(ExecState* exec)
 {
-    Register* callFrame = d()->registers - d()->functionBody->generatedCode().numLocals - RegisterFile::CallFrameHeaderSize;
+    Register* callFrame = d()->registers - d()->functionBody->generatedByteCode().numLocals - RegisterFile::CallFrameHeaderSize;
 
     JSFunction* function;
     Register* argv;

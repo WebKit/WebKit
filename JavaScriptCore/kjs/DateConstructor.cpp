@@ -128,7 +128,7 @@ static JSValue* callDate(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 CallType DateConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callDate;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 static JSValue* dateParse(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

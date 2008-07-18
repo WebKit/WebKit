@@ -1325,7 +1325,7 @@ JSValue* QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JS
 CallType QtRuntimeMetaMethod::getCallData(CallData& callData)
 {
     callData.native.function = call;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 bool QtRuntimeMetaMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -1517,7 +1517,7 @@ JSValue* QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObje
 CallType QtRuntimeConnectionMethod::getCallData(CallData& callData)
 {
     callData.native.function = call;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 bool QtRuntimeConnectionMethod::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -65,7 +65,7 @@ static JSValue* callNativeErrorConstructor(ExecState* exec, JSObject* constructo
 CallType NativeErrorConstructor::getCallData(CallData& callData)
 {
     callData.native.function = callNativeErrorConstructor;
-    return CallTypeNative;
+    return CallTypeHost;
 }
 
 void NativeErrorConstructor::mark()
