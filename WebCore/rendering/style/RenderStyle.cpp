@@ -627,11 +627,11 @@ TransformOperation* TranslateTransformOperation::blend(const TransformOperation*
         return this;
     
     if (blendToIdentity)
-        return new TranslateTransformOperation(Length(0, m_x.type()).blend(m_x, progress), Length(0, m_y.type()).blend(m_y, progress));
+        return new TranslateTransformOperation(Length(m_x.type()).blend(m_x, progress), Length(m_y.type()).blend(m_y, progress));
 
     const TranslateTransformOperation* fromOp = static_cast<const TranslateTransformOperation*>(from);
-    Length fromX = fromOp ? fromOp->m_x : Length(0, m_x.type());
-    Length fromY = fromOp ? fromOp->m_y : Length(0, m_y.type());
+    Length fromX = fromOp ? fromOp->m_x : Length(m_x.type());
+    Length fromY = fromOp ? fromOp->m_y : Length(m_y.type());
     return new TranslateTransformOperation(m_x.blend(fromX, progress), m_y.blend(fromY, progress));
 }
 

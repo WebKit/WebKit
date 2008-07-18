@@ -1,3 +1,14 @@
+2008-07-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Fix assertion about creating Length values with percentage types
+        when blending transforms.
+        https://bugs.webkit.org/show_bug.cgi?id=20086
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::TranslateTransformOperation::blend):
+
 2008-07-17  Jacob Refstrup  <jacob.refstrup@hp.com>
 
         Reviewed by rwlbuis@gmail.com
