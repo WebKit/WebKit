@@ -29,6 +29,7 @@
 #include "EventException.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "File.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPParsers.h"
@@ -458,6 +459,21 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         }
 
         m_requestEntityBody = FormData::create(UTF8Encoding().encode(body.characters(), body.length(), EntitiesForUnencodables));
+    }
+
+    createRequest(ec);
+}
+
+void XMLHttpRequest::send(File* body, ExceptionCode& ec)
+{
+    if (!initSend(ec))
+        return;
+
+    if (m_method != "GET" && m_method != "HEAD" && (m_url.protocolIs("http") || m_url.protocolIs("https"))) {
+        // FIXME: Should we set a Content-Type if one is not set.
+        // FIXME: add support for uploading bundles.
+        m_requestEntityBody = FormData::create();
+        m_requestEntityBody->appendFile(body->path(), false);
     }
 
     createRequest(ec);

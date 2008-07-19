@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class Document;
+class File;
 class TextResourceDecoder;
 
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private SubresourceLoaderClient {
@@ -61,6 +62,7 @@ public:
     void send(ExceptionCode&);
     void send(Document*, ExceptionCode&);
     void send(const String&, ExceptionCode&);
+    void send(File*, ExceptionCode&);
     void abort();
     void setRequestHeader(const String& name, const String& value, ExceptionCode&);
     void overrideMimeType(const String& override);

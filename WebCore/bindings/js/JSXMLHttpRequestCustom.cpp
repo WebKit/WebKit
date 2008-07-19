@@ -32,6 +32,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
+#include "File.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -39,6 +40,7 @@
 #include "JSDocument.h"
 #include "JSEvent.h"
 #include "JSEventListener.h"
+#include "JSFile.h"
 #include "XMLHttpRequest.h"
 #include <kjs/Error.h>
 
@@ -237,6 +239,8 @@ JSValue* JSXMLHttpRequest::send(ExecState* exec, const ArgList& args)
             impl()->send(ec);
         else if (val->isObject(&JSDocument::s_info))
             impl()->send(toDocument(val), ec);
+        else if (val->isObject(&JSFile::s_info))
+            impl()->send(toFile(val), ec);
         else
             impl()->send(val->toString(exec), ec);
     }

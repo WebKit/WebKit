@@ -1,3 +1,17 @@
+2008-07-18  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6087283> Add support for uploading files via XMLHttpRequest
+
+        - Overload XMLHttpRequests send() method to accept File tokens.
+
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::send): 
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::send):
+        * xml/XMLHttpRequest.h:
+
 2008-07-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
