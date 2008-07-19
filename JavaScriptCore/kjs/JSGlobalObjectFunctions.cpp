@@ -136,7 +136,7 @@ static JSValue* decode(ExecState* exec, const ArgList& args, const char* doNotUn
     return jsString(exec, result);
 }
 
-bool isStrWhiteSpace(unsigned short c)
+bool isStrWhiteSpace(UChar c)
 {
     switch (c) {
         case 0x0009:
