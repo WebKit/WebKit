@@ -124,7 +124,14 @@ namespace WebCore {
         // Tear offs only used by bindings, never in internal code
         PassRefPtr<TearOff> animatedTearOff() const;
 
+#if COMPILER(MSVC)
+#pragma warning(push, 0)
+#pragma warning(disable:4505)
+#endif
         void synchronize() const;
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
         void startAnimation() const;
         void stopAnimation();

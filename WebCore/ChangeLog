@@ -1,3 +1,11 @@
+2008-07-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Attempt to fix windows build
+
+        * svg/SVGAnimatedProperty.h:
+
 2008-07-19  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver & parts by Eric.
