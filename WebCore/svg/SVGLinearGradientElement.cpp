@@ -38,10 +38,10 @@ namespace WebCore {
 
 SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_x1(LengthModeWidth)
-    , m_y1(LengthModeHeight)
-    , m_x2(LengthModeWidth, "100%")
-    , m_y2(LengthModeHeight)
+    , m_x1(this, SVGNames::x1Attr, LengthModeWidth)
+    , m_y1(this, SVGNames::y1Attr, LengthModeHeight)
+    , m_x2(this, SVGNames::x2Attr, LengthModeWidth, "100%")
+    , m_y2(this, SVGNames::y2Attr, LengthModeHeight)
 {
     // Spec: If the x2 attribute is not specified, the effect is as if a value of "100%" were specified.
 }
@@ -49,11 +49,6 @@ SVGLinearGradientElement::SVGLinearGradientElement(const QualifiedName& tagName,
 SVGLinearGradientElement::~SVGLinearGradientElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, X1, x1, SVGNames::x1Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Y1, y1, SVGNames::y1Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, X2, x2, SVGNames::x2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLinearGradientElement, SVGLength, Y2, y2, SVGNames::y2Attr)
 
 void SVGLinearGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {

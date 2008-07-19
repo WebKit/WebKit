@@ -23,40 +23,30 @@
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGFELightElement.h"
-
 #include "SVGNames.h"
 
 namespace WebCore {
 
+char SVGFELightElementIdentifier[] = "SVGFELightElement";
+
 SVGFELightElement::SVGFELightElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_azimuth(0.0f)
-    , m_elevation(0.0f)
-    , m_x(0.0f)
-    , m_y(0.0f)
-    , m_z(0.0f)
-    , m_pointsAtX(0.0f)
-    , m_pointsAtY(0.0f)
-    , m_pointsAtZ(0.0f)
-    , m_specularExponent(1.0f)
-    , m_limitingConeAngle(0.0f)
+    , m_azimuth(this, SVGNames::azimuthAttr)
+    , m_elevation(this, SVGNames::elevationAttr)
+    , m_x(this, SVGNames::xAttr)
+    , m_y(this, SVGNames::yAttr)
+    , m_z(this, SVGNames::zAttr)
+    , m_pointsAtX(this, SVGNames::pointsAtXAttr)
+    , m_pointsAtY(this, SVGNames::pointsAtYAttr)
+    , m_pointsAtZ(this, SVGNames::pointsAtZAttr)
+    , m_specularExponent(this, SVGNames::specularExponentAttr, 1.0f)
+    , m_limitingConeAngle(this, SVGNames::limitingConeAngleAttr)
 {
 }
 
 SVGFELightElement::~SVGFELightElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Azimuth, azimuth, SVGNames::azimuthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Elevation, elevation, SVGNames::elevationAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, Z, z, SVGNames::zAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, PointsAtX, pointsAtX, SVGNames::pointsAtXAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, PointsAtY, pointsAtY, SVGNames::pointsAtYAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, PointsAtZ, pointsAtZ, SVGNames::pointsAtZAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, SpecularExponent, specularExponent, SVGNames::specularExponentAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFELightElement, float, LimitingConeAngle, limitingConeAngle, SVGNames::limitingConeAngleAttr)
 
 void SVGFELightElement::parseMappedAttribute(MappedAttribute* attr)
 {

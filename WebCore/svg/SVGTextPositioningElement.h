@@ -25,11 +25,12 @@
 
 #if ENABLE(SVG)
 #include "SVGTextContentElement.h"
+#include "SVGLengthList.h"
+#include "SVGNumberList.h"
 
 namespace WebCore {
 
-    class SVGLengthList;
-    class SVGNumberList;
+    extern char SVGTextPositioningElementIdentifier[];
 
     class SVGTextPositioningElement : public SVGTextContentElement {
     public:
@@ -41,11 +42,11 @@ namespace WebCore {
         bool isKnownAttribute(const QualifiedName&);
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dx, dx)
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dy, dy)
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGTextPositioningElement, SVGNumberList, Rotate, rotate)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::xAttrString, SVGLengthList, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::yAttrString, SVGLengthList, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::dxAttrString, SVGLengthList, Dx, dx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::dyAttrString, SVGLengthList, Dy, dy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPositioningElement, SVGTextPositioningElementIdentifier, SVGNames::rotateAttrString, SVGNumberList, Rotate, rotate)
     };
 
 } // namespace WebCore

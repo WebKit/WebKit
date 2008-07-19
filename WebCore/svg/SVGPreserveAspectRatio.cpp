@@ -25,6 +25,7 @@
 #if ENABLE(SVG)
 #include "SVGPreserveAspectRatio.h"
 
+#include "AffineTransform.h"
 #include "SVGParserUtilities.h"
 #include "SVGSVGElement.h"
 

@@ -25,9 +25,11 @@
 
 #if ENABLE(SVG)
 #include "SVGElement.h"
+#include "XLinkNames.h"
 
 namespace WebCore {
 
+    extern char SVGURIReferenceIdentifier[];
     class MappedAttribute;
 
     class SVGURIReference {
@@ -40,11 +42,10 @@ namespace WebCore {
 
         static String getTarget(const String& url);
 
-    protected:
         virtual const SVGElement* contextElement() const = 0;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGURIReference, String, Href, href)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGURIReference, SVGURIReferenceIdentifier, XLinkNames::hrefAttrString, String, Href, href)
     };
 
 } // namespace WebCore

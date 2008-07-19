@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2007 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,39 +22,31 @@
 
 #ifndef SVGScriptElement_h
 #define SVGScriptElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGExternalResourcesRequired.h"
 
-namespace WebCore
-{
+namespace WebCore {
+
     class SVGScriptElement : public SVGElement,
                              public SVGURIReference,
-                             public SVGExternalResourcesRequired
-    {
+                             public SVGExternalResourcesRequired {
     public:
         SVGScriptElement(const QualifiedName&, Document*);
         virtual ~SVGScriptElement();
 
-        // 'SVGScriptElement' functions
         String type() const;
         void setType(const String&);
 
-        // Internal
         virtual void parseMappedAttribute(MappedAttribute *attr);
-
         virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-
         String m_type;
     };
 
@@ -62,5 +54,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

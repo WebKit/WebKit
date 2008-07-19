@@ -51,8 +51,6 @@ namespace WebCore
 
     private:
         mutable bool m_insideRenderSection;
-
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

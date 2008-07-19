@@ -39,21 +39,16 @@ SVGForeignObjectElement::SVGForeignObjectElement(const QualifiedName& tagName, D
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth)
-    , m_height(LengthModeHeight)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth)
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight)
 {
 }
 
 SVGForeignObjectElement::~SVGForeignObjectElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGForeignObjectElement, SVGLength, Height, height, SVGNames::heightAttr)
 
 void SVGForeignObjectElement::parseMappedAttribute(MappedAttribute* attr)
 {

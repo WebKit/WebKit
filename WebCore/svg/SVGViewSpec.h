@@ -53,7 +53,6 @@ namespace WebCore {
         String viewTargetString() const { return m_viewTargetString; }
         SVGElement* viewTarget() const;
 
-    protected:
         virtual const SVGElement* contextElement() const;
 
     private:

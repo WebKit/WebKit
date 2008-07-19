@@ -45,15 +45,12 @@ namespace WebCore {
 
         RadialGradientAttributes collectGradientProperties() const;
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGLength, Cx, cx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGLength, Cy, cy)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGLength, R, r)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGLength, Fx, fx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGLength, Fy, fy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGNames::radialGradientTagString, SVGNames::cxAttrString, SVGLength, Cx, cx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGNames::radialGradientTagString, SVGNames::cyAttrString, SVGLength, Cy, cy)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGNames::radialGradientTagString, SVGNames::rAttrString, SVGLength, R, r)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGNames::radialGradientTagString, SVGNames::fxAttrString, SVGLength, Fx, fx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRadialGradientElement, SVGNames::radialGradientTagString, SVGNames::fyAttrString, SVGLength, Fy, fy)
     };
 
 } // namespace WebCore

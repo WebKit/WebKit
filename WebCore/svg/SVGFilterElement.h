@@ -32,13 +32,14 @@
 #include "SVGURIReference.h"
 
 namespace WebCore {
-    class SVGLength;
+
+    extern char SVGFilterResXIdentifier[];
+    extern char SVGFilterResYIdentifier[];
 
     class SVGFilterElement : public SVGStyledElement,
                              public SVGURIReference,
                              public SVGLangSpace,
-                             public SVGExternalResourcesRequired
-    {
+                             public SVGExternalResourcesRequired {
     public:
         SVGFilterElement(const QualifiedName&, Document*);
         virtual ~SVGFilterElement();
@@ -54,17 +55,14 @@ namespace WebCore {
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
- 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, FilterUnits, filterUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, int, PrimitiveUnits, primitiveUnits)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, FilterResX, filterResX)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, long, FilterResY, filterResY)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::filterUnitsAttrString, int, FilterUnits, filterUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::primitiveUnitsAttrString, int, PrimitiveUnits, primitiveUnits)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::xAttrString, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::yAttrString, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::widthAttrString, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGNames::heightAttrString, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGFilterResXIdentifier, long, FilterResX, filterResX)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFilterElement, SVGNames::filterTagString, SVGFilterResYIdentifier, long, FilterResY, filterResY)
 
         RefPtr<SVGResourceFilter> m_filter;
     };
@@ -73,5 +71,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

@@ -42,11 +42,11 @@ SVGImageElement::SVGImageElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth)
-    , m_height(LengthModeHeight)
-    , m_preserveAspectRatio(SVGPreserveAspectRatio::create())
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth)
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight)
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
     , m_imageLoader(this)
 {
 }
@@ -55,12 +55,6 @@ SVGImageElement::~SVGImageElement()
 {
 }
 
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGImageElement, SVGLength, Height, height, SVGNames::heightAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr)
- 
 void SVGImageElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == SVGNames::xAttr)

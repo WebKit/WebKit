@@ -24,13 +24,15 @@
 #define SVGStyledTransformableElement_h
 
 #if ENABLE(SVG)
+#include "Path.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTransformable.h"
 
 namespace WebCore {
 
+    extern char SVGStyledTransformableElementIdentifier[];
+
     class AffineTransform;
-    class SVGTransformList;
 
     class SVGStyledTransformableElement : public SVGStyledLocatableElement,
                                           public SVGTransformable {
@@ -59,7 +61,8 @@ namespace WebCore {
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     protected:
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGStyledTransformableElement, SVGTransformList, Transform, transform)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGStyledTransformableElement, SVGStyledTransformableElementIdentifier,
+                                       SVGNames::transformAttrString, SVGTransformList, Transform, transform)
 
     private:
         // Used by <animateMotion>

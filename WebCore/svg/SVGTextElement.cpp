@@ -38,15 +38,13 @@ namespace WebCore {
 SVGTextElement::SVGTextElement(const QualifiedName& tagName, Document* doc)
     : SVGTextPositioningElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
+    , m_transform(this, SVGNames::transformAttr, SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
 SVGTextElement::~SVGTextElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextElement, SVGTransformList, Transform, transform, SVGNames::transformAttr)
 
 void SVGTextElement::parseMappedAttribute(MappedAttribute* attr)
 {

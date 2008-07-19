@@ -61,10 +61,10 @@ SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
     , SVGZoomAndPan()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth, "100%")
-    , m_height(LengthModeHeight, "100%")
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "100%")
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "100%")
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
     , m_viewSpec(0)
@@ -81,11 +81,6 @@ SVGSVGElement::~SVGSVGElement()
     // see ContainerNode::removeAllChildren, called by it's destructor.
     document()->accessSVGExtensions()->removeTimeContainer(this);
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGSVGElement, SVGLength, Height, height, SVGNames::heightAttr)
 
 const AtomicString& SVGSVGElement::contentScriptType() const
 {

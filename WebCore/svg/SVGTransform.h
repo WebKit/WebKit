@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,12 +22,11 @@
 
 #ifndef SVGTransform_h
 #define SVGTransform_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "AffineTransform.h"
 #include "FloatPoint.h"
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include "SVGNames.h"
 
 namespace WebCore {
     
@@ -57,7 +56,9 @@ namespace WebCore {
         float angle() const;
         FloatPoint rotationCenter() const;
 
-        void setMatrix(const AffineTransform&);
+//        void setMatrix(const AffineTransform&);
+        void setMatrix(AffineTransform);
+
         void setTranslate(float tx, float ty);
         void setScale(float sx, float sy);
         void setRotate(float angle, float cx, float cy);
@@ -69,6 +70,9 @@ namespace WebCore {
         FloatSize scale() const;
         
         bool isValid();
+
+        // Throughout SVG 1.1 'SVGTransform' is only used for the 'transform' attribute
+        const QualifiedName& associatedAttributeName() const { return SVGNames::transformAttr; }
 
     private:
         SVGTransformType m_type;

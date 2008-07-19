@@ -35,18 +35,18 @@
 
 namespace WebCore {
 
+char SVGStyledTransformableElementIdentifier[] = "SVGStyledTransformableElement";
+
 SVGStyledTransformableElement::SVGStyledTransformableElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledLocatableElement(tagName, doc)
     , SVGTransformable()
-    , m_transform(SVGTransformList::create(SVGNames::transformAttr))
+    , m_transform(this, SVGNames::transformAttr, SVGTransformList::create(SVGNames::transformAttr))
 {
 }
 
 SVGStyledTransformableElement::~SVGStyledTransformableElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGStyledTransformableElement, SVGTransformList, Transform, transform, SVGNames::transformAttr)
 
 AffineTransform SVGStyledTransformableElement::getCTM() const
 {

@@ -106,9 +106,7 @@ namespace WebCore {
     private:
         mutable RefPtr<SVGPathSegList> m_pathSegList;
 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
- 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGPathElement, float, PathLength, pathLength)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGPathElement, SVGNames::pathTagString, SVGNames::pathLengthAttrString, float, PathLength, pathLength)
     };
 
 } // namespace WebCore

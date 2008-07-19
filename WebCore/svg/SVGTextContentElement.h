@@ -30,6 +30,9 @@
 #include "SVGTests.h"
 
 namespace WebCore {
+
+    extern char SVGTextContentElementIdentifier[];
+
     class SVGLength;
 
     class SVGTextContentElement : public SVGStyledElement,
@@ -63,11 +66,12 @@ namespace WebCore {
 
         bool isKnownAttribute(const QualifiedName&);
 
-    private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, SVGLength, TextLength, textLength)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, int, LengthAdjust, lengthAdjust)
+    private:
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, SVGTextContentElementIdentifier, SVGNames::textLengthAttrString, SVGLength, TextLength, textLength)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextContentElement, SVGTextContentElementIdentifier, SVGNames::lengthAdjustAttrString, int, LengthAdjust, lengthAdjust)
     };
 
 } // namespace WebCore

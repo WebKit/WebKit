@@ -57,21 +57,16 @@ SVGUseElement::SVGUseElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth)
-    , m_height(LengthModeHeight)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth)
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight)
 {
 }
 
 SVGUseElement::~SVGUseElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGUseElement, SVGLength, Height, height, SVGNames::heightAttr)
 
 SVGElementInstance* SVGUseElement::instanceRoot() const
 {

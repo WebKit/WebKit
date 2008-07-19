@@ -29,9 +29,11 @@ namespace WebCore {
 
 SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_xChannelSelector(CHANNEL_A)
-    , m_yChannelSelector(CHANNEL_A)
-    , m_scale(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_in2(this, SVGNames::in2Attr)
+    , m_xChannelSelector(this, SVGNames::xChannelSelectorAttr, CHANNEL_A)
+    , m_yChannelSelector(this, SVGNames::yChannelSelectorAttr, CHANNEL_A)
+    , m_scale(this, SVGNames::scaleAttr)
     , m_filterEffect(0)
 {
 }
@@ -39,12 +41,6 @@ SVGFEDisplacementMapElement::SVGFEDisplacementMapElement(const QualifiedName& ta
 SVGFEDisplacementMapElement::~SVGFEDisplacementMapElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, String, In2, in2, SVGNames::in2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, XChannelSelector, xChannelSelector, SVGNames::xChannelSelectorAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, int, YChannelSelector, yChannelSelector, SVGNames::yChannelSelectorAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDisplacementMapElement, float, Scale, scale, SVGNames::scaleAttr)
 
 ChannelSelectorType SVGFEDisplacementMapElement::stringToChannel(const String& key)
 {

@@ -37,21 +37,16 @@ SVGEllipseElement::SVGEllipseElement(const QualifiedName& tagName, Document* doc
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(LengthModeWidth)
-    , m_cy(LengthModeHeight)
-    , m_rx(LengthModeWidth)
-    , m_ry(LengthModeHeight)
+    , m_cx(this, SVGNames::cxAttr, LengthModeWidth)
+    , m_cy(this, SVGNames::cyAttr, LengthModeHeight)
+    , m_rx(this, SVGNames::rxAttr, LengthModeWidth)
+    , m_ry(this, SVGNames::ryAttr, LengthModeHeight)
 {
 }    
 
 SVGEllipseElement::~SVGEllipseElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Cx, cx, SVGNames::cxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Cy, cy, SVGNames::cyAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Rx, rx, SVGNames::rxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGEllipseElement, SVGLength, Ry, ry, SVGNames::ryAttr)
 
 void SVGEllipseElement::parseMappedAttribute(MappedAttribute* attr)
 {

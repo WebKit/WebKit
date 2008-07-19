@@ -31,10 +31,14 @@
 
 namespace WebCore {
 
+char SVGStdDeviationXAttrIdentifier[] = "SVGStdDeviationXAttr";
+char SVGStdDeviationYAttrIdentifier[] = "SVGStdDeviationYAttr";
+
 SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_stdDeviationX(0.0f)
-    , m_stdDeviationY(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_stdDeviationX(this, SVGNames::stdDeviationAttr)
+    , m_stdDeviationY(this, SVGNames::stdDeviationAttr)
     , m_filterEffect(0)
 {
 }
@@ -42,10 +46,6 @@ SVGFEGaussianBlurElement::SVGFEGaussianBlurElement(const QualifiedName& tagName,
 SVGFEGaussianBlurElement::~SVGFEGaussianBlurElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEGaussianBlurElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, StdDeviationX, stdDeviationX, SVGNames::stdDeviationAttr, "stdDeviationX")
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEGaussianBlurElement, float, StdDeviationY, stdDeviationY, SVGNames::stdDeviationAttr, "stdDeviationY")
 
 void SVGFEGaussianBlurElement::setStdDeviation(float stdDeviationX, float stdDeviationY)
 {
@@ -87,5 +87,3 @@ bool SVGFEGaussianBlurElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

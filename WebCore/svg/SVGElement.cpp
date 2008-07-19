@@ -36,6 +36,7 @@
 #include "SVGDocumentExtensions.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
+#include "SVGResource.h"
 #include "SVGSVGElement.h"
 #include "SVGURIReference.h"
 #include "SVGUseElement.h"
@@ -269,7 +270,7 @@ void SVGElement::attributeChanged(Attribute* attr, bool preserveDecls)
     svgAttributeChanged(attr->name());
 }
 
-void SVGElement::updateAnimatedSVGAttribute(StringImpl* name) const
+void SVGElement::updateAnimatedSVGAttribute(const String& name) const
 {
     ASSERT(!m_areSVGAttributesValid);
 
@@ -278,12 +279,11 @@ void SVGElement::updateAnimatedSVGAttribute(StringImpl* name) const
 
     m_synchronizingSVGAttributes = true;
 
-    if (name)
-        invokeSVGPropertySynchronizer(name);
-    else {
+    if (name.isEmpty()) {
         invokeAllSVGPropertySynchronizers();
         setSynchronizedSVGAttributes(true);
-    }
+    } else
+        invokeSVGPropertySynchronizer(name);
 
     m_synchronizingSVGAttributes = false;
 }

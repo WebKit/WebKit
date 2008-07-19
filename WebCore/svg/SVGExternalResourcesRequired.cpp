@@ -31,16 +31,16 @@
 
 namespace WebCore {
 
+char SVGExternalResourcesRequiredIdentifier[] = "SVGExternalResourcesRequired";
+
 SVGExternalResourcesRequired::SVGExternalResourcesRequired()
-    : m_externalResourcesRequired(false)
+    : m_externalResourcesRequired(this, SVGNames::externalResourcesRequiredAttr, false)
 {
 }
 
 SVGExternalResourcesRequired::~SVGExternalResourcesRequired()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired, SVGNames::externalResourcesRequiredAttr)
 
 bool SVGExternalResourcesRequired::parseMappedAttribute(MappedAttribute* attr)
 {

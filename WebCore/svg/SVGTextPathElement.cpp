@@ -38,19 +38,15 @@ namespace WebCore {
 SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* doc)
     : SVGTextContentElement(tagName, doc)
     , SVGURIReference()
-    , m_startOffset(LengthModeOther)
-    , m_method(SVG_TEXTPATH_METHODTYPE_ALIGN)
-    , m_spacing(SVG_TEXTPATH_SPACINGTYPE_EXACT)
+    , m_startOffset(this, SVGNames::startOffsetAttr, LengthModeOther)
+    , m_method(this, SVGNames::methodAttr, SVG_TEXTPATH_METHODTYPE_ALIGN)
+    , m_spacing(this, SVGNames::spacingAttr, SVG_TEXTPATH_SPACINGTYPE_EXACT)
 {
 }
 
 SVGTextPathElement::~SVGTextPathElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, SVGLength, StartOffset, startOffset, SVGNames::startOffsetAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Method, method, SVGNames::methodAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextPathElement, int, Spacing, spacing, SVGNames::spacingAttr)
 
 void SVGTextPathElement::parseMappedAttribute(MappedAttribute* attr)
 {

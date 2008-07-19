@@ -30,14 +30,17 @@
 
 namespace WebCore {
 
+char SVGBaseFrequencyXIdentifier[] = "SVGBaseFrequencyX";
+char SVGBaseFrequencyYIdentifier[] = "SVGBaseFrequencyY";
+
 SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_baseFrequencyX(0.0f)
-    , m_baseFrequencyY(0.0f)
-    , m_numOctaves(1)
-    , m_seed(0.0f)
-    , m_stitchTiles(SVG_STITCHTYPE_NOSTITCH)
-    , m_type(FETURBULENCE_TYPE_TURBULENCE)
+    , m_baseFrequencyX(this, SVGNames::baseFrequencyAttr)
+    , m_baseFrequencyY(this, SVGNames::baseFrequencyAttr)
+    , m_numOctaves(this, SVGNames::numOctavesAttr, 1)
+    , m_seed(this, SVGNames::seedAttr)
+    , m_stitchTiles(this, SVGNames::stitchTilesAttr, SVG_STITCHTYPE_NOSTITCH)
+    , m_type(this, SVGNames::typeAttr, FETURBULENCE_TYPE_TURBULENCE)
     , m_filterEffect(0)
 {
 }
@@ -45,13 +48,6 @@ SVGFETurbulenceElement::SVGFETurbulenceElement(const QualifiedName& tagName, Doc
 SVGFETurbulenceElement::~SVGFETurbulenceElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, BaseFrequencyX, baseFrequencyX, SVGNames::baseFrequencyAttr, "baseFrequencyX")
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFETurbulenceElement, float, BaseFrequencyY, baseFrequencyY, SVGNames::baseFrequencyAttr, "baseFrequencyY")
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, float, Seed, seed, SVGNames::seedAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, long, NumOctaves, numOctaves, SVGNames::numOctavesAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, StitchTiles, stitchTiles, SVGNames::stitchTilesAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETurbulenceElement, int, Type, type, SVGNames::typeAttr)
 
 void SVGFETurbulenceElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -98,5 +94,3 @@ bool SVGFETurbulenceElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

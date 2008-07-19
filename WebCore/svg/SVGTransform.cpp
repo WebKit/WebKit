@@ -83,7 +83,7 @@ FloatPoint SVGTransform::rotationCenter() const
     return m_center;
 }
 
-void SVGTransform::setMatrix(const AffineTransform& matrix)
+void SVGTransform::setMatrix(AffineTransform matrix) //const AffineTransform& matrix)
 {
     m_type = SVG_TRANSFORM_MATRIX;
     m_angle = 0;

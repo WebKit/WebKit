@@ -24,11 +24,11 @@
 #define SVGExternalResourcesRequired_h
 
 #if ENABLE(SVG)
-#include <wtf/RefPtr.h>
 #include "SVGElement.h"
 
 namespace WebCore {
 
+    extern char SVGExternalResourcesRequiredIdentifier[];
     class MappedAttribute;
 
     // FIXME: This is wrong for several reasons:
@@ -49,11 +49,12 @@ namespace WebCore {
         bool parseMappedAttribute(MappedAttribute*);
         bool isKnownAttribute(const QualifiedName&);
 
-    protected:
         virtual const SVGElement* contextElement() const = 0;
 
     private:
-        ANIMATED_PROPERTY_DECLARATIONS_WITH_CONTEXT(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGExternalResourcesRequired, SVGExternalResourcesRequiredIdentifier,
+                                       SVGNames::externalResourcesRequiredAttrString, bool,
+                                       ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

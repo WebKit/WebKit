@@ -38,6 +38,7 @@ namespace WebCore {
 
 SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_in1(this, SVGNames::inAttr)
     , m_filterEffect(0)
 {
 }
@@ -45,8 +46,6 @@ SVGFEComponentTransferElement::SVGFEComponentTransferElement(const QualifiedName
 SVGFEComponentTransferElement::~SVGFEComponentTransferElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEComponentTransferElement, String, In1, in1, SVGNames::inAttr)
 
 void SVGFEComponentTransferElement::parseMappedAttribute(MappedAttribute* attr)
 {

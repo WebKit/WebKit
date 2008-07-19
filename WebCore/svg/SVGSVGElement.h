@@ -147,15 +147,11 @@ namespace WebCore
     private:
         void addSVGWindowEventListener(const AtomicString& eventType, const Attribute* attr);   
 
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGFitToViewBox, FloatRect, ViewBox, viewBox)
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS_REFCOUNTED(SVGFitToViewBox, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::xAttrString, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::yAttrString, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::widthAttrString, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGNames::svgTagString, SVGNames::heightAttrString, SVGLength, Height, height)
 
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGSVGElement, SVGLength, Height, height)
-        
         virtual void willSaveToCache();
         virtual void willRestoreFromCache();
 
@@ -171,5 +167,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

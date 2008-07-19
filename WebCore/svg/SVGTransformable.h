@@ -26,13 +26,13 @@
 #if ENABLE(SVG)
 #include "PlatformString.h"
 #include "SVGLocatable.h"
+#include "SVGTransformList.h"
 
 namespace WebCore {
     
     class AffineTransform;
     class AtomicString;
     class SVGTransform;
-    class SVGTransformList;
     class QualifiedName;
 
     class SVGTransformable : virtual public SVGLocatable {

@@ -42,12 +42,9 @@ namespace WebCore {
         virtual bool isValid() const;
 
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
-
-    private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

@@ -37,19 +37,15 @@ SVGCircleElement::SVGCircleElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_cx(LengthModeWidth)
-    , m_cy(LengthModeHeight)
-    , m_r(LengthModeOther)
+    , m_cx(this, SVGNames::cxAttr, LengthModeWidth)
+    , m_cy(this, SVGNames::cyAttr, LengthModeHeight)
+    , m_r(this, SVGNames::rAttr, LengthModeOther)
 {
 }
 
 SVGCircleElement::~SVGCircleElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Cx, cx, SVGNames::cxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, Cy, cy, SVGNames::cyAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCircleElement, SVGLength, R, r, SVGNames::rAttr)
 
 void SVGCircleElement::parseMappedAttribute(MappedAttribute* attr)
 {

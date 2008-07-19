@@ -35,19 +35,22 @@
 
 namespace WebCore {
 
+char SVGFilterResXIdentifier[] = "SVGFilterResX";
+char SVGFilterResYIdentifier[] = "SVGFilterResY";
+
 SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_filterUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_primitiveUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(LengthModeWidth, "-10%")
-    , m_y(LengthModeHeight, "-10%")
-    , m_width(LengthModeWidth, "120%")
-    , m_height(LengthModeHeight, "120%")
-    , m_filterResX(0)
-    , m_filterResY(0)
+    , m_filterUnits(this, SVGNames::filterUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_primitiveUnits(this, SVGNames::primitiveUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth, "-10%")
+    , m_y(this, SVGNames::yAttr, LengthModeHeight, "-10%")
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "120%")
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "120%")
+    , m_filterResX(this, SVGNames::filterResAttr)
+    , m_filterResY(this, SVGNames::filterResAttr)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
@@ -56,15 +59,6 @@ SVGFilterElement::SVGFilterElement(const QualifiedName& tagName, Document* doc)
 SVGFilterElement::~SVGFilterElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, FilterUnits, filterUnits, SVGNames::filterUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, int, PrimitiveUnits, primitiveUnits, SVGNames::primitiveUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterElement, SVGLength, Height, height, SVGNames::heightAttr)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFilterElement, long, FilterResX, filterResX, SVGNames::filterResAttr, "filterResX")
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFilterElement, long, FilterResY, filterResY, SVGNames::filterResAttr, "filterResY")
 
 void SVGFilterElement::setFilterRes(unsigned long, unsigned long) const
 {

@@ -29,14 +29,13 @@ namespace WebCore {
 
 SVGFEMergeNodeElement::SVGFEMergeNodeElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
+    , m_in1(this, SVGNames::inAttr)
 {
 }
 
 SVGFEMergeNodeElement::~SVGFEMergeNodeElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEMergeNodeElement, String, In1, in1, SVGNames::inAttr)
 
 void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -50,5 +49,3 @@ void SVGFEMergeNodeElement::parseMappedAttribute(MappedAttribute* attr)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

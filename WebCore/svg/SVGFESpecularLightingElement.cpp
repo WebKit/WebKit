@@ -35,11 +35,12 @@ namespace WebCore {
 
 SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_specularConstant(1.0f)
-    , m_specularExponent(1.0f)
-    , m_surfaceScale(1.0f)
-    , m_kernelUnitLengthX(0.0f)
-    , m_kernelUnitLengthY(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_specularConstant(this, SVGNames::specularConstantAttr, 1.0f)
+    , m_specularExponent(this, SVGNames::specularExponentAttr, 1.0f)
+    , m_surfaceScale(this, SVGNames::surfaceScaleAttr, 1.0f)
+    , m_kernelUnitLengthX(this, SVGNames::kernelUnitLengthAttr)
+    , m_kernelUnitLengthY(this, SVGNames::kernelUnitLengthAttr)
     , m_filterEffect(0)
 {
 }
@@ -47,13 +48,6 @@ SVGFESpecularLightingElement::SVGFESpecularLightingElement(const QualifiedName& 
 SVGFESpecularLightingElement::~SVGFESpecularLightingElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SpecularConstant, specularConstant, SVGNames::specularConstantAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SpecularExponent, specularExponent, SVGNames::specularExponentAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFESpecularLightingElement, float, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX")
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFESpecularLightingElement, float, KernelUnitLengthY, kernelUnitLengthY, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY")
 
 void SVGFESpecularLightingElement::parseMappedAttribute(MappedAttribute* attr)
 {    
@@ -123,5 +117,3 @@ bool SVGFESpecularLightingElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

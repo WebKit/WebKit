@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,41 +22,36 @@
 
 #ifndef SVGComponentTransferFunctionElement_h
 #define SVGComponentTransferFunctionElement_h
-#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 
+#if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGElement.h"
+#include "SVGNumberList.h"
 #include "FEComponentTransfer.h"
 
-namespace WebCore
-{
-    class SVGNumberList;
+namespace WebCore {
 
-    class SVGComponentTransferFunctionElement : public SVGElement
-    {
+    extern char SVGComponentTransferFunctionElementIdentifier[];
+
+    class SVGComponentTransferFunctionElement : public SVGElement {
     public:
         SVGComponentTransferFunctionElement(const QualifiedName&, Document*);
         virtual ~SVGComponentTransferFunctionElement();
 
-        // 'SVGComponentTransferFunctionElement' functions
-        // Derived from: 'Element'
         virtual void parseMappedAttribute(MappedAttribute* attr);
         
         ComponentTransferFunction transferFunction() const;
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, int, Type, type)
-        ANIMATED_PROPERTY_DECLARATIONS_REFCOUNTED(SVGComponentTransferFunctionElement, SVGNumberList, TableValues, tableValues)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Slope, slope)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Intercept, intercept)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Amplitude, amplitude)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Exponent, exponent)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, float, Offset, offset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::typeAttrString, int, Type, type)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::tableValuesAttrString, SVGNumberList, TableValues, tableValues)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::slopeAttrString, float, Slope, slope)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::interceptAttrString, float, Intercept, intercept)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::amplitudeAttrString, float, Amplitude, amplitude)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::exponentAttrString, float, Exponent, exponent)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGComponentTransferFunctionElement, SVGComponentTransferFunctionElementIdentifier, SVGNames::offsetAttrString, float, Offset, offset)
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #endif
-
-// vim:ts=4:noet

@@ -48,12 +48,12 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_maskUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_maskContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_x(LengthModeWidth, "-10%")
-    , m_y(LengthModeHeight, "-10%")
-    , m_width(LengthModeWidth, "120%")
-    , m_height(LengthModeHeight, "120%")
+    , m_maskUnits(this, SVGNames::maskUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_maskContentUnits(this, SVGNames::maskContentUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth, "-10%")
+    , m_y(this, SVGNames::yAttr, LengthModeHeight, "-10%")
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "120%")
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "120%")
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "-10%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "120%" were specified.
@@ -62,13 +62,6 @@ SVGMaskElement::SVGMaskElement(const QualifiedName& tagName, Document* doc)
 SVGMaskElement::~SVGMaskElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, MaskUnits, maskUnits, SVGNames::maskUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, int, MaskContentUnits, maskContentUnits, SVGNames::maskContentUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGMaskElement, SVGLength, Height, height, SVGNames::heightAttr)
 
 void SVGMaskElement::parseMappedAttribute(MappedAttribute* attr)
 {

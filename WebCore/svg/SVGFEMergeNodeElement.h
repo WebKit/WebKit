@@ -26,10 +26,9 @@
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
 #include "SVGElement.h"
 
-namespace WebCore
-{
-    class SVGFEMergeNodeElement : public SVGElement
-    {
+namespace WebCore {
+
+    class SVGFEMergeNodeElement : public SVGElement {
     public:
         SVGFEMergeNodeElement(const QualifiedName&, Document*);
         virtual ~SVGFEMergeNodeElement();
@@ -40,13 +39,10 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_START_DECLARATIONS
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEMergeNodeElement, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEMergeNodeElement, SVGNames::feMergeNodeTagString, SVGNames::inAttrString, String, In1, in1)
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

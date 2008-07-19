@@ -145,18 +145,19 @@ namespace WebCore {
         const QualifiedName& m_associatedAttributeName;
     };
 
-    typedef void (*AnimatedPropertySynchronizer)(const SVGElement*);
+    template<typename OwnerTypeArg, typename AnimatedTypeArg, const char* TagName, const char* PropertyName>
+    class SVGAnimatedProperty;
 
-    template <class Type, class SVGElementSubClass>
-    PassRefPtr<Type> lookupOrCreateWrapper(const SVGElementSubClass* element, const QualifiedName& domAttrName,
-                                           const AtomicString& attrIdentifier, AnimatedPropertySynchronizer synchronizer)
+    template<typename OwnerType, typename AnimatedType, const char* TagName, const char* PropertyName, typename Type, typename OwnerElement> 
+    PassRefPtr<Type> lookupOrCreateWrapper(const SVGAnimatedProperty<OwnerType, AnimatedType, TagName, PropertyName>& creator,
+                                           const OwnerElement* element, const QualifiedName& attrName, const AtomicString& attrIdentifier)
     {
         SVGAnimatedTypeWrapperKey key(element, attrIdentifier);
         RefPtr<Type> wrapper = static_cast<Type*>(Type::wrapperCache()->get(key));
 
         if (!wrapper) {
-            wrapper = Type::create(element, domAttrName);
-            element->addSVGPropertySynchronizer(domAttrName, synchronizer);
+            wrapper = Type::create(creator, element, attrName);
+            element->addSVGPropertySynchronizer(attrName, creator);
             Type::wrapperCache()->set(key, wrapper.get());
         }
 
@@ -166,48 +167,72 @@ namespace WebCore {
     // Default implementation for pointer types
     template<typename Type>
     struct SVGAnimatedTypeValue : Noncopyable {
+        typedef RefPtr<Type> StorableType;
+        typedef Type* DecoratedType;
+
         static Type null() { return 0; }
         static AtomicString toString(Type type) { return type ? AtomicString(type->valueAsString()) : nullAtom; }
     };
 
     template<>
     struct SVGAnimatedTypeValue<bool> : Noncopyable {
+        typedef bool StorableType;
+        typedef bool DecoratedType;
+
         static bool null() { return false; }
         static AtomicString toString(bool type) { return type ? "true" : "false"; }
     };
 
     template<>
     struct SVGAnimatedTypeValue<int> : Noncopyable {
+        typedef int StorableType;
+        typedef int DecoratedType;
+
         static int null() { return 0; }
         static AtomicString toString(int type) { return String::number(type); }
     };
 
     template<>
     struct SVGAnimatedTypeValue<long> : Noncopyable {
+        typedef long StorableType;
+        typedef long DecoratedType;
+
         static long null() { return 0l; }
         static AtomicString toString(long type) { return String::number(type); }
     };
 
     template<>
     struct SVGAnimatedTypeValue<SVGLength> : Noncopyable {
+        typedef SVGLength StorableType;
+        typedef SVGLength DecoratedType;
+
         static SVGLength null() { return SVGLength(); }
         static AtomicString toString(const SVGLength& type) { return type.valueAsString(); }
     };
 
     template<>
     struct SVGAnimatedTypeValue<float> : Noncopyable {
+        typedef float StorableType;
+        typedef float DecoratedType;
+
         static float null() { return 0.0f; }
         static AtomicString toString(float type) { return String::number(type); }
     };
 
     template<>
     struct SVGAnimatedTypeValue<FloatRect> : Noncopyable {
+        typedef FloatRect StorableType;
+        typedef FloatRect DecoratedType;
+
         static FloatRect null() { return FloatRect(); }
         static AtomicString toString(const FloatRect& type) { return String::format("%f %f %f %f", type.x(), type.y(), type.width(), type.height()); }
     };
 
     template<>
     struct SVGAnimatedTypeValue<String> : Noncopyable {
+        typedef String StorableType;
+        typedef String DecoratedType;
+
         static String null() { return String(); }
         static AtomicString toString(const String& type) { return type; }
     };

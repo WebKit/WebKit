@@ -38,23 +38,21 @@
 
 namespace WebCore {
 
+char SVGGradientElementIdentifier[] = "SVGGradientElement";
+
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGURIReference()
     , SVGExternalResourcesRequired()
-    , m_spreadMethod(0)
-    , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_gradientTransform(SVGTransformList::create(SVGNames::gradientTransformAttr))
+    , m_spreadMethod(this, SVGNames::spreadMethodAttr)
+    , m_gradientUnits(this, SVGNames::gradientUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_gradientTransform(this, SVGNames::gradientTransformAttr, SVGTransformList::create(SVGNames::gradientTransformAttr))
 {
 }
 
 SVGGradientElement::~SVGGradientElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, GradientUnits, gradientUnits, SVGNames::gradientUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGGradientElement, SVGTransformList, GradientTransform, gradientTransform, SVGNames::gradientTransformAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGGradientElement, int, SpreadMethod, spreadMethod, SVGNames::spreadMethodAttr)
 
 void SVGGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {

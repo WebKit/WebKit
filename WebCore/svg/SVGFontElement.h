@@ -38,7 +38,6 @@ namespace WebCore {
         virtual ~SVGFontElement();
 
         virtual bool rendererIsNeeded(RenderStyle*) { return false; }    
-        virtual const SVGElement* contextElement() const { return this; }
 
         void invalidateGlyphCache();
 
@@ -47,6 +46,9 @@ namespace WebCore {
         bool getHorizontalKerningPairForStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2, SVGHorizontalKerningPair& kerningPair) const;
 
         SVGMissingGlyphElement* firstMissingGlyphElement() const;
+
+    protected:
+        virtual const SVGElement* contextElement() const { return this; }
 
     private:
         void ensureGlyphCache() const;
@@ -62,5 +64,3 @@ namespace WebCore {
 
 #endif // ENABLE(SVG_FONTS)
 #endif
-
-// vim:ts=4:noet

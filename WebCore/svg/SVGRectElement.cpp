@@ -36,25 +36,18 @@ SVGRectElement::SVGRectElement(const QualifiedName& tagName, Document *doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth)
-    , m_height(LengthModeHeight)
-    , m_rx(LengthModeWidth)
-    , m_ry(LengthModeHeight)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth)
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight)
+    , m_rx(this, SVGNames::rxAttr, LengthModeWidth)
+    , m_ry(this, SVGNames::ryAttr, LengthModeHeight)
 {
 }
 
 SVGRectElement::~SVGRectElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Height, height, SVGNames::heightAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Rx, rx, SVGNames::rxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRectElement, SVGLength, Ry, ry, SVGNames::ryAttr)
 
 void SVGRectElement::parseMappedAttribute(MappedAttribute* attr)
 {

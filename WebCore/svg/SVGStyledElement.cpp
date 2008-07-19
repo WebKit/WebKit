@@ -42,10 +42,12 @@ namespace WebCore {
 
 using namespace SVGNames;
 
+char SVGStyledElementIdentifier[] = "SVGStyledElement";
 static HashSet<const SVGStyledElement*>* gElementsWithInstanceUpdatesBlocked = 0;
 
 SVGStyledElement::SVGStyledElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
+    , m_className(this, HTMLNames::classAttr)
 {
 }
 
@@ -53,8 +55,6 @@ SVGStyledElement::~SVGStyledElement()
 {
     SVGResource::removeClient(this);
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGStyledElement, String, ClassName, className, HTMLNames::classAttr)
 
 bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
 {

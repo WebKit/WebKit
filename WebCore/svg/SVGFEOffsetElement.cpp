@@ -32,8 +32,9 @@ namespace WebCore {
 
 SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_dx(0.0f)
-    , m_dy(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_dx(this, SVGNames::dxAttr)
+    , m_dy(this, SVGNames::dyAttr)
     , m_filterEffect(0)
 {
 }
@@ -41,10 +42,6 @@ SVGFEOffsetElement::SVGFEOffsetElement(const QualifiedName& tagName, Document* d
 SVGFEOffsetElement::~SVGFEOffsetElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Dx, dx, SVGNames::dxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEOffsetElement, float, Dy, dy, SVGNames::dyAttr)
 
 void SVGFEOffsetElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -80,5 +77,3 @@ bool SVGFEOffsetElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

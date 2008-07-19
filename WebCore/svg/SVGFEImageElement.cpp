@@ -41,7 +41,7 @@ SVGFEImageElement::SVGFEImageElement(const QualifiedName& tagName, Document* doc
     , SVGURIReference()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_preserveAspectRatio(SVGPreserveAspectRatio::create())
+    , m_preserveAspectRatio(this, SVGNames::preserveAspectRatioAttr, SVGPreserveAspectRatio::create())
     , m_cachedImage(0)
     , m_filterEffect(0)
 {
@@ -52,8 +52,6 @@ SVGFEImageElement::~SVGFEImageElement()
     if (m_cachedImage)
         m_cachedImage->removeClient(this);
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGFEImageElement, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio, SVGNames::preserveAspectRatioAttr)
 
 void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -113,5 +111,3 @@ void SVGFEImageElement::getSubresourceAttributeStrings(Vector<String>& urls) con
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

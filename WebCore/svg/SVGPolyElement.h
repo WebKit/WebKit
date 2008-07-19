@@ -58,8 +58,6 @@ namespace WebCore {
     private:
         bool m_ignoreAttributeChanges : 1;
         mutable RefPtr<SVGPointList> m_points;
-
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
     };
 
 } // namespace WebCore

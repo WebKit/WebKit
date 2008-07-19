@@ -37,21 +37,16 @@ SVGLineElement::SVGLineElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_x1(LengthModeWidth)
-    , m_y1(LengthModeHeight)
-    , m_x2(LengthModeWidth)
-    , m_y2(LengthModeHeight)
+    , m_x1(this, SVGNames::x1Attr, LengthModeWidth)
+    , m_y1(this, SVGNames::y1Attr, LengthModeHeight)
+    , m_x2(this, SVGNames::x2Attr, LengthModeWidth)
+    , m_y2(this, SVGNames::y2Attr, LengthModeHeight)
 {
 }
 
 SVGLineElement::~SVGLineElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, X1, x1, SVGNames::x1Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Y1, y1, SVGNames::y1Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, X2, x2, SVGNames::x2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGLineElement, SVGLength, Y2, y2, SVGNames::y2Attr)
 
 void SVGLineElement::parseMappedAttribute(MappedAttribute* attr)
 {

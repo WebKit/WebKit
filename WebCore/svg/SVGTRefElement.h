@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2004, 2005 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2004, 2005, 2008 Nikolas Zimmermann <zimmermann@kde.org>
                   2004, 2005, 2006 Rob Buis <buis@kde.org>
 
     This file is part of the KDE project
@@ -22,15 +22,15 @@
 
 #ifndef SVGTRefElement_h
 #define SVGTRefElement_h
-#if ENABLE(SVG)
 
+#if ENABLE(SVG)
 #include "SVGTextPositioningElement.h"
 #include "SVGURIReference.h"
 
-namespace WebCore
-{
-    class SVGTRefElement : public SVGTextPositioningElement, public SVGURIReference
-    {
+namespace WebCore {
+
+    class SVGTRefElement : public SVGTextPositioningElement,
+                           public SVGURIReference {
     public:
         SVGTRefElement(const QualifiedName&, Document*);
         virtual ~SVGTRefElement();
@@ -44,8 +44,6 @@ namespace WebCore
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
-
         void updateReferencedText();
     };
 
@@ -53,5 +51,3 @@ namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

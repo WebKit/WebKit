@@ -34,12 +34,16 @@
 
 namespace WebCore {
 
+char SVGKernelUnitLengthXIdentifier[] = "SVGKernelUnitLengthX";
+char SVGKernelUnitLengthYIdentifier[] = "SVGKernelUnitLengthY";
+
 SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_diffuseConstant(1.0f)
-    , m_surfaceScale(1.0f)
-    , m_kernelUnitLengthX(0.0f)
-    , m_kernelUnitLengthY(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_diffuseConstant(this, SVGNames::diffuseConstantAttr, 1.0f)
+    , m_surfaceScale(this, SVGNames::surfaceScaleAttr, 1.0f)
+    , m_kernelUnitLengthX(this, SVGNames::kernelUnitLengthAttr)
+    , m_kernelUnitLengthY(this, SVGNames::kernelUnitLengthAttr)
     , m_filterEffect(0)
 {
 }
@@ -47,12 +51,6 @@ SVGFEDiffuseLightingElement::SVGFEDiffuseLightingElement(const QualifiedName& ta
 SVGFEDiffuseLightingElement::~SVGFEDiffuseLightingElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, DiffuseConstant, diffuseConstant, SVGNames::diffuseConstantAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEDiffuseLightingElement, float, SurfaceScale, surfaceScale, SVGNames::surfaceScaleAttr)
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, KernelUnitLengthX, kernelUnitLengthX, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthX")
-ANIMATED_PROPERTY_DEFINITIONS_WITH_CUSTOM_IDENTIFIER(SVGFEDiffuseLightingElement, float, KernelUnitLengthY, kernelUnitLengthY, SVGNames::kernelUnitLengthAttr, "kernelUnitLengthY")
 
 void SVGFEDiffuseLightingElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -119,5 +117,3 @@ LightSource* SVGFEDiffuseLightingElement::findLights() const
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

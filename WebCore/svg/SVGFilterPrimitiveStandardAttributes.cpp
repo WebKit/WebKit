@@ -34,12 +34,15 @@
 
 namespace WebCore {
 
+char SVGFilterPrimitiveStandardAttributesIdentifierIdentifier[] = "SVGFilterPrimitiveStandardAttributesIdentifier";
+
 SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
-    , m_x(LengthModeWidth, "0%")
-    , m_y(LengthModeHeight, "0%")
-    , m_width(LengthModeWidth, "100%")
-    , m_height(LengthModeHeight, "100%")
+    , m_x(this, SVGNames::xAttr, LengthModeWidth, "0%")
+    , m_y(this, SVGNames::yAttr, LengthModeHeight, "0%")
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth, "100%")
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight, "100%")
+    , m_result(this, SVGNames::resultAttr)
 {
     // Spec: If the x/y attribute is not specified, the effect is as if a value of "0%" were specified.
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
@@ -48,12 +51,6 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
 SVGFilterPrimitiveStandardAttributes::~SVGFilterPrimitiveStandardAttributes()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, SVGLength, Height, height, SVGNames::heightAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFilterPrimitiveStandardAttributes, String, Result, result, SVGNames::resultAttr)
 
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(MappedAttribute* attr)
 {

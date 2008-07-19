@@ -31,7 +31,9 @@ namespace WebCore {
 
 SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m_mode(FEBLEND_MODE_NORMAL)
+    , m_in1(this, SVGNames::inAttr)
+    , m_in2(this, SVGNames::in2Attr)
+    , m_mode(this, SVGNames::modeAttr, FEBLEND_MODE_NORMAL)
     , m_filterEffect(0)
 {
 }
@@ -39,10 +41,6 @@ SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* doc
 SVGFEBlendElement::~SVGFEBlendElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, String, In2, in2, SVGNames::in2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFEBlendElement, int, Mode, mode, SVGNames::modeAttr)
 
 void SVGFEBlendElement::parseMappedAttribute(MappedAttribute* attr)
 {

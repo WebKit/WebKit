@@ -51,14 +51,12 @@ namespace WebCore {
         virtual bool hasRelativeValues() const;
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGExternalResourcesRequired, bool, ExternalResourcesRequired, externalResourcesRequired)
-
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, X, x)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, Y, y)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, Width, width)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, Height, height)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, Rx, rx)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGLength, Ry, ry)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::xAttrString, SVGLength, X, x)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::yAttrString, SVGLength, Y, y)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::widthAttrString, SVGLength, Width, width)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::heightAttrString, SVGLength, Height, height)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::rxAttrString, SVGLength, Rx, rx)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGRectElement, SVGNames::rectTagString, SVGNames::ryAttrString, SVGLength, Ry, ry)
     };
 
 } // namespace WebCore

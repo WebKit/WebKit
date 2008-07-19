@@ -39,13 +39,10 @@ namespace WebCore
         virtual SVGFilterEffect* filterEffect(SVGResourceFilter*) const;
         bool build(FilterBuilder*);
 
-    protected:
-        virtual const SVGElement* contextElement() const { return this; }
-
     private:
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, In1, in1)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, String, In2, in2)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, int, Mode, mode)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::inAttrString, String, In1, in1)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::in2AttrString, String, In2, in2)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGFEBlendElement, SVGNames::feBlendTagString, SVGNames::modeAttrString, int, Mode, mode)
 
         mutable RefPtr<FEBlend> m_filterEffect;
     };

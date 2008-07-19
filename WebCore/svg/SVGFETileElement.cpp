@@ -33,6 +33,7 @@ namespace WebCore {
 
 SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
+    , m_in1(this, SVGNames::inAttr)
     , m_filterEffect(0)
 {
 }
@@ -40,8 +41,6 @@ SVGFETileElement::SVGFETileElement(const QualifiedName& tagName, Document* doc)
 SVGFETileElement::~SVGFETileElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFETileElement, String, In1, in1, SVGNames::inAttr)
 
 void SVGFETileElement::parseMappedAttribute(MappedAttribute* attr)
 {
@@ -73,5 +72,3 @@ bool SVGFETileElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -36,17 +36,14 @@ SVGCursorElement::SVGCursorElement(const QualifiedName& tagName, Document* doc)
     , SVGTests()
     , SVGExternalResourcesRequired()
     , SVGURIReference()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
 {
 }
 
 SVGCursorElement::~SVGCursorElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGCursorElement, SVGLength, Y, y, SVGNames::yAttr)
 
 void SVGCursorElement::parseMappedAttribute(MappedAttribute* attr)
 {

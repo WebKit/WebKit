@@ -53,6 +53,7 @@ SVGAElement::SVGAElement(const QualifiedName& tagName, Document *doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
+    , m_target(this, SVGNames::targetAttr)
 {
 }
 
@@ -64,8 +65,6 @@ String SVGAElement::title() const
 {
     return getAttribute(XLinkNames::titleAttr);
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGAElement, String, Target, target, SVGNames::targetAttr)
 
 void SVGAElement::parseMappedAttribute(MappedAttribute* attr)
 {

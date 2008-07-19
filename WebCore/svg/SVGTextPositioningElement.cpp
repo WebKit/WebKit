@@ -31,25 +31,21 @@
 
 namespace WebCore {
 
+char SVGTextPositioningElementIdentifier[] = "SVGTextPositioningElement";
+
 SVGTextPositioningElement::SVGTextPositioningElement(const QualifiedName& tagName, Document* doc)
     : SVGTextContentElement(tagName, doc)
-    , m_x(SVGLengthList::create(SVGNames::xAttr))
-    , m_y(SVGLengthList::create(SVGNames::yAttr))
-    , m_dx(SVGLengthList::create(SVGNames::dxAttr))
-    , m_dy(SVGLengthList::create(SVGNames::dyAttr))
-    , m_rotate(SVGNumberList::create(SVGNames::rotateAttr))
+    , m_x(this, SVGNames::xAttr, SVGLengthList::create(SVGNames::xAttr))
+    , m_y(this, SVGNames::yAttr, SVGLengthList::create(SVGNames::yAttr))
+    , m_dx(this, SVGNames::dxAttr, SVGLengthList::create(SVGNames::dxAttr))
+    , m_dy(this, SVGNames::dyAttr, SVGLengthList::create(SVGNames::dyAttr))
+    , m_rotate(this, SVGNames::rotateAttr, SVGNumberList::create(SVGNames::rotateAttr))
 {
 }
 
 SVGTextPositioningElement::~SVGTextPositioningElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dx, dx, SVGNames::dxAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGLengthList, Dy, dy, SVGNames::dyAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGTextPositioningElement, SVGNumberList, Rotate, rotate, SVGNames::rotateAttr)
 
 void SVGTextPositioningElement::parseMappedAttribute(MappedAttribute* attr)
 {

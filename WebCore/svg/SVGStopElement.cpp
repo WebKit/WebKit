@@ -34,15 +34,13 @@ namespace WebCore {
 
 SVGStopElement::SVGStopElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
-    , m_offset(0.0f)
+    , m_offset(this, SVGNames::offsetAttr, 0.0f)
 {
 }
 
 SVGStopElement::~SVGStopElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGStopElement, float, Offset, offset, SVGNames::offsetAttr)
 
 void SVGStopElement::parseMappedAttribute(MappedAttribute* attr)
 {

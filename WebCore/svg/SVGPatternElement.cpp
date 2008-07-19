@@ -57,27 +57,19 @@ SVGPatternElement::SVGPatternElement(const QualifiedName& tagName, Document* doc
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGFitToViewBox()
-    , m_x(LengthModeWidth)
-    , m_y(LengthModeHeight)
-    , m_width(LengthModeWidth)
-    , m_height(LengthModeHeight)
-    , m_patternUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
-    , m_patternContentUnits(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
-    , m_patternTransform(SVGTransformList::create(SVGNames::patternTransformAttr))
+    , m_x(this, SVGNames::xAttr, LengthModeWidth)
+    , m_y(this, SVGNames::yAttr, LengthModeHeight)
+    , m_width(this, SVGNames::widthAttr, LengthModeWidth)
+    , m_height(this, SVGNames::heightAttr, LengthModeHeight)
+    , m_patternUnits(this, SVGNames::patternUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
+    , m_patternContentUnits(this, SVGNames::patternContentUnitsAttr, SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE)
+    , m_patternTransform(this, SVGNames::patternTransformAttr, SVGTransformList::create(SVGNames::patternTransformAttr))
 {
 }
 
 SVGPatternElement::~SVGPatternElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, PatternUnits, patternUnits, SVGNames::patternUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, int, PatternContentUnits, patternContentUnits, SVGNames::patternContentUnitsAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, X, x, SVGNames::xAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Y, y, SVGNames::yAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Width, width, SVGNames::widthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGPatternElement, SVGLength, Height, height, SVGNames::heightAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGPatternElement, SVGTransformList, PatternTransform, patternTransform, SVGNames::patternTransformAttr)
 
 void SVGPatternElement::parseMappedAttribute(MappedAttribute* attr)
 {

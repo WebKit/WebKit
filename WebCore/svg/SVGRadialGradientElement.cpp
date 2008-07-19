@@ -41,11 +41,11 @@ namespace WebCore {
 
 SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName, Document* doc)
     : SVGGradientElement(tagName, doc)
-    , m_cx(LengthModeWidth, "50%")
-    , m_cy(LengthModeHeight, "50%")
-    , m_r(LengthModeOther, "50%")
-    , m_fx(LengthModeWidth)
-    , m_fy(LengthModeHeight)
+    , m_cx(this, SVGNames::cxAttr, LengthModeWidth, "50%")
+    , m_cy(this, SVGNames::cyAttr, LengthModeHeight, "50%")
+    , m_r(this, SVGNames::rAttr, LengthModeOther, "50%")
+    , m_fx(this, SVGNames::fxAttr, LengthModeWidth)
+    , m_fy(this, SVGNames::fyAttr, LengthModeHeight)
 {
     // Spec: If the cx/cy/r attribute is not specified, the effect is as if a value of "50%" were specified.
 }
@@ -53,12 +53,6 @@ SVGRadialGradientElement::SVGRadialGradientElement(const QualifiedName& tagName,
 SVGRadialGradientElement::~SVGRadialGradientElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Cx, cx, SVGNames::cxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Cy, cy, SVGNames::cyAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Fx, fx, SVGNames::fxAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, Fy, fy, SVGNames::fyAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGRadialGradientElement, SVGLength, R, r, SVGNames::rAttr)
 
 void SVGRadialGradientElement::parseMappedAttribute(MappedAttribute* attr)
 {

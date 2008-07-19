@@ -32,11 +32,13 @@ namespace WebCore {
 
 SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Document* doc)
     : SVGFilterPrimitiveStandardAttributes(tagName, doc)
-    , m__operator(FECOMPOSITE_OPERATOR_OVER)
-    , m_k1(0.0f)
-    , m_k2(0.0f)
-    , m_k3(0.0f)
-    , m_k4(0.0f)
+    , m_in1(this, SVGNames::inAttr)
+    , m_in2(this, SVGNames::in2Attr)
+    , m__operator(this, SVGNames::operatorAttr, FECOMPOSITE_OPERATOR_OVER)
+    , m_k1(this, SVGNames::k1Attr)
+    , m_k2(this, SVGNames::k2Attr)
+    , m_k3(this, SVGNames::k3Attr)
+    , m_k4(this, SVGNames::k4Attr)
     , m_filterEffect(0)
 {
 }
@@ -44,14 +46,6 @@ SVGFECompositeElement::SVGFECompositeElement(const QualifiedName& tagName, Docum
 SVGFECompositeElement::~SVGFECompositeElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, In1, in1, SVGNames::inAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, String, In2, in2, SVGNames::in2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, int, _operator, _operator, SVGNames::operatorAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, float, K1, k1, SVGNames::k1Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, float, K2, k2, SVGNames::k2Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, float, K3, k3, SVGNames::k3Attr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGFECompositeElement, float, K4, k4, SVGNames::k4Attr)
 
 void SVGFECompositeElement::parseMappedAttribute(MappedAttribute *attr)
 {
@@ -110,5 +104,3 @@ bool SVGFECompositeElement::build(FilterBuilder* builder)
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

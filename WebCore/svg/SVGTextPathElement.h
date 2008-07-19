@@ -65,21 +65,17 @@ namespace WebCore
         virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
         bool childShouldCreateRenderer(Node*) const;
-    
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 
     private:
-        ANIMATED_PROPERTY_FORWARD_DECLARATIONS(SVGURIReference, String, Href, href)
-
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGLength, StartOffset, startOffset)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, int, Method, method)
-        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, int, Spacing, spacing)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::startOffsetAttrString, SVGLength, StartOffset, startOffset)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::methodAttrString, int, Method, method)
+        ANIMATED_PROPERTY_DECLARATIONS(SVGTextPathElement, SVGNames::textPathTagString, SVGNames::spacingAttrString, int, Spacing, spacing)
     };
 
 } // namespace WebCore
 
 #endif // ENABLE(SVG)
 #endif
-
-// vim:ts=4:noet

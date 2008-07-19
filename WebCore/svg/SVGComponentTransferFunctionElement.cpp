@@ -31,29 +31,23 @@
 
 namespace WebCore {
 
+char SVGComponentTransferFunctionElementIdentifier[] = "SVGComponentTransferFunctionElement";
+
 SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const QualifiedName& tagName, Document* doc)
     : SVGElement(tagName, doc)
-    , m_type(FECOMPONENTTRANSFER_TYPE_UNKNOWN)
-    , m_tableValues(SVGNumberList::create(SVGNames::tableValuesAttr))
-    , m_slope(1.0f)
-    , m_intercept(0.0f)
-    , m_amplitude(1.0f)
-    , m_exponent(1.0f)
-    , m_offset(0.0f)
+    , m_type(this, SVGNames::typeAttr, FECOMPONENTTRANSFER_TYPE_UNKNOWN)
+    , m_tableValues(this, SVGNames::tableValuesAttr, SVGNumberList::create(SVGNames::tableValuesAttr))
+    , m_slope(this, SVGNames::slopeAttr, 1.0f)
+    , m_intercept(this, SVGNames::interceptAttr)
+    , m_amplitude(this, SVGNames::amplitudeAttr, 1.0f)
+    , m_exponent(this, SVGNames::exponentAttr, 1.0f)
+    , m_offset(this, SVGNames::offsetAttr)
 {
 }
 
 SVGComponentTransferFunctionElement::~SVGComponentTransferFunctionElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, int, Type, type, SVGNames::typeAttr)
-ANIMATED_PROPERTY_DEFINITIONS_REFCOUNTED(SVGComponentTransferFunctionElement, SVGNumberList, TableValues, tableValues, SVGNames::tableValuesAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Slope, slope, SVGNames::slopeAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Intercept, intercept, SVGNames::interceptAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Amplitude, amplitude, SVGNames::amplitudeAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Exponent, exponent, SVGNames::exponentAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGComponentTransferFunctionElement, float, Offset, offset, SVGNames::offsetAttr)
 
 void SVGComponentTransferFunctionElement::parseMappedAttribute(MappedAttribute* attr)
 {

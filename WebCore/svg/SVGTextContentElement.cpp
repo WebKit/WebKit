@@ -41,22 +41,21 @@
 
 namespace WebCore {
 
+char SVGTextContentElementIdentifier[] = "SVGTextContentElement";
+
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* doc)
     : SVGStyledElement(tagName, doc)
     , SVGTests()
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
-    , m_textLength(LengthModeOther)
-    , m_lengthAdjust(LENGTHADJUST_SPACING)
+    , m_textLength(this, SVGNames::textLengthAttr, LengthModeOther)
+    , m_lengthAdjust(this, SVGNames::lengthAdjustAttr, LENGTHADJUST_SPACING)
 {
 }
 
 SVGTextContentElement::~SVGTextContentElement()
 {
 }
-
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, SVGLength, TextLength, textLength, SVGNames::textLengthAttr)
-ANIMATED_PROPERTY_DEFINITIONS(SVGTextContentElement, int, LengthAdjust, lengthAdjust, SVGNames::lengthAdjustAttr)
 
 static inline float cumulativeCharacterRangeLength(const Vector<SVGChar>::iterator& start, const Vector<SVGChar>::iterator& end, SVGInlineTextBox* textBox,
                                                    int startOffset, long startPosition, long length, bool isVerticalText, long& atCharacter)
