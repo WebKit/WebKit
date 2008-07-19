@@ -1,3 +1,10 @@
+2008-07-18  Steve Falkenburg  <sfalken@apple.com>
+
+        Windows build fix.
+
+        * kjs/nodes.h:
+        (KJS::ThrowableExpressionData::ThrowableExpressionData):
+
 2008-07-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
