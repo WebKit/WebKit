@@ -849,17 +849,17 @@ RegisterID* CodeGenerator::emitNewFunctionExpression(RegisterID* r0, FuncExprNod
     return r0;
 }
 
-RegisterID* CodeGenerator::emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode)
+RegisterID* CodeGenerator::emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call, dst, func, base, argumentsNode);
+    return emitCall(op_call, dst, func, base, argumentsNode, divot, startOffset, endOffset);
 }
 
-RegisterID* CodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode)
+RegisterID* CodeGenerator::emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
-    return emitCall(op_call_eval, dst, func, base, argumentsNode);
+    return emitCall(op_call_eval, dst, func, base, argumentsNode, divot, startOffset, endOffset);
 }
 
-RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode)
+RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode* argumentsNode, unsigned divot, unsigned startOffset, unsigned endOffset)
 {
     ASSERT(opcodeID == op_call || opcodeID == op_call_eval);
     
@@ -882,6 +882,7 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
         emitNode(argv.last().get(), n);
     }
 
+    emitExpressionInfo(divot, startOffset, endOffset);
     emitOpcode(opcodeID);
     instructions().append(dst->index());
     instructions().append(func->index());

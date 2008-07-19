@@ -654,6 +654,7 @@ bool CodeBlock::getHandlerForVPC(const Instruction* vPC, Instruction*& target, i
 
 int CodeBlock::lineNumberForVPC(const Instruction* vPC)
 {
+    ASSERT(lineInfo.size());    
     unsigned instructionOffset = vPC - instructions.begin();
     ASSERT(instructionOffset < instructions.size());
 
@@ -669,8 +670,44 @@ int CodeBlock::lineNumberForVPC(const Instruction* vPC)
         else
             high = mid;
     }
-
     return lineInfo[low - 1].lineNumber;
+}
+
+int CodeBlock::expressionRangeForVPC(const Instruction* vPC, int& divot, int& startOffset, int& endOffset)
+{
+    unsigned instructionOffset = vPC - instructions.begin();
+    ASSERT(instructionOffset < instructions.size());
+
+    if (!expressionInfo.size()) {
+        // We didn't think anything could throw.  Apparently we were wrong.
+        startOffset = 0;
+        endOffset = 0;
+        divot = 0;
+        return lineNumberForVPC(vPC);
+    }
+
+    int low = 0;
+    int high = expressionInfo.size();
+    while (low < high) {
+        int mid = low + (high - low) / 2;
+        if (expressionInfo[mid].instructionOffset <= instructionOffset)
+            low = mid + 1;
+        else
+            high = mid;
+    }
+    
+    ASSERT(low);
+    if (!low) {
+        startOffset = 0;
+        endOffset = 0;
+        divot = 0;
+        return lineNumberForVPC(vPC);
+    }
+
+    startOffset = expressionInfo[low - 1].startOffset;
+    endOffset = expressionInfo[low - 1].endOffset;
+    divot = expressionInfo[low - 1].divotPoint + sourceOffset;
+    return lineNumberForVPC(vPC);
 }
 
 } // namespace KJS

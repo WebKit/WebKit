@@ -323,6 +323,8 @@ namespace KJS {
         virtual bool isVariableObject() const { return false; }
 
         virtual bool isWatchdogException() const { return false; }
+        
+        virtual bool isNotAnObjectErrorStub() const { return false; }
 
     protected:
         PropertyMap m_propertyMap;

@@ -132,7 +132,7 @@ namespace KJS {
         NEVER_INLINE void debug(ExecState*, const Instruction*, const CodeBlock*, ScopeChainNode*, Register*);
 
         NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, const Instruction*&, CodeBlock*&, Register*&, ScopeChainNode*&, Register*&);
-        NEVER_INLINE Instruction* throwException(ExecState*, JSValue*, const Instruction*, CodeBlock*&, Register*&, ScopeChainNode*&, Register*&);
+        NEVER_INLINE Instruction* throwException(ExecState*, JSValue*&, const Instruction*, CodeBlock*&, Register*&, ScopeChainNode*&, Register*&, bool);
 
         Register* callFrame(ExecState*, JSFunction*) const;
 

@@ -53,7 +53,9 @@ namespace KJS {
                 return UString();
             return m_sourceProvider->getRange(m_startChar, m_endChar);
         }
-
+        
+        SourceProvider* sourceProvider() const { return m_sourceProvider.get(); }
+        int startOffset() const { return m_startChar; }
     private:
         RefPtr<SourceProvider> m_sourceProvider;
         int m_startChar;

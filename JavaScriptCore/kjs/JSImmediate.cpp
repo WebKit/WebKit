@@ -24,6 +24,7 @@
 #include "BooleanConstructor.h"
 #include "BooleanPrototype.h"
 #include "Error.h"
+#include "ExceptionHelpers.h"
 #include "JSGlobalObject.h"
 #include "JSNotAnObject.h"
 #include "NumberConstructor.h"
@@ -38,10 +39,10 @@ JSObject* JSImmediate::toObject(const JSValue* v, ExecState* exec)
         return constructNumberFromImmediateNumber(exec, const_cast<JSValue*>(v));
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, const_cast<JSValue*>(v));
-    if (v == jsNull())
-        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
-    ASSERT(v == jsUndefined());
-    return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
+    
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
+    exec->setException(exception);
+    return new (exec) JSNotAnObject(exception);
 }
 
 JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
@@ -51,10 +52,10 @@ JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
         return exec->lexicalGlobalObject()->numberPrototype();
     if (isBoolean(v))
         return exec->lexicalGlobalObject()->booleanPrototype();
-    if (v == jsNull())
-        return new (exec) JSNotAnObject(throwError(exec, TypeError, "Null value"));
-    ASSERT(v == jsUndefined());
-    return new (exec) JSNotAnObject(throwError(exec, TypeError, "Undefined value"));
+
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
+    exec->setException(exception);
+    return new (exec) JSNotAnObject(exception);
 }
 
 UString JSImmediate::toString(const JSValue* v)

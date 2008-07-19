@@ -34,13 +34,18 @@
 namespace KJS {
 
     class Node;
+    class CodeBlock;
+    class Instruction;
+    class JSNotAnObjectErrorStub;
 
     JSValue* createInterruptedExecutionException(ExecState* exec);
     JSValue* createStackOverflowError(ExecState*);
-    JSValue* createUndefinedVariableError(ExecState*, const Identifier&);
-    JSValue* createInvalidParamError(ExecState*, const char* op, JSValue*);
-    JSValue* createNotAConstructorError(ExecState*, JSValue*, Node* expr);
-    JSValue* createNotAFunctionError(ExecState*, JSValue*, Node* expr);
+    JSValue* createUndefinedVariableError(ExecState*, const Identifier&, const Instruction*, CodeBlock*);
+    JSNotAnObjectErrorStub* createNotAnObjectErrorStub(ExecState*, bool isNull);
+    JSValue* createInvalidParamError(ExecState*, const char* op, JSValue*, const Instruction*, CodeBlock*);
+    JSValue* createNotAConstructorError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
+    JSValue* createNotAFunctionError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
+    JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, const Instruction*, CodeBlock*);
 
 } // namespace KJS
 

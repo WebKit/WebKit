@@ -46,8 +46,8 @@ Error: SYNTAX_ERR: DOM Exception 12
 
 Document.querySelector
 
-TypeError: Null value
-TypeError: Null value
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
@@ -58,9 +58,9 @@ Error: SYNTAX_ERR: DOM Exception 12
 
 Element.querySelector
 
-TypeError: Null value
-TypeError: Null value
-TypeError: Null value
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]
@@ -71,9 +71,9 @@ Error: SYNTAX_ERR: DOM Exception 12
 
 DocumentFragment.querySelector
 
-TypeError: Null value
-TypeError: Null value
-TypeError: Null value
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
+TypeError: Result of expression 'node.querySelector(selectorString)' [null] is not an object.
 [object HTMLDivElement]
 [object HTMLDivElement]
 [object HTMLDivElement]

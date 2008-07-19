@@ -33,6 +33,10 @@
 
 namespace KJS {
 
+const char* expressionBeginOffsetPropertyName = "expressionBeginOffset";
+const char* expressionCaretOffsetPropertyName = "expressionCaretOffset";
+const char* expressionEndOffsetPropertyName = "expressionEndOffset";
+
 JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message, int lineNumber, int sourceId, const UString& sourceURL)
 {
     JSObject* constructor;
@@ -78,11 +82,11 @@ JSObject* Error::create(ExecState* exec, ErrorType type, const UString& message,
     JSObject* error = construct(exec, constructor, constructType, constructData, args);
 
     if (lineNumber != -1)
-        error->put(exec, Identifier(exec, "line"), jsNumber(exec, lineNumber));
+        error->putWithAttributes(exec, Identifier(exec, "line"), jsNumber(exec, lineNumber), ReadOnly | DontDelete);
     if (sourceId != -1)
-        error->put(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId));
+        error->putWithAttributes(exec, Identifier(exec, "sourceId"), jsNumber(exec, sourceId), ReadOnly | DontDelete);
     if (!sourceURL.isNull())
-        error->put(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL));
+        error->putWithAttributes(exec, Identifier(exec, "sourceURL"), jsString(exec, sourceURL), ReadOnly | DontDelete);
 
     return error;
 }

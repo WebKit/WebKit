@@ -182,6 +182,35 @@ namespace KJS {
             return emitNode(0, n);
         }
 
+        void emitExpressionInfo(unsigned divot, unsigned startOffset, unsigned endOffset)
+        { 
+            divot -= m_codeBlock->sourceOffset;
+            if (divot > ExpressionRangeInfo::MaxDivot) {
+                // Overflow has occurred, we can only give line number info for errors for this region
+                divot = 0;
+                startOffset = 0;
+                endOffset = 0;
+            } else if (startOffset > ExpressionRangeInfo::MaxOffset) {
+                // If the start offset is out of bounds we clear both offsets
+                // so we only get the divot marker.  Error message will have to be reduced
+                // to line and column number.
+                startOffset = 0;
+                endOffset = 0;
+            } else if (endOffset > ExpressionRangeInfo::MaxOffset) {
+                // The end offset is only used for additional context, and is much more likely
+                // to overflow (eg. function call arguments) so we are willing to drop it without
+                // dropping the rest of the range.
+                endOffset = 0;
+            }
+            
+            ExpressionRangeInfo info;
+            info.instructionOffset = instructions().size();
+            info.divotPoint = divot;
+            info.startOffset = startOffset;
+            info.endOffset = endOffset;
+            m_codeBlock->expressionInfo.append(info);
+        }
+        
         ALWAYS_INLINE bool leftHandSideNeedsCopy(bool rightHasAssignments, bool rightIsPure)
         {
             return (m_codeType != FunctionCode || m_codeBlock->needsFullScopeChain || rightHasAssignments) && !rightIsPure;
@@ -244,8 +273,8 @@ namespace KJS {
         RegisterID* emitPutGetter(RegisterID* base, const Identifier& property, RegisterID* value);
         RegisterID* emitPutSetter(RegisterID* base, const Identifier& property, RegisterID* value);
 
-        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
-        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*);
+        RegisterID* emitCall(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
+        RegisterID* emitCallEval(RegisterID* dst, RegisterID* func, RegisterID* base, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         RegisterID* emitReturn(RegisterID* src) { return emitUnaryNoDstOp(op_ret, src); } 
         RegisterID* emitEnd(RegisterID* src) { return emitUnaryNoDstOp(op_end, src); }
@@ -312,7 +341,7 @@ namespace KJS {
 
         typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
 
-        RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*);
+        RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
         // Maps a register index in the symbol table to a RegisterID index in m_locals.
         int localsIndex(int registerIndex) { return -registerIndex - 1; }

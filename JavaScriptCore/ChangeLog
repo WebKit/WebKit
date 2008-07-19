@@ -1,3 +1,138 @@
+2008-07-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 18774: SQUIRRELFISH: print meaningful error messages <https://bugs.webkit.org/show_bug.cgi?id=18774>
+        <rdar://problem/5769353> SQUIRRELFISH: JavaScript error messages are missing informative text
+
+        Add support for decent error messages in JavaScript.  This patch achieves this by providing
+        ensuring the common errors and exceptions have messages that provide the text of expression
+        that trigger the exception.  In addition it attaches a number of properties to the exception
+        object detailing where in the source the expression came from.
+
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::lineNumberForVPC):
+        (KJS::CodeBlock::expressionRangeForVPC): 
+            Function to recover the expression range for an instruction
+            that triggered an exception.
+        * VM/CodeBlock.h:
+        (KJS::ExpressionRangeInfo::):
+        (KJS::CodeBlock::CodeBlock):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitCall):
+        (KJS::CodeGenerator::emitCallEval):
+            Emit call needed to be modified so to place the expression range info internally,
+            as the CodeGenerator emits the arguments nodes itself, rather than the various call
+            nodes.
+        * VM/CodeGenerator.h:
+        (KJS::CodeGenerator::emitExpressionInfo):
+            Record the expression range info.
+        * VM/ExceptionHelpers.cpp:
+        (KJS::createErrorMessage):
+        (KJS::createInvalidParamError):
+        (KJS::createUndefinedVariableError):
+        (KJS::createNotAConstructorError):
+        (KJS::createNotAFunctionError):
+        (KJS::createNotAnObjectErrorStub):
+        (KJS::createNotAnObjectError):
+            Rewrite all the code for the error messages so that they make use of the newly available
+            information.
+        * VM/ExceptionHelpers.h:
+        * VM/Machine.cpp:
+        (KJS::isNotObject):  Now needs vPC and codeBlock
+        (KJS::Machine::throwException):
+            New logic to handle the NotAnObjectErrorStub and to handle the absurd "no default value" edge case
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        * kjs/DebuggerCallFrame.cpp:
+        (KJS::DebuggerCallFrame::evaluate):
+        * kjs/Error.cpp:
+        (KJS::Error::create):
+        * kjs/Error.h:
+        * kjs/JSGlobalObjectFunctions.cpp:
+        * kjs/JSImmediate.cpp:
+        (KJS::JSImmediate::toObject):
+        (KJS::JSImmediate::prototype):
+            My changes to the JSNotAnObject constructor needed to be handled here.
+        * kjs/JSNotAnObject.h:
+        (KJS::JSNotAnObjectErrorStub::JSNotAnObjectErrorStub):
+        (KJS::JSNotAnObjectErrorStub::isNull):
+        (KJS::JSNotAnObjectErrorStub::isNotAnObjectErrorStub):
+            Added a JSNotAnObjectErrorStub class to ease the handling of toObject failure exceptions,
+            and potentially allow even more detailed error messages in future.
+        * kjs/JSObject.h:
+        * kjs/Parser.h:
+        (KJS::Parser::parse):
+        * kjs/SourceRange.h:
+        * kjs/grammar.y:
+            Large amounts of position propagation.
+        * kjs/lexer.cpp:
+        (KJS::Lexer::Lexer):
+        (KJS::Lexer::shift):
+        (KJS::Lexer::lex):
+            The lexer needed a few changes to be able to correctly track token character positions.
+        * kjs/lexer.h:
+        * kjs/nodes.cpp:
+        (KJS::ThrowableExpressionData::emitThrowError):
+        (KJS::StatementNode::StatementNode):
+        (KJS::ResolveNode::emitCode):
+        (KJS::BracketAccessorNode::emitCode):
+        (KJS::DotAccessorNode::emitCode):
+        (KJS::NewExprNode::emitCode):
+        (KJS::EvalFunctionCallNode::emitCode):
+        (KJS::FunctionCallValueNode::emitCode):
+        (KJS::FunctionCallResolveNode::emitCode):
+        (KJS::FunctionCallBracketNode::emitCode):
+        (KJS::FunctionCallDotNode::emitCode):
+        (KJS::PostfixResolveNode::emitCode):
+        (KJS::PostfixBracketNode::emitCode):
+        (KJS::PostfixDotNode::emitCode):
+        (KJS::DeleteResolveNode::emitCode):
+        (KJS::DeleteBracketNode::emitCode):
+        (KJS::DeleteDotNode::emitCode):
+        (KJS::PrefixResolveNode::emitCode):
+        (KJS::PrefixBracketNode::emitCode):
+        (KJS::PrefixDotNode::emitCode):
+        (KJS::ThrowableBinaryOpNode::emitCode):
+        (KJS::ReadModifyResolveNode::emitCode):
+        (KJS::AssignResolveNode::emitCode):
+        (KJS::AssignDotNode::emitCode):
+        (KJS::ReadModifyDotNode::emitCode):
+        (KJS::AssignBracketNode::emitCode):
+        (KJS::ReadModifyBracketNode::emitCode):
+        (KJS::ForInNode::ForInNode):
+        (KJS::ForInNode::emitCode):
+        (KJS::WithNode::emitCode):
+        (KJS::LabelNode::emitCode):
+        (KJS::ThrowNode::emitCode):
+        (KJS::ProgramNode::ProgramNode):
+        (KJS::ProgramNode::create):
+        (KJS::EvalNode::generateCode):
+        (KJS::FunctionBodyNode::create):
+        (KJS::FunctionBodyNode::generateCode):
+        (KJS::ProgramNode::generateCode):
+            All of these methods were handling the position information.  
+            Constructors and create methods were modified to store the information.
+            All the emitCall implementations listed needed to be updated to actually
+            record the position information we have so carefully collected.
+        * kjs/nodes.h:
+        (KJS::ThrowableExpressionData::ThrowableExpressionData):
+        (KJS::ThrowableExpressionData::setExceptionSourceRange):
+        (KJS::ThrowableExpressionData::divot):
+        (KJS::ThrowableExpressionData::startOffset):
+        (KJS::ThrowableExpressionData::endOffset):
+        (KJS::ThrowableSubExpressionData::ThrowableSubExpressionData):
+        (KJS::ThrowableSubExpressionData::setSubexpressionInfo):
+        (KJS::ThrowablePrefixedSubExpressionData::ThrowablePrefixedSubExpressionData):
+        (KJS::ThrowablePrefixedSubExpressionData::setSubexpressionInfo):
+            ThrowableExpressionData is just a uniform mechanism for storing the position
+            information.
+        (KJS::ResolveNode::):
+        (KJS::PrePostResolveNode::):
+        (KJS::ThrowableBinaryOpNode::):
+        (KJS::WithNode::):
+
 2008-07-18  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

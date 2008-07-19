@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 14: Undefined value
+CONSOLE MESSAGE: line 14: Result of expression 'document.styleSheets[1].disabled =' [undefined] is not an object.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x76

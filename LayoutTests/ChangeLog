@@ -1,3 +1,26 @@
+2008-07-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Update layout tests for new exception text, and add additional test covering the
+        expression ranges provided.
+
+        * fast/css/resources/font-face-descriptor-multiple-values-parsing.js:
+        * fast/dom/SelectorAPI/dumpNodeList-expected.txt:
+        * fast/forms/select-namedItem-expected.txt:
+        * fast/js/exception-expression-offset.html: Added.
+        * fast/js/resources/exception-expression-offset.js: Added.
+          New test covering the offset positions given for exceptions
+        * fast/xsl/transform-xhr-doc-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * platform/mac/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/mac/svg/custom/createelement-expected.txt:
+        * platform/mac/tables/mozilla/bugs/bug53690-1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+
 2008-07-18  Adele Peterson & Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.

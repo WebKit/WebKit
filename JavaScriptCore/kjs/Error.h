@@ -42,7 +42,11 @@ namespace KJS {
         TypeError      = 5,
         URIError       = 6
     };
-
+    
+    extern const char* expressionBeginOffsetPropertyName;
+    extern const char* expressionCaretOffsetPropertyName;
+    extern const char* expressionEndOffsetPropertyName;
+    
     class Error {
     public:
         static JSObject* create(ExecState*, ErrorType, const UString& message, int lineNumber, int sourceId, const UString& sourceURL);

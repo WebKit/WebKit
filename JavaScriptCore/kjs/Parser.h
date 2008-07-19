@@ -80,7 +80,8 @@ namespace KJS {
                                          int* sourceId, int* errLine, UString* errMsg)
     {
         m_sourceURL = sourceURL;
-        parse(exec, sourceURL, startingLineNumber, source, sourceId, errLine, errMsg);
+        RefPtr<SourceProvider> sourceProvider = source;
+        parse(exec, sourceURL, startingLineNumber, sourceProvider.get(), sourceId, errLine, errMsg);
         if (!m_sourceElements) {
             m_sourceURL = UString();
             return 0;
@@ -89,6 +90,7 @@ namespace KJS {
                                                      m_sourceElements.release().get(),
                                                      m_varDeclarations ? &m_varDeclarations->data : 0, 
                                                      m_funcDeclarations ? &m_funcDeclarations->data : 0,
+                                                     sourceProvider.get(),
                                                      m_usesEval,
                                                      m_needsClosure);
         m_varDeclarations = 0;
