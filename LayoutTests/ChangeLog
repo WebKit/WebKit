@@ -1,3 +1,14 @@
+2008-07-18  Adele Peterson & Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+
+        Test for <rdar://problem/6049803> Autoscroll triggered on no scrolling iframes
+
+        * ChangeLog:
+        * fast/events/autoscroll-with-non-scrollable-parent-expected.txt: Added.
+        * fast/events/autoscroll-with-non-scrollable-parent.html: Added.
+        * fast/events/resources/big-page-with-input.html: Added.
+
 2008-07-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

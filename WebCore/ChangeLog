@@ -1,3 +1,27 @@
+2008-07-18  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+        
+        Fixed <rdar://problem/6049803>
+        Prevent the autoscroll to trigger in WebClips when starting or hovering on an editable field.
+
+        Test: fast/events/autoscroll-with-non-scrollable-parent.html
+
+        * ChangeLog:
+        * page/EventHandler.cpp: Edited
+        (WebCore::EventHandler::handleMousePressEvent): changed the name of the funtion called to canBeProgramaticallyScrolled()
+        (WebCore::EventHandler::handleMouseDraggedEvent): prevent the autoscroll to keep looking for a renderer when it's already triggered
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): verifies that the top layer can be programmatically scrolled before asking him to make the rect visible
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::canBeProgramaticallyScrolled):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeProgramaticallyScrolled): Edited : For the 3rd case we want document's renderer to have scrollbar as it's the top layer   
+        (WebCore::RenderObject::hasScrollableView): Verifies that the Object has a view with scrollBars
+        * rendering/RenderObject.h: Renamed shouldAutosroll() for canBeProgramaticallyScrolled()
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::canBeProgramaticallyScrolled):
+
 2008-07-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

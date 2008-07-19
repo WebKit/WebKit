@@ -367,7 +367,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
     }
     
    m_mouseDownMayStartAutoscroll = m_mouseDownMayStartSelect || 
-        (m_mousePressNode && m_mousePressNode->renderer() && m_mousePressNode->renderer()->shouldAutoscroll());
+        (m_mousePressNode && m_mousePressNode->renderer() && m_mousePressNode->renderer()->canBeProgramaticallyScrolled());
 
    return swallowEvent;
 }
@@ -394,12 +394,14 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         // If the selection is contained in a layer that can scroll, that layer should handle the autoscroll
         // Otherwise, let the bridge handle it so the view can scroll itself.
         RenderObject* renderer = targetNode->renderer();
-        while (renderer && !renderer->shouldAutoscroll())
+        while (renderer && !renderer->canBeProgramaticallyScrolled())
             renderer = renderer->parent();
         if (renderer) {
             m_autoscrollInProgress = true;
             handleAutoscroll(renderer);
         }
+        
+        m_mouseDownMayStartAutoscroll = false;
     }
     
     updateSelectionForMouseDrag(targetNode, event.localPoint());
@@ -941,7 +943,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     } else if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {
         RenderObject* renderer = mev.targetNode()->renderer();
 
-        while (renderer && !renderer->shouldAutoscroll())
+        while (renderer && !renderer->canBeProgramaticallyScrolled())
             renderer = renderer->parent();
 
         if (renderer) {

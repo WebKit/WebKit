@@ -650,7 +650,8 @@ public:
     virtual void setScrollTop(int);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
-    virtual bool shouldAutoscroll() const;
+    virtual bool canBeProgramaticallyScrolled() const;
+    bool hasScrollableView() const;
     virtual void autoscroll();
     virtual void stopAutoscroll() { }
 

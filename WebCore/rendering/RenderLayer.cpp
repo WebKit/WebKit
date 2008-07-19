@@ -854,7 +854,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
         }
-    } else if (!parentLayer) {
+    } else if (!parentLayer && renderer()->canBeProgramaticallyScrolled()) {
         if (frameView) {
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
                 IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());

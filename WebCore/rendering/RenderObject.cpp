@@ -635,10 +635,15 @@ bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granulari
         return b->scroll(direction, granularity, multiplier);
     return false;
 }
-
-bool RenderObject::shouldAutoscroll() const
+    
+bool RenderObject::canBeProgramaticallyScrolled() const
 {
-    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable()))) || (isRoot() && view() && view()->frameView()->isScrollable());
+    return scrollsOverflow() || (node() && node()->isContentEditable()) || ((node() && node()->isDocumentNode()) && hasScrollableView());
+}
+    
+bool RenderObject::hasScrollableView() const
+{
+    return (view() && view()->frameView()->isScrollable());
 }
 
 void RenderObject::autoscroll()
