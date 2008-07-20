@@ -295,7 +295,7 @@ void Console::warn(ExecState* exec, const ArgList& arguments)
     printToStandardOut(WarningMessageLevel, exec, arguments, url);
 }
 
-void  Console::reportException(ExecState* exec, JSValue* exception)
+void Console::reportException(ExecState* exec, JSValue* exception)
 {
     UString errorMessage = exception->toString(exec);
     JSObject* exceptionObject = exception->toObject(exec);
@@ -304,7 +304,7 @@ void  Console::reportException(ExecState* exec, JSValue* exception)
     addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
 }
 
-void  Console::reportCurrentException(ExecState* exec)
+void Console::reportCurrentException(ExecState* exec)
 {
     JSValue* exception = exec->exception();
     exec->clearException();

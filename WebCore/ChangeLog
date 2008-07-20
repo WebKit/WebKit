@@ -1,3 +1,11 @@
+2008-07-20  Sam Weinig  <sam@webkit.org>
+
+        Remove extra space Oliver Hunt left in.
+
+        * page/Console.cpp:
+        (WebCore::Console::reportException):
+        (WebCore::Console::reportCurrentException):
+
 2008-07-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Dan Bernstein.
