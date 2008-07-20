@@ -52,6 +52,8 @@ namespace WebCore {
         virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
         virtual bool supportsMarkers() const { return true; }
 
+        virtual void updateAnimatedSVGAttribute(const String&) const;
+
     protected:
         virtual const SVGElement* contextElement() const { return this; }
 

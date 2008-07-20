@@ -28,6 +28,7 @@
 #include "Document.h"
 #include "FloatPoint.h"
 #include "RenderPath.h"
+#include "SVGAnimatedProperty.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
 #include "SVGPointList.h"
@@ -40,7 +41,6 @@ SVGPolyElement::SVGPolyElement(const QualifiedName& tagName, Document* doc)
     , SVGLangSpace()
     , SVGExternalResourcesRequired()
     , SVGAnimatedPoints()
-    , m_ignoreAttributeChanges(false)
 {
 }
 
@@ -86,36 +86,14 @@ void SVGPolyElement::parseMappedAttribute(MappedAttribute* attr)
 
 void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    if (m_ignoreAttributeChanges)
-        return;
-
     SVGStyledTransformableElement::svgAttributeChanged(attrName);
 
     if (!renderer())
         return;
 
     if (attrName == SVGNames::pointsAttr) {
-        m_ignoreAttributeChanges = true;
+        setSynchronizedSVGAttributes(false);
         renderer()->setNeedsLayout(true);
-
-        ExceptionCode ec = 0;
-
-        // Spec: Additionally, the 'points' attribute on the original element
-        // accessed via the XML DOM (e.g., using the getAttribute() method call)
-        // will reflect any changes made to points.
-        String _points;
-        int len = points()->numberOfItems();
-        for (int i = 0; i < len; ++i) {
-            FloatPoint p = points()->getItem(i, ec);
-            _points += String::format("%.6lg %.6lg ", p.x(), p.y());
-        }
-
-        if (RefPtr<Attr> attr = const_cast<SVGPolyElement*>(this)->getAttributeNode(SVGNames::pointsAttr.localName())) {
-            ExceptionCode ec = 0;
-            attr->setValue(_points, ec);
-        }
-
-        m_ignoreAttributeChanges = false;
         return;
     }
 
@@ -124,6 +102,27 @@ void SVGPolyElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
         SVGStyledTransformableElement::isKnownAttribute(attrName))
         renderer()->setNeedsLayout(true);
+}
+
+// Custom SVG<->XML synchronization logic, as SVGPoly*Element doesn't use animated
+// properties for this, but a special solution: SVGAnimatedPoints inheritance.
+void SVGPolyElement::updateAnimatedSVGAttribute(const String& name) const
+{
+    ASSERT(!m_areSVGAttributesValid);
+
+    if (m_synchronizingSVGAttributes)
+        return;
+
+    if (name == SVGNames::pointsAttr.localName()) {
+        m_synchronizingSVGAttributes = true;
+
+        synchronizeProperty<SVGPolyElement, SVGPointList*>(this, SVGNames::pointsAttr, m_points.get());
+        setSynchronizedSVGAttributes(true);
+        m_synchronizingSVGAttributes = false;
+        return;
+    }
+
+    SVGStyledTransformableElement::updateAnimatedSVGAttribute(name);
 }
 
 }

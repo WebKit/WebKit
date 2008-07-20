@@ -2,6 +2,25 @@
 
         Reviewed by Oliver.
 
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=12171
+
+        Remove manual SVG property <-> XML attribute synchronization in SVGPolyElement.
+        Added svg/custom/poly-points-attribute-changes.svg (testcase from Rob)
+
+        * svg/SVGPointList.cpp:
+        (WebCore::SVGPointList::valueAsString):
+        * svg/SVGPointList.h:
+        (WebCore::SVGPointList::create):
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::SVGPolyElement):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        (WebCore::SVGPolyElement::updateAnimatedSVGAttribute):
+        * svg/SVGPolyElement.h:
+
+2008-07-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Cleanup JSSVGPODTypeWrapper code.
 
         Rename: JSSVGPODTypeWrapperCreatorReadOnly -> JSSVGStaticPODTypeWrapper
