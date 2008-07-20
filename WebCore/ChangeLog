@@ -1,3 +1,45 @@
+2008-07-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Bug 15979: Console logs in a database callback lose line number information
+        <https://bugs.webkit.org/show_bug.cgi?id=15979>
+
+        The problem was that there were multiple versions of the logic to
+        log an exception to the console, many of which were incorrect.  We
+        resolve this by making one single shared reportException method,
+        which handles the exceptions correctly.
+
+        This improves fidelity of callback errors, and ensures that
+        exceptions thrown in timer callbacks correctly report line numbers,
+        etc.
+
+        Test: fast/js/exceptions-thrown-in-callbacks.html
+
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        * bindings/objc/WebScriptObject.mm:
+        (WebCore::addExceptionToConsole):
+        * page/Console.cpp:
+        (WebCore::Console::reportException):
+        * page/Console.h:
+
 2008-07-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Oliver.
@@ -27,9 +69,9 @@
         * loader/TextResourceDecoder.cpp:
         (WebCore::TextResourceDecoder::checkForHeadCharset): 
 
-2008-07-19  Oliver Hunt  <oliver@apple.com>
+2008-07-20  Oliver Hunt  <oliver@apple.com>
 
-        Reviewed by NOBODY (Build fix).
+        Reviewed by NOBODY (build fix).
 
         Attempt to fix windows build
 

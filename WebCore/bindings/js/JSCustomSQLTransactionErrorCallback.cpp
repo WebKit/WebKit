@@ -82,14 +82,8 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
     result = call(exec, function, callType, callData, m_callback, args);
     globalObject->stopTimeoutCheck();
         
-    if (exec->hadException()) {
-        JSObject* exception = exec->exception()->toObject(exec);
-        String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-        int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
-        String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
-        exec->clearException();
-    }
+    if (exec->hadException())
+        m_frame->domWindow()->console()->reportCurrentException(exec);
         
     Document::updateDocumentsRendering();
     

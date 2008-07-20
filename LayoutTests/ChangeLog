@@ -1,3 +1,27 @@
+2008-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Add layout test to check correctly handling of exceptions in callback by WebCore.
+        Update existing test results for higher fidelity output.
+
+        * fast/dom/NamedNodeMap-setNamedItem-crash-expected.txt:
+        * fast/js/exceptions-thrown-in-callbacks-expected.txt: Added.
+        * fast/js/exceptions-thrown-in-callbacks.html: Added.
+        * fast/xpath/nsresolver-exception-expected.txt:
+        * fast/xsl/transform-xhr-doc-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-document-write-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-navigate-opener-javascript-url-expected.txt:
+        * http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt:
+        * platform/mac/fast/dynamic/015-expected.txt:
+        * platform/mac/fast/events/updateLayoutForHitTest-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/dom/appendCells1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/dom/appendCellsRebuild1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/dom/insertTbodyExpand1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/dom/insertTbodyRebuild1-expected.txt:
+        * storage/transaction_callback_exception_crash-expected.txt:
+
 2008-07-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

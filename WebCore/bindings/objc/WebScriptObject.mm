@@ -89,13 +89,9 @@ id createJSWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> 
 static void addExceptionToConsole(ExecState* exec)
 {
     JSDOMWindow* window = asJSDOMWindow(exec->dynamicGlobalObject());
-    JSObject* exception = exec->exception()->toObject(exec);
-    if (!window || !exception)
+    if (!window || !exec->hadException())
         return;
-    String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-    int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
-    String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-    window->impl()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
+    window->impl()->console()->reportCurrentException(exec);
 }
 
 } // namespace WebCore

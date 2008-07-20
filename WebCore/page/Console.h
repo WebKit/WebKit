@@ -38,6 +38,7 @@ namespace KJS {
     class ExecState;
     class ArgList;
     class Profile;
+    class JSValue;
 }
 
 namespace WebCore {
@@ -79,6 +80,8 @@ namespace WebCore {
 
         void finishedProfiling(PassRefPtr<KJS::Profile>);
 
+        void reportException(KJS::ExecState*, KJS::JSValue*);
+        void reportCurrentException(KJS::ExecState*);
     private:
         Console(Frame*);
         

@@ -97,12 +97,8 @@ JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const
         return comp.value();
     }
 
-    if (comp.complType() == Throw) {
-        UString errorMessage = comp.value()->toString(exec);
-        int lineNumber = comp.value()->toObject(exec)->get(exec, Identifier(exec, "line"))->toInt32(exec);
-        UString exceptionSourceURL = comp.value()->toObject(exec)->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-        m_frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
-    }
+    if (comp.complType() == Throw)
+        m_frame->domWindow()->console()->reportException(exec, comp.value());
 
     m_sourceURL = savedSourceURL;
     return 0;

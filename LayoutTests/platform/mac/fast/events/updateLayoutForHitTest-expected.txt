@@ -1,7 +1,7 @@
-CONSOLE MESSAGE: line 36: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
-CONSOLE MESSAGE: line 40: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
-CONSOLE MESSAGE: line 36: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
-CONSOLE MESSAGE: line 40: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
+CONSOLE MESSAGE: line 36: TypeError: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
+CONSOLE MESSAGE: line 40: TypeError: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
+CONSOLE MESSAGE: line 36: TypeError: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
+CONSOLE MESSAGE: line 40: TypeError: Result of expression 'triangleSpan.nextSibling.nextSibling.nextSibling.nextSibling' [null] is not an object.
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600

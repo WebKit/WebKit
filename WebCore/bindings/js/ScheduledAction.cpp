@@ -74,13 +74,8 @@ void ScheduledAction::execute(JSDOMWindowShell* windowShell)
             window->startTimeoutCheck();
             call(exec, m_function, callType, callData, windowShell, args);
             window->stopTimeoutCheck();
-            if (exec->hadException()) {
-                JSObject* exception = exec->exception()->toObject(exec);
-                exec->clearException();
-                String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-                int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
-                frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, String());
-            }
+            if (exec->hadException())
+                frame->domWindow()->console()->reportCurrentException(exec);
         }
     } else
         frame->loader()->executeScript(m_code);

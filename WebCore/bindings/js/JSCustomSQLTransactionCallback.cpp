@@ -129,12 +129,7 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
     globalObject->stopTimeoutCheck();
         
     if (exec->hadException()) {
-        JSObject* exception = exec->exception()->toObject(exec);
-        String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-        int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
-        String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-        m_data->frame()->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
-        exec->clearException();
+        m_data->frame()->domWindow()->console()->reportCurrentException(exec);
         
         raisedException = true;
     }

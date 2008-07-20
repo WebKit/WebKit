@@ -98,14 +98,9 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 
         window->setCurrentEvent(savedEvent);
 
-        if (exec->hadException()) {
-            JSObject* exception = exec->exception()->toObject(exec);
-            String message = exception->get(exec, exec->propertyNames().message)->toString(exec);
-            int lineNumber = exception->get(exec, Identifier(exec, "line"))->toInt32(exec);
-            String sourceURL = exception->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
-            frame->domWindow()->console()->addMessage(JSMessageSource, ErrorMessageLevel, message, lineNumber, sourceURL);
-            exec->clearException();
-        } else {
+        if (exec->hadException())
+            frame->domWindow()->console()->reportCurrentException(exec);
+        else {
             if (!retval->isUndefinedOrNull() && event->storesResultAsString())
                 event->storeResult(retval->toString(exec));
             if (m_isHTML) {

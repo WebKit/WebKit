@@ -295,4 +295,20 @@ void Console::warn(ExecState* exec, const ArgList& arguments)
     printToStandardOut(WarningMessageLevel, exec, arguments, url);
 }
 
+void  Console::reportException(ExecState* exec, JSValue* exception)
+{
+    UString errorMessage = exception->toString(exec);
+    JSObject* exceptionObject = exception->toObject(exec);
+    int lineNumber = exceptionObject->get(exec, Identifier(exec, "line"))->toInt32(exec);
+    UString exceptionSourceURL = exceptionObject->get(exec, Identifier(exec, "sourceURL"))->toString(exec);
+    addMessage(JSMessageSource, ErrorMessageLevel, errorMessage, lineNumber, exceptionSourceURL);
+}
+
+void  Console::reportCurrentException(ExecState* exec)
+{
+    JSValue* exception = exec->exception();
+    exec->clearException();
+    reportException(exec, exception);
+}
+
 } // namespace WebCore
