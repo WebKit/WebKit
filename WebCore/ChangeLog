@@ -1,3 +1,67 @@
+2008-07-20  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Cleanup JSSVGPODTypeWrapper code.
+
+        Rename: JSSVGPODTypeWrapperCreatorReadOnly -> JSSVGStaticPODTypeWrapper
+                JSSVGPODTypeWrapperReadWrite       -> JSSVGDynamicPODTypeWrapper
+                JSSVGPODTypeWrapperCache           -> JSSVGDynamicPODTypeWrapperCacheCache
+
+        No functional changes.
+
+        * bindings/js/JSSVGMatrixCustom.cpp:
+        (WebCore::JSSVGMatrix::multiply):
+        (WebCore::JSSVGMatrix::inverse):
+        (WebCore::JSSVGMatrix::translate):
+        (WebCore::JSSVGMatrix::scale):
+        (WebCore::JSSVGMatrix::scaleNonUniform):
+        (WebCore::JSSVGMatrix::rotate):
+        (WebCore::JSSVGMatrix::rotateFromVector):
+        (WebCore::JSSVGMatrix::flipX):
+        (WebCore::JSSVGMatrix::flipY):
+        (WebCore::JSSVGMatrix::skewX):
+        (WebCore::JSSVGMatrix::skewY):
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGDynamicPODTypeWrapper::create):
+        (WebCore::JSSVGDynamicPODTypeWrapper::operator PODType):
+        (WebCore::JSSVGDynamicPODTypeWrapper::JSSVGDynamicPODTypeWrapper):
+        (WebCore::JSSVGStaticPODTypeWrapper::create):
+        (WebCore::JSSVGStaticPODTypeWrapper::operator PODType):
+        (WebCore::JSSVGStaticPODTypeWrapper::JSSVGStaticPODTypeWrapper):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::create):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::operator PODType):
+        (WebCore::JSSVGPODTypeWrapperCreatorForList::JSSVGPODTypeWrapperCreatorForList):
+        (WebCore::PODTypeWrapperCacheInfo::PODTypeWrapperCacheInfo):
+        (WebCore::PODTypeWrapperCacheInfo::operator==):
+        (WebCore::PODTypeWrapperCacheInfoHash::hash):
+        (WebCore::PODTypeWrapperCacheInfoHash::equal):
+        (WebCore::PODTypeWrapperCacheInfoTraits::emptyValue):
+        (WebCore::PODTypeWrapperCacheInfoTraits::constructDeletedValue):
+        (WebCore::PODTypeWrapperCacheInfoTraits::isDeletedValue):
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::dynamicWrapperHashMap):
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::lookupOrCreateWrapper):
+        (WebCore::JSSVGDynamicPODTypeWrapperCache::forgetWrapper):
+        * bindings/js/JSSVGPointListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGPointList::initialize):
+        (WebCore::JSSVGPointList::insertItemBefore):
+        (WebCore::JSSVGPointList::replaceItem):
+        (WebCore::JSSVGPointList::appendItem):
+        * bindings/js/JSSVGTransformListCustom.cpp:
+        (WebCore::finishGetter):
+        (WebCore::finishSetter):
+        (WebCore::finishSetterReadOnlyResult):
+        (WebCore::JSSVGTransformList::initialize):
+        (WebCore::JSSVGTransformList::getItem):
+        (WebCore::JSSVGTransformList::insertItemBefore):
+        (WebCore::JSSVGTransformList::replaceItem):
+        (WebCore::JSSVGTransformList::removeItem):
+        (WebCore::JSSVGTransformList::appendItem):
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2008-07-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

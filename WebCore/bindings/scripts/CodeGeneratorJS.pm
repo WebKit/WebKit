@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2005, 2006, 2007 Nikolas Zimmermann <zimmermann@kde.org>
+# Copyright (C) 2005, 2006, 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
 # Copyright (C) 2006 Anders Carlsson <andersca@mac.com>
 # Copyright (C) 2006, 2007 Samuel Weinig <sam@webkit.org>
 # Copyright (C) 2006 Alexey Proskuryakov <ap@webkit.org>
@@ -949,7 +949,7 @@ sub GenerateImplementation
 
                 # Special case for JSSVGNumber
                 if ($codeGenerator->IsSVGAnimatedType($animatedType) and $podType ne "float") {
-                    push(@implContent, "    JSSVGPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
+                    push(@implContent, "    JSSVGDynamicPODTypeWrapperCache<$podType, $animatedType>::forgetWrapper(m_impl.get());\n");
                 }
             }
             push(@implContent, "    ScriptInterpreter::forgetDOMObject(m_impl.get());\n");
@@ -1550,16 +1550,16 @@ sub NativeToJSValue
 
         if ($implClassNameForValueConversion eq "") {
             if (IsSVGTypeNeedingContextParameter($implClassName)) {
-                return "toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<$nativeType>::create($value).get(), castedThisObj->context())" if $inFunctionCall eq 1;
+                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), castedThisObj->context())" if $inFunctionCall eq 1;
 
                 # Special case: SVGZoomEvent - it doesn't have a context, but it's no problem, as there are no readwrite props
-                return "toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<$nativeType>::create($value).get(), 0)" if $implClassName eq "SVGZoomEvent";
-                return "toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<$nativeType>::create($value).get(), context())";
+                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), 0)" if $implClassName eq "SVGZoomEvent";
+                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), context())";
             } else {
-                return "toJS(exec, JSSVGPODTypeWrapperCreatorReadOnly<$nativeType>::create($value).get(), imp)";
+                return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), imp)";
             }
         } else { # These classes, always have a m_context pointer!
-            return "toJS(exec, JSSVGPODTypeWrapperCache<$nativeType, $implClassNameForValueConversion>::lookupOrCreateWrapper(imp, &${implClassNameForValueConversion}::$getter, &${implClassNameForValueConversion}::$setter).get(), context())";
+            return "toJS(exec, JSSVGDynamicPODTypeWrapperCache<$nativeType, $implClassNameForValueConversion>::lookupOrCreateWrapper(imp, &${implClassNameForValueConversion}::$getter, &${implClassNameForValueConversion}::$setter).get(), context())";
         }
     }
 
