@@ -1,3 +1,24 @@
+2008-07-20  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        Fix high CPU usage on testmyiphone.com.
+
+        - Made the logic for determining when to stop looking for meta charset more strainghtforward.
+        Previously, this happened if a tag that's disallowed in HEAD was seen past the first 512
+        bytes. Now, the algorithm bails out at the boundary if we are lo longer in HEAD (i.e, an
+        offending tag was seen at any point before).
+
+        - The above change made one of our regression tests fail, because it had its <meta>
+        declaration past the 512 byte boundary. Fixed it by raising the boundary to 1024 bytes.
+
+        - Made the algorithm bail out quickly if a comment that's not in HEAD crosses the boundary.
+
+        - Moved a check for XML content type out of the loop.
+
+        * loader/TextResourceDecoder.cpp:
+        (WebCore::TextResourceDecoder::checkForHeadCharset): 
+
 2008-07-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by NOBODY (Build fix).
