@@ -1,3 +1,16 @@
+2008-07-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Update a few tests i filed to correct in the last patch, and add tests for
+        assignment error position.
+
+        * fast/css/font-face-descriptor-multiple-values-parsing-expected.txt:
+        * fast/js/resources/exception-expression-offset.js:
+        * http/tests/security/cross-frame-access-call-expected.txt:
+        * http/tests/security/cross-frame-access-call.html:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug92868_1-expected.txt:
+
 2008-07-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

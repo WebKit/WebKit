@@ -56,7 +56,7 @@ window.onload = function()
     shouldBe("window.resizeTo.call(targetWindow, 0, 0);", "undefined");
 
     // Throws a TypeError and logs to the error console
-    shouldBe("window.showModalDialog.call(targetWindow);", "'Result of expression 'window.showModalDialog' [undefined] is not an object.'");
+    shouldBe("window.showModalDialog.call(targetWindow);", '"TypeError: Result of expression \'window.showModalDialog\' [undefined] is not an object."');
 
     // - Tests for the Location object -
     // undefined value indicates failure

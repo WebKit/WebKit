@@ -34,5 +34,13 @@ testException("1 in undefined", 0, 5, 14, "Result of expression 'undefined' [und
 testException("1 instanceof undefined", 0, 13, 22, "Result of expression 'undefined' [undefined] is not a valid argument for 'instanceof'.");
 testException("for (undefined.b in [1]) {}", 5, 14, 16, "Result of expression 'undefined' [undefined] is not an object.");
 testException("for (undefined[0] in [1]) {}", 5, 14, 17, "Result of expression 'undefined' [undefined] is not an object.");
+testException("undefined.a = 5", 0, 9, 15, "Result of expression 'undefined' [undefined] is not an object.");
+testException("undefined[0] = 5", 0, 9, 16, "Result of expression 'undefined' [undefined] is not an object.");
+testException("({b:undefined}).b.a = 5", 0, 17, 23, "Result of expression '({b:undefined}).b' [undefined] is not an object.");
+testException("({b:undefined}).b[0] = 5", 0, 17, 24, "Result of expression '({b:undefined}).b' [undefined] is not an object.");
+testException("undefined.a += 5", 0, 9, 11, "Result of expression 'undefined' [undefined] is not an object.");
+testException("undefined[0] += 5", 0, 9, 12, "Result of expression 'undefined' [undefined] is not an object.");
+testException("({b:undefined}).b.a += 5", 0, 17, 19, "Result of expression '({b:undefined}).b' [undefined] is not an object.");
+testException("({b:undefined}).b[0] += 5", 0, 17, 20, "Result of expression '({b:undefined}).b' [undefined] is not an object.");
 
 var successfullyParsed = true;
