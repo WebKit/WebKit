@@ -1,3 +1,17 @@
+2008-07-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Bug 19757: Crash when an ondragstart handler hides the element
+        <https://bugs.webkit.org/show_bug.cgi?id=19757>
+
+        The solution to this is problem is just to null check the renderer
+        immediately before launching the system drag, and terminate the
+        drag if the renderer is gone.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleDrag):
+
 2008-07-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
