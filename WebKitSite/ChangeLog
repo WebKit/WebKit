@@ -1,5 +1,11 @@
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
+        Update Akismet plugin to 2.1.6.
+
+        * blog/wp-content/plugins/akismet/akismet.php:
+
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
         Update to WordPress 2.6.
 
         * blog:

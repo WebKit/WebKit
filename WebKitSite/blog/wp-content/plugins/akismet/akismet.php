@@ -3,7 +3,7 @@
 Plugin Name: Akismet
 Plugin URI: http://akismet.com/
 Description: Akismet checks your comments against the Akismet web service to see if they look like spam or not. You need a <a href="http://wordpress.com/api-keys/">WordPress.com API key</a> to use it. You can review the spam it catches under "Comments." To show off your Akismet stats just put <code>&lt;?php akismet_counter(); ?></code> in your template. See also: <a href="http://wordpress.org/extend/plugins/stats/">WP Stats plugin</a>.
-Version: 2.1.4
+Version: 2.1.6
 Author: Matt Mullenweg
 Author URI: http://photomatt.net/
 */
@@ -271,7 +271,12 @@ function akismet_spam_count( $type = false ) {
 	if ( !$type ) { // total
 		$count = wp_cache_get( 'akismet_spam_count', 'widget' );
 		if ( false === $count ) {
-			$count = (int) $wpdb->get_var("SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_approved = 'spam'");
+			if ( function_exists('wp_count_comments') ) {
+				$count = wp_count_comments();
+				$count = $count->spam;
+			} else {
+				$count = (int) $wpdb->get_var("SELECT COUNT(comment_ID) FROM $wpdb->comments WHERE comment_approved = 'spam'");
+			}
 			wp_cache_set( 'akismet_spam_count', $count, 'widget', 3600 );
 		}
 		return $count;
@@ -475,7 +480,7 @@ if ( isset( $_POST['s'] ) ) {
 	if ( isset( $_GET['ctype'] ) )
 		$current_type = preg_replace( '|[^a-z]|', '', $_GET['ctype'] );
 
-	$comments = akismet_spam_comments( $current_type );
+	$comments = akismet_spam_comments( $current_type, $page );
 	$total = akismet_spam_count( $current_type );
 	$totals = akismet_spam_totals();
 ?>
@@ -701,11 +706,9 @@ if ( 'moderation.php' == $pagenow ) {
 
 // For WP >= 2.5
 function akismet_check_for_spam_button($comment_status) {
-	if ( 'moderated' != $comment_status )
+	if ( 'approved' == $comment_status )
 		return;
-	$count = wp_count_comments();
-	if ( !empty($count->moderated ) )
-		echo "<a href='edit-comments.php?page=akismet-admin&amp;recheckqueue=true&amp;noheader=true'>" . __('Check for Spam') . "</a>";
+	echo "</div><div class='alignleft'><a class='button-secondary checkforspam' href='edit-comments.php?page=akismet-admin&amp;recheckqueue=true&amp;noheader=true'>" . __('Check for Spam') . "</a>";
 }
 add_action('manage_comments_nav', 'akismet_check_for_spam_button');
 
