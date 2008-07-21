@@ -4487,9 +4487,11 @@ static NSString *createMacOSXVersionString()
 
 @implementation WebView (WebCallDelegateFunctions)
 
-#if !(defined(__i386__) || defined(__x86_64__))
-typedef double (*ObjCMsgSendFPRet)(id, SEL, ...);
-static const ObjCMsgSendFPRet objc_msgSend_fpret = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend);
+typedef float (*ObjCMsgSendFPRet)(id, SEL, ...);
+#if defined(__i386__)
+static const ObjCMsgSendFPRet objc_msgSend_float_return = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend_fpret);
+#else
+static const ObjCMsgSendFPRet objc_msgSend_float_return = reinterpret_cast<ObjCMsgSendFPRet>(objc_msgSend);
 #endif
 
 static inline id CallDelegate(WebView *self, id delegate, SEL selector)
@@ -4595,9 +4597,9 @@ static inline float CallDelegateReturningFloat(WebView *self, id delegate, SEL s
     if (!delegate || ![delegate respondsToSelector:selector])
         return 0.0f;
     if (!self->_private->catchesDelegateExceptions)
-        return static_cast<float>(objc_msgSend_fpret(delegate, selector, self));
+        return objc_msgSend_float_return(delegate, selector, self);
     @try {
-        return static_cast<float>(objc_msgSend_fpret(delegate, selector, self));
+        return objc_msgSend_float_return(delegate, selector, self);
     } @catch(id exception) {
         ReportDiscardedDelegateException(selector, exception);
     }

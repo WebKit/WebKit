@@ -1,3 +1,16 @@
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix CallDelegateReturningFloat for x86_64.  The x86_64 Objective-C runtime
+        only uses objc_msgSend_fpret for long double return values.  For float return
+        values the standard objc_msgSend is used, as on ppc and ppc64.
+
+        * WebView/WebView.mm: Use objc_msgSend_float_return as the name of our version of
+        objc_msgSend with the correct return type.  We can no longer call it objc_msgSend_fpret
+        as that method is defined by the Objective-C runtime for x86_64.
+        (CallDelegateReturningFloat):
+
 2008-07-14  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
