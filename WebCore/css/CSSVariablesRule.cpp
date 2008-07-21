@@ -26,7 +26,6 @@
 #include "config.h"
 #include "CSSVariablesRule.h"
 
-#include "CSSVariablesDeclaration.h"
 #include "MediaList.h"
 #include "PlatformString.h"
 #include <wtf/HashMap.h>

@@ -1,3 +1,14 @@
+2008-07-21  Rob Buis  <buis@kde.org>
+
+        Reviewed by Mitz.
+
+        Testcase for:
+        https://bugs.webkit.org/show_bug.cgi?id=19966
+        CSS variables crash when using hex notation for colors
+
+        * fast/css/variables/color-hex-test-expected.txt: Added.
+        * fast/css/variables/color-hex-test.html: Added.
+
 2008-07-20  Oliver Hunt  <oliver@apple.com>
 
         RS=Dan Bernstein.
