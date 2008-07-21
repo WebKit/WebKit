@@ -3485,7 +3485,7 @@ noPromisedData:
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
 // to get our shrink-to-fit to work with a custom pagination scheme. We can do this better
 // if AppKit makes it SPI/API.
-- (float)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
+- (CGFloat)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
 {
     return [self _scaleFactorForPrintOperation:printOperation];
 }

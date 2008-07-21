@@ -2,6 +2,17 @@
 
         Reviewed by Adam Roben.
 
+        <rdar://problem/5624143> WebView printing doesn't work correctly in x86_64
+
+        Fix the return type of an NSView method that we override so that the correct data type is used in 64-bit.
+        This prevents a garbage value being used for the scale factor that the NSView print machinery applies.
+
+        * WebView/WebHTMLView.mm:
+
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Adam Roben.
+
         Fix CallDelegateReturningFloat for x86_64.  The x86_64 Objective-C runtime
         only uses objc_msgSend_fpret for long double return values.  For float return
         values the standard objc_msgSend is used, as on ppc and ppc64.
