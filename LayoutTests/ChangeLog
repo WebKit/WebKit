@@ -1,3 +1,11 @@
+2008-07-20  Oliver Hunt  <oliver@apple.com>
+
+        RS=Dan Bernstein.
+
+        Whoops, forgot to commit expected output for this test.
+
+        * fast/js/exception-expression-offset-expected.txt: Added.
+
 2008-07-20  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.
