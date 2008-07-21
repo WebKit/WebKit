@@ -25,7 +25,6 @@
  * The project should be able to build without this header, although we rarely test that.
  */
 
-
 /* Things that need to be defined globally should go into "config.h". */
 
 #if defined(__APPLE__)

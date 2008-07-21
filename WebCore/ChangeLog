@@ -1,3 +1,9 @@
+2008-07-20  Steve Falkenburg  <sfalken@apple.com>
+
+        Touch file to force rebuild for vsprops change.
+
+        * WebCorePrefix.h:
+
 2008-07-20  Sam Weinig  <sam@webkit.org>
 
         Remove extra space Oliver Hunt left in.
