@@ -1,20 +1,3 @@
-2008-07-21  Anatoli Papirovski  <apapirovski@mac.com>
-
-        Reviewed by Dave Hyatt.
-
-        Updated layout CSS2.1 test suite tests related to css parsing:
-        https://bugs.webkit.org/show_bug.cgi?id=14346
-
-        * platform/mac/css2.1/t040105-import-01-b-expected.checksum:
-        * platform/mac/css2.1/t040105-import-01-b-expected.png:
-        * platform/mac/css2.1/t040105-import-01-b-expected.txt:
-        * platform/mac/css2.1/t0402-syntax-05-f-expected.checksum:
-        * platform/mac/css2.1/t0402-syntax-05-f-expected.png:
-        * platform/mac/css2.1/t0402-syntax-05-f-expected.txt:
-        * platform/mac/css2.1/t0402-syntax-06-f-expected.checksum:
-        * platform/mac/css2.1/t0402-syntax-06-f-expected.png:
-        * platform/mac/css2.1/t0402-syntax-06-f-expected.txt:
-
 2008-07-20  Oliver Hunt  <oliver@apple.com>
 
         RS=Dan Bernstein.

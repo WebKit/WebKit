@@ -85,12 +85,11 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 46
+%expect 44
 
 %left UNIMPORTANT_TOK
 
 %token WHITESPACE SGML_CD
-%token TOKEN_EOF 0
 
 %token INCLUDES
 %token DASHMATCH
@@ -169,14 +168,10 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <rule> page
 %type <rule> font_face
 %type <rule> invalid_rule
-%type <rule> save_block
 %type <rule> invalid_at
 %type <rule> invalid_import
-%type <rule> invalid_media
 %type <rule> rule
 %type <rule> valid_rule
-%type <rule> block_rule
-%type <rule> block_valid_rule
 %type <rule> variables_rule
 
 %type <string> maybe_ns_prefix
@@ -198,7 +193,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <mediaQueryExpList> media_query_exp_list
 %type <mediaQueryExpList> maybe_and_media_query_exp_list
 
-%type <ruleList> block_rule_list 
+%type <ruleList> ruleset_list
 
 %type <integer> property
 
@@ -305,12 +300,7 @@ maybe_charset:
    /* empty */
   | charset {
   }
-  ;
-
-closing_brace:
-    '}'
-  | %prec maybe_sgml TOKEN_EOF
-  ;
+;
 
 charset:
   CHARSET_SYM maybe_space STRING maybe_space ';' {
@@ -332,7 +322,6 @@ import_list:
      if ($2 && p->m_styleSheet)
          p->m_styleSheet->append($2);
  }
- | invalid_at_list
  ;
 
 variables_list:
@@ -372,44 +361,14 @@ rule:
   | invalid_import
   ;
 
-block_rule_list: 
-    /* empty */ { $$ = 0; }
-  | block_rule_list block_rule maybe_sgml {
-      $$ = $1;
-      if ($2) {
-          if (!$$)
-              $$ = static_cast<CSSParser*>(parser)->createRuleList();
-          $$->append($2);
-      }
-  }
-  ;
-
-block_valid_rule:
-    ruleset
-  | page
-  | font_face
-  ;
-
-block_rule:
-    block_valid_rule
-  | invalid_rule
-  | invalid_at
-  | invalid_import
-  | invalid_media
-  ;
-
-
 import:
     IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list ';' {
         $$ = static_cast<CSSParser*>(parser)->createImportRule($3, $5);
     }
-  | IMPORT_SYM maybe_space string_or_uri maybe_space maybe_media_list invalid_block {
+  | IMPORT_SYM error invalid_block {
         $$ = 0;
     }
   | IMPORT_SYM error ';' {
-        $$ = 0;
-    }
-  | IMPORT_SYM error invalid_block {
         $$ = 0;
     }
   ;
@@ -611,11 +570,23 @@ media_list:
     ;
 
 media:
-    MEDIA_SYM maybe_space media_list '{' maybe_space block_rule_list save_block {
+    MEDIA_SYM maybe_space media_list '{' maybe_space ruleset_list '}' {
         $$ = static_cast<CSSParser*>(parser)->createMediaRule($3, $6);
     }
-    | MEDIA_SYM maybe_space '{' maybe_space block_rule_list save_block {
+    | MEDIA_SYM maybe_space '{' maybe_space ruleset_list '}' {
         $$ = static_cast<CSSParser*>(parser)->createMediaRule(0, $5);
+    }
+    ;
+
+ruleset_list:
+    /* empty */ { $$ = 0; }
+    | ruleset_list ruleset maybe_space {
+        $$ = $1;
+        if ($2) {
+            if (!$$)
+                $$ = static_cast<CSSParser*>(parser)->createRuleList();
+            $$->append($2);
+        }
     }
     ;
 
@@ -670,7 +641,7 @@ unary_operator:
   ;
 
 ruleset:
-    selector_list '{' maybe_space declaration_list closing_brace {
+    selector_list '{' maybe_space declaration_list '}' {
         $$ = static_cast<CSSParser*>(parser)->createStyleRule($1);
     }
   ;
@@ -1083,9 +1054,6 @@ declaration_list:
     | decl_list error {
         $$ = $1;
     }
-    | decl_list invalid_block_list {
-        $$ = $1;
-    }
     ;
 
 decl_list:
@@ -1140,11 +1108,6 @@ declaration:
         $$ = false;
     }
     |
-    property ':' maybe_space expr prio error {
-        /* When we encounter something like p {color: red !important fail;} we should drop the declaration */
-        $$ = false;
-    }
-    |
     IMPORTANT_SYM maybe_space {
         /* Handle this case: div { text-align: center; !important } Just reduce away the stray !important. */
         $$ = false;
@@ -1157,11 +1120,6 @@ declaration:
     |
     property ':' maybe_space error {
         /* if we come across rules with invalid values like this case: p { weight: *; }, just discard the rule */
-        $$ = false;
-    }
-    |
-    property invalid_block {
-        /* if we come across: div { color{;color:maroon} }, ignore everything within curly brackets */
         $$ = false;
     }
   ;
@@ -1298,15 +1256,6 @@ hexcolor:
 
 /* error handling rules */
 
-save_block:
-    closing_brace {
-        $$ = 0;
-    }
-  | error closing_brace {
-        $$ = 0;
-    }
-    ;
-
 invalid_at:
     ATKEYWORD error invalid_block {
         $$ = 0;
@@ -1316,19 +1265,8 @@ invalid_at:
     }
     ;
 
-invalid_at_list:
-  /* empty */
-  | invalid_at_list invalid_at maybe_sgml
-  ;
-
 invalid_import:
     import {
-        $$ = 0;
-    }
-    ;
-
-invalid_media:
-    media {
         $$ = 0;
     }
     ;
@@ -1337,7 +1275,6 @@ invalid_rule:
     error invalid_block {
         $$ = 0;
     }
-
 /*
   Seems like the two rules below are trying too much and violating
   http://www.hixie.ch/tests/evil/mixed/csserrorhandling.html
@@ -1352,8 +1289,8 @@ invalid_rule:
     ;
 
 invalid_block:
-    '{' error invalid_block_list error closing_brace
-  | '{' error closing_brace
+    '{' error invalid_block_list error '}'
+  | '{' error '}'
     ;
 
 invalid_block_list:
