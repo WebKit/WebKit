@@ -705,9 +705,9 @@ NPError PluginView::getValue(NPNVariable variable, void* value)
 #endif
 
         case NPNVnetscapeWindow: {
-            PlatformWidget* w = reinterpret_cast<PlatformWidget*>(value);
+            HWND* w = reinterpret_cast<HWND*>(value);
 
-            *w = containingWindow();
+            *w = windowHandleForPlatformWidget(containingWindow());
 
             return NPERR_NO_ERROR;
         }

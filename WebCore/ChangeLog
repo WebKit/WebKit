@@ -2,6 +2,17 @@
 
         Reviewed by Holger.
 
+        In the implementation of getValue for NPNVnetscapeWindow treat
+        windowHandleForPlatformWidget on the return value of
+        containingWindow() to receive the correct HWND for the Qt port.
+
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::getValue):
+
+2008-07-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         Fix windowHandleForPlatformWidget to return 0 as HWND if we don't have
         a QWidget. This can happen on page/view destruction for example.
 
