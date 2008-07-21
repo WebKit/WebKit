@@ -89,7 +89,8 @@ const int CompositionEventKeyCode = 229;
 using namespace SVGNames;
 #endif
 
-const double autoscrollInterval = 0.1;
+// When the autoscroll or the panScroll is triggered when do the scroll every 0.05s to make it smooth
+const double autoscrollInterval = 0.05;
 
 static Frame* subframeForTargetNode(Node* node);
 

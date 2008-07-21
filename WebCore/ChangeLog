@@ -1,3 +1,14 @@
+2008-07-20  Maxime Britto  <britto@apple.com>
+
+        Reviewed by John Sullivan.
+
+        [PFR] <rdar://problem/6080639> New middle click scrolling speed seems much slower than in FF
+        Accelerate and enhance the smoothness of the pan scrollling.
+
+        * page/EventHandler.cpp: Changed the TimerInterval from 0.1 to 0.05. The scrolling is way more fluid like this.
+        * rendering/RenderLayer.cpp: 
+        (WebCore::RenderLayer::panScrollFromPoint): Differentiate the speed within a 200 pixel side square, around the original click location to the speed for farther distances. This way we allow easyier handle when we are close to the center and very fast scrolling when we go far from the original point.
+
 2008-07-18  David Hyatt  <hyatt@apple.com>
 
         Change the cached clip rects to not assume they should be infinite when the root layer has been

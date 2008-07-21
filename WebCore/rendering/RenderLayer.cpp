@@ -692,9 +692,11 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
 
 void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint) 
 {
-   const int sensitivityScale = 250;
+    // We want to reduce the speed if we're close from the original point to improve the handleability of the scroll
+    const int shortDistanceLimit = 100;  // We delimit a 200 pixels long square enclosing the original point
+    const int speedReducer = 2;          // Within this square we divide the scrolling speed by 2
+    
     const int iconRadius = 10;
-    const int speedReducer = 3;
     Frame* frame = renderer()->document()->frame();
     if (!frame)
         return;
@@ -710,19 +712,17 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 
     int xDelta = currentMousePosition.x() - sourcePoint.x();
     int yDelta = currentMousePosition.y() - sourcePoint.y();
-    
-   // If the point is too far from the center we limit the speed
-    xDelta = max(min(xDelta, sensitivityScale), -sensitivityScale);
-    yDelta = max(min(yDelta, sensitivityScale), -sensitivityScale);
 
-   if(abs(xDelta) < iconRadius) // at the center we let the space for the icon
+    if (abs(xDelta) < iconRadius) // at the center we let the space for the icon
         xDelta = 0;
-    if(abs(yDelta) < iconRadius)
+    if (abs(yDelta) < iconRadius)
         yDelta = 0;
 
-    // Let's attenuate the speed
-    xDelta /= speedReducer;
-    yDelta /= speedReducer;
+    // Let's attenuate the speed for the short distances
+    if (abs(xDelta) < shortDistanceLimit)
+        xDelta /= speedReducer;
+    if (abs(yDelta) < shortDistanceLimit)
+        yDelta /= speedReducer;
 
     bool restrictedByLineClamp = false;
     if (m_object->parent())
