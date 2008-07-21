@@ -345,14 +345,19 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
     HDC hdc = context->getWindowsContext(rectInWindow, m_isTransparent);
     NPEvent npEvent;
 
+    // On Safari/Windows without transparency layers the GraphicsContext returns the HDC
+    // of the window and the plugin expects that the passed in DC has window coordinates.
+    // In the Qt port we always draw in an offscreen buffer and therefore need to preserve
+    // the translation set in getWindowsContext.
+#if !PLATFORM(QT)
     if (!context->inTransparencyLayer()) {
-        // The plugin expects that the passed in DC has window coordinates.
         XFORM transform;
         GetWorldTransform(hdc, &transform);
         transform.eDx = 0;
         transform.eDy = 0;
         SetWorldTransform(hdc, &transform);
     }
+#endif
 
     m_npWindow.type = NPWindowTypeDrawable;
     m_npWindow.window = hdc;
