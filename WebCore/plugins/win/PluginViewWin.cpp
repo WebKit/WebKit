@@ -73,6 +73,8 @@
 static inline HWND windowHandleForPlatformWidget(PlatformWidget widget)
 {
 #if PLATFORM(QT)
+    if (!widget)
+        return 0;
     return widget->winId();
 #else
     return widget;
