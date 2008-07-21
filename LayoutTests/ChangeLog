@@ -1,3 +1,13 @@
+2008-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5820667> 
+        CrashTracer: [USER] 3759 crashes in Safari at FrameLoader::activeDocumentLoader const + 6 while canceling plug-in load
+
+        * http/tests/plugins/geturlnotify-from-npp-destroystream-expected.txt: Added.
+        * http/tests/plugins/geturlnotify-from-npp-destroystream.html: Added.
+
 2008-07-21  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.

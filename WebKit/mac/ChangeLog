@@ -1,3 +1,15 @@
+2008-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/5820667> 
+        CrashTracer: [USER] 3759 crashes in Safari at FrameLoader::activeDocumentLoader const + 6 while canceling plug-in load
+        
+        Don't allow URLs to be loaded in response to an NPP_DestroyStream that happens when tearing down the plug-in.
+        
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Adam Roben.

@@ -55,6 +55,7 @@
 #import <kjs/JSLock.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/Document.h>
+#import <WebCore/DocumentLoader.h>
 #import <WebCore/Element.h>
 #import <WebCore/Frame.h> 
 #import <WebCore/FrameLoader.h> 
@@ -2204,6 +2205,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (!URL) 
         return NPERR_INVALID_URL;
 
+    // Don't allow requests to be loaded when the document loader is stopping all loaders.
+    if ([[self dataSource] _documentLoader]->isStopping())
+        return NPERR_GENERIC_ERROR;
+    
     NSString *target = nil;
     if (cTarget) {
         // Find the frame given the target string.
