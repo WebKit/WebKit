@@ -1903,21 +1903,27 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     if (m_clipRects)
         return; // We have the correct cached value.
 
-    if (rootLayer == this || !parent()) {
+    IntRect infiniteRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX);
+    if (!parent()) {
         // The root layer's clip rect is always infinite.
-        m_clipRects = new (m_object->renderArena()) ClipRects(IntRect(INT_MIN/2, INT_MIN/2, INT_MAX, INT_MAX));
+        m_clipRects = new (m_object->renderArena()) ClipRects(infiniteRect);
         m_clipRects->ref();
         return;
     }
 
+    // For transformed layers, the root layer was shifted to be us, so there is no need to
+    // examine the parent.  We want to cache clip rects with us as the root.
+    RenderLayer* parentLayer = rootLayer != this ? parent() : 0;
+    
     // Ensure that our parent's clip has been calculated so that we can examine the values.
-    parent()->calculateClipRects(rootLayer);
+    if (parentLayer)
+        parentLayer->calculateClipRects(rootLayer);
 
     // Set up our three rects to initially match the parent rects.
-    IntRect posClipRect(parent()->clipRects()->posClipRect());
-    IntRect overflowClipRect(parent()->clipRects()->overflowClipRect());
-    IntRect fixedClipRect(parent()->clipRects()->fixedClipRect());
-    bool fixed = parent()->clipRects()->fixed();
+    IntRect posClipRect(parentLayer ? parentLayer->clipRects()->posClipRect() : infiniteRect);
+    IntRect overflowClipRect(parentLayer ? parentLayer->clipRects()->overflowClipRect() : infiniteRect);
+    IntRect fixedClipRect(parentLayer ? parentLayer->clipRects()->fixedClipRect() : infiniteRect);
+    bool fixed = parentLayer ? parentLayer->clipRects()->fixed() : false;
 
     // A fixed object is essentially the root of its containing block hierarchy, so when
     // we encounter such an object, we reset our clip rects to the fixedClipRect.

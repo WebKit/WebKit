@@ -1,3 +1,15 @@
+2008-07-18  David Hyatt  <hyatt@apple.com>
+
+        Change the cached clip rects to not assume they should be infinite when the root layer has been
+        shifted as the result of a transformation.
+
+        Reviewed by Maciej
+
+        Added fast/transforms/overflow-with-transform.html
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2008-07-21  Rob Buis  <buis@kde.org>
 
         Reviewed by Mitz.
