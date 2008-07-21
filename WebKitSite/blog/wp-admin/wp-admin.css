@@ -1,13 +1,13 @@
-#plugins .name {
+.plugins .name {
 	font-weight: bold;
 }
 
-#plugins p {
+.plugins p {
 	margin: 0 4px;
 	padding: 0;
 }
 
-#plugins .togl {
+.plugins .togl {
 	width: 150px;
 	border-right-width: 1px;
 	border-right-style: solid;
@@ -52,28 +52,90 @@ form#upload #post_content {
 	margin: 10px 20px 10px 20px;
 }
 
-.available-theme {
-	width: 30%;
-	margin: 0 1em;
-	float: left;
-	text-align: center;
-	height: 28em;
-	overflow: hidden;
+table#availablethemes {
+	border-spacing: 0px;
+	border: none;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	margin: 10px auto;
+}
+td.available-theme {
+	vertical-align: top;
+	width: 240px;
+	margin: 0;
+	padding: 20px;
+	text-align: left;
+}
+table#availablethemes td {
+	border: 1px solid #eee;
+	border-top: none;
+}
+table#availablethemes td.top {
+	border-top: none;
+}
+table#availablethemes td.right {
+	border-right: none;
+	border-left: none;
+}
+table#availablethemes td.bottom {
+	border-bottom: none;
+}
+table#availablethemes td.left {
+	border-right: none;
+	border-left: none;
 }
 
 .available-theme a.screenshot {
-	width: 250px;
-	height: 200px;
+	width: 240px;
+	height: 180px;
 	display: block;
-	margin: auto;
+	border: 1px solid #efefef;
 	margin-bottom: 10px;
 	overflow: hidden;
-	border-width: 1px;
-	border-style: solid;
+}
+.available-theme img {
+	width: 240px;
+}
+.available-theme h3 {
+	margin: 15px 0 5px;
 }
 
-.available-theme img {
-	width: 100%;
+#current-theme {
+	margin-top: 1em;
+}
+
+#current-theme a {
+	border-bottom: none;
+}
+
+#current-theme h3 {
+	font-size: 17px;
+	font-weight: normal;
+	margin: 0;
+}
+
+#current-theme .description {
+	margin-top: 5px;
+}
+
+#current-theme img {
+	float: left;
+	border: 1px solid #666;
+	margin-right: 1em;
+	margin-bottom: 1.5em;
+	width: 150px;
+}
+
+#TB_window #TB_title a.tb-theme-preview-link,
+#TB_window #TB_title a.tb-theme-preview-link:visited {
+	font-weight: bold;
+	color: #999;
+	text-decoration: none;
+}
+
+#TB_window #TB_title a.tb-theme-preview-link:hover,
+#TB_window #TB_title a.tb-theme-preview-link:focus {
+	color: #ccc;
 }
 
 .checkbox {
@@ -249,15 +311,6 @@ textarea.all-options, input.all-options {
 	border-collapse: separate;
 }
 
-#currenttheme img {
-	float: left;
-	margin-right: 1em;
-	margin-bottom: 1.5em;
-	width: 300px;
-	border-width: 1px;
-	border-style: solid;
-}
-
 #quicktags {
 	padding: 0;
 	border: 0 none;
@@ -392,26 +445,6 @@ set display:none; */
 * html #themeselect {
 	padding: 0 3px;
 	height: 22px;
-}
-
-#your-profile fieldset {
-	border-width: 1px;
-	border-style: solid;
-	float: left;
-	width: 40%;
-	padding: .5em 2em 1em;
-	margin: 1em 1em 1em 0;
-}
-
-#your-profile fieldset input {
-	width: 100%;
-	font-size: 20px;
-	padding: 2px;
-}
-
-#your-profile fieldset textarea {
-	width: 100%;
-	padding: 2px;
 }
 
 #your-profile legend {
@@ -567,7 +600,7 @@ a.view-comment-post-link {
 	border-top-style: solid;
 }
 
-#wphead a, #dashmenu a, #adminmenu a, #submenu a, #sidemenu a {
+#wphead a, #dashmenu a, #adminmenu a, #submenu a, #sidemenu a, #taglist a, #catlist a {
 	text-decoration: none;
 }
 
@@ -694,7 +727,7 @@ a.view-comment-post-link {
 	padding: 0 0 8px 17px;
 }
 
-#adminmenu li a #awaiting-mod {
+#adminmenu li a #awaiting-mod, #sidemenu li a #update-plugins {
 	position: absolute;
 	margin-left: -0.4em;
 	margin-top: 0.2em;
@@ -705,7 +738,7 @@ a.view-comment-post-link {
 	width: 1em;
 }
 
-#adminmenu li a .count-0 {
+#adminmenu li a .count-0, #sidemenu li a .count-0 {
 	display: none;
 }
 
@@ -745,11 +778,11 @@ strong .post-com-count {
 	background-position: center -3px;
 }
 
-#adminmenu li a:hover #awaiting-mod {
+#adminmenu li a:hover #awaiting-mod, #sidemenu li a:hover #update-plugins {
 	background-position: -80px bottom;
 }
 
-#adminmenu li a #awaiting-mod span {
+#adminmenu li a #awaiting-mod span, #sidemenu li a #update-plugins span {
 	top: -0.8em;
 	right: 0;
 	position: absolute;
@@ -894,6 +927,24 @@ html, body {
 	margin-right: 5px
 }
 
+.form-table .pre {
+	padding: 8px;
+	margin: 0;
+}
+
+.pre {
+	/* http://www.longren.org/2006/09/27/wrapping-text-inside-pre-tags/ */
+	white-space: pre-wrap; /* css-3 */
+	white-space: -moz-pre-wrap !important; /* Mozilla, since 1999 */
+	white-space: -pre-wrap; /* Opera 4-6 */
+	white-space: -o-pre-wrap; /* Opera 7 */
+	word-wrap: break-word; /* Internet Explorer 5.5+ */
+}
+
+table.form-table td .updated {
+	font-size: 13px;
+}
+
 /* Post Screen */
 
 #tagsdiv #newtag {
@@ -970,6 +1021,7 @@ html, body {
 	font-size: 1.5em;
 	margin-bottom: 15px;
 	padding: 0 0 3px;
+	clear: left;
 }
 
 #poststuff h3 {
@@ -1341,6 +1393,11 @@ p#post-search {
 	vertical-align:text-top;
 }
 
+.defaultavatarpicker .avatar {
+	margin: 2px 0;
+	vertical-align: middle;
+}
+
 body.minwidth {
 	min-width: 808px;
 }
@@ -1463,4 +1520,93 @@ td.action-links, th.action-links {
 
 .hide-if-no-js {
 	display: none;
+}
+
+/* Diff */
+
+table.diff {
+	width: 100%;
+}
+
+table.diff col.content {
+	width: 50%;
+}
+
+table.diff tr {
+	background-color: transparent;
+}
+
+table.diff td, table.diff th {
+	padding: .5em;
+	font-family: monospace;
+	border: none;
+}
+
+table.diff .diff-deletedline del, table.diff .diff-addedline ins {
+	text-decoration: none;
+}
+
+#wp-word-count {
+	display: block;
+}
+
+fieldset {
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+.info-box {
+	top: 100px;
+	left: 50%;
+	margin-left: -225px;
+	height: 300px;
+	width: 450px;
+	border: 5px solid #ddd;
+	background: #f8f8f8;
+	position: absolute;
+	padding: 15px 15px 10px;
+	z-index: 1000;
+	display: none;
+}
+
+.info-box .submit {
+	position: absolute;
+	bottom: 15px;
+	width: 450px;
+	padding: 15px 0 0;
+}
+
+.info-box .gears-img {
+	float: right;
+	margin: 10px;
+}
+
+.info-box-title {
+	line-height: 2;
+	margin: 0;
+	padding: 0 7px;
+}
+
+#wp_editbtns {
+	padding: 2px;
+	position: absolute;
+	display: none;
+	z-index: 999998;
+}
+
+#wp_editimgbtn, #wp_delimgbtn {
+	margin: 2px;
+	padding: 2px;
+	border: 1px solid #999;
+	background-color: #eee;
+	-moz-border-radius: 3px;
+	-khtml-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+
+#wp_editimgbtn:hover, #wp_delimgbtn:hover {
+	border-color: #555;
+	background-color: #ccc;
 }

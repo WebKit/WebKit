@@ -184,7 +184,7 @@ function get_attachment_link($id = false) {
 		else
 			$name = $object->post_name;
 		if (strpos($parentlink, '?') === false)
-			$link = trailingslashit($parentlink) . $name . '/';
+			$link = user_trailingslashit( trailingslashit($parentlink) . $name );
 	}
 
 	if (! $link ) {
@@ -402,7 +402,7 @@ function get_tag_feed_link($tag_id, $feed = '') {
 			$feed_link = 'feed';
 		else
 			$feed_link = "feed/$feed";
-		$link = $link . user_trailingslashit($feed_link, 'feed');
+		$link = trailingslashit($link) . user_trailingslashit($feed_link, 'feed');
 	}
 
 	$link = apply_filters('tag_feed_link', $link, $feed);
@@ -442,9 +442,14 @@ function get_search_comments_feed_link($search_query = '', $feed = '') {
 	return $link;
 }
 
-function get_edit_post_link( $id = 0 ) {
+function get_edit_post_link( $id = 0, $context = 'display' ) {
 	if ( !$post = &get_post( $id ) )
 		return;
+
+	if ( 'display' == $context )
+		$action = 'action=edit&amp;';
+	else
+		$action = 'action=edit&';
 
 	switch ( $post->post_type ) :
 	case 'page' :
@@ -459,6 +464,13 @@ function get_edit_post_link( $id = 0 ) {
 		$file = 'media';
 		$var  = 'attachment_id';
 		break;
+	case 'revision' :
+		if ( !current_user_can( 'edit_post', $post->ID ) )
+			return;
+		$file = 'revision';
+		$var  = 'revision';
+		$action = '';
+		break;
 	default :
 		if ( !current_user_can( 'edit_post', $post->ID ) )
 			return;
@@ -467,7 +479,7 @@ function get_edit_post_link( $id = 0 ) {
 		break;
 	endswitch;
 	
-	return apply_filters( 'get_edit_post_link', get_bloginfo( 'wpurl' ) . "/wp-admin/$file.php?action=edit&amp;$var=$post->ID", $post->ID );
+	return apply_filters( 'get_edit_post_link', get_bloginfo( 'wpurl' ) . "/wp-admin/$file.php?{$action}$var=$post->ID", $post->ID );
 }
 
 function edit_post_link( $link = 'Edit This', $before = '', $after = '' ) {
@@ -599,7 +611,8 @@ function adjacent_post_link($format, $link, $in_same_cat = false, $excluded_cate
 
 	$format = str_replace('%link', $link, $format);
 
-	echo $format;
+	$adjacent = $previous ? 'previous' : 'next';
+	echo apply_filters( "{$adjacent}_post_link", $format, $link );
 }
 
 function get_pagenum_link($pagenum = 1) {
@@ -728,6 +741,159 @@ function posts_nav_link($sep=' &#8212; ', $prelabel='&laquo; Previous Page', $nx
 			next_posts_link($nxtlabel);
 		}
 	}
+}
+
+function get_shortcut_link() {
+	$link = "javascript:
+			var d=document,
+			w=window,
+			e=w.getSelection,
+			k=d.getSelection,
+			x=d.selection,
+			s=(e?e():(k)?k():(x?x.createRange().text:0)),
+			f='" . admin_url('press-this.php') . "',
+			l=d.location,
+			e=encodeURIComponent,
+			g=f+'?u='+e(l.href)+'&t='+e(d.title)+'&s='+e(s)+'&v=2';
+			function a(){
+				if(!w.open(g,'t','toolbar=0,resizable=0,scrollbars=1,status=1,width=700,height=500')){
+					l.href=g;
+				}
+			}";
+			if (strpos($_SERVER['HTTP_USER_AGENT'], 'Firefox') !== false)
+				$link .= 'setTimeout(a,0);';
+			else
+				$link .= 'a();';
+
+			$link .= "void(0);";
+
+	$link = str_replace(array("\r", "\n", "\t"),  '', $link);
+
+	return apply_filters('shortcut_link', $link);
+}
+
+/** Return the site url
+ *
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * Returns the 'site_url' option with the appropriate protocol,  'https' if is_ssl() and 'http' otherwise. 
+ * If $scheme is 'http' or 'https', is_ssl() is overridden.
+ *
+ * @param string $path Optional path relative to the site url
+ * @param string $scheme Optional scheme to give the site url context. Currently 'http','https', 'login', 'login_post', or 'admin'
+ * @return string Site url link with optional path appended
+*/
+function site_url($path = '', $scheme = null) {
+	// should the list of allowed schemes be maintained elsewhere?
+	if ( !in_array($scheme, array('http', 'https')) ) {
+		if ( ('login_post' == $scheme) && ( force_ssl_login() || force_ssl_admin() ) )
+			$scheme = 'https';
+		elseif ( ('login' == $scheme) && ( force_ssl_admin() ) )
+			$scheme = 'https';
+		elseif ( ('admin' == $scheme) && force_ssl_admin() )
+			$scheme = 'https';
+		else
+			$scheme = ( is_ssl() ? 'https' : 'http' );
+	}
+
+	$url = str_replace( 'http://', "{$scheme}://", get_option('siteurl') );
+
+	if ( !empty($path) && is_string($path) && strpos($path, '..') === false )
+		$url .= '/' . ltrim($path, '/');
+
+	return $url;
+}
+
+/** Return the admin url
+ *
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * Returns the url to the admin area
+ *
+ * @param string $path Optional path relative to the admin url
+ * @return string Admin url link with optional path appended
+*/
+function admin_url($path = '') {
+	$url = site_url('wp-admin/', 'admin');
+
+	if ( !empty($path) && is_string($path) && strpos($path, '..') === false )
+		$url .= ltrim($path, '/');
+
+	return $url;
+}
+
+/** Return the includes url
+ *
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * Returns the url to the includes directory
+ *
+ * @param string $path Optional path relative to the includes url
+ * @return string Includes url link with optional path appended
+*/
+function includes_url($path = '') {
+	$url = site_url() . '/' . WPINC . '/';
+
+	if ( !empty($path) && is_string($path) && strpos($path, '..') === false )
+		$url .= ltrim($path, '/');
+
+	return $url;
+}
+
+/** Return the content url
+ *
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * Returns the url to the content directory
+ *
+ * @param string $path Optional path relative to the content url
+ * @return string Content url link with optional path appended
+*/
+function content_url($path = '') {
+	$scheme = ( is_ssl() ? 'https' : 'http' );
+	$url = WP_CONTENT_URL;
+	if ( 0 === strpos($url, 'http') ) {
+		if ( is_ssl() )
+			$url = str_replace( 'http://', "{$scheme}://", $url );
+	}
+
+	if ( !empty($path) && is_string($path) && strpos($path, '..') === false )
+		$url .= '/' . ltrim($path, '/');
+
+	return $url;
+}
+
+/** Return the plugins url
+ *
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * Returns the url to the plugins directory
+ *
+ * @param string $path Optional path relative to the plugins url
+ * @return string Plugins url link with optional path appended
+*/
+function plugins_url($path = '') {
+	$scheme = ( is_ssl() ? 'https' : 'http' );
+	$url = WP_PLUGIN_URL;
+	if ( 0 === strpos($url, 'http') ) {
+		if ( is_ssl() )
+			$url = str_replace( 'http://', "{$scheme}://", $url );
+	}
+
+	if ( !empty($path) && is_string($path) && strpos($path, '..') === false )
+		$url .= '/' . ltrim($path, '/');
+
+	return $url;
 }
 
 ?>

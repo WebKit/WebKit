@@ -1,4 +1,4 @@
-<?php require_once('../../../wp-config.php');
+<?php require_once('../../../wp-load.php');
 header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -6,10 +6,10 @@ header('Content-Type: text/html; charset=' . get_bloginfo('charset'));
 <head>
 <meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 <title><?php _e('Rich Editor Help') ?></title>
-<script type="text/javascript" src="tiny_mce_popup.js"></script>
+<script type="text/javascript" src="tiny_mce_popup.js?ver=311"></script>
 <?php 
-wp_admin_css( 'css/global' );
-wp_admin_css();
+wp_admin_css( 'global', true );
+wp_admin_css( 'wp-admin', true );
 ?>
 <style type="text/css">
 	#wphead {

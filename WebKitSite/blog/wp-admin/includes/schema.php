@@ -153,9 +153,11 @@ CREATE TABLE $wpdb->usermeta (
 
 function populate_options() {
 	global $wpdb, $wp_db_version;
-
-	$schema = ( isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
-	$guessurl = preg_replace('|/wp-admin/.*|i', '', $schema . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
+	
+	$guessurl = wp_guess_url();
+	
+	do_action('populate_options');
+	
 	add_option('siteurl', $guessurl);
 	add_option('blogname', __('My Blog'));
 	add_option('blogdescription', __('Just another WordPress weblog'));
@@ -223,10 +225,10 @@ function populate_options() {
 	if ( ini_get('safe_mode') ) {
 		// Safe mode screws up mkdir(), so we must use a flat structure.
 		add_option('uploads_use_yearmonth_folders', 0);
-		add_option('upload_path', 'wp-content');
+		add_option('upload_path', WP_CONTENT_DIR);
 	} else {
 		add_option('uploads_use_yearmonth_folders', 1);
-		add_option('upload_path', 'wp-content/uploads');
+		add_option('upload_path', WP_CONTENT_DIR . '/uploads');
 	}
 
 	// 2.0.3
@@ -250,8 +252,13 @@ function populate_options() {
 	add_option('medium_size_w', 300);
 	add_option('medium_size_h', 300);
 
+	// 2.6
+	add_option('avatar_default', 'mystery');
+	add_option('enable_app', 0);
+	add_option('enable_xmlrpc', 0);
+	
 	// Delete unused options
-	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing', 'autosave_interval');
+	$unusedoptions = array ('blodotgsping_url', 'bodyterminator', 'emailtestonly', 'phoneemail_separator', 'smilies_directory', 'subjectprefix', 'use_bbcode', 'use_blodotgsping', 'use_phoneemail', 'use_quicktags', 'use_weblogsping', 'weblogs_cache_file', 'use_preview', 'use_htmltrans', 'smilies_directory', 'fileupload_allowedusers', 'use_phoneemail', 'default_post_status', 'default_post_category', 'archive_mode', 'time_difference', 'links_minadminlevel', 'links_use_adminlevels', 'links_rating_type', 'links_rating_char', 'links_rating_ignore_zero', 'links_rating_single_image', 'links_rating_image0', 'links_rating_image1', 'links_rating_image2', 'links_rating_image3', 'links_rating_image4', 'links_rating_image5', 'links_rating_image6', 'links_rating_image7', 'links_rating_image8', 'links_rating_image9', 'weblogs_cacheminutes', 'comment_allowed_tags', 'search_engine_friendly_urls', 'default_geourl_lat', 'default_geourl_lon', 'use_default_geourl', 'weblogs_xml_url', 'new_users_can_blog', '_wpnonce', '_wp_http_referer', 'Update', 'action', 'rich_editing', 'autosave_interval', 'deactivated_plugins');
 	foreach ($unusedoptions as $option) :
 		delete_option($option);
 	endforeach;
@@ -268,6 +275,7 @@ function populate_roles() {
 	populate_roles_210();
 	populate_roles_230();
 	populate_roles_250();
+	populate_roles_260();
 }
 
 function populate_roles_160() {
@@ -420,6 +428,15 @@ function populate_roles_250() {
 
 	if ( !empty( $role ) ) {
 		$role->add_cap( 'edit_dashboard' );
+	}
+}
+
+function populate_roles_260() {
+	$role = get_role( 'administrator' );
+
+	if ( !empty( $role ) ) {
+		$role->add_cap( 'update_plugins' );
+		$role->add_cap( 'delete_plugins' );
 	}
 }
 

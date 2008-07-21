@@ -128,8 +128,8 @@ function get_themes() {
 	$themes = array();
 	$wp_broken_themes = array();
 	$theme_loc = $theme_root = get_theme_root();
-	if ( '/' != ABSPATH ) // don't want to replace all forward slashes, see Trac #4541
-		$theme_loc = str_replace(ABSPATH, '', $theme_root);
+	if ( '/' != WP_CONTENT_DIR ) // don't want to replace all forward slashes, see Trac #4541
+		$theme_loc = str_replace(WP_CONTENT_DIR, '', $theme_root);
 
 	// Files in wp-content/themes directory and one subdir down
 	$themes_dir = @ opendir($theme_root);
@@ -333,11 +333,11 @@ function get_current_theme() {
 }
 
 function get_theme_root() {
-	return apply_filters('theme_root', ABSPATH . "wp-content/themes");
+	return apply_filters('theme_root', WP_CONTENT_DIR . "/themes");
 }
 
 function get_theme_root_uri() {
-	return apply_filters('theme_root_uri', get_option('siteurl') . "/wp-content/themes", get_option('siteurl'));
+	return apply_filters('theme_root_uri', content_url('themes'), get_option('siteurl'));
 }
 
 function get_query_template($type) {
@@ -419,7 +419,7 @@ function get_page_template() {
 	if ( 'default' == $template )
 		$template = '';
 
-	if ( !empty($template) && file_exists(TEMPLATEPATH . "/$template") )
+	if ( !empty($template) && !validate_file($template) && file_exists(TEMPLATEPATH . "/$template") )
 		$template = TEMPLATEPATH . "/$template";
 	elseif ( file_exists(TEMPLATEPATH . "/page.php") )
 		$template = TEMPLATEPATH . "/page.php";
@@ -477,6 +477,48 @@ function locale_stylesheet() {
 	if ( empty($stylesheet) )
 		return;
 	echo '<link rel="stylesheet" href="' . $stylesheet . '" type="text/css" media="screen" />';
+}
+
+function preview_theme() {
+	if ( ! (isset($_GET['template']) && isset($_GET['preview'])) )
+		return;
+
+	if ( !current_user_can( 'switch_themes' ) )
+		return;
+
+	$_GET[template] = preg_replace('|[^a-z0-9_-]|i', '', $_GET[template]);
+
+	add_filter('template', create_function('', "return '$_GET[template]';") );
+
+	if ( isset($_GET['stylesheet']) ) {
+		$_GET[stylesheet] = preg_replace('|[^a-z0-9_-]|i', '', $_GET[stylesheet]);
+		add_filter('stylesheet', create_function('', "return '$_GET[stylesheet]';") );
+	}
+
+	ob_start( 'preview_theme_ob_filter' );
+}
+add_action('setup_theme', 'preview_theme');
+
+function preview_theme_ob_filter( $content ) {
+	return preg_replace_callback( "|(<a.*?href=([\"']))(.*?)([\"'].*?>)|", 'preview_theme_ob_filter_callback', $content );
+}
+
+function preview_theme_ob_filter_callback( $matches ) {
+	if (
+		( false !== strpos($matches[3], '/wp-admin/') )
+	||
+		( false !== strpos($matches[3], '://') && 0 !== strpos($matches[3], get_option('home')) )
+	||
+		( false !== strpos($matches[3], '/feed/') )
+	||
+		( false !== strpos($matches[3], '/trackback/') )
+	)
+		return $matches[1] . "#$matches[2] onclick=$matches[2]return false;" . $matches[4];
+
+	$link = add_query_arg( array('preview' => 1, 'template' => $_GET['template'], 'stylesheet' => @$_GET['stylesheet'] ), $matches[3] );
+	if ( 0 === strpos($link, 'preview=1') )
+		$link = "?$link";
+	return $matches[1] . attribute_escape( $link ) . $matches[4];
 }
 
 function switch_theme($template, $stylesheet) {

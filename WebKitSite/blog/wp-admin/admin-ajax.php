@@ -1,7 +1,7 @@
 <?php
 define('DOING_AJAX', true);
 
-require_once('../wp-config.php');
+require_once('../wp-load.php');
 require_once('includes/admin.php');
 
 if ( !is_user_logged_in() )
@@ -13,9 +13,14 @@ if ( isset($_GET['action']) && 'ajax-tag-search' == $_GET['action'] ) {
 
 	$s = $_GET['q']; // is this slashed already?
 
-	if ( strstr( $s, ',' ) )
-		die; // it's a multiple tag insert, we won't find anything
-	$results = $wpdb->get_col( "SELECT name FROM $wpdb->terms WHERE name LIKE ('%$s%')" );
+	if ( strstr( $s, ',' ) ) { 
+		$s = explode( ',', $s ); 
+		$s = $s[count( $s ) - 1]; 
+	}
+	$s = trim( $s );
+	if ( strlen( $s ) < 2 )
+	 die; // require 2 chars for matching
+	$results = $wpdb->get_col( "SELECT name FROM $wpdb->terms WHERE name LIKE ('%". $s . "%')" );
 	echo join( $results, "\n" );
 	die;
 }
@@ -25,14 +30,17 @@ switch ( $action = $_POST['action'] ) :
 case 'delete-comment' :
 	check_ajax_referer( "delete-comment_$id" );
 	if ( !$comment = get_comment( $id ) )
-		die('0');
+		die('1');
 	if ( !current_user_can( 'edit_post', $comment->comment_post_ID ) )
 		die('-1');
 
-	if ( isset($_POST['spam']) && 1 == $_POST['spam'] )
+	if ( isset($_POST['spam']) && 1 == $_POST['spam'] ) {
+		if ( 'spam' == wp_get_comment_status( $comment->comment_ID ) )
+			die('1');
 		$r = wp_set_comment_status( $comment->comment_ID, 'spam' );
-	else
+	} else {
 		$r = wp_delete_comment( $comment->comment_ID );
+	}
 
 	die( $r ? '1' : '0' );
 	break;
@@ -41,23 +49,37 @@ case 'delete-cat' :
 	if ( !current_user_can( 'manage_categories' ) )
 		die('-1');
 
+	$cat = get_category( $id );
+	if ( !$cat || is_wp_error( $cat ) )
+		die('1');
+
 	if ( wp_delete_category( $id ) )
 		die('1');
-	else	die('0');
+	else
+		die('0');
 	break;
 case 'delete-tag' :
 	check_ajax_referer( "delete-tag_$id" );
 	if ( !current_user_can( 'manage_categories' ) )
 		die('-1');
 
+	$tag = get_term( $id, 'post_tag' );
+	if ( !$tag || is_wp_error( $tag ) )
+		die('1');
+
 	if ( wp_delete_term($id, 'post_tag'))
 		die('1');
-	else	die('0');
+	else
+		die('0');
 	break;
 case 'delete-link-cat' :
 	check_ajax_referer( "delete-link-category_$id" );
 	if ( !current_user_can( 'manage_categories' ) )
 		die('-1');
+
+	$cat = get_term( $id, 'link_category' );
+	if ( !$cat || is_wp_error( $cat ) )
+		die('1');
 
 	$cat_name = get_term_field('name', $id, 'link_category');
 
@@ -89,14 +111,20 @@ case 'delete-link' :
 	if ( !current_user_can( 'manage_links' ) )
 		die('-1');
 
+	$link = get_bookmark( $id );
+	if ( !$link || is_wp_error( $link ) )
+		die('1');
+
 	if ( wp_delete_link( $id ) )
 		die('1');
-	else	die('0');
+	else
+		die('0');
 	break;
 case 'delete-meta' :
 	check_ajax_referer( "delete-meta_$id" );
 	if ( !$meta = get_post_meta_by_id( $id ) )
-		die('0');
+		die('1');
+
 	if ( !current_user_can( 'edit_post', $meta->post_id ) )
 		die('-1');
 	if ( delete_meta( $meta->meta_id ) )
@@ -108,6 +136,9 @@ case 'delete-post' :
 	if ( !current_user_can( 'delete_post', $id ) )
 		die('-1');
 
+	if ( !get_post( $id ) )
+		die('1');
+
 	if ( wp_delete_post( $id ) )
 		die('1');
 	else
@@ -118,19 +149,28 @@ case 'delete-page' :
 	if ( !current_user_can( 'delete_page', $id ) )
 		die('-1');
 
+	if ( !get_page( $id ) )
+		die('1');
+
 	if ( wp_delete_post( $id ) )
 		die('1');
-	else	die('0');
+	else
+		die('0');
 	break;
 case 'dim-comment' :
 	if ( !$comment = get_comment( $id ) )
 		die('0');
+
 	if ( !current_user_can( 'edit_post', $comment->comment_post_ID ) )
 		die('-1');
 	if ( !current_user_can( 'moderate_comments' ) )
 		die('-1');
 
-	if ( 'unapproved' == wp_get_comment_status($comment->comment_ID) ) {
+	$current = wp_get_comment_status( $comment->comment_ID );
+	if ( $_POST['new'] == $current )
+		die('1');
+
+	if ( 'unapproved' == $current ) {
 		check_ajax_referer( "approve-comment_$id" );
 		if ( wp_set_comment_status( $comment->comment_ID, 'approve' ) )
 			die('1');
@@ -150,6 +190,9 @@ case 'add-category' : // On the Fly
 		$parent = 0;
 	$post_category = isset($_POST['post_category'])? (array) $_POST['post_category'] : array();
 	$checked_categories = array_map( 'absint', (array) $post_category );
+	$popular_ids = isset( $_POST['popular_ids'] ) ?
+			array_map( 'absint', explode( ',', $_POST['popular_ids'] ) ) :
+			false;
 
 	$x = new WP_Ajax_Response();
 	foreach ( $names as $cat_name ) {
@@ -163,7 +206,7 @@ case 'add-category' : // On the Fly
 			continue;
 		$category = get_category( $cat_id );
 		ob_start();
-			wp_category_checklist( 0, $cat_id, $checked_categories );
+			wp_category_checklist( 0, $cat_id, $checked_categories, $popular_ids );
 		$data = ob_get_contents();
 		ob_end_clean();
 		$x->add( array(
@@ -459,10 +502,11 @@ case 'add-user' :
 	$x->send();
 	break;
 case 'autosave' : // The name of this action is hardcoded in edit_post()
-	$nonce_age = check_ajax_referer( 'autosave', 'autosavenonce');
+	define( 'DOING_AUTOSAVE', true );
+
+	$nonce_age = check_ajax_referer( 'autosave', 'autosavenonce' );
 	global $current_user;
 
-	$_POST['post_status'] = 'draft';
 	$_POST['post_category'] = explode(",", $_POST['catslist']);
 	$_POST['tags_input'] = explode(",", $_POST['tags_input']);
 	if($_POST['post_type'] == 'page' || empty($_POST['post_category']))
@@ -476,8 +520,9 @@ case 'autosave' : // The name of this action is hardcoded in edit_post()
 
 	$supplemental = array();
 
-	$id = 0;
+	$id = $revision_id = 0;
 	if($_POST['post_ID'] < 0) {
+		$_POST['post_status'] = 'draft';
 		$_POST['temp_ID'] = $_POST['post_ID'];
 		if ( $do_autosave ) {
 			$id = wp_write_post();
@@ -508,8 +553,18 @@ case 'autosave' : // The name of this action is hardcoded in edit_post()
 			if ( !current_user_can('edit_post', $post_ID) )
 				die(__('You are not allowed to edit this post.'));
 		}
+
 		if ( $do_autosave ) {
-			$id = edit_post();
+			// Drafts are just overwritten by autosave
+			if ( 'draft' == $post->post_status ) {
+				$id = edit_post();
+			} else { // Non drafts are not overwritten.  The autosave is stored in a special post revision.
+				$revision_id = wp_create_post_autosave( $post->ID );
+				if ( is_wp_error($revision_id) )
+					$id = $revision_id;
+				else
+					$id = $post->ID;
+			}
 			$data = $message;
 		} else {
 			$id = $post->ID;

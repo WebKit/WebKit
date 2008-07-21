@@ -32,6 +32,7 @@ form {
 .media-upload-form label, .media-upload-form legend {
 	display:block;
 	font-weight: bold;
+	font-size: 13px;
 	margin-bottom: 0.5em;
 	margin: 0 0 0.5em 0;
 }
@@ -196,6 +197,11 @@ abbr.required {
 #media-upload .media-upload-form p {
 	margin: 0 1em 1em 0;
 }
+
+#media-upload .media-upload-form p.ml-submit {
+	padding: 1em 0;
+}
+
 #media-upload p.help {
 	font-style: italic;
 	font-weight: normal;
@@ -217,10 +223,17 @@ abbr.required {
 	min-height: 36px;
 	width: 100%;
 }
+
+#media-upload .ui-sortable .media-item {
+	cursor: move;
+}
+
 .filename {
+	float: left;
 	line-height: 36px;
 	margin-left: 10px;
-	float: left;
+	overflow: hidden;
+	max-width: 430px;
 }
 #media-upload .describe {
 	border-top-width: 1px;
@@ -228,6 +241,7 @@ abbr.required {
 	padding: 5px;
 	width: 100%;
 	clear: both;
+	cursor: default;
 }
 #media-upload .describe th.label {
 	padding-top: .5em;
@@ -239,4 +253,63 @@ abbr.required {
 #media-upload tr.image-size {
 	margin-bottom: 1em;
 	height: 3em;
+}
+
+#media-upload #filter {
+	width: 623px;
+}
+
+#media-upload #filter .subsubsub {
+	margin: 8px 0;
+}
+
+#filter .tablenav select {
+	border-style:solid;
+	border-width:1px;
+	padding:2px;
+	vertical-align:top;
+}
+
+#media-upload a.delete,
+#media-upload a.del-link {
+	padding: 0 3px 1px;
+}
+
+#media-upload .del-attachment {
+	display: none;
+	margin: 5px 0;
+}
+
+.menu_order {
+	float: right;
+	font-size: 11px;
+	margin: 10px 10px 0;
+}
+
+.menu_order_input {
+	border: 1px solid #DDDDDD;
+	font-size: 10px;
+	padding: 1px;
+	width: 23px;
+}
+
+.ui-sortable-helper {
+	background-color: #fff;
+	border: 1px solid #aaa;
+	opacity: 0.6;
+	filter: alpha(opacity=60);
+}
+
+#media-upload th.order-head {
+	 width: 25%;
+	 text-align: center;
+}
+
+#media-upload .widefat {
+	width: 626px;
+	border-style: solid solid none;
+}
+
+.sorthelper {
+	z-index: -1;
 }

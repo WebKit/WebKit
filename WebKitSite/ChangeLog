@@ -1,3 +1,9 @@
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Update to WordPress 2.6.
+
+        * blog:
+
 2008-07-18  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fixed indentation of example code for C++ pointers/references!

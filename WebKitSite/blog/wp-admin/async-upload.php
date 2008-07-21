@@ -5,17 +5,19 @@
 */
 
 if ( defined('ABSPATH') )
-	require_once( ABSPATH . 'wp-config.php');
+	require_once(ABSPATH . 'wp-load.php');
 else
-    require_once('../wp-config.php');
+	require_once('../wp-load.php');
 
 // Flash often fails to send cookies with the POST or upload, so we need to pass it in GET or POST instead
-if ( empty($_COOKIE[AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
+if ( is_ssl() && empty($_COOKIE[SECURE_AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
+	$_COOKIE[SECURE_AUTH_COOKIE] = $_REQUEST['auth_cookie'];
+elseif ( empty($_COOKIE[AUTH_COOKIE]) && !empty($_REQUEST['auth_cookie']) )
 	$_COOKIE[AUTH_COOKIE] = $_REQUEST['auth_cookie'];
 unset($current_user);
 require_once('admin.php');
 
-header('Content-Type: text/plain');
+header('Content-Type: text/plain; charset=' . get_option('blog_charset'));
 
 if ( !current_user_can('upload_files') )
 	wp_die(__('You do not have permission to upload files.'));
@@ -25,6 +27,8 @@ if ( ($id = intval($_REQUEST['attachment_id'])) && $_REQUEST['fetch'] ) {
 	echo get_media_item($id);
 	exit;
 }
+
+check_admin_referer('media-form');
 
 $id = media_handle_upload('async-upload', $_REQUEST['post_id']);
 if (is_wp_error($id)) {

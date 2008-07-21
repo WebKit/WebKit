@@ -7,6 +7,7 @@ if ( ! current_user_can('switch_themes') )
 	wp_die( __( 'Cheatin&#8217; uh?' ));
 
 wp_enqueue_script( array( 'wp-lists', 'admin-widgets' ) );
+wp_admin_css( 'widgets' );
 
 do_action( 'sidebar_admin_setup' );
 
@@ -134,7 +135,9 @@ if ( isset($_GET['add']) && $_GET['add'] ) {
 		
 			<ul class="widget-control-list">
 				<li class="widget-list-control-item">
+					<div class="widget-top">
 					<h4 class="widget-title"><?php echo $control['name']; ?></h4>
+					</div>
 					<div class="widget-control" style="display: block;">
 	<?php
 						call_user_func_array( $control_callback, $control['params'] );
@@ -232,15 +235,16 @@ if ( isset($_GET['message']) && isset($messages[$_GET['message']]) ) : ?>
 
 	<h2><?php _e( 'Widgets' ); ?></h2>
 	<p id="widget-search">
+		<label class="hidden" for="widget-search-input"><?php _e( 'Search Widgets' ); ?>:</label>
 		<input type="text" id="widget-search-input" name="s" value="<?php echo attribute_escape( $widget_search ); ?>" />
 		<input type="submit" class="button" value="<?php _e( 'Search Widgets' ); ?>" />
 	</p>
 
 	<div class="widget-liquid-left-holder">
 	<div id="available-widgets-filter" class="widget-liquid-left">
-		<h3><?php _e('Available Widgets'); ?></h3>
+		<h3><label for="show"><?php _e('Available Widgets'); ?></label></h3>
 		<div class="nav">
-			<select name="show">
+			<select name="show" id="show">
 <?php foreach ( $show_values as $show_value => $show_text ) : $show_value = attribute_escape( $show_value ); ?>
 				<option value='<?php echo $show_value; ?>'<?php selected( $show_value, $show ); ?>><?php echo wp_specialchars( $show_text ); ?></option>
 <?php endforeach; ?>
@@ -254,7 +258,7 @@ if ( isset($_GET['message']) && isset($messages[$_GET['message']]) ) : ?>
 	</div>
 
 	<div id="available-sidebars" class="widget-liquid-right">
-		<h3><?php _e('Current Widgets'); ?></h3>
+		<h3><label for="sidebar-selector"><?php _e('Current Widgets'); ?></label></h3>
 
 		<div class="nav">
 			<select id="sidebar-selector" name="sidebar">

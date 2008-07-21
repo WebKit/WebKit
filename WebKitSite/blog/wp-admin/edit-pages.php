@@ -20,8 +20,8 @@ if ( isset($_GET['deleteit']) && isset($_GET['delete']) ) {
 	}
 
 	$sendback = wp_get_referer();
-	if (strpos($sendback, 'page.php') !== false) $sendback = get_option('siteurl') .'/wp-admin/page-new.php';
-	elseif (strpos($sendback, 'attachments.php') !== false) $sendback = get_option('siteurl') .'/wp-admin/attachments.php';
+	if (strpos($sendback, 'page.php') !== false) $sendback = admin_url('page-new.php');
+	elseif (strpos($sendback, 'attachments.php') !== false) $sendback = admin_url('attachments.php');
 	$sendback = preg_replace('|[^a-z0-9-~+_.?#=&;,/:]|i', '', $sendback);
 
 	wp_redirect($sendback);
@@ -111,11 +111,31 @@ endif;
 ?>
 
 <p id="post-search">
+	<label class="hidden" for="post-search-input"><?php _e( 'Search Pages' ); ?>:</label>
 	<input type="text" id="post-search-input" name="s" value="<?php echo attribute_escape(stripslashes($_GET['s'])); ?>" />
 	<input type="submit" value="<?php _e( 'Search Pages' ); ?>" class="button" />
 </p>
 
 <div class="tablenav">
+
+<?php
+$pagenum = absint( $_GET['pagenum'] );
+if ( empty($pagenum) )
+	$pagenum = 1;
+if( !$per_page || $pre_page < 0 )
+	$per_page = 20;
+
+$num_pages = ceil(count($posts) / $per_page);
+$page_links = paginate_links( array(
+	'base' => add_query_arg( 'pagenum', '%#%' ),
+	'format' => '',
+	'total' => $num_pages,
+	'current' => $pagenum
+));
+
+if ( $page_links )
+	echo "<div class='tablenav-pages'>$page_links</div>";
+?>
 
 <div class="alignleft">
 <input type="submit" value="<?php _e('Delete'); ?>" name="deleteit" class="button-secondary delete" />
@@ -150,7 +170,7 @@ if ($posts) {
   </tr>
   </thead>
   <tbody>
-  <?php page_rows($posts); ?>
+  <?php page_rows($posts, $pagenum, $per_page); ?>
   </tbody>
 </table>
 
@@ -168,6 +188,10 @@ if ($posts) {
 ?>
 
 <div class="tablenav">
+<?php
+if ( $page_links )
+	echo "<div class='tablenav-pages'>$page_links</div>";
+?>
 <br class="clear" />
 </div>
 
@@ -175,7 +199,7 @@ if ($posts) {
 
 if ( 1 == count($posts) && is_singular() ) :
 
-	$comments = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_post_ID = $id AND comment_approved != 'spam' ORDER BY comment_date");
+	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved != 'spam' ORDER BY comment_date", $id) );
 	if ( $comments ) :
 		// Make sure comments, post, and post_author are cached
 		update_comment_cache($comments);

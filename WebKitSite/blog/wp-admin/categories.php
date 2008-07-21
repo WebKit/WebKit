@@ -126,6 +126,7 @@ endif; ?>
 <?php endif; ?>
 
 <p id="post-search">
+	<label class="hidden" for="post-search-input"><?php _e('Search Categories'); ?>:</label>
 	<input type="text" id="post-search-input" name="s" value="<?php echo attribute_escape(stripslashes($_GET['s'])); ?>" />
 	<input type="submit" value="<?php _e( 'Search Categories' ); ?>" class="button" />
 </p>
@@ -133,6 +134,24 @@ endif; ?>
 <br class="clear" />
 
 <div class="tablenav">
+
+<?php
+$pagenum = absint( $_GET['pagenum'] );
+if ( empty($pagenum) )
+	$pagenum = 1;
+if( !$catsperpage || $catsperpage < 0 )
+	$catsperpage = 20;
+
+$page_links = paginate_links( array(
+	'base' => add_query_arg( 'pagenum', '%#%' ),
+	'format' => '',
+	'total' => ceil(wp_count_terms('category') / $catsperpage),
+	'current' => $pagenum
+));
+
+if ( $page_links )
+	echo "<div class='tablenav-pages'>$page_links</div>";
+?>
 
 <div class="alignleft">
 <input type="submit" value="<?php _e('Delete'); ?>" name="deleteit" class="button-secondary delete" />
@@ -147,7 +166,7 @@ endif; ?>
 <table class="widefat">
 	<thead>
 	<tr>
-		<th scope="col" class="check-column"><input type="checkbox" onclick="checkAll(document.getElementById('posts-filter'));" /></th>
+		<th scope="col" class="check-column"><input type="checkbox" /></th>
         <th scope="col"><?php _e('Name') ?></th>
         <th scope="col"><?php _e('Description') ?></th>
         <th scope="col" class="num"><?php _e('Posts') ?></th>
@@ -155,13 +174,18 @@ endif; ?>
 	</thead>
 	<tbody id="the-list" class="list:cat">
 <?php
-cat_rows();
+cat_rows(0, 0, 0, $pagenum, $catsperpage);
 ?>
 	</tbody>
 </table>
 </form>
 
 <div class="tablenav">
+
+<?php
+if ( $page_links )
+	echo "<div class='tablenav-pages'>$page_links</div>";
+?>
 <br class="clear" />
 </div>
 <br class="clear" />

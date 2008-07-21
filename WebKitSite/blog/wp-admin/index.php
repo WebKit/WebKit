@@ -26,12 +26,8 @@ jQuery(function($) {
 }
 add_action( 'admin_head', 'index_js' );
 
-function index_css() {
-	wp_admin_css( 'css/dashboard' );
-}
-add_action( 'admin_head', 'index_css' );
-
 wp_enqueue_script( 'jquery' );
+wp_admin_css( 'dashboard' );
 
 $title = __('Dashboard');
 $parent_file = 'index.php';
@@ -64,6 +60,8 @@ $num_cats  = wp_count_terms('category');
 
 $num_tags = wp_count_terms('post_tag');
 
+$num_comm = get_comment_count( );
+
 $post_type_texts = array();
 
 if ( !empty($num_posts->publish) ) { // with feeds, anyone can tell how many posts there are.  Just unlink if !current_user_can
@@ -93,30 +91,42 @@ if ( current_user_can( 'manage_categories' ) ) {
 	$tags_text = "<a href='edit-tags.php'>$tags_text</a>";
 }
 
+$total_comments = sprintf( __ngettext( '%1$s total', '%1$s total', $num_comm['total_comments'] ), number_format_i18n($num_comm['total_comments']) );
+$approved_comments = sprintf( __ngettext( '%1$s approved', '%1$s approved', $num_comm['approved'] ), number_format_i18n($num_comm['approved']) );
+$spam_comments = sprintf( __ngettext( '%1$s spam', '%1$s spam', $num_comm['spam'] ), number_format_i18n($num_comm['spam']) );
+$moderated_comments = sprintf( __ngettext( '%1$s awaiting moderation', '%1$s awaiting moderation', $num_comm['awaiting_moderation'] ), number_format_i18n($num_comm['awaiting_moderation']) );
+
+if( current_user_can( 'moderate_comments' ) ) {
+	$total_comments = "<a href='edit-comments.php'>{$total_comments}</a>";
+	$approved_comments = "<a href='edit-comments.php?comment_status=approved'>{$approved_comments}</a>";
+	$moderated_comments = "<a href='edit-comments.php?comment_status=moderated'>{$moderated_comments}</a>";
+}
+
+$comm_text = sprintf( __ngettext( 'You have %1$s comment, %2$s, %3$s and %4$s.', 'You have %1$s comments, %2$s, %3$s and %4$s.', $num_comm['total_comments'] ), $total_comments, $approved_comments, $spam_comments, $moderated_comments );
+
 $post_type_text = implode(', ', $post_type_texts);
 
 // There is always a category
-$sentence = sprintf( __( 'You have %1$s, contained within %2$s and %3$s. %4$s' ), $post_type_text, $cats_text, $tags_text, $pending_text );
-$sentence = apply_filters( 'dashboard_count_sentence', $sentence, $post_type_text, $cats_text, $tags_text, $pending_text );
+$sentence = sprintf( __( 'You have %1$s, contained within %2$s and %3$s. %4$s %5$s' ), $post_type_text, $cats_text, $tags_text, $pending_text, $comm_text );
+$sentence = apply_filters( 'dashboard_count_sentence', $sentence, $post_type_text, $cats_text, $tags_text, $pending_text, $comm_text );
 
 ?>
 <p class="youhave"><?php echo $sentence; ?></p>
 <?php
 $ct = current_theme_info();
 $sidebars_widgets = wp_get_sidebars_widgets();
-$num_widgets = array_reduce( $sidebars_widgets, create_function( '$prev, $curr', 'return $prev+count($curr);' ) );
+$num_widgets = array_reduce( $sidebars_widgets, create_function( '$prev, $curr', 'return $prev+count($curr);' ), 0 );
 $widgets_text = sprintf( __ngettext( '%d widget', '%d widgets', $num_widgets ), $num_widgets );
 if ( $can_switch_themes = current_user_can( 'switch_themes' ) )
 	$widgets_text = "<a href='widgets.php'>$widgets_text</a>";
 ?>
 <p class="youare">
-	<?php printf( __( 'You are using %1$s theme with %2$s.' ), $ct->title, $widgets_text ); ?>
+	<?php printf( __( 'You are using the %1$s theme with %2$s.' ), $ct->title, $widgets_text ); ?>
 	<?php if ( $can_switch_themes ) : ?>
 		<a href="themes.php" class="rbutton"><?php _e('Change Theme'); ?></a>
 	<?php endif; ?>
 	<?php update_right_now_message(); ?>
 </p>
-
 <?php do_action( 'rightnow_end' ); ?>
 <?php do_action( 'activity_box_end' ); ?>
 </div><!-- rightnow -->

@@ -153,6 +153,8 @@ add_action('check_comment_flood', 'check_comment_flood_db', 10, 3);
 add_filter('comment_flood_filter', 'wp_throttle_comment_flood', 10, 3);
 add_filter('pre_comment_content', 'wp_rel_nofollow', 15);
 add_filter('comment_email', 'antispambot');
+add_filter('option_tag_base', '_wp_filter_taxonomy_base');
+add_filter('option_category_base', '_wp_filter_taxonomy_base');
 
 //Atom SSL support
 add_filter('atom_service_url','atom_service_url_filter');
@@ -175,9 +177,11 @@ add_action('do_pings', 'do_all_pings', 10, 1);
 add_action('do_robots', 'do_robots');
 add_action('sanitize_comment_cookies', 'sanitize_comment_cookies');
 add_action('admin_print_scripts', 'wp_print_scripts', 20);
+add_action('admin_print_styles', 'wp_print_styles', 20);
 add_action('init', 'smilies_init', 5);
 add_action( 'plugins_loaded', 'wp_maybe_load_widgets', 0 );
 add_action( 'shutdown', 'wp_ob_end_flush_all', 1);
+add_action( 'pre_post_update', 'wp_save_post_revision' );
 add_action('publish_post', '_publish_post_hook', 5, 1);
 add_action('future_post', '_future_post_hook', 5, 2);
 add_action('future_page', '_future_post_hook', 5, 2);

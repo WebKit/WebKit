@@ -125,6 +125,7 @@ endif;
 ?>
 
 <p id="post-search">
+	<label class="hidden" for="post-search-input"><?php _e( 'Search Media' ); ?>:</label>
 	<input type="text" id="post-search-input" name="s" value="<?php the_search_query(); ?>" />
 	<input type="submit" value="<?php _e( 'Search Media' ); ?>" class="button" />
 </p>
@@ -211,7 +212,7 @@ if ( $page_links )
  
 if ( 1 == count($posts) && is_singular() ) :
 	
-	$comments = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_post_ID = $id AND comment_approved != 'spam' ORDER BY comment_date");
+	$comments = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved != 'spam' ORDER BY comment_date", $id) );
 	if ( $comments ) :
 		// Make sure comments, post, and post_author are cached
 		update_comment_cache($comments);

@@ -283,7 +283,7 @@ function wp_dropdown_pages($args = '') {
 	$output = '';
 
 	if ( ! empty($pages) ) {
-		$output = "<select name='$name'>\n";
+		$output = "<select name='$name' id='$name'>\n";
 		if ( $show_option_none )
 			$output .= "\t<option value=''>$show_option_none</option>\n";
 		$output .= walk_page_dropdown_tree($pages, $depth, $r);
@@ -565,4 +565,169 @@ function is_page_template($template = '') {
 	return false;
 }
 
-?>
+/**
+ * wp_post_revision_title() - returns formatted datetimestamp of a revision (linked to that revisions's page)
+ *
+ * @package WordPress
+ * @subpackage Post Revisions
+ * @since 2.6
+ *
+ * @uses date_i18n()
+ *
+ * @param int|object $revision revision ID or revision object
+ * @param bool $link optional Link to revisions's page?
+ * @return string i18n formatted datetimestamp or localized 'Corrent Revision'
+ */
+function wp_post_revision_title( $revision, $link = true ) {
+	if ( !$revision = get_post( $revision ) )
+		return $revision;
+
+	if ( !in_array( $revision->post_type, array( 'post', 'page', 'revision' ) ) )
+		return false;
+
+	$datef = _c( 'j F, Y @ G:i|revision date format');
+	$autosavef = __( '%s [Autosave]' );
+	$currentf  = __( '%s [Current Revision]' );
+
+	$date = date_i18n( $datef, strtotime( $revision->post_modified_gmt . ' +0000' ) );
+	if ( $link && current_user_can( 'edit_post', $revision->ID ) && $link = get_edit_post_link( $revision->ID ) )
+		$date = "<a href='$link'>$date</a>";
+
+	if ( !wp_is_post_revision( $revision ) )
+		$date = sprintf( $currentf, $date );
+	elseif ( wp_is_post_autosave( $revision ) )
+		$date = sprintf( $autosavef, $date );
+
+	return $date;
+}
+
+/**
+ * wp_list_post_revisions() - echoes list of a post's revisions
+ *
+ * Can output either a UL with edit links or a TABLE with diff interface, and restore action links
+ *
+ * Second argument controls parameters:
+ *   (bool)   parent : include the parent (the "Current Revision") in the list
+ *   (string) format : 'list' or 'form-table'.  'list' outputs UL, 'form-table' outputs TABLE with UI
+ *   (int)    right  : what revision is currently being viewed - used in form-table format
+ *   (int)    left   : what revision is currently being diffed against right - used in form-table format
+ *
+ * @package WordPress
+ * @subpackage Post Revisions
+ * @since 2.6
+ *
+ * @uses wp_get_post_revisions()
+ * @uses wp_post_revision_title()
+ * @uses get_edit_post_link()
+ * @uses get_author_name()
+ *
+ * @param int|object $post_id post ID or post object
+ * @param string|array $args see description @see wp_parse_args()
+ */
+function wp_list_post_revisions( $post_id = 0, $args = null ) { // TODO? split into two functions (list, form-table) ?
+	if ( !$post = get_post( $post_id ) )
+		return;
+
+	$defaults = array( 'parent' => false, 'right' => false, 'left' => false, 'format' => 'list', 'type' => 'all' );
+	extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
+	switch ( $type ) {
+	case 'autosave' :
+		if ( !$autosave = wp_get_post_autosave( $post->ID ) )
+			return;
+		$revisions = array( $autosave );
+		break;
+	case 'revision' : // just revisions - remove autosave later
+	case 'all' :
+	default :
+		if ( !$revisions = wp_get_post_revisions( $post->ID ) )
+			return;
+		break;
+	}
+
+	$titlef = _c( '%1$s by %2$s|post revision 1:datetime, 2:name' );
+
+	if ( $parent )
+		array_unshift( $revisions, $post );
+
+	$rows = '';
+	$class = false;
+	$can_edit_post = current_user_can( 'edit_post', $post->ID );
+	foreach ( $revisions as $revision ) {
+		if ( !current_user_can( 'read_post', $revision->ID ) )
+			continue;
+		if ( 'revision' === $type && wp_is_post_autosave( $revision ) )
+			continue;
+
+		$date = wp_post_revision_title( $revision );
+		$name = get_author_name( $revision->post_author );
+
+		if ( 'form-table' == $format ) {
+			if ( $left )
+				$left_checked = $left == $revision->ID ? ' checked="checked"' : '';
+			else
+				$left_checked = $right_checked ? ' checked="checked"' : ''; // [sic] (the next one)
+			$right_checked = $right == $revision->ID ? ' checked="checked"' : '';
+
+			$class = $class ? '' : " class='alternate'";
+
+			if ( $post->ID != $revision->ID && $can_edit_post )
+				$actions = '<a href="' . wp_nonce_url( add_query_arg( array( 'revision' => $revision->ID, 'diff' => false, 'action' => 'restore' ) ), "restore-post_$post->ID|$revision->ID" ) . '">' . __( 'Restore' ) . '</a>';
+			else
+				$actions = '';
+
+			$rows .= "<tr$class>\n";
+			$rows .= "\t<th style='white-space: nowrap' scope='row'><input type='radio' name='left' value='$revision->ID'$left_checked /><input type='radio' name='right' value='$revision->ID'$right_checked /></th>\n";
+			$rows .= "\t<td>$date</td>\n";
+			$rows .= "\t<td>$name</td>\n";
+			$rows .= "\t<td class='action-links'>$actions</td>\n";
+			$rows .= "</tr>\n";
+		} else {
+			$title = sprintf( $titlef, $date, $name );
+			$rows .= "\t<li>$title</li>\n";
+		}
+	}
+
+	if ( 'form-table' == $format ) : ?>
+
+<form action="revision.php" method="get">
+
+<div class="tablenav">
+	<div class="alignleft">
+		<input type="submit" class="button-secondary" value="<?php _e( 'Compare Revisions' ); ?>" />
+		<input type="hidden" name="action" value="diff" />
+	</div>
+</div>
+
+<br class="clear" />
+
+<table class="widefat post-revisions">
+	<col />
+	<col style="width: 33%" />
+	<col style="width: 33%" />
+	<col style="width: 33%" />
+<thead>
+<tr>
+	<th scope="col"></th>
+	<th scope="col"><?php _e( 'Date Created' ); ?></th>
+	<th scope="col"><?php _e( 'Author' ); ?></th>
+	<th scope="col" class="action-links"><?php _e( 'Actions' ); ?></th>
+</tr>
+</thead>
+<tbody>
+
+<?php echo $rows; ?>
+
+</tbody>
+</table>
+
+</form>
+
+<?php
+	else :
+		echo "<ul class='post-revisions'>\n";
+		echo $rows;
+		echo "</ul>";
+	endif;
+
+}

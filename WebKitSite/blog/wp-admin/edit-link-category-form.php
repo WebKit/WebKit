@@ -26,11 +26,11 @@ if ( ! empty($cat_ID) ) {
 	<table class="form-table">
 		<tr class="form-field form-required">
 			<th scope="row" valign="top"><label for="name"><?php _e('Category name') ?></label></th>
-			<td><input name="name" id="name" type="text" value="<?php echo $category->name; ?>" size="40" /></td>
+			<td><input name="name" id="name" type="text" value="<?php echo $category->name; ?>" size="40" aria-required="true" /></td>
 		</tr>
 		<tr class="form-field">
 			<th scope="row" valign="top"><label for="slug"><?php _e('Category slug') ?></label></th>
-			<td><input name="slug" id="slug" type="text" value="<?php echo $category->slug; ?>" size="40" />
+			<td><input name="slug" id="slug" type="text" value="<?php echo attribute_escape(apply_filters('editable_slug', $category->slug)); ?>" size="40" />
             <?php _e('The &#8220;slug&#8221; is the URL-friendly version of the name. It is usually all lowercase and contains only letters, numbers, and hyphens.'); ?></td>
 		</tr>
 		<tr class="form-field">

@@ -1,5 +1,113 @@
 <?php
 
+/**
+ * _wp_translate_postdata() - Rename $_POST data from form names to DB post columns.
+ *
+ * Manipulates $_POST directly.
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * @param bool $update Are we updating a pre-existing post?
+ * @return object|bool WP_Error on failure, true on success.
+ */
+function _wp_translate_postdata( $update = false ) {
+	if ( $update )
+		$_POST['ID'] = (int) $_POST['post_ID'];
+	$_POST['post_content'] = $_POST['content'];
+	$_POST['post_excerpt'] = $_POST['excerpt'];
+	$_POST['post_parent'] = isset($_POST['parent_id'])? $_POST['parent_id'] : '';
+	$_POST['to_ping'] = $_POST['trackback_url'];
+
+	if (!empty ( $_POST['post_author_override'] ) ) {
+		$_POST['post_author'] = (int) $_POST['post_author_override'];
+	} else {
+		if (!empty ( $_POST['post_author'] ) ) {
+			$_POST['post_author'] = (int) $_POST['post_author'];
+		} else {
+			$_POST['post_author'] = (int) $_POST['user_ID'];
+		}
+	}
+
+	if ( $_POST['post_author'] != $_POST['user_ID'] ) {
+		if ( 'page' == $_POST['post_type'] ) {
+			if ( !current_user_can( 'edit_others_pages' ) ) {
+				return new WP_Error( 'edit_others_pages', $update ?
+					__( 'You are not allowed to edit pages as this user.' ) :
+					__( 'You are not allowed to create pages as this user.' )
+				);
+			}
+		} else {
+			if ( !current_user_can( 'edit_others_posts' ) ) {
+				return new WP_Error( 'edit_others_posts', $update ?
+					__( 'You are not allowed to edit posts as this user.' ) :
+					__( 'You are not allowed to post as this user.' )
+				);
+			}
+		}
+	}
+
+	// What to do based on which button they pressed
+	if ( isset($_POST['saveasdraft']) && '' != $_POST['saveasdraft'] )
+		$_POST['post_status'] = 'draft';
+	if ( isset($_POST['saveasprivate']) && '' != $_POST['saveasprivate'] )
+		$_POST['post_status'] = 'private';
+	if ( isset($_POST['publish']) && ( '' != $_POST['publish'] ) && ( $_POST['post_status'] != 'private' ) )
+		$_POST['post_status'] = 'publish';
+	if ( isset($_POST['advanced']) && '' != $_POST['advanced'] )
+		$_POST['post_status'] = 'draft';
+
+	$previous_status = get_post_field('post_status',  $_POST['ID']);
+
+	// Posts 'submitted for approval' present are submitted to $_POST the same as if they were being published. 
+	// Change status from 'publish' to 'pending' if user lacks permissions to publish or to resave published posts.
+	if ( 'page' == $_POST['post_type'] ) {
+		if ( 'publish' == $_POST['post_status'] && !current_user_can( 'publish_pages' ) )
+			if ( $previous_status != 'publish' OR !current_user_can( 'edit_published_pages') )
+				$_POST['post_status'] = 'pending';
+	} else {
+		if ( 'publish' == $_POST['post_status'] && !current_user_can( 'publish_posts' ) ) :
+			// Stop attempts to publish new posts, but allow already published posts to be saved if appropriate.
+			if ( $previous_status != 'publish' OR !current_user_can( 'edit_published_posts') )
+				$_POST['post_status'] = 'pending';
+		endif;
+	}
+
+	if (!isset( $_POST['comment_status'] ))
+		$_POST['comment_status'] = 'closed';
+
+	if (!isset( $_POST['ping_status'] ))
+		$_POST['ping_status'] = 'closed';
+
+	foreach ( array('aa', 'mm', 'jj', 'hh', 'mn') as $timeunit ) {
+		if ( !empty( $_POST['hidden_' . $timeunit] ) && $_POST['hidden_' . $timeunit] != $_POST[$timeunit] ) {
+			$_POST['edit_date'] = '1';
+			break;
+		}
+	}
+
+	if ( !empty( $_POST['edit_date'] ) ) {
+		$aa = $_POST['aa'];
+		$mm = $_POST['mm'];
+		$jj = $_POST['jj'];
+		$hh = $_POST['hh'];
+		$mn = $_POST['mn'];
+		$ss = $_POST['ss'];
+		$aa = ($aa <= 0 ) ? date('Y') : $aa;
+		$mm = ($mm <= 0 ) ? date('n') : $mm;
+		$jj = ($jj > 31 ) ? 31 : $jj;
+		$jj = ($jj <= 0 ) ? date('j') : $jj;
+		$hh = ($hh > 23 ) ? $hh -24 : $hh;
+		$mn = ($mn > 59 ) ? $mn -60 : $mn;
+		$ss = ($ss > 59 ) ? $ss -60 : $ss;
+		$_POST['post_date'] = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $aa, $mm, $jj, $hh, $mn, $ss );
+		$_POST['post_date_gmt'] = get_gmt_from_date( $_POST['post_date'] );
+	}
+
+	return true;
+}
+
+
 // Update an existing post with values provided in $_POST.
 function edit_post() {
 
@@ -23,78 +131,9 @@ function edit_post() {
 			return $post_ID;
 	}
 
-	// Rename.
-	$_POST['ID'] = (int) $_POST['post_ID'];
-	$_POST['post_content'] = $_POST['content'];
-	$_POST['post_excerpt'] = $_POST['excerpt'];
-	$_POST['post_parent'] = isset($_POST['parent_id'])? $_POST['parent_id'] : '';
-	$_POST['to_ping'] = $_POST['trackback_url'];
-
-	if (!empty ( $_POST['post_author_override'] ) ) {
-		$_POST['post_author'] = (int) $_POST['post_author_override'];
-	} else
-		if (!empty ( $_POST['post_author'] ) ) {
-			$_POST['post_author'] = (int) $_POST['post_author'];
-		} else {
-			$_POST['post_author'] = (int) $_POST['user_ID'];
-		}
-
-	if ( $_POST['post_author'] != $_POST['user_ID'] ) {
-		if ( 'page' == $_POST['post_type'] ) {
-			if ( !current_user_can( 'edit_others_pages' ) )
-				wp_die( __('You are not allowed to edit pages as this user.' ));
-		} else {
-			if ( !current_user_can( 'edit_others_posts' ) )
-				wp_die( __('You are not allowed to edit posts as this user.' ));
-
-		}
-	}
-
-	// What to do based on which button they pressed
-	if ( isset($_POST['saveasdraft']) && '' != $_POST['saveasdraft'] )
-		$_POST['post_status'] = 'draft';
-	if ( isset($_POST['saveasprivate']) && '' != $_POST['saveasprivate'] )
-		$_POST['post_status'] = 'private';
-	if ( isset($_POST['publish']) && ( '' != $_POST['publish'] ) && ( $_POST['post_status'] != 'private' ) )
-		$_POST['post_status'] = 'publish';
-	if ( isset($_POST['advanced']) && '' != $_POST['advanced'] )
-		$_POST['post_status'] = 'draft';
-
-	if ( 'page' == $_POST['post_type'] ) {
-		if ('publish' == $_POST['post_status'] && !current_user_can( 'publish_pages' ))
-			$_POST['post_status'] = 'pending';
-	} else {
-		if ('publish' == $_POST['post_status'] && !current_user_can( 'publish_posts' ))
-			$_POST['post_status'] = 'pending';
-	}
-
-	if (!isset( $_POST['comment_status'] ))
-		$_POST['comment_status'] = 'closed';
-
-	if (!isset( $_POST['ping_status'] ))
-		$_POST['ping_status'] = 'closed';
-
-	foreach ( array ('aa', 'mm', 'jj', 'hh', 'mn') as $timeunit ) {
-		if ( !empty( $_POST['hidden_' . $timeunit] ) && $_POST['hidden_' . $timeunit] != $_POST[$timeunit] ) {
-			$_POST['edit_date'] = '1';
-			break;
-		}
-	}
-
-	if (!empty ( $_POST['edit_date'] ) ) {
-		$aa = $_POST['aa'];
-		$mm = $_POST['mm'];
-		$jj = $_POST['jj'];
-		$hh = $_POST['hh'];
-		$mn = $_POST['mn'];
-		$ss = $_POST['ss'];
-		$jj = ($jj > 31 ) ? 31 : $jj;
-		$hh = ($hh > 23 ) ? $hh -24 : $hh;
-		$mn = ($mn > 59 ) ? $mn -60 : $mn;
-		$ss = ($ss > 59 ) ? $ss -60 : $ss;
-		$_POST['post_date'] = "$aa-$mm-$jj $hh:$mn:$ss";
-		$_POST['post_date_gmt'] = get_gmt_from_date( "$aa-$mm-$jj $hh:$mn:$ss" );
-	}
+	$translated = _wp_translate_postdata( true );
+	if ( is_wp_error($translated) )
+		wp_die( $translated->get_error_message() );
 
 	// Meta Stuff
 	if ( isset($_POST['meta']) && $_POST['meta'] ) {
@@ -194,13 +233,13 @@ function post_exists($title, $content = '', $post_date = '') {
 	global $wpdb;
 
 	if (!empty ($post_date))
-		$post_date = "AND post_date = '$post_date'";
+		$post_date = $wpdb->prepare("AND post_date = %s", $post_date);
 
 	if (!empty ($title))
-		return $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_title = '$title' $post_date");
+		return $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_title = %s $post_date", $title) );
 	else
 		if (!empty ($content))
-			return $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_content = '$content' $post_date");
+			return $wpdb->get_var( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE post_content = %s $post_date", $content) );
 
 	return 0;
 }
@@ -236,79 +275,9 @@ function wp_write_post() {
 		}
 	}
 
-	// Rename.
-	$_POST['post_content'] = $_POST['content'];
-	$_POST['post_excerpt'] = $_POST['excerpt'];
-	$_POST['post_parent'] = isset($_POST['parent_id'])? $_POST['parent_id'] : '';
-	$_POST['to_ping'] = $_POST['trackback_url'];
-
-	if (!empty ( $_POST['post_author_override'] ) ) {
-		$_POST['post_author'] = (int) $_POST['post_author_override'];
-	} else {
-		if (!empty ( $_POST['post_author'] ) ) {
-			$_POST['post_author'] = (int) $_POST['post_author'];
-		} else {
-			$_POST['post_author'] = (int) $_POST['user_ID'];
-		}
-
-	}
-
-	if ( $_POST['post_author'] != $_POST['user_ID'] ) {
-		if ( 'page' == $_POST['post_type'] ) {
-			if ( !current_user_can( 'edit_others_pages' ) )
-				return new WP_Error( 'edit_others_pages', __( 'You are not allowed to create pages as this user.' ) );
-		} else {
-			if ( !current_user_can( 'edit_others_posts' ) )
-				return new WP_Error( 'edit_others_posts', __( 'You are not allowed to post as this user.' ) );
-
-		}
-	}
-
-	// What to do based on which button they pressed
-	if ( isset($_POST['saveasdraft']) && '' != $_POST['saveasdraft'] )
-		$_POST['post_status'] = 'draft';
-	if ( isset($_POST['saveasprivate']) && '' != $_POST['saveasprivate'] )
-		$_POST['post_status'] = 'private';
-	if ( isset($_POST['publish']) && ( '' != $_POST['publish'] ) && ( $_POST['post_status'] != 'private' ) )
-		$_POST['post_status'] = 'publish';
-	if ( isset($_POST['advanced']) && '' != $_POST['advanced'] )
-		$_POST['post_status'] = 'draft';
-
-	if ( 'page' == $_POST['post_type'] ) {
-		if ('publish' == $_POST['post_status'] && !current_user_can( 'publish_pages' ) )
-			$_POST['post_status'] = 'pending';
-	} else {
-		if ('publish' == $_POST['post_status'] && !current_user_can( 'publish_posts' ) )
-			$_POST['post_status'] = 'pending';
-	}
-
-	if (!isset( $_POST['comment_status'] ))
-		$_POST['comment_status'] = 'closed';
-
-	if (!isset( $_POST['ping_status'] ))
-		$_POST['ping_status'] = 'closed';
-
-	foreach ( array ('aa', 'mm', 'jj', 'hh', 'mn') as $timeunit ) {
-		if ( !empty( $_POST['hidden_' . $timeunit] ) && $_POST['hidden_' . $timeunit] != $_POST[$timeunit] ) {
-			$_POST['edit_date'] = '1';
-			break;
-		}
-	}
-
-	if (!empty ( $_POST['edit_date'] ) ) {
-		$aa = $_POST['aa'];
-		$mm = $_POST['mm'];
-		$jj = $_POST['jj'];
-		$hh = $_POST['hh'];
-		$mn = $_POST['mn'];
-		$ss = $_POST['ss'];
-		$jj = ($jj > 31 ) ? 31 : $jj;
-		$hh = ($hh > 23 ) ? $hh -24 : $hh;
-		$mn = ($mn > 59 ) ? $mn -60 : $mn;
-		$ss = ($ss > 59 ) ? $ss -60 : $ss;
-		$_POST['post_date'] = sprintf( "%04d-%02d-%02d %02d:%02d:%02d", $aa, $mm, $jj, $hh, $mn, $ss );
-		$_POST['post_date_gmt'] = get_gmt_from_date( $_POST['post_date'] );
-	}
+	$translated = _wp_translate_postdata( false );
+	if ( is_wp_error($translated) )
+		return $translated;
 
 	// Create the post.
 	$post_ID = wp_insert_post( $_POST );
@@ -380,11 +349,9 @@ function add_meta( $post_ID ) {
 
 		wp_cache_delete($post_ID, 'post_meta');
 
-		$wpdb->query( "
-				INSERT INTO $wpdb->postmeta
-				(post_id,meta_key,meta_value )
-				VALUES ('$post_ID','$metakey','$metavalue' )
-			" );
+		$wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->postmeta 
+			(post_id,meta_key,meta_value ) VALUES (%s, %s, %s)",
+			$post_ID, $metakey, $metavalue) );
 		return $wpdb->insert_id;
 	}
 	return false;
@@ -394,10 +361,10 @@ function delete_meta( $mid ) {
 	global $wpdb;
 	$mid = (int) $mid;
 
-	$post_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_id = '$mid'");
+	$post_id = $wpdb->get_var( $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_id = %d", $mid) );
 	wp_cache_delete($post_id, 'post_meta');
 
-	return $wpdb->query( "DELETE FROM $wpdb->postmeta WHERE meta_id = '$mid'" );
+	return $wpdb->query( $wpdb->prepare("DELETE FROM $wpdb->postmeta WHERE meta_id = %d", $mid) );
 }
 
 // Get a list of previously defined keys
@@ -417,7 +384,7 @@ function get_post_meta_by_id( $mid ) {
 	global $wpdb;
 	$mid = (int) $mid;
 
-	$meta = $wpdb->get_row( "SELECT * FROM $wpdb->postmeta WHERE meta_id = '$mid'" );
+	$meta = $wpdb->get_row( $wpdb->prepare("SELECT * FROM $wpdb->postmeta WHERE meta_id = %d", $mid) );
 	if ( is_serialized_string( $meta->meta_value ) )
 		$meta->meta_value = maybe_unserialize( $meta->meta_value );
 	return $meta;
@@ -427,29 +394,30 @@ function get_post_meta_by_id( $mid ) {
 function has_meta( $postid ) {
 	global $wpdb;
 
-	return $wpdb->get_results( "
-			SELECT meta_key, meta_value, meta_id, post_id
-			FROM $wpdb->postmeta
-			WHERE post_id = '$postid'
-			ORDER BY meta_key,meta_id", ARRAY_A );
+	return $wpdb->get_results( $wpdb->prepare("SELECT meta_key, meta_value, meta_id, post_id
+			FROM $wpdb->postmeta WHERE post_id = %d
+			ORDER BY meta_key,meta_id", $postid), ARRAY_A );
 
 }
 
-function update_meta( $mid, $mkey, $mvalue ) {
+function update_meta( $meta_id, $meta_key, $meta_value ) {
 	global $wpdb;
 
 	$protected = array( '_wp_attached_file', '_wp_attachment_metadata', '_wp_old_slug', '_wp_page_template' );
 
-	if ( in_array($mkey, $protected) )
+	if ( in_array($meta_key, $protected) )
 		return false;
 
-	$post_id = $wpdb->get_var("SELECT post_id FROM $wpdb->postmeta WHERE meta_id = '$mid'");
+	$post_id = $wpdb->get_var( $wpdb->prepare("SELECT post_id FROM $wpdb->postmeta WHERE meta_id = %d", $meta_id) );
 	wp_cache_delete($post_id, 'post_meta');
 
-	$mvalue = maybe_serialize( stripslashes( $mvalue ));
-	$mvalue = $wpdb->escape( $mvalue );
-	$mid = (int) $mid;
-	return $wpdb->query( "UPDATE $wpdb->postmeta SET meta_key = '$mkey', meta_value = '$mvalue' WHERE meta_id = '$mid'" );
+	$meta_value = maybe_serialize( stripslashes( $meta_value ));
+	$meta_id = (int) $meta_id;
+	
+	$data  = compact( 'meta_key', 'meta_value' );
+	$where = compact( 'meta_id' );
+
+	return $wpdb->update( $wpdb->postmeta, $data, $where );
 }
 
 //
@@ -502,7 +470,7 @@ function _relocate_children( $old_ID, $new_ID ) {
 	global $wpdb;
 	$old_ID = (int) $old_ID;
 	$new_ID = (int) $new_ID;
-	return $wpdb->query( "UPDATE $wpdb->posts SET post_parent = $new_ID WHERE post_parent = $old_ID" );
+	return $wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET post_parent = %d WHERE post_parent = %d", $new_ID, $old_ID) );
 }
 
 function get_available_post_statuses($type = 'post') {
@@ -631,7 +599,7 @@ function get_sample_permalink($id, $title=null, $name = null) {
 		$permalink = str_replace('%pagename%', "${uri}%pagename%", $permalink);
 	}
 
-	$permalink = array($permalink, $post->post_name);
+	$permalink = array($permalink, apply_filters('editable_slug', $post->post_name));
 	$post->post_status = $original_status;
 	$post->post_date = $original_date;
 	$post->post_name = $original_name;
@@ -691,4 +659,28 @@ function wp_set_post_lock( $post_id ) {
 		update_post_meta( $post->ID, '_edit_last', $current_user->ID );
 }
 
-?>
+/**
+ * wp_create_post_autosave() - creates autosave data for the specified post from $_POST data
+ *
+ * @package WordPress
+ * @subpackage Post Revisions
+ * @since 2.6
+ *
+ * @uses _wp_translate_postdata()
+ * @uses _wp_post_revision_fields()
+ */
+function wp_create_post_autosave( $post_id ) {
+	$translated = _wp_translate_postdata( true );
+	if ( is_wp_error( $translated ) )
+		return $translated;
+
+	// Only store one autosave.  If there is already an autosave, overwrite it.
+	if ( $old_autosave = wp_get_post_autosave( $post_id ) ) {
+		$new_autosave = _wp_post_revision_fields( $_POST, true );
+		$new_autosave['ID'] = $old_autosave->ID;
+		return wp_update_post( $new_autosave );
+	}
+
+	// Otherwise create the new autosave as a special post revision
+	return _wp_put_post_revision( $_POST, true );
+}

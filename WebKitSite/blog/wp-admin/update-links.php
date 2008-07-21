@@ -1,5 +1,5 @@
 <?php
-require_once('../wp-config.php');
+require_once('../wp-load.php');
 require_once( ABSPATH . 'wp-includes/class-snoopy.php');
 
 if ( !get_option('use_linksupdate') )
@@ -36,9 +36,9 @@ if ( false !== ( $fs = @fsockopen('api.pingomatic.com', 80, $errno, $errstr, 5) 
 	$returns = explode("\n", $body);
 
 	foreach ($returns as $return) :
-		$time = $wpdb->escape( substr($return, 0, 19) );
-		$uri = $wpdb->escape( preg_replace('/(.*?) | (.*?)/', '$2', $return) );
-		$wpdb->query("UPDATE $wpdb->links SET link_updated = '$time' WHERE link_url = '$uri'");
+		$time = substr($return, 0, 19);
+		$uri = preg_replace('/(.*?) | (.*?)/', '$2', $return);
+		$wpdb->query( $wpdb->prepare("UPDATE $wpdb->links SET link_updated = %s WHERE link_url = %s", $time, $uri) );
 	endforeach;
 }
 ?>

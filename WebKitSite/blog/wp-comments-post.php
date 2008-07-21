@@ -1,17 +1,25 @@
 <?php
+/**
+ * Handles Comment Post to WordPress and prevents duplicate comment posting.
+ *
+ * @package WordPress
+ */
+
 if ( 'POST' != $_SERVER['REQUEST_METHOD'] ) {
 	header('Allow: POST');
 	header('HTTP/1.1 405 Method Not Allowed');
 	header('Content-Type: text/plain');
 	exit;
 }
-require( dirname(__FILE__) . '/wp-config.php' );
+
+/** Sets up the WordPress Environment. */
+require( dirname(__FILE__) . '/wp-load.php' );
 
 nocache_headers();
 
 $comment_post_ID = (int) $_POST['comment_post_ID'];
 
-$status = $wpdb->get_row("SELECT post_status, comment_status FROM $wpdb->posts WHERE ID = '$comment_post_ID'");
+$status = $wpdb->get_row( $wpdb->prepare("SELECT post_status, comment_status FROM $wpdb->posts WHERE ID = %d", $comment_post_ID) );
 
 if ( empty($status->comment_status) ) {
 	do_action('comment_id_not_found', $comment_post_ID);

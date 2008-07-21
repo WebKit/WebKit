@@ -74,7 +74,7 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 
 <div id="post-body">
 <div id="namediv" class="stuffbox">
-<h3><?php _e('Name') ?></h3>
+<h3><label for="link_name"><?php _e('Name') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_name" size="30" tabindex="1" value="<?php echo $link->link_name; ?>" id="link_name" /><br />
     <?php _e('Example: Nifty blogging software'); ?>
@@ -82,7 +82,7 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 </div>
 
 <div id="addressdiv" class="stuffbox">
-<h3><?php _e('Web Address') ?></h3>
+<h3><label for="link_url"><?php _e('Web Address') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_url" size="30" tabindex="1" value="<?php echo $link->link_url; ?>" id="link_url" /><br />
     <?php _e('Example: <code>http://wordpress.org/</code> &#8212; don&#8217;t forget the <code>http://</code>'); ?>
@@ -90,21 +90,19 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 </div>
 
 <div id="descriptiondiv" class="stuffbox">
-<h3><?php _e('Description') ?></h3>
+<h3><label for="link_description"><?php _e('Description') ?></label></h3>
 <div class="inside">
 	<input type="text" name="link_description" size="30" tabindex="1" value="<?php echo $link->link_description; ?>" id="link_description" /><br />
     <?php _e('This will be shown when someone hovers over the link in the blogroll, or optionally below the link.'); ?>
 </div>
 </div>
 
-<div id="linkcategorydiv" class="postbox <?php echo postbox_classes('linkcategorydiv', 'link'); ?>">
-<h3><?php _e('Categories') ?></h3>
-<div class="inside">
-
+<?php function link_categories_meta_box($link) { ?>
 <div id="category-adder" class="wp-hidden-children">
 	<h4><a id="category-add-toggle" href="#category-add"><?php _e( '+ Add New Category' ); ?></a></h4>
 	<p id="link-category-add" class="wp-hidden-child">
-		<input type="text" name="newcat" id="newcat" class="form-required form-input-tip" value="<?php _e( 'New category name' ); ?>" />
+		<label class="hidden" for="newcat"><?php _e( '+ Add New Category' ); ?></label>
+		<input type="text" name="newcat" id="newcat" class="form-required form-input-tip" value="<?php _e( 'New category name' ); ?>" aria-required="true" />
 		<input type="button" id="category-add-sumbit" class="add:categorychecklist:linkcategorydiv button" value="<?php _e( 'Add' ); ?>" />
 		<?php wp_nonce_field( 'add-link-category', '_ajax_nonce', false ); ?>
 		<span id="category-ajax-response"></span>
@@ -118,7 +116,7 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 
 <div id="categories-all" class="ui-tabs-panel">
 	<ul id="categorychecklist" class="list:category categorychecklist form-no-clear">
-		<?php wp_link_category_checklist($link_id); ?>
+		<?php wp_link_category_checklist($link->link_id); ?>
 	</ul>
 </div>
 
@@ -127,17 +125,17 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 		<?php wp_popular_terms_checklist('link_category'); ?>
 	</ul>
 </div>
-
-</div>
-</div>
+<?php
+}
+add_meta_box('linkcategorydiv', __('Categories'), 'link_categories_meta_box', 'link', 'normal', 'core');
+?>
 
 <?php do_meta_boxes('link', 'normal', $link); ?>
 
 <h2><?php _e('Advanced Options'); ?></h2>
 
-<div id="linktargetdiv" class="postbox <?php echo postbox_classes('linktargetdiv', 'link'); ?>">
-<h3><?php _e('Target') ?></h3>
-<div class="inside">
+<?php function link_target_meta_box($link) { ?>
+<fieldset><legend class="hidden"><?php _e('Target') ?></legend>
 <label for="link_target_blank" class="selectit">
 <input id="link_target_blank" type="radio" name="link_target" value="_blank" <?php echo(($link->link_target == '_blank') ? 'checked="checked"' : ''); ?> />
 <code>_blank</code></label><br />
@@ -147,16 +145,17 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 <label for="link_target_none" class="selectit">
 <input id="link_target_none" type="radio" name="link_target" value="" <?php echo(($link->link_target == '') ? 'checked="checked"' : ''); ?> />
 <?php _e('none') ?></label>
+</fieldset>
 <p><?php _e('Choose the frame your link targets. Essentially this means if you choose <code>_blank</code> your link will open in a new window.'); ?></p>
-</div>
-</div>
+<?php
+}
+add_meta_box('linktargetdiv', __('Target'), 'link_target_meta_box', 'link', 'advanced', 'core');
 
-<div id="linkxfndiv" class="postbox <?php echo postbox_classes('linkxfndiv', 'link'); ?>">
-<h3><?php _e('Link Relationship (XFN)') ?></h3>
-<div class="inside">
+function link_xfn_meta_box($link) {
+?>
 <table class="editform" style="width: 100%;" cellspacing="2" cellpadding="5">
 	<tr>
-		<th style="width: 20%;" scope="row"><?php _e('rel:') ?></th>
+		<th style="width: 20%;" scope="row"><label for="link_rel"><?php _e('rel:') ?></label></th>
 		<td style="width: 80%;"><input type="text" name="link_rel" id="link_rel" size="50" value="<?php echo $link->link_rel; ?>" /></td>
 	</tr>
 	<tr>
@@ -164,15 +163,15 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 			<table cellpadding="3" cellspacing="5" class="form-table">
 				<tr>
 					<th scope="row"> <?php _e('identity') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('identity') ?> </legend>
 						<label for="me">
 						<input type="checkbox" name="identity" value="me" id="me" <?php xfn_check('identity', 'me'); ?> />
 						<?php _e('another web address of mine') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('friendship') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('friendship') ?> </legend>
 						<label for="contact">
 						<input class="valinp" type="radio" name="friendship" value="contact" id="contact" <?php xfn_check('friendship', 'contact', 'radio'); ?> /> <?php _e('contact') ?></label>
 						<label for="acquaintance">
@@ -181,30 +180,30 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 						<input class="valinp" type="radio" name="friendship" value="friend" id="friend" <?php xfn_check('friendship', 'friend', 'radio'); ?> /> <?php _e('friend') ?></label>
 						<label for="friendship">
 						<input name="friendship" type="radio" class="valinp" value="" id="friendship" <?php xfn_check('friendship', '', 'radio'); ?> /> <?php _e('none') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('physical') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('physical') ?> </legend>
 						<label for="met">
 						<input class="valinp" type="checkbox" name="physical" value="met" id="met" <?php xfn_check('physical', 'met'); ?> />
 						<?php _e('met') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('professional') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('professional') ?> </legend>
 						<label for="co-worker">
 						<input class="valinp" type="checkbox" name="professional" value="co-worker" id="co-worker" <?php xfn_check('professional', 'co-worker'); ?> />
 						<?php _e('co-worker') ?></label>
 						<label for="colleague">
 						<input class="valinp" type="checkbox" name="professional" value="colleague" id="colleague" <?php xfn_check('professional', 'colleague'); ?> />
 						<?php _e('colleague') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('geographical') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('geographical') ?> </legend>
 						<label for="co-resident">
 						<input class="valinp" type="radio" name="geographical" value="co-resident" id="co-resident" <?php xfn_check('geographical', 'co-resident', 'radio'); ?> />
 						<?php _e('co-resident') ?></label>
@@ -214,11 +213,11 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 						<label for="geographical">
 						<input class="valinp" type="radio" name="geographical" value="" id="geographical" <?php xfn_check('geographical', '', 'radio'); ?> />
 						<?php _e('none') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('family') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('family') ?> </legend>
 						<label for="child">
 						<input class="valinp" type="radio" name="family" value="child" id="child" <?php xfn_check('family', 'child', 'radio'); ?>  />
 						<?php _e('child') ?></label>
@@ -237,11 +236,11 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 						<label for="family">
 						<input class="valinp" type="radio" name="family" value="" id="family" <?php xfn_check('family', '', 'radio'); ?> />
 						<?php _e('none') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 				<tr>
 					<th scope="row"> <?php _e('romantic') ?> </th>
-					<td>
+					<td><fieldset><legend class="hidden"> <?php _e('romantic') ?> </legend>
 						<label for="muse">
 						<input class="valinp" type="checkbox" name="romantic" value="muse" id="muse" <?php xfn_check('romantic', 'muse'); ?> />
 						<?php _e('muse') ?></label>
@@ -254,19 +253,19 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 						<label for="romantic">
 						<input class="valinp" type="checkbox" name="romantic" value="sweetheart" id="romantic" <?php xfn_check('romantic', 'sweetheart'); ?> />
 						<?php _e('sweetheart') ?></label>
-					</td>
+					</fieldset></td>
 				</tr>
 			</table>
 		</td>
 	</tr>
 </table>
 <p><?php _e('If the link is to a person, you can specify your relationship with them using the above form. If you would like to learn more about the idea check out <a href="http://gmpg.org/xfn/">XFN</a>.'); ?></p>
-</div>
-</div>
+<?php
+}
+add_meta_box('linkxfndiv', __('Link Relationship (XFN)'), 'link_xfn_meta_box', 'link', 'advanced', 'core');
 
-<div id="linkadvanceddiv" class="postbox <?php echo postbox_classes('linkadvanceddiv', 'link'); ?>">
-<h3><?php _e('Advanced') ?></h3>
-<div class="inside">
+function link_advanced_meta_box($link) {
+?>
 <table class="form-table" style="width: 100%;" cellspacing="2" cellpadding="5">
 	<tr class="form-field">
 		<th valign="top"  scope="row"><label for="link_image"><?php _e('Image Address') ?></label></th>
@@ -294,12 +293,13 @@ if ( ( 'edit' == $action) && current_user_can('manage_links') )
 		</td>
 	</tr>
 </table>
-</div>
-</div>
+<?php
+}
+add_meta_box('linkadvanceddiv', __('Advanced'), 'link_advanced_meta_box', 'link', 'advanced', 'core');
 
-<?php do_meta_boxes('link', 'advanced', $link); ?>
+do_meta_boxes('link', 'advanced', $link);
 
-<?php if ( $link_id ) : ?>
+if ( $link_id ) : ?>
 <input type="hidden" name="action" value="save" />
 <input type="hidden" name="link_id" value="<?php echo (int) $link_id; ?>" />
 <input type="hidden" name="order_by" value="<?php echo attribute_escape($order_by); ?>" />

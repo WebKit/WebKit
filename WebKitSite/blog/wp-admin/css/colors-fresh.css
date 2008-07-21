@@ -2,7 +2,7 @@ a.page-numbers:hover {
 	border-color: #999;
 }
 
-body	{
+body, .form-table .pre {
 	background-color: #fff;
 	color: #333;
 }
@@ -41,7 +41,7 @@ input.disabled, textarea.disabled {
 	color: #fff;
 }
 
-li.widget-list-control-item, div.nav, .tablenav, .submitbox, h3.dashboard-widget-title, h3.dashboard-widget-title span, h3.dashboard-widget-title small, ul.view-switch li.current, .form-table tr, #poststuff h3, .login form {
+li.widget-list-control-item, div.nav, .tablenav, .submitbox, h3.dashboard-widget-title, h3.dashboard-widget-title span, h3.dashboard-widget-title small, ul.view-switch li.current, .form-table tr, #poststuff h3, .login form, h3.info-box-title {
 	background-color: #eaf3fa;
 }
 
@@ -63,7 +63,7 @@ ul#widget-list li.widget-list-item h4.widget-title {
 	color: #000;
 }
 
-ul.widget-control-list .sorthelper {
+.sorthelper {
 	background-color: #ccf3fa;
 }
 
@@ -196,7 +196,7 @@ ul.widget-control-list .sorthelper {
 	border-color: #535353;
 }
 
-.submit input:hover, .button:hover, .button-secondary:hover, #wphead #viewsite a:hover, #adminmenu a:hover, #sidemenu a:hover, #submenu a.current, #submenu a:hover, .submitbox #previewview a:hover, #the-comment-list .comment a:hover, #rightnow a:hover, a:hover, .subsubsub a:hover, .subsubsub a.current:hover, #login form .submit input:hover, div.dashboard-widget-submit input:hover, #edit-slug-buttons a.save:hover, #media-upload a.delete:hover {
+.submit input:hover, .button:hover, .button-secondary:hover, #wphead #viewsite a:hover, #adminmenu a:hover, #sidemenu a:hover, #submenu a.current, #submenu a:hover, .submitbox #previewview a:hover, #the-comment-list .comment a:hover, #rightnow a:hover, a:hover, .subsubsub a:hover, .subsubsub a.current:hover, #login form .submit input:hover, div.dashboard-widget-submit input:hover, #edit-slug-buttons a.save:hover, #media-upload a.delete:hover, #media-upload a.del-link:hover, .ui-tabs-nav a:hover {
 	color: #d54e21;
 }
 
@@ -226,7 +226,8 @@ ul.widget-control-list .sorthelper {
 	border-bottom-color: #999;
 }
 
-.submitbox .submitdelete:hover {
+.submitbox .submitdelete:hover,
+#media-upload a.delete:hover {
 	color: #fff;
 	background-color: #f00;
 	border-bottom-color: #f00;
@@ -278,28 +279,28 @@ ul.widget-control-list .sorthelper {
 	color: #666;
 }
 
-#adminmenu a, #submenu a, #poststuff #edButtonPreview, #poststuff #edButtonHTML, #the-comment-list p.comment-author strong a, a {
+#adminmenu a, #submenu a, #poststuff #edButtonPreview, #poststuff #edButtonHTML, #the-comment-list p.comment-author strong a, #media-upload a.del-link, #media-upload a.delete, .ui-tabs-nav a, a {
 	color: #2583ad;
 }
 
 /* Because we don't want visited on these links */
-#adminmenu a.current, #sidemenu a.current {
+#adminmenu a.current, #sidemenu a.current, body.press-this .ui-tabs-selected a, body.press-this .ui-tabs-selected a:hover {
 	background-color: #fff;
 	border-color: #c6d9e9;
 	border-bottom-color: #fff;
 	color: #d54e21;
 }
 
-#adminmenu li a #awaiting-mod {
+#adminmenu li a #awaiting-mod, #sidemenu li a #update-plugins {
 	background-image: url(../images/comment-stalk-fresh.gif);
 }
 
-#adminmenu li a #awaiting-mod span, #rightnow .reallynow {
+#adminmenu li a #awaiting-mod span, #sidemenu li a #update-plugins span, #rightnow .reallynow {
 	background-color: #d54e21;
 	color: #fff;
 }
 
-#adminmenu li a:hover #awaiting-mod span {
+#adminmenu li a:hover #awaiting-mod span, #sidemenu li a:hover #update-plugins span {
 	background-color: #264761;
 }
 
@@ -383,11 +384,11 @@ input.readonly {
 	background-color: #fff;
 }
 
-#plugins .active {
+.plugins .active {
 	background-color: #e7f7d3;
 }
 
-#plugins .togl {
+.plugins .togl {
 	border-right-color: #ccc;
 }
 
@@ -395,7 +396,7 @@ input.readonly {
 	background-color: #ffffe0;
 }
 
-#plugins tr {
+.plugins tr {
 	background-color: #fff;
 }
 
@@ -532,7 +533,7 @@ div#media-upload-error, .file-error, abbr.required, .widget-control-remove:hover
 }
 
 /* Containers */
-.wp_themeSkin table {
+.wp_themeSkin table, #wp_editbtns {
 	background: #cee1ef;
 }
 
@@ -687,4 +688,19 @@ div#media-upload-error, .file-error, abbr.required, .widget-control-remove:hover
 #tTips p#tTips_inside {
 	background-color: #ddd;
 	color: #333;
+}
+
+/* Diff */
+
+table.diff .diff-deletedline {
+	background-color: #ffdddd;
+}
+table.diff .diff-deletedline del {
+	background-color: #ff9999;
+}
+table.diff .diff-addedline {
+	background-color: #ddffdd;
+}
+table.diff .diff-addedline ins {
+	background-color: #99ff99;
 }

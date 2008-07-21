@@ -1,23 +1,23 @@
 <?php
-////////////////////////////////////////////////////
-// SMTP - PHP SMTP class
-//
-// Version 1.02
-//
-// Define an SMTP class that can be used to connect
-// and communicate with any SMTP server. It implements
-// all the SMTP functions defined in RFC821 except TURN.
-//
-// Author: Chris Ryan
-//
-// License: LGPL, see LICENSE
-////////////////////////////////////////////////////
+/**
+ * SMTP - PHP SMTP class
+ *
+ * Define an SMTP class that can be used to connect and communicate with any
+ * SMTP server. It implements all the SMTP functions defined in RFC821 except
+ * TURN.
+ *
+ * @version 1.02
+ * @author Chris Ryan
+ * @license LGPL
+ * @package PHPMailer
+ */
 
 /**
  * SMTP is rfc 821 compliant and implements all the rfc 821 SMTP
  * commands except TURN which will always return a not implemented
  * error. SMTP also provides some utility methods for sending mail
  * to an SMTP server.
+ *
  * @package PHPMailer
  * @author Chris Ryan
  */
@@ -249,7 +249,7 @@ class SMTP
      * finializing the mail transaction. $msg_data is the message
      * that is to be send with the headers. Each header needs to be
      * on a single line followed by a <CRLF> with the message headers
-     * and the message body being seperated by and additional <CRLF>.
+     * and the message body being separated by and additional <CRLF>.
      *
      * Implements rfc 821: DATA <CRLF>
      *

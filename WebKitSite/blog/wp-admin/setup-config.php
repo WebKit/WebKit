@@ -1,8 +1,9 @@
 <?php
 define('WP_INSTALLING', true);
-//These two defines are required to allow us to use require_wp_db() to load the database class while being wp-content/wp-db.php aware
+//These three defines are required to allow us to use require_wp_db() to load the database class while being wp-content/wp-db.php aware
 define('ABSPATH', dirname(dirname(__FILE__)).'/');
 define('WPINC', 'wp-includes');
+define('WP_CONTENT_DIR', ABSPATH . 'wp-content');
 
 require_once('../wp-includes/compat.php');
 require_once('../wp-includes/functions.php');
@@ -19,6 +20,10 @@ if ( !is_writable('../'))
 // Check if wp-config.php has been created
 if (file_exists('../wp-config.php'))
 	wp_die("<p>The file 'wp-config.php' already exists. If you need to reset any of the configuration items in this file, please delete it first. You may try <a href='install.php'>installing now</a>.</p>");
+
+// Check if wp-config.php exists above the root directory
+if (file_exists('../../wp-config.php'))
+	wp_die("<p>The file 'wp-config.php' already exists one level above your WordPress installation. If you need to reset any of the configuration items in this file, please delete it first. You may try <a href='install.php'>installing now</a>.</p>");
 
 if (isset($_GET['step']))
 	$step = $_GET['step'];
@@ -57,7 +62,7 @@ switch($step) {
 <p><strong>If for any reason this automatic file creation doesn't work, don't worry. All this does is fill in the database information to a configuration file. You may also simply open <code>wp-config-sample.php</code> in a text editor, fill in your information, and save it as <code>wp-config.php</code>. </strong></p>
 <p>In all likelihood, these items were supplied to you by your ISP. If you do not have this information, then you will need to contact them before you can continue. If you&#8217;re all ready&hellip;</p>
 
-<p><a href="setup-config.php?step=1" class="button">Let&#8217;s go!</a></p>
+<p class="step"><a href="setup-config.php?step=1" class="button">Let&#8217;s go!</a></p>
 <?php
 	break;
 
@@ -68,34 +73,32 @@ switch($step) {
 	<p>Below you should enter your database connection details. If you're not sure about these, contact your host. </p>
 	<table class="form-table">
 		<tr>
-			<th scope="row">Database Name</th>
-			<td><input name="dbname" type="text" size="25" value="wordpress" /></td>
+			<th scope="row"><label for="dbname">Database Name</label></th>
+			<td><input name="dbname" id="dbname" type="text" size="25" value="wordpress" /></td>
 			<td>The name of the database you want to run WP in. </td>
 		</tr>
 		<tr>
-			<th scope="row">User Name</th>
-			<td><input name="uname" type="text" size="25" value="username" /></td>
+			<th scope="row"><label for="uname">User Name</label></th>
+			<td><input name="uname" id="uname" type="text" size="25" value="username" /></td>
 			<td>Your MySQL username</td>
 		</tr>
 		<tr>
-			<th scope="row">Password</th>
-			<td><input name="pwd" type="text" size="25" value="password" /></td>
+			<th scope="row"><label for="pwd">Password</label></th>
+			<td><input name="pwd" id="pwd" type="text" size="25" value="password" /></td>
 			<td>...and MySQL password.</td>
 		</tr>
 		<tr>
-			<th scope="row">Database Host</th>
-			<td><input name="dbhost" type="text" size="25" value="localhost" /></td>
+			<th scope="row"><label for="dbhost">Database Host</label></th>
+			<td><input name="dbhost" id="dbhost" type="text" size="25" value="localhost" /></td>
 			<td>99% chance you won't need to change this value.</td>
 		</tr>
 		<tr>
-			<th scope="row">Table Prefix</th>
-			<td><input name="prefix" type="text" id="prefix" value="wp_" size="25" /></td>
+			<th scope="row"><label for="prefix">Table Prefix</label></th>
+			<td><input name="prefix" id="prefix" type="text" id="prefix" value="wp_" size="25" /></td>
 			<td>If you want to run multiple WordPress installations in a single database, change this.</td>
 		</tr>
 	</table>
-	<h2 class="step">
-	<input name="submit" type="submit" value="Submit" class="button" />
-	</h2>
+	<p class="step"><input name="submit" type="submit" value="Submit" class="button" /></p>
 </form>
 <?php
 	break;
@@ -149,7 +152,7 @@ switch($step) {
 ?>
 <p>All right sparky! You've made it through this part of the installation. WordPress can now communicate with your database. If you are ready, time now to&hellip;</p>
 
-<p><a href="install.php" class="button">Run the install</a></p>
+<p class="step"><a href="install.php" class="button">Run the install</a></p>
 <?php
 	break;
 }

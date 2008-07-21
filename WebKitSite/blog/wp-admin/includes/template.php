@@ -4,35 +4,73 @@
 // Big Mess
 //
 
-// Dandy new recursive multiple category stuff.
-function cat_rows( $parent = 0, $level = 0, $categories = 0 ) {
-	if ( !$categories ) {
+// Ugly recursive category stuff.
+function cat_rows( $parent = 0, $level = 0, $categories = 0, $page = 1, $per_page = 20 ) {
+	$count = 0;
+	_cat_rows($categories, $count, $parent, $level, $page, $per_page);
+}
+
+function _cat_rows( $categories, &$count, $parent = 0, $level = 0, $page = 1, $per_page = 20 ) {
+	if ( empty($categories) ) {
 		$args = array('hide_empty' => 0);
 		if ( !empty($_GET['s']) )
 			$args['search'] = $_GET['s'];
 		$categories = get_categories( $args );
 	}
 
+	if ( !$categories )
+		return false;
+
 	$children = _get_term_hierarchy('category');
 
-	if ( $categories ) {
-		ob_start();
-		foreach ( $categories as $category ) {
-			if ( $category->parent == $parent) {
-				echo "\t" . _cat_row( $category, $level );
-				if ( isset($children[$category->term_id]) )
-					cat_rows( $category->term_id, $level +1, $categories );
+	$start = ($page - 1) * $per_page;
+	$end = $start + $per_page;
+	$i = -1;
+	ob_start();
+	foreach ( $categories as $category ) {
+		if ( $count >= $end )
+			break;
+
+		$i++;
+
+		if ( $category->parent != $parent )
+			continue;
+
+		// If the page starts in a subtree, print the parents.
+		if ( $count == $start && $category->parent > 0 ) {
+			$my_parents = array();
+			$my_parent = $category->parent;
+			while ( $my_parent) {
+				$my_parent = get_category($my_parent);
+				$my_parents[] = $my_parent;
+				if ( !$my_parent->parent )
+					break;
+				$my_parent = $my_parent->parent;
+			}
+			$num_parents = count($my_parents);
+			while( $my_parent = array_pop($my_parents) ) {
+				echo "\t" . _cat_row( $my_parent, $level - $num_parents );
+				$num_parents--;
 			}
 		}
-		$output = ob_get_contents();
-		ob_end_clean();
 
-		$output = apply_filters('cat_rows', $output);
+		if ( $count >= $start )
+			echo "\t" . _cat_row( $category, $level );
 
-		echo $output;
-	} else {
-		return false;
+		unset($categories[$i]); // Prune the working set		
+		$count++;
+
+		if ( isset($children[$category->term_id]) )
+			_cat_rows( $categories, $count, $category->term_id, $level + 1, $page, $per_page );
+
 	}
+
+	$output = ob_get_contents();
+	ob_end_clean();
+
+	$output = apply_filters('cat_rows', $output);
+
+	echo $output;
 }
 
 function _cat_row( $category, $level, $name_override = false ) {
@@ -148,19 +186,24 @@ class Walker_Category_Checklist extends Walker {
 	}
 }
 
-function wp_category_checklist( $post_id = 0, $descendants_and_self = 0, $selected_cats = false ) {
+function wp_category_checklist( $post_id = 0, $descendants_and_self = 0, $selected_cats = false, $popular_cats = false ) {
 	$walker = new Walker_Category_Checklist;
 	$descendants_and_self = (int) $descendants_and_self;
 
 	$args = array();
 	
-	if ( $post_id )
+	if ( is_array( $selected_cats ) )
+		$args['selected_cats'] = $selected_cats;
+	elseif ( $post_id )
 		$args['selected_cats'] = wp_get_post_categories($post_id);
 	else
 		$args['selected_cats'] = array();
-	if ( is_array( $selected_cats ) )
-		$args['selected_cats'] = $selected_cats;
-	$args['popular_cats'] = get_terms( 'category', array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+
+	if ( is_array( $popular_cats ) )
+		$args['popular_cats'] = $popular_cats;
+	else
+		$args['popular_cats'] = get_terms( 'category', array( 'fields' => 'ids', 'orderby' => 'count', 'order' => 'DESC', 'number' => 10, 'hierarchical' => false ) );
+
 	if ( $descendants_and_self ) {
 		$categories = get_categories( "child_of=$descendants_and_self&hierarchical=0&hide_empty=0" );
 		$self = get_category( $descendants_and_self );
@@ -169,13 +212,22 @@ function wp_category_checklist( $post_id = 0, $descendants_and_self = 0, $select
 		$categories = get_categories('get=all');
 	}
 
-	$args = array($categories, 0, $args);
-	$output = call_user_func_array(array(&$walker, 'walk'), $args);
+	// Post process $categories rather than adding an exclude to the get_terms() query to keep the query the same across all posts (for any query cache)
+	$checked_categories = array();
+	for ( $i = 0; isset($categories[$i]); $i++ ) {
+		if ( in_array($categories[$i]->term_id, $args['selected_cats']) ) {
+			$checked_categories[] = $categories[$i];
+			unset($categories[$i]);
+		}
+	}
 
-	echo $output;
+	// Put checked cats on top
+	echo call_user_func_array(array(&$walker, 'walk'), array($checked_categories, 0, $args));
+	// Then the rest of them
+	echo call_user_func_array(array(&$walker, 'walk'), array($categories, 0, $args));
 }
 
-function wp_popular_terms_checklist( $taxonomy, $default = 0, $number = 10 ) {
+function wp_popular_terms_checklist( $taxonomy, $default = 0, $number = 10, $echo = true ) {
 	global $post_ID;
 	if ( $post_ID )
 		$checked_categories = wp_get_post_categories($post_ID);
@@ -186,6 +238,8 @@ function wp_popular_terms_checklist( $taxonomy, $default = 0, $number = 10 ) {
 	$popular_ids = array();
 	foreach ( (array) $categories as $category ) {
 		$popular_ids[] = $category->term_id;
+		if ( !$echo ) // hack for AJAX use
+			continue;
 		$id = "popular-category-$category->term_id";
 		?>
 
@@ -286,7 +340,7 @@ function tag_rows( $page = 1, $pagesize = 20, $searchterms = '' ) {
 // define the columns to display, the syntax is 'internal name' => 'display name'
 function wp_manage_posts_columns() {
 	$posts_columns = array();
-	$posts_columns['cb'] = '<input type="checkbox" onclick="checkAll(document.getElementById(\'posts-filter\'));" />';
+	$posts_columns['cb'] = '<input type="checkbox" />';
 	if ( 'draft' === $_GET['post_status'] )
 		$posts_columns['modified'] = __('Modified');
 	elseif ( 'pending' === $_GET['post_status'] )
@@ -308,7 +362,7 @@ function wp_manage_posts_columns() {
 // define the columns to display, the syntax is 'internal name' => 'display name'
 function wp_manage_media_columns() {
 	$posts_columns = array();
-	$posts_columns['cb'] = '<input type="checkbox" onclick="checkAll(document.getElementById(\'posts-filter\'));" />';
+	$posts_columns['cb'] = '<input type="checkbox" />';
 	$posts_columns['icon'] = '';
 	$posts_columns['media'] = _c('Media|media column header');
 	$posts_columns['desc'] = _c('Description|media column header');
@@ -323,7 +377,7 @@ function wp_manage_media_columns() {
 
 function wp_manage_pages_columns() {
 	$posts_columns = array();
-	$posts_columns['cb'] = '<input type="checkbox" onclick="checkAll(document.getElementById(\'posts-filter\'));" />';
+	$posts_columns['cb'] = '<input type="checkbox" />';
 	if ( 'draft' === $_GET['post_status'] )
 		$posts_columns['modified'] = __('Modified');
 	elseif ( 'pending' === $_GET['post_status'] )
@@ -344,7 +398,7 @@ function wp_manage_pages_columns() {
  * display one row if the page doesn't have any children
  * otherwise, display the row and its children in subsequent rows
  */
-function display_page_row( $page, &$children_pages, $level = 0 ) {
+function display_page_row( $page, $level = 0 ) {
 	global $post;
 	static $class;
 
@@ -468,66 +522,126 @@ foreach ($posts_columns as $column_name=>$column_display_name) {
    </tr>
 
 <?php
+}
 
-	if ( ! $children_pages )
-		return true;
+/*
+ * displays pages in hierarchical order with paging support
+ */
+function page_rows($pages, $pagenum = 1, $per_page = 20) {
+	$level = 0;
 
-	for ( $i = 0; $i < count($children_pages); $i++ ) {
+	if ( ! $pages ) {
+		$pages = get_pages( array('sort_column' => 'menu_order') );
 
-		$child = $children_pages[$i];
+		if ( ! $pages )
+			return false;
+	}
 
-		if ( $child->post_parent == $id ) {
-			array_splice($children_pages, $i, 1);
-			display_page_row($child, $children_pages, $level+1);
-			$i = -1; //as numeric keys in $children_pages are not preserved after splice
+	/* 
+	 * arrange pages into two parts: top level pages and children_pages
+	 * children_pages is two dimensional array, eg. 
+	 * children_pages[10][] contains all sub-pages whose parent is 10. 
+	 * It only takes O(N) to arrange this and it takes O(1) for subsequent lookup operations
+	 * If searching, ignore hierarchy and treat everything as top level
+	 */
+	if ( empty($_GET['s']) )  {
+		
+		$top_level_pages = array();
+		$children_pages  = array();
+		
+		foreach ( $pages as $page ) {
+			
+			// catch and repair bad pages
+			if ( $page->post_parent == $page->ID ) {
+				$page->post_parent = 0;
+				$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET post_parent = '0' WHERE ID = %d", $page->ID) );
+				clean_page_cache( $page->ID );
+			}
+	
+			if ( 0 == $page->post_parent )
+				$top_level_pages[] = $page;
+			else
+				$children_pages[ $page->post_parent ][] = $page;
+		}
+
+		$pages = &$top_level_pages;
+	}
+
+	$count = 0;
+	$start = ($pagenum - 1) * $per_page;
+	$end = $start + $per_page;
+	
+	foreach ( $pages as $page ) {
+		if ( $count >= $end )
+			break;
+
+		if ( $count >= $start )
+			echo "\t" . display_page_row( $page, $level );
+
+		$count++;
+
+		if ( isset($children_pages) )
+			_page_rows( $children_pages, $count, $page->ID, $level + 1, $pagenum, $per_page );
+	}
+	
+	// if it is the last pagenum and there are orphaned pages, display them with paging as well
+	if ( isset($children_pages) && $count < $end ){
+		foreach( $children_pages as $orphans ){
+			foreach ( $orphans as $op ) {
+				if ( $count >= $end )
+					break;
+				if ( $count >= $start )
+					echo "\t" . display_page_row( $op, 0 );
+				$count++;
+			}
 		}
 	}
 }
 
 /*
- * displays pages in hierarchical order
+ * Given a top level page ID, display the nested hierarchy of sub-pages
+ * together with paging support
  */
-function page_rows( $pages ) {
-	if ( ! $pages )
-		$pages = get_pages( 'sort_column=menu_order' );
-
-	if ( ! $pages )
-		return false;
-
-	// splice pages into two parts: those without parent and those with parent
-
-	$top_level_pages = array();
-	$children_pages  = array();
-
-	foreach ( $pages as $page ) {
-
-		// catch and repair bad pages
-		if ( $page->post_parent == $page->ID ) {
-			$page->post_parent = 0;
-			$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET post_parent = '0' WHERE ID = %d", $page->ID) );
-			clean_page_cache( $page->ID );
+function _page_rows( &$children_pages, &$count, $parent, $level, $pagenum, $per_page ) {
+	
+	if ( ! isset( $children_pages[$parent] ) )
+		return; 
+		
+	$start = ($pagenum - 1) * $per_page;
+	$end = $start + $per_page;
+	
+	foreach ( $children_pages[$parent] as $page ) {
+		
+		if ( $count >= $end )
+			break;
+			
+		// If the page starts in a subtree, print the parents.
+		if ( $count == $start && $page->post_parent > 0 ) {
+			$my_parents = array();
+			$my_parent = $page->post_parent;
+			while ( $my_parent) {
+				$my_parent = get_post($my_parent);
+				$my_parents[] = $my_parent;
+				if ( !$my_parent->post_parent )
+					break;
+				$my_parent = $my_parent->post_parent;
+			}
+			$num_parents = count($my_parents);
+			while( $my_parent = array_pop($my_parents) ) {
+				echo "\t" . display_page_row( $my_parent, $level - $num_parents );
+				$num_parents--;
+			}
 		}
 
-		if ( 0 == $page->post_parent )
-			$top_level_pages[] = $page;
-		else
-			$children_pages[] = $page;
+		if ( $count >= $start )
+			echo "\t" . display_page_row( $page, $level );
+			
+		$count++;
+
+		_page_rows( $children_pages, $count, $page->ID, $level + 1, $pagenum, $per_page );
 	}
-
-	foreach ( $top_level_pages as $page )
-		display_page_row($page, $children_pages, 0);
-
-	/*
-	 * display the remaining children_pages which are orphans
-	 * having orphan requires parental attention
-	 */
-	 if ( count($children_pages) > 0 ) {
-	 	$empty_array = array();
-	 	foreach ( $children_pages as $orphan_page ) {
-			clean_page_cache( $orphan_page->ID);
-			display_page_row( $orphan_page, $empty_array, 0 );
-		}
-	 }
+	
+	unset( $children_pages[$parent] ); //required in order to keep track of orphans
 }
 
 function user_row( $user_object, $style = '', $role = '' ) {
@@ -675,21 +789,22 @@ function _wp_comment_row( $comment_id, $mode, $comment_status, $checkbox = true 
 
 	$actions = array();
 
-		$actions['approve']   = "<a href='$approve_url' class='dim:the-comment-list:comment-$comment->comment_ID:unapproved:e7e7d3:e7e7d3' title='" . __( 'Approve this comment' ) . "'>" . __( 'Approve' ) . '</a> | ';
-		$actions['unapprove'] = "<a href='$unapprove_url' class='dim:the-comment-list:comment-$comment->comment_ID:unapproved:e7e7d3:e7e7d3' title='" . __( 'Unapprove this comment' ) . "'>" . __( 'Unapprove' ) . '</a> | ';
+	if ( current_user_can('edit_post', $comment->comment_post_ID) ) {
+		$actions['approve']   = "<a href='$approve_url' class='dim:the-comment-list:comment-$comment->comment_ID:unapproved:e7e7d3:e7e7d3:new=approved' title='" . __( 'Approve this comment' ) . "'>" . __( 'Approve' ) . '</a> | ';
+		$actions['unapprove'] = "<a href='$unapprove_url' class='dim:the-comment-list:comment-$comment->comment_ID:unapproved:e7e7d3:e7e7d3:new=unapproved' title='" . __( 'Unapprove this comment' ) . "'>" . __( 'Unapprove' ) . '</a> | ';
 
 		// we're looking at list of only approved or only unapproved comments
 		if ( 'moderated' == $comment_status ) {
-			$actions['approve'] = "<a href='$approve_url' class='delete:the-comment-list:comment-$comment->comment_ID:e7e7d3:action=dim-comment' title='" . __( 'Approve this comment' ) . "'>" . __( 'Approve' ) . '</a> | ';
+			$actions['approve'] = "<a href='$approve_url' class='delete:the-comment-list:comment-$comment->comment_ID:e7e7d3:action=dim-comment&new=approved' title='" . __( 'Approve this comment' ) . "'>" . __( 'Approve' ) . '</a> | ';
 			unset($actions['unapprove']);
 		} elseif ( 'approved' == $comment_status ) {
-			$actions['unapprove'] = "<a href='$unapprove_url' class='delete:the-comment-list:comment-$comment->comment_ID:e7e7d3:action=dim-comment' title='" . __( 'Unapprove this comment' ) . "'>" . __( 'Unapprove' ) . '</a> | ';
+			$actions['unapprove'] = "<a href='$unapprove_url' class='delete:the-comment-list:comment-$comment->comment_ID:e7e7d3:action=dim-comment&new=unapproved' title='" . __( 'Unapprove this comment' ) . "'>" . __( 'Unapprove' ) . '</a> | ';
 			unset($actions['approve']);
 		}
 
-	if ( current_user_can('edit_post', $comment->comment_post_ID) ) {
 		$actions['spam']      = "<a href='$spam_url' class='delete:the-comment-list:comment-$comment->comment_ID::spam=1' title='" . __( 'Mark this comment as spam' ) . "'>" . __( 'Spam' ) . '</a> | ';
 		$actions['delete']    = "<a href='$delete_url' class='delete:the-comment-list:comment-$comment->comment_ID delete'>" . __('Delete') . '</a>';
+		$actions = apply_filters( 'comment_row_actions', $actions, $comment );
 		foreach ( $actions as $action => $link )
 			echo "<span class='$action'>$link</span>";
 	}
@@ -701,7 +816,7 @@ function _wp_comment_row( $comment_id, $mode, $comment_status, $checkbox = true 
 
 function wp_dropdown_cats( $currentcat = 0, $currentparent = 0, $parent = 0, $level = 0, $categories = 0 ) {
 	if (!$categories )
-		$categories = get_categories( 'hide_empty=0' );
+		$categories = get_categories( array('hide_empty' => 0) );
 
 	if ( $categories ) {
 		foreach ( $categories as $category ) {
@@ -774,8 +889,8 @@ function _list_meta_row( $entry, &$count ) {
 	$delete_nonce = wp_create_nonce( 'delete-meta_' . $entry['meta_id'] );
 
 	$r .= "\n\t<tr id='meta-{$entry['meta_id']}' class='$style'>";
-	$r .= "\n\t\t<td valign='top'><input name='meta[{$entry['meta_id']}][key]' tabindex='6' type='text' size='20' value='{$entry['meta_key']}' /></td>";
-	$r .= "\n\t\t<td><textarea name='meta[{$entry['meta_id']}][value]' tabindex='6' rows='2' cols='30'>{$entry['meta_value']}</textarea></td>";
+	$r .= "\n\t\t<td valign='top'><label class='hidden' for='meta[{$entry['meta_id']}][key]'>" . __( 'Key' ) . "</label><input name='meta[{$entry['meta_id']}][key]' id='meta[{$entry['meta_id']}][key]' tabindex='6' type='text' size='20' value='{$entry['meta_key']}' /></td>";
+	$r .= "\n\t\t<td><label class='hidden' for='meta[{$entry['meta_id']}][value]'>" . __( 'Value' ) . "</label><textarea name='meta[{$entry['meta_id']}][value]' id='meta[{$entry['meta_id']}][value]' tabindex='6' rows='2' cols='30'>{$entry['meta_value']}</textarea></td>";
 	$r .= "\n\t\t<td style='text-align: center;'><input name='updatemeta' type='submit' tabindex='6' value='".attribute_escape(__( 'Update' ))."' class='add:the-list:meta-{$entry['meta_id']}::_ajax_nonce=$update_nonce updatemeta' /><br />";
 	$r .= "\n\t\t<input name='deletemeta[{$entry['meta_id']}]' type='submit' ";
 	$r .= "class='delete:the-list:meta-{$entry['meta_id']}::_ajax_nonce=$delete_nonce deletemeta' tabindex='6' value='".attribute_escape(__( 'Delete' ))."' />";
@@ -800,8 +915,8 @@ function meta_form() {
 <p><strong><?php _e( 'Add a new custom field:' ) ?></strong></p>
 <table id="newmeta" cellspacing="3" cellpadding="3">
 	<tr>
-<th colspan="2"><?php _e( 'Key' ) ?></th>
-<th><?php _e( 'Value' ) ?></th>
+<th colspan="2"><label <?php if ( $keys ) : ?> for="metakeyselect" <?php else : ?> for="metakeyinput" <?php endif; ?>><?php _e( 'Key' ) ?></label></th>
+<th><label for="metavalue"><?php _e( 'Value' ) ?></label></th>
 </tr>
 	<tr valign="top">
 		<td style="width: 18%;" class="textright">
@@ -815,7 +930,7 @@ function meta_form() {
 		echo "\n\t<option value='$key'>$key</option>";
 	}
 ?>
-</select> <?php _e( 'or' ); ?>
+</select> <label for="metakeyinput"><?php _e( 'or' ); ?></label>
 <?php endif; ?>
 </td>
 <td><input type="text" id="metakeyinput" name="metakeyinput" tabindex="7" /></td>
@@ -823,7 +938,7 @@ function meta_form() {
 	</tr>
 <tr class="submit"><td colspan="3">
 	<?php wp_nonce_field( 'add-meta', '_ajax_nonce', false ); ?>
-	<input type="submit" id="addmetasub" name="addmeta" class="add:the-list:newmeta::post_id=<?php echo $GLOBALS['post_ID'] ? $GLOBALS['post_ID'] : $GLOBALS['temp_ID']; ?>" tabindex="9" value="<?php _e( 'Add Custom Field' ) ?>" />
+	<input type="submit" id="addmetasub" name="addmeta" class="add:the-list:newmeta" tabindex="9" value="<?php _e( 'Add Custom Field' ) ?>" />
 </td></tr>
 </table>
 <?php
@@ -888,7 +1003,7 @@ function page_template_dropdown( $default = '' ) {
 
 function parent_dropdown( $default = 0, $parent = 0, $level = 0 ) {
 	global $wpdb, $post_ID;
-	$items = $wpdb->get_results( "SELECT ID, post_parent, post_title FROM $wpdb->posts WHERE post_parent = $parent AND post_type = 'page' ORDER BY menu_order" );
+	$items = $wpdb->get_results( $wpdb->prepare("SELECT ID, post_parent, post_title FROM $wpdb->posts WHERE post_parent = %d AND post_type = 'page' ORDER BY menu_order", $parent) );
 
 	if ( $items ) {
 		foreach ( $items as $item ) {
@@ -1041,8 +1156,83 @@ function wp_remember_old_slug() {
  * @param string $callback Function that fills the box with the desired content.  The function should echo its output.
  * @param string $page The type of edit page on which to show the box (post, page, link)
  * @param string $context The context within the page where the boxes should show ('normal', 'advanced')
+ * @param string $priority The priority within the context where the boxes should show ('high', 'low')
  */
-function add_meta_box($id, $title, $callback, $page, $context = 'advanced') {
+function add_meta_box($id, $title, $callback, $page, $context = 'advanced', $priority = 'default') {
+	global $wp_meta_boxes;
+
+	
+	if  ( !isset($wp_meta_boxes) )
+		$wp_meta_boxes = array();
+	if ( !isset($wp_meta_boxes[$page]) )
+		$wp_meta_boxes[$page] = array();
+	if ( !isset($wp_meta_boxes[$page][$context]) )
+		$wp_meta_boxes[$page][$context] = array();
+
+	foreach ( array('high', 'core', 'default', 'low') as $a_priority ) {
+		if ( !isset($wp_meta_boxes[$page][$context][$a_priority][$id]) )
+			continue;
+		// If a core box was previously added or removed by a plugin, don't add.
+		if ( 'core' == $priority ) {
+			// If core box previously deleted, don't add
+			if ( false === $wp_meta_boxes[$page][$context][$a_priority][$id] )
+				return;
+			// If box was added with default priority, give it core priority to maintain sort order
+			if ( 'default' == $a_priority ) {
+				$wp_meta_boxes[$page][$context]['core'][$id] = $wp_meta_boxes[$page][$context]['default'][$id];
+				unset($wp_meta_boxes[$page][$context]['default'][$id]);
+			}
+			return;
+		}
+		// If no priority given and id already present, use existing priority
+		if ( empty($priority) )
+			$priority = $a_priority;
+		// An id can be in only one priority
+		if ( $priority != $a_priority )
+			unset($wp_meta_boxes[$page][$context][$a_priority][$id]);
+	}
+
+	if ( empty($priority) )
+		$priority = low;
+
+	if ( !isset($wp_meta_boxes[$page][$context][$priority]) )
+		$wp_meta_boxes[$page][$context][$priority] = array();
+
+	$wp_meta_boxes[$page][$context][$priority][$id] = array('id' => $id, 'title' => $title, 'callback' => $callback);
+}
+
+function do_meta_boxes($page, $context, $object) {
+	global $wp_meta_boxes;
+
+	do_action('do_meta_boxes', $page, $context, $object);
+
+	if ( !isset($wp_meta_boxes) || !isset($wp_meta_boxes[$page]) || !isset($wp_meta_boxes[$page][$context]) )
+		return;
+
+	foreach ( array('high', 'core', 'default', 'low') as $priority ) {
+		foreach ( (array) $wp_meta_boxes[$page][$context][$priority] as $box ) {
+			if ( false === $box )
+				continue;
+			echo '<div id="' . $box['id'] . '" class="postbox ' . postbox_classes($box['id'], $page) . '">' . "\n";
+			echo "<h3>{$box['title']}</h3>\n";
+			echo '<div class="inside">' . "\n";
+			call_user_func($box['callback'], $object, $box);
+			echo "</div>\n";
+			echo "</div>\n";
+		}
+	}
+}
+
+/**
+ * remove_meta_box() - Remove a meta box from an edit form
+ *
+ * @since 2.6
+ *
+ * @param string $id String for use in the 'id' attribute of tags.
+ * @param string $page The type of edit page on which to show the box (post, page, link)
+ * @param string $context The context within the page where the boxes should show ('normal', 'advanced')
+ */
+function remove_meta_box($id, $page, $context) {
 	global $wp_meta_boxes;
 
 	if  ( !isset($wp_meta_boxes) )
@@ -1052,23 +1242,8 @@ function add_meta_box($id, $title, $callback, $page, $context = 'advanced') {
 	if ( !isset($wp_meta_boxes[$page][$context]) )
 		$wp_meta_boxes[$page][$context] = array();
 
-	$wp_meta_boxes[$page][$context][$id] = array('id' => $id, 'title' => $title, 'callback' => $callback);
-}
-
-function do_meta_boxes($page, $context, $object) {
-	global $wp_meta_boxes;
-
-	if ( !isset($wp_meta_boxes) || !isset($wp_meta_boxes[$page]) || !isset($wp_meta_boxes[$page][$context]) )
-		return;
-
-	foreach ( (array) $wp_meta_boxes[$page][$context] as $box ) {
-		echo '<div id="' . $box['id'] . '" class="postbox ' . postbox_classes($box['id'], $page) . '">' . "\n";
-		echo "<h3>{$box['title']}</h3>\n";
-		echo '<div class="inside">' . "\n";
-		call_user_func($box['callback'], $object, $box);
-		echo "</div>\n";
-		echo "</div>\n";
-	}
+	foreach ( array('high', 'core', 'default', 'low') as $priority )
+		$wp_meta_boxes[$page][$context][$priority][$id] = false;
 }
 
 ?>

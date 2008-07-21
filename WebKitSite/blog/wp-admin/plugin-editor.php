@@ -6,10 +6,7 @@ $parent_file = 'plugins.php';
 
 wp_reset_vars(array('action', 'redirect', 'profile', 'error', 'warning', 'a', 'file'));
 
-add_action( 'admin_head', 'theme_editor_css' );
-function theme_editor_css(){
-	wp_admin_css( 'css/theme-editor' );
-}
+wp_admin_css( 'theme-editor' );
 
 $plugins = get_plugins();
 $plugin_files = array_keys($plugins);
@@ -18,7 +15,7 @@ if (empty($file))
 	$file = $plugin_files[0];
 
 $file = validate_file_to_edit($file, $plugin_files);
-$real_file = get_real_file_to_edit( PLUGINDIR . "/$file");
+$real_file = WP_PLUGIN_DIR . '/' . $file;
 
 switch($action) {
 
@@ -71,7 +68,7 @@ default:
 
 	require_once('admin-header.php');
 
-	update_recently_edited(PLUGINDIR . "/$file");
+	update_recently_edited(WP_PLUGIN_DIR . '/' . $file);
 
 	if ( ! is_file($real_file) )
 		$error = 1;

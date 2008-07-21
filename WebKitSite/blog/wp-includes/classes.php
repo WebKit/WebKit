@@ -26,6 +26,7 @@ class WP {
 		global $wp_rewrite;
 
 		$this->query_vars = array();
+		$taxonomy_query_vars = array();
 
 		if ( is_array($extra_query_vars) )
 			$this->extra_query_vars = & $extra_query_vars;
@@ -90,6 +91,10 @@ class WP {
 			// Look for matches.
 			$request_match = $request;
 			foreach ($rewrite as $match => $query) {
+				// Don't try to match against AtomPub calls
+				if ( $req_uri == 'wp-app.php' )
+					break;
+
 				// If the requesting file is the anchor of the match, prepend it
 				// to the path info.
 				if ((! empty($req_uri)) && (strpos($match, $req_uri) === 0) && ($req_uri != $request)) {
@@ -140,6 +145,10 @@ class WP {
 
 		$this->public_query_vars = apply_filters('query_vars', $this->public_query_vars);
 
+		foreach ( $GLOBALS['wp_taxonomies'] as $taxonomy => $t )
+			if ( isset($t->query_var) )
+				$taxonomy_query_vars[$t->query_var] = $taxonomy;
+
 		for ($i=0; $i<count($this->public_query_vars); $i += 1) {
 			$wpvar = $this->public_query_vars[$i];
 			if (isset($this->extra_query_vars[$wpvar]))
@@ -153,8 +162,13 @@ class WP {
 			elseif (!empty($perma_query_vars[$wpvar]))
 				$this->query_vars[$wpvar] = $perma_query_vars[$wpvar];
 
-			if ( !empty( $this->query_vars[$wpvar] ) )
+			if ( !empty( $this->query_vars[$wpvar] ) ) {
 				$this->query_vars[$wpvar] = (string) $this->query_vars[$wpvar];
+				if ( in_array( $wpvar, $taxonomy_query_vars ) ) {
+					$this->query_vars['taxonomy'] = $taxonomy_query_vars[$wpvar];
+					$this->query_vars['term'] = $this->query_vars[$wpvar];
+				}
+			}
 		}
 
 		foreach ($this->private_query_vars as $var) {
@@ -419,7 +433,8 @@ class Walker {
 		if ( $max_depth == 0 ||
 		     ($max_depth != 0 &&  $max_depth > $depth+1 )) { //whether to descend
 
-			for ( $i = 0; $i < sizeof( $children_elements ); $i++ ) {
+			$num_elements = sizeof( $children_elements );
+			for ( $i = 0; $i < $num_elements; $i++ ) {
 
 				$child = $children_elements[$i];
 				if ( $child->$parent_field == $element->$id_field ) {
@@ -432,6 +447,7 @@ class Walker {
 					}
 
 					array_splice( $children_elements, $i, 1 );
+					$num_elements--;
 					$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $output );
 					$i = -1;
 				}
@@ -498,12 +514,14 @@ class Walker {
 		if ( !$top_level_elements ) {
 
 			$root = $children_elements[0];
-			for ( $i = 0; $i < sizeof( $children_elements ); $i++ ) {
+			$num_elements = sizeof($children_elements);
+			for ( $i = 0; $i < $num_elements; $i++ ) {
 
 				$child = $children_elements[$i];
 				if ($root->$parent_field == $child->$parent_field ) {
 					$top_level_elements[] = $child;
 					array_splice( $children_elements, $i, 1 );
+					$num_elements--;
 					$i--;
 				}
 			}

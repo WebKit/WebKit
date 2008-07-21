@@ -12,8 +12,7 @@ if ( !empty( $_REQUEST['delete_comments'] ) ) {
 	$comments_deleted = $comments_approved = $comments_unapproved = $comments_spammed = 0;
 	foreach ($_REQUEST['delete_comments'] as $comment) : // Check the permissions on each
 		$comment = (int) $comment;
-		$post_id = (int) $wpdb->get_var("SELECT comment_post_ID FROM $wpdb->comments WHERE comment_ID = $comment");
-		// $authordata = get_userdata( $wpdb->get_var("SELECT post_author FROM $wpdb->posts WHERE ID = $post_id") );
+		$post_id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT comment_post_ID FROM $wpdb->comments WHERE comment_ID = %d", $comment) );
 		if ( !current_user_can('edit_post', $post_id) )
 			continue;
 		if ( !empty( $_REQUEST['spamit'] ) ) {
@@ -97,7 +96,7 @@ if ( isset( $_GET['approved'] ) || isset( $_GET['deleted'] ) || isset( $_GET['sp
 <?php
 $status_links = array();
 $num_comments = wp_count_comments();
-$stati = array('moderated' => sprintf(__ngettext('Awaiting Moderation (%s)', 'Awaiting Moderation (%s)', $num_comments->moderated), "<span class='comment-count'>$num_comments->moderated</span>"), 'approved' => _c('Approved|plural'));
+$stati = array('moderated' => sprintf(__ngettext('Awaiting Moderation (%s)', 'Awaiting Moderation (%s)', number_format_i18n($num_comments->moderated) ), "<span class='comment-count'>" . number_format_i18n($num_comments->moderated) . "</span>"), 'approved' => _c('Approved|plural'));
 $class = ( '' === $comment_status ) ? ' class="current"' : '';
 $status_links[] = "<li><a href=\"edit-comments.php\"$class>".__('Show All Comments')."</a>";
 foreach ( $stati as $status => $label ) {
@@ -117,6 +116,7 @@ unset($status_links);
 </ul>
 
 <p id="post-search">
+	<label class="hidden" for="post-search-input"><?php _e( 'Search Comments' ); ?>:</label>
 	<input type="text" id="post-search-input" name="s" value="<?php echo $search; ?>" />
 	<input type="submit" value="<?php _e( 'Search Comments' ); ?>" class="button" />
 </p>
@@ -132,22 +132,24 @@ unset($status_links);
 
 <?php
 
+$comments_per_page = apply_filters('comments_per_page', 20, $comment_status);
+
 if ( isset( $_GET['apage'] ) )
 	$page = abs( (int) $_GET['apage'] );
 else
 	$page = 1;
 
-$start = $offset = ( $page - 1 ) * 20;
+$start = $offset = ( $page - 1 ) * $comments_per_page;
 
-list($_comments, $total) = _wp_get_comment_list( $comment_status, $search_dirty, $start, 25 ); // Grab a few extra
+list($_comments, $total) = _wp_get_comment_list( $comment_status, $search_dirty, $start, $comments_per_page + 5 ); // Grab a few extra
 
-$comments = array_slice($_comments, 0, 20);
-$extra_comments = array_slice($_comments, 20);
+$comments = array_slice($_comments, 0, $comments_per_page);
+$extra_comments = array_slice($_comments, $comments_per_page);
 
 $page_links = paginate_links( array(
 	'base' => add_query_arg( 'apage', '%#%' ),
 	'format' => '',
-	'total' => ceil($total / 20),
+	'total' => ceil($total / $comments_per_page),
 	'current' => $page
 ));
 
@@ -186,7 +188,7 @@ if ($comments) {
 <table class="widefat">
 <thead>
   <tr>
-    <th scope="col" class="check-column"><input type="checkbox" onclick="checkAll(document.getElementById('comments-form'));" /></th>
+    <th scope="col" class="check-column"><input type="checkbox" /></th>
     <th scope="col"><?php _e('Comment') ?></th>
     <th scope="col"><?php _e('Date') ?></th>
     <th scope="col" class="action-links"><?php _e('Actions') ?></th>

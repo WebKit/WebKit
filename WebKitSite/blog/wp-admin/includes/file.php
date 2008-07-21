@@ -34,19 +34,47 @@ function get_home_path() {
 
 function get_real_file_to_edit( $file ) {
 	if ('index.php' == $file || '.htaccess' == $file ) {
-		$real_file = get_home_path().$file;
+		$real_file = get_home_path() . $file;
 	} else {
-		$real_file = ABSPATH.$file;
+		$real_file = WP_CONTENT_DIR . $file;
 	}
 
 	return $real_file;
+}
+//$folder = Full path to folder
+//$levels = Levels of folders to follow, Default: 100 (PHP Loop limit)
+function list_files( $folder = '', $levels = 100 ) {
+	if( empty($folder) )
+		return false;
+
+	if( ! $levels )
+		return false;
+
+	$files = array();
+	if ( $dir = @opendir( $folder ) ) {
+		while (($file = readdir( $dir ) ) !== false ) {
+			if ( in_array($file, array('.', '..') ) )
+				continue;
+			if ( is_dir( $folder . '/' . $file ) ) {
+				$files2 = list_files( $folder . '/' . $file, $levels - 1);
+				if( $files2 )
+					$files = array_merge($files, $files2 );
+				else
+					$files[] = $folder . '/' . $file . '/';
+			} else {
+				$files[] = $folder . '/' . $file;
+			}
+		}
+	}
+	@closedir( $dir );
+	return $files;
 }
 
 function get_temp_dir() {
 	if ( defined('WP_TEMP_DIR') )
 		return trailingslashit(WP_TEMP_DIR);
 
-	$temp = ABSPATH . 'wp-content/';
+	$temp = WP_CONTENT_DIR . '/';
 	if ( is_dir($temp) && is_writable($temp) )
 		return $temp;
 
@@ -56,20 +84,16 @@ function get_temp_dir() {
 	return '/tmp/';
 }
 
-function validate_file( $file, $allowed_files = '' ) {
-	if ( false !== strpos( $file, '..' ))
-		return 1;
+function wp_tempnam($filename = '', $dir = ''){
+	if ( empty($dir) )
+		$dir = get_temp_dir();
+	$filename = basename($filename);
+	if ( empty($filename) )
+		$filename = time();
 
-	if ( false !== strpos( $file, './' ))
-		return 1;
-
-	if (':' == substr( $file, 1, 1 ))
-		return 2;
-
-	if (!empty ( $allowed_files ) && (!in_array( $file, $allowed_files ) ) )
-		return 3;
-
-	return 0;
+	$filename = $dir . wp_unique_filename($dir, $filename);
+	touch($filename);
+	return $filename;
 }
 
 function validate_file_to_edit( $file, $allowed_files = '' ) {
@@ -188,6 +212,102 @@ function wp_handle_upload( &$file, $overrides = false ) {
 
 	return $return;
 }
+// Pass this function an array similar to that of a $_FILES POST array.
+function wp_handle_sideload( &$file, $overrides = false ) {
+	// The default error handler.
+	if (! function_exists( 'wp_handle_upload_error' ) ) {
+		function wp_handle_upload_error( &$file, $message ) {
+			return array( 'error'=>$message );
+		}
+	}
+
+	// You may define your own function and pass the name in $overrides['upload_error_handler']
+	$upload_error_handler = 'wp_handle_upload_error';
+
+	// $_POST['action'] must be set and its value must equal $overrides['action'] or this:
+	$action = 'wp_handle_sideload';
+
+	// Courtesy of php.net, the strings that describe the error indicated in $_FILES[{form field}]['error'].
+	$upload_error_strings = array( false,
+		__( "The file exceeds the <code>upload_max_filesize</code> directive in <code>php.ini</code>." ),
+		__( "The file exceeds the <em>MAX_FILE_SIZE</em> directive that was specified in the HTML form." ),
+		__( "The file was only partially uploaded." ),
+		__( "No file was sent." ),
+		__( "Missing a temporary folder." ),
+		__( "Failed to write file to disk." ));
+
+	// All tests are on by default. Most can be turned off by $override[{test_name}] = false;
+	$test_form = true;
+	$test_size = true;
+
+	// If you override this, you must provide $ext and $type!!!!
+	$test_type = true;
+	$mimes = false;
+
+	// Install user overrides. Did we mention that this voids your warranty?
+	if ( is_array( $overrides ) )
+		extract( $overrides, EXTR_OVERWRITE );
+
+	// A correct form post will pass this test.
+	if ( $test_form && (!isset( $_POST['action'] ) || ($_POST['action'] != $action ) ) )
+		return $upload_error_handler( $file, __( 'Invalid form submission.' ));
+
+	// A successful upload will pass this test. It makes no sense to override this one.
+	if ( $file['error'] > 0 )
+		return $upload_error_handler( $file, $upload_error_strings[$file['error']] );
+
+	// A non-empty file will pass this test.
+	if ( $test_size && !(filesize($file['tmp_name']) > 0 ) )
+		return $upload_error_handler( $file, __( 'File is empty. Please upload something more substantial. This error could also be caused by uploads being disabled in your php.ini.' ));
+
+	// A properly uploaded file will pass this test. There should be no reason to override this one.
+	if (! @ is_file( $file['tmp_name'] ) )
+		return $upload_error_handler( $file, __( 'Specified file does not exist.' ));
+
+	// A correct MIME type will pass this test. Override $mimes or use the upload_mimes filter.
+	if ( $test_type ) {
+		$wp_filetype = wp_check_filetype( $file['name'], $mimes );
+
+		extract( $wp_filetype );
+
+		if ( ( !$type || !$ext ) && !current_user_can( 'unfiltered_upload' ) )
+			return $upload_error_handler( $file, __( 'File type does not meet security guidelines. Try another.' ));
+
+		if ( !$ext )
+			$ext = ltrim(strrchr($file['name'], '.'), '.');
+
+		if ( !$type )
+			$type = $file['type'];
+	}
+
+	// A writable uploads dir will pass this test. Again, there's no point overriding this one.
+	if ( ! ( ( $uploads = wp_upload_dir() ) && false === $uploads['error'] ) )
+		return $upload_error_handler( $file, $uploads['error'] );
+
+	$filename = wp_unique_filename( $uploads['path'], $file['name'], $unique_filename_callback );
+	
+	// Strip the query strings.
+	$filename = str_replace('?','-', $filename);
+	$filename = str_replace('&','-', $filename);
+	
+	// Move the file to the uploads dir
+	$new_file = $uploads['path'] . "/$filename";
+	if ( false === @ rename( $file['tmp_name'], $new_file ) ) {
+		return $upload_error_handler( $file, sprintf( __('The uploaded file could not be moved to %s.' ), $uploads['path'] ) );
+	}
+
+	// Set correct file permissions
+	$stat = stat( dirname( $new_file ));
+	$perms = $stat['mode'] & 0000666;
+	@ chmod( $new_file, $perms );
+
+	// Compute the URL
+	$url = $uploads['url'] . "/$filename";
+
+	$return = apply_filters( 'wp_handle_upload', array( 'file' => $new_file, 'url' => $url, 'type' => $type ) );
+
+	return $return;
+}
 
 /**
 * Downloads a url to a local file using the Snoopy HTTP Class
@@ -200,7 +320,7 @@ function download_url( $url ) {
 	if( ! $url )
 		return new WP_Error('http_no_url', __('Invalid URL Provided'));
 
-	$tmpfname = tempnam(get_temp_dir(), 'wpupdate');
+	$tmpfname = wp_tempnam($url);
 	if( ! $tmpfname )
 		return new WP_Error('http_no_file', __('Could not create Temporary file'));
 
@@ -260,13 +380,13 @@ function unzip_file($file, $to) {
 			$tmppath .= $path[$j] . '/';
 			if ( ! $fs->is_dir($to . $tmppath) )
 				if ( !$fs->mkdir($to . $tmppath, 0755) )
-					return new WP_Error('mkdir_failed', __('Could not create directory'));
+					return new WP_Error('mkdir_failed', __('Could not create directory'), $to . $tmppath);
 		}
 
 		// We've made sure the folders are there, so let's extract the file now:
 		if ( ! $file['folder'] )
 			if ( !$fs->put_contents( $to . $file['filename'], $file['content']) )
-				return new WP_Error('copy_failed', __('Could not copy file'));
+				return new WP_Error('copy_failed', __('Could not copy file'), $to . $file['filename']);
 			$fs->chmod($to . $file['filename'], 0644);
 	}
 
@@ -284,27 +404,33 @@ function copy_dir($from, $to) {
 	foreach ( (array) $dirlist as $filename => $fileinfo ) {
 		if ( 'f' == $fileinfo['type'] ) {
 			if ( ! $wp_filesystem->copy($from . $filename, $to . $filename, true) )
-				return false;
+				return new WP_Error('copy_failed', __('Could not copy file'), $to . $filename);
 			$wp_filesystem->chmod($to . $filename, 0644);
 		} elseif ( 'd' == $fileinfo['type'] ) {
 			if ( !$wp_filesystem->mkdir($to . $filename, 0755) )
-				return false;
-			if ( !copy_dir($from . $filename, $to . $filename) )
-				return false;
+				return new WP_Error('mkdir_failed', __('Could not create directory'), $to . $filename);
+			$result = copy_dir($from . $filename, $to . $filename);
+			if ( is_wp_error($result) )
+				return $result;
 		}
 	}
-
-	return true;
 }
 
-function WP_Filesystem( $args = false, $preference = false ) {
+function WP_Filesystem( $args = false ) {
 	global $wp_filesystem;
 
-	$method = get_filesystem_method($preference);
+	require_once(ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php');
+
+	$method = get_filesystem_method();
+
 	if ( ! $method )
 		return false;
 
-	require_once('class-wp-filesystem-'.$method.'.php');
+	$abstraction_file = apply_filters('filesystem_method_file', ABSPATH . 'wp-admin/includes/class-wp-filesystem-'.$method.'.php', $method);
+	if( ! file_exists($abstraction_file) )
+		return;
+
+	require_once($abstraction_file);
 	$method = "WP_Filesystem_$method";
 
 	$wp_filesystem = new $method($args);
@@ -319,18 +445,17 @@ function WP_Filesystem( $args = false, $preference = false ) {
 }
 
 function get_filesystem_method() {
-	$tempFile = tempnam(get_temp_dir(), 'WPU');
-
-	if ( getmyuid() == fileowner($tempFile) ) {
-		unlink($tempFile);
-		return 'direct';
-	} else {
-		unlink($tempFile);
+	$method = false;
+	if( function_exists('getmyuid') && function_exists('fileowner') ){
+		$temp_file = wp_tempnam();
+		if ( getmyuid() == fileowner($temp_file) )
+			$method = 'direct';
+		unlink($temp_file);
 	}
 
-	if ( extension_loaded('ftp') ) return 'ftpext';
-	if ( extension_loaded('sockets') || function_exists('fsockopen') ) return 'ftpsockets'; //Sockets: Socket extension; PHP Mode: FSockopen / fwrite / fread
-	return false;
+	if ( ! $method && extension_loaded('ftp') ) $method = 'ftpext';
+	if ( ! $method && ( extension_loaded('sockets') || function_exists('fsockopen') ) ) $method = 'ftpsockets'; //Sockets: Socket extension; PHP Mode: FSockopen / fwrite / fread
+	return apply_filters('filesystem_method', $method);
 }
 
 ?>

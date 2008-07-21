@@ -1,9 +1,7 @@
 <?php
 define('WP_INSTALLING', true);
-if (!file_exists('../wp-config.php'))
-	die("There doesn't seem to be a <code>wp-config.php</code> file. I need this before we can get started. Need more help? <a href='http://codex.wordpress.org/Installing_WordPress#Step_3:_Set_up_wp-config.php'>We got it</a>. You can create a <code>wp-config.php</code> file through a web interface, but this doesn't work for all server setups. The safest way is to manually create the file.</p><p><a href='setup-config.php' class='button'>Create a Configuration File</a>");
 
-require('../wp-config.php');
+require('../wp-load.php');
 timer_start();
 require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
@@ -18,7 +16,7 @@ else
 <head>
 	<meta http-equiv="Content-Type" content="<?php bloginfo('html_type'); ?>; charset=<?php echo get_option('blog_charset'); ?>" />
 	<title><?php _e('WordPress &rsaquo; Upgrade'); ?></title>
-	<?php wp_admin_css( 'css/install' ); ?>
+	<?php wp_admin_css( 'install', true ); ?>
 </head>
 <body>
 <h1 id="logo"><img alt="WordPress" src="images/wordpress-logo.png" /></h1>
@@ -27,7 +25,7 @@ else
 
 <h2><?php _e('No Upgrade Required'); ?></h2>
 <p><?php _e('Your WordPress database is already up-to-date!'); ?></p>
-<h2 class="step"><a href="<?php echo get_option('home'); ?>/"><?php _e('Continue'); ?></a></h2>
+<p class="step"><a class="button" href="<?php echo get_option('home'); ?>/"><?php _e('Continue'); ?></a></p>
 
 <?php else :
 switch($step) :
@@ -39,7 +37,7 @@ switch($step) :
 <h2><?php _e('Database Upgrade Required'); ?></h2>
 <p><?php _e('Your WordPress database is out-of-date, and must be upgraded before you can continue.'); ?></p>
 <p><?php _e('The upgrade process may take a while, so please be patient.'); ?></p>
-<h2 class="step"><a href="upgrade.php?step=1&amp;backto=<?php echo $goback; ?>"><?php _e('Upgrade WordPress'); ?></a></h2>
+<p class="step"><a class="button" href="upgrade.php?step=1&amp;backto=<?php echo $goback; ?>"><?php _e('Upgrade WordPress'); ?></a></p>
 <?php
 		break;
 	case 1:
@@ -54,7 +52,7 @@ switch($step) :
 ?>
 <h2><?php _e('Upgrade Complete'); ?></h2>
 	<p><?php _e('Your WordPress database has been successfully upgraded!'); ?></p>
-	<h2 class="step"><a href="<?php echo $backto; ?>"><?php _e('Continue'); ?></a></h2>
+	<p class="step"><a class="button" href="<?php echo $backto; ?>"><?php _e('Continue'); ?></a></p>
 
 <!--
 <pre>

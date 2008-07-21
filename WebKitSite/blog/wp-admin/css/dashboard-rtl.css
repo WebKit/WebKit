@@ -13,11 +13,19 @@
 	margin: 1px 0 0 6px;
 }
 
+div.dashboard-widget-holder {
+	float: right;
+}
+
 h3.dashboard-widget-title span {
 	text-align: right;
 	float: right;
 }
 
+div.dashboard-widget-submit input {
+	font-family: sans-serif !important;
+}
+	
 #dashboard-widgets .widget_rss ul li a {
 	float:right;
 	font-weight:bold;
@@ -56,7 +64,16 @@ div.dashboard-widget {
 	float:right;
 	margin:0 0 0.2em 0.5em;
 }
+#dashboard_secondary div.dashboard-widget-content ul li {
+	float: right;
+}
+#dashboard_secondary div.dashboard-widget-content ul li .post {
+	font-family: sans-serif !important;
+}
 #dashboard_secondary div.dashboard-widget-content ul li a {
 	border-right:0 none;
 	border-left:1px solid #DADADA;
+}
+#dashboard_secondary div.dashboard-widget-content ul li a cite {
+	font-family: sans-serif;
 }

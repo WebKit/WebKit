@@ -6,21 +6,37 @@
  */
 
 /**
- * check_comment() - Checks whether a comment passes internal checks to be allowed to add
+ * Checks whether a comment passes internal checks to be allowed to add.
  *
- * {@internal Missing Long Description}}
+ * If comment moderation is set in the administration, then all comments,
+ * regardless of their type and whitelist will be set to false.
+ *
+ * If the number of links exceeds the amount in the administration, then the
+ * check fails.
+ *
+ * If any of the parameter contents match the blacklist of words, then the check
+ * fails.
+ *
+ * If the comment is a trackback and part of the blogroll, then the trackback is
+ * automatically whitelisted. If the comment author was approved before, then
+ * the comment is automatically whitelisted.
+ *
+ * If none of the checks fail, then the failback is to set the check to pass
+ * (return true).
  *
  * @since 1.2
  * @uses $wpdb
  *
- * @param string $author {@internal Missing Description }}
- * @param string $email {@internal Missing Description }}
- * @param string $url {@internal Missing Description }}
- * @param string $comment {@internal Missing Description }}
- * @param string $user_ip {@internal Missing Description }}
- * @param string $user_agent {@internal Missing Description }}
- * @param string $comment_type {@internal Missing Description }}
- * @return bool {@internal Missing Description }}
+ * @param string $author Comment Author's name
+ * @param string $email Comment Author's email
+ * @param string $url Comment Author's URL
+ * @param string $comment Comment contents
+ * @param string $user_ip Comment Author's IP address
+ * @param string $user_agent Comment Author's User Agent
+ * @param string $comment_type Comment type, either user submitted comment,
+ *		trackback, or pingback
+ * @return bool Whether the checks passed (true) and the comments should be
+ *		displayed or set to moderated
  */
 function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $comment_type) {
 	global $wpdb;
@@ -83,7 +99,7 @@ function check_comment($author, $email, $url, $comment, $user_ip, $user_agent, $
 }
 
 /**
- * get_approved_comments() - Returns the approved comments for post $post_id
+ * Retrieve the approved comments for post $post_id.
  *
  * @since 2.0
  * @uses $wpdb
@@ -97,15 +113,19 @@ function get_approved_comments($post_id) {
 }
 
 /**
- * get_comment() - Retrieves comment data given a comment ID or comment object.
+ * Retrieves comment data given a comment ID or comment object.
  *
- * {@internal Missing Long Description}}
+ * If an object is passed then the comment data will be cached and then returned
+ * after being passed through a filter.
+ *
+ * If the comment is empty, then the global comment variable will be used, if it
+ * is set.
  *
  * @since 2.0
  * @uses $wpdb
  *
- * @param object|string|int $comment {@internal Missing Description}}
- * @param string $output OBJECT or ARRAY_A or ARRAY_N constants
+ * @param object|string|int $comment Comment to retrieve.
+ * @param string $output Optional. OBJECT or ARRAY_A or ARRAY_N constants
  * @return object|array|null Depends on $output value.
  */
 function &get_comment(&$comment, $output = OBJECT) {
@@ -142,12 +162,12 @@ function &get_comment(&$comment, $output = OBJECT) {
 }
 
 /**
- * get_commentdata() - Returns an array of comment data about comment $comment_ID
+ * Retrieve an array of comment data about comment $comment_ID.
  *
- * get_comment() technically does the same thing as this function. This function also
- * appears to reference variables and then not use them or not update them when needed.
- * It is advised to switch to get_comment(), since this function might be deprecated in
- * favor of using get_comment().
+ * get_comment() technically does the same thing as this function. This function
+ * also appears to reference variables and then not use them or not update them
+ * when needed. It is advised to switch to get_comment(), since this function
+ * might be deprecated in favor of using get_comment().
  *
  * @deprecated Use get_comment()
  * @see get_comment()
@@ -162,7 +182,7 @@ function &get_comment(&$comment, $output = OBJECT) {
  * @param bool $include_unapproved Whether to include unapproved comments or not
  * @return array The comment data
  */
-function get_commentdata( $comment_ID, $no_cache = 0, $include_unapproved = false ) { // less flexible, but saves DB queries
+function get_commentdata( $comment_ID, $no_cache = 0, $include_unapproved = false ) {
 	global $postc, $wpdb;
 	if ( $no_cache ) {
 		$query = $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_ID = %d", $comment_ID);
@@ -186,7 +206,7 @@ function get_commentdata( $comment_ID, $no_cache = 0, $include_unapproved = fals
 }
 
 /**
- * get_lastcommentmodified() - The date the last comment was modified
+ * The date the last comment was modified.
  *
  * {@internal Missing Long Description}}
  *
@@ -194,7 +214,8 @@ function get_commentdata( $comment_ID, $no_cache = 0, $include_unapproved = fals
  * @uses $wpdb
  * @global array $cache_lastcommentmodified
  *
- * @param string $timezone Which timezone to use in reference to 'gmt', 'blog', or 'server' locations
+ * @param string $timezone Which timezone to use in reference to 'gmt', 'blog',
+ *		or 'server' locations
  * @return string Last comment modified date
  */
 function get_lastcommentmodified($timezone = 'server') {
@@ -223,15 +244,14 @@ function get_lastcommentmodified($timezone = 'server') {
 }
 
 /**
- * get_comment_count() - The amount of comments in a post or total comments
+ * The amount of comments in a post or total comments.
  *
  * {@internal Missing Long Description}}
  *
  * @since 2.0.0
  * @uses $wpdb
  *
- * @param int $post_id Optional. Comment amount in post if > 0, else total com
-ments blog wide
+ * @param int $post_id Optional. Comment amount in post if > 0, else total comments blog wide
  * @return array The amount of spam, approved, awaiting moderation, and total
  */
 function get_comment_count( $post_id = 0 ) {
@@ -241,7 +261,7 @@ function get_comment_count( $post_id = 0 ) {
 
 	$where = '';
 	if ( $post_id > 0 ) {
-		$where = "WHERE comment_post_ID = {$post_id}";
+		$where = $wpdb->prepare("WHERE comment_post_ID = %d", $post_id);
 	}
 
 	$totals = (array) $wpdb->get_results("
@@ -281,12 +301,12 @@ function get_comment_count( $post_id = 0 ) {
 }
 
 /**
- * sanitize_comment_cookies() - {@internal Missing Short Description}}
+ * Sanitizes the cookies sent to the user already.
  *
- * {@internal Missing Long Description}}
+ * Will only do anything if the cookies have already been created for the user.
+ * Mostly used after cookies had been sent to use elsewhere.
  *
  * @since 2.0.4
- *
  */
 function sanitize_comment_cookies() {
 	if ( isset($_COOKIE['comment_author_'.COOKIEHASH]) ) {
@@ -311,7 +331,7 @@ function sanitize_comment_cookies() {
 }
 
 /**
- * wp_allow_comment() - Validates whether this comment is allowed to be made or not
+ * Validates whether this comment is allowed to be made or not.
  *
  * {@internal Missing Long Description}}
  *
@@ -344,7 +364,7 @@ function wp_allow_comment($commentdata) {
 		$post_author = $wpdb->get_var($wpdb->prepare("SELECT post_author FROM $wpdb->posts WHERE ID = %d LIMIT 1", $comment_post_ID));
 	}
 
-	if ( $userdata && ( $user_id == $post_author || $user->has_cap('level_9') ) ) {
+	if ( $userdata && ( $user_id == $post_author || $user->has_cap('moderate_comments') ) ) {
 		// The author and the admins get respect.
 		$approved = 1;
 	 } else {
@@ -362,7 +382,7 @@ function wp_allow_comment($commentdata) {
 }
 
 /**
- * check_comment_flood_db() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -379,7 +399,7 @@ function check_comment_flood_db( $ip, $email, $date ) {
 	global $wpdb;
 	if ( current_user_can( 'manage_options' ) )
 		return; // don't throttle admins
-	if ( $lasttime = $wpdb->get_var("SELECT comment_date_gmt FROM $wpdb->comments WHERE comment_author_IP = '$ip' OR comment_author_email = '$email' ORDER BY comment_date DESC LIMIT 1") ) {
+	if ( $lasttime = $wpdb->get_var( $wpdb->prepare("SELECT comment_date_gmt FROM $wpdb->comments WHERE comment_author_IP = %s OR comment_author_email = %s ORDER BY comment_date DESC LIMIT 1", $ip, $email) ) ) {
 		$time_lastcomment = mysql2date('U', $lasttime);
 		$time_newcomment  = mysql2date('U', $date);
 		$flood_die = apply_filters('comment_flood_filter', false, $time_lastcomment, $time_newcomment);
@@ -391,7 +411,7 @@ function check_comment_flood_db( $ip, $email, $date ) {
 }
 
 /**
- * wp_blacklist_check() - Does comment contain blacklisted characters or words
+ * Does comment contain blacklisted characters or words.
  *
  * {@internal Missing Long Description}}
  *
@@ -448,38 +468,55 @@ function wp_blacklist_check($author, $email, $url, $comment, $user_ip, $user_age
 	return false;
 }
 
-function wp_count_comments() {
+/**
+ * {@internal Missing Short Description}}
+ *
+ * {@internal Missing Long Description}}
+ *
+ * @param unknown_type $post_id
+ * @return unknown
+ */
+function wp_count_comments( $post_id = 0 ) {
 	global $wpdb;
 
-	$count = wp_cache_get('comments', 'counts');
+	$post_id = (int) $post_id;
+
+	$count = wp_cache_get("comments-{$post_id}", 'counts');
 
 	if ( false !== $count )
 		return $count;
 
-	$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} GROUP BY comment_approved", ARRAY_A );
+	$where = '';
+	if( $post_id > 0 )
+		$where = $wpdb->prepare( "WHERE comment_post_ID = %d", $post_id );
 
+	$count = $wpdb->get_results( "SELECT comment_approved, COUNT( * ) AS num_comments FROM {$wpdb->comments} {$where} GROUP BY comment_approved", ARRAY_A );
+
+	$total = 0;
 	$stats = array( );
 	$approved = array('0' => 'moderated', '1' => 'approved', 'spam' => 'spam');
 	foreach( (array) $count as $row_num => $row ) {
+		$total += $row['num_comments'];
 		$stats[$approved[$row['comment_approved']]] = $row['num_comments'];
 	}
 
+	$stats['total_comments'] = $total;
 	foreach ( $approved as $key ) {
 		if ( empty($stats[$key]) )
 			$stats[$key] = 0;
 	}
 
 	$stats = (object) $stats;
-	wp_cache_set('comments', $stats, 'counts');
+	wp_cache_set("comments-{$post_id}", $stats, 'counts');
 
 	return $stats;
 }
 
 /**
- * wp_delete_comment() - Removes comment ID and maybe updates post comment count
+ * Removes comment ID and maybe updates post comment count.
  *
- * The post comment count will be updated if the comment was approved and has a post
- * ID available.
+ * The post comment count will be updated if the comment was approved and has a
+ * post ID available.
  *
  * @since 2.0.0
  * @uses $wpdb
@@ -495,7 +532,7 @@ function wp_delete_comment($comment_id) {
 
 	$comment = get_comment($comment_id);
 
-	if ( ! $wpdb->query("DELETE FROM $wpdb->comments WHERE comment_ID='$comment_id' LIMIT 1") )
+	if ( ! $wpdb->query( $wpdb->prepare("DELETE FROM $wpdb->comments WHERE comment_ID = %d LIMIT 1", $comment_id) ) )
 		return false;
 
 	$post_id = $comment->comment_post_ID;
@@ -509,7 +546,7 @@ function wp_delete_comment($comment_id) {
 }
 
 /**
- * wp_get_comment_status() - The status of a comment by ID
+ * The status of a comment by ID.
  *
  * @since 1.0.0
  *
@@ -536,7 +573,7 @@ function wp_get_comment_status($comment_id) {
 }
 
 /**
- * wp_get_current_commenter() - Get current commenter's name, email, and URL
+ * Get current commenter's name, email, and URL.
  *
  * Expects cookies content to already be sanitized. User of this function
  * might wish to recheck the returned array for validity.
@@ -566,7 +603,7 @@ function wp_get_current_commenter() {
 }
 
 /**
- * wp_insert_comment() - Inserts a comment to the database
+ * Inserts a comment to the database.
  *
  * {@internal Missing Long Description}}
  *
@@ -578,7 +615,7 @@ function wp_get_current_commenter() {
  */
 function wp_insert_comment($commentdata) {
 	global $wpdb;
-	extract($commentdata, EXTR_SKIP);
+	extract(stripslashes_deep($commentdata), EXTR_SKIP);
 
 	if ( ! isset($comment_author_IP) )
 		$comment_author_IP = '';
@@ -593,11 +630,10 @@ function wp_insert_comment($commentdata) {
 	if ( ! isset($user_id) )
 		$user_id = 0;
 
-	$result = $wpdb->query("INSERT INTO $wpdb->comments
+	$result = $wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->comments
 	(comment_post_ID, comment_author, comment_author_email, comment_author_url, comment_author_IP, comment_date, comment_date_gmt, comment_content, comment_approved, comment_agent, comment_type, comment_parent, user_id)
-	VALUES
-	('$comment_post_ID', '$comment_author', '$comment_author_email', '$comment_author_url', '$comment_author_IP', '$comment_date', '$comment_date_gmt', '$comment_content', '$comment_approved', '$comment_agent', '$comment_type', '$comment_parent', '$user_id')
-	");
+	VALUES (%d, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %d, %d)",
+	$comment_post_ID, $comment_author, $comment_author_email, $comment_author_url, $comment_author_IP, $comment_date, $comment_date_gmt, $comment_content, $comment_approved, $comment_agent, $comment_type, $comment_parent, $user_id) );
 
 	$id = (int) $wpdb->insert_id;
 
@@ -608,11 +644,11 @@ function wp_insert_comment($commentdata) {
 }
 
 /**
- * wp_filter_comment() - Parses and returns comment information
+ * Parses and returns comment information.
  *
- * Sets the comment data 'filtered' field to true when finished. This
- * can be checked as to whether the comment should be filtered and to
- * keep from filtering the same comment more than once.
+ * Sets the comment data 'filtered' field to true when finished. This can be
+ * checked as to whether the comment should be filtered and to keep from
+ * filtering the same comment more than once.
  *
  * @since 2.0.0
  * @uses apply_filters() Calls 'pre_user_id' hook on comment author's user ID
@@ -639,7 +675,7 @@ function wp_filter_comment($commentdata) {
 }
 
 /**
- * wp_throttle_comment_flood() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -659,7 +695,7 @@ function wp_throttle_comment_flood($block, $time_lastcomment, $time_newcomment) 
 }
 
 /**
- * wp_new_comment() - Parses and adds a new comment to the database
+ * Parses and adds a new comment to the database.
  *
  * {@internal Missing Long Description}}
  *
@@ -707,7 +743,7 @@ function wp_new_comment( $commentdata ) {
 }
 
 /**
- * wp_set_comment_status() - Sets the status of comment ID
+ * Sets the status of comment ID.
  *
  * {@internal Missing Long Description}}
  *
@@ -722,13 +758,17 @@ function wp_set_comment_status($comment_id, $comment_status) {
 
 	switch ( $comment_status ) {
 		case 'hold':
-			$query = "UPDATE $wpdb->comments SET comment_approved='0' WHERE comment_ID='$comment_id' LIMIT 1";
+			$query = $wpdb->prepare("UPDATE $wpdb->comments SET comment_approved='0' WHERE comment_ID = %d LIMIT 1", $comment_id);
 			break;
 		case 'approve':
-			$query = "UPDATE $wpdb->comments SET comment_approved='1' WHERE comment_ID='$comment_id' LIMIT 1";
+			$query = $wpdb->prepare("UPDATE $wpdb->comments SET comment_approved='1' WHERE comment_ID = %d LIMIT 1", $comment_id);
+			if ( get_option('comments_notify') ) {
+				$comment = get_comment($comment_id);
+				wp_notify_postauthor($comment_id, $comment->comment_type);
+			}
 			break;
 		case 'spam':
-			$query = "UPDATE $wpdb->comments SET comment_approved='spam' WHERE comment_ID='$comment_id' LIMIT 1";
+			$query = $wpdb->prepare("UPDATE $wpdb->comments SET comment_approved='spam' WHERE comment_ID = %d LIMIT 1", $comment_id);
 			break;
 		case 'delete':
 			return wp_delete_comment($comment_id);
@@ -750,7 +790,7 @@ function wp_set_comment_status($comment_id, $comment_status) {
 }
 
 /**
- * wp_update_comment() - Parses and updates an existing comment in the database
+ * Parses and updates an existing comment in the database.
  *
  * {@internal Missing Long Description}}
  *
@@ -776,22 +816,29 @@ function wp_update_comment($commentarr) {
 	$commentarr = wp_filter_comment( $commentarr );
 
 	// Now extract the merged array.
-	extract($commentarr, EXTR_SKIP);
+	extract(stripslashes_deep($commentarr), EXTR_SKIP);
 
 	$comment_content = apply_filters('comment_save_pre', $comment_content);
 
 	$comment_date_gmt = get_gmt_from_date($comment_date);
 
-	$wpdb->query(
-		"UPDATE $wpdb->comments SET
-			comment_content      = '$comment_content',
-			comment_author       = '$comment_author',
-			comment_author_email = '$comment_author_email',
-			comment_approved     = '$comment_approved',
-			comment_author_url   = '$comment_author_url',
-			comment_date         = '$comment_date',
-			comment_date_gmt     = '$comment_date_gmt'
-		WHERE comment_ID = $comment_ID" );
+	$wpdb->query( $wpdb->prepare("UPDATE $wpdb->comments SET
+			comment_content      = %s,
+			comment_author       = %s,
+			comment_author_email = %s,
+			comment_approved     = %s,
+			comment_author_url   = %s,
+			comment_date         = %s,
+			comment_date_gmt     = %s
+		WHERE comment_ID = %d",
+			$comment_content,
+			$comment_author,
+			$comment_author_email,
+			$comment_approved,
+			$comment_author_url,
+			$comment_date,
+			$comment_date_gmt,
+			$comment_ID) );
 
 	$rval = $wpdb->rows_affected;
 
@@ -802,7 +849,7 @@ function wp_update_comment($commentarr) {
 }
 
 /**
- * wp_defer_comment_counting() - Whether to defer comment counting
+ * Whether to defer comment counting.
  *
  * When setting $defer to true, all post comment counts will not be updated
  * until $defer is set to false. When $defer is set to false, then all
@@ -829,15 +876,15 @@ function wp_defer_comment_counting($defer=null) {
 }
 
 /**
- * wp_update_comment_count() - Updates the comment count for post(s)
+ * Updates the comment count for post(s).
  *
- * When $do_deferred is false (is by default) and the comments have been
- * set to be deferred, the post_id will be added to a queue, which will
- * be updated at a later date and only updated once per post ID.
+ * When $do_deferred is false (is by default) and the comments have been set to
+ * be deferred, the post_id will be added to a queue, which will be updated at a
+ * later date and only updated once per post ID.
  *
- * If the comments have not be set up to be deferred, then the post will
- * be updated. When $do_deferred is set to true, then all previous deferred
- * post IDs will be updated along with the current $post_id.
+ * If the comments have not be set up to be deferred, then the post will be
+ * updated. When $do_deferred is set to true, then all previous deferred post
+ * IDs will be updated along with the current $post_id.
  *
  * @since 2.1.0
  * @see wp_update_comment_count_now() For what could cause a false return value
@@ -868,7 +915,7 @@ function wp_update_comment_count($post_id, $do_deferred=false) {
 }
 
 /**
- * wp_update_comment_count_now() - Updates the comment count for the post
+ * Updates the comment count for the post.
  *
  * @since 2.5
  * @uses $wpdb
@@ -887,8 +934,8 @@ function wp_update_comment_count_now($post_id) {
 		return false;
 
 	$old = (int) $post->comment_count;
-	$new = (int) $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_post_ID = '$post_id' AND comment_approved = '1'");
-	$wpdb->query("UPDATE $wpdb->posts SET comment_count = '$new' WHERE ID = '$post_id'");
+	$new = (int) $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_approved = '1'", $post_id) );
+	$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET comment_count = %d WHERE ID = %d", $new, $post_id) );
 
 	if ( 'page' == $post->post_type )
 		clean_page_cache( $post_id );
@@ -906,7 +953,7 @@ function wp_update_comment_count_now($post_id) {
 //
 
 /**
- * discover_pingback_server_uri() - Finds a pingback server URI based on the given URL
+ * Finds a pingback server URI based on the given URL.
  *
  * {@internal Missing Long Description}}
  *
@@ -982,23 +1029,27 @@ function discover_pingback_server_uri($url, $timeout_bytes = 2048) {
 			$pingback_server_url_len = $pingback_href_end - $pingback_href_start;
 			$pingback_server_url = substr($contents, $pingback_href_start, $pingback_server_url_len);
 			// We may find rel="pingback" but an incomplete pingback URL
-			if ( $pingback_server_url_len > 0 ) // We got it!
+			if ( $pingback_server_url_len > 0 ) { // We got it!
+				fclose($fp);
 				return $pingback_server_url;
+			}
 		}
 		$byte_count += strlen($line);
 		if ( $byte_count > $timeout_bytes ) {
 			// It's no use going further, there probably isn't any pingback
 			// server to find in this file. (Prevents loading large files.)
+			fclose($fp);
 			return false;
 		}
 	}
 
 	// We didn't find anything.
+	fclose($fp);
 	return false;
 }
 
 /**
- * do_all_pings() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -1016,7 +1067,7 @@ function do_all_pings() {
 
 	// Do Enclosures
 	while ($enclosure = $wpdb->get_row("SELECT * FROM {$wpdb->posts}, {$wpdb->postmeta} WHERE {$wpdb->posts}.ID = {$wpdb->postmeta}.post_id AND {$wpdb->postmeta}.meta_key = '_encloseme' LIMIT 1")) {
-		$wpdb->query("DELETE FROM {$wpdb->postmeta} WHERE post_id = {$enclosure->ID} AND meta_key = '_encloseme';");
+		$wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key = '_encloseme';", $enclosure->ID) );
 		do_enclose($enclosure->post_content, $enclosure->ID);
 	}
 
@@ -1031,7 +1082,7 @@ function do_all_pings() {
 }
 
 /**
- * do_trackbacks() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -1043,11 +1094,11 @@ function do_all_pings() {
 function do_trackbacks($post_id) {
 	global $wpdb;
 
-	$post = $wpdb->get_row("SELECT * FROM $wpdb->posts WHERE ID = $post_id");
+	$post = $wpdb->get_row( $wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d", $post_id) );
 	$to_ping = get_to_ping($post_id);
 	$pinged  = get_pung($post_id);
 	if ( empty($to_ping) ) {
-		$wpdb->query("UPDATE $wpdb->posts SET to_ping = '' WHERE ID = '$post_id'");
+		$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET to_ping = '' WHERE ID = %d", $post_id) );
 		return;
 	}
 
@@ -1068,14 +1119,14 @@ function do_trackbacks($post_id) {
 				trackback($tb_ping, $post_title, $excerpt, $post_id);
 				$pinged[] = $tb_ping;
 			} else {
-				$wpdb->query("UPDATE $wpdb->posts SET to_ping = TRIM(REPLACE(to_ping, '$tb_ping', '')) WHERE ID = '$post_id'");
+				$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET to_ping = TRIM(REPLACE(to_ping, '$tb_ping', '')) WHERE ID = %d", $post_id) );
 			}
 		}
 	}
 }
 
 /**
- * generic_ping() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -1098,7 +1149,7 @@ function generic_ping($post_id = 0) {
 }
 
 /**
- * pingback() - Pings back the links found in a post
+ * Pings back the links found in a post.
  *
  * {@internal Missing Long Description}}
  *
@@ -1175,7 +1226,7 @@ function pingback($content, $post_ID) {
 }
 
 /**
- * privacy_ping_filter() - {@internal Missing Short Description}}
+ * {@internal Missing Short Description}}
  *
  * {@internal Missing Long Description}}
  *
@@ -1192,19 +1243,19 @@ function privacy_ping_filter($sites) {
 }
 
 /**
- * trackback() - Send a Trackback
+ * Send a Trackback.
  *
- * {@internal Missing Long Description}}
+ * Updates database when sending trackback to prevent duplicates.
  *
  * @since 0.71
  * @uses $wpdb
  * @uses $wp_version WordPress version
  *
- * @param string $trackback_url {@internal Missing Description}}
- * @param string $title {@internal Missing Description}}
- * @param string $excerpt {@internal Missing Description}}
- * @param int $ID {@internal Missing Description}}
- * @return unknown {@internal Missing Description}}
+ * @param string $trackback_url URL to send trackbacks.
+ * @param string $title Title of post
+ * @param string $excerpt Excerpt of post
+ * @param int $ID Post ID
+ * @return mixed Database query from update
  */
 function trackback($trackback_url, $title, $excerpt, $ID) {
 	global $wpdb, $wp_version;
@@ -1233,21 +1284,19 @@ function trackback($trackback_url, $title, $excerpt, $ID) {
 	@fclose($fs);
 
 	$tb_url = addslashes( $tb_url );
-	$wpdb->query("UPDATE $wpdb->posts SET pinged = CONCAT(pinged, '\n', '$tb_url') WHERE ID = '$ID'");
-	return $wpdb->query("UPDATE $wpdb->posts SET to_ping = TRIM(REPLACE(to_ping, '$tb_url', '')) WHERE ID = '$ID'");
+	$wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET pinged = CONCAT(pinged, '\n', '$tb_url') WHERE ID = %d", $ID) );
+	return $wpdb->query( $wpdb->prepare("UPDATE $wpdb->posts SET to_ping = TRIM(REPLACE(to_ping, '$tb_url', '')) WHERE ID = %d", $ID) );
 }
 
 /**
- * weblog_ping() - {@internal Missing Short Description}}
- *
- * {@internal Missing Long Description}}
+ * Send a pingback.
  *
  * @since 1.2.0
  * @uses $wp_version
  * @uses IXR_Client
  *
- * @param unknown_type $server
- * @param unknown_type $path
+ * @param string $server Host of blog to connect to.
+ * @param string $path Path to send the ping.
  */
 function weblog_ping($server = '', $path = '') {
 	global $wp_version;
@@ -1270,7 +1319,7 @@ function weblog_ping($server = '', $path = '') {
 //
 
 /**
- * clean_comment_cache() - Removes comment ID from the comment cache
+ * Removes comment ID from the comment cache.
  *
  * @since 2.3.0
  * @package WordPress
@@ -1283,7 +1332,7 @@ function clean_comment_cache($id) {
 }
 
 /**
- * update_comment_cache() - Updates the comment cache of given comments
+ * Updates the comment cache of given comments.
  *
  * Will add the comments in $comments to the cache. If comment ID already
  * exists in the comment cache then it will not be updated.

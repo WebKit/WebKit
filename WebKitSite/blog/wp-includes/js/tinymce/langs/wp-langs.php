@@ -3,7 +3,7 @@
 // escape text only if it needs translating
 function mce_escape($text) {
 	global $language;
-	
+
 	if ( 'en' == $language ) return $text;
 	else return js_escape($text);
 }
@@ -395,7 +395,47 @@ wp_more_desc:"' . mce_escape( __('Insert More tag') ) . ' (Alt+Shift+T)",
 wp_page_desc:"' . mce_escape( __('Insert Page break') ) . ' (Alt+Shift+P)",
 wp_help_desc:"' . mce_escape( __('Help') ) . ' (Alt+Shift+H)",
 wp_more_alt:"' . mce_escape( __('More...') ) . '",
-wp_page_alt:"' . mce_escape( __('Next page...') ) . '"
+wp_page_alt:"' . mce_escape( __('Next page...') ) . '",
+add_media:"' . mce_escape( __('Add Media') ) . '",
+add_image:"' . mce_escape( __('Add an Image') ) . '",
+add_video:"' . mce_escape( __('Add Video') ) . '",
+add_audio:"' . mce_escape( __('Add Audio') ) . '"
 });
-'; 
+
+tinyMCE.addI18n("' . $language . '.wpeditimage",{
+edit_img:"' . mce_escape( __('Edit Image') )  . '",
+del_img:"' . mce_escape( __('Delete Image') )  . '",
+adv_settings:"' . mce_escape( __('Advanced Settings') )  . '",
+none:"' . mce_escape( __('None') )  . '",
+size:"' . mce_escape( __('Size') ) . '",
+thumbnail:"' . mce_escape( __('Thumbnail') ) . '",
+medium:"' . mce_escape( __('Medium') ) . '",
+full_size:"' . mce_escape( __('Full Size') ) . '",
+current_link:"' . mce_escape( __('Current Link') ) . '",
+link_to_img:"' . mce_escape( __('Link to Image') ) . '",
+link_help:"' . mce_escape( __('Enter a link URL or click above for presets.') ) . '",
+adv_img_settings:"' . mce_escape( __('Advanced Image Settings') ) . '",
+source:"' . mce_escape( __('Source') )  . '",
+width:"' . mce_escape( __('Width') ) . '",
+height:"' . mce_escape( __('Height') ) . '",
+orig_size:"' . mce_escape( __('Original Size') ) . '",
+css:"' . mce_escape( __('CSS Class') ) . '",
+adv_link_settings:"' . mce_escape( __('Advanced Link Settings') )  . '",
+link_rel:"' . mce_escape( __('Link Rel') ) . '",
+height:"' . mce_escape( __('Height') ) . '",
+orig_size:"' . mce_escape( __('Original Size') ) . '",
+css:"' . mce_escape( __('CSS Class') ) . '",
+s60:"' . mce_escape( __('60%') ) . '",
+s70:"' . mce_escape( __('70%') ) . '",
+s80:"' . mce_escape( __('80%') ) . '",
+s90:"' . mce_escape( __('90%') ) . '",
+s100:"' . mce_escape( __('100%') ) . '",
+s110:"' . mce_escape( __('110%') ) . '",
+s120:"' . mce_escape( __('120%') ) . '",
+s130:"' . mce_escape( __('130%') ) . '",
+img_title:"' . mce_escape( __('Edit Image Title') ) . '",
+caption:"' . mce_escape( __('Edit Image Caption') ) . '",
+alt:"' . mce_escape( __('Edit Alternate Text') ) . '"
+});
+';
 ?>

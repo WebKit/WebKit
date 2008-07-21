@@ -29,22 +29,23 @@ ul#widget-list li.widget-list-item div.widget-description {
 	margin-right:0;
 	margin-left:8px;
 }
+h4.widget-title span {
+	float: right;
+}
 h4.widget-title a {
-	right:auto;
-	left:1em;
+	float: left;
+	margin: 0 1em 0 0;
 }
 li.widget-list-control-item h4.widget-title a, #dragHelper li.widget-list-control-item h4.widget-title a, #draghelper li.widget-list-control-item h4.widget-title a:visited {
 	right:auto;
 	left:1em;
 }
 
-li.widget-list-control-item div.widget-control {
-	padding:0 0 0 10px;
-}
 ul.widget-control-list div.widget-control-actions {
 	margin-right:0;
 	margin-left:-10px;
 }
-ul.widget-control-list .widget-title {
-	text-align:right;
+ul.widget-control-list h4.widget-title,
+#dragHelper h4.widget-title {
+	text-align: right;
 }

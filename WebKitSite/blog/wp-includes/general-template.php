@@ -7,7 +7,7 @@ function get_header() {
 	if ( file_exists( TEMPLATEPATH . '/header.php') )
 		load_template( TEMPLATEPATH . '/header.php');
 	else
-		load_template( ABSPATH . 'wp-content/themes/default/header.php');
+		load_template( WP_CONTENT_DIR . '/themes/default/header.php');
 }
 
 
@@ -16,7 +16,7 @@ function get_footer() {
 	if ( file_exists( TEMPLATEPATH . '/footer.php') )
 		load_template( TEMPLATEPATH . '/footer.php');
 	else
-		load_template( ABSPATH . 'wp-content/themes/default/footer.php');
+		load_template( WP_CONTENT_DIR . '/themes/default/footer.php');
 }
 
 
@@ -27,15 +27,15 @@ function get_sidebar( $name = null ) {
 	elseif ( file_exists( TEMPLATEPATH . '/sidebar.php') )
 		load_template( TEMPLATEPATH . '/sidebar.php');
 	else
-		load_template( ABSPATH . 'wp-content/themes/default/sidebar.php');
+		load_template( WP_CONTENT_DIR . '/themes/default/sidebar.php');
 }
 
 
 function wp_loginout() {
 	if ( ! is_user_logged_in() )
-		$link = '<a href="' . get_option('siteurl') . '/wp-login.php">' . __('Log in') . '</a>';
+		$link = '<a href="' . site_url('wp-login.php', 'login') . '">' . __('Log in') . '</a>';
 	else
-		$link = '<a href="' . get_option('siteurl') . '/wp-login.php?action=logout">' . __('Log out') . '</a>';
+		$link = '<a href="' . site_url('wp-login.php?action=logout', 'login') . '">' . __('Log out') . '</a>';
 
 	echo apply_filters('loginout', $link);
 }
@@ -45,11 +45,11 @@ function wp_register( $before = '<li>', $after = '</li>' ) {
 
 	if ( ! is_user_logged_in() ) {
 		if ( get_option('users_can_register') )
-			$link = $before . '<a href="' . get_option('siteurl') . '/wp-login.php?action=register">' . __('Register') . '</a>' . $after;
+			$link = $before . '<a href="' . site_url('wp-login.php?action=register', 'login') . '">' . __('Register') . '</a>' . $after;
 		else
 			$link = '';
 	} else {
-		$link = $before . '<a href="' . get_option('siteurl') . '/wp-admin/">' . __('Site Admin') . '</a>' . $after;
+		$link = $before . '<a href="' . admin_url() . '">' . __('Site Admin') . '</a>' . $after;
 	}
 
 	echo apply_filters('register', $link);
@@ -233,6 +233,19 @@ function wp_title($sep = '&raquo;', $display = true, $seplocation = '') {
 		$title = strip_tags( apply_filters( 'single_post_title', $post->post_title ) );
 	}
 
+	// If there's a taxonomy
+	if ( is_tax() ) {
+		$taxonomy = get_query_var( 'taxonomy' );
+		$tax = get_taxonomy( $taxonomy );
+		$tax = $tax->label;
+		$term = $wp_query->get_queried_object();
+		$term = $term->name;
+		if ( 'right' == $seplocation )
+			$title = "$term $sep $tax";
+		else
+			$title = "$tax $sep $term";
+	}
+
 	$prefix = '';
 	if ( !empty($title) )
 		$prefix = " $sep ";
@@ -343,13 +356,17 @@ function get_archives_link($url, $text, $format = 'html', $before = '', $after =
 	$url = clean_url($url);
 
 	if ('link' == $format)
-		return "\t<link rel='archives' title='$title_text' href='$url' />\n";
+		$link_html = "\t<link rel='archives' title='$title_text' href='$url' />\n";
 	elseif ('option' == $format)
-		return "\t<option value='$url'>$before $text $after</option>\n";
+		$link_html = "\t<option value='$url'>$before $text $after</option>\n";
 	elseif ('html' == $format)
-		return "\t<li>$before<a href='$url' title='$title_text'>$text</a>$after</li>\n";
+		$link_html = "\t<li>$before<a href='$url' title='$title_text'>$text</a>$after</li>\n";
 	else // custom
-		return "\t$before<a href='$url' title='$title_text'>$text</a>$after\n";
+		$link_html = "\t$before<a href='$url' title='$title_text'>$text</a>$after\n";
+
+	$link_html = apply_filters( "get_archives_link", $link_html );
+		
+	return $link_html;
 }
 
 
@@ -810,7 +827,7 @@ function get_post_time( $d = 'U', $gmt = false ) { // returns timestamp
 		$time = $post->post_date;
 
 	$time = mysql2date($d, $time);
-	return apply_filters('get_the_time', $time, $d, $gmt);
+	return apply_filters('get_post_time', $time, $d, $gmt);
 }
 
 
@@ -1110,34 +1127,76 @@ function wp_admin_css_color($key, $name, $url, $colors = array()) {
 	$_wp_admin_css_colors[$key] = (object) array('name' => $name, 'url' => $url, 'colors' => $colors);
 }
 
+/**
+ * wp_admin_css_uri() - Outputs the URL of a WordPress admin CSS file
+ *
+ * @see WP_Styles::_css_href and its style_loader_src filter.
+ *
+ * @param string $file file relative to wp-admin/ without its ".css" extension.
+ */
+
 function wp_admin_css_uri( $file = 'wp-admin' ) {
 	if ( defined('WP_INSTALLING') ) {
 		$_file = "./$file.css";
 	} else {
-		if ( 'css/colors' == $file || 'css/colors-rtl' == $file ) {
-			global $_wp_admin_css_colors;
-			$color = get_user_option('admin_color');
-			if ( empty($color) || !isset($_wp_admin_css_colors[$color]) )
-				$color = 'fresh';
-			$color = $_wp_admin_css_colors[$color];
-			$_file = $color->url;
-			$_file = ('css/colors-rtl' == $file) ? str_replace('.css','-rtl.css',$_file) : $_file;
-		} else {
-			$_file = get_option( 'siteurl' ) . "/wp-admin/$file.css";
-		}
+		$_file = admin_url("$file.css");
 	}
 	$_file = add_query_arg( 'version', get_bloginfo( 'version' ),  $_file );
 
 	return apply_filters( 'wp_admin_css_uri', $_file, $file );
 }
 
-function wp_admin_css( $file = 'wp-admin' ) {
+/**
+ * wp_admin_css() - Enqueues or directly prints a stylesheet link to the specified CSS file.
+ *
+ * "Intelligently" decides to enqueue or to print the CSS file.
+ * If the wp_print_styles action has *not* yet been called, the CSS file will be enqueued.
+ * If the wp_print_styles action *has* been called, the CSS link will be printed.
+ * Printing may be forced by passing TRUE as the $force_echo (second) parameter.
+ *
+ * For backward compatibility with WordPress 2.3 calling method:
+ * If the $file (first) parameter does not correspond to a registered CSS file, we assume $file is a
+ * file relative to wp-admin/ without its ".css" extension.  A stylesheet link to that generated URL is printed.
+ *
+ * @package WordPress
+ * @since 2.3
+ *
+ * @uses $wp_styles WordPress Styles Object
+ *
+ * @param string $file Style handle name or file name (without ".css" extension) relative to wp-admin/
+ * @param bool $force_echo Optional.  Force the stylesheet link to be printed rather than enqueued.
+ */
 
-	echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . wp_admin_css_uri( $file ) . "' type='text/css' />\n", $file );
-	if ( 'rtl' == get_bloginfo( 'text_direction' ) ) {
-		$rtl = ( 'wp-admin' == $file ) ? 'rtl' : "$file-rtl";
-		echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . wp_admin_css_uri( $rtl ) . "' type='text/css' />\n", $rtl );
+function wp_admin_css( $file = 'wp-admin', $force_echo = false ) {
+	global $wp_styles;
+	if ( !is_a($wp_styles, 'WP_Styles') )
+		$wp_styles = new WP_Styles();
+
+	// For backward compatibility
+	$handle = 0 === strpos( $file, 'css/' ) ? substr( $file, 4 ) : $file;
+
+	if ( $wp_styles->query( $handle ) ) {
+		if ( $force_echo || did_action( 'wp_print_styles' ) ) // we already printed the style queue.  Print this one immediately
+			wp_print_styles( $handle );
+		else // Add to style queue
+			wp_enqueue_style( $handle );
+		return;
 	}
+
+	echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . clean_url( wp_admin_css_uri( $file ) ) . "' type='text/css' />\n", $file );
+	if ( 'rtl' == get_bloginfo( 'text_direction' ) )
+		echo apply_filters( 'wp_admin_css', "<link rel='stylesheet' href='" . clean_url( wp_admin_css_uri( "$file-rtl" ) ) . "' type='text/css' />\n", "$file-rtl" );
+}
+
+/**
+ * Enqueues the default ThickBox js and css. 
+ * If any of the settings need to be changed, this can be done with another js file
+ * similar to media-upload.js and theme-preview.js. That file should require array('thickbox')
+ * to ensure it is loaded after. 
+ */
+function add_thickbox() {
+	wp_enqueue_script( 'thickbox' );
+	wp_enqueue_style( 'thickbox' );
 }
 
 /**

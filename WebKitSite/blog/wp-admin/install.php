@@ -1,12 +1,7 @@
 <?php
 define('WP_INSTALLING', true);
-if (!file_exists('../wp-config.php')) {
-  require_once('../wp-includes/compat.php');
-  require_once('../wp-includes/functions.php');
-  wp_die("There doesn't seem to be a <code>wp-config.php</code> file. I need this before we can get started. Need more help? <a href='http://codex.wordpress.org/Editing_wp-config.php'>We got it</a>. You can create a <code>wp-config.php</code> file through a web interface, but this doesn't work for all server setups. The safest way is to manually create the file.</p><p><a href='setup-config.php' class='button'>Create a Configuration File</a>", "WordPress &rsaquo; Error");
-}
 
-require_once('../wp-config.php');
+require_once('../wp-load.php');
 require_once('./includes/upgrade.php');
 
 if (isset($_GET['step']))
@@ -21,7 +16,7 @@ header( 'Content-Type: text/html; charset=utf-8' );
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title><?php _e('WordPress &rsaquo; Installation'); ?></title>
-	<?php wp_admin_css( 'css/install' ); ?>
+	<?php wp_admin_css( 'install', true ); ?>
 </head>
 <body>
 <h1 id="logo"><img alt="WordPress" src="images/wordpress-logo.png" /></h1>
@@ -59,7 +54,7 @@ switch($step) {
 			<td colspan="2"><label><input type="checkbox" name="blog_public" value="1" checked="checked" /> <?php _e('Allow my blog to appear in search engines like Google and Technorati.'); ?></label></td>
 		</tr>
 	</table>
-	<input type="submit" name="Submit" value="<?php _e('Install WordPress'); ?>" class="button" />
+	<p class="step"><input type="submit" name="Submit" value="<?php _e('Install WordPress'); ?>" class="button" /></p>
 </form>
 
 <?php
@@ -103,7 +98,7 @@ switch($step) {
 	</tr>
 </table>
 
-<p><a href="../wp-login.php" class="button"><?php _e('Log In'); ?></a>
+<p class="step"><a href="../wp-login.php" class="button"><?php _e('Log In'); ?></a></p>
 
 <?php
 		break;

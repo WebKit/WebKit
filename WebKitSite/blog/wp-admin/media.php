@@ -17,6 +17,12 @@ case 'editattachment' :
 
 	$errors = media_upload_form_handler();
 
+
+	check_admin_referer('media-form');
+
+	if ( !current_user_can('edit_post', $attachment_id) )
+		wp_die ( __('You are not allowed to edit this attachment.') );
+
 	if ( empty($errors) ) {
 		$location = 'media.php';
 		if ( $referer = wp_get_original_referer() ) {
@@ -54,7 +60,8 @@ case 'edit' :
 	add_filter('attachment_fields_to_edit', 'media_single_attachment_fields_to_edit', 10, 2);
 
 	wp_enqueue_script( 'wp-ajax-response' );
-	add_action('admin_head', 'media_admin_css');
+	wp_admin_css( 'media' );
+
 
 	require( 'admin-header.php' );
 
@@ -92,7 +99,7 @@ case 'edit' :
 <?php wp_original_referer_field(true, 'previous'); ?>
 <?php wp_nonce_field('media-form'); ?>
 </p>
-
+</form>
 
 </div>
 

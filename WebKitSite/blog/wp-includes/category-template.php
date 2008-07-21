@@ -1,6 +1,6 @@
 <?php
 
-function get_category_children($id, $before = '/', $after = '') {
+function get_category_children($id, $before = '/', $after = '', $visited=array()) {
 	if ( 0 == $id )
 		return '';
 
@@ -14,7 +14,8 @@ function get_category_children($id, $before = '/', $after = '') {
 		$category = get_category($cat_id);
 		if ( is_wp_error( $category ) )
 			return $category;
-		if ( $category->parent == $id ) {
+		if ( $category->parent == $id && !in_array($category->term_id, $visited) ) {
+			$visited[] = $category->term_id;
 			$chain .= $before.$category->term_id.$after;
 			$chain .= get_category_children($category->term_id, $before, $after);
 		}
@@ -44,7 +45,7 @@ function get_category_link($category_id) {
 	return apply_filters('category_link', $catlink, $category_id);
 }
 
-function get_category_parents($id, $link = FALSE, $separator = '/', $nicename = FALSE){
+function get_category_parents($id, $link = FALSE, $separator = '/', $nicename = FALSE, $visited = array()){
 	$chain = '';
 	$parent = &get_category($id);
 	if ( is_wp_error( $parent ) )
@@ -55,8 +56,10 @@ function get_category_parents($id, $link = FALSE, $separator = '/', $nicename = 
 	else
 		$name = $parent->cat_name;
 
-	if ( $parent->parent && ($parent->parent != $parent->term_id) )
-		$chain .= get_category_parents($parent->parent, $link, $separator, $nicename);
+	if ( $parent->parent && ($parent->parent != $parent->term_id) && !in_array($parent->parent, $visited) ) {
+		$visited[] = $parent->parent;
+		$chain .= get_category_parents($parent->parent, $link, $separator, $nicename, $visited);
+	}
 
 	if ( $link )
 		$chain .= '<a href="' . get_category_link($parent->term_id) . '" title="' . sprintf(__("View all posts in %s"), $parent->cat_name) . '">'.$name.'</a>' . $separator;
@@ -185,9 +188,12 @@ function in_category( $category ) { // Check if the current post is in the given
 	if ( empty($category) )
 		return false;
 
-	$cat_ID = get_cat_ID($category);
-	if ( $cat_ID )
-		$category = $cat_ID;
+	// If category is not an int, check to see if it's a name
+	if ( ! is_int($category) ) {
+		$cat_ID = get_cat_ID($category);
+		if ( $cat_ID )
+			$category = $cat_ID;
+	}
 
 	$categories = get_object_term_cache($post->ID, 'category');
 	if ( false === $categories )
@@ -272,7 +278,7 @@ function wp_list_categories($args = '') {
 		'style' => 'list', 'show_count' => 0,
 		'hide_empty' => 1, 'use_desc_for_title' => 1,
 		'child_of' => 0, 'feed' => '', 'feed_type' => '',
-		'feed_image' => '', 'exclude' => '',
+		'feed_image' => '', 'exclude' => '', 'current_category' => 0,
 		'hierarchical' => true, 'title_li' => __('Categories'),
 		'echo' => 1, 'depth' => 0
 	);
@@ -309,7 +315,7 @@ function wp_list_categories($args = '') {
 			else
 				$output .= '<a href="' .  get_bloginfo('url')  . '">' . $show_option_all . '</a>';
 
-		if ( is_category() )
+		if ( empty( $r['current_category'] ) && is_category() )
 			$r['current_category'] = $wp_query->get_queried_object_id();
 
 		if ( $hierarchical )
@@ -412,7 +418,6 @@ function wp_generate_tag_cloud( $tags, $args = '' ) {
 	foreach ( $counts as $tag => $count ) {
 		$tag_id = $tag_ids[$tag];
 		$tag_link = clean_url($tag_links[$tag]);
-		$tag = str_replace(' ', '&nbsp;', wp_specialchars( $tag ));
 		$a[] = "<a href='$tag_link' class='tag-link-$tag_id' title='" . attribute_escape( sprintf( __ngettext('%d topic','%d topics',$count), $count ) ) . "'$rel style='font-size: " .
 			( $smallest + ( ( $count - $min_count ) * $font_step ) )
 			. "$unit;'>$tag</a>";
@@ -534,6 +539,43 @@ function the_terms( $id, $taxonomy, $before = '', $sep = '', $after = '' ) {
 		return false;
 	else
 		echo $return;
+}
+
+/**
+ * Check if the current post has the given tag
+ *
+ * @package WordPress
+ * @since 2.6
+ *
+ * @uses wp_get_object_terms() Gets the tags.
+ *
+ * @param string|int|array $tag Optional. The tag name/id/slug or array of them to check for
+ * @return bool True if the current post has the given tag, or any tag, if no tag specified
+ */
+function has_tag($tag = '') {
+	global $post;
+	$taxonomy = 'post_tag';
+
+	if ( !in_the_loop() ) return false; // in-the-loop function
+
+	$post_id = (int) $post->ID;
+
+	$terms = get_object_term_cache($post_id, $taxonomy);
+	if (empty($terms))
+		 $terms = wp_get_object_terms($post_id, $taxonomy);
+	if (empty($terms)) return false;
+
+	if (empty($tag)) return (!empty($terms));
+
+	$tag = (array) $tag;
+
+	foreach($terms as $term) {
+		if ( in_array( $term->term_id, $tag ) ) return true;
+		if ( in_array( $term->name, $tag ) ) return true;
+		if ( in_array( $term->slug, $tag ) ) return true;
+	}
+
+	return false;
 }
 
 ?>

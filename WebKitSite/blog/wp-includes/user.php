@@ -1,6 +1,6 @@
 <?php
 
-function wp_signon( $credentials = '' ) {
+function wp_signon( $credentials = '', $secure_cookie = '' ) {
 	if ( empty($credentials) ) {
 		if ( ! empty($_POST['log']) )
 			$credentials['user_login'] = $_POST['log'];
@@ -21,13 +21,21 @@ function wp_signon( $credentials = '' ) {
 
 	do_action_ref_array('wp_authenticate', array(&$credentials['user_login'], &$credentials['user_password']));
 
+	if ( '' === $secure_cookie )
+		$secure_cookie = is_ssl() ? true : false;
+	
 	// If no credential info provided, check cookie.
 	if ( empty($credentials['user_login']) && empty($credentials['user_password']) ) {
 			$user = wp_validate_auth_cookie();
 			if ( $user )
 				return new WP_User($user);
 
-			if ( !empty($_COOKIE[AUTH_COOKIE]) )
+			if ( $secure_cookie )
+				$auth_cookie = SECURE_AUTH_COOKIE;
+			else
+				$auth_cookie = AUTH_COOKIE;
+
+			if ( !empty($_COOKIE[$auth_cookie]) )
 				return new WP_Error('expired_session', __('Please log in again.'));
 
 			// If the cookie is not set, be silent.
@@ -48,7 +56,7 @@ function wp_signon( $credentials = '' ) {
 	if ( is_wp_error($user) )
 		return $user;
 
-	wp_set_auth_cookie($user->ID, $credentials['remember']);
+	wp_set_auth_cookie($user->ID, $credentials['remember'], $secure_cookie);
 	do_action('wp_login', $credentials['user_login']);
 	return $user;
 }
@@ -57,13 +65,13 @@ function get_profile($field, $user = false) {
 	global $wpdb;
 	if ( !$user )
 		$user = $wpdb->escape($_COOKIE[USER_COOKIE]);
-	return $wpdb->get_var("SELECT $field FROM $wpdb->users WHERE user_login = '$user'");
+	return $wpdb->get_var( $wpdb->prepare("SELECT $field FROM $wpdb->users WHERE user_login = %s", $user) );
 }
 
 function get_usernumposts($userid) {
 	global $wpdb;
 	$userid = (int) $userid;
-	return $wpdb->get_var("SELECT COUNT(*) FROM $wpdb->posts WHERE post_author = '$userid' AND post_type = 'post' AND " . get_private_posts_cap_sql('post'));
+	return $wpdb->get_var( $wpdb->prepare("SELECT COUNT(*) FROM $wpdb->posts WHERE post_author = %d AND post_type = 'post' AND ", $userid) . get_private_posts_cap_sql('post'));
 }
 
 // TODO: xmlrpc only.  Maybe move to xmlrpc.php.
@@ -130,9 +138,9 @@ function delete_usermeta( $user_id, $meta_key, $meta_value = '' ) {
 	$meta_value = trim( $meta_value );
 
 	if ( ! empty($meta_value) )
-		$wpdb->query("DELETE FROM $wpdb->usermeta WHERE user_id = '$user_id' AND meta_key = '$meta_key' AND meta_value = '$meta_value'");
+		$wpdb->query( $wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE user_id = %d AND meta_key = %s AND meta_value = %s", $userid, $meta_key, $meta_value) );
 	else
-		$wpdb->query("DELETE FROM $wpdb->usermeta WHERE user_id = '$user_id' AND meta_key = '$meta_key'");
+		$wpdb->query( $wpdb->prepare("DELETE FROM $wpdb->usermeta WHERE user_id = %d AND meta_key = %s", $user_id, $meta_key) );
 
 	wp_cache_delete($user_id, 'users');
 
@@ -183,19 +191,18 @@ function update_usermeta( $user_id, $meta_key, $meta_value ) {
 	if ( is_string($meta_value) )
 		$meta_value = stripslashes($meta_value);
 	$meta_value = maybe_serialize($meta_value);
-	$meta_value = $wpdb->escape($meta_value);
 
 	if (empty($meta_value)) {
 		return delete_usermeta($user_id, $meta_key);
 	}
 
-	$cur = $wpdb->get_row("SELECT * FROM $wpdb->usermeta WHERE user_id = '$user_id' AND meta_key = '$meta_key'");
+	$cur = $wpdb->get_row( $wpdb->prepare("SELECT * FROM $wpdb->usermeta WHERE user_id = %d AND meta_key = %s", $user_id, $meta_key) );
 	if ( !$cur ) {
-		$wpdb->query("INSERT INTO $wpdb->usermeta ( user_id, meta_key, meta_value )
+		$wpdb->query( $wpdb->prepare("INSERT INTO $wpdb->usermeta ( user_id, meta_key, meta_value )
 		VALUES
-		( '$user_id', '$meta_key', '$meta_value' )");
+		( %d, %s, %s )", $user_id, $meta_key, $meta_value) );
 	} else if ( $cur->meta_value != $meta_value ) {
-		$wpdb->query("UPDATE $wpdb->usermeta SET meta_value = '$meta_value' WHERE user_id = '$user_id' AND meta_key = '$meta_key'");
+		$wpdb->query( $wpdb->prepare("UPDATE $wpdb->usermeta SET meta_value = %s WHERE user_id = %d AND meta_key = %s", $meta_value, $user_id, $meta_key) );
 	} else {
 		return false;
 	}

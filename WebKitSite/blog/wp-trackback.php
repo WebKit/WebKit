@@ -1,10 +1,21 @@
 <?php
+/**
+ * Handle Trackbacks and Pingbacks sent to WordPress
+ *
+ * @package WordPress
+ */
 
 if (empty($wp)) {
-	require_once('./wp-config.php');
+	require_once('./wp-load.php');
 	wp('tb=1');
 }
 
+/**
+ * trackback_response() - Respond with error or success XML message
+ *
+ * @param int|bool $error Whether there was an error or not
+ * @param string $error_message Error message if an error occurred
+ */
 function trackback_response($error = 0, $error_message = '') {
 	header('Content-Type: text/xml; charset=' . get_option('blog_charset') );
 	if ($error) {
@@ -86,7 +97,7 @@ if ( !empty($tb_url) && !empty($title) ) {
 	$comment_content = "<strong>$title</strong>\n\n$excerpt";
 	$comment_type = 'trackback';
 
-	$dupe = $wpdb->get_results("SELECT * FROM $wpdb->comments WHERE comment_post_ID = '$comment_post_ID' AND comment_author_url = '$comment_author_url'");
+	$dupe = $wpdb->get_results( $wpdb->prepare("SELECT * FROM $wpdb->comments WHERE comment_post_ID = %d AND comment_author_url = %s", $comment_post_ID, $comment_author_url) );
 	if ( $dupe )
 		trackback_response(1, 'We already have a ping from that URL for this post.');
 
