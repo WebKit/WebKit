@@ -460,6 +460,9 @@ namespace WTF {
         T& last() { return at(size() - 1); }
         const T& last() const { return at(size() - 1); }
 
+        template<typename U> iterator find(const U& value) { return std::find(begin(), end(), value); }
+        template<typename U> const_iterator find(const U& value) const { return std::find(begin(), end(), value); }
+
         void shrink(size_t size);
         void grow(size_t size);
         void resize(size_t size);
