@@ -1007,7 +1007,8 @@ void GraphicsContext::releaseWindowsContext(HDC hdc, const IntRect& dstRect, boo
             GetObject(bitmap, sizeof(info), &info);
             ASSERT(info.bmBitsPixel == 32);
 
-            m_data->p()->drawPixmap(dstRect, QPixmap::fromWinHBITMAP(bitmap));
+            QPixmap pixmap = QPixmap::fromWinHBITMAP(bitmap, supportAlphaBlend ? QPixmap::PremultipliedAlpha : QPixmap::NoAlpha);
+            m_data->p()->drawPixmap(dstRect, pixmap);
 
             ::DeleteObject(bitmap);
         }

@@ -2,6 +2,17 @@
 
         Reviewed by Holger.
 
+        Fix rendering of transparent windowless netscape plugins by passing
+        the right conversion parameter to QPixmap::fromWinHBITMAP when
+        converting from HBITMAP to QPixmap.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::releaseWindowsContext):
+
+2008-07-21  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
         In the implementation of getValue for NPNVnetscapeWindow treat
         windowHandleForPlatformWidget on the return value of
         containingWindow() to receive the correct HWND for the Qt port.
