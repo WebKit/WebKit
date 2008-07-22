@@ -58,10 +58,6 @@ using namespace WebCore;
 - (NSData *)_bufferedData;
 @end
 
-@interface NSURLProtocol (WebFoundationSecret) 
-+ (void)_removePropertyForKey:(NSString *)key inRequest:(NSMutableURLRequest *)request;
-@end
-
 #ifndef BUILDING_ON_TIGER
 @interface WebCoreSynchronousLoader : NSObject {
     NSURL *m_url;
