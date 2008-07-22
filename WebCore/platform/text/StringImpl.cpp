@@ -165,8 +165,8 @@ StringImpl::~StringImpl()
 
 StringImpl* StringImpl::empty()
 {
-    static StringImpl e;
-    return &e;
+    static StringImpl* e = new StringImpl;
+    return e;
 }
 
 bool StringImpl::containsOnlyWhitespace()

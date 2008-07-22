@@ -1,3 +1,12 @@
+2008-07-22  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Allocate the empty StringImpl from the heap.
+        
+        * platform/text/StringImpl.cpp:
+        (WebCore::StringImpl::empty):
+
 2008-07-21  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
