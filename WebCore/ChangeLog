@@ -2,6 +2,16 @@
 
         Reviewed by Adele.
 
+        Fix for <rdar://problem/6081160> REGRESSION: Hang loading many pages if QuickTime isn't installed
+
+        * platform/graphics/win/QTMovieWin.cpp:
+        (initializeSupportedTypes): Do a Quicktime version minimum version check.
+        (QTMovieWin::initializeQuickTime): Store the Quicktime version globally so in can be used in initializeSupportedTypes as well.
+
+2008-07-21  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
         Fix for <rdar://problem/5713336> <video> and <audio> elements that use a autoplay attribute fail to start playing when returning back to page
 
         * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::willSaveToCache): Reset the ready state to DATA_UNAVAILABLE when saving to the cache
