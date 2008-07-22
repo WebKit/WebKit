@@ -1,3 +1,13 @@
+2008-07-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/6004877> internal anchors on this page are not showing up in the AXLinkedUIElements
+        Test: accessibility/internal-link-anchors2.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::internalLinkElement):
+
 2008-07-22  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.

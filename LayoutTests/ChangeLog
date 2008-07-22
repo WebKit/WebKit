@@ -1,3 +1,12 @@
+2008-07-22  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        <rdar://problem/6004877> internal anchors on this page are not showing up in the AXLinkedUIElements
+        
+        * accessibility/internal-link-anchors2-expected.txt: Added.
+        * accessibility/internal-link-anchors2.html: Added.
+
 2008-07-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
