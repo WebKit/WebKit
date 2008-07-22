@@ -1,3 +1,12 @@
+2008-07-21  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/5713336> <video> and <audio> elements that use a autoplay attribute fail to start playing when returning back to page
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::willSaveToCache): Reset the ready state to DATA_UNAVAILABLE when saving to the cache
+        so that everything starts back up normally when the page is retrieved from the cache.
+
 2008-07-21  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
