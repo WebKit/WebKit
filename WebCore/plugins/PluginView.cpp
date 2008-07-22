@@ -304,6 +304,10 @@ NPError PluginView::load(const FrameLoadRequest& frameLoadRequest, bool sendNoti
     if (url.isEmpty())
         return NPERR_INVALID_URL;
 
+    // Don't allow requests to be made when the document loader is stopping all loaders.
+    if (m_parentFrame->loader()->documentLoader()->isStopping())
+        return NPERR_GENERIC_ERROR;
+
     const String& targetFrameName = frameLoadRequest.frameName();
     String jsString = scriptStringIfJavaScriptURL(url);
 

@@ -1,3 +1,12 @@
+2008-07-21  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        Don't allow requests to be made when the document loader is stopping all loaders.
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::load):
+
 2008-07-20  Maxime Britto  <britto@apple.com>
 
         Reviewed by John Sullivan.
