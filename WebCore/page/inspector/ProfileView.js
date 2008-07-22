@@ -29,8 +29,6 @@ WebInspector.ProfileView = function(profile)
 
     this.element.addStyleClass("profile-view");
 
-    this.profile = profile;
-
     this.showSelfTimeAsPercent = true;
     this.showTotalTimeAsPercent = true;
 
@@ -43,6 +41,18 @@ WebInspector.ProfileView = function(profile)
     this.dataGrid.addEventListener("sorting changed", this._sortData, this);
     this.dataGrid.element.addEventListener("mousedown", this._mouseDownInDataGrid.bind(this), true);
     this.element.appendChild(this.dataGrid.element);
+
+    this.viewSelectElement = document.createElement("select");
+    this.viewSelectElement.className = "status-bar-item";
+    this.viewSelectElement.addEventListener("change", this._changeView.bind(this), false);
+    this.view = "Tree";
+
+    var treeViewOption = document.createElement("option");
+    treeViewOption.label = WebInspector.UIString("Tree (Top Down)");
+    var heavyViewOption = document.createElement("option");
+    heavyViewOption.label = WebInspector.UIString("Heavy (Bottom Up)");
+    this.viewSelectElement.appendChild(treeViewOption);
+    this.viewSelectElement.appendChild(heavyViewOption);
 
     this.percentButton = document.createElement("button");
     this.percentButton.className = "percent-time-status-bar-item status-bar-item";
@@ -71,13 +81,24 @@ WebInspector.ProfileView = function(profile)
 
     this._updatePercentButton();
 
-    this.refresh();
+    this.profile = profile;
 }
 
 WebInspector.ProfileView.prototype = {
     get statusBarItems()
     {
-        return [this.percentButton, this.focusButton, this.excludeButton, this.resetButton];
+        return [this.viewSelectElement, this.percentButton, this.focusButton, this.excludeButton, this.resetButton];
+    },
+
+    get profile()
+    {
+        return this._profile;
+    },
+
+    set profile(profile)
+    {
+        this._profile = profile;
+        this.refresh();
     },
 
     refresh: function()
@@ -94,6 +115,20 @@ WebInspector.ProfileView.prototype = {
 
         if (selectedProfileNode && selectedProfileNode._dataGridNode)
             selectedProfileNode._dataGridNode.selected = true;
+    },
+
+    _changeView: function(event)
+    {
+        if (!event || !this.profile)
+            return;
+
+        if (event.target.selectedIndex == 0 && this.view == "Heavy") {
+            this.profile = this.profile.treeProfile;
+            this.view = "Tree"
+        } else if (event.target.selectedIndex == 1 && this.view == "Tree") {
+            this.profile = this.profile.heavyProfile;
+            this.view = "Heavy"
+        }
     },
 
     refreshShowAsPercents: function()

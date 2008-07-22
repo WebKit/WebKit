@@ -70,6 +70,26 @@ static JSValueRef getHeadCallback(JSContextRef ctx, JSObjectRef thisObject, JSSt
     return toRef(toJS(toJS(ctx), profile->head()));
 }
 
+static JSValueRef getHeavyProfileCallback(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
+        return JSValueMakeUndefined(ctx);
+
+    Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
+    return toRef(toJS(toJS(ctx), profile->heavyProfile()));
+}
+
+static JSValueRef getTreeProfileCallback(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
+        return JSValueMakeUndefined(ctx);
+
+    Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
+    return toRef(toJS(toJS(ctx), profile->treeProfile()));
+}
+
+// Static Functions
+
 static JSValueRef focus(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
 {
     if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
@@ -215,6 +235,8 @@ JSClassRef ProfileClass()
     static JSStaticValue staticValues[] = {
         { "title", getTitleCallback, 0, kJSPropertyAttributeNone },
         { "head", getHeadCallback, 0, kJSPropertyAttributeNone },
+        { "heavyProfile", getHeavyProfileCallback, 0, kJSPropertyAttributeNone },
+        { "treeProfile", getTreeProfileCallback, 0, kJSPropertyAttributeNone },
         { 0, 0, 0, 0 }
     };
 

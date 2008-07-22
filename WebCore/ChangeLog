@@ -1,3 +1,21 @@
+2008-07-21  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5951532> JSProfiler: Implement heavy (or bottom-up)
+        view (19228)
+        - Implement UI for Heavy (Bottom Up) view.
+
+        * English.lproj/localizedStrings.js:
+        * page/JavaScriptProfile.cpp: Expose the ability to get a heavy/tree
+        profile from a profile to the Web Inspector's JavaScript.
+        (WebCore::getHeavyProfileCallback):
+        (WebCore::getTreeProfileCallback):
+        (WebCore::ProfileClass):
+        * page/inspector/ProfileView.js: Implement the dropdown for changing
+        profile views.
+        * page/inspector/inspector.css:
+
 2008-07-22  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Adam Roben.
