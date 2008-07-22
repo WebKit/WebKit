@@ -3,12 +3,9 @@ MINOR_VERSION = 3;
 TINY_VERSION = 0;
 FULL_VERSION = $(MAJOR_VERSION).$(MINOR_VERSION);
 
-// The bundle version is set based on the current build configuration, see below.
+// The bundle version and short version string are set based on the current build configuration, see below.
 BUNDLE_VERSION = $(BUNDLE_VERSION_$(CONFIGURATION));
-
-// The local builds are always just the major version with a Plus suffix.
-BUNDLE_VERSION_Release = $(FULL_VERSION)+;
-BUNDLE_VERSION_Debug = $(BUNDLE_VERSION_Release);
+SHORT_VERSION_STRING = $(SHORT_VERSION_STRING_$(CONFIGURATION))
 
 // The system version prefix is based on the current system version.
 SYSTEM_VERSION_PREFIX = $(SYSTEM_VERSION_PREFIX_$(MAC_OS_X_VERSION_MAJOR));
@@ -19,9 +16,19 @@ SYSTEM_VERSION_PREFIX_1060 = 6;
 
 // The production build always uses the full version with a system version prefix.
 BUNDLE_VERSION_Production = $(SYSTEM_VERSION_PREFIX)$(FULL_VERSION);
-
-// If $(CONFIGURATION) is undefined, use the Production version.
 BUNDLE_VERSION_ = $(BUNDLE_VERSION_Production);
+
+// The production build always uses the major version with a system version prefix
+SHORT_VERSION_STRING_Production = $(SYSTEM_VERSION_PREFIX)$(MAJOR_VERSION);
+SHORT_VERSION_STRING_ = $(SHORT_VERSION_STRING_Production);
+
+// Local builds are the full version with a plus suffix.
+BUNDLE_VERSION_Release = $(FULL_VERSION)+;
+BUNDLE_VERSION_Debug = $(BUNDLE_VERSION_Release);
+
+// Local builds use the major version with a plus suffix
+SHORT_VERSION_STRING_Release = $(MAJOR_VERSION)+;
+SHORT_VERSION_STRING_Debug = $(SHORT_VERSION_STRING_Release);
 
 DYLIB_COMPATIBILITY_VERSION = 1;
 DYLIB_CURRENT_VERSION = $(FULL_VERSION);

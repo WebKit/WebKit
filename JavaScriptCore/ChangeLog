@@ -1,3 +1,12 @@
+2008-07-21  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6091287> Revamp the handling of CFBundleShortVersionString to be fixed at the major component of the version number.
+
+        * Configurations/Version.xcconfig:
+        * Info.plist:
+
 2008-07-21  Adam Roben  <aroben@apple.com>
 
         Add Vector::find
