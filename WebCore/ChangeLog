@@ -1,3 +1,12 @@
+2008-07-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        New test to check that arrays fail gracefully (throw an out of memory exception)
+        when the vector grows to large.
+
+        * manual-tests/array-out-of-memory.html:         Added.
+
 2008-07-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

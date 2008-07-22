@@ -1,3 +1,13 @@
+2008-07-22  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Prevent integer overflow when reallocating storage vector for arrays.
+
+        Sunspider reports 1.005x as fast (no change expected).
+
+        * kjs/JSArray.cpp:
+
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.
