@@ -65,6 +65,7 @@ public:
     bool hasVideo();
     
     void setFrameView(FrameView* frameView) { m_frameView = frameView; }
+    bool inMediaDocument();
     
     IntRect rect() const { return m_rect; }
     void setRect(const IntRect& r);

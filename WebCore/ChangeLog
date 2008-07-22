@@ -1,3 +1,14 @@
+2008-07-21  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/6031039> don't disable track-types when media is in a standalone document
+
+        * platform/graphics/MediaPlayer.cpp: (WebCore::MediaPlayer::inMediaDocument): Added.
+        * platform/graphics/MediaPlayer.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: (WebCore::MediaPlayerPrivate::updateStates):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp: (WebCore::MediaPlayerPrivate::updateStates):
+
 2008-07-21  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.

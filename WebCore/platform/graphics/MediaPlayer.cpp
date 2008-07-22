@@ -30,6 +30,9 @@
 
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
+#include "FrameView.h"
+#include "Frame.h"
+#include "Document.h"
 
 #if PLATFORM(MAC)
 #include "MediaPlayerPrivateQTKit.h"
@@ -111,6 +114,14 @@ IntSize MediaPlayer::naturalSize()
 bool MediaPlayer::hasVideo()
 {
     return m_private->hasVideo();
+}
+
+bool MediaPlayer::inMediaDocument()
+{
+    Frame* frame = m_frameView ? m_frameView->frame() : 0;
+    Document* document = frame ? frame->document() : 0;
+    
+    return document && document->isMediaDocument();
 }
 
 MediaPlayer::NetworkState MediaPlayer::networkState()

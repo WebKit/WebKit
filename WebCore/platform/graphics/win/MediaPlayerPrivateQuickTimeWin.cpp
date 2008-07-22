@@ -303,7 +303,7 @@ void MediaPlayerPrivate::updateStates()
   
     long loadState = m_qtMovie ? m_qtMovie->loadState() : QTMovieLoadStateError;
 
-    if (loadState >= QTMovieLoadStateLoaded && m_networkState < MediaPlayer::LoadedMetaData) {
+    if (loadState >= QTMovieLoadStateLoaded && m_networkState < MediaPlayer::LoadedMetaData && !m_player->inMediaDocument()) {
         unsigned enabledTrackCount;
         m_qtMovie->disableUnsupportedTracks(enabledTrackCount);
         // FIXME: We should differentiate between load errors and decode errors <rdar://problem/5605692>
