@@ -1329,7 +1329,6 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
         ec = SYNTAX_ERR;
         return 0;
     }
-    RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(document()->inStrictMode());
     if (resolver) {
         String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
@@ -1339,21 +1338,19 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
             p.m_defaultNamespace = defaultNamespace;
     }
 
-    RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
-    if (!rule || !rule->isStyleRule()) {
+    std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors);
+    if (!querySelector.get()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
-    CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
-
     if (resolver) {
-        if (resolveNamespacesForSelector(querySelector, resolver, ec, exec))
+        if (resolveNamespacesForSelector(querySelector.get(), resolver, ec, exec))
             return 0;
     } else {
         // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
         // namespace prefixes.
-        if (selectorNeedsNamespaceResolution(querySelector)) {
+        if (selectorNeedsNamespaceResolution(querySelector.get())) {
             ec = NAMESPACE_ERR;
             return 0;
         }
@@ -1374,7 +1371,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
-            for (CSSSelector* selector = querySelector; selector; selector = selector->next()) {
+            for (CSSSelector* selector = querySelector.get(); selector; selector = selector->next()) {
                 if (selectorChecker.checkSelector(selector, element))
                     return element;
             }
@@ -1390,7 +1387,6 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver*
         ec = SYNTAX_ERR;
         return 0;
     }
-    RefPtr<CSSStyleSheet> tempStyleSheet = CSSStyleSheet::create(document());
     CSSParser p(document()->inStrictMode());
     if (resolver) {
         String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
@@ -1400,27 +1396,26 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver*
             p.m_defaultNamespace = defaultNamespace;
     }
 
-    RefPtr<CSSRule> rule = p.parseRule(tempStyleSheet.get(), selectors + "{}");
-    if (!rule || !rule->isStyleRule()) {
+    std::auto_ptr<CSSSelector> querySelector = p.parseSelector(selectors);
+
+    if (!querySelector.get()) {
         ec = SYNTAX_ERR;
         return 0;
     }
 
-    CSSSelector* querySelector = static_cast<CSSStyleRule*>(rule.get())->selector();
-
     if (resolver) {
-        if (resolveNamespacesForSelector(querySelector, resolver, ec, exec))
+        if (resolveNamespacesForSelector(querySelector.get(), resolver, ec, exec))
             return 0;
     } else {
         // No NSResolver was passed, so throw a NAMESPACE_ERR if the selector includes any 
         // namespace prefixes.
-        if (selectorNeedsNamespaceResolution(querySelector)) {
+        if (selectorNeedsNamespaceResolution(querySelector.get())) {
             ec = NAMESPACE_ERR;
             return 0;
         }
     }
 
-    return createSelectorNodeList(this, querySelector);
+    return createSelectorNodeList(this, querySelector.get());
 }
 
 Document *Node::ownerDocument() const

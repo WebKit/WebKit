@@ -106,6 +106,7 @@ namespace WebCore {
         bool parseHSLParameters(CSSParserValue*, double* colorValues, bool parseAlpha);
         PassRefPtr<CSSPrimitiveValue> parseColor(CSSParserValue* = 0);
         bool parseColorFromValue(CSSParserValue*, RGBA32&, bool = false);
+        std::auto_ptr<CSSSelector> parseSelector(const String&);
 
         static bool parseColor(const String&, RGBA32& rgb, bool strict);
 
@@ -181,6 +182,7 @@ namespace WebCore {
         MediaQuery* m_mediaQuery;
         CSSParserValueList* m_valueList;
         CSSProperty** m_parsedProperties;
+        CSSSelector* m_floatingSelector;
         int m_numParsedProperties;
         int m_maxParsedProperties;
 

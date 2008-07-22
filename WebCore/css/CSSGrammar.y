@@ -120,6 +120,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_DECLS_SYM
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
+%token WEBKIT_SELECTOR_SYM
 %token WEBKIT_VARIABLES_SYM
 %token WEBKIT_VARIABLES_DECLS_SYM
 %token ATKEYWORD
@@ -238,6 +239,7 @@ stylesheet:
   | webkit_decls maybe_space
   | webkit_value maybe_space
   | webkit_mediaquery maybe_space
+  | webkit_selector maybe_space
   | webkit_variables_decls maybe_space
   ;
 
@@ -283,6 +285,13 @@ webkit_mediaquery:
          CSSParser* p = static_cast<CSSParser*>(parser);
          p->m_mediaQuery = p->sinkFloatingMediaQuery($4);
      }
+;
+
+webkit_selector:
+    WEBKIT_SELECTOR_SYM '{' maybe_space selector_list '}' {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->m_floatingSelector = p->sinkFloatingSelector($4);
+    }
 ;
 
 maybe_space:

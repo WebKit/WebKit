@@ -130,6 +130,7 @@ CSSParser::CSSParser(bool strictParsing)
     , m_mediaQuery(0)
     , m_valueList(0)
     , m_parsedProperties(static_cast<CSSProperty**>(fastMalloc(32 * sizeof(CSSProperty*))))
+    , m_floatingSelector(0)
     , m_numParsedProperties(0)
     , m_maxParsedProperties(32)
     , m_inParseShorthand(0)
@@ -291,6 +292,19 @@ bool CSSParser::parseColor(CSSMutableStyleDeclaration* declaration, const String
     m_rule = 0;
 
     return (m_numParsedProperties && m_parsedProperties[0]->m_id == CSSPropertyColor);
+}
+
+std::auto_ptr<CSSSelector> CSSParser::parseSelector(const String& string)
+{
+    RefPtr<CSSStyleSheet> dummyStyleSheet = CSSStyleSheet::create();
+
+    m_styleSheet = dummyStyleSheet.get();
+
+    setupParser("@-webkit-selector{", string, "}");
+
+    cssyyparse(this);
+
+    return std::auto_ptr<CSSSelector>(m_floatingSelector);
 }
 
 bool CSSParser::parseDeclaration(CSSMutableStyleDeclaration* declaration, const String& string)

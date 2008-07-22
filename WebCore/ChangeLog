@@ -1,3 +1,25 @@
+2008-07-21  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Bug 19919: Add selectors' string parsing in CSSParser
+        https://bugs.webkit.org/show_bug.cgi?id=19919
+
+        No functional change.
+
+        * css/CSSGrammar.y: Added entry for parsing only a selector.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::CSSParser):
+        (WebCore::CSSParser::parseSelector):
+        * css/CSSParser.h: Added m_floatingSelector to hold the
+        Selector parsed in parseSelector.
+
+        * css/tokenizer.flex: Added "@-webkit-selector" token.
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll): Switched to parseSelector
+        method.
+
 2008-07-21  Kevin Calhoun  <kcalhoun@apple.com>
 
         Reviewed by Adele.
