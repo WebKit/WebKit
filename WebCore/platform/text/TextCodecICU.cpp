@@ -145,6 +145,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     registrar("xeuccn", "EUC-CN");
     registrar("xgbk", "EUC-CN");
     registrar("xunicode20utf8", "UTF-8");
+    registrar("xwindows949", "windows-949-2000");
     registrar("xxbig5", "Big5");
 }
 

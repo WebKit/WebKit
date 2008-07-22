@@ -1,3 +1,13 @@
+2008-07-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5955602> WebKit should support charset name x-windows-949
+
+        * fast/encoding/char-decoding.html:
+        * fast/encoding/char-decoding-expected.txt:
+        Added a test for this name.
+
 2008-07-21  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.

@@ -1,3 +1,15 @@
+2008-07-22  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        <rdar://problem/5955602> WebKit should support charset name x-windows-949
+
+        Test: fast/encoding/char-decoding.html
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Added support for this name for
+        Firefox compatibility.
+
 2008-07-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Alexey Proskuryakov.
