@@ -1,3 +1,14 @@
+2008-07-21  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20117
+        setBaseAndExtent fails to reverse the current selection
+
+        Test: editing/selection/setBaseAndExtent-revert-selection.html
+
+        * editing/Selection.h: (WebCore::operator==): Compare direction, too.
+
 2008-07-21  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Sam Weinig.
