@@ -167,6 +167,9 @@ and WebCore. Include this file to use these settings.
             <include>$(WK_ROOT)/WebKitLibraries/win/include/pthreads</include>
             <sys-lib>pthreadVC2</sys-lib>
         </if>
+        <if cond="FORMAT=='gnu'">
+            <sys-lib>pthread</sys-lib>
+        </if>
     </template>
     
 </makefile>

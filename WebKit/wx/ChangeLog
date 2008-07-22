@@ -1,3 +1,9 @@
+2008-07-21  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix. Fix pthread linkage under Linux.
+
+        * dependencies.bkl:
+
 2008-06-15  Darin Adler  <darin@apple.com>
 
         - give Frame object functions shorter names: scriptProxy() -> script(),
