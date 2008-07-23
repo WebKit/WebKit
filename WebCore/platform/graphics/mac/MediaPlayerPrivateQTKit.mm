@@ -38,6 +38,14 @@
 #import <QTKit/QTKit.h>
 #import <objc/objc-runtime.h>
 
+#if DRAW_FRAME_RATE
+#import "Font.h"
+#import "Frame.h"
+#import "Document.h"
+#import "RenderObject.h"
+#import "RenderStyle.h"
+#endif
+
 #ifdef BUILDING_ON_TIGER
 static IMP method_setImplementation(Method m, IMP imp)
 {
@@ -157,6 +165,11 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
+#if DRAW_FRAME_RATE
+    , m_frameCountWhilePlaying(0)
+    , m_timeStartedPlaying(0)
+    , m_timeStoppedPlaying(0)
+#endif
 {
 }
 
@@ -381,6 +394,9 @@ void MediaPlayerPrivate::play()
     if (!m_qtMovie)
         return;
     m_startedPlaying = true;
+#if DRAW_FRAME_RATE
+    m_frameCountWhilePlaying = 0;
+#endif
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() setRate:m_player->rate()];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -392,6 +408,9 @@ void MediaPlayerPrivate::pause()
     if (!m_qtMovie)
         return;
     m_startedPlaying = false;
+#if DRAW_FRAME_RATE
+    m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
+#endif
     [m_objcObserver.get() setDelayCallbacks:YES];
     [m_qtMovie.get() stop];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -679,6 +698,9 @@ void MediaPlayerPrivate::didEnd()
 {
     m_endPointTimer.stop();
     m_startedPlaying = false;
+#if DRAW_FRAME_RATE
+    m_timeStoppedPlaying = [NSDate timeIntervalSinceReferenceDate];
+#endif
     updateStates();
     m_player->timeChanged();
 }
@@ -706,6 +728,15 @@ void MediaPlayerPrivate::setVisible(bool b)
 
 void MediaPlayerPrivate::repaint()
 {
+#if DRAW_FRAME_RATE
+    if (m_startedPlaying) {
+        m_frameCountWhilePlaying++;
+        // to eliminate preroll costs from our calculation,
+        // our frame rate calculation excludes the first frame drawn after playback starts
+        if (1==m_frameCountWhilePlaying)
+            m_timeStartedPlaying = [NSDate timeIntervalSinceReferenceDate];
+    }
+#endif
     m_player->repaint();
 }
 
@@ -735,6 +766,30 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
         [NSGraphicsContext restoreGraphicsState];
     } else
         [view displayRectIgnoringOpacity:paintRect inContext:newContext];
+
+#if DRAW_FRAME_RATE
+    // Draw the frame rate only after having played more than 10 frames.
+    if (m_frameCountWhilePlaying > 10) {
+        Frame* frame = m_player->m_frameView ? m_player->m_frameView->frame() : NULL;
+        Document* document = frame ? frame->document() : NULL;
+        RenderObject* renderer = document ? document->renderer() : NULL;
+        RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
+        if (styleToUse) {
+            double frameRate = (m_frameCountWhilePlaying - 1) / ( m_startedPlaying ? ([NSDate timeIntervalSinceReferenceDate] - m_timeStartedPlaying) :
+                (m_timeStoppedPlaying - m_timeStartedPlaying) );
+            String text = String::format("%1.2f", frameRate);
+            TextRun textRun(text.characters(), text.length());
+            const Color color(255, 0, 0);
+            context->scale(FloatSize(1.0f, -1.0f));    
+            context->setFont(styleToUse->font());
+            context->setStrokeColor(color);
+            context->setStrokeStyle(SolidStroke);
+            context->setStrokeThickness(1.0f);
+            context->setFillColor(color);
+            context->drawText(textRun, IntPoint(2, -3));
+        }
+    }
+#endif
 
     context->restore();
     END_BLOCK_OBJC_EXCEPTIONS;

@@ -33,6 +33,10 @@
 #include <QTMovieWin.h>
 #include <wtf/OwnPtr.h>
 
+#ifndef DRAW_FRAME_RATE
+#define DRAW_FRAME_RATE 0
+#endif
+
 namespace WebCore {
 
 class GraphicsContext;
@@ -111,6 +115,11 @@ private:
     MediaPlayer::ReadyState m_readyState;
     bool m_startedPlaying;
     bool m_isStreaming;
+#if DRAW_FRAME_RATE
+    int m_frameCountWhilePlaying;
+    int m_timeStartedPlaying;
+    int m_timeStoppedPlaying;
+#endif
 };
 
 }

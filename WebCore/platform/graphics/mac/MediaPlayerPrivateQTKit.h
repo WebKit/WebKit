@@ -46,6 +46,10 @@ class QTVideoRendererWebKitOnly;
 class WebCoreMovieObserver;
 #endif
 
+#ifndef DRAW_FRAME_RATE
+#define DRAW_FRAME_RATE 0
+#endif
+
 namespace WebCore {
 
 class MediaPlayerPrivate : Noncopyable {
@@ -131,6 +135,11 @@ private:
     MediaPlayer::ReadyState m_readyState;
     bool m_startedPlaying;
     bool m_isStreaming;
+#if DRAW_FRAME_RATE
+    int  m_frameCountWhilePlaying;
+    double m_timeStartedPlaying;
+    double m_timeStoppedPlaying;
+#endif
 };
 
 }

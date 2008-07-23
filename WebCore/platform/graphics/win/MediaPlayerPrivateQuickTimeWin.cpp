@@ -34,6 +34,16 @@
 #include "ScrollView.h"
 #include <wtf/MathExtras.h>
 
+#if DRAW_FRAME_RATE
+#include "Font.h"
+#include "FrameView.h"
+#include "Frame.h"
+#include "Document.h"
+#include "RenderObject.h"
+#include "RenderStyle.h"
+#include "Windows.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -50,6 +60,11 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
+#if DRAW_FRAME_RATE
+    , m_frameCountWhilePlaying(0)
+    , m_timeStartedPlaying(0)
+    , m_timeStoppedPlaying(0)
+#endif
 {
 }
 
@@ -87,6 +102,9 @@ void MediaPlayerPrivate::play()
     if (!m_qtMovie)
         return;
     m_startedPlaying = true;
+#if DRAW_FRAME_RATE
+    m_frameCountWhilePlaying = 0;
+#endif
 
     m_qtMovie->play();
     startEndPointTimerIfNeeded();
@@ -97,6 +115,9 @@ void MediaPlayerPrivate::pause()
     if (!m_qtMovie)
         return;
     m_startedPlaying = false;
+#if DRAW_FRAME_RATE
+    m_timeStoppedPlaying = GetTickCount();
+#endif
     m_qtMovie->pause();
     m_endPointTimer.stop();
 }
@@ -351,6 +372,9 @@ void MediaPlayerPrivate::didEnd()
 {
     m_endPointTimer.stop();
     m_startedPlaying = false;
+#if DRAW_FRAME_RATE
+    m_timeStoppedPlaying = GetTickCount();
+#endif
     updateStates();
     m_player->timeChanged();
 }
@@ -375,6 +399,31 @@ void MediaPlayerPrivate::paint(GraphicsContext* p, const IntRect& r)
     HDC hdc = p->getWindowsContext(r);
     m_qtMovie->paint(hdc, r.x(), r.y());
     p->releaseWindowsContext(hdc, r);
+
+#if DRAW_FRAME_RATE
+    if (m_frameCountWhilePlaying > 10) {
+        Frame* frame = m_player->m_frameView ? m_player->m_frameView->frame() : NULL;
+        Document* document = frame ? frame->document() : NULL;
+        RenderObject* renderer = document ? document->renderer() : NULL;
+        RenderStyle* styleToUse = renderer ? renderer->style() : NULL;
+        if (styleToUse) {
+            double frameRate = (m_frameCountWhilePlaying - 1) / (0.001 * ( m_startedPlaying ? (GetTickCount() - m_timeStartedPlaying) :
+                (m_timeStoppedPlaying - m_timeStartedPlaying) ));
+            String text = String::format("%1.2f", frameRate);
+            TextRun textRun(text.characters(), text.length());
+            const Color color(255, 0, 0);
+            p->save();
+            p->translate(r.x(), r.y() + r.height());
+            p->setFont(styleToUse->font());
+            p->setStrokeColor(color);
+            p->setStrokeStyle(SolidStroke);
+            p->setStrokeThickness(1.0f);
+            p->setFillColor(color);
+            p->drawText(textRun, IntPoint(2, -3));
+            p->restore();
+        }
+    }
+#endif
 }
 
 void MediaPlayerPrivate::getSupportedTypes(HashSet<String>& types)
@@ -416,6 +465,15 @@ void MediaPlayerPrivate::movieTimeChanged(QTMovieWin* movie)
 void MediaPlayerPrivate::movieNewImageAvailable(QTMovieWin* movie)
 {
     ASSERT(m_qtMovie.get() == movie);
+#if DRAW_FRAME_RATE
+    if (m_startedPlaying) {
+        m_frameCountWhilePlaying++;
+        // to eliminate preroll costs from our calculation,
+        // our frame rate calculation excludes the first frame drawn after playback starts
+        if (1==m_frameCountWhilePlaying)
+            m_timeStartedPlaying = GetTickCount();
+    }
+#endif
     m_player->repaint();
 }
 

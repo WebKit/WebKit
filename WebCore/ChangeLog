@@ -1,3 +1,28 @@
+2008-07-23  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
+        Added a debug mode for viewing frames per second for videos.  This is controlled by two 
+        independent compiler flags DRAW_FRAME_RATE in MediaPlayerPrivateQTKit.h and MediaPlayerPrivateQuickTimeWin.h.
+        Unless either flags is turned on there is no change to the code for video frame drawing.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::repaint):
+        (WebCore::MediaPlayerPrivate::paint):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::pause):
+        (WebCore::MediaPlayerPrivate::didEnd):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::movieNewImageAvailable):
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h:
+
 2008-07-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sam.
