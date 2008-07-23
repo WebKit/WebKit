@@ -13,6 +13,10 @@ INCLUDEPATH += $$PWD/.. \
 CONFIG -= app_bundle
 DEFINES += BUILDING_QT__
 
+CONFIG(release) {
+    DEFINES += NDEBUG USE_SYSTEM_MALLOC
+}
+
 CONFIG += link_pkgconfig
 
 QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
