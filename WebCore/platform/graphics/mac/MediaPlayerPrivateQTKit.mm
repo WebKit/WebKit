@@ -723,6 +723,7 @@ void MediaPlayerPrivate::paint(GraphicsContext* context, const IntRect& r)
     context->save();
     context->translate(r.x(), r.y() + r.height());
     context->scale(FloatSize(1.0f, -1.0f));
+    context->setImageInterpolationQuality(InterpolationLow);
     IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
     NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
 

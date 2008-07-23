@@ -813,20 +813,46 @@ void GraphicsContext::setURLForRect(const KURL& link, const IntRect& destRect)
     }
 }
 
-void GraphicsContext::setUseLowQualityImageInterpolation(bool lowQualityMode)
+void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
 {
     if (paintingDisabled())
         return;
-        
-    CGContextSetInterpolationQuality(platformContext(), lowQualityMode ? kCGInterpolationNone : kCGInterpolationDefault);
+    
+    CGInterpolationQuality quality;
+    switch (mode) {
+        case InterpolationDefault:
+            quality = kCGInterpolationDefault;
+            break;
+        case InterpolationNone:
+            quality = kCGInterpolationNone;
+            break;
+        case InterpolationLow:
+            quality = kCGInterpolationLow;
+            break;
+        case InterpolationHigh:
+            quality = kCGInterpolationHigh;
+            break;
+    }
+    CGContextSetInterpolationQuality(platformContext(), quality);
 }
 
-bool GraphicsContext::useLowQualityImageInterpolation() const
+InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 {
     if (paintingDisabled())
-        return false;
-    
-    return CGContextGetInterpolationQuality(platformContext());
+        return InterpolationDefault;
+
+    CGInterpolationQuality quality = CGContextGetInterpolationQuality(platformContext());
+    switch (quality) {
+        case kCGInterpolationDefault:
+            return InterpolationDefault;
+        case kCGInterpolationNone:
+            return InterpolationNone;
+        case kCGInterpolationLow:
+            return InterpolationLow;
+        case kCGInterpolationHigh:
+            return InterpolationHigh;
+    }
+    return InterpolationDefault;
 }
 
 void GraphicsContext::setPlatformTextDrawingMode(int mode)

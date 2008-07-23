@@ -108,6 +108,13 @@ namespace WebCore {
         DashedStroke
     };
 
+    enum InterpolationQuality {
+        InterpolationDefault,
+        InterpolationNone,
+        InterpolationLow,
+        InterpolationHigh
+    };
+
     class GraphicsContext : Noncopyable {
     public:
         GraphicsContext(PlatformGraphicsContext*);
@@ -160,11 +167,11 @@ namespace WebCore {
                             CompositeOperator = CompositeSourceOver);
 
 #if PLATFORM(CG)
-        void setUseLowQualityImageInterpolation(bool = true);
-        bool useLowQualityImageInterpolation() const;
+        void setImageInterpolationQuality(InterpolationQuality);
+        InterpolationQuality imageInterpolationQuality() const;
 #else
-        void setUseLowQualityImageInterpolation(bool = true) {}
-        bool useLowQualityImageInterpolation() const { return false; }
+        void setImageInterpolationQuality(InterpolationQuality) {}
+        InterpolationQuality imageInterpolationQuality() const { return InterpolationDefault; }
 #endif
 
         void clip(const FloatRect&);
