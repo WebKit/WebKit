@@ -1,5 +1,52 @@
 2008-07-23  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Geoff Garen.
+
+        JSClassRef is created context-free, but gets infatuated with the first context it sees.
+
+        The implicit API contract is that JSClassRef can be used with any context on any thread.
+        This no longer worked, because UStrings in the class were turned into per-context
+        identifiers, and the cached JSObject prototype was tied to JSGlobalData, too.
+
+        * API/JSClassRef.h: Made a separate struct for context-dependent parts of OpaqueJSClass.
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::OpaqueJSClass): Updated for renames and changed member variable order.
+        (OpaqueJSClass::~OpaqueJSClass): Assert that string members are not identifiers.
+        (clearReferenceToPrototype): Update for the new reference location.
+        (OpaqueJSClassContextData::OpaqueJSClassContextData): Make a deep copy of all strings.
+        (OpaqueJSClass::contextData): Added a function that finds the per-context part of
+        OpaqueJSClass in JSGlobalData, or creates it if not found.
+        (OpaqueJSClass::className): Always make a deep copy. Callers of this function do not have
+        a way to access JSGlobalData, so a per-context copy could not be made.
+        (OpaqueJSClass::staticValues): Updated for new data location.
+        (OpaqueJSClass::staticFunctions): Ditto.
+        (OpaqueJSClass::prototype): Changed to take an internal type for consistency.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        (KJS::JSGlobalData::~JSGlobalData):
+        * kjs/JSGlobalData.h:
+        Keep a HashMap to access per-context JSClass data given a pointr to the shared part.
+
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::className):
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::getPropertyNames):
+        (KJS::::staticValueGetter):
+        (KJS::::staticFunctionGetter):j
+        Use function accessors instead of accessing OpaqueJSClass members directly.
+
+        * API/JSContextRef.cpp: (JSGlobalContextCreate): Updated for the change in
+        OpaqueJSClass::prototype() argument type.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMake): Updated for the change in OpaqueJSClass::prototype() argument type.
+        (JSObjectMakeConstructor): Ditto.
+
+2008-07-23  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix.
 
         * kjs/ArgList.h: (KJS::ArgList::operator new): removed an extraneous "ArgList::" inside the

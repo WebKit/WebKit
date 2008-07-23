@@ -95,8 +95,9 @@ JSCallbackObject<Base>::~JSCallbackObject()
 template <class Base>
 UString JSCallbackObject<Base>::className() const
 {
-    if (!m_class->className.isNull())
-        return m_class->className;
+    UString thisClassName = m_class->className();
+    if (!thisClassName.isNull())
+        return thisClassName;
     
     return Base::className();
 }
@@ -127,14 +128,14 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
             }
         }
         
-        if (OpaqueJSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (staticValues->contains(propertyName.ustring().rep())) {
                 slot.setCustom(this, staticValueGetter);
                 return true;
             }
         }
         
-        if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (staticFunctions->contains(propertyName.ustring().rep())) {
                 slot.setCustom(this, staticFunctionGetter);
                 return true;
@@ -166,7 +167,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                 return;
         }
         
-        if (OpaqueJSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return;
@@ -179,7 +180,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
             }
         }
         
-        if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
                 if (entry->attributes & kJSPropertyAttributeReadOnly)
                     return;
@@ -212,7 +213,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
                 return true;
         }
         
-        if (OpaqueJSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep())) {
                 if (entry->attributes & kJSPropertyAttributeDontDelete)
                     return false;
@@ -220,7 +221,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
             }
         }
         
-        if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
                 if (entry->attributes & kJSPropertyAttributeDontDelete)
                     return false;
@@ -343,8 +344,8 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
             getPropertyNames(execRef, thisRef, toRef(&propertyNames));
         }
         
-        if (OpaqueJSClass::StaticValuesTable* staticValues = jsClass->staticValues) {
-            typedef OpaqueJSClass::StaticValuesTable::const_iterator iterator;
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
+            typedef OpaqueJSClassStaticValuesTable::const_iterator iterator;
             iterator end = staticValues->end();
             for (iterator it = staticValues->begin(); it != end; ++it) {
                 UString::Rep* name = it->first.get();
@@ -354,8 +355,8 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
             }
         }
         
-        if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
-            typedef OpaqueJSClass::StaticFunctionsTable::const_iterator iterator;
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
+            typedef OpaqueJSClassStaticFunctionsTable::const_iterator iterator;
             iterator end = staticFunctions->end();
             for (iterator it = staticFunctions->begin(); it != end; ++it) {
                 UString::Rep* name = it->first.get();
@@ -450,7 +451,7 @@ JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identi
     JSStringRef propertyNameRef = toRef(propertyName.ustring().rep());
     
     for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parentClass)
-        if (OpaqueJSClass::StaticValuesTable* staticValues = jsClass->staticValues)
+        if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec))
             if (StaticValueEntry* entry = staticValues->get(propertyName.ustring().rep()))
                 if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
                     JSLock::DropAllLocks dropAllLocks(exec);
@@ -473,7 +474,7 @@ JSValue* JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, const Ide
         return slot2.getValue(exec, propertyName);
     
     for (JSClassRef jsClass = thisObj->m_class; jsClass; jsClass = jsClass->parentClass) {
-        if (OpaqueJSClass::StaticFunctionsTable* staticFunctions = jsClass->staticFunctions) {
+        if (OpaqueJSClassStaticFunctionsTable* staticFunctions = jsClass->staticFunctions(exec)) {
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.ustring().rep())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
                     JSObject* o = new (exec) JSCallbackFunction(exec, callAsFunction, propertyName);

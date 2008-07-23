@@ -31,8 +31,12 @@
 
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>
+
+struct OpaqueJSClass;
+struct OpaqueJSClassContextData;
 
 namespace KJS {
 
@@ -69,6 +73,8 @@ namespace KJS {
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
         const ArgList* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
+
+        HashMap<OpaqueJSClass*, OpaqueJSClassContextData*>* opaqueJSClassData;
 
         HashSet<ParserRefCounted*>* newParserObjects;
         HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;

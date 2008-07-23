@@ -74,7 +74,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsClass)
         return toRef(new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype())); // slightly more efficient
 
-    JSValue* jsPrototype = jsClass->prototype(ctx);
+    JSValue* jsPrototype = jsClass->prototype(exec);
     if (!jsPrototype)
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
@@ -99,7 +99,7 @@ JSObjectRef JSObjectMakeConstructor(JSContextRef ctx, JSClassRef jsClass, JSObje
     JSLock lock(exec);
 
     JSValue* jsPrototype = jsClass 
-        ? jsClass->prototype(ctx)
+        ? jsClass->prototype(exec)
         : exec->dynamicGlobalObject()->objectPrototype();
     
     JSCallbackConstructor* constructor = new (exec) JSCallbackConstructor(exec, jsClass, callAsConstructor);

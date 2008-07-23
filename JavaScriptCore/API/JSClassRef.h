@@ -55,22 +55,42 @@ struct StaticFunctionEntry {
     JSPropertyAttributes attributes;
 };
 
-struct OpaqueJSClass : public RefCounted<OpaqueJSClass> {
+typedef HashMap<RefPtr<KJS::UString::Rep>, StaticValueEntry*> OpaqueJSClassStaticValuesTable;
+typedef HashMap<RefPtr<KJS::UString::Rep>, StaticFunctionEntry*> OpaqueJSClassStaticFunctionsTable;
+
+class OpaqueJSClass;
+
+// An OpaqueJSClass (JSClass) is created without a context, so it can be used with any context, even across context groups.
+// This structure holds data members that vary across context groups.
+struct OpaqueJSClassContextData : Noncopyable {
+    OpaqueJSClassContextData(OpaqueJSClass*);
+    ~OpaqueJSClassContextData();
+
+    // It is necessary to keep OpaqueJSClass alive because of the following rare scenario:
+    // 1. A class is created and used, so its context data is stored in JSGlobalData hash map.
+    // 2. The class is released, and when all JS objects that use it are collected, OpaqueJSClass
+    // is deleted (that's the part prevented by this RefPtr).
+    // 3. Another class is created at the same address.
+    // 4. When it is used, the old context data is found in JSGlobalData and used.
+    RefPtr<OpaqueJSClass> m_class;
+
+    OpaqueJSClassStaticValuesTable* staticValues;
+    OpaqueJSClassStaticFunctionsTable* staticFunctions;
+    KJS::JSObject* cachedPrototype;
+};
+
+struct OpaqueJSClass : public ThreadSafeShared<OpaqueJSClass> {
     static PassRefPtr<OpaqueJSClass> create(const JSClassDefinition*);
     static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();
     
-    KJS::JSObject* prototype(JSContextRef ctx);
-    
-    typedef HashMap<RefPtr<KJS::UString::Rep>, StaticValueEntry*> StaticValuesTable;
-    typedef HashMap<RefPtr<KJS::UString::Rep>, StaticFunctionEntry*> StaticFunctionsTable;
+    KJS::UString className();
+    OpaqueJSClassStaticValuesTable* staticValues(KJS::ExecState*);
+    OpaqueJSClassStaticFunctionsTable* staticFunctions(KJS::ExecState*);
+    KJS::JSObject* prototype(KJS::ExecState*);
 
-    KJS::UString className;
     OpaqueJSClass* parentClass;
     OpaqueJSClass* prototypeClass;
-
-    StaticValuesTable* staticValues;
-    StaticFunctionsTable* staticFunctions;
     
     JSObjectInitializeCallback initialize;
     JSObjectFinalizeCallback finalize;
@@ -85,12 +105,18 @@ struct OpaqueJSClass : public RefCounted<OpaqueJSClass> {
     JSObjectConvertToTypeCallback convertToType;
 
 private:
+    friend struct OpaqueJSClassContextData;
+
     OpaqueJSClass();
     OpaqueJSClass(const OpaqueJSClass&);
     OpaqueJSClass(const JSClassDefinition*, OpaqueJSClass* protoClass);
-    
-    friend void clearReferenceToPrototype(JSObjectRef prototype);
-    KJS::JSObject* cachedPrototype;
+
+    OpaqueJSClassContextData& contextData(KJS::ExecState*);
+
+    // UStrings in these data members should not be put into any IdentifierTable.
+    KJS::UString m_className;
+    OpaqueJSClassStaticValuesTable* m_staticValues;
+    OpaqueJSClassStaticFunctionsTable* m_staticFunctions;
 };
 
 #endif // JSClassRef_h

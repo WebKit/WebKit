@@ -1,3 +1,11 @@
+2008-07-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Make JSClassRef work with any context, not just the first one it was used in.
+
+        * ForwardingHeaders/wtf/HashMap.h: Added.
+
 2008-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt and Sam Weinig.

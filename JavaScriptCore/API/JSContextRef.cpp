@@ -51,12 +51,12 @@ JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass)
     }
 
     JSGlobalObject* globalObject = new (sharedGlobalData) JSCallbackObject<JSGlobalObject>(globalObjectClass);
-    JSGlobalContextRef ctx = toGlobalRef(globalObject->globalExec());
-    JSValue* prototype = globalObjectClass->prototype(ctx);
+    ExecState* exec = globalObject->globalExec();
+    JSValue* prototype = globalObjectClass->prototype(exec);
     if (!prototype)
         prototype = jsNull();
     globalObject->reset(prototype);
-    return JSGlobalContextRetain(ctx);
+    return JSGlobalContextRetain(toGlobalRef(exec));
 }
 
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
