@@ -51,7 +51,7 @@ JSValue* JSSVGPathSegList::clear(ExecState* exec, const ArgList& args)
 JSValue* JSSVGPathSegList::initialize(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    SVGPathSeg* newItem = toSVGPathSeg(args[0]);
+    SVGPathSeg* newItem = toSVGPathSeg(args.at(exec, 0));
 
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 
@@ -69,7 +69,7 @@ JSValue* JSSVGPathSegList::getItem(ExecState* exec, const ArgList& args)
     ExceptionCode ec = 0;
 
     bool indexOk;
-    unsigned index = args[0]->toInt32(exec, indexOk);
+    unsigned index = args.at(exec, 0)->toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -86,10 +86,10 @@ JSValue* JSSVGPathSegList::getItem(ExecState* exec, const ArgList& args)
 JSValue* JSSVGPathSegList::insertItemBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    SVGPathSeg* newItem = toSVGPathSeg(args[0]);
+    SVGPathSeg* newItem = toSVGPathSeg(args.at(exec, 0));
 
     bool indexOk;
-    unsigned index = args[1]->toInt32(exec, indexOk);
+    unsigned index = args.at(exec, 1)->toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -107,10 +107,10 @@ JSValue* JSSVGPathSegList::insertItemBefore(ExecState* exec, const ArgList& args
 JSValue* JSSVGPathSegList::replaceItem(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    SVGPathSeg* newItem = toSVGPathSeg(args[0]);
+    SVGPathSeg* newItem = toSVGPathSeg(args.at(exec, 0));
     
     bool indexOk;
-    unsigned index = args[1]->toInt32(exec, indexOk);
+    unsigned index = args.at(exec, 1)->toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -130,7 +130,7 @@ JSValue* JSSVGPathSegList::removeItem(ExecState* exec, const ArgList& args)
     ExceptionCode ec = 0;
     
     bool indexOk;
-    unsigned index = args[0]->toInt32(exec, indexOk);
+    unsigned index = args.at(exec, 0)->toInt32(exec, indexOk);
     if (!indexOk) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -150,7 +150,7 @@ JSValue* JSSVGPathSegList::removeItem(ExecState* exec, const ArgList& args)
 JSValue* JSSVGPathSegList::appendItem(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    SVGPathSeg* newItem = toSVGPathSeg(args[0]);
+    SVGPathSeg* newItem = toSVGPathSeg(args.at(exec, 0));
 
     SVGPathSegList* imp = static_cast<SVGPathSegList*>(impl());
 

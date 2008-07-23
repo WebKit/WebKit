@@ -71,35 +71,35 @@ static JSObject* constructDate(ExecState* exec, JSObject*, const ArgList& args)
     if (numArgs == 0) // new Date() ECMA 15.9.3.3
         value = getCurrentUTCTime();
     else if (numArgs == 1) {
-        if (args[0]->isObject(&DateInstance::info))
-            value = static_cast<DateInstance*>(args[0])->internalNumber();
+        if (args.at(exec, 0)->isObject(&DateInstance::info))
+            value = static_cast<DateInstance*>(args.at(exec, 0))->internalNumber();
         else {
-            JSValue* primitive = args[0]->toPrimitive(exec);
+            JSValue* primitive = args.at(exec, 0)->toPrimitive(exec);
             if (primitive->isString())
                 value = parseDate(primitive->getString());
             else
                 value = primitive->toNumber(exec);
         }
     } else {
-        if (isnan(args[0]->toNumber(exec))
-                || isnan(args[1]->toNumber(exec))
-                || (numArgs >= 3 && isnan(args[2]->toNumber(exec)))
-                || (numArgs >= 4 && isnan(args[3]->toNumber(exec)))
-                || (numArgs >= 5 && isnan(args[4]->toNumber(exec)))
-                || (numArgs >= 6 && isnan(args[5]->toNumber(exec)))
-                || (numArgs >= 7 && isnan(args[6]->toNumber(exec))))
+        if (isnan(args.at(exec, 0)->toNumber(exec))
+                || isnan(args.at(exec, 1)->toNumber(exec))
+                || (numArgs >= 3 && isnan(args.at(exec, 2)->toNumber(exec)))
+                || (numArgs >= 4 && isnan(args.at(exec, 3)->toNumber(exec)))
+                || (numArgs >= 5 && isnan(args.at(exec, 4)->toNumber(exec)))
+                || (numArgs >= 6 && isnan(args.at(exec, 5)->toNumber(exec)))
+                || (numArgs >= 7 && isnan(args.at(exec, 6)->toNumber(exec))))
             value = NaN;
         else {
           GregorianDateTime t;
-          int year = args[0]->toInt32(exec);
+          int year = args.at(exec, 0)->toInt32(exec);
           t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-          t.month = args[1]->toInt32(exec);
-          t.monthDay = (numArgs >= 3) ? args[2]->toInt32(exec) : 1;
-          t.hour = args[3]->toInt32(exec);
-          t.minute = args[4]->toInt32(exec);
-          t.second = args[5]->toInt32(exec);
+          t.month = args.at(exec, 1)->toInt32(exec);
+          t.monthDay = (numArgs >= 3) ? args.at(exec, 2)->toInt32(exec) : 1;
+          t.hour = args.at(exec, 3)->toInt32(exec);
+          t.minute = args.at(exec, 4)->toInt32(exec);
+          t.second = args.at(exec, 5)->toInt32(exec);
           t.isDST = -1;
-          double ms = (numArgs >= 7) ? args[6]->toNumber(exec) : 0;
+          double ms = (numArgs >= 7) ? args.at(exec, 6)->toNumber(exec) : 0;
           value = gregorianDateTimeToMS(t, ms, false);
         }
     }
@@ -133,7 +133,7 @@ CallType DateConstructor::getCallData(CallData& callData)
 
 static JSValue* dateParse(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    return jsNumber(exec, parseDate(args[0]->toString(exec)));
+    return jsNumber(exec, parseDate(args.at(exec, 0)->toString(exec)));
 }
 
 static JSValue* dateNow(ExecState* exec, JSObject*, JSValue*, const ArgList&)
@@ -144,24 +144,24 @@ static JSValue* dateNow(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 static JSValue* dateUTC(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     int n = args.size();
-    if (isnan(args[0]->toNumber(exec))
-            || isnan(args[1]->toNumber(exec))
-            || (n >= 3 && isnan(args[2]->toNumber(exec)))
-            || (n >= 4 && isnan(args[3]->toNumber(exec)))
-            || (n >= 5 && isnan(args[4]->toNumber(exec)))
-            || (n >= 6 && isnan(args[5]->toNumber(exec)))
-            || (n >= 7 && isnan(args[6]->toNumber(exec))))
+    if (isnan(args.at(exec, 0)->toNumber(exec))
+            || isnan(args.at(exec, 1)->toNumber(exec))
+            || (n >= 3 && isnan(args.at(exec, 2)->toNumber(exec)))
+            || (n >= 4 && isnan(args.at(exec, 3)->toNumber(exec)))
+            || (n >= 5 && isnan(args.at(exec, 4)->toNumber(exec)))
+            || (n >= 6 && isnan(args.at(exec, 5)->toNumber(exec)))
+            || (n >= 7 && isnan(args.at(exec, 6)->toNumber(exec))))
         return jsNaN(exec);
 
     GregorianDateTime t;
-    int year = args[0]->toInt32(exec);
+    int year = args.at(exec, 0)->toInt32(exec);
     t.year = (year >= 0 && year <= 99) ? year : year - 1900;
-    t.month = args[1]->toInt32(exec);
-    t.monthDay = (n >= 3) ? args[2]->toInt32(exec) : 1;
-    t.hour = args[3]->toInt32(exec);
-    t.minute = args[4]->toInt32(exec);
-    t.second = args[5]->toInt32(exec);
-    double ms = (n >= 7) ? args[6]->toNumber(exec) : 0;
+    t.month = args.at(exec, 1)->toInt32(exec);
+    t.monthDay = (n >= 3) ? args.at(exec, 2)->toInt32(exec) : 1;
+    t.hour = args.at(exec, 3)->toInt32(exec);
+    t.minute = args.at(exec, 4)->toInt32(exec);
+    t.second = args.at(exec, 5)->toInt32(exec);
+    double ms = (n >= 7) ? args.at(exec, 6)->toNumber(exec) : 0;
     return jsNumber(exec, gregorianDateTimeToMS(t, ms, true));
 }
 

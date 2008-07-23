@@ -138,7 +138,7 @@ JSArray::JSArray(JSValue* prototype, unsigned initialLength)
     checkConsistency();
 }
 
-JSArray::JSArray(JSObject* prototype, const ArgList& list)
+JSArray::JSArray(ExecState* exec, JSObject* prototype, const ArgList& list)
     : JSObject(prototype)
 {
     unsigned length = list.size();
@@ -155,7 +155,7 @@ JSArray::JSArray(JSObject* prototype, const ArgList& list)
     size_t i = 0;
     ArgList::const_iterator end = list.end();
     for (ArgList::const_iterator it = list.begin(); it != end; ++it, ++i)
-        storage->m_vector[i] = (*it).jsValue();
+        storage->m_vector[i] = (*it).jsValue(exec);
 
     m_storage = storage;
 
@@ -888,12 +888,12 @@ JSArray* constructArray(ExecState* exec, JSValue* singleItemValue)
 {
     ArgList values;
     values.append(singleItemValue);
-    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), values);
+    return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayPrototype(), values);
 }
 
 JSArray* constructArray(ExecState* exec, const ArgList& values)
 {
-    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), values);
+    return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayPrototype(), values);
 }
 
 } // namespace KJS

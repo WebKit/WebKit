@@ -36,7 +36,7 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
         UChar* p = buf;
         ArgList::const_iterator end = args.end();
         for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-            *p++ = static_cast<UChar>((*it).toUInt32(exec));
+            *p++ = static_cast<UChar>((*it).jsValue(exec)->toUInt32(exec));
         s = UString(buf, args.size(), false);
     } else
         s = "";
@@ -63,7 +63,7 @@ static JSObject* constructWithStringConstructor(ExecState* exec, JSObject*, cons
     JSObject* prototype = exec->lexicalGlobalObject()->stringPrototype();
     if (args.isEmpty())
         return new (exec) StringObject(exec, prototype);
-    return new (exec) StringObject(exec, prototype, args[0]->toString(exec));
+    return new (exec) StringObject(exec, prototype, args.at(exec, 0)->toString(exec));
 }
 
 ConstructType StringConstructor::getConstructData(ConstructData& constructData)
@@ -77,7 +77,7 @@ static JSValue* callStringConstructor(ExecState* exec, JSObject*, JSValue*, cons
 {
     if (args.isEmpty())
         return jsString(exec, "");
-    return jsString(exec, args[0]->toString(exec));
+    return jsString(exec, args.at(exec, 0)->toString(exec));
 }
 
 CallType StringConstructor::getCallData(CallData& callData)

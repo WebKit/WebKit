@@ -78,8 +78,8 @@ JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, 
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValue* thisArg = args[0];
-    JSValue* argArray = args[1];
+    JSValue* thisArg = args.at(exec, 0);
+    JSValue* argArray = args.at(exec, 1);
 
     JSValue* applyThis;
     if (thisArg->isUndefinedOrNull())
@@ -111,7 +111,7 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject*, JSValue* thisValue, c
     if (callType == CallTypeNone)
         return throwError(exec, TypeError);
 
-    JSValue* thisArg = args[0];
+    JSValue* thisArg = args.at(exec, 0);
 
     JSObject* callThis;
     if (thisArg->isUndefinedOrNull())

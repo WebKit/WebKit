@@ -34,6 +34,7 @@
 #include "c_utility.h"
 #include "npruntime_impl.h"
 #include "runtime_root.h"
+#include <kjs/ArgList.h>
 #include <kjs/ExecState.h>
 #include <kjs/JSLock.h>
 #include <kjs/JSNumberCell.h>
@@ -86,7 +87,7 @@ JSValue* CInstance::invokeMethod(ExecState* exec, const MethodList& methodList, 
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, args.at(i), &cArgs[i]);
+        convertValueToNPVariant(exec, args.at(exec, i), &cArgs[i]);
 
     // Invoke the 'C' method.
     NPVariant resultVariant;
@@ -116,7 +117,7 @@ JSValue* CInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 
     unsigned i;
     for (i = 0; i < count; i++)
-        convertValueToNPVariant(exec, args.at(i), &cArgs[i]);
+        convertValueToNPVariant(exec, args.at(exec, i), &cArgs[i]);
 
     // Invoke the 'C' method.
     NPVariant resultVariant;

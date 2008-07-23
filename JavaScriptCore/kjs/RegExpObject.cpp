@@ -95,7 +95,7 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
 
     UString input;
     if (!args.isEmpty())
-        input = args[0]->toString(exec);
+        input = args.at(exec, 0)->toString(exec);
     else {
         input = regExpObj->input();
         if (input.isNull()) {

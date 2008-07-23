@@ -40,7 +40,7 @@ ObjectConstructor::ObjectConstructor(ExecState* exec, ObjectPrototype* objectPro
 // ECMA 15.2.2
 static ALWAYS_INLINE JSObject* constructObject(ExecState* exec, const ArgList& args)
 {
-    JSValue* arg = args[0];
+    JSValue* arg = args.at(exec, 0);
     if (arg->isUndefinedOrNull())
         return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
     return arg->toObject(exec);

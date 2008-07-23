@@ -125,7 +125,7 @@ static void printToStandardOut(MessageSource source, MessageLevel level, const S
     printf(" %s\n", message.utf8().data());
 }
 
-static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgList& arguments, const KURL& url)
+static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgList& args, const KURL& url)
 {
     if (!Interpreter::shouldPrintExceptions())
         return;
@@ -133,8 +133,8 @@ static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgLis
     printSourceURLAndLine(url.prettyURL(), 0);
     printMessageSourceAndLevelPrefix(JSMessageSource, level);
 
-    for (size_t i = 0; i < arguments.size(); ++i) {
-        UString argAsString = arguments[i]->toString(exec);
+    for (size_t i = 0; i < args.size(); ++i) {
+        UString argAsString = args.at(exec, i)->toString(exec);
         printf(" %s", argAsString.UTF8String().c_str());
     }
 
@@ -158,15 +158,15 @@ void Console::addMessage(MessageSource source, MessageLevel level, const String&
     printToStandardOut(source, level, message, sourceURL, lineNumber);
 }
 
-void Console::debug(ExecState* exec, const ArgList& arguments)
+void Console::debug(ExecState* exec, const ArgList& args)
 {
     // In Firebug, console.debug has the same behavior as console.log. So we'll do the same.
-    log(exec, arguments);
+    log(exec, args);
 }
 
-void Console::error(ExecState* exec, const ArgList& arguments)
+void Console::error(ExecState* exec, const ArgList& args)
 {
-    if (arguments.isEmpty())
+    if (args.isEmpty())
         return;
 
     if (!m_frame)
@@ -176,19 +176,19 @@ void Console::error(ExecState* exec, const ArgList& arguments)
     if (!page)
         return;
 
-    String message = arguments[0]->toString(exec);
+    String message = args.at(exec, 0)->toString(exec);
     const KURL& url = m_frame->loader()->url();
     String prettyURL = url.prettyURL();
 
     page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, arguments, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, 0, url.string());
 
-    printToStandardOut(ErrorMessageLevel, exec, arguments, url);
+    printToStandardOut(ErrorMessageLevel, exec, args, url);
 }
 
-void Console::info(ExecState* exec, const ArgList& arguments)
+void Console::info(ExecState* exec, const ArgList& args)
 {
-    if (arguments.isEmpty())
+    if (args.isEmpty())
         return;
 
     if (!m_frame)
@@ -198,19 +198,19 @@ void Console::info(ExecState* exec, const ArgList& arguments)
     if (!page)
         return;
 
-    String message = arguments[0]->toString(exec);
+    String message = args.at(exec, 0)->toString(exec);
     const KURL& url = m_frame->loader()->url();
     String prettyURL = url.prettyURL();
 
     page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, arguments, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, 0, url.string());
 
-    printToStandardOut(LogMessageLevel, exec, arguments, url);
+    printToStandardOut(LogMessageLevel, exec, args, url);
 }
 
-void Console::log(ExecState* exec, const ArgList& arguments)
+void Console::log(ExecState* exec, const ArgList& args)
 {
-    if (arguments.isEmpty())
+    if (args.isEmpty())
         return;
 
     if (!m_frame)
@@ -220,17 +220,17 @@ void Console::log(ExecState* exec, const ArgList& arguments)
     if (!page)
         return;
 
-    String message = arguments[0]->toString(exec);
+    String message = args.at(exec, 0)->toString(exec);
     const KURL& url = m_frame->loader()->url();
     String prettyURL = url.prettyURL();
 
     page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, arguments, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, 0, url.string());
 
-    printToStandardOut(LogMessageLevel, exec, arguments, url);
+    printToStandardOut(LogMessageLevel, exec, args, url);
 }
 
-void Console::assertCondition(bool condition, ExecState* exec, const ArgList& arguments)
+void Console::assertCondition(bool condition, ExecState* exec, const ArgList& args)
 {
     if (condition)
         return;
@@ -245,24 +245,24 @@ void Console::assertCondition(bool condition, ExecState* exec, const ArgList& ar
     const KURL& url = m_frame->loader()->url();
 
     // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19135> It would be nice to prefix assertion failures with a message like "Assertion failed: ".
-    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19136> We should print a message even when arguments.isEmpty() is true.
+    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19136> We should print a message even when args.isEmpty() is true.
 
-    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, arguments, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, 0, url.string());
 
-    printToStandardOut(ErrorMessageLevel, exec, arguments, url);
+    printToStandardOut(ErrorMessageLevel, exec, args, url);
 }
 
-void Console::profile(ExecState* exec, const ArgList& arguments)
+void Console::profile(ExecState* exec, const ArgList& args)
 {
-    UString title = arguments[0]->toString(exec);
+    UString title = args.at(exec, 0)->toString(exec);
     Profiler::profiler()->startProfiling(exec, title, this);
 }
 
-void Console::profileEnd(ExecState* exec, const ArgList& arguments)
+void Console::profileEnd(ExecState* exec, const ArgList& args)
 {
     UString title;
-    if (arguments.size() >= 1)
-        title = arguments[0]->toString(exec);
+    if (args.size() >= 1)
+        title = args.at(exec, 0)->toString(exec);
 
     Profiler::profiler()->stopProfiling(exec, title);
 }
@@ -273,9 +273,9 @@ void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
         page->inspectorController()->addProfile(prpProfile);
 }
 
-void Console::warn(ExecState* exec, const ArgList& arguments)
+void Console::warn(ExecState* exec, const ArgList& args)
 {
-    if (arguments.isEmpty())
+    if (args.isEmpty())
         return;
 
     if (!m_frame)
@@ -285,14 +285,14 @@ void Console::warn(ExecState* exec, const ArgList& arguments)
     if (!page)
         return;
 
-    String message = arguments[0]->toString(exec);
+    String message = args.at(exec, 0)->toString(exec);
     const KURL& url = m_frame->loader()->url();
     String prettyURL = url.prettyURL();
 
     page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, WarningMessageLevel, exec, arguments, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, WarningMessageLevel, exec, args, 0, url.string());
 
-    printToStandardOut(WarningMessageLevel, exec, arguments, url);
+    printToStandardOut(WarningMessageLevel, exec, args, url);
 }
 
 void Console::reportException(ExecState* exec, JSValue* exception)

@@ -1,3 +1,26 @@
+2008-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt and Sam Weinig.
+
+        Next step toward putting doubles in registers: Prepare the Register class
+        and its clients for registers that don't contain JSValue*s.
+        
+        This means a few things:
+        
+        1. Register::jsValue() clients, including ArgList clients, must now supply
+        an ExecState* when accessing an entry in an ArgList, in case the entry
+        will need to create a JSValue* on the fly.
+        
+        2. Register clients that definitely don't want to create a JSValue* on
+        the fly now use different APIs: getJSValue() for clients that know
+        the register contains a JSValue*, and v() for clients who just want a
+        void*.
+        
+        3. I had to change some headers around in order to resolve dependency
+        problems created by using a Register in the ArgList header.
+        
+        SunSpider reports no change.
+        
 2008-07-22  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Alexey Proskuryakov.

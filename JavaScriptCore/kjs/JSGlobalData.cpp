@@ -55,7 +55,6 @@ extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
-
 JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
     , heap(new Heap(this))
@@ -78,6 +77,7 @@ JSGlobalData::JSGlobalData(bool isShared)
 #endif
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
+    , emptyList(new ArgList)
     , newParserObjects(0)
     , parserObjectExtraRefCounts(0)
     , lexer(new Lexer(this))

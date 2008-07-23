@@ -139,8 +139,8 @@ JSValue* numberProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
     if (!v)
         return throwError(exec, TypeError);
 
-    double radixAsDouble = args[0]->toInteger(exec); // nan -> 0
-    if (radixAsDouble == 10 || args[0]->isUndefined())
+    double radixAsDouble = args.at(exec, 0)->toInteger(exec); // nan -> 0
+    if (radixAsDouble == 10 || args.at(exec, 0)->isUndefined())
         return jsString(exec, v->toString(exec));
 
     if (radixAsDouble < 2 || radixAsDouble > 36)
@@ -223,7 +223,7 @@ JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue* thisValue, 
     if (!v)
         return throwError(exec, TypeError);
 
-    JSValue* fractionDigits = args[0];
+    JSValue* fractionDigits = args.at(exec, 0);
     double df = fractionDigits->toInteger(exec);
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toFixed() digits argument must be between 0 and 20");
@@ -313,7 +313,7 @@ JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValue* thisV
     if (isnan(x) || isinf(x))
         return jsString(exec, UString::from(x));
 
-    JSValue* fractionalDigitsValue = args[0];
+    JSValue* fractionalDigitsValue = args.at(exec, 0);
     double df = fractionalDigitsValue->toInteger(exec);
     if (!(df >= 0 && df <= 20))
         return throwError(exec, RangeError, "toExponential() argument must between 0 and 20");
@@ -378,9 +378,9 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValue* thisVal
     if (!v)
         return throwError(exec, TypeError);
 
-    double doublePrecision = args[0]->toIntegerPreserveNaN(exec);
+    double doublePrecision = args.at(exec, 0)->toIntegerPreserveNaN(exec);
     double x = v->uncheckedGetNumber();
-    if (args[0]->isUndefined() || isnan(x) || isinf(x))
+    if (args.at(exec, 0)->isUndefined() || isnan(x) || isinf(x))
         return jsString(exec, v->toString(exec));
 
     UString s;

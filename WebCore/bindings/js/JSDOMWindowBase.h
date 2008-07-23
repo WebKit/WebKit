@@ -69,7 +69,7 @@ namespace WebCore {
         virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);
 
         int installTimeout(const KJS::UString& handler, int t, bool singleShot);
-        int installTimeout(KJS::JSValue* function, const KJS::ArgList& args, int t, bool singleShot);
+        int installTimeout(KJS::ExecState*, KJS::JSValue* function, const KJS::ArgList& args, int t, bool singleShot);
         void clearTimeout(int timerId, bool delAction = true);
         PausedTimeouts* pauseTimeouts();
         void resumeTimeouts(PausedTimeouts*);

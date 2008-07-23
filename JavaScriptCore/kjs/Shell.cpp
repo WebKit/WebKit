@@ -191,7 +191,7 @@ JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args
         if (i != 0)
             putchar(' ');
         
-        printf("%s", args[i]->toString(exec).UTF8String().c_str());
+        printf("%s", args.at(exec, i)->toString(exec).UTF8String().c_str());
     }
     
     putchar('\n');
@@ -201,7 +201,7 @@ JSValue* functionPrint(ExecState* exec, JSObject*, JSValue*, const ArgList& args
 
 JSValue* functionDebug(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    fprintf(stderr, "--> %s\n", args[0]->toString(exec).UTF8String().c_str());
+    fprintf(stderr, "--> %s\n", args.at(exec, 0)->toString(exec).UTF8String().c_str());
     return jsUndefined();
 }
 
@@ -222,7 +222,7 @@ JSValue* functionVersion(ExecState*, JSObject*, JSValue*, const ArgList&)
 JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     StopWatch stopWatch;
-    UString fileName = args[0]->toString(exec);
+    UString fileName = args.at(exec, 0)->toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");
@@ -238,7 +238,7 @@ JSValue* functionRun(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 
 JSValue* functionLoad(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    UString fileName = args[0]->toString(exec);
+    UString fileName = args.at(exec, 0)->toString(exec);
     Vector<char> script;
     if (!fillBufferWithContentsOfFile(fileName, script))
         return throwError(exec, GeneralError, "Could not open file.");

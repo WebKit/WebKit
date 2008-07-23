@@ -188,7 +188,7 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
 
     ArgList preparedArgs;
     for (size_t i = 0; i < args.size(); ++i)
-        preparedArgs.append(wrapper->prepareIncomingValue(exec, args[i]));
+        preparedArgs.append(wrapper->prepareIncomingValue(exec, args.at(exec, i)));
 
     // FIXME: Would be nice to find a way to reuse the result of m_unwrappedObject->getConstructData
     // from when we called it in JSQuarantinedObjectWrapper::getConstructData.
@@ -243,7 +243,7 @@ JSValue* JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, J
 
     ArgList preparedArgs;
     for (size_t i = 0; i < args.size(); ++i)
-        preparedArgs.append(wrapper->prepareIncomingValue(exec, args[i]));
+        preparedArgs.append(wrapper->prepareIncomingValue(exec, args.at(exec, i)));
 
     // FIXME: Would be nice to find a way to reuse the result of m_unwrappedObject->getCallData
     // from when we called it in JSQuarantinedObjectWrapper::getCallData.

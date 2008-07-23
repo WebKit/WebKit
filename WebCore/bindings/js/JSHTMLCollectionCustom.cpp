@@ -64,7 +64,7 @@ static JSValue* callHTMLCollection(ExecState* exec, JSObject* function, JSValue*
     if (args.size() == 1) {
         // Support for document.all(<index>) etc.
         bool ok;
-        UString string = args[0]->toString(exec);
+        UString string = args.at(exec, 0)->toString(exec);
         unsigned index = string.toUInt32(&ok, false);
         if (ok)
             return toJS(exec, collection->item(index));
@@ -75,8 +75,8 @@ static JSValue* callHTMLCollection(ExecState* exec, JSObject* function, JSValue*
 
     // The second arg, if set, is the index of the item we want
     bool ok;
-    UString string = args[0]->toString(exec);
-    unsigned index = args[1]->toString(exec).toUInt32(&ok, false);
+    UString string = args.at(exec, 0)->toString(exec);
+    unsigned index = args.at(exec, 1)->toString(exec).toUInt32(&ok, false);
     if (ok) {
         String pstr = string;
         Node* node = collection->namedItem(pstr);
@@ -111,15 +111,15 @@ JSValue* JSHTMLCollection::nameGetter(ExecState* exec, const Identifier& propert
 JSValue* JSHTMLCollection::item(ExecState* exec, const ArgList& args)
 {
     bool ok;
-    uint32_t index = args[0]->toString(exec).toUInt32(&ok, false);
+    uint32_t index = args.at(exec, 0)->toString(exec).toUInt32(&ok, false);
     if (ok)
         return toJS(exec, impl()->item(index));
-    return getNamedItems(exec, impl(), Identifier(exec, args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(exec, args.at(exec, 0)->toString(exec)));
 }
 
 JSValue* JSHTMLCollection::namedItem(ExecState* exec, const ArgList& args)
 {
-    return getNamedItems(exec, impl(), Identifier(exec, args[0]->toString(exec)));
+    return getNamedItems(exec, impl(), Identifier(exec, args.at(exec, 0)->toString(exec)));
 }
 
 JSValue* toJS(ExecState* exec, HTMLCollection* collection)

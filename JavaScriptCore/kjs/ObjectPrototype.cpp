@@ -67,17 +67,17 @@ JSValue* objectProtoFuncValueOf(ExecState* exec, JSObject*, JSValue* thisValue, 
 
 JSValue* objectProtoFuncHasOwnProperty(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    return jsBoolean(thisValue->toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, args[0]->toString(exec))));
+    return jsBoolean(thisValue->toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, args.at(exec, 0)->toString(exec))));
 }
 
 JSValue* objectProtoFuncIsPrototypeOf(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
     JSObject* thisObj = thisValue->toThisObject(exec);
 
-    if (!args[0]->isObject())
+    if (!args.at(exec, 0)->isObject())
         return jsBoolean(false);
 
-    JSValue* v = static_cast<JSObject*>(args[0])->prototype();
+    JSValue* v = static_cast<JSObject*>(args.at(exec, 0))->prototype();
 
     while (true) {
         if (!v->isObject())
@@ -91,34 +91,34 @@ JSValue* objectProtoFuncIsPrototypeOf(ExecState* exec, JSObject*, JSValue* thisV
 JSValue* objectProtoFuncDefineGetter(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
     CallData callData;
-    if (args[1]->getCallData(callData) == CallTypeNone)
+    if (args.at(exec, 1)->getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid getter usage");
-    thisValue->toThisObject(exec)->defineGetter(exec, Identifier(exec, args[0]->toString(exec)), static_cast<JSObject*>(args[1]));
+    thisValue->toThisObject(exec)->defineGetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)), static_cast<JSObject*>(args.at(exec, 1)));
     return jsUndefined();
 }
 
 JSValue* objectProtoFuncDefineSetter(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
     CallData callData;
-    if (args[1]->getCallData(callData) == CallTypeNone)
+    if (args.at(exec, 1)->getCallData(callData) == CallTypeNone)
         return throwError(exec, SyntaxError, "invalid setter usage");
-    thisValue->toThisObject(exec)->defineSetter(exec, Identifier(exec, args[0]->toString(exec)), static_cast<JSObject*>(args[1]));
+    thisValue->toThisObject(exec)->defineSetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)), static_cast<JSObject*>(args.at(exec, 1)));
     return jsUndefined();
 }
 
 JSValue* objectProtoFuncLookupGetter(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    return thisValue->toThisObject(exec)->lookupGetter(exec, Identifier(exec, args[0]->toString(exec)));
+    return thisValue->toThisObject(exec)->lookupGetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)));
 }
 
 JSValue* objectProtoFuncLookupSetter(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    return thisValue->toThisObject(exec)->lookupSetter(exec, Identifier(exec, args[0]->toString(exec)));
+    return thisValue->toThisObject(exec)->lookupSetter(exec, Identifier(exec, args.at(exec, 0)->toString(exec)));
 }
 
 JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)
 {
-    return jsBoolean(thisValue->toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, args[0]->toString(exec))));
+    return jsBoolean(thisValue->toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, args.at(exec, 0)->toString(exec))));
 }
 
 JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

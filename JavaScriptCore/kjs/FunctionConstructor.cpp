@@ -73,12 +73,12 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args, const Identifi
     if (argsSize == 0)
         body = "";
     else if (argsSize == 1)
-        body = args[0]->toString(exec);
+        body = args.at(exec, 0)->toString(exec);
     else {
-        p = args[0]->toString(exec);
+        p = args.at(exec, 0)->toString(exec);
         for (int k = 1; k < argsSize - 1; k++)
-            p += "," + args[k]->toString(exec);
-        body = args[argsSize - 1]->toString(exec);
+            p += "," + args.at(exec, k)->toString(exec);
+        body = args.at(exec, argsSize - 1)->toString(exec);
     }
 
     // parse the source code

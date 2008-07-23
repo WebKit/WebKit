@@ -53,7 +53,7 @@ static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const Ar
 
     RefPtr<HTMLAudioElement> audio = new HTMLAudioElement(static_cast<JSAudioConstructor*>(constructor)->document());
     if (args.size() > 0) {
-        audio->setSrc(args[0]->toString(exec));
+        audio->setSrc(args.at(exec, 0)->toString(exec));
         audio->scheduleLoad();
     }
     return static_cast<JSObject*>(toJS(exec, audio.release()));

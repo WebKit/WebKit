@@ -29,7 +29,6 @@
 #ifndef JSGlobalData_h
 #define JSGlobalData_h
 
-#include "ArgList.h"
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -37,6 +36,7 @@
 
 namespace KJS {
 
+    class ArgList;
     class CommonIdentifiers;
     class Heap;
     class IdentifierTable;
@@ -68,7 +68,7 @@ namespace KJS {
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;
-        const ArgList emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
+        const ArgList* emptyList; // Lists are supposed to be allocated on the stack to have their elements properly marked, which is not the case here - but this list has nothing to mark.
 
         HashSet<ParserRefCounted*>* newParserObjects;
         HashCountedSet<ParserRefCounted*>* parserObjectExtraRefCounts;

@@ -47,15 +47,15 @@ using namespace KJS;
 
 JSValue* JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
 {
-    String oldVersion = args[0]->toString(exec);
-    String newVersion = args[1]->toString(exec);
+    String oldVersion = args.at(exec, 0)->toString(exec);
+    String newVersion = args.at(exec, 1)->toString(exec);
 
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
     
     JSObject *object;
-    if (!(object = args[2]->getObject())) {
+    if (!(object = args.at(exec, 2)->getObject())) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }
@@ -63,8 +63,8 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
     RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, frame));
     
     RefPtr<SQLTransactionErrorCallback> errorCallback;
-    if (!args[3]->isNull()) {
-        if (!(object = args[3]->getObject())) {
+    if (!args.at(exec, 3)->isNull()) {
+        if (!(object = args.at(exec, 3)->getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
@@ -73,8 +73,8 @@ JSValue* JSDatabase::changeVersion(ExecState* exec, const ArgList& args)
     }
     
     RefPtr<VoidCallback> successCallback;
-    if (!args[4]->isNull()) {
-        successCallback = toVoidCallback(exec, args[4]);
+    if (!args.at(exec, 4)->isNull()) {
+        successCallback = toVoidCallback(exec, args.at(exec, 4));
         if (!successCallback) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
@@ -90,7 +90,7 @@ JSValue* JSDatabase::transaction(ExecState* exec, const ArgList& args)
 {
     JSObject* object;
     
-    if (!(object = args[0]->getObject())) {
+    if (!(object = args.at(exec, 0)->getObject())) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
     }        
@@ -102,8 +102,8 @@ JSValue* JSDatabase::transaction(ExecState* exec, const ArgList& args)
     RefPtr<SQLTransactionCallback> callback(JSCustomSQLTransactionCallback::create(object, frame));
     RefPtr<SQLTransactionErrorCallback> errorCallback;
     
-    if (args.size() > 1 && !args[1]->isNull()) {
-        if (!(object = args[1]->getObject())) {
+    if (args.size() > 1 && !args.at(exec, 1)->isNull()) {
+        if (!(object = args.at(exec, 1)->getObject())) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();
         }
@@ -112,8 +112,8 @@ JSValue* JSDatabase::transaction(ExecState* exec, const ArgList& args)
     }
 
     RefPtr<VoidCallback> successCallback;
-    if (args.size() > 2 && !args[2]->isNull()) {
-        successCallback = toVoidCallback(exec, args[2]);
+    if (args.size() > 2 && !args.at(exec, 2)->isNull()) {
+        successCallback = toVoidCallback(exec, args.at(exec, 2));
         if (!successCallback) {
             setDOMException(exec, TYPE_MISMATCH_ERR);
             return jsUndefined();

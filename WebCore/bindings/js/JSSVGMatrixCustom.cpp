@@ -33,7 +33,7 @@ JSValue* JSSVGMatrix::multiply(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    AffineTransform secondMatrix = toSVGMatrix(args[0]);    
+    AffineTransform secondMatrix = toSVGMatrix(args.at(exec, 0));    
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.multiply(secondMatrix)).get(), m_context.get());
 }
 
@@ -52,8 +52,8 @@ JSValue* JSSVGMatrix::translate(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float x = args[0]->toFloat(exec);
-    float y = args[1]->toFloat(exec);
+    float x = args.at(exec, 0)->toFloat(exec);
+    float y = args.at(exec, 1)->toFloat(exec);
 
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.translate(x, y)).get(), m_context.get());
 }
@@ -62,7 +62,7 @@ JSValue* JSSVGMatrix::scale(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float scaleFactor = args[0]->toFloat(exec);
+    float scaleFactor = args.at(exec, 0)->toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.scale(scaleFactor)).get(), m_context.get());
 }
 
@@ -70,8 +70,8 @@ JSValue* JSSVGMatrix::scaleNonUniform(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float scaleFactorX = args[0]->toFloat(exec);
-    float scaleFactorY = args[1]->toFloat(exec);
+    float scaleFactorX = args.at(exec, 0)->toFloat(exec);
+    float scaleFactorY = args.at(exec, 1)->toFloat(exec);
 
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.scaleNonUniform(scaleFactorX, scaleFactorY)).get(), m_context.get());
 }
@@ -80,7 +80,7 @@ JSValue* JSSVGMatrix::rotate(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float angle = args[0]->toFloat(exec);
+    float angle = args.at(exec, 0)->toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.rotate(angle)).get(), m_context.get());
 }
 
@@ -88,8 +88,8 @@ JSValue* JSSVGMatrix::rotateFromVector(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
  
-    float x = args[0]->toFloat(exec);
-    float y = args[1]->toFloat(exec);
+    float x = args.at(exec, 0)->toFloat(exec);
+    float y = args.at(exec, 1)->toFloat(exec);
 
     KJS::JSValue* result = toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.rotateFromVector(x, y)).get(), m_context.get());
 
@@ -115,7 +115,7 @@ JSValue* JSSVGMatrix::skewX(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float angle = args[0]->toFloat(exec);
+    float angle = args.at(exec, 0)->toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.skewX(angle)).get(), m_context.get());
 }
 
@@ -123,7 +123,7 @@ JSValue* JSSVGMatrix::skewY(ExecState* exec, const ArgList& args)
 {
     AffineTransform imp(*impl());
 
-    float angle = args[0]->toFloat(exec);
+    float angle = args.at(exec, 0)->toFloat(exec);
     return toJS(exec, JSSVGStaticPODTypeWrapper<AffineTransform>::create(imp.skewY(angle)).get(), m_context.get());
 }
 

@@ -80,8 +80,8 @@ JSValue* JSDocument::querySelector(ExecState* exec, const ArgList& args)
 {
     Document* imp = impl();
     ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
+    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
+    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
 
     RefPtr<Element> element = imp->querySelector(selectors, resolver.get(), ec, exec);
     if (exec->hadException())
@@ -95,8 +95,8 @@ JSValue* JSDocument::querySelectorAll(ExecState* exec, const ArgList& args)
 {
     Document* imp = impl();
     ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
+    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
+    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
 
     RefPtr<NodeList> nodeList = imp->querySelectorAll(selectors, resolver.get(), ec, exec);
     if (exec->hadException())

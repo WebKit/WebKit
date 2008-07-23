@@ -47,7 +47,7 @@ JSValue* JSDOMApplicationCache::add(ExecState* exec, const ArgList& args)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args[0]->toString(exec));
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
     
     ExceptionCode ec = 0;
     impl()->add(url, ec);
@@ -60,7 +60,7 @@ JSValue* JSDOMApplicationCache::remove(ExecState* exec, const ArgList& args)
     Frame* frame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     if (!frame)
         return jsUndefined();
-    const KURL& url = frame->loader()->completeURL(args[0]->toString(exec));
+    const KURL& url = frame->loader()->completeURL(args.at(exec, 0)->toString(exec));
     
     ExceptionCode ec = 0;
     impl()->remove(url, ec);
@@ -73,10 +73,10 @@ JSValue* JSDOMApplicationCache::addEventListener(ExecState* exec, const ArgList&
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
-    RefPtr<JSUnprotectedEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, args[1], true);
+    RefPtr<JSUnprotectedEventListener> listener = toJSDOMWindow(frame)->findOrCreateJSUnprotectedEventListener(exec, args.at(exec, 1), true);
     if (!listener)
         return jsUndefined();
-    impl()->addEventListener(args[0]->toString(exec), listener.release(), args[2]->toBoolean(exec));
+    impl()->addEventListener(args.at(exec, 0)->toString(exec), listener.release(), args.at(exec, 2)->toBoolean(exec));
     return jsUndefined();
 }
 
@@ -85,10 +85,10 @@ JSValue* JSDOMApplicationCache::removeEventListener(ExecState* exec, const ArgLi
     Frame* frame = impl()->frame();
     if (!frame)
         return jsUndefined();
-    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findJSUnprotectedEventListener(exec, args[1], true);
+    JSUnprotectedEventListener* listener = toJSDOMWindow(frame)->findJSUnprotectedEventListener(exec, args.at(exec, 1), true);
     if (!listener)
         return jsUndefined();
-    impl()->removeEventListener(args[0]->toString(exec), listener, args[2]->toBoolean(exec));
+    impl()->removeEventListener(args.at(exec, 0)->toString(exec), listener, args.at(exec, 2)->toBoolean(exec));
     return jsUndefined();
     
 }
@@ -97,7 +97,7 @@ JSValue* JSDOMApplicationCache::dispatchEvent(KJS::ExecState* exec, const ArgLis
 {
     ExceptionCode ec = 0;
     
-    bool result = impl()->dispatchEvent(toEvent(args[0]), ec);
+    bool result = impl()->dispatchEvent(toEvent(args.at(exec, 0)), ec);
     setDOMException(exec, ec);
     return jsBoolean(result);    
 }

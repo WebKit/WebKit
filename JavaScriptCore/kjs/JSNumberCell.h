@@ -23,8 +23,6 @@
 #ifndef JSNumberCell_h
 #define JSNumberCell_h
 
-#include "CallData.h"
-#include "ConstructData.h"
 #include "ExecState.h"
 #include "JSCell.h"
 #include "JSImmediate.h"
@@ -34,7 +32,6 @@
 
 namespace KJS {
 
-    class ExecState;
     class Identifier;
     class JSCell;
     class JSObject;

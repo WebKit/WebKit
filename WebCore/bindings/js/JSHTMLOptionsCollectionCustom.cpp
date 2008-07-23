@@ -70,13 +70,13 @@ void JSHTMLOptionsCollection::indexSetter(ExecState* exec, unsigned index, JSVal
 JSValue* JSHTMLOptionsCollection::add(ExecState* exec, const ArgList& args)
 {
     HTMLOptionsCollection* imp = static_cast<HTMLOptionsCollection*>(impl());
-    HTMLOptionElement* option = toHTMLOptionElement(args[0]);
+    HTMLOptionElement* option = toHTMLOptionElement(args.at(exec, 0));
     ExceptionCode ec = 0;
     if (args.size() < 2)
         imp->add(option, ec);
     else {
         bool ok;
-        int index = args[1]->toInt32(exec, ok);
+        int index = args.at(exec, 1)->toInt32(exec, ok);
         if (exec->hadException())
             return jsUndefined();
         if (!ok)

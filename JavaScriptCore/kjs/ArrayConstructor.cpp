@@ -44,15 +44,15 @@ ArrayConstructor::ArrayConstructor(ExecState* exec, FunctionPrototype* functionP
 static JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
 {
     // a single numeric argument denotes the array size (!)
-    if (args.size() == 1 && args[0]->isNumber()) {
-        uint32_t n = args[0]->toUInt32(exec);
-        if (n != args[0]->toNumber(exec))
+    if (args.size() == 1 && args.at(exec, 0)->isNumber()) {
+        uint32_t n = args.at(exec, 0)->toUInt32(exec);
+        if (n != args.at(exec, 0)->toNumber(exec))
             return throwError(exec, RangeError, "Array size is not a small enough positive integer.");
         return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), n);
     }
 
     // otherwise the array is constructed with the arguments in it
-    return new (exec) JSArray(exec->lexicalGlobalObject()->arrayPrototype(), args);
+    return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayPrototype(), args);
 }
 
 static JSObject* constructWithArrayConstructor(ExecState* exec, JSObject*, const ArgList& args)

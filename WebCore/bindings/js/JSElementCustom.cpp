@@ -64,8 +64,8 @@ static inline bool allowSettingSrcToJavascriptURL(ExecState* exec, Element* elem
 JSValue* JSElement::setAttribute(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString name = args[0]->toString(exec);
-    AtomicString value = args[1]->toString(exec);
+    AtomicString name = args.at(exec, 0)->toString(exec);
+    AtomicString value = args.at(exec, 1)->toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, name, value))
@@ -79,7 +79,7 @@ JSValue* JSElement::setAttribute(ExecState* exec, const ArgList& args)
 JSValue* JSElement::setAttributeNode(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    Attr* newAttr = toAttr(args[0]);
+    Attr* newAttr = toAttr(args.at(exec, 0));
     if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -97,9 +97,9 @@ JSValue* JSElement::setAttributeNode(ExecState* exec, const ArgList& args)
 JSValue* JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    AtomicString namespaceURI = valueToStringWithNullCheck(exec, args[0]);
-    AtomicString qualifiedName = args[1]->toString(exec);
-    AtomicString value = args[2]->toString(exec);
+    AtomicString namespaceURI = valueToStringWithNullCheck(exec, args.at(exec, 0));
+    AtomicString qualifiedName = args.at(exec, 1)->toString(exec);
+    AtomicString value = args.at(exec, 2)->toString(exec);
 
     Element* imp = impl();
     if (!allowSettingSrcToJavascriptURL(exec, imp, qualifiedName, value))
@@ -113,7 +113,7 @@ JSValue* JSElement::setAttributeNS(ExecState* exec, const ArgList& args)
 JSValue* JSElement::setAttributeNodeNS(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    Attr* newAttr = toAttr(args[0]);
+    Attr* newAttr = toAttr(args.at(exec, 0));
     if (!newAttr) {
         setDOMException(exec, TYPE_MISMATCH_ERR);
         return jsUndefined();
@@ -132,8 +132,8 @@ JSValue* JSElement::querySelector(ExecState* exec, const ArgList& args)
 {
     Element* imp = impl();
     ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
+    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
+    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
 
     RefPtr<Element> element = imp->querySelector(selectors, resolver.get(), ec, exec);
     if (exec->hadException())
@@ -147,8 +147,8 @@ JSValue* JSElement::querySelectorAll(ExecState* exec, const ArgList& args)
 {
     Element* imp = impl();
     ExceptionCode ec = 0;
-    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args[0]);
-    RefPtr<NSResolver> resolver = args[1]->isUndefinedOrNull() ? 0 : toNSResolver(args[1]);
+    const UString& selectors = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
+    RefPtr<NSResolver> resolver = args.at(exec, 1)->isUndefinedOrNull() ? 0 : toNSResolver(args.at(exec, 1));
 
     RefPtr<NodeList> nodeList = imp->querySelectorAll(selectors, resolver.get(), ec, exec);
     if (exec->hadException())

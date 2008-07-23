@@ -1,3 +1,10 @@
+2008-07-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt and Sam Weinig.
+
+        Next step toward putting doubles in registers: Prepare the Register class
+        and its clients for registers that don't contain JSValue*s.
+        
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

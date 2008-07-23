@@ -46,7 +46,7 @@ const UString* DebuggerCallFrame::functionName() const
     if (!m_codeBlock)
         return 0;
 
-    JSFunction* function = static_cast<JSFunction*>(callFrame()[RegisterFile::Callee].jsValue());
+    JSFunction* function = static_cast<JSFunction*>(callFrame()[RegisterFile::Callee].getJSValue());
     if (!function)
         return 0;
     return &function->functionName().ustring();
@@ -54,7 +54,7 @@ const UString* DebuggerCallFrame::functionName() const
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const
 {
-    if (callFrame()[RegisterFile::Callee].jsValue())
+    if (callFrame()[RegisterFile::Callee].getJSValue())
         return FunctionType;
 
     return ProgramType;
@@ -65,7 +65,7 @@ JSObject* DebuggerCallFrame::thisObject() const
     if (!m_codeBlock)
         return 0;
 
-    return static_cast<JSObject*>(m_registers[m_codeBlock->thisRegister].jsValue());
+    return static_cast<JSObject*>(m_registers[m_codeBlock->thisRegister].getJSValue());
 }
 
 JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception) const

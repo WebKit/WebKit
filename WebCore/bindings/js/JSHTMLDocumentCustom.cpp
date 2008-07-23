@@ -130,11 +130,11 @@ static String writeHelper(ExecState* exec, const ArgList& args)
 
     unsigned size = args.size();
     if (size == 1)
-        return args[0]->toString(exec);
+        return args.at(exec, 0)->toString(exec);
 
     Vector<UChar> result;
     for (unsigned i = 0; i < size; ++i)
-        append(result, args[i]->toString(exec));
+        append(result, args.at(exec, i)->toString(exec));
     return String::adopt(result);
 }
 

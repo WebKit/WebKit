@@ -32,6 +32,7 @@ namespace KJS  {
     class EvalNode;
     class FunctionBodyNode;
     class JSFunction;
+    class JSValue;
     class GlobalFuncImp;
     class Interpreter;
     class JSGlobalObject;
@@ -76,7 +77,7 @@ namespace KJS  {
 
         IdentifierTable* identifierTable() { return m_globalData->identifierTable; }
         const CommonIdentifiers& propertyNames() const { return *m_globalData->propertyNames; }
-        const ArgList& emptyList() const { return m_globalData->emptyList; }
+        const ArgList& emptyList() const { return *m_globalData->emptyList; }
         Lexer* lexer() { return m_globalData->lexer; }
         Parser* parser() { return m_globalData->parser; }
         Machine* machine() const { return m_globalData->machine; }

@@ -67,7 +67,7 @@ JSValue* JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
     ArgList messageParameters;
     arguments.getSlice(1, messageParameters);
 
-    impl()->assertCondition(arguments[0]->toBoolean(exec), exec, messageParameters);
+    impl()->assertCondition(arguments.at(exec, 0)->toBoolean(exec), exec, messageParameters);
     return jsUndefined();
 }
 

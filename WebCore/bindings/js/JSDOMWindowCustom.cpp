@@ -159,12 +159,12 @@ JSValue* JSDOMWindow::postMessage(ExecState* exec, const ArgList& args)
     DOMWindow* window = impl();
 
     DOMWindow* source = asJSDOMWindow(exec->dynamicGlobalObject())->impl();
-    String message = args[0]->toString(exec);
+    String message = args.at(exec, 0)->toString(exec);
 
     if (exec->hadException())
         return jsUndefined();
 
-    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args[1]);
+    String targetOrigin = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 1));
     if (exec->hadException())
         return jsUndefined();
 

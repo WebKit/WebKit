@@ -41,23 +41,20 @@ namespace KJS {
     class JSValue;
     class ScopeChainNode;
     struct Instruction;
+    
+    static JSValue* const nullJSValue = 0;
 
     class Register {
     public:
         Register();
         Register(JSValue*);
 
-        JSValue* jsValue() const;
+        JSValue* jsValue(ExecState*) const;
+        JSValue* getJSValue() const;
 
         bool marked() const;
         void mark();
         
-        bool isString() const;
-        
-        uint32_t toUInt32(ExecState*) const;
-        UString toString(ExecState*) const;
-        
-
     private:
         friend class Machine;
 
@@ -76,6 +73,7 @@ namespace KJS {
         Register* r() const;
         Instruction* vPC() const;
         JSPropertyNameIterator* jsPropertyNameIterator() const;
+        void* v() const;
 
         union {
         private:
@@ -87,6 +85,7 @@ namespace KJS {
             ScopeChainNode* scopeChain;
             JSPropertyNameIterator* jsPropertyNameIterator;
             Register* r;
+            void* v;
             intptr_t i;
         } u;
 
@@ -106,7 +105,7 @@ namespace KJS {
     ALWAYS_INLINE Register::Register()
     {
 #ifndef NDEBUG
-        *this = static_cast<intptr_t>(0);
+        *this = nullJSValue;
 #endif
     }
 
@@ -118,6 +117,33 @@ namespace KJS {
         u.jsValue = v;
     }
     
+    // This function is scaffolding for legacy clients. It will eventually go away.
+    ALWAYS_INLINE JSValue* Register::jsValue(ExecState*) const
+    {
+        // Once registers hold doubles, this function will allocate a JSValue*
+        // if the register doesn't hold one already. 
+        ASSERT(m_type == JSValueType);
+        return u.jsValue;
+    }
+    
+    ALWAYS_INLINE JSValue* Register::getJSValue() const
+    {
+        ASSERT(m_type == JSValueType);
+        return u.jsValue;
+    }
+    
+    ALWAYS_INLINE bool Register::marked() const
+    {
+        return getJSValue()->marked();
+    }
+
+    ALWAYS_INLINE void Register::mark()
+    {
+        getJSValue()->mark();
+    }
+    
+    // Machine functions
+
     ALWAYS_INLINE Register::Register(CodeBlock* codeBlock)
     {
 #ifndef NDEBUG
@@ -166,12 +192,6 @@ namespace KJS {
         u.i = i;
     }
 
-    ALWAYS_INLINE JSValue* Register::jsValue() const
-    {
-        ASSERT(m_type == JSValueType || !i());
-        return u.jsValue;
-    }
-    
     ALWAYS_INLINE CodeBlock* Register::codeBlock() const
     {
         ASSERT(m_type == CodeBlockType);
@@ -208,29 +228,9 @@ namespace KJS {
         return u.jsPropertyNameIterator;
     }
     
-    ALWAYS_INLINE bool Register::marked() const
+    ALWAYS_INLINE void* Register::v() const
     {
-        return jsValue()->marked();
-    }
-
-    ALWAYS_INLINE void Register::mark()
-    {
-        jsValue()->mark();
-    }
-    
-    ALWAYS_INLINE bool Register::isString() const
-    {
-        return jsValue()->isString();
-    }
-
-    ALWAYS_INLINE uint32_t Register::toUInt32(ExecState* exec) const
-    {
-        return jsValue()->toUInt32(exec);
-    }
-
-    ALWAYS_INLINE UString Register::toString(ExecState* exec) const
-    {
-        return jsValue()->toString(exec);
+        return u.v;
     }
 
 } // namespace KJS

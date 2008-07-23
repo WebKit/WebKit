@@ -69,40 +69,40 @@ typedef int ExpectionCode;
 JSValue* JSNode::insertBefore(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->insertBefore(toNode(args[0]), toNode(args[1]), ec, true);
+    bool ok = impl()->insertBefore(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args[0];
+        return args.at(exec, 0);
     return jsNull();
 }
 
 JSValue* JSNode::replaceChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->replaceChild(toNode(args[0]), toNode(args[1]), ec, true);
+    bool ok = impl()->replaceChild(toNode(args.at(exec, 0)), toNode(args.at(exec, 1)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args[1];
+        return args.at(exec, 1);
     return jsNull();
 }
 
 JSValue* JSNode::removeChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->removeChild(toNode(args[0]), ec);
+    bool ok = impl()->removeChild(toNode(args.at(exec, 0)), ec);
     setDOMException(exec, ec);
     if (ok)
-        return args[0];
+        return args.at(exec, 0);
     return jsNull();
 }
 
 JSValue* JSNode::appendChild(ExecState* exec, const ArgList& args)
 {
     ExceptionCode ec = 0;
-    bool ok = impl()->appendChild(toNode(args[0]), ec, true);
+    bool ok = impl()->appendChild(toNode(args.at(exec, 0)), ec, true);
     setDOMException(exec, ec);
     if (ok)
-        return args[0];
+        return args.at(exec, 0);
     return jsNull();
 }
 

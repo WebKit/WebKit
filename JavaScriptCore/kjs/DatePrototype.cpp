@@ -130,16 +130,16 @@ static UString formatLocaleDate(ExecState* exec, double time, bool includeDate, 
     bool useCustomFormat = false;
     UString customFormatString;
 
-    UString arg0String = args[0]->toString(exec);
-    if (arg0String == "custom" && !args[1]->isUndefined()) {
+    UString arg0String = args.at(exec, 0)->toString(exec);
+    if (arg0String == "custom" && !args.at(exec, 1)->isUndefined()) {
         useCustomFormat = true;
-        customFormatString = args[1]->toString(exec);
-    } else if (includeDate && includeTime && !args[1]->isUndefined()) {
+        customFormatString = args.at(exec, 1)->toString(exec);
+    } else if (includeDate && includeTime && !args.at(exec, 1)->isUndefined()) {
         dateStyle = styleFromArgString(arg0String, dateStyle);
-        timeStyle = styleFromArgString(args[1]->toString(exec), timeStyle);
-    } else if (includeDate && !args[0]->isUndefined())
+        timeStyle = styleFromArgString(args.at(exec, 1)->toString(exec), timeStyle);
+    } else if (includeDate && !args.at(exec, 0)->isUndefined())
         dateStyle = styleFromArgString(arg0String, dateStyle);
-    else if (includeTime && !args[0]->isUndefined())
+    else if (includeTime && !args.at(exec, 0)->isUndefined())
         timeStyle = styleFromArgString(arg0String, timeStyle);
 
     CFLocaleRef locale = CFLocaleCopyCurrent();
@@ -229,19 +229,19 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, const ArgList& args, in
     // hours
     if (maxArgs >= 4 && idx < numArgs) {
         t->hour = 0;
-        milliseconds += args[idx++]->toInt32(exec, ok) * msPerHour;
+        milliseconds += args.at(exec, idx++)->toInt32(exec, ok) * msPerHour;
     }
 
     // minutes
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->minute = 0;
-        milliseconds += args[idx++]->toInt32(exec, ok) * msPerMinute;
+        milliseconds += args.at(exec, idx++)->toInt32(exec, ok) * msPerMinute;
     }
     
     // seconds
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->second = 0;
-        milliseconds += args[idx++]->toInt32(exec, ok) * msPerSecond;
+        milliseconds += args.at(exec, idx++)->toInt32(exec, ok) * msPerSecond;
     }
     
     if (!ok)
@@ -249,7 +249,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, const ArgList& args, in
         
     // milliseconds
     if (idx < numArgs) {
-        double millis = args[idx]->toNumber(exec);
+        double millis = args.at(exec, idx)->toNumber(exec);
         ok = isfinite(millis);
         milliseconds += millis;
     } else
@@ -275,16 +275,16 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, const ArgList& args, in
   
     // years
     if (maxArgs >= 3 && idx < numArgs)
-        t->year = args[idx++]->toInt32(exec, ok) - 1900;
+        t->year = args.at(exec, idx++)->toInt32(exec, ok) - 1900;
     
     // months
     if (maxArgs >= 2 && idx < numArgs && ok)   
-        t->month = args[idx++]->toInt32(exec, ok);
+        t->month = args.at(exec, idx++)->toInt32(exec, ok);
     
     // days
     if (idx < numArgs && ok) {   
         t->monthDay = 0;
-        *ms += args[idx]->toInt32(exec, ok) * msPerDay;
+        *ms += args.at(exec, idx)->toInt32(exec, ok) * msPerDay;
     }
     
     return ok;
@@ -832,7 +832,7 @@ JSValue* dateProtoFuncSetTime(ExecState* exec, JSObject*, JSValue* thisValue, co
 
     DateInstance* thisDateObj = static_cast<DateInstance*>(thisValue); 
 
-    double milli = timeClip(args[0]->toNumber(exec));
+    double milli = timeClip(args.at(exec, 0)->toNumber(exec));
     JSValue* result = jsNumber(exec, milli);
     thisDateObj->setInternalValue(result);
     return result;
@@ -1019,7 +1019,7 @@ JSValue* dateProtoFuncSetYear(ExecState* exec, JSObject*, JSValue* thisValue, co
     }
     
     bool ok = true;
-    int32_t year = args[0]->toInt32(exec, ok);
+    int32_t year = args.at(exec, 0)->toInt32(exec, ok);
     if (!ok) {
         JSValue* result = jsNaN(exec);
         thisDateObj->setInternalValue(result);
