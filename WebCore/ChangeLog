@@ -1,3 +1,13 @@
+2008-07-23  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adam Roben.
+
+        <rdar://6092952> "REGRESSION: Crash beneath EventHandler::stopAutoscrollTimer() when closing Gmail"
+        Add a check for the m_page member value before asking for page()->mainFrame()
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::stopAutoscrollTimer):
+
 2008-07-23  Kevin Calhoun  <kcalhoun@apple.com>
 
        Reviewed by Adele.

@@ -688,7 +688,7 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 
     m_panScrollInProgress = false;
     // If we're not in the top frame we notify it that we are not using the panScroll anymore
-    if (m_frame != m_frame->page()->mainFrame())
+    if (m_frame->page() && m_frame != m_frame->page()->mainFrame())
             m_frame->page()->mainFrame()->eventHandler()->setPanScrollInProgress(false);
     m_autoscrollInProgress = false;
 }
