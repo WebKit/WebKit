@@ -322,3 +322,6 @@ __ZTVN3KJS16JSVariableObjectE
 __ZTVN3KJS8JSObjectE
 _jscore_fastmalloc_introspection
 _kJSClassDefinitionEmpty
+__ZN3KJS12SamplingTool4stopEv
+__ZN3KJS12SamplingTool5startEj
+__ZN3KJS12SamplingTool4dumpEPNS_9ExecStateE

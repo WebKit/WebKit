@@ -339,6 +339,12 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
         if (prettyPrint)
             prettyPrintScript(globalObject->globalExec(), fileName, script);
         else {
+#if SAMPLING_TOOL_ENABLED
+            Machine* machine = globalObject->globalData()->machine;
+            machine->m_sampler = new SamplingTool();
+            machine->m_sampler->start();
+#endif
+
             Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
             success = success && completion.complType() != Throw;
             if (dump) {
@@ -347,6 +353,12 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
                 else
                     printf("Exception: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());
             }
+
+#if SAMPLING_TOOL_ENABLED
+            machine->m_sampler->stop();
+            machine->m_sampler->dump(globalObject->globalExec());
+            delete machine->m_sampler;
+#endif
         }
     }
     return success;

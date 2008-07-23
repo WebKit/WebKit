@@ -119,6 +119,8 @@ namespace KJS {
             m_timeoutTime = 0;
             m_timeoutCheckCount = 0;
         }
+        
+        SamplingTool* m_sampler;
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };

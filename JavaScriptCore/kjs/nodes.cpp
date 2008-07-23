@@ -1548,7 +1548,7 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 
-// ------------------------------ FunctionBodyNode -----------------------------
+// ------------------------------ ScopeNode -----------------------------
 
 ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
     : BlockNode(globalData, children)
@@ -1561,6 +1561,8 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStac
         m_varStack = *varStack;
     if (funcStack)
         m_functionStack = *funcStack;
+
+    SCOPENODE_SAMPLING_notifyOfScope(globalData->machine->m_sampler);
 }
 
 // ------------------------------ ProgramNode -----------------------------

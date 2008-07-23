@@ -473,7 +473,8 @@ NEVER_INLINE JSValue* Machine::callEval(ExecState* exec, JSObject* thisObj, Scop
 }
 
 Machine::Machine()
-    : m_reentryDepth(0)
+    : m_sampler(0)
+    , m_reentryDepth(0)
     , m_timeoutTime(0)
     , m_timeAtLastCheckTimeout(0)
     , m_timeExecuting(0)
@@ -730,6 +731,8 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
     m_reentryDepth--;
 
+    MACHINE_SAMPLING_privateExecuteReturned();
+
     if (*profiler) {
         (*profiler)->didExecute(exec, programNode->sourceURL(), programNode->lineNo());
         if (!m_reentryDepth)
@@ -790,6 +793,8 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, newCodeBlock, exception);
     m_reentryDepth--;
+
+    MACHINE_SAMPLING_privateExecuteReturned();
 
     if (*profiler && !m_reentryDepth)
         (*profiler)->didFinishAllExecution(exec);
@@ -856,6 +861,8 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
     m_reentryDepth++;
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
     m_reentryDepth--;
+
+    MACHINE_SAMPLING_privateExecuteReturned();
 
     if (*profiler) {
         (*profiler)->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
@@ -1028,7 +1035,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     }
     
 #if HAVE(COMPUTED_GOTO)
-    #define NEXT_OPCODE goto *vPC->u.opcode
+    #define NEXT_OPCODE MACHINE_SAMPLING_sample(codeBlock, vPC); goto *vPC->u.opcode
 #if DUMP_OPCODE_STATS
     #define BEGIN_OPCODE(opcode) opcode: OpcodeStats::recordInstruction(opcode);
 #else
@@ -1036,7 +1043,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 #endif
     NEXT_OPCODE;
 #else
-    #define NEXT_OPCODE continue
+    #define NEXT_OPCODE MACHINE_SAMPLING_sample(codeBlock, vPC); continue
 #if DUMP_OPCODE_STATS
     #define BEGIN_OPCODE(opcode) case opcode: OpcodeStats::recordInstruction(opcode);
 #else
@@ -2290,6 +2297,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
             JSValue* thisValue = thisVal == missingThisObjectMarker() ? exec->globalThisValue() : r[thisVal].jsValue(exec);
             ArgList args(r + firstArg + 1, argCount - 1);
+
+            MACHINE_SAMPLING_callingNativeFunction();
 
             JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(v), thisValue, args);
             VM_CHECK_EXCEPTION();

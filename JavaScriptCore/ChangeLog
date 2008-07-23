@@ -1,3 +1,18 @@
+2008-07-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Sampling tool to analyze cost of instruction execution and identify hot regions of JS code.
+        Enable Switches by setting SAMPLING_TOOL_ENABLED in Opcode.h.
+
+        * JavaScriptCore.exp: Export symbols for Shell.cpp.
+        * VM/Machine.cpp:     Added sampling hooks.
+        * VM/Machine.h:       Machine contains a pointer to a sampler, when sampling.
+        * VM/Opcode.cpp:      Tool implementation.
+        * VM/Opcode.h:        Tool declaration.
+        * kjs/Shell.cpp:      Initialize the sampler, if enabled.
+        * kjs/nodes.cpp:      Added sampling hooks.
+
 2008-07-23  Gabor Loki  <loki@inf.u-szeged.hu>
 
         Bug 20097: [Qt] 20% Sunspider slow-down
