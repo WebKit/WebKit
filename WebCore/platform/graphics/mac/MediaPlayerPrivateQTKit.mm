@@ -371,8 +371,6 @@ void MediaPlayerPrivate::load(const String& url)
     [m_objcObserver.get() setDelayCallbacks:YES];
 
     createQTMovie(url);
-    if (m_player->visible())
-        setUpVideoRendering();
 
     [m_objcObserver.get() loadStateChanged:nil];
     [m_objcObserver.get() setDelayCallbacks:NO];
@@ -652,6 +650,9 @@ void MediaPlayerPrivate::updateStates()
         m_player->networkStateChanged();
     if (m_readyState != oldReadyState)
         m_player->readyStateChanged();
+
+    if (loadState >= QTMovieLoadStateLoaded && oldNetworkState < MediaPlayer::LoadedMetaData && m_player->visible())
+        setUpVideoRendering();
 }
 
 void MediaPlayerPrivate::loadStateChanged()
@@ -695,9 +696,11 @@ void MediaPlayerPrivate::setRect(const IntRect& r)
 
 void MediaPlayerPrivate::setVisible(bool b)
 {
-    if (b)
-        setUpVideoRendering();
-    else
+    // MediaPlayer invokes this method only when the visibility state is changing
+    if (b) {
+        if (m_networkState >= MediaPlayer::LoadedMetaData)
+            setUpVideoRendering();
+    } else
         tearDownVideoRendering();
 }
 

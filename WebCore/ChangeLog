@@ -1,3 +1,17 @@
+2008-07-23  Kevin Calhoun  <kcalhoun@apple.com>
+
+       Reviewed by Adele.
+
+       Fix for <rdar://problem/5710065> QT movies should be inactive when opened
+
+       Implemented deferral of set-up of video rendering on Mac until the ready state is Loaded and 
+       until after movie tracks of unsupported types have been disabled, to make sure they never draw.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::load):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::setVisible):
+
 2008-07-22  Maxime Britto  <britto@apple.com>
 
         Reviewed by John Sullivan.
