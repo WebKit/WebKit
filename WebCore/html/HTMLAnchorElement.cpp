@@ -70,7 +70,7 @@ bool HTMLAnchorElement::supportsFocus() const
 {
     if (isContentEditable())
         return HTMLElement::supportsFocus();
-    return isFocusable() || (m_isLink && document() && !document()->haveStylesheetsLoaded());
+    return isFocusable() || (isLink() && document() && !document()->haveStylesheetsLoaded());
 }
 
 bool HTMLAnchorElement::isFocusable() const
@@ -80,7 +80,7 @@ bool HTMLAnchorElement::isFocusable() const
 
     // FIXME: Even if we are not visible, we might have a child that is visible.
     // Dave wants to fix that some day with a "has visible content" flag or the like.
-    if (!(m_isLink && renderer() && renderer()->style()->visibility() == VISIBLE))
+    if (!(isLink() && renderer() && renderer()->style()->visibility() == VISIBLE))
         return false;
 
     return true;
@@ -126,7 +126,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
     // React on clicks and on keypresses.
     // Don't make this KEYUP_EVENT again, it makes khtml follow links it shouldn't,
     // when pressing Enter in the combo.
-    if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
+    if (isLink() && (evt->type() == clickEvent || (evt->type() == keydownEvent && focused()))) {
         MouseEvent* e = 0;
         if (evt->type() == clickEvent && evt->isMouseEvent())
             e = static_cast<MouseEvent*>(evt);
@@ -215,17 +215,17 @@ void HTMLAnchorElement::defaultEventHandler(Event* evt)
             document()->frame()->loader()->urlSelected(document()->completeURL(url), getAttribute(targetAttr), evt, false, true);
 
         evt->setDefaultHandled();
-    } else if (m_isLink && isContentEditable()) {
-    // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
-    // for the LiveWhenNotFocused editable link behavior
+    } else if (isLink() && isContentEditable()) {
+        // This keeps track of the editable block that the selection was in (if it was in one) just before the link was clicked
+        // for the LiveWhenNotFocused editable link behavior
         if (evt->type() == mousedownEvent && evt->isMouseEvent() && static_cast<MouseEvent*>(evt)->button() != RightButton && document()->frame() && document()->frame()->selection()) {
             MouseEvent* e = static_cast<MouseEvent*>(evt);
 
             m_rootEditableElementForSelectionOnMouseDown = document()->frame()->selection()->rootEditableElement();
             m_wasShiftKeyDownOnMouseDown = e && e->shiftKey();
         } else if (evt->type() == mouseoverEvent) {
-        // These are cleared on mouseover and not mouseout because their values are needed for drag events, but these happen
-        // after mouse out events.
+            // These are cleared on mouseover and not mouseout because their values are needed for drag events, but these happen
+            // after mouse out events.
             m_rootEditableElementForSelectionOnMouseDown = 0;
             m_wasShiftKeyDownOnMouseDown = false;
         }
@@ -270,9 +270,9 @@ void HTMLAnchorElement::setActive(bool down, bool pause)
 void HTMLAnchorElement::parseMappedAttribute(MappedAttribute *attr)
 {
     if (attr->name() == hrefAttr) {
-        bool wasLink = m_isLink;
-        m_isLink = !attr->isNull();
-        if (wasLink != m_isLink)
+        bool wasLink = isLink();
+        setIsLink(!attr->isNull());
+        if (wasLink != isLink())
             setChanged();
     } else if (attr->name() == nameAttr ||
              attr->name() == titleAttr ||
@@ -466,7 +466,7 @@ String HTMLAnchorElement::toString() const
 
 bool HTMLAnchorElement::isLiveLink() const
 {
-    if (!m_isLink)
+    if (!isLink())
         return false;
     if (!isContentEditable())
         return true;

@@ -118,7 +118,7 @@ void HTMLImageElement::parseMappedAttribute(MappedAttribute* attr)
             usemap = attr->value();
         else
             usemap = document()->completeURL(parseURL(attr->value())).string();
-        m_isLink = !attr->isNull();
+        setIsLink(!attr->isNull());
     } else if (attrName == ismapAttr)
         ismap = true;
     else if (attrName == onabortAttr)

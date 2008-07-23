@@ -90,10 +90,10 @@ void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
     // Unlike other SVG*Element classes, SVGAElement only listens to SVGURIReference changes
     // as none of the other properties changes the linking behaviour for our <a> element.
     if (SVGURIReference::isKnownAttribute(attrName)) {
-        bool wasLink = m_isLink;
-        m_isLink = !href().isNull();
+        bool wasLink = isLink();
+        setIsLink(!href().isNull());
 
-        if (wasLink != m_isLink)
+        if (wasLink != isLink())
             setChanged();
     }
 }
@@ -108,7 +108,7 @@ RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle* style
 
 void SVGAElement::defaultEventHandler(Event* evt)
 {
-    if (m_isLink && (evt->type() == clickEvent || (evt->type() == keydownEvent && m_focused))) {
+    if (isLink() && (evt->type() == clickEvent || (evt->type() == keydownEvent && focused()))) {
         MouseEvent* e = 0;
         if (evt->type() == clickEvent && evt->isMouseEvent())
             e = static_cast<MouseEvent*>(evt);

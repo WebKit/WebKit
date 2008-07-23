@@ -38,7 +38,7 @@ Attr::Attr(Element* element, Document* docPtr, PassRefPtr<Attribute> a)
 {
     ASSERT(!m_attribute->attr());
     m_attribute->m_impl = this;
-    m_attrWasSpecifiedOrElementHasRareData = true;
+    setSpecified(true);
 }
 
 Attr::~Attr()

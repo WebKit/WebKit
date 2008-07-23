@@ -112,7 +112,7 @@ Element::~Element()
     if (namedAttrMap)
         namedAttrMap->detachFromElement();
 
-    if (!m_attrWasSpecifiedOrElementHasRareData)
+    if (!hasRareData())
         ASSERT(!rareDataMap().contains(this));
     else {
         ElementRareDataMap& dataMap = rareDataMap();
@@ -125,22 +125,22 @@ Element::~Element()
 
 inline ElementRareData* Element::rareData()
 {
-    return m_attrWasSpecifiedOrElementHasRareData ? rareDataFromMap(this) : 0;
+    return hasRareData() ? rareDataFromMap(this) : 0;
 }
 
 inline const ElementRareData* Element::rareData() const
 {
-    return m_attrWasSpecifiedOrElementHasRareData ? rareDataFromMap(this) : 0;
+    return hasRareData() ? rareDataFromMap(this) : 0;
 }
 
 ElementRareData* Element::createRareData()
 {
-    if (m_attrWasSpecifiedOrElementHasRareData)
+    if (hasRareData())
         return rareDataMap().get(this);
     ASSERT(!rareDataMap().contains(this));
     ElementRareData* data = new ElementRareData(this);
     rareDataMap().set(this, data);
-    m_attrWasSpecifiedOrElementHasRareData = true;
+    setHasRareData(true);
     return data;
 }
 

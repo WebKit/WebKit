@@ -304,7 +304,7 @@ void HTMLInputElement::setInputType(const String& t)
             if (newType == FILE && !m_fileList)
                 m_fileList = FileList::create();
 
-            bool wasAttached = m_attached;
+            bool wasAttached = attached();
             if (wasAttached)
                 detach();
 

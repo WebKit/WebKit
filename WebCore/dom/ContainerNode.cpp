@@ -848,7 +848,8 @@ IntRect ContainerNode::getRect() const
 
 void ContainerNode::setFocus(bool received)
 {
-    if (m_focused == received) return;
+    if (focused() == received)
+        return;
 
     EventTargetNode::setFocus(received);
 

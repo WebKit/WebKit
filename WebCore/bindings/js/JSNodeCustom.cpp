@@ -133,13 +133,13 @@ void JSNode::mark()
 
     // If we're already marking this tree, then we can simply mark this wrapper
     // by calling the base class; our caller is iterating the tree.
-    if (root->m_inSubtreeMark) {
+    if (root->inSubtreeMark()) {
         DOMObject::mark();
         return;
     }
 
     // Mark the whole tree; use the global set of roots to avoid reentering.
-    root->m_inSubtreeMark = true;
+    root->setInSubtreeMark(true);
     for (Node* nodeToMark = root; nodeToMark; nodeToMark = nodeToMark->traverseNextNode()) {
         JSNode* wrapper = ScriptInterpreter::getDOMNodeForDocument(m_impl->document(), nodeToMark);
         if (wrapper) {
@@ -155,7 +155,7 @@ void JSNode::mark()
                 mark();
         }
     }
-    root->m_inSubtreeMark = false;
+    root->setInSubtreeMark(false);
 
     // Double check that we actually ended up marked. This assert caught problems in the past.
     ASSERT(marked());

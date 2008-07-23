@@ -1,3 +1,49 @@
+2008-07-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Cleanup and pack the member variables in Node.
+
+        * bindings/js/JSNodeCustom.cpp:
+        (WebCore::JSNode::mark):
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        * dom/Attr.h:
+        (WebCore::Attr::specified):
+        (WebCore::Attr::setSpecified):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::setFocus):
+        * dom/Document.cpp:
+        (WebCore::Document::adoptNode):
+        * dom/Element.cpp:
+        (WebCore::Element::~Element):
+        (WebCore::Element::rareData):
+        (WebCore::Element::createRareData):
+        * dom/Element.h:
+        (WebCore::Element::hasRareData):
+        (WebCore::Element::setHasRareData):
+        * dom/Node.h:
+        (WebCore::Node::setIsLink):
+        (WebCore::Node::inSubtreeMark):
+        (WebCore::Node::setInSubtreeMark):
+        (WebCore::Node::attrWasSpecifiedOrElementHasRareData):
+        (WebCore::Node::setAttrWasSpecifiedOrElementHasRareData):
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::supportsFocus):
+        (WebCore::HTMLAnchorElement::isFocusable):
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::parseMappedAttribute):
+        (WebCore::HTMLAnchorElement::isLiveLink):
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setInputType):
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::attach):
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::svgAttributeChanged):
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2008-07-23  Kevin Calhoun  <kcalhoun@apple.com>
 
         Reviewed by Adele.

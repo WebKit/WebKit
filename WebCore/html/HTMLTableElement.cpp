@@ -638,7 +638,7 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
 
 void HTMLTableElement::attach()
 {
-    ASSERT(!m_attached);
+    ASSERT(!attached());
     HTMLElement::attach();
 }
 
