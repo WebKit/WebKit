@@ -136,8 +136,10 @@ static void initializeSupportedImageMIMETypesForEncoding()
     }
 #else
     // FIXME: Add Windows support for all the supported UTI's when a way to convert from MIMEType to UTI reliably is found.
-    // For now, only support PNG, the minimum that the spec requires.
+    // For now, only support PNG, JPEG and GIF.  See <rdar://problem/6095286>.
     supportedImageMIMETypesForEncoding->add("image/png");
+    supportedImageMIMETypesForEncoding->add("image/jpeg");
+    supportedImageMIMETypesForEncoding->add("image/gif");
 #endif
 #elif PLATFORM(QT)
     QList<QByteArray> formats = QImageWriter::supportedImageFormats();

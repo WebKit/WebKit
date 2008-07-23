@@ -221,9 +221,19 @@ static RetainPtr<CFStringRef> utiFromMIMEType(const String& mimeType)
     return RetainPtr<CFStringRef>(AdoptCF, UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeTypeCFString.get(), 0));
 #else
     // FIXME: Add Windows support for all the supported UTIs when a way to convert from MIMEType to UTI reliably is found.
-    // For now, only support PNG, the minimum that HTML5 requires.
-    ASSERT(equalIgnoringCase(mimeType, "image/png"));
+    // For now, only support PNG, JPEG, and GIF. See <rdar://problem/6095286>.
     static const CFStringRef kUTTypePNG = CFSTR("public.png");
+    static const CFStringRef kUTTypeJPEG = CFSTR("public.jpeg");
+    static const CFStringRef kUTTypeGIF = CFSTR("com.compuserve.gif");
+
+    if (equalIgnoringCase(mimeType, "image/png"))
+        return kUTTypePNG;
+    if (equalIgnoringCase(mimeType, "image/jpeg"))
+        return kUTTypeJPEG;
+    if (equalIgnoringCase(mimeType, "image/gif"))
+        return kUTTypeGIF;
+
+    ASSERT_NOT_REACHED();
     return kUTTypePNG;
 #endif
 }

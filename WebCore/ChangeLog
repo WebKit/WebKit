@@ -1,3 +1,15 @@
+2008-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5788451> toDataURL not implemented for Windows (need mapping of MIME type to UTI)
+        Add additional support for JPEG and GIF for toDataURL encoding canvases.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedImageMIMETypesForEncoding):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::utiFromMIMEType):
+
 2008-07-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Dave Hyatt.

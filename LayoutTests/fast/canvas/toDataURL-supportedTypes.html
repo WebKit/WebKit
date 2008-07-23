@@ -21,18 +21,11 @@
             testToDataURL();
         }
 
-        // Default list of supported types by CG.
+        // Default list of supported image formats.
         var supportedMIMETypes = [
             "image/png",
             "image/jpeg",
             "image/gif",
-            "image/jp2",
-            "image/tiff",
-            "image/vnd.adobe.photoshop",
-            "application/pdf", 
-            "image/pict",
-            "image/targa",
-            "image/sgi"
         ];
 
         function testToDataURL()
@@ -48,7 +41,7 @@
             testMIMEType(undefined);
 
             // Test other formats that we don't support
-            testMIMEType("image/x-xbitmap");
+            testMIMEType("image/x-webkitbitmap");
         }
 
         function testMIMEType(mime)
@@ -67,16 +60,13 @@
             var usedMIMEType = url.substring(5, url.search(/;/));
             document.body.appendChild(image);
             var info = document.createElement("pre");
-            if (window.layoutTestController) {
-                // PDFs vary from build to build, so don't print the url in the test.
-                if (mime != "application/pdf")
-                    info.appendChild(document.createTextNode(url + "\n"));
-            }
             info.appendChild(document.createTextNode("Given MIMEType: " + (hadArgument ? mime : "")));
             info.appendChild(document.createTextNode("\n"));
             info.appendChild(document.createTextNode("Used MIMEType: " + usedMIMEType));
             info.appendChild(document.createTextNode("\n"));
             info.appendChild(document.createTextNode((mime == usedMIMEType) ? "MIME types are the SAME." :  "MIME types DIFFER."));
+            info.appendChild(document.createTextNode("\n\n"));
+
             document.body.appendChild(info);
             document.body.appendChild(document.createElement("hr"));
         }

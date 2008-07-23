@@ -1,3 +1,17 @@
+2008-07-22  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        <rdar://problem/5788451> toDataURL not implemented for Windows (need mapping of MIME type to UTI)
+        Add additional support for JPEG and GIF for toDataURL encoding canvases.
+
+        - Turn on and simplify toDataURL-supportedTypes.html to only test for support of mimeTypes and not
+          fail due to differences in image encoders.
+
+        * fast/canvas/toDataURL-supportedTypes-expected.txt:
+        * fast/canvas/toDataURL-supportedTypes.html: Copied from fast/canvas/toDataURL-supportedTypes.html-disabled.
+        * fast/canvas/toDataURL-supportedTypes.html-disabled: Removed.
+
 2008-07-22  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Dave Hyatt
