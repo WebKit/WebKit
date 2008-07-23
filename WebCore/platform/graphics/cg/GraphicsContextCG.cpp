@@ -818,7 +818,7 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
     if (paintingDisabled())
         return;
     
-    CGInterpolationQuality quality;
+    CGInterpolationQuality quality = kCGInterpolationDefault;
     switch (mode) {
         case InterpolationDefault:
             quality = kCGInterpolationDefault;
