@@ -1,3 +1,13 @@
+2008-07-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Remove tiger specific result for toDataURL-supportedTypes.html as it should have the
+        same results on all platforms.
+
+        * platform/mac-tiger/fast/canvas: Removed.
+        * platform/mac-tiger/fast/canvas/toDataURL-supportedTypes-expected.txt: Removed.
+
 2008-07-22  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Mark Rowe.
