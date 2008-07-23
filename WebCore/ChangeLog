@@ -1,3 +1,15 @@
+2008-07-22  Maxime Britto  <britto@apple.com>
+
+        Reviewed by John Sullivan.
+
+        <rdar://problem/6083116>
+        When pan-scrolling, Back then Forward causes pan-scrolling to start again
+
+        * page/Frame.cpp:
+        (WebCore::Frame::clearTimers): Ask to stop the autoscroll timer when we clear the timers from the frame
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::scrollToAnchor): When the link is an anchor we Frame::clearTimers() isn't called since we're only scrolling the page so we need to ask to stop the autoscroll timer here too.
+
 2008-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt and Sam Weinig.

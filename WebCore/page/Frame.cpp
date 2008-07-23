@@ -1481,6 +1481,7 @@ void Frame::clearTimers(FrameView *view, Document *document)
             if (document && document->renderer() && document->renderer()->hasLayer())
                 document->renderer()->layer()->suspendMarquees();
             view->frame()->animation()->suspendAnimations();
+            view->frame()->eventHandler()->stopAutoscrollTimer();
         }
     }
 }

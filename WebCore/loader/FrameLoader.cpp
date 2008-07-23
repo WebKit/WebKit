@@ -1924,6 +1924,9 @@ void FrameLoader::scrollToAnchor(const KURL& url)
 {
     m_URL = url;
     updateHistoryForAnchorScroll();
+
+    // If we were in the autoscroll/panScroll mode we want to stop it before following the link to the anchor
+    m_frame->eventHandler()->stopAutoscrollTimer();
     started();
     gotoAnchor();
 
