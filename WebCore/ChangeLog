@@ -1,3 +1,29 @@
+2008-07-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove extraneous allocations by using equalIgnoringCase rather than
+        String::lower.
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::addCSSColor):
+        * html/HTMLCollection.cpp:
+        (WebCore::HTMLCollection::checkForNameMatch):
+        * html/HTMLFormCollection.cpp:
+        (WebCore::HTMLFormCollection::getNamedFormItem):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::containsJavaApplet):
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::emitCSSRule):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createJavaAppletWidget):
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify):
+        * rendering/RenderPartObject.cpp:
+        (WebCore::RenderPartObject::updateWidget):
+
 2008-07-23  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adam Roben.

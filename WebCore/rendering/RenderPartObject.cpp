@@ -150,17 +150,17 @@ void RenderPartObject::updateWidget(bool onlyCreateNonNetscapePlugins)
       while (child && (url.isEmpty() || serviceType.isEmpty() || !embed)) {
           if (child->hasTagName(paramTag)) {
               HTMLParamElement* p = static_cast<HTMLParamElement*>(child);
-              String name = p->name().lower();
-              if (url.isEmpty() && (name == "src" || name == "movie" || name == "code" || name == "url"))
+              String name = p->name();
+              if (url.isEmpty() && (equalIgnoringCase(name, "src") || equalIgnoringCase(name, "movie") || equalIgnoringCase(name, "code") || equalIgnoringCase(name, "url")))
                   url = p->value();
-              if (serviceType.isEmpty() && name == "type") {
+              if (serviceType.isEmpty() && equalIgnoringCase(name, "type")) {
                   serviceType = p->value();
                   int pos = serviceType.find(";");
                   if (pos != -1)
                       serviceType = serviceType.left(pos);
               }
               if (!embed && !name.isEmpty()) {
-                  uniqueParamNames.add(p->name().impl());
+                  uniqueParamNames.add(name.impl());
                   paramNames.append(p->name());
                   paramValues.append(p->value());
               }

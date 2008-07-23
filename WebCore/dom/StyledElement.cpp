@@ -362,7 +362,7 @@ void StyledElement::addCSSColor(MappedAttribute* attr, int id, const String& c)
     // used as a normalization point to normalize to values between 0
     // and 255.
     
-    if (color.lower() != "transparent") {
+    if (!equalIgnoringCase(color, "transparent")) {
         if (color[0] == '#')
             color.remove(0, 1);
         int basicLength = (color.length() + 2) / 3;

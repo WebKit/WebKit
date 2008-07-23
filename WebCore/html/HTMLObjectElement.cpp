@@ -464,9 +464,7 @@ bool HTMLObjectElement::containsJavaApplet() const
     while (child) {
         if (child->isElementNode()) {
             Element* e = static_cast<Element*>(child);
-            if (e->hasTagName(paramTag) &&
-                e->getAttribute(nameAttr).string().lower() == "type" &&
-                MIMETypeRegistry::isJavaAppletMIMEType(e->getAttribute(valueAttr).string()))
+            if (e->hasTagName(paramTag) && equalIgnoringCase(e->getAttribute(nameAttr), "type") && MIMETypeRegistry::isJavaAppletMIMEType(e->getAttribute(valueAttr).string()))
                 return true;
             else if (e->hasTagName(objectTag) && static_cast<HTMLObjectElement*>(e)->containsJavaApplet())
                 return true;

@@ -125,31 +125,31 @@ void HTMLLinkElement::parseMappedAttribute(MappedAttribute *attr)
     }
 }
 
-void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& relStr, bool& styleSheet, bool& alternate, bool& icon)
+void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, bool& styleSheet, bool& alternate, bool& icon)
 {
     styleSheet = false;
     icon = false; 
-    alternate = false;
-    String rel = relStr.string().lower();
-    if (rel == "stylesheet")
+    alternate = false;;
+    if (equalIgnoringCase(rel, "stylesheet"))
         styleSheet = true;
-    else if (rel == "icon" || rel == "shortcut icon")
+    else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
         icon = true;
-    else if (rel == "alternate stylesheet" || rel == "stylesheet alternate") {
+    else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
         styleSheet = true;
         alternate = true;
     } else {
         // Tokenize the rel attribute and set bits based on specific keywords that we find.
-        rel.replace('\n', ' ');
+        String relString = rel.string();
+        relString.replace('\n', ' ');
         Vector<String> list;
-        rel.split(' ', list);
+        relString.split(' ', list);
         Vector<String>::const_iterator end = list.end();
         for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
-            if (*it == "stylesheet")
+            if (equalIgnoringCase(*it, "stylesheet"))
                 styleSheet = true;
-            else if (*it == "alternate")
+            else if (equalIgnoringCase(*it, "alternate"))
                 alternate = true;
-            else if (*it == "icon")
+            else if (equalIgnoringCase(*it, "icon"))
                 icon = true;
         }
     }

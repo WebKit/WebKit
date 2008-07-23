@@ -830,7 +830,7 @@ void PreloadScanner::emitTag()
 void PreloadScanner::emitCSSRule()
 {
     String rule(m_cssRule.data(), m_cssRule.size());
-    if (rule.lower() == "import" && !m_cssRuleValue.isEmpty()) {
+    if (equalIgnoringCase(rule, "import") && !m_cssRuleValue.isEmpty()) {
         String value(m_cssRuleValue.data(), m_cssRuleValue.size());
         String url = parseURL(value);
         if (!url.isEmpty())
