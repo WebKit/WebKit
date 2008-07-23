@@ -1,3 +1,10 @@
+2008-07-23  Alexey Proskuryakov  <ap@webkit.org>
+
+        Build fix.
+
+        * kjs/ArgList.h: (KJS::ArgList::operator new): removed an extraneous "ArgList::" inside the
+        class definition.
+
 2008-07-22  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt and Sam Weinig.
