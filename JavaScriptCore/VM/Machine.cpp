@@ -473,8 +473,12 @@ NEVER_INLINE JSValue* Machine::callEval(ExecState* exec, JSObject* thisObj, Scop
 }
 
 Machine::Machine()
-    : m_sampler(0)
-    , m_reentryDepth(0)
+    :
+#if SAMPLING_TOOL_ENABLED
+      m_sampler(0),
+#else
+      m_reentryDepth(0)
+#endif
     , m_timeoutTime(0)
     , m_timeAtLastCheckTimeout(0)
     , m_timeExecuting(0)

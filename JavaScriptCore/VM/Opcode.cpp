@@ -137,6 +137,7 @@ static const char* opcodeNames[] = {
 
 #endif
 
+#if SAMPLING_TOOL_ENABLED
 
 void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
 {
@@ -202,8 +203,6 @@ void SamplingTool::stop()
     m_running = false;
     pthread_join(m_samplingThread, 0);
 }
-
-#if SAMPLING_TOOL_ENABLED
 
 struct OpcodeSampleInfo
 {
@@ -344,12 +343,6 @@ void SamplingTool::dump(ExecState* exec)
         fprintf(stdout, "%s:\t%6lld\t%.3f%%\t(%.3f%%)\n", opcodeNames[opcode], count, ((double)count * 100)/totalOpcodeSamples, ((double)count * 100)/m_totalSamples);    
     }
     fprintf(stdout, "\n");
-}
-
-#else
-
-void SamplingTool::dump(ExecState*)
-{
 }
 
 #endif

@@ -153,6 +153,8 @@ namespace KJS {
     class CodeBlock;
     struct Instruction;
 
+#if SAMPLING_TOOL_ENABLED
+
     struct ScopeSampleRecord
     {
         RefPtr<ScopeNode> m_scope;
@@ -241,6 +243,8 @@ namespace KJS {
         long long m_totalSamples;
         ScopeSampleRecordMap* m_scopeSampleMap;
     };
+
+#endif
 
 // SCOPENODE_ / MACHINE_ macros for use from within member methods on ScopeNode / Machine respectively.
 #if SAMPLING_TOOL_ENABLED
