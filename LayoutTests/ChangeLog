@@ -1,3 +1,27 @@
+2008-07-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for <rdar://problem/5997215> display: table-row-group 
+        for :before content causes a crash
+
+        * fast/css-generated-content/table-row-group-to-inline.html: Added.
+        * fast/css-generated-content/table-row-group-with-before.html: Added.
+        * fast/css-generated-content/table-row-with-before.html: Added.
+        * fast/css-generated-content/table-with-before.html: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-to-inline-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-with-before-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-with-before-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-row-group-with-before-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-row-with-before-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-row-with-before-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-row-with-before-expected.txt: Added.
+        * platform/mac/fast/css-generated-content/table-with-before-expected.checksum: Added.
+        * platform/mac/fast/css-generated-content/table-with-before-expected.png: Added.
+        * platform/mac/fast/css-generated-content/table-with-before-expected.txt: Added.
+
 2008-07-23  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.

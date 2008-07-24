@@ -169,7 +169,7 @@ void SVGUseElement::recalcStyle(StyleChange change)
     // as the shadow tree root element has no (direct) parent node. Yes, shadow trees are tricky.
     if (change >= Inherit || m_shadowTreeRootElement->changed()) {
         RenderStyle* newStyle = document()->styleSelector()->styleForElement(m_shadowTreeRootElement.get());
-        StyleChange ch = m_shadowTreeRootElement->diff(m_shadowTreeRootElement->renderStyle(), newStyle);
+        StyleChange ch = Node::diff(m_shadowTreeRootElement->renderStyle(), newStyle);
         if (ch == Detach) {
             ASSERT(m_shadowTreeRootElement->attached());
             m_shadowTreeRootElement->detach();

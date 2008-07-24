@@ -1,3 +1,28 @@
+2008-07-23  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/5997215> display: table-row-group 
+        for :before content causes a crash
+ 
+        The actual bug fix here is to ddd the generated content container 
+        as a child before adding any of the generated content to the 
+        container. There are two correctness fixes as well that deal with 
+        style changes and correctly.
+
+        This patch also makes Node::diff() a static function.
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * dom/Node.h:
+        (WebCore::Node::):
+        (WebCore::Node::recalcStyle):
+        * rendering/RenderContainer.cpp:
+        (WebCore::findBeforeAfterParent):
+        (WebCore::RenderContainer::updateBeforeAfterContentForContainer):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::recalcStyle):
+
 2008-07-23  Timothy Hatcher  <timothy@apple.com>
 
         Updates the elements DOM tree when nodes are added or removed from
