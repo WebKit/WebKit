@@ -1,3 +1,17 @@
+2008-07-21  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a regression where TreeOutline.findTreeElement would
+        return the parent TreeElement of the representedObject instead
+        of the TreeElement for the representedObject. Regressed with the
+        fix for bug 19164.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline.prototype.findTreeElement): When performing a slow search,
+        do a final search for representedObject instead of returning item, which
+        is the parent of representedObject.
+
 2008-07-23  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.

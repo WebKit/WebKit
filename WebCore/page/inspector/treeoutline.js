@@ -295,7 +295,9 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
             item.onpopulate(item);
     }
 
-    return item;
+    // Now that all the ancestors are populated, try to find the representedObject again. This time
+    // without the isAncestor and getParent functions to prevent an infinite recursion if it isn't found.
+    return this.findTreeElement(representedObject);
 }
 
 TreeOutline.prototype.treeElementFromPoint = function(x, y)
