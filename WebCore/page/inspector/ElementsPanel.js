@@ -924,7 +924,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         var element = this._treeElementFromEvent(event);
 
-        if (!element)
+        if (!element || !element.ondblclick)
             return;
 
         element.ondblclick();

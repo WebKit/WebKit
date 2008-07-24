@@ -1,5 +1,16 @@
 2008-07-22  Timothy Hatcher  <timothy@apple.com>
 
+        Fix an exception that occurred when double clicking the closing tag
+        of an element in the DOM tree.
+
+        Reviewed by Anders Carlsson.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._ondblclick): Null check
+        element.ondblclick.
+
+2008-07-22  Timothy Hatcher  <timothy@apple.com>
+
         Fix a regression where elements in subframes would not be revealed
         or selected when inspected from the context menu. This was caused by
         JavaScript equality is not being true for JSInspectedObjectWrappers
