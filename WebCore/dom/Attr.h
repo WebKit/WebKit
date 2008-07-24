@@ -48,7 +48,7 @@ public:
     
     // DOM methods & attributes for Attr
     String name() const { return qualifiedName().toString(); }
-    bool specified() const { return attrWasSpecifiedOrElementHasRareData(); }
+    bool specified() const { return m_specified; }
     Element* ownerElement() const { return m_element; }
 
     String value() const { return m_attribute->value(); }
@@ -78,12 +78,13 @@ public:
     // An extension to get presentational information for attributes.
     CSSStyleDeclaration* style() { return m_attribute->style(); }
 
-    void setSpecified(bool specified) { setAttrWasSpecifiedOrElementHasRareData(specified); }
+    void setSpecified(bool specified) { m_specified = specified; }
 
 private:
     Element* m_element;
     RefPtr<Attribute> m_attribute;
-    int m_ignoreChildrenChanged;
+    unsigned m_ignoreChildrenChanged : 31;
+    bool m_specified : 1;
 };
 
 } // namespace WebCore

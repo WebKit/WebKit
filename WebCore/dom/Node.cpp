@@ -156,27 +156,27 @@ Node::StyleChange Node::diff( RenderStyle *s1, RenderStyle *s2 )
     return ch;
 }
 
-Node::Node(Document *doc)
-    : m_document(doc),
-      m_previous(0),
-      m_next(0),
-      m_renderer(0),
-      m_tabIndex(0),
-      m_hasId(false),
-      m_hasClass(false),
-      m_attached(false),
-      m_styleChange(NoStyleChange),
-      m_hasChangedChild(false),
-      m_inDocument(false),
-      m_isLink(false),
-      m_attrWasSpecifiedOrElementHasRareData(false),
-      m_focused(false),
-      m_active(false),
-      m_hovered(false),
-      m_inActiveChain(false),
-      m_inDetach(false),
-      m_inSubtreeMark(false),
-      m_tabIndexSetExplicitly(false)
+Node::Node(Document* doc, bool isElement)
+    : m_document(doc)
+    , m_previous(0)
+    , m_next(0)
+    , m_renderer(0)
+    , m_tabIndex(0)
+    , m_styleChange(NoStyleChange)
+    , m_hasId(false)
+    , m_hasClass(false)
+    , m_attached(false)
+    , m_hasChangedChild(false)
+    , m_inDocument(false)
+    , m_isLink(false)
+    , m_focused(false)
+    , m_active(false)
+    , m_hovered(false)
+    , m_inActiveChain(false)
+    , m_inDetach(false)
+    , m_inSubtreeMark(false)
+    , m_tabIndexSetExplicitly(false)
+    , m_isElement(isElement)
 {
 #ifndef NDEBUG
     if (shouldIgnoreLeaks)

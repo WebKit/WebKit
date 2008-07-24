@@ -32,7 +32,7 @@ typedef void (*NodeCallback)(Node*);
 
 class ContainerNode : public EventTargetNode {
 public:
-    ContainerNode(Document*);
+    ContainerNode(Document*, bool isElement = false);
     virtual ~ContainerNode();
 
     Node* firstChild() const { return m_firstChild; }

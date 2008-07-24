@@ -1,3 +1,35 @@
+2008-07-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Make isElementNode() non-virtual for a speedup on many benchmarks
+        including 20% on http://ejohn.org/apps/fragment/.
+
+        - Replace Node::m_attrWasSpecifiedOrElementHasRareData with bits in 
+          Element and Attr where space was available.  Use the new free bit
+          to represent if an node is an element or not.
+
+        * dom/Attr.cpp:
+        (WebCore::Attr::Attr):
+        * dom/Attr.h:
+        (WebCore::Attr::specified):
+        (WebCore::Attr::setSpecified):
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::ContainerNode):
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::Element):
+        * dom/Element.h:
+        (WebCore::Element::hasRareData):
+        (WebCore::Element::setHasRareData):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::EventTargetNode):
+        * dom/EventTargetNode.h:
+        * dom/Node.cpp:
+        (WebCore::Node::Node):
+        * dom/Node.h:
+        (WebCore::Node::isElementNode):
+
 2008-07-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

@@ -94,9 +94,9 @@ void ElementRareData::resetComputedStyle(Element* element)
     m_computedStyle = 0;
 }
 
-Element::Element(const QualifiedName& qName, Document *doc)
-    : ContainerNode(doc)
-    , m_tagName(qName)
+Element::Element(const QualifiedName& tagName, Document* doc)
+    : ContainerNode(doc, true)
+    , m_tagName(tagName)
     , m_isStyleAttributeValid(true)
     , m_synchronizingStyleAttribute(false)
 #if ENABLE(SVG)
@@ -104,6 +104,7 @@ Element::Element(const QualifiedName& qName, Document *doc)
     , m_synchronizingSVGAttributes(false)
 #endif
     , m_parsingChildrenFinished(true)
+    , m_hasRareData(false)
 {
 }
 

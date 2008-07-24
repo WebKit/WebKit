@@ -54,8 +54,8 @@ using namespace EventNames;
     
 static HashSet<EventTargetNode*>* gNodesDispatchingSimulatedClicks = 0; 
 
-EventTargetNode::EventTargetNode(Document *doc)
-    : Node(doc)
+EventTargetNode::EventTargetNode(Document* doc, bool isElement)
+    : Node(doc, isElement)
     , m_regdListeners(0)
 {
 }

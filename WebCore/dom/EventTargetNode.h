@@ -35,7 +35,7 @@ class Frame;
 class EventTargetNode : public Node,
                         public EventTarget {
 public:
-    EventTargetNode(Document*);
+    EventTargetNode(Document*, bool isElement = false);
     virtual ~EventTargetNode();
 
     virtual bool isEventTargetNode() const { return true; }
