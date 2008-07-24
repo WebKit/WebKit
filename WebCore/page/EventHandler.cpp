@@ -564,7 +564,7 @@ void EventHandler::handleAutoscroll(RenderObject* renderer)
 
     setAutoscrollRenderer(renderer);
 
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if PLATFORM(WIN)
     if (m_panScrollInProgress) {
         m_panScrollStartPos = currentMousePosition();
         m_frame->view()->printPanScrollIcon(m_panScrollStartPos);
@@ -597,7 +597,7 @@ void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
             stopAutoscrollTimer();
             return;
         }
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if PLATFORM(WIN)
         r->panScroll(m_panScrollStartPos);
 #endif
     }
@@ -675,7 +675,7 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
     if (autoscrollRenderer()) {
         if (!rendererIsBeingDestroyed && (m_autoscrollInProgress || m_panScrollInProgress))
             autoscrollRenderer()->stopAutoscroll();
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if PLATFORM(WIN)
         if (m_panScrollInProgress) {
             m_frame->view()->removePanScrollIcon();
         }
@@ -938,7 +938,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
         return true;
     }
  
-#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+#if PLATFORM(WIN)
     if (m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
         stopAutoscrollTimer();
     } else if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {

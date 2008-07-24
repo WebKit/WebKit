@@ -1,3 +1,13 @@
+2008-07-24  kevino  <kevino@theolliviers.com>
+
+        Windows build fix for wx. wx doesn't implement pan scrolling yet. 
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleAutoscroll):
+        (WebCore::EventHandler::autoscrollTimerFired):
+        (WebCore::EventHandler::stopAutoscrollTimer):
+        (WebCore::EventHandler::handleMousePressEvent):
+
 2008-07-24  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18673, crash when using full page zoom on generated content.  Don't call
