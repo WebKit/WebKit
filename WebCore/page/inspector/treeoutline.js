@@ -133,17 +133,13 @@ TreeOutline._insertChild = function(child, index)
     child._attach();
 }
 
-TreeOutline._removeChild = function(child)
+TreeOutline._removeChildAtIndex = function(childIndex)
 {
-    if (!child)
-        throw("child can't be undefined or null");
+    if (childIndex < 0 || childIndex >= this.children.length)
+        throw("childIndex out of range");
 
-    for (var i = 0; i < this.children.length; ++i) {
-        if (this.children[i] === child) {
-            this.children.splice(i, 1);
-            break;
-        }
-    }
+    var child = this.children[childIndex];
+    this.children.splice(childIndex, 1);
 
     child.deselect();
 
@@ -159,6 +155,18 @@ TreeOutline._removeChild = function(child)
     child.parent = null;
     child.nextSibling = null;
     child.previousSibling = null;
+}
+
+TreeOutline._removeChild = function(child)
+{
+    if (!child)
+        throw("child can't be undefined or null");
+
+    var childIndex = this.children.indexOf(child);
+    if (childIndex === -1)
+        throw("child not found in this node's children");
+
+    TreeOutline._removeChildAtIndex.call(this, childIndex);
 }
 
 TreeOutline._removeChildren = function()
@@ -395,6 +403,7 @@ TreeOutline.prototype.reveal = function()
 TreeOutline.prototype.appendChild = TreeOutline._appendChild;
 TreeOutline.prototype.insertChild = TreeOutline._insertChild;
 TreeOutline.prototype.removeChild = TreeOutline._removeChild;
+TreeOutline.prototype.removeChildAtIndex = TreeOutline._removeChildAtIndex;
 TreeOutline.prototype.removeChildren = TreeOutline._removeChildren;
 TreeOutline.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecursive;
 
@@ -491,6 +500,7 @@ TreeElement.prototype = {
 TreeElement.prototype.appendChild = TreeOutline._appendChild;
 TreeElement.prototype.insertChild = TreeOutline._insertChild;
 TreeElement.prototype.removeChild = TreeOutline._removeChild;
+TreeElement.prototype.removeChildAtIndex = TreeOutline._removeChildAtIndex;
 TreeElement.prototype.removeChildren = TreeOutline._removeChildren;
 TreeElement.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecursive;
 

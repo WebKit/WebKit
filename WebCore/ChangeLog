@@ -1,5 +1,22 @@
 2008-07-21  Timothy Hatcher  <timothy@apple.com>
 
+        Added TreeOutline.removeChildAtIndex and TreeElement.removeChildAtIndex
+        for efficiency of callers that know the index of the child. This
+        will be used in an upcoming change.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline._removeChildAtIndex): Renamed from _removeChild
+        and modified to take an index.
+        (TreeOutline._removeChild): Call _removeChildAtIndex with the
+        child index found using indexOf.
+        (TreeOutline.prototype.removeChildAtIndex): Added. Calls
+        TreeOutline._removeChildAtIndex.
+        (TreeElement.prototype.removeChildAtIndex): Ditto.
+
+2008-07-21  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a regression where TreeOutline.findTreeElement would
         return the parent TreeElement of the representedObject instead
         of the TreeElement for the representedObject. Regressed with the
