@@ -1,3 +1,11 @@
+2008-07-24  Adam Roben  <aroben@apple.com>
+
+        Fix a dead link to the Windows Platform SDK and related instructions
+
+        Rubberstamped by Alexey Proskuryakov.
+
+        * building/tools.html: Fixed a dead link.
+
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
         Update Akismet plugin to 2.1.6.
