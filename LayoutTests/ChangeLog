@@ -1,3 +1,13 @@
+2008-07-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test cases for regex starting with /=
+
+        * fast/js/regexp-divequal-expected.txt: Added.
+        * fast/js/regexp-divequal.html: Added.
+        * fast/js/resources/regexp-divequal.js: Added.
+
 2008-07-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

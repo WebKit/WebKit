@@ -297,7 +297,7 @@ Literal:
                                             Lexer& l = *LEXER;
                                             if (!l.scanRegExp())
                                                 YYABORT;
-                                            RegExpNode* node = new RegExpNode(GLOBAL_DATA, l.pattern(), l.flags());
+                                            RegExpNode* node = new RegExpNode(GLOBAL_DATA, "=" + l.pattern(), l.flags());
                                             int size = l.pattern().size() + 2; // + 2 for the two /'s
                                             SET_EXCEPTION_LOCATION(node, @1.first_column, @1.first_column + size, @1.first_column + size);
                                             $$ = createNodeFeatureInfo<ExpressionNode*>(node, 0);
