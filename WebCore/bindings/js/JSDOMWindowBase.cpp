@@ -1024,7 +1024,7 @@ JSValue* windowProtoFuncOpen(ExecState* exec, JSObject*, JSValue* thisValue, con
     // In the case of a named frame or a new window, we'll use the createWindow() helper
     WindowFeatures windowFeatures(valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 2)));
     FloatRect windowRect(windowFeatures.x, windowFeatures.y, windowFeatures.width, windowFeatures.height);
-    DOMWindow::adjustWindowRect(screenAvailableRect(page->mainFrame()->view()), windowRect, windowRect);
+    DOMWindow::adjustWindowRect(screenAvailableRect(page ? page->mainFrame()->view() : 0), windowRect, windowRect);
 
     windowFeatures.x = windowRect.x();
     windowFeatures.y = windowRect.y();

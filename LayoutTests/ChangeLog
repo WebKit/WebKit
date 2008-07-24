@@ -1,3 +1,15 @@
+2008-07-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        Test for bug 19588: CRASH doing open() on destroyed window
+        https://bugs.webkit.org/show_bug.cgi?id=19588
+
+        Test case from Eric Roman.
+
+        * fast/frames/crash-removed-iframe-expected.txt: Added.
+        * fast/frames/crash-removed-iframe.html: Added.
+
 2008-07-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.

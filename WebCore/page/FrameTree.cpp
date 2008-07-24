@@ -163,7 +163,7 @@ Frame* FrameTree::find(const AtomicString& name) const
         return m_thisFrame;
     
     if (name == "_top")
-        return m_thisFrame->page()->mainFrame();
+        return top();
     
     if (name == "_parent")
         return parent() ? parent() : m_thisFrame;
@@ -179,6 +179,11 @@ Frame* FrameTree::find(const AtomicString& name) const
 
     // Search the entire tree for this page next.
     Page* page = m_thisFrame->page();
+
+    // The frame could have been detached from the page, so check it.
+    if (!page)
+        return 0;
+
     for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
         if (frame->tree()->name() == name)
             return frame;

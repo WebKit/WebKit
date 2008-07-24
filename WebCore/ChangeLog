@@ -1,3 +1,20 @@
+2008-07-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        Bug 19588: CRASH doing open() on destroyed window
+        https://bugs.webkit.org/show_bug.cgi?id=19588
+
+        Add frame's page null check as it could have been
+        detached from the page.
+
+        Test: fast/frames/crash-removed-iframe.html
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::windowProtoFuncOpen):
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::find):
+
 2008-07-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alexey Proskuryakov.
