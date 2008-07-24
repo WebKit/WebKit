@@ -1,3 +1,71 @@
+2008-07-23  Timothy Hatcher  <timothy@apple.com>
+
+        Updates the elements DOM tree when nodes are added or removed from
+        the inspected document.
+
+        https://bugs.webkit.org/show_bug.cgi?id=6590
+        <rdar://problem/5712921>
+
+        Reviewed by Adam Roben.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::dispatchWindowObjectAvailable): Added a call to
+        InspectorController::inspectedWindowScriptObjectCleared.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        Calls the WebInspector.inspectedWindowCleared script function.
+        * page/InspectorController.h:
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel): Create the event listener callback wrappers.
+        (WebInspector.ElementsPanel.prototype.show): Call _updateModifiedNodes if
+        there are any recently modified nodes.
+        (WebInspector.ElementsPanel.prototype.reset): Remove previous mutation event listeners.
+        Adds a check for InspectorController.isWindowVisible to prevent adding
+        event listeners when the window isn't visible.
+        (WebInspector.ElementsPanel.prototype.inspectedWindowCleared): 
+        (WebInspector.ElementsPanel.prototype._addMutationEventListeners): Add DOMNodeInserted,
+        DOMNodeRemoved and DOMContentLoaded event listeners to the passed in window or window's document.
+        (WebInspector.ElementsPanel.prototype._removeMutationEventListeners): Removes the event listeners
+        added in _addMutationEventListeners.
+        (WebInspector.ElementsPanel.prototype.updateMutationEventListeners): Call _addMutationEventListeners
+        again to reinstate the listners if the document changed or window cleared them.
+        (WebInspector.ElementsPanel.prototype.registerMutationEventListeners): Append the window to
+        _mutationMonitoredWindows and call _addMutationEventListeners.
+        (WebInspector.ElementsPanel.prototype.unregisterMutationEventListeners): Remove the window from
+        _mutationMonitoredWindows and call _removeMutationEventListeners.
+        (WebInspector.ElementsPanel.prototype.unregisterAllMutationEventListeners): Call
+        _removeMutationEventListeners for all windows in _mutationMonitoredWindows and
+        clear _mutationMonitoredWindows.
+        (WebInspector.ElementsPanel.prototype._contentLoaded): Append the node and parent
+        to the recentlyModifiedNodes array. Call _updateModifiedNodesSoon if visible.
+        (WebInspector.ElementsPanel.prototype._nodeInserted): Ditto.
+        (WebInspector.ElementsPanel.prototype._nodeRemoved): Ditto.
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodesSoon): Call
+        _updateModifiedNodes on a zero timeout.
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodes): Iterate over
+        the recentlyModifiedNodes array and call updateChildren on all the parent
+        elements that had changes. Only calls updateChildren once per parent element.
+        (WebInspector.ElementsPanel.prototype._isAncestorIncludingParentFrames): Return
+        false if the nodes are the same. Return true if the nodes are the same while
+        looking at ancestor frame elements. THis use to return false, which was incorrect.
+        (WebInspector.DOMNodeTreeElement.prototype.onpopulate): Call updateChildren.
+        (WebInspector.DOMNodeTreeElement.prototype.updateChildren): Copied from
+        onpopulate and changed to rebuild the children elements by adding new children,
+        moving existing children and removed old children.
+        (WebInspector.DOMNodeTreeElement.prototype.onexpand): If the node has a contentDocument
+        call registerMutationEventListeners to track any mutations.
+        * page/inspector/inspector.js:
+        (WebInspector.inspectedWindowCleared): Call ElementsPanel.inspectedWindowCleared.
+        * page/inspector/treeoutline.js:
+        (TreeElement.prototype.get hasChildren): Return _hasChildren.
+        (TreeElement.prototype.set hasChildren): Set _hasChildren and update the className.
+        (TreeElement.prototype.hasAncestor): Return true if the element has the passed in ancestor.
+        (TreeElement.prototype.expand): Fix an exception that can happen if expand is
+        called before _attach.
+        * WebCore/manual-tests/inspector/dom-mutation.html: Added.
+        * WebCore/manual-tests/inspector/resources/mutate-frame-2.html: Added.
+        * WebCore/manual-tests/inspector/resources/mutate-frame.html: Added.
+
 2008-07-22  Timothy Hatcher  <timothy@apple.com>
 
         Fix an exception that occurred when double clicking the closing tag

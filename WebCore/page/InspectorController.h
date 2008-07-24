@@ -120,6 +120,7 @@ public:
     JSContextRef scriptContext() const { return m_scriptContext; };
     void setScriptContext(JSContextRef context) { m_scriptContext = context; };
 
+    void inspectedWindowScriptObjectCleared(Frame*);
     void windowScriptObjectAvailable();
 
     void scriptObjectReady();

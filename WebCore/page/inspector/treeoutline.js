@@ -466,6 +466,27 @@ TreeElement.prototype = {
             this._listItemNode.title = x ? x : "";
     },
 
+    get hasChildren() {
+        return this._hasChildren;
+    },
+
+    set hasChildren(x) {
+        if (this._hasChildren === x)
+            return;
+
+        this._hasChildren = x;
+
+        if (!this._listItemNode)
+            return;
+
+        if (x)
+            this._listItemNode.addStyleClass("parent");
+        else {
+            this._listItemNode.removeStyleClass("parent");
+            this.collapse();
+        }
+    },
+
     get hidden() {
         return this._hidden;
     },
@@ -628,7 +649,7 @@ TreeElement.prototype.expand = function()
     if (!this.hasChildren || (this.expanded && !this._shouldRefreshChildren && this._childrenListNode))
         return;
 
-    if (!this._childrenListNode || this._shouldRefreshChildren) {
+    if (this.treeOutline && (!this._childrenListNode || this._shouldRefreshChildren)) {
         if (this._childrenListNode && this._childrenListNode.parentNode)
             this._childrenListNode.parentNode.removeChild(this._childrenListNode);
 
@@ -650,7 +671,7 @@ TreeElement.prototype.expand = function()
 
     if (this._listItemNode) {
         this._listItemNode.addStyleClass("expanded");
-        if (this._childrenListNode.parentNode != this._listItemNode.parentNode)
+        if (this._childrenListNode && this._childrenListNode.parentNode != this._listItemNode.parentNode)
             this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
     }
 
@@ -683,6 +704,20 @@ TreeElement.prototype.expandRecursively = function(maxDepth)
         item = item.traverseNextTreeElement(false, this, (depth >= maxDepth), info);
         depth += info.depthChange;
     }
+}
+
+TreeElement.prototype.hasAncestor = function(ancestor) {
+    if (!ancestor)
+        return false;
+
+    var currentNode = this.parent;
+    while (currentNode) {
+        if (ancestor === currentNode)
+            return true;
+        currentNode = currentNode.parent;
+    }
+
+    return false;
 }
 
 TreeElement.prototype.reveal = function()

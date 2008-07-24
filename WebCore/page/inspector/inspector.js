@@ -786,6 +786,11 @@ WebInspector.reset = function()
     this.console.clearMessages();
 }
 
+WebInspector.inspectedWindowCleared = function(inspectedWindow)
+{
+    this.panels.elements.inspectedWindowCleared(inspectedWindow);
+}
+
 WebInspector.resourceURLChanged = function(resource, oldURL)
 {
     delete this.resourceURLMap[oldURL];

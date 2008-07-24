@@ -76,6 +76,11 @@ WebInspector.ElementsPanel = function()
     this.element.appendChild(this.sidebarElement);
     this.element.appendChild(this.sidebarResizeElement);
 
+    this._mutationMonitoredWindows = [];
+    this._nodeInsertedEventListener = InspectorController.wrapCallback(this._nodeInserted.bind(this));
+    this._nodeRemovedEventListener = InspectorController.wrapCallback(this._nodeRemoved.bind(this));
+    this._contentLoadedEventListener = InspectorController.wrapCallback(this._contentLoaded.bind(this));
+
     this.reset();
 }
 
@@ -103,6 +108,8 @@ WebInspector.ElementsPanel.prototype = {
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         this.updateBreadcrumb();
         this.updateTreeSelection();
+        if (this.recentlyModifiedNodes.length)
+            this._updateModifiedNodes();
     },
 
     hide: function()
@@ -128,6 +135,9 @@ WebInspector.ElementsPanel.prototype = {
         this.hoveredDOMNode = null;
         this.forceHoverHighlight = false;
 
+        this.recentlyModifiedNodes = [];
+        this.unregisterAllMutationEventListeners();
+
         var inspectedWindow = InspectorController.inspectedWindow();
         if (!inspectedWindow || !inspectedWindow.document)
             return;
@@ -141,10 +151,16 @@ WebInspector.ElementsPanel.prototype = {
             }
 
             var contentLoadedCallback = InspectorController.wrapCallback(contentLoaded.bind(this));
-
             inspectedWindow.document.addEventListener("DOMContentLoaded", contentLoadedCallback, false);
             return;
         }
+
+        // If the window isn't visible, return early so the DOM tree isn't built
+        // and mutation event listeners are not added.
+        if (!InspectorController.isWindowVisible())
+            return;
+
+        this.registerMutationEventListeners(inspectedWindow);
 
         var inspectedRootDocument = inspectedWindow.document;
         this.rootDOMNode = inspectedRootDocument;
@@ -155,6 +171,59 @@ WebInspector.ElementsPanel.prototype = {
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
         }
+    },
+
+    inspectedWindowCleared: function(window)
+    {
+        if (InspectorController.isWindowVisible())
+            this.updateMutationEventListeners(window);
+    },
+
+    _addMutationEventListeners: function(monitoredWindow)
+    {
+        monitoredWindow.document.addEventListener("DOMNodeInserted", this._nodeInsertedEventListener, true);
+        monitoredWindow.document.addEventListener("DOMNodeRemoved", this._nodeRemovedEventListener, true);
+        if (monitoredWindow.frameElement)
+            monitoredWindow.addEventListener("DOMContentLoaded", this._contentLoadedEventListener, true);
+    },
+
+    _removeMutationEventListeners: function(monitoredWindow)
+    {
+        if (monitoredWindow.frameElement)
+            monitoredWindow.removeEventListener("DOMContentLoaded", this._contentLoadedEventListener, true);
+        if (!monitoredWindow.document)
+            return;
+        monitoredWindow.document.removeEventListener("DOMNodeInserted", this._nodeInsertedEventListener, true);
+        monitoredWindow.document.removeEventListener("DOMNodeRemoved", this._nodeRemovedEventListener, true);
+    },
+
+    updateMutationEventListeners: function(monitoredWindow)
+    {
+        this._addMutationEventListeners(monitoredWindow);
+    },
+
+    registerMutationEventListeners: function(monitoredWindow)
+    {
+        if (!monitoredWindow || this._mutationMonitoredWindows.indexOf(monitoredWindow) !== -1)
+            return;
+        this._mutationMonitoredWindows.push(monitoredWindow);
+        if (InspectorController.isWindowVisible())
+            this._addMutationEventListeners(monitoredWindow);
+    },
+
+    unregisterMutationEventListeners: function(monitoredWindow)
+    {
+        if (!monitoredWindow || this._mutationMonitoredWindows.indexOf(monitoredWindow) === -1)
+            return;
+        this._mutationMonitoredWindows.remove(monitoredWindow);
+        this._removeMutationEventListeners(monitoredWindow);
+    },
+
+    unregisterAllMutationEventListeners: function()
+    {
+        for (var i = 0; i < this._mutationMonitoredWindows.length; ++i)
+            this._removeMutationEventListeners(this._mutationMonitoredWindows[i]);
+        this._mutationMonitoredWindows = [];
     },
 
     updateTreeSelection: function()
@@ -256,6 +325,70 @@ WebInspector.ElementsPanel.prototype = {
             this._updateHoverHighlightSoon();
         else
             this._updateHoverHighlight();
+    },
+
+    _contentLoaded: function(event)
+    {
+        this.recentlyModifiedNodes.push({node: event.target, parent: event.target.defaultView.frameElement, replaced: true});
+        if (this.visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _nodeInserted: function(event)
+    {
+        this.recentlyModifiedNodes.push({node: event.target, parent: event.relatedNode, inserted: true});
+        if (this.visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _nodeRemoved: function(event)
+    {
+        this.recentlyModifiedNodes.push({node: event.target, parent: event.relatedNode, removed: true});
+        if (this.visible)
+            this._updateModifiedNodesSoon();
+    },
+
+    _updateModifiedNodesSoon: function()
+    {
+        if ("_updateModifiedNodesTimeout" in this)
+            return;
+        this._updateModifiedNodesTimeout = setTimeout(this._updateModifiedNodes.bind(this), 0);
+    },
+
+    _updateModifiedNodes: function()
+    {
+        if ("_updateModifiedNodesTimeout" in this) {
+            clearTimeout(this._updateModifiedNodesTimeout);
+            delete this._updateModifiedNodesTimeout;
+        }
+
+        var updatedParentTreeElements = [];
+        var updateBreadcrumbs = false;
+
+        for (var i = 0; i < this.recentlyModifiedNodes.length; ++i) {
+            var replaced = this.recentlyModifiedNodes[i].replaced;
+            var parent = this.recentlyModifiedNodes[i].parent;
+            if (!parent)
+                continue;
+
+            var parentNodeItem = this.treeOutline.findTreeElement(parent, null, null, objectsAreSame);
+            if (parentNodeItem && !parentNodeItem.alreadyUpdatedChildren) {
+                parentNodeItem.updateChildren(replaced);
+                parentNodeItem.alreadyUpdatedChildren = true;
+                updatedParentTreeElements.push(parentNodeItem);
+            }
+
+            if (!updateBreadcrumbs && (objectsAreSame(this.focusedDOMNode, parent) || this._isAncestorIncludingParentFrames(this.focusedDOMNode, parent)))
+                updateBreadcrumbs = true;
+        }
+
+        for (var i = 0; i < updatedParentTreeElements.length; ++i)
+            delete updatedParentTreeElements[i].alreadyUpdatedChildren;
+
+        this.recentlyModifiedNodes = [];
+
+        if (updateBreadcrumbs)
+            this.updateBreadcrumb(true);
     },
 
     _updateHoverHighlightSoon: function()
@@ -888,8 +1021,10 @@ WebInspector.ElementsPanel.prototype = {
 
     _isAncestorIncludingParentFrames: function(a, b)
     {
+        if (objectsAreSame(a, b))
+            return false;
         for (var node = b; node; node = this._getDocumentForNode(node).defaultView.frameElement)
-            if (isAncestorNode.call(a, node))
+            if (objectsAreSame(a, node) || isAncestorNode.call(a, node))
                 return true;
         return false;
     },
@@ -1037,28 +1172,91 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (this.children.length || this.whitespaceIgnored !== Preferences.ignoreWhitespace)
             return;
 
-        this.removeChildren();
         this.whitespaceIgnored = Preferences.ignoreWhitespace;
 
+        this.updateChildren();
+    },
+
+    updateChildren: function(fullRefresh)
+    {
+        if (fullRefresh) {
+            var selectedTreeElement = this.treeOutline.selectedTreeElement;
+            if (selectedTreeElement && selectedTreeElement.hasAncestor(this))
+                this.select();
+            this.removeChildren();
+        }
+
         var treeElement = this;
-        function appendChildrenOfNode(node)
+        var treeChildIndex = 0;
+
+        function updateChildrenOfNode(node)
         {
+            var treeOutline = treeElement.treeOutline;
             var child = (Preferences.ignoreWhitespace ? firstChildSkippingWhitespace.call(node) : node.firstChild);
             while (child) {
-                treeElement.appendChild(new WebInspector.DOMNodeTreeElement(child));
+                var currentTreeElement = treeElement.children[treeChildIndex];
+                if (!currentTreeElement || !objectsAreSame(currentTreeElement.representedObject, child)) {
+                    // Find any existing element that is later in the children list.
+                    var existingTreeElement = null;
+                    for (var i = (treeChildIndex + 1); i < treeElement.children.length; ++i) {
+                        if (objectsAreSame(treeElement.children[i].representedObject, child)) {
+                            existingTreeElement = treeElement.children[i];
+                            break;
+                        }
+                    }
+
+                    if (existingTreeElement && existingTreeElement.parent === treeElement) {
+                        // If an existing element was found and it has the same parent, just move it.
+                        var wasSelected = existingTreeElement.selected;
+                        treeElement.removeChild(existingTreeElement);
+                        treeElement.insertChild(existingTreeElement, treeChildIndex);
+                        if (wasSelected)
+                            existingTreeElement.select();
+                    } else {
+                        // No existing element found, insert a new element.
+                        treeElement.insertChild(new WebInspector.DOMNodeTreeElement(child), treeChildIndex);
+                    }
+                }
+
                 child = Preferences.ignoreWhitespace ? nextSiblingSkippingWhitespace.call(child) : child.nextSibling;
+                ++treeChildIndex;
             }
         }
 
+        // Remove any tree elements that no longer have this node (or this node's contentDocument) as their parent.
+        for (var i = (this.children.length - 1); i >= 0; --i) {
+            if ("elementCloseTag" in this.children[i])
+                continue;
+
+            var currentChild = this.children[i];
+            var currentNode = currentChild.representedObject;
+            var currentParentNode = currentNode.parentNode;
+
+            if (objectsAreSame(currentParentNode, this.representedObject))
+                continue;
+            if (this.representedObject.contentDocument && objectsAreSame(currentParentNode, this.representedObject.contentDocument))
+                continue;
+
+            var selectedTreeElement = this.treeOutline.selectedTreeElement;
+            if (selectedTreeElement && (selectedTreeElement === currentChild || selectedTreeElement.hasAncestor(currentChild)))
+                this.select();
+
+            this.removeChildAtIndex(i);
+
+            if (currentNode.contentDocument)
+                this.treeOutline.panel.unregisterMutationEventListeners(currentNode.contentDocument.defaultView);
+        }
+
         if (this.representedObject.contentDocument)
-            appendChildrenOfNode(this.representedObject.contentDocument);
+            updateChildrenOfNode(this.representedObject.contentDocument);
+        updateChildrenOfNode(this.representedObject);
 
-        appendChildrenOfNode(this.representedObject);
-
-        if (this.representedObject.nodeType == Node.ELEMENT_NODE) {
+        var lastChild = this.children[this.children.length - 1];
+        if (this.representedObject.nodeType == Node.ELEMENT_NODE && (!lastChild || !lastChild.elementCloseTag)) {
             var title = "<span class=\"webkit-html-tag close\">&lt;/" + this.representedObject.nodeName.toLowerCase().escapeHTML() + "&gt;</span>";
-            var item = new TreeElement(title, this.representedObject, false);
+            var item = new TreeElement(title, null, false);
             item.selectable = false;
+            item.elementCloseTag = true;
             this.appendChild(item);
         }
     },
@@ -1066,6 +1264,9 @@ WebInspector.DOMNodeTreeElement.prototype = {
     onexpand: function()
     {
         this.treeOutline.panel.updateTreeSelection();
+
+        if (this.representedObject.contentDocument)
+            this.treeOutline.panel.registerMutationEventListeners(this.representedObject.contentDocument.defaultView);
     },
 
     oncollapse: function()

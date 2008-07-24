@@ -4784,9 +4784,13 @@ void FrameLoader::dispatchWindowObjectAvailable()
         return;
 
     m_client->windowObjectCleared();
-    if (Page* page = m_frame->page())
+
+    if (Page* page = m_frame->page()) {
+        if (InspectorController* inspector = page->inspectorController())
+            inspector->inspectedWindowScriptObjectCleared(m_frame);
         if (InspectorController* inspector = page->parentInspectorController())
             inspector->windowScriptObjectAvailable();
+    }
 }
 
 Widget* FrameLoader::createJavaAppletWidget(const IntSize& size, Element* element, const HashMap<String, String>& args)

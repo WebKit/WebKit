@@ -1243,6 +1243,25 @@ void InspectorController::detachWindow()
     m_client->detachWindow();
 }
 
+void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
+{
+    if (!enabled() || !m_scriptContext || !m_scriptObject)
+        return;
+
+    JSDOMWindow* win = toJSDOMWindow(frame);
+    ExecState* exec = win->globalExec();
+
+    JSValueRef arg0;
+
+    {
+        KJS::JSLock lock(false);
+        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, win));
+    }
+
+    JSValueRef exception = 0;
+    callFunction(m_scriptContext, m_scriptObject, "inspectedWindowCleared", 1, &arg0, exception);
+}
+
 void InspectorController::windowScriptObjectAvailable()
 {
     if (!m_page || !enabled())
