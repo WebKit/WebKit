@@ -39,7 +39,8 @@
 #include "PlatformScrollBar.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
-#include "RenderTheme.h" 
+#include "RenderTheme.h"
+#include "Settings.h"
 #include "ScrollBar.h"
 #include <algorithm>
 #include <winsock2.h>
@@ -669,7 +670,8 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     context->clip(enclosingIntRect(visibleContentRect()));
 
-    static_cast<const FrameView*>(this)->frame()->paint(context, documentDirtyRect);
+    const FrameView* frameView = static_cast<const FrameView*>(this);
+    frameView->frame()->paint(context, documentDirtyRect);
 
     context->restore();
 
@@ -692,8 +694,13 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
                               height() - m_data->m_hBar->height(),
                               width() - m_data->m_hBar->width(),
                               m_data->m_hBar->height());
-            if (hCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(hCorner, Color::white);
+            if (hCorner.intersects(scrollViewDirtyRect)) {
+                Page* page = frameView->frame() ? frameView->frame()->page() : 0;
+                if (page && page->settings()->shouldPaintCustomScrollbars()) {
+                    if (!page->chrome()->client()->paintCustomScrollCorner(context, hCorner))
+                        context->fillRect(hCorner, Color::white);
+                }
+            }
         }
 
         if (m_data->m_vBar && height() - m_data->m_vBar->height() > 0) {
@@ -701,8 +708,13 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
                             m_data->m_vBar->height(),
                             m_data->m_vBar->width(),
                             height() - m_data->m_vBar->height());
-            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect))
-                context->fillRect(vCorner, Color::white);
+            if (vCorner != hCorner && vCorner.intersects(scrollViewDirtyRect)) {
+                Page* page = frameView->frame() ? frameView->frame()->page() : 0;
+                if (page && page->settings()->shouldPaintCustomScrollbars()) {
+                    if (!page->chrome()->client()->paintCustomScrollCorner(context, vCorner))
+                        context->fillRect(vCorner, Color::white);
+                }
+            }
         }
 
         context->restore();

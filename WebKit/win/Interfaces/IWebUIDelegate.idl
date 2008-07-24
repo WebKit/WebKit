@@ -779,3 +779,20 @@ interface IWebUIDelegate3 : IWebUIDelegate2
     HRESULT setMenuBarVisible([in] IWebView* webView, [in] BOOL visible);
     HRESULT runDatabaseSizeLimitPrompt([in] IWebView* webView, [in] BSTR displayName, [in] IWebFrame* initiatedByFrame, [out, retval] BOOL* allowed);
 }
+
+/*!
+    @category WebUIDelegate4
+    @discussion A class that supplements the IWebUIDelegate interface
+*/
+[
+    object,
+    oleautomation,
+    uuid(042B7EE3-A5A4-4a8f-8C33-775CD9E89C7C),
+    pointer_default(unique)
+]
+interface IWebUIDelegate4 : IWebUIDelegate3
+{
+    HRESULT paintCustomScrollbar([in] IWebView* webView, [in] HDC hDC, [in] RECT rect, [in] WebScrollBarControlSize size, [in] WebScrollbarControlState state, 
+                                 [in] WebScrollbarControlPart pressedPart, [in] BOOL vertical, [in] float value, [in] float proportion, [in] WebScrollbarControlPartMask parts);
+    HRESULT paintCustomScrollCorner([in] IWebView* webView, [in] HDC hDC, [in] RECT rect);
+}

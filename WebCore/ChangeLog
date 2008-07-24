@@ -1,3 +1,29 @@
+2008-07-23  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        WebCore part of fix for <rdar://problem/5698672>  Add drawing callback for a WebKit app to draw its own scrollbars
+
+        * WebCore.base.exp: Added symbols.
+        * page/Chrome.cpp:
+        (WebCore::ChromeClient::paintCustomScrollbar): Added. Calls up to WebKit, which will call a new delegate method.
+        (WebCore::ChromeClient::paintCustomScrollCorner): ditto.
+        * page/ChromeClient.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Added the ability to store whether or not the application has decided to draw its own scrollbars.
+        (WebCore::Settings::setShouldPaintCustomScrollbars):
+        * page/Settings.h: (WebCore::Settings::shouldPaintCustomScrollbars):
+        * platform/ScrollBar.h: Moved ScrollbarControlSize enum to ScrollTypes.h
+        * platform/ScrollTypes.h: (WebCore::): Moved some existing types, and added new ones to be used in WebCore in WebKit.
+        * platform/win/PlatformScrollBar.h: Moved ScrollbarPart enum to ScrollTypes.h
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::ScrollbarPartToScrollBarPiece): Added helper function.
+        (WebCore::ScrollBarPieceMaskToScrollbarControlPartMask): ditto.
+        (WebCore::ScrollbarControlStateFromThemeState): ditto.
+        (WebCore::PlatformScrollbar::paint): Consolidated painting so the logic for the individual pieces is all in one place.
+         Added new code to paint the custom scrollbars if necessary.
+        * platform/win/ScrollViewWin.cpp: (WebCore::ScrollView::paint): Added code to paint the custom scroll corner if necessary.
+
 2008-07-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

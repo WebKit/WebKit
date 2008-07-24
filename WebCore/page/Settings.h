@@ -166,6 +166,9 @@ namespace WebCore {
         void setOfflineWebApplicationCacheEnabled(bool);
         bool offlineWebApplicationCacheEnabled() const { return m_offlineWebApplicationCacheEnabled; }
 
+        void setShouldPaintCustomScrollbars(bool);
+        bool shouldPaintCustomScrollbars() const { return m_shouldPaintCustomScrollbars; }
+
         void setUpdatesWhenOffscreen(bool);
         bool updatesWhenOffscreen() const { return m_updatesWhenOffscreen; }
     private:
@@ -212,6 +215,7 @@ namespace WebCore {
         bool m_inApplicationChromeMode : 1;
         bool m_offlineWebApplicationCacheEnabled : 1;
         bool m_rangeMutationDisabledForOldAppleMail : 1;
+        bool m_shouldPaintCustomScrollbars : 1;
         bool m_updatesWhenOffscreen : 1;
     };
 

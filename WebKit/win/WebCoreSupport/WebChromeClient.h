@@ -25,7 +25,9 @@
 
 #include <WebCore/ChromeClient.h>
 #include <WebCore/COMPtr.h>
+#include <WebCore/GraphicsContext.h>
 #include <WebCore/FocusDirection.h>
+#include <WebCore/ScrollTypes.h>
 #include <wtf/Forward.h>
 
 class WebView;
@@ -33,6 +35,7 @@ class WebView;
 interface IWebUIDelegate;
 interface IWebUIDelegate2;
 interface IWebUIDelegate3;
+interface IWebUIDelegate4;
 
 class WebChromeClient : public WebCore::ChromeClient {
 public:
@@ -102,12 +105,18 @@ public:
 
     virtual void populateVisitedLinks();
 
+    virtual bool paintCustomScrollbar(WebCore::GraphicsContext*, const WebCore::FloatRect&, WebCore::ScrollbarControlSize, 
+                                        WebCore::ScrollbarControlState, WebCore::ScrollbarPart pressedPart, bool vertical,
+                                        float value, float proportion, WebCore::ScrollbarControlPartMask);
+    virtual bool paintCustomScrollCorner(WebCore::GraphicsContext*, const WebCore::FloatRect&);
+
     WebView* webView() const { return m_webView; }
 
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
     COMPtr<IWebUIDelegate2> uiDelegate2();
     COMPtr<IWebUIDelegate3> uiDelegate3();
+    COMPtr<IWebUIDelegate4> uiDelegate4();
 
     WebView* m_webView;
 };

@@ -55,6 +55,7 @@ cpp_quote(" */")
 import "oaidl.idl";
 import "ocidl.idl";
 
+#include "WebScrollbarTypes.idl"
 #include "IWebScriptObject.idl"
 #include "DOMCSS.idl"
 #include "DOMCore.idl"

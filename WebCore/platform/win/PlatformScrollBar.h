@@ -35,8 +35,6 @@ typedef struct HDC__* HDC;
 
 namespace WebCore {
 
-enum ScrollbarPart { NoPart, BackButtonPart, BackTrackPart, ThumbPart, ForwardTrackPart, ForwardButtonPart };
-
 class PlatformScrollbar : public Widget, public Scrollbar {
 public:
     static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)

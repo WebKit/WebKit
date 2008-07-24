@@ -21,7 +21,9 @@
 #ifndef ChromeClient_h
 #define ChromeClient_h
 
+#include "GraphicsContext.h"
 #include "FocusDirection.h"
+#include "ScrollTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -134,6 +136,11 @@ namespace WebCore {
         
         virtual void enableSuddenTermination();
         virtual void disableSuddenTermination();
+
+        virtual bool paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
+                                          ScrollbarControlState, ScrollbarPart pressedPart, bool vertical,
+                                          float value, float proportion, ScrollbarControlPartMask);
+        virtual bool paintCustomScrollCorner(GraphicsContext*, const FloatRect&);
 
 #if PLATFORM(MAC)
         virtual void runOpenPanel(PassRefPtr<FileChooser>);

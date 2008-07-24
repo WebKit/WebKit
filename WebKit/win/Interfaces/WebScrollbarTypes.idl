@@ -26,47 +26,51 @@
 #ifndef DO_NO_IMPORTS
 import "oaidl.idl";
 import "ocidl.idl";
-import "IWebScrollBarDelegatePrivate.idl";
 #endif
 
-interface IWebScrollBarDelegatePrivate;
+// NOTE: these enums must be kept in sync with the WebCore versions in ScrollTypes.h
+typedef enum WebScrollBarOrientation {
+    WebHorizontalScrollbar = 0, 
+    WebVerticalScrollbar
+} WebScrollBarOrientation;
 
-[
-    object,
-    oleautomation,
-    hidden,
-    uuid(6C585B08-2E4F-4594-9B90-0425E3A33FD0),
-    pointer_default(unique)
-]
-interface IWebScrollBarPrivate : IUnknown
-{
-    HRESULT init([in] IWebScrollBarDelegatePrivate* delegate, [in] OLE_HANDLE containingWindow, [in] WebScrollBarOrientation orientation, [in] WebScrollBarControlSize controlSize);
+typedef enum WebScrollBarControlSize { 
+    WebRegularScrollbar = 0, 
+    WebSmallScrollbar, 
+    WebMiniScrollbar 
+} WebScrollBarControlSize;
 
-    HRESULT setEnabled([in] BOOL enabled);
+typedef enum WebScrollDirection {
+    WebScrollUp = 0,
+    WebScrollDown,
+    WebScrollLeft,
+    WebScrollRight
+} WebScrollDirection;
 
-    HRESULT setSteps([in] int lineStep, [in] int pageStep);
+typedef enum WebScrollGranularity {
+    WebScrollByLine = 0,
+    WebScrollByPage,
+    WebScrollByDocument,
+    WebScrollByWheel
+} WebScrollGranularity;
 
-    HRESULT setProportion([in] int visibleSize, [in] int totalSize);
+typedef unsigned WebScrollbarControlState;
 
-    HRESULT setRect([in] RECT bounds);
+typedef enum WebScrollbarControlStateMask {
+    WebActiveScrollbarState = 1,
+    WebEnabledScrollbarState = 1 << 1,
+    WebPressedScrollbarState = 1 << 2,
+} WebScrollbarControlStateMask;
 
-    HRESULT setValue([in] int value);
+typedef unsigned WebScrollbarControlPartMask;
 
-    HRESULT value([out, retval] int* value);
+typedef enum WebScrollbarControlPart {
+    WebNoScrollPart = 0,
+    WebBackButtonPart = 1,
+    WebBackTrackPart = 1 << 1,
+    WebThumbPart = 1 << 2,
+    WebForwardTrackPart = 1 << 3,
+    WebForwardButtonPart = 1 << 4,
+    WebAllParts = 0xffffffff,
+} WebScrollbarControlPart;
 
-    HRESULT paint([in] HDC dc, [in] RECT damageRect);
-
-    HRESULT frameGeometry([out, retval] RECT* bounds);
-
-    HRESULT width([out, retval] int* w);
-
-    HRESULT height([out, retval] int* h);
-
-    HRESULT requestedWidth([out, retval] int* w);
-
-    HRESULT requestedHeight([out, retval] int* h);
-
-    HRESULT handleMouseEvent([in] OLE_HANDLE hwnd, [in] UINT msg, [in] WPARAM wParam, [in] LPARAM lParam);
-
-    HRESULT scroll([in] WebScrollDirection direction, [in] WebScrollGranularity granularity, [in] float multiplier);
-}

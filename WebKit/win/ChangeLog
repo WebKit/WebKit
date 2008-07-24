@@ -1,3 +1,28 @@
+2008-07-17  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam.
+
+        WebKit part of fix for <rdar://problem/5698672>  Add drawing callback for a WebKit app to draw its own scrollbars
+        
+        Added a setting so an application can tell WebKit its going to draw custom scrollbars.  Also added delegate methods for the actual painting.
+        
+        * Interfaces/IWebPreferences.idl:  Added setShouldPaintCustomScrollbars and shouldPaintCustomScrollbars.
+        * Interfaces/IWebScrollBarPrivate.idl: Moved types to WebScrollbarTypes.idl
+        * Interfaces/IWebUIDelegate.idl: Added WebUIDelegate4 with new delegate methods, paintCustomScrollbar and paintCustomScrollCorner
+        * Interfaces/WebKit.idl: Include new WebScrollbarTypes.idl
+        * Interfaces/WebScrollbarTypes.idl: Added. Has types that the new delegate methods use.
+        * WebCoreSupport/WebChromeClient.cpp:
+        (WebChromeClient::paintCustomScrollbar): Added. Calls new delegate method and converts between WebCore types and types exported in WebScrollbarTypes.idl
+        (WebChromeClient::paintCustomScrollCorner): Added. Calls new delegate method.
+        (WebChromeClient::uiDelegate4): Added.
+        * WebCoreSupport/WebChromeClient.h:
+        * WebPreferenceKeysPrivate.h: Added WebKitPaintCustomScrollbarsPreferenceKey
+        * WebPreferences.cpp:
+        (WebPreferences::): Added.
+        (WebPreferences::shouldPaintCustomScrollbars): Added.
+        * WebPreferences.h:
+        * WebView.cpp: (WebView::notifyPreferencesChanged):
+
 2008-07-15  Adam Roben  <aroben@apple.com>
 
         Add WebKit[Set]ShouldUseFontSmoothing functions

@@ -397,6 +397,18 @@ void ChromeClient::enableSuddenTermination()
 {
 }
 
+bool ChromeClient::paintCustomScrollbar(GraphicsContext*, const FloatRect&, ScrollbarControlSize, 
+                                        ScrollbarControlState, ScrollbarPart, bool vertical,
+                                        float value, float proportion, ScrollbarControlPartMask)
+{
+    return false;
+}
+
+bool ChromeClient::paintCustomScrollCorner(GraphicsContext*, const FloatRect&)
+{
+    return false;
+}
+
 // --------
 
 PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)

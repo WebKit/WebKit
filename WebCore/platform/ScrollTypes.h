@@ -46,6 +46,28 @@ namespace WebCore {
 
     enum ScrollbarMode { ScrollbarAuto, ScrollbarAlwaysOff, ScrollbarAlwaysOn };
 
+    enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar, MiniScrollbar };
+
+    typedef unsigned ScrollbarControlState;
+
+    enum ScrollbarControlStateMask {
+        ActiveScrollbarState = 1,
+        EnabledScrollbarState = 1 << 1,
+        PressedScrollbarState = 1 << 2,
+    };
+
+    enum ScrollbarPart {
+        NoPart = 0,
+        BackButtonPart = 1,
+        BackTrackPart = 1 << 1,
+        ThumbPart = 1 << 2,
+        ForwardTrackPart = 1 << 3,
+        ForwardButtonPart = 1 << 4,
+        AllParts = 0xffffffff,
+    };
+
+    typedef unsigned ScrollbarControlPartMask;
+
 }
 
 #endif

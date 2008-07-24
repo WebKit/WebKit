@@ -41,8 +41,6 @@ class PlatformMouseEvent;
 #define LINE_STEP   40
 #define PAGE_KEEP   40
 
-enum ScrollbarControlSize { RegularScrollbar, SmallScrollbar, MiniScrollbar };
-
 class ScrollbarClient {
 public:
     virtual ~ScrollbarClient() {}

@@ -77,6 +77,7 @@ Settings::Settings(Page* page)
     , m_inApplicationChromeMode(false)
     , m_offlineWebApplicationCacheEnabled(false)
     , m_rangeMutationDisabledForOldAppleMail(false)
+    , m_shouldPaintCustomScrollbars(false)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 
     // hash before trying to use it.
@@ -355,11 +356,15 @@ void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
 {
     m_offlineWebApplicationCacheEnabled = enabled;
 }
-    
+
 void Settings::setUpdatesWhenOffscreen(bool updates)
 {
     m_updatesWhenOffscreen = updates;
 }
-    
+
+void Settings::setShouldPaintCustomScrollbars(bool shouldPaintCustomScrollbars)
+{
+    m_shouldPaintCustomScrollbars = shouldPaintCustomScrollbars;
+}
 
 } // namespace WebCore

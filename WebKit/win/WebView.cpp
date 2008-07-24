@@ -4056,6 +4056,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setDOMPasteAllowed(!!enabled);
 
+    hr = preferences->shouldPaintCustomScrollbars(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldPaintCustomScrollbars(!!enabled);
+
     settings->setShowsURLsInToolTips(false);
     settings->setForceFTPDirectoryListings(true);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled());

@@ -510,6 +510,94 @@ void WebChromeClient::populateVisitedLinks()
     history->addVisitedLinksToPageGroup(m_webView->page()->group());
 }
 
+bool WebChromeClient::paintCustomScrollbar(GraphicsContext* context, const FloatRect& rect, ScrollbarControlSize size, 
+                                           ScrollbarControlState state, ScrollbarPart pressedPart, bool vertical,
+                                           float value, float proportion, ScrollbarControlPartMask parts)
+{
+    if (context->paintingDisabled())
+        return false;
+
+    COMPtr<IWebUIDelegate4> delegate = uiDelegate4();
+    if (!delegate)
+        return false;
+
+    WebScrollbarControlPartMask webParts = WebNoScrollPart;
+    if (parts & BackButtonPart)
+        webParts |= WebBackButtonPart;
+    if (parts & BackTrackPart)
+        webParts |= WebBackTrackPart;
+    if (parts & ThumbPart)
+        webParts |= WebThumbPart;
+    if (parts & ForwardTrackPart)
+        webParts |= WebForwardTrackPart;
+    if (parts & ForwardButtonPart)
+        webParts |= WebForwardButtonPart;
+
+    WebScrollbarControlPart webPressedPart = WebNoScrollPart;
+    switch(pressedPart) {
+        case BackButtonPart:
+            webPressedPart = WebBackButtonPart;
+            break;
+        case BackTrackPart:
+            webPressedPart = WebBackTrackPart;
+            break;
+        case ThumbPart:
+            webPressedPart = WebThumbPart;
+            break;
+        case ForwardTrackPart:
+            webPressedPart = WebForwardTrackPart;
+            break;
+        case ForwardButtonPart:
+            webPressedPart = WebForwardButtonPart;
+            break;
+        default:
+            break;
+    }
+
+    WebScrollBarControlSize webSize;
+    switch (size) {
+        case MiniScrollbar:
+            webSize = WebMiniScrollbar;
+            break;
+        case SmallScrollbar:
+            webSize = WebSmallScrollbar;
+            break;
+        case RegularScrollbar:
+        default:
+            webSize = WebRegularScrollbar;
+    }
+    WebScrollbarControlState webState = 0;
+    if (state & ActiveScrollbarState)
+        webState |= WebActiveScrollbarState;
+    if (state & EnabledScrollbarState)
+        webState |= WebEnabledScrollbarState;
+    if (state & PressedScrollbarState)
+        webState |= WebPressedScrollbarState;
+    
+    RECT webRect = enclosingIntRect(rect);
+    HDC hDC = context->getWindowsContext(webRect);
+    HRESULT hr = delegate->paintCustomScrollbar(m_webView, hDC, webRect, webSize, webState, webPressedPart, 
+                                                          vertical, value, proportion, webParts);
+    context->releaseWindowsContext(hDC, webRect);
+    return SUCCEEDED(hr);
+}
+
+bool WebChromeClient::paintCustomScrollCorner(GraphicsContext* context, const FloatRect& rect)
+{
+    if (context->paintingDisabled())
+        return false;
+
+    COMPtr<IWebUIDelegate4> delegate = uiDelegate4();
+    if (!delegate)
+        return false;
+
+    RECT webRect = enclosingIntRect(rect);
+    HDC hDC = context->getWindowsContext(webRect);
+    HRESULT hr = delegate->paintCustomScrollCorner(m_webView, hDC, webRect);
+    context->releaseWindowsContext(hDC, webRect);
+    return SUCCEEDED(hr);
+}
+
 COMPtr<IWebUIDelegate> WebChromeClient::uiDelegate()
 {
     COMPtr<IWebUIDelegate> delegate;
@@ -525,4 +613,9 @@ COMPtr<IWebUIDelegate2> WebChromeClient::uiDelegate2()
 COMPtr<IWebUIDelegate3> WebChromeClient::uiDelegate3()
 {
     return COMPtr<IWebUIDelegate3>(Query, uiDelegate());
+}
+
+COMPtr<IWebUIDelegate4> WebChromeClient::uiDelegate4()
+{
+    return COMPtr<IWebUIDelegate4>(Query, uiDelegate());
 }

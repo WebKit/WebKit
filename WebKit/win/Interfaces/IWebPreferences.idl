@@ -180,4 +180,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT cacheModel([out, retval] WebCacheModel* cacheModel);
     HRESULT setCacheModel([in] WebCacheModel cacheModel);
+
+    HRESULT setShouldPaintCustomScrollbars(BOOL shouldPaint);
+    HRESULT shouldPaintCustomScrollbars(BOOL *shouldPaint);
 }

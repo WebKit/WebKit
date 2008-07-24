@@ -1071,6 +1071,18 @@ HRESULT WebPreferences::setCacheModel(WebCacheModel cacheModel)
     return S_OK;
 }
 
+HRESULT WebPreferences::setShouldPaintCustomScrollbars(BOOL shouldPaint)
+{
+    setBoolValue(CFSTR(WebKitPaintCustomScrollbarsPreferenceKey), shouldPaint);
+    return S_OK;
+}
+
+HRESULT WebPreferences::shouldPaintCustomScrollbars(BOOL* shouldPaint)
+{
+    *shouldPaint = boolValueForKey(CFSTR(WebKitPaintCustomScrollbarsPreferenceKey));
+    return S_OK;
+}
+
 HRESULT WebPreferences::setDeveloperExtrasEnabled(BOOL enabled)
 {
     setBoolValue(CFSTR(WebKitDeveloperExtrasEnabledPreferenceKey), enabled);
