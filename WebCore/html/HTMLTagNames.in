@@ -1,115 +1,120 @@
-<tags namespace="HTML" namespacePrefix="xhtml" cppNamespace="WebCore" namespaceURI="http://www.w3.org/1999/xhtml" generateFactory="1" generateWrapperFactory="1">
-<a upperCase="Anchor"/>
-<abbr/>
-<acronym/>
-<address/>
-<applet/>
-<area/>
+namespace="HTML"
+namespacePrefix="xhtml"
+cppNamespace="WebCore"
+namespaceURI="http://www.w3.org/1999/xhtml"
+generateFactory="1"
+generateWrapperFactory="1"
+
+a upperCase=Anchor
+abbr
+acronym
+address
+applet
+area
 #if ENABLE_VIDEO
-<audio applyAudioHack="1"/>
+audio applyAudioHack=1
 #endif
-<b/>
-<base/>
-<basefont upperCase="BaseFont"/>
-<bdo/>
-<big/>
-<blockquote/>
-<body/>
-<br upperCase="BR"/>
-<button/>
-<canvas/>
-<caption upperCase="TableCaption"/>
-<center/>
-<cite/>
-<code/>
-<col upperCase="TableCol"/>
-<colgroup/>
-<dd/>
-<del upperCase="Mod"/>
-<dfn/>
-<dir upperCase="Directory"/>
-<div/>
-<dl upperCase="DList"/>
-<dt/>
-<em/>
-<embed/>
-<fieldset upperCase="FieldSet"/>
-<font/>
-<form/>
-<frame/>
-<frameset upperCase="FrameSet"/>
-<head/>
-<h1 upperCase="Heading"/>
-<h2/>
-<h3/>
-<h4/>
-<h5/>
-<h6/>
-<hr upperCase="HR"/>
-<html/>
-<i/>
-<iframe upperCase="IFrame"/>
-<image/>
-<img upperCase="Image"/>
-<input/>
-<ins/>
-<isindex upperCase="IsIndex"/>
-<kbd/>
-<keygen/>
-<label/>
-<layer/>
-<legend/>
-<li upperCase="LI"/>
-<link/>
-<listing/>
-<map/>
-<marquee/>
-<menu/>
-<meta/>
-<nobr/>
-<noembed/>
-<noframes/>
-<nolayer/>
-<noscript/>
-<object/>
-<ol upperCase="OList"/>
-<optgroup upperCase="OptGroup"/>
-<option/>
-<p upperCase="Paragraph"/>
-<param/>
-<plaintext/>
-<pre/>
-<q upperCase="Quote"/>
-<s/>
-<samp/>
-<script/>
-<select/>
-<small/>
+b
+base
+basefont upperCase=BaseFont
+bdo
+big
+blockquote
+body
+br upperCase=BR
+button
+canvas
+caption upperCase=TableCaption
+center
+cite
+code
+col upperCase=TableCol
+colgroup
+dd
+del upperCase=Mod
+dfn
+dir upperCase=Directory
+div
+dl upperCase=DList
+dt
+em
+embed
+fieldset upperCase=FieldSet
+font
+form
+frame
+frameset upperCase=FrameSet
+head
+h1 upperCase=Heading
+h2
+h3
+h4
+h5
+h6
+hr upperCase=HR
+html
+i
+iframe upperCase=IFrame
+image
+img upperCase=Image
+input
+ins
+isindex upperCase=IsIndex
+kbd
+keygen
+label
+layer
+legend
+li upperCase=LI
+link
+listing
+map
+marquee
+menu
+meta
+nobr
+noembed
+noframes
+nolayer
+noscript
+object
+ol upperCase=OList
+optgroup upperCase=OptGroup
+option
+p upperCase=Paragraph
+param
+plaintext
+pre
+q upperCase=Quote
+s
+samp
+script
+select
+small
 #if ENABLE_VIDEO
-<source applyAudioHack="1"/>
+source applyAudioHack=1
 #endif
-<span/>
-<strike/>
-<strong/>
-<style/>
-<sub/>
-<sup/>
-<table/>
-<tbody upperCase="TableSection"/>
-<td upperCase="TableCell"/>
-<textarea upperCase="TextArea"/>
-<tfoot/>
-<th/>
-<thead/>
-<title/>
-<tr upperCase="TableRow"/>
-<tt/>
-<u/>
-<ul upperCase="UList"/>
-<var/>
+span
+strike
+strong
+style
+sub
+sup
+table
+tbody upperCase=TableSection
+td upperCase=TableCell
+textarea upperCase=TextArea
+tfoot
+th
+thead
+title
+tr upperCase=TableRow
+tt
+u
+ul upperCase=UList
+var
 #if ENABLE_VIDEO
-<video applyAudioHack="1"/>
+video applyAudioHack=1
 #endif
-<wbr/>
-<xmp/>
-</tags>
+wbr
+xmp

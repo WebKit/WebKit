@@ -1,113 +1,119 @@
-<tags namespace="SVG" cppNamespace="WebCore" namespaceURI="http://www.w3.org/2000/svg" generateFactory="1" generateWrapperFactory="1" guardFactoryWith="ENABLE(SVG)" exportStrings="1">
-<a/>
+namespace="SVG"
+cppNamespace="WebCore"
+namespaceURI="http://www.w3.org/2000/svg"
+generateFactory="1"
+generateWrapperFactory="1"
+guardFactoryWith="ENABLE(SVG)"
+exportStrings="1"
+
+a
 #if ENABLE_SVG_FONTS
-<altGlyph/>
+altGlyph
 #endif
 #if 0
-<altGlyphDef/>
-<altGlyphItem/>
+altGlyphDef
+altGlyphItem
 #endif
 #ifdef ENABLE_SVG_ANIMATION
-<animate/>
-<animateColor/>
-<animateMotion/>
-<animateTransform/>
-<set/>
+animate
+animateColor
+animateMotion
+animateTransform
+set
 #endif
-<circle/>
-<clipPath/>
+circle
+clipPath
 #if 0
-<color_profile/>
+color_profile
 #endif
-<cursor/>
+cursor
 #if ENABLE_SVG_FONTS
-<definition_src/>
+definition_src
 #endif
-<defs/>
-<desc/>
-<ellipse/>
+defs
+desc
+ellipse
 #ifdef ENABLE_SVG_FILTERS
-<feBlend/>
-<feColorMatrix/>
-<feComponentTransfer/>
-<feComposite/>
+feBlend
+feColorMatrix
+feComponentTransfer
+feComposite
 #if 0
-<feConvolveMatrix/>
+feConvolveMatrix
 #endif
-<feDiffuseLighting/>
-<feDisplacementMap/>
-<feDistantLight/>
-<feFlood/>
-<feFuncA/>
-<feFuncB/>
-<feFuncG/>
-<feFuncR/>
-<feGaussianBlur/>
-<feImage/>
-<feMerge/>
-<feMergeNode/>
+feDiffuseLighting
+feDisplacementMap
+feDistantLight
+feFlood
+feFuncA
+feFuncB
+feFuncG
+feFuncR
+feGaussianBlur
+feImage
+feMerge
+feMergeNode
 #if 0
-<feMorphology/>
+feMorphology
 #endif
-<feOffset/>
-<fePointLight/>
-<feSpecularLighting/>
-<feSpotLight/>
-<feTile/>
-<feTurbulence/>
-<filter/>
+feOffset
+fePointLight
+feSpecularLighting
+feSpotLight
+feTile
+feTurbulence
+filter
 #endif
 #ifdef ENABLE_SVG_FONTS
-<font/>
-<font_face/>
-<font_face_format/>
-<font_face_name/>
-<font_face_src/>
-<font_face_uri/>
+font
+font_face
+font_face_format
+font_face_name
+font_face_src
+font_face_uri
 #endif
 #ifdef ENABLE_SVG_FOREIGN_OBJECT
-<foreignObject/>
+foreignObject
 #endif
-<g/>
+g
 #ifdef ENABLE_SVG_FONTS
-<glyph/>
+glyph
 #endif
 #if 0
-<glyphRef/>
+glyphRef
 #endif
 #ifdef ENABLE_SVG_FONTS
-<hkern upperCase="HKern"/>
+hkern upperCase="HKern"
 #endif
-<image/>
-<line/>
-<linearGradient/>
-<marker/>
-<mask/>
-<metadata/>
+image
+line
+linearGradient
+marker
+mask
+metadata
 #ifdef ENABLE_SVG_FONTS
-<missing_glyph/>
+missing_glyph
 #endif
-<mpath upperCase="MPath"/>
-<path/>
-<pattern/>
-<polygon/>
-<polyline/>
-<radialGradient/>
-<rect/>
-<script/>
-<stop/>
-<style/>
-<svg upperCase="SVG"/>
-<switch/>
-<symbol/>
-<text/>
-<textPath/>
-<title/>
-<tref upperCase="TRef"/>
-<tspan upperCase="TSpan"/>
-<use/>
-<view/>
+mpath upperCase="MPath"
+path
+pattern
+polygon
+polyline
+radialGradient
+rect
+script
+stop
+style
+svg upperCase="SVG"
+switch
+symbol
+text
+textPath
+title
+tref upperCase="TRef"
+tspan upperCase="TSpan"
+use
+view
 #if 0
-<vkern upperCase="VKern"/>
+vkern upperCase="VKern"
 #endif
-</tags>

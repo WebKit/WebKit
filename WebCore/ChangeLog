@@ -1,3 +1,28 @@
+2008-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Eric.
+
+        Bug 20053: .in files should use a custom format instead of XML
+
+        - Remove our XML parser perl module (XML::Tiny)
+
+        - Add a custom perl parser
+
+        - Move XML files to the new format
+
+        * bindings/scripts/InFilesParser.pm: Added.
+        * bindings/scripts/XMLTiny.pm: Removed.
+        * dom/make_names.pl: Switched to our new
+        parser.
+
+        * html/HTMLAttributeNames.in: Switched to
+        our custom format.
+        * html/HTMLTagNames.in: Ditto.
+        * svg/svgattrs.in: Ditto.
+        * svg/svgtags.in: Ditto.
+        * svg/xlinkattrs.in: Ditto.
+        * xml/xmlattrs.in: Ditto.
+
 2008-07-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.

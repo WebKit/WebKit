@@ -1,5 +1,7 @@
-<attrs namespace="XML" cppNamespace="WebCore" namespaceURI="http://www.w3.org/XML/1998/namespace">
-<base/>
-<lang/>
-<space/>
-</attrs>
+namespace="XML"
+cppNamespace="WebCore"
+namespaceURI="http://www.w3.org/XML/1998/namespace"
+
+base
+lang
+space

@@ -32,8 +32,8 @@ use Config;
 use Getopt::Long;
 use File::Path;
 use IO::File;
+use InFilesParser;
 use Switch;
-use XMLTiny qw(parsefile);
 
 my $tagsFile = "";
 my $attrsFile = "";
@@ -54,8 +54,8 @@ GetOptions('tags=s' => \$tagsFile,
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
 
-readNames($tagsFile) if length($tagsFile);
-readNames($attrsFile) if length($attrsFile);
+readNames($tagsFile, "tags") if length($tagsFile);
+readNames($attrsFile, "attrs") if length($attrsFile);
 
 die "You must specify a namespace (e.g. SVG) for <namespace>Names.h" unless $parameters{'namespace'};
 die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $parameters{'namespaceURI'};
@@ -105,7 +105,6 @@ sub initializeParametersHash
             'generateFactory' => 0,
             'guardFactoryWith' => '',
             'generateWrapperFactory' => 0,
-            # The 2 nullNamespace properties are generated from the "nullNamespace" attribute with respect to the file parsed (attrs or tags).
             'tagsNullNamespace' => 0,
             'attrsNullNamespace' => 0,
             'exportStrings' => 0);
@@ -113,82 +112,55 @@ sub initializeParametersHash
 
 ### Parsing handlers
 
-# Our files should have the following form :
-# <'tags' or 'attrs' globalProperty1 = 'value1' ... />
-# <'tag/attr name' 'property1' = 'value1' ... />
-# where the properties are defined in the initialize*PropertyHash methods.
-# (more tag/attr ...)
-# </tags> or </attrs>
-
-sub parseTags
+sub tagsHandler
 {
-    my $contentsRef = shift;
-    foreach my $contentRef (@$contentsRef) {
-        my $tag = $${contentRef}{'name'};
-        $tag =~ s/-/_/g;
+    my ($tag, $property, $value) = @_;
 
-        # Initialize default properties' values.
-        $tags{$tag} = { initializeTagPropertyHash($tag) } if !defined($tags{$tag});
+    $tag =~ s/-/_/g;
 
-        # Parse the XML attributes.
-        my %properties = %{$$contentRef{'attrib'}};
-        foreach my $property (keys %properties) {
-            die "Unknown property $property for tag $tag\n" if !defined($tags{$tag}{$property});
-            $tags{$tag}{$property} = $properties{$property};
-        }
+    # Initialize default properties' values.
+    $tags{$tag} = { initializeTagPropertyHash($tag) } if !defined($tags{$tag});
+
+    if ($property) {
+        die "Unknown property $property for tag $tag\n" if !defined($tags{$tag}{$property});
+        $tags{$tag}{$property} = $value;
     }
 }
 
-sub parseAttrs
+sub attrsHandler
 {
-    my $contentsRef = shift;
-    foreach my $contentRef (@$contentsRef) {
-        my $attr = $${contentRef}{'name'};
-        $attr =~ s/-/_/g;
+    my ($attr, $property, $value) = @_;
 
-        # Initialize default properties' values.
-        $attrs{$attr} = { initializeAttrPropertyHash($attr) } if !defined($attrs{$attr});
+    $attr =~ s/-/_/g;
 
-        # Parse the XML attributes.
-        my %properties = %{$$contentRef{'attrib'}};
-        foreach my $property (keys %properties) {
-            die "Unknown property $property for attribute $attr\n" if !defined($attrs{$attr}{$property});
-            $attrs{$attr}{$property} = $properties{$property};
-        }
+    # Initialize default properties' values.
+    $attrs{$attr} = { initializeAttrPropertyHash($attr) } if !defined($attrs{$attr});
+
+    if ($property) {
+        die "Unknown property $property for attribute $attr\n" if !defined($attrs{$attr}{$property});
+        $attrs{$attr}{$property} = $value;
     }
 }
 
-sub parseParameters
+sub parametersHandler
 {
-    my ($propertiesRef, $elementName) = @_;
-    my %properties = %$propertiesRef;
+    my ($parameter, $value) = @_;
 
     # Initialize default properties' values.
     %parameters = initializeParametersHash() if !(keys %parameters);
 
-    # Parse the XML attributes.
-    foreach my $property (keys %properties) {
-        # This is used in case we want to change the parameter name depending
-        # on what is parsed.
-        my $parameter = $property;
-
-        # "nullNamespace" case
-        if ($property eq "nullNamespace") {
-            $parameter = $elementName.(ucfirst $property);
-        }
-
-        die "Unknown parameter $property for tags/attrs\n" if !defined($parameters{$parameter});
-        $parameters{$parameter} = $properties{$property};
-    }
+    die "Unknown parameter $parameter for tags/attrs\n" if !defined($parameters{$parameter});
+    $parameters{$parameter} = $value;
 }
 
 ## Support routines
 
 sub readNames
 {
-    my $namesFile = shift;
+    my ($namesFile, $type) = @_;
 
     my $names = new IO::File;
+
     if ($extraDefines eq 0) {
         open($names, $preprocessor . " " . $namesFile . "|") or die "Failed to open file: $namesFile";
     } else {
@@ -199,23 +171,17 @@ sub readNames
     my $tagsCount = keys %tags;
     my $attrsCount = keys %attrs;
 
-    my $documentRef = parsefile($names);
+    my $InParser = InFilesParser->new();
 
-    # XML::Tiny returns an array reference to a hash containing the different properties
-    my %document = %{@$documentRef[0]};
-    my $name = $document{'name'};
-
-    # Check root element to determine what we are parsing
-    switch($name) {
+    switch ($type) {
         case "tags" {
-            parseParameters(\%{$document{'attrib'}}, $name);
-            parseTags(\@{$document{'content'}});
+            $InParser->parse($names, \&parametersHandler, \&tagsHandler);
         }
         case "attrs" {
-            parseParameters(\%{$document{'attrib'}}, $name);
-            parseAttrs(\@{$document{'content'}});
-        } else {
-            die "Do not know how to parse file starting with $name!\n";
+            $InParser->parse($names, \&parametersHandler, \&attrsHandler);
+        }
+        else {
+            die "Do not know how to parse $type";
         }
     }
 
