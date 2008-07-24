@@ -63,9 +63,10 @@ RenderReplaced::~RenderReplaced()
 
 void RenderReplaced::setStyle(RenderStyle* newStyle)
 {
-    float oldZoom = style() ? style()->effectiveZoom() : RenderStyle::initialZoom();
+    bool hadStyle = style();
+    float oldZoom = hadStyle ? style()->effectiveZoom() : RenderStyle::initialZoom();
     RenderBox::setStyle(newStyle);
-    if (newStyle && newStyle->effectiveZoom() != oldZoom)
+    if (hadStyle && newStyle && newStyle->effectiveZoom() != oldZoom)
         intrinsicSizeChanged();
 }
 

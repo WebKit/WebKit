@@ -1,3 +1,14 @@
+2008-07-24  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18673, crash when using full page zoom on generated content.  Don't call
+        intrinsicSizeChanged when we are first setting our style.
+
+        Reviewed by olliej
+
+        * ChangeLog:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::setStyle):
+
 2008-07-24  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Eric.
