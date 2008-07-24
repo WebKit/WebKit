@@ -70,7 +70,7 @@ namespace KJS {
         {
             return (getTag(v) == NumberType);
         }
-        
+
         static ALWAYS_INLINE bool isPositiveNumber(const JSValue* v)
         {
             // A single mask to check for the sign bit and the number tag all at once.

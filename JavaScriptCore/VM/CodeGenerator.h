@@ -313,6 +313,9 @@ namespace KJS {
         JumpContext* jumpContextForContinue(const Identifier&);
         JumpContext* jumpContextForBreak(const Identifier&);
 
+        void beginSwitch(RegisterID*, SwitchInfo::SwitchType);
+        void endSwitch(uint32_t clauseCount, RefPtr<LabelID>*, ExpressionNode**, LabelID* defaultLabel, int32_t min, int32_t range);
+
         CodeType codeType() const { return m_codeType; }
 
         ExecState* globalExec() { return m_scopeChain->globalObject()->globalExec(); }
@@ -401,6 +404,7 @@ namespace KJS {
         Vector<JumpContext> m_jumpContextStack;
         int m_continueDepth;
         Vector<ControlFlowContext> m_scopeContextStack;
+        Vector<SwitchInfo> m_switchContextStack;
 
         int m_nextVar;
         int m_nextParameter;

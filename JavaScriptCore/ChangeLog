@@ -1,3 +1,41 @@
+2008-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen and Sam Weinig.
+
+        Improve switch performance.
+
+        Improve switch performance by converting to a hashmap based jump
+        table to avoid the sequence of dispatches that would otherwise be
+        needed.  This results in a 9-19x performance win for string switches
+        based on ad hoc testing, and a 6x improvement for integer switch
+        statements.  SunSpider reports a 1.2% progression.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        (KJS::SimpleJumpTable::offsetForValue):
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::beginSwitch):
+        (KJS::prepareJumpTableForImmediateSwitch):
+        (KJS::prepareJumpTableForCharacterSwitch):
+        (KJS::prepareJumpTableForStringSwitch):
+        (KJS::CodeGenerator::endSwitch):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::offsetForStringSwitch):
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.cpp:
+        (KJS::):
+        * VM/Opcode.h:
+        * kjs/JSImmediate.h:
+        * kjs/nodes.cpp:
+        (KJS::):
+        (KJS::processClauseList):
+        (KJS::CaseBlockNode::tryOptimisedSwitch):
+        (KJS::CaseBlockNode::emitCodeForBlock):
+        * kjs/nodes.h:
+        (KJS::SwitchInfo::):
+
 2008-07-23  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

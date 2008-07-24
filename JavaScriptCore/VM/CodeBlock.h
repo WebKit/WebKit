@@ -66,6 +66,17 @@ namespace KJS {
         int32_t lineNumber;
     };
 
+    typedef HashMap<RefPtr<UString::Rep>, int32_t> StringJumpTable;
+    struct SimpleJumpTable {
+        Vector<int32_t> branchOffsets;
+        int32_t min;
+        int32_t offsetForValue(int32_t value, int32_t defaultOffset);
+        void add(int32_t key, int32_t offset) {
+            if (!branchOffsets[key])
+                branchOffsets[key] = offset;
+        }
+    };
+
     struct CodeBlock {
         CodeBlock(ScopeNode* ownerNode_, CodeType codeType_, PassRefPtr<SourceProvider> source_, unsigned sourceOffset_)
             : ownerNode(ownerNode_)
@@ -111,6 +122,10 @@ namespace KJS {
         Vector<HandlerInfo> exceptionHandlers;
         Vector<ExpressionRangeInfo> expressionInfo;
         Vector<LineInfo> lineInfo;
+
+        Vector<SimpleJumpTable> immediateSwitchJumpTables;
+        Vector<SimpleJumpTable> characterSwitchJumpTables;
+        Vector<StringJumpTable> stringSwitchJumpTables;
 
     private:
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;

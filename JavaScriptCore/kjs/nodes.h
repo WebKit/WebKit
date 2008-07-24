@@ -121,6 +121,12 @@ namespace KJS {
         FunctionStack& functionStack;
     };
 
+    struct SwitchInfo {
+        enum SwitchType { SwitchNone, SwitchImmediate, SwitchCharacter, SwitchString };
+        uint32_t opcodeOffset;
+        SwitchType switchType;
+    };
+
     class ParserRefCounted : Noncopyable {
     protected:
         ParserRefCounted(JSGlobalData*) KJS_FAST_CALL;
@@ -200,6 +206,7 @@ namespace KJS {
         }
 
         virtual bool isNumber() const KJS_FAST_CALL { return false; }
+        virtual bool isString() const KJS_FAST_CALL { return false; }
         virtual bool isPure(CodeGenerator&) const KJS_FAST_CALL { return false; }        
         virtual bool isLocation() const KJS_FAST_CALL { return false; }
         virtual bool isResolveNode() const KJS_FAST_CALL { return false; }
@@ -307,7 +314,9 @@ namespace KJS {
         }
 
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
-
+        
+        virtual bool isString() const KJS_FAST_CALL { return true; }
+        UString& value() { return m_value; }
         virtual bool isPure(CodeGenerator&) const KJS_FAST_CALL { return true; }
         virtual void streamTo(SourceStream&) const KJS_FAST_CALL;
         virtual Precedence precedence() const { return PrecPrimary; }
@@ -2379,6 +2388,7 @@ namespace KJS {
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
 
     private:
+        SwitchInfo::SwitchType tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num);
         RefPtr<ClauseListNode> m_list1;
         RefPtr<CaseClauseNode> m_defaultClause;
         RefPtr<ClauseListNode> m_list2;

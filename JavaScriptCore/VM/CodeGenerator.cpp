@@ -32,6 +32,7 @@
 
 #include "JSFunction.h"
 #include "Machine.h"
+#include "ustring.h"
 
 using namespace std;
 
@@ -1142,6 +1143,126 @@ void CodeGenerator::emitSubroutineReturn(RegisterID* retAddrSrc)
 {
     emitOpcode(op_sret);
     instructions().append(retAddrSrc->index());
+}
+
+void CodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
+{
+    SwitchInfo info = { instructions().size(), type };
+    switch (type) {
+        case SwitchInfo::SwitchImmediate:
+            emitOpcode(op_switch_imm);
+            break;
+        case SwitchInfo::SwitchCharacter:
+            emitOpcode(op_switch_char);
+            break;
+        case SwitchInfo::SwitchString:
+            emitOpcode(op_switch_string);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+    }
+
+    instructions().append(0); // place holder for table index
+    instructions().append(0); // place holder for default target    
+    instructions().append(scrutineeRegister->index());
+    m_switchContextStack.append(info);
+}
+
+static int32_t keyForImmediateSwitch(ExpressionNode* node, int32_t min, int32_t max)
+{
+    UNUSED_PARAM(max);
+    ASSERT(node->isNumber());
+    double value = static_cast<NumberNode*>(node)->value();
+    ASSERT(JSImmediate::from(value));
+    int32_t key = static_cast<int32_t>(value);
+    ASSERT(key == value);
+    ASSERT(key >= min);
+    ASSERT(key <= max);
+    return key - min;
+}
+
+static void prepareJumpTableForImmediateSwitch(SimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, RefPtr<LabelID>* labels, ExpressionNode** nodes, int32_t min, int32_t max)
+{
+    jumpTable.min = min;
+    jumpTable.branchOffsets.resize(max - min + 1);
+    jumpTable.branchOffsets.fill(0);
+    for (uint32_t i = 0; i < clauseCount; ++i) {
+        // We're emitting this after the clause labels should have been fixed, so 
+        // the labels should not be "forward" references
+        ASSERT(!labels[i]->isForwardLabel());
+        jumpTable.add(keyForImmediateSwitch(nodes[i], min, max), labels[i]->offsetFrom(switchAddress)); 
+    }
+}
+
+static int32_t keyForCharacterSwitch(ExpressionNode* node, int32_t min, int32_t max)
+{
+    UNUSED_PARAM(max);
+    ASSERT(node->isString());
+    UString::Rep* clause = static_cast<StringNode*>(node)->value().rep();
+    ASSERT(clause->size() == 1);
+    
+    int32_t key = clause->data()[0];
+    ASSERT(key >= min);
+    ASSERT(key <= max);
+    return key - min;
+}
+
+static void prepareJumpTableForCharacterSwitch(SimpleJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, RefPtr<LabelID>* labels, ExpressionNode** nodes, int32_t min, int32_t max)
+{
+    jumpTable.min = min;
+    jumpTable.branchOffsets.resize(max - min + 1);
+    jumpTable.branchOffsets.fill(0);
+    for (uint32_t i = 0; i < clauseCount; ++i) {
+        // We're emitting this after the clause labels should have been fixed, so 
+        // the labels should not be "forward" references
+        ASSERT(!labels[i]->isForwardLabel());
+        jumpTable.add(keyForCharacterSwitch(nodes[i], min, max), labels[i]->offsetFrom(switchAddress)); 
+    }
+}
+
+static void prepareJumpTableForStringSwitch(StringJumpTable& jumpTable, int32_t switchAddress, uint32_t clauseCount, RefPtr<LabelID>* labels, ExpressionNode** nodes)
+{
+    for (uint32_t i = 0; i < clauseCount; ++i) {
+        // We're emitting this after the clause labels should have been fixed, so 
+        // the labels should not be "forward" references
+        ASSERT(!labels[i]->isForwardLabel());
+        
+        ASSERT(nodes[i]->isString());
+        UString::Rep* clause = static_cast<StringNode*>(nodes[i])->value().rep();
+        jumpTable.add(clause, labels[i]->offsetFrom(switchAddress)); 
+    }
+}
+
+void CodeGenerator::endSwitch(uint32_t clauseCount, RefPtr<LabelID>* labels, ExpressionNode** nodes, LabelID* defaultLabel, int32_t min, int32_t max)
+{
+    SwitchInfo switchInfo = m_switchContextStack.last();
+    m_switchContextStack.removeLast();
+    if (switchInfo.switchType == SwitchInfo::SwitchImmediate) {
+        instructions()[switchInfo.opcodeOffset + 1] = m_codeBlock->immediateSwitchJumpTables.size();
+        instructions()[switchInfo.opcodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.opcodeOffset + 3);
+
+        m_codeBlock->immediateSwitchJumpTables.append(SimpleJumpTable());
+        SimpleJumpTable& jumpTable = m_codeBlock->immediateSwitchJumpTables.last();
+
+        prepareJumpTableForImmediateSwitch(jumpTable, switchInfo.opcodeOffset + 3, clauseCount, labels, nodes, min, max);
+    } else if (switchInfo.switchType == SwitchInfo::SwitchCharacter) {
+        instructions()[switchInfo.opcodeOffset + 1] = m_codeBlock->characterSwitchJumpTables.size();
+        instructions()[switchInfo.opcodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.opcodeOffset + 3);
+        
+        m_codeBlock->characterSwitchJumpTables.append(SimpleJumpTable());
+        SimpleJumpTable& jumpTable = m_codeBlock->characterSwitchJumpTables.last();
+
+        prepareJumpTableForCharacterSwitch(jumpTable, switchInfo.opcodeOffset + 3, clauseCount, labels, nodes, min, max);
+    } else {
+        ASSERT(switchInfo.switchType == SwitchInfo::SwitchString);
+        instructions()[switchInfo.opcodeOffset + 1] = m_codeBlock->stringSwitchJumpTables.size();
+        instructions()[switchInfo.opcodeOffset + 2] = defaultLabel->offsetFrom(switchInfo.opcodeOffset + 3);
+
+        m_codeBlock->stringSwitchJumpTables.append(StringJumpTable());
+        StringJumpTable& jumpTable = m_codeBlock->stringSwitchJumpTables.last();
+
+        prepareJumpTableForStringSwitch(jumpTable, switchInfo.opcodeOffset + 3, clauseCount, labels, nodes);
+    }
 }
 
 } // namespace KJS

@@ -1,3 +1,14 @@
+2008-07-23  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Test cases to cover the behaviour of switch statements, to make sure our
+        fast switch paths have not broken things.
+
+        * fast/js/resources/switch-behaviour.js: Added.
+        * fast/js/switch-behaviour-expected.txt: Added.
+        * fast/js/switch-behaviour.html: Added.
+
 2008-07-23  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -197,7 +197,52 @@ void CodeBlock::dump(ExecState* exec) const
             ++i;
         } while (i < exceptionHandlers.size());
     }
-        
+    
+    if (immediateSwitchJumpTables.size()) {
+        printf("immediate switch jump tables:\n");
+        unsigned i = 0;
+        do {
+            printf("\t{\n");
+            int entry = 0;
+            Vector<int32_t>::const_iterator end = immediateSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry)
+                if (*iter)
+                    printf("\t\t%4d => %04d\n", entry + immediateSwitchJumpTables[i].min, *iter);
+            printf("\t}\n");
+            ++i;
+        } while (i < immediateSwitchJumpTables.size());
+    }
+    
+    if (characterSwitchJumpTables.size()) {
+        printf("\ncharacter switch jump tables:\n");
+        unsigned i = 0;
+        do {
+            printf("\t{\n");
+            int entry = 0;
+            Vector<int32_t>::const_iterator end = characterSwitchJumpTables[i].branchOffsets.end();
+            for (Vector<int32_t>::const_iterator iter = characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+                ASSERT(!((i + characterSwitchJumpTables[i].min) & ~0xFFFF));
+                UChar ch = static_cast<UChar>(i + characterSwitchJumpTables[i].min);
+                printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).ascii(), *iter);
+            }
+            printf("\t}\n");
+            ++i;
+        } while (i < characterSwitchJumpTables.size());
+    }
+    
+    if (stringSwitchJumpTables.size()) {
+        printf("\nstring switch jump tables:\n");
+        unsigned i = 0;
+        do {
+            printf("\t{\n");
+            StringJumpTable::const_iterator end = stringSwitchJumpTables[i].end();
+            for (StringJumpTable::const_iterator iter = stringSwitchJumpTables[i].begin(); iter != end; ++iter)
+                printf("\t\t\"%s\" => %04d\n", UString(iter->first).ascii(), iter->second);
+            printf("\t}\n");
+            ++i;
+        } while (i < stringSwitchJumpTables.size());
+    }
+
     printf("\n");
 }
 
@@ -502,6 +547,27 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] loop_if_less %s, %s, %d(->%d)\n", location, registerName(r0).c_str(), registerName(r1).c_str(), offset, jumpTarget(begin, it, offset));
             break;
         }
+        case op_switch_imm: {
+            int tableIndex = (++it)->u.operand;
+            int defaultTarget = (++it)->u.operand;
+            int scrutineeRegister = (++it)->u.operand;
+            printf("[%4d] switch_imm\t %d, %d(->%d), %s\n", location, tableIndex, defaultTarget, jumpTarget(begin, it, defaultTarget), registerName(scrutineeRegister).c_str());
+            break;
+        }
+        case op_switch_char: {
+            int tableIndex = (++it)->u.operand;
+            int defaultTarget = (++it)->u.operand;
+            int scrutineeRegister = (++it)->u.operand;
+            printf("[%4d] switch_char\t %d, %d(->%d), %s\n", location, tableIndex, defaultTarget, jumpTarget(begin, it, defaultTarget), registerName(scrutineeRegister).c_str());
+            break;
+        }
+        case op_switch_string: {
+            int tableIndex = (++it)->u.operand;
+            int defaultTarget = (++it)->u.operand;
+            int scrutineeRegister = (++it)->u.operand;
+            printf("[%4d] switch_string\t %d, %d(->%d), %s\n", location, tableIndex, defaultTarget, jumpTarget(begin, it, defaultTarget), registerName(scrutineeRegister).c_str());
+            break;
+        }
         case op_new_func: {
             int r0 = (++it)->u.operand;
             int f0 = (++it)->u.operand;
@@ -708,6 +774,16 @@ int CodeBlock::expressionRangeForVPC(const Instruction* vPC, int& divot, int& st
     endOffset = expressionInfo[low - 1].endOffset;
     divot = expressionInfo[low - 1].divotPoint + sourceOffset;
     return lineNumberForVPC(vPC);
+}
+
+int32_t SimpleJumpTable::offsetForValue(int32_t value, int32_t defaultOffset)
+{
+    if (value >= min && static_cast<uint32_t>(value - min) < branchOffsets.size()) {
+        int32_t offset = branchOffsets[value - min];
+        if (offset)
+            return offset;
+    }
+    return defaultOffset;        
 }
 
 } // namespace KJS

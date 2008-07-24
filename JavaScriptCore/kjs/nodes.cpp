@@ -1393,31 +1393,118 @@ RegisterID* WithNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 }
 
 // ------------------------------ CaseBlockNode --------------------------------
+enum SwitchKind { 
+    SwitchUnset = 0,
+    SwitchNumber = 1, 
+    SwitchString = 2, 
+    SwitchNeither = 3 
+};
+
+static void processClauseList(ClauseListNode* list, Vector<ExpressionNode*, 8>& literalVector, SwitchKind& typeForTable, bool& singleCharacterSwitch, int32_t& min_num, int32_t& max_num)
+{
+    for (; list; list = list->getNext()) {
+        ExpressionNode* clauseExpression = list->getClause()->expr();
+        literalVector.append(clauseExpression);
+        if (clauseExpression->isNumber()) {
+            double value = static_cast<NumberNode*>(clauseExpression)->value();
+            if ((typeForTable & ~SwitchNumber) || !JSImmediate::from(value)) {
+                typeForTable = SwitchNeither;
+                break;
+            }
+            int32_t intVal = static_cast<int32_t>(value);
+            ASSERT(intVal == value);
+            if (intVal < min_num)
+                min_num = intVal;
+            if (intVal > max_num)
+                max_num = intVal;
+            typeForTable = SwitchNumber;
+            continue;
+        }
+        if (clauseExpression->isString()) {
+            if (typeForTable & ~SwitchString) {
+                typeForTable = SwitchNeither;
+                break;
+            }
+            UString& value = static_cast<StringNode*>(clauseExpression)->value();
+            if (singleCharacterSwitch &= value.size() == 1) {
+                int32_t intVal = value.rep()->data()[0];
+                if (intVal < min_num)
+                    min_num = intVal;
+                if (intVal > max_num)
+                    max_num = intVal;
+            }
+            typeForTable = SwitchString;
+            continue;
+        }
+        typeForTable = SwitchNeither;
+        break;        
+    }
+}
+    
+SwitchInfo::SwitchType CaseBlockNode::tryOptimizedSwitch(Vector<ExpressionNode*, 8>& literalVector, int32_t& min_num, int32_t& max_num)
+{
+    SwitchKind typeForTable = SwitchUnset;
+    bool singleCharacterSwitch = true;
+    
+    processClauseList(m_list1.get(), literalVector, typeForTable, singleCharacterSwitch, min_num, max_num);
+    processClauseList(m_list2.get(), literalVector, typeForTable, singleCharacterSwitch, min_num, max_num);
+    
+    if (typeForTable == SwitchUnset || typeForTable == SwitchNeither)
+        return SwitchInfo::SwitchNone;
+    
+    if (typeForTable == SwitchNumber) {
+        int32_t range = max_num - min_num;
+        if (min_num <= max_num && range <= 1000 && (range / literalVector.size()) < 10)
+            return SwitchInfo::SwitchImmediate;
+        return SwitchInfo::SwitchNone;
+    } 
+    
+    ASSERT(typeForTable == SwitchString);
+    
+    if (singleCharacterSwitch) {
+        int32_t range = max_num - min_num;
+        if (min_num <= max_num && range <= 1000 && (range / literalVector.size()) < 10)
+            return SwitchInfo::SwitchCharacter;
+    }
+
+    return SwitchInfo::SwitchString;
+}
 
 RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID* switchExpression, RegisterID* dst)
 {
-    Vector<RefPtr<LabelID>, 8> labelVector;
-
-    // Setup jumps
-    for (ClauseListNode* list = m_list1.get(); list; list = list->getNext()) {
-        RefPtr<RegisterID> clauseVal = generator.newTemporary();
-        generator.emitNode(clauseVal.get(), list->getClause()->expr());
-        generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
-        labelVector.append(generator.newLabel());
-        generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
-    }
-
-    for (ClauseListNode* list = m_list2.get(); list; list = list->getNext()) {
-        RefPtr<RegisterID> clauseVal = generator.newTemporary();
-        generator.emitNode(clauseVal.get(), list->getClause()->expr());
-        generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
-        labelVector.append(generator.newLabel());
-        generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
-    }
-
     RefPtr<LabelID> defaultLabel;
-    defaultLabel = generator.newLabel();
-    generator.emitJump(defaultLabel.get());
+    Vector<RefPtr<LabelID>, 8> labelVector;
+    Vector<ExpressionNode*, 8> literalVector;
+    int32_t min_num = std::numeric_limits<int32_t>::max();
+    int32_t max_num = std::numeric_limits<int32_t>::min();
+    SwitchInfo::SwitchType switchType = tryOptimizedSwitch(literalVector, min_num, max_num);
+
+    if (switchType != SwitchInfo::SwitchNone) {
+        // Prepare the various labels
+        for (uint32_t i = 0; i < literalVector.size(); i++)
+            labelVector.append(generator.newLabel());
+        defaultLabel = generator.newLabel();
+        generator.beginSwitch(switchExpression, switchType);
+    } else {
+        // Setup jumps
+        for (ClauseListNode* list = m_list1.get(); list; list = list->getNext()) {
+            RefPtr<RegisterID> clauseVal = generator.newTemporary();
+            generator.emitNode(clauseVal.get(), list->getClause()->expr());
+            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
+            labelVector.append(generator.newLabel());
+            generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
+        }
+        
+        for (ClauseListNode* list = m_list2.get(); list; list = list->getNext()) {
+            RefPtr<RegisterID> clauseVal = generator.newTemporary();
+            generator.emitNode(clauseVal.get(), list->getClause()->expr());
+            generator.emitBinaryOp(op_stricteq, clauseVal.get(), clauseVal.get(), switchExpression);
+            labelVector.append(generator.newLabel());
+            generator.emitJumpIfTrue(clauseVal.get(), labelVector[labelVector.size() - 1].get());
+        }
+        defaultLabel = generator.newLabel();
+        generator.emitJump(defaultLabel.get());
+    }
 
     RegisterID* result = 0;
 
@@ -1440,7 +1527,10 @@ RegisterID* CaseBlockNode::emitCodeForBlock(CodeGenerator& generator, RegisterID
         generator.emitLabel(defaultLabel.get());
 
     ASSERT(i == labelVector.size());
-
+    if (switchType != SwitchInfo::SwitchNone) {
+        ASSERT(labelVector.size() == literalVector.size());
+        generator.endSwitch(labelVector.size(), labelVector.data(), literalVector.data(), defaultLabel.get(), min_num, max_num);
+    }
     return result;
 }
 
