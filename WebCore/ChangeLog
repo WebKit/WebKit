@@ -1,3 +1,15 @@
+2008-07-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6082111> REGRESSION (r31876): Root element with percent height does not resize when resizing the window vertically
+
+        Not testable in DumpRenderTree
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::layout): Ensured that all children with percentage
+        heights get laid out again if the height changes.
+
 2008-07-24  kevino  <kevino@theolliviers.com>
 
         Windows build fix for wx. wx doesn't implement pan scrolling yet. 

@@ -100,9 +100,14 @@ void RenderView::layout()
 
     // Use calcWidth/Height to get the new width/height, since this will take the full page zoom factor into account.
     bool relayoutChildren = !printing() && (!m_frameView || m_width != viewWidth() || m_height != viewHeight());
-    if (relayoutChildren)
+    if (relayoutChildren) {
         setChildNeedsLayout(true, false);
-    
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (child->style()->height().isPercent() || child->style()->minHeight().isPercent() || child->style()->maxHeight().isPercent())
+                child->setChildNeedsLayout(true, false);
+        }
+    }
+
     ASSERT(!m_layoutState);
     LayoutState state;
     // FIXME: May be better to push a clip and avoid issuing offscreen repaints.
