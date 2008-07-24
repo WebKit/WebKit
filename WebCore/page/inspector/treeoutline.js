@@ -245,10 +245,13 @@ TreeOutline.prototype._forgetTreeElement = function(element)
     }
 }
 
-TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, getParent)
+TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, getParent, equal)
 {
     if (!representedObject)
         return null;
+
+    if (!equal)
+        equal = function(a, b) { return a === b };
 
     if ("__treeElementIdentifier" in representedObject) {
         // If this representedObject has a tree element identifier, and it is a known TreeElement
@@ -256,7 +259,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
         var elements = this._knownTreeElements[representedObject.__treeElementIdentifier];
         if (elements) {
             for (var i = 0; i < elements.length; ++i)
-                if (elements[i].representedObject === representedObject)
+                if (equal(elements[i].representedObject, representedObject))
                     return elements[i];
         }
     }
@@ -270,7 +273,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     var found = false;
     for (var i = 0; i < this.children.length; ++i) {
         item = this.children[i];
-        if (item.representedObject === representedObject || isAncestor(item.representedObject, representedObject)) {
+        if (equal(item.representedObject, representedObject) || isAncestor(item.representedObject, representedObject)) {
             found = true;
             break;
         }
@@ -285,7 +288,7 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     var currentObject = representedObject;
     while (currentObject) {
         ancestors.unshift(currentObject);
-        if (currentObject === item.representedObject)
+        if (equal(currentObject, item.representedObject))
             break;
         currentObject = getParent(currentObject);
     }
@@ -294,18 +297,18 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
     for (var i = 0; i < ancestors.length; ++i) {
         // Make sure we don't call findTreeElement with the same representedObject
         // again, to prevent infinite recursion.
-        if (ancestors[i] === representedObject)
+        if (equal(ancestors[i], representedObject))
             continue;
         // FIXME: we could do something faster than findTreeElement since we will know the next
         // ancestor exists in the tree.
-        item = this.findTreeElement(ancestors[i], isAncestor, getParent);
+        item = this.findTreeElement(ancestors[i], isAncestor, getParent, equal);
         if (item && item.onpopulate)
             item.onpopulate(item);
     }
 
     // Now that all the ancestors are populated, try to find the representedObject again. This time
     // without the isAncestor and getParent functions to prevent an infinite recursion if it isn't found.
-    return this.findTreeElement(representedObject);
+    return this.findTreeElement(representedObject, null, null, equal);
 }
 
 TreeOutline.prototype.treeElementFromPoint = function(x, y)

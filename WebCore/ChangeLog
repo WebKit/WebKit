@@ -1,3 +1,39 @@
+2008-07-22  Timothy Hatcher  <timothy@apple.com>
+
+        Fix a regression where elements in subframes would not be revealed
+        or selected when inspected from the context menu. This was caused by
+        JavaScript equality is not being true for JSInspectedObjectWrappers
+        of the same node wrapped with different global ExecStates. This change
+        adds a helper function that uses isSameNode to compare wrapped nodes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19377
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.set rootDOMNode): Use objectsAreSame
+        to compare nodes.
+        (WebInspector.ElementsPanel.prototype.set focusedDOMNode): Ditto.
+        (WebInspector.ElementsPanel.prototype.set hoveredDOMNode): Ditto. 
+        (WebInspector.ElementsPanel.prototype._updateModifiedNodes): Ditto.
+        (WebInspector.ElementsPanel.prototype.revealNode): Ditto.
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb): Ditto.
+        (WebInspector.DOMNodeTreeElement.prototype.updateChildren): Ditto.
+        * page/inspector/treeoutline.js:
+        (TreeOutline.prototype.findTreeElement): Add an equal argument
+        to accept a functions to compare two representedObjects. Defaults
+        to strict equal if not supplied. All current clients pass objectsAreSame.
+        * page/inspector/utilities.js:
+        (Node.prototype.enclosingNodeOrSelfWithNodeNameInArray): Use objectsAreSame
+        to compare nodes.
+        (Node.prototype.enclosingNodeOrSelfWithClass): Ditto.
+        (Element.prototype.query): Use the ownerDocument of the node, not document.
+        (objectsAreSame): Added. Compares strict equal first, then uses isSameNode if
+        it exists on both objects.
+        (isAncestorNode): Use objectsAreSame to compare nodes.
+        (firstCommonNodeAncestor): Ditto.
+        (traverseNextNode): Ditto.
+
 2008-07-21  Timothy Hatcher  <timothy@apple.com>
 
         Added InspectorController.isWindowVisible to the JavaScript class

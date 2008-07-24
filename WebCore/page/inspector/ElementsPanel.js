@@ -172,7 +172,7 @@ WebInspector.ElementsPanel.prototype = {
 
     set rootDOMNode(x)
     {
-        if (this._rootDOMNode === x)
+        if (objectsAreSame(this._rootDOMNode, x))
             return;
 
         this._rootDOMNode = x;
@@ -188,7 +188,7 @@ WebInspector.ElementsPanel.prototype = {
 
     set focusedDOMNode(x)
     {
-        if (this._focusedDOMNode === x) {
+        if (objectsAreSame(this._focusedDOMNode, x)) {
             var nodeItem = this.revealNode(x);
             if (nodeItem)
                 nodeItem.select();
@@ -211,7 +211,7 @@ WebInspector.ElementsPanel.prototype = {
 
     set hoveredDOMNode(x)
     {
-        if (this._hoveredDOMNode === x)
+        if (objectsAreSame(this._hoveredDOMNode, x))
             return;
 
         this._hoveredDOMNode = x;
@@ -292,7 +292,7 @@ WebInspector.ElementsPanel.prototype = {
 
     revealNode: function(node)
     {
-        var nodeItem = this.treeOutline.findTreeElement(node, this._isAncestorIncludingParentFrames.bind(this), this._parentNodeOrFrameElement.bind(this));
+        var nodeItem = this.treeOutline.findTreeElement(node, this._isAncestorIncludingParentFrames.bind(this), this._parentNodeOrFrameElement.bind(this), objectsAreSame);
         if (!nodeItem)
             return;
 
@@ -328,7 +328,7 @@ WebInspector.ElementsPanel.prototype = {
         var foundRoot = false;
         var crumb = crumbs.firstChild;
         while (crumb) {
-            if (crumb.representedObject === this.rootDOMNode)
+            if (objectsAreSame(crumb.representedObject, this.rootDOMNode))
                 foundRoot = true;
 
             if (foundRoot)
@@ -336,7 +336,7 @@ WebInspector.ElementsPanel.prototype = {
             else
                 crumb.removeStyleClass("dimmed");
 
-            if (crumb.representedObject === this.focusedDOMNode) {
+            if (objectsAreSame(crumb.representedObject, this.focusedDOMNode)) {
                 crumb.addStyleClass("selected");
                 handled = true;
             } else {
@@ -428,7 +428,7 @@ WebInspector.ElementsPanel.prototype = {
             if (current.nodeType === Node.DOCUMENT_NODE)
                 continue;
 
-            if (current === this.rootDOMNode)
+            if (objectsAreSame(current, this.rootDOMNode))
                 foundRoot = true;
 
             var crumb = document.createElement("span");
@@ -513,7 +513,7 @@ WebInspector.ElementsPanel.prototype = {
 
             if (foundRoot)
                 crumb.addStyleClass("dimmed");
-            if (current === this.focusedDOMNode)
+            if (objectsAreSame(current, this.focusedDOMNode))
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
                 crumb.addStyleClass("end");
