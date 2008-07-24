@@ -964,6 +964,14 @@ static JSValueRef removeBreakpoint(JSContextRef ctx, JSObjectRef /*function*/, J
     return JSValueMakeUndefined(ctx);
 }
 
+static JSValueRef isWindowVisible(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+    return JSValueMakeBoolean(ctx, controller->windowVisible());
+}
+
 // Profiles
 
 static JSValueRef profiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
@@ -1278,6 +1286,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "stepOutOfFunctionInDebugger", WebCore::stepOutOfFunctionInDebugger, kJSPropertyAttributeNone },
         { "addBreakpoint", WebCore::addBreakpoint, kJSPropertyAttributeNone },
         { "removeBreakpoint", WebCore::removeBreakpoint, kJSPropertyAttributeNone },
+        { "isWindowVisible", WebCore::isWindowVisible, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
 

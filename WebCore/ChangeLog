@@ -1,5 +1,18 @@
 2008-07-21  Timothy Hatcher  <timothy@apple.com>
 
+        Added InspectorController.isWindowVisible to the JavaScript class
+        for use in an upcoming change. This will allow the Inspector to not
+        perform selective actions while the window is hidden.
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::isWindowVisible): Call InspectorController::windowVisible.
+        (WebCore::InspectorController::windowScriptObjectAvailable): Add
+        the isWindowVisible function to the JavaScript class.
+
+2008-07-21  Timothy Hatcher  <timothy@apple.com>
+
         Added TreeOutline.removeChildAtIndex and TreeElement.removeChildAtIndex
         for efficiency of callers that know the index of the child. This
         will be used in an upcoming change.
