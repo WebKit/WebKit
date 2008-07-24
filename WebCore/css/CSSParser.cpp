@@ -3167,7 +3167,7 @@ bool CSSParser::parseColorFromValue(CSSParserValue* value, RGBA32& c, bool svg)
         String str = String::format("%06d", (int)(value->fValue+.5));
         if (!CSSParser::parseColor(str, c, m_strict))
             return false;
-    } else if (value->unit == CSSPrimitiveValue::CSS_RGBCOLOR ||
+    } else if (value->unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR ||
                 value->unit == CSSPrimitiveValue::CSS_IDENT ||
                 (!m_strict && value->unit == CSSPrimitiveValue::CSS_DIMENSION)) {
         if (!CSSParser::parseColor(value->string, c, m_strict && value->unit == CSSPrimitiveValue::CSS_IDENT))

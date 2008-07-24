@@ -1,3 +1,35 @@
+2008-07-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        - fix a leak when using hex color values in CSS variables
+
+        - fix CSSOM access to hex color values in variables declarations
+
+        Test: fast/css/variables/color-hex-test.html
+
+        Added a new unit/type, CSS_PARSER_HEXCOLOR, which serves as the unit for
+        CSSParserValues coming from colors in hex notation. CSSParserValues can
+        no longer have CSS_RGBCOLOR as their unit. CSS_PARSER_HEXCOLOR is also
+        used as the type for CSSValues in CSS variables declarations where the
+        parser value was a hex color. However the type of all other color
+        CSSValues remains CSS_RGBCOLOR.
+
+        * css/CSSGrammar.y: Changed to use the new CSS_PARSER_HEXCOLOR value
+        for color values in hex notation.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseColorFromValue): Updated for the new unit.
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::createCSSValue): Ditto.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cleanup): Fixed the leak by deref()ing the
+        string containing the color.
+        (WebCore::CSSPrimitiveValue::cssText): Added support for
+        CSS_PARSER_HEXCOLOR for when serializing variable values.
+        (WebCore::CSSPrimitiveValue::parserValue): Updated for the new unit.
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::): Added a new unti, CSS_PARSER_HEXCOLOR.
+
 2008-07-23  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
@@ -457,7 +489,7 @@
         New test to check that arrays fail gracefully (throw an out of memory exception)
         when the vector grows to large.
 
-        * manual-tests/array-out-of-memory.html:         Added.
+        * manual-tests/array-out-of-memory.html: Added.
 
 2008-07-21  Alexey Proskuryakov  <ap@webkit.org>
 

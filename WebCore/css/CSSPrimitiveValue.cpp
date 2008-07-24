@@ -217,6 +217,7 @@ void CSSPrimitiveValue::cleanup()
         case CSS_URI:
         case CSS_ATTR:
         case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_HEXCOLOR:
             if (m_value.string)
                 m_value.string->deref();
             break;
@@ -693,8 +694,12 @@ String CSSPrimitiveValue::cssText() const
             text += rectVal->left()->cssText() + ")";
             break;
         }
-        case CSS_RGBCOLOR: {
-            Color color(m_value.rgbcolor);
+        case CSS_RGBCOLOR:
+        case CSS_PARSER_HEXCOLOR: {
+            RGBA32 rgbColor = m_value.rgbcolor;
+            if (m_type == CSS_PARSER_HEXCOLOR)
+                Color::parseHexColor(m_value.string, rgbColor);
+            Color color(rgbColor);
             text = (color.alpha() < 0xFF) ? "rgba(" : "rgb(";
             text += String::number(color.red()) + ", ";
             text += String::number(color.green()) + ", ";
@@ -782,10 +787,10 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
             value.fValue = m_value.num;
             value.unit = m_type;
             break;
-        case CSS_RGBCOLOR:
         case CSS_STRING:
         case CSS_URI:
         case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_HEXCOLOR:
             value.string.characters = const_cast<UChar*>(m_value.string->characters());
             value.string.length = m_value.string->length();
             value.unit = m_type;
@@ -810,6 +815,7 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
         case CSS_ATTR:
         case CSS_COUNTER:
         case CSS_RECT:
+        case CSS_RGBCOLOR:
         case CSS_PAIR:
 #if ENABLE(DASHBOARD_SUPPORT)
         case CSS_DASHBOARD_REGION:

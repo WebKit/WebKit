@@ -23,8 +23,12 @@ body {
     var style = document.defaultView.getComputedStyle(elem, null);
     var color = style.getPropertyValue("color");   
     var bgcolor = style.getPropertyValue("background-color");
+    var declaration = document.styleSheets[0].rules[0].variables;
+    var foregroundValue = declaration.getVariableValue("foreground");
+    var backgroundValue = declaration.getVariableValue("background");
 
-    if (color == "rgb(0, 128, 0)" && bgcolor == "rgb(255, 255, 255)") {
+    if (color == "rgb(0, 128, 0)" && bgcolor == "rgb(255, 255, 255)"
+        && foregroundValue == color && backgroundValue == bgcolor) {
         var elem = document.getElementById("div");
         elem.innerHTML = "PASSED";
     }
