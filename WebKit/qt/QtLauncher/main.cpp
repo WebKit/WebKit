@@ -35,7 +35,7 @@
 
 #include <QtGui>
 #include <QDebug>
-#if QT_VERSION >= 0x040400
+#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
 #include <QPrintPreviewDialog>
 #endif
 
@@ -185,7 +185,7 @@ public:
         bar->addAction(view->pageAction(QWebPage::Undo));
         bar->addAction(view->pageAction(QWebPage::Redo));
 
-#if QT_VERSION >= 0x040400
+#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
         bar->addSeparator();
         bar->addAction(tr("Print"), this, SLOT(print()));
 #endif
@@ -217,7 +217,7 @@ protected slots:
     }
     void print()
     {
-#if QT_VERSION >= 0x040400
+#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
         QPrintPreviewDialog dlg(this);
         connect(&dlg, SIGNAL(paintRequested(QPrinter *)),
                 view, SLOT(print(QPrinter *)));

@@ -1,3 +1,12 @@
+2008-07-25  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon.
+
+        Compile with QT_NO_PRINTER.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+
 2008-07-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon
