@@ -2,14 +2,14 @@
 VPATH += $$PWD
 
 INCLUDEPATH += tmp
-INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler
-DEPENDPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler
-DEFINES -= KJS_IDENTIFIER_HIDE_GLOBALS 
+INCLUDEPATH += $$PWD $$PWD/kjs $$PWD/wtf $$PWD/wtf/unicode $$PWD/VM $$PWD/profiler $$PWD/API $$PWD/.. \
+               $$PWD/ForwardingHeaders
 DEFINES += BUILDING_QT__
 
-win32-msvc*: INCLUDEPATH += $$PWD/os-win32
-
 isEmpty(GENERATED_SOURCES_DIR):GENERATED_SOURCES_DIR = tmp
+GENERATED_SOURCES_DIR_SLASH = $$GENERATED_SOURCES_DIR/
+win32-*: GENERATED_SOURCES_DIR_SLASH ~= s|/|\|
+
 
 include(pcre/pcre.pri)
 
@@ -142,16 +142,6 @@ SOURCES += \
     wtf/ThreadingQt.cpp \
     wtf/qt/MainThreadQt.cpp
 
-!CONFIG(QTDIR_build) {
-    defineTest(addExtraCompiler) {
-        QMAKE_EXTRA_COMPILERS += $$1
-        generated_files.depends += compiler_$${1}_make_all
-        export(QMAKE_EXTRA_COMPILERS)
-        export(generated_files.depends)
-        return(true)
-    }
-}
-
 # GENERATOR 1-A: LUT creator
 lut.output = $$GENERATED_SOURCES_DIR/${QMAKE_FILE_BASE}.lut.h
 lut.commands = perl $$PWD/kjs/create_hash_table ${QMAKE_FILE_NAME} -i > ${QMAKE_FILE_OUT}
@@ -176,5 +166,4 @@ kjsbison.input = KJSBISON
 kjsbison.variable_out = GENERATED_SOURCES
 kjsbison.dependency_type = TYPE_C
 kjsbison.CONFIG = target_predeps
-kjsbison.clean = ${QMAKE_FILE_OUT} ${QMAKE_VAR_GENERATED_SOURCES_DIR}${QMAKE_FILE_BASE}.h
-addExtraCompiler(kjsbison)
+addExtraCompilerWithHeader(kjsbison)

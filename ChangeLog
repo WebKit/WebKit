@@ -1,3 +1,30 @@
+2008-07-25  Simon Hausmann  <hausmann@webkit.org>
+
+        Discussed with and rubber-stamped by Lars.
+
+        Fix the build system for the Qt port.
+
+        Recent JavaScriptCore changes require the addition of JavaScriptCore/API to the
+        include search path. With a build process that combines JavaScriptCore and
+        WebCore in one build process/Makefile the existance of
+        JavaScriptCore/API/Node.h and WebCore/dom/Node.h causes include conflicts.
+
+        This commit solves this by introducing a separate build of JavaScriptCore into
+        a static library.
+
+        As a result of the split-up a race-condition due to broken dependencies of
+        regular source files to header files of generated sources showed up very
+        frequently when doing parallel builds (which the buildbot does). This commit at
+        the same time tries to address the dependency problem by making the
+        addExtraCompiler() function also generate a pseudo extra compiler that
+        represents the header file output, so that qmake is aware of the creation of
+        the header file for dependency calculation.
+
+        At the same time I removed a lot of cruft from the pro files to ease maintenance.
+
+        * WebKit.pri:
+        * WebKit.pro:
+
 2008-06-18  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.
