@@ -2,16 +2,19 @@
 <script>
     if (window.layoutTestController) {
         layoutTestController.dumpAsText();
-        layoutTestController.dumpResourceLoadCallbacks();
         layoutTestController.waitUntilDone();
     }
-    
-    function loaded() {
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
+
+    function runTest() {
+        layoutTestController.dumpResourceLoadCallbacks();
+
+        var f = document.createElement('iframe');
+        f.src = "resources/willCacheResponse-success.html";
+        f.onload = function() { if (window.layoutTestController) layoutTestController.notifyDone(); }
+        document.body.appendChild(f);    
     }
 </script>
-<body onLoad="loaded();">
+<body onLoad="setTimeout(runTest, 10);">
 This tests for the willCacheResponse resource delegate callback as added for radar 5008925.<br>
 The test is only meaningful if you are running it under DumpRenderTree<br>
 </body>

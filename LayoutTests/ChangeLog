@@ -1,3 +1,13 @@
+2008-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Make the willCacheResponse test more robust.
+        
+        * http/tests/misc/resources/willCacheResponse-success.html: Added.
+        * http/tests/misc/willCacheResponse-delegate-callback-expected.txt:
+        * http/tests/misc/willCacheResponse-delegate-callback.html:
+
 2008-07-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
