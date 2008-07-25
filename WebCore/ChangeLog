@@ -1,3 +1,27 @@
+2008-07-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Test: security/set-form-autocomplete-attribute.html
+
+        Part of the fix for <rdar://problem/6093281> - Improper handling of autocomplete
+
+        The autocomplete attribute works on both <form> and <input> elements, but was not
+        inherited properly when someone asked an <input> if it should autocomplete.
+
+        I fixed this up based on the rules in the current WF2 spec so if the <input> element
+        has its own autocomplete attribute set, it will follow that but otherwise it will
+        inherit from its parent <form>
+
+        * WebCore.base.exp:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::init):
+        (WebCore::HTMLInputElement::autoComplete):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLInputElement.h:
+        (WebCore::HTMLInputElement::):
+
 2008-07-25  Wouter Bolsterlee  <uws+webkit@xs4all.nl>
 
         Reviewed by Holger Freyther.

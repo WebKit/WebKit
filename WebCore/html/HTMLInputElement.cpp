@@ -124,7 +124,7 @@ void HTMLInputElement::init()
 
     m_haveType = false;
     m_activeSubmit = false;
-    m_autocomplete = true;
+    m_autocomplete = Uninitialized;
     m_inited = false;
     m_autofilled = false;
 
@@ -135,9 +135,6 @@ void HTMLInputElement::init()
     cachedSelEnd = -1;
 
     m_maxResults = -1;
-
-    if (form())
-        m_autocomplete = form()->autoComplete();
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -156,6 +153,20 @@ const AtomicString& HTMLInputElement::name() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
 }
+
+bool HTMLInputElement::autoComplete() const
+{
+    if (m_autocomplete != Uninitialized)
+        return m_autocomplete == On;
+    
+    // Assuming we're still in a Form, respect the Form's setting
+    if (HTMLFormElement* form = this->form())
+        return form->autoComplete();
+    
+    // The default is true
+    return true;
+}
+
 
 static inline HTMLFormElement::CheckedRadioButtons& checkedRadioButtons(const HTMLInputElement *element)
 {
@@ -589,7 +600,12 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         m_name = attr->value();
         checkedRadioButtons(this).addButton(this);
     } else if (attr->name() == autocompleteAttr) {
-        m_autocomplete = !equalIgnoringCase(attr->value(), "off");
+        if (equalIgnoringCase(attr->value(), "off"))
+            m_autocomplete = Off;
+        else if (attr->isEmpty())
+            m_autocomplete = Uninitialized;
+        else
+            m_autocomplete = On;
     } else if (attr->name() == typeAttr) {
         setInputType(attr->value());
     } else if (attr->name() == valueAttr) {

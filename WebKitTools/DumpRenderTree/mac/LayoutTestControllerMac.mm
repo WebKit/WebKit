@@ -36,9 +36,12 @@
 #import <JavaScriptCore/JSRetainPtr.h>
 #import <JavaScriptCore/JSStringRef.h>
 #import <JavaScriptCore/JSStringRefCF.h>
+#import <WebKit/DOMDocument.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDatabaseManagerPrivate.h>
+#import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -268,6 +271,20 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 int LayoutTestController::windowCount()
 {
     return CFArrayGetCount(openWindowsRef);
+}
+
+bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id)
+{
+    RetainPtr<CFStringRef> idCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, id));
+    NSString *idNS = (NSString *)idCF.get();
+    
+    DOMElement *element = [[mainFrame DOMDocument] getElementById:idNS];
+    id rep = [[mainFrame dataSource] representation];
+    
+    if ([rep class] == [WebHTMLRepresentation class])
+        return [(WebHTMLRepresentation *)rep elementDoesAutoComplete:element];
+
+    return false;
 }
 
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)

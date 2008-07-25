@@ -1,3 +1,20 @@
+2008-07-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Add the ability to dump whether-or-not an element should have autocomplete enabled, 
+        from the perspective of the WebKit API
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (elementDoesAutoCompleteForElementWithIdCallback):
+        (LayoutTestController::staticFunctions):
+
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId): Stub for now until I can get on Windows
+
 2008-07-25  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

@@ -1,3 +1,13 @@
+2008-07-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam
+
+        Test for autocomplete attribute cleanup
+
+        * platform/win/Skipped:
+        * security/set-form-autocomplete-attribute-expected.txt: Added.
+        * security/set-form-autocomplete-attribute.html: Added.
+
 2008-07-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mitz.
