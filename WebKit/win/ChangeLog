@@ -1,3 +1,13 @@
+2008-07-25  Adam Roben  <aroben@apple.com>
+
+        Try to fix the Windows build bot
+
+        * WebKit.vcproj/WebKit.sln: Linearize the project dependencies. Each
+        project now depends only on the project that should immediately
+        precede it in the build. For the frameworks, this order makes sense.
+        For the applications built on top of the frameworks, the order is
+        arbitrary (but roughly follows the applications' complexity).
+
 2008-07-17  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam.
