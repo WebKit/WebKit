@@ -193,7 +193,13 @@ static NSSet *createBinaryExtensionsSet()
 
 - (NSString *)_webcore_MIMEType
 {
-    return [self MIMEType];
+    NSString *MIMEType = [self MIMEType];
+#ifdef BUILDING_ON_LEOPARD
+    // Workaround for <rdar://problem/5539824>
+    if ([MIMEType isEqualToString:@"text/xml"])
+        return @"application/xml";
+#endif
+    return MIMEType;
 }
 
 @end

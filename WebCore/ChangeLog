@@ -1,3 +1,12 @@
+2008-07-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add workaround for a Leopard bug which causes webarchive/test-xml-stylesheet.xml to fail.
+
+        * platform/network/mac/WebCoreURLResponse.mm:
+        (-[NSURLResponse _webcore_MIMEType]):
+
 2008-07-25  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
