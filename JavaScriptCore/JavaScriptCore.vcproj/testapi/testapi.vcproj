@@ -250,7 +250,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath="..\..\API\testapi.c"
+			RelativePath="..\..\API\tests\testapi.c"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -278,7 +278,7 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\..\API\testapi.js"
+			RelativePath="..\..\API\tests\testapi.js"
 			>
 		</File>
 	</Files>

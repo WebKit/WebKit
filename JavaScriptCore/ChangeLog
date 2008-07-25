@@ -1,3 +1,41 @@
+2008-07-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        Move JavaScriptCore API tests into a subdirectory of their own to avoid header name
+        conflicts and developer confusion.
+
+        * API/JSNode.c: Removed.
+        * API/JSNode.h: Removed.
+        * API/JSNodeList.c: Removed.
+        * API/JSNodeList.h: Removed.
+        * API/Node.c: Removed.
+        * API/Node.h: Removed.
+        * API/NodeList.c: Removed.
+        * API/NodeList.h: Removed.
+        * API/minidom.c: Removed.
+        * API/minidom.html: Removed.
+        * API/minidom.js: Removed.
+        * API/testapi.c: Removed.
+        * API/testapi.js: Removed.
+        * API/tests: Added.
+        * API/tests/JSNode.c: Copied from JavaScriptCore/API/JSNode.c.
+        * API/tests/JSNode.h: Copied from JavaScriptCore/API/JSNode.h.
+        * API/tests/JSNodeList.c: Copied from JavaScriptCore/API/JSNodeList.c.
+        * API/tests/JSNodeList.h: Copied from JavaScriptCore/API/JSNodeList.h.
+        * API/tests/Node.c: Copied from JavaScriptCore/API/Node.c.
+        * API/tests/Node.h: Copied from JavaScriptCore/API/Node.h.
+        * API/tests/NodeList.c: Copied from JavaScriptCore/API/NodeList.c.
+        * API/tests/NodeList.h: Copied from JavaScriptCore/API/NodeList.h.
+        * API/tests/minidom.c: Copied from JavaScriptCore/API/minidom.c.
+        * API/tests/minidom.html: Copied from JavaScriptCore/API/minidom.html.
+        * API/tests/minidom.js: Copied from JavaScriptCore/API/minidom.js.
+        * API/tests/testapi.c: Copied from JavaScriptCore/API/testapi.c.
+        * API/tests/testapi.js: Copied from JavaScriptCore/API/testapi.js.
+        * GNUmakefile.am:
+        * JavaScriptCore.vcproj/testapi/testapi.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
         Prospective WX build fix, add JavaScriptCore/API to the include search
