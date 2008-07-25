@@ -85,22 +85,6 @@ SOFT_LINK(SafariTheme, paintThemePart, void, __stdcall,
 const double cInitialTimerDelay = 0.25;
 const double cNormalTimerDelay = 0.05;
 
-static ScrollbarControlPartMask ScrollBarPieceMaskToScrollbarControlPartMask(ScrollBarPieceMask parts)
-{
-    ScrollbarControlPartMask controlParts = NoPart;
-    if (parts & BackButtonPiece)
-        controlParts |= BackButtonPart;
-    if (parts & BackTrackPiece)
-        controlParts |= BackTrackPart;
-    if (parts & ThumbPiece)
-        controlParts |= ThumbPart;
-    if (parts & ForwardTrackPiece)
-        controlParts |= ForwardTrackPart;
-    if (parts & ForwardButtonPiece)
-        controlParts |= ForwardButtonPart;
-    return controlParts;
-}
-
 static ScrollbarControlState ScrollbarControlStateFromThemeState(ThemeControlState state)
 {
     ScrollbarControlState s = 0;
@@ -292,18 +276,18 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     if (!frameGeometry().intersects(damageRect))
         return;
 
-    // Create the ScrollBarPieceMask based on the damageRect
-    ScrollBarPieceMask scrollMask = NoScrollPiece;
-
+    // Create the ScrollbarControlPartMask based on the damageRect
+    ScrollbarControlPartMask scrollMask = NoPart;
+ 
     IntRect backButtonPaintRect;
     IntRect forwardButtonPaintRect;
     if (hasButtons()) {
         backButtonPaintRect = buttonRepaintRect(backButtonRect(), m_orientation, controlSize(), true);
         if (damageRect.intersects(backButtonPaintRect))
-            scrollMask |= BackButtonPiece;
+            scrollMask |= BackButtonPart;
         forwardButtonPaintRect = buttonRepaintRect(forwardButtonRect(), m_orientation, controlSize(), false);
         if (damageRect.intersects(forwardButtonPaintRect))
-            scrollMask |= ForwardButtonPiece;
+            scrollMask |= ForwardButtonPart;
     }
 
     IntRect track = trackRect();
@@ -311,25 +295,15 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     IntRect startTrackRect, thumbRect, endTrackRect;
     if (hasThumb()) {
         splitTrack(track, startTrackRect, thumbRect, endTrackRect);
-        /*
-        if (m_orientation == VerticalScrollbar) {
-            startTrackRect.setHeight(startTrackRect.height() + startTrackRect.y() - trackPaintRect.y());
-            startTrackRect.setY(trackPaintRect.y());
-            endTrackRect.setHeight(endTrackRect.height() + trackPaintRect.bottom() - endTrackRect.bottom());
-        } else {
-            startTrackRect.setWidth(startTrackRect.width() + startTrackRect.x() - trackPaintRect.x());
-            startTrackRect.setX(trackPaintRect.x());
-            endTrackRect.setWidth(endTrackRect.width() + trackPaintRect.right() - endTrackRect.right());
-        }*/
         if (damageRect.intersects(thumbRect))
-            scrollMask |= ThumbPiece;
+            scrollMask |= ThumbPart;
         if (damageRect.intersects(startTrackRect))
-            scrollMask |= BackTrackPiece;
+            scrollMask |= BackTrackPart;
         if (damageRect.intersects(endTrackRect))
-            scrollMask |= ForwardTrackPiece;
+            scrollMask |= ForwardTrackPart;
     } else if (damageRect.intersects(trackPaintRect)) {
-        scrollMask |= BackTrackPiece;
-        scrollMask |= ForwardTrackPiece;
+        scrollMask |= BackTrackPart;
+        scrollMask |= ForwardTrackPart;
     }
 
     ThemeControlSize size = controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
@@ -346,7 +320,7 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
         if (page->settings()->shouldPaintCustomScrollbars()) {
             if (page->chrome()->client()->paintCustomScrollbar(graphicsContext, frameGeometry(), 
                     controlSize(), ScrollbarControlStateFromThemeState(state), m_pressedPart, 
-                    m_orientation == VerticalScrollbar, value, proportion, ScrollBarPieceMaskToScrollbarControlPartMask(scrollMask)))
+                    m_orientation == VerticalScrollbar, value, proportion, scrollMask))
                         return;
         }
     }
@@ -355,22 +329,22 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
         return;
 
     // SafariTheme needs to repaint the track when painting the thumb so that the top and bottom of the thumb look right
-    if (scrollMask & ThumbPiece) {
-        scrollMask |= BackTrackPiece;
-        scrollMask |= ForwardTrackPiece;
+    if (scrollMask & ThumbPart) {
+        scrollMask |= BackTrackPart;
+        scrollMask |= ForwardTrackPart;
     }
 
     // FIXME: We should switch to use STPaintScrollBar instead of paintThemePart.  Currently, STPaintScrollBar doesn't work correctly with the pressed buttons
     // when drawing from the part mask.
-    if ((scrollMask & ForwardTrackPiece) || (scrollMask & BackTrackPiece))
+    if ((scrollMask & ForwardTrackPart) || (scrollMask & BackTrackPart))
         paintThemePart(m_orientation == VerticalScrollbar ? VScrollTrackPart : HScrollTrackPart, graphicsContext->platformContext(), trackPaintRect, size, state); 
-    if (scrollMask & BackButtonPiece)
+    if (scrollMask & BackButtonPart)
         paintThemePart(m_orientation == VerticalScrollbar ? ScrollUpArrowPart : ScrollLeftArrowPart, graphicsContext->platformContext(),
                         backButtonPaintRect, size, m_pressedPart == BackButtonPart ? state | PressedState : state);
-    if (scrollMask & ForwardButtonPiece)
+    if (scrollMask & ForwardButtonPart)
         paintThemePart(m_orientation == VerticalScrollbar ? ScrollDownArrowPart : ScrollRightArrowPart, graphicsContext->platformContext(),
                         forwardButtonPaintRect, size, m_pressedPart == ForwardButtonPart ? state | PressedState : state);
-    if (scrollMask & ThumbPiece)
+    if (scrollMask & ThumbPart)
         paintThemePart(m_orientation == VerticalScrollbar ? VScrollThumbPart : HScrollThumbPart, graphicsContext->platformContext(), 
                         thumbRect, size, m_pressedPart == ThumbPart ? state | PressedState : state);
 }
