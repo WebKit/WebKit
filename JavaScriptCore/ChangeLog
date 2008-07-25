@@ -1,3 +1,25 @@
+2008-07-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Fixed a strict aliasing violation, which caused hash tables with floating
+        point keys not to find items that were indeed in the tables
+        (intermittently, and only in release builds, of course).
+        
+        SunSpider reports no change.
+        
+        This bug doesn't seem to affect any existing code, but it causes obvious
+        crashes in some new code I'm working on.
+
+        * wtf/HashFunctions.h:
+        (WTF::FloatHash::hash): Use a union when punning between a float / double
+        and an unsigned (bucket of bits). With strict aliasing enabled, unions
+        are the only safe way to do this kind of type punning.
+
+        * wtf/HashTable.h: When rehashing, ASSERT that the item we just added to
+        the table is indeed in the table. In the buggy case described above, this
+        ASSERT fires.
+
 2008-07-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Alexey Proskuryakov.
