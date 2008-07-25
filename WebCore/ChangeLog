@@ -1,5 +1,12 @@
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
+        Fix linking of QtWebKit against the statically built JavaScriptCore
+        library, under Windows/Mac we may need _d/_debug suffixes.
+
+        * WebCore.pro:
+
+2008-07-25  Simon Hausmann  <hausmann@webkit.org>
+
         Rubber-stamped by Lars.
 
         Fix the Qt build by adapting to the latest ArgList API changes and

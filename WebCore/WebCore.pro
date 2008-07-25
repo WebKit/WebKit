@@ -88,13 +88,23 @@ INCLUDEPATH += $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders
 
 contains(CONFIG, debug_and_release_target) {
     CONFIG(debug, debug|release) {
-        LIBS+=-L../JavaScriptCore/debug
+        LIBS += -L../JavaScriptCore/debug
     } else {
-        LIBS+=-L../JavaScriptCore/release
+        LIBS += -L../JavaScriptCore/release
     }
 } else {
     LIBS += -L../JavaScriptCore
 }
+
+unset(JSCORE_LINKAGE)
+CONFIG(QTDIR_build) {
+    CONFIG(debug, debug|release) {
+        win32:JSCORE_LINKAGE = -lJavaScriptCored
+        mac:JSCORE_LINKAGE = -lJavaScriptCore_debug
+    }
+}
+isEmpty(JSCORE_LINKAGE):JSCORE_LINKAGE += -lJavaScriptCore
+LIBS += $$JSCORE_LINKAGE
 
 RESOURCES += \
     $$PWD/../WebCore/page/inspector/WebKit.qrc \
