@@ -1,3 +1,13 @@
+2008-07-24  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon
+
+        Provide access to the underlying QKeyEvent in PlatformKeyboardEvent.
+
+        * platform/PlatformKeyboardEvent.h: add accessor and member.
+        * platform/qt/PlatformKeyboardEventQt.cpp: copy pointer in ctor.
+        (WebCore::PlatformKeyboardEvent::PlatformKeyboardEvent):
+
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
         Fix linking of QtWebKit against the statically built JavaScriptCore

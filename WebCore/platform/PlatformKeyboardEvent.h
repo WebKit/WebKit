@@ -139,6 +139,7 @@ namespace WebCore {
 
 #if PLATFORM(QT)
         PlatformKeyboardEvent(QKeyEvent*);
+        QKeyEvent* qtEvent() const { return m_qtEvent; }
 #endif
 
 #if PLATFORM(WX)
@@ -166,6 +167,9 @@ namespace WebCore {
 #endif
 #if PLATFORM(GTK)
         GdkEventKey* m_gdkEventKey;
+#endif
+#if PLATFORM(QT)
+        QKeyEvent* m_qtEvent;
 #endif
     };
 

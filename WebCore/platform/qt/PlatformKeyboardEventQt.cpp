@@ -446,6 +446,7 @@ PlatformKeyboardEvent::PlatformKeyboardEvent(QKeyEvent* event)
     m_windowsVirtualKeyCode = windowsKeyCodeForKeyEvent(event->key());
     m_isKeypad = (state & Qt::KeypadModifier) != 0;
     m_shiftKey = (state & Qt::ShiftModifier) != 0 || event->key() == Qt::Key_Backtab; // Simulate Shift+Tab with Key_Backtab
+    m_qtEvent = event;
 }
 
 void PlatformKeyboardEvent::disambiguateKeyDownEvent(Type type, bool)
