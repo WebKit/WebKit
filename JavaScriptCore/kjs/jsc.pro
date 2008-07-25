@@ -11,6 +11,7 @@ INCLUDEPATH += $$PWD/.. \
     $$PWD/../VM
 CONFIG -= app_bundle
 DEFINES += BUILDING_QT__
+CONFIG += building-libs
 
 CONFIG(release) {
     DEFINES += NDEBUG USE_SYSTEM_MALLOC
