@@ -1,5 +1,12 @@
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
+        Prospective WX build fix, add JavaScriptCore/API to the include search
+        path.
+
+        * jscore.bkl:
+
+2008-07-25  Simon Hausmann  <hausmann@webkit.org>
+
         Rubber-stamped by Lars.
 
         Fix the build on Windows. operator new for ArgList is implemented using fastMalloc()
