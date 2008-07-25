@@ -1,5 +1,16 @@
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
+        Rubber-stamped by Lars.
+
+        Fix the build on Windows. operator new for ArgList is implemented using fastMalloc()
+        but operator delete was not implemented. Unfortunately MSVC decides to call/reference
+        the function, so a simple implementation using fastFree() fixes the build.
+
+        * kjs/ArgList.h:
+        (KJS::ArgList::operator delete):
+
+2008-07-25  Simon Hausmann  <hausmann@webkit.org>
+
         Discussed with and rubber-stamped by Lars.
 
         Fix the build system for the Qt port.
