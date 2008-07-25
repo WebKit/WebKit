@@ -1,5 +1,12 @@
 2008-07-25  Adele Peterson  <adele@apple.com>
 
+        Another build fix.
+
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::paint):
+
+2008-07-25  Adele Peterson  <adele@apple.com>
+
         More build fixes.
 
         * platform/win/PlatformScrollBarSafari.cpp:

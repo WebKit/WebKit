@@ -306,7 +306,7 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
         scrollMask |= ForwardTrackPart;
     }
 
-    ThemeControlSize size = controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
+    NSControlSize size = controlSize() == SmallScrollbar ? NSSmallControlSize : NSRegularControlSize;
     ThemeControlState state = 0;
     if (m_client->isActive())
         state |= ActiveState;
