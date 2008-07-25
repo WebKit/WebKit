@@ -1,5 +1,12 @@
 2008-07-25  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Anders Carlsson.
+
+        * http/tests/misc/acid3.html: Updated test 77 from acidtests.org. Added
+        alert()ing the log when the score is less than 100.
+
+2008-07-25  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Brady Eidson.
 
         - add missing pixel results and move the render tree results under the platform directory
