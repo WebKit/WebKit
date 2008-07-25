@@ -85,7 +85,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 44
+%expect 46
 
 %left UNIMPORTANT_TOK
 
@@ -122,6 +122,8 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
 %token WEBKIT_VARIABLES_SYM
+%token WEBKIT_DEFINE_SYM
+%token VARIABLES_FOR
 %token WEBKIT_VARIABLES_DECLS_SYM
 %token ATKEYWORD
 
@@ -174,6 +176,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <rule> rule
 %type <rule> valid_rule
 %type <rule> variables_rule
+%type <mediaList> variables_media_list
 
 %type <string> maybe_ns_prefix
 
@@ -384,7 +387,21 @@ import:
 
 variables_rule:
     WEBKIT_VARIABLES_SYM maybe_space maybe_media_list '{' maybe_space variables_declaration_list '}' {
-        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3);
+        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3, true);
+    }
+    |
+    WEBKIT_DEFINE_SYM maybe_space variables_media_list '{' maybe_space variables_declaration_list '}' {
+        $$ = static_cast<CSSParser*>(parser)->createVariablesRule($3, false);
+    }
+    ;
+
+variables_media_list:
+    /* empty */ {
+        $$ = static_cast<CSSParser*>(parser)->createMediaList();
+    }
+    |
+    VARIABLES_FOR WHITESPACE media_list {
+        $$ = $3;
     }
     ;
 
@@ -1204,8 +1221,19 @@ term:
   | VARCALL maybe_space {
       $$.id = 0;
       $$.string = $1;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
   }
+  | '=' IDENT '=' maybe_space {
+      $$.id = 0;
+      $$.string = $2;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX;
+  }
+  | '$' IDENT maybe_space {
+      $$.id = 0;
+      $$.string = $2;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_DOLLAR_SYNTAX;
+  }
+
   | '%' maybe_space {} /* Handle width: %; */
   ;
 

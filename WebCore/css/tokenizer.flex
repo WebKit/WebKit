@@ -3,6 +3,7 @@
 %option 8bit
 %option stack
 %s mediaquery
+%s forkeyword
 
 h               [0-9a-fA-F]
 nonascii        [\200-\377]
@@ -41,6 +42,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 <mediaquery>"not"       {yyTok = MEDIA_NOT; return yyTok;}
 <mediaquery>"only"      {yyTok = MEDIA_ONLY; return yyTok;}
 <mediaquery>"and"       {yyTok = MEDIA_AND; return yyTok;}
+<forkeyword>"for"       {BEGIN(mediaquery); yyTok = VARIABLES_FOR; return yyTok; }
 
 {string}                {yyTok = STRING; return yyTok;}
 {ident}                 {yyTok = IDENT; return yyTok;}
@@ -60,7 +62,8 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "@-webkit-value"        {yyTok = WEBKIT_VALUE_SYM; return yyTok; }
 "@-webkit-mediaquery"   {BEGIN(mediaquery); yyTok = WEBKIT_MEDIAQUERY_SYM; return yyTok; }
 "@-webkit-selector"     {yyTok = WEBKIT_SELECTOR_SYM; return yyTok; }
-"@-webkit-variables"    {yyTok = WEBKIT_VARIABLES_SYM; return yyTok; }
+"@-webkit-variables"    {BEGIN(mediaquery); yyTok = WEBKIT_VARIABLES_SYM; return yyTok; }
+"@-webkit-define"       {BEGIN(forkeyword); yyTok = WEBKIT_DEFINE_SYM; return yyTok; }
 "@-webkit-variables-decls" { yyTok = WEBKIT_VARIABLES_DECLS_SYM; return yyTok; }
 
 "@"{ident}              {yyTok = ATKEYWORD; return yyTok; }

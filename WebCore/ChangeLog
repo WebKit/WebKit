@@ -1,3 +1,41 @@
+2008-07-24  David Hyatt  <hyatt@apple.com>
+
+        Add support for an alternate syntax for CSS variables.  Testers on www-style will be able to try out
+        both versions of the syntax in WebKit to help us make a decision regarding which one to go with.
+
+        Reviewed by Dan
+
+        Added fast/css/variables/alternate-syntax/ (duplicated all existing CSS variables tests)
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createVariablesRule):
+        (WebCore::CSSParser::checkForVariables):
+        * css/CSSParser.h:
+        * css/CSSParserValues.cpp:
+        (WebCore::CSSParserValue::isVariable):
+        (WebCore::CSSParserValueList::addValue):
+        (WebCore::CSSParserValueList::deleteValueAt):
+        (WebCore::CSSParserValue::createCSSValue):
+        * css/CSSParserValues.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        (WebCore::CSSPrimitiveValue::parserValue):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::):
+        (WebCore::CSSPrimitiveValue::isVariable):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        * css/CSSVariablesRule.cpp:
+        (WebCore::CSSVariablesRule::CSSVariablesRule):
+        (WebCore::CSSVariablesRule::cssText):
+        * css/CSSVariablesRule.h:
+        (WebCore::CSSVariablesRule::create):
+        * css/maketokenizer:
+        * css/tokenizer.flex:
+
 2008-07-25  Maxime Britto  <britto@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -55,6 +55,8 @@ struct CSSParserValue {
     };
     int unit;
     
+    bool isVariable() const;
+    
     PassRefPtr<CSSValue> createCSSValue();
 };
 

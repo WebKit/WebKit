@@ -72,8 +72,10 @@ public:
         // These next types are just used internally to allow us to translate back and forth from CSSPrimitiveValues to CSSParserValues.
         CSS_PARSER_OPERATOR = 103,
         CSS_PARSER_INTEGER = 104,
-        CSS_PARSER_VARIABLE = 105,
-        CSS_PARSER_HEXCOLOR = 106
+        CSS_PARSER_VARIABLE_FUNCTION_SYNTAX = 105,
+        CSS_PARSER_VARIABLE_EQUALS_SYNTAX = 106,
+        CSS_PARSER_VARIABLE_DOLLAR_SYNTAX = 107,
+        CSS_PARSER_HEXCOLOR = 108
     };
 
     static PassRefPtr<CSSPrimitiveValue> createIdentifier(int ident)
@@ -102,6 +104,8 @@ public:
     void cleanup();
 
     unsigned short primitiveType() const { return m_type; }
+
+    bool isVariable() const { return m_type == CSS_PARSER_VARIABLE_FUNCTION_SYNTAX || m_type == CSS_PARSER_VARIABLE_EQUALS_SYNTAX || m_type == CSS_PARSER_VARIABLE_DOLLAR_SYNTAX; }
 
     /*
      * computes a length in pixels out of the given CSSValue. Need the RenderStyle to get

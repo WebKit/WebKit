@@ -216,7 +216,9 @@ void CSSPrimitiveValue::cleanup()
         case CSS_STRING:
         case CSS_URI:
         case CSS_ATTR:
-        case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_VARIABLE_FUNCTION_SYNTAX:
+        case CSS_PARSER_VARIABLE_EQUALS_SYNTAX:
+        case CSS_PARSER_VARIABLE_DOLLAR_SYNTAX:
         case CSS_PARSER_HEXCOLOR:
             if (m_value.string)
                 m_value.string->deref();
@@ -512,7 +514,9 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-        case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_VARIABLE_FUNCTION_SYNTAX:
+        case CSS_PARSER_VARIABLE_EQUALS_SYNTAX:
+        case CSS_PARSER_VARIABLE_DOLLAR_SYNTAX:
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -530,7 +534,9 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-        case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_VARIABLE_FUNCTION_SYNTAX:
+        case CSS_PARSER_VARIABLE_EQUALS_SYNTAX:
+        case CSS_PARSER_VARIABLE_DOLLAR_SYNTAX:
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -745,10 +751,19 @@ String CSSPrimitiveValue::cssText() const
             }
             break;
 #endif
-        case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_VARIABLE_FUNCTION_SYNTAX:
             text = "-webkit-var(";
             text += m_value.string;
             text += ")";
+            break;
+        case CSS_PARSER_VARIABLE_EQUALS_SYNTAX:
+            text = "=";
+            text += m_value.string;
+            text += "=";
+            break;
+        case CSS_PARSER_VARIABLE_DOLLAR_SYNTAX:
+            text = "$";
+            text += m_value.string;
             break;
         case CSS_PARSER_OPERATOR:
             char c = static_cast<char>(m_value.ident);
@@ -789,7 +804,9 @@ CSSParserValue CSSPrimitiveValue::parserValue() const
             break;
         case CSS_STRING:
         case CSS_URI:
-        case CSS_PARSER_VARIABLE:
+        case CSS_PARSER_VARIABLE_FUNCTION_SYNTAX:
+        case CSS_PARSER_VARIABLE_EQUALS_SYNTAX:
+        case CSS_PARSER_VARIABLE_DOLLAR_SYNTAX:
         case CSS_PARSER_HEXCOLOR:
             value.string.characters = const_cast<UChar*>(m_value.string->characters());
             value.string.length = m_value.string->length();

@@ -159,7 +159,7 @@ namespace WebCore {
         CSSRuleList* createRuleList();
         CSSRule* createStyleRule(CSSSelector*);
         CSSRule* createFontFaceRule();
-        CSSRule* createVariablesRule(MediaList*);
+        CSSRule* createVariablesRule(MediaList*, bool variablesKeyword);
 
         MediaQueryExp* createFloatingMediaQueryExp(const AtomicString&, CSSParserValueList*);
         MediaQueryExp* sinkFloatingMediaQueryExp(MediaQueryExp*);

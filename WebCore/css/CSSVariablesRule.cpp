@@ -32,9 +32,10 @@
 
 namespace WebCore {
 
-CSSVariablesRule::CSSVariablesRule(CSSStyleSheet* parent, MediaList* mediaList)
+CSSVariablesRule::CSSVariablesRule(CSSStyleSheet* parent, MediaList* mediaList, bool variablesKeyword)
     : CSSRule(parent)
     , m_lstMedia(mediaList)
+    , m_variablesKeyword(variablesKeyword)
 {
 }
 
@@ -44,8 +45,10 @@ CSSVariablesRule::~CSSVariablesRule()
 
 String CSSVariablesRule::cssText() const
 {
-    String result = "@-webkit-variables ";
+    String result = m_variablesKeyword ? "@-webkit-variables " : "@-webkit-define ";
     if (m_lstMedia) {
+        if (!m_variablesKeyword)
+            result += "for ";
         result += m_lstMedia->mediaText();
         result += " ";
     }
