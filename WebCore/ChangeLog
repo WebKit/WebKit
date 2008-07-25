@@ -1,3 +1,19 @@
+2008-07-25  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/6084806> AX: REGRESSION: returned line number from TextArea is incorrect
+
+        Tests: accessibility/textarea-insertion-point-line-number.html
+               accessibility/textarea-line-for-index.html
+
+        * page/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::lineForPosition):
+        * page/AccessibilityObject.h:
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2008-07-25  Jacob Refstrup  <jacob.refstrup@hp.com>
 
         Reviewed by mitz.

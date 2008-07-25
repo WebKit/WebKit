@@ -1,0 +1,44 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <textarea name="area1" id="area1" rows="5" cols="40">
+line 1
+line 2
+line 3
+    </textarea>
+
+    <textarea name="area2" id="area2" rows="5" cols="40"></textarea>
+     
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var area1 = document.getElementById("area1");
+            area1.focus();
+
+            for (var k = 0; k < 3; k++) {
+                area1.selectionStart = (k*7);
+                area1.selectionEnd = (k*7);
+                var lineNumber = accessibilityController.focusedElement.insertionPointLineNumber;            
+                if (lineNumber == k) {
+                    result.innerText += "Test:" + k + ") Line Number: Pass [" + area1.selectionStart + "->" + lineNumber + "]\n";       
+                }
+                else {
+                    result.innerText += "Test:" + k + ") Line Number: Fail [" + area1.selectionStart + "->" + lineNumber + "]\n";       
+                }
+            }
+
+            var area2 = document.getElementById("area2");
+            area2.focus();
+            var lineNumber = accessibilityController.focusedElement.insertionPointLineNumber
+            result.innerText += "Not focused on text area line number: " + lineNumber + "\n";
+        }
+    </script>
+</body>
+</html>

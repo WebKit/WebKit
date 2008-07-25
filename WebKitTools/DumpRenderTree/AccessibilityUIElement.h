@@ -66,7 +66,11 @@ public:
     double intValue();
     double minValue();
     double maxValue();
+    int insertionPointLineNumber();
 
+    // parameterized attributes
+    int lineForIndex(int);
+    
 private:
     static JSClassRef getJSClass();
 

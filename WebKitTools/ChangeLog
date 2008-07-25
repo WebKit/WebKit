@@ -1,3 +1,19 @@
+2008-07-25  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Add support for AXLineForIndex and AXInsertionPointIndex through the 
+        accessibility controller
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (lineForIndexCallback):
+        (getInsertionPointLineNumberCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::insertionPointLineNumber):
+        (AccessibilityUIElement::lineForIndex):
+
 2008-07-25  Adam Roben  <aroben@apple.com>
 
         Try to fix the Windows build bot

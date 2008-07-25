@@ -50,6 +50,16 @@ static JSValueRef attributesOfChildrenCallback(JSContextRef context, JSObjectRef
     return JSValueMakeString(context, childrenDescription.get());
 }
 
+static JSValueRef lineForIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    int indexNumber = -1;
+    if (argumentCount == 1)
+        indexNumber = JSValueToNumber(context, arguments[0], exception);
+    
+    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, element->lineForIndex(indexNumber));
+}
+
 // Static Value Getters
 
 static JSValueRef getRoleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
@@ -103,6 +113,12 @@ static JSValueRef getMaxValueCallback(JSContextRef context, JSObjectRef thisObje
     return JSValueMakeNumber(context, element->maxValue());
 }
 
+static JSValueRef getInsertionPointLineNumberCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(context, element->insertionPointLineNumber());
+}
+
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
@@ -129,6 +145,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "intValue", getIntValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "minValue", getMinValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "maxValue", getMaxValueCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "insertionPointLineNumber", getInsertionPointLineNumberCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0, 0 }
     };
 
@@ -136,6 +153,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "allAttributes", allAttributesCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfLinkedUIElements", attributesOfLinkedUIElementsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributesOfChildren", attributesOfChildrenCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "lineForIndex", lineForIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

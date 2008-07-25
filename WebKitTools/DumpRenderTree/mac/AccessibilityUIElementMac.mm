@@ -241,3 +241,21 @@ double AccessibilityUIElement::maxValue()
         return [(NSNumber*)value doubleValue]; 
     return 0.0;
 }
+
+int AccessibilityUIElement::insertionPointLineNumber()
+{
+    id value = [m_element accessibilityAttributeValue:@"AXInsertionPointLineNumber"];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber *)value intValue]; 
+    return -1;
+}
+
+// parameterized attributes
+int AccessibilityUIElement::lineForIndex(int index)
+{
+    id value = [m_element accessibilityAttributeValue:@"AXLineForIndex" forParameter:[NSNumber numberWithInt:index]];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [(NSNumber *)value intValue]; 
+    return -1;
+}
+

@@ -820,7 +820,7 @@ AccessibilityObject* AccessibilityObject::accessibilityObjectForPosition(const V
     return obj->document()->axObjectCache()->get(obj);
 }
 
-unsigned AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
+int AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos) const
 {
     if (visiblePos.isNull())
         return 0;
@@ -833,9 +833,9 @@ unsigned AccessibilityObject::lineForPosition(const VisiblePosition& visiblePos)
     // FIXME: This only takes us to the top of the rootEditableElement, not the top of the
     // top document.
     while (currentVisiblePos.isNotNull() && !(inSameLine(currentVisiblePos, savedVisiblePos))) {
-        lineCount += 1;
+        ++lineCount;
         savedVisiblePos = currentVisiblePos;
-        VisiblePosition prevVisiblePos = previousLinePosition(visiblePos, 0);
+        VisiblePosition prevVisiblePos = previousLinePosition(currentVisiblePos, 0);
         currentVisiblePos = prevVisiblePos;
     }
 

@@ -1023,9 +1023,13 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         if ([attributeName isEqualToString: NSAccessibilityVisibleCharacterRangeAttribute])
             return m_object->isPasswordField() ? nil : [NSValue valueWithRange: NSMakeRange(0, m_object->textLength())];
         if ([attributeName isEqualToString: NSAccessibilityInsertionPointLineNumberAttribute]) {
-            if (m_object->isPasswordField() || m_object->selectionStart() != m_object->selectionEnd())
+            // if selectionEnd > 0, then there is selected text and this question should not be answered
+            if (m_object->isPasswordField() || m_object->selectionEnd() > 0)
                 return nil;
-            return [NSNumber numberWithInt:m_object->lineForPosition(m_object->visiblePositionForIndex(m_object->selectionStart(), true))];
+            int lineNumber = m_object->lineForPosition(m_object->visiblePositionForIndex(m_object->selectionStart(), true));
+            if (lineNumber < 0)
+                return nil;
+            return [NSNumber numberWithInt:lineNumber];
         }
     }
     
@@ -1608,10 +1612,14 @@ static RenderObject* rendererForView(NSView* view)
     }
 
     if (m_object->isTextControl()) {
-        if ([attribute isEqualToString: (NSString*)kAXLineForIndexParameterizedAttribute])
-            return [NSNumber numberWithUnsignedInt: m_object->doAXLineForIndex(intNumber)];
+        if ([attribute isEqualToString: (NSString *)kAXLineForIndexParameterizedAttribute]) {
+            int lineNumber = m_object->doAXLineForIndex(intNumber);
+            if (lineNumber < 0)
+                return nil;
+            return [NSNumber numberWithUnsignedInt:lineNumber];
+        }
 
-        if ([attribute isEqualToString: (NSString*)kAXRangeForLineParameterizedAttribute]) {
+        if ([attribute isEqualToString: (NSString *)kAXRangeForLineParameterizedAttribute]) {
             PlainTextRange textRange = m_object->doAXRangeForLine(intNumber);
             return [NSValue valueWithRange: NSMakeRange(textRange.start, textRange.length)];
         }
