@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\API&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -117,7 +117,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\API&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"
 				WarningLevel="4"
@@ -194,7 +194,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
+				AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\..\API&quot;;&quot;$(WebKitOutputDir)\include\WebCore\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitOutputDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
