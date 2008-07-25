@@ -1,3 +1,10 @@
+2008-07-25  Adam Roben  <aroben@apple.com>
+
+        Try to fix the Windows build bot
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Don't try to copy files
+        that don't exist for people outside of Apple.
+
 2008-07-18  Landry Breuil  <landry@openbsd.org>
 
         Bug 19975: [OpenBSD] Patches to enable build of WebKit
