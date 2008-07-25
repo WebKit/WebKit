@@ -42,7 +42,13 @@
 #include "SoftLinking.h"
 
 #include <CoreGraphics/CoreGraphics.h>
+
+// If you have an empty placeholder SafariThemeConstants.h, then include SafariTheme.h
+// This is a workaround until a version of WebKitSupportLibrary is released with an updated SafariThemeConstants.h 
 #include <SafariTheme/SafariThemeConstants.h>
+#ifndef SafariThemeConstants_h
+#include <SafariTheme/SafariTheme.h>
+#endif
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
