@@ -1436,19 +1436,18 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
     return !it.atEnd();
 }
 
-// FIXME: The entire concept of the skipWhitespace function is flawed, since we really need to be building
+// FIXME: The entire concept of the skipTrailingWhitespace function is flawed, since we really need to be building
 // line boxes even for containers that may ultimately collapse away.  Otherwise we'll never get positioned
 // elements quite right.  In other words, we need to build this function's work into the normal line
 // object iteration process.
-int RenderBlock::skipWhitespace(InlineIterator& iterator)
+// NB. this function will insert any floating elements that would otherwise
+// be skipped but it will not position them.
+void RenderBlock::skipTrailingWhitespace(InlineIterator& iterator)
 {
-    int availableWidth = lineWidth(m_height);
     while (!iterator.atEnd() && !requiresLineBox(iterator)) {
         RenderObject* object = iterator.obj;
         if (object->isFloating()) {
             insertFloatingObject(object);
-            positionNewFloats();
-            availableWidth = lineWidth(m_height);
         } else if (object->isPositioned()) {
             // FIXME: The math here is actually not really right.  It's a best-guess approximation that
             // will work for the common cases
@@ -1473,10 +1472,9 @@ int RenderBlock::skipWhitespace(InlineIterator& iterator)
         }
         iterator.increment();
     }
-    return availableWidth;
 }
 
-int RenderBlock::skipWhitespace(InlineBidiResolver& resolver)
+int RenderBlock::skipLeadingWhitespace(InlineBidiResolver& resolver)
 {
     int availableWidth = lineWidth(m_height);
     while (!resolver.position().atEnd() && !requiresLineBox(resolver.position())) {
@@ -1559,7 +1557,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
 
     bool appliedStartWidth = resolver.position().pos > 0;
 
-    int width = skipWhitespace(resolver);
+    int width = skipLeadingWhitespace(resolver);
 
     int w = 0;
     int tmpW = 0;
@@ -1878,7 +1876,7 @@ InlineIterator RenderBlock::findNextLineBreak(InlineBidiResolver& resolver, ECle
                                 lineWasTooWide = true;
                                 lBreak.obj = o;
                                 lBreak.pos = pos;
-                                skipWhitespace(lBreak);
+                                skipTrailingWhitespace(lBreak);
                             }
                         }
                         if (lineWasTooWide || w + tmpW > width) {

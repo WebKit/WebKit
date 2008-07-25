@@ -145,8 +145,8 @@ public:
     bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
                         RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
     bool generatesLineBoxesForInlineChild(RenderObject*);
-    int skipWhitespace(InlineIterator&);
-    int skipWhitespace(InlineBidiResolver&);
+    void skipTrailingWhitespace(InlineIterator&);
+    int skipLeadingWhitespace(InlineBidiResolver&);
     void fitBelowFloats(int widthToFit, int& availableWidth);
     InlineIterator findNextLineBreak(InlineBidiResolver&, EClear* clear = 0);
     RootInlineBox* constructLine(unsigned runCount, BidiRun* firstRun, BidiRun* lastRun, bool lastLine, RenderObject* endObject);

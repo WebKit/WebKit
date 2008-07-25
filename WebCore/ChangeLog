@@ -1,3 +1,23 @@
+2008-07-25  Jacob Refstrup  <jacob.refstrup@hp.com>
+
+        Reviewed by mitz.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=17906
+        <rdar://problem/5805741> white-space: pre-wrap or -webkit-line-break: after-white-space text can overlap float at end of line
+        
+        Test: fast/block/float/editable-text-overlapping-float.html
+
+        * rendering/RenderBlock.h:
+        * rendering/bidi.cpp:
+        (WebCore::RenderBlock::skipTrailingWhitespace):
+        - renamed to reflect usage and removed call to position floats; 
+          they only get added
+        (WebCore::RenderBlock::skipLeadingWhitespace):
+        - renamed to reflect usage
+        (WebCore::RenderBlock::findNextLineBreak):
+        - use skipTrailingWhitespace at end of line (as before but with new
+          name)
+
 2008-07-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

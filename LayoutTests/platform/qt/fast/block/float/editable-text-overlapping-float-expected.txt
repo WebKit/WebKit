@@ -1,0 +1,23 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x19
+        RenderText {#text} at (0,0) size 256x19
+          text run at (0,0) width 256: "Text should not overlap the blue square."
+      RenderBlock {DIV} at (0,33) size 406x200 [border: (3px solid #800000)]
+        RenderText {#text} at (5,5) size 399x76
+          text run at (5,5) width 377: "Fusce at ante. In hac habitasse platea dictumst. Maecenas "
+          text run at (5,24) width 385: "iaculis nonummy magna. Vivamus a tortor vitae enim ornare "
+          text run at (5,43) width 357: "consectetuer. Lorem ipsum dolor sit amet, consectetuer "
+          text run at (5,62) width 399: "adipiscing elit. Etiam et ipsum. Nam consectetuer mi eget velit. "
+        RenderBlock (floating) {DIV} at (345,81) size 56x56 [bgcolor=#ADD8E6]
+        RenderText {#text} at (404,62) size 396x133
+          text run at (404,62) width -3: " "
+          text run at (5,81) width 339: "Sed nec risus vitae felis auctor ultricies. Pellentesque "
+          text run at (5,100) width 334: "aliquet quam ac lorem. Duis interdum, elit in ultricies "
+          text run at (5,119) width 333: "auctor, erat pede sollicitudin libero, non ultrices odio "
+          text run at (5,138) width 385: "elit in augue. Ut egestas bibendum lectus. Class aptent taciti "
+          text run at (5,157) width 381: "sociosqu ad litora torquent per conubia nostra, per inceptos "
+          text run at (5,176) width 78: "hymenaeos."

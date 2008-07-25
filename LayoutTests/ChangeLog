@@ -1,3 +1,17 @@
+2008-07-25  Jacob Refstrup  <jacob.refstrup@hp.com>
+
+        Reviewed by mitz.
+        
+        - added test case for float being added in trailing whitespace
+          of an already full line (with pre-wrap or after-white-space set).
+          <rdar://problem/5805741> https://bugs.webkit.org/show_bug.cgi?id=17906
+
+        * fast/block/float/editable-text-overlapping-float.html: Added.
+        * platform/mac/fast/block/float/editable-text-overlapping-float-expected.checksum: Added.
+        * platform/mac/fast/block/float/editable-text-overlapping-float-expected.png: Added.
+        * platform/mac/fast/block/float/editable-text-overlapping-float-expected.txt: Added.
+        * platform/qt/fast/block/float/editable-text-overlapping-float-expected.txt: Added.
+
 2008-07-24  David Hyatt  <hyatt@apple.com>
 
         Add support for an alternate proposed syntax for CSS variables.  This alternate syntax will allow
