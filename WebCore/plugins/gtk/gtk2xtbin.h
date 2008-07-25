@@ -63,13 +63,13 @@ typedef struct _GtkXtBin GtkXtBin;
 typedef struct _GtkXtBinClass GtkXtBinClass;
 
 #define GTK_TYPE_XTBIN                  (gtk_xtbin_get_type ())
-#define GTK_XTBIN(obj)                  (GTK_CHECK_CAST ((obj), \
+#define GTK_XTBIN(obj)                  (G_TYPE_CHECK_INSTANCE_CAST ((obj), \
                                          GTK_TYPE_XTBIN, GtkXtBin))
-#define GTK_XTBIN_CLASS(klass)          (GTK_CHECK_CLASS_CAST ((klass), \
+#define GTK_XTBIN_CLASS(klass)          (G_TYPE_CHECK_CLASS_CAST ((klass), \
                                          GTK_TYPE_XTBIN, GtkXtBinClass))
-#define GTK_IS_XTBIN(obj)               (GTK_CHECK_TYPE ((obj), \
+#define GTK_IS_XTBIN(obj)               (G_TYPE_CHECK_INSTANCE_TYPE ((obj), \
                                          GTK_TYPE_XTBIN))
-#define GTK_IS_XTBIN_CLASS(klass)       (GTK_CHECK_CLASS_TYPE ((klass), \
+#define GTK_IS_XTBIN_CLASS(klass)       (G_TYPE_CHECK_CLASS_TYPE ((klass), \
                                          GTK_TYPE_XTBIN))
 typedef struct _XtClient XtClient;
 
