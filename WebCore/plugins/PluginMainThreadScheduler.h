@@ -30,7 +30,9 @@
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
-#include "npapi.h"
+
+typedef struct _NPP NPP_t;
+typedef NPP_t* NPP;
 
 namespace WebCore {
 
