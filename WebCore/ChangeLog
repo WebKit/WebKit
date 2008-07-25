@@ -1,3 +1,12 @@
+2008-07-25  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://6102387> "REGRESSION: horizontal scroll with the mouse wheel is inverted on some subframes"
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleWheelEvent): Inverted the scroll direction relative to the delta value (positive scrolls left,negative scrolls right)
+
 2008-07-25  Adele Peterson  <adele@apple.com>
 
         Another build fix.

@@ -1457,7 +1457,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
             float deltaX = e.isContinuous() ? e.continuousDeltaX() : e.deltaX();
             float deltaY = e.isContinuous() ? e.continuousDeltaY() : e.deltaY();
             
-            scrollAndAcceptEvent(deltaX, ScrollRight, ScrollLeft, e.isPageXScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().width());
+            scrollAndAcceptEvent(deltaX, ScrollLeft, ScrollRight, e.isPageXScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().width());
             scrollAndAcceptEvent(deltaY, ScrollUp, ScrollDown, e.isPageYScrollModeEnabled(), e, node, m_frame->page()->chrome()->windowRect().height());
         }
     }
