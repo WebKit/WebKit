@@ -1,3 +1,22 @@
+2008-07-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - Finish fixing https://bugs.webkit.org/show_bug.cgi?id=17097
+          <rdar://problem/5715471> CGFontRefs (and HFONTs on Windows) leak because FontCache grows without bound
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontDataCacheKeyTraits): Changed needsDestruction to true because FontPlatformData
+        instances hold references to the platform resources and release them in the destructor.
+        (WebCore::cTargetInactiveFontData): Added, replacing cInactiveFontDataPurgeRatio with the
+        number of inactive FontData instances to leave in the cache when automatically purging.
+        (WebCore::FontCache::getCachedFontData): Moved the code that checks if there are too many
+        inactive FontData instances and if so calls purgeInactiveFontData() from here...
+        (WebCore::FontCache::releaseFontData): ... to here.
+        (WebCore::FontCache::purgeInactiveFontData): Added code to also purge the platform font data
+        cache. All FontPlatformData instances that do not have entries in the font data cache are
+        removed, thus releasing the platform resources (such as HFONTs and NSFonts).
+
 2008-07-24  David Hyatt  <hyatt@apple.com>
 
         Add support for an alternate syntax for CSS variables.  Testers on www-style will be able to try out
