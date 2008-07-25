@@ -1,3 +1,21 @@
+2008-07-25  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Brady Eidson.
+
+        - add missing pixel results and move the render tree results under the platform directory
+
+        * platform/mac/svg/dom/SVGRectElement: Added.
+        * platform/mac/svg/dom/SVGRectElement/rect-modify-rx-expected.checksum: Added.
+        * platform/mac/svg/dom/SVGRectElement/rect-modify-rx-expected.png: Added.
+        * platform/mac/svg/dom/SVGRectElement/rect-modify-rx-expected.txt: Added.
+        * platform/mac/webarchive: Added.
+        * platform/mac/webarchive/loading: Added.
+        * platform/mac/webarchive/loading/cache-expired-subresource-expected.checksum: Added.
+        * platform/mac/webarchive/loading/cache-expired-subresource-expected.png: Added.
+        * platform/mac/webarchive/loading/cache-expired-subresource-expected.txt: Added.
+        * svg/dom/SVGRectElement/rect-modify-rx-expected.txt: Removed.
+        * webarchive/loading/cache-expired-subresource-expected.txt: Removed.
+
 2008-07-25  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
