@@ -60,4 +60,4 @@ namespace KJS{
 
 }
 
-#endif // !JSStaticScopeObject_h
+#endif // JSStaticScopeObject_h

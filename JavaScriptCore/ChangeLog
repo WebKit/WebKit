@@ -1,5 +1,13 @@
 2008-07-25  Oliver Hunt  <oliver@apple.com>
 
+        RS=Cameron Zwarich.
+
+        Whoops, forgot to save style correction.
+
+        * kjs/JSStaticScopeObject.h:
+
+2008-07-25  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Cameron Zwarich.
 
         Bug 19718: Named anonymous functions are slow accessing global variables
