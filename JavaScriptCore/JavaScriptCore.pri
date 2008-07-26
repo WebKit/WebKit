@@ -48,6 +48,7 @@ SOURCES += \
     kjs/InitializeThreading.cpp \
     kjs/JSGlobalData.cpp \
     kjs/JSGlobalObject.cpp \
+    kjs/JSStaticScopeObject.cpp \
     kjs/JSVariableObject.cpp \
     kjs/JSActivation.cpp \
     kjs/JSNotAnObject.cpp \

@@ -26,6 +26,7 @@
 #define JAVASCRIPTCORE_BUILDING_ALL_IN_ONE_FILE 1
 #include "config.h"
 
+#include "JSStaticScopeObject.cpp"
 #include "JSFunction.cpp"
 #include "IndexToNameMap.cpp"
 #include "Arguments.cpp"

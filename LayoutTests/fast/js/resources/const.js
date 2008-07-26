@@ -103,4 +103,8 @@ with (object) {
 shouldBe("object.inWith1", "'RIGHT'");
 shouldBe("inWith2", "'RIGHT'");
 
+shouldBe("(function(){ one = 2; return one; })()", "1")
+var f = function g() { g="FAIL"; return g; };
+shouldBe("f()", "f");
+
 var successfullyParsed = true;

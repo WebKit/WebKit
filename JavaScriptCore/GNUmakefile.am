@@ -116,6 +116,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSLock.cpp \
 	JavaScriptCore/kjs/JSNumberCell.cpp \
 	JavaScriptCore/kjs/JSObject.cpp \
+	JavaScriptCore/kjs/JSStaticScopeObject.cpp \
 	JavaScriptCore/kjs/JSString.cpp \
 	JavaScriptCore/kjs/JSValue.cpp \
 	JavaScriptCore/kjs/JSVariableObject.cpp \

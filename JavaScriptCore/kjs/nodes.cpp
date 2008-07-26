@@ -29,6 +29,7 @@
 #include "CodeGenerator.h"
 #include "ExecState.h"
 #include "JSGlobalObject.h"
+#include "JSStaticScopeObject.h"
 #include "Parser.h"
 #include "PropertyNameArray.h"
 #include "RegExpObject.h"
@@ -428,7 +429,7 @@ RegisterID* FunctionCallResolveNode::emitCode(CodeGenerator& generator, Register
 
     int index = 0;
     size_t depth = 0;
-    if (generator.findScopedProperty(m_ident, index, depth) && index != missingSymbolMarker()) {
+    if (generator.findScopedProperty(m_ident, index, depth, false) && index != missingSymbolMarker()) {
         RegisterID* func = generator.emitGetScopedVar(generator.newTemporary(), depth, index);
         return generator.emitCall(generator.finalDestination(dst), func, 0, m_args.get(), m_divot, m_startOffset, m_endOffset);
     }
@@ -486,7 +487,7 @@ RegisterID* PostfixResolveNode::emitCode(CodeGenerator& generator, RegisterID* d
 
     int index = 0;
     size_t depth = 0;
-    if (generator.findScopedProperty(m_ident, index, depth) && index != missingSymbolMarker()) {
+    if (generator.findScopedProperty(m_ident, index, depth, true) && index != missingSymbolMarker()) {
         RefPtr<RegisterID> value = generator.emitGetScopedVar(generator.newTemporary(), depth, index);
         RegisterID* oldValue;
         if (dst == ignoredResult()) {
@@ -669,7 +670,7 @@ RegisterID* PrefixResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
     int index = 0;
     size_t depth = 0;
-    if (generator.findScopedProperty(m_ident, index, depth) && index != missingSymbolMarker()) {
+    if (generator.findScopedProperty(m_ident, index, depth, false) && index != missingSymbolMarker()) {
         RefPtr<RegisterID> propDst = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index);
         emitPreIncOrDec(generator, propDst.get(), m_operator);
         generator.emitPutScopedVar(depth, index, propDst.get());
@@ -872,7 +873,7 @@ RegisterID* ReadModifyResolveNode::emitCode(CodeGenerator& generator, RegisterID
 
     int index = 0;
     size_t depth = 0;
-    if (generator.findScopedProperty(m_ident, index, depth) && index != missingSymbolMarker()) {
+    if (generator.findScopedProperty(m_ident, index, depth, true) && index != missingSymbolMarker()) {
         RefPtr<RegisterID> src1 = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index);
         RegisterID* src2 = generator.emitNode(m_right.get());
         RegisterID* result = emitReadModifyAssignment(generator, generator.finalDestination(dst, src1.get()), src1.get(), src2, m_operator);
@@ -903,7 +904,7 @@ RegisterID* AssignResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 
     int index = 0;
     size_t depth = 0;
-    if (generator.findScopedProperty(m_ident, index, depth) && index != missingSymbolMarker()) {
+    if (generator.findScopedProperty(m_ident, index, depth, true) && index != missingSymbolMarker()) {
         if (dst == ignoredResult())
             dst = 0;
         RegisterID* value = generator.emitNode(dst, m_right.get());
@@ -1839,8 +1840,7 @@ JSFunction* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeCha
      */
 
     if (!m_ident.isNull()) {
-        JSObject* functionScopeObject = new (exec) JSObject;
-        functionScopeObject->putDirect(m_ident, func, ReadOnly | DontDelete);
+        JSStaticScopeObject* functionScopeObject = new (exec) JSStaticScopeObject(m_ident, func, ReadOnly | DontDelete);
         func->scope().push(functionScopeObject);
     }
 

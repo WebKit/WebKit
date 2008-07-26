@@ -1,3 +1,39 @@
+2008-07-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 19718: Named anonymous functions are slow accessing global variables
+        <https://bugs.webkit.org/show_bug.cgi?id=19718>
+
+        To fix this we switch over to an activation-like scope object for
+        on which we attach the function name property, and add logic to 
+        prevent cross scope assignment to read only properties.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::findScopedProperty):
+        (KJS::CodeGenerator::emitResolve):
+        * VM/CodeGenerator.h:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSStaticScopeObject.cpp: Added.
+        (KJS::JSStaticScopeObject::putWithAttributes):
+        (KJS::JSStaticScopeObject::isDynamicScope):
+        (KJS::JSStaticScopeObject::~JSStaticScopeObject):
+        (KJS::JSStaticScopeObject::getOwnPropertySlot):
+        * kjs/JSStaticScopeObject.h: Added.
+        (KJS::JSStaticScopeObject::JSStaticScopeObjectData::JSStaticScopeObjectData):
+        (KJS::JSStaticScopeObject::JSStaticScopeObject):
+        * kjs/nodes.cpp:
+        (KJS::FunctionCallResolveNode::emitCode):
+        (KJS::PostfixResolveNode::emitCode):
+        (KJS::PrefixResolveNode::emitCode):
+        (KJS::ReadModifyResolveNode::emitCode):
+        (KJS::AssignResolveNode::emitCode):
+        (KJS::FuncExprNode::makeFunction):
+
 2008-07-25  kevino  <kevino@theolliviers.com>
 
         wx build fix for Win.

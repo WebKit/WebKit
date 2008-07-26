@@ -45,6 +45,8 @@ PASS one = 2 is 2
 PASS one is 1
 PASS object.inWith1 is 'RIGHT'
 PASS inWith2 is 'RIGHT'
+PASS (function(){ one = 2; return one; })() is 1
+PASS f() is f
 PASS successfullyParsed is true
 
 TEST COMPLETE
