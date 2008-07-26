@@ -1,5 +1,24 @@
 2008-07-26  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        - clean up expected layout test results
+
+        * fast/encoding/idn-security-expected.txt: Replaced with LayoutTests/platform/mac/fast/encoding/idn-security-expected.txt,
+        which is the version of the results for platforms that have "newer ICU".
+        * platform/mac-leopard/Skipped: Added svg/custom/stroke-width-click.svg.
+        * platform/mac-tiger/fast/encoding: Added.
+        * platform/mac-tiger/fast/encoding/idn-security-expected.txt: Copied from LayoutTests/fast/encoding/idn-security-expected.txt,
+        as Tiger still needs the "older ICU" version of the results.
+        * platform/mac/fast/encoding/idn-security-expected.txt: Removed.
+        * platform/mac/svg/custom/stroke-width-click-expected.checksum: Removed
+        pixel results for a text-only test.
+        * platform/mac/svg/custom/stroke-width-click-expected.png: Ditto.
+        * platform/mac/svg/custom/stroke-width-click-expected.txt: Removed
+        platform-specific results for a text-only test.
+
+2008-07-26  Dan Bernstein  <mitz@apple.com>
+
         Rubber-stamped by Nikolas Zimmermann.
 
         - move platform-independent results back to the generic location
