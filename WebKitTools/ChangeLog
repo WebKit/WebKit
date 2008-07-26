@@ -1,3 +1,10 @@
+2008-07-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        DRT/Gtk build fix for r35362
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::elementDoesAutoCompleteForElementWithId):
+
 2008-07-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

@@ -196,6 +196,12 @@ void LayoutTestController::setPopupBlockingEnabled(bool popupBlockingEnabled)
     // FIXME: implement
 }
 
+bool LayoutTestController::elementDoesAutoCompleteForElementWithId(JSStringRef id) 
+{
+    // FIXME: implement
+    return false;
+}
+
 void LayoutTestController::execCommand(JSStringRef name, JSStringRef value)
 {
     // FIXME: implement
