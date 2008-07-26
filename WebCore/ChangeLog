@@ -1,3 +1,15 @@
+2008-07-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - fix crash due to re-entering purgeInactiveFontData() now that it is
+          called by releaseFontData()
+
+        Not testable in DumpRenderTree
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::purgeInactiveFontData): Added a reentry guard.
+
 2008-07-25  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam

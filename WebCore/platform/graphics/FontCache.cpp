@@ -267,6 +267,12 @@ void FontCache::purgeInactiveFontData(int count)
     if (!gInactiveFontData)
         return;
 
+    static bool isPurging;  // Guard against reentry when e.g. a deleted FontData releases its small caps FontData.
+    if (isPurging)
+        return;
+
+    isPurging = true;
+
     ListHashSet<const SimpleFontData*>::iterator end = gInactiveFontData->end();
     ListHashSet<const SimpleFontData*>::iterator it = gInactiveFontData->begin();
     for (int i = 0; i < count && it != end; ++it, ++i) {
@@ -294,6 +300,8 @@ void FontCache::purgeInactiveFontData(int count)
     size_t keysToRemoveCount = keysToRemove.size();
     for (size_t i = 0; i < keysToRemoveCount; ++i)
         delete gFontPlatformDataCache->take(keysToRemove[i]);
+
+    isPurging = false;
 }
 
 size_t FontCache::fontDataCount()
