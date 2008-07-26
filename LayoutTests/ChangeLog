@@ -1,5 +1,20 @@
 2008-07-26  Dan Bernstein  <mitz@apple.com>
 
+        - move Leopard-only expected failure results back to mac-leopard; these
+          are covered by <rdar://problem/5539818> and <rdar://problem/5539820>.
+
+        * platform/mac-leopard/http: Added.
+        * platform/mac-leopard/http/tests: Added.
+        * platform/mac-leopard/http/tests/security: Copied from platform/mac/http/tests/security.
+        * platform/mac-leopard/security: Copied from platform/mac/security.
+        * platform/mac/http/tests/security: Removed.
+        * platform/mac/http/tests/security/dataURL: Removed.
+        * platform/mac/http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase-expected.txt: Removed.
+        * platform/mac/security: Removed.
+        * platform/mac/security/block-test-expected.txt: Removed.
+
+2008-07-26  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Oliver Hunt.
 
         - clean up expected layout test results
