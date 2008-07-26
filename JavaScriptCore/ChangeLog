@@ -1,3 +1,14 @@
+2008-07-25  kevino  <kevino@theolliviers.com>
+
+        wx build fix for Win.
+        
+        On wx/Win, including windows.h in Threading.h causes multiply-defined symbol errors
+        for libjpeg and wx, and also wx needs to include windows.h itself first for wx
+        includes to work right. So until we can find a better solution to this problem,
+        on wx, we work around the need to include windows.h here.
+
+        * wtf/Threading.h:
+
 2008-07-25  Adam Roben  <aroben@apple.com>
 
         Windows build fix
