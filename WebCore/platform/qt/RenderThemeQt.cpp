@@ -74,13 +74,20 @@ StylePainter::StylePainter(const RenderObject::PaintInfo& paintInfo)
         // so reset it manually
         oldBrush = painter->brush();
         painter->setBrush(Qt::NoBrush);
+
+        // painting the widget with anti-aliasing will make it blurry
+        // disable it here and restore it later
+        oldAntialiasing = painter->testRenderHint(QPainter::Antialiasing);
+        painter->setRenderHint(QPainter::Antialiasing, false);
     }
 }
 
 StylePainter::~StylePainter()
 {
-    if (painter)
+    if (painter) {
         painter->setBrush(oldBrush);
+        painter->setRenderHints(QPainter::Antialiasing, oldAntialiasing);
+    }
 }
 
 RenderTheme* theme()

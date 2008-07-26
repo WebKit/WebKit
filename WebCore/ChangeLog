@@ -1,3 +1,15 @@
+2008-07-25  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Switch off QPainter's anti aliasing when painting the widgets using QStyle
+        because otherwise the widgets will look blurry and not crisp.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::StylePainter::StylePainter):
+        (WebCore::StylePainter::~StylePainter):
+        * platform/qt/RenderThemeQt.h:
+
 2008-07-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
