@@ -1,3 +1,15 @@
+2008-07-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Copy the way Gtk detects jpeglib. Hinted by Wouter Bolsterlee.
+
+        [Gtk] Improve detection jpeglib
+        https://bugs.webkit.org/show_bug.cgi?id=17865
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-07-25  Simon Hausmann  <hausmann@webkit.org>
 
         Discussed with and rubber-stamped by Lars.

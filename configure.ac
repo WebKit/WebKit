@@ -137,8 +137,29 @@ AC_CHECK_HEADERS([pthread.h],
                  AC_MSG_ERROR([pthread support is required to build WebKit]))
 fi
 
-# libjpeg headers
-AC_CHECK_HEADERS([jpeglib.h])
+# check for libjpeg the way Gtk does it.
+AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
+                   jpeg_ok=yes, jpeg_ok=no
+                   AC_MSG_ERROR([JPEG library (libjpeg) not found]))
+if test "$jpeg_ok" = yes; then
+   AC_MSG_CHECKING([for jpeglib])
+   AC_TRY_CPP(
+[#include <stdio.h>
+#undef PACKAGE
+#undef VERSION
+#undef HAVE_STDLIB_H
+#include <jpeglib.h>],
+         jpeg_ok=yes,
+         jpeg_ok=no)
+   AC_MSG_RESULT($jpeg_ok)
+   if test "$jpeg_ok" = yes; then
+      JPEG_LIBS="-ljpeg"
+      # should we check for progressive JPEG like GTK+ as well?
+   else
+      AC_MSG_ERROR([JPEG library (libjpeg) not found])
+   fi
+fi
+AC_SUBST([JPEG_LIBS])
 
 # check for pkg-config
 AC_PATH_PROG(PKG_CONFIG, pkg-config, no)

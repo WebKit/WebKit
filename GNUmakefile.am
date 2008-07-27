@@ -216,8 +216,8 @@ libWebCore_la_LIBADD = \
 	$(GSTREAMER_LIBS) \
 	$(LIBXSLT_LIBS) \
 	$(HILDON_LIBS) \
-	-lpthread \
-	-ljpeg
+	$(JPEG_LIBS) \
+	-lpthread
 
 # WebKit
 webkitgtk_h_api :=
