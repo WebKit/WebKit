@@ -1,5 +1,14 @@
 2008-07-26  Robert Blaut  <webkit@blaut.biz>
 
+        Reviewed by Eric Seidel.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=16719>
+        Removed basic requirements for undetected version of WebKit.
+
+        * quality/reporting.html:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
         Reviewed by Adele Petersen.
 
         Fix for bug 7436: Truncated title on webkit DOM page.
