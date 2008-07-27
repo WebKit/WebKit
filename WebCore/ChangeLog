@@ -1,3 +1,20 @@
+2008-07-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20122
+        REGRESSION (r35075-r35110): Cannot enlarge images at Apple Store product page
+
+        Use strict parsing when in AlmostStrict mode.
+
+        Tests: fast/dom/SelectorAPI/dumpNodeList-almost-strict.html
+               fast/dom/SelectorAPI/id-fastpath-almost-strict.html
+               fast/dom/SelectorAPI/id-fastpath-strict.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+
 2008-07-25  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

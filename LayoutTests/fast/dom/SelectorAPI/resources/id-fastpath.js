@@ -10,10 +10,10 @@ document.body.appendChild(root);
 
 shouldBe("document.querySelector('div#testid')", "correctNode");
 shouldBe("document.querySelector('#testid')", "correctNode");
-shouldBeNull("document.querySelector('ul#testid')", "correctNode");
-shouldBeNull("document.querySelector('ul #testid')", "correctNode");
-shouldBeNull("document.querySelector('#testid[attr]')", "correctNode");
-shouldBeNull("document.querySelector('#testid:not(div)')", "correctNode");
+shouldBeNull("document.querySelector('ul#testid')");
+shouldBeNull("document.querySelector('ul #testid')");
+shouldBeNull("document.querySelector('#testid[attr]')");
+shouldBeNull("document.querySelector('#testid:not(div)')");
 
 shouldBe("document.querySelectorAll('div#testid').length", "1");
 shouldBe("document.querySelectorAll('div#testid').item(0)", "correctNode");

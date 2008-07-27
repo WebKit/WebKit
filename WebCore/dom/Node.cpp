@@ -1329,7 +1329,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSParser p(document()->inStrictMode());
+    CSSParser p(!document()->inCompatMode());
     if (resolver) {
         String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
         if (exec && exec->hadException())
@@ -1387,7 +1387,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver*
         ec = SYNTAX_ERR;
         return 0;
     }
-    CSSParser p(document()->inStrictMode());
+    CSSParser p(!document()->inCompatMode());
     if (resolver) {
         String defaultNamespace = resolver->lookupNamespaceURI(exec, String());
         if (exec && exec->hadException())
