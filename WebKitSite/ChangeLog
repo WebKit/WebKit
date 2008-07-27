@@ -1,5 +1,14 @@
 2008-07-26  Robert Blaut  <webkit@blaut.biz>
 
+        Reviewed by Eric Seidel.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=19712>
+        Corrected validation errors in main.css file.
+
+        * css/main.css:
+
+2008-07-26  Robert Blaut  <webkit@blaut.biz>
+
         Reviewed by Alexey Proskuryakov.
 
         Fix for bug: <https://bugs.webkit.org/show_bug.cgi?id=18186>
