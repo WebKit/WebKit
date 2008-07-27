@@ -123,7 +123,12 @@ void PluginView::setFrameGeometry(const IntRect& rect)
     updateWindow();
 
 #if PLATFORM(WIN_OS)
+    // On Windows, always call plugin to change geometry.
     setNPWindowRect(rect);
+#elif XP_UNIX
+    // On Unix, only call plugin if it's full-page.
+    if (m_mode == NP_FULL)
+        setNPWindowRect(rect);
 #endif
 }
 

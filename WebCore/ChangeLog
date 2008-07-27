@@ -1,3 +1,14 @@
+2008-07-26  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Simon Hausmann.
+
+        Bug 18938: [GTK] Plugins not resized
+        https://bugs.webkit.org/show_bug.cgi?id=18938
+
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::setFrameGeometry): When viewing a full-page
+        plugin in unix, geometry changes have to be passed to the plugin.
+
 2008-07-26  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Adam Roben.
