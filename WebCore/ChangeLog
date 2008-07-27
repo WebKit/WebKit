@@ -1,3 +1,21 @@
+2008-07-26  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Add console.time/timeEnd.
+        https://bugs.webkit.org/show_bug.cgi?id=19159
+
+        * manual-tests/inspector/console-time.html: Added. Test cases for console.time/timeEnd.
+        * page/Console.cpp:
+        (WebCore::Console::time): Added.
+        (WebCore::Console::timeEnd): Added.
+        * page/Console.h:
+        * page/Console.idl: Added console.time/timeEnd.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::startTiming): Added.
+        (WebCore::InspectorController::stopTiming): Added.
+        * page/InspectorController.h:
+
 2008-07-26  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Nikolas Zimmermann.

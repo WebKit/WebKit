@@ -2449,6 +2449,24 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     drawHighlightForBoxes(context, lineBoxRects, contentBox, paddingBox, borderBox, marginBox);
 }
 
+void InspectorController::startTiming(const UString& title)
+{
+    m_times.add(title, currentTime() * 1000);
+}
+
+bool InspectorController::stopTiming(const UString& title, double& elapsed)
+{
+    HashMap<String, double>::iterator it = m_times.find(title);
+    if (it == m_times.end())
+        return false;
+
+    double startTime = it->second;
+    m_times.remove(it);
+    
+    elapsed = currentTime() * 1000 - startTime;
+    return true;
+}
+
 bool InspectorController::handleException(JSContextRef context, JSValueRef exception, unsigned lineNumber) const
 {
     if (!exception)

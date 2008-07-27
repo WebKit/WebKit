@@ -38,6 +38,8 @@ module window {
 
         [Custom] void profile(in DOMString title);
         [Custom] void profileEnd();
+        void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
     };
 
 }

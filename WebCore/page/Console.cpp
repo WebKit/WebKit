@@ -267,6 +267,42 @@ void Console::profileEnd(ExecState* exec, const ArgList& args)
     Profiler::profiler()->stopProfiling(exec, title);
 }
 
+void Console::time(const UString& title)
+{
+    if (title.isNull())
+        return;
+    
+    if (!m_frame)
+        return;
+    
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    
+    page->inspectorController()->startTiming(title);
+}
+
+void Console::timeEnd(const UString& title)
+{
+    if (title.isNull())
+        return;
+    
+    if (!m_frame)
+        return;
+    
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+    
+    double elapsed;
+    if (!page->inspectorController()->stopTiming(title, elapsed))
+        return;
+    
+    String message = String(title) + String::format(": %.0fms", elapsed);
+    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19791> We should pass in the real sourceURL here so that the Inspector can show it.
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, String());
+}
+
 void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
 {
     if (Page* page = m_frame->page())
