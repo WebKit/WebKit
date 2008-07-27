@@ -48,6 +48,7 @@ media/video-seek-past-end-paused.html
 # <rdar://problem/5075790> Layout tests that depend on certain fonts don't match Mac results:
 #                          - Mac OS X and Windows do not have an Arabic font in common
 fast/text/international/bidi-AN-after-L.html
+fast/text/international/bidi-AN-after-empty-run.html
 fast/text/international/bidi-CS-after-AN.html
 fast/text/international/bidi-neutral-run.html
 fast/text/international/bidi-neutral-directionality-paragraph-start.html
@@ -331,6 +332,9 @@ fast/frames/viewsource-empty-attribute-value.html
 
 # <rdar://5848161> REGRESSION (r31438?): Crash beneath ResourceHandle::setDefersLoading (null CFURLConnection)
 fast/loader/simultaneous-reloads-assert.html
+
+# <rdar://problem/5539822> REGRESSION (Leopard): svg/custom/stroke-width-click.svg test failing
+svg/custom/stroke-width-click.svg
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################

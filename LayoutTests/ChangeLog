@@ -1,3 +1,14 @@
+2008-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        * platform/win/Skipped: Added fast/text/international/bidi-AN-after-empty-run.html
+        (<rdar://problem/5075790>) and svg/custom/stroke-width-click.svg
+        (<rdar://problem/5539822>).
+        * platform/win/svg/hixie/viewbox/preserveAspectRatio/001-expected.txt:
+        Updated results for the new way path data is dumped after
+        <http://trac.webkit.org/changeset/34117>.
+
 2008-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
