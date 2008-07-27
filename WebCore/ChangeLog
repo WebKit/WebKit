@@ -1,3 +1,21 @@
+2008-07-27  Anatoli Papirovski  <apapirovski@mac.com>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=14346
+        Modified the css parser:
+        - not to fail when closing braces are not found for 
+          a declaration at the end of the file
+        - not to accept "!important fail" as valid
+        - to keep accepting @import when it comes after invalid @ rules
+        - not to drop the whole @media block when there's an error before the 
+          closing brace
+        + some other minor css parsing revisions.
+
+        CSSGrammar.y tweaked by David Kilzer to fix Tiger builds.
+
+        * css/CSSGrammar.y:
+
 2008-07-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Eric Seidel.
