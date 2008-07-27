@@ -20,12 +20,14 @@ new_object dst(r)
 </p>
 <h2><code>new_array</code></h2>
 <p><b>Format: </b><code>
-new_array dst(r)
+new_array dst(r) firstArg(r) argCount(n)
 </code></p>
 <p>
 
-            Constructs a new empty Array instance using the original
+            Constructs a new Array instance using the original
             constructor, and puts the result in register dst.
+            The array will contain argCount elements with values
+            taken from registers starting at register firstArg.
  
 </p>
 <h2><code>new_regexp</code></h2>
@@ -214,7 +216,7 @@ mod dst(r) dividend(r) divisor(r)
 </code></p>
 <p>
 
-            Divides register dividend (converted to number) by 
+            Divides register dividend (converted to number) by
             register divisor (converted to number), and puts the
             remainder in register dst.
  
@@ -324,7 +326,7 @@ instanceof dst(r) value(r) constructor(r)
 
             Tests whether register value is an instance of register
             constructor, and puts the boolean result in register dst.
-           
+ 
             Raises an exception if register constructor is not an
             object.
  
@@ -347,7 +349,7 @@ in dst(r) property(r) base(r)
 
             Tests whether register base has a property named register
             property, and puts the boolean result in register dst.
-           
+ 
             Raises an exception if register constructor is not an
             object.
  
@@ -368,7 +370,7 @@ resolve dst(r) property(id)
 resolve_skip dst(r) property(id) skip(n)
 </code></p>
 <p>
-         
+
           Looks up the property named by identifier property in the
           scope chain skipping the top 'skip' levels, and writes the resulting
           value to register dst. If the property is not found, raises an exception.
@@ -379,7 +381,7 @@ resolve_skip dst(r) property(id) skip(n)
 get_scoped_var dst(r) index(n) skip(n)
 </code></p>
 <p>
-         
+
           Loads the contents of the index-th local from the scope skip nodes from
           the top of the scope chain, and places it in register dst
  
@@ -458,7 +460,7 @@ put_by_id base(r) property(id) value(r)
 
             Sets register value on register base as the property named
             by identifier property. Base is converted to object first.
-  
+ 
             Unlike many opcodes, this one does not write any output to
             the register file.
  
@@ -497,7 +499,7 @@ put_by_val base(r) property(r) value(r)
             by register property. Base is converted to object
             first. register property is nominally converted to string
             but numbers are treated more efficiently.
-  
+ 
             Unlike many opcodes, this one does not write any output to
             the register file.
  
@@ -522,13 +524,25 @@ put_by_index base(r) property(n) value(r)
 
             Sets register value on register base as the property named
             by the immediate number property. Base is converted to
-            object first. register property is nominally converted to
-            string but numbers are treated more efficiently.
-  
+            object first.
+ 
             Unlike many opcodes, this one does not write any output to
             the register file.
  
             This opcode is mainly used to initialize array literals.
+ 
+</p>
+<h2><code>loop</code></h2>
+<p><b>Format: </b><code>
+loop target(offset)
+</code></p>
+<p>
+         
+            Jumps unconditionally to offset target from the current
+            instruction.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
  
 </p>
 <h2><code>jmp</code></h2>
@@ -536,9 +550,22 @@ put_by_index base(r) property(n) value(r)
 jmp target(offset)
 </code></p>
 <p>
-         
+
             Jumps unconditionally to offset target from the current
             instruction.
+ 
+</p>
+<h2><code>loop_if_true</code></h2>
+<p><b>Format: </b><code>
+loop_if_true cond(r) target(offset)
+</code></p>
+<p>
+         
+            Jumps to offset target from the current instruction, if and
+            only if register cond converts to boolean as true.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
  
 </p>
 <h2><code>jtrue</code></h2>
@@ -546,7 +573,7 @@ jmp target(offset)
 jtrue cond(r) target(offset)
 </code></p>
 <p>
-         
+
             Jumps to offset target from the current instruction, if and
             only if register cond converts to boolean as true.
  
@@ -556,9 +583,87 @@ jtrue cond(r) target(offset)
 jfalse cond(r) target(offset)
 </code></p>
 <p>
-         
+
             Jumps to offset target from the current instruction, if and
             only if register cond converts to boolean as false.
+ 
+</p>
+<h2><code>loop_if_less</code></h2>
+<p><b>Format: </b><code>
+loop_if_less src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is true.
+ 
+            Additionally this loop instruction may terminate JS execution is
+            the JS timeout is reached.
+ 
+</p>
+<h2><code>jless</code></h2>
+<p><b>Format: </b><code>
+jless src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is true.
+ 
+</p>
+<h2><code>jnless</code></h2>
+<p><b>Format: </b><code>
+jnless src1(r) src2(r) target(offset)
+</code></p>
+<p>
+
+            Checks whether register src1 is less than register src2, as
+            with the ECMAScript '<' operator, and then jumps to offset
+            target from the current instruction, if and only if the 
+            result of the comparison is false.
+ 
+</p>
+<h2><code>switch_imm</code></h2>
+<p><b>Format: </b><code>
+switch_imm tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a range checked switch on the scrutinee value, using
+            the tableIndex-th immediate switch jump table.  If the scrutinee value
+            is an immediate number in the range covered by the referenced jump
+            table, and the value at jumpTable[scrutinee value] is non-zero, then
+            that value is used as the jump offset, otherwise defaultOffset is used.
+ 
+</p>
+<h2><code>switch_char</code></h2>
+<p><b>Format: </b><code>
+switch_char tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a range checked switch on the scrutinee value, using
+            the tableIndex-th character switch jump table.  If the scrutinee value
+            is a single character string in the range covered by the referenced jump
+            table, and the value at jumpTable[scrutinee value] is non-zero, then
+            that value is used as the jump offset, otherwise defaultOffset is used.
+ 
+</p>
+<h2><code>switch_string</code></h2>
+<p><b>Format: </b><code>
+switch_string tableIndex(n) defaultOffset(offset) scrutinee(r)
+</code></p>
+<p>
+
+            Performs a sparse hashmap based switch on the value in the scrutinee
+            register, using the tableIndex-th string switch jump table.  If the 
+            scrutinee value is a string that exists as a key in the referenced 
+            jump table, then the value associated with the string is used as the 
+            jump offset, otherwise defaultOffset is used.
  
 </p>
 <h2><code>new_func</code></h2>
@@ -597,7 +702,7 @@ call_eval dst(r) func(r) thisVal(r) firstArg(r) argCount(n)
             that global object's original global eval function, then
             perform the eval operator in local scope (interpreting
             the argument registers as for the "call"
-            opcode). Otherwise, act exacty as the "call" opcode.
+            opcode). Otherwise, act exactly as the "call" opcode would.
  
 </p>
 <h2><code>call</code></h2>
@@ -774,12 +879,12 @@ end result(r)
 put_getter base(r) property(id) function(r)
 </code></p>
 <p>
-         
+
             Sets register function on register base as the getter named
             by identifier property. Base and function are assumed to be
             objects as this op should only be used for getters defined
             in object literal form.
-          
+ 
             Unlike many opcodes, this one does not write any output to
             the register file.
  
@@ -789,12 +894,12 @@ put_getter base(r) property(id) function(r)
 put_setter base(r) property(id) function(r)
 </code></p>
 <p>
-         
+
             Sets register function on register base as the setter named
             by identifier property. Base and function are assumed to be
             objects as this op should only be used for setters defined
             in object literal form.
-          
+ 
             Unlike many opcodes, this one does not write any output to
             the register file.
  
@@ -804,7 +909,7 @@ put_setter base(r) property(id) function(r)
 jsr retAddrDst(r) target(offset)
 </code></p>
 <p>
-         
+
             Places the address of the next instruction into the retAddrDst
             register and jumps to offset target from the current instruction.
  
@@ -814,7 +919,7 @@ jsr retAddrDst(r) target(offset)
 sret retAddrSrc(r)
 </code></p>
 <p>
-         
+
           Jumps to the address stored in the retAddrSrc register. This
           differs from op_jmp because the target address is stored in a
           register, not as an immediate.
@@ -825,7 +930,7 @@ sret retAddrSrc(r)
 debug debugHookID(n) firstLine(n) lastLine(n)
 </code></p>
 <p>
-         
+
           Notifies the debugger of the current state of execution. This opcode
           is only generated while the debugger is attached.
  

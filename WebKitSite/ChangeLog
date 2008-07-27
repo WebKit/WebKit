@@ -1,3 +1,11 @@
+2008-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Update the Squirrelfish bytecode documentation.
+
+        * specs/squirrelfish-bytecode.html:
+
 2008-07-26  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Eric Seidel.
