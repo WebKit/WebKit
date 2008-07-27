@@ -170,7 +170,13 @@ WebInspector.SourceFrame.prototype = {
         if (!sourceRow)
             return;
         sourceRow.addStyleClass("webkit-highlighted-line");
-        setTimeout(function() { sourceRow.removeStyleClass("webkit-highlighted-line") }, 300);
+        setTimeout(function() {
+            var line = sourceRow.getElementsByClassName('webkit-line-content')[0];
+            line.addStyleClass("webkit-fade-out-effect");
+            // FIXME Replace this timeout when ontransitionend is implemented
+            sourceRow.removeStyleClass("webkit-highlighted-line");
+            setTimeout(function () { line.removeStyleClass("webkit-fade-out-effect"); }, 1000);
+        }, 300);
     },
 
     _loaded: function()
@@ -198,7 +204,8 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
         styleText += ".webkit-line-content { background-color: white; }\n";
-        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-transition-property: background-color; -webkit-transition-duration: 1s; }\n";
+        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); }\n";
+        styleText += ".webkit-fade-out-effect { -webkit-transition-property: background-color; -webkit-transition-duration: 1s; }"
         styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
         styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";
