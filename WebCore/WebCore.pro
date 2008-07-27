@@ -1587,7 +1587,7 @@ SOURCES += \
 
         # GENERATOR 5-C:
         svgnames_a.output = $$GENERATED_SOURCES_DIR/SVGNames.cpp
-        svgnames_a.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --namespace SVG --guardFactoryWith \"ENABLE(SVG)\" --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        svgnames_a.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/svg/svgtags.in --attrs $$PWD/svg/svgattrs.in --extraDefines \"$${DEFINES}\" --namespace SVG --guardFactoryWith \"ENABLE(SVG)\" --cppNamespace WebCore --namespaceURI 'http://www.w3.org/2000/svg' --factory --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
         svgnames_a.input = SVG_NAMES
         svgnames_a.dependency_type = TYPE_C
         svgnames_a.CONFIG = target_predeps
@@ -1617,7 +1617,7 @@ SOURCES += \
 
         # GENERATOR 5-D:
         xlinknames.output = $$GENERATED_SOURCES_DIR/XLinkNames.cpp
-        xlinknames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/svg/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+        xlinknames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/svg/xlinkattrs.in --namespace XLink --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xlink' --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
         xlinknames.input = XLINK_NAMES
         xlinknames.dependency_type = TYPE_C
         xlinknames.CONFIG = target_predeps
@@ -1662,7 +1662,7 @@ SOURCES += \
 idl.output = $$GENERATED_SOURCES_DIR/JS${QMAKE_FILE_BASE}.cpp
 idl.variable_out = GENERATED_SOURCES
 idl.input = IDL_BINDINGS
-idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputdir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
+idl.commands = perl -I$$PWD/bindings/scripts $$PWD/bindings/scripts/generate-bindings.pl --defines \"$${FEATURE_DEFINES_JAVASCRIPT}\" --generator JS --include $$PWD/dom --include $$PWD/html --include $$PWD/xml --include $$PWD/svg --outputDir $$GENERATED_SOURCES_DIR --preprocessor \"$${QMAKE_MOC} -E\" ${QMAKE_FILE_NAME}
 idl.CONFIG += target_predeps
 addExtraCompilerWithHeader(idl)
 
@@ -1703,7 +1703,7 @@ addExtraCompilerWithHeader(cssbison)
 
 # GENERATOR 5-A:
 htmlnames.output = $$GENERATED_SOURCES_DIR/HTMLNames.cpp
-htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+htmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --tags $$PWD/html/HTMLTagNames.in --attrs $$PWD/html/HTMLAttributeNames.in --extraDefines \"$${DEFINES}\" --namespace HTML --namespacePrefix xhtml --cppNamespace WebCore --namespaceURI 'http://www.w3.org/1999/xhtml' --wrapperFactory --attrsNullNamespace --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
 htmlnames.input = HTML_NAMES
 htmlnames.dependency_type = TYPE_C
 htmlnames.CONFIG = target_predeps
@@ -1721,7 +1721,7 @@ addExtraCompilerWithHeader(elementwrapperfactory)
 
 # GENERATOR 5-B:
 xmlnames.output = $$GENERATED_SOURCES_DIR/XMLNames.cpp
-xmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --preprocessor \"$${QMAKE_MOC} -E\" --output $$GENERATED_SOURCES_DIR
+xmlnames.commands = perl -I$$PWD/bindings/scripts $$PWD/dom/make_names.pl --attrs $$PWD/xml/xmlattrs.in --namespace XML --cppNamespace WebCore --namespaceURI 'http://www.w3.org/XML/1998/namespace' --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$GENERATED_SOURCES_DIR
 xmlnames.input = XML_NAMES
 xmlnames.dependency_type = TYPE_C
 xmlnames.CONFIG = target_predeps

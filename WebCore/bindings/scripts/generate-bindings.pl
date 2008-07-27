@@ -44,7 +44,7 @@ my $defines;
 my $preprocessor;
 
 GetOptions('include=s@' => \@idlDirectories,
-           'outputdir=s' => \$outputDirectory,
+           'outputDir=s' => \$outputDirectory,
            'generator=s' => \$generator,
            'defines=s' => \$defines,
            'preprocessor=s' => \$preprocessor);

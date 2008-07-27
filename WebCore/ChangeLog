@@ -1,3 +1,16 @@
+2008-07-27  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use --outputDir instead of --output when invoking make_names.pl
+        There's no option named "output" in make_names.pl
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * DerivedSources.make: Remove --output. Not necessary here.
+        * bindings/scripts/generate-bindings.pl: Rename --outputdir to
+          --outputDir for consistency with make_names.pl
+
 2008-07-26  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.
