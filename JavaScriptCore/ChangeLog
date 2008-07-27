@@ -1,3 +1,9 @@
+2008-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Speculative fix for the wx build.
+
+        * JavaScriptCoreSources.bkl:  Add JSStaticScopeObject.cpp to the list of source files.
+
 2008-07-25  Oliver Hunt  <oliver@apple.com>
 
         RS=Cameron Zwarich.

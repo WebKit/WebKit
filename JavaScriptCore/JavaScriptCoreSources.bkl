@@ -87,6 +87,7 @@ Source files for JSCore.
         kjs/JSNotAnObject.cpp
         kjs/JSNumberCell.cpp
         kjs/JSObject.cpp
+        kjs/JSStaticScopeObject.cpp
         kjs/JSString.cpp
         kjs/JSValue.cpp
         kjs/JSVariableObject.cpp
