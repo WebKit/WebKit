@@ -1,3 +1,10 @@
+2008-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.  Changes to accommodate newly named/signatured loading methods in WebCore.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::createFrame):
+
 2008-07-17  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Holger Freyther.
