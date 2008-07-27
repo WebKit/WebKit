@@ -143,7 +143,6 @@ public:
     void setAccept(const String& accept) { m_accept = accept; }
 
     bool errorOccurred() const { return m_errorOccurred; }
-    bool treatAsLocal() const { return m_shouldTreatAsLocal; }
     bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
     
     virtual void destroyDecodedData() {};
@@ -201,8 +200,6 @@ private:
     
     CachedResource* m_nextInLiveResourcesList;
     CachedResource* m_prevInLiveResourcesList;
-
-    bool m_shouldTreatAsLocal;
 
     DocLoader* m_docLoader; // only non-0 for resources that are not in the cache
 };

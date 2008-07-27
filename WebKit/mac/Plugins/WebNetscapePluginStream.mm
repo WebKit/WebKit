@@ -72,7 +72,7 @@ using namespace WebCore;
 {   
     WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePlugin->ndata;
 
-    if (!core([view webFrame])->loader()->canLoad([theRequest URL], core([view webFrame])->document()))
+    if (!core([view webFrame])->loader()->canLoad([theRequest URL], String(), core([view webFrame])->document()))
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]

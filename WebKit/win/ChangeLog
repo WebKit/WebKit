@@ -1,3 +1,14 @@
+2008-07-26  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Geoff Garen.
+
+        Changes to accommodate newly named/signatured loading methods in WebCore.
+
+        * WebCoreSupport/WebContextMenuClient.cpp:
+        (WebContextMenuClient::searchWithGoogle):
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::loadURLIntoChild):
+
 2008-07-25  Adam Roben  <aroben@apple.com>
 
         Try to fix the Windows build bot

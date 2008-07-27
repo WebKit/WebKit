@@ -1,3 +1,16 @@
+2008-07-26  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        Reviewed by Geoff Garen.
+
+        Changes to accommodate newly named/signatured loading methods in WebCore.
+
+        * Plugins/WebNetscapePluginStream.mm:
+        (-[WebNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        * Plugins/WebPluginContainerCheck.mm:
+        (-[WebPluginContainerCheck _isForbiddenFileLoad]):
+        * WebView/WebPDFView.mm:
+        (-[WebPDFView PDFViewWillClickOnLink:withURL:]):
+
 2008-07-21  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

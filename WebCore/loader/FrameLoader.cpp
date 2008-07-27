@@ -319,7 +319,7 @@ Frame* FrameLoader::createWindow(FrameLoader* frameLoaderForFrameLookup, const F
         Frame* frame = frameLoaderForFrameLookup->frame()->tree()->find(request.frameName());
         if (frame && shouldAllowNavigation(frame)) {
             if (!request.resourceRequest().url().isEmpty())
-                frame->loader()->load(request, false, true, 0, 0, HashMap<String, String>());
+                frame->loader()->loadFrameRequestWithFormAndValues(request, false, 0, 0, HashMap<String, String>());
             if (Page* page = frame->page())
                 page->chrome()->focus();
             created = false;
@@ -381,6 +381,7 @@ void FrameLoader::changeLocation(const String& url, const String& referrer, bool
     changeLocation(completeURL(url), referrer, lockHistory, userGesture);
 }
 
+
 void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool lockHistory, bool userGesture)
 {
     ResourceRequestCachePolicy policy = (m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)
@@ -393,6 +394,15 @@ void FrameLoader::changeLocation(const KURL& url, const String& referrer, bool l
     urlSelected(request, "_self", 0, lockHistory, userGesture);
 }
 
+void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event, bool lockHistory)
+{
+    FrameLoadRequest copy = request;
+    if (copy.resourceRequest().httpReferrer().isEmpty())
+        copy.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
+
+    loadFrameRequestWithFormAndValues(copy, lockHistory, event, 0, HashMap<String, String>());
+}
+    
 void FrameLoader::urlSelected(const ResourceRequest& request, const String& _target, Event* triggeringEvent, bool lockHistory, bool userGesture)
 {
     if (executeIfJavaScriptURL(request.url(), userGesture, false))
@@ -404,10 +414,7 @@ void FrameLoader::urlSelected(const ResourceRequest& request, const String& _tar
 
     FrameLoadRequest frameRequest(request, target);
 
-    if (frameRequest.resourceRequest().httpReferrer().isEmpty())
-        frameRequest.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
-
-    urlSelected(frameRequest, triggeringEvent, lockHistory, userGesture);
+    urlSelected(frameRequest, triggeringEvent, lockHistory);
 }
 
 bool FrameLoader::requestFrame(HTMLFrameOwnerElement* ownerElement, const String& urlString, const AtomicString& frameName)
@@ -1558,7 +1565,7 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
     if (subframeArchive)
         childFrame->loader()->loadArchive(subframeArchive.release());
     else
-        childFrame->loader()->load(workingURL, referer, childLoadType, String(), 0, 0);
+        childFrame->loader()->loadURL(workingURL, referer, String(), childLoadType, 0, 0);
 }
 
 void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
@@ -1722,7 +1729,7 @@ bool FrameLoader::loadPlugin(RenderPart* renderer, const KURL& url, const String
         if (renderer->node() && renderer->node()->isElementNode())
             pluginElement = static_cast<Element*>(renderer->node());
 
-        if (!canLoad(url, frame()->document())) {
+        if (!canLoad(url, String(), frame()->document())) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return false;
         }
@@ -2041,14 +2048,9 @@ void FrameLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     activeDocumentLoader()->setupForReplaceByMIMEType(newMIMEType);
 }
 
-void FrameLoader::load(const KURL& url, Event* event)
+void FrameLoader::loadFrameRequestWithFormState(const FrameLoadRequest& request, bool lockHistory, Event* event, PassRefPtr<FormState> prpFormState)
 {
-    load(ResourceRequest(url), false, true, event, 0, HashMap<String, String>());
-}
-
-void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool userGesture, Event* event,
-    HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
-{
+    RefPtr<FormState> formState = prpFormState;
     KURL url = request.resourceRequest().url();
  
     String referrer;
@@ -2060,7 +2062,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
  
     ASSERT(frame()->document());
     if (url.protocolIs("file")) {
-        if (!canLoad(url, frame()->document()) && !canLoad(url, referrer)) {
+        if (!canLoad(url, String(), frame()->document()) && !canLoad(url, referrer)) {
             FrameLoader::reportLocalLoadFailed(m_frame, url.string());
             return;
         }
@@ -2070,7 +2072,7 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         referrer = String();
     
     Frame* targetFrame = findFrameForNavigation(request.frameName());
-        
+
     if (request.resourceRequest().httpMethod() != "POST") {
         FrameLoadType loadType;
         if (request.resourceRequest().cachePolicy() == ReloadIgnoringCacheData)
@@ -2080,24 +2082,30 @@ void FrameLoader::load(const FrameLoadRequest& request, bool lockHistory, bool u
         else
             loadType = FrameLoadTypeStandard;    
     
-        RefPtr<FormState> formState;
-        if (submitForm && !formValues.isEmpty())
-            formState = FormState::create(submitForm, formValues, m_frame);
-        
-        load(request.resourceRequest().url(), referrer, loadType, 
-            request.frameName(), event, formState.release());
+        loadURL(request.resourceRequest().url(), referrer, request.frameName(), loadType, 
+            event, formState.release());
     } else
-        post(request.resourceRequest().url(), referrer, request.frameName(), 
-            request.resourceRequest().httpBody(), request.resourceRequest().httpContentType(), event, submitForm, formValues);
+        loadPostRequest(request.resourceRequest(), referrer, request.frameName(), event, formState.release());
 
     if (targetFrame && targetFrame != m_frame)
         if (Page* page = targetFrame->page())
             page->chrome()->focus();
 }
-
-void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType newLoadType,
-    const String& frameName, Event* event, PassRefPtr<FormState> formState)
+        
+void FrameLoader::loadFrameRequestWithFormAndValues(const FrameLoadRequest& request, bool lockHistory, Event* event,
+    HTMLFormElement* submitForm, const HashMap<String, String>& formValues)
 {
+    RefPtr<FormState> formState;
+    if (submitForm && !formValues.isEmpty())
+        formState = FormState::create(submitForm, formValues, m_frame);
+    
+    loadFrameRequestWithFormState(request, lockHistory, event, formState.release());        
+}
+
+void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const String& frameName, FrameLoadType newLoadType,
+    Event* event, PassRefPtr<FormState> prpFormState)
+{
+    RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
     
     ResourceRequest request(newURL);
@@ -2113,7 +2121,7 @@ void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType
 
     if (!frameName.isEmpty()) {
         if (Frame* targetFrame = findFrameForNavigation(frameName))
-            targetFrame->loader()->load(newURL, referrer, newLoadType, String(), event, formState);
+            targetFrame->loader()->loadURL(newURL, referrer, String(), newLoadType, event, formState);
         else
             checkNewWindowPolicy(action, request, formState, frameName);
         return;
@@ -2134,7 +2142,7 @@ void FrameLoader::load(const KURL& newURL, const String& referrer, FrameLoadType
     } else {
         // must grab this now, since this load may stop the previous load and clear this flag
         bool isRedirect = m_quickRedirectComing;
-        load(request, action, newLoadType, formState);
+        loadWithNavigationAction(request, action, newLoadType, formState);
         if (isRedirect) {
             m_quickRedirectComing = false;
             if (m_provisionalDocumentLoader)
@@ -2178,7 +2186,7 @@ void FrameLoader::load(const ResourceRequest& request, const String& frameName)
     checkNewWindowPolicy(NavigationAction(request.url(), NavigationTypeOther), request, 0, frameName);
 }
 
-void FrameLoader::load(const ResourceRequest& request, const NavigationAction& action, FrameLoadType type, PassRefPtr<FormState> formState)
+void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, const NavigationAction& action, FrameLoadType type, PassRefPtr<FormState> formState)
 {
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(request, SubstituteData());
 
@@ -2186,7 +2194,7 @@ void FrameLoader::load(const ResourceRequest& request, const NavigationAction& a
     if (m_documentLoader)
         loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
 
-    load(loader.get(), type, formState);
+    loadWithDocumentLoader(loader.get(), type, formState);
 }
 
 void FrameLoader::load(DocumentLoader* newDocumentLoader)
@@ -2205,17 +2213,21 @@ void FrameLoader::load(DocumentLoader* newDocumentLoader)
         newDocumentLoader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
     // When we loading alternate content for an unreachable URL that we're
-    // visiting in the b/f list, we treat it as a reload so the b/f list 
+    // visiting in the history list, we treat it as a reload so the history list 
     // is appropriately maintained.
+    //
+    // FIXME: This seems like a dangerous overloading of the meaning of "FrameLoadTypeReload" ...
+    // shouldn't a more explicit type of reload be defined, that means roughly 
+    // "load without affecting history" ? 
     if (shouldReloadToHandleUnreachableURL(newDocumentLoader)) {
         ASSERT(type == FrameLoadTypeStandard);
         type = FrameLoadTypeReload;
     }
 
-    load(newDocumentLoader, type, 0);
+    loadWithDocumentLoader(newDocumentLoader, type, nil);
 }
 
-void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> formState)
+void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, PassRefPtr<FormState> prpFormState)
 {
     ASSERT(m_client->hasWebView());
 
@@ -2225,8 +2237,9 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
     ASSERT(m_client->hasFrameView());
 
     m_policyLoadType = type;
-
+    RefPtr<FormState> formState = prpFormState;
     bool isFormSubmission = formState;
+
     const KURL& newURL = loader->request().url();
 
     if (shouldScrollToAnchor(isFormSubmission, m_policyLoadType, newURL)) {
@@ -2249,29 +2262,20 @@ void FrameLoader::load(DocumentLoader* loader, FrameLoadType type, PassRefPtr<Fo
     }
 }
 
-// FIXME: It would be nice if we could collapse these into one or two functions.
-bool FrameLoader::canLoad(const KURL& url, const String& referrer)
+bool FrameLoader::canLoad(const KURL& url, const String& referrer, const Document* doc)
 {
+    // We can always load any URL that isn't considered local (e.g. http URLs)
     if (!shouldTreatURLAsLocal(url.string()))
         return true;
 
-    return shouldTreatURLAsLocal(referrer);
-}
-
-bool FrameLoader::canLoad(const KURL& url, const Document* doc)
-{
-    if (!shouldTreatURLAsLocal(url.string()))
-        return true;
-
-    return doc && doc->securityOrigin()->canLoadLocalResources();
-}
-
-bool FrameLoader::canLoad(const CachedResource& resource, const Document* doc)
-{
-    if (!resource.treatAsLocal())
-        return true;
-
-    return doc && doc->securityOrigin()->canLoadLocalResources();
+    // If we were provided a document, we let its local file policy dictate the result,
+    // otherwise we allow local loads only if the supplied referrer is also local.
+    if (doc)
+        return doc->securityOrigin()->canLoadLocalResources();
+    else if (!referrer.isEmpty())
+        return shouldTreatURLAsLocal(referrer);
+    else
+        return false;
 }
 
 void FrameLoader::reportLocalLoadFailed(Frame* frame, const String& url)
@@ -2396,7 +2400,7 @@ void FrameLoader::reloadAllowingStaleData(const String& encoding)
 
     loader->setOverrideEncoding(encoding);
 
-    load(loader.get(), FrameLoadTypeReloadAllowingStaleData, 0);
+    loadWithDocumentLoader(loader.get(), FrameLoadTypeReloadAllowingStaleData, 0);
 }
 
 void FrameLoader::reload()
@@ -2416,6 +2420,8 @@ void FrameLoader::reload()
     if (!unreachableURL.isEmpty())
         initialRequest = ResourceRequest(unreachableURL);
     
+    // Create a new document loader for the reload, this will become m_documentLoader eventually,
+    // but first it has to be the "policy" document loader, and then the "provisional" document loader.
     RefPtr<DocumentLoader> loader = m_client->createDocumentLoader(initialRequest, SubstituteData());
 
     ResourceRequest& request = loader->request();
@@ -2429,7 +2435,7 @@ void FrameLoader::reload()
 
     loader->setOverrideEncoding(m_documentLoader->overrideEncoding());
     
-    load(loader.get(), FrameLoadTypeReload, 0);
+    loadWithDocumentLoader(loader.get(), FrameLoadTypeReload, 0);
 }
 
 bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
@@ -3138,6 +3144,7 @@ void FrameLoader::continueLoadAfterWillSubmitForm(PolicyAction)
     if (!m_provisionalDocumentLoader)
         return;
 
+    // DocumentLoader calls back to our prepareForLoadStart
     m_provisionalDocumentLoader->prepareForLoadStart();
     
     // The load might be cancelled inside of prepareForLoadStart(), nulling out the m_provisionalDocumentLoader, 
@@ -3263,20 +3270,11 @@ void FrameLoader::submitForm(const FrameLoadRequest& request, Event* event)
     }
 
     // FIXME: We should probably call userGestureHint() to tell whether this form submission was the result of a user gesture.
-    load(request, false, true, event, m_formAboutToBeSubmitted.get(), m_formValuesAboutToBeSubmitted);
+    loadFrameRequestWithFormAndValues(request, false, event, m_formAboutToBeSubmitted.get(), m_formValuesAboutToBeSubmitted);
 
     clearRecordedFormValues();
 }
 
-void FrameLoader::urlSelected(const FrameLoadRequest& request, Event* event, bool lockHistory, bool userGesture)
-{
-    FrameLoadRequest copy = request;
-    if (copy.resourceRequest().httpReferrer().isEmpty())
-        copy.resourceRequest().setHTTPReferrer(m_outgoingReferrer);
-
-    load(copy, lockHistory, userGesture, event, 0, HashMap<String, String>());
-}
-    
 String FrameLoader::userAgent(const KURL& url) const
 {
     return m_client->userAgent(url);
@@ -3364,37 +3362,43 @@ void FrameLoader::committedLoad(DocumentLoader* loader, const char* data, int le
     m_client->committedLoad(loader, data, length);
 }
 
-void FrameLoader::post(const KURL& url, const String& referrer, const String& frameName, PassRefPtr<FormData> formData, 
-    const String& contentType, Event* event, HTMLFormElement* form, const HashMap<String, String>& formValues)
+void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String& referrer, const String& frameName,
+    Event* event, PassRefPtr<FormState> prpFormState)
 {
+    RefPtr<FormState> formState = prpFormState;
+
     // When posting, use the NSURLRequestReloadIgnoringCacheData load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
 
     // FIXME: Where's the code that implements what the comment above says?
 
-    ResourceRequest request(url);
-    addExtraFieldsToRequest(request, true, true);
+    // Previously when this method was reached, the original FrameLoadRequest had been deconstructed to build a 
+    // bunch of parameters that would come in here and then be built back up to a ResourceRequest.  In case
+    // any caller depends on the immutability of the original ResourceRequest, I'm rebuilding a ResourceRequest
+    // from scratch as it did all along.
+    const KURL& url = inRequest.url();
+    RefPtr<FormData> formData = inRequest.httpBody();
+    const String& contentType = inRequest.httpContentType();
+
+    ResourceRequest workingResourceRequest(url);    
+    addExtraFieldsToRequest(workingResourceRequest, true, true);
 
     if (!referrer.isEmpty())
-        request.setHTTPReferrer(referrer);
-    request.setHTTPMethod("POST");
-    request.setHTTPBody(formData);
-    request.setHTTPContentType(contentType);
+        workingResourceRequest.setHTTPReferrer(referrer);
+    workingResourceRequest.setHTTPMethod("POST");
+    workingResourceRequest.setHTTPBody(formData);
+    workingResourceRequest.setHTTPContentType(contentType);
 
     NavigationAction action(url, FrameLoadTypeStandard, true, event);
 
-    RefPtr<FormState> formState;
-    if (form && !formValues.isEmpty())
-        formState = FormState::create(form, formValues, m_frame);
-
     if (!frameName.isEmpty()) {
         if (Frame* targetFrame = findFrameForNavigation(frameName))
-            targetFrame->loader()->load(request, action, FrameLoadTypeStandard, formState.release());
+            targetFrame->loader()->loadWithNavigationAction(workingResourceRequest, action, FrameLoadTypeStandard, formState.release());
         else
-            checkNewWindowPolicy(action, request, formState.release(), frameName);
+            checkNewWindowPolicy(action, workingResourceRequest, formState.release(), frameName);
     } else
-        load(request, action, FrameLoadTypeStandard, formState.release());
+        loadWithNavigationAction(workingResourceRequest, action, FrameLoadTypeStandard, formState.release());    
 }
 
 bool FrameLoader::isReloading() const
@@ -3815,7 +3819,7 @@ void FrameLoader::continueLoadAfterNewWindowPolicy(const ResourceRequest& reques
     mainFrame->loader()->setOpenedByDOM();
     mainFrame->loader()->m_client->dispatchShow();
     mainFrame->loader()->setOpener(frame.get());
-    mainFrame->loader()->load(request, NavigationAction(), FrameLoadTypeStandard, formState);
+    mainFrame->loader()->loadWithNavigationAction(request, NavigationAction(), FrameLoadTypeStandard, formState);
 }
 
 void FrameLoader::sendRemainingDelegateMessages(unsigned long identifier, const ResourceResponse& response, int length, const ResourceError& error)
@@ -4224,7 +4228,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
             // WebKitBackForwardCacheExpirationIntervalKey in WebKit.
             // Or we should remove WebKitBackForwardCacheExpirationIntervalKey.
             if (interval <= 1800) {
-                load(cachedPage->documentLoader(), loadType, 0);   
+                loadWithDocumentLoader(cachedPage->documentLoader(), loadType, 0);   
                 inPageCache = true;
             } else {
                 LOG(PageCache, "Not restoring page for %s from back/forward cache because cache entry has expired", m_provisionalHistoryItem->url().string().ascii().data());
@@ -4287,7 +4291,7 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
                 action = NavigationAction(itemOriginalURL, loadType, false);
             }
 
-            load(request, action, loadType, 0);
+            loadWithNavigationAction(request, action, loadType, 0);
         }
     }
 }

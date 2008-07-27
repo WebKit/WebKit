@@ -66,7 +66,6 @@ CachedResource::CachedResource(const String& url, Type type)
     m_lruIndex = 0;
 #endif
     m_errorOccurred = false;
-    m_shouldTreatAsLocal = FrameLoader::shouldTreatURLAsLocal(m_url);
 }
 
 CachedResource::~CachedResource()

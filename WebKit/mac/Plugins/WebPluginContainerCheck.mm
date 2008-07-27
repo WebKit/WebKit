@@ -94,7 +94,7 @@ using namespace WebCore;
 {
    Frame* coreFrame = core([_controller webFrame]);
    ASSERT(coreFrame);
-   if (!coreFrame->loader()->canLoad([_request URL], coreFrame->document())) {
+   if (!coreFrame->loader()->canLoad([_request URL], String(), coreFrame->document())) {
        [self _continueWithPolicy:PolicyIgnore];
        return YES;
    }

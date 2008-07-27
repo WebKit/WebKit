@@ -101,14 +101,14 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     if (resource) {
         if (isPreload && !resource->isPreloaded())
             return 0;
-        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(*resource, docLoader->doc())) {
+        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
             Document* doc = docLoader->doc();
             if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->frame(), resource->url());
             return 0;
         }
     } else {
-        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, docLoader->doc())) {
+        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
             Document* doc = docLoader->doc();
             if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->frame(), url.string());

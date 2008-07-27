@@ -1,3 +1,59 @@
+2008-07-26  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        Reviewed by Geoff Garen.
+
+        Revised the FrameLoader class to clean up a variety of load methods, and hopefully
+        move things closer to integrating into a smaller set of load methods. To this
+        end, I renamed many of the overloaded load() methods to have more meaningful and 
+        easier to search names.  I added comments to the header file to provide clues as 
+        to how many of the load methods are being used, and how they fit into the loading 
+        process. I suspect that the renamed methods and comments indicating their present 
+        usage will facilitate easier cleanup by myself and others as inspiration strikes.
+
+        Updated clients of FrameLoader where necessary to adapt to the new method names and signatures.
+
+        Combined the 3 canLoad() methods into a single canLoad which expresses the 
+        intended logic of the 3 with a single method interface.
+
+        Removed unnecessary "treatAsLocal" attribute of CachedResource. It was only called from
+        one place in FrameLoader.cpp, and it derived at initialization time by calling back to FrameLoader.
+
+        Removed unused userGesture parameter to one variant of the urlSelected method, and 
+        moved one of the urlSelected methods so that it lives nearer to its overloaded 
+        sibling.
+
+        * WebCore.base.exp:
+        * loader/Cache.cpp:
+        (WebCore::Cache::requestResource):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::errorOccurred):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createWindow):
+        (WebCore::FrameLoader::urlSelected):
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+        (WebCore::FrameLoader::loadPlugin):
+        (WebCore::FrameLoader::loadFrameRequestWithFormState):
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues):
+        (WebCore::FrameLoader::loadURL):
+        (WebCore::FrameLoader::loadWithNavigationAction):
+        (WebCore::FrameLoader::load):
+        (WebCore::FrameLoader::loadWithDocumentLoader):
+        (WebCore::FrameLoader::canLoad):
+        (WebCore::FrameLoader::reloadAllowingStaleData):
+        (WebCore::FrameLoader::reload):
+        (WebCore::FrameLoader::continueLoadAfterWillSubmitForm):
+        (WebCore::FrameLoader::submitForm):
+        (WebCore::FrameLoader::loadPostRequest):
+        (WebCore::FrameLoader::continueLoadAfterNewWindowPolicy):
+        (WebCore::FrameLoader::loadItem):
+        * loader/FrameLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::contextMenuItemSelected):
+
 2008-07-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
