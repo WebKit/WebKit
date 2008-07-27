@@ -74,6 +74,7 @@ ResourceHandleManager::~ResourceHandleManager()
     curl_share_cleanup(m_curlShareHandle);
     if (m_cookieJarFileName)
         free(m_cookieJarFileName);
+    curl_global_cleanup();
 }
 
 void ResourceHandleManager::setCookieJarFileName(const char* cookieJarFileName)

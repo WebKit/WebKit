@@ -1,3 +1,12 @@
+2008-07-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Call curl_global_cleanup() to release resources acquired by curl_global_init()
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::~ResourceHandleManager):
+
 2008-07-26  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Simon Hausmann.
