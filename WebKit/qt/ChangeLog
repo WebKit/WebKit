@@ -1,3 +1,16 @@
+2008-07-26  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
+
+        Reviewed by Simon Hausmann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20010
+        [Qt] Add API access to scrolling
+
+        * Api/qwebframe.cpp: Added access to a frame scroll offset.
+        (QWebFrame::scroll):
+        (QWebFrame::scrollOffset):
+        (QWebFrame::setScrollOffset):
+        * Api/qwebframe.h:
+
 2008-07-26  Daniel Jalkut  <jalkut@red-sweater.com>
 
         Build fix.  Adjust to updated WebCore FrameLoader method names & signatures.

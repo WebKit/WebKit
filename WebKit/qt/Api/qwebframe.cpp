@@ -616,6 +616,42 @@ int QWebFrame::scrollBarMinimum(Qt::Orientation orientation) const
 }
 
 /*!
+  \since 4.5
+  Moves the current scroll offset.
+  
+  \sa QWebFrame::scrollOffset
+*/
+
+void QWebFrame::scroll(int dx, int dy) const
+{
+    if (!d->frame->view())
+        return;
+    
+    d->frame->view()->scrollBy(dx, dy);
+}
+
+/*!
+  \property QWebFrame::scrollOffset
+  \brief The offset from the start this frame is currently scrolled to.
+*/
+
+QSize QWebFrame::scrollOffset() const
+{
+    if (!d->frame->view())
+        return QSize(0,0);
+
+    return d->frame->view()->scrollOffset();
+}
+
+void QWebFrame::setScrollOffset(const QSize &offset) const
+{
+    QSize current = scrollOffset();
+    int dx = offset.width() - current.width();
+    int dy = offset.height() - current.height();
+    scroll(dx, dy);
+}
+
+/*!
   Render the frame into \a painter clipping to \a clip.
 
   \sa print()
