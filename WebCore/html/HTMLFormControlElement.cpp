@@ -223,6 +223,15 @@ short HTMLFormControlElement::tabIndex() const
 {
     return Element::tabIndex();
 }
+
+bool HTMLFormControlElement::willValidate() const
+{
+    // FIXME: Implementation shall be completed with these checks:
+    //      The control does not have a repetition template as an ancestor.
+    //      The control does not have a datalist element as an ancestor.
+    //      The control is not an output element.
+    return form() && name().length() && !disabled() && !isReadOnlyControl();
+}
     
 bool HTMLFormControlElement::supportsFocus() const
 {

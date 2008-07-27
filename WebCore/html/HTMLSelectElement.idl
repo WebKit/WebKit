@@ -41,6 +41,7 @@ module html {
 #endif
 
         readonly attribute HTMLFormElement form;
+        readonly attribute boolean         willValidate;
 
         // Modified in DOM Level 2:
         readonly attribute HTMLOptionsCollection options;

@@ -32,7 +32,7 @@ module html {
                  attribute  [ConvertNullToNullString] DOMString            name;
         readonly attribute  DOMString            type;
                  attribute  [ConvertNullToNullString] DOMString            value;
-
+        readonly attribute boolean               willValidate;
         void click();
     };
 

@@ -39,6 +39,8 @@ module html {
         
         void     select();
 
+        readonly attribute boolean         willValidate;
+
        // WinIE & FireFox extension:
                  attribute long selectionStart;
                  attribute long selectionEnd;

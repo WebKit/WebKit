@@ -1,3 +1,37 @@
+2008-07-26  Michelangelo De Simone  <michelangelo@me.com>
+
+        Reviewed by Adele Petersen.
+
+        Added the simple willValidate attribute to form controls according to
+        WebForms 2 spec.
+
+        URL: http://www.w3.org/TR/web-forms-2/#willvalidate
+
+        Tests: fast/forms/willvalidate-000.html
+               fast/forms/willvalidate-001.html
+               fast/forms/willvalidate-002.html
+               fast/forms/willvalidate-003.html
+               fast/forms/willvalidate-004.html
+               fast/forms/willvalidate-005.html
+               fast/forms/willvalidate-006.html
+               fast/forms/willvalidate-007.html
+               fast/forms/willvalidate-008.html
+               fast/forms/willvalidate-009.html
+
+        * html/HTMLButtonElement.h: Added willValidate(), always false.
+        * html/HTMLButtonElement.idl: willValidate attribute exposed.
+        * html/HTMLFieldSetElement.h: Added willValidate(), always false.
+        * html/HTMLFieldSetElement.idl: willValidate attribute exposed.
+        * html/HTMLFormControlElement.cpp: (WebCore::HTMLFormControlElement::willValidate):
+        Added base willValidate() implementation.
+        * html/HTMLFormControlElement.h: Added willValidate().
+        * html/HTMLInputElement.cpp: (WebCore::HTMLInputElement::willValidate):
+        Added willValidate(), checks for input type.
+        * html/HTMLInputElement.h: Added willValidate()
+        * html/HTMLInputElement.idl: willValidate attribute exposed.
+        * html/HTMLSelectElement.idl: willValidate attribute exposed.
+        * html/HTMLTextAreaElement.idl: willValidate attribute exposed.
+
 2008-07-26  Mark Rowe  <mrowe@apple.com>
 
         Build fix.

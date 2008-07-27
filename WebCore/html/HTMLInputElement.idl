@@ -49,7 +49,7 @@ module html {
                  attribute [ConvertNullToNullString] DOMString type; // readonly dropped as part of DOM level 2
                  attribute [ConvertNullToNullString] DOMString useMap;
                  attribute [ConvertNullToNullString] DOMString value;
-        
+        readonly attribute boolean         willValidate;
         void               select();
         void               click();
         

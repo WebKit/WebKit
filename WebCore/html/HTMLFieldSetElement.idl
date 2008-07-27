@@ -25,6 +25,7 @@ module html {
         ImplementationUUID=93573758-96db-415d-9bdc-ee7238604094
     ] HTMLFieldSetElement : HTMLElement {
         readonly attribute HTMLFormElement form;
+        readonly attribute boolean         willValidate;
     };
 
 }

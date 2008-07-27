@@ -1,3 +1,30 @@
+2008-07-26  Michelangelo De Simone  <m.des@mac.com>
+
+        Reviewed by Adele Petersen.
+
+        Test suite for the willValidate form controls attribute.
+
+        * fast/forms/willvalidate-000-expected.txt: Added.
+        * fast/forms/willvalidate-000.html: Added.
+        * fast/forms/willvalidate-001-expected.txt: Added.
+        * fast/forms/willvalidate-001.html: Added.
+        * fast/forms/willvalidate-002-expected.txt: Added.
+        * fast/forms/willvalidate-002.html: Added.
+        * fast/forms/willvalidate-003-expected.txt: Added.
+        * fast/forms/willvalidate-003.html: Added.
+        * fast/forms/willvalidate-004-expected.txt: Added.
+        * fast/forms/willvalidate-004.html: Added.
+        * fast/forms/willvalidate-005-expected.txt: Added.
+        * fast/forms/willvalidate-005.html: Added.
+        * fast/forms/willvalidate-006-expected.txt: Added.
+        * fast/forms/willvalidate-006.html: Added.
+        * fast/forms/willvalidate-007-expected.txt: Added.
+        * fast/forms/willvalidate-007.html: Added.
+        * fast/forms/willvalidate-008-expected.txt: Added.
+        * fast/forms/willvalidate-008.html: Added.
+        * fast/forms/willvalidate-009-expected.txt: Added.
+        * fast/forms/willvalidate-009.html: Added.
+
 2008-07-26  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Mark Rowe.

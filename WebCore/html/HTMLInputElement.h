@@ -202,6 +202,8 @@ public:
 
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
     
+    virtual bool willValidate() const;
+
 protected:
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
