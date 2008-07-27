@@ -169,7 +169,7 @@ namespace WebCore {
 
         // Returns true for any non-local URL. If Document parameter is supplied, its local load policy dictates,
         // otherwise if referrer is non-empty and represents a local file, then the local load is allowed.
-        static bool canLoad(const KURL&, const String& referrer, const Document* theDocument = nil);
+        static bool canLoad(const KURL&, const String& referrer, const Document* theDocument = 0);
         static void reportLocalLoadFailed(Frame*, const String& url);
 
         static bool shouldHideReferrer(const KURL& url, const String& referrer);

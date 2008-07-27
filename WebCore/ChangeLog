@@ -1,3 +1,9 @@
+2008-07-26  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * loader/FrameLoader.h: Use 0 rather than nil as this is a C++ header.
+
 2008-07-26  Daniel Jalkut  <jalkut@red-sweater.com>
 
         Reviewed by Geoff Garen.
