@@ -1,3 +1,16 @@
+2008-07-26  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=18694
+        [CAIRO] Problem with rotation in a given matrix in SVG
+
+        Changed values given to AffineTransform.
+
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::setMatrix):
+
 2008-07-26  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.
