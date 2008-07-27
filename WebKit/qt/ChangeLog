@@ -1,3 +1,10 @@
+2008-07-27  David Kilzer  <ddkilzer@apple.com>
+
+        Fix Qt build failure.
+
+        * Api/qwebframe.h:
+        (QWebFrame::setScrollOffset): Make argument const.
+
 2008-07-26  Marc Ordinas i Llopis  <marc.ordinasillopis@collabora.co.uk>
 
         Reviewed by Simon Hausmann.

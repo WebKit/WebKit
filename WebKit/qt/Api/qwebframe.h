@@ -146,7 +146,7 @@ public:
 
     void scroll(int, int) const;
     QSize scrollOffset() const;
-    void setScrollOffset(QSize &offset) const;
+    void setScrollOffset(const QSize &offset) const;
 
     void render(QPainter *painter, const QRegion &clip);
     void render(QPainter *painter);
