@@ -130,7 +130,7 @@ shouldBe("resultArray[2].item", "namedNodeMap.item(2)");
 // HTMLFormElement
 var htmlFormElement = document.getElementsByTagName('form')[0];
 resultArray = iterateList(htmlFormElement);
-shouldBe("resultArray.length", "121");
+shouldBe("resultArray.length", "128");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "document.getElementsByTagName('select')[0]");
 shouldBe("resultArray[1].i", "'1'");
@@ -141,7 +141,7 @@ shouldBe("resultArray[2].item", "document.getElementsByTagName('select')[2]");
 // HTMLSelectElement
 var htmlSelectElement = document.getElementsByTagName('select')[0];
 resultArray = iterateList(htmlSelectElement);
-shouldBe("resultArray.length", "125");
+shouldBe("resultArray.length", "133");
 shouldBe("resultArray[0].i", "'0'");
 shouldBe("resultArray[0].item", "document.getElementsByTagName('option')[0]");
 shouldBe("resultArray[1].i", "'1'");

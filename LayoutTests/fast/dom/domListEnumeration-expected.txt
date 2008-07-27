@@ -32,7 +32,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is namedNodeMap.item(2)
 
 [object HTMLFormElement]
-FAIL resultArray.length should be 121. Was 128.
+FAIL resultArray.length is 128
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is document.getElementsByTagName('select')[0]
 PASS resultArray[1].i is '1'
@@ -41,7 +41,7 @@ PASS resultArray[2].i is '2'
 PASS resultArray[2].item is document.getElementsByTagName('select')[2]
 
 [object HTMLSelectElement]
-FAIL resultArray.length should be 125. Was 132.
+FAIL resultArray.length is 133
 PASS resultArray[0].i is '0'
 PASS resultArray[0].item is document.getElementsByTagName('option')[0]
 PASS resultArray[1].i is '1'

@@ -1,3 +1,13 @@
+2008-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Sam Weinig.
+
+        - update test and expected results for attributes added to
+          HTMLFormElement and HTMLSelectElement.
+
+        * fast/dom/domListEnumeration-expected.txt:
+        * fast/dom/resources/domListEnumeration.js:
+
 2008-07-26  Michelangelo De Simone  <m.des@mac.com>
 
         Reviewed by Adele Petersen.
