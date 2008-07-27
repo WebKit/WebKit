@@ -1,3 +1,13 @@
+2008-07-26  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Added pattern-support for SVG in Cairo.
+
+        * svg/graphics/cairo/SVGPaintServerPatternCairo.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::SVGPaintServerPattern::setup):
+
 2008-07-26  Keishi Hattori  <casey.hattori@gmail.com>
 
         Reviewed by Adam Roben.
