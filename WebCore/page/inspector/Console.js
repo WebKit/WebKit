@@ -497,7 +497,10 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         for (var i = 0; i < parameters.length; ++i) {
-            formattedResult.appendChild(formatForConsole(parameters[i]));
+            if (typeof parameters[i] === "string")
+                formattedResult.appendChild(document.createTextNode(parameters[i]));
+            else
+                formattedResult.appendChild(formatForConsole(parameters[i]));
             if (i < parameters.length - 1)
                 formattedResult.appendChild(document.createTextNode(" "));
         }

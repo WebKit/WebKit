@@ -1,3 +1,13 @@
+2008-07-26  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Reviewed by Adam Roben.
+
+        Fixed bug 18540: console.log('multiple', 'strings') quotes all strings after the first
+        <https://bugs.webkit.org/show_bug.cgi?id=18540>
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage.prototype._format): String arguments are appended without formatting.
+
 2008-07-26  Anthony Ricaud  <rik24d@gmail.com>
 
         Reviewed by Tim Hatcher.
