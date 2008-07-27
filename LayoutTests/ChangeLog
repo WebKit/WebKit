@@ -3,6 +3,7 @@
         Reviewed by Dan Bernstein.
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=20122
+        <rdar://problem/6089522>
         REGRESSION (r35075-r35110): Cannot enlarge images at Apple Store product page
 
         - Additionally, fix some errors introduced in old tests.
