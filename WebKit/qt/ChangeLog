@@ -1,3 +1,12 @@
+2008-07-26  Daniel Jalkut  <jalkut@red-sweater.com>
+
+        Build fix.  Adjust to updated WebCore FrameLoader method names & signatures.
+
+        * Api/qwebpage.cpp:
+        (QWebPage::triggerAction):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createFrame):
+
 2008-07-25  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Simon.

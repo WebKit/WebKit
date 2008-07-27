@@ -1218,13 +1218,10 @@ void QWebPage::triggerAction(WebAction action, bool checked)
         case OpenLink:
             if (QWebFrame *targetFrame = d->hitTestResult.linkTargetFrame()) {
                 WTF::RefPtr<WebCore::Frame> wcFrame = targetFrame->d->frame;
-                targetFrame->d->frame->loader()->load(frameLoadRequest(d->hitTestResult.linkUrl(), wcFrame.get()),
-                                                      /*lockHistory*/ false,
-                                                      /*userGesture*/ true,
-                                                      /*event*/ 0,
-                                                      /*HTMLFormElement*/ 0,
-                                                      /*formValues*/
-                                                      WTF::HashMap<String, String>());
+                targetFrame->d->frame->loader()->loadFrameRequestWithFormAndValues(frameLoadRequest(d->hitTestResult.linkUrl(), wcFrame.get()),
+                                                                                   /*lockHistory*/ false, /*event*/ 0,
+                                                                                   /*HTMLFormElement*/ 0, /*formValues*/
+                                                                                   WTF::HashMap<String, String>());
                 break;
             }
             // fall through
