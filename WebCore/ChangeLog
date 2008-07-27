@@ -2,6 +2,18 @@
 
         Reviewed by Nikolas Zimmermann.
 
+        Fixes rendering issues with gradients in SVG/Cairo.
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::boundingRect):
+        * svg/graphics/cairo/SVGPaintServerGradientCairo.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::SVGPaintServerGradient::setup):
+
+2008-07-26  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Nikolas Zimmermann.
+
         Added pattern-support for SVG in Cairo.
 
         * svg/graphics/cairo/SVGPaintServerPatternCairo.cpp:

@@ -180,7 +180,7 @@ FloatRect Path::boundingRect() const
 {
     cairo_t* cr = platformPath()->m_cr;
     double x0, x1, y0, y1;
-    cairo_fill_extents(cr, &x0, &y0, &x1, &y1);
+    cairo_path_extents(cr, &x0, &y0, &x1, &y1);
     return FloatRect(x0, y0, x1 - x0, y1 - y0);
 }
 
