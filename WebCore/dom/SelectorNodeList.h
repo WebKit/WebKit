@@ -35,7 +35,7 @@ namespace WebCore {
 
     class CSSSelector;
 
-    PassRefPtr<StaticNodeList> createSelectorNodeList(PassRefPtr<Node> rootNode, CSSSelector*);
+    PassRefPtr<StaticNodeList> createSelectorNodeList(Node* rootNode, CSSSelector*);
 
 } // namespace WebCore
 

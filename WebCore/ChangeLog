@@ -1,3 +1,25 @@
+2008-07-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20176
+        querySelectorAll id optimization no longer working
+
+        Turn the querySelector/querySelectorAll id optimization back on
+        for only strict and almost strict mode.  In quirks mode, the optimiztion
+        won't work as the id match is not case sensitive.
+
+        Tests: fast/dom/SelectorAPI/caseID-almost-strict.html
+               fast/dom/SelectorAPI/caseID-strict.html
+               fast/dom/SelectorAPI/caseID.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::querySelector):
+        (WebCore::Node::querySelectorAll):
+        * dom/SelectorNodeList.cpp:
+        (WebCore::createSelectorNodeList):
+        * dom/SelectorNodeList.h:
+
 2008-07-27  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.

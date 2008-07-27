@@ -1,0 +1,8 @@
+PASS document.querySelector('#lower1').textContent is 'lower 1'
+PASS document.querySelector('#LOWER2').textContent is 'lower 2'
+PASS document.querySelector('#UPPER1').textContent is 'UPPER 1'
+PASS document.querySelector('#upper2').textContent is 'UPPER 2'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -1,3 +1,17 @@
+2008-07-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=20176
+        querySelectorAll id optimization no longer working
+
+        * fast/dom/SelectorAPI/caseID-almost-strict-expected.txt: Added.
+        * fast/dom/SelectorAPI/caseID-almost-strict.html: Added.
+        * fast/dom/SelectorAPI/caseID-expected.txt: Added.
+        * fast/dom/SelectorAPI/caseID-strict-expected.txt: Added.
+        * fast/dom/SelectorAPI/caseID-strict.html: Added.
+        * fast/dom/SelectorAPI/caseID.html: Added.
+
 2008-07-27  Anatoli Papirovski  <apapirovski@mac.com>
 
         Reviewed by Dave Hyatt.
