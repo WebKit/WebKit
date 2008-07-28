@@ -53,7 +53,7 @@ static JSObject* constructXSLTProcessor(ExecState* exec, JSObject*, const ArgLis
 ConstructType JSXSLTProcessorConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructXSLTProcessor;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 } // namespace WebCore

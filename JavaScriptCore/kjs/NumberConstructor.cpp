@@ -85,7 +85,7 @@ static JSObject* constructWithNumberConstructor(ExecState* exec, JSObject*, cons
 ConstructType NumberConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructWithNumberConstructor;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 // ECMA 15.7.2

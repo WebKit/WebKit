@@ -296,7 +296,7 @@ static JSObject* constructWithRegExpConstructor(ExecState* exec, JSObject*, cons
 ConstructType RegExpConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructWithRegExpConstructor;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 // ECMA 15.10.3

@@ -62,7 +62,7 @@ static JSObject* constructAudio(ExecState* exec, JSObject* constructor, const Ar
 ConstructType JSAudioConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructAudio;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 } // namespace WebCore

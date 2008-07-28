@@ -54,7 +54,7 @@ static JSObject* constructWithObjectConstructor(ExecState* exec, JSObject*, cons
 ConstructType ObjectConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructWithObjectConstructor;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 static JSValue* callObjectConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

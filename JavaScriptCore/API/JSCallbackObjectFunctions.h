@@ -245,7 +245,7 @@ ConstructType JSCallbackObject<Base>::getConstructData(ConstructData& constructD
     for (JSClassRef jsClass = m_class; jsClass; jsClass = jsClass->parentClass) {
         if (jsClass->callAsConstructor) {
             constructData.native.function = construct;
-            return ConstructTypeNative;
+            return ConstructTypeHost;
         }
     }
     return ConstructTypeNone;

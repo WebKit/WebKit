@@ -32,7 +32,7 @@ namespace KJS {
 
 JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
-    if (constructType == ConstructTypeNative)
+    if (constructType == ConstructTypeHost)
         return constructData.native.function(exec, static_cast<JSObject*>(object), args);
     ASSERT(constructType == ConstructTypeJS);
     // FIXME: Can this be done more efficiently using the constructData?

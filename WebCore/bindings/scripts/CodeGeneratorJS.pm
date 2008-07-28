@@ -1829,7 +1829,7 @@ $implContent .= << "EOF";
     virtual ConstructType getConstructData(ConstructData& constructData)
     {
         constructData.native.function = construct;
-        return ConstructTypeNative;
+        return ConstructTypeHost;
     }
 EOF
     }

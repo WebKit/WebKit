@@ -64,7 +64,7 @@ static JSObject* constructWithArrayConstructor(ExecState* exec, JSObject*, const
 ConstructType ArrayConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructWithArrayConstructor;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 static JSValue* callArrayConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)

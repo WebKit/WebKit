@@ -40,7 +40,7 @@ namespace KJS {
 
     enum ConstructType {
         ConstructTypeNone,
-        ConstructTypeNative,
+        ConstructTypeHost,
         ConstructTypeJS
     };
 

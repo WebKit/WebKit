@@ -79,7 +79,7 @@ static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, con
 ConstructType JSCallbackConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructJSCallback;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 } // namespace KJS

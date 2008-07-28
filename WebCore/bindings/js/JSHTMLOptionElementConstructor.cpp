@@ -70,7 +70,7 @@ static JSObject* constructHTMLOptionElement(ExecState* exec, JSObject* construct
 ConstructType JSHTMLOptionElementConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructHTMLOptionElement;
-    return ConstructTypeNative;
+    return ConstructTypeHost;
 }
 
 } // namespace WebCore
