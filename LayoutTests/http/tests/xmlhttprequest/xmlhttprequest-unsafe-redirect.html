@@ -1,0 +1,50 @@
+<html>
+<script>
+
+function didReadFile()
+{
+    document.getElementById('result').innerHTML = 'FAILURE: ' + req.responseText;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();    
+}
+
+function onReqreadystatechange()
+{
+    if (req.readyState == 4)
+        didReadFile();
+}
+
+function onReqError() 
+{
+    document.getElementById('result').innerHTML = 'SUCCESS: Error handler was called with readyState ' + req.readyState;
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    // First, make a sync request.
+    req = new XMLHttpRequest();
+    req.open('GET', '/xmlhttprequest/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt', false);
+    req.send(null);
+    if (req.responseText != '') {
+        didReadFile();
+        return;
+    }
+    
+    req = new XMLHttpRequest();
+    req.onreadystatechange = onReqreadystatechange;
+    req.onerror = onReqError;
+    req.open('GET', '/xmlhttprequest/resources/redirect.php?url=http://localhost:8080/xmlhttprequest/resources/forbidden.txt');
+    req.send(null);
+}
+</script>
+<body onload="runTest()">
+<div>This tests that unsafe redirects won't be allowed when making an XMLHttpRequest.</div>
+<div id="result">FAILURE</div>
+</body>
+</html>

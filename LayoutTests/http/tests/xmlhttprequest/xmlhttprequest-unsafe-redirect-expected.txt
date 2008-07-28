@@ -1,0 +1,2 @@
+This tests that unsafe redirects won't be allowed when making an XMLHttpRequest.
+SUCCESS: Error handler was called with readyState 1
