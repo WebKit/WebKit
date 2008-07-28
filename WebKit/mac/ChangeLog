@@ -5,6 +5,7 @@
         Based on a patch by Dimcho Balev.
         
         https://bugs.webkit.org/show_bug.cgi?id=18676
+        <rdar://problem/6106578>
         Plug-In API Proposal: Enable plugins to receive response body when an HTTP error occurs
 
         * Plugins/WebBaseNetscapePluginStream.h:
