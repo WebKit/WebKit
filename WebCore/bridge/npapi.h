@@ -335,6 +335,14 @@ typedef enum {
      * NPN_MemAlloc() to allocate memory for the string data.
      */
     NPPVformValue = 16,    /* Not implemented in WebKit */
+
+    NPPVpluginUrlRequestsDisplayedBool = 17, /* Not implemented in WebKit */
+
+    /* Checks if the plugin is interested in receiving the http body of
+     * failed http requests (http status != 200).
+     */
+    NPPVpluginWantsAllNetworkStreams = 18,
+
 #ifdef XP_MACOSX
     /* Used for negotiating drawing models */
     NPPVpluginDrawingModel = 1000,

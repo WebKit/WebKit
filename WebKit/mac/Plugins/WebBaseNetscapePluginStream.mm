@@ -36,6 +36,7 @@
 #import "WebNSURLExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import <Foundation/NSURLResponse.h>
+#import <kjs/JSLock.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/HashMap.h>
@@ -207,6 +208,7 @@ static StreamMap& streams()
         NPP_StreamAsFile = [pluginPackage NPP_StreamAsFile];
         NPP_DestroyStream = [pluginPackage NPP_DestroyStream];
         NPP_URLNotify = [pluginPackage NPP_URLNotify];
+        NPP_GetValue = [pluginPackage NPP_GetValue];
     } else {
         WebBaseNetscapePluginView *view = pluginView;
 
@@ -217,6 +219,7 @@ static StreamMap& streams()
         NPP_StreamAsFile = NULL;
         NPP_DestroyStream = NULL;
         NPP_URLNotify = NULL;
+        NPP_GetValue = NULL;
         pluginView = nil;
 
         [view disconnectStream:self];
@@ -356,6 +359,26 @@ static StreamMap& streams()
                 lastModifiedDate:WKGetNSURLResponseLastModifiedDate(r)
                         MIMEType:[r MIMEType]
                          headers:theHeaders];
+}
+
+- (BOOL)wantsAllStreams
+{
+    if (!NPP_GetValue)
+        return NO;
+    
+    NPBool value;
+    NPError error;
+    WebBaseNetscapePluginView *pv = pluginView;
+    [pv willCallPlugInFunction];
+    {
+        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
+    }
+    [pv didCallPlugInFunction];
+    if (error != NPERR_NO_ERROR)
+        return NO;
+    
+    return value;
 }
 
 - (void)_destroyStream

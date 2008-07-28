@@ -44,7 +44,8 @@ public:
     virtual void didReceiveData(WebCore::NetscapePlugInStreamLoader*, const char*, int);
     virtual void didFail(WebCore::NetscapePlugInStreamLoader*, const WebCore::ResourceError&);
     virtual void didFinishLoading(WebCore::NetscapePlugInStreamLoader*);
-
+    virtual bool wantsAllStreams() const;
+    
 private:
     RetainPtr<PlugInStreamLoaderDelegate> m_stream;
 };

@@ -55,3 +55,8 @@ void WebNetscapePlugInStreamLoaderClient::didFinishLoading(NetscapePlugInStreamL
     [m_stream.get() finishedLoading];
     m_stream = 0;
 }
+
+bool WebNetscapePlugInStreamLoaderClient::wantsAllStreams() const
+{
+    return [m_stream.get() wantsAllStreams];
+}

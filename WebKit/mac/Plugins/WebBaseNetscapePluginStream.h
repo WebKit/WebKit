@@ -62,6 +62,7 @@
     NPP_WriteReadyProcPtr NPP_WriteReady;
     NPP_WriteProcPtr NPP_Write;
     NPP_URLNotifyProcPtr NPP_URLNotify;
+    NPP_GetValueProcPtr NPP_GetValue;
 }
 
 + (NPP)ownerForStream:(NPStream *)stream;

@@ -1,5 +1,30 @@
 2008-07-28  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Kevin Decker.
+
+        Based on a patch by Dimcho Balev.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=18676
+        Plug-In API Proposal: Enable plugins to receive response body when an HTTP error occurs
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        Add NPP_GetValue pointer.
+        
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream setPlugin:]):
+        Initialize NPP_GetValue.
+        
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        Call NPP_GetValue.
+        
+        * Plugins/WebPlugInStreamLoaderDelegate.h:
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.h:
+        * WebCoreSupport/WebNetscapePlugInStreamLoaderClient.mm:
+        (WebNetscapePlugInStreamLoaderClient::wantsAllStreams):
+        Implement this and call down to the stream.
+
+2008-07-28  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam.
 
         <rdar://problem/6105529> 

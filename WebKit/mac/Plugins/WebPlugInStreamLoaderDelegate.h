@@ -43,4 +43,6 @@
 - (void)receivedData:(NSData *)data;
 - (void)finishedLoading;
 
+- (BOOL)wantsAllStreams;
+
 @end
