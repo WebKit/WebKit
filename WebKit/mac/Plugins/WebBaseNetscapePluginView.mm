@@ -772,11 +772,16 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)sendActivateEvent:(BOOL)activate
 {
+    if (!isStarted)
+        return;
+
     eventHandler->windowFocusChanged(activate);
 }
 
 - (void)sendDrawRectEvent:(NSRect)rect
 {
+    ASSERT(eventHandler);
+    
     eventHandler->drawRect(rect);
 }
 
@@ -831,6 +836,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)setHasFocus:(BOOL)flag
 {
+    if (!isStarted)
+        return;
+
     if (hasFocus == flag)
         return;
     
@@ -869,21 +877,33 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseDown(theEvent);
 }
 
 - (void)mouseUp:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseUp(theEvent);
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseEntered(theEvent);
 }
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseExited(theEvent);
     
     // Set cursor back to arrow cursor.  Because NSCursor doesn't know about changes that the plugin made, we could get confused about what we think the
@@ -895,52 +915,84 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 // the NSView mouseMoved implementation.
 - (void)handleMouseMoved:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseMoved(theEvent);
 }
     
 - (void)mouseDragged:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->mouseDragged(theEvent);
 }
 
 - (void)scrollWheel:(NSEvent *)theEvent
 {
+    if (!isStarted) {
+        [super scrollWheel:theEvent];
+        return;
+    }
+
     if (!eventHandler->scrollWheel(theEvent))
         [super scrollWheel:theEvent];
 }
 
 - (void)keyUp:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyUp(theEvent);
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyDown(theEvent);
 }
 
 - (void)flagsChanged:(NSEvent *)theEvent
 {
+    if (!isStarted)
+        return;
+
     eventHandler->flagsChanged(theEvent);
 }
 
 - (void)cut:(id)sender
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)copy:(id)sender
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)paste:(id)sender
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyDown([NSApp currentEvent]);
 }
 
 - (void)selectAll:(id)sender
 {
+    if (!isStarted)
+        return;
+
     eventHandler->keyDown([NSApp currentEvent]);
 }
 
@@ -1563,9 +1615,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 
 - (void)drawRect:(NSRect)rect
 {
-    if (!isStarted) {
+    if (!isStarted)
         return;
-    }
     
     if ([NSGraphicsContext currentContextDrawingToScreen])
         [self sendDrawRectEvent:rect];
@@ -1887,7 +1938,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
 - (NSInputContext *)inputContext
 {
 #ifndef NP_NO_CARBON
-    if ([self isStarted] && eventModel == NPEventModelCarbon)
+    if (![self isStarted] || eventModel == NPEventModelCarbon)
         return nil;
 #endif
         
