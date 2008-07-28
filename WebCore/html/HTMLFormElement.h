@@ -121,6 +121,12 @@ public:
     
     CheckedRadioButtons& checkedRadioButtons() { return m_checkedRadioButtons; }
     
+    virtual void didRestoreFromCache();
+
+protected:
+    virtual void willMoveToNewOwnerDocument();
+    virtual void didMoveToNewOwnerDocument();
+
 private:
     void parseEnctype(const String&);
     bool isMailtoForm() const;

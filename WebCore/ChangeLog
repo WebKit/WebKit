@@ -1,3 +1,40 @@
+2008-07-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Test: security/autocomplete-cleared-on-back.html
+
+        <rdar://problem/6093281> - autocomplete="off" should work when going back
+
+        Taken care of in two ways:
+        1 - Listening for the page cache notification to clear the form, in cases where the page
+            is being restored from the page cache
+        2 - Not saving such form elements when doing the normal "save state" to a history item,
+            for cases with no page cache
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::~HTMLFormElement):
+        (WebCore::HTMLFormElement::parseMappedAttribute):
+        (WebCore::HTMLFormElement::didRestoreFromCache):
+        (WebCore::HTMLFormElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLFormElement::didMoveToNewOwnerDocument):
+        * html/HTMLFormElement.h:
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::~HTMLInputElement):
+        (WebCore::HTMLInputElement::setInputType):
+        (WebCore::HTMLInputElement::saveState):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::needsCacheCallback):
+        (WebCore::HTMLInputElement::registerForCacheCallbackIfNeeded): Only register if the type or attribute
+          indicate we should.
+        (WebCore::HTMLInputElement::unregisterForCacheCallbackIfNeeded): Only unregister if both the type
+          and attribute are clear of needing registration.
+        (WebCore::HTMLInputElement::didRestoreFromCache):
+        (WebCore::HTMLInputElement::willMoveToNewOwnerDocument):
+        (WebCore::HTMLInputElement::didMoveToNewOwnerDocument):
+        * html/HTMLInputElement.h:
+
 2008-07-28  David Hyatt  <hyatt@apple.com>
 
         Add support for CSS variable declaration blocks.

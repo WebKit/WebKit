@@ -1,0 +1,47 @@
+<html>
+<head>
+<script>
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(message)
+{
+    var txt = document.createTextNode(message);
+    document.getElementById("logger").appendChild(txt);
+    document.getElementById("logger").appendChild(document.createElement('br'));
+}
+
+function runTest()
+{
+    if (!sessionStorage.secondPageReached) {
+        document.getElementById("firstInput").value = "SuperSeekritValue";
+        document.getElementById("secondInput").value = "SuperSeekritValue";
+        window.location = "resources/autocomplete-cleared-on-back2.html";
+        return;
+    }
+    
+    sessionStorage.removeItem("secondPageReached");
+    
+    log("Input value 1 - " + document.getElementById("firstInput").value);
+    log("Input value 2 - " + document.getElementById("secondInput").value);
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This tests whether or not form input values that are designated autocomplete="off" retain their values after a navigation away from the page then returning back to it via the back button.
+<form autocomplete="off">
+<input type="text" id="firstInput"/>
+</form>
+<form>
+<input autocomplete="off" id="secondInput"/>
+</form>
+<div id="logger"></div>
+</body>
+</html>

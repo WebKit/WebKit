@@ -1,3 +1,14 @@
+2008-07-28  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        <rdar://problem/6093281> - autocomplete="off" should work when going back
+
+        * security/autocomplete-cleared-on-back-expected.txt: Added.
+        * security/autocomplete-cleared-on-back.html: Added.
+        * security/resources: Added.
+        * security/resources/autocomplete-cleared-on-back2.html: Added.
+
 2008-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

@@ -139,7 +139,7 @@ void HTMLInputElement::init()
 
 HTMLInputElement::~HTMLInputElement()
 {
-    if (inputType() == PASSWORD)
+    if (needsCacheCallback())
         document()->unregisterForCacheCallbacks(this);
 
     document()->checkedRadioButtons().removeButton(this);
@@ -337,9 +337,9 @@ void HTMLInputElement::setInputType(const String& t)
                 recheckValue();
 
             if (wasPasswordField && !isPasswordField)
-                document()->unregisterForCacheCallbacks(this);
+                unregisterForCacheCallbackIfNeeded();
             else if (!wasPasswordField && isPasswordField)
-                document()->registerForCacheCallbacks(this);
+                registerForCacheCallbackIfNeeded();
 
             if (didRespectHeightAndWidth != willRespectHeightAndWidth) {
                 NamedMappedAttrMap* map = mappedAttributes();
@@ -426,6 +426,9 @@ const AtomicString& HTMLInputElement::type() const
 
 bool HTMLInputElement::saveState(String& result) const
 {
+    if (!autoComplete())
+        return false;
+
     switch (inputType()) {
         case BUTTON:
         case FILE:
@@ -600,12 +603,17 @@ void HTMLInputElement::parseMappedAttribute(MappedAttribute *attr)
         m_name = attr->value();
         checkedRadioButtons(this).addButton(this);
     } else if (attr->name() == autocompleteAttr) {
-        if (equalIgnoringCase(attr->value(), "off"))
+        if (equalIgnoringCase(attr->value(), "off")) {
             m_autocomplete = Off;
-        else if (attr->isEmpty())
-            m_autocomplete = Uninitialized;
-        else
-            m_autocomplete = On;
+            registerForCacheCallbackIfNeeded();
+        } else {
+            if (m_autocomplete == Off)
+                unregisterForCacheCallbackIfNeeded();
+            if (attr->isEmpty())
+                m_autocomplete = Uninitialized;
+            else
+                m_autocomplete = On;
+        }
     } else if (attr->name() == typeAttr) {
         setInputType(attr->value());
     } else if (attr->name() == valueAttr) {
@@ -1525,6 +1533,23 @@ void HTMLInputElement::recheckValue()
         setValue(newValue);
 }
 
+bool HTMLInputElement::needsCacheCallback()
+{
+    return inputType() == PASSWORD || m_autocomplete == Off;
+}
+
+void HTMLInputElement::registerForCacheCallbackIfNeeded()
+{
+    if (needsCacheCallback())
+        document()->registerForCacheCallbacks(this);
+}
+
+void HTMLInputElement::unregisterForCacheCallbackIfNeeded()
+{
+    if (!needsCacheCallback())
+        document()->unregisterForCacheCallbacks(this);
+}
+
 String HTMLInputElement::constrainValue(const String& proposedValue, int maxLen) const
 {
     if (isTextField()) {
@@ -1567,13 +1592,14 @@ Selection HTMLInputElement::selection() const
 
 void HTMLInputElement::didRestoreFromCache()
 {
-    ASSERT(inputType() == PASSWORD);
+    ASSERT(needsCacheCallback());
     reset();
 }
 
 void HTMLInputElement::willMoveToNewOwnerDocument()
 {
-    if (inputType() == PASSWORD)
+    // Always unregister for cache callbacks when leaving a document, even if we would otherwise like to be registered
+    if (needsCacheCallback())
         document()->unregisterForCacheCallbacks(this);
         
     document()->checkedRadioButtons().removeButton(this);
@@ -1583,8 +1609,7 @@ void HTMLInputElement::willMoveToNewOwnerDocument()
 
 void HTMLInputElement::didMoveToNewOwnerDocument()
 {
-    if (inputType() == PASSWORD)
-        document()->registerForCacheCallbacks(this);
+    registerForCacheCallbackIfNeeded();
         
     HTMLFormControlElementWithState::didMoveToNewOwnerDocument();
 }

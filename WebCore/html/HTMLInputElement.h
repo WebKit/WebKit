@@ -215,6 +215,10 @@ private:
     bool storesValueSeparateFromAttribute() const;
     String constrainValue(const String& proposedValue, int maxLen) const;
     void recheckValue();
+    
+    bool needsCacheCallback();
+    void registerForCacheCallbackIfNeeded();
+    void unregisterForCacheCallbackIfNeeded();
 
     String m_value;
     String m_originalValue;
