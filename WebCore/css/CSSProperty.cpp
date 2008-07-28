@@ -30,6 +30,8 @@ namespace WebCore {
 
 String CSSProperty::cssText() const
 {
+    if (id() == CSSPropertyWebkitVariableDeclarationBlock)
+        return m_value->cssText() + ";";
     return String(getPropertyName(static_cast<CSSPropertyID>(id()))) + ": " + m_value->cssText() + (isImportant() ? " !important" : "") + "; ";
 }
 

@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    one {
+       background-color: red;
+       -webkit-var(two);
+    };
+    two {
+       -webkit-var(one);
+       background-color:green
+    }
+}
+
+div {
+    background-color: red;
+    width:100px;
+    height:100px;
+    -webkit-var(one);
+}
+</style>
+</head>
+<body>
+You should see a green square below.  There should be no red on the page.
+
+<div></div>

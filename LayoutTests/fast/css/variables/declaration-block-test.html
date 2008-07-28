@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+<style>
+@-webkit-variables {
+    verticalMargin: 5em;
+    fiveEmSquare {
+        height: 5em;
+        width: 5em
+    };
+    tenEmSquare {
+        height: 10em;
+        width: 10em
+    };
+}
+
+div.outer {
+    position:absolute;
+    -webkit-var(tenEmSquare);
+}
+
+div.bad {
+    position:absolute;
+    top:5em;
+    left:2em;
+    -webkit-var(fiveEmSquare);
+    background-color:red;
+}
+
+div.inner {
+    position:relative;
+    margin: -webkit-var(verticalMargin) 2em;
+    -webkit-var(fiveEmSquare);
+    background-color:green;
+}
+</style>
+</head>
+<body>
+You should see a 5em wide green square below.  There should be no red on the page.
+
+<div class="outer">
+<div class="bad"></div>
+<div class="inner"></div>
+</div>

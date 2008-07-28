@@ -170,6 +170,7 @@ namespace WebCore {
         MediaQuery* sinkFloatingMediaQuery(MediaQuery*);
 
         bool addVariable(const CSSParserString&, CSSParserValueList*);
+        bool addVariableDeclarationBlock(const CSSParserString&);
         bool checkForVariables(CSSParserValueList*);
         void addUnresolvedProperty(int propId, bool important);
         
@@ -193,7 +194,7 @@ namespace WebCore {
         bool m_hasFontFaceOnlyValues;
 
         Vector<String> m_variableNames;
-        Vector<RefPtr<CSSValueList> > m_variableValues;
+        Vector<RefPtr<StyleBase> > m_variableValues;
 
         AtomicString m_defaultNamespace;
 

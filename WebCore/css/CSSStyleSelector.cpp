@@ -441,18 +441,26 @@ void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
     // If this declaration has any variables in it, then we need to make a cloned
     // declaration with as many variables resolved as possible for this style selector's media.
     RefPtr<CSSMutableStyleDeclaration> newDecl = CSSMutableStyleDeclaration::create(decl->parentRule());
-    *newDecl = *decl;
     m_matchedDecls.append(newDecl.get());
     m_resolvedVariablesDeclarations.set(decl, newDecl);
 
+    HashSet<String> usedBlockVariables;
+    resolveVariablesForDeclaration(decl, newDecl.get(), usedBlockVariables);
+}
+
+void CSSStyleSelector::resolveVariablesForDeclaration(CSSMutableStyleDeclaration* decl, CSSMutableStyleDeclaration* newDecl, HashSet<String>& usedBlockVariables)
+{
     // Now iterate over the properties in the original declaration.  As we resolve variables we'll end up
     // mutating the new declaration (possibly expanding shorthands).  The new declaration has no m_node
     // though, so it can't mistakenly call setChanged on anything.
     DeprecatedValueListConstIterator<CSSProperty> end;
     for (DeprecatedValueListConstIterator<CSSProperty> it = decl->valuesIterator(); it != end; ++it) {
         const CSSProperty& current = *it;
-        if (!current.value()->isVariableDependentValue())
+        if (!current.value()->isVariableDependentValue()) {
+            // We can just add the parsed property directly.
+            newDecl->addParsedProperty(current);
             continue;
+        }
         CSSValueList* valueList = static_cast<CSSVariableDependentValue*>(current.value())->valueList();
         if (!valueList)
             continue;
@@ -468,6 +476,18 @@ void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
                     fullyResolved = false;
                     break;
                 }
+                
+                if (current.id() == CSSPropertyWebkitVariableDeclarationBlock && s == 1) {
+                    fullyResolved = false;
+                    if (!usedBlockVariables.contains(primitiveValue->getStringValue())) {
+                        CSSMutableStyleDeclaration* declBlock = rule->variables()->getParsedVariableDeclarationBlock(primitiveValue->getStringValue());
+                        if (declBlock) {
+                            usedBlockVariables.add(primitiveValue->getStringValue());
+                            resolveVariablesForDeclaration(declBlock, newDecl, usedBlockVariables);
+                        }
+                    }
+                }
+
                 CSSValueList* resolvedVariable = rule->variables()->getParsedVariable(primitiveValue->getStringValue());
                 if (!resolvedVariable) {
                     fullyResolved = false;
@@ -485,7 +505,7 @@ void CSSStyleSelector::addMatchedDeclaration(CSSMutableStyleDeclaration* decl)
 
         // We now have a fully resolved new value list.  We want the parser to use this value list
         // and parse our new declaration.
-        CSSParser(m_checker.m_strictParsing).parsePropertyWithResolvedVariables(current.id(), current.isImportant(), newDecl.get(), &resolvedValueList);
+        CSSParser(m_checker.m_strictParsing).parsePropertyWithResolvedVariables(current.id(), current.isImportant(), newDecl, &resolvedValueList);
     }
 }
 

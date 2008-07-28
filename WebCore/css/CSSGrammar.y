@@ -26,6 +26,7 @@
 
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
+#include "CSSPropertyNames.h"
 #include "CSSRuleList.h"
 #include "CSSSelector.h"
 #include "CSSStyleSheet.h"
@@ -85,7 +86,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 
 %}
 
-%expect 49
+%expect 48
 
 %left UNIMPORTANT_TOK
 
@@ -238,6 +239,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <boolean> variables_declaration_list
 %type <boolean> variables_decl_list
 %type <boolean> variables_declaration
+%type <value> variable_reference
 
 %%
 
@@ -499,6 +501,10 @@ variables_decl_list:
 variables_declaration:
     variable_name ':' maybe_space expr {
         $$ = static_cast<CSSParser*>(parser)->addVariable($1, $4);
+    }
+    |
+    variable_name maybe_space '{' maybe_space declaration_list '}' maybe_space {
+        $$ = static_cast<CSSParser*>(parser)->addVariableDeclarationBlock($1);
     }
     |
     variable_name error {
@@ -1156,6 +1162,18 @@ declaration:
         }
     }
     |
+    variable_reference maybe_space {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        p->m_valueList = new CSSParserValueList;
+        p->m_valueList->addValue(p->sinkFloatingValue($1));
+        int oldParsedProperties = p->m_numParsedProperties;
+        $$ = p->parseValue(CSSPropertyWebkitVariableDeclarationBlock, false);
+        if (!$$)
+            p->rollbackLastProperties(p->m_numParsedProperties - oldParsedProperties);
+        delete p->m_valueList;
+        p->m_valueList = 0;
+    }
+    |
     property error {
         $$ = false;
     }
@@ -1261,22 +1279,9 @@ term:
   | function {
       $$ = $1;
   }
-  | VARCALL maybe_space {
-      $$.id = 0;
-      $$.string = $1;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
+  | variable_reference maybe_space {
+      $$ = $1;
   }
-  | '=' IDENT '=' maybe_space {
-      $$.id = 0;
-      $$.string = $2;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX;
-  }
-  | '$' IDENT maybe_space {
-      $$.id = 0;
-      $$.string = $2;
-      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_DOLLAR_SYNTAX;
-  }
-
   | '%' maybe_space {} /* Handle width: %; */
   ;
 
@@ -1302,6 +1307,23 @@ unary_term:
   | EXS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_EXS; }
     ;
 
+variable_reference:
+  VARCALL {
+      $$.id = 0;
+      $$.string = $1;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_FUNCTION_SYNTAX;
+  }
+  | '=' IDENT '=' {
+      $$.id = 0;
+      $$.string = $2;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_EQUALS_SYNTAX;
+  }
+  | '$' IDENT {
+      $$.id = 0;
+      $$.string = $2;
+      $$.unit = CSSPrimitiveValue::CSS_PARSER_VARIABLE_DOLLAR_SYNTAX;
+  }
+  ;
 
 function:
     FUNCTION maybe_space expr ')' maybe_space {

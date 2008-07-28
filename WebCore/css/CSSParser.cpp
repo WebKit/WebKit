@@ -4438,6 +4438,14 @@ bool CSSParser::addVariable(const CSSParserString& name, CSSParserValueList* val
     return true;
 }
 
+bool CSSParser::addVariableDeclarationBlock(const CSSParserString& name)
+{
+    m_variableNames.append(String(name));
+    m_variableValues.append(CSSMutableStyleDeclaration::create(0, m_parsedProperties, m_numParsedProperties));
+    clearProperties();
+    return true;
+}
+
 void CSSParser::clearVariables()
 {
     m_variableNames.clear();

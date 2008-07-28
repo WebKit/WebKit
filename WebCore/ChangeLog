@@ -1,3 +1,41 @@
+2008-07-28  David Hyatt  <hyatt@apple.com>
+
+        Add support for CSS variable declaration blocks.
+
+        Reviewed by Sam
+
+        Added tests in fast/css/variables.
+
+        * css/CSSGrammar.y:
+        * css/CSSMutableStyleDeclaration.h:
+        (WebCore::CSSMutableStyleDeclaration::isMutableStyleDeclaration):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::addVariableDeclarationBlock):
+        * css/CSSParser.h:
+        * css/CSSProperty.cpp:
+        (WebCore::CSSProperty::cssText):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addMatchedDeclaration):
+        (WebCore::CSSStyleSelector::resolveVariablesForDeclaration):
+        * css/CSSStyleSelector.h:
+        * css/CSSValueList.h:
+        (WebCore::CSSValueList::isValueList):
+        * css/CSSVariablesDeclaration.cpp:
+        (WebCore::CSSVariablesDeclaration::CSSVariablesDeclaration):
+        (WebCore::CSSVariablesDeclaration::getVariableValue):
+        (WebCore::CSSVariablesDeclaration::removeVariable):
+        (WebCore::CSSVariablesDeclaration::addParsedVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedSimpleVariable):
+        (WebCore::CSSVariablesDeclaration::getParsedComplexVariable):
+        * css/CSSVariablesDeclaration.h:
+        (WebCore::CSSVariablesDeclaration::create):
+        * css/StyleBase.cpp:
+        (WebCore::StyleBase::cssText):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isValueList):
+        (WebCore::StyleBase::isMutableStyleDeclaration):
+
 2008-07-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam.

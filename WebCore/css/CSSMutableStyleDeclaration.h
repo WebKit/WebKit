@@ -54,6 +54,8 @@ public:
 
     void setNode(Node* node) { m_node = node; }
 
+    virtual bool isMutableStyleDeclaration() const { return true; }
+
     virtual String cssText() const;
     virtual void setCssText(const String&, ExceptionCode&);
 

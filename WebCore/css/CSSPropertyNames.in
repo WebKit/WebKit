@@ -228,3 +228,4 @@ zoom
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select
+-webkit-variable-declaration-block

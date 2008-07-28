@@ -37,12 +37,13 @@ namespace WebCore {
 
 typedef int ExceptionCode;
 
+class CSSMutableStyleDeclaration;
 class CSSRule;
 class CSSValueList;
 
 class CSSVariablesDeclaration : public StyleBase {
 public:
-    static PassRefPtr<CSSVariablesDeclaration> create(StyleBase* owningRule, const Vector<String>& names, const Vector<RefPtr<CSSValueList> >& values)
+    static PassRefPtr<CSSVariablesDeclaration> create(StyleBase* owningRule, const Vector<String>& names, const Vector<RefPtr<StyleBase> >& values)
     {
         return adoptRef(new CSSVariablesDeclaration(owningRule, names, values));
     }
@@ -60,17 +61,19 @@ public:
     String cssText() const;
     void setCssText(const String&); // FIXME: The spec contradicts itself regarding whether or not cssText is settable.
 
-    void addParsedVariable(const String& variableName, PassRefPtr<CSSValueList> variableValue, bool updateNamesList = true);
+    void addParsedVariable(const String& variableName, PassRefPtr<StyleBase> variableValue, bool updateNamesList = true);
+    
     CSSValueList* getParsedVariable(const String& variableName);
+    CSSMutableStyleDeclaration* getParsedVariableDeclarationBlock(const String& variableName);
 
 private:
-    CSSVariablesDeclaration(StyleBase* owningRule, const Vector<String>& names, const Vector<RefPtr<CSSValueList> >& values);
+    CSSVariablesDeclaration(StyleBase* owningRule, const Vector<String>& names, const Vector<RefPtr<StyleBase> >& values);
 
     void setChanged();
 
 protected:
     Vector<String> m_variableNames;
-    HashMap<String, RefPtr<CSSValueList> > m_variablesMap;
+    HashMap<String, RefPtr<StyleBase> > m_variablesMap;
 };
 
 } // namespace WebCore
