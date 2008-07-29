@@ -455,4 +455,16 @@ void PluginStream::didFinishLoading(NetscapePlugInStreamLoader* loader)
     m_loader = 0;
 }
 
+bool PluginStream::wantsAllStreams() const
+{
+    if (!m_pluginFuncs->getvalue)
+        return false;
+
+    NPBool result;
+    if (m_pluginFuncs->getvalue(m_instance, NPPVpluginWantsAllNetworkStreams, &result) != NPERR_NO_ERROR)
+        return false;
+
+    return result;
+}
+
 }

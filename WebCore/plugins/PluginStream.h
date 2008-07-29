@@ -80,6 +80,7 @@ namespace WebCore {
         virtual void didReceiveData(NetscapePlugInStreamLoader*, const char*, int);
         virtual void didFail(NetscapePlugInStreamLoader*, const ResourceError&);
         virtual void didFinishLoading(NetscapePlugInStreamLoader*);
+        virtual bool wantsAllStreams() const;
 
     private:
         PluginStream(PluginStreamClient*, Frame*, const ResourceRequest&, bool sendNotification, void* notifyData, const NPPluginFuncs*, NPP instance, const PluginQuirkSet&);
