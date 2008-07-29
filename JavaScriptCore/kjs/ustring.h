@@ -96,6 +96,12 @@ namespace KJS {
             static unsigned computeHash(const char*, int length);
             static unsigned computeHash(const char* s) { return computeHash(s, strlen(s)); }
 
+            IdentifierTable* identifierTable() const { return reinterpret_cast<IdentifierTable*>(m_identifierTable & ~static_cast<uintptr_t>(1)); }
+            void setIdentifierTable(IdentifierTable* table) { ASSERT(!isStatic()); m_identifierTable = reinterpret_cast<intptr_t>(table); }
+
+            bool isStatic() const { return m_identifierTable & 1; }
+            void setStatic(bool v) { ASSERT(!identifierTable()); m_identifierTable = v; }
+
             Rep* ref() { ++rc; return this; }
             ALWAYS_INLINE void deref() { if (--rc == 0) destroy(); }
 
@@ -104,10 +110,9 @@ namespace KJS {
             int len;
             int rc; // For null and empty static strings, this field does not reflect a correct count, because ref/deref are not thread-safe. A special case in destroy() guarantees that these do not get deleted.
             mutable unsigned _hash;
-            IdentifierTable* identifierTable; // 0 if not an identifier. Since garbage collection can happen on a different thread, there is no other way to get to the table during destruction.
+            intptr_t m_identifierTable; // A pointer to identifier table. The lowest bit is used to indicate whether the string is static (null or empty).
             UString::Rep* baseString;
-            bool isStatic : 1;
-            size_t reportedCost : 31;
+            size_t reportedCost;
 
             // potentially shared data
             UChar* buf;
@@ -308,28 +313,18 @@ namespace KJS {
 
     inline size_t UString::cost() const
     {
-       size_t capacity = (m_rep->baseString->capacity + m_rep->baseString->preCapacity) * sizeof(UChar);
-       size_t reportedCost = m_rep->baseString->reportedCost;
-       ASSERT(capacity >= reportedCost);
+        size_t capacity = (m_rep->baseString->capacity + m_rep->baseString->preCapacity) * sizeof(UChar);
+        size_t reportedCost = m_rep->baseString->reportedCost;
+        ASSERT(capacity >= reportedCost);
 
-       size_t capacityDelta = capacity - reportedCost;
+        size_t capacityDelta = capacity - reportedCost;
 
-       if (capacityDelta < static_cast<size_t>(minShareSize))
-           return 0;
-
-#if COMPILER(MSVC)
-// MSVC complains about this assignment, since reportedCost is a 31-bit size_t.
-#pragma warning(push)
-#pragma warning(disable: 4267)
-#endif
+        if (capacityDelta < static_cast<size_t>(minShareSize))
+            return 0;
 
         m_rep->baseString->reportedCost = capacity;
 
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-
-       return capacityDelta;
+        return capacityDelta;
     }
 
 } // namespace KJS

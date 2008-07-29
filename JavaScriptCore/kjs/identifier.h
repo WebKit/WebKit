@@ -91,13 +91,13 @@ namespace KJS {
 
         static PassRefPtr<UString::Rep> add(ExecState* exec, UString::Rep* r)
         {
-            if (r->identifierTable)
+            if (r->identifierTable())
                 return r;
             return addSlowCase(exec, r);
         }
         static PassRefPtr<UString::Rep> add(JSGlobalData* globalData, UString::Rep* r)
         {
-            if (r->identifierTable)
+            if (r->identifierTable())
                 return r;
             return addSlowCase(globalData, r);
         }

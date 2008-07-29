@@ -1,3 +1,35 @@
+2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Store UString::Rep::isStatic bit in identifierTable pointer instead of reportedCost for
+        slightly nicer code and a 0.5% SunSpider improvement.
+
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::~OpaqueJSClass):
+        (OpaqueJSClassContextData::OpaqueJSClassContextData):
+        * API/JSStringRef.cpp:
+        (JSStringRelease):
+        * kjs/PropertyNameArray.cpp:
+        (KJS::PropertyNameArray::add):
+        * kjs/identifier.cpp:
+        (KJS::IdentifierTable::~IdentifierTable):
+        (KJS::IdentifierTable::add):
+        (KJS::Identifier::addSlowCase):
+        (KJS::Identifier::remove):
+        * kjs/identifier.h:
+        (KJS::Identifier::add):
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::identifierTable):
+        (KJS::UString::Rep::setIdentifierTable):
+        (KJS::UString::Rep::isStatic):
+        (KJS::UString::Rep::setStatic):
+        (KJS::UString::cost):
+
 2008-07-28  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

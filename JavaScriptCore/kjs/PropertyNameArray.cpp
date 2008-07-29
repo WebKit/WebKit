@@ -27,7 +27,7 @@ static const size_t setThreshold = 20;
 
 void PropertyNameArray::add(UString::Rep* identifier)
 {
-    ASSERT(identifier == &UString::Rep::null || identifier == &UString::Rep::empty || identifier->identifierTable);
+    ASSERT(identifier == &UString::Rep::null || identifier == &UString::Rep::empty || identifier->identifierTable());
 
     size_t size = m_vector.size();
     if (size < setThreshold) {
