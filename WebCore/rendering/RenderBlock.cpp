@@ -2462,8 +2462,10 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
     if (!includeOverflowInterior && hasOverflowClip())
         return bottom;
 
-    if (includeSelf && m_overflowHeight > bottom)
-        bottom = m_overflowHeight;
+    int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetY() : 0;
+
+    if (includeSelf)
+        bottom = max(bottom, m_overflowHeight + relativeOffset);
         
     if (m_positionedObjects) {
         RenderObject* r;
@@ -2478,7 +2480,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
                 // Therefore we should not allow it to contribute to the lowest position.
                 if (!isRenderView() || r->xPos() + r->width() > 0 || r->xPos() + r->rightmostPosition(false) > 0) {
                     int lp = r->yPos() + r->lowestPosition(false);
-                    bottom = max(bottom, lp);
+                    bottom = max(bottom, lp + relativeOffset);
                 }
             }
         }
@@ -2487,7 +2489,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
     if (m_hasColumns) {
         Vector<IntRect>* colRects = columnRects();
         for (unsigned i = 0; i < colRects->size(); i++)
-            bottom = max(bottom, colRects->at(i).bottom());
+            bottom = max(bottom, colRects->at(i).bottom() + relativeOffset);
         return bottom;
     }
 
@@ -2497,7 +2499,7 @@ int RenderBlock::lowestPosition(bool includeOverflowInterior, bool includeSelf) 
         for ( ; (r = it.current()); ++it ) {
             if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
                 int lp = r->m_top + r->m_renderer->marginTop() + r->m_renderer->lowestPosition(false);
-                bottom = max(bottom, lp);
+                bottom = max(bottom, lp + relativeOffset);
             }
         }
     }
@@ -2517,8 +2519,10 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     if (!includeOverflowInterior && hasOverflowClip())
         return right;
 
-    if (includeSelf && m_overflowWidth > right)
-        right = m_overflowWidth;
+    int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetX() : 0;
+
+    if (includeSelf)
+        right = max(right, m_overflowWidth + relativeOffset);
 
     if (m_positionedObjects) {
         RenderObject* r;
@@ -2533,7 +2537,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
                 // Therefore we should not allow it to contribute to the rightmost position.
                 if (!isRenderView() || r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
                     int rp = r->xPos() + r->rightmostPosition(false);
-                    right = max(right, rp);
+                    right = max(right, rp + relativeOffset);
                 }
             }
         }
@@ -2542,7 +2546,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
     if (m_hasColumns) {
         // This only matters for LTR
         if (style()->direction() == LTR)
-            right = max(columnRects()->last().right(), right);
+            right = max(columnRects()->last().right() + relativeOffset, right);
         return right;
     }
 
@@ -2552,7 +2556,7 @@ int RenderBlock::rightmostPosition(bool includeOverflowInterior, bool includeSel
         for ( ; (r = it.current()); ++it ) {
             if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
                 int rp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->rightmostPosition(false);
-                right = max(right, rp);
+                right = max(right, rp + relativeOffset);
             }
         }
     }
@@ -2577,8 +2581,10 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     if (!includeOverflowInterior && hasOverflowClip())
         return left;
     
-    if (includeSelf && m_overflowLeft < left)
-        left = m_overflowLeft;
+    int relativeOffset = includeSelf && isRelPositioned() ? relativePositionOffsetX() : 0;
+
+    if (includeSelf)
+        left = min(left, m_overflowLeft + relativeOffset);
 
     if (m_positionedObjects) {
         RenderObject* r;
@@ -2593,7 +2599,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
                 // Therefore we should not allow it to contribute to the leftmost position.
                 if (!isRenderView() || r->yPos() + r->height() > 0 || r->yPos() + r->lowestPosition(false) > 0) {
                     int lp = r->xPos() + r->leftmostPosition(false);
-                    left = min(left, lp);
+                    left = min(left, lp + relativeOffset);
                 }
             }
         }
@@ -2602,7 +2608,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
     if (m_hasColumns) {
         // This only matters for RTL
         if (style()->direction() == RTL)
-            left = min(columnRects()->last().x(), left);
+            left = min(columnRects()->last().x() + relativeOffset, left);
         return left;
     }
 
@@ -2612,7 +2618,7 @@ int RenderBlock::leftmostPosition(bool includeOverflowInterior, bool includeSelf
         for ( ; (r = it.current()); ++it ) {
             if (r->m_shouldPaint || r->m_renderer->hasLayer()) {
                 int lp = r->m_left + r->m_renderer->marginLeft() + r->m_renderer->leftmostPosition(false);
-                left = min(left, lp);
+                left = min(left, lp + relativeOffset);
             }
         }
     }

@@ -1,12 +1,12 @@
 <html>
 <head>
-	<script src="repaint.js" type="text/javascript"></script>
-	<script type="text/javascript">
-	   function repaintTest()
-	   {
+    <script src="repaint.js" type="text/javascript"></script>
+    <script type="text/javascript">
+       function repaintTest()
+       {
            document.getElementById('t').style.position = 'relative';
-	   }
-	</script>
+       }
+    </script>
 </head>
 <body onload="runRepaintTest();">
     <p>
@@ -14,7 +14,7 @@
         REGRESSION: [Incremental Repaint] DHTML movement test failures</i>.
     </p>
     <hr>
-    <div id="t" style="position: static; left: 50px;">
+    <div id="t" style="position: static; left: 50px; width: 500px;">
         <div style="width: 50px; height: 50px; background: blue; position: absolute; left: 100px;"></div>
     </div>
 </body>

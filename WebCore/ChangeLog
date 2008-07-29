@@ -2,6 +2,24 @@
 
         Reviewed by Dave Hyatt.
 
+        - fix <rdar://problem/6059648> Some content not visible when the window is short at courtneyalbright.com
+
+        Test: fast/overflow/float-in-relpositioned.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::lowestPosition): Add this block's relative offset
+        to floats' and positioned objects' lowest position.
+        (WebCore::RenderBlock::rightmostPosition): Ditto.
+        (WebCore::RenderBlock::leftmostPosition): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::lowestPosition): Removed redundant test.
+        (WebCore::RenderBox::rightmostPosition): Ditto.
+        (WebCore::RenderBox::leftmostPosition): Ditto.
+
+2008-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - fix <rdar://problem/6048566> Repaint original element's position, not its offset position
 
         Test: fast/repaint/layout-state-relative.html

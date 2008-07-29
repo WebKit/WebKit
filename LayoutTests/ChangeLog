@@ -2,6 +2,21 @@
 
         Reviewed by Dave Hyatt.
 
+        - test, updated test and results for <rdar://problem/6059648> Some content not visible when the window is short at courtneyalbright.com
+
+        * fast/overflow/float-in-relpositioned.html: Added.
+        * fast/repaint/containing-block-position-change.html: Changed to avoid
+        a full repaint due to a scroll bar appearing.
+        * platform/mac/fast/clip/015-expected.txt:
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.checksum: Added.
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.png: Added.
+        * platform/mac/fast/overflow/float-in-relpositioned-expected.txt: Added.
+        * platform/mac/fast/repaint/clipped-relative-expected.txt:
+
+2008-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - repaint test for <rdar://problem/6048566> Repaint original element's position, not its offset position
 
         * fast/repaint/layout-state-relative.html: Added.
