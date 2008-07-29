@@ -1,5 +1,18 @@
 2008-07-29  Adam Roben  <aroben@apple.com>
 
+        Change Vector::find to return an index instead of an iterator
+
+        Indices are more natural than iterators when working with Vector.
+
+        Reviewed by John Sullivan.
+
+        * wtf/Vector.h:
+        (WTF::Vector::find): Changed to iterate the Vector manually and return
+        the index of the found item, rather than an iterator. When the item
+        could not be found, we return WTF::notFound.
+
+2008-07-29  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * wtf/ThreadingWin.cpp:
