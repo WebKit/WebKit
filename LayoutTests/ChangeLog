@@ -1,3 +1,11 @@
+2008-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Mark Rowe.
+
+        - update results for console.group and console.groupEnd
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-07-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sammy Weinig.
