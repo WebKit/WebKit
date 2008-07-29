@@ -128,7 +128,7 @@ void initializeThreading()
     }
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)
 {
     ThreadPrivate* thread = new ThreadPrivate(entryPoint, data);
     if (!thread) {

@@ -1,3 +1,9 @@
+2008-07-29  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the Qt build.
+
+        * wtf/ThreadingQt.cpp: Add the extra argument to createThread.
+
 2008-07-29  Adam Roben  <aroben@apple.com>
 
         Change Vector::find to return an index instead of an iterator
