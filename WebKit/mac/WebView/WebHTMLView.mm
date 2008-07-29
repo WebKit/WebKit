@@ -310,10 +310,12 @@ static CachedResourceClient* promisedDataClient()
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
 
-@class NSInputContext;
-@interface NSResponder (IMSecretsIKnowAbout)
-- (NSInputContext *)inputContext;
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+@class NSTextInputContext;
+@interface NSResponder (AppKitDetails)
+- (NSTextInputContext *)inputContext;
 @end
+#endif
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
@@ -4962,7 +4964,7 @@ static BOOL isTextInput(Frame* coreFrame)
 // Some input methods do not properly behave when TSM is in secure input mode
 // which can allow the password to be made visible.  We prevent this by overriding 
 // the active context if a password field is focused.
-- (NSInputContext *)inputContext 
+- (NSTextInputContext *)inputContext
 {
     Frame* coreFrame = core([self _frame]);
     if (coreFrame && coreFrame->selection()->isInPasswordField())
