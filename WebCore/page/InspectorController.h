@@ -173,6 +173,9 @@ public:
     void startTiming(const KJS::UString& title);
     bool stopTiming(const KJS::UString& title, double& elapsed);
 
+    void startGroup();
+    void endGroup();
+
 private:
     void focusNode();
 
@@ -237,6 +240,7 @@ private:
     SpecialPanels m_showAfterVisible;
     long long m_nextIdentifier;
     RefPtr<Node> m_highlightedNode;
+    unsigned m_groupLevel;
 };
 
 } // namespace WebCore

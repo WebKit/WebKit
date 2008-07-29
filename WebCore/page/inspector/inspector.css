@@ -466,7 +466,7 @@ body.console-visible #console {
     min-height: 16px; 
 }
 
-.console-message::before, .console-user-command::before, #console-prompt::before {
+.console-message::before, .console-user-command::before, #console-prompt::before, .console-group-title-level::before {
     position: absolute;
     display: block;
     content: "";
@@ -480,6 +480,29 @@ body.console-visible #console {
 
 .console-message-text {
     white-space: pre-wrap;
+}
+
+.console-group .console-group > .console-group-messages {
+    margin-left: 16px;
+}
+
+.console-group-title-level {
+    font-weight: bold;
+}
+
+.console-group-title-level::before {
+    background-image: url(Images/disclosureTriangleSmallDown.png);
+    top: 0.6em;
+    width: 11px;
+    height: 12px;
+}
+
+.console-group.collapsed .console-group-title-level::before {
+    background-image: url(Images/disclosureTriangleSmallRight.png);
+}
+
+.console-group.collapsed > .console-group-messages {
+    display: none;
 }
 
 .console-error-level .console-message-text {

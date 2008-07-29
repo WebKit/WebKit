@@ -303,6 +303,35 @@ void Console::timeEnd(const UString& title)
     page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, String());
 }
 
+void Console::group(ExecState* exec, const ArgList& arguments)
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->inspectorController()->startGroup();
+
+    if (arguments.isEmpty())
+        page->inspectorController()->addMessageToConsole(JSMessageSource, GroupTitleMessageLevel, String(), 0, String());
+    else
+        page->inspectorController()->addMessageToConsole(JSMessageSource, GroupTitleMessageLevel, exec, arguments, 0, String());
+}
+
+void Console::groupEnd()
+{
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->inspectorController()->endGroup();
+}
+
 void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
 {
     if (Page* page = m_frame->page())

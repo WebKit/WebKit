@@ -48,6 +48,11 @@ WebInspector.Console = function()
     this.clearButton.title = WebInspector.UIString("Clear console log.");
     this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 
+    this.topGroup = new WebInspector.ConsoleGroup(null, 0);
+    this.messagesElement.insertBefore(this.topGroup.element, this.promptElement);
+    this.groupLevel = 0;
+    this.currentGroup = this.topGroup;
+
     document.getElementById("main-status-bar").addEventListener("mousedown", this._startStatusBarDragging.bind(this), true);
 }
 
@@ -143,8 +148,12 @@ WebInspector.Console.prototype = {
 
         this.messages.push(msg);
 
-        var element = msg.toMessageElement();
-        this.messagesElement.insertBefore(element, this.promptElement);
+        while (msg.groupLevel > this.groupLevel)
+            this.startGroup();
+        while (msg.groupLevel < this.groupLevel)
+            this.endGroup();
+
+        this.currentGroup.addMessage(msg);
         this.promptElement.scrollIntoView(false);
     },
 
@@ -154,8 +163,9 @@ WebInspector.Console.prototype = {
 
         this.messages = [];
 
-        while (this.messagesElement.firstChild != this.promptElement)
-            this.messagesElement.removeChild(this.messagesElement.firstChild);
+        this.groupLevel = 0;
+        this.currentGroup = this.topGroup;
+        this.topGroup.messagesElement.removeChildren();
     },
 
     completions: function(wordRange, bestMatchOnly)
@@ -207,6 +217,23 @@ WebInspector.Console.prototype = {
         }
 
         return results;
+    },
+
+    startGroup: function() {
+        this.groupLevel++;
+        
+        var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
+        this.currentGroup.messagesElement.appendChild(group.element);
+        this.currentGroup = group;
+    },
+
+    endGroup: function() {
+        if (this.groupLevel < 1)
+            return;
+
+        this.groupLevel--;
+
+        this.currentGroup = this.currentGroup.parentGroup;
     },
 
     _toggleButtonClicked: function()
@@ -443,19 +470,20 @@ WebInspector.Console.prototype = {
 
 WebInspector.Console.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ConsoleMessage = function(source, level, line, url)
+WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
 {
     this.source = source;
     this.level = level;
     this.line = line;
     this.url = url;
+    this.groupLevel = groupLevel;
 
     // This _format call passes in true for the plainText argument. The result's textContent is
     // used for inline message bubbles in SourceFrames, or other plain-text representations.
-    this.message = this._format(Array.prototype.slice.call(arguments, 4), true).textContent;
+    this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
 
     // The formatedMessage property is used for the rich and interactive console.
-    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 4));
+    this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 5));
 }
 
 WebInspector.ConsoleMessage.prototype = {
@@ -544,6 +572,9 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 element.addStyleClass("console-error-level");
+                break;
+            case WebInspector.ConsoleMessage.MessageLevel.GroupTitle:
+                element.addStyleClass("console-group-title-level");
         }
 
         var messageTextElement = document.createElement("span");
@@ -608,6 +639,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 levelString = "Error";
                 break;
+            case WebInspector.ConsoleMessage.MessageLevel.GroupTitle:
+                levelString = "GroupTitle";
+                break;
         }
 
         return sourceString + " " + levelString + ": " + this.formattedMessage.textContent + "\n" + this.url + " line " + this.line;
@@ -627,7 +661,8 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Tip: 0,
     Log: 1,
     Warning: 2,
-    Error: 3
+    Error: 3,
+    GroupTitle: 4
 }
 
 WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)
@@ -670,5 +705,51 @@ WebInspector.ConsoleCommand.prototype = {
         resultElement.appendChild(resultTextElement);
 
         return element;
+    }
+}
+
+WebInspector.ConsoleGroup = function(parentGroup, level)
+{
+    this.parentGroup = parentGroup;
+    this.level = level;
+
+    var element = document.createElement("div");
+    element.className = "console-group";
+    element.group = this;
+    this.element = element;
+
+    var messagesElement = document.createElement("div");
+    messagesElement.className = "console-group-messages";
+    element.appendChild(messagesElement);
+    this.messagesElement = messagesElement;
+}
+
+WebInspector.ConsoleGroup.prototype = {
+    addMessage: function(msg)
+    {
+        var element = msg.toMessageElement();
+        
+        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.GroupTitle) {
+            this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
+            element.addEventListener("click", this._titleClicked.bind(this), true);
+        } else
+            this.messagesElement.appendChild(element);
+    },
+    
+    _titleClicked: function(event)
+    {
+        var groupTitleElement = event.target.enclosingNodeOrSelfWithClass("console-group-title-level");
+        if (groupTitleElement) {
+            var groupElement = groupTitleElement.enclosingNodeOrSelfWithClass("console-group");
+            if (groupElement)
+                if (groupElement.hasStyleClass("collapsed"))
+                    groupElement.removeStyleClass("collapsed");
+                else
+                    groupElement.addStyleClass("collapsed");
+            groupTitleElement.scrollIntoViewIfNeeded(true);
+        }
+
+        event.stopPropagation();
+        event.preventDefault();
     }
 }

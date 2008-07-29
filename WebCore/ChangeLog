@@ -1,3 +1,44 @@
+2008-07-29  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Fixed Bug 19158: Inspector should support console.group/console.groupEnd
+
+        <https://bugs.webkit.org/show_bug.cgi?id=19158>
+
+        Reviewed by Tim Hatcher and Adam Roben.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::group): Added.
+        * page/Console.cpp:
+        (WebCore::Console::group): Added.
+        (WebCore::Console::groupEnd): Added.
+        * page/Console.h:
+        (WebCore::):
+        * page/Console.idl: Added group/groupEnd.
+        * page/InspectorController.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::InspectorController::InspectorController): Added m_groupLevel.
+        (WebCore::InspectorController::addMessageToConsole): Added groupLevel argument.
+        (WebCore::InspectorController::startGroup): Increments m_groupLevel by one and calls js function if needed.
+        (WebCore::InspectorController::endGroup): Decrements m_groupLevel by one and calls js function if needed.
+        (WebCore::InspectorController::addScriptConsoleMessage): Added groupLevel argument.
+        (WebCore::InspectorController::didCommitLoad): Resets m_groupLevel.
+        * page/InspectorController.h:
+        * page/inspector/Console.js:
+        (WebInspector.Console): Added groupLevel and currentGroup topGroup.
+        (WebInspector.Console.addMessage): Calls addMessage method in the currentGroup.
+        (WebInspector.Console.startGroup): Added.
+        (WebInspector.Console.endGroup): Added.
+        (WebInspector.Console.clearMessages): Resets groupLevel and currentGroup.
+        (WebInspector.ConsoleMessage): Added groupLevel property.
+        (WebInspector.ConsoleMessage.MessageLevel.GroupTitle): Added.
+        (WebInspector.ConsoleGroup): Added.
+        (WebInspector.ConsoleGroup.addMessage): Adds console message to group.
+        (WebInspector.ConsoleGroup._titleClicked): Adds "collapsed" style class.
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.js:
+        (WebInspector.startGroupInConsole): Calls console.startGroup
+        (WebInspector.endGroupInConsole): Calls console.endGroup
+
 2008-07-29  Adam Roben  <aroben@apple.com>
 
         Add names for WebCore's threads
