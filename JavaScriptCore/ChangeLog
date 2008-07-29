@@ -1,3 +1,39 @@
+2008-07-29  Adam Roben  <aroben@apple.com>
+
+        Add support for setting thread names on Windows
+
+        These thread names make it much easier to identify particular threads
+        in Visual Studio's Threads panel.
+
+        WTF::createThread now takes a const char* representing the thread's
+        name. On Windows, we throw a special exception to set this string as
+        the thread's name. Other platforms do nothing with this name for now.
+
+        Reviewed by Anders Carlsson.
+
+        * JavaScriptCore.exp: Export the new version of createThread that
+        takes 3 arguments (the old one continues to be exported for backward
+        compatibility).
+        * wtf/Threading.h: Add a threadName argument to createThread.
+
+        * wtf/ThreadingGtk.cpp:
+        (WTF::createThread):
+        * wtf/ThreadingNone.cpp:
+        (WTF::createThread):
+        Updated for function signature change.
+
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::createThread): Updated for function signature change. We keep
+        around the old 2-argument version of createThread for backward
+        compatibility.
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::setThreadName): Added. This function's implementation came from
+        MSDN.
+        (WTF::initializeThreading): Set the name of the main thread.
+        (WTF::createThread): Call setThreadName. We keep around the old
+        2-argument version of createThread for backward compatibility.
+
 2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Oliver Hunt.

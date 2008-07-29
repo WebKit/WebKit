@@ -234,6 +234,7 @@ __ZN3WTF10fastCallocEmm
 __ZN3WTF10fastMallocEm
 __ZN3WTF11fastReallocEPvm
 __ZN3WTF12createThreadEPFPvS0_ES0_
+__ZN3WTF12createThreadEPFPvS0_ES0_PKc
 __ZN3WTF12detachThreadEj
 __ZN3WTF12isMainThreadEv
 __ZN3WTF13currentThreadEv

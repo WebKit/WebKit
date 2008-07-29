@@ -77,6 +77,32 @@
 
 namespace WTF {
 
+// MS_VC_EXCEPTION, THREADNAME_INFO, and setThreadName all come from <http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx>.
+static const DWORD MS_VC_EXCEPTION = 0x406D1388;
+
+#pragma pack(push, 8)
+typedef struct tagTHREADNAME_INFO {
+    DWORD dwType; // must be 0x1000
+    LPCSTR szName; // pointer to name (in user addr space)
+    DWORD dwThreadID; // thread ID (-1=caller thread)
+    DWORD dwFlags; // reserved for future use, must be zero
+} THREADNAME_INFO;
+#pragma pack(pop)
+
+static void setThreadName(DWORD dwThreadID, LPCSTR szThreadName)
+{
+    THREADNAME_INFO info;
+    info.dwType = 0x1000;
+    info.szName = szThreadName;
+    info.dwThreadID = dwThreadID;
+    info.dwFlags = 0;
+
+    __try {
+        RaiseException(MS_VC_EXCEPTION, 0, sizeof(info)/sizeof(ULONG_PTR), reinterpret_cast<ULONG_PTR*>(&info));
+    } __except (EXCEPTION_CONTINUE_EXECUTION) {
+    }
+}
+
 Mutex* atomicallyInitializedStaticMutex;
 
 static ThreadIdentifier mainThreadIdentifier;
@@ -95,6 +121,7 @@ void initializeThreading()
         wtf_random_init();
         initializeMainThread();
         mainThreadIdentifier = currentThread();
+        setThreadName(mainThreadIdentifier, "Main Thread");
     }
 }
 
@@ -145,8 +172,12 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
     return reinterpret_cast<unsigned>(result);
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* threadName)
 {
+    // Visual Studio has a 31-character limit on thread names. Longer names will
+    // be truncated silently, but we'd like callers to know about the limit.
+    ASSERT_ARG(szThreadName, strlen(szThreadName) <= 31);
+
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
     ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);
@@ -156,10 +187,20 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
         return 0;
     }
 
+    if (threadName)
+        setThreadName(threadIdentifier, threadName);
+
     threadID = static_cast<ThreadIdentifier>(threadIdentifier);
     storeThreadHandleByIdentifier(threadIdentifier, threadHandle);
 
     return threadID;
+}
+
+// This function is deprecated but needs to be kept around for backward
+// compatibility. Use the 3-argument version of createThread above.
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+{
+    return createThread(entryPoint, data, 0);
 }
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)

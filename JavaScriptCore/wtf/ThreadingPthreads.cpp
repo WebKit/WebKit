@@ -103,7 +103,7 @@ static void clearPthreadHandleForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)
 {
     pthread_t threadHandle;
     if (pthread_create(&threadHandle, NULL, entryPoint, data)) {
@@ -114,6 +114,15 @@ ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
     ThreadIdentifier threadID = establishIdentifierForPthreadHandle(threadHandle);
     return threadID;
 }
+
+#if PLATFORM(MAC)
+// This function is deprecated but needs to be kept around for backward
+// compatibility. Use the 3-argument version of createThread above instead.
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+{
+    return createThread(entryPoint, data, 0);
+}
+#endif
 
 int waitForThreadCompletion(ThreadIdentifier threadID, void** result)
 {

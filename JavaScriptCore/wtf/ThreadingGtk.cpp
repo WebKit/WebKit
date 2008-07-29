@@ -106,7 +106,7 @@ static void clearThreadForIdentifier(ThreadIdentifier id)
     threadMap().remove(id);
 }
 
-ThreadIdentifier createThread(ThreadFunction entryPoint, void* data)
+ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char*)
 {
     GThread* thread;
     if (!(thread = g_thread_create(entryPoint, data, TRUE, 0))) {

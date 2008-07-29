@@ -1,3 +1,14 @@
+2008-07-29  Adam Roben  <aroben@apple.com>
+
+        Export the new version of createThread
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+        Also moved the old version of createThread into the deprecated
+        section.
+
 2008-07-26  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Geoff Garen.

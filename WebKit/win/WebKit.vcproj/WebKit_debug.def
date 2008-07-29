@@ -110,7 +110,7 @@ EXPORTS
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-        ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
+        ?createThread@WTF@@YAIP6APAXPAX@Z0PBD@Z
         ?initializeThreading@WTF@@YAXXZ
         ?isMainThread@WTF@@YA_NXZ
         ?lock@Mutex@WTF@@QAEXXZ
@@ -126,3 +126,4 @@ EXPORTS
         WebLocalizedString
         WebLocalizedLPCTSTR
         SetWebLocalizedStringMainBundle
+        ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
