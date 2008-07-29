@@ -1,5 +1,14 @@
 2008-07-29  Adam Roben  <aroben@apple.com>
 
+        Export detachThread
+
+        Reviewed by Geoff Garen.
+
+        * WebKit.vcproj/WebKit.def:
+        * WebKit.vcproj/WebKit_debug.def:
+
+2008-07-29  Adam Roben  <aroben@apple.com>
+
         Export the new version of createThread
 
         Reviewed by Anders Carlsson.
