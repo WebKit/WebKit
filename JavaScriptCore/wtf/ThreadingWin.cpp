@@ -91,6 +91,10 @@ typedef struct tagTHREADNAME_INFO {
 
 static void setThreadName(DWORD dwThreadID, LPCSTR szThreadName)
 {
+    // Visual Studio has a 31-character limit on thread names. Longer names will
+    // be truncated silently, but we'd like callers to know about the limit.
+    ASSERT_ARG(szThreadName, strlen(szThreadName) <= 31);
+
     THREADNAME_INFO info;
     info.dwType = 0x1000;
     info.szName = szThreadName;
@@ -174,10 +178,6 @@ static unsigned __stdcall wtfThreadEntryPoint(void* param)
 
 ThreadIdentifier createThread(ThreadFunction entryPoint, void* data, const char* threadName)
 {
-    // Visual Studio has a 31-character limit on thread names. Longer names will
-    // be truncated silently, but we'd like callers to know about the limit.
-    ASSERT_ARG(szThreadName, strlen(szThreadName) <= 31);
-
     unsigned threadIdentifier = 0;
     ThreadIdentifier threadID = 0;
     ThreadFunctionInvocation* invocation = new ThreadFunctionInvocation(entryPoint, data);

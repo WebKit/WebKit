@@ -1,5 +1,13 @@
 2008-07-29  Adam Roben  <aroben@apple.com>
 
+        Windows build fix
+
+        * wtf/ThreadingWin.cpp:
+        (WTF::setThreadName): Move a misplaced assertion to here...
+        (WTF::createThread): ...from here.
+
+2008-07-29  Adam Roben  <aroben@apple.com>
+
         Add support for setting thread names on Windows
 
         These thread names make it much easier to identify particular threads
