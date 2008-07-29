@@ -1,3 +1,21 @@
+2008-07-29  Maxime Britto  <britto@apple.com>
+
+        Reviewed by adele.
+
+        Test: fast/events/autoscroll-in-textfield.html
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeProgramaticallyScrolled): reverted a bad change introduced in r35244
+        nb:the test case introduced in r35244 is still working.
+
+2008-07-29  Maxime Britto  <britto@apple.com>
+
+        Reviewed by adele.
+        This test verifies that the autoscroll works within textfields.
+
+        * fast/events/autoscroll-in-textfield-expected.txt: Added.
+        * fast/events/autoscroll-in-textfield.html: Added.
+
 2008-07-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Sammy Weinig.
