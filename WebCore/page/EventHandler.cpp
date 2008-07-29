@@ -941,7 +941,11 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 #if PLATFORM(WIN)
     if (m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
         stopAutoscrollTimer();
-    } else if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {
+        invalidateClick();
+        return true;
+    }
+    
+    if (mouseEvent.button() == MiddleButton && !mev.isOverLink()) {
         RenderObject* renderer = mev.targetNode()->renderer();
 
         while (renderer && !renderer->canBeProgramaticallyScrolled())

@@ -1,5 +1,15 @@
 2008-07-29  Maxime Britto  <britto@apple.com>
 
+        Reviewed by Darin.
+
+        <rdar://problem/6095023> "When pan-scrolling, mouse click on hyperlink stop the pan-Scroll but follow the link after that."
+        With this patch we now stop the pan scroll and swallow the event to prevent any following action.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent): If we were in pan scrolling mode we no longer just stop the pan scroll and continue with the function, we now stop and return true to attest that we swallowed the event.
+
+2008-07-29  Maxime Britto  <britto@apple.com>
+
         Reviewed by adele.
 
         Test: fast/events/autoscroll-in-textfield.html
