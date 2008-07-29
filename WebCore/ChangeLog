@@ -1,3 +1,24 @@
+2008-07-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sammy Weinig.
+
+        Fix for <rdar://problem/6103024>
+        When a QT movie is loaded directly in the browser, I can't pause it by single-clicking on the video
+
+        Test: media/video-click-dlbclick-standalone.html
+
+        * loader/MediaDocument.cpp: (WebCore::MediaDocument::defaultEventHandler): For standalone media documents,
+        match the default Quicktime plugin behavior to allow clicking and double-clicking to pause and play the media.
+        * loader/MediaDocument.h: Added defaultEventHandler.
+
+        * html/HTMLMediaElement.cpp: (WebCore::HTMLMediaElement::defaultEventHandler): Return early if the event has been handled.
+        * rendering/MediaControlElements.cpp:
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler): Correct what was probably a typo.  Instead of "event->defaultHandled()",
+         it is supposed to be "event->setDefaultHandled()".
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler): ditto.
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler): ditto.
+
 2008-07-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

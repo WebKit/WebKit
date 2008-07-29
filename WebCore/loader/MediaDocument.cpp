@@ -29,12 +29,13 @@
 #include "MediaDocument.h"
 
 #include "Element.h"
+#include "Event.h"
+#include "EventNames.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLNames.h"
-#include "HTMLMediaElement.h"
 #include "HTMLVideoElement.h"
 #include "Page.h"
 #include "SegmentedString.h"
@@ -43,9 +44,10 @@
 #include "XMLTokenizer.h"
 
 namespace WebCore {
-    
+
+using namespace EventNames;
 using namespace HTMLNames;
-    
+
 class MediaTokenizer : public Tokenizer {
 public:
     MediaTokenizer(Document* doc) : m_doc(doc), m_mediaElement(0) {}
@@ -63,7 +65,7 @@ private:
     Document* m_doc;
     HTMLMediaElement* m_mediaElement;
 };
-    
+
 bool MediaTokenizer::write(const SegmentedString& s, bool appendData)
 {
     ASSERT_NOT_REACHED();
@@ -91,7 +93,7 @@ void MediaTokenizer::createDocumentStructure()
     m_mediaElement->setAttribute(nameAttr, "media");
     m_mediaElement->setSrc(m_doc->url());
     
-    body->appendChild(mediaElement, ec);    
+    body->appendChild(mediaElement, ec);
 }
     
 bool MediaTokenizer::writeRawData(const char* data, int len)
@@ -128,6 +130,28 @@ Tokenizer* MediaDocument::createTokenizer()
 {
     return new MediaTokenizer(this);
 }
-    
+
+void MediaDocument::defaultEventHandler(Event* event)
+{
+    // Match the default Quicktime plugin behavior to allow 
+    // clicking and double-clicking to pause and play the media.
+    EventTargetNode* targetNode = event->target()->toNode();
+    if (targetNode && targetNode->hasTagName(videoTag)) {
+        HTMLVideoElement* video = static_cast<HTMLVideoElement*>(targetNode);
+        ExceptionCode ec;
+        if (event->type() == clickEvent) {
+            if (!video->canPlay()) {
+                video->pause(ec);
+                event->setDefaultHandled();
+            }
+        } else if (event->type() == dblclickEvent) {
+            if (video->canPlay()) {
+                video->play(ec);
+                event->setDefaultHandled();
+            }
+        }
+    }
+}
+
 }
 #endif

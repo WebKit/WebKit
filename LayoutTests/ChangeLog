@@ -1,3 +1,13 @@
+2008-07-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Sammy Weinig.
+
+        Test for <rdar://problem/6103024>
+        When a QT movie is loaded directly in the browser, I can't pause it by single-clicking on the video
+
+        * media/video-click-dlbclick-standalone-expected.txt: Added.
+        * media/video-click-dlbclick-standalone.html: Added.
+
 2008-07-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

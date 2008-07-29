@@ -1040,6 +1040,8 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 {
     if (renderer() && renderer()->isMedia())
         static_cast<RenderMedia*>(renderer())->forwardEvent(event);
+    if (event->defaultHandled())
+        return;
     HTMLElement::defaultEventHandler(event);
 }
 
