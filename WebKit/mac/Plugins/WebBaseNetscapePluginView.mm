@@ -184,12 +184,10 @@ typedef struct {
     AGLContext oldContext;
 } PortState_GL;
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 @class NSTextInputContext;
 @interface NSResponder (AppKitDetails)
 - (NSTextInputContext *)inputContext;
 @end
-#endif
 
 @interface WebPluginRequest : NSObject
 {

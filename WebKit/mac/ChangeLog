@@ -1,5 +1,12 @@
 2008-07-29  Mark Rowe  <mrowe@apple.com>
 
+        Tweak to the build fix to keep Dan happy.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * WebView/WebHTMLView.mm:
+
+2008-07-29  Mark Rowe  <mrowe@apple.com>
+
         Build fix.
 
         * Plugins/WebBaseNetscapePluginView.mm:

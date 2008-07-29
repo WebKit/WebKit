@@ -310,12 +310,10 @@ static CachedResourceClient* promisedDataClient()
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
 @end
 
-#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
 @class NSTextInputContext;
 @interface NSResponder (AppKitDetails)
 - (NSTextInputContext *)inputContext;
 @end
-#endif
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
