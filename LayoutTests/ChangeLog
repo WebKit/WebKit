@@ -1,3 +1,13 @@
+2008-07-29  David Hyatt  <hyatt@apple.com>
+
+        Add a layout test for using multiple variable declaration blocks in a single style rule.
+
+        * fast/css/variables/alternate-syntax/multiple-blocks-test.html: Added.
+        * fast/css/variables/multiple-blocks-test.html: Added.
+        * platform/mac/fast/css/variables/multiple-blocks-test-expected.checksum: Added.
+        * platform/mac/fast/css/variables/multiple-blocks-test-expected.png: Added.
+        * platform/mac/fast/css/variables/multiple-blocks-test-expected.txt: Added.
+
 2008-07-28  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig
