@@ -1,3 +1,16 @@
+2008-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6048566> Repaint original element's position, not its offset position
+
+        Test: fast/repaint/layout-state-relative.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absolutePosition): Changed the LayoutState-enabled
+        code path to account for the object's relative offset.
+        (WebCore::RenderBox::computeAbsoluteRepaintRect): Ditto.
+
 2008-07-29  Keishi Hattori  <casey.hattori@gmail.com>
 
         Fixed Bug 19158: Inspector should support console.group/console.groupEnd

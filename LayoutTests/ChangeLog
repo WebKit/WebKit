@@ -1,3 +1,14 @@
+2008-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - repaint test for <rdar://problem/6048566> Repaint original element's position, not its offset position
+
+        * fast/repaint/layout-state-relative.html: Added.
+        * platform/mac/fast/repaint/layout-state-relative-expected.checksum: Added.
+        * platform/mac/fast/repaint/layout-state-relative-expected.png: Added.
+        * platform/mac/fast/repaint/layout-state-relative-expected.txt: Added.
+
 2008-07-29  David Hyatt  <hyatt@apple.com>
 
         Add a layout test for using multiple variable declaration blocks in a single style rule.

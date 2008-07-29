@@ -977,6 +977,8 @@ bool RenderBox::absolutePosition(int& xPos, int& yPos, bool fixed) const
         if (LayoutState* layoutState = v->layoutState()) {
             xPos = layoutState->m_offset.width() + m_x;
             yPos = layoutState->m_offset.height() + m_y;
+            if (style()->position() == RelativePosition && m_layer)
+                m_layer->relativePositionOffset(xPos, yPos);
             return true;
         }
     }
@@ -1102,6 +1104,12 @@ void RenderBox::computeAbsoluteRepaintRect(IntRect& rect, bool fixed)
 {
     if (RenderView* v = view()) {
         if (LayoutState* layoutState = v->layoutState()) {
+            if (style()->position() == RelativePosition && m_layer) {
+                int relX = 0;
+                int relY = 0;
+                m_layer->relativePositionOffset(relX, relY);
+                rect.move(relX, relY);
+            }
             rect.move(m_x, m_y);
             rect.move(layoutState->m_offset);
             if (layoutState->m_clipped)
