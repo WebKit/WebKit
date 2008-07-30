@@ -1,3 +1,11 @@
+2008-07-30  Jessica Kahn  <jess@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Added support for UI_STRING and UI_STRING_KEY macros with flexible prefixes.
+        
+        * Scripts/extract-localizable-strings:
+
 2008-07-30  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
