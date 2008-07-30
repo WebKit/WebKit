@@ -1,3 +1,23 @@
+2008-07-29  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/6031021> Make standalone video render more like the quicktime plugin to improve performance
+
+        For standalone video, use QTMovieView to draw.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::createQTMovieView): Moved nil checks to setUpVideoRendering.
+         Associate the QTMovieView with the WebCoreMovieObserver.
+         If we're in a media document, allow QTMovieView to render in its default mode; otherwise tell it to draw synchronously. 
+        (WebCore::MediaPlayerPrivate::detachQTMovieView): Set the WebCoreMovieObserver's view to nil.
+        (WebCore::MediaPlayerPrivate::createQTVideoRenderer): Nil check is now in setUpVideoRendering, which is the only caller of this.
+        (WebCore::MediaPlayerPrivate::setUpVideoRendering): Added nil checks.  Call createQTMovieView for media documents.
+        (WebCore::MediaPlayerPrivate::tearDownVideoRendering): Call detachQTMovieView if a QTMovieView exists.
+        (WebCore::MediaPlayerPrivate::setRect): Call setFrame on the QTMovieView if necessary.
+        (-[WebCoreMovieObserver menuForEventDelegate:]): Added. Returns the frame view's menu.
+        (-[WebCoreMovieObserver setView:]): Added.
+
 2008-07-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Dan Bernstein.

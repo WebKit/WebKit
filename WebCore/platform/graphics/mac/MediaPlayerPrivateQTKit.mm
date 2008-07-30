@@ -128,10 +128,12 @@ using namespace std;
 @interface WebCoreMovieObserver : NSObject
 {
     MediaPlayerPrivate* m_callback;
+    NSView* m_view;
     BOOL m_delayCallbacks;
 }
 -(id)initWithCallback:(MediaPlayerPrivate*)callback;
 -(void)disconnect;
+-(void)setView:(NSView*)view;
 -(void)repaint;
 -(void)setDelayCallbacks:(BOOL)shouldDelay;
 -(void)loadStateChanged:(NSNotification *)notification;
@@ -260,9 +262,6 @@ void MediaPlayerPrivate::createQTMovieView()
 {
     detachQTMovieView();
 
-    if (!m_player->m_frameView || !m_qtMovie)
-        return;
-
     static bool addedCustomMethods = false;
     if (!addedCustomMethods) {
         Class QTMovieContentViewClass = NSClassFromString(@"QTMovieContentView");
@@ -285,17 +284,24 @@ void MediaPlayerPrivate::createQTMovieView()
 #else
     [m_qtMovieView.get() setDelegate:m_objcObserver.get()];
 #endif
+    [m_objcObserver.get() setView:m_qtMovieView.get()];
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
     [m_qtMovieView.get() setControllerVisible:NO];
     [m_qtMovieView.get() setPreservesAspectRatio:NO];
     // the area not covered by video should be transparent
     [m_qtMovieView.get() setFillColor:[NSColor clearColor]];
-    wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
+
+    // If we're in a media document, allow QTMovieView to render in its default mode;
+    // otherwise tell it to draw synchronously.
+    // Note that we expect mainThreadSetNeedsDisplay to be invoked only when synchronous drawing is requested.
+    if (!m_player->inMediaDocument())
+        wkQTMovieViewSetDrawSynchronously(m_qtMovieView.get(), YES);
 }
 
 void MediaPlayerPrivate::detachQTMovieView()
 {
     if (m_qtMovieView) {
+        [m_objcObserver.get() setView:nil];
 #ifdef BUILDING_ON_TIGER
         // setDelegate: isn't a public call in Tiger, so use performSelector to keep the compiler happy
         [m_qtMovieView.get() performSelector:@selector(setDelegate:) withObject:nil];    
@@ -309,9 +315,6 @@ void MediaPlayerPrivate::detachQTMovieView()
 
 void MediaPlayerPrivate::createQTVideoRenderer()
 {
-    if (!m_qtMovie)
-        return;
-
     destroyQTVideoRenderer();
 
     m_qtVideoRenderer.adoptNS([[QTVideoRendererClass() alloc] init]);
@@ -346,18 +349,21 @@ void MediaPlayerPrivate::destroyQTVideoRenderer()
 
 void MediaPlayerPrivate::setUpVideoRendering()
 {
-    if (QTVideoRendererClass())
-        createQTVideoRenderer();
-    else
+    if (!m_player->m_frameView || !m_qtMovie)
+        return;
+
+    if (m_player->inMediaDocument() || !QTVideoRendererClass() )
         createQTMovieView();
+    else
+        createQTVideoRenderer();
 }
 
 void MediaPlayerPrivate::tearDownVideoRendering()
 {
-    if (QTVideoRendererClass())
-        destroyQTVideoRenderer();
-    else
+    if (m_qtMovieView)
         detachQTMovieView();
+    else
+        destroyQTVideoRenderer();
 }
 
 QTTime MediaPlayerPrivate::createQTTime(float time) const
@@ -709,11 +715,17 @@ void MediaPlayerPrivate::setRect(const IntRect& r)
 { 
     if (!m_qtMovieView) 
         return;
-    // We don't really need the QTMovieView in any specific location so let's just get it out of the way
-    // where it won't intercept events or try to bring up the context menu.
-    IntRect farAwayButCorrectSize(r);
-    farAwayButCorrectSize.move(-1000000, -1000000);
-    [m_qtMovieView.get() setFrame:farAwayButCorrectSize];
+
+    if (m_player->inMediaDocument())
+        // We need the QTMovieView to be placed in the proper location for document mode.
+        [m_qtMovieView.get() setFrame:r];
+    else {
+        // We don't really need the QTMovieView in any specific location so let's just get it out of the way
+        // where it won't intercept events or try to bring up the context menu.
+        IntRect farAwayButCorrectSize(r);
+        farAwayButCorrectSize.move(-1000000, -1000000);
+        [m_qtMovieView.get() setFrame:farAwayButCorrectSize];
+    }   
 }
 
 void MediaPlayerPrivate::setVisible(bool b)
@@ -932,6 +944,17 @@ void MediaPlayerPrivate::disableUnsupportedTracks(unsigned& enabledTrackCount)
 {
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     m_callback = 0;
+}
+
+-(NSMenu*)menuForEventDelegate:(NSEvent*)theEvent
+{
+    // Get the contextual menu from the QTMovieView's superview, the frame view
+    return [[m_view superview] menuForEvent:theEvent];
+}
+
+-(void)setView:(NSView*)view
+{
+    m_view = view;
 }
 
 -(void)repaint
