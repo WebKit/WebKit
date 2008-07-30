@@ -378,6 +378,33 @@ void RenderMedia::forwardEvent(Event* event)
     }
 }
 
+int RenderMedia::lowestPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int bottom = RenderReplaced::lowestPosition(includeOverflowInterior, includeSelf);
+    if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
+        return bottom;
+    
+    return max(bottom,  m_controlsShadowRoot->renderer()->yPos() + m_controlsShadowRoot->renderer()->lowestPosition(includeOverflowInterior, includeSelf));
+}
+
+int RenderMedia::rightmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int right = RenderReplaced::rightmostPosition(includeOverflowInterior, includeSelf);
+    if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
+        return right;
+    
+    return max(right, m_controlsShadowRoot->renderer()->xPos() + m_controlsShadowRoot->renderer()->rightmostPosition(includeOverflowInterior, includeSelf));
+}
+
+int RenderMedia::leftmostPosition(bool includeOverflowInterior, bool includeSelf) const
+{
+    int left = RenderReplaced::leftmostPosition(includeOverflowInterior, includeSelf);
+    if (!m_controlsShadowRoot || !m_controlsShadowRoot->renderer())
+        return left;
+    
+    return min(left, m_controlsShadowRoot->renderer()->xPos() +  m_controlsShadowRoot->renderer()->leftmostPosition(includeOverflowInterior, includeSelf));
+}
+
 } // namespace WebCore
 
 #endif

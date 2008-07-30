@@ -1,3 +1,23 @@
+2008-07-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix for <rdar://problem/6073372> Move built-in controls below <video> element for standalone media documents
+
+        * css/CSSSelector.cpp: (WebCore::CSSSelector::extractPseudoType): Added -webkit-full-page-media pseudo class.
+        * css/CSSSelector.h: (WebCore::CSSSelector::): Added PseudoFullPageMedia.
+        * css/CSSStyleSelector.cpp: (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Added case to
+        apply PseudoFullPageMedia for elements in a full page media document.
+
+        * css/html4.css: Added rule to shift control panel down for video in standalone media documents.
+
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::lowestPosition): Added implementation that takes the controls into account.
+        This makes sure that scrollbars on the page will account for controls not directly contained in the RenderMedia.
+        (WebCore::RenderMedia::rightmostPosition): ditto.
+        (WebCore::RenderMedia::leftmostPosition): ditto.
+        * rendering/RenderMedia.h:
+
 2008-07-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

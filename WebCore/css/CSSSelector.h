@@ -136,6 +136,7 @@ namespace WebCore {
             PseudoActive,
             PseudoChecked,
             PseudoEnabled,
+            PseudoFullPageMedia,
             PseudoDisabled,
             PseudoReadOnly,
             PseudoReadWrite,

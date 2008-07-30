@@ -80,6 +80,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString firstLetter("first-letter");
     static AtomicString firstLine("first-line");
     static AtomicString firstOfType("first-of-type");
+    static AtomicString fullPageMedia("-webkit-full-page-media");
     static AtomicString nthChild("nth-child(");
     static AtomicString nthOfType("nth-of-type(");
     static AtomicString nthLastChild("nth-last-child(");
@@ -149,6 +150,8 @@ void CSSSelector::extractPseudoType() const
         m_pseudoType = PseudoEmpty;
     else if (m_value == firstChild)
         m_pseudoType = PseudoFirstChild;
+    else if (m_value == fullPageMedia)
+        m_pseudoType = PseudoFullPageMedia;
     else if (m_value == lastChild)
         m_pseudoType = PseudoLastChild;
     else if (m_value == lastOfType)
