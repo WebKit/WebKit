@@ -39,6 +39,7 @@
     #include <wx/wx.h>
 #endif
 #include <wx/textdlg.h>
+#include <wx/tooltip.h>
 
 #include "WebBrowserShell.h"
 #include "WebView.h"
@@ -304,9 +305,11 @@ void ChromeClientWx::mouseDidMoveOverElement(const HitTestResult&, unsigned modi
     notImplemented();
 }
 
-void ChromeClientWx::setToolTip(const String&)
+void ChromeClientWx::setToolTip(const String& tip)
 {
-    notImplemented();
+    wxToolTip* tooltip = m_webView->GetToolTip();
+    if (!tooltip || tooltip->GetTip() != wxString(tip))
+        m_webView->SetToolTip(tip);
 }
 
 void ChromeClientWx::print(Frame*)

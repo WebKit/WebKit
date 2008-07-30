@@ -1,3 +1,16 @@
+2008-07-27  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Sam Weinig.
+
+        Add tooltip support to the wx port.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20173
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::setToolTip):
+        * WebView.cpp:
+        (wxWebView::OnMouseEvents): Use mouseMoved instead of handleMouseMoveEvent.
+
 2008-07-21  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Fix pthread linkage under Linux.

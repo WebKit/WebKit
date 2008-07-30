@@ -537,7 +537,7 @@ void wxWebView::OnMouseEvents(wxMouseEvent& event)
         m_impl->frame->eventHandler()->handleMouseReleaseEvent(wkEvent);
 
     else if (type == wxEVT_MOTION)
-        m_impl->frame->eventHandler()->handleMouseMoveEvent(wkEvent);
+        m_impl->frame->eventHandler()->mouseMoved(wkEvent);
 }
 
 bool wxWebView::CanCopy()
