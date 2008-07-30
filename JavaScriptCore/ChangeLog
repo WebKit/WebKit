@@ -1,5 +1,11 @@
 2008-07-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix the else.
+        
+        * API/WebKitAvailability.h:
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
         * API/WebKitAvailability.h:
         Fix Windows (and other non-Mac builds).
         

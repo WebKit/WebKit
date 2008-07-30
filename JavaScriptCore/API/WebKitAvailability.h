@@ -42,7 +42,7 @@
 
 #ifdef __APPLE__
 #import <AvailabilityMacros.h>
-else
+#else
 // For non-Mac platforms, require the newest version.
 #define WEBKIT_VERSION_MIN_REQUIRED WEBKIT_VERSION_LATEST
 #endif
