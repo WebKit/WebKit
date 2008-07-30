@@ -434,7 +434,7 @@ bool WebFrameLoaderClient::shouldGoToHistoryItem(HistoryItem*) const
 
 PassRefPtr<DocumentLoader> WebFrameLoaderClient::createDocumentLoader(const ResourceRequest& request, const SubstituteData& substituteData)
 {
-    RefPtr<WebDocumentLoader> loader = new WebDocumentLoader(request, substituteData);
+    RefPtr<WebDocumentLoader> loader = WebDocumentLoader::create(request, substituteData);
 
     COMPtr<WebDataSource> dataSource(AdoptCOM, WebDataSource::createInstance(loader.get()));
 

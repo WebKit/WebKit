@@ -1,3 +1,15 @@
+2008-07-29  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fix WebDocumentLoader leak on Windows.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createDocumentLoader):
+        * WebDocumentLoader.cpp:
+        (WebDocumentLoader::create):
+        * WebDocumentLoader.h:
+
 2008-07-29  Adam Roben  <aroben@apple.com>
 
         Export detachThread

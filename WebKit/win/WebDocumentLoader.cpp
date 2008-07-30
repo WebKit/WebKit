@@ -38,6 +38,11 @@ WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const Subst
     gClassCount++;
 }
 
+PassRefPtr<WebDocumentLoader> WebDocumentLoader::create(const ResourceRequest& req, const SubstituteData& data)
+{
+    return adoptRef(new WebDocumentLoader(req, data));
+}
+
 WebDocumentLoader::~WebDocumentLoader()
 {
     gClassCount--;

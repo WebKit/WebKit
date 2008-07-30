@@ -29,10 +29,13 @@
 #include <WebCore/DocumentLoader.h>
 #pragma warning(pop)
 
-class WebDocumentLoader : public WebCore::DocumentLoader
+using namespace WebCore;
+
+class WebDocumentLoader : public DocumentLoader
 {
 public:
-    WebDocumentLoader(const WebCore::ResourceRequest&, const WebCore::SubstituteData&);
+    static PassRefPtr<WebDocumentLoader> create(const ResourceRequest&, const SubstituteData&);
+
     ~WebDocumentLoader();
 
     void setDataSource(WebDataSource*);
@@ -43,6 +46,7 @@ public:
     virtual void detachFromFrame();
 
 private:
+    WebDocumentLoader(const ResourceRequest&, const SubstituteData&);
     WebDataSource* m_dataSource;
     WebDataSource* m_detachedDataSource; // not retained
 };
