@@ -1,3 +1,11 @@
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam.
+
+        Copy icu38* files instead of icu36* files.
+        
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-07-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         DRT/Gtk build fix for r35362
