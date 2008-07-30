@@ -123,9 +123,11 @@ Heap::Heap(JSGlobalData* globalData)
 #endif
     , m_globalData(globalData)
 {
+#if USE(MULTIPLE_THREADS)
     int error = pthread_key_create(&m_currentThreadRegistrar, unregisterThread);
     if (error)
         CRASH();
+#endif
 
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
