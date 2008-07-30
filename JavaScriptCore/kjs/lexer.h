@@ -92,7 +92,7 @@ namespace KJS {
         SourceRange sourceRange(int openBrace, int closeBrace) { return SourceRange(m_source, openBrace + 1, closeBrace); }
 
     private:
-        friend struct JSGlobalData;
+        friend class JSGlobalData;
         Lexer(JSGlobalData*);
         ~Lexer();
 

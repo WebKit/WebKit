@@ -1,3 +1,15 @@
+2008-07-30  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver.
+        
+        MSVC warns when structs are called classes or vice versa.
+        Make all the source refer to JSGlobalData as a class.
+
+        * kjs/CommonIdentifiers.h:
+        * kjs/JSGlobalData.h:
+        * kjs/Parser.h:
+        * kjs/lexer.h:
+
 2008-07-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

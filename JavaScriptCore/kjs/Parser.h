@@ -59,7 +59,7 @@ namespace KJS {
                               ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine);
 
     private:
-        friend struct JSGlobalData;
+        friend class JSGlobalData;
         Parser();
 
         void parse(ExecState*, const UString& sourceURL, int startingLineNumber, PassRefPtr<SourceProvider> source,
