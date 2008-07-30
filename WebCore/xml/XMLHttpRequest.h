@@ -20,7 +20,6 @@
 #ifndef XMLHttpRequest_h
 #define XMLHttpRequest_h
 
-#include "AccessControlList.h"
 #include "EventListener.h"
 #include "EventTarget.h"
 #include "FormData.h"
@@ -156,6 +155,7 @@ private:
 
     bool isSimpleCrossSiteAccessRequest() const;
     String accessControlOrigin() const;
+    bool accessControlCheck(const ResourceResponse&);
 
     void genericError();
     void networkError();
@@ -187,6 +187,7 @@ private:
     RefPtr<FormData> m_requestEntityBody;
     String m_mimeTypeOverride;
     bool m_async;
+    bool m_includeCredentials;
 
     RefPtr<SubresourceLoader> m_loader;
     State m_state;
@@ -214,10 +215,6 @@ private:
     bool m_sameOriginRequest;
     bool m_allowAccess;
     bool m_inPreflight;
-    HTTPHeaderMap m_crossSiteRequestHeaders;
-
-    // FIXME: Add support for AccessControlList in a PI in an XML document in addition to the http header.
-    OwnPtr<AccessControlList> m_httpAccessControlList;
 
     // Used for onprogress tracking
     long long m_receivedLength;

@@ -14,14 +14,14 @@ if (window.layoutTestController)
     var xhr = new XMLHttpRequest;
 
     try {
-        xhr.open("POST", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi", false);
+        xhr.open("PUT", "http://localhost:8000/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi", false);
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in 'open'. [" + e.message + "].");
         return;
     }
 
     try {
-        xhr.send("PASS: POST data received");
+        xhr.send("PASS: PUT data received");
     } catch(e) {
         log("FAIL: Exception thrown. Cross-domain access is not allowed in 'send'. [" + e.message + "].");
         return;

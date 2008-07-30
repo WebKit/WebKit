@@ -3619,12 +3619,6 @@
 		BC348BD40DB7F804004ABAB9 /* JSXMLHttpRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BD20DB7F804004ABAB9 /* JSXMLHttpRequest.h */; };
 		BC348BE90DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */; };
 		BC348BEA0DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */; };
-		BC34C33A0DD607DE00090123 /* AccessControlList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC34C3340DD607DE00090123 /* AccessControlList.cpp */; };
-		BC34C33B0DD607DE00090123 /* AccessControlList.h in Headers */ = {isa = PBXBuildFile; fileRef = BC34C3350DD607DE00090123 /* AccessControlList.h */; };
-		BC34C33C0DD607DE00090123 /* AccessItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC34C3360DD607DE00090123 /* AccessItem.cpp */; };
-		BC34C33D0DD607DE00090123 /* AccessItem.h in Headers */ = {isa = PBXBuildFile; fileRef = BC34C3370DD607DE00090123 /* AccessItem.h */; };
-		BC34C33E0DD607DE00090123 /* AccessItemRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC34C3380DD607DE00090123 /* AccessItemRule.cpp */; };
-		BC34C33F0DD607DE00090123 /* AccessItemRule.h in Headers */ = {isa = PBXBuildFile; fileRef = BC34C3390DD607DE00090123 /* AccessItemRule.h */; };
 		BC3A44DE0E26D20200C14DFA /* NSResolver.h in Headers */ = {isa = PBXBuildFile; fileRef = BC3A44DC0E26D20200C14DFA /* NSResolver.h */; };
 		BC3A44DF0E26D20200C14DFA /* NSResolver.idl in Resources */ = {isa = PBXBuildFile; fileRef = BC3A44DD0E26D20200C14DFA /* NSResolver.idl */; };
 		BC3A44E20E26D21B00C14DFA /* JSNSResolver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC3A44E00E26D21B00C14DFA /* JSNSResolver.cpp */; };
@@ -7986,12 +7980,6 @@
 		BC348BD20DB7F804004ABAB9 /* JSXMLHttpRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequest.h; sourceTree = "<group>"; };
 		BC348BE70DB80354004ABAB9 /* JSXMLHttpRequestConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestConstructor.cpp; sourceTree = "<group>"; };
 		BC348BE80DB80354004ABAB9 /* JSXMLHttpRequestConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestConstructor.h; sourceTree = "<group>"; };
-		BC34C3340DD607DE00090123 /* AccessControlList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessControlList.cpp; sourceTree = "<group>"; };
-		BC34C3350DD607DE00090123 /* AccessControlList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessControlList.h; sourceTree = "<group>"; };
-		BC34C3360DD607DE00090123 /* AccessItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessItem.cpp; sourceTree = "<group>"; };
-		BC34C3370DD607DE00090123 /* AccessItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessItem.h; sourceTree = "<group>"; };
-		BC34C3380DD607DE00090123 /* AccessItemRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessItemRule.cpp; sourceTree = "<group>"; };
-		BC34C3390DD607DE00090123 /* AccessItemRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessItemRule.h; sourceTree = "<group>"; };
 		BC3A44DC0E26D20200C14DFA /* NSResolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSResolver.h; sourceTree = "<group>"; };
 		BC3A44DD0E26D20200C14DFA /* NSResolver.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NSResolver.idl; sourceTree = "<group>"; };
 		BC3A44E00E26D21B00C14DFA /* JSNSResolver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSNSResolver.cpp; sourceTree = "<group>"; };
@@ -12671,12 +12659,6 @@
 		E1F0424309839389006694EA /* xml */ = {
 			isa = PBXGroup;
 			children = (
-				BC34C3340DD607DE00090123 /* AccessControlList.cpp */,
-				BC34C3350DD607DE00090123 /* AccessControlList.h */,
-				BC34C3360DD607DE00090123 /* AccessItem.cpp */,
-				BC34C3370DD607DE00090123 /* AccessItem.h */,
-				BC34C3380DD607DE00090123 /* AccessItemRule.cpp */,
-				BC34C3390DD607DE00090123 /* AccessItemRule.h */,
 				1ACE53E10A8D18E70022947D /* DOMParser.cpp */,
 				1ACE53E20A8D18E70022947D /* DOMParser.h */,
 				1ACE53E30A8D18E70022947D /* DOMParser.idl */,
@@ -15268,9 +15250,6 @@
 				1C5FAED20DCFD90100D58F78 /* JSJavaScriptCallFrame.h in Headers */,
 				2999869E0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h in Headers */,
 				299986A00DD0DEEA00F8D261 /* AccessibilityListBox.h in Headers */,
-				BC34C33B0DD607DE00090123 /* AccessControlList.h in Headers */,
-				BC34C33D0DD607DE00090123 /* AccessItem.h in Headers */,
-				BC34C33F0DD607DE00090123 /* AccessItemRule.h in Headers */,
 				BC76AC130DD7AD5C00415F34 /* ParserUtilities.h in Headers */,
 				BC8C8FAE0DDCD31B00B592F4 /* RenderStyle.h in Headers */,
 				95969B480DD8D21B00F653EE /* JavaScriptProfileNode.h in Headers */,
@@ -17047,9 +17026,6 @@
 				1C5FAEE70DCFDA6800D58F78 /* JSJavaScriptCallFrameCustom.cpp in Sources */,
 				2999869F0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp in Sources */,
 				299986A10DD0DEEA00F8D261 /* AccessibilityListBox.cpp in Sources */,
-				BC34C33A0DD607DE00090123 /* AccessControlList.cpp in Sources */,
-				BC34C33C0DD607DE00090123 /* AccessItem.cpp in Sources */,
-				BC34C33E0DD607DE00090123 /* AccessItemRule.cpp in Sources */,
 				BC8C8FAD0DDCD31B00B592F4 /* RenderStyle.cpp in Sources */,
 				95969B470DD8D21B00F653EE /* JavaScriptProfileNode.cpp in Sources */,
 				95969B490DD8D21B00F653EE /* JavaScriptProfile.cpp in Sources */,

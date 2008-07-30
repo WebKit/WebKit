@@ -880,9 +880,6 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/style/RenderStyle.cpp \
-    xml/AccessControlList.cpp \
-    xml/AccessItem.cpp \
-    xml/AccessItemRule.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \

@@ -1,5 +1,35 @@
 2008-07-29  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        Update Cross-site XMLHttpRequests using Access control to
+        the latest spec. (Editor's Draft 8 July 2008)
+
+        - Update syntax in tests a remove tests for removed features.
+
+        * http/tests/xmlhttprequest/access-control-basic-allow-async.html:
+        * http/tests/xmlhttprequest/access-control-basic-blacklist-request-headers-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-blacklist-request-headers.html: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-exclude.html: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/access-control-basic-not-get-allow-async-expected.txt.
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html: Copied from LayoutTests/http/tests/xmlhttprequest/access-control-basic-not-get-allow-async.html.
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow-expected.txt: Copied from LayoutTests/http/tests/xmlhttprequest/access-control-basic-not-get-allow-expected.txt.
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow.html: Copied from LayoutTests/http/tests/xmlhttprequest/access-control-basic-not-get-allow.html.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-async-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-async.html: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow-expected.txt: Removed.
+        * http/tests/xmlhttprequest/access-control-basic-not-get-allow.html: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-access-control-origin-header.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-print-headers.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow-star.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-allow.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-exclude.cgi: Removed.
+        * http/tests/xmlhttprequest/resources/access-control-basic-get-fail-non-simple.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-non-get-allow.cgi:
+        * http/tests/xmlhttprequest/resources/access-control-basic-whitelist-response-headers.cgi:
+
+2008-07-29  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         <rdar://problem/6084585> Investigate upload progress events

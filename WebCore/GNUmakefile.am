@@ -1042,9 +1042,6 @@ webcore_sources += \
 	WebCore/rendering/RenderWordBreak.cpp \
 	WebCore/rendering/RootInlineBox.cpp \
 	WebCore/rendering/style/RenderStyle.cpp \
-	WebCore/xml/AccessControlList.cpp \
-	WebCore/xml/AccessItem.cpp \
-	WebCore/xml/AccessItemRule.cpp \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/XMLHttpRequest.cpp \
 	WebCore/xml/XMLHttpRequestUpload.cpp \

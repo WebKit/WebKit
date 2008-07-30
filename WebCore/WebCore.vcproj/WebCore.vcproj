@@ -10458,30 +10458,6 @@
 			Name="xml"
 			>
 			<File
-				RelativePath="..\xml\AccessControlList.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\AccessControlList.h"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\AccessItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\AccessItem.h"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\AccessItemRule.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\xml\AccessItemRule.h"
-				>
-			</File>
-			<File
 				RelativePath="..\xml\DOMParser.cpp"
 				>
 			</File>

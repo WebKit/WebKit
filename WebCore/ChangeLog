@@ -1,3 +1,42 @@
+2008-07-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Update Cross-site XMLHttpRequests using Access control to
+        the latest spec. (Editor's Draft 8 July 2008)
+
+        - This leaves us at about the same place as we previously were
+          still needing preflight caching and better redirect support.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * xml/AccessControlList.cpp: Removed.
+        * xml/AccessControlList.h: Removed.
+        * xml/AccessItem.cpp: Removed.
+        * xml/AccessItem.h: Removed.
+        * xml/AccessItemRule.cpp: Removed.
+        * xml/AccessItemRule.h: Removed.
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::isSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeSimpleCrossSiteAccessRequest):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::XMLHttpRequest::handleAsynchronousPreflightResult):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::clearRequest):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didFinishLoadingPreflight):
+        (WebCore::XMLHttpRequest::accessControlCheck):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::parseAccessControlAllowList):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+        * xml/XMLHttpRequest.h:
+
 2008-07-29  Kevin Calhoun  <kcalhoun@apple.com>
 
         Reviewed by Adele.
