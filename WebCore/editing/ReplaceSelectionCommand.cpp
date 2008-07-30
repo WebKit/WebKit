@@ -765,7 +765,8 @@ void ReplaceSelectionCommand::doApply()
     if (!handledStyleSpans)
         handleStyleSpans();
     
-    if (!m_firstNodeInserted)
+    // Mutation events (bug 20161) may have already removed the inserted content
+    if (!m_firstNodeInserted || !m_firstNodeInserted->inDocument())
         return;
     
     endOfInsertedContent = positionAtEndOfInsertedContent();

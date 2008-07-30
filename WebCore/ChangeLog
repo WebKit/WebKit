@@ -1,3 +1,16 @@
+2008-07-25  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Justin.
+
+        Crash Safari when dragging images into Google presentations
+        https://bugs.webkit.org/show_bug.cgi?id=20161
+
+        Test: manual-tests/remove-on-drop-crash.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+        * manual-tests/remove-on-drop-crash.html: Added.
+
 2008-07-30  Christian Dywan  <christian@twotoasts.de>
 
         Reviewed by Mark.
