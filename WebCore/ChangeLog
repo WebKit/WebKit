@@ -1,3 +1,12 @@
+2008-07-30  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Mark.
+
+        Build fix for Cairo < 1.6
+
+        * platform/graphics/cairo/PathCairo.cpp:
+        (WebCore::Path::boundingRect): use cairo_stroke_extends for < 1.6
+
 2008-07-29  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
