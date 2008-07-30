@@ -1,3 +1,10 @@
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
+        One step closer towards fixing the Windows build.
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:
+        Make sure to copy WebKitAvailability.h
+
 2008-07-29  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

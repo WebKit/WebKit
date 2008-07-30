@@ -14,6 +14,7 @@ all:
     xcopy /y /d "..\..\API\JSValueRef.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\JavaScriptCore.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     xcopy /y /d "..\..\API\JSRetainPtr.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
+    xcopy /y /d "..\..\API\WebKitAvailability.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\JavaScriptCore"
     -del "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\stdbool.h" "$(WEBKITOUTPUTDIR)\include\JavaScriptCore\stdint.h"
     -del "$(WEBKITOUTPUTDIR)\buildfailed"
 
