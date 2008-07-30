@@ -48,6 +48,7 @@ namespace KJS {
     class ProgramNode;
     class Register;
     class ScopeChainNode;
+    class SamplingTool;
 
     enum DebugHookID {
         WillExecuteProgram,
@@ -119,10 +120,8 @@ namespace KJS {
             m_timeoutTime = 0;
             m_timeoutCheckCount = 0;
         }
-        
-#if SAMPLING_TOOL_ENABLED
+
         SamplingTool* m_sampler;
-#endif
 
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };

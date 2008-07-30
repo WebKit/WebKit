@@ -144,6 +144,7 @@ Source files for JSCore.
         VM/JSPropertyNameIterator.cpp
         VM/Machine.cpp
         VM/Opcode.cpp
+        VM/SamplingTool.cpp
         VM/RegisterFile.cpp
     </set>
     <set append="1" var="JSCORE_WTF_SOURCES">

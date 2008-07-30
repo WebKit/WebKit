@@ -30,12 +30,13 @@
 #ifndef Opcodes_h
 #define Opcodes_h
 
+#include <algorithm>
+#include <string.h>
+
 #include <wtf/Assertions.h>
-#include <wtf/HashMap.h>
 
 namespace KJS {
 
-#define SAMPLING_TOOL_ENABLED 0
 #define DUMP_OPCODE_STATS 0
 
     #define FOR_EACH_OPCODE_ID(macro) \
@@ -148,117 +149,24 @@ namespace KJS {
     typedef OpcodeID Opcode;
 #endif
 
-    class ExecState;
-    class ScopeNode;
-    class CodeBlock;
-    struct Instruction;
+#if ENABLE(SAMPLING_TOOL) || DUMP_OPCODE_STATS
 
-#if SAMPLING_TOOL_ENABLED
+#define PADDING_STRING "                                "
+#define PADDING_STRING_LENGTH static_cast<unsigned>(strlen(PADDING_STRING))
 
-    struct ScopeSampleRecord
+    extern const char* const opcodeNames[];
+
+    inline const char* padOpcodeName(OpcodeID op, unsigned width)
     {
-        RefPtr<ScopeNode> m_scope;
-        CodeBlock* m_codeBlock;
-        int m_totalCount;
-        int* m_vpcCounts;
-        unsigned m_size;
-        
-        ScopeSampleRecord(ScopeNode* scope)
-            : m_scope(scope)
-            , m_codeBlock(0)
-            , m_totalCount(0)
-            , m_vpcCounts(0)
-            , m_size(0)
-        {
-        }
-        
-        ~ScopeSampleRecord()
-        {
-            if (m_vpcCounts)
-                free(m_vpcCounts);
-        }
-        
-        void sample(CodeBlock* codeBlock, Instruction* vPC);
-    };
+        unsigned pad = width - strlen(opcodeNames[op]);
+        pad = std::min(pad, PADDING_STRING_LENGTH);
+        return PADDING_STRING + PADDING_STRING_LENGTH - pad;
+    }
 
-    typedef WTF::HashMap<ScopeNode*, ScopeSampleRecord*> ScopeSampleRecordMap;
-
-    class SamplingTool
-    {
-    public:
-        SamplingTool()
-            : m_running(false)
-            , m_recordedCodeBlock(0)
-            , m_recordedVPC(0)
-            , m_totalSamples(0)
-            , m_scopeSampleMap(new ScopeSampleRecordMap())
-        {
-        }
-
-        ~SamplingTool()
-        {
-            for (ScopeSampleRecordMap::iterator iter = m_scopeSampleMap->begin(); iter != m_scopeSampleMap->end(); ++iter)
-                delete iter->second;
-            delete m_scopeSampleMap;
-        }
-
-        void start(unsigned hertz=1000);
-        void stop();
-        void dump(ExecState*);
-
-        void notifyOfScope(ScopeNode* scope);
-
-        void sample(CodeBlock* recordedCodeBlock, Instruction* recordedVPC)
-        {
-            m_recordedCodeBlock = recordedCodeBlock;
-            m_recordedVPC = recordedVPC;
-        }
-
-        void privateExecuteReturned()
-        {
-            m_recordedCodeBlock = 0;
-            m_recordedVPC = 0;
-        }
-        
-        void callingNativeFunction()
-        {
-            m_recordedCodeBlock = 0;
-            m_recordedVPC = 0;
-        }
-        
-    private:
-        static void* threadStartFunc(void*);
-        void run();
-        
-        // Sampling thread state.
-        bool m_running;
-        unsigned m_hertz;
-        pthread_t m_samplingThread;
-
-        // State tracked by the main thread, used by the sampling thread.
-        CodeBlock* m_recordedCodeBlock;
-        Instruction* m_recordedVPC;
-
-        // Gathered sample data.
-        long long m_totalSamples;
-        ScopeSampleRecordMap* m_scopeSampleMap;
-    };
+#undef PADDING_STRING_LENGTH
+#undef PADDING_STRING
 
 #endif
-
-// SCOPENODE_ / MACHINE_ macros for use from within member methods on ScopeNode / Machine respectively.
-#if SAMPLING_TOOL_ENABLED
-#define SCOPENODE_SAMPLING_notifyOfScope(sampler) sampler->notifyOfScope(this)
-#define MACHINE_SAMPLING_sample(codeBlock, vPC) m_sampler->sample(codeBlock, vPC)
-#define MACHINE_SAMPLING_privateExecuteReturned() m_sampler->privateExecuteReturned()
-#define MACHINE_SAMPLING_callingNativeFunction() m_sampler->callingNativeFunction()
-#else
-#define SCOPENODE_SAMPLING_notifyOfScope(sampler)
-#define MACHINE_SAMPLING_sample(codeBlock, vPC)
-#define MACHINE_SAMPLING_privateExecuteReturned()
-#define MACHINE_SAMPLING_callingNativeFunction()
-#endif
-
 
 #if DUMP_OPCODE_STATS
 

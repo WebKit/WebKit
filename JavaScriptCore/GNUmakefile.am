@@ -50,6 +50,7 @@ javascriptcore_sources += \
 	JavaScriptCore/VM/JSPropertyNameIterator.cpp \
 	JavaScriptCore/VM/Machine.cpp \
 	JavaScriptCore/VM/Opcode.cpp \
+	JavaScriptCore/VM/SamplingTool.cpp \
 	JavaScriptCore/pcre/pcre_compile.cpp \
 	JavaScriptCore/pcre/pcre_exec.cpp \
 	JavaScriptCore/pcre/pcre_tables.cpp \

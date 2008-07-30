@@ -324,4 +324,7 @@
 #define ENABLE_DASHBOARD_SUPPORT 0
 #endif
 
+// Set to 1 to enable the sampler, SamplingTool.
+#define ENABLE_SAMPLING_TOOL 0
+
 #endif /* WTF_Platform_h */

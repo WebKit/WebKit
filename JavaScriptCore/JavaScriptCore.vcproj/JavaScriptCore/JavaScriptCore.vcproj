@@ -1274,6 +1274,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\VM\SamplingTool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\VM\SamplingTool.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\VM\Register.h"
 				>
 			</File>

@@ -58,6 +58,7 @@ SOURCES += \
     VM/JSPropertyNameIterator.cpp \
     VM/Machine.cpp \
     VM/Opcode.cpp \
+    VM/SamplingTool.cpp \
     VM/RegisterFile.cpp
 
 # AllInOneFile.cpp helps gcc analize and optimize code

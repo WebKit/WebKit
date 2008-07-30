@@ -1,3 +1,25 @@
+2008-07-30  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fixes for Windows and non-AllInOne file build with SamplingTool, plus review fixes.
+
+        * GNUmakefile.am:              Adding SamplingTool.cpp to build.
+        * JavaScriptCore.exp:          Export hooks to init & control SamplingTool.
+        * JavaScriptCore.pri:          Adding SamplingTool.cpp to build.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj: Adding SamplingTool.cpp to build.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Adding SamplingTool.cpp to build.
+        * JavaScriptCoreSources.bkl:   Adding SamplingTool.cpp to build.
+        * VM/Machine.cpp:              MACHINE_SAMPLING_callingNativeFunction renamed MACHINE_SAMPLING_callingHostFunction
+        * VM/Machine.h:
+        * VM/Opcode.cpp:               SamplingTool moved to SamplingTool.cpp/.h, opcodeNames generated from FOR_EACH_OPCODE_ID.
+        * VM/Opcode.h:
+        * VM/SamplingTool.cpp:         Added .cpp/.h for SamplingTool.
+        * VM/SamplingTool.h:
+        * kjs/Shell.cpp:               Switched SAMPLING_TOOL_ENABLED to ENABLE_SAMPLING_TOOL.
+        * wtf/Platform.h:              Added ENABLE_SAMPLING_TOOL config option.
+        * kjs/nodes.cpp:               Header include to fix non-AllInOne builds.
+
 2008-07-30  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Alexey Proskuryakov.
