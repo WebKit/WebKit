@@ -1,3 +1,15 @@
+2008-07-30  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=18070
+        
+        Full page zoom needs to work properly with JS mouse events.  Make sure to adjust the coordinates of the
+        JS mouse event to account for zoom.
+
+        Reviewed by olliej
+
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+
 2008-07-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
