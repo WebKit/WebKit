@@ -334,6 +334,9 @@ void Console::groupEnd()
 
 void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
 {
+    if (!m_frame)
+        return;
+
     if (Page* page = m_frame->page())
         page->inspectorController()->addProfile(prpProfile);
 }

@@ -1,3 +1,14 @@
+2008-07-29  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/6110314> Crash in profiler dereferencing null frame or
+        page (20214)
+        - Null check.
+
+        * page/Console.cpp:
+        (WebCore::Console::finishedProfiling):
+
 2008-07-30  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=18070
