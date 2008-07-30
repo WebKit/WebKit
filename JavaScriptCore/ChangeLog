@@ -1,4 +1,10 @@
 2008-07-30  Anders Carlsson  <andersca@apple.com>
+        
+        Add WebKitAvailability.h forwarding header.
+        
+        * ForwardingHeaders/JavaScriptCore/WebKitAvailability.h: Added.
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
 
         Fix the else.
         
