@@ -1,5 +1,24 @@
 2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
 
+        Reviewed by Geoff Garen.
+
+        Fix a leak of ThreadRegistrar objects.
+
+        As the heap is usually deleted when registered threads still exist, ThreadSpecific doesn't
+        have a chance to clean up per-thread object. Switched to native pthread calls, storing a
+        plain pointer that doesn't require cleanup.
+
+        * kjs/collector.cpp:
+        (KJS::PlatformThread::PlatformThread):
+        (KJS::Heap::Thread::Thread):
+        (KJS::Heap::Heap):
+        (KJS::Heap::~Heap):
+        (KJS::Heap::registerThread):
+        (KJS::Heap::unregisterThread):
+        * kjs/collector.h:
+
+2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Sam Weinig.
 
         https://bugs.webkit.org/show_bug.cgi?id=20169

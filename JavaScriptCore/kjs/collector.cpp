@@ -36,11 +36,6 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/UnusedParam.h>
 
-#if USE(MULTIPLE_THREADS)
-#include <pthread.h>
-#include <wtf/Threading.h>
-#endif
-
 #if PLATFORM(DARWIN)
 
 #include <mach/mach_port.h>
@@ -69,8 +64,6 @@
 
 #if HAVE(PTHREAD_NP_H)
 #include <pthread_np.h>
-#else
-#include <pthread.h>
 #endif
 
 #endif
@@ -94,6 +87,35 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
+#if USE(MULTIPLE_THREADS)
+
+#if PLATFORM(DARWIN)
+typedef mach_port_t PlatformThread;
+#elif PLATFORM(WIN_OS)
+struct PlatformThread {
+    PlatformThread(DWORD _id, HANDLE _handle) : id(_id), handle(_handle) {}
+    DWORD id;
+    HANDLE handle;
+};
+#endif
+
+class Heap::Thread {
+public:
+    Thread(pthread_t pthread, const PlatformThread& platThread, void* base) 
+        : posixThread(pthread)
+        , platformThread(platThread)
+        , stackBase(base)
+    {
+    }
+
+    Thread* next;
+    pthread_t posixThread;
+    PlatformThread platformThread;
+    void* stackBase;
+};
+
+#endif
+
 Heap::Heap(JSGlobalData* globalData)
     : m_markListSet(0)
 #if USE(MULTIPLE_THREADS)
@@ -101,6 +123,10 @@ Heap::Heap(JSGlobalData* globalData)
 #endif
     , m_globalData(globalData)
 {
+    int error = pthread_key_create(&m_currentThreadRegistrar, unregisterThread);
+    if (error)
+        CRASH();
+
     memset(&primaryHeap, 0, sizeof(CollectorHeap));
     memset(&numberHeap, 0, sizeof(CollectorHeap));
 }
@@ -117,6 +143,21 @@ Heap::~Heap()
 
     freeHeap(&primaryHeap);
     freeHeap(&numberHeap);
+
+#if USE(MULTIPLE_THREADS)
+#ifndef NDEBUG
+    int error =
+#endif
+        pthread_key_delete(m_currentThreadRegistrar);
+    ASSERT(!error);
+
+    MutexLocker registeredThreadsLock(m_registeredThreadsMutex);
+    for (Heap::Thread* t = m_registeredThreads; t;) {
+        Heap::Thread* next = t->next;
+        delete t;
+        t = next;
+    }
+#endif
 }
 
 static NEVER_INLINE CollectorBlock* allocateBlock()
@@ -407,16 +448,6 @@ static inline void* currentThreadStackBase()
 
 #if USE(MULTIPLE_THREADS)
 
-#if PLATFORM(DARWIN)
-typedef mach_port_t PlatformThread;
-#elif PLATFORM(WIN_OS)
-struct PlatformThread {
-    PlatformThread(DWORD _id, HANDLE _handle) : id(_id), handle(_handle) {}
-    DWORD id;
-    HANDLE handle;
-};
-#endif
-
 static inline PlatformThread getCurrentPlatformThread()
 {
 #if PLATFORM(DARWIN)
@@ -427,33 +458,24 @@ static inline PlatformThread getCurrentPlatformThread()
 #endif
 }
 
-class Heap::Thread {
-public:
-    Thread(pthread_t pthread, const PlatformThread& platThread, void* base) 
-        : posixThread(pthread)
-        , platformThread(platThread)
-        , stackBase(base)
-    {
-    }
-
-    Thread* next;
-    pthread_t posixThread;
-    PlatformThread platformThread;
-    void* stackBase;
-};
-
 void Heap::registerThread()
 {
-    if (m_currentThreadRegistrar)
+    if (pthread_getspecific(m_currentThreadRegistrar))
         return;
 
-    m_currentThreadRegistrar->set(new ThreadRegistrar(this));
+    pthread_setspecific(m_currentThreadRegistrar, this);
     Heap::Thread* thread = new Heap::Thread(pthread_self(), getCurrentPlatformThread(), currentThreadStackBase());
 
     MutexLocker lock(m_registeredThreadsMutex);
 
     thread->next = m_registeredThreads;
     m_registeredThreads = thread;
+}
+
+void Heap::unregisterThread(void* p)
+{
+    if (p)
+        static_cast<Heap*>(p)->unregisterThread();
 }
 
 void Heap::unregisterThread()
