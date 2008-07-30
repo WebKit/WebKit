@@ -1,3 +1,17 @@
+2008-07-30  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19742
+        [GTK] Auto generate webkitmarshal.list
+
+        Auto generate webkitmarshal.list from source files to reduce the
+        number of conflicts when merging git branches or when applying
+        patches.
+        Also rename webkit-marshal.* to webkitmarshal.* for consistency.
+
+        * GNUmakefile.am:
+
 2008-07-25  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.

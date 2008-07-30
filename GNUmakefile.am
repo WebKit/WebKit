@@ -320,8 +320,8 @@ webkitgtk_h_api += \
 	WebKit/gtk/webkit/webkitwebview.h
 
 webkitgtk_built_sources += \
-	DerivedSources/webkit-marshal.h \
-	DerivedSources/webkit-marshal.cpp \
+	DerivedSources/webkitmarshal.h \
+	DerivedSources/webkitmarshal.cpp \
 	DerivedSources/webkitenumtypes.cpp \
 	WebKit/gtk/webkit/webkitenumtypes.h
 
@@ -367,26 +367,37 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = WebKit/gtk/webkit-1.0.pc
 
 stamp_files := \
-	stamp-webkit-marshal.cpp \
-	stamp-webkit-marshal.h \
+	stamp-webkitmarshal.cpp \
+	stamp-webkitmarshal.h \
 	stamp-webkitenumtypes.cpp \
 	stamp-webkitenumtypes.h
 
-WEBKIT_MARSHAL = $(GENSOURCES)/webkit-marshal
-WEBKIT_MARSHAL_LIST = $(srcdir)/WebKit/gtk/webkit/webkit-marshal.list
+WEBKIT_MARSHAL = $(GENSOURCES)/webkitmarshal
+WEBKIT_MARSHAL_LIST = $(WEBKIT_MARSHAL).list
 
-DerivedSources/webkit-marshal.cpp: stamp-webkit-marshal.cpp
+$(WEBKIT_MARSHAL_LIST): $(webkitgtk_sources) GNUmakefile.am
+	( cd $(top_srcdir) && \
+	sed -n -e 's/.*webkit_marshal_\([[:upper:][:digit:]]*__[[:upper:][:digit:]_]*\).*/\1/p' \
+	$(webkitgtk_sources) ) \
+	| sed -e 's/__/:/' -e 'y/_/,/' | sort -u > $@.tmp
+	if cmp -s $@.tmp $@; then \
+		rm $@.tmp; \
+	else \
+		mv $@.tmp $@; \
+	fi
+
+$(WEBKIT_MARSHAL).cpp: stamp-webkitmarshal.cpp
 	@true
 
-DerivedSources/webkit-marshal.h: stamp-webkit-marshal.h
+$(WEBKIT_MARSHAL).h: stamp-webkitmarshal.h
 	@true
 
-stamp-webkit-marshal.cpp: $(WEBKIT_MARSHAL_LIST)
+stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST)
 	echo "extern \"C\" {" > $(WEBKIT_MARSHAL).cpp && \
 	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body >> $(WEBKIT_MARSHAL).cpp && echo '}' >> $(WEBKIT_MARSHAL).cpp && \
 	echo timestamp > $(@F)
 
-stamp-webkit-marshal.h: $(WEBKIT_MARSHAL_LIST)
+stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST)
 	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --header > $(WEBKIT_MARSHAL).h && \
 	echo timestamp > $(@F)
 

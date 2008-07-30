@@ -25,7 +25,7 @@
 #include "config.h"
 
 #include "webkitwebview.h"
-#include "webkit-marshal.h"
+#include "webkitmarshal.h"
 #include "webkitprivate.h"
 #include "webkitwebbackforwardlist.h"
 #include "webkitwebhistoryitem.h"

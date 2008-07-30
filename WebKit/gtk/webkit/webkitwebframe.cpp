@@ -25,7 +25,7 @@
 
 #include "webkitwebframe.h"
 #include "webkitwebview.h"
-#include "webkit-marshal.h"
+#include "webkitmarshal.h"
 #include "webkitprivate.h"
 
 #include "CString.h"
