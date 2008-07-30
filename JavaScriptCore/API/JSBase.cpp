@@ -85,31 +85,22 @@ bool JSCheckScriptSyntax(JSContextRef ctx, JSStringRef script, JSStringRef sourc
 
 void JSGarbageCollect(JSContextRef ctx)
 {
-    // Unlikely, but it is legal to call JSGarbageCollect(0) before actually doing anything that would implicitly call initializeThreading().
-    if (!ctx)
-        initializeThreading();
-
-    // When using a shared heap, clients need to call JSGarbageCollect(0) after releasing the last reference to the context to avoid
-    // leaking protected objects. Because the function arguments were originally ignored, some clients may pass their released context here,
+    // We used to recommend passing NULL as an argument here, which caused the only heap to be collected.
+    // As there is no longer a shared heap, the previously recommended usage became a no-op (but the GC
+    // will happen when the context group is destroyed).
+    // Because the function argument was originally ignored, some clients may pass their released context here,
     // in which case there is a risk of crashing if another thread performs GC on the same heap in between.
-    if (ctx) {
-        ExecState* exec = toJS(ctx);
-        JSGlobalData& globalData = exec->globalData();
-        Heap* heap = globalData.heap;
+    if (!ctx)
+        return;
 
-        JSLock lock(globalData.isSharedInstance);
+    ExecState* exec = toJS(ctx);
+    JSGlobalData& globalData = exec->globalData();
+    Heap* heap = globalData.heap;
 
-        if (!heap->isBusy())
-            heap->collect();
-    } else {
-        JSLock lock(true);
+    JSLock lock(globalData.isSharedInstance);
 
-        if (JSGlobalData::sharedInstanceExists()) {
-            Heap* heap = JSGlobalData::sharedInstance().heap;
-            if (!heap->isBusy())
-                heap->collect();
-        }
-    }
+    if (!heap->isBusy())
+        heap->collect();
 
     // FIXME: Perhaps we should trigger a second mark and sweep
     // once the garbage collector is done if this is called when

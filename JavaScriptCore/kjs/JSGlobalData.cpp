@@ -56,7 +56,7 @@ extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
-JSGlobalData::JSGlobalData(bool isShared)
+JSGlobalData::JSGlobalData()
     : machine(new Machine)
     , heap(new Heap(this))
 #if USE(MULTIPLE_THREADS)
@@ -85,7 +85,7 @@ JSGlobalData::JSGlobalData(bool isShared)
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
-    , isSharedInstance(isShared)
+    , isSharedInstance(false)
 {
 }
 
@@ -129,26 +129,6 @@ JSGlobalData::~JSGlobalData()
 PassRefPtr<JSGlobalData> JSGlobalData::create()
 {
     return adoptRef(new JSGlobalData);
-}
-
-bool JSGlobalData::sharedInstanceExists()
-{
-    return sharedInstanceInternal();
-}
-
-JSGlobalData& JSGlobalData::sharedInstance()
-{
-    JSGlobalData*& instance = sharedInstanceInternal();
-    if (!instance)
-        instance = new JSGlobalData(true);
-    return *instance;
-}
-
-JSGlobalData*& JSGlobalData::sharedInstanceInternal()
-{
-    ASSERT(JSLock::currentThreadIsHoldingLock());
-    static JSGlobalData* sharedInstance;
-    return sharedInstance;
 }
 
 }

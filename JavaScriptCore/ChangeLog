@@ -2,6 +2,49 @@
 
         Reviewed by Geoff Garen.
 
+        Implement JSContextGroup APIs to make concurrent execution possible for
+        JavaScriptCore clients.
+
+        This changes the behavior of JSGlobalContextCreate(), so that it now uses a private context
+        group for each context, making JSlock implicit locking unnecessary.
+
+        * API/JSContextRef.h:
+        * API/JSContextRef.cpp:
+        (JSContextGroupCreate):
+        (JSContextGroupRetain):
+        (JSContextGroupRelease):
+        (JSGlobalContextCreate):
+        (JSGlobalContextCreateInGroup):
+        (JSGlobalContextRelease):
+        (JSContextGetGroup):
+        Added new methods. JSGlobalContextCreate() calls JSGlobalContextCreateInGroup() now.
+
+        * API/APICast.h: (toJS): (toRef): Added converters for JSContextGroupRef.
+        * API/JSBase.cpp: (JSGarbageCollect): JSGarbageCollect(0) is now a no-op, and the passed in
+        context is actually used.
+
+        * API/JSBase.h: Aded a typedef for JSContextGroupRef. Updated documentation for
+        JSGarbageCollect().
+
+        * JavaScriptCore.exp: Removed JSGlobalData::sharedInstance().
+
+        * kjs/JSGlobalData.cpp:
+        * kjs/JSGlobalData.h:
+        Removed support for JSGlobalData shared instance. JSGlobalData::isSharedInstance member
+        variable still remains, to be deleted in a followup patch.
+
+        * kjs/JSLock.cpp: (KJS::JSLock::JSLock): Disabled JSLock, to be deleted in a follow-up patch.
+        
+        * kjs/collector.cpp:
+        (KJS::Heap::markOtherThreadConservatively): Removed an assertion that referenced
+        JSGlobalData::sharedInstance.
+
+        * kjs/collector.h: Made Heap destructor public, so that JSContextRelease can use it.
+
+2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
         Fix a leak of ThreadRegistrar objects.
 
         As the heap is usually deleted when registered threads still exist, ThreadSpecific doesn't

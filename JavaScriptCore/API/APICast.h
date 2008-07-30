@@ -37,6 +37,7 @@ namespace KJS {
     class PropertyNameArray;
 }
 
+typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSContext* JSGlobalContextRef;
 typedef struct OpaqueJSString* JSStringRef;
@@ -74,6 +75,11 @@ inline KJS::JSObject* toJS(JSObjectRef o)
 inline KJS::PropertyNameArray* toJS(JSPropertyNameAccumulatorRef a)
 {
     return reinterpret_cast<KJS::PropertyNameArray*>(a);
+}
+
+inline KJS::JSGlobalData* toJS(JSContextGroupRef g)
+{
+    return reinterpret_cast<KJS::JSGlobalData*>(const_cast<OpaqueJSContextGroup*>(g));
 }
 
 inline JSValueRef toRef(KJS::JSValue* v)
@@ -114,6 +120,11 @@ inline JSGlobalContextRef toGlobalRef(KJS::ExecState* e)
 inline JSPropertyNameAccumulatorRef toRef(KJS::PropertyNameArray* l)
 {
     return reinterpret_cast<JSPropertyNameAccumulatorRef>(l);
+}
+
+inline JSContextGroupRef toRef(KJS::JSGlobalData* g)
+{
+    return reinterpret_cast<JSContextGroupRef>(g);
 }
 
 #endif // APICast_h

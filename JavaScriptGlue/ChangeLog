@@ -1,3 +1,17 @@
+2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Implement JSContextGroup APIs to make concurrent execution possible for
+        JavaScriptCore clients.
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        * JSUtils.cpp:
+        (getThreadGlobalExecState):
+        Changed JavaScriptGlue to use a JSGlobalData of its own, now that there is no shared
+        instance.
+
 2008-07-23  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

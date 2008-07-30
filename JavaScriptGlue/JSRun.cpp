@@ -34,7 +34,7 @@
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
         fSource(CFStringToUString(source)),
-        fGlobalObject(new (&JSGlobalData::sharedInstance()) JSGlueGlobalObject(inFlags)),
+        fGlobalObject(new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(inFlags)),
         fFlags(inFlags)
 {
 }
