@@ -570,7 +570,6 @@ int main(int argc, char* argv[])
     TestInitializeFinalize = true;
     testInitializeFinalize();
     JSGlobalContextRelease(context);
-    JSGarbageCollect(context);
     TestInitializeFinalize = false;
 
     ASSERT(Base_didFinalize);
@@ -950,7 +949,6 @@ int main(int argc, char* argv[])
     JSStringRelease(badSyntax);
 
     JSGlobalContextRelease(context);
-    JSGarbageCollect(context);
     JSClassRelease(globalObjectClass);
 
     printf("PASS: Program exited normally.\n");
