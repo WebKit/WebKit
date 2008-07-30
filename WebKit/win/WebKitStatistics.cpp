@@ -31,6 +31,9 @@
 #include "WebKitStatistics.h"
 
 #include "WebKitStatisticsPrivate.h"
+#include <WebCore/BString.h>
+
+using namespace WebCore;
 
 int WebViewCount;
 int WebDataSourceCount;
@@ -44,11 +47,13 @@ WebKitStatistics::WebKitStatistics()
 : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebKitStatistics");
 }
 
 WebKitStatistics::~WebKitStatistics()
 {
     gClassCount--;
+    gClassNameCount.remove("WebKitStatistics");
 }
 
 WebKitStatistics* WebKitStatistics::createInstance()
@@ -129,5 +134,21 @@ HRESULT STDMETHODCALLTYPE WebKitStatistics::comClassCount(
     /* [retval][out] */ int *classCount)
 {
     *classCount = gClassCount;
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebKitStatistics::comClassNameCounts( 
+    /* [retval][out] */ BSTR *output)
+{
+    typedef HashCountedSet<String>::const_iterator Iterator;
+    Iterator end = gClassNameCount.end();
+    Vector<UChar> vector;
+    for (Iterator current = gClassNameCount.begin(); current != end; ++current) {
+        append(vector, String::format("%4u", current->second));
+        vector.append('\t');
+        append(vector, static_cast<String>(current->first));
+        vector.append('\n');
+    }
+    *output = BString(String::adopt(vector)).release();
     return S_OK;
 }

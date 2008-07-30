@@ -39,11 +39,13 @@ WebCache::WebCache()
 : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebCache");
 }
 
 WebCache::~WebCache()
 {
     gClassCount--;
+    gClassNameCount.remove("WebCache");
 }
 
 WebCache* WebCache::createInstance()

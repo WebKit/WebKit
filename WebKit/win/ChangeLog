@@ -1,3 +1,17 @@
+2008-07-30  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Adding logging of COM class names and counts to facilitate
+        investigating memory issues.
+
+        * Interfaces/IWebKitStatistics.idl:
+        * WebKitDLL.cpp:
+        * WebKitDLL.h:
+        * WebKitStatistics.cpp:
+        (WebKitStatistics::comClassNameCounts):
+        * WebKitStatistics.h:
+
 2008-07-29  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Geoff Garen.

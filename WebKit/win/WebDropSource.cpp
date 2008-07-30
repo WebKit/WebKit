@@ -55,11 +55,13 @@ WebDropSource::WebDropSource(WebView* webView)
 , m_webView(webView)
 {
     gClassCount++;
+    gClassNameCount.add("WebDropSource");
 }
 
 WebDropSource::~WebDropSource()
 {
     gClassCount--;
+    gClassNameCount.remove("WebDropSource");
 }
 
 STDMETHODIMP WebDropSource::QueryInterface(REFIID riid, void** ppvObject)

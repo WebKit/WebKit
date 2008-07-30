@@ -44,11 +44,13 @@ WebJavaScriptCollector::WebJavaScriptCollector()
 : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebJavaScriptCollector");
 }
 
 WebJavaScriptCollector::~WebJavaScriptCollector()
 {
     gClassCount--;
+    gClassNameCount.remove("WebJavaScriptCollector");
 }
 
 WebJavaScriptCollector* WebJavaScriptCollector::createInstance()

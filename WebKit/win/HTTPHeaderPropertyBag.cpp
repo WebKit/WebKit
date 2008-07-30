@@ -38,11 +38,13 @@ HTTPHeaderPropertyBag::HTTPHeaderPropertyBag(WebURLResponse* response)
     , m_response(response)
 {
     gClassCount++;
+    gClassNameCount.add("HTTPHeaderPropertyBag");
 }
 
 HTTPHeaderPropertyBag::~HTTPHeaderPropertyBag()
 {
     gClassCount--;
+    gClassNameCount.remove("HTTPHeaderPropertyBag");
 }
 
 HTTPHeaderPropertyBag* HTTPHeaderPropertyBag::createInstance(WebURLResponse* response)

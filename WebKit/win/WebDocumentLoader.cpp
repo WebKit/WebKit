@@ -36,6 +36,7 @@ WebDocumentLoader::WebDocumentLoader(const ResourceRequest& request, const Subst
     , m_detachedDataSource(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebDocumentLoader");
 }
 
 PassRefPtr<WebDocumentLoader> WebDocumentLoader::create(const ResourceRequest& req, const SubstituteData& data)
@@ -46,6 +47,7 @@ PassRefPtr<WebDocumentLoader> WebDocumentLoader::create(const ResourceRequest& r
 WebDocumentLoader::~WebDocumentLoader()
 {
     gClassCount--;
+    gClassNameCount.remove("WebDocumentLoader");
     if (m_dataSource) {
         ASSERT(!m_detachedDataSource);
         m_dataSource->Release();

@@ -46,11 +46,13 @@ WebResource::WebResource(IStream* data, const WebCore::KURL& url, const WebCore:
     , m_frameName(frameName)
 {
     gClassCount++;
+    gClassNameCount.add("WebResource");
 }
 
 WebResource::~WebResource()
 {
     gClassCount--;
+    gClassNameCount.remove("WebResource");
 }
 
 WebResource* WebResource::createInstance(PassRefPtr<WebCore::SharedBuffer> data, const WebCore::ResourceResponse& response)

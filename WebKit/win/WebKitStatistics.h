@@ -63,6 +63,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE comClassCount( 
         /* [retval][out] */ int *classCount);
 
+    virtual HRESULT STDMETHODCALLTYPE comClassNameCounts( 
+        /* [retval][out] */ BSTR *output);
+
 protected:
     ULONG m_refCount;
 };

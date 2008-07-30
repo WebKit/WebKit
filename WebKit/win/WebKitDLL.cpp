@@ -42,8 +42,11 @@
 #include <tchar.h>
 #include <olectl.h>
 
+using namespace WebCore;
+
 ULONG gLockCount;
 ULONG gClassCount;
+HashCountedSet<String> gClassNameCount;
 HINSTANCE gInstance;
 
 #define CLSID_FOR_CLASS(cls) CLSID_##cls,

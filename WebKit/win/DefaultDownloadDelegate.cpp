@@ -47,11 +47,13 @@ DefaultDownloadDelegate::DefaultDownloadDelegate()
     : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("DefaultDownloadDelegate");
 }
 
 DefaultDownloadDelegate::~DefaultDownloadDelegate()
 {
     gClassCount--;
+    gClassNameCount.remove("DefaultDownloadDelegate");
     HashSet<IWebDownload*>::iterator i = m_downloads.begin();
     for (;i != m_downloads.end(); ++i)
         (*i)->Release();

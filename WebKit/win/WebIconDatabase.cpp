@@ -53,11 +53,13 @@ WebIconDatabase::WebIconDatabase()
 , m_deliveryRequested(false)
 {
     gClassCount++;
+    gClassNameCount.add("WebIconDatabase");
 }
 
 WebIconDatabase::~WebIconDatabase()
 {
     gClassCount--;
+    gClassNameCount.remove("WebIconDatabase");
 }
 
 void WebIconDatabase::init()

@@ -91,6 +91,7 @@ WebHistory::WebHistory()
 , m_preferences(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebHistory");
 
     m_entriesByURL.adoptCF(CFDictionaryCreateMutable(0, 0, &kCFTypeDictionaryKeyCallBacks, &MarshallingHelpers::kIUnknownDictionaryValueCallBacks));
     m_datesWithEntries.adoptCF(CFArrayCreateMutable(0, 0, &kCFTypeArrayCallBacks));
@@ -102,6 +103,7 @@ WebHistory::WebHistory()
 WebHistory::~WebHistory()
 {
     gClassCount--;
+    gClassNameCount.remove("WebHistory");
 }
 
 WebHistory* WebHistory::createInstance()

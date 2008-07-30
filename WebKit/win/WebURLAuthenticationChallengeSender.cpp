@@ -47,11 +47,13 @@ WebURLAuthenticationChallengeSender::WebURLAuthenticationChallengeSender(PassRef
 {
     ASSERT(m_handle);
     gClassCount++;
+    gClassNameCount.add("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender::~WebURLAuthenticationChallengeSender()
 {
     gClassCount--;
+    gClassNameCount.remove("WebURLAuthenticationChallengeSender");
 }
 
 WebURLAuthenticationChallengeSender* WebURLAuthenticationChallengeSender::createInstance(PassRefPtr<WebCore::ResourceHandle> handle)

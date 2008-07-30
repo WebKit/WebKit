@@ -50,11 +50,13 @@ WebActionPropertyBag::WebActionPropertyBag(const NavigationAction& action, PassR
     , m_frame(frame)
 {
     gClassCount++;
+    gClassNameCount.add("WebActionPropertyBag");
 }
 
 WebActionPropertyBag::~WebActionPropertyBag()
 {
     gClassCount--;
+    gClassNameCount.remove("WebActionPropertyBag");
 }
 
 WebActionPropertyBag* WebActionPropertyBag::createInstance(const NavigationAction& action, PassRefPtr<HTMLFormElement> form, PassRefPtr<Frame> frame)

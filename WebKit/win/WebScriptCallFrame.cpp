@@ -97,11 +97,13 @@ WebScriptCallFrame::WebScriptCallFrame(ExecState* state)
     ASSERT_ARG(state, state);
     ASSERT(m_state);
     gClassCount++;
+    gClassNameCount.add("WebScriptCallFrame");
 }
 
 WebScriptCallFrame::~WebScriptCallFrame()
 {
     gClassCount--;
+    gClassNameCount.remove("WebScriptCallFrame");
 }
 
 WebScriptCallFrame* WebScriptCallFrame::createInstance(ExecState* state)

@@ -35,11 +35,13 @@ WebScriptObject::WebScriptObject()
 : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebScriptObject");
 }
 
 WebScriptObject::~WebScriptObject()
 {
     gClassCount--;
+    gClassNameCount.remove("WebScriptObject");
 }
 
 // IUnknown -------------------------------------------------------------------

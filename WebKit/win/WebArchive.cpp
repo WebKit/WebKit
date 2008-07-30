@@ -55,11 +55,13 @@ WebArchive::WebArchive(PassRefPtr<LegacyWebArchive> coreArchive)
     , m_archive(coreArchive)
 {
     gClassCount++;
+    gClassNameCount.add("WebArchive");
 }
 
 WebArchive::~WebArchive()
 {
     gClassCount--;
+    gClassNameCount.remove("WebArchive");
 }
 
 HRESULT STDMETHODCALLTYPE WebArchive::QueryInterface(REFIID riid, void** ppvObject)

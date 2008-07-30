@@ -81,6 +81,7 @@ WebDownload::WebDownload()
     : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebDownload");
 }
 
 void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, const ResourceResponse& response, IWebDownloadDelegate* delegate)
@@ -139,6 +140,7 @@ WebDownload::~WebDownload()
     LOG(Download, "WebDownload - Destroying download (%p)", this);
     cancel();
     gClassCount--;
+    gClassNameCount.remove("WebDownload");
 }
 
 WebDownload* WebDownload::createInstance()

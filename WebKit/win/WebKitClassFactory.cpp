@@ -85,11 +85,13 @@ WebKitClassFactory::WebKitClassFactory(CLSID targetClass)
     WebCore::populateFontDatabase();
 
     gClassCount++;
+    gClassNameCount.add("WebKitClassFactory");
 }
 
 WebKitClassFactory::~WebKitClassFactory()
 {
     gClassCount--;
+    gClassNameCount.remove("WebKitClassFactory");
 }
 
 // IUnknown -------------------------------------------------------------------

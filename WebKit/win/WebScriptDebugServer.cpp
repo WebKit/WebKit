@@ -34,11 +34,13 @@ WebScriptDebugServer::WebScriptDebugServer()
     : m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebScriptDebugServer");
 }
 
 WebScriptDebugServer::~WebScriptDebugServer()
 {
     gClassCount--;
+    gClassNameCount.remove("WebScriptDebugServer");
 }
 
 WebScriptDebugServer* WebScriptDebugServer::createInstance()

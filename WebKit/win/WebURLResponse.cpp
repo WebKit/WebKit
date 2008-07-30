@@ -210,11 +210,13 @@ WebURLResponse::WebURLResponse()
     :m_refCount(0)
 {
     gClassCount++;
+    gClassNameCount.add("WebURLResponse");
 }
 
 WebURLResponse::~WebURLResponse()
 {
     gClassCount--;
+    gClassNameCount.remove("WebURLResponse");
 }
 
 WebURLResponse* WebURLResponse::createInstance()

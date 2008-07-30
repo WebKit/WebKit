@@ -36,11 +36,13 @@ CFDictionaryPropertyBag::CFDictionaryPropertyBag()
 : m_refCount(1)
 {
     gClassCount++;
+    gClassNameCount.add("CFDictionaryPropertyBag");
 }
 
 CFDictionaryPropertyBag::~CFDictionaryPropertyBag()
 {
     gClassCount--;
+    gClassNameCount.remove("CFDictionaryPropertyBag");
 }
 
 CFDictionaryPropertyBag* CFDictionaryPropertyBag::createInstance()

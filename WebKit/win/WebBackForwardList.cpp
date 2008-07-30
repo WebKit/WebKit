@@ -54,6 +54,7 @@ WebBackForwardList::WebBackForwardList(PassRefPtr<BackForwardList> backForwardLi
     backForwardListWrappers().set(m_backForwardList.get(), this);
 
     gClassCount++;
+    gClassNameCount.add("WebBackForwardList");
 }
 
 WebBackForwardList::~WebBackForwardList()
@@ -64,6 +65,7 @@ WebBackForwardList::~WebBackForwardList()
     backForwardListWrappers().remove(m_backForwardList.get());
 
     gClassCount--;
+    gClassNameCount.remove("WebBackForwardList");
 }
 
 WebBackForwardList* WebBackForwardList::createInstance(PassRefPtr<BackForwardList> backForwardList)
