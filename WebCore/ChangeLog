@@ -2,6 +2,14 @@
 
         Reviewed by Adele.
 
+        Fix for <rdar://problem/6060647> Adopt QTMovieOpenForPlaybackAttribute flag
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: (WebCore::MediaPlayerPrivate::createQTMovie):
+
+2008-07-29  Kevin Calhoun  <kcalhoun@apple.com>
+
+        Reviewed by Adele.
+
         Fix for <rdar://problem/6031021> Make standalone video render more like the quicktime plugin to improve performance
 
         For standalone video, use QTMovieView to draw.

@@ -202,6 +202,7 @@ void MediaPlayerPrivate::createQTMovie(const String& url)
                                      [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
                                      [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
                                      [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
+                                     [NSNumber numberWithBool:YES], @"QTMovieOpenForPlaybackAttribute",     // FIXME: Use defined attribute when required version of QT supports this attribute
                                      nil];
     
     NSError* error = nil;
