@@ -124,6 +124,14 @@ void SubresourceLoader::willSendRequest(ResourceRequest& newRequest, const Resou
         m_client->willSendRequest(this, newRequest, redirectResponse);
 }
 
+void SubresourceLoader::didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    RefPtr<SubresourceLoader> protect(this);
+
+    if (m_client)
+        m_client->didSendData(this, bytesSent, totalBytesToBeSent);
+}
+
 void SubresourceLoader::didReceiveResponse(const ResourceResponse& r)
 {
     ASSERT(!r.isNull());

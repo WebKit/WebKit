@@ -1,3 +1,128 @@
+2008-07-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6084585> Investigate upload progress events.
+
+        - Add progress notifications for data being sent via a ResourceHandle.
+        - Add XMLHttpRequestUpload support.
+
+        Upload notifications only work on the Mac right now as the CFNetwork API
+        on windows does not expose enough information.
+
+        Tests: http/tests/xmlhttprequest/upload-onload-event.html
+               http/tests/xmlhttprequest/upload-onloadstart-event.html
+               http/tests/xmlhttprequest/upload-onprogress-event.html
+               http/tests/xmlhttprequest/upload-progress-events.html
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * bindings/js/JSEventTargetBase.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSXMLHttpRequestCustom.cpp:
+        (WebCore::JSXMLHttpRequest::mark):
+        * bindings/js/JSXMLHttpRequestUploadCustom.cpp: Added.
+        (WebCore::JSXMLHttpRequestUpload::mark):
+        (WebCore::JSXMLHttpRequestUpload::onabort):
+        (WebCore::JSXMLHttpRequestUpload::setOnabort):
+        (WebCore::JSXMLHttpRequestUpload::onerror):
+        (WebCore::JSXMLHttpRequestUpload::setOnerror):
+        (WebCore::JSXMLHttpRequestUpload::onload):
+        (WebCore::JSXMLHttpRequestUpload::setOnload):
+        (WebCore::JSXMLHttpRequestUpload::onloadstart):
+        (WebCore::JSXMLHttpRequestUpload::setOnloadstart):
+        (WebCore::JSXMLHttpRequestUpload::onprogress):
+        (WebCore::JSXMLHttpRequestUpload::setOnprogress):
+        (WebCore::JSXMLHttpRequestUpload::addEventListener):
+        (WebCore::JSXMLHttpRequestUpload::removeEventListener):
+        (WebCore::JSXMLHttpRequestUpload::dispatchEvent):
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toXMLHttpRequestUpload):
+        * dom/EventTarget.h:
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didSendData):
+        * loader/ResourceLoader.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::didSendData):
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        (WebCore::SubresourceLoaderClient::didSendData):
+        * page/DOMWindow.idl:
+        * platform/network/FormData.cpp:
+        (WebCore::FormData::FormData):
+        * platform/network/FormData.h:
+        (WebCore::FormData::alwaysStream):
+        (WebCore::FormData::setAlwaysStream):
+        * platform/network/ResourceHandleClient.h:
+        (WebCore::ResourceHandleClient::didSendData):
+        * platform/network/mac/FormDataStreamMac.h:
+        * platform/network/mac/FormDataStreamMac.mm:
+        (WebCore::getStreamFormDataMap):
+        (WebCore::getStreamResourceHandleMap):
+        (WebCore::associateStreamWithResourceHandle):
+        (WebCore::disassociateStreamWithResourceHandle):
+        (WebCore::DidSendDataCallbackData::DidSendDataCallbackData):
+        (WebCore::performDidSendDataCallback):
+        (WebCore::formCreate):
+        (WebCore::formFinalize):
+        (WebCore::formRead):
+        (WebCore::setHTTPBody):
+        (WebCore::httpBodyFromStream):
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::cancel):
+        (-[WebCoreResourceHandleAsDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebCoreResourceHandleAsDelegate connectionDidFinishLoading:]):
+        (-[WebCoreResourceHandleAsDelegate connection:didFailWithError:]):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::~XMLHttpRequest):
+        (WebCore::XMLHttpRequest::upload):
+        (WebCore::XMLHttpRequest::open):
+        (WebCore::XMLHttpRequest::send):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::abort):
+        (WebCore::XMLHttpRequest::networkError):
+        (WebCore::XMLHttpRequest::abortError):
+        (WebCore::XMLHttpRequest::didSendData):
+        * xml/XMLHttpRequest.h:
+        (WebCore::XMLHttpRequest::optionalUpload):
+        * xml/XMLHttpRequest.idl:
+        * xml/XMLHttpRequestUpload.cpp: Added.
+        (WebCore::XMLHttpRequestUpload::XMLHttpRequestUpload):
+        (WebCore::XMLHttpRequestUpload::addEventListener):
+        (WebCore::XMLHttpRequestUpload::removeEventListener):
+        (WebCore::XMLHttpRequestUpload::dispatchEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchXMLHttpRequestProgressEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchAbortEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchErrorEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchLoadEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchLoadStartEvent):
+        (WebCore::XMLHttpRequestUpload::dispatchProgressEvent):
+        * xml/XMLHttpRequestUpload.h: Added.
+        (WebCore::XMLHttpRequestUpload::create):
+        (WebCore::XMLHttpRequestUpload::toXMLHttpRequestUpload):
+        (WebCore::XMLHttpRequestUpload::associatedXMLHttpRequest):
+        (WebCore::XMLHttpRequestUpload::disconnectXMLHttpRequest):
+        (WebCore::XMLHttpRequestUpload::setOnAbortListener):
+        (WebCore::XMLHttpRequestUpload::onAbortListener):
+        (WebCore::XMLHttpRequestUpload::setOnErrorListener):
+        (WebCore::XMLHttpRequestUpload::onErrorListener):
+        (WebCore::XMLHttpRequestUpload::setOnLoadListener):
+        (WebCore::XMLHttpRequestUpload::onLoadListener):
+        (WebCore::XMLHttpRequestUpload::setOnLoadStartListener):
+        (WebCore::XMLHttpRequestUpload::onLoadStartListener):
+        (WebCore::XMLHttpRequestUpload::setOnProgressListener):
+        (WebCore::XMLHttpRequestUpload::onProgressListener):
+        (WebCore::XMLHttpRequestUpload::eventListeners):
+        (WebCore::XMLHttpRequestUpload::refEventTarget):
+        (WebCore::XMLHttpRequestUpload::derefEventTarget):
+        * xml/XMLHttpRequestUpload.idl: Added.
+
 2008-07-29  Maxime Britto  <britto@apple.com>
 
         Reviewed by Darin.

@@ -3852,6 +3852,11 @@
 		BCDBB8AD0E088CA500C60FF6 /* FileList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDBB8AB0E088CA500C60FF6 /* FileList.cpp */; };
 		BCDBB8CD0E08958400C60FF6 /* File.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDBB8CB0E08958400C60FF6 /* File.h */; };
 		BCDBB8CE0E08958400C60FF6 /* File.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDBB8CC0E08958400C60FF6 /* File.cpp */; };
+		BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */; };
+		BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */; };
+		BCDFD4920E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDFD4910E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp */; };
+		BCDFD4950E30592F009D10AD /* JSXMLHttpRequestUpload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDFD4930E30592F009D10AD /* JSXMLHttpRequestUpload.cpp */; };
+		BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDFD4940E30592F009D10AD /* JSXMLHttpRequestUpload.h */; };
 		BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCE013980C0BEF180043860A /* JSStyleSheet.cpp */; };
 		BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE013990C0BEF180043860A /* JSStyleSheet.h */; };
 		BCE04C8A0DAFF7A0007A0F41 /* Generator.h in Headers */ = {isa = PBXBuildFile; fileRef = BCE04C890DAFF7A0007A0F41 /* Generator.h */; };
@@ -8223,6 +8228,12 @@
 		BCDBB8AB0E088CA500C60FF6 /* FileList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileList.cpp; sourceTree = "<group>"; };
 		BCDBB8CB0E08958400C60FF6 /* File.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = File.h; sourceTree = "<group>"; };
 		BCDBB8CC0E08958400C60FF6 /* File.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = File.cpp; sourceTree = "<group>"; };
+		BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLHttpRequestUpload.h; sourceTree = "<group>"; };
+		BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLHttpRequestUpload.cpp; sourceTree = "<group>"; };
+		BCDFD4900E305644009D10AD /* XMLHttpRequestUpload.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XMLHttpRequestUpload.idl; sourceTree = "<group>"; };
+		BCDFD4910E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestUploadCustom.cpp; sourceTree = "<group>"; };
+		BCDFD4930E30592F009D10AD /* JSXMLHttpRequestUpload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXMLHttpRequestUpload.cpp; sourceTree = "<group>"; };
+		BCDFD4940E30592F009D10AD /* JSXMLHttpRequestUpload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSXMLHttpRequestUpload.h; sourceTree = "<group>"; };
 		BCE013980C0BEF180043860A /* JSStyleSheet.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSStyleSheet.cpp; sourceTree = "<group>"; };
 		BCE013990C0BEF180043860A /* JSStyleSheet.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSStyleSheet.h; sourceTree = "<group>"; };
 		BCE04C890DAFF7A0007A0F41 /* Generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Generator.h; sourceTree = "<group>"; };
@@ -11409,6 +11420,8 @@
 				BC60DA380D2A302800B9918F /* JSXMLHttpRequestException.h */,
 				F916C48B0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.cpp */,
 				F916C48C0DB510F80076CD83 /* JSXMLHttpRequestProgressEvent.h */,
+				BCDFD4930E30592F009D10AD /* JSXMLHttpRequestUpload.cpp */,
+				BCDFD4940E30592F009D10AD /* JSXMLHttpRequestUpload.h */,
 				1ACE53F40A8D19470022947D /* JSXMLSerializer.cpp */,
 				1ACE53F50A8D19470022947D /* JSXMLSerializer.h */,
 				BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */,
@@ -12429,6 +12442,7 @@
 				1A2C40AA0DEB55AA005AF19E /* JSTextCustom.cpp */,
 				516BB7920CE91E6800512F79 /* JSTreeWalkerCustom.cpp */,
 				BC348BBD0DB7F531004ABAB9 /* JSXMLHttpRequestCustom.cpp */,
+				BCDFD4910E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp */,
 				BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */,
 			);
 			name = Custom;
@@ -12581,11 +12595,11 @@
 			children = (
 				1AE42F670AA4B8CB00C8612D /* cf */,
 				B2A015910AF6CD53006BCE0E /* graphics */,
-				6582A14809999D6C00BEEB6D /* mac */,
 				656B84D70AEA1CE900A095B4 /* network */,
 				516030090CC4245400C8AC25 /* posix */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
+				6582A14809999D6C00BEEB6D /* mac */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				51E1ECB10C91C55600DC255B /* AutodrainedPool.h */,
@@ -12676,6 +12690,9 @@
 				BC60D9C80D2A29E500B9918F /* XMLHttpRequestException.idl */,
 				F9F0ED770DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.h */,
 				F9F0ED780DB50CA200D16DB9 /* XMLHttpRequestProgressEvent.idl */,
+				BCDFD48D0E305290009D10AD /* XMLHttpRequestUpload.cpp */,
+				BCDFD48C0E305290009D10AD /* XMLHttpRequestUpload.h */,
+				BCDFD4900E305644009D10AD /* XMLHttpRequestUpload.idl */,
 				1ACE53E40A8D18E70022947D /* XMLSerializer.cpp */,
 				1ACE53E50A8D18E70022947D /* XMLSerializer.h */,
 				1ACE53E60A8D18E70022947D /* XMLSerializer.idl */,
@@ -15300,6 +15317,8 @@
 				BC3A44DE0E26D20200C14DFA /* NSResolver.h in Headers */,
 				BC3A44E30E26D21B00C14DFA /* JSNSResolver.h in Headers */,
 				A824B4650E2EF2EA0081A7B7 /* TextRun.h in Headers */,
+				BCDFD48E0E305290009D10AD /* XMLHttpRequestUpload.h in Headers */,
+				BCDFD4960E30592F009D10AD /* JSXMLHttpRequestUpload.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17070,6 +17089,9 @@
 				31611E5A0E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp in Sources */,
 				31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */,
 				BC3A44E20E26D21B00C14DFA /* JSNSResolver.cpp in Sources */,
+				BCDFD48F0E305290009D10AD /* XMLHttpRequestUpload.cpp in Sources */,
+				BCDFD4920E3056BD009D10AD /* JSXMLHttpRequestUploadCustom.cpp in Sources */,
+				BCDFD4950E30592F009D10AD /* JSXMLHttpRequestUpload.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

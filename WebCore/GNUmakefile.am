@@ -209,6 +209,7 @@ webcore_built_sources += \
 	DerivedSources/JSWheelEvent.h \
 	DerivedSources/JSXMLHttpRequest.h \
 	DerivedSources/JSXMLHttpRequestException.h \
+	DerivedSources/JSXMLHttpRequestUpload.h \
 	DerivedSources/JSXMLSerializer.h \
 	DerivedSources/JSXSLTProcessor.h \
 	DerivedSources/JSAttr.cpp \
@@ -351,6 +352,7 @@ webcore_built_sources += \
 	DerivedSources/JSXMLHttpRequest.cpp \
 	DerivedSources/JSXMLHttpRequestException.cpp \
 	DerivedSources/JSXMLHttpRequestProgressEvent.cpp \
+	DerivedSources/JSXMLHttpRequestUpload.cpp \
 	DerivedSources/JSXMLSerializer.cpp \
 	DerivedSources/JSXSLTProcessor.cpp
 
@@ -491,6 +493,7 @@ IDL_BINDINGS +=  \
 	WebCore/xml/XMLHttpRequest.idl \
 	WebCore/xml/XMLHttpRequestProgressEvent.idl \
 	WebCore/xml/XMLHttpRequestException.idl \
+	WebCore/xml/XMLHttpRequestUpload.idl \
 	WebCore/xml/XMLSerializer.idl \
 	WebCore/xml/XSLTProcessor.idl
 
@@ -557,6 +560,7 @@ webcore_sources += \
 	WebCore/bindings/js/JSTextCustom.cpp \
 	WebCore/bindings/js/JSTreeWalkerCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestCustom.cpp \
+	WebCore/bindings/js/JSXMLHttpRequestUploadCustom.cpp \
 	WebCore/bindings/js/JSXMLHttpRequestConstructor.cpp \
 	WebCore/bindings/js/JSXSLTProcessorCustom.cpp \
 	WebCore/bindings/js/JSXSLTProcessorConstructor.cpp \
@@ -1043,6 +1047,7 @@ webcore_sources += \
 	WebCore/xml/AccessItemRule.cpp \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/XMLHttpRequest.cpp \
+	WebCore/xml/XMLHttpRequestUpload.cpp \
 	WebCore/xml/XMLSerializer.cpp
 
 webcoregtk_sources += \

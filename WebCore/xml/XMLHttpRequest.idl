@@ -68,6 +68,8 @@ module xml {
 
         void abort();
 
+        readonly attribute XMLHttpRequestUpload upload;
+
         // response
         [ConvertNullStringTo=Undefined] DOMString getAllResponseHeaders()
             raises(DOMException);

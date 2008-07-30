@@ -52,6 +52,12 @@ void JSXMLHttpRequest::mark()
 {
     Base::mark();
 
+    if (XMLHttpRequestUpload* upload = m_impl->optionalUpload()) {
+        DOMObject* wrapper = ScriptInterpreter::getDOMObject(upload);
+        if (wrapper && !wrapper->marked())
+            wrapper->mark();
+    }
+
     if (JSUnprotectedEventListener* onReadyStateChangeListener = static_cast<JSUnprotectedEventListener*>(m_impl->onReadyStateChangeListener()))
         onReadyStateChangeListener->mark();
 

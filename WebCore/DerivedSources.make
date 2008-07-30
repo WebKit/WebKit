@@ -346,6 +346,7 @@ DOM_CLASSES = \
     XMLHttpRequest \
     XMLHttpRequestException \
     XMLHttpRequestProgressEvent \
+    XMLHttpRequestUpload \
     XMLSerializer \
     XPathEvaluator \
     XPathException \

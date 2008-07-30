@@ -75,6 +75,7 @@ namespace WebCore {
         void clearResourceData();
         
         virtual void willSendRequest(ResourceRequest&, const ResourceResponse& redirectResponse);
+        virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
         virtual void didReceiveResponse(const ResourceResponse&);
         virtual void didReceiveData(const char*, int, long long lengthReceived, bool allAtOnce);
         void willStopBufferingData(const char*, int);
@@ -86,7 +87,8 @@ namespace WebCore {
         virtual void receivedCancellation(const AuthenticationChallenge&);
 
         // ResourceHandleClient
-        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);        
+        virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse& redirectResponse);
+        virtual void didSendData(ResourceHandle*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
         virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse&);
         virtual void didReceiveData(ResourceHandle*, const char*, int, int lengthReceived);
         virtual void didFinishLoading(ResourceHandle*);

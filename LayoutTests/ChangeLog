@@ -1,3 +1,21 @@
+2008-07-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/6084585> Investigate upload progress events
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/xmlhttprequest/upload-onload-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-onload-event.html: Added.
+        * http/tests/xmlhttprequest/upload-onloadstart-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-onloadstart-event.html: Added.
+        * http/tests/xmlhttprequest/upload-onprogress-event-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-onprogress-event.html: Added.
+        * http/tests/xmlhttprequest/upload-progress-events-expected.txt: Added.
+        * http/tests/xmlhttprequest/upload-progress-events.html: Added.
+        * platform/win/Skipped: Skip new tests on windows where the feature is not
+        implemented yet.
+
 2008-07-29  Maxime Britto  <britto@apple.com>
 
         Reviewed by adele.

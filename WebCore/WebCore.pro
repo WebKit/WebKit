@@ -344,6 +344,7 @@ IDL_BINDINGS += \
     xml/XMLHttpRequest.idl \
     xml/XMLHttpRequestException.idl \
     xml/XMLHttpRequestProgressEvent.idl \
+    xml/XMLHttpRequestUpload.idl \
     xml/XMLSerializer.idl \
     xml/XSLTProcessor.idl
 
@@ -405,6 +406,7 @@ SOURCES += \
     bindings/js/JSTreeWalkerCustom.cpp \
     bindings/js/JSXMLHttpRequestConstructor.cpp \
     bindings/js/JSXMLHttpRequestCustom.cpp \
+    bindings/js/JSXMLHttpRequestUploadCustom.cpp \
     bindings/js/JSXSLTProcessorConstructor.cpp \
     bindings/js/JSXSLTProcessorCustom.cpp \
     bindings/js/JSPluginCustom.cpp \
@@ -884,6 +886,7 @@ SOURCES += \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \
+    xml/XMLHttpRequestUpload.cpp \
     xml/XMLSerializer.cpp \
     xml/XPathEvaluator.cpp \
     xml/XPathExpression.cpp \

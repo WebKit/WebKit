@@ -30,6 +30,7 @@
 #include "JSDOMWindow.h"
 #include "JSEventListener.h"
 #include "JSEventTargetNode.h"
+#include "JSXMLHttpRequestUpload.h"
 #include <kjs/Error.h>
 
 #if ENABLE(SVG)
@@ -271,6 +272,9 @@ JSValue* toJS(ExecState* exec, EventTarget* target)
     if (XMLHttpRequest* xhr = target->toXMLHttpRequest())
         // XMLHttpRequest is always created via JS, so we don't need to use cacheDOMObject() here.
         return ScriptInterpreter::getDOMObject(xhr);
+
+    if (XMLHttpRequestUpload* upload = target->toXMLHttpRequestUpload())
+        return toJS(exec, upload);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (DOMApplicationCache* cache = target->toDOMApplicationCache())

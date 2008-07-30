@@ -41,6 +41,7 @@
 #include "TextResourceDecoder.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
+#include "XMLHttpRequestUpload.h"
 #include "markup.h"
 #include <kjs/JSLock.h>
 #include <kjs/protect.h>
@@ -204,6 +205,7 @@ XMLHttpRequest::XMLHttpRequest(Document* doc)
     , m_responseText("")
     , m_createdDocument(false)
     , m_error(false)
+    , m_uploadComplete(false)
     , m_sameOriginRequest(true)
     , m_allowAccess(false)
     , m_inPreflight(false)
@@ -217,6 +219,9 @@ XMLHttpRequest::~XMLHttpRequest()
 {
     if (m_doc)
         removeFromRequestsByDocument(m_doc, this);
+
+    if (m_upload)
+        m_upload->disconnectXMLHttpRequest();
 }
 
 XMLHttpRequest::State XMLHttpRequest::readyState() const
@@ -254,6 +259,13 @@ Document* XMLHttpRequest::responseXML() const
     }
 
     return m_responseXML.get();
+}
+
+XMLHttpRequestUpload* XMLHttpRequest::upload()
+{
+    if (!m_upload)
+        m_upload = XMLHttpRequestUpload::create(this);
+    return m_upload.get();
 }
 
 void XMLHttpRequest::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> eventListener, bool)
@@ -331,6 +343,8 @@ void XMLHttpRequest::open(const String& method, const KURL& url, bool async, Exc
     State previousState = m_state;
     m_state = UNSENT;
     m_error = false;
+
+    m_uploadComplete = false;
 
     // clear stuff from possible previous load
     clearResponse();
@@ -436,6 +450,8 @@ void XMLHttpRequest::send(Document* document, ExceptionCode& ec)
         // FIXME: this should use value of document.inputEncoding to determine the encoding to use.
         TextEncoding encoding = UTF8Encoding();
         m_requestEntityBody = FormData::create(encoding.encode(body.characters(), body.length(), EntitiesForUnencodables));
+        if (m_upload)
+            m_requestEntityBody->setAlwaysStream(true);
     }
 
     createRequest(ec);
@@ -459,6 +475,8 @@ void XMLHttpRequest::send(const String& body, ExceptionCode& ec)
         }
 
         m_requestEntityBody = FormData::create(UTF8Encoding().encode(body.characters(), body.length(), EntitiesForUnencodables));
+        if (m_upload)
+            m_requestEntityBody->setAlwaysStream(true);
     }
 
     createRequest(ec);
@@ -481,8 +499,11 @@ void XMLHttpRequest::send(File* body, ExceptionCode& ec)
 
 void XMLHttpRequest::createRequest(ExceptionCode& ec)
 {
-    if (m_async)
+    if (m_async) {
         dispatchLoadStartEvent();
+        if (m_requestEntityBody && m_upload)
+            m_upload->dispatchLoadStartEvent();
+    }
 
     m_sameOriginRequest = m_doc->securityOrigin()->canRequest(m_url);
 
@@ -715,6 +736,11 @@ void XMLHttpRequest::abort()
     }
 
     dispatchAbortEvent();
+    if (!m_uploadComplete) {
+        m_uploadComplete = true;
+        if (m_upload)
+            m_upload->dispatchAbortEvent();
+    }
 }
 
 void XMLHttpRequest::internalAbort()
@@ -769,12 +795,22 @@ void XMLHttpRequest::networkError()
 {
     genericError();
     dispatchErrorEvent();
+    if (!m_uploadComplete) {
+        m_uploadComplete = true;
+        if (m_upload)
+            m_upload->dispatchErrorEvent();
+    }
 }
 
 void XMLHttpRequest::abortError()
 {
     genericError();
     dispatchAbortEvent();
+    if (!m_uploadComplete) {
+        m_uploadComplete = true;
+        if (m_upload)
+            m_upload->dispatchAbortEvent();
+    }
 }
 
 void XMLHttpRequest::dropProtection()        
@@ -1035,6 +1071,19 @@ void XMLHttpRequest::willSendRequest(SubresourceLoader*, ResourceRequest& reques
     if (!m_doc->securityOrigin()->canRequest(request.url())) {
         internalAbort();
         networkError();
+    }
+}
+
+void XMLHttpRequest::didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent)
+{
+    if (!m_upload)
+        return;
+
+    m_upload->dispatchProgressEvent(bytesSent, totalBytesToBeSent);
+
+    if (bytesSent == totalBytesToBeSent && !m_uploadComplete) {
+        m_uploadComplete = true;
+        m_upload->dispatchLoadEvent();
     }
 }
 

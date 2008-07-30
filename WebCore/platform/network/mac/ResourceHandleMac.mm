@@ -27,9 +27,11 @@
 #import "ResourceHandle.h"
 #import "ResourceHandleInternal.h"
 
+#import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
 #import "BlockExceptions.h"
 #import "DocLoader.h"
+#import "FormDataStreamMac.h"
 #import "Frame.h"
 #import "FrameLoader.h"
 #import "Page.h"
@@ -38,7 +40,6 @@
 #import "SchedulePair.h"
 #import "SharedBuffer.h"
 #import "SubresourceLoader.h"
-#import "AuthenticationChallenge.h"
 #import "WebCoreSystemInterface.h"
 
 using namespace WebCore;
@@ -136,6 +137,7 @@ bool ResourceHandle::start(Frame* frame)
     } else 
         delegate = ResourceHandle::delegate();
     
+    associateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream], this);
 
     NSURLConnection *connection;
     
@@ -194,6 +196,7 @@ bool ResourceHandle::start(Frame* frame)
 
 void ResourceHandle::cancel()
 {
+    disassociateStreamWithResourceHandle([d->m_request.nsURLRequest() HTTPBodyStream]);
     [d->m_connection.get() cancel];
 }
 
@@ -443,7 +446,16 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     [m_url release];
     m_url = copy;
 #endif
-    
+
+    // The client may change the request's body stream, in which case we have to re-associate
+    // the handle with the new stream so upload progress callbacks continue to work correctly.
+    NSInputStream* oldBodyStream = [newRequest HTTPBodyStream];
+    NSInputStream* newBodyStream = [request.nsURLRequest() HTTPBodyStream];
+    if (oldBodyStream != newBodyStream) {
+        disassociateStreamWithResourceHandle(oldBodyStream);
+        associateStreamWithResourceHandle(newBodyStream, m_handle);
+    }
+
     return request.nsURLRequest();
 }
 
@@ -514,6 +526,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
+    disassociateStreamWithResourceHandle([m_handle->request().nsURLRequest() HTTPBodyStream]);
     m_handle->client()->didFinishLoading(m_handle);
 }
 
@@ -522,6 +535,7 @@ void ResourceHandle::receivedCancellation(const AuthenticationChallenge& challen
     if (!m_handle || !m_handle->client())
         return;
     CallbackGuard guard;
+    disassociateStreamWithResourceHandle([m_handle->request().nsURLRequest() HTTPBodyStream]);
     m_handle->client()->didFail(m_handle, error);
 }
 

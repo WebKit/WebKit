@@ -2896,6 +2896,14 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestUpload.cpp"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLHttpRequestUpload.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSXMLSerializer.cpp"
 				>
 			</File>
@@ -10506,6 +10514,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\xml\XMLHttpRequestUpload.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\xml\XMLHttpRequestUpload.h"
+				>
+			</File>
+			<File
 				RelativePath="..\xml\XMLSerializer.cpp"
 				>
 			</File>
@@ -14112,6 +14128,10 @@
 				</File>
 				<File
 					RelativePath="..\bindings\js\JSXMLHttpRequestCustom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\bindings\js\JSXMLHttpRequestUploadCustom.cpp"
 					>
 				</File>
 				<File

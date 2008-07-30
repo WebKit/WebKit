@@ -82,12 +82,16 @@ public:
     void generateFiles(ChromeClient*);
     void removeGeneratedFilesIfNeeded();
 
+    bool alwaysStream() const { return m_alwaysStream; }
+    void setAlwaysStream(bool alwaysStream) { m_alwaysStream = alwaysStream; }
+
 private:
     FormData();
     FormData(const FormData&);
      
     Vector<FormDataElement> m_elements;
     bool m_hasGeneratedFiles;
+    bool m_alwaysStream;
 };
 
 inline bool operator==(const FormData& a, const FormData& b)

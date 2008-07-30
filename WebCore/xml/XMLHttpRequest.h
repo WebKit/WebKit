@@ -71,6 +71,9 @@ public:
     const KJS::UString& responseText() const;
     Document* responseXML() const;
 
+    XMLHttpRequestUpload* upload();
+    XMLHttpRequestUpload* optionalUpload() const { return m_upload.get(); }
+
     void setOnReadyStateChangeListener(PassRefPtr<EventListener> eventListener) { m_onReadyStateChangeListener = eventListener; }
     EventListener* onReadyStateChangeListener() const { return m_onReadyStateChangeListener.get(); }
 
@@ -110,6 +113,7 @@ private:
     virtual void derefEventTarget() { deref(); }
 
     virtual void willSendRequest(SubresourceLoader*, ResourceRequest& request, const ResourceResponse& redirectResponse);
+    virtual void didSendData(SubresourceLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
     virtual void didReceiveData(SubresourceLoader*, const char* data, int size);
     virtual void didFail(SubresourceLoader*, const ResourceError&);
@@ -175,6 +179,8 @@ private:
     RefPtr<EventListener> m_onProgressListener;
     EventListenersMap m_eventListeners;
 
+    RefPtr<XMLHttpRequestUpload> m_upload;
+
     KURL m_url;
     String m_method;
     HTTPHeaderMap m_requestHeaders;
@@ -202,6 +208,8 @@ private:
     mutable RefPtr<Document> m_responseXML;
 
     bool m_error;
+
+    bool m_uploadComplete;
 
     bool m_sameOriginRequest;
     bool m_allowAccess;
