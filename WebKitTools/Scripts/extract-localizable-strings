@@ -164,7 +164,7 @@ handleString:
                         # FIXME: Validate UTF-8 here?
                         $UIString = $string;
                         $expected = ",";
-                    } elsif (($macro =~ /UI_STRING_KEY?$/) and !defined $key) {
+                    } elsif (($macro =~ /UI_STRING_KEY$/) and !defined $key) {
                         # FIXME: Validate UTF-8 here?
                         $key = $string;
                         $expected = ",";
