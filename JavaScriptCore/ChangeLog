@@ -1,3 +1,21 @@
+2008-07-30  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Add consistency checks to UString to document and enforce its design.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::Rep::create):
+        (KJS::UString::Rep::destroy):
+        (KJS::UString::Rep::checkConsistency):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::expandPreCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::spliceSubstringsWithSeparators):
+        (KJS::UString::append):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::checkConsistency):
+
 2008-07-30  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoff Garen.

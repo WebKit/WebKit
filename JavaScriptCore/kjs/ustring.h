@@ -105,6 +105,8 @@ namespace KJS {
             Rep* ref() { ++rc; return this; }
             ALWAYS_INLINE void deref() { if (--rc == 0) destroy(); }
 
+            void checkConsistency() const;
+
             // unshared data
             int offset;
             int len;
@@ -114,7 +116,7 @@ namespace KJS {
             UString::Rep* baseString;
             size_t reportedCost;
 
-            // potentially shared data
+            // potentially shared data. 0 if backed up by a base string.
             UChar* buf;
             int usedCapacity;
             int capacity;
@@ -288,6 +290,12 @@ namespace KJS {
     int compare(const UString&, const UString&);
 
     bool equal(const UString::Rep*, const UString::Rep*);
+
+#ifdef NDEBUG
+    inline void UString::Rep::checkConsistency() const
+    {
+    }
+#endif
 
     inline UString::UString()
         : m_rep(&Rep::null)

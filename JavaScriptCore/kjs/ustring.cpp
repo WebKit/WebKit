@@ -199,6 +199,8 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar* d, int l)
     r->usedPreCapacity = 0;
     r->preCapacity = 0;
 
+    r->checkConsistency();
+
     // steal the single reference this Rep was created with
     return adoptRef(r);
 }
@@ -206,6 +208,7 @@ PassRefPtr<UString::Rep> UString::Rep::create(UChar* d, int l)
 PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, int length)
 {
     ASSERT(base);
+    base->checkConsistency();
 
     int baseOffset = base->offset;
 
@@ -228,6 +231,8 @@ PassRefPtr<UString::Rep> UString::Rep::create(PassRefPtr<Rep> base, int offset, 
     r->usedPreCapacity = 0;
     r->preCapacity = 0;
 
+    r->checkConsistency();
+
     // steal the single reference this Rep was created with
     return adoptRef(r);
 }
@@ -248,6 +253,8 @@ PassRefPtr<UString::Rep> UString::Rep::createFromUTF8(const char* string)
 
 void UString::Rep::destroy()
 {
+    checkConsistency();
+
     // Static null and empty strings can never be destroyed, but we cannot rely on 
     // reference counting, because ref/deref are not thread-safe.
     if (!isStatic()) {
@@ -355,6 +362,37 @@ unsigned UString::Rep::computeHash(const char* s, int l)
     return hash;
 }
 
+#ifndef NDEBUG
+void UString::Rep::checkConsistency() const
+{
+    // Only base strings have non-zero shared data.
+    if (this != baseString) {
+        ASSERT(!buf);
+        ASSERT(!usedCapacity);
+        ASSERT(!capacity);
+        ASSERT(!usedPreCapacity);
+        ASSERT(!preCapacity);
+    }
+
+    // There is no recursion for base strings.
+    ASSERT(baseString == baseString->baseString);
+
+    if (isStatic()) {
+        // There are only two static strings: null and empty.
+        ASSERT(!len);
+
+        // Static strings cannot get in identifier tables, because they are globally shared.
+        ASSERT(!identifierTable());
+    }
+
+    // The string fits in buffer.
+    ASSERT(baseString->usedPreCapacity <= baseString->preCapacity);
+    ASSERT(baseString->usedCapacity <= baseString->capacity);
+    ASSERT(-offset <= baseString->usedPreCapacity);
+    ASSERT(offset + len <= baseString->usedCapacity);
+}
+#endif
+
 // put these early so they can be inlined
 inline size_t UString::expandedSize(size_t size, size_t otherSize) const
 {
@@ -383,6 +421,8 @@ inline int UString::usedPreCapacity() const
 
 void UString::expandCapacity(int requiredLength)
 {
+    m_rep->checkConsistency();
+
     Rep* r = m_rep->baseString;
 
     if (requiredLength > r->capacity) {
@@ -398,10 +438,14 @@ void UString::expandCapacity(int requiredLength)
     }
     if (requiredLength > r->usedCapacity)
         r->usedCapacity = requiredLength;
+
+    m_rep->checkConsistency();
 }
 
 void UString::expandPreCapacity(int requiredPreCap)
 {
+    m_rep->checkConsistency();
+
     Rep* r = m_rep->baseString;
 
     if (requiredPreCap > r->preCapacity) {
@@ -421,6 +465,8 @@ void UString::expandPreCapacity(int requiredPreCap)
     }
     if (requiredPreCap > r->usedPreCapacity)
         r->usedPreCapacity = requiredPreCap;
+
+    m_rep->checkConsistency();
 }
 
 UString::UString(const char* c)
@@ -475,6 +521,9 @@ UString::UString(const Vector<UChar>& buffer)
 
 UString::UString(const UString& a, const UString& b)
 {
+    a.rep()->checkConsistency();
+    b.rep()->checkConsistency();
+
     int aSize = a.size();
     int aOffset = a.m_rep->offset;
     int bSize = b.size();
@@ -526,6 +575,9 @@ UString::UString(const UString& a, const UString& b)
             m_rep->capacity = newCapacity;
         }
     }
+    a.rep()->checkConsistency();
+    b.rep()->checkConsistency();
+    m_rep->checkConsistency();
 }
 
 const UString& UString::null()
@@ -678,6 +730,8 @@ UString UString::from(double d)
 
 UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, int rangeCount, const UString* separators, int separatorCount) const
 {
+    m_rep->checkConsistency();
+
     if (rangeCount == 1 && separatorCount == 0) {
         int thisSize = size();
         int position = substringRanges[0].position;
@@ -718,6 +772,9 @@ UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, in
 
 UString& UString::append(const UString &t)
 {
+    m_rep->checkConsistency();
+    t.rep()->checkConsistency();
+
     int thisSize = size();
     int thisOffset = m_rep->offset;
     int tSize = t.size();
@@ -758,11 +815,16 @@ UString& UString::append(const UString &t)
         }
     }
 
+    m_rep->checkConsistency();
+    t.rep()->checkConsistency();
+
     return *this;
 }
 
 UString& UString::append(const UChar* tData, int tSize)
 {
+    m_rep->checkConsistency();
+
     int thisSize = size();
     int thisOffset = m_rep->offset;
     int length = thisSize + tSize;
@@ -802,11 +864,15 @@ UString& UString::append(const UChar* tData, int tSize)
         }
     }
 
+    m_rep->checkConsistency();
+
     return *this;
 }
 
 UString& UString::append(const char* t)
 {
+    m_rep->checkConsistency();
+
     int thisSize = size();
     int thisOffset = m_rep->offset;
     int tSize = static_cast<int>(strlen(t));
@@ -852,11 +918,15 @@ UString& UString::append(const char* t)
         }
     }
 
+    m_rep->checkConsistency();
+
     return *this;
 }
 
 UString& UString::append(UChar c)
 {
+    m_rep->checkConsistency();
+
     int thisOffset = m_rep->offset;
     int length = size();
 
@@ -902,6 +972,8 @@ UString& UString::append(UChar c)
             m_rep->capacity = newCapacity;
         }
     }
+
+    m_rep->checkConsistency();
 
     return *this;
 }
