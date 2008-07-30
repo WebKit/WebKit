@@ -1,5 +1,13 @@
 2008-07-30  Anders Carlsson  <andersca@apple.com>
 
+        * API/WebKitAvailability.h:
+        Fix Windows (and other non-Mac builds).
+        
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Add WebKitAvailability.h to the project.
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
         One step closer towards fixing the Windows build.
         
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make:

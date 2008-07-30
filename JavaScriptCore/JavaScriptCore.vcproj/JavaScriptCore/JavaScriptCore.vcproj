@@ -573,14 +573,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\JSStaticScopeObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\kjs\JSStaticScopeObject.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\kjs\JSGlobalObjectFunctions.cpp"
 				>
 			</File>
@@ -626,6 +618,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\JSObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSStaticScopeObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSStaticScopeObject.h"
 				>
 			</File>
 			<File
@@ -1107,6 +1107,10 @@
 			</File>
 			<File
 				RelativePath="..\..\API\JSValueRef.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\WebKitAvailability.h"
 				>
 			</File>
 		</Filter>
