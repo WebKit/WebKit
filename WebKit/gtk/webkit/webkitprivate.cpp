@@ -83,7 +83,7 @@ WebKitWebView* kit(WebCore::Page* corePage)
     return client ? client->webView() : 0;
 }
 
-} /** end namespace WebCore */
+} /** end namespace WebKit */
 
 void webkit_init()
 {
