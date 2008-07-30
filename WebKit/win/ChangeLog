@@ -1,3 +1,17 @@
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
+        Add COMPropertyBag, a simple template class that implements the IPropertyBag interface. All
+        property bag values must be of the same type.
+        
+        The COMVariantSetter helpers are now in COMVariantSetter.h
+        
+        * COMEnumVariant.h:
+        * COMPropertyBag.h: Added.
+        * COMVariantSetter.h: Added.
+        * WebKit.vcproj/WebKit.vcproj:
+        
 2008-07-30  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Adam Roben.

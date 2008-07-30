@@ -619,6 +619,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\COMPropertyBag.h"
+				>
+			</File>
+			<File
+				RelativePath="..\COMVariantSetter.h"
+				>
+			</File>
+			<File
 				RelativePath="..\DefaultDownloadDelegate.h"
 				>
 			</File>
