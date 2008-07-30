@@ -252,8 +252,9 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
         return 0;
-    // FIXME: should we try to atomize constant strings?
-    return generator.emitLoad(generator.finalDestination(dst), jsOwnedString(generator.globalExec(), m_value));
+
+    // We atomize constant strings, in case they're later used in property lookup.
+    return generator.emitLoad(generator.finalDestination(dst), jsOwnedString(generator.globalExec(), Identifier(generator.globalExec(), m_value).ustring()));
 }
 
 // ------------------------------ RegExpNode -----------------------------------
