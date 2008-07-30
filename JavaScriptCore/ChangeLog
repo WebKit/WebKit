@@ -1,3 +1,15 @@
+2008-07-29  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20169
+        Memory allocated with fastMalloc is freed with delete
+
+        * VM/JSPropertyNameIterator.cpp:
+        (KJS::JSPropertyNameIterator::invalidate): Free the array properly.
+        (KJS::JSPropertyNameIterator::~JSPropertyNameIterator): Delete the array by calling
+        invalidate().
+
 2008-07-29  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the Qt build.
