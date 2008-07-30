@@ -85,8 +85,10 @@ static int depth(ScopeChain& sc)
     int scopeDepth = 0;
     ScopeChainIterator iter = sc.begin();
     ScopeChainIterator end = sc.end();
-    while (!(*iter)->isVariableObject()) {
+    while (!(*iter)->isActivationObject()) {
         ++iter;
+        if (iter == end)
+            break;
         ++scopeDepth;
     }
     return scopeDepth;

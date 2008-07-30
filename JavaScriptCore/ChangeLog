@@ -1,3 +1,18 @@
+2008-07-30  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        <rdar://problem/6111648> JavaScript exceptions fail if the scope chain includes the global object
+
+        In an attempt to remove the branch I just added to KJS::depth I
+        used the existence of a Variable Object at a point in the scope
+        chain as an indicator of function or global scope activation.
+        However this assumption results in incorrect behaviour if the
+        global object is injected into the scope chain with 'with'.
+
+        * VM/Machine.cpp:
+        (KJS::depth):
+
 2008-07-30  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.
