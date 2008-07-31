@@ -1,3 +1,27 @@
+2008-07-31  John Sullivan  <sullivan@apple.com>
+
+        WebKit part of <rdar://problem/6116650> Text-only zoom setting should be stored in WebKit prefs
+
+        Reviewed by Hyatt
+
+        * WebView/WebPreferenceKeysPrivate.h:
+        added WebKitZoomsTextOnlyPreferenceKey
+        
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        default value of YES for WebKitZoomsTextOnlyPreferenceKey
+        (-[WebPreferences zoomsTextOnly]):
+        getter for WebKitZoomsTextOnlyPreferenceKey
+        (-[WebPreferences setZoomsTextOnly:]):
+        setter for WebKitZoomsTextOnlyPreferenceKey
+        
+        * WebView/WebPreferencesPrivate.h:
+        declare zoomsTextOnly/setZoomsTextOnly:
+        
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]):
+        update WebCore::Settings value for zoomsTextOnly
+
 2008-07-31  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix layout test results for webarchive/test-xml-stylesheet.xml

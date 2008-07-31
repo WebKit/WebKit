@@ -648,12 +648,12 @@ float Frame::zoomFactor() const
 
 bool Frame::isZoomFactorTextOnly() const
 {
-    return d->m_zoomFactorIsTextOnly;
+    return d->m_page->settings()->zoomsTextOnly();
 }
 
 bool Frame::shouldApplyTextZoom() const
 {
-    if (d->m_zoomFactor == 1.0f || !d->m_zoomFactorIsTextOnly)
+    if (d->m_zoomFactor == 1.0f || !isZoomFactorTextOnly())
         return false;
 #if ENABLE(SVG)
     if (d->m_doc && d->m_doc->isSVGDocument())
@@ -664,7 +664,7 @@ bool Frame::shouldApplyTextZoom() const
 
 bool Frame::shouldApplyPageZoom() const
 {
-    if (d->m_zoomFactor == 1.0f || d->m_zoomFactorIsTextOnly)
+    if (d->m_zoomFactor == 1.0f || isZoomFactorTextOnly())
         return false;
 #if ENABLE(SVG)
     if (d->m_doc && d->m_doc->isSVGDocument())
@@ -675,7 +675,7 @@ bool Frame::shouldApplyPageZoom() const
 
 void Frame::setZoomFactor(float percent, bool isTextOnly)
 {  
-    if (d->m_zoomFactor == percent && d->m_zoomFactorIsTextOnly == isTextOnly)
+    if (d->m_zoomFactor == percent && isZoomFactorTextOnly())
         return;
 
 #if ENABLE(SVG)
@@ -685,7 +685,7 @@ void Frame::setZoomFactor(float percent, bool isTextOnly)
         if (!static_cast<SVGDocument*>(d->m_doc.get())->zoomAndPanEnabled())
             return;
         d->m_zoomFactor = percent;
-        d->m_zoomFactorIsTextOnly = true; // We do this to avoid doing any scaling of CSS pixels, since the SVG has its own notion of zoom.
+        d->m_page->settings()->setZoomsTextOnly(true); // We do this to avoid doing any scaling of CSS pixels, since the SVG has its own notion of zoom.
         if (d->m_doc->renderer())
             d->m_doc->renderer()->repaint();
         return;
@@ -693,7 +693,7 @@ void Frame::setZoomFactor(float percent, bool isTextOnly)
 #endif
 
     d->m_zoomFactor = percent;
-    d->m_zoomFactorIsTextOnly = isTextOnly;
+    d->m_page->settings()->setZoomsTextOnly(isTextOnly);
 
     if (d->m_doc)
         d->m_doc->recalcStyle(Node::Force);
@@ -1945,7 +1945,6 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_ownerElement(ownerElement)
     , m_script(thisFrame)
     , m_zoomFactor(parent ? parent->d->m_zoomFactor : 1.0f)
-    , m_zoomFactorIsTextOnly(parent ? parent->d->m_zoomFactorIsTextOnly : true)
     , m_selectionGranularity(CharacterGranularity)
     , m_selectionController(thisFrame)
     , m_caretBlinkTimer(thisFrame, &Frame::caretBlinkTimerFired)

@@ -336,6 +336,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitUpdatesWhenOffscreenPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
 #ifndef NDEBUG
         // In Release and Production we skip a lot of object teardown during quit to speed up shutdown time.  This breaks
         // our RefCount Leak tracking, and so for Debug we will use the full document teardown.
@@ -792,6 +793,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setUpdatesWhenOffscreen:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitUpdatesWhenOffscreenPreferenceKey];
+}
+
+- (BOOL)zoomsTextOnly
+{
+    return [self _boolValueForKey:WebKitZoomsTextOnlyPreferenceKey];
+}
+
+- (void)setZoomsTextOnly:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitZoomsTextOnlyPreferenceKey];
 }
 
 - (BOOL)respectStandardStyleKeyEquivalents

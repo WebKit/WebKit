@@ -77,6 +77,9 @@ extern NSString *WebPreferencesRemovedNotification;
 - (BOOL)updatesWhenOffscreen;
 - (void)setUpdatesWhenOffscreen:(BOOL)updatesWhenOffscreen;
 
+- (BOOL)zoomsTextOnly;
+- (void)setZoomsTextOnly:(BOOL)zoomsTextOnly;
+
 // zero means do AutoScale
 - (float)PDFScaleFactor;
 - (void)setPDFScaleFactor:(float)scale;

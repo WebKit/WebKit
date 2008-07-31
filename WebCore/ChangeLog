@@ -1,3 +1,35 @@
+2008-07-31  John Sullivan  <sullivan@apple.com>
+
+        WebCore part of <rdar://problem/6116650> Text-only zoom setting should be stored in WebKit prefs
+
+        Reviewed by Hyatt
+
+        * WebCore.base.exp:
+        export symbol for WebCoreSettings::setZoomsTextOnly()
+        
+        * page/Frame.cpp:
+        (WebCore::Frame::isZoomFactorTextOnly):
+        use value from Settings instead of data member
+        (WebCore::Frame::shouldApplyTextZoom):
+        call isZoomFactorTextOnly() to get value instead of accessing now-removed data member
+        (WebCore::Frame::shouldApplyPageZoom):
+        ditto
+        (WebCore::Frame::setZoomFactor):
+        set value into Settings rather than into data member
+        (WebCore::FramePrivate::FramePrivate):
+        don't set initial value of now-removed data member; this is managed by Settings now
+        
+        * page/FramePrivate.h:
+        removed m_zoomFactorIsTextOnly
+        
+        * page/Settings.cpp:
+        (WebCore::Settings::setZoomsTextOnly):
+        new function, sets values and reapplies styles in all frames
+        
+        * page/Settings.h:
+        (WebCore::Settings::zoomsTextOnly):
+        new function, returns value of new data member
+
 2008-07-31  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

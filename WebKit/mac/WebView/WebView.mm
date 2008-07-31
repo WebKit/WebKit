@@ -1028,6 +1028,7 @@ static bool debugWidget = true;
     settings->disableRangeMutationForOldAppleMail(WKAppVersionCheckLessThan(@"com.apple.mail", -1, 4.0));
     settings->setOfflineWebApplicationCacheEnabled([preferences offlineWebApplicationCacheEnabled]);
     settings->setUpdatesWhenOffscreen([preferences updatesWhenOffscreen]);
+    settings->setZoomsTextOnly([preferences zoomsTextOnly]);
     settings->setEnforceCSSMIMETypeInStrictMode(!WKAppVersionCheckLessThan(@"com.apple.iWeb", -1, 2.1));
 }
 
