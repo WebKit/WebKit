@@ -63,3 +63,7 @@ include(JavaScriptCore.pri)
 QMAKE_EXTRA_TARGETS += generated_files
 
 linux-icc*:QMAKE_CXXFLAGS_RELEASE ~= s/-O2/-O0/
+
+qt-port: lessThan(QT_MINOR_VERSION, 4) {
+    DEFINES += QT_BEGIN_NAMESPACE="" QT_END_NAMESPACE=""
+}

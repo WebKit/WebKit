@@ -1,3 +1,12 @@
+2008-07-31  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Simon.
+
+        Bug 20170: [Qt] missing namespace defines in JavaScriptCore.pro
+        <https://bugs.webkit.org/show_bug.cgi?id=20170>
+
+        * JavaScriptCore.pro: Added missing define.
+
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Maciej.
