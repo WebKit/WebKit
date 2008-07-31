@@ -1080,8 +1080,15 @@ contains(DEFINES, ENABLE_DATABASE=1) {
             SOURCES += $$QT_SOURCE_TREE/src/3rdparty/sqlite/sqlite3.c
         }
     } else {
-        INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
-        LIBS += -lsqlite3
+        SQLITE3SRCDIR = $$(SQLITE3SRCDIR)
+        isEmpty(SQLITE3SRCDIR) {
+            INCLUDEPATH += $$[QT_INSTALL_PREFIX]/src/3rdparty/sqlite/
+            LIBS += -lsqlite3
+        } else {
+            CONFIG(release, debug|release):DEFINES *= NDEBUG
+            INCLUDEPATH += $${SQLITE3SRCDIR}
+            SOURCES += $${SQLITE3SRCDIR}/sqlite3.c
+        }
     }
 
     SOURCES += \
