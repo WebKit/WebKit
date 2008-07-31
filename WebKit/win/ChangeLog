@@ -1,6 +1,15 @@
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.
+        
+        Tweak the names.
+
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+
+2008-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
 
         <rdar://problem/5826110>
         

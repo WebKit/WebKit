@@ -626,15 +626,15 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* e
         COMPtr<IWebUIDelegatePrivate4> uiPrivate(Query, ui);
 
         if (uiPrivate) {
-            // Assemble the plug-in arguments in a property bag.
-            HashMap<String, String> pluginArguments;
+            // Assemble the view arguments in a property bag.
+            HashMap<String, String> viewArguments;
             for (unsigned i = 0; i < paramNames.size(); i++) 
-                pluginArguments.set(paramNames[i], paramValues[i]);
-            COMPtr<IPropertyBag> pluginArgumentsBag(AdoptCOM, COMPropertyBag<String>::adopt(pluginArguments));
+                viewArguments.set(paramNames[i], paramValues[i]);
+            COMPtr<IPropertyBag> viewArgumentsBag(AdoptCOM, COMPropertyBag<String>::adopt(viewArguments));
 
-            // Now create a new property bag where the plug-in arguments is the only property.
+            // Now create a new property bag where the view arguments is the only property.
             HashMap<String, COMPtr<IUnknown> > arguments;
-            arguments.set(WebEmbeddedViewAttributesKey, COMPtr<IUnknown>(AdoptCOM, pluginArgumentsBag.releaseRef()));
+            arguments.set(WebEmbeddedViewAttributesKey, COMPtr<IUnknown>(AdoptCOM, viewArgumentsBag.releaseRef()));
             COMPtr<IPropertyBag> argumentsBag(AdoptCOM, COMPropertyBag<COMPtr<IUnknown> >::adopt(arguments));
 
             COMPtr<IWebEmbeddedView> view;
