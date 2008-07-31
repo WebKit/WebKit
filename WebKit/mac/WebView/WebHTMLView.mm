@@ -1219,8 +1219,9 @@ static void _updateMouseoverTimerCallback(CFRunLoopTimerRef timer, void *info)
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursive:(BOOL)recurse displayRectIgnoringOpacity:(NSRect)displayRect inContext:(NSGraphicsContext *)context topView:(BOOL)topView
 {
-#ifdef BUILDING_ON_TIGER
-    // Because Tiger does not have viewWillDraw we need to do layout here.
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+    // Tiger needs this because AppKit in Tiger does not have viewWillDraw, so we need to do layout here.
+    // Leopard needs this as a workaround for rdar://5668489
     [self _web_layoutIfNeededRecursive];
 #endif
 

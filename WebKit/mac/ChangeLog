@@ -1,3 +1,14 @@
+2008-07-31  John Sullivan  <sullivan@apple.com>
+
+        Fixed <https://bugs.webkit.org/show_bug.cgi?id=5195>
+        drawing with cacheDisplayInRect:toBitmapImageRep: doesn't trigger layout on Leopard
+
+        Reviewed by Dan
+
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView _recursive:displayRectIgnoringOpacity:inContext:topView:]):
+        include Leopard in the #ifdef that forces a layout if needed
+
 2008-07-30  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam and Hyatt
