@@ -63,11 +63,7 @@
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
 
-// On wx/Win, including windows.h here causes multiply-defined symbol errors
-// for libjpeg and wx, and also wx needs to include windows.h itself first for wx
-// includes to work right. So until we can find a better solution to this problem,
-// on wx, we workaround including windows.h here.
-#if PLATFORM(WIN_OS) && !PLATFORM(WX)
+#if PLATFORM(WIN_OS)
 #include <windows.h>
 #elif PLATFORM(DARWIN)
 #include <libkern/OSAtomic.h>
@@ -177,19 +173,9 @@ private:
 #define WTF_USE_LOCKFREE_THREADSAFESHARED 1
 
 #if COMPILER(MINGW) || COMPILER(MSVC7)
-#if PLATFORM(WX)
-// we define these prototypes to avoid a dependency on windows.h in the header. See comment at top of header.
-long InterlockedIncrement(long *Addend);
-long InterlockedDecrement(long *Addend);
-#endif
 inline void atomicIncrement(int* addend) { InterlockedIncrement(reinterpret_cast<long*>(addend)); }
 inline int atomicDecrement(int* addend) { return InterlockedDecrement(reinterpret_cast<long*>(addend)); }
 #else
-#if PLATFORM(WX)
-// we define these prototypes to avoid a dependency on windows.h in the header. See comment at top of header.
-long InterlockedIncrement(long volatile *Addend);
-long InterlockedDecrement(long volatile *Addend);
-#endif
 inline void atomicIncrement(int volatile* addend) { InterlockedIncrement(reinterpret_cast<long volatile*>(addend)); }
 inline int atomicDecrement(int volatile* addend) { return InterlockedDecrement(reinterpret_cast<long volatile*>(addend)); }
 #endif

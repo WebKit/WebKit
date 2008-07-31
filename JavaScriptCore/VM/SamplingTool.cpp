@@ -51,7 +51,7 @@ void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
         m_vpcCounts[codeOffset]++;
 }
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN_OS)
 
 static void sleepForMicroseconds(unsigned us)
 {

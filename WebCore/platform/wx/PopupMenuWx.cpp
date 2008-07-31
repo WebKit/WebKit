@@ -30,6 +30,9 @@
 #include "PlatformString.h"
 
 #include <wx/defs.h>
+#if __WXMSW__
+#include <wx/msw/winundef.h>
+#endif
 #include <wx/event.h>
 #include <wx/menu.h>
 

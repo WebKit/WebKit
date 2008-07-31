@@ -45,11 +45,26 @@
 #if COMPILER(MSVC)
 // Remove warnings from warning level 4.
 #pragma warning(disable : 4611) // warning C4611: interaction between '_setjmp' and C++ object destruction is non-portable
-#endif
+
+// if ADDRESS_TAG_BIT is dfined, INT32 has been declared as a typedef in the PlatformSDK (BaseTsd.h),
+// so we need to stop jpeglib.h from trying to #define it 
+// see here for more info: http://www.cygwin.com/ml/cygwin/2004-07/msg01051.html
+# if defined(ADDRESS_TAG_BIT) && !defined(XMD_H)
+#  define XMD_H
+#  define VTK_JPEG_XMD_H
+# endif
+#endif // COMPILER(MSVC)
 
 extern "C" {
 #include "jpeglib.h"
 }
+
+#if COMPILER(MSVC)
+# if defined(VTK_JPEG_XMD_H)
+#  undef VTK_JPEG_XMD_H
+#  undef XMD_H
+# endif
+#endif // COMPILER(MSVC)
 
 #include <setjmp.h>
 

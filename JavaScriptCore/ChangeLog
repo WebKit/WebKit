@@ -1,3 +1,12 @@
+2008-07-31  Kevin Ollivier <kevino@theolliviers.com>
+
+        Second attempt at Windows/wx build fix. Instead of avoiding inclusion of windows.h,
+        use defines, etc. to avoid conflicts in each affected file. Also, change PLATFORM(WIN)
+        to PLATFORM(WIN_OS) so that other ports using Windows headers get the right impls.
+
+        * VM/SamplingTool.cpp:
+        * wtf/Threading.h:
+
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
