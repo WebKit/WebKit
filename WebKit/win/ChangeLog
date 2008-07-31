@@ -1,3 +1,9 @@
+2008-07-31  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Windows build fix.
+
+        * WebURLResponse.cpp:
+
 2008-07-30  Mark Rowe  <mrowe@apple.com>
 
         Windows build fix.

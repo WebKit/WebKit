@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+#include "WebURLResponse.h"
+
 #include "WebKitDLL.h"
 #include "WebKit.h"
 
