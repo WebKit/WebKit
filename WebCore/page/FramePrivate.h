@@ -117,6 +117,8 @@ namespace WebCore {
         bool m_prohibitsScrolling;
 
         bool m_needsReapplyStyles;
+        
+        bool m_isDisconnected;
 
         // The root object used for objects bound outside the context of a plugin.
         RefPtr<KJS::Bindings::RootObject> m_bindingRootObject; 

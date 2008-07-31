@@ -1,3 +1,28 @@
+2008-07-30  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fixes <rdar://problem/6041390>
+
+        Adds the ability to have a frame that is "disconnected" from the 
+        main frame from the perspective of top and parent in 
+        Javascript.
+
+        * WebCore.base.exp:
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::parent):
+        (WebCore::DOMWindow::top):
+        * page/Frame.cpp:
+        (WebCore::Frame::isDisconnectedFrame):
+        (WebCore::Frame::setIsDisconnectedFrame):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/FrameTree.cpp:
+        (WebCore::FrameTree::parent):
+        (WebCore::FrameTree::top):
+        * page/FrameTree.h:
+
 2008-07-25  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Justin.

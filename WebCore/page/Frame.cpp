@@ -1195,6 +1195,16 @@ RenderPart* Frame::ownerRenderer() const
     return static_cast<RenderPart*>(object);
 }
 
+bool Frame::isDisconnected() const
+{
+    return d->m_isDisconnected;
+}
+
+void Frame::setIsDisconnected(bool isDisconnected)
+{
+    d->m_isDisconnected = isDisconnected;
+}
+
 // returns FloatRect because going through IntRect would truncate any floats
 FloatRect Frame::selectionRect(bool clipToVisibleContent) const
 {
@@ -1960,6 +1970,7 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , frameCount(0)
     , m_prohibitsScrolling(false)
     , m_needsReapplyStyles(false)
+    , m_isDisconnected(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
 #endif

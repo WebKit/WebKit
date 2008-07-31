@@ -1088,6 +1088,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
                                                 selector:selector];
 }
 
+- (void)_setIsDisconnected:(bool)isDisconnected
+{
+    _private->coreFrame->setIsDisconnected(isDisconnected);
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {

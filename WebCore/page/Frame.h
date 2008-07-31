@@ -110,6 +110,9 @@ public:
 
     RenderView* contentRenderer() const; // root renderer for the document contained in this frame
     RenderPart* ownerRenderer() const; // renderer for the element that contains this frame
+    
+    bool isDisconnected() const;
+    void setIsDisconnected(bool);
 
     friend class FramePrivate;
 
