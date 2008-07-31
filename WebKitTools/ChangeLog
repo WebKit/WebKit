@@ -1,3 +1,18 @@
+2008-07-31  Stefan Landvogt <stefan.landvogt@gmail.com>
+
+        Fix Bug 20245: WinLauncher does not start in WebKit-debug right out of
+        the box
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20245>
+
+        Reviewed by Adam Roben.
+
+        * WinLauncher/WinLauncher.vcproj: adding the following properties to
+        WinLauncher > Properties > Manifest Tool > Isolated COM
+        Type Library File: $(WebKitOutputDir)\lib\WebKit.tlb
+        Component File Name: WebKit$(WebKitDLLConfigSuffix)
+        Doing the change on "All Configurations"
+
 2008-07-31  Adam Roben  <aroben@apple.com>
 
         Windows build bot fix
