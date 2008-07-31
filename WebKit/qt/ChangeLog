@@ -2,6 +2,15 @@
 
         Reviewed by Simon.
 
+        Make sure edit actions get updated when the contents change.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedContents):
+
+2008-07-31  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Simon.
+
         Add simple edit test abilities to QtLauncher.
 
         * QtLauncher/main.cpp:
