@@ -78,7 +78,7 @@
 #include "FastMalloc.h"
 
 #include "Assertions.h"
-#if USE(PTHREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>
 #endif
 

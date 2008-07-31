@@ -30,7 +30,7 @@
 #include <wtf/Threading.h>
 
 // This is supremely lame that we require pthreads to build on windows.
-#if USE(JSC_MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 #include <pthread.h>
 #endif
 
