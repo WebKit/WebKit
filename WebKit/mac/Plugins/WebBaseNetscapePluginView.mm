@@ -1096,7 +1096,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
         [self willCallPlugInFunction];
-        NPError npErr = NPP_SetWindow(plugin, &window);
+#ifndef NDEBUG
+        NPError npErr = 
+#endif
+            NPP_SetWindow(plugin, &window);
         [self didCallPlugInFunction];
         inSetWindow = NO;
 
