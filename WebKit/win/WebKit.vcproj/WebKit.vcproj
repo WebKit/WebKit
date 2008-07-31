@@ -655,10 +655,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\HTTPHeaderPropertyBag.h"
-				>
-			</File>
-			<File
 				RelativePath="..\MarshallingHelpers.h"
 				>
 			</File>
@@ -916,10 +912,6 @@
 			</File>
 			<File
 				RelativePath="..\ForEachCoClass.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\HTTPHeaderPropertyBag.cpp"
 				>
 			</File>
 			<File

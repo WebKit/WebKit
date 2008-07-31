@@ -1,5 +1,16 @@
 2008-07-30  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mitz.
+
+        Use a COMPropertyBag instead of the HTTPHeaderPropertyBag.
+        
+        * HTTPHeaderPropertyBag.cpp: Removed.
+        * HTTPHeaderPropertyBag.h: Removed.
+        * WebURLResponse.cpp:
+        (WebURLResponse::allHeaderFields):
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
         Fix copyright years.
         
         * COMPropertyBag.h:
