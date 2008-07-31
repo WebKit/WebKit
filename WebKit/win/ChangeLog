@@ -1,5 +1,24 @@
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Adam.
+
+        Get rid of FormValuesPropertyBag and use COMPropertyBag instead.
+        
+        * COMPropertyBag.h:
+        Implement parts of IPropertyBag2. 
+        Currently just one method (CountProperties) is implemented.
+        
+        * WebCoreSupport/FormValuesPropertyBag.cpp: Removed.
+        * WebCoreSupport/FormValuesPropertyBag.h: Removed.
+      
+        * WebFrame.cpp:
+        (WebFrame::dispatchWillSubmitForm):
+        Create a COMPropertyBag instead.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+
+2008-07-31  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Jon.
         
         Tweak the names.

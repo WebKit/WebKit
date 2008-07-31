@@ -29,9 +29,9 @@
 
 #include "CFDictionaryPropertyBag.h"
 #include "COMPtr.h"
+#include "COMPropertyBag.h"
 #include "DefaultPolicyDelegate.h"
 #include "DOMCoreClasses.h"
-#include "FormValuesPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
@@ -1168,11 +1168,10 @@ void WebFrame::dispatchWillSubmitForm(FramePolicyFunction function, PassRefPtr<F
 
     COMPtr<IDOMElement> formElement(AdoptCOM, DOMElement::createInstance(formState->form()));
 
-    // FIXME: The FormValuesPropertyBag constructor should take a const pointer
-    FormValuesPropertyBag formValuesPropBag(const_cast<HashMap<String, String>*>(&formState->values()));
+    COMPtr<IPropertyBag> formValuesPropertyBag(AdoptCOM, COMPropertyBag<String>::createInstance(formState->values()));
 
     COMPtr<WebFrame> sourceFrame(kit(formState->sourceFrame()));
-    if (SUCCEEDED(formDelegate->willSubmitForm(this, sourceFrame.get(), formElement.get(), &formValuesPropBag, setUpPolicyListener(function).get())))
+    if (SUCCEEDED(formDelegate->willSubmitForm(this, sourceFrame.get(), formElement.get(), formValuesPropertyBag.get(), setUpPolicyListener(function).get())))
         return;
 
     // FIXME: Add a sane default implementation
