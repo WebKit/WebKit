@@ -1,3 +1,19 @@
+2008-07-31  David Kilzer  <ddkilzer@apple.com>
+
+        Fix layout test results for webarchive/test-xml-stylesheet.xml
+
+        Reviewed by Darin.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (convertMIMEType): Work around the "text/xml" local file type
+        regression in Leopard using the BUILDING_ON_LEOPARD macro.  Also
+        stop mangling "application/x-javascript" into "text/javascript".
+        (convertWebResourceDataToString): When checking whether to dump a
+        resource as text, also check to see if the MIME type is in the
+        -[WebHTMLRepresentation supportedNonImageMIMETypes] array.
+        * DumpRenderTree/mac/DumpRenderTreeMac.h: Added BUILDING_ON_LEOPARD
+        macro.
+
 2008-07-31  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu

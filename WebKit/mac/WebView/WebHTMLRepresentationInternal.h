@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,38 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DumpRenderTreeMac_h
-#define DumpRenderTreeMac_h
+#import <WebKit/WebHTMLRepresentationPrivate.h>
 
-// FIXME: we should add a config.h file for DumpRenderTree.
-#define WTF_PLATFORM_CF 1
-
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define BUILDING_ON_TIGER 1
-#elif MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_5
-#define BUILDING_ON_LEOPARD 1
-#endif
-
-@class DumpRenderTreeDraggingInfo;
-@class NavigationController;
-@class PolicyDelegate;
-@class WebFrame;
-@class WebView;
-
-typedef const struct __CFString* CFStringRef;
-
-extern CFMutableArrayRef openWindowsRef;
-extern CFMutableSetRef disallowedURLs;
-extern WebFrame* mainFrame;
-extern WebFrame* topLoadingFrame;
-extern DumpRenderTreeDraggingInfo *draggingInfo;
-extern NavigationController* navigationController;
-extern PolicyDelegate* policyDelegate;
-
-extern const unsigned maxViewHeight;
-extern const unsigned maxViewWidth;
-
-WebView* createWebViewAndOffscreenWindow();
-void setPersistentUserStyleSheetLocation(CFStringRef);
-
-#endif // DumpRenderTreeMac_h 
+@interface WebHTMLRepresentation (WebInternal)
++ (NSArray *)supportedNonImageMIMETypes;
+@end

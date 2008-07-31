@@ -1,3 +1,14 @@
+2008-07-31  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fix layout test results for webarchive/test-xml-stylesheet.xml
+
+        Reviewed by Darin.
+
+        Needed to expose -[WebHTMLRepresentation supportedNonImageMIMETypes]
+        for DumpRenderTree.
+
+        * WebView/WebHTMLRepresentationInternal.h: Added.
+
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Release build fix.

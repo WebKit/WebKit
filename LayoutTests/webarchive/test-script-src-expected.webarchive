@@ -28,11 +28,11 @@
     layoutTestController.dumpDOMAsWebArchive();
 </string>
 			<key>WebResourceMIMEType</key>
-			<string>text/javascript</string>
+			<string>application/x-javascript</string>
 			<key>WebResourceResponse</key>
 			<dict>
 				<key>MIMEType</key>
-				<string>text/javascript</string>
+				<string>application/x-javascript</string>
 				<key>URL</key>
 				<string>file:///LayoutTests/webarchive/resources/dump-webarchive.js</string>
 				<key>expectedContentLength</key>

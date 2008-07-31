@@ -42,6 +42,7 @@
 		226E9E6A09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 226E9E6809D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.h */; };
 		226E9E6B09D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = 226E9E6909D0AA8200F3A2BC /* WebNetscapeDeprecatedFunctions.c */; settings = {COMPILER_FLAGS = "-Wno-deprecated-declarations"; }; };
 		22F219CC08D236730030E078 /* WebBackForwardListPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 22F219CB08D236730030E078 /* WebBackForwardListPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		441793A60E34EE150055E1AE /* WebHTMLRepresentationInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
 		51079D170CED11B00077247D /* WebSecurityOrigin.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51079D140CED11B00077247D /* WebSecurityOrigin.mm */; };
@@ -142,7 +143,7 @@
 		939810530824BF01008DF038 /* WebFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 39446074020F50ED0ECA1767 /* WebFrame.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		939810540824BF01008DF038 /* WebFramePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 9CF0E249021361B00ECA16EA /* WebFramePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810550824BF01008DF038 /* WebHTMLRepresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810560824BF01008DF038 /* WebHTMLRepresentationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */; };
+		939810560824BF01008DF038 /* WebHTMLRepresentationPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810570824BF01008DF038 /* WebHTMLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810580824BF01008DF038 /* WebHTMLViewPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 35081D9602B6D4D80ACA2ACA /* WebHTMLViewPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9398105B0824BF01008DF038 /* WebFrameLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 5152FAE5033FC52200CA2ACD /* WebFrameLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -360,6 +361,7 @@
 		3944607E020F50ED0ECA1767 /* WebBackForwardList.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebBackForwardList.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		3944607F020F50ED0ECA1767 /* WebHistoryItem.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebHistoryItem.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		39446080020F50ED0ECA1767 /* WebHistoryItem.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebHistoryItem.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebHTMLRepresentationInternal.h; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
 		4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebEditorClient.mm; sourceTree = "<group>"; };
 		51079D140CED11B00077247D /* WebSecurityOrigin.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebSecurityOrigin.mm; sourceTree = "<group>"; };
@@ -994,6 +996,7 @@
 			children = (
 				35081D9202B6D4D80ACA2ACA /* WebHTMLRepresentation.h */,
 				35081D9302B6D4D80ACA2ACA /* WebHTMLRepresentation.mm */,
+				441793A50E34EE150055E1AE /* WebHTMLRepresentationInternal.h */,
 				F5A55DC702BAA2E8018635CC /* WebHTMLRepresentationPrivate.h */,
 				35081D9402B6D4D80ACA2ACA /* WebHTMLView.h */,
 				35081D9502B6D4D80ACA2ACA /* WebHTMLView.mm */,
@@ -1203,6 +1206,7 @@
 				939810AF0824BF01008DF038 /* WebFrameViewPrivate.h in Headers */,
 				1CA57D620AED6A470009BDD0 /* WebGraphicsExtras.h in Headers */,
 				939810550824BF01008DF038 /* WebHTMLRepresentation.h in Headers */,
+				441793A60E34EE150055E1AE /* WebHTMLRepresentationInternal.h in Headers */,
 				939810560824BF01008DF038 /* WebHTMLRepresentationPrivate.h in Headers */,
 				939810570824BF01008DF038 /* WebHTMLView.h in Headers */,
 				939810A10824BF01008DF038 /* WebHTMLViewInternal.h in Headers */,

@@ -59,6 +59,7 @@
 #import <WebKit/WebDocumentPrivate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFrameView.h>
+#import <WebKit/WebHTMLRepresentationInternal.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
@@ -643,8 +644,11 @@ static NSData *dumpFrameAsPDF(WebFrame *frame)
 
 static void convertMIMEType(NSMutableString *mimeType)
 {
-    if ([mimeType isEqualToString:@"application/x-javascript"])
-        [mimeType setString:@"text/javascript"];
+#ifdef BUILDING_ON_LEOPARD
+    // Workaround for <rdar://problem/5539824> on Leopard
+    if ([mimeType isEqualToString:@"text/xml"])
+        [mimeType setString:@"application/xml"];
+#endif
 }
 
 static void convertWebResourceDataToString(NSMutableDictionary *resource)
@@ -652,7 +656,7 @@ static void convertWebResourceDataToString(NSMutableDictionary *resource)
     NSMutableString *mimeType = [resource objectForKey:@"WebResourceMIMEType"];
     convertMIMEType(mimeType);
     
-    if ([mimeType hasPrefix:@"text/"]) {
+    if ([mimeType hasPrefix:@"text/"] || [[WebHTMLRepresentation supportedNonImageMIMETypes] containsObject:mimeType]) {
         NSData *data = [resource objectForKey:@"WebResourceData"];
         NSString *dataAsString = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
         [resource setObject:dataAsString forKey:@"WebResourceData"];

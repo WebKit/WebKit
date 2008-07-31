@@ -1,3 +1,20 @@
+2008-07-31  David D. Kilzer  <ddkilzer@webkit.org>
+
+        Fix layout test results for webarchive/test-xml-stylesheet.xml
+
+        Reviewed by Darin.
+
+        * platform/mac/webarchive/test-xml-stylesheet-expected.txt:
+        Removed unused test results.
+
+        * webarchive/test-duplicate-resources-expected.webarchive: Updated
+        results now that we don't mangle application/x-javascript into
+        text/javascript.
+        * webarchive/test-script-src-expected.webarchive: Ditto.
+
+        * webarchive/test-xml-stylesheet-expected.webarchive: Updated
+        results now that we handle application/xml correctly.
+
 2008-07-31  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu
