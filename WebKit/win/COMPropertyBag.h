@@ -40,6 +40,7 @@ public:
     typedef HashMap<WebCore::String, ValueType, HashType> HashMapType;
 
     static COMPropertyBag* createInstance(const HashMapType&);
+    static COMPropertyBag* adopt(HashMapType&);
 
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
@@ -51,6 +52,11 @@ public:
     virtual HRESULT STDMETHODCALLTYPE Write(LPCOLESTR pszPropName, VARIANT*);
 
 private:
+    COMPropertyBag()
+        : m_refCount(0)
+    {
+    }
+
     COMPropertyBag(const HashMapType& hashMap)
         : m_refCount(0)
         , m_hashMap(hashMap)
@@ -63,11 +69,20 @@ private:
     HashMapType m_hashMap;
 };
 
-// COMEnumVariant ------------------------------------------------------------------
+// COMPropertyBag ------------------------------------------------------------------
 template<typename ValueType, typename HashType>
 COMPropertyBag<ValueType, HashType>* COMPropertyBag<typename ValueType, HashType>::createInstance(const HashMapType& hashMap)
 {
     COMPropertyBag* instance = new COMPropertyBag(hashMap);
+    instance->AddRef();
+    return instance;
+}
+
+template<typename ValueType, typename HashType>
+COMPropertyBag<ValueType, HashType>* COMPropertyBag<typename ValueType, HashType>::adopt(HashMapType& hashMap)
+{
+    COMPropertyBag* instance = new COMPropertyBag;
+    instance->m_hashMap.swap(hashMap);
     instance->AddRef();
     return instance;
 }
@@ -115,7 +130,13 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::Read(LPCOLESTR ps
     if (it == end)
         return E_INVALIDARG;
 
+    VARTYPE requestedType = V_VT(pVar);
+    V_VT(pVar) = VT_EMPTY;
     COMVariantSetter<ValueType>::setVariant(pVar, it->second);
+
+    if (requestedType != COMVariantSetter<ValueType>::VariantType && requestedType != VT_EMPTY)
+        return ::VariantChangeType(pVar, pVar, VARIANT_NOUSEROVERRIDE | VARIANT_ALPHABOOL, requestedType);
+
     return S_OK;
 }
 

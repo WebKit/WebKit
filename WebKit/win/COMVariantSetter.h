@@ -27,6 +27,7 @@
 #define COMVariantSetter_h
 
 #include <WebCore/BString.h>
+#include <WebCore/COMPtr.h>
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -37,34 +38,54 @@ template<typename T> struct COMVariantSetter {};
 
 template<> struct COMVariantSetter<WebCore::String>
 {
+    static const VARENUM VariantType = VT_BSTR;
+
     static void setVariant(VARIANT* variant, const WebCore::String& value)
     {
         ASSERT(V_VT(variant) == VT_EMPTY);
 
-        V_VT(variant) = VT_BSTR;
+        V_VT(variant) = VariantType;
         V_BSTR(variant) = WebCore::BString(value).release();
     }
 };
 
 template<> struct COMVariantSetter<unsigned long long>
 {
+    static const VARENUM VariantType = VT_UI8;
+
     static void setVariant(VARIANT* variant, unsigned long long value)
     {
         ASSERT(V_VT(variant) == VT_EMPTY);
 
-        V_VT(variant) = VT_UI8;
+        V_VT(variant) = VariantType;
         V_UI8(variant) = value;
+    }
+};
+
+template<typename T> struct COMVariantSetter<COMPtr<T> >
+{
+    static const VARENUM VariantType = VT_UNKNOWN;
+
+    static void setVariant(VARIANT* variant, const COMPtr<T>& value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        V_VT(variant) = VariantType;
+        V_UNKNOWN(variant) = value.get();
+        value->AddRef();
     }
 };
 
 template<typename COMType, typename UnderlyingType>
 struct COMIUnknownVariantSetter
 {
+    static const VARENUM VariantType = VT_UNKNOWN;
+
     static void setVariant(VARIANT* variant, const UnderlyingType& value)
     {
         ASSERT(V_VT(variant) == VT_EMPTY);
 
-        V_VT(variant) = VT_UNKNOWN;
+        V_VT(variant) = VariantType;
         V_UNKNOWN(variant) = COMType::createInstance(value);
     }
 };

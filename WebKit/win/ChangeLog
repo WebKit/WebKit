@@ -2,6 +2,19 @@
 
         Reviewed by Sam.
 
+        More property bag work.
+        
+        * COMPropertyBag.h:
+        (COMPropertyBag::COMPropertyBag):        
+        (::adopt):
+        (::Read):
+        * COMVariantSetter.h:
+        (COMIUnknownVariantSetter::setVariant):
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam.
+
         Add COMPropertyBag, a simple template class that implements the IPropertyBag interface. All
         property bag values must be of the same type.
         
