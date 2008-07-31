@@ -28,6 +28,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 
 #include "AffineTransform.h"
 #include "AXObjectCache.h"
@@ -186,7 +187,7 @@ SearchPopupMenu::SearchPopupMenu(PopupMenuClient* client) : PopupMenu(client) { 
 bool SearchPopupMenu::enabled() { return true; }
 
 namespace WebCore {
-float userIdleTime() { notImplemented(); return 0; }
+float userIdleTime() { notImplemented(); return FLT_MAX; } // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed
 Vector<String> supportedKeySizes() { notImplemented(); return Vector<String>(); }
 String signedPublicKeyAndChallengeString(unsigned keySizeIndex, const String &challengeString, const KURL &url) { return String(); }
 const char* currentTextBreakLocaleID() { notImplemented(); return "en_us"; }

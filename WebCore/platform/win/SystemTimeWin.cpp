@@ -56,9 +56,11 @@ double currentTime()
 
 float userIdleTime()
 {
-    // Needed for back/forward cache.
-    notImplemented();
-    return 0.0F;
+    LASTINPUTINFO lastInputInfo = {0};
+    lastInputInfo.cbSize = sizeof(LASTINPUTINFO);
+    if (::GetLastInputInfo(&lastInputInfo))
+        return (GetTickCount() - lastInputInfo.dwTime) * 0.001; // ::GetTickCount returns ms of uptime valid for up to 49.7 days.
+    return FLT_MAX; // return an arbitrarily high userIdleTime so that releasing pages from the page cache isn't postponed. 
 }
 
 }

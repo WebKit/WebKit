@@ -1,3 +1,21 @@
+2008-07-30  Alice Liu  <alice.liu@apple.com>
+
+        Implement userIdleTime() for Windows, and place a band-aid over other
+        platform implementations of userIdleTime().  This will fix the issue
+        of indefinitely postposing releasing pages from the PageCache
+        on non-Mac platforms, causing us to hang onto just about everything 
+        else about a web page.
+        
+        Reviewed by Sam Weinig.
+
+        * platform/gtk/TemporaryLinkStubs.cpp:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        * platform/qt/TemporaryLinkStubs.cpp:
+        (WebCore::userIdleTime): set to FLT_MAX
+
+        * platform/win/SystemTimeWin.cpp:
+        (WebCore::userIdleTime): implemented
+
 2008-07-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.
