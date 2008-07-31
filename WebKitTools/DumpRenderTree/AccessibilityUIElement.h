@@ -51,12 +51,14 @@ public:
 
     void getLinkedUIElements(Vector<AccessibilityUIElement*>&);
     void getChildren(Vector<AccessibilityUIElement*>&);
-
+    AccessibilityUIElement* getChildAtIndex(unsigned);
+    
     // Methods - platfrom independant implementations
     JSStringRef allAttributes();
     JSStringRef attributesOfLinkedUIElements();
     JSStringRef attributesOfChildren();
-
+    JSStringRef parameterizedAttributeNames();
+    
     // Attributes - platfrom independant implementations
     JSStringRef role();
     JSStringRef title();
@@ -70,6 +72,7 @@ public:
 
     // parameterized attributes
     int lineForIndex(int);
+    JSStringRef boundsForRange(unsigned location, unsigned length);
     
 private:
     static JSClassRef getJSClass();

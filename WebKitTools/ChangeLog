@@ -1,3 +1,22 @@
+2008-07-31  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alice Liu
+
+        Add AX support to get the bounds for a range of text
+        Add AX support to get the child of an element
+        Add AX support to get all the parameterized attribute names of an element
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (parameterizedAttributeNamesCallback):
+        (boundsForRangeCallback):
+        (childAtIndexCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::parameterizedAttributeNames):
+        (AccessibilityUIElement::boundsForRange):
+
 2008-07-31  Erik Bunce  <elbunce@thehive.com>
 
         Reviewed by Simon.

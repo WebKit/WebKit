@@ -1,3 +1,21 @@
+2008-07-31  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Alice Liu
+
+        <rdar://problem/3563671> VO doesn't highlight characters when interacting when static text in web areas
+
+        Need to expose the AXBoundsForRange parameter which allows an AX client to get the visible bounds
+        for individual characters on a webpage.
+
+        Test: accessibility/bounds-for-range.html
+
+        * ChangeLog:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::visiblePositionForIndex):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2008-07-31  Kevin Ollivier <kevino@theolliviers.com>
 
         Second attempt at Windows/wx build fix. Instead of avoiding inclusion of windows.h,

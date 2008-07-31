@@ -152,6 +152,16 @@ void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement*>& elemen
         elementVector.append(new AccessibilityUIElement([children objectAtIndex:i]));
 }
 
+AccessibilityUIElement* AccessibilityUIElement::getChildAtIndex(unsigned index)
+{
+    Vector<AccessibilityUIElement*> children;
+    getChildren(children);
+    
+    if (index < children.size())
+        return children[index];
+    return nil;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 {
     Vector<AccessibilityUIElement*> linkedElements;
@@ -186,6 +196,18 @@ JSStringRef AccessibilityUIElement::allAttributes()
 {
     NSString* attributes = attributesOfElement(m_element);
     return [attributes createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::parameterizedAttributeNames()
+{
+    NSArray* supportedParameterizedAttributes = [m_element accessibilityParameterizedAttributeNames];
+    
+    NSMutableString* attributesString = [NSMutableString string];
+    for (NSUInteger i = 0; i < [supportedParameterizedAttributes count]; ++i) {
+        [attributesString appendFormat:@"%@\n", [supportedParameterizedAttributes objectAtIndex:i]];
+    }
+    
+    return [attributesString createJSStringRef];
 }
 
 JSStringRef AccessibilityUIElement::role()
@@ -257,5 +279,17 @@ int AccessibilityUIElement::lineForIndex(int index)
     if ([value isKindOfClass:[NSNumber class]])
         return [(NSNumber *)value intValue]; 
     return -1;
+}
+
+JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned length)
+{
+    NSRange range = NSMakeRange(location, length);
+    id value = [m_element accessibilityAttributeValue:NSAccessibilityBoundsForRangeParameterizedAttribute forParameter:[NSValue valueWithRange:range]];
+    NSRect rect = NSMakeRect(0,0,0,0);
+    if ([value isKindOfClass:[NSValue class]])
+        rect = [value rectValue]; 
+    
+    NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",rect.origin.x,rect.origin.y,rect.size.width,rect.size.height];
+    return [boundsDescription createJSStringRef];
 }
 

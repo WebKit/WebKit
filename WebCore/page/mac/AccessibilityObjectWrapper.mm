@@ -1244,6 +1244,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
                       @"AXPreviousParagraphStartTextMarkerForTextMarker",
                       @"AXStyleTextMarkerRangeForTextMarker",
                       @"AXLengthForTextMarkerRange",
+                      NSAccessibilityBoundsForRangeParameterizedAttribute,
                       nil];
     }
 
@@ -1517,6 +1518,15 @@ static RenderObject* rendererForView(NSView* view)
 
     if ([attribute isEqualToString: @"AXBoundsForTextMarkerRange"]) {
         NSRect rect = m_object->boundsForVisiblePositionRange(visiblePosRange);
+        return [NSValue valueWithRect:rect];
+    }
+    
+    if ([attribute isEqualToString:NSAccessibilityBoundsForRangeParameterizedAttribute]) {
+        VisiblePosition start = m_object->visiblePositionForIndex(range.location);
+        VisiblePosition end = m_object->visiblePositionForIndex(range.location+range.length);
+        if (start.isNull() || end.isNull())
+            return nil;
+        NSRect rect = m_object->boundsForVisiblePositionRange(VisiblePositionRange(start, end));
         return [NSValue valueWithRect:rect];
     }
 
