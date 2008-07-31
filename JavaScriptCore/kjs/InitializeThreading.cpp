@@ -46,7 +46,7 @@ static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeThreadingOnce()
 {
     WTF::initializeThreading();
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
     UString::null();
     initDateMath();
@@ -55,7 +55,7 @@ static void initializeThreadingOnce()
 
 void initializeThreading()
 {
-#if PLATFORM(DARWIN) && USE(MULTIPLE_THREADS)
+#if PLATFORM(DARWIN) && ENABLE(JSC_MULTIPLE_THREADS)
     pthread_once(&initializeThreadingKeyOnce, initializeThreadingOnce);
 #else
     static bool initializedThreading = false;

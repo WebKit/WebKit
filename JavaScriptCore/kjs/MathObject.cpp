@@ -233,7 +233,7 @@ JSValue* mathProtoFuncPow(ExecState* exec, JSObject*, JSValue*, const ArgList& a
 
 JSValue* mathProtoFuncRandom(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
-#if !USE(MULTIPLE_THREADS)
+#if !ENABLE(JSC_MULTIPLE_THREADS)
     static bool didInitRandom;
     if (!didInitRandom) {
         wtf_random_init();

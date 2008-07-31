@@ -217,8 +217,8 @@
 #define WTF_COMPILER_CYGWIN 1
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
-#define WTF_USE_MULTIPLE_THREADS 1
+#if (PLATFORM(MAC) || PLATFORM(WIN)) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
+#define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif
 
 /* for Unicode, KDE uses Qt */
@@ -242,7 +242,7 @@
 #endif
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(SYMBIAN) || PLATFORM(WIN) || PLATFORM(WX)
+#if (PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(SYMBIAN) || PLATFORM(WIN) || PLATFORM(WX)) && !defined(ENABLE_NETSCAPE_PLUGIN_API)
 #define ENABLE_NETSCAPE_PLUGIN_API 1
 #endif
 
@@ -255,7 +255,7 @@
 #define WTF_USE_PTHREADS 1
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(WIN)
+#if (PLATFORM(MAC) || PLATFORM(WIN)) && !defined(ENABLE_DASHBOARD_SUPPORT)
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
@@ -323,7 +323,8 @@
 #define ENABLE_DASHBOARD_SUPPORT 0
 #endif
 
-// Set to 1 to enable the sampler, SamplingTool.
+#if !defined(ENABLE_SAMPLING_TOOL)
 #define ENABLE_SAMPLING_TOOL 0
+#endif
 
 #endif /* WTF_Platform_h */

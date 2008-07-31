@@ -168,7 +168,7 @@ Exactly one of IEEE_8087, IEEE_ARM or IEEE_MC68k should be defined.
 
 namespace KJS {
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 Mutex* s_dtoaP5Mutex;
 #endif
 
@@ -562,7 +562,7 @@ static Bigint* pow5mult(Bigint* b, int k)
     if (!(k >>= 2))
         return b;
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex->lock();
 #endif
     Bigint* p5 = p5s;
@@ -572,7 +572,7 @@ static Bigint* pow5mult(Bigint* b, int k)
         p5s_count = 1;
     }
     int p5s_count_local = p5s_count;
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
     s_dtoaP5Mutex->unlock();
 #endif
     int p5s_used = 0;
@@ -587,7 +587,7 @@ static Bigint* pow5mult(Bigint* b, int k)
             break;
 
         if (++p5s_used == p5s_count_local) {
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
             s_dtoaP5Mutex->lock();
 #endif
             if (p5s_used == p5s_count) {
@@ -597,7 +597,7 @@ static Bigint* pow5mult(Bigint* b, int k)
             }
             
             p5s_count_local = p5s_count;
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
             s_dtoaP5Mutex->unlock();
 #endif
         }
@@ -1825,7 +1825,7 @@ static int quorem(Bigint* b, Bigint* S)
     return q;
 }
 
-#if !USE(MULTIPLE_THREADS)
+#if !ENABLE(JSC_MULTIPLE_THREADS)
 static char* dtoa_result;
 #endif
 
@@ -1841,7 +1841,7 @@ static char* rv_alloc(int i)
     int* r = (int*)Balloc(k);
     *r = k;
     return
-#if !USE(MULTIPLE_THREADS)
+#if !ENABLE(JSC_MULTIPLE_THREADS)
     dtoa_result =
 #endif
         (char*)(r + 1);
@@ -1870,7 +1870,7 @@ void freedtoa(char* s)
     Bigint* b = (Bigint*)((int*)s - 1);
     b->maxwds = 1 << (b->k = *(int*)b);
     Bfree(b);
-#if !USE(MULTIPLE_THREADS)
+#if !ENABLE(JSC_MULTIPLE_THREADS)
     if (s == dtoa_result)
         dtoa_result = 0;
 #endif
@@ -1936,7 +1936,7 @@ char* dtoa(double d, int ndigits, int* decpt, int* sign, char** rve)
     int inexact, oldinexact;
 #endif
 
-#if !USE(MULTIPLE_THREADS)
+#if !ENABLE(JSC_MULTIPLE_THREADS)
     if (dtoa_result) {
         freedtoa(dtoa_result);
         dtoa_result = 0;

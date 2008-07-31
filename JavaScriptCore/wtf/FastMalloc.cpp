@@ -78,7 +78,7 @@
 #include "FastMalloc.h"
 
 #include "Assertions.h"
-#if USE(MULTIPLE_THREADS)
+#if USE(PTHREADS)
 #include <pthread.h>
 #endif
 
@@ -99,7 +99,7 @@
 #ifndef NDEBUG
 namespace WTF {
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 static pthread_key_t isForbiddenKey;
 static pthread_once_t isForbiddenKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeIsForbiddenKey()
@@ -142,7 +142,7 @@ void fastMallocAllow()
 {
     staticIsForbidden = false;
 }
-#endif // USE(MULTIPLE_THREADS)
+#endif // ENABLE(JSC_MULTIPLE_THREADS)
 
 } // namespace WTF
 #endif // NDEBUG

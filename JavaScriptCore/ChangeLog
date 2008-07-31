@@ -1,3 +1,37 @@
+2008-07-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+        
+        Rename USE(MULTIPLE_THREADS) to ENABLE(JSC_MULTIPLE_THREADS)
+        to better match the use/enable pattern (and better describe
+        the usage of the feature in question.)
+        
+        I also fixed a couple other ENABLE_ macros to be pre-processor
+        definition override-able to match the rest of the ENABLE_ macros
+        since it seems to be our convention that build systems can set
+        ENABLE_ macros in Makefiles.
+
+        * kjs/InitializeThreading.cpp:
+        (KJS::initializeThreadingOnce):
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        (KJS::JSGlobalData::~JSGlobalData):
+        * kjs/MathObject.cpp:
+        * kjs/collector.cpp:
+        (KJS::Heap::Heap):
+        (KJS::Heap::~Heap):
+        (KJS::allocateBlock):
+        (KJS::Heap::markStackObjectsConservatively):
+        * kjs/collector.h:
+        * kjs/dtoa.cpp:
+        (KJS::pow5mult):
+        (KJS::rv_alloc):
+        (KJS::freedtoa):
+        (KJS::dtoa):
+        * wtf/FastMalloc.cpp:
+        * wtf/Platform.h:
+        * wtf/RefCountedLeakCounter.cpp:
+
 2008-07-30  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Mark Rowe.

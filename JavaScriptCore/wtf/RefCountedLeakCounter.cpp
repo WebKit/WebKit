@@ -59,7 +59,7 @@ namespace WTF {
 #endif
     }
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 
     void RefCountedLeakCounter::increment()
     {

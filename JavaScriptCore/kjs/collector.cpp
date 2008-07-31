@@ -87,7 +87,7 @@ const size_t ALLOCATIONS_PER_COLLECTION = 4000;
 
 static void freeHeap(CollectorHeap*);
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 
 #if PLATFORM(DARWIN)
 typedef mach_port_t PlatformThread;
@@ -118,12 +118,12 @@ public:
 
 Heap::Heap(JSGlobalData* globalData)
     : m_markListSet(0)
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
     , m_registeredThreads(0)
 #endif
     , m_globalData(globalData)
 {
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
     int error = pthread_key_create(&m_currentThreadRegistrar, unregisterThread);
     if (error)
         CRASH();
@@ -146,7 +146,7 @@ Heap::~Heap()
     freeHeap(&primaryHeap);
     freeHeap(&numberHeap);
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 #ifndef NDEBUG
     int error =
 #endif
@@ -177,7 +177,7 @@ static NEVER_INLINE CollectorBlock* allocateBlock()
     memset(address, 0, BLOCK_SIZE);
 #else
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 #error Need to initialize pagesize safely.
 #endif
     static size_t pagesize = getpagesize();
@@ -448,7 +448,7 @@ static inline void* currentThreadStackBase()
 #endif
 }
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline PlatformThread getCurrentPlatformThread()
 {
@@ -505,7 +505,7 @@ void Heap::unregisterThread()
     }
 }
 
-#else // USE(MULTIPLE_THREADS)
+#else // ENABLE(JSC_MULTIPLE_THREADS)
 
 void Heap::registerThread()
 {
@@ -596,7 +596,7 @@ void Heap::markCurrentThreadConservatively()
     markCurrentThreadConservativelyInternal();
 }
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 
 static inline void suspendThread(const PlatformThread& platformThread)
 {
@@ -747,7 +747,7 @@ void Heap::markStackObjectsConservatively()
 {
     markCurrentThreadConservatively();
 
-#if USE(MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS)
 
     if (m_currentThreadRegistrar) {
 
