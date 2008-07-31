@@ -1,5 +1,12 @@
 2008-07-30  Anders Carlsson  <andersca@apple.com>
 
+        Fix copyright years.
+        
+        * COMPropertyBag.h:
+        * COMVariantSetter.h:
+
+2008-07-30  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam.
 
         More property bag work.
