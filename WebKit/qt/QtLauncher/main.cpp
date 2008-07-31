@@ -40,6 +40,7 @@
 #endif
 
 #include <QtUiTools/QUiLoader>
+#include <QtDebug>
 
 
 class SearchEdit;
@@ -185,15 +186,46 @@ public:
         bar->addAction(view->pageAction(QWebPage::Undo));
         bar->addAction(view->pageAction(QWebPage::Redo));
 
+        bar->addSeparator();
+        QAction* editAction = bar->addAction(tr("Edit"), this, SLOT(setEditable(bool)));
+        editAction->setCheckable(true);
+        bar->addAction(tr("Dump"), this, SLOT(dumpHtml()));
 #if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
         bar->addSeparator();
-        bar->addAction(tr("Print"), this, SLOT(print()));
+        QAction* printAction = bar->addAction(tr("Print"), this, SLOT(print()));
 #endif
+
+        addToolBarBreak();
+        bar = addToolBar("Editing");
+        bar->addAction(view->pageAction(QWebPage::ToggleBold));
+        bar->addAction(view->pageAction(QWebPage::ToggleItalic));
+        bar->addAction(view->pageAction(QWebPage::ToggleUnderline));
 
         addToolBarBreak();
         bar = addToolBar("Location");
         bar->addWidget(new QLabel(tr("Location:")));
         bar->addWidget(urlEdit);
+
+#if QT_VERSION >= 0x040400 && !defined(QT_NO_PRINTER)
+        QMenu* fileMenu = menuBar()->addMenu(tr("File"));
+        fileMenu->addAction(printAction);
+#endif
+        QMenu* editMenu = menuBar()->addMenu(tr("Edit"));
+        editMenu->addAction(view->pageAction(QWebPage::Undo));
+        editMenu->addAction(view->pageAction(QWebPage::Redo));
+        editMenu->addSeparator();
+        editMenu->addAction(view->pageAction(QWebPage::Cut));
+        editMenu->addAction(view->pageAction(QWebPage::Copy));
+        editMenu->addAction(view->pageAction(QWebPage::Paste));
+        
+        QMenu* formatMenu = menuBar()->addMenu(tr("Format"));
+        formatMenu->addAction(view->pageAction(QWebPage::ToggleBold));
+        formatMenu->addAction(view->pageAction(QWebPage::ToggleItalic));
+        formatMenu->addAction(view->pageAction(QWebPage::ToggleUnderline));
+        QMenu* writingMenu = formatMenu->addMenu(tr("Writing Direction"));
+        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionDefault));
+        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionLeftToRight));
+        writingMenu->addAction(view->pageAction(QWebPage::SetTextDirectionRightToLeft));
 
         if (url.isValid())
             view->load(url);
@@ -214,6 +246,14 @@ protected slots:
     void showLinkHover(const QString &link, const QString &toolTip)
     {
         statusBar()->showMessage(link);
+    }
+    void setEditable(bool on)
+    {
+        view->page()->setEditable(on);
+    }
+    void dumpHtml()
+    {
+        qDebug() << "HTML: " << view->page()->mainFrame()->toHtml();
     }
     void print()
     {
