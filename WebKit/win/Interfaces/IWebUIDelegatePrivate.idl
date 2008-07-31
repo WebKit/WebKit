@@ -30,6 +30,9 @@ import "IWebSecurityOrigin.idl";
 import "IWebView.idl";
 #endif
 
+cpp_quote("#define WebEmbeddedViewAttributesKey TEXT(\"WebEmbeddedViewAttributesKey\")")
+
+interface IWebEmbeddedView;
 interface IWebFrame;
 interface IWebSecurityOrigin;
 interface IWebView;
@@ -73,4 +76,15 @@ interface IWebUIDelegatePrivate2 : IWebUIDelegatePrivate
 interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
 {
     HRESULT exceededDatabaseQuota([in] IWebView* sender, [in] IWebFrame* frame, [in] IWebSecurityOrigin* origin, [in] BSTR databaseIdentifier);
+}
+
+[
+    object,
+    oleautomation,
+    uuid(88566775-C003-4EDF-8900-2872AC7EA44F),
+    pointer_default(unique)
+]
+interface IWebUIDelegatePrivate4 : IWebUIDelegatePrivate3
+{
+    HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
 }

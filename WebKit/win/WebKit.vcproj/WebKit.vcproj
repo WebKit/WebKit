@@ -2007,6 +2007,14 @@
 			Name="WebCoreSupport"
 			>
 			<File
+				RelativePath="..\WebCoreSupport\EmbeddedWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\WebCoreSupport\EmbeddedWidget.h"
+				>
+			</File>
+			<File
 				RelativePath="..\WebCoreSupport\FormValuesPropertyBag.cpp"
 				>
 			</File>

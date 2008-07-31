@@ -30,6 +30,8 @@
 #include "WebFrameLoaderClient.h"
 
 #include "CFDictionaryPropertyBag.h"
+#include "COMPropertyBag.h"
+#include "EmbeddedWidget.h"
 #include "MarshallingHelpers.h"
 #include "WebCachedPagePlatformData.h"
 #include "WebChromeClient.h"
@@ -617,6 +619,36 @@ void WebFrameLoaderClient::loadURLIntoChild(const KURL& originalURL, const Strin
 
 Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* element, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
+    WebView* webView = m_webFrame->webView();
+
+    COMPtr<IWebUIDelegate> ui;
+    if (SUCCEEDED(webView->uiDelegate(&ui)) && ui) {
+        COMPtr<IWebUIDelegatePrivate4> uiPrivate(Query, ui);
+
+        if (uiPrivate) {
+            // Assemble the plug-in arguments in a property bag.
+            HashMap<String, String> pluginArguments;
+            for (unsigned i = 0; i < paramNames.size(); i++) 
+                pluginArguments.set(paramNames[i], paramValues[i]);
+            COMPtr<IPropertyBag> pluginArgumentsBag(AdoptCOM, COMPropertyBag<String>::adopt(pluginArguments));
+
+            // Now create a new property bag where the plug-in arguments is the only property.
+            HashMap<String, COMPtr<IUnknown> > arguments;
+            arguments.set(WebEmbeddedViewAttributesKey, COMPtr<IUnknown>(AdoptCOM, pluginArgumentsBag.releaseRef()));
+            COMPtr<IPropertyBag> argumentsBag(AdoptCOM, COMPropertyBag<COMPtr<IUnknown> >::adopt(arguments));
+
+            COMPtr<IWebEmbeddedView> view;
+            HRESULT result = uiPrivate->embeddedViewWithArguments(webView, m_webFrame, argumentsBag.get(), &view);
+            if (SUCCEEDED(result)) {
+                HWND parentWindow;
+                HRESULT hr = webView->viewWindow((OLE_HANDLE*)&parentWindow);
+                ASSERT(SUCCEEDED(hr));
+
+                return EmbeddedWidget::create(view.get(), element, parentWindow, pluginSize);
+            }
+        }
+    }
+
     Frame* frame = core(m_webFrame);
     PluginView* pluginView = PluginView::create(frame, pluginSize, element, url, paramNames, paramValues, mimeType, loadManually);
 
@@ -625,7 +657,6 @@ Widget* WebFrameLoaderClient::createPlugin(const IntSize& pluginSize, Element* e
 
     COMPtr<IWebResourceLoadDelegate> resourceLoadDelegate;
 
-    WebView* webView = m_webFrame->webView();
     if (FAILED(webView->resourceLoadDelegate(&resourceLoadDelegate)))
         return pluginView;
 

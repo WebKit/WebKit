@@ -76,6 +76,7 @@ import "ocidl.idl";
 #include "IWebDocument.idl"
 #include "IWebDownload.idl"
 #include "IWebEditingDelegate.idl"
+#include "IWebEmbeddedView.idl"
 #include "IWebError.idl"
 #include "IWebErrorPrivate.idl"
 #include "IWebFormDelegate.idl"

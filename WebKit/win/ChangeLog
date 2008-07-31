@@ -1,3 +1,31 @@
+2008-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        <rdar://problem/5826110>
+        
+        Add a way for WebKit clients to embed custom content in web pages.
+        
+        * Interfaces/IWebEmbeddedView.idl: Added.
+        New interface which an embedded view must implement.
+        
+        * Interfaces/IWebUIDelegatePrivate.idl:
+        Add new UI delegate method for creating an embedded view.
+        
+        * Interfaces/WebKit.idl:
+        Include IWebEmbeddedView.idl.
+        
+        * WebCoreSupport/EmbeddedWidget.cpp: Added.
+        * WebCoreSupport/EmbeddedWidget.h: Added.
+        Add EmbeddedWidget, a widget subclass which can hold an IWebEmbeddedView.
+        
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::createPlugin):
+        Check if the UI delegate wants to create an embedded view.
+        
+        * WebKit.vcproj/WebKit.vcproj:
+        Add EmbeddedWidget.{cpp|h}
+
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Maciej.
