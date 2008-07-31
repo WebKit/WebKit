@@ -1,3 +1,11 @@
+2008-07-31  Adam Roben  <aroben@apple.com>
+
+        Windows build bot fix
+
+        * DumpRenderTree/win/ImageDiff.vcproj: Don't fail if files that only
+        exist for people at Apple can't be found. Also updated the ICU version
+        to 3.8.
+
 2008-07-31  David Kilzer  <ddkilzer@apple.com>
 
         Fix layout test results for webarchive/test-xml-stylesheet.xml
