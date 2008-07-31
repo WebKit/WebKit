@@ -24,10 +24,6 @@
 #include "collector.h"
 #include "ExecState.h"
 
-#if USE(MULTIPLE_THREADS)
-#include <pthread.h>
-#endif
-
 namespace KJS {
 
 JSLock::JSLock(ExecState*)

@@ -28,9 +28,6 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
-#if USE(MULTIPLE_THREADS)
-#include <pthread.h>
-#endif
 
 namespace KJS {
 

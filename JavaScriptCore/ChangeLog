@@ -1,5 +1,18 @@
 2008-07-30  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Mark Rowe.
+        
+        Try to clean up our usage of USE(MULTIPLE_THREADS) vs. USE(PTHREADS) a little.
+        It looks like JSC assumes that if MULTIPLE_THREADS is defined, then pthreads will always be available
+        I'm not sure that's always the case for gtk, certainly not for Windows.  We should eventually go back
+        and fix wtf/Threading.h to cover all these cases some day.
+
+        * kjs/JSLock.cpp:
+        * kjs/collector.h:
+        * wtf/Platform.h:
+
+2008-07-30  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Oliver.
         
         MSVC warns when structs are called classes or vice versa.
