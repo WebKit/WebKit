@@ -1966,7 +1966,8 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer)
     
     // If our clip rects match our parent's clip, then we can just share its data structure and
     // ref count.
-    if (fixed == parent()->clipRects()->fixed() &&
+    if (parent()->clipRects() &&
+        fixed == parent()->clipRects()->fixed() &&
         posClipRect == parent()->clipRects()->posClipRect() &&
         overflowClipRect == parent()->clipRects()->overflowClipRect() &&
         fixedClipRect == parent()->clipRects()->fixedClipRect())

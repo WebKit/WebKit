@@ -1,3 +1,14 @@
+2008-07-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Null-check parent clip rects, because they may not have been
+        set up yet.
+        https://bugs.webkit.org/show_bug.cgi?id=20243
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+
 2008-07-31  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
