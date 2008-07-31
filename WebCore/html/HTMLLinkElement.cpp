@@ -33,6 +33,8 @@
 #include "HTMLNames.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
+#include "Page.h"
+#include "Settings.h"
 
 namespace WebCore {
 
@@ -235,9 +237,17 @@ void HTMLLinkElement::finishParsingChildren()
 
 void HTMLLinkElement::setCSSStyleSheet(const String& url, const String& charset, const CachedCSSStyleSheet* sheet)
 {
-    bool strict = !document()->inCompatMode();
     m_sheet = CSSStyleSheet::create(this, url, charset);
-    m_sheet->parseString(sheet->sheetText(strict), strict);
+
+    bool strictParsing = !document()->inCompatMode();
+    bool enforceMIMEType = strictParsing;
+
+    // Check to see if we should enforce the MIME type of the CSS resource in strict mode.
+    // Running in iWeb 2 is one example of where we don't want to - <rdar://problem/6099748>
+    if (enforceMIMEType && document()->page() && !document()->page()->settings()->enforceCSSMIMETypeInStrictMode())
+        enforceMIMEType = false;
+
+    m_sheet->parseString(sheet->sheetText(enforceMIMEType), strictParsing);
     m_sheet->setTitle(title());
 
     RefPtr<MediaList> media = MediaList::createAllowingDescriptionSyntax(m_media);

@@ -1,3 +1,13 @@
+2008-07-30  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam and Hyatt
+
+        Fix for <rdar://problem/6099748>
+
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Set the "don't enforce CSS mime type in strict mode" 
+          quirk when running under iWeb 2
+
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Maciej.

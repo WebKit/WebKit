@@ -42,7 +42,7 @@ namespace WebCore {
         CachedCSSStyleSheet(const String& URL, const String& charset);
         virtual ~CachedCSSStyleSheet();
 
-        const String sheetText(bool strict = true) const { return canUseSheet(strict) ? m_sheet : ""; }
+        const String sheetText(bool enforceMIMEType = true) const { return canUseSheet(enforceMIMEType) ? m_sheet : ""; }
 
         virtual void addClient(CachedResourceClient*);
  
@@ -56,7 +56,7 @@ namespace WebCore {
         void checkNotify();
     
     private:
-        bool canUseSheet(bool strict) const;
+        bool canUseSheet(bool enforceMIMEType) const;
 
     protected:
         String m_sheet;

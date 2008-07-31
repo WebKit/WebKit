@@ -1,3 +1,27 @@
+2008-07-31  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Adam and Hyatt
+
+        Fix for <rdar://problem/6099748>
+
+        Adds a "don't enforce CSS mime type in strict mode" quirk for iWeb 2
+
+        * WebCore.base.exp:
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::setCSSStyleSheet):
+
+        * loader/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::canUseSheet):
+        * loader/CachedCSSStyleSheet.h:
+        (WebCore::CachedCSSStyleSheet::sheetText): 
+        * page/Settings.cpp:
+
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setEnforceCSSMIMETypeInStrictMode):
+        * page/Settings.h:
+        (WebCore::Settings::enforceCSSMIMETypeInStrictMode):
+
 2008-07-31  Erik Bunce  <elbunce@thehive.com>
 
         Reviewed by Simon.
