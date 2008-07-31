@@ -1,4 +1,4 @@
-﻿2008-07-31  Kevin Ollivier <kevino@theolliviers.com>
+2008-07-31  Kevin Ollivier <kevino@theolliviers.com>
 
         Second attempt at Windows/wx build fix. Instead of avoiding inclusion of windows.h,
         use defines, etc. to avoid conflicts in each affected file.
