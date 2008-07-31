@@ -1,3 +1,42 @@
+2008-07-30  Timothy Hatcher  <timothy@apple.com>
+
+        Fix various minor bugs with style editing in the Inspector.
+
+        - Restores the scroll position to 0,0 when finished editing a
+        string that was longer than the editing input area.
+
+        - Adjusts the margin of the list item to ensure the text does
+        not shift when entering and exiting editing mode.
+
+        - Reliably remembers if a shorthand has children when the
+        children haven't been populated yet.
+
+        - Reliably remembers if a shorthand was expanded, and expands
+        if needed after editing finishes.
+
+        - Hides color swatches when editing.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20238
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.startEditing):
+        Store the expanded state and children state in wasExpanded and
+        reallyHasChildren properties.
+        (WebInspector.StylePropertyTreeElement.prototype.editingEnded):
+        Removed the wasExpanded argument and use the reallyHasChildren and
+        wasExpanded properties to restore state. Deletes the state properties.
+        (WebInspector.StylePropertyTreeElement.prototype.editingCancelled):
+        Removed the wasExpanded argument.
+        (WebInspector.StylePropertyTreeElement.prototype.editingCommitted):
+        Removed the wasExpanded argument.
+        * page/inspector/inspector.css: Tweak the margin and hides the color
+        swatches. ALso removes a rule that was not needed.
+        * page/inspector/inspector.js:
+        (WebInspector.startEditing): Restore the scrollLeft and scrollTop
+        to zero when editing finishes.
+
 2008-07-30  Alice Liu  <alice.liu@apple.com>
 
         Implement userIdleTime() for Windows, and place a band-aid over other

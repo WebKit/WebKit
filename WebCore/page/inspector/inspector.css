@@ -1167,11 +1167,11 @@ body.inactive .placard.selected {
 }
 
 .section .properties li.editing {
-    margin-left: 8px;
+    margin-left: 10px;
     text-overflow: clip;
 }
 
-.section .properties li.editing.parent::before {
+li.editing .swatch {
     display: none;
 }
 

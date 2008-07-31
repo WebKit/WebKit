@@ -1150,6 +1150,8 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
 
         this.removeStyleClass("editing");
         this.tabIndex = oldTabIndex;
+        this.scrollTop = 0;
+        this.scrollLeft = 0;
 
         this.handleKeyEvent = handleKeyEvent;
         element.removeEventListener("blur", blurEventListener, false);

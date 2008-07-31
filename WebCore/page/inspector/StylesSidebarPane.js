@@ -553,9 +553,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (WebInspector.isBeingEdited(this.listItemElement) || (this.treeOutline.section && !this.treeOutline.section.editable))
             return;
 
-        var wasExpanded = this.expanded;
-        this.collapse();
-        // Lie about out children to prevent toggling on click.
+        var context = { expanded: this.expanded, hasChildren: this.hasChildren };
+
+        // Lie about our children to prevent expanding on double click and to collapse shorthands.
         this.hasChildren = false;
 
         if (!selectElement)
@@ -563,25 +563,25 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
 
-        WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), wasExpanded);
+        WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
     },
 
-    editingEnded: function(wasExpanded)
+    editingEnded: function(context)
     {
-        this.hasChildren = (this.children.length ? true : false);
-        if (wasExpanded)
+        this.hasChildren = context.hasChildren;
+        if (context.expanded)
             this.expand();
     },
 
-    editingCancelled: function(e, wasExpanded)
+    editingCancelled: function(element, context)
     {
-        this.editingEnded(wasExpanded);
+        this.editingEnded(context);
         this.updateTitle();
     },
 
-    editingCommitted: function(e, userInput, previousContent, wasExpanded)
+    editingCommitted: function(element, userInput, previousContent, context)
     {
-        this.editingEnded();
+        this.editingEnded(context);
 
         if (userInput === previousContent)
             return; // nothing changed, so do nothing else
