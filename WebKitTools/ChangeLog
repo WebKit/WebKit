@@ -1,3 +1,11 @@
+2008-07-31  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Simon.
+
+        Make run-launcher set DYLD_LIBRARY_PATH to make things work on Mac OS X.
+
+        * Scripts/run-launcher:
+
 2008-07-30  Jessica Kahn  <jess@apple.com>
 
         Reviewed by Adam Roben.

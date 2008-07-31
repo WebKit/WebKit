@@ -53,6 +53,7 @@ if (isQt()) {
     print "Starting webkit launcher with LD_LIBRARY_PATH set to point to built WebKit in $libDir.\n";
 
     $ENV{LD_LIBRARY_PATH} = $ENV{LD_LIBRARY_PATH} ? "$libDir:$ENV{LD_LIBRARY_PATH}" : $libDir;
+    $ENV{DYLD_LIBRARY_PATH} = $ENV{DYLD_LIBRARY_PATH} ? "$libDir:$ENV{DYLD_LIBRARY_PATH}" : $libDir;
 } else {
 
     if (isGtk()) {
