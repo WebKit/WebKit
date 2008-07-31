@@ -28,7 +28,6 @@
 #include "WebKit.h"
 
 #include "COMPropertyBag.h"
-#include "HTTPHeaderPropertyBag.h"
 #include "MarshallingHelpers.h"
 #include "WebLocalizableStrings.h"
 
