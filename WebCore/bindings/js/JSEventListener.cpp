@@ -33,7 +33,6 @@
 #include "JSEventTargetNode.h"
 #include "ScriptController.h"
 #include <kjs/FunctionConstructor.h>
-#include <kjs/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 using namespace KJS;
@@ -59,8 +58,6 @@ void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
     ScriptController* script = frame->script();
     if (!script->isEnabled() || script->isPaused())
         return;
-
-    JSLock lock(false);
 
     ExecState* exec = window->globalExec();
 
@@ -256,7 +253,6 @@ void JSLazyEventListener::parseCode() const
     if (frame && frame->script()->isEnabled()) {
         ExecState* exec = window()->globalExec();
 
-        JSLock lock(false);
         ArgList args;
 
         UString sourceURL(frame->loader()->url().string());

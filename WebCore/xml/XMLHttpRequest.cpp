@@ -43,7 +43,6 @@
 #include "XMLHttpRequestProgressEvent.h"
 #include "XMLHttpRequestUpload.h"
 #include "markup.h"
-#include <kjs/JSLock.h>
 #include <kjs/protect.h>
 
 namespace WebCore {
@@ -743,10 +742,7 @@ void XMLHttpRequest::internalAbort()
 void XMLHttpRequest::clearResponse()
 {
     m_response = ResourceResponse();
-    {
-        KJS::JSLock lock(false);
-        m_responseText = "";
-    }
+    m_responseText = "";
     m_createdDocument = false;
     m_responseXML = 0;
 }
@@ -992,11 +988,8 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
     if (m_state < HEADERS_RECEIVED)
         changeState(HEADERS_RECEIVED);
 
-    {
-        KJS::JSLock lock(false);
-        if (m_decoder)
-            m_responseText += m_decoder->flush();
-    }
+    if (m_decoder)
+        m_responseText += m_decoder->flush();
 
     if (Frame* frame = m_doc->frame()) {
         if (Page* page = frame->page())
@@ -1175,10 +1168,7 @@ void XMLHttpRequest::didReceiveData(SubresourceLoader*, const char* data, int le
 
     String decoded = m_decoder->decode(data, len);
 
-    {
-        KJS::JSLock lock(false);
-        m_responseText += decoded;
-    }
+    m_responseText += decoded;
 
     if (!m_error) {
         updateAndDispatchOnProgress(len);

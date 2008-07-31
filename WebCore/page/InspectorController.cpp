@@ -68,7 +68,6 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <JavaScriptCore/JSStringRef.h>
-#include <kjs/JSLock.h>
 #include <kjs/ustring.h>
 #include <profiler/Profile.h>
 #include <profiler/Profiler.h>
@@ -103,7 +102,6 @@ static JSRetainPtr<JSStringRef> jsStringRef(const String& str)
 
 static JSRetainPtr<JSStringRef> jsStringRef(const UString& str)
 {
-    JSLock lock(false);
     return JSRetainPtr<JSStringRef>(toRef(str.rep()));
 }
 
@@ -170,7 +168,6 @@ struct ConsoleMessage {
         , url(u)
         , groupLevel(g)
     {
-        JSLock lock(false);
         for (unsigned i = 0; i < args.size(); ++i)
             wrappedArguments[i] = JSInspectedObjectWrapper::wrap(exec, args.at(exec, i));
     }
@@ -189,13 +186,11 @@ struct ConsoleMessage {
 struct XMLHttpRequestResource {
     XMLHttpRequestResource(KJS::UString& sourceString)
     {
-        KJS::JSLock lock(false);
         this->sourceString = sourceString.rep();
     }
 
     ~XMLHttpRequestResource()
     {
-        KJS::JSLock lock(false);
         sourceString.clear();
     }
 
@@ -519,7 +514,6 @@ static JSValueRef getResourceDocumentNode(JSContextRef ctx, JSObjectRef /*functi
 
     ExecState* exec = toJSDOMWindowShell(resource->frame.get())->window()->globalExec();
 
-    KJS::JSLock lock(false);
     JSValueRef documentValue = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, document)));
     return documentValue;
 }
@@ -648,7 +642,6 @@ static JSValueRef search(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef
         if (newStart == startVisiblePosition(searchRange.get(), DOWNSTREAM))
             break;
 
-        KJS::JSLock lock(false);
         JSValueRef arg0 = toRef(toJS(toJS(ctx), resultRange.get()));
         JSObjectCallAsFunction(ctx, pushFunction, result, 1, &arg0, exception);
         if (exception && *exception)
@@ -723,7 +716,6 @@ static JSValueRef inspectedWindow(JSContextRef ctx, JSObjectRef /*function*/, JS
         return JSValueMakeUndefined(ctx);
 
     JSDOMWindow* inspectedWindow = toJSDOMWindow(controller->inspectedPage()->mainFrame());
-    JSLock lock(false);
     return toRef(JSInspectedObjectWrapper::wrap(inspectedWindow->globalExec(), inspectedWindow));
 }
 
@@ -796,7 +788,6 @@ static JSValueRef wrapCallback(JSContextRef ctx, JSObjectRef /*function*/, JSObj
     if (argumentCount < 1)
         return JSValueMakeUndefined(ctx);
 
-    JSLock lock(false);
     return toRef(JSInspectorCallbackWrapper::wrap(toJS(ctx), toJS(arguments[0])));
 }
 
@@ -842,7 +833,6 @@ static JSValueRef currentCallFrame(JSContextRef ctx, JSObjectRef /*function*/, J
 
     ExecState* globalExec = callFrame->scopeChain()->globalObject()->globalExec();
 
-    JSLock lock(false);
     return toRef(JSInspectedObjectWrapper::wrap(globalExec, toJS(toJS(ctx), callFrame)));
 }
 
@@ -982,8 +972,6 @@ static JSValueRef profiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectR
     InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
     if (!controller)
         return JSValueMakeUndefined(ctx);
-
-    JSLock lock(false);
 
     const Vector<RefPtr<Profile> >& profiles = controller->profiles();
 
@@ -1136,12 +1124,7 @@ void InspectorController::focusNode()
 
     ExecState* exec = toJSDOMWindow(frame)->globalExec();
 
-    JSValueRef arg0;
-
-    {
-        KJS::JSLock lock(false);
-        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, m_nodeToFocus.get())));
-    }
+    JSValueRef arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, m_nodeToFocus.get())));
 
     m_nodeToFocus = 0;
 
@@ -1278,12 +1261,7 @@ void InspectorController::inspectedWindowScriptObjectCleared(Frame* frame)
     JSDOMWindow* win = toJSDOMWindow(frame);
     ExecState* exec = win->globalExec();
 
-    JSValueRef arg0;
-
-    {
-        KJS::JSLock lock(false);
-        arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, win));
-    }
+    JSValueRef arg0 = toRef(JSInspectedObjectWrapper::wrap(exec, win));
 
     JSValueRef exception = 0;
     callFunction(m_scriptContext, m_scriptObject, "inspectedWindowCleared", 1, &arg0, exception);
@@ -1845,13 +1823,7 @@ JSObjectRef InspectorController::addDatabaseScriptResource(InspectorDatabaseReso
 
     ExecState* exec = toJSDOMWindow(frame)->globalExec();
 
-    JSValueRef database;
-
-    {
-        KJS::JSLock lock(false);
-        database = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, resource->database.get())));
-    }
-
+    JSValueRef database = toRef(JSInspectedObjectWrapper::wrap(exec, toJS(exec, resource->database.get())));
     JSValueRef domainValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->domain).get());
     JSValueRef nameValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->name).get());
     JSValueRef versionValue = JSValueMakeString(m_scriptContext, jsStringRef(resource->version).get());
@@ -1941,7 +1913,6 @@ void InspectorController::addScriptConsoleMessage(const ConsoleMessage* message)
 
 void InspectorController::addScriptProfile(Profile* profile)
 {
-    JSLock lock(false);
     JSValueRef exception = 0;
     JSValueRef profileObject = toRef(toJS(toJS(m_scriptContext), profile));
     callFunction(m_scriptContext, m_scriptObject, "addProfile", 1, &profileObject, exception);

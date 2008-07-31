@@ -373,8 +373,6 @@ int main(int argc, char **argv)
     
     bool ret = true;
     {
-        JSLock lock;
-        
         // create interpreter w/ global object
         Object global(new GlobalImp());
         Interpreter interp;

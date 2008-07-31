@@ -56,7 +56,6 @@
 #include "XMLNames.h"
 #include "htmlediting.h"
 #include <kjs/ExecState.h>
-#include <kjs/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 namespace WebCore {
@@ -193,10 +192,7 @@ void Node::setDocument(Document* doc)
 
     willMoveToNewOwnerDocument();
 
-    {
-        KJS::JSLock lock(false);
-        ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
-    }    
+    ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
     m_document = doc;
 
     didMoveToNewOwnerDocument();

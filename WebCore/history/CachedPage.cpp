@@ -45,7 +45,6 @@
 #include "PausedTimeouts.h"
 #include "SystemTime.h"
 #include "ScriptController.h"
-#include <kjs/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 #if ENABLE(SVG)
@@ -81,8 +80,6 @@ CachedPage::CachedPage(Page* page)
     Frame* mainFrame = page->mainFrame();
     mainFrame->clearTimers();
 
-    JSLock lock(false);
-
     ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
         m_window = proxy->windowShell()->window();
@@ -106,8 +103,6 @@ void CachedPage::restore(Page* page)
     ASSERT(m_document->view() == m_view);
 
     Frame* mainFrame = page->mainFrame();
-
-    JSLock lock(false);
 
     ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
@@ -169,7 +164,6 @@ void CachedPage::clear()
     m_mousePressNode = 0;
     m_URL = KURL();
 
-    JSLock lock(false);
     m_pausedTimeouts.clear();
     m_window = 0;
 

@@ -35,7 +35,6 @@
 #include "Frame.h"
 #include "ScriptController.h"
 #include "JSSQLError.h"
-#include <kjs/JSLock.h>
 
 namespace WebCore {
     
@@ -57,8 +56,6 @@ bool JSCustomSQLTransactionErrorCallback::handleEvent(SQLError* error)
         
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
-        
-    KJS::JSLock lock(false);
         
     JSValue* function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;

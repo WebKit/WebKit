@@ -32,7 +32,6 @@
 #include "ArgList.h"
 #include "CommonIdentifiers.h"
 #include "JSClassRef.h"
-#include "JSLock.h"
 #include "Machine.h"
 #include "Parser.h"
 #include "collector.h"
@@ -85,7 +84,6 @@ JSGlobalData::JSGlobalData()
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
-    , isSharedInstance(false)
 {
 }
 

@@ -28,7 +28,6 @@
 
 #include "JSDOMWindow.h"
 #include <kjs/JSGlobalData.h>
-#include <kjs/JSLock.h>
 #include <kjs/collector.h>
 
 #if USE(PTHREADS)
@@ -43,7 +42,6 @@ namespace WebCore {
 
 static void* collect(void*)
 {
-    JSLock lock(false);
     JSDOMWindow::commonJSGlobalData()->heap->collect();
     return 0;
 }
@@ -69,13 +67,11 @@ void GCController::garbageCollectSoon()
 
 void GCController::gcTimerFired(Timer<GCController>*)
 {
-    JSLock lock(false);
     JSDOMWindow::commonJSGlobalData()->heap->collect();
 }
 
 void GCController::garbageCollectNow()
 {
-    JSLock lock(false);
     JSDOMWindow::commonJSGlobalData()->heap->collect();
 }
 

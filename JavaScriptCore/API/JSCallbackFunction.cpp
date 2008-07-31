@@ -32,7 +32,6 @@
 #include "JSFunction.h"
 #include "FunctionPrototype.h"
 #include <kjs/JSGlobalObject.h>
-#include <kjs/JSLock.h>
 #include <wtf/Vector.h>
 
 namespace KJS {
@@ -63,7 +62,6 @@ JSValue* JSCallbackFunction::call(ExecState* exec, JSObject* functionObject, JSV
     for (int i = 0; i < argumentCount; i++)
         arguments[i] = toRef(args.at(exec, i));
 
-    JSLock::DropAllLocks dropAllLocks(exec);
     return toJS(static_cast<JSCallbackFunction*>(functionObject)->m_callback(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
 }
 

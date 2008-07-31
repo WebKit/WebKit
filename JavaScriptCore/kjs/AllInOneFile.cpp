@@ -61,7 +61,6 @@
 #include "InternalFunction.cpp"
 #include "interpreter.cpp"
 #include "JSImmediate.cpp"
-#include "JSLock.cpp"
 #include "JSWrapperObject.cpp"
 #include "lexer.cpp"
 #include "ArgList.cpp"

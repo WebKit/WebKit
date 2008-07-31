@@ -52,7 +52,6 @@
 #import "WebViewInternal.h"
 #import "WebUIDelegatePrivate.h"
 #import <Carbon/Carbon.h>
-#import <kjs/JSLock.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentLoader.h>
@@ -750,12 +749,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Temporarily retain self in case the plug-in view is released while sending an event. 
     [[self retain] autorelease];
     
-    BOOL acceptedEvent;
     [self willCallPlugInFunction];
-    {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
-        acceptedEvent = NPP_HandleEvent(plugin, event);
-    }
+    BOOL acceptedEvent = NPP_HandleEvent(plugin, event);
     [self didCallPlugInFunction];
         
     if (portState) {
@@ -1093,7 +1088,6 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // We probably don't want more general reentrancy protection; we are really
         // protecting only against this one case, which actually comes up when
         // you first install the SVG viewer plug-in.
-        NPError npErr;
         ASSERT(!inSetWindow);
         
         inSetWindow = YES;
@@ -1102,10 +1096,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         ASSERT((drawingModel != NPDrawingModelCoreGraphics && drawingModel != NPDrawingModelOpenGL) || [NSView focusView] == self);
         
         [self willCallPlugInFunction];
-        {
-            KJS::JSLock::DropAllLocks dropAllLocks(false);
-            npErr = NPP_SetWindow(plugin, &window);
-        }
+        NPError npErr = NPP_SetWindow(plugin, &window);
         [self didCallPlugInFunction];
         inSetWindow = NO;
 
@@ -1302,12 +1293,9 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     // Get the text input vtable
     if (eventModel == NPEventModelCocoa) {
         [self willCallPlugInFunction];
-        {
-            KJS::JSLock::DropAllLocks dropAllLocks(false);
-            NPPluginTextInputFuncs *value;
-            if (NPP_GetValue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
-                textInputFuncs = value;
-        }
+        NPPluginTextInputFuncs *value;
+        if (NPP_GetValue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
+            textInputFuncs = value;
         [self didCallPlugInFunction];
     }
     
@@ -1846,12 +1834,8 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         return NULL;
         
     NPObject *value = NULL;
-    NPError error;
     [self willCallPlugInFunction];
-    {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
-        error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
-    }
+    NPError error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
     [self didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
         return NULL;
@@ -2137,10 +2121,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         // FIXME: If the result is a string, we probably want to put that string into the frame.
         if ([JSPluginRequest sendNotification]) {
             [self willCallPlugInFunction];
-            {
-                KJS::JSLock::DropAllLocks dropAllLocks(false);
-                NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
-            }
+            NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
             [self didCallPlugInFunction];
         }
     } else if ([result length] > 0) {
@@ -2170,10 +2151,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT([pluginRequest sendNotification]);
         
     [self willCallPlugInFunction];
-    {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
-        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
-    }
+    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
     [self didCallPlugInFunction];
     
     [pendingFrameLoads removeObjectForKey:webFrame];
@@ -2215,10 +2193,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
             if (!newWebView) {
                 if ([pluginRequest sendNotification]) {
                     [self willCallPlugInFunction];
-                    {
-                        KJS::JSLock::DropAllLocks dropAllLocks(false);
-                        NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
-                    }
+                    NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
                     [self didCallPlugInFunction];
                 }
                 return;
@@ -2960,10 +2935,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     
     // Tell the plugin to print into the GWorld
     [self willCallPlugInFunction];
-    {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
-        NPP_Print(plugin, &npPrint);
-    }
+    NPP_Print(plugin, &npPrint);
     [self didCallPlugInFunction];
 
     // Don't need the GWorld anymore

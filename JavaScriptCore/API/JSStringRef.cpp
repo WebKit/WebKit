@@ -30,7 +30,6 @@
 #include <wtf/Platform.h>
 
 #include "APICast.h"
-#include <kjs/JSLock.h>
 #include <kjs/JSType.h>
 #include <kjs/JSString.h>
 #include <kjs/operations.h>
@@ -68,7 +67,6 @@ void JSStringRelease(JSStringRef string)
     if (needsLocking) {
         // It is wasteful to take the lock for non-shared contexts, but we don't have a good way
         // to determine what the context is.
-        JSLock lock(true);
         rep->deref();
     } else
         rep->deref();

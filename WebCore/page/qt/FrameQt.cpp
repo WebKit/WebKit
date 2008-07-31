@@ -64,7 +64,6 @@
 #include "SelectionController.h"
 #include "ScriptController.h"
 #include "TypingCommand.h"
-#include "JSLock.h"
 #include "qt_instance.h"
 #include "runtime_root.h"
 #include "runtime.h"

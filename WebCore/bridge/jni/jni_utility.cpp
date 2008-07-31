@@ -32,7 +32,6 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <kjs/JSArray.h>
-#include <kjs/JSLock.h>
 #include <dlfcn.h>
 
 namespace KJS {
@@ -472,8 +471,6 @@ static jobject convertArrayInstanceToJavaArray(ExecState *exec, JSValue *value, 
 
 jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, const char *javaClassName)
 {
-    JSLock lock(false);
-    
     jvalue result;
    
     switch (_JNIType){

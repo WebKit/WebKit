@@ -23,7 +23,6 @@
 #include "identifier.h"
 
 #include "ExecState.h"
-#include "JSLock.h"
 #include <new> // for placement new
 #include <string.h> // for strlen
 #include <wtf/Assertions.h>

@@ -1,3 +1,13 @@
+2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        Eliminate JSLock (it was already disabled, removing the stub implementaion and all
+        call sites now).
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2008-07-27  David Kilzer  <ddkilzer@apple.com>
 
         Fix Qt build failure.

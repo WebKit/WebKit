@@ -82,8 +82,6 @@ namespace KJS {
 
         JSGlobalObject* head;
 
-        bool isSharedInstance;
-
     private:
         JSGlobalData();
 

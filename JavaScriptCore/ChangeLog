@@ -1,5 +1,97 @@
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
+        Rubber-stamped by Maciej.
+
+        Eliminate JSLock (it was already disabled, removing the stub implementaion and all
+        call sites now).
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        (JSGarbageCollect):
+        * API/JSCallbackConstructor.cpp:
+        (KJS::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::init):
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::construct):
+        (KJS::::hasInstance):
+        (KJS::::call):
+        (KJS::::getPropertyNames):
+        (KJS::::toNumber):
+        (KJS::::toString):
+        (KJS::::staticValueGetter):
+        (KJS::::callbackGetter):
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreateInGroup):
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        (JSObjectMakeFunction):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        (JSObjectCopyPropertyNames):
+        (JSPropertyNameArrayRelease):
+        (JSPropertyNameAccumulatorAddName):
+        * API/JSStringRef.cpp:
+        (JSStringRelease):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * ForwardingHeaders/JavaScriptCore/JSLock.h: Removed.
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.order:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject):
+        (KJS::JSGlobalObject::init):
+        * kjs/JSLock.cpp: Removed.
+        * kjs/JSLock.h: Removed.
+        * kjs/Shell.cpp:
+        (functionGC):
+        (jscmain):
+        * kjs/collector.cpp:
+        (KJS::Heap::~Heap):
+        (KJS::Heap::heapAllocate):
+        (KJS::Heap::setGCProtectNeedsLocking):
+        (KJS::Heap::protect):
+        (KJS::Heap::unprotect):
+        (KJS::Heap::collect):
+        * kjs/identifier.cpp:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+
+2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
+
         Rubber-stamped by Oliver Hunt.
 
         Fix the Mac project to not display "test/" as part of file name for tests.

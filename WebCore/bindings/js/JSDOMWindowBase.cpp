@@ -61,7 +61,6 @@
 #include "WindowFeatures.h"
 #include "htmlediting.h"
 #include <kjs/Error.h>
-#include <kjs/JSLock.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
 
@@ -110,7 +109,6 @@ public:
 
     virtual ~DOMWindowTimer()
     {
-        JSLock lock(false);
         delete m_action;
     }
 
@@ -871,13 +869,11 @@ void JSDOMWindowBase::clearHelperObjectProperties()
 
 void JSDOMWindowBase::clear()
 {
-  JSLock lock(false);
+    if (d->m_returnValueSlot && !*d->m_returnValueSlot)
+        *d->m_returnValueSlot = getDirect(Identifier(globalExec(), "returnValue"));
 
-  if (d->m_returnValueSlot && !*d->m_returnValueSlot)
-    *d->m_returnValueSlot = getDirect(Identifier(globalExec(), "returnValue"));
-
-  clearAllTimeouts();
-  clearHelperObjectProperties();
+    clearAllTimeouts();
+    clearHelperObjectProperties();
 }
 
 void JSDOMWindowBase::setCurrentEvent(Event* evt)
@@ -1271,7 +1267,6 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
     delete timer;
     action->execute(shell());
 
-    JSLock lock(false);
     delete action;
 }
 

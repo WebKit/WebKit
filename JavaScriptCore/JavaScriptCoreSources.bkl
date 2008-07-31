@@ -83,7 +83,6 @@ Source files for JSCore.
         kjs/JSGlobalObject.cpp
         kjs/JSGlobalObjectFunctions.cpp
         kjs/JSImmediate.cpp
-        kjs/JSLock.cpp
         kjs/JSNotAnObject.cpp
         kjs/JSNumberCell.cpp
         kjs/JSObject.cpp

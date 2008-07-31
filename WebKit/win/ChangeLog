@@ -1,3 +1,22 @@
+2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        Eliminate JSLock (it was already disabled, removing the stub implementaion and all
+        call sites now).
+
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptObjectsCount):
+        (WebCoreStatistics::javaScriptGlobalObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedObjectsCount):
+        (WebCoreStatistics::javaScriptProtectedGlobalObjectsCount):
+        * WebJavaScriptCollector.cpp:
+        (WebJavaScriptCollector::objectCount):
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::stringByEvaluatingJavaScriptFromString):
+        * WebView.cpp:
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
 2008-07-31  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Windows build fix.

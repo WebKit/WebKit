@@ -36,7 +36,6 @@
 #import "WebNSURLExtras.h"
 #import "WebNetscapePluginPackage.h"
 #import <Foundation/NSURLResponse.h>
-#import <kjs/JSLock.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/HashMap.h>
@@ -367,13 +366,9 @@ static StreamMap& streams()
         return NO;
     
     NPBool value;
-    NPError error;
     WebBaseNetscapePluginView *pv = pluginView;
     [pv willCallPlugInFunction];
-    {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
-        error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
-    }
+    NPError error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
     [pv didCallPlugInFunction];
     if (error != NPERR_NO_ERROR)
         return NO;

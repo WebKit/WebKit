@@ -37,7 +37,6 @@
 #include "ScriptController.h"
 #include "JSSQLTransaction.h"
 #include "Page.h"
-#include <kjs/JSLock.h>
 #include <wtf/MainThread.h>
 #include <wtf/RefCountedLeakCounter.h>
 
@@ -99,8 +98,6 @@ void JSCustomSQLTransactionCallback::handleEvent(SQLTransaction* transaction, bo
         
     JSGlobalObject* globalObject = m_data->frame()->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
-        
-    KJS::JSLock lock(false);
         
     JSValue* handleEventFunction = m_data->callback()->get(exec, Identifier(exec, "handleEvent"));
     CallData handleEventCallData;

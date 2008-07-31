@@ -21,7 +21,6 @@
 #include "qt_runtime.h"
 #include "qt_instance.h"
 #include "JSGlobalObject.h"
-#include "JSLock.h"
 #include "JSObject.h"
 #include "JSArray.h"
 #include "DateInstance.h"
@@ -151,7 +150,6 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
         return QVariant();
     }
 
-    JSLock lock(false);
     JSRealType type = valueRealType(exec, value);
     if (hint == QMetaType::Void) {
         switch(type) {
@@ -717,8 +715,6 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         type != QMetaType::QString) {
         return jsNull();
     }
-
-    JSLock lock(false);
 
     if (type == QMetaType::Bool)
         return jsBoolean(variant.toBool());
@@ -1295,8 +1291,6 @@ JSValue* QtRuntimeMetaMethod::call(ExecState* exec, JSObject* functionObject, JS
         return jsUndefined();
 
     // We have to pick a method that matches..
-    JSLock lock(false);
-
     QObject *obj = d->m_instance->getObject();
     if (obj) {
         QVarLengthArray<QVariant, 10> vargs;
@@ -1387,8 +1381,6 @@ QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Iden
 JSValue* QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObject, JSValue* thisValue, const ArgList& args)
 {
     QtRuntimeConnectionMethodData* d = static_cast<QtRuntimeConnectionMethod *>(functionObject)->d_func();
-
-    JSLock lock(false);
 
     QObject* sender = d->m_instance->getObject();
 
@@ -1546,7 +1538,6 @@ QtConnectionObject::QtConnectionObject(PassRefPtr<QtInstance> instance, int sign
     , m_funcObject(funcObject)
 {
     setParent(m_originalObject);
-    ASSERT(JSLock::currentThreadIsHoldingLock()); // so our ProtectedPtrs are safe
 }
 
 QtConnectionObject::~QtConnectionObject()
@@ -1617,8 +1608,6 @@ void QtConnectionObject::execute(void **argv)
         QList<QByteArray> parameterTypes = method.parameterTypes();
 
         int argc = parameterTypes.count();
-
-        JSLock lock(false);
 
         // ### Should the Interpreter/ExecState come from somewhere else?
         RefPtr<RootObject> ro = m_instance->rootObject();

@@ -1,3 +1,45 @@
+2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        Eliminate JSLock (it was already disabled, removing the stub implementaion and all
+        call sites now).
+
+        * ForwardingHeaders/kjs/JSLock.h: Removed.
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView createPluginScriptableObject]):
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        * Plugins/WebPluginController.mm:
+        (+[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView/WebView.mm:
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+
 2008-07-30  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Anders Carlsson.

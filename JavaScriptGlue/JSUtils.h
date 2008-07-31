@@ -32,7 +32,6 @@
 #include "JavaScriptGlue.h"
 
 #include <JavaScriptCore/JSValue.h>
-#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObject.h>
 #include <JavaScriptCore/JSGlobalObject.h>
 #include <JavaScriptCore/interpreter.h>

@@ -36,7 +36,6 @@
 #import <kjs/ExecState.h>
 #import <kjs/JSGlobalObject.h>
 #import <kjs/JSFunction.h>
-#import <kjs/JSLock.h>
 #import <kjs/interpreter.h>
 #import <WebCore/Frame.h>
 #import <WebCore/WebScriptObjectPrivate.h>
@@ -218,8 +217,6 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 {
     if (!_private->debuggerCallFrame)
         return nil;
-
-    JSLock lock(false);
 
     JSValue* exception = 0;
     JSValue* result = _private->debuggerCallFrame->evaluate(String(script), exception);

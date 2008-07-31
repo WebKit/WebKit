@@ -38,7 +38,6 @@
 #include "JSEventListener.h"
 #include <kjs/completion.h>
 #include <kjs/debugger.h>
-#include <kjs/JSLock.h>
 
 #if ENABLE(SVG)
 #include "JSSVGLazyEventListener.h"
@@ -82,8 +81,6 @@ JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const
     const String* savedSourceURL = m_sourceURL;
     m_sourceURL = &sourceURL;
 
-    JSLock lock(false);
-
     // Evaluating the JavaScript could cause the frame to be deallocated
     // so we start the keep alive timer here.
     m_frame->keepAlive();
@@ -109,7 +106,6 @@ void ScriptController::clear()
     if (!m_windowShell)
         return;
 
-    JSLock lock(false);
     m_windowShell->window()->clear();
     m_liveFormerWindows.add(m_windowShell->window());
     m_windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(m_frame->domWindow(), m_windowShell));
@@ -125,7 +121,6 @@ void ScriptController::clear()
 PassRefPtr<EventListener> ScriptController::createHTMLEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
-    JSLock lock(false);
     return JSLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 
@@ -133,7 +128,6 @@ PassRefPtr<EventListener> ScriptController::createHTMLEventHandler(const String&
 PassRefPtr<EventListener> ScriptController::createSVGEventHandler(const String& functionName, const String& code, Node* node)
 {
     initScriptIfNeeded();
-    JSLock lock(false);
     return JSSVGLazyEventListener::create(functionName, code, m_windowShell->window(), node, m_handlerLineno);
 }
 #endif
@@ -151,8 +145,6 @@ void ScriptController::initScript()
 {
     if (m_windowShell)
         return;
-
-    JSLock lock(false);
 
     m_windowShell = new JSDOMWindowShell(m_frame->domWindow());
     updateDocument();
@@ -215,7 +207,6 @@ void ScriptController::updateDocument()
     if (!m_frame->document())
         return;
 
-    JSLock lock(false);
     if (m_windowShell)
         m_windowShell->window()->updateDocument();
     HashSet<JSDOMWindow*>::iterator end = m_liveFormerWindows.end();

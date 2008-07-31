@@ -33,7 +33,6 @@
 
 #include "c_utility.h"
 #include <kjs/identifier.h>
-#include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 
@@ -65,8 +64,6 @@ NPIdentifier _NPN_GetStringIdentifier(const NPUTF8* name)
     
     if (name) {
         PrivateIdentifier* identifier = 0;
-        
-        KJS::JSLock lock(false);
         
         identifier = getStringIdentifierMap()->get(identifierFromNPIdentifier(name).ustring().rep());
         if (identifier == 0) {

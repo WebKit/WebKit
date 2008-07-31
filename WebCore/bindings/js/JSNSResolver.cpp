@@ -28,7 +28,6 @@
 
 #include "JSDOMBinding.h"
 #include "PlatformString.h"
-#include <kjs/JSLock.h>
 #include <kjs/JSValue.h>
 #include <kjs/JSString.h>
 
@@ -49,8 +48,6 @@ void JSNSResolver::mark()
 
 String JSNSResolver::lookupNamespaceURI(ExecState* exec, const String& prefix)
 {
-    JSLock lock(false);
-
     JSValue* function = m_resolver->get(exec, Identifier(exec, "lookupNamespaceURI"));
     if (exec->hadException())
         return String();

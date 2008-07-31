@@ -30,7 +30,6 @@
 #include "JSArray.h"
 #include "JSFunction.h"
 #include "JSGlobalObject.h"
-#include "JSLock.h"
 #include "JSObject.h"
 #include "Parser.h"
 #include "PrototypeFunction.h"
@@ -208,7 +207,6 @@ JSValue* functionDebug(ExecState* exec, JSObject*, JSValue*, const ArgList& args
 
 JSValue* functionGC(ExecState* exec, JSObject*, JSValue*, const ArgList&)
 {
-    JSLock lock(false);
     exec->heap()->collect();
     return jsUndefined();
 }
@@ -459,8 +457,6 @@ static void parseArguments(int argc, char** argv, Options& options)
 int jscmain(int argc, char** argv, JSGlobalData* globalData)
 {
     KJS::initializeThreading();
-
-    JSLock lock(false);
 
     Options options;
     parseArguments(argc, argv, options);
