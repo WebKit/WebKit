@@ -138,29 +138,44 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         return;
     }
 
+    float currHeight = CGImageGetHeight(image);
+    if (currHeight <= srcRect.y())
+        return;
+
     CGContextRef context = ctxt->platformContext();
     ctxt->save();
 
+    bool shouldUseSubimage = false;
+
     // If the source rect is a subportion of the image, then we compute an inflated destination rect that will hold the entire image
     // and then set a clip to the portion that we want to display.
-    CGSize selfSize = size();
     FloatRect adjustedDestRect = destRect;
-    if (srcRect.width() != selfSize.width || srcRect.height() != selfSize.height) {
-        // A subportion of the image is drawing.  Adjust the destination rect to
-        // account for this.
-        float xScale = srcRect.width() / destRect.width();
-        float yScale = srcRect.height() / destRect.height();
-        
-        adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
-        adjustedDestRect.setSize(FloatSize(size().width() / xScale, size().height() / yScale));
-        
-        CGContextClipToRect(context, destRect);
+    FloatSize selfSize = size();
+    if (srcRect.size() != selfSize) {
+        CGInterpolationQuality interpolationQuality = CGContextGetInterpolationQuality(context);
+        // When the image is scaled, we create a temporary CGImage containing only the portion
+        // we want to display, to work around <rdar://problem/6112909>.
+        shouldUseSubimage = (interpolationQuality == kCGInterpolationHigh || interpolationQuality == kCGInterpolationDefault) && srcRect.size() != destRect.size();
+        if (shouldUseSubimage) {
+            image = CGImageCreateWithImageInRect(image, srcRect);
+            if (currHeight < srcRect.bottom()) {
+                ASSERT(CGImageGetHeight(image) == currHeight - srcRect.y());
+                adjustedDestRect.setHeight(destRect.height() / srcRect.height() * (currHeight - srcRect.y()));
+            }
+        } else {
+            float xScale = srcRect.width() / destRect.width();
+            float yScale = srcRect.height() / destRect.height();
+
+            adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
+            adjustedDestRect.setSize(FloatSize(size().width() / xScale, size().height() / yScale));
+
+            CGContextClipToRect(context, destRect);
+        }
     }
 
     // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.
-    float currHeight = CGImageGetHeight(image);
-    if (currHeight < selfSize.height)
-        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height);
+    if (!shouldUseSubimage && currHeight < selfSize.height())
+        adjustedDestRect.setHeight(adjustedDestRect.height() * currHeight / selfSize.height());
 
     // Flip the coords.
     ctxt->setCompositeOperation(compositeOp);
@@ -170,9 +185,12 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
 
     // Draw the image.
     CGContextDrawImage(context, adjustedDestRect, image);
-        
+
+    if (shouldUseSubimage)
+        CGImageRelease(image);
+
     ctxt->restore();
-    
+
     startAnimation();
 
     if (imageObserver())

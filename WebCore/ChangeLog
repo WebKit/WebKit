@@ -1,3 +1,15 @@
+2008-07-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6058958> REGRESSION (r34210): Seams are visible in border-image
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw): To work around a Core Graphics
+        interpolation issue, reverted to using a temporary subimage for drawing
+        a portion of the image with scaling and high-quality interpolation in
+        effect.
+
 2008-07-31  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu
