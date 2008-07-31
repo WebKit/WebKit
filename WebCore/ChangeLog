@@ -1,3 +1,16 @@
+2008-07-31  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20224
+
+        Include the Writing Direction sub-menu in the context menu of all
+        platforms but GTK. This fixes a regression introduced by revision
+        34426.
+
+        * platform/ContextMenu.cpp:
+        (WebCore::ContextMenu::populate):
+
 2008-07-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Adam and Hyatt
