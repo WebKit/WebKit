@@ -1,3 +1,10 @@
+2008-07-31  Adam Roben  <aroben@apple.com>
+
+        Follow-up to r35500
+
+        * WinLauncher/WinLauncher.vcproj: Set the manifest properties for the
+        Release configuration, too.
+
 2008-07-31  Stefan Landvogt <stefan.landvogt@gmail.com>
 
         Fix Bug 20245: WinLauncher does not start in WebKit-debug right out of

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="WinLauncher"
 	ProjectGUID="{114FCA11-216B-4C8C-957E-30A75AE80443}"
 	RootNamespace="WinLauncher"
@@ -162,6 +162,8 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				TypeLibraryFile="$(WebKitOutputDir)\lib\WebKit.tlb"
+				ComponentFileName="WebKit$(WebKitDLLConfigSuffix)"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
