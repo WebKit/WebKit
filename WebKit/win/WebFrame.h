@@ -210,6 +210,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE allowsScrolling(
         /* [retval][out] */ BOOL *flag);
 
+    virtual HRESULT STDMETHODCALLTYPE setIsDisconnected(
+        /* [in] */ BOOL flag);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

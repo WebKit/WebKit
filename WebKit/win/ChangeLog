@@ -1,3 +1,15 @@
+2008-08-01  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Fix for <rdar://problem/6119382> Need to hook up WebFrame's 
+        disconnected frame API on Windows.
+
+        * Interfaces/IWebFrame.idl:
+        * WebFrame.cpp:
+        (WebFrame::setIsDisconnected):
+        * WebFrame.h:
+
 2008-08-01  Adam Roben  <aroben@apple.com>
 
         Fix <rdar://6118733> REGRESSION (r35502): Crash when submitting any

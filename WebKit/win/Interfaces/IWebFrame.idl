@@ -240,4 +240,11 @@ interface IWebFrame : IUnknown
         bridge between the WebKit and JavaScriptCore APIs.
     */
    [local] JSGlobalContextRef globalContext();
+
+   /*!
+        @method setIsDisconnected
+        @abstract Set whether a frame is disconnected
+        @param flag YES to mark the frame as disconnected, NO keeps it a regular frame
+   */
+   HRESULT setIsDisconnected([in] BOOL flag);
 }
