@@ -1,3 +1,12 @@
+2008-08-01  Adam Roben  <aroben@apple.com>
+
+        Add a link to the instructions to use Apple's Safari for Windows
+        symbol server
+
+        Reviewed by Eric Seidel.
+
+        * building/debug.html:
+
 2008-07-28  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Mark Rowe.
