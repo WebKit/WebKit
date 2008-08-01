@@ -5,15 +5,13 @@
 	<key>WebMainResource</key>
 	<dict>
 		<key>WebResourceData</key>
-		<data>
-		PHN2ZzpzdmcgeG1sbnM6c3ZnPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2
-		ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsi
-		PgogPHN2ZzpzY3JpcHQ+CiAgICBpZiAod2luZG93LmxheW91dFRlc3RDb250
-		cm9sbGVyKQogICAgICAgIGxheW91dFRlc3RDb250cm9sbGVyLmR1bXBET01B
-		c1dlYkFyY2hpdmUoKTsKICA8L3N2ZzpzY3JpcHQ+CiAgPHN2ZzppbWFnZSB4
-		bGluazpocmVmPSJyZXNvdXJjZXMvZ3JlZW4tY2hlY2tlci5wbmciIHdpZHRo
-		PSIxMDAiIGhlaWdodD0iMTAwIi8+Cjwvc3ZnOnN2Zz4=
-		</data>
+		<string>&lt;svg:svg xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"&gt;
+ &lt;svg:script&gt;
+    if (window.layoutTestController)
+        layoutTestController.dumpDOMAsWebArchive();
+  &lt;/svg:script&gt;
+  &lt;svg:image xlink:href="resources/green-checker.png" width="100" height="100"/&gt;
+&lt;/svg:svg&gt;</string>
 		<key>WebResourceFrameName</key>
 		<string></string>
 		<key>WebResourceMIMEType</key>
