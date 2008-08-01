@@ -100,11 +100,11 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::QueryInterface(RE
 {
     *ppvObject = 0;
     if (IsEqualGUID(riid, IID_IUnknown))
-        *ppvObject = static_cast<COMPropertyBag*>(this);
+        *ppvObject = static_cast<IPropertyBag*>(this);
     else if (IsEqualGUID(riid, IID_IPropertyBag))
-        *ppvObject = static_cast<COMPropertyBag*>(this);
+        *ppvObject = static_cast<IPropertyBag*>(this);
     else if (IsEqualGUID(riid, IID_IPropertyBag2))
-        *ppvObject = static_cast<COMPropertyBag*>(this);
+        *ppvObject = static_cast<IPropertyBag2*>(this);
     else
         return E_NOINTERFACE;
 

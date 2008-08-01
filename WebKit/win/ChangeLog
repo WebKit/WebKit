@@ -1,3 +1,14 @@
+2008-08-01  Adam Roben  <aroben@apple.com>
+
+        Fix <rdar://6118733> REGRESSION (r35502): Crash when submitting any
+        form
+
+        Reviewed by Darin Adler.
+
+        * COMPropertyBag.h:
+        (COMPropertyBag::QueryInterface): Cast to an appropriate type before
+        assigning into ppvObject.
+
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam.
