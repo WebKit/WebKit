@@ -1,3 +1,26 @@
+2008-07-30  David Hyatt  <hyatt@apple.com>
+
+        Improvements to selection drawing.
+
+        Clip out floating and positioned objects when drawing selection so
+        that there is no "double painting" of selection when the selection spans both the space behind the positioned/floating
+        object and the positioned/floating object itself.  Improves most Web pages.
+
+        Do not paint left/right selection gaps if the object's edge is already outside the boundary (at a negative
+        position).  Significantly improves the look of selections on digg.com, since it uses giant negative text-indent.
+
+        Reviewed by Dan
+
+        Covered by existing selection pixel tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isSelectionRoot):
+        (WebCore::RenderBlock::paintSelection):
+        (WebCore::clipOutPositionedObjects):
+        (WebCore::RenderBlock::fillSelectionGaps):
+        (WebCore::RenderBlock::fillLeftSelectionGap):
+        (WebCore::RenderBlock::fillRightSelectionGap):
+
 2008-08-01  Timothy Hatcher  <timothy@apple.com>
 
         Adds the ability to disable individual properties of a CSS rule.

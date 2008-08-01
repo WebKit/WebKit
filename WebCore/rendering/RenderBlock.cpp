@@ -1823,7 +1823,8 @@ bool RenderBlock::isSelectionRoot() const
         return false;
         
     if (isBody() || isRoot() || hasOverflowClip() || isRelPositioned() ||
-        isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable() || hasTransform())
+        isFloatingOrPositioned() || isTableCell() || isInlineBlockOrInlineTable() || hasTransform() ||
+        hasReflection() || hasMask())
         return true;
     
     if (view() && view()->selectionStart()) {
@@ -1860,13 +1861,45 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
         int lastTop = -borderTopExtra();
         int lastLeft = leftSelectionOffset(this, lastTop);
         int lastRight = rightSelectionOffset(this, lastTop);
+        paintInfo.context->save();
         fillSelectionGaps(this, tx, ty, tx, ty, lastTop, lastLeft, lastRight, &paintInfo);
+        paintInfo.context->restore();
+    }
+}
+
+static void clipOutPositionedObjects(const RenderObject::PaintInfo* paintInfo, int tx, int ty, ListHashSet<RenderObject*>* positionedObjects)
+{
+    if (!positionedObjects)
+        return;
+    
+    ListHashSet<RenderObject*>::const_iterator end = positionedObjects->end();
+    for (ListHashSet<RenderObject*>::const_iterator it = positionedObjects->begin(); it != end; ++it) {
+        RenderObject* r = *it;
+        paintInfo->context->clipOut(IntRect(tx + r->xPos(), ty + r->yPos(), r->width(), r->height()));
     }
 }
 
 GapRects RenderBlock::fillSelectionGaps(RenderBlock* rootBlock, int blockX, int blockY, int tx, int ty,
                                         int& lastTop, int& lastLeft, int& lastRight, const PaintInfo* paintInfo)
 {
+    // IMPORTANT: Callers of this method that intend for painting to happen need to do a save/restore.
+    // Clip out floating and positioned objects when painting selection gaps.
+    if (paintInfo) {
+        // Note that we don't clip out overflow for positioned objects.  We just stick to the border box.
+        clipOutPositionedObjects(paintInfo, tx, ty, m_positionedObjects);
+        if (isBody() || isRoot()) // The <body> must make sure to examine its containingBlock's positioned objects.
+            for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())
+                clipOutPositionedObjects(paintInfo, cb->xPos(), cb->yPos(), cb->m_positionedObjects);
+        if (m_floatingObjects) {
+            for (DeprecatedPtrListIterator<FloatingObject> it(*m_floatingObjects); it.current(); ++it) {
+                FloatingObject* r = it.current();
+                paintInfo->context->clipOut(IntRect(tx + r->m_left + r->m_renderer->marginLeft(), 
+                                                    ty + r->m_top + r->m_renderer->marginTop(),
+                                                    r->m_renderer->width(), r->m_renderer->height()));
+            }
+        }
+    }
+
     // FIXME: overflow: auto/scroll regions need more math here, since painting in the border box is different from painting in the padding box (one is scrolled, the other is
     // fixed).
     GapRects result;
@@ -2044,7 +2077,8 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
 {
     int top = yPos + ty;
     int left = blockX + max(leftSelectionOffset(rootBlock, yPos), leftSelectionOffset(rootBlock, yPos + height));
-    int width = tx + xPos - left;
+    int right = min(xPos + tx, blockX + min(rightSelectionOffset(rootBlock, yPos), rightSelectionOffset(rootBlock, yPos + height)));
+    int width = right - left;
     if (width <= 0)
         return IntRect();
 
@@ -2057,7 +2091,7 @@ IntRect RenderBlock::fillLeftSelectionGap(RenderObject* selObj, int xPos, int yP
 IntRect RenderBlock::fillRightSelectionGap(RenderObject* selObj, int xPos, int yPos, int height, RenderBlock* rootBlock,
                                            int blockX, int blockY, int tx, int ty, const PaintInfo* paintInfo)
 {
-    int left = xPos + tx;
+    int left = max(xPos + tx, blockX + max(leftSelectionOffset(rootBlock, yPos), leftSelectionOffset(rootBlock, yPos + height)));
     int top = yPos + ty;
     int right = blockX + min(rightSelectionOffset(rootBlock, yPos), rightSelectionOffset(rootBlock, yPos + height));
     int width = right - left;
