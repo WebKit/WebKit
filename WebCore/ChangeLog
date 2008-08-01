@@ -1,3 +1,52 @@
+2008-08-01  Timothy Hatcher  <timothy@apple.com>
+
+        Adds the ability to disable individual properties of a CSS rule.
+        When hovering over a rule, checkboxes show up to the right of all
+        properties and toggling a checkbox disables/enables the property.
+        Behind the scenes the property is removed from the rule when disabled,
+        but still remains in the list and in the computed style. When disabled
+        the property has a line through it, and is faded in computed style.
+
+        <rdar://problem/5712828> Support disabling individual CSS properties
+        https://bugs.webkit.org/show_bug.cgi?id=14377
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update): Include the
+        inline style when it also has disabled properties. Call
+        deleteDisabledProperty for any property that is in the style,
+        since it might have been added back by the page. Remember all
+        disabled properties so they show up in computed style.
+        (deleteDisabledProperty): Helper function to delete all the
+        right properties that track disabled properties.
+        (WebInspector.StylePropertiesSection): Add the computed-style
+        class when  the section is Computed Style.
+        (WebInspector.StylePropertiesSection.prototype.onpopulate):
+        Include disabled properties.
+        (WebInspector.StylePropertyTreeElement): Added a disabled argument.
+        (WebInspector.StylePropertyTreeElement.prototype.get/set disabled):
+        Sets the _disabled property and calls updateState.
+        (WebInspector.StylePropertyTreeElement.prototype.get priority):
+        Return the priority of enabled or disabled properties.
+        (WebInspector.StylePropertyTreeElement.prototype.get value):
+        Return the value of enabled or disabled properties.
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle): Use the
+        priority and value getter. Append the checkbox for root elements of
+        an editable section.
+        (WebInspector.StylePropertyTreeElement.prototype.toggleEnabled):
+        Add or remove properties from the rule and remember removed ones
+        by adding three objects to the style: __disabledProperties,
+        __disabledPropertyValues and __disabledPropertyPriorities.
+        The __disabledProperties object will include all longhand
+        properties of a shorthand for use by Computed Style.
+        (WebInspector.StylePropertyTreeElement.prototype.updateState):
+        Use the value getter. Update the disabled state.
+        * page/inspector/inspector.css:
+        * page/inspector/utilities.js:
+        (Object.hasProperties): Added. Helper to test if an object
+        has any properties.
+
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

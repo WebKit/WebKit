@@ -90,7 +90,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 }
             }
 
-            if (node.style && node.style.length) {
+            if (node.style && (node.style.length || Object.hasProperties(node.style.__disabledProperties))) {
                 var inlineStyle = { selectorText: WebInspector.UIString("Inline Style Attribute"), style: node.style };
                 inlineStyle.subtitle = WebInspector.UIString("element’s “%s” attribute", "style");
                 styleRules.push(inlineStyle);
@@ -106,7 +106,20 @@ WebInspector.StylesSidebarPane.prototype = {
             }
         }
 
+        function deleteDisabledProperty(style, name)
+        {
+            if (!style || !name)
+                return;
+            if (style.__disabledPropertyValues)
+                delete style.__disabledPropertyValues[name];
+            if (style.__disabledPropertyPriorities)
+                delete style.__disabledPropertyPriorities[name];
+            if (style.__disabledProperties)
+                delete style.__disabledProperties[name];
+        }
+
         var usedProperties = {};
+        var disabledComputedProperties = {};
         var priorityUsed = false;
 
         // Walk the style rules and make a list of all used and overloaded properties.
@@ -140,12 +153,22 @@ WebInspector.StylesSidebarPane.prototype = {
                     styleRule.usedProperties["font-weight"] = true;
                     styleRule.usedProperties["line-height"] = true;
                 }
+
+                // Delete any disabled properties, since the property does exist.
+                // This prevents it from showing twice.
+                deleteDisabledProperty(style, name);
+                deleteDisabledProperty(style, style.getPropertyShorthand(name));
             }
 
             // Add all the properties found in this style to the used properties list.
             // Do this here so only future rules are affect by properties used in this rule.
             for (var name in styleRules[i].usedProperties)
                 usedProperties[name] = true;
+
+            // Remember all disabled properties so they show up in computed style.
+            if (style.__disabledProperties)
+                for (var name in style.__disabledProperties)
+                    disabledComputedProperties[name] = true;
         }
 
         if (priorityUsed) {
@@ -178,6 +201,8 @@ WebInspector.StylesSidebarPane.prototype = {
             for (var i = 0; i < styleRules.length; ++i) {
                 var styleRule = styleRules[i];
                 var section = styleRule.section;
+                if (styleRule.computedStyle)
+                    section.disabledComputedProperties = disabledComputedProperties;
                 section._usedProperties = (styleRule.usedProperties || usedProperties);
                 section.update((section === editedSection) || styleRule.computedStyle);
             }
@@ -202,6 +227,8 @@ WebInspector.StylesSidebarPane.prototype = {
                     editable = true;
 
                 var section = new WebInspector.StylePropertiesSection(styleRule, subtitle, computedStyle, (ruleUsedProperties || usedProperties), editable);
+                if (computedStyle)
+                    section.disabledComputedProperties = disabledComputedProperties;
                 section.expanded = true;
                 section.pane = this;
 
@@ -231,6 +258,8 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
     this._usedProperties = usedProperties;
 
     if (computedStyle) {
+        this.element.addStyleClass("computed-style");
+
         if (Preferences.showInheritedComputedStyleProperties)
             this.element.addStyleClass("show-inherited");
 
@@ -290,7 +319,7 @@ WebInspector.StylePropertiesSection.prototype = {
             return false;
         // These properties should always show for Computed Style.
         var alwaysShowComputedProperties = { "display": true, "height": true, "width": true };
-        return !(property in this.usedProperties) && !(property in alwaysShowComputedProperties);
+        return !(property in this.usedProperties) && !(property in alwaysShowComputedProperties) && !(property in this.disabledComputedProperties);
     },
 
     isPropertyOverloaded: function(property, shorthand)
@@ -331,16 +360,23 @@ WebInspector.StylePropertiesSection.prototype = {
     onpopulate: function()
     {
         var style = this.styleRule.style;
-        if (!style.length)
-            return;
 
         var foundShorthands = {};
         var uniqueProperties = getUniqueStyleProperties(style);
+        var disabledProperties = style.__disabledPropertyValues || {};
+
+        for (var name in disabledProperties)
+            uniqueProperties.push(name);
+
         uniqueProperties.sort();
 
         for (var i = 0; i < uniqueProperties.length; ++i) {
             var name = uniqueProperties[i];
-            var shorthand = style.getPropertyShorthand(name);
+            var disabled = name in disabledProperties;
+            if (!disabled && this.disabledComputedProperties && !(name in this.usedProperties) && name in this.disabledComputedProperties)
+                disabled = true;
+
+            var shorthand = !disabled ? style.getPropertyShorthand(name) : null;
 
             if (shorthand && shorthand in foundShorthands)
                 continue;
@@ -354,7 +390,7 @@ WebInspector.StylePropertiesSection.prototype = {
             var inherited = this.isPropertyInherited(name);
             var overloaded = this.isPropertyOverloaded(name, isShorthand);
 
-            var item = new WebInspector.StylePropertyTreeElement(style, name, isShorthand, inherited, overloaded);
+            var item = new WebInspector.StylePropertyTreeElement(style, name, isShorthand, inherited, overloaded, disabled);
             this.propertiesTreeOutline.appendChild(item);
         }
     }
@@ -362,13 +398,14 @@ WebInspector.StylePropertiesSection.prototype = {
 
 WebInspector.StylePropertiesSection.prototype.__proto__ = WebInspector.PropertiesSection.prototype;
 
-WebInspector.StylePropertyTreeElement = function(style, name, shorthand, inherited, overloaded)
+WebInspector.StylePropertyTreeElement = function(style, name, shorthand, inherited, overloaded, disabled)
 {
     this.style = style;
     this.name = name;
     this.shorthand = shorthand;
     this._inherited = inherited;
     this._overloaded = overloaded;
+    this._disabled = disabled;
 
     // Pass an empty title, the title gets made later in onattach.
     TreeElement.call(this, "", null, shorthand);
@@ -401,6 +438,33 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.updateState();
     },
 
+    get disabled()
+    {
+        return this._disabled;
+    },
+
+    set disabled(x)
+    {
+        if (x === this._disabled)
+            return;
+        this._disabled = x;
+        this.updateState();
+    },
+
+    get priority()
+    {
+        if (this.disabled && this.style.__disabledPropertyPriorities && this.name in this.style.__disabledPropertyPriorities)
+            return this.style.__disabledPropertyPriorities[this.name];
+        return (this.shorthand ? getShorthandPriority(this.style, this.name) : this.style.getPropertyPriority(this.name));
+    },
+
+    get value()
+    {
+        if (this.disabled && this.style.__disabledPropertyValues && this.name in this.style.__disabledPropertyValues)
+            return this.style.__disabledPropertyValues[this.name];
+        return (this.shorthand ? getShorthandValue(this.style, this.name) : this.style.getPropertyValue(this.name));
+    },
+
     onattach: function()
     {
         this.updateTitle();
@@ -427,8 +491,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
             "rgb(0, 255, 255)": "cyan"
         };
 
-        var priority = (this.shorthand ? getShorthandPriority(this.style, this.name) : this.style.getPropertyPriority(this.name));
-        var value = (this.shorthand ? getShorthandValue(this.style, this.name) : this.style.getPropertyValue(this.name));
+        var priority = this.priority;
+        var value = this.value;
         var htmlValue = value;
 
         if (priority && !priority.length)
@@ -453,6 +517,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         this.updateState();
 
+        var enabledCheckboxElement = document.createElement("input");
+        enabledCheckboxElement.className = "enabled-button";
+        enabledCheckboxElement.type = "checkbox";
+        enabledCheckboxElement.checked = !this.disabled;
+        enabledCheckboxElement.addEventListener("change", this.toggleEnabled.bind(this), false);
+
         var nameElement = document.createElement("span");
         nameElement.className = "name";
         nameElement.textContent = this.name;
@@ -469,6 +539,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         this.listItemElement.removeChildren();
 
+        // Append the checkbox for root elements of an editable section.
+        if (this.treeOutline.section && this.treeOutline.section.editable && this.parent.root)
+            this.listItemElement.appendChild(enabledCheckboxElement);
         this.listItemElement.appendChild(nameElement);
         this.listItemElement.appendChild(document.createTextNode(": "));
         this.listItemElement.appendChild(valueElement);
@@ -497,13 +570,54 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.tooltip = this.name + ": " + (valueNicknames[value] || value) + (priority ? " " + priority : "");
     },
 
+    toggleEnabled: function(event)
+    {
+        var disabled = !event.target.checked;
+
+        if (disabled) {
+            if (!this.style.__disabledPropertyValues || !this.style.__disabledPropertyPriorities) {
+                var inspectedWindow = InspectorController.inspectedWindow();
+                this.style.__disabledProperties = new inspectedWindow.Object;
+                this.style.__disabledPropertyValues = new inspectedWindow.Object;
+                this.style.__disabledPropertyPriorities = new inspectedWindow.Object;
+            }
+
+            this.style.__disabledPropertyValues[this.name] = this.value;
+            this.style.__disabledPropertyPriorities[this.name] = this.priority;
+
+            if (this.shorthand) {
+                var longhandProperties = getLonghandProperties(this.style, this.name);
+                for (var i = 0; i < longhandProperties.length; ++i) {
+                    this.style.__disabledProperties[longhandProperties[i]] = true;
+                    this.style.removeProperty(longhandProperties[i]);
+                }
+            } else {
+                this.style.__disabledProperties[this.name] = true;
+                this.style.removeProperty(this.name);
+            }
+        } else {
+            this.style.setProperty(this.name, this.value, this.priority);
+            delete this.style.__disabledProperties[this.name];
+            delete this.style.__disabledPropertyValues[this.name];
+            delete this.style.__disabledPropertyPriorities[this.name];
+        }
+
+        // Set the disabled property here, since the code above replies on it not changing
+        // until after the value and priority are retrieved.
+        this.disabled = disabled;
+
+        if (this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane.update(null, this.treeOutline.section);
+        else if (this.treeOutline.section)
+            this.treeOutline.section.update(true);
+    },
+
     updateState: function()
     {
         if (!this.listItemElement)
             return;
 
-        var value = (this.shorthand ? getShorthandValue(this.style, this.name) : this.style.getPropertyValue(this.name));
-        if (this.style.isPropertyImplicit(this.name) || value === "initial")
+        if (this.style.isPropertyImplicit(this.name) || this.value === "initial")
             this.listItemElement.addStyleClass("implicit");
         else
             this.listItemElement.removeStyleClass("implicit");
@@ -517,6 +631,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
             this.listItemElement.addStyleClass("overloaded");
         else
             this.listItemElement.removeStyleClass("overloaded");
+
+        if (this.disabled)
+            this.listItemElement.addStyleClass("disabled");
+        else
+            this.listItemElement.removeStyleClass("disabled");
     },
 
     onpopulate: function()

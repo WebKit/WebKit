@@ -54,6 +54,15 @@ Object.type = function(obj, win)
     return type;
 }
 
+Object.hasProperties = function(obj)
+{
+    if (typeof obj === "undefined" || typeof obj === "null")
+        return false;
+    for (var name in obj)
+        return true;
+    return false;
+}
+
 Object.describe = function(obj, abbreviated)
 {
     var type1 = Object.type(obj);

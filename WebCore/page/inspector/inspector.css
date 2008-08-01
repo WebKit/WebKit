@@ -1171,12 +1171,17 @@ body.inactive .placard.selected {
     text-overflow: clip;
 }
 
-li.editing .swatch {
+li.editing .swatch, li.editing .enabled-button {
     display: none;
 }
 
-.section .properties .overloaded {
+.section .properties .overloaded, .section .properties .disabled {
     text-decoration: line-through;
+}
+
+.section.computed-style .properties .disabled {
+    text-decoration: none;
+    opacity: 0.5;
 }
 
 .section .properties .implicit, .section .properties .inherited {
@@ -1185,6 +1190,20 @@ li.editing .swatch {
 
 .section:not(.show-inherited) .properties .inherited {
     display: none;
+}
+
+.section .properties .enabled-button {
+    display: none;
+    float: right;
+    font-size: 10px;
+    margin: 0 0 0 4px;
+    vertical-align: top;
+    position: relative;
+    z-index: 1;
+}
+
+.section:hover .properties .enabled-button {
+    display: block;
 }
 
 .section .properties .name {
