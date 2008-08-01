@@ -45,7 +45,7 @@ ApplicationCache::ApplicationCache()
 
 ApplicationCache::~ApplicationCache()
 {
-    if (m_group)
+    if (m_group && !m_group->isCopy())
         m_group->cacheDestroyed(this);
 }
     

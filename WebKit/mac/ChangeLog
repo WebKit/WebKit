@@ -1,3 +1,24 @@
+2008-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5949410>
+        Add the ability to transfer a given application cache to a new database.
+
+        * Misc/WebKitNSStringExtras.h:
+        * Misc/WebKitNSStringExtras.m:
+        (+[NSString _webkit_applicationCacheDirectoryWithBundleIdentifier:]):
+        New method which returns the appopriate cache directory for a given bundle identifier.
+        
+        * WebView/WebDataSource.mm:
+        (-[WebDataSource _transferApplicationCache:]):
+        Transfer the application cache.
+        
+        * WebView/WebDataSourcePrivate.h:
+        * WebView/WebView.mm:
+        (WebKitInitializeApplicationCachePathIfNecessary):
+        Change this to use _webkit_applicationCacheDirectoryWithBundleIdentifier.
+
 2008-07-31  John Sullivan  <sullivan@apple.com>
 
         WebKit part of <rdar://problem/6116650> Text-only zoom setting should be stored in WebKit prefs

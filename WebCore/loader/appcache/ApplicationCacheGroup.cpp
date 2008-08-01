@@ -44,17 +44,30 @@
 
 namespace WebCore {
 
-ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL)
+ApplicationCacheGroup::ApplicationCacheGroup(const KURL& manifestURL, bool isCopy)
     : m_manifestURL(manifestURL)
     , m_status(Idle)
     , m_savedNewestCachePointer(0)
     , m_frame(0)
     , m_storageID(0)
+    , m_isCopy(isCopy)
 {
 }
 
 ApplicationCacheGroup::~ApplicationCacheGroup()
 {
+    if (m_isCopy) {
+        ASSERT(m_newestCache);
+        ASSERT(m_caches.size() == 1);
+        ASSERT(m_caches.contains(m_newestCache.get()));
+        ASSERT(!m_cacheBeingUpdated);
+        ASSERT(m_associatedDocumentLoaders.isEmpty());
+        ASSERT(m_cacheCandidates.isEmpty());
+        ASSERT(m_newestCache->group() == this);
+        
+        return;
+    }
+               
     ASSERT(!m_newestCache);
     ASSERT(m_caches.isEmpty());
     

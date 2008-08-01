@@ -131,7 +131,6 @@
 #import <mach-o/dyld.h>
 #import <objc/objc-auto.h>
 #import <objc/objc-runtime.h>
-#import <sys/param.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>
@@ -1879,19 +1878,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     
     ASSERT(appName);
 
-    NSString* cacheDir = nil;
-    
-#ifdef BUILDING_ON_TIGER
-    cacheDir = [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Caches"];
-#else
-    char cacheDirectory[MAXPATHLEN];
-    size_t cacheDirectoryLen = confstr(_CS_DARWIN_USER_CACHE_DIR, cacheDirectory, MAXPATHLEN);
-    
-    if (cacheDirectoryLen)
-        cacheDir = [[NSFileManager defaultManager] stringWithFileSystemRepresentation:cacheDirectory length:cacheDirectoryLen - 1];
-#endif
-
-    cacheDir = [cacheDir stringByAppendingPathComponent:appName];    
+    NSString* cacheDir = [NSString _webkit_applicationCacheDirectoryWithBundleIdentifier:appName];
 
     cacheStorage().setCacheDirectory(cacheDir);
     initialized = YES;

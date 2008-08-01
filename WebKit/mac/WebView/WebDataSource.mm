@@ -40,6 +40,7 @@
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebKitStatisticsPrivate.h"
+#import "WebKitNSStringExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebNSURLRequestExtras.h"
 #import "WebPDFRepresentation.h"
@@ -47,6 +48,7 @@
 #import "WebResourceLoadDelegate.h"
 #import "WebResourcePrivate.h"
 #import "WebViewInternal.h"
+#import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/KURL.h>
 #import <WebCore/LegacyWebArchive.h>
@@ -178,6 +180,22 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 - (NSString *)_responseMIMEType
 {
     return [[self response] _webcore_MIMEType];
+}
+
+- (BOOL)_transferApplicationCache:(NSString*)destinationBundleIdentifier
+{
+    DocumentLoader* loader = [self _documentLoader];
+    
+    if (!loader)
+        return NO;
+    
+    ApplicationCache* cache = loader->applicationCache();
+    if (!cache)
+        return YES;
+    
+    NSString *cacheDir = [NSString _webkit_applicationCacheDirectoryWithBundleIdentifier:destinationBundleIdentifier];
+    
+    return ApplicationCacheStorage::storeCopyOfCache(cacheDir, cache);
 }
 
 @end

@@ -435,6 +435,7 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
     if (!executeStatement(entryStatement))
         return false;
     
+    resource->setStorageID(resourceId);
     return true;
 }
 
@@ -453,7 +454,7 @@ void ApplicationCacheStorage::store(ApplicationCacheResource* resource, Applicat
     storeResourceTransaction.commit();
 }
 
-void ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
+bool ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
 {
     openDatabase(true);
     
@@ -464,7 +465,7 @@ void ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     if (!group->storageID()) {
         // Store the group
         if (!store(group))
-            return;
+            return false;
     }
     
     ASSERT(group->newestCache());
@@ -472,21 +473,22 @@ void ApplicationCacheStorage::storeNewestCache(ApplicationCacheGroup* group)
     
     // Store the newest cache
     if (!store(group->newestCache()))
-        return;
+        return false;
     
     // Update the newest cache in the group.
     
     SQLiteStatement statement(m_database, "UPDATE CacheGroups SET newestCache=? WHERE id=?");
     if (statement.prepare() != SQLResultOk)
-        return;
+        return false;
     
     statement.bindInt64(1, group->newestCache()->storageID());
     statement.bindInt64(2, group->storageID());
     
     if (!executeStatement(statement))
-        return;
+        return false;
     
     storeCacheTransaction.commit();
+    return true;
 }
 
 static inline void parseHeader(const UChar* header, size_t headerLength, ResourceResponse& response)
@@ -617,6 +619,38 @@ void ApplicationCacheStorage::empty()
         it->second->clearStorageID();
 }    
 
+bool ApplicationCacheStorage::storeCopyOfCache(const String& cacheDirectory, ApplicationCache* cache)
+{
+    // Create a new cache.
+    RefPtr<ApplicationCache> cacheCopy = ApplicationCache::create();
+    
+    // Set the online whitelist
+    cacheCopy->setOnlineWhitelist(cache->onlineWhitelist());
+    
+    // Traverse the cache and add copies of all resources.
+    ApplicationCache::ResourceMap::const_iterator end = cache->end();
+    for (ApplicationCache::ResourceMap::const_iterator it = cache->begin(); it != end; ++it) {
+        ApplicationCacheResource* resource = it->second.get();
+        
+        RefPtr<ApplicationCacheResource> resourceCopy = ApplicationCacheResource::create(resource->url(), resource->response(), resource->type(), resource->data());
+        
+        cacheCopy->addResource(resourceCopy.release());
+    }
+    
+    // Now create a new cache group.
+    OwnPtr<ApplicationCacheGroup> groupCopy(new ApplicationCacheGroup(cache->group()->manifestURL(), true));
+    
+    groupCopy->setNewestCache(cacheCopy);
+    
+    ApplicationCacheStorage copyStorage;
+    copyStorage.setCacheDirectory(cacheDirectory);
+    
+    // Empty the cache in case something was there before.
+    copyStorage.empty();
+    
+    return copyStorage.storeNewestCache(groupCopy.get());
+}
+    
 ApplicationCacheStorage& cacheStorage()
 {
     static ApplicationCacheStorage storage;

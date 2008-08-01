@@ -49,7 +49,7 @@ class Frame;
 
 class ApplicationCacheGroup : Noncopyable, ResourceHandleClient {
 public:
-    ApplicationCacheGroup(const KURL& manifestURL);    
+    ApplicationCacheGroup(const KURL& manifestURL, bool isCopy = false);    
     ~ApplicationCacheGroup();
     
     enum Status { Idle, Checking, Downloading };
@@ -78,6 +78,7 @@ public:
 
     void setNewestCache(PassRefPtr<ApplicationCache> newestCache);
 
+    bool isCopy() const { return m_isCopy; }
 private:
     typedef void (DOMApplicationCache::*ListenerFunction)();
     void callListenersOnAssociatedDocuments(ListenerFunction);
@@ -133,6 +134,9 @@ private:
     Frame* m_frame;
   
     unsigned m_storageID;
+  
+    // Whether this cache group is a copy that's only used for transferring the cache to another file.
+    bool m_isCopy;
     
     RefPtr<ResourceHandle> m_currentHandle;
     RefPtr<ApplicationCacheResource> m_currentResource;

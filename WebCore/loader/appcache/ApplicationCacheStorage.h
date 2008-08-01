@@ -50,12 +50,14 @@ public:
     ApplicationCacheGroup* findOrCreateCacheGroup(const KURL& manifestURL);
     void cacheGroupDestroyed(ApplicationCacheGroup*);
         
-    void storeNewestCache(ApplicationCacheGroup*);
+    bool storeNewestCache(ApplicationCacheGroup*);
     void store(ApplicationCacheResource*, ApplicationCache*);
 
     void remove(ApplicationCache*);
     
     void empty();
+    
+    static bool storeCopyOfCache(const String& cacheDirectory, ApplicationCache*);
 private:
     PassRefPtr<ApplicationCache> loadCache(unsigned storageID);
     ApplicationCacheGroup* loadCacheGroup(const KURL& manifestURL);

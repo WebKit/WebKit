@@ -1,3 +1,40 @@
+2008-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/5949410>
+        Add the ability to transfer a given application cache to a new database.
+        
+        * WebCore.base.exp:
+        Export ApplicationCacheStorage::storeCopyOfCache.
+        
+        * loader/appcache/ApplicationCache.cpp:
+        (WebCore::ApplicationCache::~ApplicationCache):
+        Don't call cacheDestroyed for our special "copy" groups.
+        
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::ApplicationCacheGroup):
+        (WebCore::ApplicationCacheGroup::~ApplicationCacheGroup):
+        Add a "copy" flag to the ApplicationCacheGroup constructor. A "copied" group is special
+        and can only be stored to disk.
+        
+        * loader/appcache/ApplicationCacheGroup.h:
+        (WebCore::ApplicationCacheGroup::isCopy):
+        New getter.
+        
+        * loader/appcache/ApplicationCacheStorage.cpp:
+        (WebCore::ApplicationCacheStorage::store):
+        Make sure to set the storageID when storing an application resource.
+        
+        (WebCore::ApplicationCacheStorage::storeNewestCache):
+        Change this to return true/false depending on whether storing the cache succeeded or not.
+        
+        (WebCore::ApplicationCacheStorage::storeCopyOfCache):
+        New method which stores a given cache in a new storage (database file).
+        
+        * loader/appcache/ApplicationCacheStorage.h:
+        Add new methods.
+
 2008-07-31  John Sullivan  <sullivan@apple.com>
 
         WebCore part of <rdar://problem/6116650> Text-only zoom setting should be stored in WebKit prefs
