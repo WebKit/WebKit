@@ -1,3 +1,12 @@
+2008-08-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Rubber-stamped by Maciej.
+
+        Remove JSGlobalData::DataInstance. It was only needed when we had per-thread JSGlobalData
+        instances.
+
+        * kjs/JSGlobalData.h:
+
 2008-07-31  Kevin Ollivier <kevino@theolliviers.com>
 
         Second attempt at Windows/wx build fix. Instead of avoiding inclusion of windows.h,

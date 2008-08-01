@@ -84,14 +84,6 @@ namespace KJS {
 
     private:
         JSGlobalData();
-
-        struct DataInstance {
-            DataInstance() : m_data(0) { }
-            ~DataInstance() { delete m_data; }
-            operator JSGlobalData*&() { return m_data; }
-
-            JSGlobalData* m_data;
-        };
     };
 
 }
