@@ -1,3 +1,11 @@
+2008-08-02  Christian Dywan  <christian@twotoasts.de>
+
+        Reviewed by Eric Seidel.
+
+        Remove webkit-marshal.list, which was made obsolete in #19742
+
+        * webkit/webkit-marshal.list: Removed.
+
 2008-08-01  Wouter Bolsterlee  <uws@xs4all.nl>
 
         Reviewed by Eric Seidel.
