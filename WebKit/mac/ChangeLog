@@ -1,3 +1,12 @@
+2008-08-02  Matt Lilek  <webkit@mattlilek.com>
+
+        Reviewed by Tim Hatcher.
+
+        Update the window gradient offset to match the inspector toolbar's new height.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]):
+
 2008-08-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.

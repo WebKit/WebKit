@@ -235,7 +235,7 @@ void WebInspectorClient::updateWindowTitle() const
 
 #ifndef BUILDING_ON_TIGER
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
-    [window setContentBorderThickness:40. forEdge:NSMaxYEdge];
+    [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
 
     WKNSWindowMakeBottomCornersSquare(window);
 #endif
