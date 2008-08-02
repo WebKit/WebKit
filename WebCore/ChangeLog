@@ -1,4 +1,8 @@
-2008-06-17  Marco Barisione  <marco.barisione@collabora.co.uk>
+2008-08-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        * ChangeLog: Fix date of previous commit (r35520)
+
+2008-08-01  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.
 
