@@ -1,5 +1,11 @@
 2008-08-02  Kevin Ollivier  <kevino@theolliviers.com>
 
+        Forgot to commit licensing correction in last commit.
+
+        * wx/packaging/wxWebKitInstaller.iss.in:
+
+2008-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
         Reviewed by Eric Seidel.
         
         Scripts for building a wxWebKit installer for wxPython on Win, eventually will
