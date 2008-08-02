@@ -460,11 +460,11 @@ bool PluginStream::wantsAllStreams() const
     if (!m_pluginFuncs->getvalue)
         return false;
 
-    NPBool result;
+    void* result = 0;
     if (m_pluginFuncs->getvalue(m_instance, NPPVpluginWantsAllNetworkStreams, &result) != NPERR_NO_ERROR)
         return false;
 
-    return result;
+    return result != 0;
 }
 
 }

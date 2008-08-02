@@ -1,3 +1,15 @@
+2008-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Jon.
+
+        <rdar://problem/6120206>
+        Crash when plug-in queries for NPPVpluginWantsAllNetworkStreams.
+        
+        Pass in a pointer to a void* to make sure that plug-ins don't overwrite the stack.
+
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.

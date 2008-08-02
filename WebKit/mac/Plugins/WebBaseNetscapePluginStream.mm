@@ -365,7 +365,7 @@ static StreamMap& streams()
     if (!NPP_GetValue)
         return NO;
     
-    NPBool value;
+    void *value = 0;
     WebBaseNetscapePluginView *pv = pluginView;
     [pv willCallPlugInFunction];
     NPError error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
@@ -373,7 +373,7 @@ static StreamMap& streams()
     if (error != NPERR_NO_ERROR)
         return NO;
     
-    return value;
+    return value != 0;
 }
 
 - (void)_destroyStream
