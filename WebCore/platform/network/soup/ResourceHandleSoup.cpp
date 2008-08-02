@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2008 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -412,9 +413,11 @@ static void closeCallback(GObject* source, GAsyncResult* res, gpointer data)
 {
     ResourceHandle* handle = static_cast<ResourceHandle*>(data);
     ResourceHandleInternal* d = handle->getInternal();
+    ResourceHandleClient* client = handle->client();
 
     g_input_stream_close_finish(d->m_input_stream, res, NULL);
     cleanupGioOperation(handle);
+    client->didFinishLoading(handle);
 }
 
 static void readCallback(GObject* source, GAsyncResult* res, gpointer data)
@@ -438,7 +441,6 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer data)
         client->didFinishLoading(handle);
         return;
     } else if (!nread) {
-        client->didFinishLoading(handle);
         g_input_stream_close_async(d->m_input_stream, G_PRIORITY_DEFAULT,
                                    NULL, closeCallback, handle);
         return;

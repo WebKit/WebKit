@@ -1,3 +1,17 @@
+2008-06-17  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19603
+        [SOUP] segfault when closing a file using gio
+
+        Call client->didFinishLoading() only after releasing all the gio
+        resources.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::closeCallback):
+        (WebCore::readCallback):
+
 2008-08-01  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Jon.
