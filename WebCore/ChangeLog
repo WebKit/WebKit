@@ -1,3 +1,14 @@
+2008-08-02  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Move to using constants in accordance with discussions about wx renderer commit.
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::minimumMenuListSize):
+        (WebCore::RenderThemeWx::popupInternalPaddingLeft):
+        (WebCore::RenderThemeWx::popupInternalPaddingRight):
+        (WebCore::RenderThemeWx::popupInternalPaddingTop):
+        (WebCore::RenderThemeWx::popupInternalPaddingBottom):
+
 2008-08-02  Wouter Bolsterlee  <wbolster@svn.gnome.org>
 
         Reviewed by Eric Seidel.
