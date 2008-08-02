@@ -1,5 +1,7 @@
 2008-08-01  Wouter Bolsterlee  <uws@xs4all.nl>
 
+        Reviewed by Eric Seidel.
+
         https://bugs.webkit.org/show_bug.cgi?id=20035
         [GTK] Fix return value for webkit_web_view_go_to_back_forward_item()
 
