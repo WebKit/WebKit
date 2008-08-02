@@ -153,8 +153,10 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
     FloatSize selfSize = size();
     if (srcRect.size() != selfSize) {
         CGInterpolationQuality interpolationQuality = CGContextGetInterpolationQuality(context);
-        // When the image is scaled, we create a temporary CGImage containing only the portion
-        // we want to display, to work around <rdar://problem/6112909>.
+        // When the image is scaled using high-quality interpolation, we create a temporary CGImage
+        // containing only the portion we want to display. We need to do this because high-quality
+        // interpolation smoothes sharp edges, causing pixels from outside the source rect to bleed
+        // into the destination rect. See <rdar://problem/6112909>.
         shouldUseSubimage = (interpolationQuality == kCGInterpolationHigh || interpolationQuality == kCGInterpolationDefault) && srcRect.size() != destRect.size();
         if (shouldUseSubimage) {
             image = CGImageCreateWithImageInRect(image, srcRect);

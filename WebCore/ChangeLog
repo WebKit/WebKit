@@ -1,3 +1,12 @@
+2008-08-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - tweak a comment
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2008-08-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         * ChangeLog: Fix date of previous commit (r35520)
