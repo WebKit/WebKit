@@ -1,3 +1,25 @@
+2008-08-01  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Eric Seidel.
+
+        Native rendering implementations for form elements in the wx port.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19069
+
+        * platform/wx/RenderThemeWx.cpp:
+        (WebCore::RenderThemeWx::adjustRepaintRect):
+        (WebCore::RenderThemeWx::paintButton):
+        (WebCore::RenderThemeWx::paintTextField):
+        (WebCore::RenderThemeWx::minimumMenuListSize):
+        (WebCore::RenderThemeWx::adjustMenuListStyle):
+        (WebCore::RenderThemeWx::paintMenuList):
+        (WebCore::RenderThemeWx::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWx::paintMenuListButton):
+        (WebCore::RenderThemeWx::popupInternalPaddingLeft):
+        (WebCore::RenderThemeWx::popupInternalPaddingRight):
+        (WebCore::RenderThemeWx::popupInternalPaddingTop):
+        (WebCore::RenderThemeWx::popupInternalPaddingBottom):
+
 2008-07-30  David Hyatt  <hyatt@apple.com>
 
         Improvements to selection drawing.
