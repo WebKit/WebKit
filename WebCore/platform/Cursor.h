@@ -121,6 +121,15 @@ namespace WebCore {
     const Cursor& northWestSouthEastResizeCursor();
     const Cursor& columnResizeCursor();
     const Cursor& rowResizeCursor();
+    const Cursor& middlePanningCursor();
+    const Cursor& eastPanningCursor();
+    const Cursor& northPanningCursor();
+    const Cursor& northEastPanningCursor();
+    const Cursor& northWestPanningCursor();
+    const Cursor& southPanningCursor();
+    const Cursor& southEastPanningCursor();
+    const Cursor& southWestPanningCursor();
+    const Cursor& westPanningCursor();
     const Cursor& verticalTextCursor();
     const Cursor& cellCursor();
     const Cursor& contextMenuCursor();

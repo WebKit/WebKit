@@ -254,6 +254,51 @@ const Cursor& rowResizeCursor()
 {
     return Cursors::self()->SplitVCursor;
 }
+    
+const Cursor& middlePanningCursor()
+{
+    return moveCursor();
+}
+
+const Cursor& eastPanningCursor()
+{
+    return eastResizeCursor();
+}
+
+const Cursor& northPanningCursor()
+{
+    return northResizeCursor();
+}
+
+const Cursor& northEastPanningCursor()
+{
+    return northEastResizeCursor();
+}
+
+const Cursor& northWestPanningCursor()
+{
+    return northWestResizeCursor();
+}
+
+const Cursor& southPanningCursor()
+{
+    return southResizeCursor();
+}
+
+const Cursor& southEastPanningCursor()
+{
+    return southEastResizeCursor();
+}
+
+const Cursor& southWestPanningCursor()
+{
+    return southWestResizeCursor();
+}
+
+const Cursor& westPanningCursor()
+{
+    return westResizeCursor();
+}    
 
 const Cursor& verticalTextCursor()
 {

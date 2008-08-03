@@ -214,6 +214,7 @@ private:
     void handleKeyboardSelectionMovement(KeyboardEvent*);
     
     Cursor selectCursor(const MouseEventWithHitTestResults&, PlatformScrollbar*);
+    void setPanScrollCursor();
 
     void hoverTimerFired(Timer<EventHandler>*);
 

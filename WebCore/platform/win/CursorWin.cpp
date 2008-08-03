@@ -281,6 +281,60 @@ const Cursor& rowResizeCursor()
     return c;
 }
 
+const Cursor& middlePanningCursor()
+{
+    static const Cursor c = loadCursorByName("panIcon", 7, 7);
+    return c;
+}
+
+const Cursor& eastPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panEastCursor", 7, 7);
+    return c;
+}
+
+const Cursor& northPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panNorthCursor", 7, 7);
+    return c;
+}
+
+const Cursor& northEastPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panNorthEastCursor", 7, 7);
+    return c;
+}
+
+const Cursor& northWestPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panNorthWestCursor", 7, 7);
+    return c;
+}
+
+const Cursor& southPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panSouthCursor", 7, 7);
+    return c;
+}
+
+const Cursor& southEastPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panSouthEastCursor", 7, 7);
+    return c;
+}
+
+const Cursor& southWestPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panSouthWestCursor", 7, 7);
+    return c;
+}
+
+const Cursor& westPanningCursor()
+{
+    static const Cursor c = loadCursorByName("panWestCursor", 7, 7);
+    return c;
+}
+
 const Cursor& moveCursor() 
 {
     static Cursor c = loadSharedCursor(0, IDC_SIZEALL);

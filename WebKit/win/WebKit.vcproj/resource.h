@@ -11,6 +11,14 @@
 #define IDR_ZOOM_OUT_CURSOR             7
 #define IDR_VERTICAL_TEXT_CURSOR        8
 #define IDR_PAN_SCROLL_ICON             9
+#define IDR_PAN_SOUTH_CURSOR            10
+#define IDR_PAN_NORTH_CURSOR            11
+#define IDR_PAN_EAST_CURSOR             12
+#define IDR_PAN_WEST_CURSOR             13
+#define IDR_PAN_SOUTH_EAST_CURSOR       14
+#define IDR_PAN_SOUTH_WEST_CURSOR       15
+#define IDR_PAN_NORTH_EAST_CURSOR       16
+#define IDR_PAN_NORTH_WEST_CURSOR       17
 #define IDC_STATIC                      -1
 
 #define BUILD_NUMBER                    1
@@ -19,7 +27,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        12
+#define _APS_NEXT_RESOURCE_VALUE        18
 #define _APS_NEXT_COMMAND_VALUE         40001
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           101

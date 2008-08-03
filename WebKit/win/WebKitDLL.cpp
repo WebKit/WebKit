@@ -149,6 +149,22 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         idr = IDR_NULL_PLUGIN;
     else if (!strcmp(name, "panIcon"))
         idr = IDR_PAN_SCROLL_ICON;
+    else if (!strcmp(name, "panSouthCursor"))
+        idr = IDR_PAN_SOUTH_CURSOR;
+    else if (!strcmp(name, "panNorthCursor"))
+        idr = IDR_PAN_NORTH_CURSOR;
+    else if (!strcmp(name, "panEastCursor"))
+        idr = IDR_PAN_EAST_CURSOR;
+    else if (!strcmp(name, "panWestCursor"))
+        idr = IDR_PAN_WEST_CURSOR;
+    else if (!strcmp(name, "panSouthEastCursor"))
+        idr = IDR_PAN_SOUTH_EAST_CURSOR;
+    else if (!strcmp(name, "panSouthWestCursor"))
+        idr = IDR_PAN_SOUTH_WEST_CURSOR;
+    else if (!strcmp(name, "panNorthEastCursor"))
+        idr = IDR_PAN_NORTH_EAST_CURSOR;
+    else if (!strcmp(name, "panNorthWestCursor"))
+        idr = IDR_PAN_NORTH_WEST_CURSOR;
     else if (!strcmp(name, "zoomInCursor"))
         idr = IDR_ZOOM_IN_CURSOR;
     else if (!strcmp(name, "zoomOutCursor"))

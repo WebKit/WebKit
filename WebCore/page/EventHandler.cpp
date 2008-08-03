@@ -598,9 +598,42 @@ void EventHandler::autoscrollTimerFired(Timer<EventHandler>*)
             return;
         }
 #if PLATFORM(WIN)
+        setPanScrollCursor();
         r->panScroll(m_panScrollStartPos);
 #endif
     }
+}
+
+void EventHandler::setPanScrollCursor()
+{
+    // At the original click location we draw a 4 arrowed icon. Over this icon there won't be any scroll
+    // So we don't want to change the cursor over this area
+    const int noScrollRadius = 9;
+    bool east = m_panScrollStartPos.x() < (m_currentMousePosition.x() - noScrollRadius);
+    bool west = m_panScrollStartPos.x() > (m_currentMousePosition.x() + noScrollRadius);
+    bool north = m_panScrollStartPos.y() > (m_currentMousePosition.y() + noScrollRadius);
+    bool south = m_panScrollStartPos.y() < (m_currentMousePosition.y() - noScrollRadius);
+         
+    if (north) {
+        if (east)
+            m_frame->view()->setCursor(northEastPanningCursor());
+        else if (west)
+            m_frame->view()->setCursor(northWestPanningCursor());
+        else
+            m_frame->view()->setCursor(northPanningCursor());
+    } else if (south) {
+        if (east)
+            m_frame->view()->setCursor(southEastPanningCursor());
+        else if (west)
+            m_frame->view()->setCursor(southWestPanningCursor());
+        else
+            m_frame->view()->setCursor(southPanningCursor());
+    } else if (east)
+        m_frame->view()->setCursor(eastPanningCursor());
+    else if (west)
+        m_frame->view()->setCursor(westPanningCursor());
+    else
+        m_frame->view()->setCursor(middlePanningCursor());
 }
 
 RenderObject* EventHandler::autoscrollRenderer() const
@@ -1137,7 +1170,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     } else {
         if (scrollbar && !m_mousePressed)
             scrollbar->handleMouseMoveEvent(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
-        if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && m_frame->view())
+        if ((!m_resizeLayer || !m_resizeLayer->inResizeMode()) && !m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() && m_frame->view())
             m_frame->view()->setCursor(selectCursor(mev, scrollbar));
     }
     
