@@ -1,3 +1,14 @@
+2008-07-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Add tests to cover behaviour of "this" when calling named function
+        expressions and functions thrown as exceptions.
+
+        * fast/js/resources/static-scope-object.js: Added.
+        * fast/js/static-scope-object-expected.txt: Added.
+        * fast/js/static-scope-object.html: Added.
+
 2008-07-31  David Kilzer  <ddkilzer@apple.com>
 
         Updated test results for DumpRenderTree fix in r35497

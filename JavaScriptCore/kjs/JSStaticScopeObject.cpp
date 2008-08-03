@@ -29,6 +29,19 @@
 
 namespace KJS {
 
+JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
+{
+    return exec->globalThisValue();
+}
+
+void JSStaticScopeObject::put(ExecState*, const Identifier& propertyName, JSValue* value)
+{
+    if (symbolTablePut(propertyName, value))
+        return;
+    
+    ASSERT_NOT_REACHED();
+}
+
 void JSStaticScopeObject::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
     if (symbolTablePutWithAttributes(propertyName, value, attributes))

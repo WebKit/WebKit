@@ -121,6 +121,7 @@ namespace KJS {
         \
         macro(op_push_scope) \
         macro(op_pop_scope) \
+        macro(op_push_new_scope) \
         \
         macro(op_catch) \
         macro(op_throw) \

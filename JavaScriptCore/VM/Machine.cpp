@@ -40,6 +40,7 @@
 #include "JSFunction.h"
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
+#include "JSStaticScopeObject.h"
 #include "JSString.h"
 #include "ObjectPrototype.h"
 #include "Parser.h"
@@ -996,6 +997,16 @@ static int32_t offsetForStringSwitch(StringJumpTable& jumpTable, JSValue* scruti
     if (loc == end)
         return defaultOffset;
     return loc->second;
+}
+
+static NEVER_INLINE ScopeChainNode* createExceptionScope(ExecState* exec, CodeBlock* codeBlock, const Instruction* vPC, Register* r, ScopeChainNode* scopeChain)
+{
+    int dst = (++vPC)->u.operand;
+    Identifier& property = codeBlock->identifiers[(++vPC)->u.operand];
+    JSValue* value = r[(++vPC)->u.operand].jsValue(exec);
+    JSObject* scope = new (exec) JSStaticScopeObject(property, value, DontDelete);
+    r[dst] = scope;
+    return scopeChain->push(scope);
 }
 
 JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFile* registerFile, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue** exception)
@@ -2602,6 +2613,24 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         vPC += target;
         NEXT_OPCODE;
     }
+#if HAVE(COMPUTED_GOTO)
+    // Appease GCC
+    goto *(&&skip_new_scope);
+#endif
+    BEGIN_OPCODE(op_push_new_scope) {
+        /* new_scope dst(r) property(id) value(r)
+         
+           Constructs a new StaticScopeObject with property set to value.  That scope
+           object is then pushed onto the ScopeChain.  The scope object is then stored
+           in dst for GC.
+         */
+        setScopeChain(exec, scopeChain, createExceptionScope(exec, codeBlock, vPC, r, scopeChain));
+        vPC += 4;
+        NEXT_OPCODE;
+    }
+#if HAVE(COMPUTED_GOTO)
+    skip_new_scope:
+#endif
     BEGIN_OPCODE(op_catch) {
         /* catch ex(r)
 

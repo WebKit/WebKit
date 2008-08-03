@@ -1150,6 +1150,20 @@ void CodeGenerator::emitSubroutineReturn(RegisterID* retAddrSrc)
     instructions().append(retAddrSrc->index());
 }
 
+void CodeGenerator::emitPushNewScope(RegisterID* dst, Identifier& property, RegisterID* value)
+{
+    m_codeBlock->needsFullScopeChain = true;
+    ControlFlowContext context;
+    context.isFinallyBlock = false;
+    m_scopeContextStack.append(context);
+    m_dynamicScopeDepth++;
+    
+    emitOpcode(op_push_new_scope);
+    instructions().append(dst->index());
+    instructions().append(addConstant(property));
+    instructions().append(value->index());
+}
+
 void CodeGenerator::beginSwitch(RegisterID* scrutineeRegister, SwitchInfo::SwitchType type)
 {
     SwitchInfo info = { instructions().size(), type };

@@ -1,3 +1,33 @@
+2008-07-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 19359: JavaScriptCore behaves differently from FF2/3 and IE when handling context in catch statement
+        <https://bugs.webkit.org/show_bug.cgi?id=19359>
+
+        Make our catch behave like Firefox and IE, we do this by using a StaticScopeObject
+        instead of a generic JSObject for the scope node.  We still don't make use of the
+        fact that we have a static scope inside the catch block, so the internal performance
+        of the catch block is not improved, even though technically it would be possible to
+        do so.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitPushNewScope):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::createExceptionScope):
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * kjs/JSStaticScopeObject.cpp:
+        (KJS::JSStaticScopeObject::toThisObject):
+        (KJS::JSStaticScopeObject::put):
+        * kjs/JSStaticScopeObject.h:
+        * kjs/nodes.cpp:
+        (KJS::TryNode::emitCode):
+
 2008-08-02  Rob Gowin  <robg@gowin.net>
 
         Reviewed by Eric Seidel.

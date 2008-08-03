@@ -53,8 +53,10 @@ namespace KJS{
         }
         virtual ~JSStaticScopeObject();
         bool isDynamicScope() const;
+        virtual JSObject* toThisObject(ExecState*) const;
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
+        virtual void put(ExecState*, const Identifier&, JSValue*);
         void putWithAttributes(ExecState*, const Identifier&, JSValue*, unsigned attributes);
     };
 

@@ -1604,10 +1604,7 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         RefPtr<LabelID> handlerEndLabel = generator.newLabel();
         generator.emitJump(handlerEndLabel.get());
         RefPtr<RegisterID> exceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), tryEndLabel.get());
-        RefPtr<RegisterID> newScope = generator.emitNewObject(generator.newTemporary()); // scope must be protected until popped
-        generator.emitPutById(newScope.get(), m_exceptionIdent, exceptionRegister.get());
-        exceptionRegister = 0; // Release register used for temporaries
-        generator.emitPushScope(newScope.get());
+        generator.emitPushNewScope(exceptionRegister.get(), m_exceptionIdent, exceptionRegister.get());
         generator.emitNode(dst, m_catchBlock.get());
         generator.emitPopScope();
         generator.emitLabel(handlerEndLabel.get());
