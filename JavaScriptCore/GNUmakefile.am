@@ -16,7 +16,8 @@ javascriptcore_h_api += \
 	JavaScriptCore/API/JSStringRefBSTR.h \
 	JavaScriptCore/API/JSStringRefCF.h \
 	JavaScriptCore/API/JSStringRef.h \
-	JavaScriptCore/API/JSValueRef.h
+	JavaScriptCore/API/JSValueRef.h \
+	JavaScriptCore/API/WebKitAvailability.h
 
 javascriptcore_built_nosources += \
 	JavaScriptCore/kjs/ArrayPrototype.lut.h \
