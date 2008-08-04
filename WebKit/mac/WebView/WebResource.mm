@@ -237,6 +237,15 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
     if (!self)
         return nil;
             
+    ASSERT(coreResource);
+    
+    // WebResources should not be init'ed with nil data, and doing so breaks certain uses of NSHTMLReader
+    // See <rdar://problem/5820157> for more info
+    if (!coreResource->data()) {
+        [self release];
+        return nil;
+    }
+    
     _private = [[WebResourcePrivate alloc] initWithCoreResource:coreResource];
             
     return self;

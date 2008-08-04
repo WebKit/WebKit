@@ -1,3 +1,16 @@
+2008-08-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        Fix <rdar://problem/5820157> - Saving WebArchives of Mail attachments broken.
+
+        This broke in r31355 when we stopped returning nil WebResources when there was nil
+        resource data.
+
+        * WebView/WebResource.mm:
+        (-[WebResource _initWithCoreResource:]): Restore previous behavior of returning nil
+          when the resource data is null.
+
 2008-08-02  Matt Lilek  <webkit@mattlilek.com>
 
         Reviewed by Tim Hatcher.
