@@ -14,5 +14,5 @@ fast/css/font-weight-1.html
 http/tests/misc/acid3.html
 
 # <rdar://problem/5960969> LayoutTests that send an OPTIONS request don't work on Tiger due to Apache 1.3
-http/tests/xmlhttprequest/access-control-basic-not-get-allow-async.html
-http/tests/xmlhttprequest/access-control-basic-not-get-allow.html
+http/tests/xmlhttprequest/access-control-basic-not-simple-allow-async.html
+http/tests/xmlhttprequest/access-control-basic-not-simple-allow.html

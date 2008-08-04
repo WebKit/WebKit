@@ -2,6 +2,15 @@
 
         Reviewed by Dan Bernstein.
 
+        Update skipped lists for renamed tests.
+
+        * platform/mac-tiger/Skipped:
+        * platform/win/Skipped:
+
+2008-08-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
         Tests for the Access-control for Cross Site requests
         preflight cache.
 
