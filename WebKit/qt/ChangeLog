@@ -1,3 +1,34 @@
+2008-08-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        A bunch of improvements to the QtLauncher.
+
+        Among others:
+        - Unify and unclutter the toolbar, use menu for addition actions
+        - Simplify URL edit, just use QLineEdit (no fancy close button etc)
+        - Guess the URL from the command line so now we can run ./QtLauncher www.google.com
+        - Shortcut keys for most actions
+        - Simple autocomplete for the URL edit
+        - Actions for zooming, New Window and Close Window
+        - Show Format menu only when the content is set to editable
+
+        * QtLauncher/main.cpp:
+        (MainWindow::MainWindow):
+        (MainWindow::webPage):
+        (MainWindow::changeLocation):
+        (MainWindow::loadFinished):
+        (MainWindow::showLinkHover):
+        (MainWindow::newWindow):
+        (MainWindow::zoomIn):
+        (MainWindow::zoomOut):
+        (MainWindow::resetZoom):
+        (MainWindow::print):
+        (MainWindow::setEditable):
+        (MainWindow::dumpHtml):
+        (MainWindow::setupUI):
+        (main):
+
 2008-08-04  Erik Bunce  <elbunce@thehive.com>
 
         Reviewed by Simon.
