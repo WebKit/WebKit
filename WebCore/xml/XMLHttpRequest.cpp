@@ -859,19 +859,17 @@ void XMLHttpRequest::abortError()
 
 void XMLHttpRequest::dropProtection()        
 {
-    {
-        KJS::JSValue* wrapper = ScriptInterpreter::getDOMObject(this);
-        KJS::gcUnprotectNullTolerant(wrapper);
-    
-        // the XHR object itself holds on to the responseText, and
-        // thus has extra cost even independent of any
-        // responseText or responseXML objects it has handed
-        // out. But it is protected from GC while loading, so this
-        // can't be recouped until the load is done, so only
-        // report the extra cost at that point.
-    
-        if (wrapper)
-            KJS::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
+    // The XHR object itself holds on to the responseText, and
+    // thus has extra cost even independent of any
+    // responseText or responseXML objects it has handed
+    // out. But it is protected from GC while loading, so this
+    // can't be recouped until the load is done, so only
+    // report the extra cost at that point.
+
+    KJS::JSValue* wrapper = ScriptInterpreter::getDOMObject(this);
+    if (wrapper) {
+        KJS::gcUnprotect(wrapper);
+        KJS::Heap::heap(wrapper)->reportExtraMemoryCost(m_responseText.size() * 2);
     }
 
     deref();
