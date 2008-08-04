@@ -39,6 +39,15 @@
 
 2008-08-04  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Fix warning seen in MSVC converting ints to floats.
+
+        * rendering/Length.h:
+        (WebCore::Length::calcFloatValue):
+
+2008-08-04  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         Clean up Gradient constructors, make sure all members are initialized.
