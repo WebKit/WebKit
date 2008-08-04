@@ -1,3 +1,19 @@
+2008-08-04  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20221
+
+        Add updateAction() support to ToggleBold, ToggleItalic, and ToggleUnderline.
+        Add lookup table for mapping web actions to editor commands.
+
+        * Api/qwebpage.cpp:
+        (editorCommandForWebActions):
+        (QWebPagePrivate::updateAction):
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::triggerAction):
+        (QWebPage::setEditable):
+
 2008-08-03  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Reviewed by Simon.

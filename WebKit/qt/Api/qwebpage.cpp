@@ -91,6 +91,81 @@
 
 using namespace WebCore;
 
+// Lookup table mapping QWebPage::WebActions to the associated Editor commands
+static const char* editorCommandWebActions[] = 
+{
+    0, // OpenLink,
+
+    0, // OpenLinkInNewWindow,
+    0, // OpenFrameInNewWindow,
+    
+    0, // DownloadLinkToDisk,
+    0, // CopyLinkToClipboard,
+    
+    0, // OpenImageInNewWindow,
+    0, // DownloadImageToDisk,
+    0, // CopyImageToClipboard,
+    
+    0, // Back,
+    0, // Forward,
+    0, // Stop,
+    0, // Reload,
+    
+    "Cut", // Cut,
+    "Copy", // Copy,
+    "Paste", // Paste,
+    
+    "Undo", // Undo,
+    "Redo", // Redo,
+    "MoveForward", // MoveToNextChar,
+    "MoveBackward", // MoveToPreviousChar,
+    "MoveWordForward", // MoveToNextWord,
+    "MoveWordBackward", // MoveToPreviousWord,
+    "MoveDown", // MoveToNextLine,
+    "MoveUp", // MoveToPreviousLine,
+    "MoveToBeginningOfLine", // MoveToStartOfLine,
+    "MoveToEndOfLine", // MoveToEndOfLine,
+    "MoveToBeginningOfParagraph", // MoveToStartOfBlock,
+    "MoveToEndOfParagraph", // MoveToEndOfBlock,
+    "MoveToBeginningOfDocument", // MoveToStartOfDocument,
+    "MoveToEndOfDocument", // MoveToEndOfDocument,
+    "MoveForwardAndModifySelection", // SelectNextChar,
+    "MoveBackwardAndModifySelection", // SelectPreviousChar,
+    "MoveWordForwardAndModifySelection", // SelectNextWord,
+    "MoveWordBackwardAndModifySelection", // SelectPreviousWord,
+    "MoveDownAndModifySelection", // SelectNextLine,
+    "MoveUpAndModifySelection", // SelectPreviousLine,
+    "MoveToBeginningOfLineAndModifySelection", // SelectStartOfLine,
+    "MoveToEndOfLineAndModifySelection", // SelectEndOfLine,
+    "MoveToBeginningOfParagraphAndModifySelection", // SelectStartOfBlock,
+    "MoveToEndOfParagraphAndModifySelection", // SelectEndOfBlock,
+    "MoveToBeginningOfDocumentAndModifySelection", //SelectStartOfDocument,
+    "MoveToEndOfDocumentAndModifySelection", // SelectEndOfDocument,
+    "DeleteWordBackward", // DeleteStartOfWord,
+    "DeleteWordForward", // DeleteEndOfWord,
+    
+    0, // SetTextDirectionDefault,
+    0, // SetTextDirectionLeftToRight,
+    0, // SetTextDirectionRightToLeft,
+    
+    "ToggleBold", // ToggleBold,
+    "ToggleItalic", // ToggleItalic,
+    "ToggleUnderline", // ToggleUnderline,
+    
+    0, // InspectElement,
+
+    0 // WebActionCount
+};
+
+// Lookup the appropriate editor command to use for WebAction \a action
+static const char* editorCommandForWebActions(QWebPage::WebAction action)
+{
+    if ((action > QWebPage::NoWebAction) && (action < int(sizeof(editorCommandWebActions) / sizeof(const char*))))
+        return editorCommandWebActions[action];
+    
+    return 0;
+}
+
 #ifndef QT_NO_CURSOR
 SetCursorEvent::SetCursorEvent(const QCursor& cursor)
     : QEvent(static_cast<QEvent::Type>(EventType))
@@ -325,6 +400,7 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
     WebCore::Editor *editor = page->focusController()->focusedOrMainFrame()->editor();
 
     bool enabled = a->isEnabled();
+    bool checked = a->isChecked();
 
     switch (action) {
         case QWebPage::Back:
@@ -352,10 +428,22 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         case QWebPage::Redo:
             // those two are handled by QUndoStack
             break;
+        case QWebPage::ToggleBold:
+        case QWebPage::ToggleItalic:
+        case QWebPage::ToggleUnderline:
+            enabled = editor->canEditRichly();
+            if (enabled)
+                checked = editor->command(editorCommandForWebActions(action)).state() != FalseTriState;
+            else
+                checked = false;
+            break;
         default: break;
     }
 
     a->setEnabled(enabled);
+
+    if (a->isCheckable())
+        a->setChecked(checked);
 }
 
 void QWebPagePrivate::updateNavigationActions()
@@ -371,6 +459,9 @@ void QWebPagePrivate::updateEditorActions()
     updateAction(QWebPage::Cut);
     updateAction(QWebPage::Copy);
     updateAction(QWebPage::Paste);
+    updateAction(QWebPage::ToggleBold);
+    updateAction(QWebPage::ToggleItalic);
+    updateAction(QWebPage::ToggleUnderline);
 }
 
 void QWebPagePrivate::timerEvent(QTimerEvent *ev)
@@ -1269,102 +1360,6 @@ void QWebPage::triggerAction(WebAction action, bool checked)
         case Reload:
             mainFrame()->d->frame->loader()->reload();
             break;
-        case Cut:
-            command = "Cut";
-            break;
-        case Copy:
-            command = "Copy";
-            break;
-        case Paste:
-            command = "Paste";
-            break;
-
-        case Undo:
-            command = "Undo";
-            break;
-        case Redo:
-            command = "Redo";
-            break;
-
-        case MoveToNextChar:
-            command = "MoveForward";
-            break;
-        case MoveToPreviousChar:
-            command = "MoveBackward";
-            break;
-        case MoveToNextWord:
-            command = "MoveWordForward";
-            break;
-        case MoveToPreviousWord:
-            command = "MoveWordBackward";
-            break;
-        case MoveToNextLine:
-            command = "MoveDown";
-            break;
-        case MoveToPreviousLine:
-            command = "MoveUp";
-            break;
-        case MoveToStartOfLine:
-            command = "MoveToBeginningOfLine";
-            break;
-        case MoveToEndOfLine:
-            command = "MoveToEndOfLine";
-            break;
-        case MoveToStartOfBlock:
-            command = "MoveToBeginningOfParagraph";
-            break;
-        case MoveToEndOfBlock:
-            command = "MoveToEndOfParagraph";
-            break;
-        case MoveToStartOfDocument:
-            command = "MoveToBeginningOfDocument";
-            break;
-        case MoveToEndOfDocument:
-            command = "MoveToEndOfDocument";
-            break;
-        case SelectNextChar:
-            command = "MoveForwardAndModifySelection";
-            break;
-        case SelectPreviousChar:
-            command = "MoveBackwardAndModifySelection";
-            break;
-        case SelectNextWord:
-            command = "MoveWordForwardAndModifySelection";
-            break;
-        case SelectPreviousWord:
-            command = "MoveWordBackwardAndModifySelection";
-            break;
-        case SelectNextLine:
-            command = "MoveDownAndModifySelection";
-            break;
-        case SelectPreviousLine:
-            command = "MoveUpAndModifySelection";
-            break;
-        case SelectStartOfLine:
-            command = "MoveToBeginningOfLineAndModifySelection";
-            break;
-        case SelectEndOfLine:
-            command = "MoveToEndOfLineAndModifySelection";
-            break;
-        case SelectStartOfBlock:
-            command = "MoveToBeginningOfParagraphAndModifySelection";
-            break;
-        case SelectEndOfBlock:
-            command = "MoveToEndOfParagraphAndModifySelection";
-            break;
-        case SelectStartOfDocument:
-            command = "MoveToBeginningOfDocumentAndModifySelection";
-            break;
-        case SelectEndOfDocument:
-            command = "MoveToEndOfDocumentAndModifySelection";
-            break;
-        case DeleteStartOfWord:
-            command = "DeleteWordBackward";
-            break;
-        case DeleteEndOfWord:
-            command = "DeleteWordForward";
-            break;
-
         case SetTextDirectionDefault:
             editor->setBaseWritingDirection(NaturalWritingDirection);
             break;
@@ -1374,22 +1369,12 @@ void QWebPage::triggerAction(WebAction action, bool checked)
         case SetTextDirectionRightToLeft:
             editor->setBaseWritingDirection(RightToLeftWritingDirection);
             break;
-
-        case ToggleBold:
-            command = "ToggleBold";
-            break;
-        case ToggleItalic:
-            command = "ToggleItalic";
-            break;
-        case ToggleUnderline:
-            editor->toggleUnderline();
-            break;
-
         case InspectElement:
             d->page->inspectorController()->inspect(d->hitTestResult.d->innerNonSharedNode.get());
             break;
-
-        default: break;
+        default:
+            command = editorCommandForWebActions(action);
+            break;
     }
 
     if (command)
@@ -1779,6 +1764,8 @@ void QWebPage::setEditable(bool editable)
                 frame->removeEditingStyleFromBodyElement();
             }
         }
+
+        d->updateEditorActions();
     }
 }
 
