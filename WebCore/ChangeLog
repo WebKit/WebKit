@@ -1,3 +1,12 @@
+2008-08-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Clean up Gradient constructors, make sure all members are initialized.
+
+        * platform/graphics/Gradient.cpp:
+        (WebCore::Gradient::Gradient):
+
 2008-08-02  Maxime Britto  <britto@apple.com>
 
         Reviewed by Eric Seidel.
