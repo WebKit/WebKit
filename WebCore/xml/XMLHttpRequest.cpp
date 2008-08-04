@@ -35,9 +35,12 @@
 #include "HTTPParsers.h"
 #include "InspectorController.h"
 #include "JSDOMBinding.h"
+#include "KURL.h"
+#include "KURLHash.h"
 #include "Page.h"
 #include "Settings.h"
 #include "SubresourceLoader.h"
+#include "SystemTime.h"
 #include "TextResourceDecoder.h"
 #include "XMLHttpRequestException.h"
 #include "XMLHttpRequestProgressEvent.h"
@@ -48,6 +51,41 @@
 namespace WebCore {
 
 using namespace EventNames;
+
+struct PreflightResultCacheItem {
+    PreflightResultCacheItem(unsigned expiryDelta, bool credentials, HashSet<String>* methods, HashSet<String, CaseFoldingHash>* headers)
+        : m_absoluteExpiryTime(currentTime() + expiryDelta)
+        , m_credentials(credentials)
+        , m_methods(methods)
+        , m_headers(headers)
+    {
+    }
+
+    // FIXME: A better solution to holding onto the absolute expiration time might be
+    // to start a timer for the expiration delta, that removes this from the cache when
+    // it fires.
+    double m_absoluteExpiryTime;
+    bool m_credentials;
+    OwnPtr<HashSet<String> > m_methods;
+    OwnPtr<HashSet<String, CaseFoldingHash> > m_headers;
+};
+
+typedef HashMap<std::pair<String, KURL>, PreflightResultCacheItem*> PreflightResultCache;
+
+static PreflightResultCache& preflightResultCache()
+{
+    static PreflightResultCache cache;
+    return cache;
+}
+
+static void appendPreflightResultCacheEntry(String origin, KURL url, unsigned expiryDelta, 
+                                            bool credentials, HashSet<String>* methods, HashSet<String, CaseFoldingHash>* headers)
+{
+    ASSERT(!preflightResultCache().contains(std::make_pair(origin, url)));
+
+    PreflightResultCacheItem* item = new PreflightResultCacheItem(expiryDelta, credentials, methods, headers);
+    preflightResultCache().set(std::make_pair(origin, url), item);
+}
 
 typedef HashSet<XMLHttpRequest*> RequestsSet;
 
@@ -557,6 +595,24 @@ void XMLHttpRequest::makeSimpleCrossSiteAccessRequest(ExceptionCode& ec)
         loadRequestSynchronously(request, ec);
 }
 
+static bool canSkipPrelight(PreflightResultCache::iterator cacheIt, bool includeCredentials, const String& method, const HTTPHeaderMap& requestHeaders)
+{
+    PreflightResultCacheItem* item = cacheIt->second;
+    if (item->m_absoluteExpiryTime < currentTime())
+        return false;
+    if (includeCredentials && !item->m_credentials)
+        return false;
+    if (!item->m_methods->contains(method) && method != "GET" && method != "POST")
+        return false;
+    HTTPHeaderMap::const_iterator end = requestHeaders.end();
+    for (HTTPHeaderMap::const_iterator it = requestHeaders.begin(); it != end; ++it) {
+        if (!item->m_headers->contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first))
+            return false;
+    }
+
+    return true;
+}
+
 void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
 {
     String origin = accessControlOrigin();
@@ -564,39 +620,50 @@ void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
     url.setUser(String());
     url.setPass(String());
 
-    m_inPreflight = true;
-    ResourceRequest preflightRequest(url);
-    preflightRequest.setHTTPMethod("OPTIONS");
-    preflightRequest.setHTTPHeaderField("Origin", origin);
-    preflightRequest.setHTTPHeaderField("Access-Control-Request-Method", m_method);
+    bool skipPreflight = false;
 
-    if (m_requestHeaders.size() > 0) {
-        Vector<UChar> headerBuffer;
-        HTTPHeaderMap::const_iterator it = m_requestHeaders.begin();
-        append(headerBuffer, it->first);
-        ++it;
+    PreflightResultCache::iterator cacheIt = preflightResultCache().find(std::make_pair(origin, url));
+    if (cacheIt != preflightResultCache().end()) {
+        skipPreflight = canSkipPrelight(cacheIt, m_includeCredentials, m_method, m_requestHeaders);
+        if (!skipPreflight)
+            preflightResultCache().remove(cacheIt);
+    }
 
-        HTTPHeaderMap::const_iterator end = m_requestHeaders.end();
-        for (; it != end; ++it) {
-            headerBuffer.append(',');
-            headerBuffer.append(' ');
+    if (!skipPreflight) {
+        m_inPreflight = true;
+        ResourceRequest preflightRequest(url);
+        preflightRequest.setHTTPMethod("OPTIONS");
+        preflightRequest.setHTTPHeaderField("Origin", origin);
+        preflightRequest.setHTTPHeaderField("Access-Control-Request-Method", m_method);
+
+        if (m_requestHeaders.size() > 0) {
+            Vector<UChar> headerBuffer;
+            HTTPHeaderMap::const_iterator it = m_requestHeaders.begin();
             append(headerBuffer, it->first);
+            ++it;
+
+            HTTPHeaderMap::const_iterator end = m_requestHeaders.end();
+            for (; it != end; ++it) {
+                headerBuffer.append(',');
+                headerBuffer.append(' ');
+                append(headerBuffer, it->first);
+            }
+
+            preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
+            preflightRequest.addHTTPHeaderFields(m_requestHeaders);
         }
 
-        preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
-        preflightRequest.addHTTPHeaderFields(m_requestHeaders);
+        if (m_async) {
+            loadRequestAsynchronously(preflightRequest);
+            return;
+        }
+
+        loadRequestSynchronously(preflightRequest, ec);
+        m_inPreflight = false;
+
+        if (ec)
+            return;
     }
-
-    if (m_async) {
-        loadRequestAsynchronously(preflightRequest);
-        return;
-    }
-
-    loadRequestSynchronously(preflightRequest, ec);
-    m_inPreflight = false;
-
-    if (ec)
-        return;
 
     // Send the actual request.
     ResourceRequest request(url);
@@ -610,6 +677,11 @@ void XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight(ExceptionCode& ec)
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");
         request.setHTTPBody(m_requestEntityBody.release());
+    }
+
+    if (m_async) {
+        loadRequestAsynchronously(request);
+        return;
     }
 
     loadRequestSynchronously(request, ec);
@@ -1082,7 +1154,7 @@ void XMLHttpRequest::didReceiveResponse(SubresourceLoader* loader, const Resourc
 }
 
 template<class HashType>
-static bool parseAccessControlAllowList(const String& string, HashSet<String, HashType> & set)
+static bool parseAccessControlAllowList(const String& string, HashSet<String, HashType>* set)
 {
     int start = 0;
     int end;
@@ -1091,13 +1163,21 @@ static bool parseAccessControlAllowList(const String& string, HashSet<String, Ha
             return false;
 
         // FIXME: this could be made more efficient by not not allocating twice.
-        set.add(string.substring(start, end - start).stripWhiteSpace());
+        set->add(string.substring(start, end - start).stripWhiteSpace());
         start = end + 1;
     }
     if (start != static_cast<int>(string.length()))
-        set.add(string.substring(start).stripWhiteSpace());
+        set->add(string.substring(start).stripWhiteSpace());
 
     return true;
+}
+
+static bool parseAccessControlMaxAge(const String& string, unsigned& expiryDelta)
+{
+    // FIXME: this will not do the correct thing for a number starting with a '+'
+    bool ok = false;
+    expiryDelta = string.toUIntStrict(&ok);
+    return ok;
 }
 
 void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const ResourceResponse& response)
@@ -1110,30 +1190,36 @@ void XMLHttpRequest::didReceiveResponsePreflight(SubresourceLoader*, const Resou
         return;
     }
 
-    HashSet<String> methods;
-    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Methods"), methods)) {
+    OwnPtr<HashSet<String> > methods(new HashSet<String>);
+    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Methods"), methods.get())) {
         networkError();
         return;
     }
 
-    if (!methods.contains(m_method) && m_method != "GET" && m_method != "POST") {
+    if (!methods->contains(m_method) && m_method != "GET" && m_method != "POST") {
         networkError();
         return;
     }
 
-    HashSet<String, CaseFoldingHash> headers;
-    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Headers"), headers)) {
+    OwnPtr<HashSet<String, CaseFoldingHash> > headers(new HashSet<String, CaseFoldingHash>);
+    if (!parseAccessControlAllowList(response.httpHeaderField("Access-Control-Allow-Headers"), headers.get())) {
         networkError();
         return;
     }
 
     HTTPHeaderMap::const_iterator end = m_requestHeaders.end();
     for (HTTPHeaderMap::const_iterator it = m_requestHeaders.begin(); it != end; ++it) {
-        if (!headers.contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first)) {
+        if (!headers->contains(it->first) && !isOnAccessControlSimpleRequestHeaderWhitelist(it->first)) {
             networkError();
             return;
         }
     }
+
+    unsigned expiryDelta = 0;
+    if (!parseAccessControlMaxAge(response.httpHeaderField("Access-Control-Max-Age"), expiryDelta))
+        expiryDelta = 5;
+
+    appendPreflightResultCacheEntry(accessControlOrigin(), m_url, expiryDelta, m_includeCredentials, methods.release(), headers.release());
 }
 
 void XMLHttpRequest::receivedCancellation(SubresourceLoader*, const AuthenticationChallenge& challenge)

@@ -1,3 +1,33 @@
+2008-08-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Implement the Access-control for Cross Site requests
+        preflight cache.
+
+        Tests: http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html
+               http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html
+               http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
+               http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/KURL.h:
+        (WTF::):
+        * platform/KURLHash.h: Added.
+        (WebCore::KURLHash::hash):
+        (WebCore::KURLHash::equal):
+        (WTF::):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::PreflightResultCacheItem::PreflightResultCacheItem):
+        (WebCore::preflightResultCache):
+        (WebCore::appendPreflightResultCacheEntry):
+        (WebCore::canSkipPrelight):
+        (WebCore::XMLHttpRequest::makeCrossSiteAccessRequestWithPreflight):
+        (WebCore::parseAccessControlAllowList):
+        (WebCore::parseAccessControlMaxAge):
+        (WebCore::XMLHttpRequest::didReceiveResponsePreflight):
+
 2008-08-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

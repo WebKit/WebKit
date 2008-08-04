@@ -4344,6 +4344,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\KURLHash.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\Language.h"
 				>
 			</File>

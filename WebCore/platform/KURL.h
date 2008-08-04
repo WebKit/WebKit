@@ -49,6 +49,7 @@ QT_END_NAMESPACE
 namespace WebCore {
 
 class TextEncoding;
+struct KURLHash;
 
 // FIXME: Our terminology here is a bit inconsistent. We refer to the part
 // after the "#" as the "fragment" in some places and the "ref" in others.
@@ -267,6 +268,16 @@ inline bool operator!=(const String& a, const KURL& b)
     return a != b.string();
 }
 
-}
+} // namespace WebCore
+
+namespace WTF {
+
+    // KURLHash is the default hash for String
+    template<typename T> struct DefaultHash;
+    template<> struct DefaultHash<WebCore::KURL> {
+        typedef WebCore::KURLHash Hash;
+    };
+
+} // namespace WTF
 
 #endif // KURL_h

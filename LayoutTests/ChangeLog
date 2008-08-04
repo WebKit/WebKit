@@ -1,3 +1,25 @@
+2008-08-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Tests for the Access-control for Cross Site requests
+        preflight cache.
+
+        * ChangeLog:
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-header.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-invalidation-by-method.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout-expected.txt: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html: Added.
+        * http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache.html: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-invalidation.php: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache-timeout.php: Added.
+        * http/tests/xmlhttprequest/resources/access-control-basic-preflight-cache.php: Added.
+        * http/tests/xmlhttprequest/resources/portabilityLayer.php: Added.
+        * http/tests/xmlhttprequest/resources/reset-temp-file.php: Added.
+
 2008-08-03  David D. Kilzer  <ddkilzer@apple.com>
 
         Future-proof fast/cookies/local-file-can-set-cookies.html
