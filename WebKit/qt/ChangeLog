@@ -1,3 +1,14 @@
+2008-08-04  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20198
+
+        Allow Copy key sequence to work in non-editable areas.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+
 2008-07-31  Erik Bunce  <elbunce@thehive.com>
 
         Reviewed by Simon.

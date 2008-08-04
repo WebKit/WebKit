@@ -554,6 +554,11 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
             q->triggerAction(action);
             handled = true;
         }
+    } else {
+        if (ev == QKeySequence::Copy) {
+            q->triggerAction(QWebPage::Copy);
+            handled = true;
+        }
     }
     if (!handled)
         handled = frame->eventHandler()->keyEvent(ev);
