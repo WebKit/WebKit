@@ -1,3 +1,7 @@
+2008-08-05  Dean Jackson  <dino@apple.com>
+
+        Fix the ChangeLog that was corrupted by r34545.
+
 2008-08-04  Timothy Hatcher  <timothy@apple.com>
 
         Makes the selection surround just the name or value that was
@@ -162,6 +166,22 @@
         * rendering/RenderWidget.cpp:
         * rendering/style/RenderStyle.cpp:
         * rendering/style/RenderStyle.h:
+
+2008-08-04  Mike Belshe  <mike@belshe.com>
+
+        Reviewed by Antti.
+        
+        Currently we create two copies of script in the HTMLTokenizer.
+        One copy gets passed into the javascript engine, the other gets
+        stored in the DOM.  Modify the HTMLParser so that it does not
+        chunk the string into it's normal 64K chunks for script code,
+        and modify the HTMLTokenizer to pass that same string into the
+        JS engine.  On some sites (e.g. GMail), which have hundreds of
+        KB of inline JS, this saves more than a MB of RAM to run the page.
+        (Strings use 16bit strings, so 600KB of JS code == 1.2MB of memory)
+
+        * html\HTMLParser.cpp
+        * html\HTMLTokenizer.cpp
 
 2008-08-04  Sam Weinig  <sam@webkit.org>
 
