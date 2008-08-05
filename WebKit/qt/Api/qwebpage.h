@@ -142,6 +142,9 @@ public:
 
         InspectElement,
 
+        InsertParagraphSeparator,
+        InsertLineSeparator,
+
         WebActionCount
     };
 

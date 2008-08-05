@@ -154,6 +154,9 @@ static const char* editorCommandWebActions[] =
     
     0, // InspectElement,
 
+    "InsertNewline", // InsertParagraphSeparator
+    "InsertLineBreak", // InsertLineSeparator
+
     0 // WebActionCount
 };
 
@@ -592,7 +595,7 @@ static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
     static struct {
         QKeySequence::StandardKey standardKey;
         QWebPage::WebAction action;
-    } editorActions[32] = {
+    } editorActions[] = {
         { QKeySequence::Cut, QWebPage::Cut },
         { QKeySequence::Copy, QWebPage::Copy },
         { QKeySequence::Paste, QWebPage::Paste },
@@ -624,6 +627,10 @@ static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
         { QKeySequence::SelectEndOfDocument, QWebPage::SelectEndOfDocument },
         { QKeySequence::DeleteStartOfWord, QWebPage::DeleteStartOfWord },
         { QKeySequence::DeleteEndOfWord, QWebPage::DeleteEndOfWord },
+#if QT_VERSION >= 0x040500
+        { QKeySequence::InsertParagraphSeparator, QWebPage::InsertParagraphSeparator },
+        { QKeySequence::InsertLineSeparator, QWebPage::InsertLineSeparator },
+#endif
         { QKeySequence::UnknownKey, QWebPage::NoWebAction }
     };
 
@@ -1042,6 +1049,8 @@ QVariant QWebPage::inputMethodQuery(Qt::InputMethodQuery property) const
     \value ToggleItalic Toggle the formatting between italic and normal style.
     \value ToggleUnderline Toggle underlining.
     \value InspectElement Show the Web Inspector with the currently highlighted HTML element.
+    \value InsertParagraphSeparator Insert a new paragraph.
+    \value InsertLineSeparator Insert a new line.
     \omitvalue WebActionCount
 
 */
