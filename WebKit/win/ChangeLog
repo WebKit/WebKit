@@ -1,3 +1,14 @@
+2008-08-05  Ada Chan  <adachan@apple.com>
+
+        Add a getter for CFURLRequestRef in WebMutableURLRequest.
+
+        Reviewed by Anders Carlsson.
+
+        * Interfaces/IWebMutableURLRequestPrivate.idl:
+        * WebMutableURLRequest.cpp:
+        (WebMutableURLRequest::cfRequest):
+        * WebMutableURLRequest.h:
+
 2008-08-05  Steve Falkenburg  <sfalken@apple.com>
 
         Don't invalidate a WebView in the process of being closed when prefs change.

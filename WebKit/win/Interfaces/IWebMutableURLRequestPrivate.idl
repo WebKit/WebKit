@@ -31,6 +31,13 @@ import "oaidl.idl";
 import "ocidl.idl";
 #endif
 
+cpp_quote("// this is done to get midl to treat the CFURLRequestRef as pointer types")
+cpp_quote("#if 0")
+typedef void* CFURLRequestRef;
+cpp_quote("#else")
+cpp_quote("typedef const struct _CFURLRequest* CFURLRequestRef;")
+cpp_quote("#endif")
+
 [
     object,
     oleautomation,
@@ -41,4 +48,6 @@ import "ocidl.idl";
 interface IWebMutableURLRequestPrivate : IUnknown
 {
     HRESULT setClientCertificate([in] OLE_HANDLE cert);
+
+    [local] CFURLRequestRef cfRequest();
 }

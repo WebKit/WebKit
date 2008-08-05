@@ -356,6 +356,11 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(
     return S_OK;
 }
 
+CFURLRequestRef STDMETHODCALLTYPE WebMutableURLRequest::cfRequest()
+{
+    return m_request.cfURLRequest();
+}
+
 // IWebMutableURLRequest ----------------------------------------------------
 
 void WebMutableURLRequest::setFormData(const PassRefPtr<FormData> data)
