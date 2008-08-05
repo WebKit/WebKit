@@ -1142,7 +1142,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         element.tabIndex = 0;
 
     function blurEventListener() {
-        editingCancelled.call(element);
+        editingCommitted.call(element);
     }
 
     function cleanUpAfterEditing() {

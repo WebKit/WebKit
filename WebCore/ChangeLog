@@ -1,5 +1,18 @@
 2008-08-04  Timothy Hatcher  <timothy@apple.com>
 
+        Changes the editing behavior in the Inspector to commit changes
+        when focus is lost, instead of reverting the changes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20279
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/inspector.js:
+        (WebInspector.startEditing): Call editingCommitted in blurEventListener
+        instead of editingCancelled.
+
+2008-08-04  Timothy Hatcher  <timothy@apple.com>
+
         Adds the ability to increment/decrement numbers in editable style
         properties with the arrow and page keys.
 
