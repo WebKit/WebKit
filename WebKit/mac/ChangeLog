@@ -1,3 +1,17 @@
+2008-08-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe and Anders Carlsson.
+
+        - fix WebMemorySize() reporting a value capped at 2GB
+
+        * misc/WebKitSystemBits.m:
+        (WebMemorySize): Changed to return the max_mem field, which, unlike
+        memory_size, is not capped at 2GB.
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]): Made the cache sizes for over 2GB RAM the
+        same as for 2GB, so that behavior on machines that have more than 2GB
+        RAM is not affected by the fix to WebMemorySize().
+
 2008-08-04  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
