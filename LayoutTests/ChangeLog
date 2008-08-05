@@ -1,3 +1,13 @@
+2008-08-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Add tests for optimizations of the modulo operator in JavaScript.
+
+        * fast/js/mod-crash-expected.txt: Added.
+        * fast/js/mod-crash.html: Added.
+        * fast/js/resources/mod-crash.js: Added.
+
 2008-08-04  Bernhard Krüpl  <kruepl@dbai.tuwien.ac.at>
 
         Reviewed by Dave Hyatt.
