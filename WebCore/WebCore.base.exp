@@ -117,6 +117,7 @@ _DOMXPathException
 _WebCoreDrawTextAtPoint
 _WebCoreFindFont
 _WebCoreObjCFinalizeOnMainThread
+_WebCoreObjCScheduleDeallocateOnMainThread
 _WebCoreSetAlwaysUseATSU
 _WebCoreSetShouldUseFontSmoothing
 _WebCoreShouldUseFontSmoothing

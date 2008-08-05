@@ -26,9 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "config.h"
 #include "WebCoreObjCExtras.h"
 
 #include <objc/objc-auto.h>
+#include <objc/objc-runtime.h>
+#include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 
 void WebCoreObjCFinalizeOnMainThread(Class cls)
 {
@@ -36,3 +40,37 @@ void WebCoreObjCFinalizeOnMainThread(Class cls)
     objc_finalizeOnMainThread(cls);
 #endif
 }
+
+#ifdef BUILDING_ON_TIGER
+static inline IMP method_getImplementation(Method method) 
+{
+    return method->method_imp;
+}
+#endif
+
+typedef std::pair<Class, id> ClassAndIdPair;
+
+static void deallocCallback(void* context)
+{
+    ClassAndIdPair* pair = static_cast<ClassAndIdPair*>(context);
+    
+    Method method = class_getInstanceMethod(pair->first, @selector(dealloc));
+    
+    IMP imp = method_getImplementation(method);
+    imp(pair->second, @selector(dealloc));
+    
+    delete pair;
+}
+
+bool WebCoreObjCScheduleDeallocateOnMainThread(Class cls, id object)
+{
+    ASSERT([object isKindOfClass:cls]);
+    
+    if (pthread_main_np() != 0)
+        return false;
+    
+    ClassAndIdPair* pair = new ClassAndIdPair(cls, object);
+    callOnMainThread(deallocCallback, pair);
+    return true;
+}
+

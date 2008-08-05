@@ -30,7 +30,6 @@
 #import "WebViewInternal.h"
 
 #import "DOMRangeInternal.h"
-#import "MainThreadObjectDeallocator.h"
 #import "WebBackForwardListInternal.h"
 #import "WebBaseNetscapePluginView.h"
 #import "WebChromeClient.h"
@@ -2069,7 +2068,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)dealloc
 {
-    if (scheduleDeallocateOnMainThread([WebView class], self))
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebView class], self))
         return;
 
     // call close to ensure we tear-down completely

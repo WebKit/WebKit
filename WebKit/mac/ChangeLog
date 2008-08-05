@@ -2,6 +2,19 @@
 
         Reviewed by Darin.
 
+        Remove MainThreadObjectDeallocator.{h|mm}.
+
+        * WebView/MainThreadObjectDeallocator.h: Removed.
+        * WebView/MainThreadObjectDeallocator.mm: Removed.
+        
+        * WebView/WebView.mm:
+        (-[WebView dealloc]):
+        Call WebCoreObjCScheduleDeallocateOnMainThread instead.
+
+2008-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         Make the main thread object deallocator work with subclasses.
         
         * WebView/MainThreadObjectDeallocator.h:
