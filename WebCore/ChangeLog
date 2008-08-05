@@ -1,5 +1,12 @@
 2008-08-05  Kevin McCullough  <kmccullough@apple.com>
 
+        - Updated a manual test to be an accurate description of what it is
+        actually testing.
+
+        * manual-tests/inspector/profiler-test-stop-profiling-after-setTimeout.html:
+
+2008-08-05  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Tim.
 
         <rdar://problem/5732836> XMLHttpRequest: Inspector should show network

@@ -10,31 +10,24 @@ function startTest()
 
 function startProfiling()
 {
-    console.profile("Profiling From A Nested Location");
-
-    for (var i = 0; i < 1000000; i++)
-        var b = i + 2;
-    
+    console.profile("Stop profiling from a timeout");    
     setTimeout("endProfile()", 20);
 }
 
 function endProfile()
 {
-    for (var i = 0; i < 1000000; i++)
-        var b = i + 2;
-
-    console.profileEnd("Profiling From A Nested Location");
+    console.profileEnd("Stop profiling from a timeout");
 }
 
 </script>
 </head>
 
 <body onload="startTest()">
-This page's JavaScript starts profiling from within a nested location.
+This page's JavaScript stops profiling from a timeout.
 <br>
 <br>
 To use this test, load it in the browser then load the WebInspector and look at
-the profile.  In the profile there should be a call to functionWichStartsAndStopsTheProfiler().
+the profile.  In the profile endProfile() should not be a child of (program).
 <div id="output"></div>
 </body>
 </html>
