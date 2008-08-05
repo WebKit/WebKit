@@ -1158,12 +1158,12 @@ body.inactive .placard.selected {
     padding-left: 2px;
     margin-bottom: -1px;
     padding-bottom: 1px;
-    text-decoration: none !important;
     opacity: 1.0 !important;
 }
 
 .editing, .editing * {
     color: black !important;
+    text-decoration: none !important;
 }
 
 .section .properties li.editing {

@@ -1,3 +1,37 @@
+2008-08-05  Timothy Hatcher  <timothy@apple.com>
+
+        Makes DOM attribute editing start on double-click to match the styles
+        pane. Links in attributes are now triggered with a single click again.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20281
+
+        Reviewed by Adam Roben.
+
+        * English.lproj/localizedStrings.js: Removed some strings.
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.DOMNodeTreeElement.prototype.onattach): Call
+        _preventFollowingLinksOnDoubleClick.
+        (WebInspector.DOMNodeTreeElement.prototype._preventFollowingLinksOnDoubleClick):
+        Renamed from _makeURLsActivateOnModifiedClick. Simply sets the
+        preventFollowOnDoubleClick property on all links.
+        (WebInspector.DOMNodeTreeElement.prototype.onselect): Removed
+        _selectedByCurrentMouseDown.
+        (WebInspector.DOMNodeTreeElement.prototype.onmousedown): Moved
+        editing code to ondblclick.
+        (WebInspector.DOMNodeTreeElement.prototype.ondblclick): Calls
+        _startEditing. Removed URL check.
+        (WebInspector.DOMNodeTreeElement.prototype._updateTitle): Calls
+        _preventFollowingLinksOnDoubleClick.
+        * page/inspector/inspector.css:
+        (.editing): Removed the text-decoration property.
+        (.editing, .editing *): Added the text-decoration property here
+        so it removes underlines on child elements.
+        * page/inspector/inspector.js:
+        (WebInspector.documentClick): Removed the followOnAltClick code.
+        Added support for preventFollowOnDoubleClick, which sets a timeout
+        on the first click where future clicks will cancel it (double click).
+        If the timeout isn't canceled, the link is followed.
+
 2008-08-05  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Sam Weinig.

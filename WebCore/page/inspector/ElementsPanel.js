@@ -1135,36 +1135,17 @@ WebInspector.DOMNodeTreeElement.prototype = {
     {
         this.listItemElement.addEventListener("mousedown", this.onmousedown.bind(this), false);
 
-        this._makeURLsActivateOnModifiedClick();
+        this._preventFollowingLinksOnDoubleClick();
     },
 
-    _makeURLsActivateOnModifiedClick: function()
+    _preventFollowingLinksOnDoubleClick: function()
     {
         var links = this.listItemElement.querySelectorAll("li > .webkit-html-tag > .webkit-html-attribute > .webkit-html-external-link, li > .webkit-html-tag > .webkit-html-attribute > .webkit-html-resource-link");
         if (!links)
             return;
 
-        var isMac = InspectorController.platform().indexOf("mac") == 0;
-
-        for (var i = 0; i < links.length; ++i) {
-            var link = links[i];
-            var isExternal = link.hasStyleClass("webkit-html-external-link");
-            var href = link.getAttribute("href");
-            var title;
-            if (isMac) {
-                if (isExternal)
-                    title = WebInspector.UIString("Option-click to visit %s.", href);
-                else
-                    title = WebInspector.UIString("Option-click to show %s.", href);
-            } else {
-                if (isExternal)
-                    title = WebInspector.UIString("Alt-click to visit %s.", href);
-                else
-                    title = WebInspector.UIString("Alt-click to show %s.", href);
-            }
-            link.setAttribute("title", title);
-            link.followOnAltClick = true;
-        }
+        for (var i = 0; i < links.length; ++i)
+            links[i].preventFollowOnDoubleClick = true;
     },
 
     onpopulate: function()
@@ -1282,7 +1263,6 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
     onselect: function()
     {
-        this._selectedByCurrentMouseDown = true;
         this.treeOutline.panel.focusedDOMNode = this.representedObject;
         this.updateSelection();
     },
@@ -1292,13 +1272,6 @@ WebInspector.DOMNodeTreeElement.prototype = {
         if (this._editing)
             return;
 
-        if (this._selectedByCurrentMouseDown)
-            delete this._selectedByCurrentMouseDown;
-        else if (this._startEditing(event)) {
-            event.preventDefault();
-            return;
-        }
-
         // Prevent selecting the nearest word on double click.
         if (event.detail >= 2)
             event.preventDefault();
@@ -1307,6 +1280,9 @@ WebInspector.DOMNodeTreeElement.prototype = {
     ondblclick: function(treeElement, event)
     {
         if (this._editing)
+            return;
+
+        if (this._startEditing(event))
             return;
 
         var panel = this.treeOutline.panel;
@@ -1343,10 +1319,6 @@ WebInspector.DOMNodeTreeElement.prototype = {
 
         var attributeNameElement = attribute.getElementsByClassName("webkit-html-attribute-name")[0];
         if (!attributeNameElement)
-            return false;
-
-        var isURL = event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link");
-        if (isURL && event.altKey)
             return false;
 
         var attributeName = attributeNameElement.innerText;
@@ -1431,7 +1403,6 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this._updateTitle();
     },
 
-
     _editingCancelled: function(element, context)
     {
         delete this._editing;
@@ -1444,7 +1415,7 @@ WebInspector.DOMNodeTreeElement.prototype = {
         this.title = nodeTitleInfo.call(this.representedObject, this.hasChildren, WebInspector.linkifyURL).title;
         delete this.selectionElement;
         this.updateSelection();
-        this._makeURLsActivateOnModifiedClick();
+        this._preventFollowingLinksOnDoubleClick();
     },
 }
 
