@@ -1062,10 +1062,10 @@ void XMLHttpRequest::didFinishLoading(SubresourceLoader* loader)
         m_responseText += m_decoder->flush();
 
     if (Frame* frame = m_doc->frame()) {
-        if (Page* page = frame->page())
+        if (Page* page = frame->page()) {
             page->inspectorController()->resourceRetrievedByXMLHttpRequest(m_loader ? m_loader->identifier() : m_identifier, m_responseText);
-
-        frame->domWindow()->console()->addMessage(JSMessageSource, LogMessageLevel, "XHR did finish loading \"" + m_url + "\".", 0, m_doc->url());
+            page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, "XHR did finish loading \"" + m_url + "\".", 0, m_doc->url());
+        }
     }
 
     bool hadLoader = m_loader;

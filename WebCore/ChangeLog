@@ -1,3 +1,13 @@
+2008-08-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - LayoutTests fix.  Log only to the Inspector because other listeners may not want
+        XHR notifications, including DRT and the numerous tests that don't expect them.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2008-08-05  Timothy Hatcher  <timothy@apple.com>
 
         Makes DOM attribute editing start on double-click to match the styles
