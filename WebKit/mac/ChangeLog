@@ -1,3 +1,13 @@
+2008-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Declare empty protocols when using versions of AppKit that do not use formal protocols for delegates and data sources.
+        Part one of fix for <rdar://problem/5853147>.
+
+        * Misc/EmptyProtocolDefinitions.h:
+        * WebKitPrefix.h:
+
 2008-08-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel

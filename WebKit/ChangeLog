@@ -1,3 +1,12 @@
+2008-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Declare empty protocols when using versions of AppKit that do not use formal protocols for delegates and data sources.
+        Part one of fix for <rdar://problem/5853147>.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-07-31  David D. Kilzer  <ddkilzer@webkit.org>
 
         Fix layout test results for webarchive/test-xml-stylesheet.xml

@@ -66,6 +66,8 @@
 #endif
 #endif
 
+#include "EmptyProtocolDefinitions.h"
+
 #include <wtf/Platform.h>
 
 #ifdef __cplusplus
