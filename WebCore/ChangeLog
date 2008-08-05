@@ -1,3 +1,9 @@
+2008-08-05  Alp Toker  <alp@nuanti.com>
+
+        Remove leftover mark pragma from r35568 to fix compiler warning spew.
+
+        * rendering/style/RenderStyle.h:
+
 2008-08-05  Kevin McCullough  <kmccullough@apple.com>
 
         - Added a test that checks for several edge cases (see description in
