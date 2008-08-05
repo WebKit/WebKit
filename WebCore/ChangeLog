@@ -1,3 +1,13 @@
+2008-08-04  Bernhard Krüpl  <kruepl@dbai.tuwien.ac.at>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19094
+        Corrected offsetTop for table cells by subtracting borderTopExtra
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::offsetTop):
+
 2008-08-04  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dave Hyatt.

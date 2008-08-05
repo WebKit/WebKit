@@ -530,7 +530,7 @@ int RenderObject::offsetTop() const
     RenderObject* offsetPar = offsetParent();
     if (!offsetPar)
         return 0;
-    int y = yPos() - offsetPar->borderTop();
+    int y = yPos() - borderTopExtra() - offsetPar->borderTop();
     if (!isPositioned()) {
         if (isRelPositioned())
             y += static_cast<const RenderBox*>(this)->relativePositionOffsetY();

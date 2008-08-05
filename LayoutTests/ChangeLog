@@ -1,3 +1,13 @@
+2008-08-04  Bernhard Krüpl  <kruepl@dbai.tuwien.ac.at>
+
+        Reviewed by Dave Hyatt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19094
+        Tests for offsetTop of table cells updated so that they don't include borderExtraTop
+
+        * fast/dom/Element/offsetTop-table-cell-expected.txt:
+        * fast/dom/Element/offsetTop-table-cell.html:
+
 2008-08-04  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by Dan Bernstein.
