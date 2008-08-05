@@ -1,5 +1,22 @@
 2008-08-04  Timothy Hatcher  <timothy@apple.com>
 
+        Factors out the TextPrompt.scanBackwards function into a generic
+        helper function on the Node prototype, named rangeOfWord.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.completions): Use rangeOfWord.
+        * page/inspector/TextPrompt.js:
+        (WebInspector.TextPrompt.prototype.complete): Ditto.
+        (WebInspector.TextPrompt.prototype.scanBackwards): Removed.
+        * page/inspector/utilities.js:
+        (Node.prototype.rangeOfWord): Added. Copied from TextPrompt.scanBackwards,
+        and added a direction argument allowing scanning forward, backward or
+        both directions from the offset.
+
+2008-08-04  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where the property toggle button would not be hidden
         during editing.
 

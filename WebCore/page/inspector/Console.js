@@ -170,9 +170,10 @@ WebInspector.Console.prototype = {
 
     completions: function(wordRange, bestMatchOnly)
     {
-        // Pass less characters to scanBackwards so the range will be a more complete expression.
-        var expression = this.prompt.scanBackwards(" =:{;", wordRange.startContainer, wordRange.startOffset);
-        var expressionString = expression.toString();
+        // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
+        const expressionStopCharacters = " =:{;";
+        var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, expressionStopCharacters, this.promptElement, "backward");
+        var expressionString = expressionRange.toString();
         var lastIndex = expressionString.length - 1;
 
         var dotNotation = (expressionString[lastIndex] === ".");

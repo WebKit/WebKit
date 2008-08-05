@@ -151,8 +151,7 @@ WebInspector.TextPrompt.prototype = {
         if (auto && !this.isCaretAtEndOfPrompt())
             return;
 
-        var wordPrefixRange = this.scanBackwards(this.completionStopCharacters, selectionRange.startContainer, selectionRange.startOffset, this.element);
-
+        var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this.completionStopCharacters, this.element, "backward");
         var completions = this.completions(wordPrefixRange, auto);
 
         if (!completions || !completions.length)
@@ -217,47 +216,6 @@ WebInspector.TextPrompt.prototype = {
 
         selection.removeAllRanges();
         selection.addRange(finalSelectionRange);
-    },
-
-    scanBackwards: function(stopCharacters, endNode, endOffset, stayWithinElement)
-    {
-        var startNode;
-        var startOffset = 0;
-        var node = endNode;
-
-        if (!stayWithinElement)
-            stayWithinElement = this.element;
-
-        while (node) {
-            if (node === stayWithinElement) {
-                if (!startNode)
-                    startNode = stayWithinElement;
-                break;
-            }
-
-            if (node.nodeType === Node.TEXT_NODE) {
-                var start = (node === endNode ? endOffset : node.nodeValue.length);
-                for (var i = (start - 1); i >= 0; --i) {
-                    var character = node.nodeValue[i];
-                    if (stopCharacters.indexOf(character) !== -1) {
-                        startNode = node;
-                        startOffset = i + 1;
-                        break;
-                    }
-                }
-            }
-
-            if (startNode)
-                break;
-
-            node = node.traversePreviousNode();
-        }
-
-        var result = document.createRange();
-        result.setStart(startNode, startOffset);
-        result.setEnd(endNode, endOffset);
-
-        return result;
     },
 
     isCaretInsidePrompt: function()

@@ -107,6 +107,93 @@ Function.prototype.bind = function(thisObject)
     return function() { return func.apply(thisObject, args.concat(Array.prototype.slice.call(arguments, 0))) };
 }
 
+Node.prototype.rangeOfWord = function(offset, stopCharacters, stayWithinNode, direction)
+{
+    var startNode;
+    var startOffset = 0;
+    var endNode;
+    var endOffset = 0;
+
+    if (!stayWithinNode)
+        stayWithinNode = this;
+
+    if (!direction || direction === "backward" || direction === "both") {
+        var node = this;
+        while (node) {
+            if (node === stayWithinNode) {
+                if (!startNode)
+                    startNode = stayWithinNode;
+                break;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                var start = (node === this ? (offset - 1) : (node.nodeValue.length - 1));
+                for (var i = start; i >= 0; --i) {
+                    if (stopCharacters.indexOf(node.nodeValue[i]) !== -1) {
+                        startNode = node;
+                        startOffset = i + 1;
+                        break;
+                    }
+                }
+            }
+
+            if (startNode)
+                break;
+
+            node = node.traversePreviousNode(false, stayWithinNode);
+        }
+
+        if (!startNode) {
+            startNode = stayWithinNode;
+            startOffset = 0;
+        }
+    } else {
+        startNode = this;
+        startOffset = offset;
+    }
+
+    if (!direction || direction === "forward" || direction === "both") {
+        node = this;
+        while (node) {
+            if (node === stayWithinNode) {
+                if (!endNode)
+                    endNode = stayWithinNode;
+                break;
+            }
+
+            if (node.nodeType === Node.TEXT_NODE) {
+                var start = (node === this ? offset : 0);
+                for (var i = start; i < node.nodeValue.length; ++i) {
+                    if (stopCharacters.indexOf(node.nodeValue[i]) !== -1) {
+                        endNode = node;
+                        endOffset = i;
+                        break;
+                    }
+                }
+            }
+
+            if (endNode)
+                break;
+
+            node = node.traverseNextNode(false, stayWithinNode);
+        }
+
+        if (!endNode) {
+            endNode = stayWithinNode;
+            endOffset = stayWithinNode.nodeType === Node.TEXT_NODE ? stayWithinNode.nodeValue.length : stayWithinNode.childNodes.length;
+        }
+    } else {
+        endNode = this;
+        endOffset = offset;
+    }
+
+    var result = this.ownerDocument.createRange();
+    result.setStart(startNode, startOffset);
+    result.setEnd(endNode, endOffset);
+
+    return result;
+}
+
 Element.prototype.removeStyleClass = function(className) 
 {
     // Test for the simple case before using a RegExp.
@@ -624,10 +711,12 @@ function traverseNextNode(skipWhitespace, stayWithin)
     return skipWhitespace ? nextSiblingSkippingWhitespace.call(node) : node.nextSibling;
 }
 
-function traversePreviousNode(skipWhitespace)
+function traversePreviousNode(skipWhitespace, stayWithin)
 {
     if (!this)
         return;
+    if (stayWithin && objectsAreSame(this, stayWithin))
+        return null;
     var node = skipWhitespace ? previousSiblingSkippingWhitespace.call(this) : this.previousSibling;
     while (node && (skipWhitespace ? lastChildSkippingWhitespace.call(node) : node.lastChild) )
         node = skipWhitespace ? lastChildSkippingWhitespace.call(node) : node.lastChild;
