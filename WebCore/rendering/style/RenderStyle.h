@@ -72,6 +72,7 @@ class CSSValueList;
 class CachedImage;
 class CachedResource;
 class CursorList;
+class KeyframeList;
 class Pair;
 class RenderArena;
 class ShadowValue;
@@ -1257,19 +1258,35 @@ private:
     double m_y2;
 };
 
+enum EAnimPlayState {
+    AnimPlayStatePlaying = 0x0,
+    AnimPlayStatePaused = 0x1
+};
+
 class Animation : public RefCounted<Animation> {
 public:
 
     static PassRefPtr<Animation> create() { return adoptRef(new Animation); };
     
     bool isDelaySet() const { return m_delaySet; }
+    bool isDirectionSet() const { return m_directionSet; }
     bool isDurationSet() const { return m_durationSet; }
-    bool isTimingFunctionSet() const { return m_timingFunctionSet; }
+    bool isIterationCountSet() const { return m_iterationCountSet; }
+    bool isNameSet() const { return m_nameSet; }
+    bool isPlayStateSet() const { return m_playStateSet; }
     bool isPropertySet() const { return m_propertySet; }
+    bool isTimingFunctionSet() const { return m_timingFunctionSet; }
+
+    // Flags this to be the special "none" animation (animation-name: none)
+    bool isNoneAnimation() const { return m_isNone; }
+    // We can make placeholder Animation objects to keep the comma-separated lists
+    // of properties in sync. isValidAnimation means this is not a placeholder.
+    bool isValidAnimation() const { return !m_isNone && !m_name.isEmpty(); }
 
     bool isEmpty() const
     {
-        return (!m_durationSet && !m_delaySet && !m_timingFunctionSet && !m_propertySet);
+        return (!m_directionSet && !m_durationSet && !m_nameSet && !m_playStateSet && 
+               !m_iterationCountSet && !m_delaySet && !m_timingFunctionSet && !m_propertySet);
     }
 
     bool isEmptyOrZeroDuration() const
@@ -1278,25 +1295,42 @@ public:
     }
 
     void clearDelay() { m_delaySet = false; }
+    void clearDirection() { m_directionSet = false; }
     void clearDuration() { m_durationSet = false; }
+    void clearIterationCount() { m_iterationCountSet = false; }
+    void clearName() { m_nameSet = false; }
+    void clearPlayState() { m_playStateSet = AnimPlayStatePlaying; }
+    void clearProperty() { m_propertySet = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; }
 
-    void clearProperty() { m_propertySet = false; }
-
     double delay() const { return m_delay; }
+    bool direction() const { return m_direction; }
     double duration() const { return m_duration; }
-    const TimingFunction& timingFunction() const { return m_timingFunction; }
+    int iterationCount() const { return m_iterationCount; }
+    const String& name() const { return m_name; }
+    unsigned playState() const { return m_playState; }
     int property() const { return m_property; }
+    const TimingFunction& timingFunction() const { return m_timingFunction; }
+
+    const RefPtr<KeyframeList>& keyframeList() const { return m_keyframeList; }
 
     void setDelay(double c) { m_delay = c; m_delaySet = true; }
+    void setDirection(bool d) { m_direction = d; m_directionSet = true; }
     void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
-    void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
+    void setIterationCount(int c) { m_iterationCount = c; m_iterationCountSet = true; }
+    void setName(const String& n) { m_name = n; m_nameSet = true; }
+    void setPlayState(unsigned d) { m_playState = d; m_playStateSet = true; }
     void setProperty(int t) { m_property = t; m_propertySet = true; }
+    void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
+
+    void setIsNoneAnimation(bool n) { m_isNone = n; }
+
+    void setAnimationKeyframe(const RefPtr<KeyframeList> keyframe)  { m_keyframeList = keyframe; }
 
     Animation& operator=(const Animation& o);
 
     // return true if all members of this class match (excluding m_next)
-    bool animationsMatch(const Animation* t) const;
+    bool animationsMatch(const Animation* t, bool matchPlayStates=true) const;
 
     // return true every Animation in the chain (defined by m_next) match 
     bool operator==(const Animation& o) const { return animationsMatch(&o); }
@@ -1306,15 +1340,28 @@ private:
     Animation();
     Animation(const Animation& o);
     
-    double m_duration;
-    TimingFunction m_timingFunction;
     double m_delay;
+    bool m_direction;
+    double m_duration;
+    int m_iterationCount;
+    String m_name;
     int m_property;
+    TimingFunction m_timingFunction;
 
-    bool m_durationSet       : 1;
-    bool m_timingFunctionSet : 1;
+    RefPtr<KeyframeList> m_keyframeList;
+
+    unsigned m_playState     : 2;
+
     bool m_delaySet          : 1;
+    bool m_directionSet      : 1;
+    bool m_durationSet       : 1;
+    bool m_iterationCountSet : 1;
+    bool m_nameSet           : 1;
+    bool m_playStateSet      : 1;
     bool m_propertySet       : 1;
+    bool m_timingFunctionSet : 1;
+    
+    bool m_isNone            : 1;
 };
 
 class AnimationList : public Vector<RefPtr<Animation> >
@@ -1376,7 +1423,9 @@ public:
  
     bool shadowDataEquivalent(const StyleRareNonInheritedData& o) const;
     bool reflectionDataEquivalent(const StyleRareNonInheritedData& o) const;
+    bool animationDataEquivalent(const StyleRareNonInheritedData&) const;
     bool transitionDataEquivalent(const StyleRareNonInheritedData&) const;
+    void updateKeyframes(const CSSStyleSelector* styleSelector);
 
     int lineClamp; // An Apple extension.
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -1403,6 +1452,7 @@ public:
     
     RefPtr<StyleReflection> m_boxReflect;
 
+    AnimationList* m_animations;
     AnimationList* m_transitions;
 
     FillLayer m_mask;
@@ -2101,9 +2151,17 @@ public:
     // End CSS3 Getters
 
     // Apple-specific property getter methods
-    AnimationList* accessTransitions();
+    const AnimationList* animations() const { return rareNonInheritedData->m_animations; }
     const AnimationList* transitions() const { return rareNonInheritedData->m_transitions; }
+
+    AnimationList* accessAnimations();
+    AnimationList* accessTransitions();
+
+    bool hasAnimations() const { return rareNonInheritedData->m_animations && rareNonInheritedData->m_animations->size() > 0; }
     bool hasTransitions() const { return rareNonInheritedData->m_transitions && rareNonInheritedData->m_transitions->size() > 0; }
+
+    // return the first found Animation (including 'all' transitions)
+    const Animation* transitionForProperty(int property);
 
     int lineClamp() const { return rareNonInheritedData->lineClamp; }
     bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
@@ -2368,6 +2426,13 @@ public:
     // End CSS3 Setters
 
     // Apple-specific property setters
+    void clearAnimations()
+    {
+        if (rareNonInheritedData.access()->m_animations) {
+            delete rareNonInheritedData.access()->m_animations;
+            rareNonInheritedData.access()->m_animations = 0;
+        }
+    }
     void clearTransitions()
     {
         if (rareNonInheritedData.access()->m_transitions) {
@@ -2376,8 +2441,12 @@ public:
         }
     }
 
+    void inheritAnimations(const AnimationList* parent) { clearAnimations(); if (parent) rareNonInheritedData.access()->m_animations = new AnimationList(*parent); }
     void inheritTransitions(const AnimationList* parent) { clearTransitions(); if (parent) rareNonInheritedData.access()->m_transitions = new AnimationList(*parent); }
+    void adjustAnimations();
     void adjustTransitions();
+    void updateKeyframes(const CSSStyleSelector* styleSelector) { if (rareNonInheritedData.get()) rareNonInheritedData.access()->updateKeyframes(styleSelector); }
+
     void setLineClamp(int c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
     void setTextSizeAdjust(bool b) { SET_VAR(rareInheritedData, textSizeAdjust, b); }
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); } 
@@ -2534,10 +2603,14 @@ public:
     static Length initialTransformOriginY() { return Length(50.0, Percent); }
     
     // Keep these at the end.
-    static float initialDelay() { return 0; }
-    static double initialDuration() { return 0; }
-    static TimingFunction initialTimingFunction() { return TimingFunction(); }
-    static int initialProperty() { return cAnimateAll; }
+    static float initialAnimationDelay() { return 0; }
+    static bool initialAnimationDirection() { return false; }
+    static double initialAnimationDuration() { return 0; }
+    static int initialAnimationIterationCount() { return 1; }
+    static String initialAnimationName() { return String(); }
+    static unsigned initialAnimationPlayState() { return AnimPlayStatePlaying; }
+    static int initialAnimationProperty() { return cAnimateAll; }
+    static TimingFunction initialAnimationTimingFunction() { return TimingFunction(); }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
@@ -2545,6 +2618,50 @@ public:
     static const Vector<StyleDashboardRegion>& initialDashboardRegions();
     static const Vector<StyleDashboardRegion>& noneDashboardRegions();
 #endif
+};
+
+#pragma mark -
+
+class KeyframeValue {
+public:
+    KeyframeValue() : key(-1) { }
+    float key;
+    RenderStyle style;
+};
+
+class KeyframeList : public RefCounted<KeyframeList> {
+public:
+    static PassRefPtr<KeyframeList> create(const AtomicString& inAnimName) { return adoptRef(new KeyframeList(inAnimName)); }
+
+    bool operator==(const KeyframeList& o) const;
+    bool operator!=(const KeyframeList& o) const { return !(*this == o); }
+    
+    const AtomicString& animationName() const { return m_animationName; }
+    
+    void insert(float inKey, const RenderStyle& inStyle);
+    
+    void addProperty(int prop) { m_properties.add(prop); }
+    bool containsProperty(int prop) const { return m_properties.contains(prop); }
+    HashSet<int>::const_iterator beginProperties() { return m_properties.begin(); }
+    HashSet<int>::const_iterator endProperties() { return m_properties.end(); }
+    
+    void clear() { m_keyframes.clear(); m_properties.clear(); }
+    bool isEmpty() const { return m_keyframes.isEmpty(); }
+    Vector<KeyframeValue>::const_iterator beginKeyframes() const { return m_keyframes.begin(); }
+    Vector<KeyframeValue>::const_iterator endKeyframes() const { return m_keyframes.end(); }
+
+private:
+    KeyframeList(const AtomicString& inAnimName)
+    : m_animationName(inAnimName)
+    {
+        insert(0, RenderStyle());
+        insert(1, RenderStyle());
+    }
+        
+protected:
+    AtomicString m_animationName;
+    Vector<KeyframeValue> m_keyframes;
+    HashSet<int> m_properties;       // the properties being animated
 };
 
 } // namespace WebCore

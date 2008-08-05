@@ -1,3 +1,18 @@
+2008-08-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Add support for CSS Animation properties to RenderStyle
+        https://bugs.webkit.org/show_bug.cgi?id=20068
+
+        (also fix some minor whitespace issues and remove debugging code)
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSStyleSelector.cpp:
+        * page/AnimationController.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
+
 2008-08-05  Kevin McCullough  <kmccullough@apple.com>
 
         - Updated a manual test to be an accurate description of what it is

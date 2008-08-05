@@ -111,7 +111,7 @@ public:
     {
     }
     
-    void startTimer(Element* element, const AtomicString& name, int property, bool reset, 
+    void startTimer(Element* element, const AtomicString& name, int property, bool reset,
                     const AtomicString& eventType, double elapsedTime)
     {
         m_element = element;
@@ -191,7 +191,7 @@ public:
     
     void suspendAnimations();
     void resumeAnimations();
-    bool suspended() const      { return m_suspended; }
+    bool suspended() const { return m_suspended; }
     
     void overrideImplicitAnimations(int property);
     void resumeOverriddenImplicitAnimations(int property);
@@ -215,7 +215,7 @@ private:
 
 class AnimationBase : public Noncopyable {
 public:
-    AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);    
+    AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim);
     virtual ~AnimationBase()
     {
         if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
@@ -308,7 +308,7 @@ public:
     virtual bool shouldFireEvents() const { return false; }
     
     void animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime);
-    void animationEventDispatcherFired(Element* element, const AtomicString& name, int property, bool reset, 
+    void animationEventDispatcherFired(Element* element, const AtomicString& name, int property, bool reset,
                                        const AtomicString& eventType, double elapsedTime);
     
     bool animationsMatch(const Animation* anim) const { return m_animation->animationsMatch(anim); }
@@ -698,7 +698,7 @@ void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, d
     }
 }
 
-void AnimationBase::animationEventDispatcherFired(Element* element, const AtomicString& name, int property, 
+void AnimationBase::animationEventDispatcherFired(Element* element, const AtomicString& name, int property,
                                                   bool reset, const AtomicString& eventType, double elapsedTime)
 {
     m_waitingForEndEvent = false;
@@ -1740,17 +1740,11 @@ bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* obj, int p
 
 void AnimationController::suspendAnimations(Document* document)
 {
-#ifdef DEBUG_STATE_MACHINE
-    fprintf(stderr, "AnimationController %p suspendAnimations for document %p\n", this, document);
-#endif
     m_data->suspendAnimations(document);
 }
 
 void AnimationController::resumeAnimations(Document* document)
 {
-#ifdef DEBUG_STATE_MACHINE
-    fprintf(stderr, "AnimationController %p resumeAnimations for document %p\n", this, document);
-#endif
     m_data->resumeAnimations(document);
 }
 
