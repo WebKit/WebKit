@@ -4235,8 +4235,9 @@ static WebFrameView *containingFrameView(NSView *view)
 
     NSDictionary *element = [sender representedObject];
     ASSERT([element isKindOfClass:[NSDictionary class]]);
-    
-    NSURLRequest *request = [[[[element objectForKey:WebElementFrameKey] dataSource] request] copy];
+
+    WebDataSource *dataSource = [[element objectForKey:WebElementFrameKey] dataSource];
+    NSURLRequest *request = [[dataSource request] copy];
     ASSERT(request);
     
     [self _openNewWindowWithRequest:request];

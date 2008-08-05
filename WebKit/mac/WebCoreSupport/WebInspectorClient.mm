@@ -52,7 +52,7 @@
 
 using namespace WebCore;
 
-@interface WebInspectorWindowController : NSWindowController {
+@interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
 @private
     WebView *_inspectedWebView;
     WebView *_webView;

@@ -333,7 +333,7 @@ static CachedResourceClient* promisedDataClient()
 @end
 
 // Handles the complete: text command
-@interface WebTextCompleteController : NSObject {
+@interface WebTextCompleteController : NSObject <NSTableViewDelegate, NSTableViewDataSource> {
 @private
     WebHTMLView *_view;
     NSWindow *_popupWindow;
