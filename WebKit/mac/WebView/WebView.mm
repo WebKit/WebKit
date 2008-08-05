@@ -491,10 +491,7 @@ static BOOL grammarCheckingEnabled;
 }
 
 - (void)dealloc
-{
-    if (scheduleDeallocateOnMainThread(self))
-        return;
-    
+{    
     ASSERT(applicationIsTerminating || !page);
     ASSERT(applicationIsTerminating || !preferences);
 
@@ -2072,6 +2069,9 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
 
 - (void)dealloc
 {
+    if (scheduleDeallocateOnMainThread([WebView class], self))
+        return;
+
     // call close to ensure we tear-down completely
     // this maintains our old behavior for existing applications
     [self close];

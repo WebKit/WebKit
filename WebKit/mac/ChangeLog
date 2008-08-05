@@ -1,3 +1,21 @@
+2008-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        Make the main thread object deallocator work with subclasses.
+        
+        * WebView/MainThreadObjectDeallocator.h:
+        * WebView/MainThreadObjectDeallocator.mm:
+        (deallocCallback):
+        Call the correct dealloc method.
+                
+        (scheduleDeallocateOnMainThread):
+        Store both the class and the instance, so we know which dealloc method to call.
+        
+        * WebView/WebView.mm:
+        (-[WebViewPrivate dealloc]):
+        Schedule deallocation on the main thread.
+
 2008-08-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe and Anders Carlsson.

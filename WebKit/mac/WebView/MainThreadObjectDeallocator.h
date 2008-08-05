@@ -28,7 +28,9 @@
 
 #include <objc/objc.h>
 
-bool scheduleDeallocateOnMainThread(id object);
+// The 'Class' that should be passed in here is the class of the
+// object that implements the dealloc method that this function is called from.
+bool scheduleDeallocateOnMainThread(Class cls, id object);
 
 #endif // MainThreadDeallocator_h
 
