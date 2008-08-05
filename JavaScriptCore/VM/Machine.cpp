@@ -1432,8 +1432,18 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int dividend = (++vPC)->u.operand;
         int divisor = (++vPC)->u.operand;
-        double d = r[dividend].jsValue(exec)->toNumber(exec);
-        JSValue* result = jsNumber(exec, fmod(d, r[divisor].jsValue(exec)->toNumber(exec)));
+
+        JSValue* dividendValue = r[dividend].jsValue(exec);
+        JSValue* divisorValue = r[divisor].jsValue(exec);
+
+        if (JSImmediate::areBothImmediateNumbers(dividendValue, divisorValue)) {
+            r[dst] = JSImmediate::from(JSImmediate::getTruncatedInt32(dividendValue) % JSImmediate::getTruncatedInt32(divisorValue));
+            ++vPC;
+            NEXT_OPCODE;
+        }
+
+        double d = dividendValue->toNumber(exec);
+        JSValue* result = jsNumber(exec, fmod(d, divisorValue->toNumber(exec)));
         VM_CHECK_EXCEPTION();
         r[dst] = result;
         ++vPC;

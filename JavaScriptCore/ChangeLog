@@ -1,3 +1,14 @@
+2008-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Geoff.
+        
+        - add fast path for immediates to % operator, as we have for many other math ops
+        
+        0.6% speedup on SunSpider. 1.4x speedup on a prime testing torture test that Oliver whipped up.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-07-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.
