@@ -1,3 +1,11 @@
+2008-08-05  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        - remove redundant #imports from FrameMac.mm
+
+        * page/mac/FrameMac.mm:
+
 2008-08-04  Bernhard Krüpl  <kruepl@dbai.tuwien.ac.at>
 
         Reviewed by Dave Hyatt.
