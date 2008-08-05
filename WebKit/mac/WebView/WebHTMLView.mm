@@ -315,6 +315,11 @@ static CachedResourceClient* promisedDataClient()
 - (NSTextInputContext *)inputContext;
 @end
 
+@interface NSObject (NSTextInputContextDetails)
+- (BOOL)wantsToHandleMouseEvents;
+- (BOOL)handleMouseEvent:(NSEvent *)event;
+@end
+
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
 @end
