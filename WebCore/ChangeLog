@@ -1,3 +1,13 @@
+2008-08-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/5732836> XMLHttpRequest: Inspector should show network
+        activity/XHR in Console (17233)
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
 2008-08-05  Dean Jackson  <dino@apple.com>
 
         Fix the ChangeLog that was corrupted by r34545.
