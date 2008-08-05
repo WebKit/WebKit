@@ -1,3 +1,10 @@
+2008-08-05  Kevin McCullough  <kmccullough@apple.com>
+
+        - Added a test that checks for several edge cases (see description in
+        test.
+
+        * manual-tests/inspector/profiler-test-start-but-dont-stop-profiling.html: Added.
+
 2008-08-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dave Hyatt
