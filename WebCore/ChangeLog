@@ -1,5 +1,22 @@
 2008-08-04  Timothy Hatcher  <timothy@apple.com>
 
+        Makes the selection surround just the name or value that was
+        double clicked when editing CSS properties. This regressed when
+        the Inspector started using focus/blur events, since a focus on
+        a content editable region changes the selection.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20280
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.startEditing):
+        Change the selection after calling WebInspector.startEditing,
+        since WebInspector.startEditing will set an initial selection
+        due to a focus event.
+
+2008-08-04  Timothy Hatcher  <timothy@apple.com>
+
         Changes the editing behavior in the Inspector to commit changes
         when focus is lost, instead of reverting the changes.
 

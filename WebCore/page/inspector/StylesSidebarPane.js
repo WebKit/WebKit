@@ -687,11 +687,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (!selectElement)
             selectElement = this.listItemElement;
 
-        window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
-
         this.listItemElement.handleKeyEvent = this.editingKeyDown.bind(this);
 
         WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+        window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
     },
 
     editingKeyDown: function(event)
