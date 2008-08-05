@@ -441,8 +441,8 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
     }
 
     state = processListing(SegmentedString(scriptCode, scriptCodeSize), state);
-    String scriptCode(buffer, dest - buffer);
-    processToken();
+    RefPtr<Node> node = processToken();
+    String scriptString = node ? node->textContent() : "";
     currToken.tagName = scriptTag.localName();
     currToken.beginTag = false;
     processToken();
@@ -483,7 +483,7 @@ HTMLTokenizer::State HTMLTokenizer::scriptHandler(State state)
             else
                 prependingSrc = src;
             setSrc(SegmentedString());
-            state = scriptExecution(scriptCode, state, String(), scriptStartLineno);
+            state = scriptExecution(scriptString, state, String(), scriptStartLineno);
         }
     }
 

@@ -211,10 +211,11 @@ PassRefPtr<Node> HTMLParser::parseToken(Token* t)
         return 0;
     }
 
-    // ignore spaces, if we're not inside a paragraph or other inline code
-    if (t->tagName == textAtom && t->text) {
-        if (inBody && !skipMode() && current->localName() != styleTag && current->localName() != titleTag && 
-            current->localName() != scriptTag && !t->text->containsOnlyWhitespace()) 
+    // Ignore spaces, if we're not inside a paragraph or other inline code.
+    // Do not alter the text if it is part of a scriptTag.
+    if (t->tagName == textAtom && t->text && current->localName() != scriptTag) {
+        if (inBody && !skipMode() && current->localName() != styleTag &&
+            current->localName() != titleTag && !t->text->containsOnlyWhitespace())
             haveContent = true;
         
         RefPtr<Node> n;

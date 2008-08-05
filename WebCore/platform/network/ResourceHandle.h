@@ -178,7 +178,7 @@ private:
     bool startGio(String urlString);
 #endif
 
-void scheduleFailure(FailureType);
+    void scheduleFailure(FailureType);
 
     bool start(Frame*);
 
