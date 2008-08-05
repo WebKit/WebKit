@@ -1,3 +1,12 @@
+2008-08-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Don't invalidate a WebView in the process of being closed when prefs change.
+        
+        Reviewed by Ada Chan.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2008-08-04  Alice Liu  <alice.liu@apple.com>
 
         Reviewed by Steve Falkenburg.
