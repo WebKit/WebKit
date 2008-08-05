@@ -1,3 +1,9 @@
+2008-08-05  Dan Bernstein  <mitz@apple.com>
+
+        - try to fix the 64-bit build
+
+        * page/mac/FrameMac.mm:
+
 2008-08-05  Alp Toker  <alp@nuanti.com>
 
         Remove leftover mark pragma from r35568 to fix compiler warning spew.
