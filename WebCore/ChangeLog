@@ -1,3 +1,19 @@
+2008-08-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/6112219> Video in standalone media document flashes when navigating away
+
+        When navigating out from a page, MediaPlayer was set invisible and then immediately 
+        made visible again causing flicker in some cases.
+        
+        The document is not yet marked being in page cache when willSaveToCache() is called.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::willSaveToCache):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::updatePlayer):
+
 2008-08-05  Dan Bernstein  <mitz@apple.com>
 
         - fix typo

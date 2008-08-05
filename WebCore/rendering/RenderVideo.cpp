@@ -120,15 +120,16 @@ void RenderVideo::updatePlayer()
     MediaPlayer* mediaPlayer = player();
     if (!mediaPlayer)
         return;
-    Document* doc = document();
-    if (doc->inPageCache())
+    if (mediaElement()->inPageCache()) {
+        mediaPlayer->setVisible(false);
         return;
+    }
     int x;
     int y;
     absolutePosition(x, y);
     IntRect videoBounds = videoBox(); 
     videoBounds.move(x, y);
-    mediaPlayer->setFrameView(doc->view());
+    mediaPlayer->setFrameView(document()->view());
     mediaPlayer->setRect(videoBounds);
     mediaPlayer->setVisible(true);
 }
