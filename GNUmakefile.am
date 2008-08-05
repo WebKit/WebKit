@@ -171,6 +171,7 @@ libWebCore_la_CXXFLAGS = \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
+	$(XT_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
@@ -187,6 +188,7 @@ libWebCore_la_CFLAGS = \
 	$(GLOBALDEPS_CFLAGS) \
 	$(UNICODE_CFLAGS) \
 	$(WEBKITDEPS_CFLAGS) \
+	$(XT_CFLAGS) \
 	$(LIBCURL_CFLAGS) \
 	$(LIBSOUP_CFLAGS) \
 	$(FREETYPE_CFLAGS) \
@@ -208,6 +210,7 @@ libWebCore_la_LIBADD = \
 	$(webcore_libadd) \
 	$(GLOBALDEPS_LIBS) \
 	$(WEBKITDEPS_LIBS) \
+	$(XT_LIBS) \
 	$(LIBCURL_LIBS) \
 	$(LIBSOUP_LIBS) \
 	$(FREETYPE_LIBS) \
@@ -272,7 +275,6 @@ endif
 
 if TARGET_X11
 global_cppflags += -DXP_UNIX
-webcore_libadd += -lXt
 endif
 
 if !ENABLE_DEBUG

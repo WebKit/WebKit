@@ -1,3 +1,18 @@
+2008-08-05  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19045
+        [gtk] ./configure doesn't check for x toolkit availability
+
+        Check for the .pc file for Xt instead of hard coding -lXt in the
+        GNUmakefile.am.
+
+        Thanks to Dominik Röttsches for the initial patch.
+
+        * GNUmakefile.am:
+        * configure.ac:
+
 2008-07-30  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger.

@@ -284,6 +284,14 @@ PKG_CHECK_MODULES([WEBKITDEPS],
 AC_SUBST([WEBKITDEPS_CFLAGS])
 AC_SUBST([WEBKITDEPS_LIBS])
 
+# check for Xt if the target is X11
+if test "$with_target" = "x11"; then
+   PKG_CHECK_MODULES([XT],
+                     [xt])
+   AC_SUBST([XT_CFLAGS])
+   AC_SUBST([XT_LIBS])
+fi
+
 # check whether to build with debugging enabled
 AC_MSG_CHECKING([whether to do a debug build])
 AC_ARG_ENABLE(debug,
