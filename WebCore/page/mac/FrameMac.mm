@@ -43,7 +43,7 @@
 #import "SimpleFontData.h"
 #import "UserStyleSheetLoader.h"
 #import "WebScriptObjectPrivate.h"
-#import <Carbon/Carbon>
+#import <Carbon/Carbon.h>
 #import <JavaScriptCore/APICast.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
