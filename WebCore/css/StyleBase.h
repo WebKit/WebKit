@@ -50,6 +50,8 @@ namespace WebCore {
         virtual bool isCharsetRule() { return false; }
         virtual bool isFontFaceRule() { return false; }
         virtual bool isImportRule() { return false; }
+        virtual bool isKeyframeRule() { return false; }
+        virtual bool isKeyframesRule() { return false; }
         virtual bool isMediaRule() { return false; }
         virtual bool isVariablesRule() { return false; }
         

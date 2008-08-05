@@ -633,6 +633,8 @@ webcore_sources += \
 	WebCore/css/StyleList.cpp \
 	WebCore/css/StyleSheet.cpp \
 	WebCore/css/StyleSheetList.cpp \
+	WebCore/css/WebKitCSSKeyframeRule.cpp \
+	WebCore/css/WebKitCSSKeyframesRule.cpp \
 	WebCore/css/WebKitCSSTransformValue.cpp \
 	WebCore/dom/Attr.cpp \
 	WebCore/dom/Attribute.cpp \

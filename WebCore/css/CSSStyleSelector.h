@@ -60,6 +60,7 @@ class StyleImage;
 class StyleSheet;
 class StyleSheetList;
 class StyledElement;
+class WebKitCSSKeyframesRule;
 
 class MediaQueryResult {
 public:
@@ -130,10 +131,23 @@ public:
 
         void allVisitedStateChanged() { m_checker.allVisitedStateChanged(); }
         void visitedStateChanged(unsigned visitedHash) { m_checker.visitedStateChanged(visitedHash); }
-        
+
         void addVariables(CSSVariablesRule* variables);
         CSSValue* resolveVariableDependentValue(CSSVariableDependentValue*);
         void resolveVariablesForDeclaration(CSSMutableStyleDeclaration* decl, CSSMutableStyleDeclaration* newDecl, HashSet<String>& usedBlockVariables);
+
+        KeyframeList* findKeyframeRule(const String& name) const
+        {
+            if (name.isEmpty())
+                return 0;
+            
+            AtomicString s(name);
+            if (!m_keyframeRuleMap.contains(s.impl()))
+                return 0;
+            return m_keyframeRuleMap.find(s.impl()).get()->second.get();
+        }
+
+        void addKeyframeStyle(Document* doc, const WebKitCSSKeyframesRule* rule);
 
     private:
         enum SelectorMatch { SelectorMatches, SelectorFailsLocally, SelectorFailsCompletely };
@@ -162,6 +176,9 @@ public:
         BorderData m_borderData;
         FillLayer m_backgroundData;
         Color m_backgroundColor;
+
+        typedef HashMap<AtomicStringImpl*, RefPtr<KeyframeList> > KeyframeRuleMap;
+        KeyframeRuleMap m_keyframeRuleMap;
 
     public:
         static RenderStyle* styleNotYetAvailable() { return s_styleNotYetAvailable; }
@@ -205,10 +222,14 @@ public:
         void mapFillXPosition(FillLayer*, CSSValue*);
         void mapFillYPosition(FillLayer*, CSSValue*);
 
-        void mapDelay(Animation*, CSSValue*);
-        void mapDuration(Animation*, CSSValue*);
-        void mapTimingFunction(Animation*, CSSValue*);
-        void mapProperty(Animation*, CSSValue*);
+        void mapAnimationDelay(Animation*, CSSValue*);
+        void mapAnimationDirection(Animation*, CSSValue*);
+        void mapAnimationDuration(Animation*, CSSValue*);
+        void mapAnimationIterationCount(Animation*, CSSValue*);
+        void mapAnimationName(Animation*, CSSValue*);
+        void mapAnimationPlayState(Animation*, CSSValue*);
+        void mapAnimationProperty(Animation*, CSSValue*);
+        void mapAnimationTimingFunction(Animation*, CSSValue*);
 
         void mapNinePieceImage(CSSValue*, NinePieceImage&);
 

@@ -65,6 +65,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "@-webkit-variables"    {BEGIN(mediaquery); yyTok = WEBKIT_VARIABLES_SYM; return yyTok; }
 "@-webkit-define"       {BEGIN(forkeyword); yyTok = WEBKIT_DEFINE_SYM; return yyTok; }
 "@-webkit-variables-decls" { yyTok = WEBKIT_VARIABLES_DECLS_SYM; return yyTok; }
+"@-webkit-keyframes"    {yyTok = WEBKIT_KEYFRAMES_SYM; return yyTok; }
 
 "@"{ident}              {yyTok = ATKEYWORD; return yyTok; }
 

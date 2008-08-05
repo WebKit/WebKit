@@ -8946,6 +8946,38 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\WebKitCSSKeyframeRule.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSKeyframeRule.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSKeyframesRule.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\WebKitCSSKeyframesRule.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\WebKitCSSTransformValue.cpp"
 				>
 				<FileConfiguration

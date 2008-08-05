@@ -142,6 +142,14 @@ word-spacing
 word-wrap
 z-index
 zoom
+-webkit-animation
+-webkit-animation-delay
+-webkit-animation-direction
+-webkit-animation-duration
+-webkit-animation-iteration-count
+-webkit-animation-name
+-webkit-animation-play-state
+-webkit-animation-timing-function
 -webkit-appearance
 -webkit-background-clip
 -webkit-background-composite

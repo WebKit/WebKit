@@ -39,7 +39,9 @@ public:
         MEDIA_RULE,
         FONT_FACE_RULE,
         PAGE_RULE,
-        VARIABLES_RULE
+        VARIABLES_RULE,
+        WEBKIT_KEYFRAMES_RULE,
+        WEBKIT_KEYFRAME_RULE
     };
 
     // FIXME: Change to return CSSRuleType.

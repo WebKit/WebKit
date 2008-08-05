@@ -481,6 +481,8 @@ SOURCES += \
     css/StyleList.cpp \
     css/StyleSheet.cpp \
     css/StyleSheetList.cpp \
+    css/WebKitCSSKeyframeRule.cpp \
+    css/WebKitCSSKeyframesRule.cpp \
     css/WebKitCSSTransformValue.cpp \
     dom/Attr.cpp \
     dom/Attribute.cpp \

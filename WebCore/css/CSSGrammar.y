@@ -33,6 +33,8 @@
 #include "Document.h"
 #include "HTMLNames.h"
 #include "MediaList.h"
+#include "WebKitCSSKeyframeRule.h"
+#include "WebKitCSSKeyframesRule.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -70,6 +72,9 @@ using namespace HTMLNames;
     CSSParserValue value;
     CSSParserValueList* valueList;
     Vector<MediaQueryExp*>* mediaQueryExpList;
+    WebKitCSSKeyframeRule* keyframeRule;
+    WebKitCSSKeyframesRule* keyframesRule;
+    float val;
 }
 
 %{
@@ -120,6 +125,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token NAMESPACE_SYM
 %token WEBKIT_RULE_SYM
 %token WEBKIT_DECLS_SYM
+%token WEBKIT_KEYFRAMES_SYM
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
 %token WEBKIT_SELECTOR_SYM
@@ -172,6 +178,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <rule> import
 %type <rule> page
 %type <rule> font_face
+%type <rule> keyframes
 %type <rule> invalid_rule
 %type <rule> save_block
 %type <rule> invalid_at
@@ -204,6 +211,11 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <mediaQueryExp> media_query_exp
 %type <mediaQueryExpList> media_query_exp_list
 %type <mediaQueryExpList> maybe_and_media_query_exp_list
+
+%type <string> keyframe_name
+%type <keyframeRule> keyframe_rule
+%type <keyframesRule> keyframes_rule
+%type <val> key
 
 %type <integer> property
 
@@ -378,6 +390,7 @@ valid_rule:
   | media
   | page
   | font_face
+  | keyframes
   ;
 
 rule:
@@ -657,6 +670,47 @@ medium:
       $$ = $1;
   }
   ;
+
+keyframes:
+    WEBKIT_KEYFRAMES_SYM maybe_space keyframe_name maybe_space '{' maybe_space keyframes_rule '}' {
+        $$ = $7;
+        $7->setName($3);
+    }
+    ;
+  
+keyframe_name:
+    IDENT
+    | STRING
+    ;
+
+keyframes_rule:
+    /* empty */ { $$ = static_cast<CSSParser*>(parser)->createKeyframesRule(); }
+    | keyframes_rule keyframe_rule maybe_space {
+        $$ = $1;
+        if ($2)
+            $$->insert($2);
+    }
+    ;
+
+keyframe_rule:
+    key maybe_space '{' maybe_space declaration_list '}' {
+        $$ = static_cast<CSSParser*>(parser)->createKeyframeRule($1);
+    }
+    ;
+
+key:
+    PERCENTAGE { $$ = (float) $1; }
+    | IDENT {
+        $$ = -1;
+        CSSParserString& str = $1;
+        if (equalIgnoringCase(static_cast<const String&>(str), "from"))
+            $$ = 0;
+        else if (equalIgnoringCase(static_cast<const String&>(str), "to"))
+            $$ = 100;
+        else
+            YYERROR;
+    }
+    ;
 
 /*
 page:

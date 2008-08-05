@@ -46,6 +46,8 @@ namespace WebCore {
     class MediaQueryExp;
     class StyleBase;
     class StyleList;
+    class WebKitCSSKeyframeRule;
+    class WebKitCSSKeyframesRule;
 
     class CSSParser {
     public:
@@ -54,6 +56,7 @@ namespace WebCore {
 
         void parseSheet(CSSStyleSheet*, const String&);
         PassRefPtr<CSSRule> parseRule(CSSStyleSheet*, const String&);
+        PassRefPtr<CSSRule> parseKeyframeRule(CSSStyleSheet*, const String&);
         bool parseValue(CSSMutableStyleDeclaration*, int propId, const String&, bool important);
         static bool parseColor(RGBA32& color, const String&, bool strict = false);
         bool parseColor(CSSMutableStyleDeclaration*, const String&);
@@ -83,16 +86,21 @@ namespace WebCore {
 
         void addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 
-        void addTransitionValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
+        void addAnimationValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 
-        PassRefPtr<CSSValue> parseDelay();
-        PassRefPtr<CSSValue> parseDuration();
-        PassRefPtr<CSSValue> parseTimingFunction();
-        PassRefPtr<CSSValue> parseTransitionProperty();
+        PassRefPtr<CSSValue> parseAnimationDelay();
+        PassRefPtr<CSSValue> parseAnimationDirection();
+        PassRefPtr<CSSValue> parseAnimationDuration();
+        PassRefPtr<CSSValue> parseAnimationIterationCount();
+        PassRefPtr<CSSValue> parseAnimationName();
+        PassRefPtr<CSSValue> parseAnimationPlayState();
+        PassRefPtr<CSSValue> parseAnimationProperty();
+        PassRefPtr<CSSValue> parseAnimationTimingFunction();
 
         bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
-        bool parseTransitionProperty(int propId, RefPtr<CSSValue>&);
+        bool parseAnimationProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
+        bool parseAnimationShorthand(bool important);
         
         bool parseDashboardRegions(int propId, bool important);
 
@@ -157,6 +165,8 @@ namespace WebCore {
         MediaList* createMediaList();
         CSSRule* createCharsetRule(const CSSParserString&);
         CSSRule* createImportRule(const CSSParserString&, MediaList*);
+        WebKitCSSKeyframeRule* createKeyframeRule(float key);
+        WebKitCSSKeyframesRule* createKeyframesRule();
         CSSRule* createMediaRule(MediaList*, CSSRuleList*);
         CSSRuleList* createRuleList();
         CSSRule* createStyleRule(CSSSelector*);
@@ -182,6 +192,7 @@ namespace WebCore {
         int m_id;
         CSSStyleSheet* m_styleSheet;
         RefPtr<CSSRule> m_rule;
+        RefPtr<CSSRule> m_keyframe;
         MediaQuery* m_mediaQuery;
         CSSParserValueList* m_valueList;
         CSSProperty** m_parsedProperties;
