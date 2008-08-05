@@ -1172,7 +1172,7 @@ body.inactive .placard.selected {
 }
 
 li.editing .swatch, li.editing .enabled-button {
-    display: none;
+    display: none !important;
 }
 
 .section .properties .overloaded, .section .properties .disabled {

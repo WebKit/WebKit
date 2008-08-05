@@ -1,3 +1,15 @@
+2008-08-04  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where the property toggle button would not be hidden
+        during editing.
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/inspector.css:
+        (li.editing .swatch, li.editing .enabled-button):
+        Make the display !important, since a more specific rule for 
+        .enabledbutton overrides display.
+
 2008-08-05  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.
