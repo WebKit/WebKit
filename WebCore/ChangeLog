@@ -1,5 +1,45 @@
 2008-08-04  Timothy Hatcher  <timothy@apple.com>
 
+        Adds the ability to increment/decrement numbers in editable style
+        properties with the arrow and page keys.
+
+        Reviewed by Adam Roben.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20273
+
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.updateAll):
+        Updates all properties in the current section, or all sections
+        depending in the argument passed.
+        (WebInspector.StylePropertyTreeElement.prototype.toggleEnabled):
+        Call updateAll instead of having duplicate code.
+        (WebInspector.StylePropertyTreeElement.prototype.startEditing):
+        Assign the list element's handleKeyEvent to editingKeyDown.
+        (WebInspector.StylePropertyTreeElement.prototype.editingKeyDown):
+        Handles the Up and Down arrows keys. Finds the word based on the
+        selection and extracts the number, prefix and suffix. Increments
+        or decrements the number based on the key and modifiers. Replaces
+        the original word with the new value and selects it. Also applies
+        the style so the page reflects the changes live.
+        (WebInspector.StylePropertyTreeElement.prototype.editingEnded):
+        Delete the handleKeyEvent and originalCSSText properties.
+        (WebInspector.StylePropertyTreeElement.prototype.editingCancelled):
+        If originalCSSText exists, set the cssText to that value and call
+        updateAll. Otherwise just call updateTitle like before.
+        (WebInspector.StylePropertyTreeElement.prototype.editingCommitted):
+        Factored out the style applying code to applyStyleText.
+        (WebInspector.StylePropertyTreeElement.prototype.applyStyleText):
+        Factored out from editingCommitted. Takes an argument that specifies
+        if the interface should be updated when the style is applied.
+        * page/inspector/inspector.js:
+        (WebInspector.startEditing): Call the original key handler, if one
+        existed before interrupting key events.
+        * page/inspector/utilities.js:
+        (getStyleTextWithShorthands): Helper to return CSS text that preserves
+        shorthand values, since the cssText property only outputs longhands.
+
+2008-08-04  Timothy Hatcher  <timothy@apple.com>
+
         Factors out the TextPrompt.scanBackwards function into a generic
         helper function on the Node prototype, named rangeOfWord.
 

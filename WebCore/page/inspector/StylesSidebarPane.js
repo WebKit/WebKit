@@ -570,6 +570,16 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.tooltip = this.name + ": " + (valueNicknames[value] || value) + (priority ? " " + priority : "");
     },
 
+    updateAll: function(updateAllRules)
+    {
+        if (updateAllRules && this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane.update(null, this.treeOutline.section);
+        else if (this.treeOutline.section)
+            this.treeOutline.section.update(true);
+        else
+            this.updateTitle(); // FIXME: this will not show new properties. But we don't hit his case yet.
+    },
+
     toggleEnabled: function(event)
     {
         var disabled = !event.target.checked;
@@ -606,10 +616,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // until after the value and priority are retrieved.
         this.disabled = disabled;
 
-        if (this.treeOutline.section && this.treeOutline.section.pane)
-            this.treeOutline.section.pane.update(null, this.treeOutline.section);
-        else if (this.treeOutline.section)
-            this.treeOutline.section.update(true);
+        this.updateAll(true);
     },
 
     updateState: function()
@@ -682,7 +689,93 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
         window.getSelection().setBaseAndExtent(selectElement, 0, selectElement, 1);
 
+        this.listItemElement.handleKeyEvent = this.editingKeyDown.bind(this);
+
         WebInspector.startEditing(this.listItemElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+    },
+
+    editingKeyDown: function(event)
+    {
+        var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
+        var pageKeyPressed = (event.keyIdentifier === "PageUp" || event.keyIdentifier === "PageDown");
+        if (!arrowKeyPressed && !pageKeyPressed)
+            return;
+
+        var selection = window.getSelection();
+        if (!selection.rangeCount)
+            return;
+
+        var selectionRange = selection.getRangeAt(0);
+        if (selectionRange.commonAncestorContainer !== this.listItemElement && !selectionRange.commonAncestorContainer.isDescendant(this.listItemElement))
+            return;
+
+        const styleValueDelimeters = " \t\n\"':;,/()";
+        var wordRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, styleValueDelimeters, this.listItemElement);
+        var wordString = wordRange.toString();
+        var replacementString = wordString;
+
+        var matches = /(.*?)(-?\d+(?:\.\d+)?)(.*)/.exec(wordString);
+        if (matches && matches.length) {
+            var prefix = matches[1];
+            var number = parseFloat(matches[2]);
+            var suffix = matches[3];
+
+            // If the number is near zero or the number is one and the direction will take it near zero.
+            var numberNearZero = (number < 1 && number > -1);
+            if (number === 1 && event.keyIdentifier === "Down")
+                numberNearZero = true;
+            else if (number === -1 && event.keyIdentifier === "Up")
+                numberNearZero = true;
+
+            // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
+            // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
+            var changeAmount = 1;
+            if (event.shiftKey && pageKeyPressed)
+                changeAmount = 100;
+            else if (event.shiftKey || pageKeyPressed)
+                changeAmount = 10;
+            else if (event.altKey || numberNearZero)
+                changeAmount = 0.1;
+
+            if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
+                changeAmount *= -1;
+
+            // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
+            // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
+            number = Number((number + changeAmount).toFixed(6));
+
+            replacementString = prefix + number + suffix;
+        } else {
+            // FIXME: this should cycle through known keywords for the current property name.
+            return;
+        }
+
+        var replacementTextNode = document.createTextNode(replacementString);
+
+        wordRange.deleteContents();
+        wordRange.insertNode(replacementTextNode);
+
+        var finalSelectionRange = document.createRange();
+        finalSelectionRange.setStart(replacementTextNode, 0);
+        finalSelectionRange.setEnd(replacementTextNode, replacementString.length);
+
+        selection.removeAllRanges();
+        selection.addRange(finalSelectionRange);
+
+        event.preventDefault();
+        event.handled = true;
+
+        if (!this.originalCSSText) {
+            // Remember the rule's original CSS text, so it can be restored
+            // if the editing is canceled and before each apply.
+            this.originalCSSText = getStyleTextWithShorthands(this.style);
+        } else {
+            // Restore the original CSS text before applying user changes. This is needed to prevent
+            // new properties from sticking around if the user adds one, then removes it.
+            this.style.cssText = this.originalCSSText;
+        }
+
+        this.applyStyleText(this.listItemElement.textContent);
     },
 
     editingEnded: function(context)
@@ -690,12 +783,19 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.hasChildren = context.hasChildren;
         if (context.expanded)
             this.expand();
+        delete this.listItemElement.handleKeyEvent;
+        delete this.originalCSSText;
     },
 
     editingCancelled: function(element, context)
     {
+        if (this.originalCSSText) {
+            this.style.cssText = this.originalCSSText;
+            this.updateAll();
+        } else
+            this.updateTitle();
+
         this.editingEnded(context);
-        this.updateTitle();
     },
 
     editingCommitted: function(element, userInput, previousContent, context)
@@ -705,14 +805,19 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (userInput === previousContent)
             return; // nothing changed, so do nothing else
 
-        var userInputLength = userInput.trimWhitespace().length;
+        this.applyStyleText(userInput, true);
+    },
+
+    applyStyleText: function(styleText, updateInterface)
+    {
+        var styleTextLength = styleText.trimWhitespace().length;
 
         // Create a new element to parse the user input CSS.
         var parseElement = document.createElement("span");
-        parseElement.setAttribute("style", userInput);
+        parseElement.setAttribute("style", styleText);
 
-        var userInputStyle = parseElement.style;
-        if (userInputStyle.length || !userInputLength) {
+        var tempStyle = parseElement.style;
+        if (tempStyle.length || !styleTextLength) {
             // The input was parsable or the user deleted everything, so remove the
             // original property from the real style declaration. If this represents
             // a shorthand remove all the longhand properties.
@@ -724,51 +829,50 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 this.style.removeProperty(this.name);
         }
 
-        if (!userInputLength) {
-            // The user deleted the everything, so remove the tree element and update.
-            if (this.treeOutline.section && this.treeOutline.section.pane)
-                this.treeOutline.section.pane.update();
-            this.parent.removeChild(this);
+        if (!styleTextLength) {
+            if (updateInterface) {
+                // The user deleted the everything, so remove the tree element and update.
+                if (this.treeOutline.section && this.treeOutline.section.pane)
+                    this.treeOutline.section.pane.update();
+                this.parent.removeChild(this);
+            }
             return;
         }
 
-        if (!userInputStyle.length) {
+        if (!tempStyle.length) {
             // The user typed something, but it didn't parse. Just abort and restore
             // the original title for this property.
-            this.updateTitle();
+            if (updateInterface)
+                this.updateTitle();
             return;
         }
 
         // Iterate of the properties on the test element's style declaration and
         // add them to the real style declaration. We take care to move shorthands.
         var foundShorthands = {};
-        var uniqueProperties = getUniqueStyleProperties(userInputStyle);
+        var uniqueProperties = getUniqueStyleProperties(tempStyle);
         for (var i = 0; i < uniqueProperties.length; ++i) {
             var name = uniqueProperties[i];
-            var shorthand = userInputStyle.getPropertyShorthand(name);
+            var shorthand = tempStyle.getPropertyShorthand(name);
 
             if (shorthand && shorthand in foundShorthands)
                 continue;
 
             if (shorthand) {
-                var value = getShorthandValue(userInputStyle, shorthand);
-                var priority = getShorthandPriority(userInputStyle, shorthand);
+                var value = getShorthandValue(tempStyle, shorthand);
+                var priority = getShorthandPriority(tempStyle, shorthand);
                 foundShorthands[shorthand] = true;
             } else {
-                var value = userInputStyle.getPropertyValue(name);
-                var priority = userInputStyle.getPropertyPriority(name);
+                var value = tempStyle.getPropertyValue(name);
+                var priority = tempStyle.getPropertyPriority(name);
             }
 
             // Set the property on the real style declaration.
             this.style.setProperty((shorthand || name), value, priority);
         }
 
-        if (this.treeOutline.section && this.treeOutline.section.pane)
-            this.treeOutline.section.pane.update(null, this.treeOutline.section);
-        else if (this.treeOutline.section)
-            this.treeOutline.section.update(true);
-        else
-            this.updateTitle(); // FIXME: this will not show new properties. But we don't hit his case yet.
+        if (updateInterface)
+            this.updateAll(true);
     }
 }
 

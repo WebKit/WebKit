@@ -1133,7 +1133,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     element.__editing = true;
 
     var oldText = element.textContent;
-    var handleKeyEvent = element.handleKeyEvent;
+    var oldHandleKeyEvent = element.handleKeyEvent;
 
     element.addStyleClass("editing");
 
@@ -1153,7 +1153,7 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
         this.scrollTop = 0;
         this.scrollLeft = 0;
 
-        this.handleKeyEvent = handleKeyEvent;
+        this.handleKeyEvent = oldHandleKeyEvent;
         element.removeEventListener("blur", blurEventListener, false);
 
         if (element === WebInspector.currentFocusElement || element.isAncestor(WebInspector.currentFocusElement))
@@ -1175,6 +1175,11 @@ WebInspector.startEditing = function(element, committedCallback, cancelledCallba
     }
 
     element.handleKeyEvent = function(event) {
+        if (oldHandleKeyEvent)
+            oldHandleKeyEvent(event);
+        if (event.handled)
+            return;
+
         if (event.keyIdentifier === "Enter") {
             editingCommitted.call(element);
             event.preventDefault();

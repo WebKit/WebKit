@@ -378,6 +378,37 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
+function getStyleTextWithShorthands(style)
+{
+    var cssText = "";
+    var foundProperties = {};
+    for (var i = 0; i < style.length; ++i) {
+        var individualProperty = style[i];
+        var shorthandProperty = style.getPropertyShorthand(individualProperty);
+        var propertyName = (shorthandProperty || individualProperty);
+
+        if (propertyName in foundProperties)
+            continue;
+
+        if (shorthandProperty) {
+            var value = getShorthandValue(style, shorthandProperty);
+            var priority = getShorthandPriority(style, shorthandProperty);
+        } else {
+            var value = style.getPropertyValue(individualProperty);
+            var priority = style.getPropertyPriority(individualProperty);
+        }
+
+        foundProperties[propertyName] = true;
+
+        cssText += propertyName + ": " + value;
+        if (priority)
+            cssText += " !" + priority;
+        cssText += "; ";
+    }
+
+    return cssText;
+}
+
 function getShorthandValue(style, shorthandProperty)
 {
     var value = style.getPropertyValue(shorthandProperty);
