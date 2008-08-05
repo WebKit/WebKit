@@ -1,3 +1,13 @@
+2008-08-04  Alice Liu  <alice.liu@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Fix CFDictionary leak
+
+        * CFDictionaryPropertyBag.cpp:
+        (CFDictionaryPropertyBag::Write):
+        m_dictionary is a RetainPtr and should adopt the CF type created
+
 2008-08-02  Maxime Britto  <britto@apple.com>
 
         Reviewed by Eric Seidel.
