@@ -184,61 +184,52 @@ HANDLE_FILL_LAYER_VALUE(mask, Mask, prop, Prop, value)
 
 #define HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
 if (isInherit) { \
-    Transition* currChild = m_style->accessTransitions(); \
-    Transition* prevChild = 0; \
-    const Transition* currParent = m_parentStyle->transitions(); \
-    while (currParent && currParent->is##Prop##Set()) { \
-        if (!currChild) { \
-            /* Need to make a new layer.*/ \
-            currChild = new Transition(); \
-            prevChild->setNext(currChild); \
-        } \
-        currChild->set##Prop(currParent->prop()); \
-        prevChild = currChild; \
-        currChild = prevChild->next(); \
-        currParent = currParent->next(); \
+    AnimationList* list = m_style->accessTransitions(); \
+    const AnimationList* parentList = m_parentStyle->transitions(); \
+    size_t i = 0; \
+    for ( ; i < parentList->size() && (*parentList)[i]->is##Prop##Set(); ++i) { \
+        if (list->size() <= i) \
+            list->append(Animation::create()); \
+        (*list)[i]->set##Prop((*parentList)[i]->prop()); \
     } \
     \
-    while (currChild) { \
-        /* Reset any remaining layers to not have the property set. */ \
-        currChild->clear##Prop(); \
-        currChild = currChild->next(); \
-    } \
-} else if (isInitial) { \
-    Transition* currChild = m_style->accessTransitions(); \
-    currChild->set##Prop(RenderStyle::initialTransition##Prop()); \
-    for (currChild = currChild->next(); currChild; currChild = currChild->next()) \
-        currChild->clear##Prop(); \
+    /* Reset any remaining layers to not have the property set. */ \
+    for ( ; i < list->size(); ++i) \
+        (*list)[i]->clear##Prop(); \
+} \
+if (isInitial) { \
+    AnimationList* list = m_style->accessTransitions(); \
+    (*list)[0]->set##Prop(RenderStyle::initial##Prop()); \
+    for (size_t i = 1; i < list->size(); ++i) \
+        (*list)[0]->clear##Prop(); \
 }
 
 #define HANDLE_TRANSITION_VALUE(prop, Prop, value) { \
 HANDLE_TRANSITION_INHERIT_AND_INITIAL(prop, Prop) \
 if (isInherit || isInitial) \
     return; \
-Transition* currChild = m_style->accessTransitions(); \
-Transition* prevChild = 0; \
+AnimationList* list = m_style->accessTransitions(); \
+size_t childIndex = 0; \
 if (value->isValueList()) { \
     /* Walk each value and put it into a layer, creating new layers as needed. */ \
     CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
-        if (!currChild) { \
-            /* Need to make a new layer to hold this value */ \
-            currChild = new Transition(); \
-            prevChild->setNext(currChild); \
-        } \
-        mapTransition##Prop(currChild, valueList->itemWithoutBoundsCheck(i)); \
-        prevChild = currChild; \
-        currChild = currChild->next(); \
+        if (childIndex <= list->size()) \
+            list->append(Animation::create()); \
+        map##Prop((*list)[childIndex].get(), valueList->itemWithoutBoundsCheck(i)); \
+        ++childIndex; \
     } \
 } else { \
-    mapTransition##Prop(currChild, value); \
-    currChild = currChild->next(); \
+    if (list->isEmpty()) \
+        list->append(Animation::create()); \
+    map##Prop((*list)[childIndex].get(), value); \
+    childIndex = 1; \
 } \
-while (currChild) { \
+for ( ; childIndex < list->size(); ++childIndex) { \
     /* Reset all remaining layers to not have the property set. */ \
-    currChild->clear##Prop(); \
-    currChild = currChild->next(); \
-} }
+    (*list)[childIndex]->clear##Prop(); \
+} \
+}
 
 #define HANDLE_INHERIT_COND(propID, prop, Prop) \
 if (id == propID) { \
@@ -4758,17 +4749,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else if (isInherit)
             m_style->inheritTransitions(m_parentStyle->transitions());
         return;
+    case CSSPropertyWebkitTransitionDelay:
+        HANDLE_TRANSITION_VALUE(delay, Delay, value)
+        return;
     case CSSPropertyWebkitTransitionDuration:
         HANDLE_TRANSITION_VALUE(duration, Duration, value)
         return;
-    case CSSPropertyWebkitTransitionRepeatCount:
-        HANDLE_TRANSITION_VALUE(repeatCount, RepeatCount, value)
+    case CSSPropertyWebkitTransitionProperty:
+        HANDLE_TRANSITION_VALUE(property, Property, value)
         return;
     case CSSPropertyWebkitTransitionTimingFunction:
         HANDLE_TRANSITION_VALUE(timingFunction, TimingFunction, value)
-        return;
-    case CSSPropertyWebkitTransitionProperty:
-        HANDLE_TRANSITION_VALUE(property, Property, value)
         return;
     case CSSPropertyInvalid:
         return;
@@ -5010,10 +5001,10 @@ void CSSStyleSelector::mapFillYPosition(FillLayer* layer, CSSValue* value)
     layer->setYPosition(l);
 }
 
-void CSSStyleSelector::mapTransitionDuration(Transition* transition, CSSValue* value)
+void CSSStyleSelector::mapDuration(Animation* transition, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        transition->setDuration(RenderStyle::initialTransitionDuration());
+        transition->setDuration(RenderStyle::initialDuration());
         return;
     }
 
@@ -5022,35 +5013,36 @@ void CSSStyleSelector::mapTransitionDuration(Transition* transition, CSSValue* v
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
     if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
-        transition->setDuration(int(1000*primitiveValue->getFloatValue()));
+        transition->setDuration(primitiveValue->getFloatValue());
     else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_MS)
-        transition->setDuration(int(primitiveValue->getFloatValue()));
+        transition->setDuration(primitiveValue->getFloatValue()/1000.0f);
 }
 
-void CSSStyleSelector::mapTransitionRepeatCount(Transition* transition, CSSValue* value)
+void CSSStyleSelector::mapDelay(Animation* transition, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        transition->setRepeatCount(RenderStyle::initialTransitionRepeatCount());
+        transition->setDelay(RenderStyle::initialDelay());
         return;
     }
-
-    if (!value->isPrimitiveValue())
-        return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    if (primitiveValue->getIdent() == CSSValueInfinite)
-        transition->setRepeatCount(-1);
-    else
-        transition->setRepeatCount(int(primitiveValue->getFloatValue()));
+    if (primitiveValue->getIdent() == CSSValueNow)
+        transition->setDelay(0);
+    else {
+        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_S)
+            transition->setDelay(primitiveValue->getFloatValue());
+        else
+            transition->setDelay(primitiveValue->getFloatValue()/1000.0f);
+    }
 }
 
-void CSSStyleSelector::mapTransitionTimingFunction(Transition* transition, CSSValue* value)
+void CSSStyleSelector::mapTimingFunction(Animation* transition, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        transition->setTimingFunction(RenderStyle::initialTransitionTimingFunction());
+        transition->setTimingFunction(RenderStyle::initialTimingFunction());
         return;
     }
-
+    
     if (value->isPrimitiveValue()) {
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         switch (primitiveValue->getIdent()) {
@@ -5072,17 +5064,17 @@ void CSSStyleSelector::mapTransitionTimingFunction(Transition* transition, CSSVa
         }
         return;
     }
-
-    if (value->isTransitionTimingFunctionValue()) {
+    
+    if (value->isTimingFunctionValue()) {
         CSSTimingFunctionValue* timingFunction = static_cast<CSSTimingFunctionValue*>(value);
         transition->setTimingFunction(TimingFunction(CubicBezierTimingFunction, timingFunction->x1(), timingFunction->y1(), timingFunction->x2(), timingFunction->y2()));
     }
 }
 
-void CSSStyleSelector::mapTransitionProperty(Transition* transition, CSSValue* value)
+void CSSStyleSelector::mapProperty(Animation* transition, CSSValue* value)
 {
     if (value->cssValueType() == CSSValue::CSS_INITIAL) {
-        transition->setProperty(RenderStyle::initialTransitionProperty());
+        transition->setProperty(RenderStyle::initialProperty());
         return;
     }
 
@@ -5090,7 +5082,7 @@ void CSSStyleSelector::mapTransitionProperty(Transition* transition, CSSValue* v
         return;
 
     CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
-    transition->setProperty(primitiveValue->getIdent());
+    transition->setProperty(static_cast<CSSPropertyID>(primitiveValue->getIdent()));
 }
 
 void CSSStyleSelector::mapNinePieceImage(CSSValue* value, NinePieceImage& image)

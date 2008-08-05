@@ -61,7 +61,7 @@ struct NodeListsNodeData;
 
 typedef int ExceptionCode;
 
-enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange };
+enum StyleChangeType { NoStyleChange, InlineStyleChange, FullStyleChange, AnimationStyleChange };
 
 const unsigned short DOCUMENT_POSITION_EQUIVALENT = 0x00;
 const unsigned short DOCUMENT_POSITION_DISCONNECTED = 0x01;

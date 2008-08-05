@@ -1,3 +1,15 @@
+2008-08-04  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Update expected computed style results for the following bug
+        Improve AnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=19938
+
+        * fast/css/computed-style-expected.txt:
+        * fast/css/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2008-08-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

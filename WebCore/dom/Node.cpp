@@ -412,7 +412,7 @@ void Node::setChanged(StyleChangeType changeType)
     if ((changeType != NoStyleChange) && !attached()) // changed compared to what?
         return;
 
-    if (!(changeType == InlineStyleChange && m_styleChange == FullStyleChange))
+    if (!(changeType == InlineStyleChange && (m_styleChange == FullStyleChange || m_styleChange == AnimationStyleChange)))
         m_styleChange = changeType;
 
     if (m_styleChange != NoStyleChange) {

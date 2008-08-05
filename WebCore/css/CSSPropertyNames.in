@@ -142,11 +142,6 @@ word-spacing
 word-wrap
 z-index
 zoom
--webkit-transition
--webkit-transition-duration
--webkit-transition-property
--webkit-transition-repeat-count
--webkit-transition-timing-function
 -webkit-appearance
 -webkit-background-clip
 -webkit-background-composite
@@ -225,6 +220,11 @@ zoom
 -webkit-transform-origin
 -webkit-transform-origin-x
 -webkit-transform-origin-y
+-webkit-transition
+-webkit-transition-delay
+-webkit-transition-duration
+-webkit-transition-property
+-webkit-transition-timing-function
 -webkit-user-drag
 -webkit-user-modify
 -webkit-user-select

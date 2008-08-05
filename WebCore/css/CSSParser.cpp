@@ -1294,8 +1294,8 @@ bool CSSParser::parseValue(int propId, bool important)
         }
         return false;
     }
+    case CSSPropertyWebkitTransitionDelay:
     case CSSPropertyWebkitTransitionDuration:
-    case CSSPropertyWebkitTransitionRepeatCount:
     case CSSPropertyWebkitTransitionTimingFunction:
     case CSSPropertyWebkitTransitionProperty: {
         RefPtr<CSSValue> val;
@@ -1709,8 +1709,9 @@ void CSSParser::addTransitionValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> 
 
 bool CSSParser::parseTransitionShorthand(bool important)
 {
-    const int properties[] = { CSSPropertyWebkitTransitionProperty, CSSPropertyWebkitTransitionDuration, 
-                               CSSPropertyWebkitTransitionTimingFunction, CSSPropertyWebkitTransitionRepeatCount };
+    const int properties[] = { CSSPropertyWebkitTransitionProperty,
+                               CSSPropertyWebkitTransitionDuration,
+                               CSSPropertyWebkitTransitionTimingFunction };
     const int numProperties = sizeof(properties) / sizeof(properties[0]);
     
     ShorthandScope scope(this, CSSPropertyWebkitTransition);
@@ -2206,20 +2207,20 @@ bool CSSParser::parseFillProperty(int propId, int& propId1, int& propId2,
     return false;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseTransitionDuration()
+PassRefPtr<CSSValue> CSSParser::parseDelay()
 {
     CSSParserValue* value = m_valueList->current();
+    if (value->id == CSSValueNow)
+        return CSSPrimitiveValue::createIdentifier(value->id);
     if (validUnit(value, FTime, m_strict))
         return CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
     return 0;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseTransitionRepeatCount()
+PassRefPtr<CSSValue> CSSParser::parseDuration()
 {
     CSSParserValue* value = m_valueList->current();
-    if (value->id == CSSValueInfinite)
-        return CSSPrimitiveValue::createIdentifier(value->id);
-    if (validUnit(value, FInteger|FNonNeg, m_strict))
+    if (validUnit(value, FTime|FNonNeg, m_strict))
         return CSSPrimitiveValue::create(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
     return 0;
 }
@@ -2242,7 +2243,7 @@ bool CSSParser::parseTimingFunctionValue(CSSParserValueList*& args, double& resu
     return true;
 }
 
-PassRefPtr<CSSValue> CSSParser::parseTransitionTimingFunction()
+PassRefPtr<CSSValue> CSSParser::parseTimingFunction()
 {
     CSSParserValue* value = m_valueList->current();
     if (value->id == CSSValueEase || value->id == CSSValueLinear || value->id == CSSValueEaseIn || value->id == CSSValueEaseOut || value->id == CSSValueEaseInOut)
@@ -2306,18 +2307,18 @@ bool CSSParser::parseTransitionProperty(int propId, RefPtr<CSSValue>& result)
         }
         else {
             switch (propId) {
-                case CSSPropertyWebkitTransitionDuration:
-                    currValue = parseTransitionDuration();
+                case CSSPropertyWebkitTransitionDelay:
+                    currValue = parseDelay();
                     if (currValue)
                         m_valueList->next();
                     break;
-                case CSSPropertyWebkitTransitionRepeatCount:
-                    currValue = parseTransitionRepeatCount();
+                case CSSPropertyWebkitTransitionDuration:
+                    currValue = parseDuration();
                     if (currValue)
                         m_valueList->next();
                     break;
                 case CSSPropertyWebkitTransitionTimingFunction:
-                    currValue = parseTransitionTimingFunction();
+                    currValue = parseTimingFunction();
                     if (currValue)
                         m_valueList->next();
                     break;
@@ -3907,7 +3908,7 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
 
     // The transform is a list of functional primitives that specify transform operations.
     // We collect a list of WebKitCSSTransformValues, where each value specifies a single operation.
-    RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+    RefPtr<CSSValueList> list = CSSValueList::createSpaceSeparated();
     for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
         if (value->unit != CSSParserValue::Function || !value->function)
             return 0;

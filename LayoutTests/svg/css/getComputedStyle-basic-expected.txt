@@ -274,6 +274,14 @@ rect: style.getPropertyValue(-webkit-transform-origin-x) : 0px
 rect: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-transform-origin-y) : 0px
 rect: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-transition-delay) : 0s
+rect: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-transition-duration) : 0s
+rect: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-transition-property) : all
+rect: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
+rect: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+rect: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-user-modify) : read-only
@@ -642,6 +650,14 @@ g: style.getPropertyValue(-webkit-transform-origin-x) : 0px
 g: style.getPropertyCSSValue(-webkit-transform-origin-x) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-transform-origin-y) : 0px
 g: style.getPropertyCSSValue(-webkit-transform-origin-y) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-transition-delay) : 0s
+g: style.getPropertyCSSValue(-webkit-transition-delay) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-transition-duration) : 0s
+g: style.getPropertyCSSValue(-webkit-transition-duration) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-transition-property) : all
+g: style.getPropertyCSSValue(-webkit-transition-property) : [object CSSValueList]
+g: style.getPropertyValue(-webkit-transition-timing-function) : cubic-bezier(0.25, 0.1, 0.25, 1)
+g: style.getPropertyCSSValue(-webkit-transition-timing-function) : [object CSSValueList]
 g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyCSSValue(-webkit-user-drag) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-user-modify) : read-only

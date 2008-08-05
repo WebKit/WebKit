@@ -119,6 +119,12 @@ namespace WebCore { namespace EventNames {
     macro(progress) \
     macro(stalled) \
     \
+    macro(webkitAnimationEnd) \
+    macro(webkitAnimationStart) \
+    macro(webkitAnimationIteration) \
+    \
+    macro(webkitTransitionEnd) \
+    \
 // end of DOM_EVENT_NAMES_FOR_EACH
 
 #ifndef DOM_EVENT_NAMES_HIDE_GLOBALS

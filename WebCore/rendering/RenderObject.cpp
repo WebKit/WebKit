@@ -2156,7 +2156,7 @@ void RenderObject::handleDynamicFloatPositionChange()
 void RenderObject::setAnimatableStyle(RenderStyle* style)
 {
     if (!isText() && m_style && style)
-        style = animation()->updateImplicitAnimations(this, style);
+        style = animation()->updateAnimations(this, style);
 
     setStyle(style);
 }
@@ -2535,7 +2535,7 @@ void RenderObject::destroy()
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->remove(this);
 
-    animation()->cancelImplicitAnimations(this);
+    animation()->cancelAnimations(this);
 
     // By default no ref-counting. RenderWidget::destroy() doesn't call
     // this function because it needs to do ref-counting. If anything

@@ -24,6 +24,7 @@
 #include "config.h"
 #include "Document.h"
 
+#include "AnimationController.h"
 #include "AXObjectCache.h"
 #include "CDATASection.h"
 #include "CSSHelper.h"
@@ -1162,6 +1163,10 @@ void Document::updateRendering()
 {
     if (hasChangedChild())
         recalcStyle(NoChange);
+    
+    // tell the animation controller that the style is available and it can start animations
+    if (m_frame)
+        m_frame->animation()->styleAvailable();
 }
 
 void Document::updateDocumentsRendering()

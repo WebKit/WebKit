@@ -122,7 +122,7 @@ void CachedPage::restore(Page* page)
         m_document->accessSVGExtensions()->unpauseAnimations();
 #endif
 
-    mainFrame->animation()->resumeAnimations();
+    mainFrame->animation()->resumeAnimations(m_document.get());
 
     mainFrame->eventHandler()->setMousePressNode(mousePressNode());
         

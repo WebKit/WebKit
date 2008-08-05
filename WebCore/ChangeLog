@@ -1,18 +1,50 @@
-2008-05-12  Mike Belshe  <mike@belshe.com>
+2008-08-04  Dean Jackson  <dino@apple.com>
 
-        Reviewed by Antti.
-        
-        Currently we create two copies of script in the HTMLTokenizer.
-        One copy gets passed into the javascript engine, the other gets
-        stored in the DOM.  Modify the HTMLParser so that it does not
-        chunk the string into it's normal 64K chunks for script code,
-        and modify the HTMLTokenizer to pass that same string into the
-        JS engine.  On some sites (e.g. GMail), which have hundreds of
-        KB of inline JS, this saves more than a MB of RAM to run the page.
-        (Strings use 16bit strings, so 600KB of JS code == 1.2MB of memory)
+        Reviewed by Dave Hyatt.
 
-        * html\HTMLParser.cpp
-        * html\HTMLTokenizer.cpp
+        Improve AnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=19938
+
+        - Transition class is now called Animation
+        - new state-based AnimationController that can support CSS Animations
+        - add support for -webkit-transition-delay
+        - remove -webkit-transition-repeat-count (since it never existed officially)
+        - updates the -webkit-transition shorthand to reflect removing repeat count
+        - updates the Transition class so that properties can be shared with animations
+        - adds a "now" keyword for -webkit-transition-delay
+        - adds a new change type for style (changed by animation)
+        - adds new event names (although they are not dispatched yet)
+        - makes text stroke and text fill colors returned by RenderStyle const
+
+        Tests:
+        - manual-tests/transition-left.html
+        - manual-tests/transition-delay.html
+        - manual-tests/transition-timing-functions.html
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        * css/CSSParser.cpp:
+        * css/CSSParser.h:
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        * css/CSSStyleSelector.h:
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSValue.h:
+        * css/CSSValueKeywords.in:
+        * css/WebKitCSSTransformValue.cpp:
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/Element.cpp:
+        * dom/EventNames.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * history/CachedPage.cpp:
+        * page/AnimationController.cpp:
+        * page/AnimationController.h:
+        * page/Frame.cpp:
+        * rendering/RenderObject.cpp:
+        * rendering/RenderWidget.cpp:
+        * rendering/style/RenderStyle.cpp:
+        * rendering/style/RenderStyle.h:
 
 2008-08-04  Sam Weinig  <sam@webkit.org>
 

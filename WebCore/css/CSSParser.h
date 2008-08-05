@@ -84,11 +84,13 @@ namespace WebCore {
         void addFillValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
 
         void addTransitionValue(RefPtr<CSSValue>& lval, PassRefPtr<CSSValue> rval);
-        PassRefPtr<CSSValue> parseTransitionDuration();
-        PassRefPtr<CSSValue> parseTransitionRepeatCount();
-        PassRefPtr<CSSValue> parseTransitionTimingFunction();
-        bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
+
+        PassRefPtr<CSSValue> parseDelay();
+        PassRefPtr<CSSValue> parseDuration();
+        PassRefPtr<CSSValue> parseTimingFunction();
         PassRefPtr<CSSValue> parseTransitionProperty();
+
+        bool parseTimingFunctionValue(CSSParserValueList*& args, double& result);
         bool parseTransitionProperty(int propId, RefPtr<CSSValue>&);
         bool parseTransitionShorthand(bool important);
         

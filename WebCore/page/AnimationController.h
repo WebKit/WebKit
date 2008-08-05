@@ -29,9 +29,12 @@
 #ifndef AnimationController_h
 #define AnimationController_h
 
+#include "CSSPropertyNames.h"
+
 namespace WebCore {
 
 class AnimationControllerPrivate;
+class Document;
 class Frame;
 class RenderObject;
 class RenderStyle;
@@ -42,14 +45,22 @@ public:
     AnimationController(Frame*);
     ~AnimationController();
     
-    void cancelImplicitAnimations(RenderObject*);
-    RenderStyle* updateImplicitAnimations(RenderObject*, RenderStyle* newStyle);
+    void cancelAnimations(RenderObject*);
+    RenderStyle* updateAnimations(RenderObject*, RenderStyle* newStyle);
     
-    void suspendAnimations();
-    void resumeAnimations();
+    bool isAnimatingPropertyOnRenderer(RenderObject* obj, int property) const;
+    
+    void suspendAnimations(Document* document);
+    void resumeAnimations(Document* document);
+    void updateAnimationTimer();
+    
+    void startUpdateRenderingDispatcher();
+    
+    void styleAvailable();
     
 private:
     AnimationControllerPrivate* m_data;
+    
 };
 
 }

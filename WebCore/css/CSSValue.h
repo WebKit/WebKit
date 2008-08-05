@@ -52,7 +52,7 @@ public:
     virtual bool isImageValue() const { return false; }
     virtual bool isImplicitInitialValue() const { return false; }
     virtual bool isPrimitiveValue() const { return false; }
-    virtual bool isTransitionTimingFunctionValue() { return false; }
+    virtual bool isTimingFunctionValue() { return false; }
     virtual bool isValueList() { return false; }
 
 #if ENABLE(SVG)

@@ -664,111 +664,87 @@ TransformOperation* MatrixTransformOperation::blend(const TransformOperation* fr
                                         fromF + (m_f - fromF) * progress);
 }
 
-Transition::Transition()
-    : m_duration(RenderStyle::initialTransitionDuration())
-    , m_repeatCount(RenderStyle::initialTransitionRepeatCount())
-    , m_timingFunction(RenderStyle::initialTransitionTimingFunction())
-    , m_property(RenderStyle::initialTransitionProperty())
+Animation::Animation()
+    : m_duration(RenderStyle::initialDuration())
+    , m_timingFunction(RenderStyle::initialTimingFunction())
+    , m_delay(RenderStyle::initialDelay())
+    , m_property(RenderStyle::initialProperty())
     , m_durationSet(false)
-    , m_repeatCountSet(false)
     , m_timingFunctionSet(false)
+    , m_delaySet(false)
     , m_propertySet(false)
-    , m_next(0)
 {
 }
 
-Transition::Transition(const Transition& o)
-    : m_duration(o.m_duration)
-    , m_repeatCount(o.m_repeatCount)
+Animation::Animation(const Animation& o)
+    : RefCounted<Animation>()
+    , m_duration(o.m_duration)
     , m_timingFunction(o.m_timingFunction)
+    , m_delay(o.m_delay)
     , m_property(o.m_property)
     , m_durationSet(o.m_durationSet)
-    , m_repeatCountSet(o.m_repeatCountSet)
     , m_timingFunctionSet(o.m_timingFunctionSet)
+    , m_delaySet(o.m_delaySet)
     , m_propertySet(o.m_propertySet)
-    , m_next(o.m_next ? new Transition(*o.m_next) : 0)
 {
 }
 
-Transition::~Transition()
+Animation& Animation::operator=(const Animation& o)
 {
-    delete m_next;
-}
-
-Transition& Transition::operator=(const Transition& o)
-{
-    if (m_next != o.m_next) {
-        delete m_next;
-        m_next = o.m_next ? new Transition(*o.m_next) : 0;
-    }
-
+    m_delay = o.m_delay;
     m_duration = o.m_duration;
-    m_repeatCount = o.m_repeatCount;
     m_timingFunction = o.m_timingFunction;
     m_property = o.m_property;
 
+    m_delaySet = o.m_delaySet;
     m_durationSet = o.m_durationSet;
-    m_repeatCountSet = o.m_repeatCountSet;
     m_timingFunctionSet = o.m_timingFunctionSet;
     m_propertySet = o.m_propertySet;
 
     return *this;
 }
 
-bool Transition::operator==(const Transition& o) const
+bool Animation::animationsMatch(const Animation* o) const
 {
-    return m_duration == o.m_duration && m_repeatCount == o.m_repeatCount && m_timingFunction == o.m_timingFunction &&
-           m_property == o.m_property && m_durationSet == o.m_durationSet && m_repeatCountSet == o.m_repeatCountSet &&
-           m_timingFunctionSet == o.m_timingFunctionSet && m_propertySet == o.m_propertySet &&
-           ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
+    if (!o)
+        return false;
+    
+    bool result = m_duration == o->m_duration &&
+                  m_timingFunction == o->m_timingFunction &&
+                  m_delay == o->m_delay &&
+                  m_property == o->m_property && 
+                  m_durationSet == o->m_durationSet && 
+                  m_timingFunctionSet == o->m_timingFunctionSet && 
+                  m_delaySet == o->m_delaySet &&
+                  m_propertySet == o->m_propertySet;
+    
+    return result;
 }
 
-void Transition::fillUnsetProperties()
-{
-    Transition* curr;
-    for (curr = this; curr && curr->isDurationSet(); curr = curr->next()) { }
-    if (curr && curr != this) {
-        // We need to fill in the remaining values with the pattern specified.
-        for (Transition* pattern = this; curr; curr = curr->next()) {
-            curr->m_duration = pattern->m_duration;
-            pattern = pattern->next();
-            if (pattern == curr || !pattern)
-                pattern = this;
-        }
-    }
-    
-    for (curr = this; curr && curr->isRepeatCountSet(); curr = curr->next()) { }
-    if (curr && curr != this) {
-        // We need to fill in the remaining values with the pattern specified.
-        for (Transition* pattern = this; curr; curr = curr->next()) {
-            curr->m_repeatCount = pattern->m_repeatCount;
-            pattern = pattern->next();
-            if (pattern == curr || !pattern)
-                pattern = this;
-        }
-    }
-    
-    for (curr = this; curr && curr->isTimingFunctionSet(); curr = curr->next()) { }
-    if (curr && curr != this) {
-        // We need to fill in the remaining values with the pattern specified.
-        for (Transition* pattern = this; curr; curr = curr->next()) {
-            curr->m_timingFunction = pattern->m_timingFunction;
-            pattern = pattern->next();
-            if (pattern == curr || !pattern)
-                pattern = this;
-        }
-    }
+#define FILL_UNSET_PROPERTY(test, propGet, propSet) \
+for (i = 0; i < size() && (*this)[i]->test(); ++i) { } \
+if (i < size() && i != 0) { \
+    for (size_t j = 0; i < size(); ++i, ++j) \
+        (*this)[i]->propSet((*this)[j]->propGet()); \
+}
 
-    for (curr = this; curr && curr->isPropertySet(); curr = curr->next()) { }
-    if (curr && curr != this) {
-        // We need to fill in the remaining values with the pattern specified.
-        for (Transition* pattern = this; curr; curr = curr->next()) {
-            curr->m_property = pattern->m_property;
-            pattern = pattern->next();
-            if (pattern == curr || !pattern)
-                pattern = this;
-        }
-    }
+void AnimationList::fillUnsetProperties()
+{
+    size_t i;
+    FILL_UNSET_PROPERTY(isDelaySet, delay, setDelay);
+    FILL_UNSET_PROPERTY(isDurationSet, duration, setDuration);
+    FILL_UNSET_PROPERTY(isTimingFunctionSet, timingFunction, setTimingFunction);
+    FILL_UNSET_PROPERTY(isPropertySet, property, setProperty);
+}
+
+bool AnimationList::operator==(const AnimationList& o) const
+{
+    if (size() != o.size())
+        return false;
+    for (size_t i = 0; i < size(); ++i)
+        if (*at(i) != *o.at(i))
+            return false;
+    return true;
 }
 
 StyleRareNonInheritedData::StyleRareNonInheritedData()
@@ -784,7 +760,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_appearance(RenderStyle::initialAppearance())
     , m_borderFit(RenderStyle::initialBorderFit())
     , m_boxShadow(0)
-    , m_transition(0)
+    , m_transitions(0)
     , m_mask(FillLayer(MaskFillLayer))
 #if ENABLE(XBL)
     , bindingURI(0)
@@ -811,7 +787,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_borderFit(o.m_borderFit)
     , m_boxShadow(o.m_boxShadow ? new ShadowData(*o.m_boxShadow) : 0)
     , m_boxReflect(o.m_boxReflect)
-    , m_transition(o.m_transition ? new Transition(*o.m_transition) : 0)
+    , m_transitions(o.m_transitions ? new AnimationList(*o.m_transitions) : 0)
     , m_mask(o.m_mask)
     , m_maskBoxImage(o.m_maskBoxImage)
 #if ENABLE(XBL)
@@ -825,7 +801,6 @@ StyleRareNonInheritedData::~StyleRareNonInheritedData()
     delete m_content;
     delete m_counterDirectives;
     delete m_boxShadow;
-    delete m_transition;
 #if ENABLE(XBL)
     delete bindingURI;
 #endif
@@ -896,9 +871,9 @@ bool StyleRareNonInheritedData::reflectionDataEquivalent(const StyleRareNonInher
 
 bool StyleRareNonInheritedData::transitionDataEquivalent(const StyleRareNonInheritedData& o) const
 {
-    if (!m_transition && o.m_transition || m_transition && !o.m_transition)
+    if (!m_transitions && o.m_transitions || m_transitions && !o.m_transitions)
         return false;
-    if (m_transition && o.m_transition && (*m_transition != *o.m_transition))
+    if (m_transitions && o.m_transitions && (*m_transitions != *o.m_transitions))
         return false;
     return true;
 }
@@ -1494,7 +1469,7 @@ RenderStyle::Diff RenderStyle::diff(const RenderStyle* other) const
     // Cursors are not checked, since they will be set appropriately in response to mouse events,
     // so they don't need to cause any repaint or layout.
 
-    // Transitions don't need to be checked either.  We always set the new style on the RenderObject, so we will get a chance to fire off
+    // Animations don't need to be checked either.  We always set the new style on the RenderObject, so we will get a chance to fire off
     // the resulting transition properly.
     return Equal;
 }
@@ -1870,33 +1845,50 @@ const Vector<StyleDashboardRegion>& RenderStyle::noneDashboardRegions()
 
 void RenderStyle::adjustTransitions()
 {
-    if (transitions()) {
-        if (transitions()->isEmpty()) {
-            clearTransitions();
-            return;
-        }
+    AnimationList* transitionList = rareNonInheritedData->m_transitions;
+    if (!transitionList)
+        return;
+    
+    if (transitionList->size() == 0) {
+        clearTransitions();
+        return;
+    }
 
-        Transition* next;
-        for (Transition* p = accessTransitions(); p; p = next) {
-            next = p->m_next;
-            if (next && next->isEmpty()) {
-                delete next;
-                p->m_next = 0;
-                break;
+    // get rid of empty transitions and anything beyond them
+    for (size_t i = 0; i < transitionList->size(); ++i) {
+        if ((*transitionList)[i]->isEmpty()) {
+            transitionList->resize(i);
+            break;
+        }
+    }
+
+    if (transitionList->size() == 0) {
+        clearTransitions();
+        return;
+    }
+
+    // Repeat patterns into layers that don't have some properties set.
+    transitionList->fillUnsetProperties();
+        
+    // Make sure there are no duplicate properties. This is an O(n^2) algorithm
+    // but the lists tend to be very short, so it is probably ok
+    for (size_t i = 0; i < transitionList->size(); ++i) {
+        for (size_t j = i+1; j < transitionList->size(); ++j) {
+            if ((*transitionList)[i]->property() == (*transitionList)[j]->property()) {
+                // toss i
+                transitionList->remove(i);
+                j = i;
             }
         }
-    
-        // Repeat patterns into layers that don't have some properties set.
-        accessTransitions()->fillUnsetProperties();
     }
 }
 
-Transition* RenderStyle::accessTransitions()
+AnimationList* RenderStyle::accessTransitions()
 {
-    Transition* layer = rareNonInheritedData.access()->m_transition;
-    if (!layer)
-        rareNonInheritedData.access()->m_transition = new Transition();
-    return rareNonInheritedData->m_transition;
+    AnimationList* list = rareNonInheritedData.access()->m_transitions;
+    if (!list)
+        rareNonInheritedData.access()->m_transitions = new AnimationList();
+    return rareNonInheritedData->m_transitions;
 }
 
 }

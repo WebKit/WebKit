@@ -750,7 +750,7 @@ public:
 
     void updateFocusAppearanceSoon();
     void cancelFocusAppearanceUpdate();
-    
+        
     // FF method for accessing the selection added for compatability.
     DOMSelection* getSelection() const;
     
@@ -1046,6 +1046,7 @@ private:
 #if USE(LOW_BANDWIDTH_DISPLAY)
     bool m_inLowBandwidthDisplay;
 #endif
+
 };
 
 inline bool Document::hasElementWithId(AtomicStringImpl* id) const

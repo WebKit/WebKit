@@ -1257,59 +1257,73 @@ private:
     double m_y2;
 };
 
-struct Transition {
+class Animation : public RefCounted<Animation> {
 public:
-    Transition();
-    ~Transition();
 
-    Transition* next() const { return m_next; }
-    Transition* next() { return m_next; }
-
+    static PassRefPtr<Animation> create() { return adoptRef(new Animation); };
+    
+    bool isDelaySet() const { return m_delaySet; }
     bool isDurationSet() const { return m_durationSet; }
-    bool isRepeatCountSet() const { return m_repeatCountSet; }
     bool isTimingFunctionSet() const { return m_timingFunctionSet; }
     bool isPropertySet() const { return m_propertySet; }
-    
-    bool isEmpty() const { return !m_durationSet && !m_repeatCountSet && !m_timingFunctionSet && !m_propertySet; }
+
+    bool isEmpty() const
+    {
+        return (!m_durationSet && !m_delaySet && !m_timingFunctionSet && !m_propertySet);
+    }
+
+    bool isEmptyOrZeroDuration() const
+    {
+        return isEmpty() || (m_duration == 0 && m_delay <= 0);
+    }
+
+    void clearDelay() { m_delaySet = false; }
     void clearDuration() { m_durationSet = false; }
-    void clearRepeatCount() { m_repeatCountSet = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; }
+
     void clearProperty() { m_propertySet = false; }
 
-    int duration() const { return m_duration; }
-    int repeatCount() const { return m_repeatCount; }
+    double delay() const { return m_delay; }
+    double duration() const { return m_duration; }
     const TimingFunction& timingFunction() const { return m_timingFunction; }
     int property() const { return m_property; }
-    
-    void setDuration(int d) { m_duration = d; m_durationSet = true; }
-    void setRepeatCount(int c) { m_repeatCount = c; m_repeatCountSet = true; }
+
+    void setDelay(double c) { m_delay = c; m_delaySet = true; }
+    void setDuration(double d) { ASSERT(d >= 0); m_duration = d; m_durationSet = true; }
     void setTimingFunction(const TimingFunction& f) { m_timingFunction = f; m_timingFunctionSet = true; }
     void setProperty(int t) { m_property = t; m_propertySet = true; }
 
-    void setNext(Transition* n) { if (m_next != n) { delete m_next; m_next = n; } }
+    Animation& operator=(const Animation& o);
 
-    Transition& operator=(const Transition& o);    
-    Transition(const Transition& o);
+    // return true if all members of this class match (excluding m_next)
+    bool animationsMatch(const Animation* t) const;
 
-    bool operator==(const Transition& o) const;
-    bool operator!=(const Transition& o) const {
-        return !(*this == o);
-    }
+    // return true every Animation in the chain (defined by m_next) match 
+    bool operator==(const Animation& o) const { return animationsMatch(&o); }
+    bool operator!=(const Animation& o) const { return !(*this == o); }
 
-    void fillUnsetProperties();
-
-    int m_duration;
-    int m_repeatCount;
+private:
+    Animation();
+    Animation(const Animation& o);
+    
+    double m_duration;
     TimingFunction m_timingFunction;
+    double m_delay;
     int m_property;
 
-    bool m_durationSet;
-    bool m_repeatCountSet;
-    bool m_timingFunctionSet;
-    bool m_propertySet;
-
-    Transition* m_next;
+    bool m_durationSet       : 1;
+    bool m_timingFunctionSet : 1;
+    bool m_delaySet          : 1;
+    bool m_propertySet       : 1;
 };
+
+class AnimationList : public Vector<RefPtr<Animation> >
+{
+public:
+    void fillUnsetProperties();
+    bool operator==(const AnimationList& o) const;
+};    
+
 
 class StyleReflection : public RefCounted<StyleReflection> {
 public:
@@ -1389,7 +1403,7 @@ public:
     
     RefPtr<StyleReflection> m_boxReflect;
 
-    Transition* m_transition;
+    AnimationList* m_transitions;
 
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;
@@ -2030,9 +2044,9 @@ public:
         return background->m_outline._offset;
     }
     ShadowData* textShadow() const { return rareInheritedData->textShadow; }
-    Color textStrokeColor() const { return rareInheritedData->textStrokeColor; }
+    const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     float textStrokeWidth() const { return rareInheritedData->textStrokeWidth; }
-    Color textFillColor() const { return rareInheritedData->textFillColor; }
+    const Color& textFillColor() const { return rareInheritedData->textFillColor; }
     float opacity() const { return rareNonInheritedData->opacity; }
     EAppearance appearance() const { return static_cast<EAppearance>(rareNonInheritedData->m_appearance); }
     EBoxAlignment boxAlign() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->align); }
@@ -2087,8 +2101,10 @@ public:
     // End CSS3 Getters
 
     // Apple-specific property getter methods
-    Transition* accessTransitions();
-    const Transition* transitions() const { return rareNonInheritedData->m_transition; }
+    AnimationList* accessTransitions();
+    const AnimationList* transitions() const { return rareNonInheritedData->m_transitions; }
+    bool hasTransitions() const { return rareNonInheritedData->m_transitions && rareNonInheritedData->m_transitions->size() > 0; }
+
     int lineClamp() const { return rareNonInheritedData->lineClamp; }
     bool textSizeAdjust() const { return rareInheritedData->textSizeAdjust; }
     ETextSecurity textSecurity() const { return static_cast<ETextSecurity>(rareInheritedData->textSecurity); }
@@ -2350,10 +2366,17 @@ public:
     void setTransformOriginX(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_x, l); }
     void setTransformOriginY(Length l) { SET_VAR(rareNonInheritedData.access()->m_transform, m_y, l); }
     // End CSS3 Setters
-   
+
     // Apple-specific property setters
-    void clearTransitions() { delete rareNonInheritedData.access()->m_transition; rareNonInheritedData.access()->m_transition = 0; }
-    void inheritTransitions(const Transition* parent) { clearTransitions(); if (parent) rareNonInheritedData.access()->m_transition = new Transition(*parent); }
+    void clearTransitions()
+    {
+        if (rareNonInheritedData.access()->m_transitions) {
+            delete rareNonInheritedData.access()->m_transitions;
+            rareNonInheritedData.access()->m_transitions = 0;
+        }
+    }
+
+    void inheritTransitions(const AnimationList* parent) { clearTransitions(); if (parent) rareNonInheritedData.access()->m_transitions = new AnimationList(*parent); }
     void adjustTransitions();
     void setLineClamp(int c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
     void setTextSizeAdjust(bool b) { SET_VAR(rareInheritedData, textSizeAdjust, b); }
@@ -2511,10 +2534,10 @@ public:
     static Length initialTransformOriginY() { return Length(50.0, Percent); }
     
     // Keep these at the end.
-    static int initialTransitionDuration() { return 0; }
-    static int initialTransitionRepeatCount() { return 1; }
-    static TimingFunction initialTransitionTimingFunction() { return TimingFunction(); }
-    static int initialTransitionProperty() { return cAnimateAll; }
+    static float initialDelay() { return 0; }
+    static double initialDuration() { return 0; }
+    static TimingFunction initialTimingFunction() { return TimingFunction(); }
+    static int initialProperty() { return cAnimateAll; }
     static int initialLineClamp() { return -1; }
     static bool initialTextSizeAdjust() { return true; }
     static ETextSecurity initialTextSecurity() { return TSNONE; }
