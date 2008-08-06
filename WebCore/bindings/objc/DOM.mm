@@ -59,6 +59,7 @@
 #import "Range.h"
 #import "RenderImage.h"
 #import "RenderView.h"
+#import "ScriptController.h"
 #import "SimpleFontData.h"
 #import "Text.h"
 #import "TreeWalker.h"
@@ -417,7 +418,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
 {
     if (WebCore::Node *n = [self _node]) {
         if (WebCore::Frame* frame = n->document()->frame())
-            return frame->bindingRootObject();
+            return frame->script()->bindingRootObject();
     }
     return 0;
 }

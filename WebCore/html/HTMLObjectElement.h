@@ -63,7 +63,7 @@ public:
     void renderFallbackContent();
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-    virtual KJS::Bindings::Instance* getInstance() const;
+    virtual RenderWidget* renderWidgetForJSBindings() const;
 #endif
 
     String archive() const;

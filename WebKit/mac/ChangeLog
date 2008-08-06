@@ -1,3 +1,26 @@
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Move more methods from Frame into ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=20294
+
+        The WebKit side of this move.  Calls to frame() are now frame()->script()
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        (-[WebBaseNetscapePluginView _destroyPlugin]):
+        * Plugins/WebPluginController.mm:
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebFrame.mm:
+        (-[WebFrame windowObject]):
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::callEvent):
+        * WebView/WebView.mm:
+        (-[WebView windowScriptObject]):
+
 2008-08-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

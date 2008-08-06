@@ -1050,6 +1050,7 @@ webcore_sources += \
 	WebCore/xml/XMLSerializer.cpp
 
 webcoregtk_sources += \
+	WebCore/bindings/js/ScriptControllerGtk.cpp \
 	WebCore/plugins/gtk/PluginDataGtk.cpp \
 	WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	WebCore/plugins/gtk/PluginViewGtk.cpp

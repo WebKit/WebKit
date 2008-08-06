@@ -8,6 +8,7 @@
  *                     2000 Stefan Schimanski <1Stein@gmx.de>
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,28 +34,12 @@
 #include "RenderLayer.h"
 #include "TextGranularity.h"
 
-struct NPObject;
-
-namespace KJS {
-
-    class JSGlobalObject;
-
-    namespace Bindings {
-        class Instance;
-        class RootObject;
-    }
-
-}
-
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WebScriptObject;
-#else
+#ifndef __OBJC__
 class NSArray;
 class NSDictionary;
 class NSMutableDictionary;
 class NSString;
-class WebScriptObject;
 typedef int NSWritingDirection;
 #endif
 #endif
@@ -157,36 +142,12 @@ public:
 
     String documentTypeString() const;
 
-    void clearScriptController();
+    // This method -- and the corresponding list of former DOM windows --
+    // should move onto ScriptController
     void clearDOMWindow();
 
-    void clearScriptObjects();
-    void cleanupScriptObjectsForPlugin(void*);
-
 private:
-    void clearPlatformScriptObjects();
-    void disconnectPlatformScriptObjects();
-
     void lifeSupportTimerFired(Timer<Frame>*);
-    
-// === to be moved into ScriptController
-
-public:
-    PassRefPtr<KJS::Bindings::Instance> createScriptInstanceForWidget(Widget*);
-    KJS::Bindings::RootObject* bindingRootObject();
-
-    PassRefPtr<KJS::Bindings::RootObject> createRootObject(void* nativeHandle, KJS::JSGlobalObject*);
-
-#if PLATFORM(MAC)
-#if ENABLE(MAC_JAVA_BRIDGE)
-    static void initJavaJSBindings();
-#endif
-    WebScriptObject* windowScriptObject();
-#endif
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* windowScriptNPObject();
-#endif    
 
 // === to be moved into Document
 

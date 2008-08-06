@@ -98,6 +98,7 @@
 #import <WebCore/ResourceHandle.h>
 #import <WebCore/ResourceLoader.h>
 #import <WebCore/ResourceRequest.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/Widget.h>
@@ -1446,14 +1447,15 @@ String WebFrameLoaderClient::overrideMediaType() const
 void WebFrameLoaderClient::windowObjectCleared()
 {
     Frame *frame = core(m_webFrame.get());
+    ScriptController *script = frame->script();
     WebView *webView = getWebView(m_webFrame.get());
     WebFrameLoadDelegateImplementationCache* implementations = WebViewGetFrameLoadDelegateImplementations(webView);
     if (implementations->didClearWindowObjectForFrameFunc) {
         CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:),
-            frame->windowScriptObject(), m_webFrame.get());
+            script->windowScriptObject(), m_webFrame.get());
     } else if (implementations->windowScriptObjectAvailableFunc) {
         CallFrameLoadDelegate(implementations->windowScriptObjectAvailableFunc, webView, @selector(webView:windowScriptObjectAvailable:),
-            frame->windowScriptObject());
+            script->windowScriptObject());
     }
 
     if ([webView scriptDebugDelegate]) {

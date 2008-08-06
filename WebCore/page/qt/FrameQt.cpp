@@ -1,15 +1,4 @@
 /*
- * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
- * Copyright (C) 2006 Zack Rusin <zack@kde.org>
- * Copyright (C) 2006 George Staikos <staikos@kde.org>
- * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
- * Copyright (C) 2006 Rob Buis <buis@kde.org>
- * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) 2007 Trolltech ASA
- * Copyright (C) 2008 Collabora Ltd.  All rights reserved.
- *
- * All rights reserved.
- *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -35,92 +24,7 @@
 #include "config.h"
 #include "Frame.h"
 
-#include "PluginView.h"
-
-#include "Element.h"
-#include "RenderObject.h"
-#include "RenderWidget.h"
-#include "RenderLayer.h"
-#include "Page.h"
-#include "Document.h"
-#include "HTMLElement.h"
-#include "DOMWindow.h"
-#include "FrameLoadRequest.h"
-#include "FrameLoaderClientQt.h"
-#include "DOMImplementation.h"
-#include "ResourceHandleInternal.h"
-#include "Document.h"
-#include "Settings.h"
-#include "FrameView.h"
-#include "FramePrivate.h"
-#include "GraphicsContext.h"
-#include "HTMLDocument.h"
-#include "ResourceHandle.h"
-#include "FrameLoader.h"
-#include "PlatformMouseEvent.h"
-#include "PlatformKeyboardEvent.h"
-#include "PlatformWheelEvent.h"
-#include "MouseEventWithHitTestResults.h"
-#include "SelectionController.h"
-#include "ScriptController.h"
-#include "TypingCommand.h"
-#include "qt_instance.h"
-#include "runtime_root.h"
-#include "runtime.h"
-#include "JSDOMWindow.h"
-#include <QScrollArea>
-#include "NotImplemented.h"
-
 namespace WebCore {
-
-// FIXME: Turned this off to fix buildbot. This function be either deleted or used.
-#if 0
-static void doScroll(const RenderObject* r, bool isHorizontal, int multiplier)
-{
-    // FIXME: The scrolling done here should be done in the default handlers
-    // of the elements rather than here in the part.
-    if (!r)
-        return;
-
-    //broken since it calls scroll on scrollbars
-    //and we have none now
-    //r->scroll(direction, KWQScrollWheel, multiplier);
-    if (!r->layer())
-        return;
-
-    int x = r->layer()->scrollXOffset();
-    int y = r->layer()->scrollYOffset();
-    if (isHorizontal)
-        x += multiplier;
-    else
-        y += multiplier;
-
-    r->layer()->scrollToOffset(x, y, true, true);
-}
-#endif
-
-PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(WebCore::Widget* widget)
-{
-    if (widget->isFrameView())
-        return 0;
-    if (widget->isNPAPIPlugin())
-        return static_cast<PluginView*>(widget)->bindingInstance();
-
-    QWidget* nativeWidget = widget->nativeWidget();
-    if (!nativeWidget)
-        return 0;
-    return KJS::Bindings::QtInstance::create(nativeWidget, bindingRootObject());
-}
-
-void Frame::clearPlatformScriptObjects()
-{
-    notImplemented();
-}
-
-void Frame::disconnectPlatformScriptObjects()
-{
-    notImplemented();
-}
 
 DragImageRef Frame::dragImageForSelection() 
 {

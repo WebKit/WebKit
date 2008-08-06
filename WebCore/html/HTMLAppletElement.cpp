@@ -30,10 +30,7 @@
 #include "RenderApplet.h"
 #include "RenderInline.h"
 #include "Settings.h"
-
-#if USE(JAVASCRIPTCORE_BINDINGS)
-#include "runtime.h"
-#endif
+#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -46,10 +43,6 @@ HTMLAppletElement::HTMLAppletElement(Document* doc)
 
 HTMLAppletElement::~HTMLAppletElement()
 {
-#if USE(JAVASCRIPTCORE_BINDINGS)
-    // m_instance should have been cleaned up in detach().
-    ASSERT(!m_instance);
-#endif
 }
 
 void HTMLAppletElement::parseMappedAttribute(MappedAttribute* attr)
@@ -143,21 +136,17 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena* arena, RenderStyle*
 }
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-KJS::Bindings::Instance* HTMLAppletElement::getInstance() const
+RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
 {
     Settings* settings = document()->settings();
     if (!settings || !settings->isJavaEnabled())
         return 0;
 
-    if (m_instance)
-        return m_instance.get();
-    
-    if (RenderApplet* r = static_cast<RenderApplet*>(renderer())) {
-        r->createWidgetIfNecessary();
-        if (r->widget() && document()->frame())
-            m_instance = document()->frame()->createScriptInstanceForWidget(r->widget());
-    }
-    return m_instance.get();
+    RenderApplet* applet = static_cast<RenderApplet*>(renderer());
+    if (applet)
+        applet->createWidgetIfNecessary();
+
+    return applet;
 }
 #endif
 
@@ -167,14 +156,6 @@ void HTMLAppletElement::finishParsingChildren()
     HTMLPlugInElement::finishParsingChildren();
     if (renderer())
         renderer()->setNeedsLayout(true); // This will cause it to create its widget & the Java applet
-}
-
-void HTMLAppletElement::detach()
-{
-#if USE(JAVASCRIPTCORE_BINDINGS)
-    m_instance = 0;
-#endif
-    HTMLPlugInElement::detach();
 }
 
 String HTMLAppletElement::alt() const

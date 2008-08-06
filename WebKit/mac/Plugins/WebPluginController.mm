@@ -35,6 +35,7 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/DocumentLoader.h>
+#import <WebCore/ScriptController.h>
 #import <WebKit/WebDataSourceInternal.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameView.h>
@@ -209,7 +210,7 @@ static NSMutableSet *pluginViews = nil;
             [view pluginDestroy];
         
         if (Frame* frame = core([self webFrame]))
-            frame->cleanupScriptObjectsForPlugin(self);
+            frame->script()->cleanupScriptObjectsForPlugin(self);
         
         [pluginViews removeObject:view];
         [[_documentView _webView] removePluginInstanceView:view];
@@ -256,7 +257,7 @@ static void cancelOutstandingCheck(const void *item, void *context)
             [aView pluginDestroy];
         
         if (Frame* frame = core([self webFrame]))
-            frame->cleanupScriptObjectsForPlugin(self);
+            frame->script()->cleanupScriptObjectsForPlugin(self);
         
         [pluginViews removeObject:aView];
         [[_documentView _webView] removePluginInstanceView:aView];

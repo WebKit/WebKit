@@ -14183,6 +14183,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\bindings\js\ScriptControllerWin.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\bindings\js\StringSourceProvider.h"
 					>
 				</File>

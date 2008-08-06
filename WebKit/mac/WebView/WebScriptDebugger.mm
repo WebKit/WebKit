@@ -26,17 +26,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "WebScriptDebugger.h"
+#import "WebScriptDebugger.h"
 
-#include "WebFrameInternal.h"
-#include "WebViewInternal.h"
-#include "WebScriptDebugDelegate.h"
-#include <kjs/JSGlobalObject.h>
-#include <kjs/DebuggerCallFrame.h>
-#include <WebCore/DOMWindow.h>
-#include <WebCore/Frame.h>
-#include <WebCore/JSDOMWindow.h>
-#include <WebCore/KURL.h>
+#import "WebFrameInternal.h"
+#import "WebViewInternal.h"
+#import "WebScriptDebugDelegate.h"
+#import <kjs/JSGlobalObject.h>
+#import <kjs/DebuggerCallFrame.h>
+#import <WebCore/DOMWindow.h>
+#import <WebCore/Frame.h>
+#import <WebCore/JSDOMWindow.h>
+#import <WebCore/KURL.h>
+#import <WebCore/ScriptController.h>
 
 using namespace KJS;
 using namespace WebCore;
@@ -120,7 +121,7 @@ void WebScriptDebugger::callEvent(const DebuggerCallFrame& debuggerCallFrame, in
 
     WebFrame *webFrame = toWebFrame(debuggerCallFrame.dynamicGlobalObject());
 
-    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->windowScriptObject() caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
+    m_topCallFrame.adoptNS([[WebScriptCallFrame alloc] _initWithGlobalObject:core(webFrame)->script()->windowScriptObject() caller:m_topCallFrame.get() debuggerCallFrame:debuggerCallFrame]);
 
     WebView *webView = [webFrame webView];
     [[webView _scriptDebugDelegateForwarder] webView:webView didEnterCallFrame:m_topCallFrame.get() sourceId:sourceID line:lineNumber forWebFrame:webFrame];

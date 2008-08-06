@@ -27,64 +27,20 @@
 #include "runtime.h"
 #include "FrameWin.h"
 
-#include <winsock2.h>
-#include <windows.h>
-
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "Document.h"
-#include "EditorClient.h"
-#include "FrameLoader.h"
-#include "FrameLoadRequest.h"
 #include "FramePrivate.h"
-#include "FrameView.h"
-#include "HTMLIFrameElement.h"
-#include "HTMLNames.h"
-#include "HTMLTableCellElement.h"
-#include "JSDOMWindow.h"
-#include "KeyboardEvent.h"
-#include "NP_jsobject.h"
-#include "NotImplemented.h"
-#include "Page.h"
-#include "PluginDatabase.h"
-#include "PluginView.h"
-#include "RegularExpression.h"
-#include "RenderFrame.h"
-#include "RenderTableCell.h"
 #include "RenderView.h"
-#include "ResourceHandle.h"
-#include "TextResourceDecoder.h"
-#include "ScriptController.h"
-#include "npruntime_impl.h"
-#include "runtime_root.h"
-#include "GraphicsContext.h"
 #include "Settings.h"
 
 using std::min;
-using namespace KJS::Bindings;
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
-void Frame::clearPlatformScriptObjects()
-{
-}
-
-void Frame::disconnectPlatformScriptObjects()
-{
-}
-
-PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget* widget)
-{
-    // FIXME: Ideally we'd have an isPluginView() here but we can't add that to the open source tree right now.
-    if (widget->isFrameView())
-        return 0;
-
-    return static_cast<PluginView*>(widget)->bindingInstance();
-}
-
-void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor,Vector<IntRect>& pages, int& outPageHeight)
+void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& pages, int& outPageHeight)
 {
     ASSERT(frame);
 
@@ -94,7 +50,7 @@ void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float head
     if (!frame->document() || !frame->view() || !frame->document()->renderer())
         return;
  
-    RenderView* root = static_cast<RenderView *>(frame->document()->renderer());
+    RenderView* root = static_cast<RenderView*>(frame->document()->renderer());
 
     if (!root) {
         LOG_ERROR("document to be printed has no renderer");

@@ -39,6 +39,8 @@ struct NPObject;
 
 namespace WebCore {
 
+class RenderWidget;
+
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
 public:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
@@ -67,15 +69,13 @@ public:
     virtual void defaultEventHandler(Event*);
 
 #if USE(JAVASCRIPTCORE_BINDINGS)
-    virtual KJS::Bindings::Instance* getInstance() const = 0;
-#endif
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    virtual NPObject* getNPObject();
+    virtual void detach();
+    virtual RenderWidget* renderWidgetForJSBindings() const = 0;
+    KJS::Bindings::Instance* getInstance() const;
 #endif
 
-private:
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    NPObject* createNPObject();
+    virtual NPObject* getNPObject();
 #endif
 
 protected:

@@ -2515,7 +2515,7 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     Frame* coreFrame = core([self mainFrame]);
     if (!coreFrame)
         return nil;
-    return coreFrame->windowScriptObject();
+    return coreFrame->script()->windowScriptObject();
 }
 
 // Get the appropriate user-agent string for a particular URL.

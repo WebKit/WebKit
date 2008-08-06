@@ -922,6 +922,7 @@ HEADERS += \
     $$PWD/platform/network/qt/QNetworkReplyHandler.h
 
 SOURCES += \
+    bindings/js/ScriptControllerQt.cpp \
     bridge/qt/qt_class.cpp \
     bridge/qt/qt_instance.cpp \
     bridge/qt/qt_runtime.cpp \

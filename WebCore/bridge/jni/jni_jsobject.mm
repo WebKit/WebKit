@@ -441,7 +441,7 @@ static PassRefPtr<RootObject> createRootObject(void* nativeHandle)
     }
     if (!frame)
         return 0;
-    return frame->createRootObject(nativeHandle, frame->script()->globalObject());
+    return frame->script()->createRootObject(nativeHandle);
 }
 
 // We're either creating a 'Root' object (via a call to JavaJSObject.getWindow()), or

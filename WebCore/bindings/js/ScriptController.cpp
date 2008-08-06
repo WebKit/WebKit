@@ -29,15 +29,23 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "GCController.h"
-#include "JSDocument.h"
 #include "JSDOMWindow.h"
+#include "JSDocument.h"
+#include "JSEventListener.h"
+#include "npruntime_impl.h"
+#include "NP_jsobject.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "runtime_root.h"
 #include "Settings.h"
 #include "StringSourceProvider.h"
-#include "JSEventListener.h"
+
 #include <kjs/completion.h>
 #include <kjs/debugger.h>
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#include "HTMLPlugInElement.h"
+#endif
 
 #if ENABLE(SVG)
 #include "JSSVGLazyEventListener.h"
@@ -54,7 +62,20 @@ ScriptController::ScriptController(Frame* frame)
     , m_sourceURL(0)
     , m_processingTimerCallback(false)
     , m_paused(false)
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    , m_windowScriptNPObject(0)
+#endif
+#if PLATFORM(MAC)
+    , m_windowScriptObject(0)
+#endif
 {
+#if PLATFORM(MAC) && ENABLE(MAC_JAVA_BRIDGE)
+    static bool initializedJavaJSBindings;
+    if (!initializedJavaJSBindings) {
+        initializedJavaJSBindings = true;
+        initJavaJSBindings();
+    }
+#endif
 }
 
 ScriptController::~ScriptController()
@@ -65,6 +86,8 @@ ScriptController::~ScriptController()
         // It's likely that releasing the global object has created a lot of garbage.
         gcController().garbageCollectSoon();
     }
+
+    disconnectPlatformScriptObjects();
 }
 
 JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const String& str) 
@@ -101,7 +124,7 @@ JSValue* ScriptController::evaluate(const String& sourceURL, int baseLine, const
     return 0;
 }
 
-void ScriptController::clear()
+void ScriptController::clearWindowShell()
 {
     if (!m_windowShell)
         return;
@@ -214,5 +237,112 @@ void ScriptController::updateDocument()
         (*it)->updateDocument();
 }
 
+
+Bindings::RootObject* ScriptController::bindingRootObject()
+{
+    if (!isEnabled())
+        return 0;
+
+    if (!m_bindingRootObject)
+        m_bindingRootObject = Bindings::RootObject::create(0, globalObject());
+    return m_bindingRootObject.get();
+}
+
+PassRefPtr<Bindings::RootObject> ScriptController::createRootObject(void* nativeHandle)
+{
+    RootObjectMap::iterator it = m_rootObjects.find(nativeHandle);
+    if (it != m_rootObjects.end())
+        return it->second;
+
+    RefPtr<Bindings::RootObject> rootObject = Bindings::RootObject::create(nativeHandle, globalObject());
+
+    m_rootObjects.set(nativeHandle, rootObject);
+    return rootObject.release();
+}
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+NPObject* ScriptController::windowScriptNPObject()
+{
+    if (!m_windowScriptNPObject) {
+        if (isEnabled()) {
+            // JavaScript is enabled, so there is a JavaScript window object.
+            // Return an NPObject bound to the window object.
+            JSObject* win = windowShell()->window();
+            ASSERT(win);
+            Bindings::RootObject* root = bindingRootObject();
+            m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root);
+        } else {
+            // JavaScript is not enabled, so we cannot bind the NPObject to the JavaScript window object.
+            // Instead, we create an NPObject of a different class, one which is not bound to a JavaScript object.
+            m_windowScriptNPObject = _NPN_CreateNoScriptObject();
+        }
+    }
+
+    return m_windowScriptNPObject;
+}
+
+NPObject* ScriptController::createScriptObjectForPluginElement(HTMLPlugInElement* plugin)
+{
+    // Can't create NPObjects when JavaScript is disabled
+    if (!isEnabled())
+        return _NPN_CreateNoScriptObject();
+
+    // Create a JSObject bound to this element
+    ExecState* exec = globalObject()->globalExec();
+    JSValue* jsElementValue = toJS(exec, plugin);
+    if (!jsElementValue || !jsElementValue->isObject())
+        return _NPN_CreateNoScriptObject();
+
+    // Wrap the JSObject in an NPObject
+    return _NPN_CreateScriptObject(0, jsElementValue->getObject(), bindingRootObject());
+}
+#endif
+
+#if !PLATFORM(MAC)
+void ScriptController::clearPlatformScriptObjects()
+{
+}
+
+void ScriptController::disconnectPlatformScriptObjects()
+{
+}
+#endif
+
+void ScriptController::cleanupScriptObjectsForPlugin(void* nativeHandle)
+{
+    RootObjectMap::iterator it = m_rootObjects.find(nativeHandle);
+
+    if (it == m_rootObjects.end())
+        return;
+
+    it->second->invalidate();
+    m_rootObjects.remove(it);
+}
+
+void ScriptController::clearScriptObjects()
+{
+    RootObjectMap::const_iterator end = m_rootObjects.end();
+    for (RootObjectMap::const_iterator it = m_rootObjects.begin(); it != end; ++it)
+        it->second->invalidate();
+
+    m_rootObjects.clear();
+
+    if (m_bindingRootObject) {
+        m_bindingRootObject->invalidate();
+        m_bindingRootObject = 0;
+    }
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (m_windowScriptNPObject) {
+        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
+        // script object properly.
+        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
+        _NPN_DeallocateObject(m_windowScriptNPObject);
+        m_windowScriptNPObject = 0;
+    }
+#endif
+
+    clearPlatformScriptObjects();
+}
 
 } // namespace WebCore

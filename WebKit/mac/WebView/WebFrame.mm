@@ -1308,7 +1308,7 @@ static NSURL *createUniqueWebDataURL()
     Frame* coreFrame = _private->coreFrame;
     if (!coreFrame)
         return 0;
-    return coreFrame->windowScriptObject();
+    return coreFrame->script()->windowScriptObject();
 }
 
 - (JSGlobalContextRef)globalContext

@@ -830,26 +830,26 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects)
     // Do this after detaching the document so that the unload event works.
     if (clearWindowProperties) {
         m_frame->clearDOMWindow();
-        m_frame->clearScriptController();
+        m_frame->script()->clearWindowShell();
     }
 
     m_frame->selection()->clear();
     m_frame->eventHandler()->clear();
     if (m_frame->view())
         m_frame->view()->clear();
-    
+
     m_frame->setSelectionGranularity(CharacterGranularity);
 
-    // Do not drop the document before the script proxy and view are cleared, as some destructors
-    // might still try to access the document.
+    // Do not drop the document before the ScriptController and view are cleared
+    // as some destructors might still try to access the document.
     m_frame->setDocument(0);
     m_decoder = 0;
 
     m_containsPlugIns = false;
-    
+
     if (clearScriptObjects)
-        m_frame->clearScriptObjects();
-  
+        m_frame->script()->clearScriptObjects();
+
     m_redirectionTimer.stop();
     m_scheduledRedirection.clear();
 

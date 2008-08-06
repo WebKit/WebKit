@@ -1,4 +1,11 @@
 /*
+ * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006 Michael Emmel mike.emmel@gmail.com
+ * Copyright (C) 2007 Holger Hans Peter Freyther
+ * Copyright (C) 2008 Collabora Ltd.  All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ * All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -22,16 +29,20 @@
  */
 
 #include "config.h"
-#include "Frame.h"
+#include "ScriptController.h"
 
-#include "NotImplemented.h"
+#include "PluginView.h"
+#include "runtime_root.h"
+#include "runtime.h"
 
 namespace WebCore {
 
-DragImageRef Frame::dragImageForSelection()
+PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget* widget)
 {
-    notImplemented();
-    return 0;
+    if (widget->isPluginView())
+        return 0;
+
+    return static_cast<PluginView*>(widget)->bindingInstance();
 }
 
 }

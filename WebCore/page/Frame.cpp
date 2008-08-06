@@ -8,6 +8,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2005 Alexey Proskuryakov <ap@nypop.com>
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -56,7 +57,6 @@
 #include "Logging.h"
 #include "markup.h"
 #include "MediaFeatureNames.h"
-#include "NP_jsobject.h"
 #include "Navigator.h"
 #include "NodeList.h"
 #include "Page.h"
@@ -124,14 +124,6 @@ Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient*
 
     XMLNames::init();
 
-#if PLATFORM(MAC) && ENABLE(MAC_JAVA_BRIDGE)
-    static bool initializedJavaJSBindings;
-    if (!initializedJavaJSBindings) {
-        initializedJavaJSBindings = true;
-        initJavaJSBindings();
-    }
-#endif
-
     if (!ownerElement)
         page->setMainFrame(this);
     else {
@@ -174,8 +166,6 @@ Frame::~Frame()
         d->m_view->hide();
         d->m_view->clearFrame();
     }
-
-    disconnectPlatformScriptObjects();
 
     ASSERT(!d->m_lifeSupportTimer.isActive());
 
@@ -1058,55 +1048,6 @@ void Frame::lifeSupportTimerFired(Timer<Frame>*)
     deref();
 }
 
-KJS::Bindings::RootObject* Frame::bindingRootObject()
-{
-    if (!script()->isEnabled())
-        return 0;
-
-    if (!d->m_bindingRootObject)
-        d->m_bindingRootObject = KJS::Bindings::RootObject::create(0, script()->globalObject());
-    return d->m_bindingRootObject.get();
-}
-
-PassRefPtr<KJS::Bindings::RootObject> Frame::createRootObject(void* nativeHandle, KJS::JSGlobalObject* globalObject)
-{
-    RootObjectMap::iterator it = d->m_rootObjects.find(nativeHandle);
-    if (it != d->m_rootObjects.end())
-        return it->second;
-    
-    RefPtr<KJS::Bindings::RootObject> rootObject = KJS::Bindings::RootObject::create(nativeHandle, globalObject);
-    
-    d->m_rootObjects.set(nativeHandle, rootObject);
-    return rootObject.release();
-}
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-NPObject* Frame::windowScriptNPObject()
-{
-    if (!d->m_windowScriptNPObject) {
-        if (script()->isEnabled()) {
-            // JavaScript is enabled, so there is a JavaScript window object.  Return an NPObject bound to the window
-            // object.
-            KJS::JSObject* win = toJSDOMWindow(this);
-            ASSERT(win);
-            KJS::Bindings::RootObject* root = bindingRootObject();
-            d->m_windowScriptNPObject = _NPN_CreateScriptObject(0, win, root);
-        } else {
-            // JavaScript is not enabled, so we cannot bind the NPObject to the JavaScript window object.
-            // Instead, we create an NPObject of a different class, one which is not bound to a JavaScript object.
-            d->m_windowScriptNPObject = _NPN_CreateNoScriptObject();
-        }
-    }
-
-    return d->m_windowScriptNPObject;
-}
-#endif
-    
-void Frame::clearScriptController()
-{
-    d->m_script.clear();
-}
-
 void Frame::clearDOMWindow()
 {
     if (d->m_domWindow) {
@@ -1114,43 +1055,6 @@ void Frame::clearDOMWindow()
         d->m_domWindow->clear();
     }
     d->m_domWindow = 0;
-}
-
-void Frame::cleanupScriptObjectsForPlugin(void* nativeHandle)
-{
-    RootObjectMap::iterator it = d->m_rootObjects.find(nativeHandle);
-    
-    if (it == d->m_rootObjects.end())
-        return;
-    
-    it->second->invalidate();
-    d->m_rootObjects.remove(it);
-}
-    
-void Frame::clearScriptObjects()
-{
-    RootObjectMap::const_iterator end = d->m_rootObjects.end();
-    for (RootObjectMap::const_iterator it = d->m_rootObjects.begin(); it != end; ++it)
-        it->second->invalidate();
-
-    d->m_rootObjects.clear();
-
-    if (d->m_bindingRootObject) {
-        d->m_bindingRootObject->invalidate();
-        d->m_bindingRootObject = 0;
-    }
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (d->m_windowScriptNPObject) {
-        // Call _NPN_DeallocateObject() instead of _NPN_ReleaseObject() so that we don't leak if a plugin fails to release the window
-        // script object properly.
-        // This shouldn't cause any problems for plugins since they should have already been stopped and destroyed at this point.
-        _NPN_DeallocateObject(d->m_windowScriptNPObject);
-        d->m_windowScriptNPObject = 0;
-    }
-#endif
-
-    clearPlatformScriptObjects();
 }
 
 RenderView* Frame::contentRenderer() const
@@ -1754,17 +1658,17 @@ void Frame::pageDestroyed()
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
-    if (d->m_page && d->m_page->focusController()->focusedFrame() == this)
-        d->m_page->focusController()->setFocusedFrame(0);
+    // FIXME: It's unclear as to why this is called more than once, but it is,
+    // so page() could be NULL.
+    if (page() && page()->focusController()->focusedFrame() == this)
+        page()->focusController()->setFocusedFrame(0);
 
     // This will stop any JS timers
-    if (d->m_script.haveWindowShell()) {
-        if (JSDOMWindowShell* windowShell = toJSDOMWindowShell(this))
-            windowShell->disconnectFrame();
-    }
+    if (script()->haveWindowShell())
+        script()->windowShell()->disconnectFrame();
 
-    clearScriptObjects();
-    
+    script()->clearScriptObjects();
+
     d->m_page = 0;
 }
 
@@ -1951,25 +1855,18 @@ FramePrivate::FramePrivate(Page* page, Frame* parent, Frame* thisFrame, HTMLFram
     , m_editor(thisFrame)
     , m_eventHandler(thisFrame)
     , m_animationController(thisFrame)
+    , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
+    , m_paintRestriction(PaintRestrictionNone)
     , m_caretVisible(false)
     , m_caretPaint(true)
     , m_isPainting(false)
-    , m_lifeSupportTimer(thisFrame, &Frame::lifeSupportTimerFired)
-    , m_paintRestriction(PaintRestrictionNone)
     , m_highlightTextMatches(false)
     , m_inViewSourceMode(false)
-    , frameCount(0)
     , m_prohibitsScrolling(false)
     , m_needsReapplyStyles(false)
     , m_isDisconnected(false)
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    , m_windowScriptNPObject(0)
-#endif
 #if FRAME_LOADS_USER_STYLESHEET
     , m_userStyleSheetLoader(0)
-#endif
-#if PLATFORM(MAC)
-    , m_windowScriptObject(nil)
 #endif
 {
 }

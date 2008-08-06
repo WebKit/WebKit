@@ -30,7 +30,11 @@
 
 #import "BlockExceptions.h"
 #import "ColorMac.h"
-#import "DOMAbstractViewFrame.h"
+#import "Cursor.h"
+#import "DOMInternal.h"
+#import "DocumentLoader.h"
+#import "EditorClient.h"
+#import "Event.h"
 #import "EventNames.h"
 #import "FrameLoaderClient.h"
 #import "FramePrivate.h"
@@ -38,40 +42,33 @@
 #import "GraphicsContext.h"
 #import "HTMLNames.h"
 #import "HTMLTableCellElement.h"
+#import "HitTestRequest.h"
+#import "HitTestResult.h"
+#import "KeyboardEvent.h"
+#import "Logging.h"
+#import "MouseEventWithHitTestResults.h"
+#import "Page.h"
+#import "PlatformKeyboardEvent.h"
+#import "PlatformScrollBar.h"
+#import "PlatformWheelEvent.h"
 #import "RegularExpression.h"
 #import "RenderTableCell.h"
 #import "SimpleFontData.h"
 #import "UserStyleSheetLoader.h"
-#import "WebScriptObjectPrivate.h"
-#import <Carbon/Carbon.h>
-#import <JavaScriptCore/APICast.h>
+#import "WebCoreViewFactory.h"
+#import "visible_units.h"
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
-#import "c_instance.h"
-#import "NP_jsobject.h"
-#import "npruntime_impl.h"
-#endif
-#import "objc_instance.h"
-#import "runtime_root.h"
-#import "runtime.h"
-#if ENABLE(MAC_JAVA_BRIDGE)
-#import "jni_instance.h"
-#endif
+#import <Carbon/Carbon.h>
+
 #if ENABLE(DASHBOARD_SUPPORT)
 #import "WebDashboardRegion.h"
 #endif
-
-@interface NSObject (WebPlugin)
-- (id)objectForWebScript;
-- (NPObject *)createPluginScriptableObject;
-@end
  
 @interface NSView (WebCoreHTMLDocumentView)
 - (void)drawSingleRect:(NSRect)rect;
 @end
  
 using namespace std;
-using namespace KJS::Bindings;
 
 namespace WebCore {
 
@@ -507,76 +504,6 @@ DragImageRef Frame::dragImageForSelection()
     return selectionImage();
 }
 
-PassRefPtr<KJS::Bindings::Instance> Frame::createScriptInstanceForWidget(Widget* widget)
-{
-    NSView* widgetView = widget->getView();
-    if (!widgetView)
-        return 0;
-
-    RefPtr<RootObject> rootObject = createRootObject(widgetView, script()->globalObject());
-
-    if ([widgetView respondsToSelector:@selector(objectForWebScript)]) {
-        id objectForWebScript = [widgetView objectForWebScript];
-        if (!objectForWebScript)
-            return 0;
-        return KJS::Bindings::ObjcInstance::create(objectForWebScript, rootObject.release());
-    }
-
-    if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
-#if !ENABLE(NETSCAPE_PLUGIN_API)
-        return 0;
-#else
-        NPObject* npObject = [widgetView createPluginScriptableObject];
-        if (!npObject)
-            return 0;
-        RefPtr<Instance> instance = KJS::Bindings::CInstance::create(npObject, rootObject.release());
-        // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
-        _NPN_ReleaseObject(npObject);
-        return instance.release();
-#endif
-    }
-
-#if ENABLE(MAC_JAVA_BRIDGE)
-    jobject applet = loader()->client()->javaApplet(widgetView);
-    if (!applet)
-        return 0;
-    return KJS::Bindings::JavaInstance::create(applet, rootObject.release());
-#else
-    return 0;
-#endif
-}
-
-WebScriptObject* Frame::windowScriptObject()
-{
-    if (!script()->isEnabled())
-        return 0;
-
-    if (!d->m_windowScriptObject) {
-        KJS::JSObject* win = toJSDOMWindowShell(this);
-        KJS::Bindings::RootObject *root = bindingRootObject();
-        d->m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(win) originRootObject:root rootObject:root];
-    }
-
-    ASSERT([d->m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);
-    return d->m_windowScriptObject.get();
-}
-
-void Frame::clearPlatformScriptObjects()
-{
-    if (d->m_windowScriptObject) {
-        KJS::Bindings::RootObject* root = bindingRootObject();
-        [d->m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
-    }
-}
-
-void Frame::disconnectPlatformScriptObjects()
-{
-    if (d->m_windowScriptObject) {
-        ASSERT([d->m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);
-        [(DOMAbstractView *)d->m_windowScriptObject.get() _disconnectFrame];
-    }
-}
-
 void Frame::setUserStyleSheetLocation(const KURL& url)
 {
     delete d->m_userStyleSheetLoader;
@@ -592,39 +519,5 @@ void Frame::setUserStyleSheet(const String& styleSheet)
     if (d->m_doc)
         d->m_doc->setUserStyleSheet(styleSheet);
 }
-
-#if ENABLE(MAC_JAVA_BRIDGE)
-static pthread_t mainThread;
-
-static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* rootObject)
-{
-    if (pthread_self() != mainThread)
-        return;
-        
-    if (!rootObject)
-        return;
-        
-    JSDOMWindow* window = static_cast<JSDOMWindow*>(rootObject);
-    if (!window)
-        return;
-
-    Frame* frame = window->impl()->frame();
-    if (!frame)
-        return;
-
-    Document* document = frame->document();
-    if (!document)
-        return;
-
-    document->updateRendering();
-}
-
-void Frame::initJavaJSBindings()
-{
-    mainThread = pthread_self();
-    KJS::Bindings::JavaJSObject::initializeJNIThreading();
-    KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
-}
-#endif
 
 } // namespace WebCore

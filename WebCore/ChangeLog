@@ -1,3 +1,92 @@
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Move more methods from Frame into ScriptController
+        https://bugs.webkit.org/show_bug.cgi?id=20294
+        
+        Finally finish more of the work which Darin started long ago
+        Move a few more Frame methods into ScriptController.
+        I also took this opportunity to clean up some of the plugin
+        code as well, and moved some of that into ScriptController.
+
+        I removed Frame::clearScriptController() and ScriptController::clear() is now clearWindowShell()
+
+        No functional changes, thus no test cases.
+
+        * GNUmakefile.am:
+        * WebCore.NPAPI.exp:
+        * WebCore.base.exp:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::~ScriptController):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::createRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::createScriptObjectForPluginElement): New method.
+        (WebCore::ScriptController::clearPlatformScriptObjects):
+        (WebCore::ScriptController::disconnectPlatformScriptObjects):
+        (WebCore::ScriptController::cleanupScriptObjectsForPlugin):
+        (WebCore::ScriptController::clearScriptObjects):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::sourceURL):
+        (WebCore::ScriptController::clearFormerWindow):
+        * bindings/js/ScriptControllerGtk.cpp: Copied from WebCore/page/gtk/FrameGtk.cpp.
+        (WebCore::Frame::createScriptInstanceForWidget):
+        * bindings/js/ScriptControllerMac.mm: Added.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        (WebCore::ScriptController::windowScriptObject):
+        (WebCore::ScriptController::clearPlatformScriptObjects):
+        (WebCore::ScriptController::disconnectPlatformScriptObjects):
+        (WebCore::updateRenderingForBindings):
+        (WebCore::ScriptController::initJavaJSBindings):
+        * bindings/js/ScriptControllerQt.cpp: Copied from WebCore/page/gtk/FrameGtk.cpp.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bindings/js/ScriptControllerWin.cpp: Copied from WebCore/svg/graphics/cg/SVGResourceMaskerCg.cpp.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bindings/objc/DOM.mm:
+        (-[DOMNode KJS::Bindings::]):
+        * bindings/objc/DOMInternal.mm:
+        (-[WebScriptObject _initializeScriptDOMNodeImp]):
+        * bridge/jni/jni_jsobject.mm:
+        (createRootObject):
+        * html/HTMLAppletElement.cpp:
+        (WebCore::HTMLAppletElement::renderWidgetForJSBindings):
+        * html/HTMLAppletElement.h:
+        * html/HTMLEmbedElement.cpp:
+        (WebCore::findWidgetRenderer):
+        (WebCore::HTMLEmbedElement::renderWidgetForJSBindings):
+        * html/HTMLEmbedElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::~HTMLObjectElement):
+        (WebCore::HTMLObjectElement::renderWidgetForJSBindings):
+        (WebCore::HTMLObjectElement::detach):
+        * html/HTMLObjectElement.h:
+        * html/HTMLPlugInElement.cpp:
+        (WebCore::HTMLPlugInElement::~HTMLPlugInElement):
+        (WebCore::HTMLPlugInElement::detach):
+        (WebCore::HTMLPlugInElement::getInstance):
+        (WebCore::HTMLPlugInElement::parseMappedAttribute):
+        (WebCore::HTMLPlugInElement::getNPObject):
+        * html/HTMLPlugInElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::clear):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        (WebCore::Frame::~Frame):
+        (WebCore::Frame::pageDestroyed):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+        * page/gtk/FrameGtk.cpp:
+        * page/mac/FrameMac.mm:
+        * page/qt/FrameQt.cpp:
+        * page/win/FrameWin.cpp:
+        (WebCore::computePageRectsForFrame):
+
 2008-08-05  Steve Falkenburg  <sfalken@apple.com>
 
         Fix last timer fix.

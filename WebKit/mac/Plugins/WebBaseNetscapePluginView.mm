@@ -61,6 +61,7 @@
 #import <WebCore/FrameTree.h> 
 #import <WebCore/Page.h> 
 #import <WebCore/PluginMainThreadScheduler.h>
+#import <WebCore/ScriptController.h>
 #import <WebCore/SoftLinking.h> 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKit/nptextinput.h>
@@ -2548,7 +2549,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
         case NPNVWindowNPObject:
         {
             Frame* frame = core([self webFrame]);
-            NPObject* windowScriptObject = frame ? frame->windowScriptNPObject() : 0;
+            NPObject* windowScriptObject = frame ? frame->script()->windowScriptNPObject() : 0;
 
             // Return value is expected to be retained, as described here: <http://www.mozilla.org/projects/plugins/npruntime.html#browseraccess>
             if (windowScriptObject)
@@ -2846,7 +2847,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     LOG(Plugins, "NPP_Destroy: %d", npErr);
     
     if (Frame* frame = core([self webFrame]))
-        frame->cleanupScriptObjectsForPlugin(self);
+        frame->script()->cleanupScriptObjectsForPlugin(self);
         
     free(plugin);
     plugin = NULL;

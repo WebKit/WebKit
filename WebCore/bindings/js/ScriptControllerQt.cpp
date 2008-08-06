@@ -1,4 +1,16 @@
 /*
+ * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
+ * Copyright (C) 2006 Zack Rusin <zack@kde.org>
+ * Copyright (C) 2006 George Staikos <staikos@kde.org>
+ * Copyright (C) 2006 Simon Hausmann <hausmann@kde.org>
+ * Copyright (C) 2006 Rob Buis <buis@kde.org>
+ * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
+ * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Collabora Ltd.  All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
+ *
+ * All rights reserved.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -22,16 +34,28 @@
  */
 
 #include "config.h"
-#include "Frame.h"
+#include "ScriptController.h"
 
-#include "NotImplemented.h"
+#include "DOMWindow.h"
+#include "PluginView.h"
+#include "qt_instance.h"
+#include "runtime_root.h"
+#include "runtime.h"
 
 namespace WebCore {
 
-DragImageRef Frame::dragImageForSelection()
+PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
-    notImplemented();
-    return 0;
+    if (widget->isFrameView())
+        return 0;
+    if (widget->isNPAPIPlugin())
+        return static_cast<PluginView*>(widget)->bindingInstance();
+
+    QWidget* nativeWidget = widget->nativeWidget();
+    if (!nativeWidget)
+        return 0;
+    return KJS::Bindings::QtInstance::create(nativeWidget, bindingRootObject());
 }
 
 }
+// vim: ts=4 sw=4 et
