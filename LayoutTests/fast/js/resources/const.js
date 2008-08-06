@@ -107,4 +107,6 @@ shouldBe("(function(){ one = 2; return one; })()", "1")
 var f = function g() { g="FAIL"; return g; };
 shouldBe("f()", "f");
 
+shouldBe("const a;", "undefined");
+
 var successfullyParsed = true;

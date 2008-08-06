@@ -1,5 +1,17 @@
 2008-08-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Darin.
+
+        Bug 20293: Crash in JavaScript codegen for eval("const a;")
+        <https://bugs.webkit.org/show_bug.cgi?id=20293>
+
+        Correctly handle constant declarations in eval code with no initializer.
+
+        * kjs/nodes.cpp:
+        (KJS::ConstDeclNode::emitCodeSingle):
+
+2008-08-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Oliver.
 
         Roll out r35555 because of correctness issues.

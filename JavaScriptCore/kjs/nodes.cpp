@@ -1015,7 +1015,7 @@ RegisterID* ConstDeclNode::emitCodeSingle(CodeGenerator& generator)
     // FIXME: While this code should only be hit in eval code, it will potentially
     // assign to the wrong base if m_ident exists in an intervening dynamic scope.
     RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);
-    RegisterID* value = generator.emitNode(m_init.get());
+    RegisterID* value = m_init ? generator.emitNode(m_init.get()) : generator.emitLoad(generator.newTemporary(), jsUndefined());
     return generator.emitPutById(base.get(), m_ident, value);
 }
 
