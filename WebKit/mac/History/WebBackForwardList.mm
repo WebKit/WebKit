@@ -106,7 +106,9 @@ WebBackForwardList *kit(BackForwardList* backForwardList)
 
 - (void)dealloc
 {
-    WebCoreThreadViolationCheck();
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebBackForwardList class], self))
+        return;
+
     BackForwardList* backForwardList = core(self);
     ASSERT(backForwardList->closed());
     backForwardLists().remove(backForwardList);

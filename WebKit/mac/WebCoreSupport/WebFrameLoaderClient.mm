@@ -1518,6 +1518,9 @@ jobject WebFrameLoaderClient::javaApplet(NSView* view)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebFramePolicyListener class], self))
+        return;
+
     if (m_frame)
         m_frame->deref();
     [super dealloc];

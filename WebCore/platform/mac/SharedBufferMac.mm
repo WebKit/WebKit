@@ -55,6 +55,9 @@ using namespace WebCore;
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebCoreSharedBufferData class], self))
+        return;
+
     sharedBuffer->deref();
     
     [super dealloc];

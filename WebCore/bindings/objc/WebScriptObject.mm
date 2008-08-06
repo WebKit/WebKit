@@ -220,6 +220,9 @@ static void _didExecute(WebScriptObject *obj)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebScriptObject class], self))
+        return;
+
     if (_private->imp)
         WebCore::removeJSWrapper(_private->imp);
 

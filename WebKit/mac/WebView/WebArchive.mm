@@ -106,6 +106,9 @@ static NSString * const WebSubframeArchivesKey = @"WebSubframeArchives";
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebArchivePrivate class], self))
+        return;
+
     ASSERT(coreArchive);
     coreArchive->deref();
     coreArchive = 0;

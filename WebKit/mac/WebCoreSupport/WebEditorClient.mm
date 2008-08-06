@@ -106,6 +106,9 @@ WebViewInsertAction kit(EditorInsertAction coreAction)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebEditCommand class], self))
+        return;
+    
     m_command->deref();
     [super dealloc];
 }

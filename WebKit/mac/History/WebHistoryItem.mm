@@ -102,7 +102,9 @@ void WKNotifyHistoryItemChanged()
 
 - (void)dealloc
 {
-    WebCoreThreadViolationCheck();
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebHistoryItem class], self))
+        return;
+
     if (_private) {
         HistoryItem* coreItem = core(_private);
         coreItem->deref();

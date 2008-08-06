@@ -84,6 +84,9 @@ using namespace WebCore;
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebDataSourcePrivate class], self))
+        return;
+
     ASSERT(!loader->isLoading());
     loader->detachDataSource();
     loader->deref();

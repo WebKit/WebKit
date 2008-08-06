@@ -281,6 +281,8 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
 // Clean up.
 - (void)dealloc {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([CarbonWindowAdapter class], self))
+        return;
 
     // Clean up, if necessary.
     // if we didn't remove the event handler at dealloc time, we would risk getting sent events after the window has been deallocated.  See 2702179.  M.P. Notice - 6/1/01
@@ -288,7 +290,6 @@ static OSStatus NSCarbonWindowHandleEvent(EventHandlerCallRef inEventHandlerCall
 
     // Do the standard Cocoa thing.
     [super dealloc];
-
 }
 
 - (void)finalize {

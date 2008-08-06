@@ -76,6 +76,9 @@ void removeWrapperForRGB(WebCore::RGBA32 value)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([DOMRGBColor class], self))
+        return;
+    
     WebCore::removeWrapperForRGB(reinterpret_cast<uintptr_t>(_internal));
     _internal = 0;
     [super dealloc];

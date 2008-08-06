@@ -88,6 +88,9 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebResource class], self))
+        return;
+
     if (coreResource)
         coreResource->deref();
     [super dealloc];

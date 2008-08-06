@@ -100,6 +100,9 @@ static void cacheValueForKey(const void *key, const void *value, void *self)
 
 - (void)dealloc
 {
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebElementDictionary class], self))
+        return;
+
     delete _result;
     [_cache release];
     [_nilValues release];

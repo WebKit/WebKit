@@ -2,6 +2,37 @@
 
         Reviewed by Darin.
 
+        <rdar://problem/6037398>
+        ER: Deallocate WebKit objects on the main thread, even if released on secondary thread
+        
+        Add calls to WebCoreObjCScheduleDeallocateOnMainThread in dealloc methods of objects we expose.
+
+        * Carbon/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter dealloc]):
+        * History/WebBackForwardList.mm:
+        (-[WebBackForwardList dealloc]):
+        * History/WebHistoryItem.mm:
+        (-[WebHistoryItem dealloc]):
+        * Misc/WebElementDictionary.mm:
+        (+[WebElementDictionary initialize]):
+        (-[WebElementDictionary dealloc]):
+        * WebCoreSupport/WebEditorClient.mm:
+        (-[WebEditCommand dealloc]):
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.mm:
+        (-[WebArchivePrivate dealloc]):
+        * WebView/WebDataSource.mm:
+        (-[WebDataSourcePrivate dealloc]):
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLViewPrivate dealloc]):
+        (-[WebHTMLView dealloc]):
+        * WebView/WebResource.mm:
+        (-[WebResourcePrivate dealloc]):
+
+2008-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
         Remove MainThreadObjectDeallocator.{h|mm}.
 
         * WebView/MainThreadObjectDeallocator.h: Removed.
