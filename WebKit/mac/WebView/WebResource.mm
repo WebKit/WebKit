@@ -88,7 +88,7 @@ static NSString * const WebResourceResponseKey =          @"WebResourceResponse"
 
 - (void)dealloc
 {
-    if (WebCoreObjCScheduleDeallocateOnMainThread([WebResource class], self))
+    if (WebCoreObjCScheduleDeallocateOnMainThread([WebResourcePrivate class], self))
         return;
 
     if (coreResource)

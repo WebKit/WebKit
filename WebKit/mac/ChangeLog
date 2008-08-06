@@ -1,5 +1,12 @@
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
+        Pass in the correct class here.
+        
+        * WebView/WebResource.mm:
+        (-[WebResourcePrivate dealloc]):
+
+2008-08-05  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/6037398>
