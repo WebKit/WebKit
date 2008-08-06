@@ -42,6 +42,8 @@
 #include "runtime_root.h"
 #include "runtime.h"
 
+#include <QWidget>
+
 namespace WebCore {
 
 PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWidget(WebCore::Widget* widget)

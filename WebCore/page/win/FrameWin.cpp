@@ -38,8 +38,6 @@ using std::min;
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 void computePageRectsForFrame(Frame* frame, const IntRect& printRect, float headerHeight, float footerHeight, float userScaleFactor, Vector<IntRect>& pages, int& outPageHeight)
 {
     ASSERT(frame);

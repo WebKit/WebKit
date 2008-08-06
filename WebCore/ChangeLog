@@ -1,3 +1,18 @@
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
+        Attempt to fix the Windows and Qt builds.
+
+        * bindings/js/ScriptControllerWin.cpp: add runtime.h include
+        * bindings/js/ScriptControllerQt.cpp: add QWidget include
+        * page/win/FrameWin.cpp: remove bogus using namespace
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::bindingInstance): use script()
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::getValue): use script()
+        (WebCore::PluginView::~PluginView): use script()
+
   2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.
