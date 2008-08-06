@@ -1,3 +1,14 @@
+2008-08-06  Benjamin C Meyer  <ben@meyerhome.net>
+
+        Reviewed by Simon.
+
+        During the drag operation only accept the event if the action is not ignore action.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::dragEnterEvent):
+        (QWebPagePrivate::dragMoveEvent):
+        (QWebPagePrivate::dropEvent):
+
 2008-08-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Fix the Qt build due to recent ScriptController refactoring.

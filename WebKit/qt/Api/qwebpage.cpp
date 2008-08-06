@@ -734,7 +734,8 @@ void QWebPagePrivate::dragEnterEvent(QDragEnterEvent *ev)
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragEntered(&dragData));
     ev->setDropAction(action);
-    ev->accept();
+    if (action != Qt::IgnoreAction)
+        ev->accept();
 #endif
 }
 
@@ -754,7 +755,8 @@ void QWebPagePrivate::dragMoveEvent(QDragMoveEvent *ev)
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->dragUpdated(&dragData));
     ev->setDropAction(action);
-    ev->accept();
+    if (action != Qt::IgnoreAction)
+        ev->accept();
 #endif
 }
 
@@ -764,7 +766,8 @@ void QWebPagePrivate::dropEvent(QDropEvent *ev)
     DragData dragData(ev->mimeData(), ev->pos(), QCursor::pos(),
                       dropActionToDragOp(ev->possibleActions()));
     Qt::DropAction action = dragOpToDropAction(page->dragController()->performDrag(&dragData));
-    ev->accept();
+    if (action != Qt::IgnoreAction)
+        ev->accept();
 #endif
 }
 
