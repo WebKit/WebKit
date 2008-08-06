@@ -229,9 +229,10 @@ KURL HitTestResult::absoluteImageURL() const
     else if (m_innerNonSharedNode->hasTagName(SVGNames::imageTag))
         urlString = static_cast<Element*>(m_innerNonSharedNode.get())->getAttribute(XLinkNames::hrefAttr);
 #endif
-    else if (m_innerNonSharedNode->hasTagName(objectTag))
-        urlString = static_cast<Element*>(m_innerNonSharedNode.get())->getAttribute(dataAttr);
-    else
+    else if (m_innerNonSharedNode->hasTagName(embedTag) || m_innerNonSharedNode->hasTagName(objectTag)) {
+        Element* element = static_cast<Element*>(m_innerNonSharedNode.get());
+        urlString = element->getAttribute(element->imageSourceAttributeName());
+    } else
         return KURL();
     
     return m_innerNonSharedNode->document()->completeURL(parseURL(urlString));

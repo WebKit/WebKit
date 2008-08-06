@@ -28,14 +28,10 @@
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "Frame.h"
-#include "FrameLoader.h"
-#include "FrameLoaderClient.h"
-#include "FrameView.h"
 #include "HTMLDocument.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
-#include "Image.h"
 #include "MIMETypeRegistry.h"
 #include "RenderImage.h"
 #include "RenderPartObject.h"
@@ -43,13 +39,17 @@
 #include "ScriptController.h"
 #include "Text.h"
 
+#if USE(JAVASCRIPTCORE_BINDINGS)
+#include "runtime.h"
+#endif
+
 namespace WebCore {
 
 using namespace EventNames;
 using namespace HTMLNames;
 
 HTMLObjectElement::HTMLObjectElement(Document* doc, bool createdByParser) 
-    : HTMLPlugInElement(objectTag, doc)
+    : HTMLPlugInImageElement(objectTag, doc)
     , m_docNamedItem(true)
     , m_needWidgetUpdate(!createdByParser)
     , m_useFallbackContent(false)
@@ -160,10 +160,8 @@ void HTMLObjectElement::attach()
         if (m_useFallbackContent)
             return;
 
-        if (renderer()) {
-            RenderImage* imageObj = static_cast<RenderImage*>(renderer());
-            imageObj->setCachedImage(m_imageLoader->image());
-        }
+        if (renderer())
+            static_cast<RenderImage*>(renderer())->setCachedImage(m_imageLoader->image());
     }
 }
 
@@ -241,19 +239,6 @@ bool HTMLObjectElement::isURLAttribute(Attribute *attr) const
 const QualifiedName& HTMLObjectElement::imageSourceAttributeName() const
 {
     return dataAttr;
-}
-
-bool HTMLObjectElement::isImageType()
-{
-    if (m_serviceType.isEmpty() && protocolIs(m_url, "data"))
-        m_serviceType = mimeTypeFromDataURL(m_url);
-
-    if (Frame* frame = document()->frame()) {
-        KURL completedURL(frame->loader()->completeURL(m_url));
-        return frame->loader()->client()->objectContentType(completedURL, m_serviceType) == ObjectContentImage;
-    }
-
-    return Image::supportsType(m_serviceType);
 }
 
 void HTMLObjectElement::renderFallbackContent()

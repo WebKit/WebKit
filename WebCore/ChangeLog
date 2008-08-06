@@ -1,3 +1,70 @@
+2008-07-02  David Kilzer  <ddkilzer@apple.com>
+
+        Images using QT plugin do not display correctly
+
+        <https://bugs.webkit.org/show_bug.cgi?id=9214>
+        <rdar://problem/5683413>
+
+        Reviewed by Darin.
+
+        Tests: fast/images/embed-image.html
+               fast/images/object-image.html
+
+        Use RenderImage instead of RenderPartObject for a renderer when
+        the <embed> tag references an image.  Extract common code from
+        HTMLEmbedElement and HTMLObjectElement into HTMLPlugInImageElement.
+
+        * WebCore.xcodeproj/project.pbxproj: Added new source files.
+
+        * html/HTMLEmbedElement.cpp: Cleaned up #include statements.
+        (WebCore::HTMLEmbedElement::HTMLEmbedElement): Extend
+        HTMLPlugInImageElement which extends HTMLPlugInElement.
+        (WebCore::HTMLEmbedElement::parseMappedAttribute): Split codeAttr
+        and srcAttr cases.  Create or clear HTMLImageLoader as needed for
+        srcAttr.
+        (WebCore::HTMLEmbedElement::rendererIsNeeded): Use
+        HTMLPlugInElement::rendererIsNeeded() for images.
+        (WebCore::HTMLEmbedElement::createRenderer): Create a
+        RenderImage instead of a RenderPartObject for images.
+        (WebCore::HTMLEmbedElement::attach): Create HTMLImageLoader,
+        load image and populate RenderImage for images.
+        (WebCore::HTMLEmbedElement::updateWidget): Don't call
+        RenderPartObject::updateWidget() for images.
+        (WebCore::HTMLEmbedElement::imageSourceAttributeName): Added.
+        * html/HTMLEmbedElement.h: Removed unneeded namespace and class
+        declarations.  Extend HTMLPlugInImageElement which extends
+        HTMLPlugInElement.
+        (WebCore::HTMLEmbedElement::imageSourceAttributeName): Added.
+        (WebCore::HTMLEmbedElement::serviceType): Moved to
+        HTMLPlugInImageElement.
+        (WebCore::HTMLEmbedElement::url): Ditto.
+
+        * html/HTMLObjectElement.cpp: Cleaned up #include statements.
+        (WebCore::HTMLObjectElement::attach): Removed local variable.
+        (WebCore::HTMLObjectElement::isImageType): Moved to
+        HTMLPlugInImageElement.
+        * html/HTMLObjectElement.h: Extend HTMLPlugInImageElement which
+        extends HTMLPlugInElement.
+        (WebCore::HTMLObjectElement::isImageType): Moved to
+        HTMLPlugInImageElement.
+        (WebCore::HTMLObjectElement::serviceType): Ditto.
+        (WebCore::HTMLObjectElement::url): Ditto.
+
+        * html/HTMLPlugInImageElement.cpp: Added.
+        (WebCore::HTMLPlugInImageElement::HTMLPlugInImageElement): Added.
+        (WebCore::HTMLPlugInImageElement::~HTMLPlugInImageElement): Added.
+        (WebCore::HTMLPlugInImageElement::isImageType): Moved from
+        HTMLObjectElement.
+        * html/HTMLPlugInImageElement.h: Added.
+        (WebCore::HTMLPlugInImageElement::isImageType): Added from 
+        HTMLObjectElement.
+        (WebCore::HTMLPlugInImageElement::serviceType): Ditto.
+        (WebCore::HTMLPlugInImageElement::url): Ditto.
+
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteImageURL): Return urlString
+        for embed elements with images.
+
 2008-08-06  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.

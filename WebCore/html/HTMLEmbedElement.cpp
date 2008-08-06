@@ -27,19 +27,25 @@
 #include "CSSHelper.h"
 #include "CSSPropertyNames.h"
 #include "Frame.h"
-#include "FrameView.h"
 #include "HTMLDocument.h"
-#include "HTMLObjectElement.h"
+#include "HTMLImageLoader.h"
 #include "HTMLNames.h"
+#include "HTMLObjectElement.h"
+#include "RenderImage.h"
 #include "RenderPartObject.h"
+#include "RenderWidget.h"
 #include "ScriptController.h"
+
+#if USE(JAVASCRIPTCORE_BINDINGS)
+#include "runtime.h"
+#endif
 
 namespace WebCore {
 
 using namespace HTMLNames;
 
 HTMLEmbedElement::HTMLEmbedElement(Document* doc)
-    : HTMLPlugInElement(embedTag, doc)
+    : HTMLPlugInImageElement(embedTag, doc)
     , m_needWidgetUpdate(false)
 {
 }
@@ -61,7 +67,7 @@ static inline RenderWidget* findWidgetRenderer(const Node* n)
 
     return 0;
 }
-    
+
 RenderWidget* HTMLEmbedElement::renderWidgetForJSBindings() const
 {
     RenderWidget* renderWidget = findWidgetRenderer(this);
@@ -92,9 +98,18 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
         int pos = m_serviceType.find(";");
         if (pos != -1)
             m_serviceType = m_serviceType.left(pos);
-    } else if (attr->name() == codeAttr || attr->name() == srcAttr)
+        if (!isImageType() && m_imageLoader)
+            m_imageLoader.clear();
+    } else if (attr->name() == codeAttr)
         m_url = parseURL(value.string());
-    else if (attr->name() == pluginpageAttr || attr->name() == pluginspageAttr)
+    else if (attr->name() == srcAttr) {
+        m_url = parseURL(value.string());
+        if (renderer() && isImageType()) {
+            if (!m_imageLoader)
+                m_imageLoader.set(new HTMLImageLoader(this));
+            m_imageLoader->updateFromElement();
+        }
+    } else if (attr->name() == pluginpageAttr || attr->name() == pluginspageAttr)
         m_pluginPage = value;
     else if (attr->name() == hiddenAttr) {
         if (equalIgnoringCase(value.string(), "yes") || equalIgnoringCase(value.string(), "true")) {
@@ -116,6 +131,9 @@ void HTMLEmbedElement::parseMappedAttribute(MappedAttribute* attr)
 
 bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
 {
+    if (isImageType())
+        return HTMLPlugInElement::rendererIsNeeded(style);
+
     Frame* frame = document()->frame();
     if (!frame)
         return false;
@@ -131,20 +149,36 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
 
 RenderObject* HTMLEmbedElement::createRenderer(RenderArena* arena, RenderStyle* style)
 {
+    if (isImageType())
+        return new (arena) RenderImage(this);
     return new (arena) RenderPartObject(this);
 }
 
 void HTMLEmbedElement::attach()
 {
     m_needWidgetUpdate = true;
-    queuePostAttachCallback(&HTMLPlugInElement::updateWidgetCallback, this);
+
+    bool isImage = isImageType();
+
+    if (!isImage)
+        queuePostAttachCallback(&HTMLPlugInElement::updateWidgetCallback, this);
+
     HTMLPlugInElement::attach();
+
+    if (isImage && renderer()) {
+        if (!m_imageLoader)
+            m_imageLoader.set(new HTMLImageLoader(this));
+        m_imageLoader->updateFromElement();
+
+        if (renderer())
+            static_cast<RenderImage*>(renderer())->setCachedImage(m_imageLoader->image());
+    }
 }
 
 void HTMLEmbedElement::updateWidget()
 {
     document()->updateRendering();
-    if (m_needWidgetUpdate && renderer())
+    if (m_needWidgetUpdate && renderer() && !isImageType())
         static_cast<RenderPartObject*>(renderer())->updateWidget(true);
 }
 
@@ -194,6 +228,11 @@ void HTMLEmbedElement::attributeChanged(Attribute* attr, bool preserveDecls)
 bool HTMLEmbedElement::isURLAttribute(Attribute* attr) const
 {
     return attr->name() == srcAttr;
+}
+
+const QualifiedName& HTMLEmbedElement::imageSourceAttributeName() const
+{
+    return srcAttr;
 }
 
 String HTMLEmbedElement::src() const

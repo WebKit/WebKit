@@ -1,3 +1,23 @@
+2008-07-02  David Kilzer  <ddkilzer@apple.com>
+
+        Images using QT plugin do not display correctly
+
+        <https://bugs.webkit.org/show_bug.cgi?id=9214>
+        <rdar://problem/5683413>
+
+        Reviewed by Darin.
+
+        Test images rendered by both embed and object elements.
+
+        * fast/images/embed-image.html: Added.
+        * fast/images/object-image.html: Added.
+        * platform/mac/fast/images/embed-image-expected.checksum: Added.
+        * platform/mac/fast/images/embed-image-expected.png: Added.
+        * platform/mac/fast/images/embed-image-expected.txt: Added.
+        * platform/mac/fast/images/object-image-expected.checksum: Added.
+        * platform/mac/fast/images/object-image-expected.png: Added.
+        * platform/mac/fast/images/object-image-expected.txt: Added.
+
 2008-08-06  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
