@@ -153,10 +153,16 @@ void setSharedTimerFiredFunction(void (*f)())
     sharedTimerFiredFunction = f;
 }
 
+static void clearTimer()
+{
+    void* previousTimer;
+    if (previousTimer = InterlockedExchangePointer(&timer, 0))
+        DeleteTimerQueueTimer(timerQueue, previousTimer, 0);
+}
+
 static void NTAPI queueTimerProc(PVOID, BOOLEAN)
 {
-    DeleteTimerQueueTimer(timerQueue, timer, 0);
-    timer = 0;
+    clearTimer();
     PostMessage(timerWindowHandle, timerFiredMessage, 0, 0);
 }
 
@@ -221,10 +227,7 @@ void setSharedTimerFireTime(double fireTime)
 
 void stopSharedTimer()
 {
-    if (timer) {
-        DeleteTimerQueueTimer(timerQueue, timer, 0);
-        timer = 0;
-    }
+    clearTimer();
     if (timerID) {
         KillTimer(timerWindowHandle, timerID);
         timerID = 0;

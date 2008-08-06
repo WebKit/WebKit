@@ -1,5 +1,17 @@
 2008-08-05  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix last timer fix.
+        Add null check, clear timer using InterlockedExchange.
+        
+        Reviewed by Alice Liu.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::clearTimer):
+        (WebCore::queueTimerProc):
+        (WebCore::stopSharedTimer):
+
+2008-08-05  Steve Falkenburg  <sfalken@apple.com>
+
         Fix timer leak, flag.
         
         Timers need to be deleted explicitly, even if they fire.
