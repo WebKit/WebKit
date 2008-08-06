@@ -405,7 +405,7 @@ stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST)
 
 WebKit/gtk/webkit/webkitenumtypes.h: stamp-webkitenumtypes.h
 	@true
-stamp-webkitenumtypes.h: $(webkitgtk_h_api) Makefile
+stamp-webkitenumtypes.h: $(webkitgtk_h_api) GNUmakefile
 	(cd $(srcdir) \
 	&& glib-mkenums \
 			--fhead "#ifndef WEBKIT_ENUM_TYPES_H\n" \
@@ -427,7 +427,7 @@ stamp-webkitenumtypes.h: $(webkitgtk_h_api) Makefile
 	&& rm -f xgen-gth \
 	&& echo timestamp > $(@F)
 
-DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) Makefile
+DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 	(cd $(srcdir) \
 	&& glib-mkenums \
 			--fhead "#include <config.h>\n" \

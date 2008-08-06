@@ -1,3 +1,18 @@
+2008-08-06  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20276
+        [GTK] Makefile rules for the enum GTypes files depend on Makefile
+        instead of GNUmakefile
+
+        The patch committed in revision 34649 added the code needed to
+        generate GTypes for enums but the makefile rules for
+        stamp-webkitenumtypes.h and webkitenumtypes.cpp were depending on
+        Makefile (used by other ports) instead of GNUmakefile.
+
+        * GNUmakefile.am: Depend on GNUmakefile instead of Makefile.
+
 2008-08-05  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Alp Toker.
