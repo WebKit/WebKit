@@ -1,3 +1,11 @@
+2008-08-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Fix the Qt build due to recent ScriptController refactoring.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::~PluginView):
+
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Build fix only, no review.

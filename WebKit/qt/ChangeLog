@@ -1,3 +1,10 @@
+2008-08-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Fix the Qt build due to recent ScriptController refactoring.
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
 2008-08-05  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
