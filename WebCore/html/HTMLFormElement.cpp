@@ -443,12 +443,13 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton)
     bool needButtonActivation = activateSubmitButton; // do we need to activate a submit button?
     
     frame->loader()->clearRecordedFormValues();
+    frame->loader()->setFormAboutToBeSubmitted(this);
     for (unsigned i = 0; i < formElements.size(); ++i) {
         HTMLFormControlElement* control = formElements[i];
         if (control->hasLocalName(inputTag)) {
             HTMLInputElement* input = static_cast<HTMLInputElement*>(control);
             if (input->isTextField()) {
-                frame->loader()->recordFormValue(input->name(), input->value(), this);
+                frame->loader()->recordFormValue(input->name(), input->value());
                 if (input->isSearchField())
                     input->addSearchResult();
             }

@@ -386,7 +386,8 @@ namespace WebCore {
         void scheduleCheckLoadComplete();
 
         void clearRecordedFormValues();
-        void recordFormValue(const String& name, const String& value, PassRefPtr<HTMLFormElement>);
+        void setFormAboutToBeSubmitted(PassRefPtr<HTMLFormElement> element);
+        void recordFormValue(const String& name, const String& value);
 
         bool isComplete() const;
 

@@ -1,3 +1,51 @@
+2008-08-05  David D. Kilzer  <ddkilzer@apple.com>
+
+        Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20038>
+        <rdar://problem/6092270>
+
+        Reviewed by Eric Seidel.
+
+        Test: fast/forms/submit-to-url-fragment.html
+
+        The problem was that isFormSubmission was not being set to true in
+        FrameLoader::loadWithDocumentLoader() when we were actually
+        submitting a form, causing the page to scroll instead of the form to
+        be submitted.
+
+        The isFormSubmission variable wasn't set to true because a FormState
+        object was not being created in
+        FrameLoader::loadFrameRequestWithFormAndValues().
+
+        The FormState object was not being created because
+        HTMLFormElement::submit(Event*, bool activateSubmitButton) would
+        only set FrameLoader::m_formAboutToBeSubmitted to the current form
+        if there was a "text field" element in the form (type = text,
+        password, search or isindex).
+
+        Thus when FrameLoader::submitForm(const FrameLoadRequest&, Event*)
+        called FrameLoader::loadFrameRequestWithFormAndValues(), a null
+        HTMLFormElement pointer would be sent and cause the above failures.
+
+        * html/HTMLFormElement.cpp:
+        (WebCore::HTMLFormElement::submit): Call new
+        FrameLoader::setFormAboutToBeSubmitted() method outside the for
+        loop so we always set FrameLoader::m_formAboutToBeSubmitted exactly
+        once for any form submission.  The FrameLoader::recordFormValue()
+        method is only called with the name/value pair of each text field.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setFormAboutToBeSubmitted): Added method that
+        only sets m_formAboutToBeSubmitted.
+        (WebCore::FrameLoader::recordFormValue): Removed
+        PassRefPtr<HTMLFormElement> argument since this method only sets
+        name/value pairs on m_formValuesAboutToBeSubmitted now.
+        (WebCore::FrameLoader::loadFrameRequestWithFormAndValues): Create a
+        FormState object as long as submitForm is not null so that other
+        FrameLoader methods know when a form is being submitted.
+        * loader/FrameLoader.h:
+
 2008-08-06  David D. Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: Add HTMLPlugInImageElement.cpp to all other build systems

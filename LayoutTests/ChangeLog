@@ -1,3 +1,15 @@
+2008-08-05  David D. Kilzer  <ddkilzer@apple.com>
+
+        Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com
+
+        <https://bugs.webkit.org/show_bug.cgi?id=20038>
+        <rdar://problem/6092270>
+
+        Reviewed by Eric Seidel.
+
+        * fast/forms/submit-to-url-fragment-expected.txt: Added.
+        * fast/forms/submit-to-url-fragment.html: Added.
+
 2008-07-02  David Kilzer  <ddkilzer@apple.com>
 
         Images using QT plugin do not display correctly
