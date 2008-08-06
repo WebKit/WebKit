@@ -29,31 +29,33 @@
 
 // Static Functions
 
+static AccessibilityUIElement* toAXElement(JSObjectRef object)
+{
+    // FIXME: We should ASSERT that it is the right class here.
+    return reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(object));
+}
+
 static JSValueRef allAttributesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> attributes(Adopt, element->allAttributes());
+    JSRetainPtr<JSStringRef> attributes(Adopt, toAXElement(thisObject)->allAttributes());
     return JSValueMakeString(context, attributes.get());
 }
 
 static JSValueRef attributesOfLinkedUIElementsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> linkedUIDescription(Adopt, element->attributesOfLinkedUIElements());
+    JSRetainPtr<JSStringRef> linkedUIDescription(Adopt, toAXElement(thisObject)->attributesOfLinkedUIElements());
     return JSValueMakeString(context, linkedUIDescription.get());
 }
 
 static JSValueRef attributesOfChildrenCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> childrenDescription(Adopt, element->attributesOfChildren());
+    JSRetainPtr<JSStringRef> childrenDescription(Adopt, toAXElement(thisObject)->attributesOfChildren());
     return JSValueMakeString(context, childrenDescription.get());
 }
 
 static JSValueRef parameterizedAttributeNamesCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> parameterizedAttributeNames(Adopt, element->parameterizedAttributeNames());
+    JSRetainPtr<JSStringRef> parameterizedAttributeNames(Adopt, toAXElement(thisObject)->parameterizedAttributeNames());
     return JSValueMakeString(context, parameterizedAttributeNames.get());
 }
 
@@ -64,8 +66,7 @@ static JSValueRef lineForIndexCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         indexNumber = JSValueToNumber(context, arguments[0], exception);
     
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->lineForIndex(indexNumber));
+    return JSValueMakeNumber(context, toAXElement(thisObject)->lineForIndex(indexNumber));
 }
 
 static JSValueRef boundsForRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
@@ -76,8 +77,7 @@ static JSValueRef boundsForRangeCallback(JSContextRef context, JSObjectRef funct
         length = JSValueToNumber(context, arguments[1], exception);
     }
 
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> boundsDescription(Adopt, element->boundsForRange(location, length));
+    JSRetainPtr<JSStringRef> boundsDescription(Adopt, toAXElement(thisObject)->boundsForRange(location, length));
     return JSValueMakeString(context, boundsDescription.get());    
 }
 
@@ -87,82 +87,71 @@ static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         indexNumber = JSValueToNumber(context, arguments[0], exception);
     
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, element->getChildAtIndex(0));
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->getChildAtIndex(0));
 }
 
 // Static Value Getters
 
 static JSValueRef getRoleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> role(Adopt, element->role());
+    JSRetainPtr<JSStringRef> role(Adopt, toAXElement(thisObject)->role());
     return JSValueMakeString(context, role.get());
 }
 
 static JSValueRef getTitleCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> title(Adopt, element->title());
+    JSRetainPtr<JSStringRef> title(Adopt, toAXElement(thisObject)->title());
     return JSValueMakeString(context, title.get());
 }
 
 static JSValueRef getDescriptionCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    JSRetainPtr<JSStringRef> description(Adopt, element->description());
+    JSRetainPtr<JSStringRef> description(Adopt, toAXElement(thisObject)->description());
     return JSValueMakeString(context, description.get());
 }
 
 static JSValueRef getWidthCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->width());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->width());
 }
 
 static JSValueRef getHeightCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->height());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->height());
 }
 
 static JSValueRef getIntValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->intValue());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->intValue());
 }
 
 static JSValueRef getMinValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->minValue());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->minValue());
 }
 
 static JSValueRef getMaxValueCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->maxValue());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->maxValue());
 }
 
 static JSValueRef getInsertionPointLineNumberCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, element->insertionPointLineNumber());
+    return JSValueMakeNumber(context, toAXElement(thisObject)->insertionPointLineNumber());
 }
 
 // Destruction
 
 static void finalize(JSObjectRef thisObject)
 {
-    AccessibilityUIElement* element = reinterpret_cast<AccessibilityUIElement*>(JSObjectGetPrivate(thisObject));
-    delete element;
+    delete toAXElement(thisObject);
 }
 
 // Object Creation
 
-JSObjectRef AccessibilityUIElement::makeJSAccessibilityUIElement(JSContextRef context, AccessibilityUIElement* element)
+JSObjectRef AccessibilityUIElement::makeJSAccessibilityUIElement(JSContextRef context, const AccessibilityUIElement& element)
 {
-    return JSObjectMake(context, AccessibilityUIElement::getJSClass(), element);
+    return JSObjectMake(context, AccessibilityUIElement::getJSClass(), new AccessibilityUIElement(element));
 }
 
 JSClassRef AccessibilityUIElement::getJSClass()

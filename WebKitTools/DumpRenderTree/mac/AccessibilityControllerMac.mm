@@ -39,16 +39,16 @@ AccessibilityController::~AccessibilityController()
 {
 }
 
-AccessibilityUIElement* AccessibilityController::focusedElement()
+AccessibilityUIElement AccessibilityController::focusedElement()
 {
     // FIXME: we could do some caching here.
     id accessibilityObject = [[[mainFrame frameView] documentView] accessibilityFocusedUIElement];
-    return new AccessibilityUIElement(accessibilityObject);
+    return AccessibilityUIElement(accessibilityObject);
 }
 
-AccessibilityUIElement* AccessibilityController::rootElement()
+AccessibilityUIElement AccessibilityController::rootElement()
 {
     // FIXME: we could do some caching here.
     id accessibilityObject = [[mainFrame frameView] documentView];
-    return new AccessibilityUIElement(accessibilityObject);
+    return AccessibilityUIElement(accessibilityObject);
 }

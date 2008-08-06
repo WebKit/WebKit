@@ -41,7 +41,13 @@ AccessibilityUIElement::AccessibilityUIElement(PlatformUIElement element)
     [m_element retain];
 }
 
-AccessibilityUIElement::AccessibilityUIElement()
+AccessibilityUIElement::AccessibilityUIElement(const AccessibilityUIElement& other)
+    : m_element(other.m_element)
+{
+    [m_element retain];
+}
+
+AccessibilityUIElement::~AccessibilityUIElement()
 {
     [m_element release];
 }
@@ -136,27 +142,27 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
     return JSStringCreateWithCharacters(buffer.data(), buffer.size());
 }
 
-void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement*>& elementVector)
+void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)
 {
     NSArray* linkedElements = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
     NSUInteger count = [linkedElements count];
     for (NSUInteger i = 0; i < count; ++i)
-        elementVector.append(new AccessibilityUIElement([linkedElements objectAtIndex:i]));
+        elementVector.append(AccessibilityUIElement([linkedElements objectAtIndex:i]));
 }
 
-void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement*>& elementVector)
+void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& elementVector)
 {
     NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
     NSUInteger count = [children count];
     for (NSUInteger i = 0; i < count; ++i)
-        elementVector.append(new AccessibilityUIElement([children objectAtIndex:i]));
+        elementVector.append(AccessibilityUIElement([children objectAtIndex:i]));
 }
 
-AccessibilityUIElement* AccessibilityUIElement::getChildAtIndex(unsigned index)
+AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
 {
-    Vector<AccessibilityUIElement*> children;
+    Vector<AccessibilityUIElement> children;
     getChildren(children);
-    
+
     if (index < children.size())
         return children[index];
     return nil;
@@ -164,13 +170,13 @@ AccessibilityUIElement* AccessibilityUIElement::getChildAtIndex(unsigned index)
 
 JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 {
-    Vector<AccessibilityUIElement*> linkedElements;
+    Vector<AccessibilityUIElement> linkedElements;
     getLinkedUIElements(linkedElements);
 
     NSMutableString* allElementString = [NSMutableString string];
     size_t size = linkedElements.size();
     for (size_t i = 0; i < size; ++i) {
-        NSString* attributes = attributesOfElement(linkedElements[i]->platformUIElement());
+        NSString* attributes = attributesOfElement(linkedElements[i].platformUIElement());
         [allElementString appendFormat:@"%@\n------------\n", attributes];
     }
 
@@ -179,13 +185,13 @@ JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()
 {
-    Vector<AccessibilityUIElement*> children;
+    Vector<AccessibilityUIElement> children;
     getChildren(children);
 
     NSMutableString* allElementString = [NSMutableString string];
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i) {
-        NSString* attributes = attributesOfElement(children[i]->platformUIElement());
+        NSString* attributes = attributesOfElement(children[i].platformUIElement());
         [allElementString appendFormat:@"%@\n------------\n", attributes];
     }
 

@@ -43,15 +43,16 @@ typedef void* PlatformUIElement;
 class AccessibilityUIElement {
 public:
     AccessibilityUIElement(PlatformUIElement);
-    AccessibilityUIElement();
+    AccessibilityUIElement(const AccessibilityUIElement&);
+    ~AccessibilityUIElement();
 
     PlatformUIElement platformUIElement() { return m_element; }
 
-    static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, AccessibilityUIElement*);
+    static JSObjectRef makeJSAccessibilityUIElement(JSContextRef, const AccessibilityUIElement&);
 
-    void getLinkedUIElements(Vector<AccessibilityUIElement*>&);
-    void getChildren(Vector<AccessibilityUIElement*>&);
-    AccessibilityUIElement* getChildAtIndex(unsigned);
+    void getLinkedUIElements(Vector<AccessibilityUIElement>&);
+    void getChildren(Vector<AccessibilityUIElement>&);
+    AccessibilityUIElement getChildAtIndex(unsigned);
     
     // Methods - platfrom independant implementations
     JSStringRef allAttributes();

@@ -38,8 +38,8 @@ public:
     void makeWindowObject(JSContextRef context, JSObjectRef windowObject, JSValueRef* exception);
 
     // Controller Methods - platfrom independant implementations
-    AccessibilityUIElement* rootElement();
-    AccessibilityUIElement* focusedElement();
+    AccessibilityUIElement rootElement();
+    AccessibilityUIElement focusedElement();
 
 private:
     static JSClassRef getJSClass();

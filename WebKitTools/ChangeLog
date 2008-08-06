@@ -10,6 +10,52 @@
 
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by darin.
+        
+        Fix leaks seen on build-bot by fixing memory management of AccessibilityUIElement.
+        
+        I've made AccessibilityUIElement a stack object for now.  It could be
+        made RefCounted, but I figured that might be overkill for the moment.
+        Essentially it's just a RefPtr itself. :)
+        
+        I also fixed a few typos, such as AccessibilityUIElement() instead of ~AccessibilityUIElement()
+        which was causing additional leaks. :)
+        
+        I added toAXElement to remove a bunch of copy/paste code.
+
+        * DumpRenderTree/AccessibilityController.h:
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (toAXElement):
+        (allAttributesCallback):
+        (attributesOfLinkedUIElementsCallback):
+        (attributesOfChildrenCallback):
+        (lineForIndexCallback):
+        (boundsForRangeCallback):
+        (childAtIndexCallback):
+        (getRoleCallback):
+        (getTitleCallback):
+        (getDescriptionCallback):
+        (getWidthCallback):
+        (getHeightCallback):
+        (getIntValueCallback):
+        (getMinValueCallback):
+        (getMaxValueCallback):
+        (getInsertionPointLineNumberCallback):
+        (finalize):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        (AccessibilityUIElement::platformUIElement):
+        * DumpRenderTree/mac/AccessibilityControllerMac.mm:
+        (AccessibilityController::focusedElement):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::getLinkedUIElements):
+        (AccessibilityUIElement::getChildren):
+        (AccessibilityUIElement::getChildAtIndex):
+        (AccessibilityUIElement::attributesOfLinkedUIElements):
+        (AccessibilityUIElement::attributesOfChildren):
+
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Cameron Zwarich.
 
         Speculative fix for an error I keep seeing in my Cygwin build
