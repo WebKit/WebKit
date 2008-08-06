@@ -213,9 +213,15 @@ void ThreadCondition::wait(Mutex& mutex)
     m_condition->wait(mutex.impl());
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+bool ThreadCondition::timedWait(Mutex& mutex, double secondsToWait)
 {
-    return m_condition->wait(mutex.impl(), interval);
+    if (secondsToWait < 0.0) {
+        wait(mutex);
+        return true;
+    }
+
+    unsigned long millisecondsToWait = static_cast<unsigned long>(secondsToWait * 1000.0);
+    return m_condition->wait(mutex.impl(), millisecondsToWait);
 }
 
 void ThreadCondition::signal()

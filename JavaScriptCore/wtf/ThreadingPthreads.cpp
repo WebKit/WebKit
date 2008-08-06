@@ -217,20 +217,20 @@ void ThreadCondition::wait(Mutex& mutex)
         ASSERT(false);
 }
 
-bool ThreadCondition::timedWait(Mutex& mutex, double interval)
+bool ThreadCondition::timedWait(Mutex& mutex, double secondsToWait)
 {
-    if (interval < 0.0) {
+    if (secondsToWait < 0.0) {
         wait(mutex);
         return true;
     }
-    
-    int intervalSeconds = static_cast<int>(interval);
-    int intervalMicroseconds = static_cast<int>((interval - intervalSeconds) * 1000000.0);
-    
+
+    int intervalSeconds = static_cast<int>(secondsToWait);
+    int intervalMicroseconds = static_cast<int>((secondsToWait - intervalSeconds) * 1000000.0);
+
     // Current time comes in sec/microsec
     timeval currentTime;
     gettimeofday(&currentTime, NULL);
-    
+
     // Target time comes in sec/nanosec
     timespec targetTime;
     targetTime.tv_sec = currentTime.tv_sec + intervalSeconds;

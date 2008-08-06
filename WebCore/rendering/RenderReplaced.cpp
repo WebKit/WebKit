@@ -96,7 +96,9 @@ void RenderReplaced::layout()
  
 void RenderReplaced::intrinsicSizeChanged()
 {
-    m_intrinsicSize = IntSize(cDefaultWidth * style()->effectiveZoom(), cDefaultHeight * style()->effectiveZoom());
+    int scaledWidth = static_cast<int>(cDefaultWidth * style()->effectiveZoom());
+    int scaledHeight = static_cast<int>(cDefaultHeight * style()->effectiveZoom());
+    m_intrinsicSize = IntSize(scaledWidth, scaledHeight);
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 

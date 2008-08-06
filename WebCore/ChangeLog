@@ -8,6 +8,44 @@
 
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Cameron Zwarich.
+
+        Fix warnings and errors seen on Qt bot.
+        Including one correctness fix for ThreadingQt.
+        According to the Qt 4.4 docs, we were always passing
+        seconds to "wait()" when we should have been passing
+        milliseconds.
+        
+        Lots of float <-> int conversion warnings.
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom):
+        (WebCore::adjustForAbsoluteZoom):
+        (WebCore::Element::setScrollLeft):
+        (WebCore::Element::setScrollTop):
+        * dom/EventTargetNode.cpp:
+        (WebCore::EventTargetNode::dispatchMouseEvent):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::imageRect):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::innerHeight):
+        (WebCore::DOMWindow::innerWidth):
+        (WebCore::DOMWindow::scrollX):
+        (WebCore::DOMWindow::scrollY):
+        (WebCore::DOMWindow::scrollTo):
+        * page/EventHandler.cpp:
+        (WebCore::scrollAndAcceptEvent):
+        * plugins/npapi.cpp:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::~PluginView):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::intrinsicSizeChanged):
+
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
         Build fix only, no review.
 
         Attempt to fix the Windows and Qt builds.

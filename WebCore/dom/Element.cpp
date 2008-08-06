@@ -319,7 +319,7 @@ static int adjustForLocalZoom(int value, RenderObject* renderer)
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1.0f)
         return value;
-    return value / zoomFactor;
+    return static_cast<int>(value / zoomFactor);
 }
 
 static int adjustForAbsoluteZoom(int value, RenderObject* renderer)
@@ -327,7 +327,7 @@ static int adjustForAbsoluteZoom(int value, RenderObject* renderer)
     float zoomFactor = renderer->style()->effectiveZoom();
     if (zoomFactor == 1.0f)
         return value;
-    return value / zoomFactor;
+    return static_cast<int>(value / zoomFactor);
 }
 
 int Element::offsetLeft()
@@ -446,15 +446,15 @@ int Element::scrollTop()
 void Element::setScrollLeft(int newLeft)
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderObject *rend = renderer())
-        rend->setScrollLeft(newLeft * rend->style()->effectiveZoom());
+    if (RenderObject* rend = renderer())
+        rend->setScrollLeft(static_cast<int>(newLeft * rend->style()->effectiveZoom()));
 }
 
 void Element::setScrollTop(int newTop)
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderObject *rend = renderer())
-        rend->setScrollTop(newTop * rend->style()->effectiveZoom());
+    if (RenderObject* rend = renderer())
+        rend->setScrollTop(static_cast<int>(newTop * rend->style()->effectiveZoom()));
 }
 
 int Element::scrollWidth()

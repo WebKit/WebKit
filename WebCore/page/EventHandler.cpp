@@ -94,18 +94,18 @@ const double autoscrollInterval = 0.05;
 
 static Frame* subframeForTargetNode(Node* node);
 
-static inline void scrollAndAcceptEvent(int delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, bool pageScrollEnabled, PlatformWheelEvent& e, Node* node, float windowHeightOrWidth)
+static inline void scrollAndAcceptEvent(float delta, ScrollDirection positiveDirection, ScrollDirection negativeDirection, bool pageScrollEnabled, PlatformWheelEvent& e, Node* node, float windowHeightOrWidth)
 {
     if (!delta)
         return;
 
-    int pixelsToScroll = abs(delta);
+    int pixelsToScroll = abs(static_cast<int>(delta));
     if (!e.isContinuous() && !pageScrollEnabled) {
         if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByLine, pixelsToScroll))
             e.accept();
     } else {
         if (pageScrollEnabled)
-            pixelsToScroll = windowHeightOrWidth; 
+            pixelsToScroll = static_cast<int>(windowHeightOrWidth); 
         if (node->renderer()->scroll(delta < 0 ? negativeDirection : positiveDirection, ScrollByPixel, pixelsToScroll))
             e.accept();
     }
