@@ -13,6 +13,8 @@
         Reviewed by darin.
         
         Fix leaks seen on build-bot by fixing memory management of AccessibilityUIElement.
+        <https://bugs.webkit.org/show_bug.cgi?id=20297>
+        <rdar://problem/6093153>
         
         I've made AccessibilityUIElement a stack object for now.  It could be
         made RefCounted, but I figured that might be overkill for the moment.
