@@ -1,3 +1,15 @@
+2008-08-05  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix timer leak, flag.
+        
+        Timers need to be deleted explicitly, even if they fire.
+        Also added WT_EXECUTEONLYONCE flag, since this is not a repeating timer.
+        
+        Reviewed by Ada Chan.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::queueTimerProc):
+
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin.
