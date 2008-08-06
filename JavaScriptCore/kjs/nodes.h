@@ -2148,7 +2148,7 @@ namespace KJS {
 
     class ScopeNode : public BlockNode {
     public:
-        ScopeNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        ScopeNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         int sourceId() const KJS_FAST_CALL { return m_sourceId; }
         const UString& sourceURL() const KJS_FAST_CALL { return m_sourceURL; }
@@ -2160,6 +2160,15 @@ namespace KJS {
         VarStack& varStack() { return m_varStack; }
         FunctionStack& functionStack() { return m_functionStack; }
 
+        int neededConstants()
+        {
+            // We may need 3 more constants than the count given by the parser,
+            // because of the various uses of jsUndefined() and the 1.0 / -1.0
+            // that are emitted for a preincrement or predecrement on a constant
+            // local variable. 
+            return m_numConstants + 3;
+        }
+
     protected:
         VarStack m_varStack;
         FunctionStack m_functionStack;
@@ -2169,11 +2178,12 @@ namespace KJS {
         int m_sourceId;
         bool m_usesEval;
         bool m_needsClosure;
+        int m_numConstants;
     };
 
     class ProgramNode : public ScopeNode {
     public:
-        static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static ProgramNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         ProgramCodeBlock& byteCode(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
@@ -2183,7 +2193,7 @@ namespace KJS {
         }
 
     private:
-        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        ProgramNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         void generateCode(ScopeChainNode*) KJS_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
@@ -2198,7 +2208,7 @@ namespace KJS {
 
     class EvalNode : public ScopeNode {
     public:
-        static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static EvalNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         EvalCodeBlock& byteCode(ScopeChainNode* scopeChain) KJS_FAST_CALL
         {
@@ -2208,7 +2218,7 @@ namespace KJS {
         }
 
     private:
-        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        EvalNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         void generateCode(ScopeChainNode*) KJS_FAST_CALL;
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
@@ -2220,8 +2230,8 @@ namespace KJS {
 
     class FunctionBodyNode : public ScopeNode {
     public:
-        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
-        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, SourceProvider*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
+        static FunctionBodyNode* create(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
         Vector<Identifier>& parameters() KJS_FAST_CALL { return m_parameters; }
         UString paramString() const KJS_FAST_CALL;
@@ -2249,7 +2259,7 @@ namespace KJS {
         void setSource(const SourceRange& source) { m_source = source; } 
         UString toSourceString() const KJS_FAST_CALL { return UString("{") + m_source.toString() + UString("}"); }
     protected:
-        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure) KJS_FAST_CALL;
+        FunctionBodyNode(JSGlobalData*, SourceElements*, VarStack*, FunctionStack*, bool usesEval, bool needsClosure, int numConstants) KJS_FAST_CALL;
 
     private:
         void generateCode(ScopeChainNode*) KJS_FAST_CALL;

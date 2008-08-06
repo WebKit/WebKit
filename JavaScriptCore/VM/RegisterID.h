@@ -39,6 +39,7 @@ namespace KJS {
     public:
         RegisterID()
             : m_refCount(0)
+            , m_isConstant(false)
 #ifndef NDEBUG
             , m_didSetIndex(false)
 #endif
@@ -48,6 +49,7 @@ namespace KJS {
         explicit RegisterID(int index)
             : m_refCount(0)
             , m_index(index)
+            , m_isConstant(false)
 #ifndef NDEBUG
             , m_didSetIndex(true)
 #endif
@@ -63,6 +65,11 @@ namespace KJS {
             m_index = index;
         }
 
+        void makeConstant()
+        {
+            m_isConstant = true;
+        }
+
         int index() const
         {
             ASSERT(m_didSetIndex);
@@ -71,7 +78,7 @@ namespace KJS {
 
         bool isTemporary()
         {
-            return m_index >= 0;
+            return m_index >= 0 && !m_isConstant;
         }
 
         void ref()
@@ -94,6 +101,7 @@ namespace KJS {
 
         int m_refCount;
         int m_index;
+        bool m_isConstant;
 #ifndef NDEBUG
         bool m_didSetIndex;
 #endif

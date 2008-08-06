@@ -56,7 +56,7 @@ namespace KJS {
         int sourceId() const { return m_sourceId; }
 
         void didFinishParsing(SourceElements*, ParserRefCountedData<DeclarationStacks::VarStack>*, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine);
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>*, bool usesEval, bool needsClosure, int lastLine, int numConstants);
 
     private:
         friend class JSGlobalData;
@@ -73,6 +73,7 @@ namespace KJS {
         bool m_usesEval;
         bool m_needsClosure;
         int m_lastLine;
+        int m_numConstants;
     };
 
     template <class ParsedNode>
@@ -92,7 +93,8 @@ namespace KJS {
                                                      m_funcDeclarations ? &m_funcDeclarations->data : 0,
                                                      sourceProvider.get(),
                                                      m_usesEval,
-                                                     m_needsClosure);
+                                                     m_needsClosure,
+                                                     m_numConstants);
         m_varDeclarations = 0;
         m_funcDeclarations = 0;
         m_sourceURL = UString();

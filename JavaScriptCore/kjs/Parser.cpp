@@ -83,7 +83,7 @@ void Parser::parse(ExecState* exec, const UString& sourceURL, int startingLineNu
 }
 
 void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedData<DeclarationStacks::VarStack>* varStack, 
-                              ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, bool usesEval, bool needsClosure, int lastLine)
+                              ParserRefCountedData<DeclarationStacks::FunctionStack>* funcStack, bool usesEval, bool needsClosure, int lastLine, int numConstants)
 {
     m_sourceElements = sourceElements;
     m_varDeclarations = varStack;
@@ -91,6 +91,7 @@ void Parser::didFinishParsing(SourceElements* sourceElements, ParserRefCountedDa
     m_usesEval = usesEval;
     m_needsClosure = needsClosure;
     m_lastLine = lastLine;
+    m_numConstants = numConstants;
 }
 
 } // namespace KJS

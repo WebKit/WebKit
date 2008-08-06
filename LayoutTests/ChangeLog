@@ -1,3 +1,19 @@
+2008-08-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Add tests for bug 20286: Load constants all at once instead of using op_load
+        <https://bugs.webkit.org/show_bug.cgi?id=20286>
+
+        Add a test for the edge cases of the new constant counting in the
+        parser, and change the limit in the deep recursion test to account for
+        the slightly larger stack frames.
+
+        * fast/js/constant-count-expected.txt: Added.
+        * fast/js/constant-count.html: Added.
+        * fast/js/deep-recursion-test.html:
+        * fast/js/resources/constant-count.js: Added.
+
 2008-08-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.

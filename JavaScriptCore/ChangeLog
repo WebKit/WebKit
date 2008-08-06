@@ -1,3 +1,69 @@
+2008-08-06  Cameron Zwarich  <cwzwarich@webkit.org>
+
+        Reviewed by Maciej.
+
+        Bug 20286: Load constants all at once instead of using op_load
+        <https://bugs.webkit.org/show_bug.cgi?id=20286>
+
+        Load constants all at once into temporary registers instead of using
+        individual instances of op_load.
+
+        This is a 2.6% speedup on SunSpider.
+
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        (KJS::CodeBlock::mark):
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator):
+        (KJS::CodeGenerator::newTemporary):
+        (KJS::CodeGenerator::addConstant):
+        (KJS::CodeGenerator::addUnexpectedConstant):
+        (KJS::CodeGenerator::emitLoad):
+        (KJS::CodeGenerator::emitUnexpectedLoad):
+        (KJS::CodeGenerator::emitNewError):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::slideRegisterWindowForCall):
+        (KJS::Machine::unwindCallFrame):
+        (KJS::Machine::throwException):
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * VM/RegisterID.h:
+        (KJS::RegisterID::RegisterID):
+        (KJS::RegisterID::makeConstant):
+        (KJS::RegisterID::isTemporary):
+        * kjs/NodeInfo.h:
+        * kjs/Parser.cpp:
+        (KJS::Parser::didFinishParsing):
+        * kjs/Parser.h:
+        (KJS::Parser::parse):
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::NullNode::emitCode):
+        (KJS::BooleanNode::emitCode):
+        (KJS::NumberNode::emitCode):
+        (KJS::StringNode::emitCode):
+        (KJS::ArrayNode::emitCode):
+        (KJS::DeleteResolveNode::emitCode):
+        (KJS::DeleteValueNode::emitCode):
+        (KJS::VoidNode::emitCode):
+        (KJS::ConstDeclNode::emitCodeSingle):
+        (KJS::ReturnNode::emitCode):
+        (KJS::ScopeNode::ScopeNode):
+        (KJS::ProgramNode::ProgramNode):
+        (KJS::ProgramNode::create):
+        (KJS::EvalNode::EvalNode):
+        (KJS::EvalNode::create):
+        (KJS::FunctionBodyNode::FunctionBodyNode):
+        (KJS::FunctionBodyNode::create):
+        (KJS::FunctionBodyNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::ScopeNode::neededConstants):
+
 2008-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron.

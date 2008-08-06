@@ -35,6 +35,7 @@ namespace KJS {
     template <typename T> struct NodeFeatureInfo {
         T m_node;
         FeatureInfo m_featureInfo;
+        int m_numConstants;
     };
     
     typedef NodeFeatureInfo<FuncExprNode*> FuncExprNodeInfo;
@@ -51,6 +52,7 @@ namespace KJS {
         ParserRefCountedData<DeclarationStacks::VarStack>* m_varDeclarations;
         ParserRefCountedData<DeclarationStacks::FunctionStack>* m_funcDeclarations;
         FeatureInfo m_featureInfo;
+        int m_numConstants;
     };
     
     typedef NodeDeclarationInfo<StatementNode*> StatementNodeInfo;

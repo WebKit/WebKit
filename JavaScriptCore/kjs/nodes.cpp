@@ -226,7 +226,7 @@ RegisterID* NullNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
         return 0;
-    return generator.emitLoad(generator.finalDestination(dst), jsNull());
+    return generator.emitLoad(dst, jsNull());
 }
 
 // ------------------------------ BooleanNode ----------------------------------
@@ -235,7 +235,7 @@ RegisterID* BooleanNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
         return 0;
-    return generator.emitLoad(generator.finalDestination(dst), m_value);
+    return generator.emitLoad(dst, m_value);
 }
 
 // ------------------------------ NumberNode -----------------------------------
@@ -244,7 +244,7 @@ RegisterID* NumberNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (dst == ignoredResult())
         return 0;
-    return generator.emitLoad(generator.finalDestination(dst), m_double);
+    return generator.emitLoad(dst, m_double);
 }
 
 // ------------------------------ StringNode -----------------------------------
@@ -255,7 +255,7 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         return 0;
 
     // We atomize constant strings, in case they're later used in property lookup.
-    return generator.emitLoad(generator.finalDestination(dst), jsOwnedString(generator.globalExec(), Identifier(generator.globalExec(), m_value).ustring()));
+    return generator.emitLoad(dst, jsOwnedString(generator.globalExec(), Identifier(generator.globalExec(), m_value).ustring()));
 }
 
 // ------------------------------ RegExpNode -----------------------------------
@@ -323,7 +323,7 @@ RegisterID* ArrayNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     }
 
     if (m_elision) {
-        RegisterID* value = generator.emitLoad(generator.newTemporary(), jsNumber(generator.globalExec(), m_elision + length));
+        RegisterID* value = generator.emitLoad(0, jsNumber(generator.globalExec(), m_elision + length));
         generator.emitPutById(array.get(), generator.propertyNames().length, value);
     }
 
@@ -575,7 +575,7 @@ RegisterID* PostfixErrorNode::emitCode(CodeGenerator& generator, RegisterID*)
 RegisterID* DeleteResolveNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     if (generator.registerForLocal(m_ident))
-        return generator.emitLoad(generator.finalDestination(dst), false);
+        return generator.emitUnexpectedLoad(generator.finalDestination(dst), false);
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
     RegisterID* base = generator.emitResolveBase(generator.tempDestination(dst), m_ident);
@@ -610,7 +610,7 @@ RegisterID* DeleteValueNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     generator.emitNode(ignoredResult(), m_expr.get());
 
     // delete on a non-location expression ignores the value and returns true
-    return generator.emitLoad(generator.finalDestination(dst), true);
+    return generator.emitUnexpectedLoad(generator.finalDestination(dst), true);
 }
 
 // ------------------------------ VoidNode -------------------------------------
@@ -622,7 +622,7 @@ RegisterID* VoidNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         return 0;
     }
     RefPtr<RegisterID> r0 = generator.emitNode(m_expr.get());
-    return generator.emitLoad(generator.finalDestination(dst, r0.get()), jsUndefined());
+    return generator.emitLoad(dst, jsUndefined());
 }
 
 // ------------------------------ TypeOfValueNode -----------------------------------
@@ -1015,7 +1015,7 @@ RegisterID* ConstDeclNode::emitCodeSingle(CodeGenerator& generator)
     // FIXME: While this code should only be hit in eval code, it will potentially
     // assign to the wrong base if m_ident exists in an intervening dynamic scope.
     RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);
-    RegisterID* value = m_init ? generator.emitNode(m_init.get()) : generator.emitLoad(generator.newTemporary(), jsUndefined());
+    RegisterID* value = m_init ? generator.emitNode(m_init.get()) : generator.emitLoad(0, jsUndefined());
     return generator.emitPutById(base.get(), m_ident, value);
 }
 
@@ -1373,7 +1373,7 @@ RegisterID* ReturnNode::emitCode(CodeGenerator& generator, RegisterID* dst)
     if (generator.codeType() != FunctionCode)
         return emitThrowError(generator, SyntaxError, "Invalid return statement.");
         
-    RegisterID* r0 = m_value ? generator.emitNode(dst, m_value.get()) : generator.emitLoad(generator.finalDestination(dst), jsUndefined());
+    RegisterID* r0 = m_value ? generator.emitNode(dst, m_value.get()) : generator.emitLoad(dst, jsUndefined());
     if (generator.scopeDepth()) {
         RefPtr<LabelID> l0 = generator.newLabel();
         generator.emitJumpScopes(l0.get(), 0);
@@ -1640,12 +1640,13 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 // ------------------------------ ScopeNode -----------------------------
 
-ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
     : BlockNode(globalData, children)
     , m_sourceURL(globalData->parser->sourceURL())
     , m_sourceId(globalData->parser->sourceId())
     , m_usesEval(usesEval)
     , m_needsClosure(needsClosure)
+    , m_numConstants(numConstants)
 {
     if (varStack)
         m_varStack = *varStack;
@@ -1657,21 +1658,21 @@ ScopeNode::ScopeNode(JSGlobalData* globalData, SourceElements* children, VarStac
 
 // ------------------------------ ProgramNode -----------------------------
 
-ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
+ProgramNode::ProgramNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
     , m_sourceProvider(sourceProvider)
 {
 }
 
-ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure)
+ProgramNode* ProgramNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
 {
-    return new ProgramNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure);
+    return new ProgramNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, numConstants);
 }
 
 // ------------------------------ EvalNode -----------------------------
 
-EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
+EvalNode::EvalNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
     , m_sourceProvider(sourceProvider)
 {
 }
@@ -1702,15 +1703,15 @@ void EvalNode::generateCode(ScopeChainNode* sc)
     generator.generate();
 }
 
-EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure)
+EvalNode* EvalNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider* sourceProvider, bool usesEval, bool needsClosure, int numConstants)
 {
-    return new EvalNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure);
+    return new EvalNode(globalData, children, varStack, funcStack, sourceProvider, usesEval, needsClosure, numConstants);
 }
 
 // ------------------------------ FunctionBodyNode -----------------------------
 
-FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
-    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure)
+FunctionBodyNode::FunctionBodyNode(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
+    : ScopeNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants)
 {
 }
 
@@ -1720,14 +1721,14 @@ void FunctionBodyNode::mark()
         m_code->mark();
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, bool usesEval, bool needsClosure, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants);
 }
 
-FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider*, bool usesEval, bool needsClosure)
+FunctionBodyNode* FunctionBodyNode::create(JSGlobalData* globalData, SourceElements* children, VarStack* varStack, FunctionStack* funcStack, SourceProvider*, bool usesEval, bool needsClosure, int numConstants)
 {
-    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure);
+    return new FunctionBodyNode(globalData, children, varStack, funcStack, usesEval, needsClosure, numConstants);
 }
 
 void FunctionBodyNode::generateCode(ScopeChainNode* sc)
@@ -1747,7 +1748,7 @@ RegisterID* FunctionBodyNode::emitCode(CodeGenerator& generator, RegisterID*)
     generator.emitDebugHook(DidEnterCallFrame, firstLine(), lastLine());
     statementListEmitCode(m_children, generator);
     if (!m_children.size() || !m_children.last()->isReturnNode()) {
-        RegisterID* r0 = generator.emitLoad(generator.newTemporary(), jsUndefined());
+        RegisterID* r0 = generator.emitLoad(0, jsUndefined());
         generator.emitDebugHook(WillLeaveCallFrame, firstLine(), lastLine());
         generator.emitReturn(r0);
     }
