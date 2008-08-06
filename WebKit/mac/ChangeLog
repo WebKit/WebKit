@@ -1,3 +1,16 @@
+2008-08-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - fix an assertion failure in Cache::setCapacities()
+
+        * Misc/WebKitSystemBits.h: Changed the return type of WebMemorySize()
+        to uint64_t.
+        * Misc/WebKitSystemBits.m:
+        (WebMemorySize):
+        * WebView/WebView.mm:
+        (+[WebView _setCacheModel:]):
+
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
         Pass in the correct class here.

@@ -3915,7 +3915,7 @@ static WebFrameView *containingFrameView(NSView *view)
 
     // As a fudge factor, use 1000 instead of 1024, in case the reported byte 
     // count doesn't align exactly to a megabyte boundary.
-    vm_size_t memSize = WebMemorySize() / 1024 / 1000;
+    uint64_t memSize = WebMemorySize() / 1024 / 1000;
     unsigned long long diskFreeSize = WebVolumeFreeSize(nsurlCacheDirectory) / 1024 / 1000;
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
 

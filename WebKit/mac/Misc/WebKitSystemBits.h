@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-vm_size_t WebMemorySize(void);
+uint64_t WebMemorySize(void);
 unsigned long long WebVolumeFreeSize(NSString *path);
 int WebNumberOfCPUs(void);
 
