@@ -1,3 +1,19 @@
+2008-08-06  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Eric Seidel.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20295
+        RegularExpression::match should not crash when a null string is passed
+
+        RegularExpression::match used to pass null subject strings to
+        jsRegExpExecute causing an ASSERT failure and then a crash.
+        There is no need to fix also RegularExpression:search and
+        RegularExpression::searchRev as they just call
+        RegularExpression::match.
+
+        * platform/text/RegularExpression.cpp:
+        (WebCore::RegularExpression::match): Return -1 if the string is null.
+
 2008-08-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix only

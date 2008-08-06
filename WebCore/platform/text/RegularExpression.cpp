@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Collabora Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -129,6 +130,9 @@ String RegularExpression::pattern() const
 
 int RegularExpression::match(const String& str, int startFrom, int* matchLength) const
 {
+    if (str.isNull())
+        return -1;
+
     d->lastMatchString = str;
     // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
     d->lastMatchCount = jsRegExpExecute(d->regex, d->lastMatchString.characters(),
