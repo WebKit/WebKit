@@ -38,12 +38,30 @@
 
 namespace WebCore {
 
-LocalStorage::LocalStorage(PageGroup* group, const String& path)
-    : m_group(group)
-    , m_path(path.copy())
-{
-    ASSERT(m_group);
+typedef HashMap<String, LocalStorage*> LocalStorageMap;
 
+static LocalStorageMap& localStorageMap()
+{
+    static LocalStorageMap localStorageMap;
+    return localStorageMap;
+}
+
+PassRefPtr<LocalStorage> LocalStorage::localStorage(const String& path)
+{
+    const String lookupPath = path.isNull() ? String("") : path;
+    LocalStorageMap::iterator it = localStorageMap().find(lookupPath);
+    if (it == localStorageMap().end()) {
+        RefPtr<LocalStorage> localStorage = adoptRef(new LocalStorage(lookupPath));
+        localStorageMap().set(lookupPath, localStorage.get());
+        return localStorage.release();
+    }
+    
+    return it->second;
+}
+
+LocalStorage::LocalStorage(const String& path)
+    : m_path(path.copy())
+{
     // If the path is empty, we know we're never going to be using the thread for anything, so don't start it.
     // In the future, we might also want to consider removing it from the DOM in that case - <rdar://problem/5960470>
     if (path.isEmpty())
@@ -52,6 +70,12 @@ LocalStorage::LocalStorage(PageGroup* group, const String& path)
     m_thread = LocalStorageThread::create();
     m_thread->start();
     m_thread->scheduleImport(this);
+}
+
+LocalStorage::~LocalStorage()
+{
+    ASSERT(localStorageMap().get(m_path) == this);
+    localStorageMap().remove(m_path);
 }
 
 PassRefPtr<StorageArea> LocalStorage::storageArea(Frame* sourceFrame, SecurityOrigin* origin)

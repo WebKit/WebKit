@@ -106,7 +106,7 @@ void PageGroup::addPage(Page* page)
     m_pages.add(page);
 #if ENABLE(DOM_STORAGE)
     if (!m_localStorage)
-        m_localStorage = LocalStorage::create(this, page->settings()->localStorageDatabasePath());
+        m_localStorage = LocalStorage::localStorage(page->settings()->localStorageDatabasePath());
 #endif
 }
 

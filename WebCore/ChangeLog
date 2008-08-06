@@ -1,3 +1,29 @@
+2008-08-06  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by MitzPettel
+
+        <rdar://problem/6078543> - Many LocalStorageThreads may be started
+
+        The original decision to key LocalStorage sets to PageGroups was a poor one.
+
+        It seems a much better solution is to key them to the actual path of on-disk storage,
+        which also solves all of the avenues that could lead to a boundless number of threads.
+
+        In this patch, I am not attempting to completely sever the attachment of LocalStorage
+        to PageGroups as that would require a more substantial re-working of the lifetime
+        between pages, groups, and local storage threads.
+
+        * page/PageGroup.cpp:
+        (WebCore::PageGroup::addPage):
+
+        * storage/LocalStorage.cpp:
+        (WebCore::localStorageMap):  Map paths to LocalStorage objects here.
+        (WebCore::LocalStorage::localStorage): Return the shared LocalStorage object for this path,
+          or create a new one if it doesn't yet exist.
+        (WebCore::LocalStorage::LocalStorage):
+        (WebCore::LocalStorage::~LocalStorage):  Add to remove the path->LocalStorage mapping
+        * storage/LocalStorage.h:
+
 2008-08-06  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Adele.
