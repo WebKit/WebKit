@@ -2,6 +2,15 @@
 
         Reviewed by Tim.
 
+        - Make XHR console message clearer.
+
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::didFinishLoading):
+
+2008-08-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
         - Created a new function to create DOM links from text without
         converting back and forth from HTML and messing with escaping special
         characters.
