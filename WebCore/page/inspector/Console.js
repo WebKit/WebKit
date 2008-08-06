@@ -404,8 +404,10 @@ WebInspector.Console.prototype = {
 
     _formatstring: function(str, elem, plainText)
     {
-        // Honor the plainText argument, if the textContent output doesn't make sense.
-        elem.appendChild(document.createTextNode("\"" + str + "\""));
+        if (plainText)
+            elem.appendChild(document.createTextNode("\"" + str + "\""));
+        else
+            elem.insertAdjacentHTML("beforeEnd", "\"" + WebInspector.linkifyString(str) + "\"");
     },
 
     _formatregexp: function(re, elem, plainText)
@@ -489,7 +491,7 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
 
 WebInspector.ConsoleMessage.prototype = {
     _format: function(parameters, plainText)
-    {
+    {    
         var formattedResult = document.createElement("span");
 
         if (!parameters.length)
@@ -513,8 +515,9 @@ WebInspector.ConsoleMessage.prototype = {
             function append(a, b)
             {
                 if (!(b instanceof Node))
-                    b = document.createTextNode(b);
-                a.appendChild(b);
+                    a.insertAdjacentHTML("beforeEnd", WebInspector.linkifyString(b.toString()));
+                else
+                    a.appendChild(b);
                 return a;
             }
 
@@ -527,7 +530,7 @@ WebInspector.ConsoleMessage.prototype = {
 
         for (var i = 0; i < parameters.length; ++i) {
             if (typeof parameters[i] === "string")
-                formattedResult.appendChild(document.createTextNode(parameters[i]));
+                formattedResult.insertAdjacentHTML("beforeEnd", WebInspector.linkifyString(parameters[i]));
             else
                 formattedResult.appendChild(formatForConsole(parameters[i]));
             if (i < parameters.length - 1)

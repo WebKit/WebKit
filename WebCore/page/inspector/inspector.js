@@ -405,8 +405,14 @@ WebInspector.documentClick = function(event)
     function followLink()
     {
         // FIXME: support webkit-html-external-link links here.
-        if (anchor.hasStyleClass("webkit-html-resource-link"))
+        if (anchor.href in WebInspector.resourceURLMap) {
+            if (anchor.hasStyleClass("webkit-html-external-link")) {
+                anchor.removeStyleClass("webkit-html-external-link");
+                anchor.addStyleClass("webkit-html-resource-link");
+            }
+
             WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
+        }
     }
 
     if (WebInspector.followLinkTimeout)
@@ -909,11 +915,24 @@ WebInspector.showResourceForURL = function(url, line, preferredPanel)
     return true;
 }
 
+WebInspector.linkifyString = function(string)
+{
+    function linkify(url)
+    {
+        url = url.unescapeHTML();
+        var realURL = (url.indexOf("www.") === 0 ? "http://" + url : url);
+        return WebInspector.linkifyURL(realURL, url, null, (realURL in WebInspector.resourceURLMap));
+    }
+
+    string = string.escapeHTML();
+    return string.replace(new RegExp("(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}://|www\\.)[\\w$\\-_+*'=\\|/\\\\(){}[\\]%@&#~,:;.!?]{4,}[\\w$\\-_+*=\\|/\\\\({%@&#~]"), linkify);
+}
+
 WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 {
-    if (linkText === undefined)
+    if (!linkText)
         linkText = url.escapeHTML();
-    classes = (classes === undefined) ? "" : classes + " ";
+    classes = (classes ? classes + " " : "");
     classes += isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
     var link = "<a href=\"" + url + "\" class=\"" + classes + "\" title=\"" + url + "\" target=\"_blank\">" + linkText + "</a>";
     return link;
