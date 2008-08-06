@@ -1,3 +1,12 @@
+2008-08-06  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix only
+
+        * bindings/js/ScriptControllerGtk.cpp:
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::getValue):
+        (WebCore::PluginView::~PluginView):
+
 2008-08-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
 
         Fix the Qt build due to recent ScriptController refactoring.
