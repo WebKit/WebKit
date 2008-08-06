@@ -1,3 +1,15 @@
+2008-08-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron.
+
+        - add fast path for immediates to % operator, as we have for many other math ops
+        
+        This fixes handling for a 0 divisor relative to the last patch. Only an 0.2% speedup on SunSpider but
+        still a 1.4x win on Oliver's prime test.
+        
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-08-05  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Darin.
