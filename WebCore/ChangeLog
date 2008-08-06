@@ -1,3 +1,30 @@
+2008-08-06  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Fix a large animation leak found on the buildbot
+        (m_animations and m_transitions were never deleted)
+        Drag RenderStyle (kicking and screaming) into the 21st century
+        of memory management with a little application of OwnPtr.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::FillLayer::cullEmptyLayers):
+        (WebCore::RenderStyle::diff):
+        (WebCore::RenderStyle::contentDataEquivalent):
+        (WebCore::RenderStyle::setContent):
+        (WebCore::BindingURI::BindingURI):
+        (WebCore::RenderStyle::setBoxShadow):
+        (WebCore::ShadowData::ShadowData):
+        (WebCore::RenderStyle::counterDirectives):
+        (WebCore::RenderStyle::accessCounterDirectives):
+        (WebCore::RenderStyle::adjustAnimations):
+        (WebCore::RenderStyle::adjustTransitions):
+        (WebCore::RenderStyle::accessAnimations):
+        (WebCore::RenderStyle::accessTransitions):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::clearAnimations):
+        (WebCore::RenderStyle::clearTransitions):
+
 2008-08-06  Brady Eidson  <beidson@apple.com>
 
         Reviewed by MitzPettel

@@ -1438,8 +1438,8 @@ public:
     DataRef<StyleMultiColData> m_multiCol; //  CSS3 multicol properties
     DataRef<StyleTransformData> m_transform; // Transform properties (rotate, scale, skew, etc.)
 
-    ContentData* m_content;
-    CounterDirectiveMap* m_counterDirectives;
+    OwnPtr<ContentData> m_content;
+    OwnPtr<CounterDirectiveMap> m_counterDirectives;
 
     unsigned userDrag : 2; // EUserDrag
     bool textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
@@ -1448,18 +1448,18 @@ public:
     unsigned matchNearestMailBlockquoteColor : 1; // EMatchNearestMailBlockquoteColor, FIXME: This property needs to be eliminated. It should never have been added.
     unsigned m_appearance : 6; // EAppearance
     unsigned m_borderFit : 1; // EBorderFit
-    ShadowData* m_boxShadow;  // For box-shadow decorations.
+    OwnPtr<ShadowData> m_boxShadow;  // For box-shadow decorations.
     
     RefPtr<StyleReflection> m_boxReflect;
 
-    AnimationList* m_animations;
-    AnimationList* m_transitions;
+    OwnPtr<AnimationList> m_animations;
+    OwnPtr<AnimationList> m_transitions;
 
     FillLayer m_mask;
     NinePieceImage m_maskBoxImage;
 
 #if ENABLE(XBL)
-    BindingURI* bindingURI; // The XBL binding URI list.
+    OwnPtr<BindingURI> bindingURI; // The XBL binding URI list.
 #endif
     
 private:
@@ -2107,7 +2107,7 @@ public:
     unsigned int boxOrdinalGroup() const { return rareNonInheritedData->flexibleBox->ordinal_group; }
     EBoxOrient boxOrient() const { return static_cast<EBoxOrient>(rareNonInheritedData->flexibleBox->orient); }
     EBoxAlignment boxPack() const { return static_cast<EBoxAlignment>(rareNonInheritedData->flexibleBox->pack); }
-    ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow; }
+    ShadowData* boxShadow() const { return rareNonInheritedData->m_boxShadow.get(); }
     StyleReflection* boxReflect() const { return rareNonInheritedData->m_boxReflect.get(); }
     EBoxSizing boxSizing() const { return static_cast<EBoxSizing>(box->boxSizing); }
     Length marqueeIncrement() const { return rareNonInheritedData->marquee->increment; }
@@ -2151,8 +2151,8 @@ public:
     // End CSS3 Getters
 
     // Apple-specific property getter methods
-    const AnimationList* animations() const { return rareNonInheritedData->m_animations; }
-    const AnimationList* transitions() const { return rareNonInheritedData->m_transitions; }
+    const AnimationList* animations() const { return rareNonInheritedData->m_animations.get(); }
+    const AnimationList* transitions() const { return rareNonInheritedData->m_transitions.get(); }
 
     AnimationList* accessAnimations();
     AnimationList* accessTransitions();
@@ -2362,7 +2362,6 @@ public:
     // CSS3 Setters
 #if ENABLE(XBL)
     void deleteBindingURIs() { 
-        delete rareNonInheritedData->bindingURI; 
         SET_VAR(rareNonInheritedData, bindingURI, (BindingURI*) 0);
     }
     void inheritBindingURIs(BindingURI* other) {
@@ -2428,21 +2427,15 @@ public:
     // Apple-specific property setters
     void clearAnimations()
     {
-        if (rareNonInheritedData.access()->m_animations) {
-            delete rareNonInheritedData.access()->m_animations;
-            rareNonInheritedData.access()->m_animations = 0;
-        }
+        rareNonInheritedData.access()->m_animations.clear();
     }
     void clearTransitions()
     {
-        if (rareNonInheritedData.access()->m_transitions) {
-            delete rareNonInheritedData.access()->m_transitions;
-            rareNonInheritedData.access()->m_transitions = 0;
-        }
+        rareNonInheritedData.access()->m_transitions.clear();
     }
 
-    void inheritAnimations(const AnimationList* parent) { clearAnimations(); if (parent) rareNonInheritedData.access()->m_animations = new AnimationList(*parent); }
-    void inheritTransitions(const AnimationList* parent) { clearTransitions(); if (parent) rareNonInheritedData.access()->m_transitions = new AnimationList(*parent); }
+    void inheritAnimations(const AnimationList* parent) { rareNonInheritedData.access()->m_animations.set(parent ? new AnimationList(*parent) : 0); }
+    void inheritTransitions(const AnimationList* parent) { rareNonInheritedData.access()->m_transitions.set(parent ? new AnimationList(*parent) : 0); }
     void adjustAnimations();
     void adjustTransitions();
     void updateKeyframes(const CSSStyleSelector* styleSelector) { if (rareNonInheritedData.get()) rareNonInheritedData.access()->updateKeyframes(styleSelector); }
@@ -2456,7 +2449,7 @@ public:
     SVGRenderStyle* accessSVGStyle() { return m_svgStyle.access(); }
 #endif
 
-    const ContentData* contentData() const { return rareNonInheritedData->m_content; }
+    const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
     bool contentDataEquivalent(const RenderStyle* otherStyle) const;
     void clearContent();
     void setContent(StringImpl*, bool add = false);
