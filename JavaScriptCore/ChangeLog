@@ -1,3 +1,10 @@
+2008-08-06  Adam Roben  <aroben@apple.com>
+
+        Try to fix the Windows build bots
+
+        * API/JSBase.cpp: Touch this to force JSC to rebuild and re-copy the
+        WTF headers.
+
 2008-08-06  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Revert change 35595.
