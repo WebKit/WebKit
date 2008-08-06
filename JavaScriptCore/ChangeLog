@@ -1,3 +1,16 @@
+2008-08-06  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Darin. Landed by Cameron.
+
+        Bug 20272: typo in JavaScriptCore
+        <https://bugs.webkit.org/show_bug.cgi?id=20272>
+
+        Correct the documentation for op_not. (typo)
+        Fix #undef. (typo)
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-08-06  Cameron Zwarich  <cwzwarich@webkit.org>
 
         Reviewed by Maciej.
