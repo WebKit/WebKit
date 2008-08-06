@@ -406,8 +406,11 @@ WebInspector.Console.prototype = {
     {
         if (plainText)
             elem.appendChild(document.createTextNode("\"" + str + "\""));
-        else
-            elem.insertAdjacentHTML("beforeEnd", "\"" + WebInspector.linkifyString(str) + "\"");
+        else {
+            elem.appendChild(document.createTextNode("\""));
+            elem.appendChild(WebInspector.linkifyStringAsFragment(str));
+            elem.appendChild(document.createTextNode("\""));
+        }
     },
 
     _formatregexp: function(re, elem, plainText)
@@ -515,7 +518,7 @@ WebInspector.ConsoleMessage.prototype = {
             function append(a, b)
             {
                 if (!(b instanceof Node))
-                    a.insertAdjacentHTML("beforeEnd", WebInspector.linkifyString(b.toString()));
+                    a.appendChild(WebInspector.linkifyStringAsFragment(b.toString()));
                 else
                     a.appendChild(b);
                 return a;
@@ -530,7 +533,7 @@ WebInspector.ConsoleMessage.prototype = {
 
         for (var i = 0; i < parameters.length; ++i) {
             if (typeof parameters[i] === "string")
-                formattedResult.insertAdjacentHTML("beforeEnd", WebInspector.linkifyString(parameters[i]));
+                formattedResult.appendChild(WebInspector.linkifyStringAsFragment(parameters[i]));
             else
                 formattedResult.appendChild(formatForConsole(parameters[i]));
             if (i < parameters.length - 1)

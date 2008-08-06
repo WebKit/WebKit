@@ -1,3 +1,15 @@
+2008-08-06  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - Created a new function to create DOM links from text without
+        converting back and forth from HTML and messing with escaping special
+        characters.
+
+        * page/inspector/Console.js:
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by hyatt.

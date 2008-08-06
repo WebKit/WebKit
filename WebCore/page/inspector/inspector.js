@@ -915,17 +915,46 @@ WebInspector.showResourceForURL = function(url, line, preferredPanel)
     return true;
 }
 
-WebInspector.linkifyString = function(string)
+WebInspector.linkifyStringAsFragment = function(string)
 {
-    function linkify(url)
-    {
-        url = url.unescapeHTML();
-        var realURL = (url.indexOf("www.") === 0 ? "http://" + url : url);
-        return WebInspector.linkifyURL(realURL, url, null, (realURL in WebInspector.resourceURLMap));
+    var container = document.createDocumentFragment();
+    var linkStringRegEx = new RegExp("(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}://|www\\.)[\\w$\\-_+*'=\\|/\\\\(){}[\\]%@&#~,:;.!?]{4,}[\\w$\\-_+*=\\|/\\\\({%@&#~]");
+
+    while (string) {
+        var linkString = linkStringRegEx.exec(string);
+        if (!linkString)
+            break;
+
+        linkString = linkString[0];
+        var linkIndex = string.indexOf(linkString);
+        var nonLink = string.substring(0, linkIndex);
+        container.appendChild(document.createTextNode(nonLink));
+        var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
+        container.appendChild(WebInspector.linkifyURLAsNode(realURL, linkString, null, (realURL in WebInspector.resourceURLMap)));
+        string = string.substring(linkIndex + linkString.length, string.length);
     }
 
-    string = string.escapeHTML();
-    return string.replace(new RegExp("(?:[a-zA-Z][a-zA-Z0-9+.-]{2,}://|www\\.)[\\w$\\-_+*'=\\|/\\\\(){}[\\]%@&#~,:;.!?]{4,}[\\w$\\-_+*=\\|/\\\\({%@&#~]"), linkify);
+    if (string)
+        container.appendChild(document.createTextNode(string));
+    
+    return container;
+}
+
+WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)
+{
+    if (!linkText)
+        linkText = url;
+    classes = (classes ? classes + " " : "");
+    classes += isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
+
+    var a = document.createElement("a");
+    a.href = url;
+    a.className = classes;
+    a.title = url;
+    a.target = "_blank";
+    a.textContent = linkText;
+    
+    return a;
 }
 
 WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
