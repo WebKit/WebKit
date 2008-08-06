@@ -1164,6 +1164,14 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyTextUnderlineStyle:
         case CSSPropertyTextUnderlineWidth:
         case CSSPropertyUnicodeRange: // Only used in @font-face rules.
+        case CSSPropertyWebkitAnimation:
+        case CSSPropertyWebkitAnimationDelay:
+        case CSSPropertyWebkitAnimationDirection:
+        case CSSPropertyWebkitAnimationDuration:
+        case CSSPropertyWebkitAnimationIterationCount:
+        case CSSPropertyWebkitAnimationName:
+        case CSSPropertyWebkitAnimationPlayState:
+        case CSSPropertyWebkitAnimationTimingFunction:
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
         case CSSPropertyWebkitColumnRule:
@@ -1174,6 +1182,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitMask:
         case CSSPropertyWebkitPaddingStart:
         case CSSPropertyWebkitTextStroke:
+        case CSSPropertyWebkitTransformOrigin:
+        case CSSPropertyWebkitTransition:
+        case CSSPropertyWebkitVariableDeclarationBlock:
             // FIXME: The above are unimplemented.
             break;
 #if ENABLE(SVG)

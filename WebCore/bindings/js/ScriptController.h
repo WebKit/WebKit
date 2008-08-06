@@ -25,9 +25,10 @@
 #include "JSDOMWindowShell.h"
 #include <kjs/protect.h>
 #include <wtf/RefPtr.h>
-#include <wtf/RetainPtr.h>
 
 #if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+
 #ifdef __OBJC__
 @class WebScriptObject;
 #else
