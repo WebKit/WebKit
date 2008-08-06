@@ -816,6 +816,7 @@ webcore_sources += \
 	WebCore/html/HTMLParser.cpp \
 	WebCore/html/HTMLParserErrorCodes.cpp \
 	WebCore/html/HTMLPlugInElement.cpp \
+	WebCore/html/HTMLPlugInImageElement.cpp \
 	WebCore/html/HTMLPreElement.cpp \
 	WebCore/html/HTMLQuoteElement.cpp \
 	WebCore/html/HTMLScriptElement.cpp \
