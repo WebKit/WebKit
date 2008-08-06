@@ -13300,6 +13300,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\HTMLPlugInImageElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\html\HTMLPlugInImageElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\HTMLPreElement.cpp"
 				>
 				<FileConfiguration
