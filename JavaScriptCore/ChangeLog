@@ -1,3 +1,9 @@
+2008-08-06  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Fix non-Mac build.
+
+        * wtf/RetainPtr.h: CoreFoundation only for PLATFORM(MAC)
+
 2008-08-06  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
 
         Reviewed by Darin. Landed by Cameron.
