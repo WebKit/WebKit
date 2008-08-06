@@ -1,3 +1,13 @@
+2008-08-06  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        AX functions shouldn't return position information because it changes
+        based on the platform
+
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::boundsForRange):
+
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Cameron Zwarich.

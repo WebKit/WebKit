@@ -289,7 +289,8 @@ JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned l
     if ([value isKindOfClass:[NSValue class]])
         rect = [value rectValue]; 
     
-    NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",rect.origin.x,rect.origin.y,rect.size.width,rect.size.height];
+    // don't return position information because it is platform dependent
+    NSMutableString* boundsDescription = [NSMutableString stringWithFormat:@"{{%f, %f}, {%f, %f}}",-1.0f,-1.0f,rect.size.width,rect.size.height];
     return [boundsDescription createJSStringRef];
 }
 

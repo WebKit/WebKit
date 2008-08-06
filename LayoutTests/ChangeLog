@@ -1,3 +1,11 @@
+2008-08-06  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Fix AX layout test for multi-platform
+
+        * accessibility/bounds-for-range-expected.txt:
+
 2008-08-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
