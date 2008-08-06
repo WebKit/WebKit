@@ -1,3 +1,15 @@
+2008-08-06  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/6130724>
+
+        Disconnected frames should not be allowed to resize the window.
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::resizeBy):
+        (WebCore::DOMWindow::resizeTo):
+
 2008-08-05  David D. Kilzer  <ddkilzer@apple.com>
 
         Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com
