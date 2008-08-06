@@ -1,3 +1,9 @@
+2008-08-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix after Frame -> ScriptController moves.
+
+        * platform/wx/TemporaryLinkStubs.cpp:
+
 2008-08-06  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
@@ -725,7 +731,7 @@
 
         * page/mac/FrameMac.mm:
 
-2008-08-04  Bernhard Krüpl  <kruepl@dbai.tuwien.ac.at>
+2008-08-04  Bernhard Kruepl  <kruepl@dbai.tuwien.ac.at>
 
         Reviewed by Dave Hyatt.
 

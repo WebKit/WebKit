@@ -95,10 +95,6 @@ void findSentenceBoundary(UChar const*,int,int,int*,int*) { notImplemented(); }
 
 int WebCore::findNextWordFromIndex(UChar const*,int,int,bool) { notImplemented(); return 0; }
 
-void Frame::clearPlatformScriptObjects() { notImplemented(); }
-
-void Frame::disconnectPlatformScriptObjects() { notImplemented(); }
-
 DragImageRef Frame::dragImageForSelection() { notImplemented(); return 0; }
 
 void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness) { notImplemented(); }
