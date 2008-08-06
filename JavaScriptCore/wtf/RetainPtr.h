@@ -24,10 +24,7 @@
 #define RetainPtr_h
 
 #include <algorithm>
-
-#if PLATFORM(MAC)
 #include <CoreFoundation/CoreFoundation.h>
-#endif
 
 #ifdef __OBJC__
 #import <Foundation/Foundation.h>
