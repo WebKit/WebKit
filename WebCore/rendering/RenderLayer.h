@@ -56,6 +56,7 @@ class CachedResource;
 class HitTestResult;
 class PlatformScrollbar;
 class RenderFrameSet;
+class RenderMarquee;
 class RenderObject;
 class RenderReplica;
 class RenderStyle;
@@ -114,49 +115,6 @@ private:
     bool m_fixed : 1;
 };
 
-
-// FIXME: move this to its own file
-// This class handles the auto-scrolling of layers with overflow: marquee.
-class Marquee {
-public:
-    Marquee(RenderLayer*);
-
-    int speed() const { return m_speed; }
-    int marqueeSpeed() const;
-
-    EMarqueeDirection reverseDirection() const { return static_cast<EMarqueeDirection>(-direction()); }
-    EMarqueeDirection direction() const;
-
-    bool isHorizontal() const;
-
-    int computePosition(EMarqueeDirection, bool stopAtClientEdge);
-
-    void setEnd(int end) { m_end = end; }
-    
-    void start();
-    void suspend();
-    void stop();
-
-    void updateMarqueeStyle();
-    void updateMarqueePosition();
-
-private:
-    void timerFired(Timer<Marquee>*);
-
-    RenderLayer* m_layer;
-    int m_currentLoop;
-    int m_totalLoops;
-    Timer<Marquee> m_timer;
-    int m_start;
-    int m_end;
-    int m_speed;
-    Length m_height;
-    bool m_reset: 1;
-    bool m_suspended : 1;
-    bool m_stopped : 1;
-    EMarqueeDirection m_direction : 4;
-};
-
 class RenderLayer : public ScrollbarClient {
 public:
     enum ScrollBehavior {
@@ -207,7 +165,7 @@ public:
 
     void styleChanged(RenderStyle*);
 
-    Marquee* marquee() const { return m_marquee; }
+    RenderMarquee* marquee() const { return m_marquee; }
     void suspendMarquees();
 
     bool isOverflowOnly() const { return m_isOverflowOnly; }
@@ -481,7 +439,7 @@ protected:
     bool m_visibleDescendantStatusDirty : 1;
     bool m_hasVisibleDescendant : 1;
 
-    Marquee* m_marquee; // Used by layers with overflow:marquee
+    RenderMarquee* m_marquee; // Used by layers with overflow:marquee
     
     // Cached normal flow values for absolute positioned elements with static left/top values.
     int m_staticX;

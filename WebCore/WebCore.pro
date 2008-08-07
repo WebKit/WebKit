@@ -860,6 +860,7 @@ SOURCES += \
     rendering/RenderListBox.cpp \
     rendering/RenderListItem.cpp \
     rendering/RenderListMarker.cpp \
+    rendering/RenderMarquee.cpp \
     rendering/RenderMenuList.cpp \
     rendering/RenderObject.cpp \
     rendering/RenderPart.cpp \

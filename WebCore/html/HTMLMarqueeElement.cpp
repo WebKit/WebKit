@@ -28,6 +28,7 @@
 #include "CSSValueKeywords.h"
 #include "HTMLNames.h"
 #include "RenderLayer.h"
+#include "RenderMarquee.h"
 
 namespace WebCore {
 

@@ -1023,6 +1023,7 @@ webcore_sources += \
 	WebCore/rendering/RenderListBox.cpp \
 	WebCore/rendering/RenderListItem.cpp \
 	WebCore/rendering/RenderListMarker.cpp \
+	WebCore/rendering/RenderMarquee.cpp \
 	WebCore/rendering/RenderMenuList.cpp \
 	WebCore/rendering/RenderObject.cpp \
 	WebCore/rendering/RenderPart.cpp \

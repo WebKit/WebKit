@@ -1,3 +1,37 @@
+2008-08-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Rename Marquee to RenderMarquee and move to its own file.
+        https://bugs.webkit.org/show_bug.cgi?id=20319
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLMarqueeElement.cpp:
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::styleChanged):
+        * rendering/RenderLayer.h:
+        * rendering/RenderMarquee.cpp: Added.
+        (WebCore::RenderMarquee::RenderMarquee):
+        (WebCore::RenderMarquee::marqueeSpeed):
+        (WebCore::RenderMarquee::direction):
+        (WebCore::RenderMarquee::isHorizontal):
+        (WebCore::RenderMarquee::computePosition):
+        (WebCore::RenderMarquee::start):
+        (WebCore::RenderMarquee::suspend):
+        (WebCore::RenderMarquee::stop):
+        (WebCore::RenderMarquee::updateMarqueePosition):
+        (WebCore::RenderMarquee::updateMarqueeStyle):
+        (WebCore::RenderMarquee::timerFired):
+        * rendering/RenderMarquee.h: Added.
+        (WebCore::RenderMarquee::speed):
+        (WebCore::RenderMarquee::reverseDirection):
+        (WebCore::RenderMarquee::setEnd):
+
 2008-08-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
