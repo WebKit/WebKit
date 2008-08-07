@@ -115,6 +115,7 @@ using std::min;
 using std::max;
 
 static HMODULE accessibilityLib;
+static HashSet<WebView*> pendingDeleteBackingStoreSet;
 
 WebView* kit(Page* page)
 {
@@ -635,6 +636,8 @@ void WebView::close()
 
 void WebView::deleteBackingStore()
 {
+    pendingDeleteBackingStoreSet.remove(this);
+
     if (m_deleteBackingStoreTimerActive) {
         KillTimer(m_viewWindow, DeleteBackingStoreTimer);
         m_deleteBackingStoreTimerActive = false;
@@ -2725,6 +2728,17 @@ void WebView::updateActiveStateSoon() const
 
 void WebView::deleteBackingStoreSoon()
 {
+    if (pendingDeleteBackingStoreSet.size() > 2) {
+        Vector<WebView*> views;
+        HashSet<WebView*>::iterator end = pendingDeleteBackingStoreSet.end();
+        for (HashSet<WebView*>::iterator it = pendingDeleteBackingStoreSet.begin(); it != end; ++it)
+            views.append(*it);
+        for (int i = 0; i < views.size(); ++i)
+            views[i]->deleteBackingStore();
+        ASSERT(pendingDeleteBackingStoreSet.isEmpty());
+    }
+
+    pendingDeleteBackingStoreSet.add(this);
     m_deleteBackingStoreTimerActive = true;
     SetTimer(m_viewWindow, DeleteBackingStoreTimer, delayBeforeDeletingBackingStoreMsec, 0);
 }
@@ -2733,6 +2747,7 @@ void WebView::cancelDeleteBackingStoreSoon()
 {
     if (!m_deleteBackingStoreTimerActive)
         return;
+    pendingDeleteBackingStoreSet.remove(this);
     m_deleteBackingStoreTimerActive = false;
     KillTimer(m_viewWindow, DeleteBackingStoreTimer);
 }

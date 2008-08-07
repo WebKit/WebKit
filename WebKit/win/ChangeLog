@@ -1,3 +1,18 @@
+2008-08-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Delete backing stores before 5 second WM_TIMER fires if more than 2 are already queued.
+        
+        WM_TIMER-based timers can be starved if enough other events are keeping
+        our message loop busy. This change prevents many backing store deletes from stacking
+        up in this case.
+        
+        Reviewed by Geoff Garen.
+
+        * WebView.cpp:
+        (WebView::deleteBackingStore):
+        (WebView::deleteBackingStoreSoon):
+        (WebView::cancelDeleteBackingStoreSoon):
+
 2008-08-05  Ada Chan  <adachan@apple.com>
 
         Add a getter for CFURLRequestRef in WebMutableURLRequest.
