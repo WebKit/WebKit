@@ -1,3 +1,11 @@
+2008-08-07  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Lars.
+
+        Added API tests for QWebPage/QWebFrame based on QTestLib.
+
+        * WebKit.pro: Add WebKit/qt/tests to the build.
+
 2008-08-06  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.
