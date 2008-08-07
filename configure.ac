@@ -95,6 +95,10 @@ fi
 AC_PATH_PROG(FLEX, flex)
 if test -z "$FLEX"; then
    AC_MSG_ERROR([You need the 'flex' lexer generator to compile WebKit])
+else
+   FLEX_VERSION=`$FLEX --version | sed 's,.*\ \([0-9]*\.[0-9]*\.[0-9]*\)$,\1,'`
+   AX_COMPARE_VERSION([2.5.33],[gt],[$FLEX_VERSION],
+      AC_MSG_ERROR([You need at least version 2.5.33 of the 'flex' lexer generator to compile WebKit]))
 fi
 
 AC_PATH_PROG(GPERF, gperf)

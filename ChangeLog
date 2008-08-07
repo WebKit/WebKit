@@ -1,3 +1,18 @@
+2008-08-07  Kalle Vahlman  <zuh@iki.fi>
+
+        Reviewed by David Kilzer.
+
+        Check for correct flex version to avoid faulty builds
+
+        A correct Webkit build requires flex 2.5.33 but autotools build doesn't check for it
+        https://bugs.webkit.org/show_bug.cgi?id=20253
+
+        acinclude.m4: Import AX_COMPARE_VERSION macro
+        configure.ac: Check for flex version
+
+        * acinclude.m4:
+        * configure.ac:
+
 2008-08-07  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Lars.
