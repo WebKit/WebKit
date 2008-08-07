@@ -691,7 +691,7 @@ void Frame::setZoomFactor(float percent, bool isTextOnly)
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
         child->setZoomFactor(d->m_zoomFactor, isTextOnly);
 
-    if (d->m_doc && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout())
+    if (d->m_doc && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout() && view()->didFirstLayout())
         view()->layout();
 }
 

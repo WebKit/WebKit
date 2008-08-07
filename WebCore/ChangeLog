@@ -1,3 +1,14 @@
+2008-08-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6118816> Initial empty page or bookmarks view window has white strip where vertical scrollbar would be (which vanishes on resize)
+
+        * page/Frame.cpp:
+        (WebCore::Frame::setZoomFactor): If the view has never had a layout with
+        the old zoom factor, then there is no need to explicitly call layout()
+        here.
+
 2008-08-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.
