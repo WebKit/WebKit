@@ -45,14 +45,14 @@ WebInspector.ProfileView = function(profile)
     this.viewSelectElement = document.createElement("select");
     this.viewSelectElement.className = "status-bar-item";
     this.viewSelectElement.addEventListener("change", this._changeView.bind(this), false);
-    this.view = "Tree";
+    this.view = "Heavy";
 
-    var treeViewOption = document.createElement("option");
-    treeViewOption.label = WebInspector.UIString("Tree (Top Down)");
     var heavyViewOption = document.createElement("option");
     heavyViewOption.label = WebInspector.UIString("Heavy (Bottom Up)");
-    this.viewSelectElement.appendChild(treeViewOption);
+    var treeViewOption = document.createElement("option");
+    treeViewOption.label = WebInspector.UIString("Tree (Top Down)");
     this.viewSelectElement.appendChild(heavyViewOption);
+    this.viewSelectElement.appendChild(treeViewOption);
 
     this.percentButton = document.createElement("button");
     this.percentButton.className = "percent-time-status-bar-item status-bar-item";
@@ -81,7 +81,7 @@ WebInspector.ProfileView = function(profile)
 
     this._updatePercentButton();
 
-    this.profile = profile;
+    this.profile = profile.heavyProfile;
 }
 
 WebInspector.ProfileView.prototype = {
@@ -122,10 +122,10 @@ WebInspector.ProfileView.prototype = {
         if (!event || !this.profile)
             return;
 
-        if (event.target.selectedIndex == 0 && this.view == "Heavy") {
+        if (event.target.selectedIndex == 1 && this.view == "Heavy") {
             this.profile = this.profile.treeProfile;
             this.view = "Tree"
-        } else if (event.target.selectedIndex == 1 && this.view == "Tree") {
+        } else if (event.target.selectedIndex == 0 && this.view == "Tree") {
             this.profile = this.profile.heavyProfile;
             this.view = "Heavy"
         }
