@@ -582,11 +582,15 @@ CString String::utf8() const
 
 String String::fromUTF8(const char* string, size_t size)
 {
+    if (!string)
+        return String();
     return UTF8Encoding().decode(string, size);
 }
 
 String String::fromUTF8(const char* string)
 {
+    if (!string)
+        return String();
     return UTF8Encoding().decode(string, strlen(string));
 }
 
