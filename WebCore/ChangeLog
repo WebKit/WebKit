@@ -1,3 +1,13 @@
+2008-08-07  Steve Falkenburg  <sfalken@apple.com>
+
+        Compile derived sources through an all-in-one cpp file.
+        Fixes Windows release build on non-x64 systems by reducing the size of WebCore.lib from 1.5GB to 1GB.
+        
+        Reviewed by Mark Rowe.
+
+        * DerivedSources.cpp: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+
 2008-08-07  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adam.
