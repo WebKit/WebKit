@@ -74,6 +74,7 @@ This file builds the wxWebKit library.
             WebKitSupport/FrameLoaderClientWx.cpp
             WebKitSupport/InspectorClientWx.cpp
             
+            WebFrame.cpp
             WebView.cpp
             WebBrowserShell.cpp
         </sources>   

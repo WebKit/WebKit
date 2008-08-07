@@ -1,3 +1,77 @@
+2008-08-06  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Kevin Ollivier.
+        
+        Create a wxWebFrame API to match other ports and to prepare for frames support.
+        Also fixes a frame leak in wx port on trunk.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=19041
+
+        * WebFrame.cpp: Added.
+        (wxWebFrame::wxWebFrame):
+        (wxWebFrame::~wxWebFrame):
+        (wxWebFrame::GetFrame):
+        (wxWebFrame::Stop):
+        (wxWebFrame::Reload):
+        (wxWebFrame::GetPageSource):
+        (wxWebFrame::SetPageSource):
+        (wxWebFrame::GetInnerText):
+        (wxWebFrame::GetAsMarkup):
+        (wxWebFrame::GetExternalRepresentation):
+        (wxWebFrame::RunScript):
+        (wxWebFrame::LoadURL):
+        (wxWebFrame::GoBack):
+        (wxWebFrame::GoForward):
+        (wxWebFrame::CanGoBack):
+        (wxWebFrame::CanGoForward):
+        (wxWebFrame::CanIncreaseTextSize):
+        (wxWebFrame::IncreaseTextSize):
+        (wxWebFrame::CanDecreaseTextSize):
+        (wxWebFrame::DecreaseTextSize):
+        (wxWebFrame::MakeEditable):
+        (wxWebFrame::CanCopy):
+        (wxWebFrame::Copy):
+        (wxWebFrame::CanCut):
+        (wxWebFrame::Cut):
+        (wxWebFrame::CanPaste):
+        (wxWebFrame::Paste):
+        * WebFrame.h: Added.
+        * WebView.cpp:
+        (wxWebView::wxWebView):
+        (wxWebView::Create):
+        (wxWebView::~wxWebView):
+        (wxWebView::Stop):
+        (wxWebView::Reload):
+        (wxWebView::GetPageSource):
+        (wxWebView::SetPageSource):
+        (wxWebView::GetInnerText):
+        (wxWebView::GetAsMarkup):
+        (wxWebView::GetExternalRepresentation):
+        (wxWebView::RunScript):
+        (wxWebView::LoadURL):
+        (wxWebView::GoBack):
+        (wxWebView::GoForward):
+        (wxWebView::CanGoBack):
+        (wxWebView::CanGoForward):
+        (wxWebView::CanIncreaseTextSize):
+        (wxWebView::IncreaseTextSize):
+        (wxWebView::CanDecreaseTextSize):
+        (wxWebView::DecreaseTextSize):
+        (wxWebView::OnPaint):
+        (wxWebView::OnSize):
+        (wxWebView::OnMouseEvents):
+        (wxWebView::CanCopy):
+        (wxWebView::Copy):
+        (wxWebView::CanCut):
+        (wxWebView::Cut):
+        (wxWebView::CanPaste):
+        (wxWebView::Paste):
+        (wxWebView::OnKeyEvents):
+        (wxWebView::OnSetFocus):
+        (wxWebView::OnKillFocus):
+        * WebView.h:
+        * wxwebkit.bkl:
+
 2008-07-27  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Sam Weinig.

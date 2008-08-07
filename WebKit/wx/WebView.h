@@ -35,6 +35,7 @@
 
 class WebViewPrivate;
 class WebViewFrameData;
+class wxWebFrame;
 
 namespace WebCore {
     class ChromeClientWx;
@@ -75,8 +76,7 @@ public:
               const wxPoint& point = wxDefaultPosition,
               const wxSize& size = wxDefaultSize,
               long style = 0,
-              const wxString& name = wxWebViewNameStr,
-              WebViewFrameData* data = NULL); // For wxWebView internal data passing
+              const wxString& name = wxWebViewNameStr); // For wxWebView internal data passing
 #if SWIG
     %rename(PreWebView) wxWebView();
 #else
@@ -87,8 +87,7 @@ public:
                 const wxPoint& point = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize,
                 long style = 0,
-                const wxString& name = wxWebViewNameStr,
-                WebViewFrameData* data = NULL); // For wxWebView internal data passing
+                const wxString& name = wxWebViewNameStr); // For wxWebView internal data passing
     
 #ifndef SWIG
     ~wxWebView();
@@ -130,6 +129,8 @@ public:
 
     wxString GetPageTitle() const { return m_title; }
     void SetPageTitle(const wxString& title) { m_title = title; }
+    
+    wxWebFrame* GetMainFrame() { return m_mainFrame; }
 
 protected:
 
@@ -153,6 +154,7 @@ private:
     bool m_isInitialized;
     bool m_beingDestroyed;
     WebViewPrivate* m_impl;
+    wxWebFrame* m_mainFrame;
     wxString m_title;
     
 };
