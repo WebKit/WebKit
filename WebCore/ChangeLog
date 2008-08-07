@@ -1,3 +1,22 @@
+2008-08-07  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adam.
+
+        <rdar://problem/5712917> Confusing console error message clear
+        behavior (16791)
+        https://bugs.webkit.org/show_bug.cgi?id=16791
+        <rdar://problem/5831899> The Web Inspector does not correctly clear the
+        console messages
+
+        * page/InspectorController.cpp: Clear the message so they don't show up
+        in the inspector after it has cleared them.
+        (WebCore::clearMessages):
+        (WebCore::InspectorController::clearConsoleMessages):
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        * page/InspectorController.h:
+        * page/inspector/Console.js: Tell the InspectorController to clear the
+        messages it's holding onto.
+
 2008-08-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig

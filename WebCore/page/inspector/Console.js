@@ -159,6 +159,7 @@ WebInspector.Console.prototype = {
 
     clearMessages: function()
     {
+        InspectorController.clearMessages();
         WebInspector.panels.resources.clearMessages();
 
         this.messages = [];

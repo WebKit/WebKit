@@ -109,6 +109,7 @@ public:
 
     void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceID);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
+    void clearConsoleMessages();
 
     void addProfile(PassRefPtr<KJS::Profile>);
     void addScriptProfile(KJS::Profile* profile);
