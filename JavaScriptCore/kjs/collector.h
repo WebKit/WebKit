@@ -105,7 +105,7 @@ namespace KJS {
         HashSet<ArgList*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<ArgList*>; return *m_markListSet; }
 
         JSGlobalData* globalData() const { return m_globalData; }
-
+        static bool fastIsNumber(JSCell*);
     private:
         template <Heap::HeapType heapType> void* heapAllocate(size_t);
         template <Heap::HeapType heapType> size_t sweep();
@@ -202,6 +202,7 @@ namespace KJS {
         CollectorCell* freeList;
         CollectorBitmap marked;
         Heap* heap;
+        Heap::HeapType type;
     };
 
     class SmallCellCollectorBlock {
@@ -211,7 +212,14 @@ namespace KJS {
         SmallCollectorCell* freeList;
         CollectorBitmap marked;
         Heap* heap;
+        Heap::HeapType type;
     };
+    
+    inline bool Heap::fastIsNumber(JSCell* cell)
+    {
+        CollectorBlock* block = Heap::cellBlock(cell);
+        return block && block->type == NumberHeap;
+    }
 
     inline const CollectorBlock* Heap::cellBlock(const JSCell* cell)
     {

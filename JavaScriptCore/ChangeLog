@@ -1,3 +1,31 @@
+2008-08-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Improve performance of arithmetic operators
+
+        Added a fast (non-virtual) mechanism to determine if a non-immediate JSValue*
+        is a JSNumberCell.  We then use this to allow improved specialisation in many
+        arithmetic operators.  SunSpider reports a 2.5% progression overall, with greater
+        than 10% progressions on a number of arithmetic heavy tests.
+
+        * VM/Machine.cpp:
+        (KJS::fastIsNumber):
+        (KJS::fastToInt32):
+        (KJS::fastToUInt32):
+        (KJS::jsLess):
+        (KJS::jsLessEq):
+        (KJS::jsAdd):
+        (KJS::Machine::privateExecute):
+        * kjs/JSNumberCell.h:
+        (KJS::JSNumberCell::fastToInt32):
+        (KJS::JSNumberCell::fastToUInt32):
+        * kjs/collector.cpp:
+        (KJS::allocateBlock):
+        (KJS::Heap::heapAllocate):
+        * kjs/collector.h:
+        (KJS::Heap::fastIsNumber):
+
 2008-08-06  Adam Roben  <aroben@apple.com>
 
         Try to fix the Windows build bots
