@@ -2,7 +2,7 @@
 
         Change highlight time from 300ms to 500ms and fade effect from 1s to 2s
 
-        https://bugs.webkit.org/show_bug.cgi?id=17589
+        https://bugs.webkit.org/show_bug.cgi?id=20055
 
         Reviewed by Timothy Hatcher.
 
@@ -2344,7 +2344,7 @@
 
         Reviewed by Tim Hatcher.
 
-        <https://bugs.webkit.org/show_bug.cgi?id=17589> Line highlighting should last longer
+        <https://bugs.webkit.org/show_bug.cgi?id=20055> Line highlighting should last longer
 
         Restore the fade out effect after highlighting.
 
