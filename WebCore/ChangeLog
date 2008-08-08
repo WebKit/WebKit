@@ -1,3 +1,16 @@
+2008-08-08  Adam Treat  <treat@kde.org>
+
+        Reviewed by Simon.
+
+        Return the canonical file path in Qt's listDirectory as WebCore::PluginDatabase
+        uses this method to retrieve a list of possible plugins.  Many linux systems
+        have nested symbolic links scattered throughout the plugin directories which
+        resulted in the PluginDatabase loading the same plugin N times depending on
+        the number of symbolic links.
+
+        * platform/qt/FileSystemQt.cpp:
+        (WebCore::listDirectory):
+
 2008-08-07  Anthony Ricaud  <rik24d@gmail.com>
 
         Change highlight time from 300ms to 500ms and fade effect from 1s to 2s
