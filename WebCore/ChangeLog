@@ -1,3 +1,27 @@
+2008-08-08  Dean Jackson  <dino@apple.com>
+
+        Execute CSS Animations using new AnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=20119
+
+        I still need to file some follow-on bugs that EricS noticed.
+
+        Reviewed by Dave Hyatt
+
+        Some new tests:
+        * manual-tests/animate-duration.html: Added.
+        * manual-tests/animate-left.html: Added.
+        * manual-tests/animate-none.html: Added.
+
+        * css/CSSStyleSelector.cpp:
+        * dom/Document.cpp:
+            - don't redo style when page is place into cache
+        * page/AnimationController.cpp:
+        * page/AnimationController.h:
+            - execute the animations
+        * rendering/RenderObject.cpp:
+        * rendering/style/RenderStyle.h:
+            - make border radii const (for blending)
+
 2008-08-08  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

@@ -195,7 +195,7 @@ if (isInherit) { \
         (*list)[i]->set##Prop((*parentList)[i]->prop()); \
     } \
     \
-    /* Reset any remaining layers to not have the property set. */ \
+    /* Reset any remaining animations to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
         (*list)[i]->clear##Prop(); \
 } \
@@ -213,7 +213,7 @@ if (isInherit || isInitial) \
 AnimationList* list = m_style->accessAnimations(); \
 size_t childIndex = 0; \
 if (value->isValueList()) { \
-    /* Walk each value and put it into a layer, creating new layers as needed. */ \
+    /* Walk each value and put it into an animation, creating new animations as needed. */ \
     CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (childIndex <= list->size()) \
@@ -228,7 +228,7 @@ if (value->isValueList()) { \
     childIndex = 1; \
 } \
 for ( ; childIndex < list->size(); ++childIndex) { \
-    /* Reset all remaining layers to not have the property set. */ \
+    /* Reset all remaining animations to not have the property set. */ \
     (*list)[childIndex]->clear##Prop(); \
 } \
 }
@@ -244,7 +244,7 @@ if (isInherit) { \
         (*list)[i]->set##Prop((*parentList)[i]->prop()); \
     } \
     \
-    /* Reset any remaining layers to not have the property set. */ \
+    /* Reset any remaining transitions to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
         (*list)[i]->clear##Prop(); \
 } \
@@ -262,7 +262,7 @@ if (isInherit || isInitial) \
 AnimationList* list = m_style->accessTransitions(); \
 size_t childIndex = 0; \
 if (value->isValueList()) { \
-    /* Walk each value and put it into a layer, creating new layers as needed. */ \
+    /* Walk each value and put it into a transition, creating new animations as needed. */ \
     CSSValueList* valueList = static_cast<CSSValueList*>(value); \
     for (unsigned int i = 0; i < valueList->length(); i++) { \
         if (childIndex <= list->size()) \
@@ -277,7 +277,7 @@ if (value->isValueList()) { \
     childIndex = 1; \
 } \
 for ( ; childIndex < list->size(); ++childIndex) { \
-    /* Reset all remaining layers to not have the property set. */ \
+    /* Reset all remaining transitions to not have the property set. */ \
     (*list)[childIndex]->clear##Prop(); \
 } \
 }

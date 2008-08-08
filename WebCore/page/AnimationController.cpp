@@ -157,6 +157,7 @@ private:
 };
 
 class ImplicitAnimation;
+class KeyframeAnimation;
 class AnimationControllerPrivate;
 
 // A CompositeAnimation represents a collection of animations that
@@ -173,6 +174,7 @@ public:
     ~CompositeAnimation()
     {
         deleteAllValues(m_transitions);
+        deleteAllValues(m_keyframeAnimations);
     }
     
     RenderStyle* animate(RenderObject*, RenderStyle* currentStyle, RenderStyle* targetStyle);
@@ -182,12 +184,13 @@ public:
     
     bool hasAnimationForProperty(int prop) const { return m_transitions.contains(prop); }
     
-    void setTransitionStartTime(int property, double t);
-    
     void resetTransitions(RenderObject*);
     void resetAnimations(RenderObject*);
     
     void cleanupFinishedAnimations(RenderObject*);
+
+    void setAnimationStartTime(double t);
+    void setTransitionStartTime(int property, double t);
     
     void suspendAnimations();
     void resumeAnimations();
@@ -198,16 +201,22 @@ public:
     
     void styleAvailable();
     
-    bool isAnimatingProperty(int property) const;
+    bool isAnimatingProperty(int property, bool isRunningNow) const;
     
     void setWaitingForStyleAvailable(bool waiting);
+
 protected:
     void updateTransitions(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle);
+    void updateKeyframeAnimations(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle);
+
+    KeyframeAnimation* findKeyframeAnimation(const AtomicString& name);
     
 private:
     typedef HashMap<int, ImplicitAnimation*> CSSPropertyTransitionsMap;
+    typedef HashMap<AtomicStringImpl*, KeyframeAnimation*>  AnimationNameMap;
     
     CSSPropertyTransitionsMap   m_transitions;
+    AnimationNameMap            m_keyframeAnimations;
     bool                        m_suspended;
     AnimationControllerPrivate* m_animationController;
     uint32_t                    m_numStyleAvailableWaiters;
@@ -270,13 +279,11 @@ public:
     void updateStateMachine(AnimStateInput input, double param);
     
     // Animation has actually started, at passed time
-    // This is a callback and is only received when RenderObject::startAnimation() or RenderObject::startTransition() 
-    // returns true. If RenderObject::
     void onAnimationStartResponse(double startTime);
     
     // Called to change to or from paused state
     void updatePlayState(bool running);
-    bool playStatePlaying() const { return m_animation; }
+    bool playStatePlaying() const { return m_animation && m_animation->playState() == AnimPlayStatePlaying; }
     
     bool waitingToStart() const { return m_animState == STATE_NEW || m_animState == STATE_START_WAIT_TIMER; }
     bool preactive() const
@@ -302,7 +309,7 @@ public:
     double progress(double scale, double offset) const;
     
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, 
-                         const RenderStyle* targetStyle, RenderStyle*& ioAnimatedStyle) { }
+                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle) { }
     virtual void reset(RenderObject* renderer, const RenderStyle* from = 0, const RenderStyle* to = 0) { }
     
     virtual bool shouldFireEvents() const { return false; }
@@ -323,9 +330,12 @@ public:
     
     // Does this animation/transition involve the given property?
     virtual bool affectsProperty(int property) const { return false; }
-    bool isAnimatingProperty(int property) const
+    bool isAnimatingProperty(int property, bool isRunningNow) const
     {
-        return (!waitingToStart() && !postactive()) && affectsProperty(property);
+        if (isRunningNow)
+            return (!waitingToStart() && !postactive()) && affectsProperty(property);
+
+        return !postactive() && affectsProperty(property);
     }
         
 protected:
@@ -358,7 +368,7 @@ protected:
     bool m_waitedForResponse;
     double m_startTime;
     double m_pauseTime;
-    RenderObject*   m_object;
+    RenderObject* m_object;
     
     AnimationTimerCallback m_animationTimerCallback;
     AnimationEventDispatcher m_animationEventDispatcher;
@@ -395,11 +405,9 @@ public:
     int property() const { return m_property; }
     
     virtual void onAnimationEnd(double inElapsedTime);
-    virtual bool startAnimation(double beginTime);
-    virtual void endAnimation(bool reset);
     
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, 
-                         const RenderStyle* targetStyle, RenderStyle*& ioAnimatedStyle);
+                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
     virtual void reset(RenderObject* renderer, const RenderStyle* from = 0, const RenderStyle* to = 0);
     
     void setOverridden(bool b);
@@ -441,7 +449,59 @@ void AnimationEventDispatcher::timerFired(Timer<AnimationTimerBase>*)
 {
     m_anim->animationEventDispatcherFired(m_element.get(), m_name, m_property, m_reset, m_eventType, m_elapsedTime);
 }
+
+class KeyframeAnimation : public AnimationBase {
+public:
+    KeyframeAnimation(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compAnim)
+    : AnimationBase(animation, renderer, compAnim)
+    , m_keyframes(animation->keyframeList())
+    , m_name(animation->name())
+    , m_index(index)
+    {
+    }
+
+    virtual ~KeyframeAnimation()
+    {
+        // Do the cleanup here instead of in the base class so the specialized methods get called
+        if (!postactive())
+            updateStateMachine(STATE_INPUT_END_ANIMATION, -1);
+    }
+
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle,
+                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
+
+    void setName(const String& s) { m_name = s; }
+    const AtomicString& name() const { return m_name; }
+    int index() const { return m_index; }
+
+    virtual bool shouldFireEvents() const { return true; }
+
+protected:
+    virtual void onAnimationStart(double inElapsedTime);
+    virtual void onAnimationIteration(double inElapsedTime);
+    virtual void onAnimationEnd(double inElapsedTime);
+    virtual void endAnimation(bool reset);
+
+    virtual void overrideAnimations();
+    virtual void resumeOverriddenAnimations();
     
+    bool shouldSendEventForListener(Document::ListenerType inListenerType)
+    {
+        return m_object->document()->hasListenerType(inListenerType);
+    }
+    
+    bool sendAnimationEvent(const AtomicString& inEventType, double inElapsedTime);
+    
+    virtual bool affectsProperty(int property) const;
+
+private:
+    // The keyframes that we are blending.
+    RefPtr<KeyframeList> m_keyframes;
+    AtomicString m_name;
+    // The order in which this animation appears in the animation-name style.
+    int m_index;
+};
+
 AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
 : m_animState(STATE_NEW)
 , m_iteration(0)
@@ -460,7 +520,7 @@ AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer
 
 void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 {
-    // if we get a RESTART then we force a new animation, regardless of state
+    // If we get a RESTART then we force a new animation, regardless of state
     if (input == STATE_INPUT_MAKE_NEW) {
         if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
             m_compAnim->setWaitingForStyleAvailable(false);
@@ -509,7 +569,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
         return;
     }
     
-    // execute state machine
+    // Execute state machine
     switch(m_animState) {
         case STATE_NEW:
             ASSERT(input == STATE_INPUT_START_ANIMATION || input == STATE_INPUT_PLAY_STATE_RUNNING || input == STATE_INPUT_PLAY_STATE_PAUSED);
@@ -553,7 +613,7 @@ void AnimationBase::updateStateMachine(AnimStateInput input, double param)
                 overrideAnimations();
                 
                 // Send start event, if needed
-                onAnimationStart(0.0f); // the elapsedTime is always 0 here
+                onAnimationStart(0.0f); // The elapsedTime is always 0 here
                 
                 // Start the animation
                 if (overridden() || !startAnimation(0)) {
@@ -714,6 +774,15 @@ void AnimationBase::animationEventDispatcherFired(Element* element, const Atomic
     ASSERT(!element || (element->document() && !element->document()->inPageCache()));
     if (!element)
         return;
+
+    // FIXME: Actual event dispatching will be done here
+
+    if (animEventType == EventNames::webkitAnimationEndEvent) {
+        if (element->renderer()) {
+            // Restore the original (unanimated) style
+            setChanged(element->renderer()->element());
+        }
+    }
 }
 
 void AnimationBase::updatePlayState(bool run)
@@ -732,30 +801,35 @@ double AnimationBase::progress(double scale, double offset) const
         return 0;
     
     double dur = m_animation->duration();
+    if (m_animation->iterationCount() > 0)
+        dur *= m_animation->iterationCount();
     
-    if (postactive() || !m_animation->duration() || elapsedTime >= dur)
+    if (postactive() || !m_animation->duration() || (m_animation->iterationCount() > 0 && elapsedTime >= dur))
         return 1.0;
     
     // Compute the fractional time, taking into account direction.
-    // There is no need to worry about iterations, we assume that we would have 
+    // There is no need to worry about iterations, we assume that we would have
     // short circuited above if we were done
-    double t = elapsedTime / m_animation->duration();
-    int i = (int) t;
-    t -= i;
+    double fractionalTime = elapsedTime / m_animation->duration();
+    int integralTime = (int) fractionalTime;
+    fractionalTime -= integralTime;
+    
+    if (m_animation->direction() && (integralTime & 1))
+        fractionalTime = 1 - fractionalTime;
     
     if (scale != 1 || offset != 0)
-        t = (t - offset) * scale;
+        fractionalTime = (fractionalTime - offset) * scale;
     
     if (m_animation->timingFunction().type() == LinearTimingFunction)
-        return t;
+        return fractionalTime;
     
     // Cubic bezier.
-    double tt = solveCubicBezierFunction(m_animation->timingFunction().x1(), 
-                                         m_animation->timingFunction().y1(), 
-                                         m_animation->timingFunction().x2(), 
-                                         m_animation->timingFunction().y2(),
-                                         t, m_animation->duration());
-    return tt;
+    double result = solveCubicBezierFunction(m_animation->timingFunction().x1(),
+                                            m_animation->timingFunction().y1(),
+                                            m_animation->timingFunction().x2(),
+                                            m_animation->timingFunction().y2(),
+                                            fractionalTime, m_animation->duration());
+    return result;
 }
 
 void AnimationBase::primeEventTimers()
@@ -765,7 +839,10 @@ void AnimationBase::primeEventTimers()
     const double elapsedDuration = ct - m_startTime;
     ASSERT(elapsedDuration >= 0);
     
-    double totalDuration = m_animation->duration();
+    double totalDuration = -1;
+    if (m_animation->iterationCount() > 0)
+        totalDuration = m_animation->duration() * m_animation->iterationCount();
+
     double durationLeft = 0;
     double nextIterationTime = totalDuration;
     if (totalDuration < 0 || elapsedDuration < totalDuration) {
@@ -839,9 +916,9 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
     unsigned size = max(fromSize, toSize);
     TransformOperations result;
     for (unsigned i = 0; i < size; i++) {
-        TransformOperation* fromOp = i < fromSize ? from[i].get() : 0;
-        TransformOperation* toOp = i < toSize ? to[i].get() : 0;
-        TransformOperation* blendedOp = toOp ? toOp->blend(fromOp, progress) : fromOp->blend(0, progress, true);
+        RefPtr<TransformOperation> fromOp = i < fromSize ? from[i] : 0;
+        RefPtr<TransformOperation> toOp = i < toSize ? to[i] : 0;
+        RefPtr<TransformOperation> blendedOp = toOp ? toOp->blend(fromOp.get(), progress) : fromOp->blend(0, progress, true);
         if (blendedOp)
             result.append(blendedOp);
     }
@@ -946,33 +1023,6 @@ private:
     void (RenderStyle::*m_setter)(ShadowData*, bool);
 };
 
-class PropertyWrapperIntSize : public PropertyWrapperGetter<IntSize> {
-public:
-    PropertyWrapperIntSize(int prop, IntSize (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const IntSize&))
-    : PropertyWrapperGetter<IntSize>(prop, getter)
-    , m_setter(setter)
-    { }
-    
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
-    {
-        IntSize sizea = (a->*m_getter)();
-        IntSize sizeb = (b->*m_getter)();
-        
-        return (sizea == sizeb);
-    }
-    
-    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog) const
-    {
-        IntSize sizea = (a->*m_getter)();
-        IntSize sizeb = (b->*m_getter)();
-                
-        (dst->*m_setter)(blendFunc(sizea, sizeb, prog));
-    }
-    
-private:
-    void (RenderStyle::*m_setter)(const IntSize&);
-};
-
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {
 public:
     PropertyWrapperMaybeInvalidColor(int prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
@@ -1030,7 +1080,7 @@ public:
     
     void styleAvailable();
     
-    bool isAnimatingPropertyOnRenderer(RenderObject* obj, int property) const;
+    bool isAnimatingPropertyOnRenderer(RenderObject* obj, int property, bool isRunningNow) const;
     
     static bool propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b);
     static int getPropertyAtIndex(int i);
@@ -1117,10 +1167,10 @@ void AnimationControllerPrivate::ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const TransformOperations&>(CSSPropertyWebkitTransform, &RenderStyle::transform, &RenderStyle::setTransform));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginX, &RenderStyle::transformOriginX, &RenderStyle::setTransformOriginX));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyWebkitTransformOriginY, &RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY));
-        gPropertyWrappers->append(new PropertyWrapperIntSize(CSSPropertyWebkitBorderTopLeftRadius, &RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius));
-        gPropertyWrappers->append(new PropertyWrapperIntSize(CSSPropertyWebkitBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius));
-        gPropertyWrappers->append(new PropertyWrapperIntSize(CSSPropertyWebkitBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius));
-        gPropertyWrappers->append(new PropertyWrapperIntSize(CSSPropertyWebkitBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius));
+        gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyWebkitBorderTopLeftRadius, &RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius));
+        gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyWebkitBorderTopRightRadius, &RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius));
+        gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyWebkitBorderBottomLeftRadius, &RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius));
+        gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyWebkitBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius));
         gPropertyWrappers->append(new PropertyWrapper<EVisibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility));
         gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoom));
         
@@ -1302,12 +1352,12 @@ void AnimationControllerPrivate::animationTimerFired(Timer<AnimationControllerPr
     updateAnimationTimer();
 }
 
-bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* obj, int property) const
+bool AnimationControllerPrivate::isAnimatingPropertyOnRenderer(RenderObject* obj, int property, bool isRunningNow) const
 {
     CompositeAnimation* animation = m_compositeAnimations.get(obj);
     if (!animation) return false;
-    
-    return animation->isAnimatingProperty(property);
+
+    return animation->isAnimatingProperty(property, isRunningNow);
 }
 
 void AnimationControllerPrivate::suspendAnimations(Document* document)
@@ -1406,6 +1456,78 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, RenderStyle* 
     }
 }
 
+void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
+{
+    // Nothing to do if we don't have any animations, and didn't have any before
+    if (m_keyframeAnimations.isEmpty() && !targetStyle->hasAnimations())
+        return;
+    
+    // Nothing to do if the current and target animations are the same
+    if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations()))
+        return;
+        
+    int numAnims = 0;
+    bool animsChanged = false;
+    
+    // see if the lists match
+    if (targetStyle->animations()) {
+        for (size_t i = 0; i < targetStyle->animations()->size(); ++i) {
+            const Animation* anim = (*targetStyle->animations())[i].get();
+            
+            if (!anim->isValidAnimation())
+                animsChanged = true;
+            else {
+                AtomicString name(anim->name());
+                KeyframeAnimation* kfAnim = m_keyframeAnimations.get(name.impl());
+                if (!kfAnim || !kfAnim->animationsMatch(anim))
+                    animsChanged = true;
+                else
+                    if (anim) {
+                        // animations match, but play states may differ. update if needed
+                        kfAnim->updatePlayState(anim->playState() == AnimPlayStatePlaying);
+                        
+                        // set the saved animation to this new one, just in case the play state has changed
+                        kfAnim->setAnimation(anim);
+                    }
+            }
+            ++numAnims;
+        }
+    }
+    
+    if (!animsChanged && m_keyframeAnimations.size() != numAnims)
+        animsChanged = true;
+
+    if (!animsChanged)
+        return;
+
+    // animations have changed, update the list
+    resetAnimations(renderer);
+
+    if (!targetStyle->animations())
+        return;
+
+    // add all the new animations
+    int index = 0;
+    for (size_t i = 0; i < targetStyle->animations()->size(); ++i) {
+        const Animation* anim = (*targetStyle->animations())[i].get();
+
+        if (!anim->isValidAnimation())
+            continue;
+            
+        // don't bother adding the animation if it has no keyframes or won't animate
+        if ((anim->duration() || anim->delay()) && anim->iterationCount() &&
+                                            anim->keyframeList().get() && !anim->keyframeList()->isEmpty()) {
+            KeyframeAnimation* kfanim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, index++, this);
+            m_keyframeAnimations.set(kfanim->name().impl(), kfanim);
+        }
+    }
+}
+
+KeyframeAnimation* CompositeAnimation::findKeyframeAnimation(const AtomicString& name)
+{
+    return m_keyframeAnimations.get(name.impl());
+}
+
 RenderStyle* CompositeAnimation::animate(RenderObject* renderer, RenderStyle* currentStyle, RenderStyle* targetStyle)
 {
     RenderStyle* resultStyle = 0;
@@ -1424,9 +1546,26 @@ RenderStyle* CompositeAnimation::animate(RenderObject* renderer, RenderStyle* cu
             }
         }
     }
+
+    updateKeyframeAnimations(renderer, currentStyle, targetStyle);
+
+    // Now that we have animation objects ready, let them know about the new goal state.  We want them
+    // to fill in a RenderStyle*& only if needed.
+    if (targetStyle->hasAnimations()) {
+        for (size_t i = 0; i < targetStyle->animations()->size(); ++i) {
+            const Animation* anim = (*targetStyle->animations())[i].get();
+
+            if (anim->isValidAnimation()) {
+                AtomicString name(anim->name());
+                KeyframeAnimation* keyframeAnim = m_keyframeAnimations.get(name.impl());
+                if (keyframeAnim)
+                    keyframeAnim->animate(this, renderer, currentStyle, targetStyle, resultStyle);
+            }
+        }
+    }
     
     cleanupFinishedAnimations(renderer);
-    
+
     return resultStyle ? resultStyle : targetStyle;
 }
 
@@ -1439,6 +1578,12 @@ void CompositeAnimation::setAnimating(bool inAnimating)
         ImplicitAnimation*  transition = it->second;
         transition->setAnimating(inAnimating);
     }
+
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        anim->setAnimating(inAnimating);
+    }
 }
 
 bool CompositeAnimation::animating()
@@ -1449,6 +1594,14 @@ bool CompositeAnimation::animating()
         if (transition && transition->animating() && transition->running())
             return true;
     }
+    
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (anim && !anim->paused() && anim->animating() && anim->active())
+            return true;
+    }
+
     return false;
 }
 
@@ -1461,6 +1614,16 @@ void CompositeAnimation::resetTransitions(RenderObject* renderer)
         delete transition;
     }
     m_transitions.clear();
+}
+
+void CompositeAnimation::resetAnimations(RenderObject* renderer)
+{
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        delete anim;
+    }
+    m_keyframeAnimations.clear();
 }
 
 void CompositeAnimation::cleanupFinishedAnimations(RenderObject* renderer)
@@ -1489,6 +1652,39 @@ void CompositeAnimation::cleanupFinishedAnimations(RenderObject* renderer)
         }
         m_transitions.remove(*it);
     }
+
+    // Make a list of animations to be deleted
+    Vector<AtomicStringImpl*> finishedAnimations;
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (!anim)
+            continue;
+        if (anim->postactive() && !anim->waitingForEndEvent())
+            finishedAnimations.append(anim->name().impl());
+    }
+    
+    // delete them
+    for (Vector<AtomicStringImpl*>::iterator it = finishedAnimations.begin(); it != finishedAnimations.end(); ++it) {
+        KeyframeAnimation* kfanim = m_keyframeAnimations.get(*it);
+        if (kfanim) {
+            kfanim->reset(renderer);
+            delete kfanim;
+        }
+        m_keyframeAnimations.remove(*it);
+    }
+}
+
+void CompositeAnimation::setAnimationStartTime(double t)
+{
+    // set start time on all animations waiting for it
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (anim && anim->waitingForStartTime())
+            anim->updateStateMachine(AnimationBase::STATE_INPUT_START_TIME_SET, t);
+    }
 }
 
 void CompositeAnimation::setTransitionStartTime(int property, double t)
@@ -1510,12 +1706,18 @@ void CompositeAnimation::suspendAnimations()
     
     m_suspended = true;
 
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (anim)
+            anim->updatePlayState(false);
+    }
+
     CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
         ImplicitAnimation* anim = it->second;
-        if (anim && anim->hasStyle()) {
+        if (anim && anim->hasStyle())
             anim->updatePlayState(false);
-        }
     }
 }
 
@@ -1525,13 +1727,19 @@ void CompositeAnimation::resumeAnimations()
         return;
     
     m_suspended = false;
-
+    
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (anim && anim->playStatePlaying())
+            anim->updatePlayState(true);
+    }
+    
     CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
         ImplicitAnimation* anim = it->second;
-        if (anim && anim->hasStyle()) {
+        if (anim && anim->hasStyle())
             anim->updatePlayState(true);
-        }
     }
 }
 
@@ -1555,10 +1763,36 @@ void CompositeAnimation::resumeOverriddenImplicitAnimations(int property)
     }
 }
 
+static inline bool compareAnimationIndices(const KeyframeAnimation* a, const KeyframeAnimation* b)
+{
+    return a->index() < b->index();
+}
+
 void CompositeAnimation::styleAvailable()
 {
     if (m_numStyleAvailableWaiters == 0)
         return;
+    
+    // We have to go through animations in the order in which they appear in
+    // the style, because order matters for additivity.
+    Vector<KeyframeAnimation*> animations(m_keyframeAnimations.size());
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    size_t i = 0;
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        // We can't just insert based on anim->index() because invalid animations don't
+        // make it into the hash.
+        animations[i++] = anim;
+    }
+
+    if (animations.size() > 1)
+        std::stable_sort(animations.begin(), animations.end(), compareAnimationIndices);
+    
+    for (i = 0; i < animations.size(); ++i) {
+        KeyframeAnimation* anim = animations[i];
+        if (anim && anim->waitingForStyleAvailable())
+            anim->updateStateMachine(AnimationBase::STATE_INPUT_STYLE_AVAILABLE, -1);
+    }
     
     CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
@@ -1568,19 +1802,26 @@ void CompositeAnimation::styleAvailable()
     }
 }
 
-bool CompositeAnimation::isAnimatingProperty(int property) const
+bool CompositeAnimation::isAnimatingProperty(int property, bool isRunningNow) const
 {
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* anim = it->second;
+        if (anim && anim->isAnimatingProperty(property, isRunningNow))
+            return true;
+    }
+    
     CSSPropertyTransitionsMap::const_iterator end = m_transitions.end();
     for (CSSPropertyTransitionsMap::const_iterator it = m_transitions.begin(); it != end; ++it) {
         ImplicitAnimation* anim = it->second;
-        if (anim && anim->isAnimatingProperty(property))
+        if (anim && anim->isAnimatingProperty(property, isRunningNow))
             return true;
     }
     return false;
 }
 
 void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, const RenderStyle* currentStyle, 
-                                const RenderStyle* targetStyle, RenderStyle*& ioAnimatedStyle)
+                                const RenderStyle* targetStyle, RenderStyle*& animatedStyle)
 {
     if (paused())
         return;
@@ -1588,8 +1829,8 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // If so, send back the targetStyle (it will get tossed later)
     if (postactive()) {
-        if (!ioAnimatedStyle)
-            ioAnimatedStyle = const_cast<RenderStyle*>(targetStyle);
+        if (!animatedStyle)
+            animatedStyle = const_cast<RenderStyle*>(targetStyle);
         return;
     }
 
@@ -1599,22 +1840,13 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     
     // Run a cycle of animation.
     // We know we will need a new render style, so make one if needed
-    if (!ioAnimatedStyle)
-        ioAnimatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
+    if (!animatedStyle)
+        animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
     
     double prog = progress(1, 0);
-    bool needsAnim = AnimationControllerPrivate::blendProperties(m_property, ioAnimatedStyle, m_fromStyle, m_toStyle, prog);
+    bool needsAnim = AnimationControllerPrivate::blendProperties(m_property, animatedStyle, m_fromStyle, m_toStyle, prog);
     if (needsAnim)
         setAnimating();
-}
-
-bool ImplicitAnimation::startAnimation(double beginTime)
-{
-    return false;
-}
-
-void ImplicitAnimation::endAnimation(bool reset)
-{
 }
 
 void ImplicitAnimation::onAnimationEnd(double inElapsedTime)
@@ -1629,7 +1861,8 @@ void ImplicitAnimation::onAnimationEnd(double inElapsedTime)
 
 bool ImplicitAnimation::sendTransitionEvent(const AtomicString& inEventType, double inElapsedTime)
 {
-    return false; // didn't dispatch an event
+    // FIXME: event dispatching code will go here
+    return false; // Didn't dispatch an event
 }
 
 void ImplicitAnimation::reset(RenderObject* renderer, const RenderStyle* from /* = 0 */, const RenderStyle* to /* = 0 */)
@@ -1679,6 +1912,142 @@ void ImplicitAnimation::blendPropertyValueInStyle(int prop, RenderStyle* current
     AnimationControllerPrivate::blendProperties(prop, currentStyle, m_fromStyle, m_toStyle, prog);
 }    
 
+void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, const RenderStyle* currentStyle, 
+                                    const RenderStyle* targetStyle, RenderStyle*& animatedStyle)
+{
+    // if we have not yet started, we will not have a valid start time, so just start the animation if needed
+    if (isnew() && m_animation->playState() == AnimPlayStatePlaying)
+        updateStateMachine(STATE_INPUT_START_ANIMATION, -1);
+    
+    // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
+    // If so, we need to send back the targetStyle
+    if (postactive()) {
+        if (!animatedStyle)
+            animatedStyle = const_cast<RenderStyle*>(targetStyle);
+        return;
+    }
+
+    // if we are waiting for the start timer, we don't want to change the style yet
+    // Special case - if the delay time is 0, then we do want to set the first frame of the
+    // animation right away. This avoids a flash when the animation starts
+    if (waitingToStart() && m_animation->delay() > 0)
+        return;
+    
+    // FIXME: we need to be more efficient about determining which keyframes we are animating between.
+    // We should cache the last pair or something
+    
+    // find the first key
+    double elapsedTime = (m_startTime > 0) ? ((!paused() ? currentTime() : m_pauseTime) - m_startTime) : 0.0;
+    if (elapsedTime < 0.0)
+        elapsedTime = 0.0;
+        
+    double t = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1.0;
+    int i = (int) t;
+    t -= i;
+    if (m_animation->direction() && (i & 1))
+        t = 1 - t;
+
+    RenderStyle* fromStyle = 0;
+    RenderStyle* toStyle = 0;
+    double scale = 1.0;
+    double offset = 0.0;
+    if (m_keyframes.get()) {
+        Vector<KeyframeValue>::const_iterator end = m_keyframes->endKeyframes();
+        for (Vector<KeyframeValue>::const_iterator it = m_keyframes->beginKeyframes(); it != end; ++it) {
+            if (t < it->key) {
+                // The first key should always be 0, so we should never succeed on the first key
+                if (!fromStyle)
+                    break;
+                scale = 1.0 / (it->key - offset);
+                toStyle = const_cast<RenderStyle*>(&(it->style));
+                break;
+            }
+            
+            offset = it->key;
+            fromStyle = const_cast<RenderStyle*>(&(it->style));
+        }
+    }
+    
+    // if either style is 0 we have an invalid case, just stop the animation
+    if (!fromStyle || !toStyle) {
+        updateStateMachine(STATE_INPUT_END_ANIMATION, -1);
+        return;
+    }
+    
+    // run a cycle of animation.
+    // We know we will need a new render style, so make one if needed
+    if (!animatedStyle)
+        animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
+    
+    double prog = progress(scale, offset);
+
+    HashSet<int>::const_iterator end = m_keyframes->endProperties();
+    for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {
+        if (AnimationControllerPrivate::blendProperties(*it, animatedStyle, fromStyle, toStyle, prog))
+            setAnimating();
+    }
+}
+
+void KeyframeAnimation::endAnimation(bool reset)
+{
+    if (m_object) {
+        // restore the original (unanimated) style
+        setChanged(m_object->element());
+    }
+}
+
+void KeyframeAnimation::onAnimationStart(double inElapsedTime)
+{
+    sendAnimationEvent(EventNames::webkitAnimationStartEvent, inElapsedTime);
+}
+
+void KeyframeAnimation::onAnimationIteration(double inElapsedTime)
+{
+    sendAnimationEvent(EventNames::webkitAnimationIterationEvent, inElapsedTime);
+}
+
+void KeyframeAnimation::onAnimationEnd(double inElapsedTime)
+{
+    // FIXME: set the unanimated style on the element
+    if (!sendAnimationEvent(EventNames::webkitAnimationEndEvent, inElapsedTime)) {
+        // we didn't dispatch an event, which would call endAnimation(), so we'll just end
+        // it here.
+        endAnimation(true);
+    }
+}
+
+bool KeyframeAnimation::sendAnimationEvent(const AtomicString& inEventType, double inElapsedTime)
+{
+    // FIXME: Event dispatch goes here
+    return false; // didn't dispatch an event
+}
+
+void KeyframeAnimation::overrideAnimations()
+{
+    // this will override implicit animations that match the properties in the keyframe animation
+    HashSet<int>::const_iterator end = m_keyframes->endProperties();
+    for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it)
+        compositeAnimation()->overrideImplicitAnimations(*it);
+}
+
+void KeyframeAnimation::resumeOverriddenAnimations()
+{
+    // this will resume overridden implicit animations
+    HashSet<int>::const_iterator end = m_keyframes->endProperties();
+    for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it)
+        compositeAnimation()->resumeOverriddenImplicitAnimations(*it);
+}
+
+bool KeyframeAnimation::affectsProperty(int property) const
+{
+    HashSet<int>::const_iterator end = m_keyframes->endProperties();
+    for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {
+        if ((*it) == property)
+            return true;
+    }
+    return false;
+}
+
 AnimationController::AnimationController(Frame* frame)
 : m_data(new AnimationControllerPrivate(frame))
 {
@@ -1707,7 +2076,8 @@ RenderStyle* AnimationController::updateAnimations(RenderObject* renderer, Rende
     
     RenderStyle* oldStyle = renderer->style();
     
-    if ((!oldStyle || !oldStyle->transitions()) && !newStyle->transitions())
+    if ((!oldStyle || (!oldStyle->animations() && !oldStyle->transitions())) && 
+                        (!newStyle->animations() && !newStyle->transitions()))
         return newStyle;
     
     RenderStyle* blendedStyle = newStyle;
@@ -1733,9 +2103,21 @@ RenderStyle* AnimationController::updateAnimations(RenderObject* renderer, Rende
     return blendedStyle;
 }
 
-bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* obj, int property) const
+void AnimationController::setAnimationStartTime(RenderObject* obj, double t)
 {
-    return m_data->isAnimatingPropertyOnRenderer(obj, property);
+    CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(obj);
+    rendererAnimations->setAnimationStartTime(t);
+}
+
+void AnimationController::setTransitionStartTime(RenderObject* obj, int property, double t)
+{
+    CompositeAnimation* rendererAnimations = m_data->accessCompositeAnimation(obj);
+    rendererAnimations->setTransitionStartTime(property, t);
+}
+
+bool AnimationController::isAnimatingPropertyOnRenderer(RenderObject* obj, int property, bool isRunningNow) const
+{
+    return m_data->isAnimatingPropertyOnRenderer(obj, property, isRunningNow);
 }
 
 void AnimationController::suspendAnimations(Document* document)

@@ -1161,10 +1161,10 @@ bail_out:
 
 void Document::updateRendering()
 {
-    if (hasChangedChild())
+    if (hasChangedChild() && !inPageCache())
         recalcStyle(NoChange);
     
-    // tell the animation controller that the style is available and it can start animations
+    // Tell the animation controller that the style is available and it can start animations
     if (m_frame)
         m_frame->animation()->styleAvailable();
 }
@@ -1547,6 +1547,10 @@ void Document::implicitClose()
     Frame* f = frame();
     if (f)
         f->loader()->startIconLoader();
+
+    // Resume the animations (or start them)
+    if (f)
+        f->animation()->resumeAnimations(this);
 
     dispatchImageLoadEventsNow();
     this->dispatchWindowEvent(loadEvent, false, false);

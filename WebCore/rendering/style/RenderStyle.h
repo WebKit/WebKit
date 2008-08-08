@@ -1913,10 +1913,10 @@ public:
 
     const NinePieceImage& borderImage() const { return surround->border.image; }
 
-    IntSize borderTopLeftRadius() const { return surround->border.topLeft; }
-    IntSize borderTopRightRadius() const { return surround->border.topRight; }
-    IntSize borderBottomLeftRadius() const { return surround->border.bottomLeft; }
-    IntSize borderBottomRightRadius() const { return surround->border.bottomRight; }
+    const IntSize& borderTopLeftRadius() const { return surround->border.topLeft; }
+    const IntSize& borderTopRightRadius() const { return surround->border.topRight; }
+    const IntSize& borderBottomLeftRadius() const { return surround->border.bottomLeft; }
+    const IntSize& borderBottomRightRadius() const { return surround->border.bottomRight; }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned short  borderLeftWidth() const { return surround->border.borderLeftWidth(); }
