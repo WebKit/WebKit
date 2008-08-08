@@ -1,3 +1,22 @@
+2008-08-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/6131187> Profiles don't show up immediately when run
+        with the UI.
+
+        * page/InspectorController.cpp:
+        (WebCore::startProfiling): Added so that the inspector's JS code could
+        call through to the same function used by the Develop menu.  This way
+        both can call didFinishAllExecution() which puts the profile in the
+        Web Inspector.
+        (WebCore::stopProfiling): Ditto
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        (WebCore::InspectorController::stopUserInitiatedProfiling): Now calls
+        didFinishAllExecution() to put the profile in the Web Inspector.  This
+        should be safe since the UIs shouldn't work if JS is still running.
+        * page/inspector/ProfilesPanel.js: Use the new functions.
+
 2008-08-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

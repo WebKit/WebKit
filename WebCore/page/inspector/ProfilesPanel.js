@@ -213,11 +213,11 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.recording) {
             this.recordButton.addStyleClass("toggled-on");
             this.recordButton.title = WebInspector.UIString("Stop profiling.");
-            InspectorController.inspectedWindow().console.profile("org.webkit.profiles.user-initiated");
+            InspectorController.startProfiling();
         } else {
             this.recordButton.removeStyleClass("toggled-on");
             this.recordButton.title = WebInspector.UIString("Start profiling.");
-            InspectorController.inspectedWindow().console.profileEnd("org.webkit.profiles.user-initiated");
+            InspectorController.stopProfiling();
         }
     },
 

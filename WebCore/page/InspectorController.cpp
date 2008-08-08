@@ -1017,6 +1017,24 @@ static JSValueRef clearMessages(JSContextRef ctx, JSObjectRef /*function*/, JSOb
 }
 
 
+static JSValueRef startProfiling(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (controller)
+        controller->startUserInitiatedProfiling();
+
+   return JSValueMakeUndefined(ctx);
+}
+
+static JSValueRef stopProfiling(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* /*exception*/)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (controller)
+        controller->stopUserInitiatedProfiling();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 // InspectorController Class
 
 InspectorController::InspectorController(Page* page, InspectorClient* client)
@@ -1327,6 +1345,8 @@ void InspectorController::windowScriptObjectAvailable()
         { "addBreakpoint", WebCore::addBreakpoint, kJSPropertyAttributeNone },
         { "removeBreakpoint", WebCore::removeBreakpoint, kJSPropertyAttributeNone },
         { "isWindowVisible", WebCore::isWindowVisible, kJSPropertyAttributeNone },
+        { "startProfiling", WebCore::startProfiling, kJSPropertyAttributeNone },
+        { "stopProfiling", WebCore::stopProfiling, kJSPropertyAttributeNone },
         { "clearMessages", clearMessages, kJSPropertyAttributeNone },
         { 0, 0, 0 }
     };
@@ -1485,6 +1505,7 @@ void InspectorController::stopUserInitiatedProfiling()
 
     ExecState* exec = toJSDOMWindow(m_inspectedPage->mainFrame())->globalExec();
     Profiler::profiler()->stopProfiling(exec, UserInitiatedProfileName);
+    Profiler::profiler()->didFinishAllExecution(exec);
 }
 
 void InspectorController::finishedProfiling(PassRefPtr<Profile> prpProfile)
