@@ -835,6 +835,11 @@ WebInspector.addProfile = function(profile)
     this.panels.profiles.addProfile(profile);
 }
 
+WebInspector.setRecordingProfile = function(isProfiling)
+{
+    this.panels.profiles.setRecordingProfile(isProfiling);
+}
+
 WebInspector.drawLoadingPieChart = function(canvas, percent) {
     var g = canvas.getContext("2d");
     var darkColor = "rgb(122, 168, 218)";

@@ -210,15 +210,24 @@ WebInspector.ProfilesPanel.prototype = {
     {
         this.recording = !this.recording;
 
-        if (this.recording) {
+        if (this.recording)
+            InspectorController.startProfiling();
+        else
+            InspectorController.stopProfiling();
+    },
+    
+    setRecordingProfile: function(isProfiling)
+    {
+        this.recording = isProfiling;
+        
+        if (isProfiling) {
             this.recordButton.addStyleClass("toggled-on");
             this.recordButton.title = WebInspector.UIString("Stop profiling.");
-            InspectorController.startProfiling();
         } else {
             this.recordButton.removeStyleClass("toggled-on");
             this.recordButton.title = WebInspector.UIString("Start profiling.");
-            InspectorController.stopProfiling();
         }
+    
     },
 
     _populateProfiles: function()

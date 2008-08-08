@@ -2,6 +2,23 @@
 
         Reviewed by Tim.
 
+        <rdar://problem/6136326> JSProfiler: Start/stop profiling button in the
+        Web Inspector does not match the menu.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::toggleRecordButton): Toggle the record
+        button in the webInspector.
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        * page/InspectorController.h: 
+        * page/inspector/ProfilesPanel.js: Move the UI part of the record button
+        into its funtion so that it can be called from the Inspector controller.
+        * page/inspector/inspector.js:
+
+2008-08-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
         <rdar://problem/6131187> Profiles don't show up immediately when run
         with the UI.
 
