@@ -175,8 +175,8 @@ WebInspector.SourceFrame.prototype = {
             line.addStyleClass("webkit-fade-out-effect");
             // FIXME Replace this timeout when ontransitionend is implemented
             sourceRow.removeStyleClass("webkit-highlighted-line");
-            setTimeout(function () { line.removeStyleClass("webkit-fade-out-effect"); }, 1000);
-        }, 300);
+            setTimeout(function () { line.removeStyleClass("webkit-fade-out-effect"); }, 2000);
+        }, 500);
     },
 
     _loaded: function()
@@ -205,7 +205,7 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
         styleText += ".webkit-line-content { background-color: white; }\n";
         styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); }\n";
-        styleText += ".webkit-fade-out-effect { -webkit-transition-property: background-color; -webkit-transition-duration: 1s; }"
+        styleText += ".webkit-fade-out-effect { -webkit-transition-property: background-color; -webkit-transition-duration: 2s; }"
         styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
         styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";

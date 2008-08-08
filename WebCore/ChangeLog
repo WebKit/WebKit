@@ -1,5 +1,15 @@
 2008-08-07  Anthony Ricaud  <rik24d@gmail.com>
 
+        Change highlight time from 300ms to 500ms and fade effect from 1s to 2s
+
+        https://bugs.webkit.org/show_bug.cgi?id=17589
+
+        Reviewed by Timothy Hatcher.
+
+        * page/inspector/SourceFrame.js:
+
+2008-08-07  Anthony Ricaud  <rik24d@gmail.com>
+
         The search is only performed if the field contains more than 3
         letters or if Enter is pressed.
 
