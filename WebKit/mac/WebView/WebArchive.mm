@@ -296,8 +296,10 @@ static BOOL isArrayOfClass(id object, Class elementClass)
             _private->cachedSubresources = mutableArray;
             for (unsigned i = 0; i < subresources.size(); ++i) {
                 WebResource *resource = [[WebResource alloc] _initWithCoreResource:subresources[i].get()];
-                [mutableArray addObject:resource];
-                [resource release];
+                if (resource) {
+                    [mutableArray addObject:resource];
+                    [resource release];
+                }
             }
         }
     }

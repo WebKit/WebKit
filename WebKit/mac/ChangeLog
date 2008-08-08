@@ -1,3 +1,17 @@
+2008-08-08  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Fix for <rdar://problem/5865504>
+
+        This bug was actually *largely* fixed by http://trac.webkit.org/changeset/35538.
+        But with that same patch, it became possible for a WebResource to fail to initialize.  
+        Therefore we were trying to add nil to an NSCFArray for certain situations, which is bad.
+        Lets fix that, shall we?
+
+        * WebView/WebArchive.mm:
+        (-[WebArchive subresources]): 
+
 2008-08-06  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Cameron Zwarich.
