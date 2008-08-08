@@ -340,6 +340,8 @@ WebInspector.loaded = function()
     this._updateErrorAndWarningCounts();
 
     document.getElementById("search-toolbar-label").textContent = WebInspector.UIString("Search");
+    var searchField = document.getElementById("search");
+    searchField.addEventListener("keyup", this.performSearch.bind(this), false);
 
     if (platform === "mac-leopard")
         document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
@@ -974,12 +976,22 @@ WebInspector.addMainEventListeners = function(doc)
     doc.addEventListener("click", this.documentClick.bind(this), true);
 }
 
-WebInspector.performSearch = function(query)
+WebInspector.performSearch = function(event)
 {
+    var query = event.target.value;
+
     if (!query || !query.length) {
         this.showingSearchResults = false;
         return;
     }
+
+    var forceSearch = event.keyIdentifier === "Enter";
+    if(!forceSearch && query.length < 3)
+        return;
+
+    if (!forceSearch && this.lastQuery && this.lastQuery === query)
+        return;
+    this.lastQuery = query;
 
     var resultsContainer = document.getElementById("searchResults");
     resultsContainer.removeChildren();

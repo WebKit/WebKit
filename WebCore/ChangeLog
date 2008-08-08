@@ -1,3 +1,21 @@
+2008-08-07  Anthony Ricaud  <rik24d@gmail.com>
+
+        The search is only performed if the field contains more than 3
+        letters or if Enter is pressed.
+
+        Search is now performed through a keyup event.
+
+        Added a WebInspector.lastQuery to remember the last query and not
+        perform it again (eg. the user hits a modifier key).
+
+        https://bugs.webkit.org/show_bug.cgi?id=18548
+
+        Reviewed by Timothy Hatcher.
+
+        * page/inspector/inspector.html: Removed the onsearch and incremental
+        attributes
+        * page/inspector/inspector.js:
+
 2008-08-07  Steve Falkenburg  <sfalken@apple.com>
 
         Compile derived sources through an all-in-one cpp file.
