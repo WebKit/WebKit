@@ -1,3 +1,12 @@
+2008-08-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/5961260> GDI text: transparent fill color text does not render if it it has a stroke or shadow
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
 2008-08-08  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
