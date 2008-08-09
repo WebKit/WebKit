@@ -1,3 +1,14 @@
+2008-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Test for bug 20330: JSCore crash loading any filehurricane media page
+        <https://bugs.webkit.org/show_bug.cgi?id=20330>
+
+        * fast/js/resources/unexpected-constant-crash.js: Added.
+        * fast/js/unexpected-constant-crash-expected.txt: Added.
+        * fast/js/unexpected-constant-crash.html: Added.
+
 2008-08-08  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.

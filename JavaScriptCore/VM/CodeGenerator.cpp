@@ -540,7 +540,7 @@ RegisterID* CodeGenerator::addConstant(JSValue* v)
 
 unsigned CodeGenerator::addUnexpectedConstant(JSValue* v)
 {
-    int index = m_codeBlock->regexps.size();
+    int index = m_codeBlock->unexpectedConstants.size();
     m_codeBlock->unexpectedConstants.append(v);
     return index;
 }

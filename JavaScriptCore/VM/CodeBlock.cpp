@@ -259,6 +259,12 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
 {
     int location = it - begin;
     switch (exec->machine()->getOpcodeID(it->u.opcode)) {
+        case op_unexpected_load: {
+            int r0 = (++it)->u.operand;
+            int k0 = (++it)->u.operand;
+            printf("[%4d] unexpected_load\t %s, %s\n", location, registerName(r0).c_str(), constantName(exec, k0, unexpectedConstants[k0]).c_str());
+            break;
+        }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             printf("[%4d] new_object\t %s\n", location, registerName(r0).c_str());
