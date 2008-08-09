@@ -53,6 +53,8 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "RemoveFormatCommand.h"
+#include "RenderBlock.h"
+#include "RenderPart.h"
 #include "ReplaceSelectionCommand.h"
 #include "Sound.h"
 #include "Text.h"
@@ -1929,5 +1931,73 @@ void Editor::setKillRingToYankedState()
 }
 
 #endif
+
+Editor::Visibility Editor::rangeVisibility(Range* range) const
+{
+    // Right now, we only check the visibility of a range for disconnected frames. For all other
+    // frames, we assume visibility.
+    if (!m_frame->isDisconnected() || !range)
+        return InsideVisibleArea;
+    
+    RenderPart* renderer = m_frame->ownerRenderer();
+    RenderBlock* container = renderer->containingBlock();
+    if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
+        return InsideVisibleArea;
+
+    IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
+    IntRect rectInFrameCoords = IntRect(renderer->xPos() * -1, renderer->yPos() * -1,
+                                    rectInPageCoords.width(), rectInPageCoords.height());
+    IntRect resultRect = range->boundingBox();
+    
+    if (rectInFrameCoords.contains(resultRect))
+        return InsideVisibleArea;
+    if (resultRect.y() < rectInFrameCoords.y())
+        return BeforeVisibleArea;
+    if (resultRect.y() > rectInFrameCoords.y())
+        return AfterVisibleArea;
+
+    ASSERT(resultRect.y() == rectInFrameCoords.y());
+    if (resultRect.x() < rectInFrameCoords.x())
+        return BeforeVisibleArea;
+    return AfterVisibleArea;
+}
+
+PassRefPtr<Range> Editor::firstVisibleRange(Range* startRange, const String& target, bool forward, bool caseFlag)
+{
+    if (!forward)
+        return startRange;
+
+    RefPtr<Range> resultRange = startRange;
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    ExceptionCode ec = 0;
+
+    while (rangeVisibility(resultRange.get()) == BeforeVisibleArea) {
+        searchRange->setStartAfter(resultRange->endContainer(), ec);
+        if (searchRange->startContainer() == searchRange->endContainer())
+            return startRange;
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+    }
+    
+    return resultRange;
+}
+
+PassRefPtr<Range> Editor::lastVisibleRange(Range* startRange, const String& target, bool forward, bool caseFlag)
+{
+    if (forward)
+        return startRange;
+
+    RefPtr<Range> resultRange = startRange;
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    ExceptionCode ec = 0;
+
+    while (rangeVisibility(resultRange.get()) == AfterVisibleArea) {
+        searchRange->setEndBefore(resultRange->startContainer(), ec);
+        if (searchRange->startContainer() == searchRange->endContainer())
+            return startRange;
+        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+    }
+    
+    return resultRange;
+}
 
 } // namespace WebCore

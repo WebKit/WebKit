@@ -1,3 +1,21 @@
+2008-08-08  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        This patch makes the findString and markAllMatchesForText functions 
+        work with disconnected frames that are contained within 
+        overflow:hidden blocks.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeVisibility):
+        (WebCore::Editor::firstVisibleRange):
+        (WebCore::Editor::lastVisibleRange):
+        * editing/Editor.h:
+        (WebCore::Editor::):
+        * page/Frame.cpp:
+        (WebCore::Frame::findString):
+        (WebCore::Frame::markAllMatchesForText):
+
 2008-08-08  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.
