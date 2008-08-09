@@ -77,7 +77,7 @@ public:
     bool scrollToRevealElementAtListIndex(int index);
     bool listIndexIsVisible(int index);
 
-    virtual bool canBeProgramaticallyScrolled() const { return true; }
+    virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
     virtual void autoscroll();
     virtual void stopAutoscroll();
 

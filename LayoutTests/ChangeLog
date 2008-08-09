@@ -1,3 +1,12 @@
+2008-08-08  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+        https://bugs.webkit.org/show_bug.cgi?id=20270
+        This test is automatic and can also be run manually.
+
+        * fast/events/scroll-to-anchor-in-overflow-hidden-expected.txt: Added.
+        * fast/events/scroll-to-anchor-in-overflow-hidden.html: Added.
+
 2008-08-05  David D. Kilzer  <ddkilzer@apple.com>
 
         Bug 20038: REGRESSION (r35151): Can't post comments on flickr.com

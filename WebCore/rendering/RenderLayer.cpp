@@ -809,7 +809,7 @@ void RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars, bool repai
     }
 }
 
-void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(const IntRect &rect, bool scrollToAnchor, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
     IntRect newRect = rect;
@@ -854,7 +854,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
         }
-    } else if (!parentLayer && renderer()->canBeProgramaticallyScrolled()) {
+    } else if (!parentLayer && renderer()->canBeProgramaticallyScrolled(scrollToAnchor)) {
         if (frameView) {
             if (m_object->document() && m_object->document()->ownerElement() && m_object->document()->ownerElement()->renderer()) {
                 IntRect viewRect = enclosingIntRect(frameView->visibleContentRect());
@@ -882,7 +882,7 @@ void RenderLayer::scrollRectToVisible(const IntRect &rect, const ScrollAlignment
     }
     
     if (parentLayer)
-        parentLayer->scrollRectToVisible(newRect, alignX, alignY);
+        parentLayer->scrollRectToVisible(newRect, scrollToAnchor, alignX, alignY);
 
     if (frameView)
         frameView->resumeScheduledEvents();
@@ -974,7 +974,7 @@ void RenderLayer::autoscroll()
     frame->eventHandler()->updateSelectionForMouseDrag();
 
     IntPoint currentDocumentPosition = frameView->windowToContents(frame->eventHandler()->currentMousePosition());
-    scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
+    scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), false, gAlignToEdgeIfNeeded, gAlignToEdgeIfNeeded);    
 }
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)

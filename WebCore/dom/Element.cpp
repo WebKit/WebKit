@@ -248,9 +248,9 @@ void Element::scrollIntoView(bool alignToTop)
     if (renderer()) {
         // Align to the top / bottom and to the closest edge.
         if (alignToTop)
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignTopAlways);
         else
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignBottomAlways);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignBottomAlways);
     }
 }
 
@@ -260,9 +260,9 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     IntRect bounds = getRect();    
     if (renderer()) {
         if (centerIfNeeded)
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignCenterIfNeeded, RenderLayer::gAlignCenterIfNeeded);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, RenderLayer::gAlignCenterIfNeeded, RenderLayer::gAlignCenterIfNeeded);
         else
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
     }
 }
 

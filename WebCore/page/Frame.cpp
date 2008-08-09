@@ -1208,7 +1208,7 @@ void Frame::revealSelection(const RenderLayer::ScrollAlignment& alignment) const
         // the selection rect could intersect more than just that. 
         // See <rdar://problem/4799899>.
         if (RenderLayer *layer = start.node()->renderer()->enclosingLayer())
-            layer->scrollRectToVisible(rect, alignment, alignment);
+            layer->scrollRectToVisible(rect, false, alignment, alignment);
     }
 }
 
@@ -1222,7 +1222,7 @@ void Frame::revealCaret(const RenderLayer::ScrollAlignment& alignment) const
         IntRect extentRect = VisiblePosition(extent).caretRect();
         RenderLayer* layer = extent.node()->renderer()->enclosingLayer();
         if (layer)
-            layer->scrollRectToVisible(extentRect, alignment, alignment);
+            layer->scrollRectToVisible(extentRect, false, alignment, alignment);
     }
 }
 

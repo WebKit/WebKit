@@ -67,6 +67,7 @@
 #import <WebCore/Page.h>
 #import <WebCore/PluginData.h>
 #import <WebCore/RenderView.h>
+#import <WebCore/RenderLayer.h>
 #import <WebCore/ReplaceSelectionCommand.h>
 #import <WebCore/SmartReplace.h>
 #import <WebCore/SystemTime.h>
@@ -643,7 +644,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (startNode && startNode->renderer()) {
         RenderLayer *layer = startNode->renderer()->enclosingLayer();
         if (layer)
-            layer->scrollRectToVisible(enclosingIntRect(rangeRect), RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
+            layer->scrollRectToVisible(enclosingIntRect(rangeRect), false, RenderLayer::gAlignToEdgeIfNeeded, RenderLayer::gAlignToEdgeIfNeeded);
     }
 }
 

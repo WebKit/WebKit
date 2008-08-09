@@ -636,9 +636,9 @@ bool RenderObject::scroll(ScrollDirection direction, ScrollGranularity granulari
     return false;
 }
     
-bool RenderObject::canBeProgramaticallyScrolled() const
+bool RenderObject::canBeProgramaticallyScrolled(bool scrollToAnchor) const
 {
-    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable()))) || ((node() && node()->isDocumentNode()) && hasScrollableView());
+    return (hasOverflowClip() && (scrollsOverflow() || (node() && node()->isContentEditable()))) || ((node() && node()->isDocumentNode()) && (hasScrollableView() || scrollToAnchor));
 }
     
 bool RenderObject::hasScrollableView() const

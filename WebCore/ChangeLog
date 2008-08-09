@@ -2,6 +2,38 @@
 
         Reviewed by Adele.
 
+        Test: fast/events/scroll-to-anchor-in-overflow-hidden.html
+        https://bugs.webkit.org/show_bug.cgi?id=20270
+        Jump to an anchor wasn't working when the overflow:hidden CSS attribute was set on the page.
+
+        * WebCore.base.exp:
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::gotoAnchor):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        * page/Frame.cpp:
+        (WebCore::Frame::revealSelection):
+        (WebCore::Frame::revealCaret):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::scrollRectToVisible): Takes a new parameter "scrollToAnchor" since it's a special case of scroll. It passes this new bool to canBeProgrammaticallyScrolled. 
+        (WebCore::RenderLayer::autoscroll):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::canBeProgramaticallyScrolled):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeProgramaticallyScrolled): If the call is coming from a scrollToAnchor we don't need scrollBars to accept.
+        * rendering/RenderObject.h:
+        * rendering/RenderTextControl.h:
+        (WebCore::RenderTextControl::canBeProgramaticallyScrolled):
+
+2008-08-08  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+
         <rdar://problem/6137022>
         <https://bugs.webkit.org/show_bug.cgi?id=20331>
         REGRESSION(r35177-r35203): Scrolling slowly over a scrollable field scrolls the page instead of the field (20331)
