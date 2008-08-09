@@ -37,6 +37,8 @@
 
 namespace KJS {
 
+#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
+
 static UString escapeQuotes(const UString& str)
 {
     UString result = str;
@@ -701,6 +703,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
     }
 }
+
+#endif // !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
 
 void CodeBlock::mark()
 {

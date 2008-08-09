@@ -1,3 +1,19 @@
+2008-08-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Revision 35651, despite being a rather trivial change, introduced a
+        large regression on the regexp-dna SunSpider test. This regression
+        stemmed from an increase in the size of CodeBlock::dump(). There is
+        no reason for this method (and several related methods) to be compiled
+        in non-debug builds with the sampling tool disabled. This patch
+        conditionally compiles them, reversing the regression on SunSpider.
+
+        * JavaScriptCore.exp:
+        * VM/CodeBlock.cpp:
+        * VM/CodeBlock.h:
+        * VM/Machine.cpp:
+
 2008-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

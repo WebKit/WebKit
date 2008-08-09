@@ -92,7 +92,9 @@ namespace KJS {
         {
         }
 
+#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
         void dump(ExecState*) const;
+#endif
         int expressionRangeForVPC(const Instruction*, int& divot, int& startOffset, int& endOffset);
         int lineNumberForVPC(const Instruction* vPC);
         bool getHandlerForVPC(const Instruction* vPC, Instruction*& target, int& scopeDepth);
@@ -130,7 +132,9 @@ namespace KJS {
         Vector<StringJumpTable> stringSwitchJumpTables;
 
     private:
+#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
+#endif
     };
 
     // Program code is not marked by any function, so we make the global object
