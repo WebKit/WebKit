@@ -1,3 +1,15 @@
+2008-08-09  Alp Toker  <alp@nuanti.com>
+
+        GTK+ build fixes.
+
+        Back out r20338 libxslt check (conditional check already exists and
+        this broke the build).
+
+        Make the flex version check a warning rather than fatal to fix the
+        build bot.
+
+        * configure.ac:
+
 2008-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Mark Rowe.

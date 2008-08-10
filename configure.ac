@@ -98,7 +98,7 @@ if test -z "$FLEX"; then
 else
    FLEX_VERSION=`$FLEX --version | sed 's,.*\ \([0-9]*\.[0-9]*\.[0-9]*\)$,\1,'`
    AX_COMPARE_VERSION([2.5.33],[gt],[$FLEX_VERSION],
-      AC_MSG_ERROR([You need at least version 2.5.33 of the 'flex' lexer generator to compile WebKit]))
+      AC_MSG_WARN([You need at least version 2.5.33 of the 'flex' lexer generator to compile WebKit correctly]))
 fi
 
 AC_PATH_PROG(GPERF, gperf)
@@ -284,7 +284,6 @@ PKG_CHECK_MODULES([WEBKITDEPS],
                   [gtk+-2.0 >= $GTK_REQUIRED_VERSION
                   pango >= $PANGO_REQUIRED_VERSION
                   cairo >= $CAIRO_REQUIRED_VERSION
-                  libxslt >= LIBXSLT_REQUIRED_VERSION
                   libxml-2.0 >= $LIBXML_REQUIRED_VERSION])
 AC_SUBST([WEBKITDEPS_CFLAGS])
 AC_SUBST([WEBKITDEPS_LIBS])
