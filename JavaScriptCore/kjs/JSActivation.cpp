@@ -83,6 +83,8 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
 
 void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue* value)
 {
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
     if (symbolTablePut(propertyName, value))
         return;
 
@@ -96,6 +98,8 @@ void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue* valu
 // FIXME: Make this function honor ReadOnly (const) and DontEnum
 void JSActivation::putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
     if (symbolTablePutWithAttributes(propertyName, value, attributes))
         return;
 

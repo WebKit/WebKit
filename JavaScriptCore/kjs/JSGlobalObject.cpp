@@ -139,6 +139,8 @@ void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValu
 
 void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
 {
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
     if (symbolTablePutWithAttributes(propertyName, value, attributes))
         return;
 

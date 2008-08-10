@@ -125,6 +125,8 @@ namespace KJS {
 
     inline bool JSVariableObject::symbolTablePut(const Identifier& propertyName, JSValue* value)
     {
+        ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
         SymbolTableEntry entry = symbolTable().inlineGet(propertyName.ustring().rep());
         if (entry.isNull())
             return false;
@@ -136,6 +138,8 @@ namespace KJS {
 
     inline bool JSVariableObject::symbolTablePutWithAttributes(const Identifier& propertyName, JSValue* value, unsigned attributes)
     {
+        ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
         SymbolTable::iterator iter = symbolTable().find(propertyName.ustring().rep());
         if (iter == symbolTable().end())
             return false;

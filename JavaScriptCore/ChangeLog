@@ -1,3 +1,20 @@
+2008-08-09  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Added same heap debug checks to more code paths.
+
+        * kjs/JSActivation.cpp:
+        (KJS::JSActivation::put):
+        (KJS::JSActivation::putWithAttributes):
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::putWithAttributes):
+        * kjs/JSObject.h:
+        (KJS::JSObject::putDirect):
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::symbolTablePut):
+        (KJS::JSVariableObject::symbolTablePutWithAttributes):
+
 2008-08-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

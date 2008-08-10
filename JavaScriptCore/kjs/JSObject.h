@@ -476,6 +476,8 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifie
 
 inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, unsigned attr)
 {
+    ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
+
     m_propertyMap.put(propertyName, value, attr);
 }
 
