@@ -1,3 +1,12 @@
+2008-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6074587> REGRESSION (34722): Unable to view AT&T wireless bill - window title contains markup, window is empty
+
+        * fast/tokenizer/ampersand-in-special-tag-expected.txt: Added.
+        * fast/tokenizer/ampersand-in-special-tag.html: Added.
+
 2008-08-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

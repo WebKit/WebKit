@@ -1,3 +1,15 @@
+2008-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6074587> REGRESSION (34722): Unable to view AT&T wireless bill - window title contains markup, window is empty
+
+        Test: fast/tokenizer/ampersand-in-special-tag.html
+
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::parseSpecial): Changed to only advance
+        lastDecodedEntityPosition if an entity was found and decoded.
+
 2008-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed (and updated) by Alp Toker.
