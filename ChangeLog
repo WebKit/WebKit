@@ -1,3 +1,16 @@
+2008-08-09  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Alp Toker.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19045
+        [gtk] ./configure doesn't check for x toolkit availability
+
+        Some old versions of Xt do not provide xt.pc, in this case use
+        AC_CHECK_LIB to check if the library is installed and then fall back
+        to using just -lXt.
+
+        * configure.ac:
+
 2008-08-09  Alp Toker  <alp@nuanti.com>
 
         GTK+ build fixes.

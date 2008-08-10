@@ -291,7 +291,19 @@ AC_SUBST([WEBKITDEPS_LIBS])
 # check for Xt if the target is X11
 if test "$with_target" = "x11"; then
    PKG_CHECK_MODULES([XT],
-                     [xt])
+                     [xt],
+                     [xt_has_pkg_config=yes],
+                     [xt_has_pkg_config=no])
+   # some old versions of Xt do not provide xt.pc, so try to link against Xt
+   # and if it's installed fall back to just adding -lXt
+   if test "$xt_has_pkg_config" = "no"; then
+      # using AC_CHECK_LIB instead of AC_SEARCH_LIB is fine in this case as
+      # we don't care about the XtOpenDisplay symbol but only about the
+      # existence of libXt
+      AC_CHECK_LIB([Xt], [XtOpenDisplay],
+                   [XT_CFLAGS=""; XT_LIBS="-lXt"],
+                   [AC_MSG_ERROR([X Toolkit Intrinsics library (libXt) not found])])
+   fi
    AC_SUBST([XT_CFLAGS])
    AC_SUBST([XT_LIBS])
 fi
