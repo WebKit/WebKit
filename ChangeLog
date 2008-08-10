@@ -1,3 +1,14 @@
+2008-08-08  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20338
+        [Gtk] Autotools should check for libxslt
+
+        Autotools check for libxslt
+
+        * configure.ac:
+
 2008-08-07  Kalle Vahlman  <zuh@iki.fi>
 
         Reviewed by David Kilzer.

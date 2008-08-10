@@ -284,6 +284,7 @@ PKG_CHECK_MODULES([WEBKITDEPS],
                   [gtk+-2.0 >= $GTK_REQUIRED_VERSION
                   pango >= $PANGO_REQUIRED_VERSION
                   cairo >= $CAIRO_REQUIRED_VERSION
+                  libxslt >= LIBXSLT_REQUIRED_VERSION
                   libxml-2.0 >= $LIBXML_REQUIRED_VERSION])
 AC_SUBST([WEBKITDEPS_CFLAGS])
 AC_SUBST([WEBKITDEPS_LIBS])
