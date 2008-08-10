@@ -1,3 +1,16 @@
+2008-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed (and updated) by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16620
+        [GTK] Autotools make dist and make check support
+
+        Get make dist working.
+
+        Note that not all possible configurations have been tested yet.
+
+        * GNUmakefile.am:
+
 2008-08-08  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

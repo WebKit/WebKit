@@ -32,10 +32,21 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 Programs_DumpRenderTree_SOURCES = \
-	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
-	WebKitTools/DumpRenderTree/LayoutTestController.cpp \
+	WebKitTools/DumpRenderTree/AccessibilityController.h \
+	WebKitTools/DumpRenderTree/AccessibilityUIElement.h \
+	WebKitTools/DumpRenderTree/DumpRenderTree.h \
+	WebKitTools/DumpRenderTree/DumpRenderTreePrefix.h \
 	WebKitTools/DumpRenderTree/GCController.cpp \
+	WebKitTools/DumpRenderTree/GCController.h \
+	WebKitTools/DumpRenderTree/JavaScriptThreading.h \
+	WebKitTools/DumpRenderTree/LayoutTestController.cpp \
+	WebKitTools/DumpRenderTree/LayoutTestController.h \
+	WebKitTools/DumpRenderTree/PixelDumpSupport.h \
 	WebKitTools/DumpRenderTree/WorkQueue.cpp \
+	WebKitTools/DumpRenderTree/WorkQueue.h \
+	WebKitTools/DumpRenderTree/WorkQueueItem.h \
+	WebKitTools/DumpRenderTree/gtk/DumpRenderTree.cpp \
+	WebKitTools/DumpRenderTree/gtk/DumpRenderTreeGtk.h \
 	WebKitTools/DumpRenderTree/gtk/GCControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/LayoutTestControllerGtk.cpp \
 	WebKitTools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp
