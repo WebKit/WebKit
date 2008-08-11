@@ -1,3 +1,11 @@
+2008-08-11  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Added JSWebKitAnimationEvent.cpp and
+        JSWebKitTransitionEvent.cpp to the project. Let VS reformat the file,
+        too.
+
 2008-08-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

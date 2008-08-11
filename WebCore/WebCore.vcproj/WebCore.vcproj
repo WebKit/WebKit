@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-1252"?>
+<?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -507,11 +507,11 @@
 					/>
 				</FileConfiguration>
 			</File>
-      <File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\HTMLNames.h"
 				>
-      </File>
-      <File
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSAttr.h"
 				>
 			</File>
@@ -1227,15 +1227,15 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementInstanceList.h"
 				>
 			</File>
-      <File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.cpp"
 				>
-      </File>
-      <File
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGElementWrapperFactory.h"
 				>
-      </File>
-      <File
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSSVGEllipseElement.h"
 				>
 			</File>
@@ -1664,11 +1664,19 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.h"
 				>
 			</File>
 			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitTransitionEvent.cpp"
 				>
 			</File>
 			<File
@@ -1743,7 +1751,7 @@
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XMLNames.h"
 				>
 			</File>
- 			<File
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\XPathGrammar.cpp"
 				>
 				<FileConfiguration
@@ -8370,7 +8378,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderMedia.cpp"
+				RelativePath="..\rendering\RenderMarquee.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -8386,7 +8394,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderMarquee.cpp"
+				RelativePath="..\rendering\RenderMedia.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -8413,7 +8421,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-
 			<File
 				RelativePath="..\rendering\RenderMenuList.h"
 				>
