@@ -405,6 +405,7 @@ public:
     void setNeedsPositionedMovementLayout();
     void setPrefWidthsDirty(bool, bool markParents = true);
     void invalidateContainerPrefWidths();
+    virtual void invalidateCounters() { }
     
     void setNeedsLayoutAndPrefWidthsRecalc()
     {

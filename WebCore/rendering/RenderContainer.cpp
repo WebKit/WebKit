@@ -392,6 +392,25 @@ bool RenderContainer::isAfterContent(RenderObject* child) const
     return true;
 }
 
+static void invalidateCountersInContainer(RenderObject* container)
+{
+    if (!container)
+        return;
+    container = findBeforeAfterParent(container);
+    if (!container)
+        return;
+    for (RenderObject* content = container->firstChild(); content; content = content->nextSibling()) {
+        if (content->isCounter())
+            static_cast<RenderCounter*>(content)->invalidate();
+    }
+}
+
+void RenderContainer::invalidateCounters()
+{
+    invalidateCountersInContainer(beforeAfterContainer(RenderStyle::BEFORE));
+    invalidateCountersInContainer(beforeAfterContainer(RenderStyle::AFTER));
+}
+
 void RenderContainer::appendChildNode(RenderObject* newChild, bool fullAppend)
 {
     ASSERT(newChild->parent() == 0);

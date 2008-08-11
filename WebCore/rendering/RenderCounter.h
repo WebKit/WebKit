@@ -33,11 +33,13 @@ public:
     RenderCounter(Document*, const CounterContent&);
 
     virtual const char* renderName() const;
-    virtual bool isRenderCounter() const;
+    virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
     virtual void dirtyLineBoxes(bool, bool);
     virtual void calcPrefWidths(int leadWidth);
+
+    void invalidate();
 
     static void destroyCounterNodes(RenderObject*);
 

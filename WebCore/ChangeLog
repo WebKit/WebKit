@@ -1,3 +1,26 @@
+2008-08-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6131096> Reproducible crash in CounterNode::isReset under guard malloc
+
+        Test: fast/css/counters/invalidate-cached-counter-node.html
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::invalidateCounters): Added. Invalidates all
+        RenderCounters in :before and :after content.
+        * rendering/RenderContainer.h:
+        * rendering/RenderCounter.cpp:
+        (WebCore::RenderCounter::isCounter): Renamed isRenderCounter() to this
+        to match the RenderObject method.
+        (WebCore::RenderCounter::invalidate): Added. Resets the cached
+        CounterNode and invalidates the object's layout and preferred widths.
+        (WebCore::destroyCounterNodeChildren): Added a call to
+        invalidateCounters().
+        * rendering/RenderCounter.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::invalidateCounters):
+
 2008-08-11  Dean Jackson  <dino@apple.com>
 
         Implement CSS Animation and Transition Events
