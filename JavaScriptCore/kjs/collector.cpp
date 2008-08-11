@@ -134,7 +134,13 @@ Heap::Heap(JSGlobalData* globalData)
 
 Heap::~Heap()
 {
+    // The global object is not GC protected at this point, so sweeping may delete it (and thus the global data)
+    // before other objects that may use the global data.
+    RefPtr<JSGlobalData> protect(m_globalData);
+
     delete m_markListSet;
+    m_markListSet = 0;
+
     sweep<PrimaryHeap>();
     // No need to sweep number heap, because the JSNumber destructor doesn't do anything.
 

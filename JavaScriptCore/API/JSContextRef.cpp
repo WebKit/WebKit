@@ -101,7 +101,7 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
         ASSERT(!heap->protectedObjectCount());
         ASSERT(!heap->isBusy());
 
-        // Heap::destroy() will delete JSGlobalObject, which will in turn delete JSGlobalData, which will
+        // Heap destructor will delete JSGlobalObject, which will in turn delete JSGlobalData, which will
         // delete the heap, which would cause a crash if allowed.
         globalData.heap = 0;
 
