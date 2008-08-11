@@ -148,10 +148,14 @@ WebInspector.Console.prototype = {
 
         this.messages.push(msg);
 
-        while (msg.groupLevel > this.groupLevel)
-            this.startGroup();
-        while (msg.groupLevel < this.groupLevel)
-            this.endGroup();
+        if (msg.groupLevel === null)
+            msg.groupLevel = this.groupLevel
+        else {
+            while (msg.groupLevel > this.groupLevel)
+                this.startGroup();
+            while (msg.groupLevel < this.groupLevel)
+                this.endGroup();
+        }
 
         this.currentGroup.addMessage(msg);
         this.promptElement.scrollIntoView(false);

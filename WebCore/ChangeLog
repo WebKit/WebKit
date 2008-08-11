@@ -1,3 +1,14 @@
+2008-08-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        - Because console messages have group levels now, newly created messages
+        that do not specify the level lose their message since the number of
+        arguments is wrong.
+ 
+        * page/inspector/Console.js:
+        * page/inspector/Resource.js:
+
 2008-08-11  Alp Toker  <alp@nuanti.com>
 
         Build fix. Add new files from r35666 (WebKitAnimationEvent). Also take
