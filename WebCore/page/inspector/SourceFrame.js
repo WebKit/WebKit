@@ -469,20 +469,21 @@ WebInspector.SourceFrame.prototype = {
         delete this._needsBreakpointImages;
     },
 
-    _syntaxHighlightJavascriptLine: function(line, prevLine)
+    syntaxHighlightJavascript: function()
     {
-        var previousMatchLength = 0;
+        var table = this.element.contentDocument.getElementsByTagName("table")[0];
+        if (!table)
+            return;
 
-        var messageBubble = line.lastChild;
-        if (messageBubble && messageBubble.nodeType === Node.ELEMENT_NODE && messageBubble.hasStyleClass("webkit-html-message-bubble"))
-            line.removeChild(messageBubble);
-        else
-            messageBubble = null;
-
-        var code = line.textContent;
-
-        while (line.firstChild)
-            line.removeChild(line.firstChild);
+        function deleteContinueFlags(cell)
+        {
+            if (!cell)
+                return;
+            delete cell._commentContinues;
+            delete cell._singleQuoteStringContinues;
+            delete cell._doubleQuoteStringContinues;
+            delete cell._regexpContinues;
+        }
 
         function createSpan(content, className)
         {
@@ -505,7 +506,7 @@ WebInspector.SourceFrame.prototype = {
 
         var findNumber = generateFinder(/^(-?(\d+\.?\d*([eE][+-]\d+)?|0[xX]\h+|Infinity)|NaN)(?:\W|$)/, 1, "webkit-javascript-number");
         var findKeyword = generateFinder(/^(null|true|false|break|case|catch|const|default|finally|for|instanceof|new|var|continue|function|return|void|delete|if|this|do|while|else|in|switch|throw|try|typeof|with|debugger|class|enum|export|extends|import|super|get|set)(?:\W|$)/, 1, "webkit-javascript-keyword");
-        var findSingleLineString = generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-javascript-string");
+        var findSingleLineString = generateFinder(/^"(?:[^"\\]|\\.)*"|^'([^'\\]|\\.)*'/, 0, "webkit-javascript-string"); // " this quote keeps Xcode happy
         var findMultilineCommentStart = generateFinder(/^\/\*.*$/, 0, "webkit-javascript-comment");
         var findMultilineCommentEnd = generateFinder(/^.*?\*\//, 0, "webkit-javascript-comment");
         var findMultilineSingleQuoteStringStart = generateFinder(/^'(?:[^'\\]|\\.)*\\$/, 0, "webkit-javascript-string");
@@ -535,98 +536,96 @@ WebInspector.SourceFrame.prototype = {
             return node;
         }
 
-        var token;
-        var tmp = 0;
-        var i = 0;
+        function syntaxHighlightJavascriptLine(line, prevLine)
+        {
+            var messageBubble = line.lastChild;
+            if (messageBubble && messageBubble.nodeType === Node.ELEMENT_NODE && messageBubble.hasStyleClass("webkit-html-message-bubble"))
+                line.removeChild(messageBubble);
+            else
+                messageBubble = null;
 
-        if (prevLine) {
-            if (prevLine._commentContinues) {
-                if (!(token = findMultilineCommentEnd(code))) {
-                    token = createSpan(code, "webkit-javascript-comment");
-                    line._commentContinues = true;
-                }
-            } else if (prevLine._singleQuoteStringContinues) {
-                if (!(token = findMultilineSingleQuoteStringEnd(code))) {
-                    token = createSpan(code, "webkit-javascript-string");
-                    line._singleQuoteStringContinues = true;
-                }
-            } else if (prevLine._doubleQuoteStringContinues) {
-                if (!(token = findMultilineDoubleQuoteStringEnd(code))) {
-                    token = createSpan(code, "webkit-javascript-string");
-                    line._doubleQuoteStringContinues = true;
-                }
-            } else if (prevLine._regexpContinues) {
-                if (!(token = findMultilineRegExpEnd(code))) {
-                    token = createSpan(code, "webkit-javascript-regexp");
-                    line._regexpContinues = true;
-                }
-            }
-            if (token) {
-                i += previousMatchLength ? previousMatchLength : code.length;
-                tmp = i;
-                line.appendChild(token);
-            }
-        }
+            var code = line.textContent;
 
-        for ( ; i < code.length; ++i) {
-            var codeFragment = code.substr(i);
-            var prevChar = code[i - 1];
-            token = findSingleLineComment(codeFragment);
-            if (!token) {
-                if ((token = findMultilineCommentStart(codeFragment)))
-                    line._commentContinues = true;
-                else if (!prevChar || /^\W/.test(prevChar)) {
-                    token = findNumber(codeFragment, code[i - 1]) ||
-                            findKeyword(codeFragment, code[i - 1]) ||
-                            findSingleLineString(codeFragment) ||
-                            findSingleLineRegExp(codeFragment);
-                    if (!token) {
-                        if (token = findMultilineSingleQuoteStringStart(codeFragment))
-                            line._singleQuoteStringContinues = true;
-                        else if (token = findMultilineDoubleQuoteStringStart(codeFragment))
-                            line._doubleQuoteStringContinues = true;
-                        else if (token = findMultilineRegExpStart(codeFragment))
-                            line._regexpContinues = true;
+            while (line.firstChild)
+                line.removeChild(line.firstChild);
+
+            var token;
+            var tmp = 0;
+            var i = 0;
+
+            if (prevLine) {
+                if (prevLine._commentContinues) {
+                    if (!(token = findMultilineCommentEnd(code))) {
+                        token = createSpan(code, "webkit-javascript-comment");
+                        line._commentContinues = true;
+                    }
+                } else if (prevLine._singleQuoteStringContinues) {
+                    if (!(token = findMultilineSingleQuoteStringEnd(code))) {
+                        token = createSpan(code, "webkit-javascript-string");
+                        line._singleQuoteStringContinues = true;
+                    }
+                } else if (prevLine._doubleQuoteStringContinues) {
+                    if (!(token = findMultilineDoubleQuoteStringEnd(code))) {
+                        token = createSpan(code, "webkit-javascript-string");
+                        line._doubleQuoteStringContinues = true;
+                    }
+                } else if (prevLine._regexpContinues) {
+                    if (!(token = findMultilineRegExpEnd(code))) {
+                        token = createSpan(code, "webkit-javascript-regexp");
+                        line._regexpContinues = true;
                     }
                 }
+                if (token) {
+                    i += previousMatchLength ? previousMatchLength : code.length;
+                    tmp = i;
+                    line.appendChild(token);
+                }
             }
-            if (token) {
-                if (tmp !== i)
-                    line.appendChild(document.createTextNode(code.substring(tmp, i)));
-                line.appendChild(token);
-                i += previousMatchLength - 1;
-                tmp = i + 1;
+
+            for ( ; i < code.length; ++i) {
+                var codeFragment = code.substr(i);
+                var prevChar = code[i - 1];
+                token = findSingleLineComment(codeFragment);
+                if (!token) {
+                    if ((token = findMultilineCommentStart(codeFragment)))
+                        line._commentContinues = true;
+                    else if (!prevChar || /^\W/.test(prevChar)) {
+                        token = findNumber(codeFragment, code[i - 1]) ||
+                                findKeyword(codeFragment, code[i - 1]) ||
+                                findSingleLineString(codeFragment) ||
+                                findSingleLineRegExp(codeFragment);
+                        if (!token) {
+                            if (token = findMultilineSingleQuoteStringStart(codeFragment))
+                                line._singleQuoteStringContinues = true;
+                            else if (token = findMultilineDoubleQuoteStringStart(codeFragment))
+                                line._doubleQuoteStringContinues = true;
+                            else if (token = findMultilineRegExpStart(codeFragment))
+                                line._regexpContinues = true;
+                        }
+                    }
+                }
+
+                if (token) {
+                    if (tmp !== i)
+                        line.appendChild(document.createTextNode(code.substring(tmp, i)));
+                    line.appendChild(token);
+                    i += previousMatchLength - 1;
+                    tmp = i + 1;
+                }
             }
+
+            if (tmp < code.length)
+                line.appendChild(document.createTextNode(code.substring(tmp, i)));
+
+            if (messageBubble)
+                line.appendChild(messageBubble);
         }
-
-        if (tmp < code.length)
-            line.appendChild(document.createTextNode(code.substring(tmp, i)));
-
-        if (messageBubble)
-            line.appendChild(messageBubble);
-    },
-
-    syntaxHighlightJavascript: function()
-    {
-        var table = this.element.contentDocument.getElementsByTagName("table")[0];
-        if (!table)
-            return;
 
         var i = 0;
         var rows = table.rows;
         var rowsLength = rows.length;
         var previousCell = null;
-        var processChunkInterval;
-
-        function deleteContinueFlags(cell)
-        {
-            if (!cell)
-                return;
-            delete cell._commentContinues;
-            delete cell._singleQuoteStringContinues;
-            delete cell._doubleQuoteStringContinues;
-            delete cell._regexpContinues;
-        }
+        var previousMatchLength = 0;
 
         // Split up the work into chunks so we don't block the
         // UI thread while processing.
@@ -640,7 +639,7 @@ WebInspector.SourceFrame.prototype = {
                 var cell = row.cells[1];
                 if (!cell)
                     continue;
-                this._syntaxHighlightJavascriptLine(cell, previousCell);
+                syntaxHighlightJavascriptLine(cell, previousCell);
                 if (i < (end - 1))
                     deleteContinueFlags(previousCell);
                 previousCell = cell;
@@ -652,7 +651,8 @@ WebInspector.SourceFrame.prototype = {
             }
         }
 
-        processChunk.call(this);
-        processChunkInterval = setInterval(processChunk.bind(this), 25);
+        processChunk();
+
+        var processChunkInterval = setInterval(processChunk, 25);
     }
 }

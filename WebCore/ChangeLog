@@ -1,3 +1,19 @@
+2008-08-11  Timothy Hatcher  <timothy@apple.com>
+
+        Speed up the the JavaScript syntax highlighter by generating
+        the finders only once per script instead of per line.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20346
+
+        Reviewed by Adam Roben.
+
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._syntaxHighlightJavascriptLine):
+        Removed, factored into syntaxHighlightJavascript as an inline function.
+        (WebInspector.SourceFrame.prototype.syntaxHighlightJavascript):
+        Pulled in the _syntaxHighlightJavascriptLine so it will create a closure.
+        Generate the finders before iterating the lines.
+
 2008-08-11  Adam Roben  <aroben@apple.com>
 
         Windows build fix
