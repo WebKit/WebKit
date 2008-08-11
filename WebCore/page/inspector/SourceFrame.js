@@ -333,7 +333,7 @@ WebInspector.SourceFrame.prototype = {
             return;
 
         var errorDiv = cell.lastChild;
-        if (!errorDiv || errorDiv.nodeName.toLowerCase() !== "div" || !errorDiv.hasStyleClass("webkit-html-message-bubble")) {
+        if (!errorDiv || errorDiv.nodeType !== Node.ELEMENT_NODE || !errorDiv.hasStyleClass("webkit-html-message-bubble")) {
             errorDiv = this.element.contentDocument.createElement("div");
             errorDiv.className = "webkit-html-message-bubble";
             cell.appendChild(errorDiv);
@@ -472,8 +472,16 @@ WebInspector.SourceFrame.prototype = {
     _syntaxHighlightJavascriptLine: function(line, prevLine)
     {
         var previousMatchLength = 0;
+
+        var messageBubble = line.lastChild;
+        if (messageBubble && messageBubble.nodeType === Node.ELEMENT_NODE && messageBubble.hasStyleClass("webkit-html-message-bubble"))
+            line.removeChild(messageBubble);
+        else
+            messageBubble = null;
+
         var code = line.textContent;
-        while (line.hasChildNodes())
+
+        while (line.firstChild)
             line.removeChild(line.firstChild);
 
         function createSpan(content, className)
@@ -593,6 +601,9 @@ WebInspector.SourceFrame.prototype = {
 
         if (tmp < code.length)
             line.appendChild(document.createTextNode(code.substring(tmp, i)));
+
+        if (messageBubble)
+            line.appendChild(messageBubble);
     },
 
     syntaxHighlightJavascript: function()

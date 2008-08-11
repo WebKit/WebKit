@@ -1,1 +1,19 @@
+2008-08-11  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where error bubbles in JavaScript resources would
+        be clobbered by the syntax highlighter.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20345
+
+        Reviewed by Adam Roben.
+
+        * manual-tests/inspector/resources/script-error.js: Added.
+        * manual-tests/inspector/styled-error-bubbles-in-scripts.html: Added.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._addMessageToSource):
+        Check the nodeType and not the nodeName, this is less fragile.
+        (WebInspector.SourceFrame.prototype._syntaxHighlightJavascriptLine):
+        Check if the lastChild is an error bubble, if so remove it before
+        getting the line's textContent. Add the error bubble back at the end.
+
 == Rolled over to ChangeLog-2008-08-10 ==
