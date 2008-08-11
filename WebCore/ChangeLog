@@ -1,3 +1,11 @@
+2008-08-11  Adam Roben  <aroben@apple.com>
+
+        Add a ForwardingHeader for wtf/NotFound.h
+
+        Rubberstamped by Darin Adler.
+
+        * ForwardingHeaders/wtf/NotFound.h: Added.
+
 2008-08-11  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where error bubbles in JavaScript resources would

@@ -25,6 +25,7 @@
 #include "Assertions.h"
 #include "FastMalloc.h"
 #include "Noncopyable.h"
+#include "NotFound.h"
 #include "VectorTraits.h"
 #include <limits>
 #include <stdlib.h>
@@ -36,8 +37,6 @@ namespace WTF {
     using std::min;
     using std::max;
     
-    const size_t notFound = static_cast<size_t>(-1);
-
     template <bool needsDestruction, typename T>
     class VectorDestructor;
 
