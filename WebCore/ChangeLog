@@ -1,3 +1,29 @@
+2008-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=20328
+        Fix a problem when an 'all' transition transition with more than
+        one property changing is interrupted, and did some AnimationController
+        cleanup.
+
+        Test: transitions/interrupted-all-transition.html
+
+        * page/AnimationController.cpp:
+        (WebCore::ImplicitAnimation::ImplicitAnimation):
+        (WebCore::AnimationControllerPrivate::blendProperties):
+        (WebCore::CompositeAnimation::updateTransitions):
+        (WebCore::CompositeAnimation::cleanupFinishedAnimations):
+        (WebCore::CompositeAnimation::setTransitionStartTime):
+        (WebCore::CompositeAnimation::overrideImplicitAnimations):
+        (WebCore::CompositeAnimation::resumeOverriddenImplicitAnimations):
+        (WebCore::ImplicitAnimation::animate):
+        (WebCore::ImplicitAnimation::onAnimationEnd):
+        (WebCore::ImplicitAnimation::sendTransitionEvent):
+        (WebCore::ImplicitAnimation::affectsProperty):
+        (WebCore::KeyframeAnimation::endAnimation):
+        (WebCore::KeyframeAnimation::onAnimationEnd):
+
 2008-08-11  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

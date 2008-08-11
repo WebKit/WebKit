@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Interrupted All Transition</title>
+  <style type="text/css" media="screen">
+    #container {
+      position: relative;
+      width: 400px;
+      height: 100px;
+      border: 1px solid black;
+    }
+    #box {
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 1s;
+      -webkit-transition-timing-function: linear;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+
+    function startTransition()
+    {
+      var box = document.getElementById('box');
+      box.style.left = '300px';
+      box.style.opacity = 0.5;
+      window.setTimeout(function() {
+        box.style.left = '0px';
+        
+        window.setTimeout(function() {
+          var boxPos = parseInt(window.getComputedStyle(box).left);
+          document.getElementById('result').innerHTML = (boxPos < 200) ? "PASS" : "FAIL";
+          if (window.layoutTestController)
+              layoutTestController.notifyDone();
+        }, 250);
+      }, 500);
+    }
+    window.addEventListener('load', startTransition, false)
+  </script>
+</head>
+<body>
+
+<p>Box should start moving left after left style is reset after 500ms</p>
+<div id="container">
+  <div id="box">
+  </div>
+</div>
+<div id="result">
+</div>
+</body>
+</html>

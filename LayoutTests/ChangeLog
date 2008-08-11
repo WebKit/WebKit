@@ -1,3 +1,14 @@
+2008-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        https://bugs.webkit.org/show_bug.cgi?id=20328
+        Add testcase for interrupted 'all' transition with more than
+        one property changing.
+        
+        * transitions/interrupted-all-transition-expected.txt: Added.
+        * transitions/interrupted-all-transition.html: Added.
+
 2008-08-11  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
