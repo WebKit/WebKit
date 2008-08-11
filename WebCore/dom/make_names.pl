@@ -215,7 +215,7 @@ sub printConstructors
 
         print F "$parameters{'namespace'}Element* ${name}Constructor(Document* doc, bool createdByParser)\n";
         print F "{\n";
-        print F "    return new $parameters{'namespace'}${ucName}Element(${name}Tag, doc);\n";
+        print F "    return new $parameters{'namespace'}${ucName}Element($parameters{'namespace'}Names::${name}Tag, doc);\n";
         print F "}\n\n";
     }
     print F "#endif\n" if $parameters{'guardFactoryWith'};
@@ -225,7 +225,7 @@ sub printFunctionInits
 {
     my ($F, $namesRef) = @_;
     for my $name (sort keys %$namesRef) {
-        print F "    gFunctionMap->set(${name}Tag.localName().impl(), ${name}Constructor);\n";
+        print F "    gFunctionMap->set($parameters{'namespace'}Names::${name}Tag.localName().impl(), ${name}Constructor);\n";
     }
 }
 
@@ -516,7 +516,6 @@ print F <<END
 #include <wtf/HashMap.h>
 
 using namespace WebCore;
-using namespace $parameters{'cppNamespace'}::$parameters{'namespace'}Names;
 
 typedef $parameters{'namespace'}Element* (*ConstructorFunc)(Document* doc, bool createdByParser);
 typedef WTF::HashMap<AtomicStringImpl*, ConstructorFunc> FunctionMap;

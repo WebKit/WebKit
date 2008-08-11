@@ -1,3 +1,13 @@
+2008-08-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20339
+          REGRESSION (r35531-r35615): Acid3 crashes on Windows in CachedFont::getSVGFontById
+
+        * dom/make_names.pl: Removed "using namespace WebCore::*Names"
+        from *ElementFactory.cpp files.        
+
 2008-08-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Cameron Zwarich.
