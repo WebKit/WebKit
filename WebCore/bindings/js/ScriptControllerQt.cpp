@@ -48,7 +48,7 @@ namespace WebCore {
 
 PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWidget(WebCore::Widget* widget)
 {
-    if (widget->isFrameView())
+    if (!widget->isPluginView())
         return 0;
     if (widget->isNPAPIPlugin())
         return static_cast<PluginView*>(widget)->bindingInstance();

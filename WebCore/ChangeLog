@@ -1,3 +1,13 @@
+2008-08-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Fix crash in Acid3 in Windows and Gtk ports, introduced in r35590.
+
+        * bindings/js/ScriptControllerGtk.cpp: Fix the logic.
+        * bindings/js/ScriptControllerWin.cpp: Ditto.
+        * bindings/js/ScriptControllerQt.cpp: Switch to isPluginView for consistency with Gtk and Windows.
+
 2008-08-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
