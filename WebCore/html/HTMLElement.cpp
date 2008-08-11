@@ -219,6 +219,14 @@ void HTMLElement::parseMappedAttribute(MappedAttribute *attr)
         setHTMLEventListener(submitEvent, attr);
     } else if (attr->name() == onerrorAttr) {
         setHTMLEventListener(errorEvent, attr);
+    } else if (attr->name() == onwebkitanimationstartAttr) {
+        setHTMLEventListener(webkitAnimationStartEvent, attr);
+    } else if (attr->name() == onwebkitanimationiterationAttr) {
+        setHTMLEventListener(webkitAnimationIterationEvent, attr);
+    } else if (attr->name() == onwebkitanimationendAttr) {
+        setHTMLEventListener(webkitAnimationEndEvent, attr);
+    } else if (attr->name() == onwebkittransitionendAttr) {
+        setHTMLEventListener(webkitTransitionEndEvent, attr);
     }
 }
 

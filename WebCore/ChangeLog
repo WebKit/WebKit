@@ -1,3 +1,49 @@
+2008-08-11  Dean Jackson  <dino@apple.com>
+
+        Implement CSS Animation and Transition Events
+        https://bugs.webkit.org/show_bug.cgi?id=20337
+
+        Implement the events defined in the CSS Animations
+        and Transitions specifications so code can react
+        to animations and transitions.
+
+        Reviewed by Tim Hatcher and Dave Hyatt.
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            Build configs for new files
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSEventCustom.cpp:
+        * dom/Document.h:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/EventTarget.cpp:
+        * dom/EventTargetNode.cpp:
+        * dom/EventTargetNode.h:
+        * html/HTMLElement.cpp:
+        * page/AnimationController.cpp:
+            do all the new event stuff
+            
+        * html/HTMLAttributeNames.in:
+            the onwebkitanimation* and onwebkittransitionend attrs
+
+        * dom/WebKitAnimationEvent.cpp: Added.
+        * dom/WebKitAnimationEvent.h: Added.
+        * dom/WebKitAnimationEvent.idl: Added.
+        * dom/WebKitTransitionEvent.cpp: Added.
+        * dom/WebKitTransitionEvent.h: Added.
+        * dom/WebKitTransitionEvent.idl: Added.
+            New files for the events
+
+        * manual-tests/transition-events.html: Added.
+            New testfile
+
 2008-08-11  Adam Roben  <aroben@apple.com>
 
         Add a ForwardingHeader for wtf/NotFound.h

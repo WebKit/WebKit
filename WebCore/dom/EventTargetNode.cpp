@@ -41,6 +41,8 @@
 #include "ProgressEvent.h"
 #include "RegisteredEventListener.h"
 #include "TextEvent.h"
+#include "WebKitAnimationEvent.h"
+#include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
 #include <wtf/HashSet.h>
 
@@ -358,6 +360,21 @@ void EventTargetNode::dispatchWheelEvent(PlatformWheelEvent& e)
         e.accept();
 }
 
+bool EventTargetNode::dispatchWebKitAnimationEvent(const AtomicString& eventType, const String& animationName, double elapsedTime)
+{
+    ASSERT(!eventDispatchForbidden());
+    
+    ExceptionCode ec = 0;
+    return dispatchEvent(WebKitAnimationEvent::create(eventType, animationName, elapsedTime), ec, true);
+}
+
+bool EventTargetNode::dispatchWebKitTransitionEvent(const AtomicString& eventType, const String& propertyName, double elapsedTime)
+{
+    ASSERT(!eventDispatchForbidden());
+    
+    ExceptionCode ec = 0;
+    return dispatchEvent(WebKitTransitionEvent::create(eventType, propertyName, elapsedTime), ec, true);
+}
 
 void EventTargetNode::dispatchFocusEvent()
 {

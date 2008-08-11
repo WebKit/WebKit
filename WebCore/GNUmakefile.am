@@ -205,7 +205,9 @@ webcore_built_sources += \
 	DerivedSources/JSTextEvent.h \
 	DerivedSources/JSTreeWalker.h \
 	DerivedSources/JSUIEvent.h \
+	DerivedSources/JSWebKitAnimationEvent.h \
 	DerivedSources/JSWebKitCSSTransformValue.h \
+	DerivedSources/JSWebKitTransitionEvent.h \
 	DerivedSources/JSWheelEvent.h \
 	DerivedSources/JSXMLHttpRequest.h \
 	DerivedSources/JSXMLHttpRequestException.h \
@@ -412,6 +414,8 @@ IDL_BINDINGS +=  \
 	WebCore/dom/TextEvent.idl \
 	WebCore/dom/TreeWalker.idl \
 	WebCore/dom/UIEvent.idl \
+	WebCore/dom/WebKitAnimationEvent.idl \
+	WebCore/dom/WebKitTransitionEvent.idl \
 	WebCore/dom/WheelEvent.idl \
 	WebCore/html/CanvasGradient.idl \
 	WebCore/html/CanvasPattern.idl \

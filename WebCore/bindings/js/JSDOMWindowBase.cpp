@@ -179,6 +179,10 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
   onsubmit              WebCore::JSDOMWindowBase::Onsubmit           DontDelete
   onunload              WebCore::JSDOMWindowBase::Onunload           DontDelete
   onbeforeunload        WebCore::JSDOMWindowBase::Onbeforeunload     DontDelete
+  onwebkitanimationstart    WebCore::JSDOMWindowBase::OnWebKitAnimationStart  DontDelete
+  onwebkitanimationiteration     WebCore::JSDOMWindowBase::OnWebKitAnimationIteration   DontDelete
+  onwebkitanimationend      WebCore::JSDOMWindowBase::OnWebKitAnimationEnd    DontDelete
+  onwebkittransitionend     WebCore::JSDOMWindowBase::OnWebKitTransitionEnd   DontDelete
 # -- Constructors --
   Audio                 WebCore::JSDOMWindowBase::Audio              DontDelete
   Image                 WebCore::JSDOMWindowBase::Image              DontDelete
@@ -518,6 +522,14 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
      return getListener(exec, beforeunloadEvent);
    case Onunload:
      return getListener(exec, unloadEvent);
+   case OnWebKitAnimationStart:
+     return getListener(exec, webkitAnimationStartEvent);
+   case OnWebKitAnimationIteration:
+     return getListener(exec, webkitAnimationIterationEvent);
+   case OnWebKitAnimationEnd:
+     return getListener(exec, webkitAnimationEndEvent);
+   case OnWebKitTransitionEnd:
+     return getListener(exec, webkitTransitionEndEvent);
    }
    ASSERT_NOT_REACHED();
    return jsUndefined();

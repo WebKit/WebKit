@@ -775,14 +775,15 @@ void AnimationBase::animationEventDispatcherFired(Element* element, const Atomic
     if (!element)
         return;
 
-    // FIXME: Actual event dispatching will be done here
+    if (eventType == EventNames::webkitTransitionEndEvent)
+        element->dispatchWebKitTransitionEvent(eventType, name, elapsedTime);
+    else
+        element->dispatchWebKitAnimationEvent(eventType, name, elapsedTime);
 
-    if (animEventType == EventNames::webkitAnimationEndEvent) {
-        if (element->renderer()) {
-            // Restore the original (unanimated) style
+    // Restore the original (unanimated) style
+    if (animEventType == EventNames::webkitAnimationEndEvent)
+        if (element->renderer())
             setChanged(element->renderer()->element());
-        }
-    }
 }
 
 void AnimationBase::updatePlayState(bool run)
@@ -1861,7 +1862,24 @@ void ImplicitAnimation::onAnimationEnd(double inElapsedTime)
 
 bool ImplicitAnimation::sendTransitionEvent(const AtomicString& inEventType, double inElapsedTime)
 {
-    // FIXME: event dispatching code will go here
+    if (inEventType == EventNames::webkitTransitionEndEvent) {
+        Document::ListenerType listenerType = Document::TRANSITIONEND_LISTENER;
+        
+        if (shouldSendEventForListener(listenerType)) {
+            Element* element = elementForEventDispatch();
+            if (element) {
+                String propertyName;
+                if (m_property == cAnimateAll)
+                    propertyName = String("");
+                else
+                    propertyName = String(getPropertyName((CSSPropertyID)m_property));
+                m_waitingForEndEvent = true;
+                m_animationEventDispatcher.startTimer(element, propertyName, m_property, true, inEventType, inElapsedTime);
+                return true; // Did dispatch an event
+            }
+        }
+    }
+    
     return false; // Didn't dispatch an event
 }
 
@@ -2018,8 +2036,24 @@ void KeyframeAnimation::onAnimationEnd(double inElapsedTime)
 
 bool KeyframeAnimation::sendAnimationEvent(const AtomicString& inEventType, double inElapsedTime)
 {
-    // FIXME: Event dispatch goes here
-    return false; // didn't dispatch an event
+    Document::ListenerType listenerType;
+    if (inEventType == EventNames::webkitAnimationIterationEvent)
+        listenerType = Document::ANIMATIONITERATION_LISTENER;
+    else if (inEventType == EventNames::webkitAnimationEndEvent)
+        listenerType = Document::ANIMATIONEND_LISTENER;
+    else
+        listenerType = Document::ANIMATIONSTART_LISTENER;
+    
+    if (shouldSendEventForListener(listenerType)) {
+        Element* element = elementForEventDispatch();
+        if (element) {
+            m_waitingForEndEvent = true;
+            m_animationEventDispatcher.startTimer(element, m_name, -1, true, inEventType, inElapsedTime);
+            return true; // Did dispatch an event
+        }
+    }
+
+    return false; // Did not dispatch an event
 }
 
 void KeyframeAnimation::overrideAnimations()

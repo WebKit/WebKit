@@ -154,6 +154,10 @@ onselectstart
 onstorage
 onsubmit
 onunload
+onwebkitanimationstart
+onwebkitanimationiteration
+onwebkitanimationend
+onwebkittransitionend
 pagex
 pagey
 placeholder

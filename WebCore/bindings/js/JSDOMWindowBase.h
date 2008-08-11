@@ -137,6 +137,8 @@ namespace WebCore {
             OnWindowMouseWheel, Onreset, Onresize, Onscroll,
             Onsearch, Onselect, Onsubmit, Onunload,
             Onbeforeunload,
+            OnWebKitAnimationStart, OnWebKitAnimationIteration, OnWebKitAnimationEnd,
+            OnWebKitTransitionEnd,
 
             // Constructors
             Audio, Image, Option, XMLHttpRequest,

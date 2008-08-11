@@ -106,6 +106,14 @@ static inline void addListenerTypeToDocumentIfNeeded(const AtomicString& eventTy
         type = Document::DOMCHARACTERDATAMODIFIED_LISTENER;
     else if (eventType == overflowchangedEvent)
         type = Document::OVERFLOWCHANGED_LISTENER;
+    else if (eventType == webkitAnimationStartEvent)
+        type = Document::ANIMATIONSTART_LISTENER;
+    else if (eventType == webkitAnimationEndEvent)
+        type = Document::ANIMATIONEND_LISTENER;
+    else if (eventType == webkitAnimationIterationEvent)
+        type = Document::ANIMATIONITERATION_LISTENER;
+    else if (eventType == webkitTransitionEndEvent)
+        type = Document::TRANSITIONEND_LISTENER;
 
     if (type)
         document->addListenerType(type);

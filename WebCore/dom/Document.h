@@ -540,7 +540,11 @@ public:
         DOMNODEINSERTEDINTODOCUMENT_LISTENER = 0x10,
         DOMATTRMODIFIED_LISTENER             = 0x20,
         DOMCHARACTERDATAMODIFIED_LISTENER    = 0x40,
-        OVERFLOWCHANGED_LISTENER             = 0x80
+        OVERFLOWCHANGED_LISTENER             = 0x80,
+        ANIMATIONEND_LISTENER                = 0x100,
+        ANIMATIONSTART_LISTENER              = 0x200,
+        ANIMATIONITERATION_LISTENER          = 0x400,
+        TRANSITIONEND_LISTENER               = 0x800
     };
 
     bool hasListenerType(ListenerType listenerType) const { return (m_listenerTypes & listenerType); }

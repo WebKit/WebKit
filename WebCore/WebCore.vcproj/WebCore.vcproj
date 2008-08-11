@@ -1664,7 +1664,15 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitAnimationEvent.h"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSTransformValue.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitTransitionEvent.h"
 				>
 			</File>
 			<File
@@ -10562,6 +10570,38 @@
 			</File>
 			<File
 				RelativePath="..\dom\UIEventWithKeyState.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\WebKitAnimationEvent.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\WebKitAnimationEvent.h"
+				>
+			</File>
+			<File
+				RelativePath="..\dom\WebKitTransitionEvent.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\WebKitTransitionEvent.h"
 				>
 			</File>
 			<File

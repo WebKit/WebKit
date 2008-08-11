@@ -111,6 +111,8 @@ namespace WebCore {
         virtual bool isOverflowEvent() const;
         virtual bool isProgressEvent() const;
         virtual bool isXMLHttpRequestProgressEvent() const;
+        virtual bool isWebKitAnimationEvent() const;
+        virtual bool isWebKitTransitionEvent() const;
 #if ENABLE(SVG)
         virtual bool isSVGZoomEvent() const;
 #endif

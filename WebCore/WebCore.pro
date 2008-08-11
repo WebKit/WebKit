@@ -259,6 +259,8 @@ IDL_BINDINGS += \
     dom/TextEvent.idl \
     dom/TreeWalker.idl \
     dom/UIEvent.idl \
+    dom/WebKitAnimationEvent.idl \
+    dom/WebKitTransitionEvent.idl \
     dom/WheelEvent.idl \
     html/CanvasGradient.idl \
     html/CanvasPattern.idl \
@@ -545,6 +547,8 @@ SOURCES += \
     dom/TreeWalker.cpp \
     dom/UIEvent.cpp \
     dom/UIEventWithKeyState.cpp \
+    dom/WebKitAnimationEvent.cpp \
+    dom/WebKitTransitionEvent.cpp \
     dom/WheelEvent.cpp \
     dom/XMLTokenizer.cpp \
     editing/AppendNodeCommand.cpp \

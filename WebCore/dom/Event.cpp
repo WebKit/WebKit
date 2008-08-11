@@ -129,6 +129,16 @@ bool Event::isProgressEvent() const
     return false;
 }
 
+bool Event::isWebKitAnimationEvent() const
+{
+    return false;
+}
+
+bool Event::isWebKitTransitionEvent() const
+{
+    return false;
+}
+
 bool Event::isXMLHttpRequestProgressEvent() const
 {
     return false;
