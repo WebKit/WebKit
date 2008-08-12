@@ -1,5 +1,13 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. The last SVGLineElement* fix attempt, fixed 4/8 failing tests.
+        Trying two variations in two tests to find out the right offset to make the other four tests work on Tiger.
+
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Eric.
 
         Add new dynamic-update layout tests covering SVGRectElement.
