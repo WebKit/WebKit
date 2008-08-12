@@ -1,8 +1,40 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Anders.
+
+        Add new dynamic-update layout tests covering SVGCursorElement.
+
+        Scale svg/webarchive/resources/green-checker.png to a value < 128x128,
+        as this is the maximum hardcoded cursor size (fixes manual testing of svg-cursor-subresources.svg).
+
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGCursorElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGCursorElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGCursorElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGCursorElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGCursorElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGCursorElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGCursorElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGCursorElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGCursorElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGCursorElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGCursorElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGCursorElement-svgdom-y-prop.js: Added.
+        * svg/webarchive/resources/green-checker.png:
+        * svg/webarchive/svg-cursor-subresources-expected.webarchive:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Oliver.
 
-        Add new dynamice-update layout tests covering SVGMaskElement.
+        Add new dynamic-update layout tests covering SVGMaskElement.
         Move pixel tests results of SVGMarkerElement* to the right positions, while I'm at it.
 
         * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum: Copied from svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum.
@@ -78,7 +110,7 @@
 
         Reviewed by Oliver.
 
-        Add new dynamice-update layout tests covering SVGMarkerElement.
+        Add new dynamic-update layout tests covering SVGMarkerElement.
  
         * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.checksum: Added.
         * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png: Added.
