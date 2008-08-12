@@ -1,3 +1,11 @@
+2008-08-12  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * bindings/js/JSSVGPODTypeWrapper.h: Align
+        JSSVGDynamicPODTypeWrapper's and JSSVGStaticPODTypeWrapperWithParent's
+        members on 16-byte boundaries to avoid an alignment warning.
+
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Oliver.

@@ -64,6 +64,12 @@ public:
 // Represents a JS wrapper object for SVGAnimated* classes, exposing SVG POD types that contain writable properties
 // (Two cases: SVGAnimatedLength exposing SVGLength, SVGAnimatedRect exposing SVGRect)
 
+#if COMPILER(MSVC)
+// GetterMethod and SetterMethod are each 12 bytes. We have to pack to a size
+// greater than or equal to that to avoid an alignment warning (C4121). 16 is
+// the next-largest size allowed for packing, so we use that.
+#pragma pack(16)
+#endif
 template<typename PODType, typename PODTypeCreator>
 class JSSVGDynamicPODTypeWrapper : public JSSVGPODTypeWrapper<PODType> {
 public:
@@ -162,6 +168,12 @@ private:
     RefPtr<ParentType> m_parentType;
 };
 
+#if COMPILER(MSVC)
+// GetterMethod and SetterMethod are each 12 bytes. We have to pack to a size
+// greater than or equal to that to avoid an alignment warning (C4121). 16 is
+// the next-largest size allowed for packing, so we use that.
+#pragma pack(16)
+#endif
 template<typename PODType, typename ParentType>
 class JSSVGStaticPODTypeWrapperWithParent : public JSSVGPODTypeWrapper<PODType> {
 public:
