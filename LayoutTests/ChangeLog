@@ -1,5 +1,81 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Oliver.
+
+        Add new dynamice-update layout tests covering SVGMaskElement.
+        Move pixel tests results of SVGMarkerElement* to the right positions, while I'm at it.
+
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum: Copied from svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png: Copied from svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.checksum: Copied from svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.checksum.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png: Copied from svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum: Removed.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png: Removed.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.checksum: Removed.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png: Removed.
+        * svg/dynamic-updates/SVGMaskElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-maskContentUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-maskUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskContentUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-maskUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMaskElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-height-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-maskContentUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-maskUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-width-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-height-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskContentUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-maskUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-width-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMaskElement-svgdom-y-prop.js: Added.
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Oliver.
 
         Add new dynamice-update layout tests covering SVGMarkerElement.
