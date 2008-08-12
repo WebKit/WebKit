@@ -1,5 +1,82 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Eric.
+
+        Add new dynamic-update layout tests covering SVGPatternElement.
+
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternTransform-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-patternUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternTransform-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-patternUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGPatternElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-height-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternContentUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternTransform-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-width-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-height-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternContentUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternTransform-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-width-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-y-prop.js: Added.
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Dave.
 
         Fix mask regressions.
