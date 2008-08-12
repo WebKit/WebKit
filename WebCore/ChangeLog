@@ -1,5 +1,16 @@
 2008-08-11  Anthony Ricaud  <rik24d@gmail.com>
 
+        Changed Option/Alt-Up or Down in CSS editing when the value is
+        near zero to jump to the next integer.
+
+        Reviewed by Tim Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20326
+
+        * page/inspector/StylesSidebarPane.js:
+
+2008-08-11  Anthony Ricaud  <rik24d@gmail.com>
+
         Changed the line highlight transition for an easier animation.
 
         Reviewed by Tim Hatcher.

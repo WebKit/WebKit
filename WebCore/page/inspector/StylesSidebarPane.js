@@ -726,22 +726,29 @@ WebInspector.StylePropertyTreeElement.prototype = {
             else if (number === -1 && event.keyIdentifier === "Up")
                 numberNearZero = true;
 
-            // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
-            // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
-            var changeAmount = 1;
-            if (event.shiftKey && pageKeyPressed)
-                changeAmount = 100;
-            else if (event.shiftKey || pageKeyPressed)
-                changeAmount = 10;
-            else if (event.altKey || numberNearZero)
-                changeAmount = 0.1;
+            if (numberNearZero && event.altKey && arrowKeyPressed) {
+                if (event.keyIdentifier === "Down")
+                    number = Math.ceil(number - 1);
+                else
+                    number = Math.floor(number + 1);
+            } else {
+                // Jump by 10 when shift is down or jump by 0.1 when near zero or Alt/Option is down.
+                // Also jump by 10 for page up and down, or by 100 if shift is held with a page key.
+                var changeAmount = 1;
+                if (event.shiftKey && pageKeyPressed)
+                    changeAmount = 100;
+                else if (event.shiftKey || pageKeyPressed)
+                    changeAmount = 10;
+                else if (event.altKey || numberNearZero)
+                    changeAmount = 0.1;
 
-            if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
-                changeAmount *= -1;
+                if (event.keyIdentifier === "Down" || event.keyIdentifier === "PageDown")
+                    changeAmount *= -1;
 
-            // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
-            // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
-            number = Number((number + changeAmount).toFixed(6));
+                // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
+                // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
+                number = Number((number + changeAmount).toFixed(6));
+            }
 
             replacementString = prefix + number + suffix;
         } else {
