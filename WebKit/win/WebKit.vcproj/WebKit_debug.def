@@ -119,6 +119,7 @@ EXPORTS
         ?unlock@Mutex@WTF@@QAEXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
+        WTFLog
         WTFReportArgumentAssertionFailure
         WTFReportAssertionFailure
         WTFReportError
