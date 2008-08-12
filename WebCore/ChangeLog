@@ -1,5 +1,19 @@
 2008-08-12  Dan Bernstein  <mitz@apple.com>
 
+        - WebCore part of <rdar://problem/6121636>
+          Make fast*alloc() abort() on failure and add "try" variants that
+          return NULL on failure.
+
+        Reviewed by Darin Adler.
+
+        * platform/Arena.cpp:
+        (WebCore::ArenaAllocate): Removed null checking of fastMalloc()'s
+        result.
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::create): Changed to use tryFastCalloc().
+
+2008-08-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=19348

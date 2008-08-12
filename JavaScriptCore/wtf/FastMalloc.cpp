@@ -150,19 +150,24 @@ void fastMallocAllow()
 #include <string.h>
 
 namespace WTF {
-void *fastZeroedMalloc(size_t n) 
+
+void* fastZeroedMalloc(size_t n) 
 {
-    void *result = fastMalloc(n);
-    if (!result)
-        return 0;
+    void* result = fastMalloc(n);
     memset(result, 0, n);
-#ifndef WTF_CHANGES
-    MallocHook::InvokeNewHook(result, n);
-#endif
     return result;
 }
     
+void* tryFastZeroedMalloc(size_t n) 
+{
+    void* result = tryFastMalloc(n);
+    if (!result)
+        return 0;
+    memset(result, 0, n);
+    return result;
 }
+
+} // namespace WTF
 
 #if FORCE_SYSTEM_MALLOC
 
@@ -173,16 +178,34 @@ void *fastZeroedMalloc(size_t n)
 
 namespace WTF {
     
-void *fastMalloc(size_t n) 
+void* tryFastMalloc(size_t n) 
 {
     ASSERT(!isForbidden());
     return malloc(n);
 }
 
-void *fastCalloc(size_t n_elements, size_t element_size)
+void* fastMalloc(size_t n) 
+{
+    ASSERT(!isForbidden());
+    void* result = malloc(n);
+    if (!result)
+        abort();
+    return result;
+}
+
+void* tryFastCalloc(size_t n_elements, size_t element_size)
 {
     ASSERT(!isForbidden());
     return calloc(n_elements, element_size);
+}
+
+void* fastCalloc(size_t n_elements, size_t element_size)
+{
+    ASSERT(!isForbidden());
+    void* result = calloc(n_elements, element_size);
+    if (!result)
+        abort();
+    return result;
 }
 
 void fastFree(void* p)
@@ -191,10 +214,19 @@ void fastFree(void* p)
     free(p);
 }
 
-void *fastRealloc(void* p, size_t n)
+void* tryFastRealloc(void* p, size_t n)
 {
     ASSERT(!isForbidden());
     return realloc(p, n);
+}
+
+void* fastRealloc(void* p, size_t n)
+{
+    ASSERT(!isForbidden());
+    void* result = realloc(p, n);
+    if (!result)
+        abort();
+    return result;
 }
 
 void releaseFastMallocFreeMemory() { }
@@ -2961,6 +2993,9 @@ static inline void* SpanToMallocResult(Span *span) {
       CheckedMallocResult(reinterpret_cast<void*>(span->start << kPageShift));
 }
 
+#ifdef WTF_CHANGES
+template <bool abortOnFailure>
+#endif
 static ALWAYS_INLINE void* do_malloc(size_t size) {
   void* ret = NULL;
 
@@ -2990,7 +3025,14 @@ static ALWAYS_INLINE void* do_malloc(size_t size) {
     // size-appropriate freelist, afer replenishing it if it's empty.
     ret = CheckedMallocResult(heap->Allocate(size));
   }
-  if (ret == NULL) errno = ENOMEM;
+  if (!ret) {
+#ifdef WTF_CHANGES
+    if (abortOnFailure) // This branch should be optimized out by the compiler.
+        abort();
+#else
+    errno = ENOMEM;
+#endif
+  }
   return ret;
 }
 
@@ -3154,6 +3196,24 @@ static inline struct mallinfo do_mallinfo() {
 
 #ifndef WTF_CHANGES
 extern "C" 
+#else
+#define do_malloc do_malloc<abortOnFailure>
+
+template <bool abortOnFailure>
+void* malloc(size_t);
+
+void* fastMalloc(size_t size)
+{
+    return malloc<true>(size);
+}
+
+void* tryFastMalloc(size_t size)
+{
+    return malloc<false>(size);
+}
+
+template <bool abortOnFailure>
+ALWAYS_INLINE
 #endif
 void* malloc(size_t size) {
   void* result = do_malloc(size);
@@ -3175,6 +3235,22 @@ void free(void* ptr) {
 
 #ifndef WTF_CHANGES
 extern "C" 
+#else
+template <bool abortOnFailure>
+void* calloc(size_t, size_t);
+
+void* fastCalloc(size_t n, size_t elem_size)
+{
+    return calloc<true>(n, elem_size);
+}
+
+void* tryFastCalloc(size_t n, size_t elem_size)
+{
+    return calloc<false>(n, elem_size);
+}
+
+template <bool abortOnFailure>
+ALWAYS_INLINE
 #endif
 void* calloc(size_t n, size_t elem_size) {
   const size_t totalBytes = n * elem_size;
@@ -3205,6 +3281,22 @@ void cfree(void* ptr) {
 
 #ifndef WTF_CHANGES
 extern "C" 
+#else
+template <bool abortOnFailure>
+void* realloc(void*, size_t);
+
+void* fastRealloc(void* old_ptr, size_t new_size)
+{
+    return realloc<true>(old_ptr, new_size);
+}
+
+void* tryFastRealloc(void* old_ptr, size_t new_size)
+{
+    return realloc<false>(old_ptr, new_size);
+}
+
+template <bool abortOnFailure>
+ALWAYS_INLINE
 #endif
 void* realloc(void* old_ptr, size_t new_size) {
   if (old_ptr == NULL) {
@@ -3264,7 +3356,9 @@ void* realloc(void* old_ptr, size_t new_size) {
   }
 }
 
-#ifndef WTF_CHANGES
+#ifdef WTF_CHANGES
+#undef do_malloc
+#else
 
 static SpinLock set_new_handler_lock = SPINLOCK_INITIALIZER;
 

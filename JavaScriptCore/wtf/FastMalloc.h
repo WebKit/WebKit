@@ -27,11 +27,19 @@
 
 namespace WTF {
 
-    void *fastMalloc(size_t n);
-    void *fastZeroedMalloc(size_t n);
-    void *fastCalloc(size_t n_elements, size_t element_size);
+    // These functions call abort() if an allocation fails.
+    void* fastMalloc(size_t n);
+    void* fastZeroedMalloc(size_t n);
+    void* fastCalloc(size_t n_elements, size_t element_size);
+    void* fastRealloc(void* p, size_t n);
+
+    // These functions return NULL if an allocation fails.
+    void* tryFastMalloc(size_t n);
+    void* tryFastZeroedMalloc(size_t n);
+    void* tryFastCalloc(size_t n_elements, size_t element_size);
+    void* tryFastRealloc(void* p, size_t n);
+
     void fastFree(void* p);
-    void *fastRealloc(void* p, size_t n);
 
 #ifndef NDEBUG    
     void fastMallocForbid();
@@ -46,6 +54,10 @@ using WTF::fastMalloc;
 using WTF::fastZeroedMalloc;
 using WTF::fastCalloc;
 using WTF::fastRealloc;
+using WTF::tryFastMalloc;
+using WTF::tryFastZeroedMalloc;
+using WTF::tryFastCalloc;
+using WTF::tryFastRealloc;
 using WTF::fastFree;
 
 #ifndef NDEBUG    

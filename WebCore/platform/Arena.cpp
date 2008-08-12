@@ -180,24 +180,20 @@ void* ArenaAllocate(ArenaPool *pool, unsigned int nb)
         printf("Malloc: %d\n", i);
 #endif
         a = (Arena*)fastMalloc(sz);
-        if (a)  {
-            a->limit = (uword)a + sz;
-            a->base = a->avail = (uword)ARENA_ALIGN(pool, a + 1);
-            rp = (char *)a->avail;
-            a->avail += nb;
-            /* the newly allocated arena is linked after pool->current 
-            *  and becomes pool->current */
-            a->next = pool->current->next;
-            pool->current->next = a;
-            pool->current = a;
-            if ( !pool->first.next )
-                pool->first.next = a;
-            return(rp);
-       }
+        // fastMalloc will abort() if it fails, so we are guaranteed that a is not 0.
+        a->limit = (uword)a + sz;
+        a->base = a->avail = (uword)ARENA_ALIGN(pool, a + 1);
+        rp = (char *)a->avail;
+        a->avail += nb;
+        /* the newly allocated arena is linked after pool->current 
+        *  and becomes pool->current */
+        a->next = pool->current->next;
+        pool->current->next = a;
+        pool->current = a;
+        if ( !pool->first.next )
+            pool->first.next = a;
+        return(rp);
     }
-
-    /* we got to here, and there's no memory to allocate */
-    return(0);
 } /* --- end ArenaAllocate() --- */
 
 void* ArenaGrow(ArenaPool *pool, void *p, unsigned int size, unsigned int incr)

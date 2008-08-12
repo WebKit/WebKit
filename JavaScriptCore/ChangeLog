@@ -1,3 +1,44 @@
+2008-08-12  Dan Bernstein  <mitz@apple.com>
+
+        - JavaScriptCore part of <rdar://problem/6121636>
+          Make fast*alloc() abort() on failure and add "try" variants that
+          return NULL on failure.
+
+        Reviewed by Darin Adler.
+
+        * JavaScriptCore.exp: Exported tryFastCalloc().
+        * VM/RegisterFile.h:
+        (KJS::RegisterFile::RegisterFile): Removed an ASSERT().
+        * kjs/JSArray.cpp:
+        (KJS::JSArray::putSlowCase): Changed to use tryFastRealloc().
+        (KJS::JSArray::increaseVectorLength): Ditto.
+        * kjs/ustring.cpp:
+        (KJS::allocChars): Changed to use tryFastMalloc().
+        (KJS::reallocChars): Changed to use tryFastRealloc().
+        * wtf/FastMalloc.cpp:
+        (WTF::fastZeroedMalloc): Removed null checking of fastMalloc()'s result
+        and removed extra call to InvokeNewHook().
+        (WTF::tryFastZeroedMalloc): Added. Uses tryFastMalloc().
+        (WTF::tryFastMalloc): Renamed fastMalloc() to this.
+        (WTF::fastMalloc): Added. This version abort()s if allocation fails.
+        (WTF::tryFastCalloc): Renamed fastCalloc() to this.
+        (WTF::fastCalloc): Added. This version abort()s if allocation fails.
+        (WTF::tryFastRealloc): Renamed fastRealloc() to this.
+        (WTF::fastRealloc): Added. This version abort()s if allocation fails.
+        (WTF::do_malloc): Made this a function template. When the abortOnFailure
+        template parameter is set, the function abort()s on failure to allocate.
+        Otherwise, it sets errno to ENOMEM and returns zero.
+        (WTF::TCMallocStats::fastMalloc): Defined to abort() on failure.
+        (WTF::TCMallocStats::tryFastMalloc): Added. Does not abort() on
+        failure.
+        (WTF::TCMallocStats::fastCalloc): Defined to abort() on failure.
+        (WTF::TCMallocStats::tryFastCalloc): Added. Does not abort() on
+        failure.
+        (WTF::TCMallocStats::fastRealloc): Defined to abort() on failure.
+        (WTF::TCMallocStats::tryFastRealloc): Added. Does not abort() on
+        failure.
+        * wtf/FastMalloc.h: Declared the "try" variants.
+
 2008-08-11  Adam Roben  <aroben@apple.com>
 
         Move WTF::notFound into its own header so that it can be used

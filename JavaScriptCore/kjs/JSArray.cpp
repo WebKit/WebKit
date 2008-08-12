@@ -329,7 +329,7 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue* val
         }
     }
 
-    storage = static_cast<ArrayStorage*>(fastRealloc(storage, storageSize(newVectorLength)));
+    storage = static_cast<ArrayStorage*>(tryFastRealloc(storage, storageSize(newVectorLength)));
     if (!storage) {
         throwOutOfMemoryError(exec);
         return;
@@ -445,7 +445,7 @@ bool JSArray::increaseVectorLength(unsigned newLength)
     ASSERT(newLength <= MAX_STORAGE_VECTOR_INDEX);
     unsigned newVectorLength = increasedVectorLength(newLength);
 
-    storage = static_cast<ArrayStorage*>(fastRealloc(storage, storageSize(newVectorLength)));
+    storage = static_cast<ArrayStorage*>(tryFastRealloc(storage, storageSize(newVectorLength)));
     if (!storage)
         return false;
 
