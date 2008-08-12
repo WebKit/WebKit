@@ -1,3 +1,24 @@
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new dynamic-update layout tests covering SVGImageElement.
+        Fix bug: SVGImageElement doesn't react on 'preserveAspectRatio' changes.
+
+        Tests: svg/dynamic-updates/SVGImageElement-dom-height-attr.html
+               svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr.html
+               svg/dynamic-updates/SVGImageElement-dom-width-attr.html
+               svg/dynamic-updates/SVGImageElement-dom-x-attr.html
+               svg/dynamic-updates/SVGImageElement-dom-y-attr.html
+               svg/dynamic-updates/SVGImageElement-svgdom-height-prop.html
+               svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html
+               svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html
+               svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html
+               svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html
+
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::svgAttributeChanged):
+
 2008-08-11  Anthony Ricaud  <rik24d@gmail.com>
 
         Changed Option/Alt-Up or Down in CSS editing when the value is

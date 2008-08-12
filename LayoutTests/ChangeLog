@@ -1,3 +1,61 @@
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
+        Add new dynamic-update layout tests covering SVGImageElement.
+        Fix bug: SVGImageElement doesn't react on 'preserveAspectRatio' changes.
+
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-preserveAspectRatio-attr.html: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-preserveAspectRatio-prop.html: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGImageElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-height-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-preserveAspectRatio-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-width-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-height-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-preserveAspectRatio-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-width-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-y-prop.js: Added.
+
 2008-08-11  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Rubber stamped by Oliver.

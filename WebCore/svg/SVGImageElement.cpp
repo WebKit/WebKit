@@ -99,6 +99,7 @@ void SVGImageElement::svgAttributeChanged(const QualifiedName& attrName)
 
     if (attrName == SVGNames::xAttr || attrName == SVGNames::yAttr ||
         attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr ||
+        attrName == SVGNames::preserveAspectRatioAttr ||
         SVGTests::isKnownAttribute(attrName) ||
         SVGLangSpace::isKnownAttribute(attrName) ||
         SVGExternalResourcesRequired::isKnownAttribute(attrName) ||
