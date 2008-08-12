@@ -1,5 +1,18 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed. Trying to modify mouseevent target location, to work around known CG/Tiger hit test problem.
+
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x2-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y2-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x2-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y1-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y2-prop.js:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Sam.
 
         Forgot to include these in my last commit.
