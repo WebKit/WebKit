@@ -331,7 +331,31 @@ WebInspector.Console.prototype = {
     {
         if (WebInspector.panels.scripts.paused)
             return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression);
-        return InspectorController.inspectedWindow().eval(expression);
+
+        var inspectedWindow = InspectorController.inspectedWindow();
+        if (!inspectedWindow._inspectorCommandLineAPI) {
+            inspectedWindow.eval("window._inspectorCommandLineAPI = { \
+                $: function() { return document.getElementById.apply(document, arguments) }, \
+                $$: function() { return document.querySelectorAll.apply(document, arguments) }, \
+                $x: function(xpath, context) { \
+                    var nodes = []; \
+                    try { \
+                        var doc = context || document; \
+                        var results = doc.evaluate(xpath, doc, null, XPathResult.ANY_TYPE, null); \
+                        var node; \
+                        while (node = results.iterateNext()) nodes.push(node); \
+                    } catch (e) {} \
+                    return nodes; \
+                }, \
+                keys: function(o) { var a = []; for (k in o) a.push(k); return a; }, \
+                values: function(o) { var a = []; for (k in o) a.push(o[k]); return a; }, \
+                profile: function() { return console.profile.apply(console, arguments) }, \
+                profileEnd: function() { return console.profileEnd.apply(console, arguments) } \
+            };");
+        }
+
+        expression = "with (window._inspectorCommandLineAPI) { " + expression + " }";
+        return inspectedWindow.eval(expression);
     },
 
     _enterKeyPressed: function(event)
