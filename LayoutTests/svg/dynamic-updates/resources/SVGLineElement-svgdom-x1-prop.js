@@ -22,4 +22,4 @@ function executeTest() {
     completeTest();
 }
 
-startTest(lineElement, 103, 13);
+startTest(lineElement, 101, 11);

@@ -1,5 +1,21 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Not reviewed.
+
+        Revert the last SVGLineElement commit. It's not needed, the first run on buildbot showed them as failures
+        the next build doesn't complain anymore (this was before adjusting the offsets.) No idea what's going on,
+        but if it's fixed I'm happy.
+
+        While I'm at it, regenerate struct-image-02-b.svg (invisible differences) to have a clean baseline.
+        All SVG pixel test results are accurate on Leopard now.
+
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/struct-image-02-b-expected.png:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. The last SVGLineElement* fix attempt, fixed 4/8 failing tests.
         Trying two variations in two tests to find out the right offset to make the other four tests work on Tiger.
 
