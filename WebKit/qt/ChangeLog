@@ -1,3 +1,18 @@
+2008-08-12  Urs Wolfer  <uwolfer@kde.org>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20357
+
+        Fix crash in QWebPage in case contextMenuEvent has been overwritten
+        because context menu has the view as parent and thus is deleted too early.
+
+        Add testcase for this crash.
+
+        * Api/qwebpage_p.h:
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::contextMenuCrash):
+
 2008-08-07  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Lars.
