@@ -3061,7 +3061,7 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
 
 - (void)windowWillOrderOnScreen:(NSNotification *)notification
 {
-    if (![[[self _webView] preferences] updatesWhenOffscreen])
+    if (![[self _webView] shouldUpdateWhileHidden])
         [self setNeedsDisplay:YES];
 }
 

@@ -354,10 +354,11 @@ WebView *getWebView(WebFrame *webFrame)
     _private->coreFrame = 0;
 }
 
-- (void)_updateBackground
+- (void)_updateBackgroundAndUpdatesWhileHidden
 {
-    BOOL drawsBackground = [getWebView(self) drawsBackground];
-    NSColor *backgroundColor = [getWebView(self) backgroundColor];
+    WebView *webView = getWebView(self);
+    BOOL drawsBackground = [webView drawsBackground];
+    NSColor *backgroundColor = [webView backgroundColor];
 
     Frame* coreFrame = _private->coreFrame;
     for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
@@ -376,6 +377,7 @@ WebView *getWebView(WebFrame *webFrame)
             frame->view()->setTransparent(!drawsBackground);
             Color color = colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
             frame->view()->setBaseBackgroundColor(color);
+            frame->view()->setShouldUpdateWhileHidden([webView shouldUpdateWhileHidden]);
         }
     }
 }

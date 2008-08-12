@@ -240,7 +240,7 @@ void ScrollView::updateContents(const IntRect& rect, bool now)
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
     NSView *view = documentView();
-    if (!now && ![[view window] isVisible] && !shouldUpdateWhenOffscreen())
+    if (!now && ![[view window] isVisible] && !shouldUpdateWhileHidden())
         return;
 
     NSRect visibleRect = visibleContentRect();

@@ -75,8 +75,6 @@ public:
     virtual void setHScrollbarMode(ScrollbarMode);
     virtual void setScrollbarsMode(ScrollbarMode);
 
-    virtual bool shouldUpdateWhenOffscreen() const;
-
     void layout(bool allowSubtree = true);
     bool didFirstLayout() const;
     void layoutTimerFired(Timer<FrameView>*);
@@ -104,6 +102,9 @@ public:
 
     Color baseBackgroundColor() const;
     void setBaseBackgroundColor(Color);
+
+    virtual bool shouldUpdateWhileHidden() const;
+    void setShouldUpdateWhileHidden(bool);
 
     void adjustViewSize();
     void initScrollbars();

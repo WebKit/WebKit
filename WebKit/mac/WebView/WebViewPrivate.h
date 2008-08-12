@@ -176,6 +176,9 @@ typedef enum {
 - (BOOL)canResetPageZoom;
 - (IBAction)resetPageZoom:(id)sender;
 
+- (BOOL)shouldUpdateWhileHidden;
+- (void)setShouldUpdateWhileHidden:(BOOL)flag;
+
 @end
 
 @interface WebView (WebPrivate)

@@ -358,11 +358,6 @@ void Settings::setOfflineWebApplicationCacheEnabled(bool enabled)
     m_offlineWebApplicationCacheEnabled = enabled;
 }
 
-void Settings::setUpdatesWhenOffscreen(bool updates)
-{
-    m_updatesWhenOffscreen = updates;
-}
-
 void Settings::setShouldPaintCustomScrollbars(bool shouldPaintCustomScrollbars)
 {
     m_shouldPaintCustomScrollbars = shouldPaintCustomScrollbars;

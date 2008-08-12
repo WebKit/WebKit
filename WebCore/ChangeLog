@@ -1,3 +1,18 @@
+2008-08-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - move shouldUpdateWhenOffscreen from Settings to FrameView and rename it shouldUpdateWhileHidden
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::shouldUpdateWhileHidden):
+        (WebCore::FrameView::setShouldUpdateWhileHidden):
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        * page/Settings.h:
+
 2008-08-12  Adam Roben  <aroben@apple.com>
 
         Windows build fix

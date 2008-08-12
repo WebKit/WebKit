@@ -335,7 +335,6 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitUpdatesWhenOffscreenPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
 #ifndef NDEBUG
         // In Release and Production we skip a lot of object teardown during quit to speed up shutdown time.  This breaks
@@ -783,16 +782,6 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setOfflineWebApplicationCacheEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitOfflineWebApplicationCacheEnabledPreferenceKey];
-}
-
-- (BOOL)updatesWhenOffscreen
-{
-    return [self _boolValueForKey:WebKitUpdatesWhenOffscreenPreferenceKey];
-}
-
-- (void)setUpdatesWhenOffscreen:(BOOL)flag
-{
-    [self _setBoolValue:flag forKey:WebKitUpdatesWhenOffscreenPreferenceKey];
 }
 
 - (BOOL)zoomsTextOnly

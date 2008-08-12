@@ -1,3 +1,29 @@
+2008-08-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - replace -[WebPreferences updatesWhenOffscreen] with -[WebView shouldUpdateWhileHidden]
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileHidden]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView windowWillOrderOnScreen:]):
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebView _preferencesChangedNotification:]):
+        (-[WebView setBackgroundColor:]):
+        (-[WebView setDrawsBackground:]):
+        (-[WebView shouldUpdateWhileHidden]):
+        (-[WebView setShouldUpdateWhileHidden:]):
+        * WebView/WebViewPrivate.h:
+
 2008-08-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
