@@ -48,8 +48,6 @@
 #import <WebKit/DOMExtensions.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebKitSystemInterface.h>
-
 using namespace WebCore;
 
 @interface WebInspectorWindowController : NSWindowController <NSWindowDelegate> {
@@ -236,8 +234,6 @@ void WebInspectorClient::updateWindowTitle() const
 #ifndef BUILDING_ON_TIGER
     [window setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
     [window setContentBorderThickness:55. forEdge:NSMaxYEdge];
-
-    WKNSWindowMakeBottomCornersSquare(window);
 #endif
 
     [self setWindow:window];

@@ -1,5 +1,17 @@
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
+        Remove the call to WKNSWindowMakeBottomCornersSquare on the
+        Web Inspector's window. This isn't needed anymore since the
+        window style masks used always have square bottom corners.
+
+        Reviewed by Adam Roben.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController window]): Remove the call
+        to WKNSWindowMakeBottomCornersSquare.
+
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
         Make attaching and detaching the Web Inspector instantaneous.
         This also preserves the current view, other state, and keeps
         the script debugger attached.
