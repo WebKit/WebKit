@@ -1,5 +1,52 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Rubber stamped by Eric.
+
+        Add new dynamic-update layout tests covering SVGRectElement.
+
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-height-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-height-attr.html: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-width-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-width-attr.html: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-height-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-height-prop.html: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-width-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-width-prop.html: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGRectElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-height-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-width-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-x-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-dom-y-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-height-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-width-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-x-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGRectElement-svgdom-y-prop.js: Added.
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Not reviewed. Trying to modify mouseevent target location, to work around known CG/Tiger hit test problem.
 
         * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js:
