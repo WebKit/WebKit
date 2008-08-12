@@ -50,6 +50,7 @@ protected:
         , m_response(response)
         , m_data(data)
     {
+        ASSERT(m_data);
     }
     
 private:

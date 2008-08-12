@@ -1,3 +1,27 @@
+2008-08-11  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by John and Anders
+
+        Fix for <rdar://problem/6141797>
+
+        When WebArchives were entirely a WebKit concept, there was a guarantee that a WebResource
+        would never have nil data.
+
+        When they were pushed down into WebCore, that guarantee was lost, subtly changing a few
+        semantics with some WebKit applications.
+
+        The guarantee was a good one and should be restored.
+
+        Note that ApplicationCacheResource doesn't need any updates to follow this rule as it already
+        creates an empty data object in the case of null data for its own purposes.
+
+        * loader/SubstituteResource.h:
+        (WebCore::SubstituteResource::SubstituteResource): ASSERT that the data is not null.  This
+          well help any future subclassers not make this mistake.
+
+        * loader/archive/ArchiveResource.cpp:
+        (WebCore::ArchiveResource::create): Return 0 if the data is null.
+
 2008-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
