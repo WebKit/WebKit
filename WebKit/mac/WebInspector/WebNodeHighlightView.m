@@ -28,10 +28,6 @@
 
 #import "WebNodeHighlightView.h"
 #import "WebNodeHighlight.h"
-#import "WebNSViewExtras.h"
-
-#import <WebKit/DOMCore.h>
-#import <WebKit/DOMExtensions.h>
 
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/InspectorController.h>
@@ -99,4 +95,3 @@ using namespace WebCore;
 }
 
 @end
-

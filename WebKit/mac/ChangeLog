@@ -1,5 +1,15 @@
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
+        Remove unneeded header imports from some Web Inspector files.
+
+        Reviewed by Adam Roben.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        * WebInspector/WebInspector.mm:
+        * WebInspector/WebNodeHighlightView.m:
+
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
         Remove the call to WKNSWindowMakeBottomCornersSquare on the
         Web Inspector's window. This isn't needed anymore since the
         window style masks used always have square bottom corners.

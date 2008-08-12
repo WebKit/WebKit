@@ -28,7 +28,6 @@
 
 #import "WebInspector.h"
 #import "WebFrameInternal.h"
-#import "WebView.h"
 
 #include <WebCore/Document.h>
 #include <WebCore/Frame.h>

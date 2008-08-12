@@ -29,24 +29,16 @@
 #import "WebInspectorClient.h"
 
 #import "WebFrameInternal.h"
-#import "WebFrameView.h"
 #import "WebInspector.h"
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"
-#import "WebPreferences.h"
-#import "WebTypesInternal.h"
-#import "WebView.h"
+#import "WebUIDelegate.h"
 #import "WebViewInternal.h"
-#import "WebViewPrivate.h"
-
-#import <AppKit/NSWindowController.h>
 
 #import <WebCore/InspectorController.h>
 #import <WebCore/Page.h>
 
-#import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
-#import <WebKit/WebUIDelegate.h>
 
 using namespace WebCore;
 
