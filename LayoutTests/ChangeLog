@@ -1,3 +1,32 @@
+2008-08-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17736
+
+        JS wrapper objects around SVG POD types, that contain other SVG POD types with writable properties
+        failed to update. Modification of the values were completly ignored (ie. transform.matrix.a = 50, didn't take any effect)
+
+        * platform/mac/svg/custom/immutable-properties-expected.checksum: Added.
+        * platform/mac/svg/custom/immutable-properties-expected.png: Added.        
+        * platform/mac/svg/custom/svg-modify-currentTranslate-expected.checksum: Added.
+        * platform/mac/svg/custom/svg-modify-currentTranslate-expected.png: Added.
+        * platform/mac/svg/custom/tearoffs-with-tearoffs-expected.checksum: Added.
+        * platform/mac/svg/custom/tearoffs-with-tearoffs-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.checksum:
+        * platform/mac/svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.png:
+        * svg/custom/immutable-properties-expected.txt: Added.
+        * svg/custom/immutable-properties.html: Added.
+        * svg/custom/resources/immutable-properties.js: Added.
+        * svg/custom/resources/svg-modify-currentTranslate.js: Added.
+        * svg/custom/resources/tearoffs-with-tearoffs.js: Added.
+        * svg/custom/svg-modify-currentTranslate-expected.txt: Added.
+        * svg/custom/svg-modify-currentTranslate.html: Added.
+        * svg/custom/tearoffs-with-tearoffs-expected.txt: Added.
+        * svg/custom/tearoffs-with-tearoffs.html: Added.
+        * svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop-expected.txt:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientTransform-prop.js:
+
 2008-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

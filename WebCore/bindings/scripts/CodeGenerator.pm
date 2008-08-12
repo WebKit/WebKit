@@ -40,8 +40,8 @@ my %primitiveTypeHash = ("int" => 1, "short" => 1, "long" => 1, "long long" => 1
                          "float" => 1, "double" => 1, 
                          "boolean" => 1, "void" => 1);
 
-my %podTypeHash = ("RGBColor" => 1, "SVGLength" => 1, "SVGPoint" => 1, "SVGRect" => 1, "SVGNumber" => 1, "SVGMatrix" => 1, "SVGTransform" => 1);
- 
+my %podTypeHash = ("RGBColor" => 1, "SVGNumber" => 1, "SVGTransform" => 1);
+my %podTypesWithWritablePropertiesHash = ("SVGLength" => 1, "SVGMatrix" => 1, "SVGPoint" => 1, "SVGRect" => 1);
 my %stringTypeHash = ("DOMString" => 1, "AtomicString" => 1);
 
 my %nonPointerTypeHash = ("DOMTimeStamp" => 1, "CompareHow" => 1, "SVGPaintType" => 1);
@@ -270,6 +270,16 @@ sub IsPodType
     my $type = shift;
 
     return 1 if $podTypeHash{$type};
+    return 1 if $podTypesWithWritablePropertiesHash{$type};
+    return 0;
+}
+
+sub IsPodTypeWithWriteableProperties
+{
+    my $object = shift;
+    my $type = shift;
+
+    return 1 if $podTypesWithWritablePropertiesHash{$type};
     return 0;
 }
 

@@ -1548,6 +1548,18 @@ sub NativeToJSValue
 
         my $setter = "set" . $codeGenerator->WK_ucfirst($getter);
 
+        # Function calls will never return 'modifyable' POD types (ie. SVGRect getBBox()) - no need to keep track changes to the returned SVGRect
+        if ($inFunctionCall eq 0
+            and not $codeGenerator->IsSVGAnimatedType($implClassName)
+            and $codeGenerator->IsPodTypeWithWriteableProperties($type)
+            and not defined $signature->extendedAttributes->{"Immutable"}) {
+            if ($codeGenerator->IsPodType($implClassName)) {
+                return "toJS(exec, JSSVGStaticPODTypeWrapperWithPODTypeParent<$nativeType, $implClassName>::create($value, impl()).get(), context())";
+            } else {
+                return "toJS(exec, JSSVGStaticPODTypeWrapperWithParent<$nativeType, $implClassName>::create(imp, &${implClassName}::$getter, &${implClassName}::$setter).get(), imp)";
+            }
+        }
+
         if ($implClassNameForValueConversion eq "") {
             if (IsSVGTypeNeedingContextParameter($implClassName)) {
                 return "toJS(exec, JSSVGStaticPODTypeWrapper<$nativeType>::create($value).get(), castedThisObj->context())" if $inFunctionCall eq 1;

@@ -11,17 +11,8 @@ ellipseElement.setAttribute("rx", "100");
 ellipseElement.setAttribute("ry", "150");
 ellipseElement.setAttribute("fill", "url(#gradient)");
 
-// TODO: Fix JS POD type bindings bug. Tracked by: http://bugs.webkit.org/show_bug.cgi?id=17736
-// We're unable to modify 'transform.matrix.*' at the moment, and have to use
-// createSVGTransformFromMatrix instead. Once the bug is fixed, use:
-//
-// var transform = rootSVGElement.createSVGTransform();
-// transform.matrix.e = 50;
-
-var matrix = rootSVGElement.createSVGMatrix();
-matrix.e = 50;
-
-var transform = rootSVGElement.createSVGTransformFromMatrix(matrix);
+var transform = rootSVGElement.createSVGTransform();
+transform.matrix.e = 50;
 
 shouldBe("transform.type", "SVGTransform.SVG_TRANSFORM_MATRIX");
 shouldBe("transform.matrix.a", "1.0");
@@ -65,7 +56,6 @@ shouldBe("linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.e", 
 shouldBe("linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.f", "0.0");
 
 function executeTest() {
-    // TODO: This does not take any effect. Tracked by: http://bugs.webkit.org/show_bug.cgi?id=17736
     linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.e = -100;
 
     shouldBe("linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.a", "1.0");

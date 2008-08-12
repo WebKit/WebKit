@@ -23,7 +23,7 @@ PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.a is 1.0
 PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.b is 0.0
 PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.c is 0.0
 PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.d is 1.0
-FAIL linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.e should be -100. Was 50.
+PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.e is -100.0
 PASS linearGradientElement.gradientTransform.baseVal.getItem(0).matrix.f is 0.0
 PASS successfullyParsed is true
 

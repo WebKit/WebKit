@@ -26,11 +26,11 @@
 module svg {
 
     interface [Conditional=SVG] SVGZoomEvent : events::UIEvent { 
-        readonly attribute SVGRect zoomRectScreen;
+        readonly attribute [Immutable] SVGRect zoomRectScreen;
         readonly attribute float previousScale;
-        readonly attribute SVGPoint previousTranslate;
+        readonly attribute [Immutable] SVGPoint previousTranslate;
         readonly attribute float newScale;
-        readonly attribute SVGPoint newTranslate;
+        readonly attribute [Immutable] SVGPoint newTranslate;
     };
 
 }

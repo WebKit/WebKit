@@ -38,12 +38,31 @@ class JSSVGPODTypeWrapper : public RefCounted<JSSVGPODTypeWrapper<PODType> > {
 public:
     virtual ~JSSVGPODTypeWrapper() { }
 
-    // Getter wrapper
     virtual operator PODType() = 0;
-
-    // Setter wrapper
     virtual void commitChange(PODType, SVGElement*) = 0;
 };
+
+// This file contains JS wrapper objects for SVG datatypes, that are passed around by value
+// in WebCore/svg (aka. 'POD types'). For instance SVGMatrix is mapped to AffineTransform, and
+// passed around as const reference. SVG DOM demands these objects to be "live", changes to any
+// of the writable attributes of SVGMatrix need to be reflected in the object which exposed the
+// SVGMatrix object (ie. 'someElement.transform.matrix.a = 50.0', in that case 'SVGTransform').
+// The SVGTransform class stores its "AffineTransform m_matrix" object on the stack. If it would
+// be stored as pointer we could just build an auto-generated JSSVG* wrapper object around it
+// and all changes to that object would automatically affect the AffineTransform* object stored
+// in the SVGTransform object. For the sake of efficiency and memory we don't pass around any
+// primitive values as pointers, so a custom JS wrapper object is needed for all SVG types, that
+// are internally represented by POD types (SVGRect <-> FloatRect, SVGPoint <-> FloatPoint, ...).
+// Those custom wrappers are called JSSVGPODTypeWrapper and are capable of updating the POD types
+// by taking function pointers to the getter & setter functions of the "creator object", the object
+// which exposed a SVG POD type. For example, the JSSVGPODTypeWrapper object wrapping a SVGMatrix
+// object takes (SVGTransform*, &SVGTransform::matrix, &SVGTransform::setMatrix). A JS call like
+// "someElement.transform.matrix.a = 50.0' causes the JSSVGMatrix object to call SVGTransform::setMatrix,
+// method, which in turn notifies 'someElement' that the 'SVGNames::transformAttr' has changed.
+// That's a short sketch of our SVG DOM implementation.
+
+// Represents a JS wrapper object for SVGAnimated* classes, exposing SVG POD types that contain writable properties
+// (Two cases: SVGAnimatedLength exposing SVGLength, SVGAnimatedRect exposing SVGRect)
 
 template<typename PODType, typename PODTypeCreator>
 class JSSVGDynamicPODTypeWrapper : public JSSVGPODTypeWrapper<PODType> {
@@ -56,18 +75,13 @@ public:
         return adoptRef(new JSSVGDynamicPODTypeWrapper(creator, getter, setter));
     }
 
-    // Getter wrapper
     virtual operator PODType()
     {
         return (m_creator.get()->*m_getter)();
     }
 
-    // Setter wrapper
     virtual void commitChange(PODType type, SVGElement* context)
     {
-        if (!m_setter)
-            return;
-
         (m_creator.get()->*m_setter)(type);
 
         if (context)
@@ -91,6 +105,10 @@ private:
     SetterMethod m_setter;
 };
 
+// Represents a JS wrapper object for SVG POD types (not for SVGAnimated* clases). Any modification to the SVG POD
+// types don't cause any updates unlike JSSVGDynamicPODTypeWrapper. This class is used for return values (ie. getBBox())
+// and for properties where SVG specification explicitely states, that the contents of the POD type are immutable.
+
 template<typename PODType>
 class JSSVGStaticPODTypeWrapper : public JSSVGPODTypeWrapper<PODType> {
 public:
@@ -99,19 +117,17 @@ public:
         return adoptRef(new JSSVGStaticPODTypeWrapper(type));
     }
 
-    // Getter wrapper
     virtual operator PODType()
     {
         return m_podType;
     }
 
-    // Setter wrapper
     virtual void commitChange(PODType type, SVGElement*)
     {
         m_podType = type;
     }
 
-private:
+protected:
     JSSVGStaticPODTypeWrapper(PODType type)
         : m_podType(type)
     {
@@ -120,8 +136,74 @@ private:
     PODType m_podType;
 };
 
+template<typename PODType, typename ParentTypeArg>
+class JSSVGStaticPODTypeWrapperWithPODTypeParent : public JSSVGStaticPODTypeWrapper<PODType> {
+public:
+    typedef JSSVGPODTypeWrapper<ParentTypeArg> ParentType;
+
+    static PassRefPtr<JSSVGStaticPODTypeWrapperWithPODTypeParent> create(PODType type, PassRefPtr<ParentType> parent)
+    {
+        return adoptRef(new JSSVGStaticPODTypeWrapperWithPODTypeParent(type, parent));
+    }
+
+    virtual void commitChange(PODType type, SVGElement* context)
+    {
+        JSSVGStaticPODTypeWrapper<PODType>::commitChange(type, context);
+        m_parentType->commitChange(ParentTypeArg(type), context);    
+    }
+
+private:
+    JSSVGStaticPODTypeWrapperWithPODTypeParent(PODType type, PassRefPtr<ParentType> parent)
+        : JSSVGStaticPODTypeWrapper<PODType>(type)
+        , m_parentType(parent)
+    {
+    }
+
+    RefPtr<ParentType> m_parentType;
+};
+
+template<typename PODType, typename ParentType>
+class JSSVGStaticPODTypeWrapperWithParent : public JSSVGPODTypeWrapper<PODType> {
+public:
+    typedef PODType (ParentType::*GetterMethod)() const;
+    typedef void (ParentType::*SetterMethod)(const PODType&);
+
+    static PassRefPtr<JSSVGStaticPODTypeWrapperWithParent> create(PassRefPtr<ParentType> parent, GetterMethod getter, SetterMethod setter)
+    {
+        return adoptRef(new JSSVGStaticPODTypeWrapperWithParent(parent, getter, setter));
+    }
+
+    virtual operator PODType()
+    {
+        return (m_parent.get()->*m_getter)();
+    }
+
+    virtual void commitChange(PODType type, SVGElement* context)
+    {
+        (m_parent.get()->*m_setter)(type);
+    }
+
+private:
+    JSSVGStaticPODTypeWrapperWithParent(PassRefPtr<ParentType> parent, GetterMethod getter, SetterMethod setter)
+        : m_parent(parent)
+        , m_getter(getter)
+        , m_setter(setter)
+    {
+        ASSERT(m_parent);
+        ASSERT(m_getter);
+        ASSERT(m_setter);
+    }
+
+    // Update callbacks
+    RefPtr<ParentType> m_parent;
+    GetterMethod m_getter;
+    SetterMethod m_setter;
+};
+
 template<typename PODType>
 class SVGPODListItem;
+
+// Just like JSSVGDynamicPODTypeWrapper, but only used for SVGList* objects wrapping around POD values.
 
 template<typename PODType>
 class JSSVGPODTypeWrapperCreatorForList : public JSSVGPODTypeWrapper<PODType> {
@@ -136,13 +218,11 @@ public:
         return adoptRef(new JSSVGPODTypeWrapperCreatorForList(creator, attributeName));
     }
 
-    // Getter wrapper
     virtual operator PODType()
     {
         return (m_creator.get()->*m_getter)();
     }
 
-    // Setter wrapper
     virtual void commitChange(PODType type, SVGElement* context)
     {
         if (!m_setter)

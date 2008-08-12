@@ -1,3 +1,32 @@
+2008-08-11  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Antti.
+
+        Fixes: http://bugs.webkit.org/show_bug.cgi?id=17736
+
+        JS wrapper objects around SVG POD types, that contain other SVG POD types with writable properties
+        failed to update. Modification of the values were completly ignored (ie. transform.matrix.a = 50, didn't take any effect)
+
+        Added tests: svg/custom/svg-modify-currentTranslate.html
+                     svg/custom/tearoffs-with-tearoffs.html
+                     svg/custom/immutable-properties.html
+
+        Fixed tests: svg/dynamic-updates/SVGLinearGradientElement-svgdom-gradientTransform-prop.html
+
+        * bindings/js/JSSVGPODTypeWrapper.h:
+        (WebCore::JSSVGDynamicPODTypeWrapper::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapperWithPODTypeParent::create):
+        (WebCore::JSSVGStaticPODTypeWrapperWithPODTypeParent::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapperWithPODTypeParent::JSSVGStaticPODTypeWrapperWithPODTypeParent):
+        (WebCore::JSSVGStaticPODTypeWrapperWithParent::create):
+        (WebCore::JSSVGStaticPODTypeWrapperWithParent::operator PODType):
+        (WebCore::JSSVGStaticPODTypeWrapperWithParent::commitChange):
+        (WebCore::JSSVGStaticPODTypeWrapperWithParent::JSSVGStaticPODTypeWrapperWithParent):
+        * bindings/scripts/CodeGenerator.pm:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * svg/SVGSVGElement.idl: Add [Immutable] markers to SVG POD attributes, that contain POD types with writable attributes.
+        * svg/SVGZoomEvent.idl:  SVG specification explicitely demands these attributes to be readonly, even its content.
+
 2008-08-11  Brady Eidson  <beidson@apple.com>
 
         Reviewed by John and Anders

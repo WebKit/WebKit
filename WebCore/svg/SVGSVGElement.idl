@@ -43,14 +43,14 @@ module svg {
                      /*setter raises(DOMException)*/;
                  attribute core::DOMString contentStyleType
                      /*setter raises(DOMException)*/;
-        readonly attribute SVGRect viewport;
+        readonly attribute [Immutable] SVGRect viewport;
         readonly attribute float pixelUnitToMillimeterX;
         readonly attribute float pixelUnitToMillimeterY;
         readonly attribute float screenPixelToMillimeterX;
         readonly attribute float screenPixelToMillimeterY;
                  attribute boolean useCurrentView
                      /*setter raises(DOMException)*/;
-        // TODO    readonly attribute SVGViewSpec currentView;
+        // TODO    readonly attribute [Immutable] SVGViewSpec currentView;
                  attribute float currentScale
                      /*setter raises(DOMException)*/;
         readonly attribute SVGPoint currentTranslate;
