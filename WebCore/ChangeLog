@@ -1,3 +1,20 @@
+2008-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19891
+        Broken HTML object elements cause de-reference of pointer to freed memory.
+        If we fail to load an image for an object tag and we no longer believe the object tag points at
+        an image, then clear m_imageLoader in the HTMLObjectElement so that we attempt to render the
+        fall back content.
+
+        Reviewed by Dave Hyatt and Alexey Proskuryakov.
+
+        Test: http/tests/misc/object-image-error-with-onload.html
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Dave.

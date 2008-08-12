@@ -1,3 +1,13 @@
+2008-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=19891
+        Broken HTML object elements cause de-reference of pointer to freed memory.
+
+        Reviewed by Dave Hyatt and Alexey Proskuryakov.
+
+        * http/tests/misc/object-image-error-with-onload-expected.txt: Added.
+        * http/tests/misc/object-image-error-with-onload.html: Added.
+
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Reviewed by Eric.
