@@ -2,6 +2,88 @@
 
         Reviewed by Oliver.
 
+        Add new dynamice-update layout tests covering SVGMarkerElement.
+ 
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.checksum: Added.
+        * platform/mac/svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-orient-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-orient-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-refX-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-refX-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-refY-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-dom-refY-attr.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.checksum: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.png: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call.html: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.checksum: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.png: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call-expected.txt: Added.
+        * svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call.html: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerHeight-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerUnits-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-markerWidth-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-orient-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-refX-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-dom-refY-attr.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerHeight-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerUnits-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-markerWidth-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientAngle-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-orientType-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refX-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-refY-prop.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAngle-call.js: Added.
+        * svg/dynamic-updates/resources/SVGMarkerElement-svgdom-setOrientToAuto-call.js: Added.
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Add new dynamic-update layout tests covering SVGImageElement.
         Fix bug: SVGImageElement doesn't react on 'preserveAspectRatio' changes.
 

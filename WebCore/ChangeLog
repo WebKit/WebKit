@@ -2,6 +2,39 @@
 
         Reviewed by Oliver.
 
+        Add new dynamice-update layout tests covering SVGMarkerElement.
+        Fix bug: SVGMarkerElement's SVG DOM function calls don't update rendering.
+        Fix orientAngle/orientType confusion: "auto" orient should always return "0" as angle.
+
+        Tests: svg/dynamic-updates/SVGMarkerElement-dom-markerHeight-attr.html
+               svg/dynamic-updates/SVGMarkerElement-dom-markerUnits-attr.html
+               svg/dynamic-updates/SVGMarkerElement-dom-markerWidth-attr.html
+               svg/dynamic-updates/SVGMarkerElement-dom-orient-attr.html
+               svg/dynamic-updates/SVGMarkerElement-dom-refX-attr.html
+               svg/dynamic-updates/SVGMarkerElement-dom-refY-attr.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-markerHeight-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-markerUnits-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-markerWidth-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-orientAngle-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-orientType-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-refX-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-refY-prop.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAngle-call.html
+               svg/dynamic-updates/SVGMarkerElement-svgdom-setOrientToAuto-call.html
+
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::SVGMarkerElement):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::childrenChanged):
+        (WebCore::SVGMarkerElement::setOrientToAuto):
+        (WebCore::SVGMarkerElement::setOrientToAngle):
+        (WebCore::SVGMarkerElement::canvasResource):
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Oliver.
+
         Add new dynamic-update layout tests covering SVGImageElement.
         Fix bug: SVGImageElement doesn't react on 'preserveAspectRatio' changes.
 

@@ -47,7 +47,7 @@ SVGMarkerElement::SVGMarkerElement(const QualifiedName& tagName, Document* doc)
     , m_markerWidth(this, SVGNames::markerWidthAttr, LengthModeWidth, "3")
     , m_markerHeight(this, SVGNames::markerHeightAttr, LengthModeHeight, "3") 
     , m_markerUnits(this, SVGNames::markerUnitsAttr, SVG_MARKERUNITS_STROKEWIDTH)
-    , m_orientType(this, SVGNames::orientAttr)
+    , m_orientType(this, SVGNames::orientAttr, SVG_MARKER_ORIENT_ANGLE)
     , m_orientAngle(this, SVGNames::orientAttr, SVGAngle::create())
 {
     // Spec: If the markerWidth/markerHeight attribute is not specified, the effect is as if a value of "3" were specified.
@@ -62,6 +62,8 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
     if (attr->name() == SVGNames::markerUnitsAttr) {
         if (attr->value() == "userSpaceOnUse")
             setMarkerUnitsBaseValue(SVG_MARKERUNITS_USERSPACEONUSE);
+        else if (attr->value() == "strokeWidth")
+            setMarkerUnitsBaseValue(SVG_MARKERUNITS_STROKEWIDTH);
     } else if (attr->name() == SVGNames::refXAttr)
         setRefXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::refYAttr)
@@ -71,13 +73,16 @@ void SVGMarkerElement::parseMappedAttribute(MappedAttribute* attr)
     else if (attr->name() == SVGNames::markerHeightAttr)
         setMarkerHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::orientAttr) {
+        RefPtr<SVGAngle> angle = SVGAngle::create();
+
         if (attr->value() == "auto")
-            setOrientToAuto();
+            setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
         else {
-            RefPtr<SVGAngle> angle = SVGAngle::create();
             angle->setValueAsString(attr->value());
-            setOrientToAngle(angle.release());
+            setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
         }
+
+        setOrientAngleBaseValue(angle.get());
     } else {
         if (SVGLangSpace::parseMappedAttribute(attr))
             return;
@@ -106,7 +111,7 @@ void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
         SVGStyledElement::isKnownAttribute(attrName)) {
         if (renderer())
             renderer()->setNeedsLayout(true);
-        
+
         m_marker->invalidate();
     }
 }
@@ -115,22 +120,43 @@ void SVGMarkerElement::childrenChanged(bool changedByParser, Node* beforeChange,
 {
     SVGStyledElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
 
+    if (!m_marker)
+        return;
+
     if (renderer())
         renderer()->setNeedsLayout(true);
 
-    if (m_marker)
-        m_marker->invalidate();
+    m_marker->invalidate();
 }
 
 void SVGMarkerElement::setOrientToAuto()
 {
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_AUTO);
+
+    RefPtr<SVGAngle> angle = SVGAngle::create();
+    setOrientAngleBaseValue(angle.get());
+
+    if (!m_marker)
+        return;
+
+    if (renderer())
+        renderer()->setNeedsLayout(true);
+
+    m_marker->invalidate();
 }
 
 void SVGMarkerElement::setOrientToAngle(PassRefPtr<SVGAngle> angle)
 {
     setOrientTypeBaseValue(SVG_MARKER_ORIENT_ANGLE);
     setOrientAngleBaseValue(angle.get());
+
+    if (!m_marker)
+        return;
+
+    if (renderer())
+        renderer()->setNeedsLayout(true);
+
+    m_marker->invalidate();
 }
 
 SVGResource* SVGMarkerElement::canvasResource()
@@ -140,14 +166,10 @@ SVGResource* SVGMarkerElement::canvasResource()
 
     m_marker->setMarker(static_cast<RenderSVGViewportContainer*>(renderer()));
 
-    // Spec: If the attribute is not specified, the effect is as if a
-    // value of "0" were specified.
-    if (!orientType())
-        setOrientToAngle(SVGSVGElement::createSVGAngle());
-
-    if (orientType() == SVG_MARKER_ORIENT_ANGLE)
-        m_marker->setAngle(orientAngle()->value());
-    else
+    if (orientType() == SVG_MARKER_ORIENT_ANGLE) {
+        if (orientAngle())
+            m_marker->setAngle(orientAngle()->value());
+    } else
         m_marker->setAutoAngle();
 
     m_marker->setRef(refX().value(this), refY().value(this));
