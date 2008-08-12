@@ -1,3 +1,14 @@
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Forgot to include these in my last commit.
+
+        * svg/dynamic-updates/resources/SVGAElement-dom-href-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-dom-target-attr.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-href-prop.js:
+        * svg/dynamic-updates/resources/SVGAElement-svgdom-target-prop.js:
+
 2008-08-12  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=19891

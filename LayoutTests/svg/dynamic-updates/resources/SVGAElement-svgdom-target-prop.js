@@ -22,7 +22,7 @@ rootSVGElement.appendChild(anchorElement);
 function executeTest() {
     anchorElement.target.baseVal = "_self";
     completeTest();
-    triggerUpdate();
+    triggerUpdate(150, 200);
 }
 
 executeTest();

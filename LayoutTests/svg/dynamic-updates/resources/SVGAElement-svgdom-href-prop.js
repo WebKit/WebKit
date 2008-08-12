@@ -21,7 +21,7 @@ rootSVGElement.appendChild(anchorElement);
 function executeTest() {
     anchorElement.href.baseVal = "resources/linkTarget.svg";
     completeTest();
-    triggerUpdate();
+    triggerUpdate(150, 200);
 }
 
 executeTest();
