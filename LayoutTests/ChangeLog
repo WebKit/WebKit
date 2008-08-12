@@ -1,5 +1,22 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Dave.
+
+        Fix mask regressions.
+
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/coords-viewattr-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.checksum:
+        * platform/mac/svg/W3C-SVG-1.1/masking-mask-01-b-expected.png:
+        * platform/mac/svg/batik/masking/maskRegions-expected.checksum:
+        * platform/mac/svg/batik/masking/maskRegions-expected.png:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.checksum:
+        * platform/mac/svg/custom/grayscale-gradient-mask-expected.png:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Reviewed by Sam.
 
         Speculative fix for hit testing problems in dynamic-updates/SVGLineElement* on Tiger.

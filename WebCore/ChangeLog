@@ -1,3 +1,19 @@
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Dave.
+    
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=19798
+        Masks are translated, and the mask images are swapped on the y-axis.
+
+        Turned out that http://trac.webkit.org/changeset/31830/trunk/WebCore/svg/graphics/cg/SVGResourceMaskerCg.mm
+        is guilty. GraphicsContext::clipToImageBuffer() does some extra transformations that SVGResourcesMaskerCg does not want.
+
+        Long term goal is to remove the SVGResource*/SVGPaintServer* classes anyway, so it's okay to duplicate
+        the "clip to image buffer" functionality, in the CG specific SVGResourceMaskerCg class - as it was before.
+
+        * svg/graphics/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask): Changed back to use CG clipping again.
+
 2008-08-12  Dan Bernstein  <mitz@apple.com>
 
         - WebCore part of <rdar://problem/6121636>
