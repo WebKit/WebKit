@@ -1,3 +1,12 @@
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Sam.
+
+        Speculative fix for hit testing problems in dynamic-updates/SVGLineElement* on Tiger.
+        Supposed to fix the hanging tests on the buildbot.
+
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+
 2008-08-12  Sam Weinig  <sam@webkit.org>
 
         * fast/dom/Window/window-properties-expected.txt: Update results.
