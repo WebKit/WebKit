@@ -1,5 +1,18 @@
 2008-08-12  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Darin Adler.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19348
+          <rdar://problem/5978447> REGRESSION (r34193): Setting the size of a frame with javascript document.body.row no longer works
+
+        Test: fast/frames/frameset-style-recalc.html
+
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::recalcStyle): Changed to call the base
+        class implementation after marking for layout.
+
+2008-08-12  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by John Sullivan.
 
         - move shouldUpdateWhenOffscreen from Settings to FrameView and rename it shouldUpdateWhileHidden
