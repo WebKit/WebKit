@@ -1,5 +1,5 @@
 // [Name] SVGImageElement-dom-preserveAspectRatio-attr.js
-// [Expected rendering result] image at 0x0 size 100x200, needs to fit exactly in destination bbox (aka. preserveAspectRatio=none) - and a series of PASS mesages
+// [Expected rendering result] image at 0x0 size 100x200, needs to fit exactly in destination bbox (aka. preserveAspectRatio=none) - and a series of PASS messages
 
 description("Tests dynamic updates of the 'preserveAspectRatio' attribute of the SVGImageElement object")
 createSVGTestCase();

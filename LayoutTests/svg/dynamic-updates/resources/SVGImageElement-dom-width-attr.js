@@ -1,5 +1,5 @@
 // [Name] SVGImageElement-dom-width-attr.js
-// [Expected rendering result] image at 0x0 size 200x200 - and a series of PASS mesages
+// [Expected rendering result] image at 0x0 size 200x200 - and a series of PASS messages
 
 description("Tests dynamic updates of the 'width' attribute of the SVGImageElement object")
 createSVGTestCase();

@@ -1,5 +1,5 @@
 // [Name] SVGCircleElement-svgdom-cx-prop.js
-// [Expected rendering result] unclipped green circle - and a series of PASS mesages
+// [Expected rendering result] unclipped green circle - and a series of PASS messages
 
 description("Tests dynamic updates of the 'cx' property of the SVGCircleElement object")
 createSVGTestCase();

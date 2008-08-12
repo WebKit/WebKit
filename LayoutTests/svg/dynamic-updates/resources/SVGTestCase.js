@@ -21,16 +21,6 @@ function createSVGTestCase() {
 }
 
 function triggerUpdate(x, y) {
-    // Default x position
-    if (!x) {
-        x = 150;
-    }
-
-    // Default y position
-    if (!y) {
-        y = 200;
-    }
-
     // Translation due to <h1> above us
     x = x + rootSVGElement.offsetLeft;
     y = y + rootSVGElement.offsetTop;

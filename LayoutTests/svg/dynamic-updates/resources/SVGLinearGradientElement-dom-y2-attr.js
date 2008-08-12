@@ -1,5 +1,5 @@
 // [Name] SVGLinearGradientElement-dom-y2-attr.js
-// [Expected rendering result] green ellipse, no red visible - and a series of PASS mesages
+// [Expected rendering result] green ellipse, no red visible - and a series of PASS messages
 
 description("Tests dynamic updates of the 'y2' attribute of the SVGLinearGradientElement object")
 createSVGTestCase();

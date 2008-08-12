@@ -1,5 +1,5 @@
 // [Name] SVGLineElement-svgdom-y1-prop.js
-// [Expected rendering result] green line from 10x10 to 200x200 - and a series of PASS mesages
+// [Expected rendering result] green line from 10x10 to 200x200 - and a series of PASS messages
 
 description("Tests dynamic updates of the 'y1' property of the SVGLineElement object")
 createSVGTestCase();

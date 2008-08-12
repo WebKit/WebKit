@@ -1,5 +1,5 @@
 // [Name] SVGRadialGradientElement-svgdom-fx-prop.js
-// [Expected rendering result] green ellipse, red radial gradient centered in the middle of the ellipse - and a series of PASS mesages
+// [Expected rendering result] green ellipse, red radial gradient centered in the middle of the ellipse - and a series of PASS messages
 
 description("Tests dynamic updates of the 'fx' property of the SVGRadialGradientElement object")
 createSVGTestCase();

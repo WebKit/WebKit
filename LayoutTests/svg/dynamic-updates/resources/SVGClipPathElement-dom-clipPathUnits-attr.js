@@ -1,5 +1,5 @@
 // [Name] SVGClipPathElement-dom-clipPathUnits-attr.js
-// [Expected rendering result] green circle - and a series of PASS mesages
+// [Expected rendering result] green circle - and a series of PASS messages
 
 description("Tests dynamic updates of the 'clipPathUnits' attribute of the SVGClipPathElement object")
 createSVGTestCase();

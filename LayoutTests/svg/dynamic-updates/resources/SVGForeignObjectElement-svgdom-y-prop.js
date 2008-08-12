@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-svgdom-y-prop.js
-// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS messages
 
 description("Tests dynamic updates of the 'y' property of the SVGForeignObjectElement object")
 createSVGTestCase();

@@ -1,5 +1,5 @@
 // [Name] SVGEllipseElement-dom-ry-attr.js
-// [Expected rendering result] with rx = ry (in fact a circle) - and a series of PASS mesages
+// [Expected rendering result] with rx = ry (in fact a circle) - and a series of PASS messages
 
 description("Tests dynamic updates of the 'ry' attribute of the SVGEllipseElement object")
 createSVGTestCase();

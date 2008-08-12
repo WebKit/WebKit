@@ -1,5 +1,5 @@
 // [Name] SVGCircleElement-dom-r-attr.js
-// [Expected rendering result] green circle - and a series of PASS mesages
+// [Expected rendering result] green circle - and a series of PASS messages
 
 description("Tests dynamic updates of the 'r' attribute of the SVGCircleElement object")
 createSVGTestCase();

@@ -1,5 +1,5 @@
 // [Name] SVGForeignObjectElement-dom-width-attr.js
-// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS mesages
+// [Expected rendering result] unclipped 'Test passed' text - and a series of PASS messages
 
 description("Tests dynamic updates of the 'width' attribute of the SVGForeignObjectElement object")
 createSVGTestCase();

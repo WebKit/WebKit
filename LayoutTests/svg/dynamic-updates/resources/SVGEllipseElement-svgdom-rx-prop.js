@@ -1,5 +1,5 @@
 // [Name] SVGEllipseElement-svgdom-rx-prop.js
-// [Expected rendering result] green ellipse with rx = ry (in fact a circle)- and a series of PASS mesages
+// [Expected rendering result] green ellipse with rx = ry (in fact a circle)- and a series of PASS messages
 
 description("Tests dynamic updates of the 'rx' property of the SVGEllipseElement object")
 createSVGTestCase();

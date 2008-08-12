@@ -1,5 +1,5 @@
 // [Name] SVGLinearGradientElement-svgdom-gradientUnits-prop.js
-// [Expected rendering result] green ellipse, no red visible - and a series of PASS mesages
+// [Expected rendering result] green ellipse, no red visible - and a series of PASS messages
 
 description("Tests dynamic updates of the 'gradientUnits' property of the SVGLinearGradientElement object")
 createSVGTestCase();

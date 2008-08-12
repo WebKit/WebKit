@@ -1,5 +1,5 @@
 // [Name] SVGEllipseElement-svgdom-cy-prop.js
-// [Expected rendering result] unclipped green ellipse - and a series of PASS mesages
+// [Expected rendering result] unclipped green ellipse - and a series of PASS messages
 
 description("Tests dynamic updates of the 'cy' property of the SVGEllipseElement object")
 createSVGTestCase();

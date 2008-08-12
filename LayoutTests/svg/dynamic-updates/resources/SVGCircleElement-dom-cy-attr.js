@@ -1,5 +1,5 @@
 // [Name] SVGCircleElement-dom-cy-attr.js
-// [Expected rendering result] unclipped green circle - and a series of PASS mesages
+// [Expected rendering result] unclipped green circle - and a series of PASS messages
 
 description("Tests dynamic updates of the 'cy' attribute of the SVGCircleElement object")
 createSVGTestCase();

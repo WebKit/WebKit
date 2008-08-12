@@ -1,5 +1,5 @@
 // [Name] SVGPatternElement-dom-patternUnits-attr.js
-// [Expected rendering result] green rect, no red visible - and a series of PASS mesages
+// [Expected rendering result] green rect, no red visible - and a series of PASS messages
 
 description("Tests dynamic updates of the 'patternUnits' attribute of the SVGPatternElement object")
 createSVGTestCase();

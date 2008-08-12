@@ -1,5 +1,96 @@
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Reviewed by Eric.
+
+        Fix typo in most files: "mesage" -> "message".
+        Remove unused code in SVGTestCase.js
+
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-dom-r-attr.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGCircleElement-svgdom-r-prop.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-dom-clipPathUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGClipPathElement-svgdom-clipPathUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-rx-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-dom-ry-attr.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-rx-prop.js:
+        * svg/dynamic-updates/resources/SVGEllipseElement-svgdom-ry-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-height-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-width-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-x-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-dom-y-attr.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-height-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-width-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-x-prop.js:
+        * svg/dynamic-updates/resources/SVGForeignObjectElement-svgdom-y-prop.js:
+        * svg/dynamic-updates/resources/SVGImageElement-dom-height-attr.js:
+        * svg/dynamic-updates/resources/SVGImageElement-dom-preserveAspectRatio-attr.js:
+        * svg/dynamic-updates/resources/SVGImageElement-dom-width-attr.js:
+        * svg/dynamic-updates/resources/SVGImageElement-dom-x-attr.js:
+        * svg/dynamic-updates/resources/SVGImageElement-dom-y-attr.js:
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-height-prop.js:
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-preserveAspectRatio-prop.js:
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-width-prop.js:
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-x-prop.js:
+        * svg/dynamic-updates/resources/SVGImageElement-svgdom-y-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-x2-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y1-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-dom-y2-attr.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x1-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-x2-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y1-prop.js:
+        * svg/dynamic-updates/resources/SVGLineElement-svgdom-y2-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientTransform-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-gradientUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x1-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-x2-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y1-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-dom-y2-attr.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientTransform-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-gradientUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x1-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-x2-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y1-prop.js:
+        * svg/dynamic-updates/resources/SVGLinearGradientElement-svgdom-y2-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-height-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternContentUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternTransform-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-patternUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-width-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-x-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-dom-y-attr.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-height-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternContentUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternTransform-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-patternUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-width-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-x-prop.js:
+        * svg/dynamic-updates/resources/SVGPatternElement-svgdom-y-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cx-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-cy-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fx-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-fy-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientTransform-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-gradientUnits-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-dom-r-attr.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cx-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-cy-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fx-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-fy-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientTransform-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-gradientUnits-prop.js:
+        * svg/dynamic-updates/resources/SVGRadialGradientElement-svgdom-r-prop.js:
+        * svg/dynamic-updates/resources/SVGTestCase.js:
+
+2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Rubber stamped by Eric.
 
         Add new dynamic-update layout tests covering SVGPatternElement.
