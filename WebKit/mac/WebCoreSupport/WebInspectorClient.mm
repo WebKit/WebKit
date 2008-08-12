@@ -266,7 +266,8 @@ void WebInspectorClient::updateWindowTitle() const
 
     _visible = NO;
 
-    [_inspectedWebView page]->inspectorController()->setWindowVisible(false);
+    if (!_movingWindows)
+        [_inspectedWebView page]->inspectorController()->setWindowVisible(false);
 
     [self hideHighlight];
 

@@ -1,3 +1,17 @@
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Make attaching and detaching the Web Inspector instantaneous.
+        This also preserves the current view, other state, and keeps
+        the script debugger attached.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19301
+
+        Reviewed by Adam Roben.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController close]): Only call setWindowVisible(false)
+        when not moving windows.
+
 2008-08-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.
