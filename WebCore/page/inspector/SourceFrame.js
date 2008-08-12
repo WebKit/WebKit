@@ -164,25 +164,31 @@ WebInspector.SourceFrame.prototype = {
         }
     },
 
+    _highlightLineEnds: function(event)
+    {
+        event.target.parentNode.removeStyleClass("webkit-highlighted-line");
+    },
+
     highlightLine: function(lineNumber)
     {
         var sourceRow = this.sourceRow(lineNumber);
         if (!sourceRow)
             return;
-        sourceRow.addStyleClass("webkit-highlighted-line");
-        setTimeout(function() {
-            var line = sourceRow.getElementsByClassName('webkit-line-content')[0];
-            line.addStyleClass("webkit-fade-out-effect");
-            // FIXME Replace this timeout when ontransitionend is implemented
-            sourceRow.removeStyleClass("webkit-highlighted-line");
-            setTimeout(function () { line.removeStyleClass("webkit-fade-out-effect"); }, 2000);
-        }, 500);
+        var line = sourceRow.getElementsByClassName('webkit-line-content')[0];
+        // Trick to reset the animation if the user clicks on the same link
+        // Using a timeout to avoid coalesced style updates
+        line.style.setProperty("-webkit-animation-name", "none");
+        setTimeout(function () {
+            line.style.removeProperty("-webkit-animation-name");
+            sourceRow.addStyleClass("webkit-highlighted-line");
+        }, 0);
     },
 
     _loaded: function()
     {
         WebInspector.addMainEventListeners(this.element.contentDocument);
         this.element.contentDocument.addEventListener("mousedown", this._documentMouseDown.bind(this), true);
+        this.element.contentDocument.addEventListener("webkitAnimationEnd", this._highlightLineEnds.bind(this), false);
 
         var headElement = this.element.contentDocument.getElementsByTagName("head")[0];
         if (!headElement) {
@@ -204,8 +210,8 @@ WebInspector.SourceFrame.prototype = {
         styleText += ".webkit-execution-line .webkit-line-content { background-color: rgb(171, 191, 254); outline: 1px solid rgb(64, 115, 244); }\n";
         styleText += ".webkit-height-sized-to-fit { overflow-y: hidden }\n";
         styleText += ".webkit-line-content { background-color: white; }\n";
-        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); }\n";
-        styleText += ".webkit-fade-out-effect { -webkit-transition-property: background-color; -webkit-transition-duration: 2s; }"
+        styleText += "@-webkit-keyframes fadeout {from {background-color: rgb(255, 255, 120);} to { background-color: white;}}\n";
+        styleText += ".webkit-highlighted-line .webkit-line-content { background-color: rgb(255, 255, 120); -webkit-animation: 'fadeout' 2s 500ms}\n";
         styleText += ".webkit-javascript-comment { color: rgb(0, 116, 0); }\n";
         styleText += ".webkit-javascript-keyword { color: rgb(170, 13, 145); }\n";
         styleText += ".webkit-javascript-number { color: rgb(28, 0, 207); }\n";

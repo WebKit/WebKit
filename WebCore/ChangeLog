@@ -1,3 +1,11 @@
+2008-08-11  Anthony Ricaud  <rik24d@gmail.com>
+
+        Changed the line highlight transition for an easier animation.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/SourceFrame.js:
+
 2008-08-11  Keishi Hattori  <casey.hattori@gmail.com>
 
         Added support for some Firebug Command Line APIs.
