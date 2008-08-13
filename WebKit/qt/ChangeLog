@@ -1,3 +1,11 @@
+2008-08-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix linking with QtWebKit.
+
+        * Api/qwebframe.h: remove non-existing function/property.
+
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
