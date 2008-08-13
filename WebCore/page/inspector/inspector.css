@@ -90,6 +90,7 @@ body.attached #toolbar {
     height: 34px;
     border-top: 1px solid rgb(100, 100, 100);
     cursor: row-resize;
+    padding-left: 0;
 }
 
 body.attached.inactive #toolbar {
@@ -169,6 +170,28 @@ body.attached #search-toolbar-label {
 
 .toolbar-item.profiles .toolbar-icon {
     content: url(Images/profilesIcon.png);
+}
+
+#close-button {
+    width: 14px;
+    height: 14px;
+    background-image: url(Images/closeButtons.png);
+    background-position: 0 0;
+    background-color: transparent;
+    border: 0 none transparent;
+    margin: 5px 0;
+}
+
+#close-button:hover {
+    background-position: 14px 0;
+}
+
+#close-button:active {
+    background-position: 28px 0;
+}
+
+body.detached .toolbar-item.close {
+    display: none;
 }
 
 #searchResults {

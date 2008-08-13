@@ -152,6 +152,7 @@ public:
     const ResourcesMap& resources() const { return m_resources; }
 
     void moveWindowBy(float x, float y) const;
+    void closeWindow();
 
     void startDebuggingAndReloadInspectedPage();
     void stopDebugging();
@@ -214,7 +215,6 @@ private:
     bool handleException(JSContextRef, JSValueRef exception, unsigned lineNumber) const;
 
     void showWindow();
-    void closeWindow();
 
     virtual void didParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID);
     virtual void failedToParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage);

@@ -983,6 +983,17 @@ static JSValueRef isWindowVisible(JSContextRef ctx, JSObjectRef /*function*/, JS
     return JSValueMakeBoolean(ctx, controller->windowVisible());
 }
 
+static JSValueRef closeWindow(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    InspectorController* controller = reinterpret_cast<InspectorController*>(JSObjectGetPrivate(thisObject));
+    if (!controller)
+        return JSValueMakeUndefined(ctx);
+
+    controller->closeWindow();
+
+    return JSValueMakeUndefined(ctx);
+}
+
 // Profiles
 
 static JSValueRef profiles(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t /*argumentCount*/, const JSValueRef[] /*arguments*/, JSValueRef* exception)
@@ -1381,6 +1392,7 @@ void InspectorController::windowScriptObjectAvailable()
         { "addBreakpoint", WebCore::addBreakpoint, kJSPropertyAttributeNone },
         { "removeBreakpoint", WebCore::removeBreakpoint, kJSPropertyAttributeNone },
         { "isWindowVisible", WebCore::isWindowVisible, kJSPropertyAttributeNone },
+        { "closeWindow", WebCore::closeWindow, kJSPropertyAttributeNone },
         { "startProfiling", WebCore::startProfiling, kJSPropertyAttributeNone },
         { "stopProfiling", WebCore::stopProfiling, kJSPropertyAttributeNone },
         { "clearMessages", clearMessages, kJSPropertyAttributeNone },

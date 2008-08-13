@@ -1,5 +1,25 @@
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
+        Added a close button to the Inspector's toolbar when docked.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14270
+
+        Reviewed by Kevin McCullough.
+
+        * page/InspectorController.cpp:
+        (WebCore::closeWindow): Call InspectorController::closeWindow.
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        Added closeWindow to the script class.
+        * page/InspectorController.h:
+        * page/inspector/Images/closeButtons.png: Added.
+        * page/inspector/inspector.css: Added and changed styles.
+        * page/inspector/inspector.html: Added the close button.
+        * page/inspector/inspector.js:
+        (WebInspector.loaded): Added click event listener to the close button.
+        (WebInspector.close): Call InspectorController.closeWindow.
+
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
         Make the docked Web Inspector resizable. This is the cross platform
         portion of the code. Each InspectorClient needs to implement the
         real resize code.

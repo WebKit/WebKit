@@ -273,6 +273,8 @@ WebInspector.loaded = function()
     };
 
     var toolbarElement = document.getElementById("toolbar");
+    var previousToolbarItem = toolbarElement.children[0];
+
     for (var panelName in this.panels) {
         var panel = this.panels[panelName];
         var panelToolbarItem = panel.toolbarItem;
@@ -281,7 +283,7 @@ WebInspector.loaded = function()
             toolbarElement.insertBefore(panelToolbarItem, previousToolbarItem.nextSibling);
         else
             toolbarElement.insertBefore(panelToolbarItem, toolbarElement.firstChild);
-        var previousToolbarItem = panelToolbarItem;
+        previousToolbarItem = panelToolbarItem;
     }
 
     this.currentPanel = this.panels.elements;
@@ -344,6 +346,7 @@ WebInspector.loaded = function()
     searchField.addEventListener("keyup", this.performSearch.bind(this), false);
 
     document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
+    document.getElementById("close-button").addEventListener("click", this.close, true);
 
     InspectorController.loaded();
 }
@@ -392,6 +395,11 @@ WebInspector.windowBlured = function(event)
 WebInspector.focusChanged = function(event)
 {
     this.currentFocusElement = event.target;
+}
+
+WebInspector.close = function(event)
+{
+    InspectorController.closeWindow();
 }
 
 WebInspector.documentClick = function(event)
