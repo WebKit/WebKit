@@ -1,3 +1,14 @@
+2008-08-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        <rdar://problem/6137931>
+        https://bugs.webkit.org/show_bug.cgi?id=20360
+        Add test case for parameters on a <source> element 'type' attribute.
+
+        * media/video-source-type-params-expected.txt: Added.
+        * media/video-source-type-params.html: Added.
+
 2008-08-13  Alexey Proskuryakov  <ap@webkit.org>
 
         Removing http/tests/xmlhttprequest/readystatechange.html from Windows skipped list -

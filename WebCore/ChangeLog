@@ -1,3 +1,17 @@
+2008-08-13  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Fix for <rdar://problem/6137931>
+        https://bugs.webkit.org/show_bug.cgi?id=20360
+        Remove all parameters from the MIME type before checking with the MIME type registry
+
+        Tests: media/video-source-type-params.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::pickMedia): only pass the portion before the first ';' 
+        to isSupportedMediaMIMEType()
+
 2008-08-13  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.
