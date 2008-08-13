@@ -57,6 +57,7 @@ using namespace WebCore;
 - (WebView *)webView;
 - (void)attach;
 - (void)detach;
+- (void)setAttachedWindowHeight:(unsigned)height;
 - (void)highlightAndScrollToNode:(DOMNode *)node;
 - (void)highlightNode:(DOMNode *)node;
 - (void)hideHighlight;
@@ -110,6 +111,11 @@ void WebInspectorClient::attachWindow()
 void WebInspectorClient::detachWindow()
 {
     [m_windowController.get() detach];
+}
+
+void WebInspectorClient::setAttachedWindowHeight(unsigned height)
+{
+    [m_windowController.get() setAttachedWindowHeight:height];
 }
 
 void WebInspectorClient::highlight(Node* node)
@@ -289,21 +295,15 @@ void WebInspectorClient::updateWindowTitle() const
     if (_shouldAttach) {
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
 
-        NSRect frameViewRect = [frameView frame];
-        float attachedHeight = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInspectorAttachedViewHeightKey];
-        attachedHeight = MAX(300.0, MIN(attachedHeight, (NSHeight(frameViewRect) * 0.6)));
-        frameViewRect = NSMakeRect(0, attachedHeight, NSWidth(frameViewRect), NSHeight(frameViewRect) - attachedHeight);
-
         [_webView removeFromSuperview];
-        [_inspectedWebView addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView*)frameView];
+        [_inspectedWebView addSubview:_webView positioned:NSWindowBelow relativeTo:(NSView *)frameView];
 
         [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMaxYMargin)];
-        [_webView setFrame:NSMakeRect(0, 0, NSWidth(frameViewRect), attachedHeight)];
-
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable | NSViewMinYMargin)];
-        [frameView setFrame:frameViewRect];
 
         _attachedToInspectedWebView = YES;
+
+        [self setAttachedWindowHeight:[[NSUserDefaults standardUserDefaults] integerForKey:WebKitInspectorAttachedViewHeightKey]];
     } else {
         _attachedToInspectedWebView = NO;
 
@@ -347,6 +347,23 @@ void WebInspectorClient::updateWindowTitle() const
     [self showWindow:nil];
 
     _movingWindows = NO;
+}
+
+- (void)setAttachedWindowHeight:(unsigned)height
+{
+    [[NSUserDefaults standardUserDefaults] setInteger:height forKey:WebKitInspectorAttachedViewHeightKey];
+
+    if (!_attachedToInspectedWebView)
+        return;
+
+    WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
+    NSRect frameViewRect = [frameView frame];
+
+    CGFloat attachedHeight = round(MAX(250.0, MIN(height, (NSHeight([_inspectedWebView frame]) * 0.75))));
+    frameViewRect = NSMakeRect(0.0, attachedHeight, NSWidth(frameViewRect), NSHeight([_inspectedWebView frame]) - attachedHeight);
+
+    [_webView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), attachedHeight)];
+    [frameView setFrame:frameViewRect];
 }
 
 #pragma mark -

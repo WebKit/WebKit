@@ -1,3 +1,12 @@
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a stub for InspectorClient::setAttachedWindowHeight.
+
+        * WebKitSupport/InspectorClientWx.cpp:
+        (WebCore::InspectorClientWx::setAttachedWindowHeight):
+        Call notImplemented().
+        * WebKitSupport/InspectorClientWx.h:
+
 2008-08-06  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Kevin Ollivier.

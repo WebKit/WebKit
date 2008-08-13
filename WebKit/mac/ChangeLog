@@ -1,5 +1,23 @@
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
+        Make the docked Web Inspector resizable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14282
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+        (WebInspectorClient::setAttachedWindowHeight): Call setAttachedWindowHeight:
+        on the WebInspectorWindowController.
+        (-[WebInspectorWindowController showWindow:]): Call setAttachedWindowHeight:.
+        (-[WebInspectorWindowController setAttachedWindowHeight:]): Moved code
+        from showWindow: and generalized to allow being called multiple times.
+        Remembers the last height passed, which is used by showWindow: the next
+        time the Inspector attaches.
+
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
         Remove unneeded header imports from some Web Inspector files.
 
         Reviewed by Adam Roben.

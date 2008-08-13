@@ -49,6 +49,8 @@ public:
     virtual void attachWindow();
     virtual void detachWindow();
 
+    virtual void setAttachedWindowHeight(unsigned height);
+
     virtual void highlight(WebCore::Node*);
     virtual void hideHighlight();
     virtual void inspectedURLChanged(const WebCore::String& newURL);

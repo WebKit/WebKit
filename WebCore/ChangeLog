@@ -1,3 +1,33 @@
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Make the docked Web Inspector resizable. This is the cross platform
+        portion of the code. Each InspectorClient needs to implement the
+        real resize code.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14282
+
+        Reviewed by Kevin McCullough.
+
+        * loader/EmptyClients.h: Added an empty setAttachedWindowHeight.
+        * page/InspectorClient.h: Added setAttachedWindowHeight.
+        * page/InspectorController.cpp:
+        (WebCore::setAttachedWindowHeight): Call setAttachedWindowHeight
+        on the InspectorController.
+        (WebCore::InspectorController::setAttachedWindowHeight): Call
+        setAttachedWindowHeight on the client.
+        (WebCore::InspectorController::windowScriptObjectAvailable):
+        Added setAttachedWindowHeight to the script class.
+        * page/InspectorController.h:
+        * page/inspector/inspector.css: Make the cursor on the toolbar be
+        row-resize when docked.
+        * page/inspector/inspector.js:
+        (WebInspector.loaded): Always add the toolbarDragStart event listener.
+        (WebInspector.toolbarDragStart): Return early if we are not attached
+        and not on Leopard. Call WebInspector.elementDragStart.
+        (WebInspector.toolbarDragEnd): Call WebInspector.elementDragEnd.
+        (WebInspector.toolbarDrag): When attached call setAttachedWindowHeight,
+        otherwise call moveByUnrestricted.
+
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.

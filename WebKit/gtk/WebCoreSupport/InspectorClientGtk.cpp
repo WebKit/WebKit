@@ -61,6 +61,11 @@ void InspectorClient::detachWindow()
     notImplemented();
 }
 
+void InspectorClient::setAttachedWindowHeight(unsigned height)
+{
+    notImplemented();
+}
+
 void InspectorClient::highlight(Node* node)
 {
     notImplemented();

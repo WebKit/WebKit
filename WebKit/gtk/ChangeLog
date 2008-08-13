@@ -1,3 +1,12 @@
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a stub for InspectorClient::setAttachedWindowHeight.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::setAttachedWindowHeight):
+        Call notImplemented().
+        * WebCoreSupport/InspectorClientGtk.h:
+
 2008-08-10  Alp Toker  <alp@nuanti.com>
 
         Remove leftover qmake/GTK+ build files.

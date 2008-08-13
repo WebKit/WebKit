@@ -48,6 +48,8 @@ public:
     virtual void attachWindow() = 0;
     virtual void detachWindow() = 0;
 
+    virtual void setAttachedWindowHeight(unsigned height) = 0;
+
     virtual void highlight(Node*) = 0;
     virtual void hideHighlight() = 0;
 

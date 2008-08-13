@@ -89,6 +89,7 @@ body.detached.platform-mac-leopard #toolbar {
 body.attached #toolbar {
     height: 34px;
     border-top: 1px solid rgb(100, 100, 100);
+    cursor: row-resize;
 }
 
 body.attached.inactive #toolbar {

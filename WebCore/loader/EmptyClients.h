@@ -395,6 +395,8 @@ public:
     virtual void attachWindow() {};
     virtual void detachWindow() {};
 
+    virtual void setAttachedWindowHeight(unsigned) {};
+
     virtual void highlight(Node*) {};
     virtual void hideHighlight() {};
     virtual void inspectedURLChanged(const String& newURL) {};

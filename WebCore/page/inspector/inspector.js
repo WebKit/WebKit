@@ -343,8 +343,7 @@ WebInspector.loaded = function()
     var searchField = document.getElementById("search");
     searchField.addEventListener("keyup", this.performSearch.bind(this), false);
 
-    if (platform === "mac-leopard")
-        document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
+    document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
 
     InspectorController.loaded();
 }
@@ -583,7 +582,7 @@ WebInspector.toggleAttach = function()
 
 WebInspector.toolbarDragStart = function(event)
 {
-    if (WebInspector.attached)
+    if (!WebInspector.attached && InspectorController.platform() !== "mac-leopard")
         return;
 
     var target = event.target;
@@ -597,39 +596,38 @@ WebInspector.toolbarDragStart = function(event)
     toolbar.lastScreenX = event.screenX;
     toolbar.lastScreenY = event.screenY;
 
-    document.addEventListener("mousemove", WebInspector.toolbarDrag, true);
-    document.addEventListener("mouseup", WebInspector.toolbarDragEnd, true);
-    document.body.style.cursor = "default";
-
-    event.preventDefault();
+    WebInspector.elementDragStart(toolbar, WebInspector.toolbarDrag, WebInspector.toolbarDragEnd, event, (WebInspector.attached ? "row-resize" : "default"));
 }
 
 WebInspector.toolbarDragEnd = function(event)
 {
     var toolbar = document.getElementById("toolbar");
+
+    WebInspector.elementDragEnd(event);
+
     delete toolbar.lastScreenX;
     delete toolbar.lastScreenY;
-
-    document.removeEventListener("mousemove", WebInspector.toolbarDrag, true);
-    document.removeEventListener("mouseup", WebInspector.toolbarDragEnd, true);
-    document.body.style.removeProperty("cursor");
-
-    event.preventDefault();
 }
 
 WebInspector.toolbarDrag = function(event)
 {
     var toolbar = document.getElementById("toolbar");
 
-    var x = event.screenX - toolbar.lastScreenX;
-    var y = event.screenY - toolbar.lastScreenY;
+    if (WebInspector.attached) {
+        var height = window.innerHeight - (event.screenY - toolbar.lastScreenY);
+
+        InspectorController.setAttachedWindowHeight(height);
+    } else {
+        var x = event.screenX - toolbar.lastScreenX;
+        var y = event.screenY - toolbar.lastScreenY;
+
+        // We cannot call window.moveBy here because it restricts the movement
+        // of the window at the edges.
+        InspectorController.moveByUnrestricted(x, y);
+    }
 
     toolbar.lastScreenX = event.screenX;
     toolbar.lastScreenY = event.screenY;
-
-    // We cannot call window.moveBy here because it restricts the movement of the window
-    // at the edges.
-    InspectorController.moveByUnrestricted(x, y);
 
     event.preventDefault();
 }

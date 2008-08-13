@@ -1,3 +1,11 @@
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
+        Add a stub for InspectorClient::setAttachedWindowHeight.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::setAttachedWindowHeight): Add a FIXME to implement this.
+        * WebCoreSupport/WebInspectorClient.h:
+
 2008-08-12  Adam Roben  <aroben@apple.com>
 
         Export WTFLog in Debug builds
