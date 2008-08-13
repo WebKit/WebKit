@@ -2,6 +2,18 @@
 
         Reviewed by Simon.
 
+        Use full-page zoom in QtLauncher.
+
+        * QtLauncher/main.cpp:
+        (MainWindow::zoomIn):
+        (MainWindow::zoomOut):
+        (MainWindow::resetZoom):
+        (MainWindow::setupUI):
+
+2008-08-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
         Fix linking with QtWebKit.
 
         * Api/qwebframe.h: remove non-existing function/property.

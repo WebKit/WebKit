@@ -132,7 +132,7 @@ protected slots:
         if (i < zoomLevels.count() - 1)
             currentZoom = zoomLevels[i + 1];
 
-        view->setTextSizeMultiplier(qreal(currentZoom) / 100.0);
+        view->setZoomFactor(qreal(currentZoom)/100.0);
     }
 
     void zoomOut() {
@@ -141,12 +141,18 @@ protected slots:
         if (i > 0)
             currentZoom = zoomLevels[i - 1];
 
-        view->setTextSizeMultiplier(qreal(currentZoom) / 100.0);
+        view->setZoomFactor(qreal(currentZoom)/100.0);
     }
 
-    void resetZoom() {
-        currentZoom = 100;
-        view->setTextSizeMultiplier(1.0);
+    void resetZoom()
+    {
+       currentZoom = 100;
+       view->setZoomFactor(1.0);
+    }
+
+    void toggleZoomTextOnly(bool b)
+    {
+        view->page()->settings()->setAttribute(QWebSettings::ZoomTextOnly, b);
     }
 
     void print() {
@@ -224,6 +230,9 @@ private:
         QAction *zoomIn = viewMenu->addAction("Zoom &In", this, SLOT(zoomIn()));
         QAction *zoomOut = viewMenu->addAction("Zoom &Out", this, SLOT(zoomOut()));
         QAction *resetZoom = viewMenu->addAction("Reset Zoom", this, SLOT(resetZoom()));
+        QAction *zoomTextOnly = viewMenu->addAction("Zoom Text Only", this, SLOT(toggleZoomTextOnly(bool)));
+        zoomTextOnly->setCheckable(true);
+        zoomTextOnly->setChecked(false);
         viewMenu->addSeparator();
         viewMenu->addAction("Dump HTML", this, SLOT(dumpHtml()));
 
