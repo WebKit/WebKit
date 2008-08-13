@@ -1,3 +1,14 @@
+2008-08-13  Ariya Hidayat  <ariya.hidayat@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix Ctrl+Y to work again when editing text in contextEditable mode.
+
+        This fixes regression in LayoutTests/editing/pasteboard/emacs-cntl-y-001.html
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleKeyboardEvent):
+
 2008-08-13  Thiago Macieira  <tjmaciei@trolltech.com>
 
         Reviewed by Simon.
