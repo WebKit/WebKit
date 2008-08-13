@@ -48,7 +48,8 @@ class QWEBKIT_EXPORT QWebView : public QWidget
     Q_PROPERTY(QString selectedText READ selectedText)
     Q_PROPERTY(bool modified READ isModified)
     //Q_PROPERTY(Qt::TextInteractionFlags textInteractionFlags READ textInteractionFlags WRITE setTextInteractionFlags)
-    Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier)
+    Q_PROPERTY(qreal textSizeMultiplier READ textSizeMultiplier WRITE setTextSizeMultiplier DESIGNABLE false)
+    Q_PROPERTY(qreal zoomFactor READ zoomFactor WRITE setZoomFactor)
 public:
     explicit QWebView(QWidget *parent = 0);
     virtual ~QWebView();
@@ -91,6 +92,9 @@ public:
     QVariant inputMethodQuery(Qt::InputMethodQuery property) const;
 
     QSize sizeHint() const;
+
+    qreal zoomFactor() const;
+    void setZoomFactor(qreal factor);
 
     void setTextSizeMultiplier(qreal factor);
     qreal textSizeMultiplier() const;

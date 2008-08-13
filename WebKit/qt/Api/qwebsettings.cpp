@@ -155,6 +155,10 @@ void QWebSettingsPrivate::apply()
 
         QUrl location = !userStyleSheetLocation.isEmpty() ? userStyleSheetLocation : global->userStyleSheetLocation;
         settings->setUserStyleSheetLocation(WebCore::KURL(location));
+
+        value = attributes.value(QWebSettings::ZoomTextOnly,
+                                 global->attributes.value(QWebSettings::ZoomTextOnly));
+        settings->setZoomsTextOnly(value);
     } else {
         QList<QWebSettingsPrivate *> settings = *::allSettings();
         for (int i = 0; i < settings.count(); ++i)
@@ -260,6 +264,8 @@ QWebSettings *QWebSettings::globalSettings()
     which shows the WebKit WebInspector for web site debugging.
     \value LinksIncludedInFocusChain Specifies whether hyperlinks should be
         included in the keyboard focus chain.
+    \value ZoomTextOnly Specifies whether the zoom factor on a frame applies to
+        only the text or all content.
 */
 
 /*!
@@ -284,6 +290,7 @@ QWebSettings::QWebSettings()
     d->attributes.insert(QWebSettings::AutoLoadImages, true);
     d->attributes.insert(QWebSettings::JavascriptEnabled, true);
     d->attributes.insert(QWebSettings::LinksIncludedInFocusChain, true);
+    d->attributes.insert(QWebSettings::ZoomTextOnly, false);
 }
 
 /*!

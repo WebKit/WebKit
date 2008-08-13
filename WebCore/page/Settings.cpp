@@ -78,6 +78,7 @@ Settings::Settings(Page* page)
     , m_offlineWebApplicationCacheEnabled(false)
     , m_rangeMutationDisabledForOldAppleMail(false)
     , m_shouldPaintCustomScrollbars(false)
+    , m_zoomsTextOnly(false)
     , m_enforceCSSMIMETypeInStrictMode(true)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

@@ -473,8 +473,31 @@ QSize QWebView::sizeHint() const
 }
 
 /*!
+    \property QWebView::zoomFactor
+    \since 4.5
+    \brief the zoom factor for the view
+*/
+
+void QWebView::setZoomFactor(qreal factor)
+{
+    page()->mainFrame()->setZoomFactor(factor);
+}
+
+qreal QWebView::zoomFactor() const
+{
+    return page()->mainFrame()->zoomFactor();
+}
+
+/*!
   \property QWebView::textSizeMultiplier
   \brief the scaling factor for all text in the frame
+  \obsolete
+
+  Use setZoomFactor instead, in combination with the
+  ZoomTextOnly attribute in QWebSettings.
+
+  \note Setting this property also enables the
+  ZoomTextOnly attribute in QWebSettings.
 */
 
 void QWebView::setTextSizeMultiplier(qreal factor)

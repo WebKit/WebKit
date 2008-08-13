@@ -1,3 +1,12 @@
+2008-08-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Reviewed by Holger.
+
+        Initialize m_zoomsTextOnly in the Settings constructor.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+
 2008-08-13  Brad Hughes <bhughes@trolltech.com>
 
         Reviewed by Simon.
