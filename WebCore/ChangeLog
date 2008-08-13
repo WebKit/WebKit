@@ -1,3 +1,9 @@
+2008-08-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix for case-sensitive platforms, like Linux.
+
+        * WebCoreSources.bkl:
+
 2008-08-13  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Holger Freyther.
