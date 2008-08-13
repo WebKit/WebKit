@@ -1,3 +1,19 @@
+2008-08-12  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Add peephole optimisation to 'op_not... jfalse...' (eg. if(!...) )
+
+        This is a very slight win in sunspider, and a fairly substantial win
+        in hot code that does if(!...), etc.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::retrieveLastUnaryOp):
+        (KJS::CodeGenerator::rewindBinaryOp):
+        (KJS::CodeGenerator::rewindUnaryOp):
+        (KJS::CodeGenerator::emitJumpIfFalse):
+        * VM/CodeGenerator.h:
+
 2008-08-12  Dan Bernstein  <mitz@apple.com>
 
         - JavaScriptCore part of <rdar://problem/6121636>

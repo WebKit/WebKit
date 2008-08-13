@@ -325,7 +325,9 @@ namespace KJS {
     private:
         void emitOpcode(OpcodeID);
         void retrieveLastBinaryOp(int& dstIndex, int& src1Index, int& src2Index);
+        void retrieveLastUnaryOp(int& dstIndex, int& srcIndex);
         void rewindBinaryOp();
+        void rewindUnaryOp();
 
         PassRefPtr<LabelID> emitComplexJumpScopes(LabelID* target, ControlFlowContext* topScope, ControlFlowContext* bottomScope);
         struct JSValueHashTraits : HashTraits<JSValue*> {
