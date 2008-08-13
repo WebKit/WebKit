@@ -397,6 +397,11 @@ WebInspector.focusChanged = function(event)
     this.currentFocusElement = event.target;
 }
 
+WebInspector.setAttachedWindow = function(attached)
+{
+    this.attached = attached;
+}
+
 WebInspector.close = function(event)
 {
     InspectorController.closeWindow();

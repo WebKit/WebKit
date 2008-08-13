@@ -1,3 +1,19 @@
+2008-08-13  Timothy Hatcher  <timothy@apple.com>
+
+        Remember the docked state of the Web Inspector, so it can be
+        reopened docked if it was last docked.
+
+        https://bugs.webkit.org/show_bug.cgi?id=14271
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController init]): Initialize _shouldAttach
+        to the value stored in the user defaults. If there has never
+        been a value stored, default to being attached.
+        (-[WebInspectorWindowController showWindow:]): Pass the attached
+        state to InspectorController::setWindowVisible.
+
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Remove the Inspector's WebView for the view hierarchy when closed

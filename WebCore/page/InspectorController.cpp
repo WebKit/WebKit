@@ -1210,7 +1210,7 @@ bool InspectorController::windowVisible()
     return m_windowVisible;
 }
 
-void InspectorController::setWindowVisible(bool visible)
+void InspectorController::setWindowVisible(bool visible, bool attached)
 {
     if (visible == m_windowVisible)
         return;
@@ -1221,6 +1221,7 @@ void InspectorController::setWindowVisible(bool visible)
         return;
 
     if (m_windowVisible) {
+        setAttachedWindow(attached);
         populateScriptObjects();
         if (m_nodeToFocus)
             focusNode();
@@ -1324,6 +1325,17 @@ void InspectorController::detachWindow()
     if (!enabled())
         return;
     m_client->detachWindow();
+}
+
+void InspectorController::setAttachedWindow(bool attached)
+{
+    if (!enabled() || !m_scriptContext || !m_scriptObject)
+        return;
+
+    JSValueRef attachedValue = JSValueMakeBoolean(m_scriptContext, attached);
+
+    JSValueRef exception = 0;
+    callFunction(m_scriptContext, m_scriptObject, "setAttachedWindow", 1, &attachedValue, exception);
 }
 
 void InspectorController::setAttachedWindowHeight(unsigned height)

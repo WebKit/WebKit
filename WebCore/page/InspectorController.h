@@ -105,7 +105,7 @@ public:
     void finishedProfiling(PassRefPtr<KJS::Profile>);
 
     bool windowVisible();
-    void setWindowVisible(bool visible = true);
+    void setWindowVisible(bool visible = true, bool attached = false);
 
     void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceID);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
@@ -119,6 +119,7 @@ public:
     void attachWindow();
     void detachWindow();
 
+    void setAttachedWindow(bool);
     void setAttachedWindowHeight(unsigned height);
 
     JSContextRef scriptContext() const { return m_scriptContext; };

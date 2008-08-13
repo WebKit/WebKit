@@ -1,3 +1,20 @@
+2008-08-13  Timothy Hatcher  <timothy@apple.com>
+
+        Changed the InspectorController so it can be notified when the
+        attached state of the Inspector changes in WebKit.
+
+        Reviewed by Kevin McCullough.
+
+        * WebCore.base.exp: Updated the symbol for setWindowVisible.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible): Added an attached argument,
+        that defaults to false.Call setAttachedWindow with the attached argument.
+        (WebCore::InspectorController::setAttachedWindow): Call the script version
+        of setAttachedWindow.
+        * page/InspectorController.h:
+        * page/inspector/inspector.js:
+        (WebInspector.setAttachedWindow): Set the attached property.
+
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Added a close button to the Inspector's toolbar when docked.

@@ -142,6 +142,7 @@ void WebInspectorClient::updateWindowTitle() const
 
 #pragma mark -
 
+#define WebKitInspectorAttachedKey @"WebKitInspectorAttached"
 #define WebKitInspectorAttachedViewHeightKey @"WebKitInspectorAttachedViewHeight"
 
 @implementation WebInspectorWindowController
@@ -174,6 +175,10 @@ void WebInspectorClient::updateWindowTitle() const
     [_webView setUIDelegate:self];
 
     [preferences release];
+
+    NSNumber *attached = [[NSUserDefaults standardUserDefaults] objectForKey:WebKitInspectorAttachedKey];
+    ASSERT(!attached || [attached isKindOfClass:[NSNumber class]]);
+    _shouldAttach = attached ? [attached boolValue] : YES;
 
     NSString *path = [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"inspector" ofType:@"html" inDirectory:@"inspector"];
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL fileURLWithPath:path]];
@@ -318,7 +323,7 @@ void WebInspectorClient::updateWindowTitle() const
         [super showWindow:nil];
     }
 
-    [_inspectedWebView page]->inspectorController()->setWindowVisible(true);
+    [_inspectedWebView page]->inspectorController()->setWindowVisible(true, _shouldAttach);
 }
 
 #pragma mark -
