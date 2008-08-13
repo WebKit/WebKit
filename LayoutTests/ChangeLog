@@ -1,3 +1,9 @@
+2008-08-12  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        * platform/mac/Skipped: Add fast/dom/cssTarget-crash.html to the skipped list.
+
 2008-08-12  Nikolas Zimmermann  <zimmermann@kde.org>
 
         Not reviewed.
