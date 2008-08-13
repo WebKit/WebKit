@@ -1820,5 +1820,3 @@ addExtraCompilerWithHeader(xpathbison)
     }
 }
 
-
-linux-icc*:QMAKE_CXXFLAGS_RELEASE ~= s/-O2/-O0/

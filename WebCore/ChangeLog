@@ -1,3 +1,14 @@
+2008-08-13  Brad Hughes <bhughes@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compiling of QtWebKit in release mode with the Intel C++ Compiler for Linux
+
+        The latest upgrade of the intel compiler allows us to compile all of
+        Qt with optimizations enabled (yay!).
+
+        * WebCore.pro:
+
 2008-08-13  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
 
         Reviewed by Simon.
