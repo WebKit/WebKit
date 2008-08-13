@@ -1,3 +1,19 @@
+2008-08-13  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=16881
+        [GTK] PlatformScreenGtk is unimplemented
+
+        Original patch by Christian Dywan.
+
+        * platform/gtk/PlatformScreenGtk.cpp:
+        (WebCore::screenDepth):
+        (WebCore::screenDepthPerComponent):
+        (WebCore::screenIsMonochrome):
+        (WebCore::screenRect):
+        (WebCore::screenAvailableRect):
+
 2008-08-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed by Holger Freyther.
