@@ -1,5 +1,20 @@
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Lars.
+
+        Fix QWebFrame::setHtml() not setting the new contents immediately.
+
+        Added a setter to the DocumentLoader to toggle the deferred loading of the main
+        resource when it comes from substitute data.
+
+        Disable deferred loading of the main resource when we have valid substitute data,
+        as used by QWebFrame::setHtml.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::download):
+
+2008-08-13  Simon Hausmann  <hausmann@webkit.org>
+
         Rubber-stamped by Holger.
 
         Fix QWebPage::isModified().

@@ -191,6 +191,7 @@ namespace WebCore {
 
         void subresourceLoaderFinishedLoadingOnePart(ResourceLoader*);
         
+        void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
         bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
