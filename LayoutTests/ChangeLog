@@ -1,3 +1,10 @@
+2008-08-13  Alexey Proskuryakov  <ap@webkit.org>
+
+        Removing http/tests/xmlhttprequest/readystatechange.html from Windows skipped list -
+        this test hasn't been failing locally for a long time.
+
+        * platform/win/Skipped:
+
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
