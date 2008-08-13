@@ -42,6 +42,7 @@
 #include "EventNames.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLInputElement.h"
 #include "HTMLTextAreaElement.h"
@@ -1932,17 +1933,21 @@ void Editor::setKillRingToYankedState()
 
 #endif
 
-Editor::Visibility Editor::rangeVisibility(Range* range) const
+bool Editor::insideVisibleArea(Range* range) const
 {
+    if (!range)
+        return true;
+    
     // Right now, we only check the visibility of a range for disconnected frames. For all other
     // frames, we assume visibility.
-    if (!m_frame->isDisconnected() || !range)
-        return InsideVisibleArea;
+    Frame* frame = m_frame->isDisconnected() ? m_frame : m_frame->tree()->top(true);
+    if (!frame->isDisconnected())
+        return true;
     
-    RenderPart* renderer = m_frame->ownerRenderer();
+    RenderPart* renderer = frame->ownerRenderer();
     RenderBlock* container = renderer->containingBlock();
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
-        return InsideVisibleArea;
+        return true;
 
     IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
     IntRect rectInFrameCoords = IntRect(renderer->xPos() * -1, renderer->yPos() * -1,
@@ -1950,50 +1955,63 @@ Editor::Visibility Editor::rangeVisibility(Range* range) const
     IntRect resultRect = range->boundingBox();
     
     if (rectInFrameCoords.contains(resultRect))
-        return InsideVisibleArea;
-    if (resultRect.y() < rectInFrameCoords.y())
-        return BeforeVisibleArea;
-    if (resultRect.y() > rectInFrameCoords.y())
-        return AfterVisibleArea;
-
-    ASSERT(resultRect.y() == rectInFrameCoords.y());
-    if (resultRect.x() < rectInFrameCoords.x())
-        return BeforeVisibleArea;
-    return AfterVisibleArea;
+        return true;
+    return false;
 }
 
-PassRefPtr<Range> Editor::firstVisibleRange(Range* startRange, const String& target, bool forward, bool caseFlag)
+PassRefPtr<Range> Editor::firstVisibleRange(const String& target, bool caseFlag)
 {
-    if (!forward)
-        return startRange;
-
-    RefPtr<Range> resultRange = startRange;
     RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    RefPtr<Range> resultRange = findPlainText(searchRange.get(), target, true, caseFlag);
     ExceptionCode ec = 0;
 
-    while (rangeVisibility(resultRange.get()) == BeforeVisibleArea) {
+    while (!insideVisibleArea(resultRange.get())) {
         searchRange->setStartAfter(resultRange->endContainer(), ec);
         if (searchRange->startContainer() == searchRange->endContainer())
-            return startRange;
-        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+            return 0;
+        resultRange = findPlainText(searchRange.get(), target, true, caseFlag);
     }
     
     return resultRange;
 }
 
-PassRefPtr<Range> Editor::lastVisibleRange(Range* startRange, const String& target, bool forward, bool caseFlag)
+PassRefPtr<Range> Editor::lastVisibleRange(const String& target, bool caseFlag)
 {
-    if (forward)
-        return startRange;
-
-    RefPtr<Range> resultRange = startRange;
     RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    RefPtr<Range> resultRange = findPlainText(searchRange.get(), target, false, caseFlag);
     ExceptionCode ec = 0;
 
-    while (rangeVisibility(resultRange.get()) == AfterVisibleArea) {
+    while (!insideVisibleArea(resultRange.get())) {
         searchRange->setEndBefore(resultRange->startContainer(), ec);
         if (searchRange->startContainer() == searchRange->endContainer())
-            return startRange;
+            return 0;
+        resultRange = findPlainText(searchRange.get(), target, false, caseFlag);
+    }
+    
+    return resultRange;
+}
+
+PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& target, bool forward, bool caseFlag)
+{
+    RefPtr<Range> resultRange = currentRange;
+    RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
+    ExceptionCode ec = 0;
+    
+    while (!insideVisibleArea(resultRange.get())) {
+        if (forward)
+            searchRange->setStartAfter(resultRange->endContainer(), ec);
+        else
+            searchRange->setEndBefore(resultRange->startContainer(), ec);
+
+        // If we have made it to the beginning or the end of the document, then either there is no search result
+        // or we have to wrap around to find it.
+        if (resultRange->startContainer()->isDocumentNode()) {
+            if (forward)
+                return firstVisibleRange(target, caseFlag);
+            else
+                return lastVisibleRange(target, caseFlag);
+        }
+        
         resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
     }
     

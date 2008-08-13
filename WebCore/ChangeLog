@@ -1,3 +1,30 @@
+2008-08-13  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/6141345>
+
+        This patch refines findString and markAllMatchesForText functions' 
+        interactions with disconnected frames. They no longer rely on 
+        knowing where a range is relative to the visible region and work 
+        with disconnected frames that contain frames.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea): Now returns a bool instead of 
+        the visiblity enum.
+        (WebCore::Editor::firstVisibleRange): This now returns the very 
+        first visible range in the document. It's no longer dependent on 
+        searching forward.
+        (WebCore::Editor::lastVisibleRange): This now returns the very last 
+        visible range in the document. It's no longer dependent on 
+        searching backwards.
+        (WebCore::Editor::nextVisibleRange): This returns the next visible 
+        range in the appropriate direction from the current range.
+        * editing/Editor.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::findString):
+        (WebCore::Frame::markAllMatchesForText):
+
 2008-08-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix for case-sensitive platforms, like Linux.
