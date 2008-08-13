@@ -26,6 +26,7 @@
 #include <qwebframe.h>
 #include <qwebhistory.h>
 #include <QRegExp>
+#include <QNetworkRequest>
 //TESTED_CLASS=
 //TESTED_FILES=
 
@@ -563,6 +564,7 @@ private slots:
     void progressSignal();
     void domCycles();
     void setHtml();
+    void ipv6HostEncoding();
 private:
     QString  evalJS(const QString&s) {
         // Convert an undefined return variant to the string "undefined"
@@ -2058,6 +2060,38 @@ void tst_QWebFrame::setHtml()
     QString html("<html><body><p>hello world</p></body></html>");
     m_view->page()->mainFrame()->setHtml(html);
     QCOMPARE(m_view->page()->mainFrame()->toHtml(), html);
+}
+
+class TestNetworkManager : public QNetworkAccessManager
+{
+public:
+    TestNetworkManager(QObject* parent) : QNetworkAccessManager(parent) {}
+
+    QList<QUrl> requestedUrls;
+
+protected:
+    virtual QNetworkReply* createRequest(Operation op, const QNetworkRequest &request, QIODevice* outgoingData) {
+        requestedUrls.append(request.url());
+        QNetworkRequest redirectedRequest = request;
+        redirectedRequest.setUrl(QUrl("data:text/html,<p>hello"));
+        return QNetworkAccessManager::createRequest(op, redirectedRequest, outgoingData);
+    }
+};
+
+void tst_QWebFrame::ipv6HostEncoding()
+{
+    TestNetworkManager* networkManager = new TestNetworkManager(m_page);
+    m_page->setNetworkAccessManager(networkManager);
+    networkManager->requestedUrls.clear();
+
+    QUrl baseUrl = QUrl::fromEncoded("http://[::1]/index.html");
+    m_view->setHtml("<p>Hi", baseUrl);
+    m_view->page()->mainFrame()->evaluateJavaScript("var r = new XMLHttpRequest();"
+            "r.open('GET', 'http://[::1]/test.xml', false);"
+            "r.send(null);"
+            );
+    QCOMPARE(networkManager->requestedUrls.count(), 1);
+    QCOMPARE(networkManager->requestedUrls.at(0), QUrl::fromEncoded("http://[::1]/test.xml"));
 }
 
 QTEST_MAIN(tst_QWebFrame)

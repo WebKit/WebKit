@@ -1,3 +1,21 @@
+2008-08-13  Thiago Macieira  <tjmaciei@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix encoding of [ and ] in the host part of the URL
+
+        Until QUrl is fixed (making QUrl's tolerant parser more tolerant), we have to
+        add this workaround to the QUrl <> WebCore::KURL conversion operator so that it
+        doesn't encode [ and ] when they are found in the host part. That is, the
+        following URL:
+        http://[::1]/
+        is valid and should not be reencoded to:
+        http://%5b::1%5d/
+
+        This change adds the automatic test for it.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+
 2008-08-12  Urs Wolfer  <uwolfer@kde.org>
 
         Reviewed by Simon.
