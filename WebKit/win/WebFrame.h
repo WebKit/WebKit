@@ -213,6 +213,10 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setIsDisconnected(
         /* [in] */ BOOL flag);
 
+    virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(
+        /* [in] */ RECT rect,
+        /* [in] */ OLE_HANDLE deviceContext);
+
     // IWebDocumentText
     virtual HRESULT STDMETHODCALLTYPE supportsTextEncoding( 
         /* [retval][out] */ BOOL* result);

@@ -4813,31 +4813,10 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     if (!deviceContext)
         return E_POINTER;
 
-    Frame* frame = m_page->mainFrame();
-    if (!frame)
+    if (!m_mainFrame)
         return E_FAIL;
 
-    FrameView* view = frame->view();
-    if (!view)
-        return E_FAIL;
-
-    // We can't paint with a layout still pending.
-    view->layoutIfNeededRecursive();
-
-    HDC dc = (HDC)(ULONG64)deviceContext;
-    GraphicsContext gc(dc);
-    gc.save();
-    LONG width = rect.right - rect.left;
-    LONG height = rect.bottom - rect.top;
-    FloatRect dirtyRect;
-    dirtyRect.setWidth(width);
-    dirtyRect.setHeight(height);
-    gc.clip(dirtyRect);
-    gc.translate(-rect.left, -rect.top);
-    frame->paint(&gc, rect);
-    gc.restore();
-
-    return S_OK;
+    return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
 
 bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const

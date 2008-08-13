@@ -1,3 +1,22 @@
+2008-08-13  Ada Chan  <adachan@apple.com>
+
+        Implemented DOMHTMLElement::idName() and WebFrame::frameElement().
+        Added IWebFrame::paintDocumentRectToContext() so we can paint a frame's
+        content into a device context.  Changed WebView::paintDocumentRectToContext()
+        to call that WebFrame method.
+
+        Reviewed by Adam Roben.
+
+        * DOMHTMLClasses.cpp:
+        (DOMHTMLElement::idName):
+        * Interfaces/IWebFramePrivate.idl:
+        * WebFrame.cpp:
+        (WebFrame::paintDocumentRectToContext):
+        (WebFrame::frameElement):
+        * WebFrame.h:
+        * WebView.cpp:
+        (WebView::paintDocumentRectToContext):
+
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Add a stub for InspectorClient::setAttachedWindowHeight.

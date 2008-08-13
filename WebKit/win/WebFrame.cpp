@@ -32,6 +32,7 @@
 #include "COMPropertyBag.h"
 #include "DefaultPolicyDelegate.h"
 #include "DOMCoreClasses.h"
+#include "HTMLFrameOwnerElement.h"
 #include "MarshallingHelpers.h"
 #include "WebActionPropertyBag.h"
 #include "WebChromeClient.h"
@@ -284,6 +285,37 @@ HRESULT STDMETHODCALLTYPE WebFrame::setIsDisconnected(
     return E_FAIL;
 }
 
+HRESULT STDMETHODCALLTYPE WebFrame::paintDocumentRectToContext(
+    /* [in] */ RECT rect,
+    /* [in] */ OLE_HANDLE deviceContext)
+{
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    FrameView* view = coreFrame->view();
+    if (!view)
+        return E_FAIL;
+
+    // We can't paint with a layout still pending.
+    view->layoutIfNeededRecursive();
+
+    HDC dc = (HDC)(ULONG64)deviceContext;
+    GraphicsContext gc(dc);
+    gc.save();
+    LONG width = rect.right - rect.left;
+    LONG height = rect.bottom - rect.top;
+    FloatRect dirtyRect;
+    dirtyRect.setWidth(width);
+    dirtyRect.setHeight(height);
+    gc.clip(dirtyRect);
+    gc.translate(-rect.left, -rect.top);
+    coreFrame->paint(&gc, rect);
+    gc.restore();
+
+    return S_OK;
+}
+
 // IUnknown -------------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE WebFrame::QueryInterface(REFIID riid, void** ppvObject)
@@ -376,10 +408,21 @@ HRESULT STDMETHODCALLTYPE WebFrame::DOMDocument(
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::frameElement( 
-    /* [retval][out] */ IDOMHTMLElement** /*frameElement*/)
+    /* [retval][out] */ IDOMHTMLElement** frameElement)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!frameElement)
+        return E_POINTER;
+
+    *frameElement = 0;
+    Frame* coreFrame = core(this);
+    if (!coreFrame)
+        return E_FAIL;
+
+    COMPtr<IDOMElement> domElement(AdoptCOM, DOMElement::createInstance(coreFrame->ownerElement()));
+    COMPtr<IDOMHTMLElement> htmlElement(Query, domElement);
+    if (!htmlElement)
+        return E_FAIL;
+    return htmlElement.copyRefTo(frameElement);
 }
 
 HRESULT STDMETHODCALLTYPE WebFrame::currentForm( 

@@ -79,4 +79,6 @@ interface IWebFramePrivate : IUnknown
     HRESULT pendingFrameUnloadEventCount([out, retval] UINT* result);
 
     HRESULT fetchApplicationIcon([in] IWebIconFetcherDelegate* delegate, [out, retval] IWebIconFetcher** result);
+
+    HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE deviceContext);
 }

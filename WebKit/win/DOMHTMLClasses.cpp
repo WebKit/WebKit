@@ -352,10 +352,15 @@ HRESULT STDMETHODCALLTYPE DOMHTMLElement::QueryInterface(REFIID riid, void** ppv
 // DOMHTMLElement -------------------------------------------------------------
 
 HRESULT STDMETHODCALLTYPE DOMHTMLElement::idName( 
-        /* [retval][out] */ BSTR* /*result*/)
+        /* [retval][out] */ BSTR* result)
 {
-    ASSERT_NOT_REACHED();
-    return E_NOTIMPL;
+    if (!result)
+        return E_POINTER;
+
+    ASSERT(m_element && m_element->isHTMLElement());
+    String idString = static_cast<HTMLElement*>(m_element)->id();
+    *result = BString(idString).release();
+    return S_OK;
 }
     
 HRESULT STDMETHODCALLTYPE DOMHTMLElement::setIdName( 
