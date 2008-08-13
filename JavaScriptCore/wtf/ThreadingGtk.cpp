@@ -49,15 +49,16 @@ static Mutex& threadMapMutex()
 
 void initializeThreading()
 {
-    if (!g_thread_supported()) {
+    if (!g_thread_supported())
         g_thread_init(NULL);
-        ASSERT(!atomicallyInitializedStaticMutex);
+    ASSERT(g_thread_supported());
+
+    if (!atomicallyInitializedStaticMutex) {
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         wtf_random_init();
         mainThreadIdentifier = currentThread();
     }
-    ASSERT(g_thread_supported());
 }
 
 static HashMap<ThreadIdentifier, GThread*>& threadMap()
