@@ -313,6 +313,19 @@ const UChar* String::charactersWithNullTermination()
 
 String String::format(const char *format, ...)
 {
+#if PLATFORM(QT)
+    // Use QString::vsprintf to avoid the locale dependent formatting of vsnprintf.
+    // https://bugs.webkit.org/show_bug.cgi?id=18994
+    va_list args;
+    va_start(args, format);
+
+    QString buffer;
+    buffer.vsprintf(format, args);
+
+    va_end(args);
+
+    return buffer;
+#else
     va_list args;
     va_start(args, format);
 
@@ -347,6 +360,7 @@ String String::format(const char *format, ...)
     va_end(args);
     
     return StringImpl::create(buffer.data(), len);
+#endif
 }
 
 String String::number(int n)

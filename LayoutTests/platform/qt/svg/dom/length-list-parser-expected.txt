@@ -1,0 +1,212 @@
+This test fuzzes the length list parser with semi-random attribute values and dumps the results of any values that parse successfully.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Parsed as 4 length(s) [ 0, 0, 63, 7 ]: e,-.++979,63e,7
+Parsed as 3 length(s) [ 0, nan, 8796 ]: -. e809534-e8	,8796+
+Parsed as 2 length(s) [ 0, -38 ]: e7++ -38e
+Parsed as 3 length(s) [ 4, 0.252, 9 ]: 4	,.252	+9
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 5 length(s) [ 0, nan, 98, 0, 68 ]: -	e775+,98 ee 68
+Parsed as 6 length(s) [ 9.46328e+08, 2, 12, 15, 4, 0.58 ]: 946328317e. 2	+12+.601+8+9+08,15	4, .58
+Parsed as 3 length(s) [ 525, 0, 252020 ]: 525 ,.+ 252020-
+Parsed as 4 length(s) [ 7.23607e+06, 0, nan, 3131 ]: 7236071+672,.,+e944-.005 3131+.9
+Parsed as 1 length(s) [ 172 ]: 172e
+Parsed as 4 length(s) [ 3, 17, 6, 8 ]: 003-4-572e, 17e0-353125 6	8
+Parsed as 4 length(s) [ 919, 0, 20, 82 ]: 919+5.	+0e 20+ ,82
+Parsed as 5 length(s) [ 0, 91, 0, 1, 7e+06 ]: .+85	91	0 1+1e5-6,7e6-
+Parsed as 2 length(s) [ 9036, 6 ]: 9036 6
+Parsed as 5 length(s) [ -2, 7, 2, 0, 9 ]: -2 7 2+8162 -0 9
+Parsed as 9 length(s) [ 2, 8, 684, 0, 0, 9, 3, 0, 63 ]: 2 8+0,684 0	e 9++	3+6e,-.++979,63
+Parsed as 6 length(s) [ 62, 0, 3.78695e+08, 0.252, 91, 6 ]: 62- +		378694944	,.252	+91,6
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 5 length(s) [ 0, nan, 98, 0, 68 ]: -	e775+,98 ee 68
+Parsed as 6 length(s) [ 9.46328e+08, 2, 12, 15, 4, 0.58 ]: 946328317e. 2	+12+.601+8+9+08,15	4, .58
+Parsed as 3 length(s) [ 525, 0, 252020 ]: 525 ,.+ 252020-
+Parsed as 4 length(s) [ 7.23607e+06, 0, nan, 3131 ]: 7236071+672,.,+e944-.005 3131+.9
+Parsed as 1 length(s) [ 172 ]: 172e
+Parsed as 4 length(s) [ 3, 17, 6, 8 ]: 003-4-572e, 17e0-353125 6	8
+Parsed as 4 length(s) [ 919, 0, 20, 82 ]: 919+5.	+0e 20+ ,82
+Parsed as 5 length(s) [ 0, 91, 0, 1, 7e+06 ]: .+85	91	0 1+1e5-6,7e6-
+Parsed as 2 length(s) [ 9036, 6 ]: 9036 6
+Parsed as 5 length(s) [ -2, 7, 2, 0, 9 ]: -2 7 2+8162 -0 9
+Parsed as 9 length(s) [ 2, 8, 684, 0, 0, 9, 3, 0, 63 ]: 2 8+0,684 0	e 9++	3+6e,-.++979,63
+Parsed as 6 length(s) [ 62, 0, 3.78695e+08, 0.252, 91, 6 ]: 62- +		378694944	,.252	+91,6
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 5 length(s) [ 0, nan, 98, 0, 68 ]: -	e775+,98 ee 68
+Parsed as 6 length(s) [ 9.46328e+08, 2, 12, 15, 4, 0.58 ]: 946328317e. 2	+12+.601+8+9+08,15	4, .58
+Parsed as 3 length(s) [ 525, 0, 252020 ]: 525 ,.+ 252020-
+Parsed as 4 length(s) [ 7.23607e+06, 0, nan, 3131 ]: 7236071+672,.,+e944-.005 3131+.9
+Parsed as 1 length(s) [ 172 ]: 172e
+Parsed as 4 length(s) [ 3, 17, 6, 8 ]: 003-4-572e, 17e0-353125 6	8
+Parsed as 4 length(s) [ 919, 0, 20, 82 ]: 919+5.	+0e 20+ ,82
+Parsed as 5 length(s) [ 0, 91, 0, 1, 7e+06 ]: .+85	91	0 1+1e5-6,7e6-
+Parsed as 2 length(s) [ 9036, 6 ]: 9036 6
+Parsed as 5 length(s) [ -2, 7, 2, 0, 9 ]: -2 7 2+8162 -0 9
+Parsed as 9 length(s) [ 2, 8, 684, 0, 0, 9, 3, 0, 63 ]: 2 8+0,684 0	e 9++	3+6e,-.++979,63
+Parsed as 6 length(s) [ 62, 0, 3.78695e+08, 0.252, 91, 6 ]: 62- +		378694944	,.252	+91,6
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 5 length(s) [ 0, nan, 98, 0, 68 ]: -	e775+,98 ee 68
+Parsed as 6 length(s) [ 9.46328e+08, 2, 12, 15, 4, 0.58 ]: 946328317e. 2	+12+.601+8+9+08,15	4, .58
+Parsed as 3 length(s) [ 525, 0, 252020 ]: 525 ,.+ 252020-
+Parsed as 4 length(s) [ 7.23607e+06, 0, nan, 3131 ]: 7236071+672,.,+e944-.005 3131+.9
+Parsed as 1 length(s) [ 172 ]: 172e
+Parsed as 4 length(s) [ 3, 17, 6, 8 ]: 003-4-572e, 17e0-353125 6	8
+Parsed as 4 length(s) [ 919, 0, 20, 82 ]: 919+5.	+0e 20+ ,82
+Parsed as 5 length(s) [ 0, 91, 0, 1, 7e+06 ]: .+85	91	0 1+1e5-6,7e6-
+Parsed as 2 length(s) [ 9036, 6 ]: 9036 6
+Parsed as 5 length(s) [ -2, 7, 2, 0, 9 ]: -2 7 2+8162 -0 9
+Parsed as 9 length(s) [ 2, 8, 684, 0, 0, 9, 3, 0, 63 ]: 2 8+0,684 0	e 9++	3+6e,-.++979,63
+Parsed as 6 length(s) [ 62, 0, 3.78695e+08, 0.252, 91, 6 ]: 62- +		378694944	,.252	+91,6
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 5 length(s) [ 0, nan, 98, 0, 68 ]: -	e775+,98 ee 68
+Parsed as 6 length(s) [ 9.46328e+08, 2, 12, 15, 4, 0.58 ]: 946328317e. 2	+12+.601+8+9+08,15	4, .58
+Parsed as 3 length(s) [ 525, 0, 252020 ]: 525 ,.+ 252020-
+Parsed as 4 length(s) [ 7.23607e+06, 0, nan, 3131 ]: 7236071+672,.,+e944-.005 3131+.9
+Parsed as 1 length(s) [ 172 ]: 172e
+Parsed as 4 length(s) [ 3, 17, 6, 8 ]: 003-4-572e, 17e0-353125 6	8
+Parsed as 4 length(s) [ 919, 0, 20, 82 ]: 919+5.	+0e 20+ ,82
+Parsed as 5 length(s) [ 0, 91, 0, 1, 7e+06 ]: .+85	91	0 1+1e5-6,7e6-
+Parsed as 2 length(s) [ 9036, 6 ]: 9036 6
+Parsed as 5 length(s) [ -2, 7, 2, 0, 9 ]: -2 7 2+8162 -0 9
+Parsed as 9 length(s) [ 2, 8, 684, 0, 0, 9, 3, 0, 63 ]: 2 8+0,684 0	e 9++	3+6e,-.++979,63
+Parsed as 6 length(s) [ 62, 0, 3.78695e+08, 0.252, 91, 6 ]: 62- +		378694944	,.252	+91,6
+Parsed as 2 length(s) [ 0, 9.95301e+06 ]: e 9953010
+Parsed as 5 length(s) [ 9.08, 0, 9, 468, 0 ]: 9.08.848e2898614e85 e-2-81709	9 468 ..9
+Parsed as 1 length(s) [ 0 ]: e.+63
+Parsed as 3 length(s) [ 0, 0, inf ]: ---49 0+,8e962
+Parsed as 4 length(s) [ 787, 3.01, 0, 0 ]: 787 3.01, .0,e
+Parsed as 2 length(s) [ 0, 892 ]: ..7.. 892-53
+Parsed as 2 length(s) [ 7, 14 ]: 7ee	14+
+Parsed as 5 length(s) [ 0, 0, 593, 7.48321e+12, 8.3385e+22 ]: -e.	e 593.e,0748321.1e7 083385e18
+Parsed as 9 length(s) [ 0, 5, 4, 29, -8, 1, 57, 5, 19 ]: -e2+2+0 5 4e 29	-8 1 57 05,19
+Parsed as 6 length(s) [ 4, 45, -685, 0, 26, 0 ]: 4,45	-685 +	26.e   +e4-
+Parsed as 3 length(s) [ 0, 6.41239e+08, 0 ]: 0+,9231173915+,--2-36e777470
+Parsed as 1 length(s) [ 89.517 ]: 89.517.70410652,,572-970	2-. 39
+Parsed as 3 length(s) [ 0, inf, 0 ]: --48 ,8538.7e+63e9  .-e61-1-.e236
+Parsed as 2 length(s) [ 823, 1 ]: 823,1
+Parsed as 3 length(s) [ -0.267, 33, 0 ]: -00.267.7 33	e5
+Parsed as 6 length(s) [ 768, 0, 8.47866e+08, 0, 0, 21 ]: 768-7 e ,847866488-446..54,+,0	 21
+Parsed as 2 length(s) [ 2921, -96 ]: 2921. -96.+.. 
+Parsed as 7 length(s) [ 42, 9, 624, 0, 9, 0, 7 ]: 42	9 624	0. 9 e47e52147433	7	
+Parsed as 8 length(s) [ 3, 60746, 495, 60.49, 0, 3194, 0.192, 69 ]: 3 60746- 495	60.49 -+ 3194 .192,69-- 
+Parsed as 3 length(s) [ 489, 6.76966e+08, 2 ]: 0489e,676965885	+2
+Parsed as 6 length(s) [ 54, 858, 975, 0.33, 5, 0 ]: 54	858+0.7e4580611 975	.33e,5	-
+Parsed as 8 length(s) [ 0, 0, 9, 3, 589, -46, -5, inf ]: 0e1 e,9 3 589	-46+58	-5	1e68
+Parsed as 6 length(s) [ 0, 98, 52, 0.5675, 0.7812, 9 ]: +-799e,98, 52 .5675e,.7812+ ,9+
+Parsed as 1 length(s) [ 0 ]: 
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

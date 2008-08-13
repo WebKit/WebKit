@@ -1,5 +1,16 @@
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Holger.
+
+        Qt part of https://bugs.webkit.org/show_bug.cgi?id=18994
+
+        Make the formatting of String::format() locale independent through the use of QString::vsprintf.
+
+        * platform/text/String.cpp:
+        (WebCore::String::format):
+
+2008-08-13  Simon Hausmann  <hausmann@webkit.org>
+
         Reviewed by Lars.
 
         Fix QWebFrame::setHtml() not setting the new contents immediately.
