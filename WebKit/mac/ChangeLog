@@ -1,5 +1,18 @@
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
+        Remove the Inspector's WebView for the view hierarchy when closed
+        while attached. This prevents it from showing in the background
+        while the page changes.
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController close:]): Call removeFromSuperview
+        on the Inspector's WebView if it isn't attached, so it will not
+        be visible when navigating pages while closed.
+
+2008-08-12  Timothy Hatcher  <timothy@apple.com>
+
         Make the docked Web Inspector resizable.
 
         https://bugs.webkit.org/show_bug.cgi?id=14282

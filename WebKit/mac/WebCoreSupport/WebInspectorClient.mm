@@ -269,6 +269,8 @@ void WebInspectorClient::updateWindowTitle() const
         if ([_inspectedWebView _isClosed])
             return;
 
+        [_webView removeFromSuperview];
+
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
 
         NSRect frameViewRect = [frameView frame];
