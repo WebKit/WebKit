@@ -1,3 +1,15 @@
+2008-08-13  Prasanth Ullattil  <prasanth.ullattil@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix QtWebKit not displaying content on 403 HTTP responses
+
+        Just like with 404 responses also display content with 403, as
+        used by http://audiio.ejamming.proteus-tech.com/audiio/profile/original_signup/
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::finish):
+
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
