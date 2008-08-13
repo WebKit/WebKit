@@ -1,3 +1,22 @@
+2008-08-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Holger.
+
+        Fix QWebPage::isModified().
+
+        isModified() would return true after loading a new page or it would continue to
+        return true after undoing modifications. Fix this by eliminating the
+        QWebPagePrivate::modified variable and use the undoStack's canUndo() property
+        instead.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19252
+
+        * Api/qwebpage.cpp:
+        (QWebPage::action):
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedContents):
+
 2008-08-13  David Boddie  <dboddie@trolltech.com>
 
         Reviewed by Simon.

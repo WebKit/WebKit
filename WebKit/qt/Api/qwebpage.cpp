@@ -211,7 +211,6 @@ static inline Qt::DropAction dragOpToDropAction(unsigned actions)
 QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     : q(qq)
     , view(0)
-    , modified(false)
     , viewportSize(QSize(0,0))
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
@@ -1651,7 +1650,9 @@ QAction *QWebPage::action(WebAction action) const
 */
 bool QWebPage::isModified() const
 {
-    return d->modified;
+    if (!d->undoStack)
+        return false;
+    return d->undoStack->canUndo();
 }
 
 /*!

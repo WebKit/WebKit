@@ -204,8 +204,6 @@ void EditorClientQt::respondToChangedContents()
 {
     if (dumpEditingCallbacks)
         printf("EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification\n");
-    m_page->d->modified = true;
-
     m_page->d->updateEditorActions();
 }
 

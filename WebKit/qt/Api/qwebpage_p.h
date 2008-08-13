@@ -117,8 +117,6 @@ public:
     QUndoStack *undoStack;
     QWidget *view;
 
-    bool modified;
-
     bool insideOpenCall;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
