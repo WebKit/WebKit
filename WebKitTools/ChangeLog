@@ -1,3 +1,16 @@
+2008-08-13  Simon Hausmann  <hausmann@webkit.org>
+
+        Rubber-stamped by Holger.
+
+        Revert r31585 and disable http tests for the Qt build again unless
+        explicitly enabled.
+
+        Running the http tests unfortunately currently still triggers
+        failures in non-http tests due to side-effects. Disable them by default for
+        now, for more reliable results.
+
+        * Scripts/run-webkit-tests:
+
 2008-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed (and updated) by Alp Toker.
