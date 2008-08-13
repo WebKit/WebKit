@@ -1,3 +1,16 @@
+2008-08-13  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Reviewed by Holger Freyther.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20318
+        SharedTimerGtk should use G_PRIORITY_DEFAULT_IDLE for g_idle_add
+
+        g_idle_add is the same as g_idle_add_full with a priority of
+        G_PRIORITY_DEFAULT_IDLE, so we can safely use that.
+
+        * platform/gtk/SharedTimerGtk.cpp:
+        (WebCore::setSharedTimerFireTime):
+
 2008-08-13  Timothy Hatcher  <timothy@apple.com>
 
         Changed the InspectorController so it can be notified when the
