@@ -897,7 +897,8 @@ QWebFrame* QWebFramePrivate::kit(WebCore::Frame* coreFrame)
 /*!
     \fn void QWebFrame::urlChanged(const QUrl &url)
 
-    This signal is emitted when the \a url of the frame changes.
+    This signal is emitted with the URL of the frame when the frame's title is
+    received. The new URL is specified by \a url.
 
     \sa url()
 */
