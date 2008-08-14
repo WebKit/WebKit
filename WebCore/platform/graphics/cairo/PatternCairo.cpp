@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,41 +26,21 @@
 #include "config.h"
 #include "CanvasPattern.h"
 
-#include "ExceptionCode.h"
-#include "PlatformString.h"
+#include <cairo.h>
 
 namespace WebCore {
 
-void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
+cairo_pattern_t* CanvasPattern::createPlatformPattern(const AffineTransform& patternTransform) const
 {
-    ec = 0;
-    if (type.isEmpty() || type == "repeat") {
-        repeatX = true;
-        repeatY = true;
-        return;
-    }
-    if (type == "no-repeat") {
-        repeatX = false;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-x") {
-        repeatX = true;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-y") {
-        repeatX = false;
-        repeatY = true;
-        return;
-    }
-    ec = SYNTAX_ERR;
-}
+    cairo_surface_t* surface = image()->nativeImageForCurrentFrame();
+    if (!surface)
+        return 0;
 
-CanvasPattern::CanvasPattern(Image* image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(image, repeatX, repeatY)
-    , m_originClean(originClean)
-{
+    cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface);
+    cairo_pattern_set_matrix(pattern, &patternTransform);
+    if (m_repeatX || m_repeatY)
+        cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
+    return pattern;
 }
 
 }

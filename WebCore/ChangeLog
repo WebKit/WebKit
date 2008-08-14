@@ -2,6 +2,45 @@
 
         Reviewed by Niko.
 
+        Split out a Pattern class from CanvasPattern
+        and remove all the Pattern-related #ifdefs
+        (This will break non-mac platforms!  I will fix them.)
+        https://bugs.webkit.org/show_bug.cgi?id=20351
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/CanvasPattern.cpp:
+        (WebCore::CanvasPattern::parseRepetitionType):
+        (WebCore::CanvasPattern::CanvasPattern):
+        * html/CanvasPattern.h:
+        (WebCore::CanvasPattern::create):
+        (WebCore::CanvasPattern::pattern):
+        (WebCore::CanvasPattern::originClean):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        (WebCore::CanvasRenderingContext2D::applyStrokePattern):
+        (WebCore::CanvasRenderingContext2D::applyFillPattern):
+        * html/CanvasRenderingContext2D.h:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::createHistoryItem):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        (WebCore::GraphicsContext::applyFillPattern):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Niko.
+
         Make Images RefCounted (and clean up callers)
         https://bugs.webkit.org/show_bug.cgi?id=20351
 

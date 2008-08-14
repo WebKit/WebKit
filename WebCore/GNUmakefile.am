@@ -1583,6 +1583,8 @@ webcore_sources += \
 	WebCore/platform/graphics/Path.h \
 	WebCore/platform/graphics/PathTraversalState.cpp \
 	WebCore/platform/graphics/PathTraversalState.h \
+	WebCore/platform/graphics/Pattern.cpp \
+	WebCore/platform/graphics/Pattern.h \
 	WebCore/platform/graphics/Pen.cpp \
 	WebCore/platform/graphics/Pen.h \
 	WebCore/platform/graphics/SegmentedFontData.cpp \
@@ -1860,6 +1862,7 @@ webcoregtk_sources += \
 	WebCore/platform/graphics/cairo/ImageCairo.cpp \
 	WebCore/platform/graphics/cairo/ImageSourceCairo.cpp \
 	WebCore/platform/graphics/cairo/PathCairo.cpp \
+	WebCore/platform/graphics/cairo/PatternCairo.cpp \
 	WebCore/platform/graphics/gtk/ColorGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCacheGtk.cpp \
 	WebCore/platform/graphics/gtk/FontCustomPlatformData.h \

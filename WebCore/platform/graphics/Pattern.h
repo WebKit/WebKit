@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,44 +24,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "CanvasPattern.h"
+#ifndef Pattern_h
+#define Pattern_h
 
-#include "ExceptionCode.h"
-#include "PlatformString.h"
+#include <wtf/Noncopyable.h>
+#include <wtf/RefPtr.h>
+
+#if PLATFORM(CG)
+typedef struct CGPattern* CGPatternRef;
+typedef CGPatternRef PlatformPatternPtr;
+#elif PLATFORM(CAIRO)
+#include <cairo.h>
+typedef cairo_pattern_t* PlatformPatternPtr;
+#elif PLATFORM(QT)
+#include <QBrush>
+typedef QBrush* PlatformPatternPtr;
+#endif
 
 namespace WebCore {
+    class AffineTransform;
+    class Image;
 
-void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
-{
-    ec = 0;
-    if (type.isEmpty() || type == "repeat") {
-        repeatX = true;
-        repeatY = true;
-        return;
-    }
-    if (type == "no-repeat") {
-        repeatX = false;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-x") {
-        repeatX = true;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-y") {
-        repeatX = false;
-        repeatY = true;
-        return;
-    }
-    ec = SYNTAX_ERR;
-}
+    class Pattern : Noncopyable {
+    public:
+        Pattern(Image*, bool repeatX, bool repeatY);
 
-CanvasPattern::CanvasPattern(Image* image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(image, repeatX, repeatY)
-    , m_originClean(originClean)
-{
-}
+        virtual ~Pattern();
+        
+        Image* tileImage() const { return m_tileImage.get(); }
 
-}
+        PlatformPatternPtr createPlatformPattern(const AffineTransform& patternTransform) const;
+
+    private:
+        RefPtr<Image> m_tileImage;
+        bool m_repeatX;
+        bool m_repeatY;
+    };
+
+} //namespace
+
+#endif

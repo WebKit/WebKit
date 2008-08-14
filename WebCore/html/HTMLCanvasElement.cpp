@@ -275,48 +275,4 @@ ImageBuffer* HTMLCanvasElement::buffer() const
     return m_imageBuffer.get();
 }
 
-#if PLATFORM(CG)
-
-CGImageRef HTMLCanvasElement::createPlatformImage() const
-{
-    GraphicsContext* context = drawingContext();
-    if (!context)
-        return 0;
-
-    CGContextRef contextRef = context->platformContext();
-    if (!contextRef)
-        return 0;
-
-    CGContextFlush(contextRef);
-
-    return CGBitmapContextCreateImage(contextRef);
-}
-
-#elif PLATFORM(QT)
-
-QPixmap HTMLCanvasElement::createPlatformImage() const
-{
-    if (!m_imageBuffer)
-        return QPixmap();
-    return *m_imageBuffer->pixmap();
-}
-
-#elif PLATFORM(CAIRO)
-
-cairo_surface_t* HTMLCanvasElement::createPlatformImage() const
-{
-    if (!m_imageBuffer)
-        return 0;
-
-    // Note that unlike CG, our returned image is not a copy or
-    // copy-on-write, but the original. This is fine, since it is only
-    // ever used as a source.
-
-    cairo_surface_flush(m_imageBuffer->surface());
-    cairo_surface_reference(m_imageBuffer->surface());
-    return m_imageBuffer->surface();
-}
-
-#endif
-
 }

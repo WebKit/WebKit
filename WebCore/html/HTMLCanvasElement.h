@@ -30,19 +30,6 @@
 #include "HTMLElement.h"
 #include "IntSize.h"
 
-#if PLATFORM(CG)
-// FIXME: CG-specific parts need to move to the platform directory.
-typedef struct CGContext* CGContextRef;
-typedef struct CGImage* CGImageRef;
-#elif PLATFORM(QT)
-QT_BEGIN_NAMESPACE
-class QPixmap;
-class QPainter;
-QT_END_NAMESPACE
-#elif PLATFORM(CAIRO)
-typedef struct _cairo_surface cairo_surface_t;
-#endif
-
 namespace WebCore {
 
 class CanvasRenderingContext2D;
@@ -105,15 +92,8 @@ public:
 
     GraphicsContext* drawingContext() const;
 
-    ImageBuffer* buffer() const; 
-#if PLATFORM(CG)
-    CGImageRef createPlatformImage() const;
-#elif PLATFORM(QT)
-    QPixmap createPlatformImage() const;
-#elif PLATFORM(CAIRO)
-    cairo_surface_t* createPlatformImage() const;
-#endif
-    
+    ImageBuffer* buffer() const;
+
     IntRect convertLogicalToDevice(const FloatRect&) const;
     IntSize convertLogicalToDevice(const FloatSize&) const;
     IntPoint convertLogicalToDevice(const FloatPoint&) const;

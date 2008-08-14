@@ -3893,6 +3893,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\Pattern.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\Pattern.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\PathTraversalState.cpp"
 					>
 				</File>
@@ -4709,6 +4717,26 @@
 					</File>
 					<File
 						RelativePath="..\platform\graphics\cg\PathCG.cpp"
+						>
+						<FileConfiguration
+							Name="Debug_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release_Cairo|Win32"
+							ExcludedFromBuild="true"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\cg\PatternCG.cpp"
 						>
 						<FileConfiguration
 							Name="Debug_Cairo|Win32"

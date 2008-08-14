@@ -495,6 +495,23 @@ IntPoint GraphicsContext::origin()
     return IntPoint(static_cast<int>(matrix.x0), static_cast<int>(matrix.y0));
 }
 
+void GraphicsContext::applyStrokePattern(const Pattern& pattern)
+{
+    cairo_pattern_t* platformPattern = pattern.createPlatformPattern(getCTM());
+    if (!platformPattern)
+        return;
+
+    cairo_set_source(platformContext(), platformPattern);
+    cairo_pattern_destroy(platformPattern);
+}
+
+void GraphicsContext::applyFillPattern(const Pattern& pattern)
+{
+    // The Cairo codepath doesn't seem to support separate stroke/fill?
+    // The code I refactored to create these methods was identical for Cairo
+    applyStrokePattern(pattern);
+}
+
 void GraphicsContext::setPlatformFillColor(const Color& col)
 {
     // FIXME: this is probably a no-op but I'm not sure

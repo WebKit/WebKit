@@ -195,8 +195,8 @@ namespace WebCore {
             bool m_appliedFillPattern;
             AffineTransform m_transform;
 #if PLATFORM(CG)
-            CGAffineTransform m_strokeStylePatternTransform;
-            CGAffineTransform m_fillStylePatternTransform;
+            AffineTransform m_strokeStylePatternTransform;
+            AffineTransform m_fillStylePatternTransform;
 #endif
         };
         Path m_path;

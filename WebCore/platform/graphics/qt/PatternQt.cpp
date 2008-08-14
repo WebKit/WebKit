@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,43 +24,18 @@
  */
 
 #include "config.h"
-#include "CanvasPattern.h"
+#include "Pattern.h"
 
-#include "ExceptionCode.h"
-#include "PlatformString.h"
+#include "AffineTransform.h"
+#include "GraphicsContext.h"
+#include "NotImplemented.h"
 
 namespace WebCore {
 
-void CanvasPattern::parseRepetitionType(const String& type, bool& repeatX, bool& repeatY, ExceptionCode& ec)
+QBrush* Pattern::createPlatformPattern(const AffineTransform& transform) const
 {
-    ec = 0;
-    if (type.isEmpty() || type == "repeat") {
-        repeatX = true;
-        repeatY = true;
-        return;
-    }
-    if (type == "no-repeat") {
-        repeatX = false;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-x") {
-        repeatX = true;
-        repeatY = false;
-        return;
-    }
-    if (type == "repeat-y") {
-        repeatX = false;
-        repeatY = true;
-        return;
-    }
-    ec = SYNTAX_ERR;
-}
-
-CanvasPattern::CanvasPattern(Image* image, bool repeatX, bool repeatY, bool originClean)
-    : m_pattern(image, repeatX, repeatY)
-    , m_originClean(originClean)
-{
+    notImplemented();
+    return 0;
 }
 
 }

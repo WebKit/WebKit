@@ -3999,7 +3999,11 @@ PassRefPtr<HistoryItem> FrameLoader::createHistoryItem(bool useOriginal)
     if (originalURL.isEmpty())
         originalURL = blankURL();
     
-    RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->name(), m_frame->tree()->parent() ? m_frame->tree()->parent()->tree()->name() : "", docLoader ? docLoader->title() : "");
+    Frame* parentFrame = m_frame->tree()->parent();
+    String parent = parentFrame ? parentFrame->tree()->name() : "";
+    String title = docLoader ? docLoader->title() : "";
+
+    RefPtr<HistoryItem> item = HistoryItem::create(url, m_frame->tree()->name(), parent, title);
     item->setOriginalURLString(originalURL.string());
     
     // Save form state if this is a POST

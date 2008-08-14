@@ -1116,14 +1116,15 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return 0;
-    
-    bool originClean = true;
-    if (CachedImage* cachedImage = image->cachedImage()) {
-        KURL url(cachedImage->url());
-        RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
-        originClean = m_canvas->document()->securityOrigin()->canAccess(origin.get());
-    }
-    return CanvasPattern::create(image->cachedImage(), repeatX, repeatY, originClean);
+
+    CachedImage* cachedImage = image->cachedImage();
+    if (!cachedImage || !image->cachedImage()->image())
+        return CanvasPattern::create(Image::nullImage(), repeatX, repeatY, true);
+
+    KURL url(cachedImage->url());
+    RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
+    bool originClean = m_canvas->document()->securityOrigin()->canAccess(origin.get());
+    return CanvasPattern::create(cachedImage->image(), repeatX, repeatY, originClean);
 }
 
 PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElement* canvas,
@@ -1134,23 +1135,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLCanvasElem
     CanvasPattern::parseRepetitionType(repetitionType, repeatX, repeatY, ec);
     if (ec)
         return 0;
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    RetainPtr<CGImageRef> image(AdoptCF, canvas->createPlatformImage());
-    if (!image)
-        return 0;
-    return CanvasPattern::create(image.get(), repeatX, repeatY, canvas->originClean());
-#elif PLATFORM(CAIRO)
-    cairo_surface_t* surface = canvas->createPlatformImage();
-    if (!surface)
-        return 0;
-    RefPtr<CanvasPattern> pattern = CanvasPattern::create(surface, repeatX, repeatY, canvas->originClean());
-    cairo_surface_destroy(surface);
-    return pattern.release();
-#else
-    notImplemented();
-    return 0;
-#endif
+    return CanvasPattern::create(canvas->buffer()->image(), repeatX, repeatY, canvas->originClean());
 }
 
 void CanvasRenderingContext2D::willDraw(const FloatRect& r)
@@ -1173,47 +1158,22 @@ void CanvasRenderingContext2D::applyStrokePattern()
     if (!c)
         return;
 
+    // FIXME: Can this check be moved into GraphicsContext? or removed?
 #if PLATFORM(CG)
     // Check for case where the pattern is already set.
-    CGAffineTransform m = CGContextGetCTM(c->platformContext());
-    if (state().m_appliedStrokePattern
-            && CGAffineTransformEqualToTransform(m, state().m_strokeStylePatternTransform))
+    AffineTransform ctm = c->getCTM();
+    if (state().m_appliedStrokePattern && ctm == state().m_strokeStylePatternTransform)
         return;
+#endif
 
     CanvasPattern* pattern = state().m_strokeStyle->pattern();
     if (!pattern)
         return;
 
-    CGPatternRef platformPattern = pattern->createPattern(m);
-    if (!platformPattern)
-        return;
+    c->applyStrokePattern(pattern->pattern());
 
-    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-    CGContextSetStrokeColorSpace(c->platformContext(), patternSpace);
-    CGColorSpaceRelease(patternSpace);
-
-    const CGFloat patternAlpha = 1;
-    CGContextSetStrokePattern(c->platformContext(), platformPattern, &patternAlpha);
-    CGPatternRelease(platformPattern);
-
-    state().m_strokeStylePatternTransform = m;
-#elif PLATFORM(QT)
-    notImplemented();
-#elif PLATFORM(CAIRO)
-    CanvasPattern* pattern = state().m_strokeStyle->pattern();
-    if (!pattern)
-        return;
-
-    cairo_t* cr = c->platformContext();
-    cairo_matrix_t m;
-    cairo_get_matrix(cr, &m);
-
-    cairo_pattern_t* platformPattern = pattern->createPattern(m);
-    if (!platformPattern)
-        return;
-
-    cairo_set_source(cr, platformPattern);
-    cairo_pattern_destroy(platformPattern);
+#if PLATFORM(CG)
+    state().m_strokeStylePatternTransform = ctm;
 #endif
     state().m_appliedStrokePattern = true;
 }
@@ -1224,47 +1184,22 @@ void CanvasRenderingContext2D::applyFillPattern()
     if (!c)
         return;
 
+    // FIXME: Can this check be moved into GraphicsContext? or removed?
 #if PLATFORM(CG)
     // Check for case where the pattern is already set.
-    CGAffineTransform m = CGContextGetCTM(c->platformContext());
-    if (state().m_appliedFillPattern
-            && CGAffineTransformEqualToTransform(m, state().m_fillStylePatternTransform))
+    AffineTransform ctm = c->getCTM();
+    if (state().m_appliedFillPattern && ctm == state().m_fillStylePatternTransform)
         return;
+#endif
 
     CanvasPattern* pattern = state().m_fillStyle->pattern();
     if (!pattern)
         return;
 
-    CGPatternRef platformPattern = pattern->createPattern(m);
-    if (!platformPattern)
-        return;
+    c->applyFillPattern(pattern->pattern());
 
-    CGColorSpaceRef patternSpace = CGColorSpaceCreatePattern(0);
-    CGContextSetFillColorSpace(c->platformContext(), patternSpace);
-    CGColorSpaceRelease(patternSpace);
-
-    const CGFloat patternAlpha = 1;
-    CGContextSetFillPattern(c->platformContext(), platformPattern, &patternAlpha);
-    CGPatternRelease(platformPattern);
-
-    state().m_fillStylePatternTransform = m;
-#elif PLATFORM(QT)
-    notImplemented();
-#elif PLATFORM(CAIRO)
-    CanvasPattern* pattern = state().m_fillStyle->pattern();
-    if (!pattern)
-        return;
-
-    cairo_t* cr = c->platformContext();
-    cairo_matrix_t m;
-    cairo_get_matrix(cr, &m);
-
-    cairo_pattern_t* platformPattern = pattern->createPattern(m);
-    if (!platformPattern)
-        return;
-
-    cairo_set_source(cr, platformPattern);
-    cairo_pattern_destroy(platformPattern);
+#if PLATFORM(CG)
+    state().m_fillStylePatternTransform = ctm;
 #endif
     state().m_appliedFillPattern = true;
 }
