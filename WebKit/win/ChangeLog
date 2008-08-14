@@ -1,3 +1,10 @@
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Attempt to fix the windows build, not review.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::getOrCreateDefaultIconBitmap):
+
 2008-08-13  Ada Chan  <adachan@apple.com>
 
         Implemented DOMHTMLElement::idName() and WebFrame::frameElement().

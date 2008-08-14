@@ -261,10 +261,8 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
         return result;
 
     result = createDIB(size);
-    static Image* defaultIconImage = 0;
-    if (!defaultIconImage) {
-        defaultIconImage = Image::loadPlatformResource("urlIcon");
-    }
+    static RefPtr<Image> defaultIconImage = Image::loadPlatformResource("urlIcon");
+
     m_defaultIconMap.set(*size, result);
     if (!defaultIconImage->getHBITMAPOfSize(result, size)) {
         LOG_ERROR("Failed to draw Image to HBITMAP");
