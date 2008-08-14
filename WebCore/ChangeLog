@@ -1,5 +1,12 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Attempt to fix the Qt build, no review.
+
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::image):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Attempt to fix the Windows build, no review.
 
         * platform/graphics/win/ImageWin.cpp:

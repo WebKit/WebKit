@@ -70,7 +70,7 @@ Image* ImageBuffer::image() const
         // It's assumed that if image() is called, the actual rendering to the
         // GraphicsContext must be done.
         ASSERT(context());
-        m_image.set(new StillImage(m_pixmap));
+        m_image = StillImage::create(m_pixmap);
     }
 
     return m_image.get();
