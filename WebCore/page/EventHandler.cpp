@@ -1627,6 +1627,13 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
+#if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
+    String escKeyId = "U+001B";
+    // If a key is pressed while the autoscroll/panScroll is in progress then we want to stop
+    if (initialKeyEvent.keyIdentifier() == escKeyId && m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) 
+        stopAutoscrollTimer();
+#endif
+
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
     RefPtr<EventTargetNode> node = eventTargetNodeForDocument(m_frame->document());

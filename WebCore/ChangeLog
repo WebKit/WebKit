@@ -1,3 +1,18 @@
+2008-08-14  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        rdar://6102511
+        When pan-scrolling, typing on the keyboard should either stop the pan scroll or be ignored
+        IE and FF are both preventing the keyboard event to interact with the page while scrolling.
+        Some differences exist between them concerning the kind of key which is pressed :
+        IE7 : every key leads to a stop of the panning
+        FF3 : the ESC and TAB keys leads to a stop, the other keys are inactive.
+        For WebKit this patch is adopting the FF3 behavior except for the TAB key which is inactive too.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::keyEvent): Verifies which key has been hit and decide either to stop the pan scroll or to swallow the key event.
+
 2008-08-14  Christian Dywan  <christian@twotoasts.de>
 
         Gtk+/ Cairo build fix, patch by Dirk Schulze.
