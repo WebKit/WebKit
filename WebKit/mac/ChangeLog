@@ -1,3 +1,21 @@
+2008-08-13  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where Safari's find banner would be permanently hidden
+        when attaching or closing the Web Inspector while attached.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20376
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController close]):
+        Carefully manipulate the WebFrameView's frame when closing to
+        not assume the WebFrameView's frame fills the inspected WebView.
+        (-[WebInspectorWindowController setAttachedWindowHeight:]):
+        Carefully manipulate the WebFrameView's frame when docking to
+        not assume the WebFrameView plus the Web Inspector WebViews fills
+        the full inspected WebView.
+
 2008-08-13  Stephanie Lewis  <slewis@apple.com>
 
         fix 64bit build

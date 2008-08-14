@@ -278,9 +278,12 @@ void WebInspectorClient::updateWindowTitle() const
         [_webView removeFromSuperview];
 
         WebFrameView *frameView = [[_inspectedWebView mainFrame] frameView];
-
         NSRect frameViewRect = [frameView frame];
-        frameViewRect = NSMakeRect(0, 0, NSWidth(frameViewRect), NSHeight([_inspectedWebView frame]));
+
+        // Setting the height based on the previous height is done to work with
+        // Safari's find banner. This assumes the previous height is the Y origin.
+        frameViewRect.size.height += NSMinY(frameViewRect);
+        frameViewRect.origin.y = 0.0;
 
         [frameView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [frameView setFrame:frameViewRect];
@@ -368,7 +371,12 @@ void WebInspectorClient::updateWindowTitle() const
     NSRect frameViewRect = [frameView frame];
 
     CGFloat attachedHeight = round(MAX(250.0, MIN(height, (NSHeight([_inspectedWebView frame]) * 0.75))));
-    frameViewRect = NSMakeRect(0.0, attachedHeight, NSWidth(frameViewRect), NSHeight([_inspectedWebView frame]) - attachedHeight);
+
+    // Setting the height based on the difference is done to work with
+    // Safari's find banner. This assumes the previous height is the Y origin.
+    CGFloat heightDifference = (NSMinY(frameViewRect) - attachedHeight);
+    frameViewRect.size.height += heightDifference;
+    frameViewRect.origin.y = attachedHeight;
 
     [_webView setFrame:NSMakeRect(0.0, 0.0, NSWidth(frameViewRect), attachedHeight)];
     [frameView setFrame:frameViewRect];
