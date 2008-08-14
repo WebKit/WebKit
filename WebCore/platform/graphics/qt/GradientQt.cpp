@@ -28,6 +28,8 @@
 #include "Gradient.h"
 
 #include "CSSParser.h"
+#include "NotImplemented.h"
+
 #include <QGradient>
 
 namespace WebCore {
@@ -57,6 +59,11 @@ QGradient* Gradient::platformGradient()
     }
 
     return m_gradient;
+}
+
+void Gradient::fill(GraphicsContext* context, const FloatRect& rect)
+{
+    notImplemented();
 }
 
 } //namespace

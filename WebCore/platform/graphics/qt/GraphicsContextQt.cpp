@@ -40,6 +40,7 @@
 
 #include "AffineTransform.h"
 #include "Path.h"
+#include "Pattern.h"
 #include "Color.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -923,6 +924,20 @@ void GraphicsContext::setPlatformFillColor(const Color& color)
     if (paintingDisabled())
         return;
     m_data->p()->setBrush(QBrush(color));
+}
+
+void GraphicsContext::applyStrokePattern(const Pattern& pattern)
+{
+    if (paintingDisabled())
+        return;
+    notImplemented();
+}
+
+void GraphicsContext::applyFillPattern(const Pattern& pattern)
+{
+    if (paintingDisabled())
+        return;
+    notImplemented();
 }
 
 void GraphicsContext::setUseAntialiasing(bool enable)
