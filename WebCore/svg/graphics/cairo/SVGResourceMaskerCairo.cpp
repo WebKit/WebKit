@@ -32,8 +32,6 @@ namespace WebCore {
 void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
     if (!m_mask)
-        m_mask.set(m_ownerElement->drawMaskerContent(boundingBox, m_maskRect).release());
-    if (!m_mask)
         return;
 
     cairo_t* cr = context->platformContext();

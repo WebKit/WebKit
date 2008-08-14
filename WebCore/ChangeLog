@@ -1,3 +1,12 @@
+2008-08-14  Christian Dywan  <christian@twotoasts.de>
+
+        Gtk+/ Cairo build fix, patch by Dirk Schulze.
+
+        * html/CanvasStyle.cpp:
+        * platform/graphics/cairo/PatternCairo.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+        * svg/graphics/cairo/SVGResourceMaskerCairo.cpp:
+
 2008-08-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

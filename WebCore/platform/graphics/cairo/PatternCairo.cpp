@@ -40,7 +40,8 @@ cairo_pattern_t* Pattern::createPlatformPattern(const AffineTransform& patternTr
         return 0;
 
     cairo_pattern_t* pattern = cairo_pattern_create_for_surface(surface);
-    cairo_pattern_set_matrix(pattern, &patternTransform);
+    const cairo_matrix_t* pattern_matrix = reinterpret_cast<const cairo_matrix_t*>(&patternTransform);
+    cairo_pattern_set_matrix(pattern, pattern_matrix);
     if (m_repeatX || m_repeatY)
         cairo_pattern_set_extend(pattern, CAIRO_EXTEND_REPEAT);
     return pattern;

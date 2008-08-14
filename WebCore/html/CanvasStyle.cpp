@@ -154,9 +154,6 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     }
 }
 
-// Cairo's graphics model allows us to share a single code path for
-// stroke and fill.
-#if !PLATFORM(CAIRO)
 void CanvasStyle::applyFillColor(GraphicsContext* context)
 {
     if (!context)
@@ -202,6 +199,5 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             break;
     }
 }
-#endif
 
 }
