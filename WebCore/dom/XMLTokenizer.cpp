@@ -775,6 +775,25 @@ bool XMLTokenizer::write(const SegmentedString& s, bool /*appendData*/)
 
     return false;
 }
+
+static void eventuallyMarkAsParserCreated(Element* element)
+{
+    if (element->hasTagName(HTMLNames::scriptTag))
+        static_cast<HTMLScriptElement*>(element)->setCreatedByParser(true);
+#if ENABLE(SVG)
+    else if (element->hasTagName(SVGNames::scriptTag))
+        static_cast<SVGScriptElement*>(element)->setCreatedByParser(true);
+#endif
+    else if (element->hasTagName(HTMLNames::styleTag))
+        static_cast<HTMLStyleElement*>(element)->setCreatedByParser(true);
+#if ENABLE(SVG)
+    else if (element->hasTagName(SVGNames::styleTag))
+        static_cast<SVGStyleElement*>(element)->setCreatedByParser(true);
+#endif
+    else if (element->hasTagName(HTMLNames::linkTag))
+        static_cast<HTMLLinkElement*>(element)->setCreatedByParser(true);
+}
+
 #ifndef USE_QXMLSTREAM
 static inline String toString(const xmlChar* str, unsigned len)
 {
@@ -833,24 +852,6 @@ static inline void handleElementAttributes(Element* newElement, const xmlChar** 
         if (ec) // exception setting attributes
             return;
     }
-}
-
-static void eventuallyMarkAsParserCreated(Element* element)
-{
-    if (element->hasTagName(HTMLNames::scriptTag))
-        static_cast<HTMLScriptElement*>(element)->setCreatedByParser(true);
-#if ENABLE(SVG)
-    else if (element->hasTagName(SVGNames::scriptTag))
-        static_cast<SVGScriptElement*>(element)->setCreatedByParser(true);
-#endif
-    else if (element->hasTagName(HTMLNames::styleTag))
-        static_cast<HTMLStyleElement*>(element)->setCreatedByParser(true);
-#if ENABLE(SVG)
-    else if (element->hasTagName(SVGNames::styleTag))
-        static_cast<SVGStyleElement*>(element)->setCreatedByParser(true);
-#endif
-    else if (element->hasTagName(HTMLNames::linkTag))
-        static_cast<HTMLLinkElement*>(element)->setCreatedByParser(true);
 }
 
 void XMLTokenizer::startElementNs(const xmlChar* xmlLocalName, const xmlChar* xmlPrefix, const xmlChar* xmlURI, int nb_namespaces,
