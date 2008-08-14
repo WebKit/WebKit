@@ -546,8 +546,7 @@ void RenderImage::calcPrefWidths()
 
 Image* RenderImage::nullImage()
 {
-    static BitmapImage sharedNullImage;
-    return &sharedNullImage;
+    return Image::nullImage();
 }
 
 } // namespace WebCore

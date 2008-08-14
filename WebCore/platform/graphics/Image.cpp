@@ -28,6 +28,7 @@
 #include "Image.h"
 
 #include "AffineTransform.h"
+#include "BitmapImage.h"
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "MIMETypeRegistry.h"
@@ -47,6 +48,12 @@ Image::Image(ImageObserver* observer)
 
 Image::~Image()
 {
+}
+
+Image* Image::nullImage()
+{
+    static RefPtr<Image> nullImage = BitmapImage::create();
+    return nullImage.get();
 }
 
 bool Image::supportsType(const String& type)

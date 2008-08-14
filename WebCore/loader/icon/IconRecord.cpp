@@ -66,12 +66,12 @@ void IconRecord::setImageData(PassRefPtr<SharedBuffer> data)
 {
     // It's okay to delete the raw image here. Any existing clients using this icon will be
     // managing an image that was created with a copy of this raw image data.
-    m_image.set(new BitmapImage());
+    m_image = BitmapImage::create();
 
     // Copy the provided data into the buffer of the new Image object.
     if (!m_image->setData(data, true)) {
         LOG(IconDatabase, "Manual image data for iconURL '%s' FAILED - it was probably invalid image data", m_iconURL.ascii().data());
-        m_image.set(0);
+        m_image.clear();
     }
     
     m_dataSet = true;
@@ -82,7 +82,7 @@ void IconRecord::loadImageFromResource(const char* resource)
     if (!resource)
         return;
         
-    m_image.set(Image::loadPlatformResource(resource));
+    m_image = Image::loadPlatformResource(resource);
     m_dataSet = true;
 }
 

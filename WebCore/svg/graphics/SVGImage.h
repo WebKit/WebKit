@@ -42,7 +42,10 @@ namespace WebCore {
     
     class SVGImage : public Image {
     public:
-        SVGImage(ImageObserver*);
+        static PassRefPtr<SVGImage> create(ImageObserver* observer)
+        {
+            return adoptRef(new SVGImage(observer));
+        }
         ~SVGImage();
 
         virtual void setContainerSize(const IntSize&);
@@ -54,9 +57,15 @@ namespace WebCore {
         
         virtual bool dataChanged(bool allDataReceived);
 
+        // FIXME: SVGImages are underreporting decoded sizes and will be unable
+        // to prune because these functions are not implemented yet.
+        virtual void destroyDecodedData(bool incremental = false) { }
+        virtual unsigned decodedSize() const { return 0; }
+
         virtual NativeImagePtr frameAtIndex(size_t) { return 0; }
         
 private:
+        SVGImage(ImageObserver*);
         virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, CompositeOperator);
         
         virtual NativeImagePtr nativeImageForCurrentFrame();

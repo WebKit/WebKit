@@ -175,16 +175,7 @@ NativeImagePtr SVGImage::nativeImageForCurrentFrame()
             return 0;
         renderSubtreeToImage(m_frameCache.get(), m_frame->contentRenderer());
     }
-#if PLATFORM(CG)
-    return m_frameCache->cgImage();
-#elif PLATFORM(QT)
-    return m_frameCache->pixmap();
-#elif PLATFORM(CAIRO)
-    return m_frameCache->surface();
-#else
-    notImplemented();
-    return 0;
-#endif
+    return m_frameCache->image()->nativeImageForCurrentFrame();
 }
 
 bool SVGImage::dataChanged(bool allDataReceived)

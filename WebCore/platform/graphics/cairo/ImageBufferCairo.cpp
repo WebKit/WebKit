@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "ImageData.h"
 #include "NotImplemented.h"
+#include "Pattern.h"
 
 #include <cairo.h>
 
@@ -70,11 +71,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-cairo_surface_t* ImageBuffer::surface() const
-{
-    return m_surface;
-}
-
 Image* ImageBuffer::image() const
 {
     if (!m_image) {
@@ -82,7 +78,7 @@ Image* ImageBuffer::image() const
         // GraphicsContext must be done.
         ASSERT(context());
         // BitmapImage will release the passed in surface on destruction
-        m_image.set(new BitmapImage(cairo_surface_reference(m_surface)));
+        m_image.set(BitmapImage::create(cairo_surface_reference(m_surface)));
     }
     return m_image.get();
 }

@@ -21,6 +21,7 @@
 
 #if ENABLE(SVG)
 #include "SVGResourceMasker.h"
+#include "Image.h"
 #include "ImageBuffer.h"
 #include "GraphicsContext.h"
 
@@ -30,8 +31,13 @@ namespace WebCore {
 
 void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& boundingBox)
 {
+    if (!m_mask)
+        m_mask.set(m_ownerElement->drawMaskerContent(boundingBox, m_maskRect).release());
+    if (!m_mask)
+        return;
+
     cairo_t* cr = context->platformContext();
-    cairo_surface_t* surface = m_mask->surface();
+    cairo_surface_t* surface = m_mask->image()->nativeImageForCurrentFrame();
     if (!surface)
         return;
     cairo_pattern_t* mask = cairo_pattern_create_for_surface(surface);

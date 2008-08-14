@@ -102,7 +102,7 @@ Image* ImageBuffer::image() const
         ASSERT(context());
         CGImageRef cgImage = CGBitmapContextCreateImage(context()->platformContext());
         // BitmapImage will release the passed in CGImage on destruction
-        m_image.set(new BitmapImage(cgImage));
+        m_image = BitmapImage::create(cgImage);
     }
     return m_image.get();
 }
@@ -153,9 +153,8 @@ PassRefPtr<ImageData> ImageBuffer::getImageData(const IntRect& rect) const
                 destRows[basex + 1] = (srcRows[basex + 1] * 255) / alpha;
                 destRows[basex + 2] = (srcRows[basex + 2] * 255) / alpha;
                 destRows[basex + 3] = alpha;
-            } else {
+            } else
                 reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
-            }
         }
         srcRows += srcBytesPerRow;
         destRows += destBytesPerRow;
@@ -205,9 +204,8 @@ void ImageBuffer::putImageData(ImageData* source, const IntRect& sourceRect, con
                 destRows[basex + 1] = (srcRows[basex + 1] * alpha + 254) / 255;
                 destRows[basex + 2] = (srcRows[basex + 2] * alpha + 254) / 255;
                 destRows[basex + 3] = alpha;
-            } else {
+            } else
                 reinterpret_cast<uint32_t*>(destRows + basex)[0] = reinterpret_cast<uint32_t*>(srcRows + basex)[0];
-            }
         }
         destRows += destBytesPerRow;
         srcRows += srcBytesPerRow;

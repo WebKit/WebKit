@@ -91,12 +91,14 @@ class BitmapImage : public Image {
     friend class GeneratedImage;
     friend class GraphicsContext;
 public:
-#if PLATFORM(CG)
-    BitmapImage(CGImageRef, ImageObserver* = 0);
-#elif PLATFORM(CAIRO)
-    BitmapImage(cairo_surface_t*, ImageObserver* = 0);
-#endif
-    BitmapImage(ImageObserver* = 0);
+    static PassRefPtr<BitmapImage> create(NativeImagePtr nativeImage, ImageObserver* observer = 0)
+    {
+        return adoptRef(new BitmapImage(nativeImage, observer));
+    }
+    static PassRefPtr<BitmapImage> create(ImageObserver* observer = 0)
+    {
+        return adoptRef(new BitmapImage(observer));
+    }
     ~BitmapImage();
     
     virtual bool isBitmapImage() const { return true; }
@@ -135,6 +137,9 @@ public:
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
 
 protected:
+    BitmapImage(NativeImagePtr, ImageObserver* = 0);
+    BitmapImage(ImageObserver* = 0);
+
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator);
 #endif

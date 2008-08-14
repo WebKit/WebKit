@@ -89,7 +89,7 @@ private:
     void createImage();
     void notifyObservers();
 
-    Image* m_image;
+    RefPtr<Image> m_image;
 };
 
 }

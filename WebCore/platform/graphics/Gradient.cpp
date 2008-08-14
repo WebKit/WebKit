@@ -88,7 +88,7 @@ void Gradient::addColorStop(float value, const Color& color)
     platformDestroy();
 }
 
-static inline bool compareStops(const Gradient::ColorStop &a, const Gradient::ColorStop &b)
+static inline bool compareStops(const Gradient::ColorStop& a, const Gradient::ColorStop& b)
 {
     return a.stop < b.stop;
 }

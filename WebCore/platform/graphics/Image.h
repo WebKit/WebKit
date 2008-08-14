@@ -69,18 +69,19 @@ class String;
 // This class gets notified when an image creates or destroys decoded frames and when it advances animation frames.
 class ImageObserver;
 
-class Image : Noncopyable {
+class Image : public RefCounted<Image> {
     friend class GeneratedImage;
     friend class GraphicsContext;
 public:
-    Image(ImageObserver* = 0);
     virtual ~Image();
     
-    static Image* loadPlatformResource(const char* name);
+    static PassRefPtr<Image> create(ImageObserver* = 0);
+    static PassRefPtr<Image> loadPlatformResource(const char* name);
     static bool supportsType(const String&); 
 
     virtual bool isBitmapImage() const { return false; }
-    
+
+    static Image* nullImage();
     bool isNull() const;
 
     // These are only used for SVGImage right now
@@ -96,11 +97,9 @@ public:
 
     bool setData(PassRefPtr<SharedBuffer> data, bool allDataReceived);
     virtual bool dataChanged(bool allDataReceived) { return false; }
-    
-    // FIXME: PDF/SVG will be underreporting decoded sizes and will be unable to prune because these functions are not
-    // implemented yet for those image types.
-    virtual void destroyDecodedData(bool incremental = false) {};
-    virtual unsigned decodedSize() const { return 0; }
+
+    virtual void destroyDecodedData(bool incremental = false) = 0;
+    virtual unsigned decodedSize() const = 0;
 
     SharedBuffer* data() { return m_data.get(); }
 
@@ -137,9 +136,10 @@ public:
 #endif
 
 protected:
+    Image(ImageObserver* = 0);
+
     static void fillWithSolidColor(GraphicsContext* ctxt, const FloatRect& dstRect, const Color& color, CompositeOperator op);
 
-protected:
 #if PLATFORM(WIN)
     virtual void drawFrameMatchingSourceSize(GraphicsContext*, const FloatRect& dstRect, const IntSize& srcSize, CompositeOperator) { }
 #endif

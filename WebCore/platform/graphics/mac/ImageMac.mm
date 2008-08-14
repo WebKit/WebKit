@@ -52,24 +52,22 @@ void BitmapImage::invalidatePlatformData()
     m_tiffRep = 0;
 }
 
-Image* Image::loadPlatformResource(const char *name)
+PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
-    static BitmapImage nullImage;
-    
     NSBundle *bundle = [NSBundle bundleForClass:[WebCoreBundleFinder class]];
     NSString *imagePath = [bundle pathForResource:[NSString stringWithUTF8String:name] ofType:@"tiff"];
     NSData *namedImageData = [NSData dataWithContentsOfFile:imagePath];
     if (namedImageData) {
-        Image* image = new BitmapImage;
+        RefPtr<Image> image = BitmapImage::create();
         image->setData(SharedBuffer::wrapNSData(namedImageData), true);
-        return image;
+        return image.release();
     }
-    
+
     // We have reports indicating resource loads are failing, but we don't yet know the root cause(s).
     // Two theories are bad installs (image files are missing), and too-many-open-files.
     // See rdar://5607381
     ASSERT_NOT_REACHED();
-    return &nullImage;
+    return Image::nullImage();
 }
 
 CFDataRef BitmapImage::getTIFFRepresentation()

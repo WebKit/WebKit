@@ -30,7 +30,6 @@
 #include "Generator.h"
 
 #include "FloatPoint.h"
-#include "NotImplemented.h"
 #include <wtf/Vector.h>
 
 #if PLATFORM(CG)
@@ -79,11 +78,7 @@ namespace WebCore {
 
         void setStopsSorted(bool s) { m_stopsSorted = s; }
 
-#if PLATFORM(CG) || PLATFORM(CAIRO)
         virtual void fill(GraphicsContext*, const FloatRect&);
-#else
-        virtual void fill(GraphicsContext*, const FloatRect&) { notImplemented(); }
-#endif
 
     private:
         void platformInit() { m_gradient = 0; }

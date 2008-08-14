@@ -195,13 +195,11 @@ void DeleteButtonController::createDeletionUI()
     style->setProperty(CSSPropertyWidth, String::number(buttonWidth) + "px");
     style->setProperty(CSSPropertyHeight, String::number(buttonHeight) + "px");
 
-    Image* buttonImage = Image::loadPlatformResource("deleteButton");
-    if (buttonImage->isNull()) {
-        delete buttonImage;
+    RefPtr<Image> buttonImage = Image::loadPlatformResource("deleteButton");
+    if (buttonImage->isNull())
         return;
-    }
-    
-    button->setCachedImage(new CachedImage(buttonImage));
+
+    button->setCachedImage(new CachedImage(buttonImage.get()));
 
     container->appendChild(button.get(), ec);
     ASSERT(ec == 0);

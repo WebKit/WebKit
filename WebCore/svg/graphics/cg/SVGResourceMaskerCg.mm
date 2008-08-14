@@ -113,7 +113,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     CIContext* ciGrayscaleContext = [CIContext contextWithCGContext:grayScaleContext options:nil];
 
     // Transform colorized mask to gray scale
-    CIImage* colorMask = [CIImage imageWithCGImage:m_mask->cgImage()];
+    CIImage* colorMask = [CIImage imageWithCGImage:m_mask->image()->getCGImageRef()];
     if (!colorMask)
         return;
 

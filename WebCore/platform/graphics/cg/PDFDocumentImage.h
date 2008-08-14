@@ -38,14 +38,23 @@ namespace WebCore {
 
     class PDFDocumentImage : public Image {
     public:
-        PDFDocumentImage();
+        static PassRefPtr<PDFDocumentImage> create()
+        {
+            return adoptRef(new PDFDocumentImage);
+        }
         ~PDFDocumentImage();
         
         virtual bool dataChanged(bool allDataReceived);
 
+        // FIXME: PDF Images are underreporting decoded sizes and will be unable
+        // to prune because these functions are not implemented yet.
+        virtual void destroyDecodedData(bool incremental = false) { }
+        virtual unsigned decodedSize() const { return 0; }
+
         virtual IntSize size() const;
 
     private:
+        PDFDocumentImage();
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
         
         void setCurrentPage(int);

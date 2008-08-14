@@ -26,8 +26,6 @@
 #include "config.h"
 
 #include "BitmapImage.h"
-#include "Image.h"
-#include "NotImplemented.h"
 
 // This function loads resources from WebKit
 Vector<char> loadResourceIntoArray(const char*);
@@ -42,12 +40,13 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-Image* Image::loadPlatformResource(const char *name)
+PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
     Vector<char> arr = loadResourceIntoArray(name);
-    BitmapImage* img = new BitmapImage;
+    RefPtr<BitmapImage> img = BitmapImage::create();
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(arr.data(), arr.size());
     img->setData(buffer, true);
-    return img;
+    return img.release();
 }
+
 }

@@ -1,8 +1,72 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
-        Reviewed by Sam.
+        Reviewed by Niko.
+
+        Make Images RefCounted (and clean up callers)
+        https://bugs.webkit.org/show_bug.cgi?id=20351
+
+        * editing/DeleteButtonController.cpp:
+        (WebCore::DeleteButtonController::createDeletionUI):
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::brokenImage):
+        (WebCore::nullImage):
+        (WebCore::CachedImage::image):
+        (WebCore::CachedImage::notifyObservers):
+        (WebCore::CachedImage::createImage):
+        * loader/CachedImage.h:
+        * loader/icon/IconRecord.cpp:
+        (WebCore::IconRecord::setImageData):
+        (WebCore::IconRecord::loadImageFromResource):
+        * loader/icon/IconRecord.h:
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::create):
+        * platform/graphics/GeneratedImage.h:
+        * platform/graphics/Gradient.cpp:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::nullImage):
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::image):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::ImageBuffer::image):
+        (WebCore::ImageBuffer::getImageData):
+        (WebCore::ImageBuffer::putImageData):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::create):
+        (WebCore::PDFDocumentImage::destroyDecodedData):
+        (WebCore::PDFDocumentImage::decodedSize):
+        * platform/graphics/gtk/ImageGtk.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/mac/ImageMac.mm:
+        (WebCore::Image::loadPlatformResource):
+        * rendering/RenderImage.cpp:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImage::nativeImageForCurrentFrame):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::create):
+        (WebCore::SVGImage::destroyDecodedData):
+        (WebCore::SVGImage::decodedSize):
+        (WebCore::SVGImage::frameAtIndex):
+        * svg/graphics/cairo/SVGPaintServerPatternCairo.cpp:
+        (WebCore::SVGPaintServerPattern::setup):
+        * svg/graphics/cairo/SVGResourceMaskerCairo.cpp:
+        (WebCore::SVGResourceMasker::applyMask):
+        * svg/graphics/cg/SVGPaintServerPatternCg.cpp:
+        (WebCore::patternCallback):
+        * svg/graphics/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Niko.
 
         Remove #ifdefs from CanvasStyle by using platform/Color.h
+        https://bugs.webkit.org/show_bug.cgi?id=20351
 
         There are some down-sides to this commit.
         This commit limits us to 255 levels of grey for calls like:
