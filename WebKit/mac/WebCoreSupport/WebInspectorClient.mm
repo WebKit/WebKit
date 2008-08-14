@@ -29,6 +29,7 @@
 #import "WebInspectorClient.h"
 
 #import "WebFrameInternal.h"
+#import "WebFrameView.h"
 #import "WebInspector.h"
 #import "WebLocalizableStrings.h"
 #import "WebNodeHighlight.h"

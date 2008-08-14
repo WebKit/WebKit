@@ -1,3 +1,9 @@
+2008-08-13  Stephanie Lewis  <slewis@apple.com>
+
+        fix 64bit build
+
+        * WebCoreSupport/WebInspectorClient.mm:
+
 2008-08-13  Timothy Hatcher  <timothy@apple.com>
 
         Remember the docked state of the Web Inspector, so it can be
