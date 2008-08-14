@@ -1,5 +1,14 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        No review, build fix only.
+
+        Fix mac build, due to change in new code since my patch was written.
+
+        * svg/graphics/cg/SVGResourceMaskerCg.mm:
+        (WebCore::SVGResourceMasker::applyMask):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Build fix only, no review.
 
         Attempt to fix the Qt build.

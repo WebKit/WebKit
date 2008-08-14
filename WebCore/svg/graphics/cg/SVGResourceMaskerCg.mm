@@ -120,7 +120,7 @@ void SVGResourceMasker::applyMask(GraphicsContext* context, const FloatRect& bou
     CIImage* grayScaleMask = transformImageIntoGrayscaleMask(colorMask);
     [ciGrayscaleContext drawImage:grayScaleMask atPoint:CGPointZero fromRect:CGRectMake(0, 0, maskSize.width(), maskSize.height())];
 
-    CGContextClipToMask(context->platformContext(), m_maskRect, grayScaleImage->cgImage());
+    CGContextClipToMask(context->platformContext(), m_maskRect, grayScaleImage->image()->getCGImageRef());
     END_BLOCK_OBJC_EXCEPTIONS
 }
 
