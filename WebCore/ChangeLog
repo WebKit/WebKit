@@ -1,5 +1,16 @@
 2008-08-14  Dan Bernstein  <mitz@apple.com>
 
+        - fix non-CG builds by adding an ImageSource::frameSizeAtIndex() that returns size().
+
+        * platform/graphics/cairo/ImageSourceCairo.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex):
+        * platform/graphics/qt/ImageSourceQt.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex):
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex):
+
+2008-08-14  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Brady Eidson.
 
         - fix <rdar://problem/5993323> REGRESSION (r34210): Apple.com favicon appears stretched/clipped
