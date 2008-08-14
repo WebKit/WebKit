@@ -84,7 +84,8 @@ public:
 
     bool isSizeAvailable();
     IntSize size() const;
-    
+    IntSize frameSizeAtIndex(size_t) const;
+
     int repetitionCount();
     
     size_t frameCount() const;

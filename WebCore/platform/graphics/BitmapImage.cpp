@@ -54,6 +54,7 @@ BitmapImage::BitmapImage(ImageObserver* observer)
     , m_allDataReceived(false)
     , m_haveSize(false)
     , m_sizeAvailable(false)
+    , m_hasUniformFrameSize(true)
     , m_decodedSize(0)
     , m_haveFrameCount(false)
     , m_frameCount(0)
@@ -125,8 +126,16 @@ void BitmapImage::cacheFrame(size_t index)
     if (shouldAnimate())
         m_frames[index].m_duration = m_source.frameDurationAtIndex(index);
     m_frames[index].m_hasAlpha = m_source.frameHasAlphaAtIndex(index);
-    
-    int sizeChange = m_frames[index].m_frame ? m_size.width() * m_size.height() * 4 : 0;
+
+    int sizeChange;
+    if (index) {
+        IntSize frameSize = m_source.frameSizeAtIndex(index);
+        if (frameSize != m_size)
+            m_hasUniformFrameSize = false;
+        sizeChange = m_frames[index].m_frame ? frameSize.width() * frameSize.height() * 4 : 0;
+    } else
+        sizeChange = m_frames[index].m_frame ? m_size.width() * m_size.height() * 4 : 0;
+
     if (sizeChange) {
         m_decodedSize += sizeChange;
         if (imageObserver())
@@ -143,6 +152,13 @@ IntSize BitmapImage::size() const
     return m_size;
 }
 
+IntSize BitmapImage::currentFrameSize() const
+{
+    if (!m_currentFrame || m_hasUniformFrameSize)
+        return size();
+    return m_source.frameSizeAtIndex(m_currentFrame);
+}
+
 bool BitmapImage::dataChanged(bool allDataReceived)
 {
     destroyDecodedData(true);
@@ -153,6 +169,8 @@ bool BitmapImage::dataChanged(bool allDataReceived)
     
     // Clear the frame count.
     m_haveFrameCount = false;
+
+    m_hasUniformFrameSize = true;
 
     // Image properties will not be available until the first frame of the file
     // reaches kCGImageStatusIncomplete.

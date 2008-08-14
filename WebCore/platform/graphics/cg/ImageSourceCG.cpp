@@ -108,10 +108,10 @@ bool ImageSource::isSizeAvailable()
     return result;
 }
 
-IntSize ImageSource::size() const
+IntSize ImageSource::frameSizeAtIndex(size_t index) const
 {
     IntSize result;
-    CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(m_decoder, 0, imageSourceOptions());
+    CFDictionaryRef properties = CGImageSourceCopyPropertiesAtIndex(m_decoder, index, imageSourceOptions());
     if (properties) {
         int w = 0, h = 0;
         CFNumberRef num = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyPixelWidth);
@@ -120,10 +120,15 @@ IntSize ImageSource::size() const
         num = (CFNumberRef)CFDictionaryGetValue(properties, kCGImagePropertyPixelHeight);
         if (num)
             CFNumberGetValue(num, kCFNumberIntType, &h);
-        result = IntSize(w, h);            
+        result = IntSize(w, h);
         CFRelease(properties);
     }
     return result;
+}
+
+IntSize ImageSource::size() const
+{
+    return frameSizeAtIndex(0);
 }
 
 int ImageSource::repetitionCount()

@@ -1,3 +1,30 @@
+2008-08-14  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        - fix <rdar://problem/5993323> REGRESSION (r34210): Apple.com favicon appears stretched/clipped
+
+        * platform/graphics/BitmapImage.cpp: 
+        (WebCore::BitmapImage::BitmapImage): Added initialization of
+        m_hasUniformFrameSize.
+        (WebCore::BitmapImage::cacheFrame): Added code to get the size of the
+        cached frame for use in decoded size computation and for setting
+        m_hasUniformFrameSize.
+        (WebCore::BitmapImage::currentFrameSize): Added.
+        (WebCore::BitmapImage::dataChanged): Added code to reset
+        m_hasUniformFrameSize.
+        * platform/graphics/BitmapImage.h: Added currentFrameSize() and
+        m_hasUniformFrameSize.
+        * platform/graphics/ImageSource.h: Added frameSizeAtIndex().
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw): Changed to use currentFrameSize(). This
+        fixes the bug, which resulted from assuming that the frame being drawn 
+        was the same size as the first frame.
+        * platform/graphics/cg/ImageSourceCG.cpp:
+        (WebCore::ImageSource::frameSizeAtIndex): Renamed size() to this and
+        changed to get the size of the frame at the given index.
+        (WebCore::ImageSource::size): Added. Returns frameSizeAtIndex(0).
+
 2008-08-13  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel
