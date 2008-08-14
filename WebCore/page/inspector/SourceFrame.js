@@ -135,6 +135,9 @@ WebInspector.SourceFrame.prototype = {
 
     addMessage: function(msg)
     {
+        // Don't add the message if there is no message or valid line or if the msg isn't an error or warning.
+        if (!msg.message || msg.line <= 0 || !msg.isErrorOrWarning())
+            return;
         this.messages.push(msg);
         this._addMessageToSource(msg);
     },

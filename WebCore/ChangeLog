@@ -1,3 +1,20 @@
+2008-08-14  Timothy Hatcher  <timothy@apple.com>
+
+        Avoid formating ConsoleMessages twice unless the message will be
+        displayed in bubbles of a SourceFrame.
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage): Only format the plain text message
+        if the URL and line are valid and the level is error or warning.
+        (WebInspector.ConsoleMessage.prototype.isErrorOrWarning): Added.
+        Helper to test for error or warning level.
+        * page/inspector/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.addMessage): Don't add the
+        message if there is no message or valid line or if the msg
+        isn't an error or warning.
+
 2008-08-14  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         partial Gtk build fix, not reviewed

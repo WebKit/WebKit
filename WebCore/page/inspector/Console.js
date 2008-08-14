@@ -513,17 +513,26 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
     this.url = url;
     this.groupLevel = groupLevel;
 
-    // This _format call passes in true for the plainText argument. The result's textContent is
-    // used for inline message bubbles in SourceFrames, or other plain-text representations.
-    this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
+    if (url && line > 0 && this.isErrorOrWarning()) {
+        // This _format call passes in true for the plainText argument. The result's textContent is
+        // used for inline message bubbles in SourceFrames, or other plain-text representations.
+        // Right now we only need to generate this string if the URL and line are valid and the level
+        // is error or warning, since SourceFrame only shows these messages.
+        this.message = this._format(Array.prototype.slice.call(arguments, 5), true).textContent;
+    }
 
     // The formatedMessage property is used for the rich and interactive console.
     this.formattedMessage = this._format(Array.prototype.slice.call(arguments, 5));
 }
 
 WebInspector.ConsoleMessage.prototype = {
+    isErrorOrWarning: function()
+    {
+        return (this.level === WebInspector.ConsoleMessage.MessageLevel.Warning || this.level === WebInspector.ConsoleMessage.MessageLevel.Error);
+    },
+
     _format: function(parameters, plainText)
-    {    
+    {
         var formattedResult = document.createElement("span");
 
         if (!parameters.length)
