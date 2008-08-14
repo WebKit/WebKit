@@ -284,7 +284,7 @@ void PluginView::hide()
 
 void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect& rect)
 {
-    static Image* nullPluginImage;
+    static RefPtr<Image> nullPluginImage;
     if (!nullPluginImage)
         nullPluginImage = Image::loadPlatformResource("nullPlugin");
 
@@ -300,7 +300,7 @@ void PluginView::paintMissingPluginIcon(GraphicsContext* context, const IntRect&
 
     context->save();
     context->clip(windowClipRect());
-    context->drawImage(nullPluginImage, imageRect.location());
+    context->drawImage(nullPluginImage.get(), imageRect.location());
     context->restore();
 }
 

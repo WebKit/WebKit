@@ -42,12 +42,12 @@ void BitmapImage::invalidatePlatformData()
 {
 }
 
-Image* Image::loadPlatformResource(const char *name)
+PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
     RefPtr<SharedBuffer> buffer = loadResourceIntoBuffer(name);
-    BitmapImage* img = new BitmapImage;
+    RefPtr<BitmapImage> img = BitmapImage::create();
     img->setData(buffer.release(), true);
-    return img;
+    return img.release();
 }
 
 bool BitmapImage::getHBITMAP(HBITMAP bmp)

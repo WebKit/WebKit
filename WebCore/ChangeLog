@@ -1,5 +1,14 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Attempt to fix the Windows build, no review.
+
+        * platform/graphics/win/ImageWin.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::paintMissingPluginIcon):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Another attempt to fix the Qt build, no review.
 
         * platform/graphics/qt/ImageQt.cpp:
