@@ -1,5 +1,12 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Another attempt to fix the Qt build, no review.
+
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/qt/StillImageQt.h:
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         No review, build fix only.
 
         Fix mac build, due to change in new code since my patch was written.

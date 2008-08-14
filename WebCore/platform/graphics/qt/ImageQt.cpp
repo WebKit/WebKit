@@ -84,9 +84,9 @@ void FrameData::clear()
 // Image Class
 // ================================================
 
-Image* Image::loadPlatformResource(const char* name)
+PassRefPtr<Image> Image::loadPlatformResource(const char* name)
 {
-    return new StillImage(loadResourcePixmap(name));
+    return StillImage::create(loadResourcePixmap(name));
 }
 
     

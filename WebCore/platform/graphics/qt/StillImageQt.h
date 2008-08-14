@@ -34,7 +34,7 @@ namespace WebCore {
 
     class StillImage : public Image {
     public:
-        static create(const QPixmap& pixmap)
+        static PassRefPtr<StillImage> create(const QPixmap& pixmap)
         {
             return adoptRef(new StillImage(pixmap));
         }
