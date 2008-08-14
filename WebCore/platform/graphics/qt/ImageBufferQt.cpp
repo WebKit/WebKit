@@ -64,15 +64,6 @@ GraphicsContext* ImageBuffer::context() const
     return m_context.get();
 }
 
-QPixmap* ImageBuffer::pixmap() const
-{
-    if (!m_painter)
-        return &m_pixmap;
-    if (m_painter->isActive())
-        m_painter->end();
-    return &m_pixmap;
-}
-
 Image* ImageBuffer::image() const
 {
     if (!m_image) {

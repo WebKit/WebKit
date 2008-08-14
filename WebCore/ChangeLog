@@ -4,6 +4,18 @@
 
         Attempt to fix the Qt build.
 
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        * platform/graphics/qt/StillImageQt.h:
+        (WebCore::StillImage::create):
+        (WebCore::StillImage::destroyDecodedData):
+        (WebCore::StillImage::decodedSize):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
+        Attempt to fix the Qt build.
+
         * html/CanvasStyle.cpp:
         (WebCore::CanvasStyle::applyStrokeColor):
         (WebCore::CanvasStyle::applyFillColor):
