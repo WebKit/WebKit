@@ -1,5 +1,16 @@
 2008-08-14  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Alexey.
+
+        Clean up GlyphBuffer.h, removing more #ifdefs
+
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::glyphAt):
+        (WebCore::GlyphBuffer::advanceAt):
+        (WebCore::GlyphBuffer::add):
+
+2008-08-14  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Clean up AffineTransform.h, removing #ifdefs

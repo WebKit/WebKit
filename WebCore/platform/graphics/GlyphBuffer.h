@@ -44,17 +44,18 @@ namespace WebCore {
 typedef unsigned short Glyph;
 class SimpleFontData;
 
-#if PLATFORM(CG)
-typedef Glyph GlyphBufferGlyph;
-typedef CGSize GlyphBufferAdvance;
-#elif PLATFORM(CAIRO)
+#if PLATFORM(CAIRO)
+// FIXME: Why does Cairo use such a huge struct instead of just an offset into an array?
 typedef cairo_glyph_t GlyphBufferGlyph;
-typedef FloatSize GlyphBufferAdvance;
-#elif PLATFORM(WX)
+#else
 typedef Glyph GlyphBufferGlyph;
-typedef FloatSize GlyphBufferAdvance;
-#elif PLATFORM(QT)
-typedef unsigned short GlyphBufferGlyph;
+#endif
+
+// CG uses CGSize instead of FloatSize so that the result of advances()
+// can be passed directly to CGContextShowGlyphsWithAdvances in FontMac.mm
+#if PLATFORM(CG)
+typedef CGSize GlyphBufferAdvance;
+#else
 typedef FloatSize GlyphBufferAdvance;
 #endif
 
@@ -103,10 +104,10 @@ public:
 
     Glyph glyphAt(int index) const
     {
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(WX)
-        return m_glyphs[index];
-#elif PLATFORM(CAIRO)
+#if PLATFORM(CAIRO)
         return m_glyphs[index].index;
+#else
+        return m_glyphs[index];
 #endif
     }
 
@@ -114,7 +115,7 @@ public:
     {
 #if PLATFORM(CG)
         return m_advances[index].width;
-#elif PLATFORM(CAIRO) || PLATFORM(QT) || PLATFORM(WX)
+#else
         return m_advances[index].width();
 #endif
     }
@@ -131,21 +132,21 @@ public:
     void add(Glyph glyph, const SimpleFontData* font, float width, const FloatSize* offset = 0)
     {
         m_fontData.append(font);
-#if PLATFORM(CG)
-        m_glyphs.append(glyph);
-        CGSize advance;
-        advance.width = width;
-        advance.height = 0;
-        m_advances.append(advance);
-#elif PLATFORM(CAIRO)
+#if PLATFORM(CAIRO)
         cairo_glyph_t cairoGlyph;
         cairoGlyph.index = glyph;
         m_glyphs.append(cairoGlyph);
-        m_advances.append(FloatSize(width, 0));
-#elif PLATFORM(QT) || PLATFORM(WX)
+#else
         m_glyphs.append(glyph);
+#endif
+
+#if PLATFORM(CG)
+        CGSize advance = { width, 0 };
+        m_advances.append(advance);
+#else
         m_advances.append(FloatSize(width, 0));
 #endif
+
 #if PLATFORM(WIN)
         if (offset)
             m_offsets.append(*offset);
