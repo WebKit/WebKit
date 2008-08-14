@@ -2,6 +2,8 @@
 
         Make Firebug command line API respect predefined variables.
 
+        https://bugs.webkit.org/show_bug.cgi?id=20385
+
         Reviewed by Tim Hatcher.
 
         * page/inspector/Console.js:
