@@ -1,3 +1,15 @@
+2008-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Fix @font-face inside @media rule crash.
+        https://bugs.webkit.org/show_bug.cgi?id=20367
+
+        Test: fast/css/font-face-in-media-rule.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSRuleSet::addRulesFromSheet):
+
 2008-08-14  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes after recent changes to Canvas and Image classes.

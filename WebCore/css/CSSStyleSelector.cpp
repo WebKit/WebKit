@@ -2400,7 +2400,7 @@ void CSSRuleSet::addRulesFromSheet(CSSStyleSheet* sheet, const MediaQueryEvaluat
                             addRule(rule, s);
                     } else if (childItem->isFontFaceRule() && styleSelector) {
                         // Add this font face to our set.
-                        const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(item);
+                        const CSSFontFaceRule* fontFaceRule = static_cast<CSSFontFaceRule*>(childItem);
                         styleSelector->fontSelector()->addFontFaceRule(fontFaceRule);
                     } else if (childItem->isKeyframesRule() && styleSelector) {
                         // Add this keyframe rule to our set.

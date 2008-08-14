@@ -1,3 +1,13 @@
+2008-08-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Eric Seidel
+
+        Fix @font-face inside @media rule crash.
+        https://bugs.webkit.org/show_bug.cgi?id=20367
+        
+        * fast/css/font-face-in-media-rule.html: Added.
+        * platform/mac/fast/css/font-face-in-media-rule-expected.txt: Added.
+
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
