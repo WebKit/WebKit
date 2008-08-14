@@ -823,7 +823,7 @@ String HTMLMediaElement::pickMedia()
 
                     // "type" can have parameters after a semi-colon, strip them before checking with the type registry
                     int semi = type.find(';');
-                    if (-1 != semi)
+                    if (semi != -1)
                         type = type.left(semi).stripWhiteSpace();
 
                     if (!MIMETypeRegistry::isSupportedMediaMIMEType(type))
