@@ -42,4 +42,9 @@ PlatformGradient Gradient::platformGradient()
     return 0;
 }
 
+void Gradient::fill(GraphicsContext*, const FloatRect&)
+{
+    notImplemented();
+}
+
 } //namespace

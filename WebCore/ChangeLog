@@ -1,3 +1,18 @@
+2008-08-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes after recent changes to Canvas and Image classes.
+
+        * platform/graphics/Pattern.h:
+        * platform/graphics/wx/GradientWx.cpp:
+        (WebCore::Gradient::fill):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::applyFillPattern):
+        (WebCore::GraphicsContext::applyStrokePattern):
+        * platform/graphics/wx/ImageBufferWx.cpp:
+        (WebCore::ImageBuffer::image):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::Image::loadPlatformResource):
+
 2008-08-14  Maxime Britto  <britto@apple.com>
 
         Reviewed by Sam Weinig.

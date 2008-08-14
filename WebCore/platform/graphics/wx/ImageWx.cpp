@@ -66,13 +66,13 @@ void FrameData::clear()
 // Image Class
 // ================================================
 
-Image* Image::loadPlatformResource(const char *name)
+PassRefPtr<Image> Image::loadPlatformResource(const char *name)
 {
     Vector<char> arr = loadResourceIntoArray(name);
-    Image* img = new BitmapImage();
+    RefPtr<Image> img = BitmapImage::create();
     RefPtr<SharedBuffer> buffer = SharedBuffer::create(arr.data(), arr.size());
     img->setData(buffer, true);
-    return img;
+    return img.release();
 }
 
 void BitmapImage::initPlatformData()

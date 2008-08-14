@@ -476,4 +476,18 @@ void GraphicsContext::setUseAntialiasing(bool enable)
     notImplemented();
 }
 
+void GraphicsContext::applyFillPattern(const Pattern&)
+{
+    if (paintingDisabled())
+        return;
+    notImplemented();
+}
+
+void GraphicsContext::applyStrokePattern(const Pattern&)
+{
+    if (paintingDisabled())
+        return;
+    notImplemented();
+}
+
 }
