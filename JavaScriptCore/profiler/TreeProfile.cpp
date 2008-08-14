@@ -30,13 +30,13 @@
 
 namespace KJS {
 
-PassRefPtr<TreeProfile> TreeProfile::create(const UString& title)
+PassRefPtr<TreeProfile> TreeProfile::create(const UString& title, unsigned uid)
 {
-    return adoptRef(new TreeProfile(title));
+    return adoptRef(new TreeProfile(title, uid));
 }
 
-TreeProfile::TreeProfile(const UString& title)
-    : Profile(title)
+TreeProfile::TreeProfile(const UString& title, unsigned uid)
+    : Profile(title, uid)
 {
 }
 

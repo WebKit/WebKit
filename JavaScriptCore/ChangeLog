@@ -1,3 +1,29 @@
+2008-08-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/6115819> Notify of profile in console
+        - Profiles now have a unique ID so that they can be linked to the
+        console message that announces that a profile completed.
+
+        * profiler/HeavyProfile.cpp: 
+        (KJS::HeavyProfile::HeavyProfile):
+        * profiler/Profile.cpp:
+        (KJS::Profile::create):
+        (KJS::Profile::Profile):
+        * profiler/Profile.h:
+        (KJS::Profile::uid):
+        * profiler/ProfileGenerator.cpp:
+        (KJS::ProfileGenerator::create):
+        (KJS::ProfileGenerator::ProfileGenerator):
+        * profiler/ProfileGenerator.h:
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::startProfiling):
+        * profiler/TreeProfile.cpp:
+        (KJS::TreeProfile::create):
+        (KJS::TreeProfile::TreeProfile):
+        * profiler/TreeProfile.h:
+
 2008-08-13  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

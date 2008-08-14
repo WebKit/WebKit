@@ -1,3 +1,30 @@
+2008-08-14  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/6115819> Notify of profile in console
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::addProfileMessageToConsole): Called by
+        addProfile this is the function that adds a message to the console that
+        a profile finished.
+        * page/InspectorController.h:
+        * page/JavaScriptProfile.cpp: Expose the profiler's unique ID to match
+        the console log to the profile in the web inspector.
+        (WebCore::getUniqueIdCallback):
+        (WebCore::ProfileClass):
+        * page/inspector/ProfilesPanel.js: Created a map of all the profiles by
+        Id to bring up the requested profile.  Also select and reveal the
+        profile in the profile panel.  And created displayTitleForProfileLink()
+        which formats a title taking into account if it's user initiated or if
+        there are multiples. Lasty, I put the user initiated profile in a
+        variable.
+        * page/inspector/inspector.js: Make the profile title be a clickable
+        link that will take the user to the identified profile.  Also expose
+        the count of user initiated profiles so they can be displayed in the
+        console with the correct count.
+
 2008-08-14  Timothy Hatcher  <timothy@apple.com>
 
         Avoid formating ConsoleMessages twice unless the message will be

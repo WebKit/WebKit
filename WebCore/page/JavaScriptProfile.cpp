@@ -88,6 +88,15 @@ static JSValueRef getTreeProfileCallback(JSContextRef ctx, JSObjectRef thisObjec
     return toRef(toJS(toJS(ctx), profile->treeProfile()));
 }
 
+static JSValueRef getUniqueIdCallback(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    if (!JSValueIsObjectOfClass(ctx, thisObject, ProfileClass()))
+        return JSValueMakeUndefined(ctx);
+
+    Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
+    return JSValueMakeNumber(ctx, profile->uid());
+}
+
 // Static Functions
 
 static JSValueRef focus(JSContextRef ctx, JSObjectRef /*function*/, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* /*exception*/)
@@ -237,6 +246,7 @@ JSClassRef ProfileClass()
         { "head", getHeadCallback, 0, kJSPropertyAttributeNone },
         { "heavyProfile", getHeavyProfileCallback, 0, kJSPropertyAttributeNone },
         { "treeProfile", getTreeProfileCallback, 0, kJSPropertyAttributeNone },
+        { "uid", getUniqueIdCallback, 0, kJSPropertyAttributeNone },
         { 0, 0, 0, 0 }
     };
 

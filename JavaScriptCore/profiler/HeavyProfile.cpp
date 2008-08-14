@@ -31,7 +31,7 @@
 namespace KJS {
 
 HeavyProfile::HeavyProfile(TreeProfile* treeProfile)
-    : Profile(treeProfile->title())
+    : Profile(treeProfile->title(), treeProfile->uid())
 {
     m_treeProfile = treeProfile;
     head()->setTotalTime(m_treeProfile->head()->actualTotalTime());

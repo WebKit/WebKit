@@ -41,6 +41,7 @@ namespace KJS {
 
 static const char* GlobalCodeExecution = "(program)";
 static const char* AnonymousFunction = "(anonymous function)";
+static unsigned ProfilesUID = 0;
 
 static CallIdentifier createCallIdentifier(JSObject*);
 static CallIdentifier createCallIdentifier(const UString& sourceURL, int startingLineNumber);
@@ -70,7 +71,7 @@ void Profiler::startProfiling(ExecState* exec, const UString& title, ProfilerCli
     }
 
     s_sharedEnabledProfilerReference = this;
-    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(title, globalExec, exec->lexicalGlobalObject()->profileGroup(), client);
+    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(title, globalExec, exec->lexicalGlobalObject()->profileGroup(), client, ++ProfilesUID);
     m_currentProfiles.append(profileGenerator);
 }
 

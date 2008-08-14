@@ -32,13 +32,14 @@
 
 namespace KJS {
 
-PassRefPtr<Profile> Profile::create(const UString& title)
+PassRefPtr<Profile> Profile::create(const UString& title, unsigned uid)
 {
-    return TreeProfile::create(title);
+    return TreeProfile::create(title, uid);
 }
 
-Profile::Profile(const UString& title)
+Profile::Profile(const UString& title, unsigned uid)
     : m_title(title)
+    , m_uid(uid)
 {
     // FIXME: When multi-threading is supported this will be a vector and calls
     // into the profiler will need to know which thread it is executing on.

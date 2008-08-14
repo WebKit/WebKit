@@ -37,13 +37,13 @@ namespace KJS {
 
     class TreeProfile : public Profile {
     public:
-        static PassRefPtr<TreeProfile> create(const UString& title);
+        static PassRefPtr<TreeProfile> create(const UString& title, unsigned uid);
 
         virtual Profile* heavyProfile();
         virtual Profile* treeProfile() { return this; }
 
     private:
-        TreeProfile(const UString& title);
+        TreeProfile(const UString& title, unsigned uid);
         RefPtr<HeavyProfile> m_heavyProfile;
     };
 

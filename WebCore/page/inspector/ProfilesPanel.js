@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
+
 WebInspector.ProfilesPanel = function()
 {
     WebInspector.Panel.call(this);
@@ -95,6 +97,7 @@ WebInspector.ProfilesPanel.prototype = {
     reset: function()
     {
         this.nextUserInitiatedProfileNumber = 1;
+        this.nextUserInitiatedProfileNumberForLinks = 1;
 
         if (this._profiles) {
             var profiledLength = this._profiles.length;
@@ -105,7 +108,9 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         this._profiles = [];
+        this._profilesIdMap = {};
         this._profileGroups = {};
+        this._profileGroupsForLinks = {}
 
         this.sidebarTreeElement.removeStyleClass("some-expandable");
 
@@ -123,12 +128,13 @@ WebInspector.ProfilesPanel.prototype = {
     addProfile: function(profile)
     {
         this._profiles.push(profile);
+        this._profilesIdMap[profile.uid] = profile;
 
         var sidebarParent = this.sidebarTree;
         var small = false;
         var alternateTitle;
 
-        if (profile.title !== "org.webkit.profiles.user-initiated") {
+        if (profile.title !== UserInitiatedProfileName) {
             if (!(profile.title in this._profileGroups))
                 this._profileGroups[profile.title] = [];
 
@@ -189,6 +195,8 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         view.show(this.profileViews);
+        profile._profilesTreeElement.select(true);
+        profile._profilesTreeElement.reveal()
 
         this.visibleProfileView = view;
 
@@ -199,11 +207,34 @@ WebInspector.ProfilesPanel.prototype = {
             this.profileViewStatusBarItemsContainer.appendChild(statusBarItems[i]);
     },
 
+    showProfileById: function(uid)
+    {
+        this.showProfile(this._profilesIdMap[uid]);
+    },
+
     closeVisibleView: function()
     {
         if (this.visibleProfileView)
             this.visibleProfileView.hide();
         delete this.visibleProfileView;
+    },
+
+    displayTitleForProfileLink: function(title)
+    {
+        title = unescape(title);
+        if (title === UserInitiatedProfileName)
+            title = WebInspector.UIString("Profile %d", this.nextUserInitiatedProfileNumberForLinks++);
+        else {
+            if (!(title in this._profileGroupsForLinks))
+                this._profileGroupsForLinks[title] = 0;
+
+            groupNumber = ++this._profileGroupsForLinks[title];
+
+            if (groupNumber >= 2)
+                title += " " + WebInspector.UIString("Run %d", groupNumber);
+        }
+        
+        return title;
     },
 
     _recordClicked: function()
@@ -295,7 +326,7 @@ WebInspector.ProfileSidebarTreeElement = function(profile)
 {
     this.profile = profile;
 
-    if (this.profile.title === "org.webkit.profiles.user-initiated")
+    if (this.profile.title === UserInitiatedProfileName)
         this._profileNumber = WebInspector.panels.profiles.nextUserInitiatedProfileNumber++;
 
     WebInspector.SidebarTreeElement.call(this, "profile-sidebar-tree-item", "", "", profile, false);
@@ -313,7 +344,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     {
         if (this._mainTitle)
             return this._mainTitle;
-        if (this.profile.title === "org.webkit.profiles.user-initiated")
+        if (this.profile.title === UserInitiatedProfileName)
             return WebInspector.UIString("Profile %d", this._profileNumber);
         return this.profile.title;
     },

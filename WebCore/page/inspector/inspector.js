@@ -426,6 +426,11 @@ WebInspector.documentClick = function(event)
             }
 
             WebInspector.showResourceForURL(anchor.href, anchor.lineNumber, anchor.preferredPanel);
+        } else {
+            var profileStringRegEx = new RegExp("webkit-profile://.+/([0-9]+)");
+            var profileString = profileStringRegEx.exec(anchor.href);
+            if (profileString)
+                WebInspector.showProfileById(profileString[1])
         }
     }
 
@@ -944,18 +949,30 @@ WebInspector.linkifyStringAsFragment = function(string)
             break;
 
         linkString = linkString[0];
+        var title = linkString;
         var linkIndex = string.indexOf(linkString);
         var nonLink = string.substring(0, linkIndex);
         container.appendChild(document.createTextNode(nonLink));
+
+        var profileStringRegEx = new RegExp("webkit-profile://(.+)/[0-9]+");
+        var profileTitle = profileStringRegEx.exec(title)[1];
+        if (profileTitle)
+            title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle);
+
         var realURL = (linkString.indexOf("www.") === 0 ? "http://" + linkString : linkString);
-        container.appendChild(WebInspector.linkifyURLAsNode(realURL, linkString, null, (realURL in WebInspector.resourceURLMap)));
+        container.appendChild(WebInspector.linkifyURLAsNode(realURL, title, null, (realURL in WebInspector.resourceURLMap)));
         string = string.substring(linkIndex + linkString.length, string.length);
     }
 
     if (string)
         container.appendChild(document.createTextNode(string));
-    
+
     return container;
+}
+
+WebInspector.showProfileById = function(uid) {
+    WebInspector.showProfilesPanel();
+    WebInspector.panels.profiles.showProfileById(uid);
 }
 
 WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)

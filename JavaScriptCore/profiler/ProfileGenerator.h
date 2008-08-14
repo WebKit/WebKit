@@ -41,7 +41,7 @@ namespace KJS {
 
     class ProfileGenerator : public RefCounted<ProfileGenerator>  {
     public:
-        static PassRefPtr<ProfileGenerator> create(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient*);
+        static PassRefPtr<ProfileGenerator> create(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient*, unsigned uid);
 
         // Members
         const UString& title() const;
@@ -62,7 +62,7 @@ namespace KJS {
         typedef void (ProfileGenerator::*ProfileFunction)(const CallIdentifier& callIdentifier);
 
     private:
-        ProfileGenerator(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient*);
+        ProfileGenerator(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient*, unsigned uid);
 
         void removeProfileStart();
         void removeProfileEnd();

@@ -113,6 +113,7 @@ public:
     void toggleRecordButton(bool);
 
     void addProfile(PassRefPtr<KJS::Profile>);
+    void addProfileMessageToConsole(PassRefPtr<KJS::Profile> prpProfile);
     void addScriptProfile(KJS::Profile* profile);
     const Vector<RefPtr<KJS::Profile> >& profiles() const { return m_profiles; }
 

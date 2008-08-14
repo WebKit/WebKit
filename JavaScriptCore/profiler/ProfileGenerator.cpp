@@ -33,19 +33,19 @@ namespace KJS {
 
 static const char* NonJSExecution = "(idle)";
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client, unsigned uid)
 {
-    return adoptRef(new ProfileGenerator(title, originatingGlobalExec, profileGroup, client));
+    return adoptRef(new ProfileGenerator(title, originatingGlobalExec, profileGroup, client, uid));
 }
 
-ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client)
+ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client, unsigned uid)
     : m_originatingGlobalExec(originatingGlobalExec)
     , m_profileGroup(profileGroup)
     , m_client(client)
     , m_stoppedProfiling(false)
     , m_stoppedCallDepth(0)
 {
-    m_profile = Profile::create(title);
+    m_profile = Profile::create(title, uid);
     m_currentNode = m_head = m_profile->head();
 }
 

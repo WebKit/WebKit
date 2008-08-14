@@ -1311,7 +1311,22 @@ void InspectorController::addProfile(PassRefPtr<Profile> prpProfile)
 
     if (windowVisible())
         addScriptProfile(profile.get());
+
+    addProfileMessageToConsole(profile);
 }
+
+void InspectorController::addProfileMessageToConsole(PassRefPtr<Profile> prpProfile)
+{
+    RefPtr<Profile> profile = prpProfile;
+
+    UString message = "Profile \"webkit-profile://";
+    message += encodeWithURLEscapeSequences(profile->title());
+    message += "/";
+    message += UString::from(profile->uid());
+    message += "\" finished.";
+    addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, "");
+}
+
 
 void InspectorController::attachWindow()
 {
