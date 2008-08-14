@@ -1,3 +1,17 @@
+2008-08-13  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Nixed a PIC branch from JSObject::getOwnPropertySlot, by forcing
+        fillGetterProperty, which references a global function pointer,
+        out-of-line.
+        
+        .2% SunSpider speedup, 4.3% access-nbody speedup, 8.7% speedup on a
+        custom property access benchmark for objects with one property.
+
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::fillGetterPropertySlot):
+
 2008-08-13  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Eric Seidel.

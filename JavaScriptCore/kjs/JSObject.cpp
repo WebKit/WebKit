@@ -465,7 +465,7 @@ void JSObject::putDirectFunction(InternalFunction* function, unsigned attr)
     putDirect(function->functionName(), function, attr);
 }
 
-void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)
+NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)
 {
     if (JSObject* getterFunction = static_cast<GetterSetter*>(*location)->getter())
         slot.setGetterSlot(getterFunction);
