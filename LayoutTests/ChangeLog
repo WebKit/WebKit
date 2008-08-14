@@ -1,3 +1,15 @@
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Match HTML5 spec by throwing INVALID_STATE_ERR when
+        createPattern is called and the HTMLImageElement is not
+        yet done loading the image (!isComplete)
+        https://bugs.webkit.org/show_bug.cgi?id=20351
+
+        * http/tests/misc/canvas-pattern-from-incremental-image.html: Added.
+        * http/tests/misc/resources/image-slow.pl: Copied from LayoutTests/http/tests/misc/resources/script-slow1.pl.
+
 2008-08-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.

@@ -1,5 +1,19 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Sam.
+
+        Match HTML5 spec by throwing INVALID_STATE_ERR when
+        createPattern is called and the HTMLImageElement is not
+        yet done loading the image (!isComplete)
+        https://bugs.webkit.org/show_bug.cgi?id=20351
+
+        Test: http/misc/canvas-pattern-from-incremental-image.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Niko.
 
         Split out a Pattern class from CanvasPattern

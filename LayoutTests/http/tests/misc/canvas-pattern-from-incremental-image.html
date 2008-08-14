@@ -1,0 +1,21 @@
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var canvas = document.createElement("canvas");
+var ctx = canvas.getContext('2d');
+ctx.fillRect(0,0,150,150);
+var img = new Image();
+img.src = 'resources/image-slow.pl';
+var ptrn
+try {
+    ptrn = ctx.createPattern(img, 'repeat');
+    document.write("FAIL");
+} catch (e) {
+    if (e.code == DOMException.INVALID_STATE_ERR) {
+        document.write("PASS");
+    } else {
+        document.write("FAIL " + e);
+    }
+}
+</script>
