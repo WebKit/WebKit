@@ -10428,6 +10428,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\dom\ScriptElement.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\dom\ScriptElement.h"
+				>
+			</File>
+			<File
 				RelativePath="..\dom\SelectorNodeList.cpp"
 				>
 				<FileConfiguration

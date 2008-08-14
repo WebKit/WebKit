@@ -1,3 +1,96 @@
+2008-08-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
+        Reviewed by Eric.
+
+        Fixes: https://bugs.webkit.org/show_bug.cgi?id=20372
+
+        Refactor HTMLScriptElement's code into a common base class: ScriptElement.
+        SVGScriptElement will be converted to use ScriptElement in a follow-up patch.
+
+        This resolves code duplications and allows us to completly replace the old
+        SVGScriptElement (which doesn't use CachedScript, no dynamic injected scripts etc..)
+
+        As ScriptElement, doesn't actually inherit from Element, we may want to rename
+        it, though StyleElement uses the same naming convention, so I left it as is for now.
+        Eventually we'll rename both files in future.
+
+        No functional changes yet, as SVGScriptElement doesn't yet use the new base class.
+
+        * WebCore.pro: Add new ScriptElement.cpp to build.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCoreSources.bkl: Dutto.
+        * dom/ScriptElement.cpp: Added. 1:1 based on HTMLScriptElement
+        (WebCore::ScriptElement::insertedIntoDocument):
+        (WebCore::ScriptElement::removedFromDocument):
+        (WebCore::ScriptElement::childrenChanged):
+        (WebCore::ScriptElement::finishParsingChildren):
+        (WebCore::ScriptElement::handleSourceAttribute):
+        (WebCore::isSupportedJavaScriptLanguage):
+        (WebCore::ScriptElementData::ScriptElementData):
+        (WebCore::ScriptElementData::~ScriptElementData):
+        (WebCore::ScriptElementData::requestScript):
+        (WebCore::ScriptElementData::evaluateScript):
+        (WebCore::ScriptElementData::stopLoadRequest):
+        (WebCore::ScriptElementData::notifyFinished):
+        (WebCore::ScriptElementData::ignoresLoadRequest):
+        (WebCore::ScriptElementData::shouldExecuteAsJavaScript):
+        (WebCore::ScriptElementData::scriptCharset):
+        (WebCore::ScriptElementData::scriptContent):
+        * dom/ScriptElement.h: Added.
+        (WebCore::ScriptElement::ScriptElement):
+        (WebCore::ScriptElement::~ScriptElement):
+        (WebCore::ScriptElementData::element):
+        (WebCore::ScriptElementData::createdByParser):
+        (WebCore::ScriptElementData::setCreatedByParser):
+        * dom/XMLTokenizer.cpp:
+        (WebCore::isScriptElement):
+        (WebCore::castToScriptElement):
+        (WebCore::eventuallyMarkAsParserCreated):
+        (WebCore::XMLTokenizer::startElementNs):
+        (WebCore::XMLTokenizer::endElementNs):
+        (WebCore::createXHTMLParserErrorHeader):
+        (WebCore::XMLTokenizer::insertErrorMessageBlock):
+        * html/HTMLScriptElement.cpp: Refactored code, pushed most code down to ScriptElement.
+        (WebCore::HTMLScriptElement::HTMLScriptElement):
+        (WebCore::HTMLScriptElement::~HTMLScriptElement):
+        (WebCore::HTMLScriptElement::isURLAttribute):
+        (WebCore::HTMLScriptElement::setCreatedByParser):
+        (WebCore::HTMLScriptElement::shouldExecuteAsJavaScript):
+        (WebCore::HTMLScriptElement::childrenChanged):
+        (WebCore::HTMLScriptElement::parseMappedAttribute):
+        (WebCore::HTMLScriptElement::finishParsingChildren):
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        (WebCore::HTMLScriptElement::removedFromDocument):
+        (WebCore::HTMLScriptElement::text):
+        (WebCore::HTMLScriptElement::setText):
+        (WebCore::HTMLScriptElement::setHtmlFor):
+        (WebCore::HTMLScriptElement::setEvent):
+        (WebCore::HTMLScriptElement::charset):
+        (WebCore::HTMLScriptElement::src):
+        (WebCore::HTMLScriptElement::type):
+        (WebCore::HTMLScriptElement::scriptCharset):
+        (WebCore::HTMLScriptElement::scriptContent):
+        (WebCore::HTMLScriptElement::sourceAttributeValue):
+        (WebCore::HTMLScriptElement::charsetAttributeValue):
+        (WebCore::HTMLScriptElement::typeAttributeValue):
+        (WebCore::HTMLScriptElement::languageAttributeValue):
+        (WebCore::HTMLScriptElement::dispatchLoadEvent):
+        (WebCore::HTMLScriptElement::dispatchErrorEvent):
+        * html/HTMLScriptElement.h:
+        * svg/SVGScriptElement.cpp: Inherit from ScriptElement, don't actually use it yet.
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::SVGScriptElement):
+        (WebCore::SVGScriptElement::scriptContent):
+        (WebCore::SVGScriptElement::sourceAttributeValue):
+        (WebCore::SVGScriptElement::charsetAttributeValue):
+        (WebCore::SVGScriptElement::typeAttributeValue):
+        (WebCore::SVGScriptElement::languageAttributeValue):
+        (WebCore::SVGScriptElement::dispatchLoadEvent):
+        (WebCore::SVGScriptElement::dispatchErrorEvent):
+        * svg/SVGScriptElement.h:
+        (WebCore::SVGScriptElement::setCreatedByParser):
+
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
         Attempt to fix the Gtk build, no review.

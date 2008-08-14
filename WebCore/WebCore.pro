@@ -536,6 +536,7 @@ SOURCES += \
     dom/QualifiedName.cpp \
     dom/Range.cpp \
     dom/RegisteredEventListener.cpp \
+    dom/ScriptElement.cpp \
     dom/SelectorNodeList.cpp \
     dom/StaticNodeList.cpp \
     dom/StyledElement.cpp \

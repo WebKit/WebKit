@@ -2,6 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Nikolas Zimmermann <zimmermann@kde.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,17 +24,20 @@
 #ifndef HTMLScriptElement_h
 #define HTMLScriptElement_h
 
-#include "CachedResourceClient.h"
+#include "ScriptElement.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
 
-class CachedScript;
-
-class HTMLScriptElement : public HTMLElement, public CachedResourceClient {
+class HTMLScriptElement : public HTMLElement
+                        , public ScriptElement {
 public:
     HTMLScriptElement(Document*);
     ~HTMLScriptElement();
+
+    void setCreatedByParser(bool);
+    bool shouldExecuteAsJavaScript() const;
+    virtual String scriptContent() const;
 
     virtual HTMLTagStatus endTagRequirement() const { return TagStatusRequired; }
     virtual int tagPriority() const { return 1; }
@@ -42,17 +46,10 @@ public:
     virtual void parseMappedAttribute(MappedAttribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void notifyFinished(CachedResource*);
-
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
 
     virtual bool isURLAttribute(Attribute*) const;
-
-    void setCreatedByParser(bool createdByParser) { m_createdByParser = createdByParser; }
     virtual void finishParsingChildren();
-
-    bool shouldExecuteAsJavaScript();
-    void evaluateScript(const String& url, const String& script);
 
     String text() const;
     void setText(const String&);
@@ -80,10 +77,17 @@ public:
     
     virtual void getSubresourceAttributeStrings(Vector<String>&) const;
 
+protected:
+    virtual String sourceAttributeValue() const;
+    virtual String charsetAttributeValue() const;
+    virtual String typeAttributeValue() const;
+    virtual String languageAttributeValue() const;
+
+    virtual void dispatchLoadEvent();
+    virtual void dispatchErrorEvent();
+
 private:
-    CachedScript* m_cachedScript;
-    bool m_createdByParser;
-    bool m_evaluated;
+    ScriptElementData m_data;
 };
 
 } //namespace

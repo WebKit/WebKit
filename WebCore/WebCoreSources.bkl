@@ -406,6 +406,7 @@ This file contains the list of files needed to build WebCore.
         dom/QualifiedName.cpp
         dom/Range.cpp
         dom/RegisteredEventListener.cpp
+        dom/ScriptElement.cpp
         dom/SelectorNodeList.cpp
         dom/StaticNodeList.cpp
         dom/StyleElement.cpp
