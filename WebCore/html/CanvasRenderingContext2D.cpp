@@ -176,12 +176,7 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
-#if PLATFORM(CAIRO)
-    // FIXME: hack to reduce code duplication in CanvasStyle.cpp
-    state().m_fillStyle->applyStrokeColor(c);
-#else
     state().m_fillStyle->applyFillColor(c);
-#endif
     state().m_appliedFillPattern = false;
 }
 

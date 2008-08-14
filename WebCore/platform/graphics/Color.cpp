@@ -51,6 +51,17 @@ RGBA32 makeRGBA(int r, int g, int b, int a)
     return max(0, min(a, 255)) << 24 | max(0, min(r, 255)) << 16 | max(0, min(g, 255)) << 8 | max(0, min(b, 255));
 }
 
+int colorFloatToRGBAByte(float f)
+{
+    // We use lroundf and 255 instead of nextafterf(256, 0) to match CG's rounding
+    return max(0, min(static_cast<int>(lroundf(255.0f * f)), 255));
+}
+
+RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
+{
+    return colorFloatToRGBAByte(a) << 24 | colorFloatToRGBAByte(r) << 16 | colorFloatToRGBAByte(g) << 8 | colorFloatToRGBAByte(b);
+}
+
 static double calcHue(double temp1, double temp2, double hueVal)
 {
     if (hueVal < 0.0)

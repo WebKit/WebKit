@@ -1,3 +1,38 @@
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Remove #ifdefs from CanvasStyle by using platform/Color.h
+
+        There are some down-sides to this commit.
+        This commit limits us to 255 levels of grey for calls like:
+        context.setStrokeStyle(.37, 1.0)
+        previously CG might have used up to 32bits to store the grey level
+        Since setStrokeStyle is not part of HTML5, I don't suspect the web will notice.
+
+        Likewise, setStrokeStyle/setFillStyle calls which used float colors are now limited
+        to RGBA32 (like all the rest of colors in WebCore), thus:
+        context.setStrokStyle(.37, .24, .456, .99) will now have the same precision as:
+        context.strokeStyle = "rgba(.37, .24, .456, .99)", which is to say RGBA32
+
+        If this is a problem for Dashboard, we can either roll out this commit
+        or add a beefier Color abstraction, which can be used internally by GraphicsContext
+        when keeping state, and then GraphicsContext can grow some additional set* routines
+        for setting the a grey/float/whatever fill and stroke.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::CanvasStyle):
+        (WebCore::colorWithOverrideAlpha):
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/CanvasStyle.h:
+        * platform/graphics/Color.cpp:
+        (WebCore::colorFloatToRGBAByte):
+        (WebCore::makeRGBA32FromFloats):
+        * platform/graphics/Color.h:
+
 2008-08-13  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele Peterson.
