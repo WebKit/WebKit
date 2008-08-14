@@ -1,5 +1,13 @@
 2008-08-13  Nikolas Zimmermann  <zimmermann@kde.org>
 
+        Build fix for Cairo, not reviewed. (exposed by gtk build slave)
+        Continue Erics build fixes, after the Image cleanup.
+
+        * platform/graphics/cairo/ImageBufferCairo.cpp:
+        (WebCore::ImageBuffer::image):
+
+2008-08-13  Nikolas Zimmermann  <zimmermann@kde.org>
+
         Build fix for Qt, not reviewed.
         Don't declare eventuallyMarkAsParserCreated in a block wrapped by !USE_QXMLSTREAM.
 

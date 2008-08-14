@@ -78,7 +78,7 @@ Image* ImageBuffer::image() const
         // GraphicsContext must be done.
         ASSERT(context());
         // BitmapImage will release the passed in surface on destruction
-        m_image.set(BitmapImage::create(cairo_surface_reference(m_surface)));
+        m_image = BitmapImage::create(cairo_surface_reference(m_surface));
     }
     return m_image.get();
 }
