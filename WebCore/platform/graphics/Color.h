@@ -57,7 +57,7 @@ typedef unsigned RGBA32;        // RGBA quadruplet
 RGBA32 makeRGB(int r, int g, int b);
 RGBA32 makeRGBA(int r, int g, int b, int a);
 
-int colorFloatToRGBAByte(float);
+RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha);
 RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a);
 RGBA32 makeRGBAFromHSLA(double h, double s, double l, double a);
 

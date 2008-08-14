@@ -24,42 +24,41 @@
 #if ENABLE(SVG)
 #include "SVGPaintServerSolid.h"
 
+#include "Color.h"
+#include "CgSupport.h"
 #include "GraphicsContext.h"
 #include "RenderObject.h"
-#include "CgSupport.h"
 
 namespace WebCore {
 
 bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* object, SVGPaintTargetType type, bool isPaintingText) const
 {
-    CGContextRef contextRef = context->platformContext();
+    // FIXME: This function does not use any CG-specific calls, however it's not yet
+    // cross platform, because CG handles fill rule different from other graphics
+    // platforms.  CG makes you use two separate fill calls, other platforms set
+    // the fill rule state on the context and then call a generic "fillPath"
+
     RenderStyle* style = object ? object->style() : 0;
 
-    static CGColorSpaceRef deviceRGBColorSpace = CGColorSpaceCreateDeviceRGB(); // This should be shared from GraphicsContext, or some other central location
-
     if ((type & ApplyToFillTargetType) && (!style || style->svgStyle()->hasFill())) {
-        CGFloat colorComponents[4];
-        color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
+        RGBA32 rgba = color().rgb();
         ASSERT(!color().hasAlpha());
         if (style)
-            colorComponents[3] = style->svgStyle()->fillOpacity(); // SVG/CSS colors are not specified w/o alpha
+            rgba = colorWithOverrideAlpha(rgba, style->svgStyle()->fillOpacity());
 
-        CGContextSetFillColorSpace(contextRef, deviceRGBColorSpace);
-        CGContextSetFillColor(contextRef, colorComponents);
+        context->setFillColor(rgba);
 
         if (isPaintingText)
             context->setTextDrawingMode(cTextFill);
     }
 
     if ((type & ApplyToStrokeTargetType) && (!style || style->svgStyle()->hasStroke())) {
-        CGFloat colorComponents[4];
-        color().getRGBA(colorComponents[0], colorComponents[1], colorComponents[2], colorComponents[3]);
+        RGBA32 rgba = color().rgb();
         ASSERT(!color().hasAlpha());
         if (style)
-            colorComponents[3] = style->svgStyle()->strokeOpacity(); // SVG/CSS colors are not specified w/o alpha
+            rgba = colorWithOverrideAlpha(rgba, style->svgStyle()->strokeOpacity());
 
-        CGContextSetStrokeColorSpace(contextRef, deviceRGBColorSpace);
-        CGContextSetStrokeColor(contextRef, colorComponents);
+        context->setStrokeColor(rgba);
 
         if (style)
             applyStrokeStyleToContext(context, style, object);

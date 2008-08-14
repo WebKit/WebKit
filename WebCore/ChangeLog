@@ -1,5 +1,22 @@
 2008-08-14  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Beth.
+
+        Move us one step closer to cross-platform svg/graphics code
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CanvasStyle.cpp:
+        * platform/graphics/Color.cpp:
+        (WebCore::colorWithOverrideAlpha):
+        * platform/graphics/Color.h:
+        * svg/graphics/cg/CgSupport.cpp:
+        (WebCore::applyStrokeStyleToContext):
+        (WebCore::strokeBoundingBox):
+        * svg/graphics/cg/SVGPaintServerSolidCg.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-08-14  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Alexey.
 
         Remove un-need includes from HTMLCanvas and use the

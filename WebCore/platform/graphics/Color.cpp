@@ -62,6 +62,13 @@ RGBA32 makeRGBA32FromFloats(float r, float g, float b, float a)
     return colorFloatToRGBAByte(a) << 24 | colorFloatToRGBAByte(r) << 16 | colorFloatToRGBAByte(g) << 8 | colorFloatToRGBAByte(b);
 }
 
+RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
+{
+    RGBA32 rgbOnly = color & 0x00FFFFFF;
+    RGBA32 rgba = rgbOnly | colorFloatToRGBAByte(overrideAlpha) << 24;
+    return rgba;
+}
+
 static double calcHue(double temp1, double temp2, double hueVal)
 {
     if (hueVal < 0.0)

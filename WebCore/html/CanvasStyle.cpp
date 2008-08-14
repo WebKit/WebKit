@@ -98,13 +98,6 @@ CanvasStyle::CanvasStyle(PassRefPtr<CanvasPattern> pattern)
 {
 }
 
-static inline RGBA32 colorWithOverrideAlpha(RGBA32 color, float overrideAlpha)
-{
-    RGBA32 rgbOnly = color & 0x00FFFFFF;
-    RGBA32 rgba = rgbOnly | colorFloatToRGBAByte(overrideAlpha) << 24;
-    return rgba;
-}
-
 void CanvasStyle::applyStrokeColor(GraphicsContext* context)
 {
     if (!context)
