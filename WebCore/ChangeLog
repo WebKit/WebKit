@@ -1,5 +1,15 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Build fix only, no review.
+
+        Attempt to fix the Qt build.
+
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Sam.
 
         Match HTML5 spec by throwing INVALID_STATE_ERR when

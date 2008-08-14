@@ -138,11 +138,11 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
 #if PLATFORM(CG)
             CGContextSetCMYKStrokeColor(context->platformContext(), m_cyan, m_magenta, m_yellow, m_black, m_alpha);
 #elif PLATFORM(QT)
-            QPen currentPen = p->pen();
+            QPen currentPen = context->platformContext()->pen();
             QColor clr;
             clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
             currentPen.setColor(clr);
-            p->setPen(currentPen);
+            context->platformContext()->setPen(currentPen);
 #elif PLATFORM(CAIRO)
             notImplemented();
 #endif
@@ -189,11 +189,11 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
 #if PLATFORM(CG)
             CGContextSetCMYKFillColor(context->platformContext(), m_cyan, m_magenta, m_yellow, m_black, m_alpha);
 #elif PLATFORM(QT)
-            QBrush currentBrush = p->brush();
+            QBrush currentBrush = context->platformContext()->brush();
             QColor clr;
             clr.setCmykF(m_cyan, m_magenta, m_yellow, m_black, m_alpha);
             currentBrush.setColor(clr);
-            p->setBrush(currentBrush);
+            context->platformContext()->setBrush(currentBrush);
 #endif
             break;
         }
