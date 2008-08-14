@@ -41,7 +41,7 @@ AffineTransform::AffineTransform(double a, double b, double c, double d, double 
 {
 }
 
-AffineTransform::AffineTransform(const QMatrix& matrix)
+AffineTransform::AffineTransform(const PlatformAffineTransform& matrix)
     : m_transform(matrix)
 {
 }

@@ -1,3 +1,15 @@
+2008-08-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Clean up AffineTransform.h, removing #ifdefs
+
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/cairo/AffineTransformCairo.cpp:
+        * platform/graphics/cg/AffineTransformCG.cpp:
+        * platform/graphics/qt/AffineTransformQt.cpp:
+        * platform/graphics/wx/AffineTransformWx.cpp:
+
 2008-08-14  Dan Bernstein  <mitz@apple.com>
 
         - fix non-CG builds by adding an ImageSource::frameSizeAtIndex() that returns size().

@@ -37,8 +37,8 @@
 namespace WebCore {
 
 AffineTransform::AffineTransform()
+    : m_transform(CGAffineTransformIdentity)
 {
-    m_transform = CGAffineTransformIdentity;
 }
 
 AffineTransform::AffineTransform(double a, double b, double c, double d, double tx, double ty)
@@ -51,9 +51,9 @@ AffineTransform::AffineTransform(double a, double b, double c, double d, double 
                                         narrowPrecisionToCGFloat(ty));
 }
 
-AffineTransform::AffineTransform(CGAffineTransform t)
+AffineTransform::AffineTransform(const PlatformAffineTransform& t)
+    : m_transform(t)
 {
-    m_transform = t;
 }
 
 void AffineTransform::setMatrix(double a, double b, double c, double d, double tx, double ty)
@@ -190,7 +190,7 @@ AffineTransform AffineTransform::inverse() const
     return AffineTransform();
 }
 
-AffineTransform::operator CGAffineTransform() const
+AffineTransform::operator PlatformAffineTransform() const
 {
     return m_transform;
 }
