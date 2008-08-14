@@ -41,25 +41,16 @@
 #include "HTMLParser.h"
 #include "HTMLScriptElement.h"
 #include "HTMLViewSourceDocument.h"
+#include "Page.h"
 #include "PreloadScanner.h"
-#include "Settings.h"
-#include "SystemTime.h"
 #include "ScriptController.h"
+#include "SystemTime.h"
 #include <wtf/ASCIICType.h>
 
 #include "HTMLEntityNames.c"
 
 #define PRELOAD_SCANNER_ENABLED 1
 // #define INSTRUMENT_LAYOUT_SCHEDULING 1
-
-#if MOBILE
-// The mobile device needs to be responsive, as such the tokenizer chunk size is reduced.
-// This value is used to define how many characters the tokenizer will process before 
-// yeilding control.
-#define TOKENIZER_CHUNK_SIZE  256
-#else
-#define TOKENIZER_CHUNK_SIZE  4096
-#endif
 
 using namespace std;
 using namespace WTF;
@@ -70,15 +61,23 @@ using namespace HTMLNames;
 using namespace EventNames;
 
 #if MOBILE
+// The mobile device needs to be responsive, as such the tokenizer chunk size is reduced.
+// This value is used to define how many characters the tokenizer will process before 
+// yeilding control.
+static const int defaultTokenizerChunkSize = 256;
+#else
+static const int defaultTokenizerChunkSize = 4096;
+#endif
+
+#if MOBILE
 // As the chunks are smaller (above), the tokenizer should not yield for as long a period, otherwise
 // it will take way to long to load a page.
-const double tokenizerTimeDelay = 0.300;
-
+static const double defaultTokenizerTimeDelay = 0.300;
 #else
 // FIXME: We would like this constant to be 200ms.
 // Yielding more aggressively results in increased responsiveness and better incremental rendering.
 // It slows down overall page-load on slower machines, though, so for now we set a value of 500.
-const double tokenizerTimeDelay = 0.500;
+static const double defaultTokenizerTimeDelay = 0.500;
 #endif
 
 static const char commentStart [] = "<!--";
@@ -257,6 +256,17 @@ void HTMLTokenizer::begin()
     scriptStartLineno = 0;
     tagStartLineno = 0;
     m_state.setForceSynchronous(false);
+
+    Page* page = m_doc->page();
+    if (page && page->hasCustomHTMLTokenizerTimeDelay())
+        m_tokenizerTimeDelay = page->customHTMLTokenizerTimeDelay();
+    else
+        m_tokenizerTimeDelay = defaultTokenizerTimeDelay;
+
+    if (page && page->hasCustomHTMLTokenizerChunkSize())
+        m_tokenizerChunkSize = page->customHTMLTokenizerChunkSize();
+    else
+        m_tokenizerChunkSize = defaultTokenizerChunkSize;
 }
 
 void HTMLTokenizer::setForceSynchronous(bool force)
@@ -1573,9 +1583,9 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
     // processed a certain number of characters.
     bool allowedYield = state.allowYield();
     state.setAllowYield(false);
-    if (!state.loadingExtScript() && !state.forceSynchronous() && !m_executingScript && (processedCount > TOKENIZER_CHUNK_SIZE || allowedYield)) {
+    if (!state.loadingExtScript() && !state.forceSynchronous() && !m_executingScript && (processedCount > m_tokenizerChunkSize || allowedYield)) {
         processedCount = 0;
-        if (currentTime() - startTime > tokenizerTimeDelay) {
+        if (currentTime() - startTime > m_tokenizerTimeDelay) {
             /* FIXME: We'd like to yield aggressively to give stylesheets the opportunity to
                load, but this hurts overall performance on slower machines.  For now turn this
                off.
@@ -1584,7 +1594,7 @@ inline bool HTMLTokenizer::continueProcessing(int& processedCount, double startT
             // Schedule the timer to keep processing as soon as possible.
             m_timer.startOneShot(0);
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-            if (currentTime() - startTime > tokenizerTimeDelay)
+            if (currentTime() - startTime > m_tokenizerTimeDelay)
                 printf("Deferring processing of data because 500ms elapsed away from event loop.\n");
 #endif
             return false;

@@ -121,6 +121,8 @@ Page::Page(ChromeClient* chromeClient, ContextMenuClient* contextMenuClient, Edi
     , m_debugger(0)
     , m_pendingUnloadEventCount(0)
     , m_pendingBeforeUnloadEventCount(0)
+    , m_customHTMLTokenizerTimeDelay(-1)
+    , m_customHTMLTokenizerChunkSize(-1)
 {
     if (!allPages) {
         allPages = new HashSet<Page*>;
@@ -550,6 +552,24 @@ void Page::changePendingBeforeUnloadEventCount(int delta)
     
     m_pendingBeforeUnloadEventCount += delta;
     return; 
+}
+
+void Page::setCustomHTMLTokenizerTimeDelay(double customHTMLTokenizerTimeDelay)
+{
+    if (customHTMLTokenizerTimeDelay < 0) {
+        m_customHTMLTokenizerTimeDelay = -1;
+        return;
+    }
+    m_customHTMLTokenizerTimeDelay = customHTMLTokenizerTimeDelay;
+}
+
+void Page::setCustomHTMLTokenizerChunkSize(int customHTMLTokenizerChunkSize)
+{
+    if (customHTMLTokenizerChunkSize < 0) {
+        m_customHTMLTokenizerChunkSize = -1;
+        return;
+    }
+    m_customHTMLTokenizerChunkSize = customHTMLTokenizerChunkSize;
 }
 
 } // namespace WebCore

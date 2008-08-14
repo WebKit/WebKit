@@ -1675,6 +1675,20 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     coreFrame->editor()->command(name).execute(value);
 }
 
+- (void)_setCustomHTMLTokenizerTimeDelay:(double)timeDelay
+{
+    if (!_private->page)
+        return;
+    return _private->page->setCustomHTMLTokenizerTimeDelay(timeDelay);
+}
+
+- (void)_setCustomHTMLTokenizerChunkSize:(int)chunkSize
+{
+    if (!_private->page)
+        return;
+    return _private->page->setCustomHTMLTokenizerChunkSize(chunkSize);
+}
+
 @end
 
 @implementation _WebSafeForwarder

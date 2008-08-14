@@ -1,3 +1,14 @@
+2008-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen and Timothy Hatcher.
+
+        Add WebView SPI to set HTMLTokenizer yielding parameters.
+
+        * WebView/WebView.mm:
+        (-[WebView _setCustomHTMLTokenizerTimeDelay:]):
+        (-[WebView _setCustomHTMLTokenizerChunkSize:]):
+        * WebView/WebViewPrivate.h:
+
 2008-08-13  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where Safari's find banner would be permanently hidden

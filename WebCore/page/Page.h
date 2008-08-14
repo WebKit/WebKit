@@ -169,6 +169,14 @@ namespace WebCore {
         void setSessionStorage(PassRefPtr<SessionStorage>);
 #endif
 
+        void setCustomHTMLTokenizerTimeDelay(double);
+        bool hasCustomHTMLTokenizerTimeDelay() const { return m_customHTMLTokenizerTimeDelay != -1; }
+        double customHTMLTokenizerTimeDelay() const { ASSERT(m_customHTMLTokenizerTimeDelay != -1); return m_customHTMLTokenizerTimeDelay; }
+
+        void setCustomHTMLTokenizerChunkSize(int);
+        bool hasCustomHTMLTokenizerChunkSize() const { return m_customHTMLTokenizerChunkSize != -1; }
+        int customHTMLTokenizerChunkSize() const { ASSERT(m_customHTMLTokenizerChunkSize != -1); return m_customHTMLTokenizerChunkSize; }
+
     private:
         void initGroup();
 
@@ -210,6 +218,9 @@ namespace WebCore {
         
         unsigned m_pendingUnloadEventCount;
         unsigned m_pendingBeforeUnloadEventCount;
+
+        double m_customHTMLTokenizerTimeDelay;
+        int m_customHTMLTokenizerChunkSize;
 
 #if ENABLE(DOM_STORAGE)
         RefPtr<SessionStorage> m_sessionStorage;

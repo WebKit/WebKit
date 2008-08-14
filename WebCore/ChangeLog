@@ -1,3 +1,25 @@
+2008-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen and Timothy Hatcher.
+
+        Allow programatically setting the HTMLTokenizers time delay and chunk size
+        which are used for determining how aggressively we yield.
+
+        * WebCore.base.exp:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::begin):
+        (WebCore::HTMLTokenizer::continueProcessing):
+        * html/HTMLTokenizer.h:
+        * page/Page.cpp:
+        (WebCore::Page::Page):
+        (WebCore::Page::setCustomHTMLTokenizerTimeDelay):
+        (WebCore::Page::setCustomHTMLTokenizerChunkSize):
+        * page/Page.h:
+        (WebCore::Page::hasCustomHTMLTokenizerTimeDelay):
+        (WebCore::Page::customHTMLTokenizerTimeDelay):
+        (WebCore::Page::hasCustomHTMLTokenizerChunkSize):
+        (WebCore::Page::customHTMLTokenizerChunkSize):
+
 2008-08-14  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Beth.
