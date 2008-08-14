@@ -45,7 +45,6 @@
 #include <QColor>
 #elif PLATFORM(CAIRO)
 #include "NotImplemented.h"
-#include <cairo.h>
 #endif
 
 namespace WebCore {

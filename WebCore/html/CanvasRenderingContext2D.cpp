@@ -702,10 +702,8 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     // FIXME: Do this through platform-independent GraphicsContext API.
 #if PLATFORM(CG)
     if (state().m_fillStyle->canvasGradient()) {
-        // Shading works on the entire clip region, so convert the rect to a clip.
         c->save();
-        CGContextClipToRect(c->platformContext(), rect);
-        CGContextDrawShading(c->platformContext(), state().m_fillStyle->canvasGradient()->gradient().platformGradient());        
+        state().m_fillStyle->canvasGradient()->gradient().fill(c, rect);
         c->restore();
     } else {
         if (state().m_fillStyle->pattern())

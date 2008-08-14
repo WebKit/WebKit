@@ -2,6 +2,18 @@
 
         Reviewed by Alexey.
 
+        Remove un-need includes from HTMLCanvas and use the
+        Gradient platform abstraction in one place in CanvasStyle
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        * html/CanvasStyle.cpp:
+        * html/HTMLCanvasElement.cpp:
+
+2008-08-14  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Alexey.
+
         Clean up GlyphBuffer.h, removing more #ifdefs
 
         * platform/graphics/GlyphBuffer.h:

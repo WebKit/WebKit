@@ -46,13 +46,6 @@
 #include <math.h>
 #include <stdio.h>
 
-#if PLATFORM(QT)
-#include <QPainter>
-#include <QPixmap>
-#elif PLATFORM(CAIRO)
-#include <cairo.h>
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
