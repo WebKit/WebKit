@@ -21,9 +21,12 @@
  */
 
 #include "config.h"
+#include "RenderThemeGtk.h"
+
+#include "AffineTransform.h"
+#include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "RenderObject.h"
-#include "RenderThemeGtk.h"
 #include "gtkdrawing.h"
 
 #include <gdk/gdk.h>
@@ -152,7 +155,9 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
             break;
     }
 
-    IntPoint pos = i.context->translatePoint(rect.location());
+    AffineTransform ctm = i.context->getCTM();
+
+    IntPoint pos = ctm.mapPoint(rect.location());
     GdkRectangle gdkRect = IntRect(pos.x(), pos.y(), rect.width(), rect.height());
     GtkTextDirection direction = gtkTextDirection(o->style()->direction());
 
@@ -164,7 +169,7 @@ static bool paintMozWidget(RenderTheme* theme, GtkThemeWidgetType type, RenderOb
     GdkRectangle gdkClipRect;
     gdkClipRect.width = clipX2 - clipX1;
     gdkClipRect.height = clipY2 - clipY1;
-    IntPoint clipPos = i.context->translatePoint(IntPoint(clipX1, clipY1));
+    IntPoint clipPos = ctm.mapPoint(IntPoint(clipX1, clipY1));
     gdkClipRect.x = clipPos.x();
     gdkClipRect.y = clipPos.y();
 

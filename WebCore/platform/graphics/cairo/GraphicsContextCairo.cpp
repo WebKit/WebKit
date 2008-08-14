@@ -37,7 +37,9 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Path.h"
+#include "Pattern.h"
 #include "SimpleFontData.h"
+
 #include <cairo.h>
 #include <math.h>
 #include <stdio.h>
@@ -895,17 +897,6 @@ GdkDrawable* GraphicsContext::gdkDrawable() const
         return 0;
 
     return GDK_DRAWABLE(m_data->expose->window);
-}
-
-IntPoint GraphicsContext::translatePoint(const IntPoint& point) const
-{
-    cairo_matrix_t tm;
-    cairo_get_matrix(m_data->cr, &tm);
-    double x = point.x();
-    double y = point.y();
-
-    cairo_matrix_transform_point(&tm, &x, &y);
-    return IntPoint(x, y);
 }
 #endif
 

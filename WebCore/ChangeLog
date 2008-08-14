@@ -1,5 +1,18 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Attempt to fix the Gtk build, no review.
+
+        I removed the bogus GraphicsContext::translatePoint() hack for Gtk in the process.
+
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        * platform/graphics/qt/GradientQt.cpp:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::paintMozWidget):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Yet another attempt to fix the Qt build, no review.
 
         * platform/graphics/qt/GradientQt.cpp:
