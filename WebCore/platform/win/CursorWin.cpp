@@ -146,7 +146,7 @@ static Cursor loadCursorByName(char* name, int x, int y)
 {
     IntPoint hotSpot(x, y);
     Cursor c;
-    OwnPtr<Image> cursorImage(Image::loadPlatformResource(name));
+    RefPtr<Image> cursorImage(Image::loadPlatformResource(name));
     if (cursorImage && !cursorImage->isNull()) 
         c = Cursor(cursorImage.get(), hotSpot);
     else

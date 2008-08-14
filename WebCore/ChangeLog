@@ -1,5 +1,14 @@
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
+        Attempt to fix the Windows build, no review.
+
+        * platform/win/CursorWin.cpp:
+        (WebCore::loadCursorByName):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::paint):
+
+2008-08-13  Eric Seidel  <eric@webkit.org>
+
         Attempt to fix the Qt build, no review.
 
         * platform/graphics/qt/ImageBufferQt.cpp:

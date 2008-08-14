@@ -721,11 +721,11 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     }
 
     //Paint the panScroll Icon
-    static Image* panScrollIcon;
+    static RefPtr<Image> panScrollIcon;
     if (m_data->m_drawPanScrollIcon) {
         if (!panScrollIcon)
             panScrollIcon = Image::loadPlatformResource("panIcon");
-        context->drawImage(panScrollIcon, m_data->m_panScrollIconPoint);
+        context->drawImage(panScrollIcon.get(), m_data->m_panScrollIconPoint);
     }
 }
 
