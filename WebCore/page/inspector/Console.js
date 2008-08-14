@@ -354,7 +354,7 @@ WebInspector.Console.prototype = {
             };");
         }
 
-        expression = "with (window._inspectorCommandLineAPI) { " + expression + " }";
+        expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
         return inspectedWindow.eval(expression);
     },
 

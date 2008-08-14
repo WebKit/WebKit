@@ -1,3 +1,11 @@
+2008-08-14  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Make Firebug command line API respect predefined variables.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/Console.js:
+
 2008-08-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen and Timothy Hatcher.
