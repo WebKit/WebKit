@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Doc: Added documentation for default property values.
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::keyPressEvent):
+        (QWebPage::triggerAction):
+        (QWebPage::acceptNavigationRequest):
+        (QWebPage::action):
+        * Api/qwebview.cpp:
+
+2008-08-15  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
         Doc: Renamed snippets that appear in the code directory.
         
 

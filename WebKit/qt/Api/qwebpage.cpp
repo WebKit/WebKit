@@ -784,6 +784,8 @@ void QWebPagePrivate::leaveEvent(QEvent *ev)
     \brief the page's palette
 
     The background brush of the palette is used to draw the background of the main frame.
+
+    By default, this property contains the application's default palette.
 */
 void QWebPage::setPalette(const QPalette &pal)
 {
@@ -1406,6 +1408,9 @@ QSize QWebPage::viewportSize() const
 
     The size affects for example the visibility of scrollbars
     if the document is larger than the viewport.
+
+    By default, for a newly-created Web page, this property contains a size with
+    zero width and height.
 */
 void QWebPage::setViewportSize(const QSize &size) const
 {
@@ -1463,6 +1468,8 @@ bool QWebPage::acceptNavigationRequest(QWebFrame *frame, const QWebNetworkReques
 /*!
     \property QWebPage::selectedText
     \brief the text currently selected
+
+    By default, this property contains an empty string.
 
     \sa selectionChanged()
 */
@@ -1647,6 +1654,8 @@ QAction *QWebPage::action(WebAction action) const
 /*!
     \property QWebPage::modified
     \brief whether the page contains unsubmitted form data
+
+    By default, this property is false.
 */
 bool QWebPage::isModified() const
 {
