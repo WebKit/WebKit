@@ -599,6 +599,7 @@ void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 }
 #endif // QT_NO_WHEELEVENT
 
+#ifndef QT_NO_SHORTCUT
 static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
 {
     static struct {
@@ -649,12 +650,14 @@ static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
 
     return QWebPage::NoWebAction;
 }
+#endif // QT_NO_SHORTCUT
 
 void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
 {
     bool handled = false;
     WebCore::Frame* frame = page->focusController()->focusedOrMainFrame();
     WebCore::Editor* editor = frame->editor();
+#ifndef QT_NO_SHORTCUT
     if (editor->canEdit()) {
         QWebPage::WebAction action = editorActionForKeyEvent(ev);
         if (action != QWebPage::NoWebAction) {
@@ -667,6 +670,7 @@ void QWebPagePrivate::keyPressEvent(QKeyEvent *ev)
             handled = true;
         }
     }
+#endif // QT_NO_SHORTCUT
     if (!handled)
         handled = frame->eventHandler()->keyEvent(ev);
     if (!handled) {
@@ -873,6 +877,7 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev)
     ScrollDirection direction;
     ScrollGranularity granularity;
 
+#ifndef QT_NO_SHORTCUT
     if (ev == QKeySequence::MoveToNextPage
         || (ev->key() == Qt::Key_Space && !(ev->modifiers() & Qt::ShiftModifier))) {
         granularity = ScrollByPage;
@@ -881,7 +886,9 @@ bool QWebPagePrivate::handleScrolling(QKeyEvent *ev)
                || (ev->key() == Qt::Key_Space) && (ev->modifiers() & Qt::ShiftModifier)) {
         granularity = ScrollByPage;
         direction = ScrollUp;
-    } else if (ev->key() == Qt::Key_Up && ev->modifiers() & Qt::ControlModifier
+    } else
+#endif // QT_NO_SHORTCUT
+    if (ev->key() == Qt::Key_Up && ev->modifiers() & Qt::ControlModifier
                || ev->key() == Qt::Key_Home) {
         granularity = ScrollByDocument;
         direction = ScrollUp;
