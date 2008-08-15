@@ -31,6 +31,7 @@
 #include <JavaScriptCore/APICast.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSStringRef.h>
+#include <JavaScriptCore/OpaqueJSString.h>
 #include <kjs/JSObject.h>
 #include <kjs/JSValue.h>
 
@@ -58,7 +59,7 @@ static JSValueRef getTitleCallback(JSContextRef ctx, JSObjectRef thisObject, JSS
         return JSValueMakeUndefined(ctx);
 
     Profile* profile = static_cast<Profile*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeString(ctx, toRef(profile->title().rep()));
+    return JSValueMakeString(ctx, OpaqueJSString::create(profile->title()).get());
 }
 
 static JSValueRef getHeadCallback(JSContextRef ctx, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)

@@ -27,14 +27,7 @@
 #include "config.h"
 #include "JSStringRef.h"
 
-#include <wtf/Platform.h>
-
-#include "APICast.h"
-#include <kjs/JSType.h>
-#include <kjs/JSString.h>
-#include <kjs/operations.h>
-#include <kjs/ustring.h>
-#include <kjs/JSValue.h>
+#include "OpaqueJSString.h"
 #include <wtf/unicode/UTF8.h>
 
 using namespace KJS;
@@ -42,72 +35,69 @@ using namespace WTF::Unicode;
 
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
-    return toRef(UString(chars, static_cast<int>(numChars)).rep()->ref());
+    return OpaqueJSString::create(chars, numChars).releaseRef();
 }
 
 JSStringRef JSStringCreateWithUTF8CString(const char* string)
 {
-    RefPtr<UString::Rep> result = UString::Rep::createFromUTF8(string);
-    if (result.get() == &UString::Rep::null)
-        return 0;
+    if (string) {
+        size_t length = strlen(string);
+        Vector<UChar, 1024> buffer(length);
+        UChar* p = buffer.data();
+        if (conversionOK == convertUTF8ToUTF16(&string, string + length, &p, p + length))
+            return OpaqueJSString::create(buffer.data(), p - buffer.data()).releaseRef();
+    }
 
-    return toRef(result.release().releaseRef());
+    // Null string.
+    return OpaqueJSString::create().releaseRef();
 }
 
 JSStringRef JSStringRetain(JSStringRef string)
 {
-    UString::Rep* rep = toJS(string);
-    return toRef(rep->ref());
+    string->ref();
+    return string;
 }
 
 void JSStringRelease(JSStringRef string)
 {
-    UString::Rep* rep = toJS(string);
-    bool needsLocking = rep->identifierTable();
-    if (needsLocking) {
-        // It is wasteful to take the lock for non-shared contexts, but we don't have a good way
-        // to determine what the context is.
-        rep->deref();
-    } else
-        rep->deref();
+    string->deref();
 }
 
 size_t JSStringGetLength(JSStringRef string)
 {
-    UString::Rep* rep = toJS(string);
-    return rep->size();
+    return string->length();
 }
 
 const JSChar* JSStringGetCharactersPtr(JSStringRef string)
 {
-    UString::Rep* rep = toJS(string);
-    return reinterpret_cast<const JSChar*>(rep->data());
+    return string->characters();
 }
 
 size_t JSStringGetMaximumUTF8CStringSize(JSStringRef string)
 {
-    UString::Rep* rep = toJS(string);
-    
     // Any UTF8 character > 3 bytes encodes as a UTF16 surrogate pair.
-    return rep->size() * 3 + 1; // + 1 for terminating '\0'
+    return string->length() * 3 + 1; // + 1 for terminating '\0'
 }
 
 size_t JSStringGetUTF8CString(JSStringRef string, char* buffer, size_t bufferSize)
 {
-    UString::Rep* rep = toJS(string);
-    CString cString = UString(rep).UTF8String();
+    if (!bufferSize)
+        return 0;
 
-    size_t length = std::min(bufferSize, cString.size() + 1); // + 1 for terminating '\0'
-    memcpy(buffer, cString.c_str(), length);
-    return length;
+    char* p = buffer;
+    const UChar* d = string->characters();
+    ConversionResult result = convertUTF16ToUTF8(&d, d + string->length(), &p, p + bufferSize - 1, true);
+    *p++ = '\0';
+    if (result != conversionOK && result != targetExhausted)
+        return 0;
+
+    return p - buffer;
 }
 
 bool JSStringIsEqual(JSStringRef a, JSStringRef b)
 {
-    UString::Rep* aRep = toJS(a);
-    UString::Rep* bRep = toJS(b);
-    
-    return UString(aRep) == UString(bRep);
+    unsigned len = a->length();
+    return len == b->length() && 0 == memcmp(a->characters(), b->characters(), len * sizeof(UChar));
 }
 
 bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)

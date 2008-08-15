@@ -1,6 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,29 +24,36 @@
  */
 
 #include "config.h"
-#include "JSStringRefCF.h"
-
-#include "APICast.h"
-#include "JSStringRef.h"
 #include "OpaqueJSString.h"
-#include <kjs/ustring.h>
-#include <kjs/JSValue.h>
-#include <wtf/OwnArrayPtr.h>
 
-JSStringRef JSStringCreateWithCFString(CFStringRef string)
-{
-    CFIndex length = CFStringGetLength(string);
-    if (length) {
-        OwnArrayPtr<UniChar> buffer(new UniChar[length]);
-        CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
-        COMPILE_ASSERT(sizeof(UniChar) == sizeof(UChar), unichar_and_uchar_must_be_same_size);
-        return OpaqueJSString::create(buffer.get(), length).releaseRef();
-    } else {
-        return OpaqueJSString::create(0, 0).releaseRef();
-    }
-    }
+#include <kjs/ExecState.h>
+#include <kjs/identifier.h>
 
-CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)
+using namespace KJS;
+
+PassRefPtr<OpaqueJSString> OpaqueJSString::create(const UString& ustring)
 {
-    return CFStringCreateWithCharacters(alloc, reinterpret_cast<const UniChar*>(string->characters()), string->length());
+    if (!ustring.isNull())
+        return adoptRef(new OpaqueJSString(ustring.data(), ustring.size()));
+    return 0;
+}
+
+UString OpaqueJSString::ustring() const
+{
+    if (this && m_characters)
+        return UString(m_characters, m_length, true);
+    return UString::null();
+}
+
+Identifier OpaqueJSString::identifier(ExecState* exec) const
+{
+    return identifier(&exec->globalData());
+}
+
+Identifier OpaqueJSString::identifier(JSGlobalData* globalData) const
+{
+    if (!this || !m_characters)
+        return Identifier(globalData, static_cast<const char*>(0));
+
+    return Identifier(globalData, m_characters, m_length);
 }

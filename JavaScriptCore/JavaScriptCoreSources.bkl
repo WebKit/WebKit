@@ -39,6 +39,7 @@ Source files for JSCore.
         API/JSObjectRef.cpp
         API/JSStringRef.cpp
         API/JSValueRef.cpp
+        API/OpaqueJSString.cpp
     </set>
     
     <set append="1" var="JSCORE_SOURCES_KJS">

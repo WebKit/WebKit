@@ -1,6 +1,5 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
- * Copyright (C) 2006, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,30 +23,62 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "JSStringRefCF.h"
+#ifndef OpaqueJSString_h
+#define OpaqueJSString_h
 
-#include "APICast.h"
-#include "JSStringRef.h"
-#include "OpaqueJSString.h"
 #include <kjs/ustring.h>
-#include <kjs/JSValue.h>
-#include <wtf/OwnArrayPtr.h>
 
-JSStringRef JSStringCreateWithCFString(CFStringRef string)
-{
-    CFIndex length = CFStringGetLength(string);
-    if (length) {
-        OwnArrayPtr<UniChar> buffer(new UniChar[length]);
-        CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
-        COMPILE_ASSERT(sizeof(UniChar) == sizeof(UChar), unichar_and_uchar_must_be_same_size);
-        return OpaqueJSString::create(buffer.get(), length).releaseRef();
-    } else {
-        return OpaqueJSString::create(0, 0).releaseRef();
-    }
+namespace KJS {
+    class ExecState;
+    class Identifier;
+    class JSGlobalData;
+};
+
+struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
+
+    static PassRefPtr<OpaqueJSString> create() // null
+    {
+        return adoptRef(new OpaqueJSString);
     }
 
-CFStringRef JSStringCopyCFString(CFAllocatorRef alloc, JSStringRef string)
-{
-    return CFStringCreateWithCharacters(alloc, reinterpret_cast<const UniChar*>(string->characters()), string->length());
-}
+    static PassRefPtr<OpaqueJSString> create(const UChar* characters, unsigned length)
+    {
+        return adoptRef(new OpaqueJSString(characters, length));
+    }
+
+    static PassRefPtr<OpaqueJSString> create(const KJS::UString&);
+
+    UChar* characters() { return this ? m_characters : 0; }
+    unsigned length() { return this ? m_length : 0; }
+
+    KJS::UString ustring() const;
+
+    KJS::Identifier identifier(KJS::ExecState*) const;
+    KJS::Identifier identifier(KJS::JSGlobalData*) const;
+
+private:
+    friend class ThreadSafeShared<OpaqueJSString>;
+
+    OpaqueJSString()
+        : m_characters(0)
+        , m_length(0)
+    {
+    }
+
+    OpaqueJSString(const UChar* characters, unsigned length)
+        : m_length(length)
+    {
+        m_characters = new UChar[length];
+        memcpy(m_characters, characters, length * sizeof(UChar));
+    }
+
+    ~OpaqueJSString()
+    {
+        delete[] m_characters;
+    }
+
+    UChar* m_characters;
+    unsigned m_length;
+};
+
+#endif

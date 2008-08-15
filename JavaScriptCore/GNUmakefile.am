@@ -47,6 +47,7 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSRetainPtr.h \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
+	JavaScriptCore/API/OpaqueJSString.cpp \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSBase.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSContextRef.h \

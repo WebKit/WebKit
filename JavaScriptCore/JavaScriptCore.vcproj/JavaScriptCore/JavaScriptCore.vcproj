@@ -1102,6 +1102,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\API\OpaqueJSString.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\API\OpaqueJSString.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\API\WebKitAvailability.h"
 				>
 			</File>

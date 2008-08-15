@@ -188,8 +188,7 @@ JSValueRef JSValueMakeString(JSContextRef ctx, JSStringRef string)
     ExecState* exec = toJS(ctx);
     exec->globalData().heap->registerThread();
 
-    UString::Rep* rep = toJS(string);
-    return toRef(jsString(exec, UString(rep)));
+    return toRef(jsString(exec, string->ustring()));
 }
 
 bool JSValueToBoolean(JSContextRef ctx, JSValueRef value)
@@ -223,14 +222,14 @@ JSStringRef JSValueToStringCopy(JSContextRef ctx, JSValueRef value, JSValueRef* 
 
     JSValue* jsValue = toJS(value);
     
-    JSStringRef stringRef = toRef(jsValue->toString(exec).rep()->ref());
+    RefPtr<OpaqueJSString> stringRef(OpaqueJSString::create(jsValue->toString(exec)));
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec->exception());
         exec->clearException();
-        stringRef = 0;
+        stringRef.clear();
     }
-    return stringRef;
+    return stringRef.release().releaseRef();
 }
 
 JSObjectRef JSValueToObject(JSContextRef ctx, JSValueRef value, JSValueRef* exception)

@@ -1,3 +1,73 @@
+2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        JSStringRef is created context-free, but can get linked to one via an identifier table,
+        breaking an implicit API contract.
+
+        Made JSStringRef point to OpaqueJSString, which is a new string object separate from UString.
+
+        * API/APICast.h: Removed toRef/toJS conversions for JSStringRef, as this is no longer a
+        simple typecast.
+
+        * kjs/identifier.cpp:
+        (KJS::Identifier::checkSameIdentifierTable):
+        * kjs/identifier.h:
+        (KJS::Identifier::add):
+        (KJS::UString::checkSameIdentifierTable):
+        Added assertions to verify that an identifier is not being added to a different JSGlobalData.
+
+        * API/JSObjectRef.cpp:
+        (OpaqueJSPropertyNameArray::OpaqueJSPropertyNameArray): Changed OpaqueJSPropertyNameArray to
+        hold JSStringRefs. This is necessary to avoid having to construct (and leak) a new instance
+        in JSPropertyNameArrayGetNameAtIndex(), now that making a JSStringRef is not just a typecast.
+
+        * API/OpaqueJSString.cpp: Added.
+        (OpaqueJSString::create):
+        (OpaqueJSString::ustring):
+        (OpaqueJSString::identifier):
+        * API/OpaqueJSString.h: Added.
+        (OpaqueJSString::create):
+        (OpaqueJSString::characters):
+        (OpaqueJSString::length):
+        (OpaqueJSString::OpaqueJSString):
+        (OpaqueJSString::~OpaqueJSString):
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::staticValueGetter):
+        (KJS::::callbackGetter):
+        * API/JSStringRef.cpp:
+        (JSStringCreateWithCharacters):
+        (JSStringCreateWithUTF8CString):
+        (JSStringRetain):
+        (JSStringRelease):
+        (JSStringGetLength):
+        (JSStringGetCharactersPtr):
+        (JSStringGetMaximumUTF8CStringSize):
+        (JSStringGetUTF8CString):
+        (JSStringIsEqual):
+        * API/JSStringRefCF.cpp:
+        (JSStringCreateWithCFString):
+        (JSStringCopyCFString):
+        * API/JSValueRef.cpp:
+        (JSValueMakeString):
+        (JSValueToStringCopy):
+        Updated to use OpaqueJSString.
+
+        * GNUmakefile.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        Added OpaqueJSString.
+
 2008-08-14  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

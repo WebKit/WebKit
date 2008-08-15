@@ -40,7 +40,6 @@ namespace KJS {
 typedef const struct OpaqueJSContextGroup* JSContextGroupRef;
 typedef const struct OpaqueJSContext* JSContextRef;
 typedef struct OpaqueJSContext* JSGlobalContextRef;
-typedef struct OpaqueJSString* JSStringRef;
 typedef struct OpaqueJSPropertyNameAccumulator* JSPropertyNameAccumulatorRef;
 typedef const struct OpaqueJSValue* JSValueRef;
 typedef struct OpaqueJSValue* JSObjectRef;
@@ -60,11 +59,6 @@ inline KJS::ExecState* toJS(JSGlobalContextRef c)
 inline KJS::JSValue* toJS(JSValueRef v)
 {
     return reinterpret_cast<KJS::JSValue*>(const_cast<OpaqueJSValue*>(v));
-}
-
-inline KJS::UString::Rep* toJS(JSStringRef b)
-{
-    return reinterpret_cast<KJS::UString::Rep*>(b);
 }
 
 inline KJS::JSObject* toJS(JSObjectRef o)
@@ -90,11 +84,6 @@ inline JSValueRef toRef(KJS::JSValue* v)
 inline JSValueRef* toRef(KJS::JSValue** v)
 {
     return reinterpret_cast<JSValueRef*>(const_cast<const KJS::JSValue**>(v));
-}
-
-inline JSStringRef toRef(KJS::UString::Rep* s)
-{
-    return reinterpret_cast<JSStringRef>(s);
 }
 
 inline JSObjectRef toRef(KJS::JSObject* o)
