@@ -34,6 +34,7 @@ module window {
         [Custom] void info();
         [Custom] void log();
         [Custom] void warn();
+        [Custom] void dir();
         [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
 
         [Custom] void profile(in DOMString title);

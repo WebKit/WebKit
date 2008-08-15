@@ -108,7 +108,7 @@ WebInspector.ObjectPropertyTreeElement = function(parentObject, propertyName)
 WebInspector.ObjectPropertyTreeElement.prototype = {
     safePropertyValue: function(object, propertyName)
     {
-        if ("__lookupGetter__" in object && object.__lookupGetter__(propertyName))
+        if (object["__lookupGetter__"] && object.__lookupGetter__(propertyName))
             return;
         return object[propertyName];
     },

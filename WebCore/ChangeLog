@@ -1,5 +1,26 @@
 2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
 
+        Adds support for console.dir to the Inspector
+
+        https://bugs.webkit.org/show_bug.cgi?id=19155
+
+        Reviewed by Tim Hatcher.
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::dir):
+        * page/Console.cpp:
+        (WebCore::Console::dir):
+        * page/Console.h: Added ObjectMessageLevel.
+        * page/Console.idl: Added console.dir.
+        * page/inspector/Console.js:
+        (WebInspector.ConsoleMessage.prototypet.toMessageElement): Creates an
+        ObjectPropertiesSection if the MessageLevel is Object.
+        * page/inspector/ObjectPropertiesSection.js: "in" operator can't be
+        used on primitive data types.
+        * page/inspector/inspector.css:
+
+2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
+
         Adds support for clear() in the Inspector console.
 
         https://bugs.webkit.org/show_bug.cgi?id=19873

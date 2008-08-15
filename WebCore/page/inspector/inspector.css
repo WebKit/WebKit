@@ -579,6 +579,34 @@ body.console-visible #console {
     opacity: 1;
 }
 
+.console-group-messages .section {
+    margin: 0;
+}
+
+.console-group-messages .section .header {
+    padding: 0 8px 0 0;
+    background-image: none;
+    border: none;
+    min-height: 16px;
+}
+
+.console-group-messages .section .header::before {
+    position: absolute;
+    top: 1px;
+    left: 12px;
+    width: 8px;
+    height: 8px;
+    content: url(Images/treeRightTriangleBlack.png);
+}
+
+.console-group-messages .section.expanded .header::before {
+    content: url(Images/treeDownTriangleBlack.png);
+}
+
+.console-group-messages .section .header .title {
+    color: black;
+}
+
 .auto-complete-text {
     color: rgb(128, 128, 128);
     -webkit-user-select: none;

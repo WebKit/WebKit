@@ -347,6 +347,7 @@ WebInspector.Console.prototype = {
                     } catch (e) {} \
                     return nodes; \
                 }, \
+                dir: function() { return console.dir.apply(console, arguments) }, \
                 keys: function(o) { var a = []; for (k in o) a.push(k); return a; }, \
                 values: function(o) { var a = []; for (k in o) a.push(o[k]); return a; }, \
                 profile: function() { return console.profile.apply(console, arguments) }, \
@@ -515,6 +516,12 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
     this.url = url;
     this.groupLevel = groupLevel;
 
+    if (this.level === WebInspector.ConsoleMessage.MessageLevel.Object) {
+        var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[5], null, null, null, true);
+        propertiesSection.element.addStyleClass("console-message");
+        this.propertiesSection = propertiesSection;
+    }
+
     if (url && line > 0 && this.isErrorOrWarning()) {
         // This _format call passes in true for the plainText argument. The result's textContent is
         // used for inline message bubbles in SourceFrames, or other plain-text representations.
@@ -585,6 +592,9 @@ WebInspector.ConsoleMessage.prototype = {
 
     toMessageElement: function()
     {
+        if (this.level === WebInspector.ConsoleMessage.MessageLevel.Object)
+            return this.propertiesSection.element;
+
         var element = document.createElement("div");
         element.message = this;
         element.className = "console-message";
@@ -686,6 +696,9 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 levelString = "Error";
                 break;
+            case WebInspector.ConsoleMessage.MessageLevel.Object:
+                levelString = "Object";
+                break;
             case WebInspector.ConsoleMessage.MessageLevel.GroupTitle:
                 levelString = "GroupTitle";
                 break;
@@ -709,7 +722,8 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Log: 1,
     Warning: 2,
     Error: 3,
-    GroupTitle: 4
+    Object: 4,
+    GroupTitle: 5
 }
 
 WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)
