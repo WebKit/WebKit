@@ -472,7 +472,7 @@ void FrameLoaderClientQt::postProgressEstimateChangedNotification()
 
 void FrameLoaderClientQt::postProgressFinishedNotification()
 {
-    // send a mousemove event to 
+    // send a mousemove event to
     // (1) update the cursor to change according to whatever is underneath the mouse cursor right now
     // (2) display the tool tip if the mouse hovers a node which has a tool tip
     if (m_frame && m_frame->eventHandler() && m_webFrame->page()) {
@@ -1049,6 +1049,7 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 
     if (mimeType == "application/x-qt-plugin" || mimeType == "application/x-qt-styled-widget") {
         object = m_webFrame->page()->createPlugin(classid, qurl, params, values);
+#ifndef QT_NO_STYLE_STYLESHEET
         QWidget *widget = qobject_cast<QWidget *>(object);
         if (widget && mimeType == "application/x-qt-styled-widget") {
 
@@ -1067,6 +1068,8 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
 
             widget->setStyleSheet(styleSheet);
         }
+#endif // QT_NO_STYLE_STYLESHEET
+    }
 
 #if QT_VERSION >= 0x040400
         if (!object) {
@@ -1087,7 +1090,6 @@ Widget* FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, Element* el
             }
             // FIXME: make things work for widgetless plugins as well
             delete object;
-        }
     } else { // NPAPI Plugins
         PluginView* pluginView = PluginView::create(m_frame, pluginSize, element, url,
             paramNames, paramValues, mimeType, loadManually);
