@@ -1,3 +1,22 @@
+2008-08-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver.
+
+        Some loader performance tweaks:
+        - Make stylesheets highest priority instead of scripts. We block script execution on stylesheets.
+          Especially if a stylesheet @imports other stylesheets it is important to get them to the front of the queue 
+          to not delay rendering.
+        - Issue the first resource load for a host immediately even if the resource is low priority. TCP connection setup
+          can take long time when latency is high so it is good to get started early.
+        - When the document is fully parsed and stylesheets have been loaded there is no need to keep managing the
+          load queues. Issue remaining loads to the network layer.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::determinePriority):
+        (WebCore::Loader::load):
+        (WebCore::Loader::Host::servePendingRequests):
+        * loader/loader.h:
+
 2008-08-15  Timothy Hatcher  <timothy@apple.com>
 
         Detach the script debugger when the Web Inspector's window closes.

@@ -73,7 +73,7 @@ namespace WebCore {
             virtual void didFail(SubresourceLoader*, const ResourceError&);
             
             typedef Deque<Request*> RequestQueue;
-            void servePendingRequests(RequestQueue& requestsPending);
+            void servePendingRequests(RequestQueue& requestsPending, bool& serveLowerPriority);
             void didFail(SubresourceLoader*, bool cancelled = false);
             void cancelPendingRequests(RequestQueue& requestsPending, DocLoader*);
             

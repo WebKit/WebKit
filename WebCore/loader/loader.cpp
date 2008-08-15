@@ -72,16 +72,16 @@ Loader::Priority Loader::determinePriority(const CachedResource* resource) const
 {
 #if REQUEST_MANAGEMENT_ENABLED
     switch (resource->type()) {
-        case CachedResource::Script: 
+        case CachedResource::CSSStyleSheet:
+#if ENABLE(XSLT)
+        case CachedResource::XSLStyleSheet:
+#endif
 #if ENABLE(XBL)
         case CachedResource::XBL:
 #endif
             return High;
-        case CachedResource::CSSStyleSheet:
+        case CachedResource::Script: 
         case CachedResource::FontResource:
-#if ENABLE(XSLT)
-        case CachedResource::XSLStyleSheet:
-#endif
             return Medium;
         case CachedResource::ImageResource:
             return Low;
@@ -111,11 +111,12 @@ void Loader::load(DocLoader* docLoader, CachedResource* resource, bool increment
     } else 
         host = &m_nonHTTPProtocolHost;
     
+    bool hadRequests = host->hasRequests();
     Priority priority = determinePriority(resource);
     host->addRequest(request, priority);
     docLoader->incrementRequestCount();
 
-    if (priority > Low || !isHTTP) {
+    if (priority > Low || !isHTTP || !hadRequests) {
         // Try to request important resources immediately
         host->servePendingRequests(priority);
     } else {
@@ -207,17 +208,25 @@ bool Loader::Host::hasRequests() const
 
 void Loader::Host::servePendingRequests(Loader::Priority minimumPriority)
 {
-    for (int priority = High; priority >= minimumPriority; --priority)
-        servePendingRequests(m_requestsPending[priority]);
+    bool serveMore = true;
+    for (int priority = High; priority >= minimumPriority && serveMore; --priority)
+        servePendingRequests(m_requestsPending[priority], serveMore);
 }
-    
-void Loader::Host::servePendingRequests(RequestQueue& requestsPending)
-{
-    while (m_requestsLoading.size() < m_maxRequestsInFlight && !requestsPending.isEmpty()) {        
-        Request* request = requestsPending.first();
-        requestsPending.removeFirst();
 
+void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& serveLowerPriority)
+{
+    while (!requestsPending.isEmpty()) {        
+        Request* request = requestsPending.first();
         DocLoader* docLoader = request->docLoader();
+        // If the document is fully parsed and there are no pending stylesheets there won't be any more 
+        // resources that we would want to push to the front of the queue. Just hand off the remaining resources
+        // to the networking layer.
+        bool parsedAndStylesheetsKnown = !docLoader->doc()->parsing() && docLoader->doc()->haveStylesheetsLoaded();
+        if (!parsedAndStylesheetsKnown && m_requestsLoading.size() >= m_maxRequestsInFlight) {
+            serveLowerPriority = false;
+            return;
+        }
+        requestsPending.removeFirst();
         
         ResourceRequest resourceRequest(request->cachedResource()->url());
         
