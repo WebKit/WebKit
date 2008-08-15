@@ -259,17 +259,17 @@ namespace KJS {
         
         static ALWAYS_INLINE int32_t intValue(const JSValue* v)
         {
-            return reinterpret_cast<int32_t>(v) >> IntegerPayloadShift;
+            return static_cast<int32_t>(reinterpret_cast<intptr_t>(v) >> IntegerPayloadShift);
         }
         
         static ALWAYS_INLINE uint32_t uintValue(const JSValue* v)
         {
-            return reinterpret_cast<uint32_t>(v) >> IntegerPayloadShift;
+            return static_cast<uint32_t>(rawValue(v) >> IntegerPayloadShift);
         }
         
         static ALWAYS_INLINE bool boolValue(const JSValue* v)
         {
-            return (reinterpret_cast<uint32_t>(v) & ExtendedPayloadBitBoolValue) != 0;
+            return (rawValue(v) & ExtendedPayloadBitBoolValue) != 0;
         }
         
         static ALWAYS_INLINE uintptr_t rawValue(const JSValue* v)

@@ -1,3 +1,14 @@
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 64-bit build.
+
+        Add extra cast to avoid warnings about loss of precision when casting from
+        JSValue* to an integer type.
+
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::intValue):
+        (KJS::JSImmediate::uintValue):
+
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Still fixing Windows build.
