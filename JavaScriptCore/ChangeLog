@@ -1,5 +1,12 @@
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
+        Still fixing Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreGenerated.make: Added OpaqueJSString
+        to yet another place.
+
+2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
+
         Trying to fix non-Apple builds.
 
         * ForwardingHeaders/JavaScriptCore/OpaqueJSString.h: Added.
