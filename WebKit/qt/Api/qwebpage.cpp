@@ -238,7 +238,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     forwardUnsupportedContent = false;
     editable = false;
     linkPolicy = QWebPage::DontDelegateLinks;
+#ifndef QT_NO_CONTEXTMENU
     currentContextMenu = 0;
+#endif
 
     history.d = new QWebHistoryPrivate(page->backForwardList());
     memset(actions, 0, sizeof(actions));
@@ -246,7 +248,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
 QWebPagePrivate::~QWebPagePrivate()
 {
+#ifndef QT_NO_CONTEXTMENU
     delete currentContextMenu;
+#endif
     delete undoStack;
     delete settings;
     delete page;
@@ -314,6 +318,7 @@ static QWebPage::WebAction webActionForContextMenuAction(WebCore::ContextMenuAct
     return QWebPage::NoWebAction;
 }
 
+#ifndef QT_NO_CONTEXTMENU
 QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMenu,
         const QList<WebCore::ContextMenuItem> *items, QBitArray *visitedWebActions)
 {
@@ -365,6 +370,7 @@ QMenu *QWebPagePrivate::createContextMenu(const WebCore::ContextMenu *webcoreMen
     }
     return menu;
 }
+#endif // QT_NO_CONTEXTMENU
 
 QWebFrame *QWebPagePrivate::frameAt(const QPoint &pos) const
 {
@@ -555,6 +561,7 @@ void QWebPagePrivate::mouseReleaseEvent(QMouseEvent *ev)
 #endif
 }
 
+#ifndef QT_NO_CONTEXTMENU
 void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
 {
     QMenu *menu = q->createStandardContextMenu();
@@ -563,6 +570,7 @@ void QWebPagePrivate::contextMenuEvent(QContextMenuEvent *ev)
         delete menu;
     }
 }
+#endif // QT_NO_CONTEXTMENU
 
 /*!
     \since 4.5
@@ -1697,9 +1705,11 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::MouseButtonRelease:
         d->mouseReleaseEvent(static_cast<QMouseEvent*>(ev));
         break;
+#ifndef QT_NO_CONTEXTMENU
     case QEvent::ContextMenu:
         d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
         break;
+#endif
 #ifndef QT_NO_WHEELEVENT
     case QEvent::Wheel:
         d->wheelEvent(static_cast<QWheelEvent*>(ev));
@@ -1838,6 +1848,7 @@ QWebPage::LinkDelegationPolicy QWebPage::linkDelegationPolicy() const
     return d->linkPolicy;
 }
 
+#ifndef QT_NO_CONTEXTMENU
 /*!
     Filters the context menu event, \a event, through handlers for scrollbars and
     custom event handlers in the web page. Returns true if the event was handled;
@@ -1867,6 +1878,7 @@ bool QWebPage::swallowContextMenuEvent(QContextMenuEvent *event)
 
     return !menu;
 }
+#endif // QT_NO_CONTEXTMENU
 
 /*!
     Updates the page's actions depending on the position \a pos. For example if \a pos is over an image
@@ -1893,11 +1905,14 @@ void QWebPage::updatePositionDependentActions(const QPoint &pos)
     if (d->page->inspectorController()->enabled())
         menu.addInspectElementItem();
 
+    QBitArray visitedWebActions(QWebPage::WebActionCount);
+
+#ifndef QT_NO_CONTEXTMENU
     delete d->currentContextMenu;
 
     // Then we let createContextMenu() enable the actions that are put into the menu
-    QBitArray visitedWebActions(QWebPage::WebActionCount);
     d->currentContextMenu = d->createContextMenu(&menu, menu.platformDescription(), &visitedWebActions);
+#endif // QT_NO_CONTEXTMENU
 
     // Finally, we restore the original enablement for the actions that were not put into the menu.
     originallyEnabledWebActions &= ~visitedWebActions; // Mask out visited actions (they're part of the menu)

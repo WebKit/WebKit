@@ -541,6 +541,7 @@ bool QWebView::findText(const QString &subString, QWebPage::FindFlags options)
 bool QWebView::event(QEvent *e)
 {
     if (d->page) {
+#ifndef QT_NO_CONTEXTMENU
         if (e->type() == QEvent::ContextMenu) {
             QContextMenuEvent *event = static_cast<QContextMenuEvent *>(e);
             if (d->page->swallowContextMenuEvent(event)) {
@@ -548,7 +549,9 @@ bool QWebView::event(QEvent *e)
                 return true;
             }
             d->page->updatePositionDependentActions(event->pos());
-        } else if (e->type() == QEvent::ShortcutOverride) {
+        } else
+#endif // QT_NO_CONTEXTMENU
+        if (e->type() == QEvent::ShortcutOverride) {
             d->page->event(e);
 #ifndef QT_NO_CURSOR
         } else if (e->type() == static_cast<QEvent::Type>(WebCore::SetCursorEvent::EventType)) {
@@ -718,6 +721,7 @@ void QWebView::mouseReleaseEvent(QMouseEvent* ev)
         d->page->event(ev);
 }
 
+#ifndef QT_NO_CONTEXTMENU
 /*! \reimp
 */
 void QWebView::contextMenuEvent(QContextMenuEvent* ev)
@@ -725,6 +729,7 @@ void QWebView::contextMenuEvent(QContextMenuEvent* ev)
     if (d->page)
         d->page->event(ev);
 }
+#endif // QT_NO_CONTEXTMENU
 
 #ifndef QT_NO_WHEELEVENT
 /*! \reimp

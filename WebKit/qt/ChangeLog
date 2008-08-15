@@ -2,6 +2,24 @@
 
         Reviewed by Simon.
 
+        Fixes:    compile with QT_NO_CONTEXTMENU
+        
+
+        * Api/qwebpage.cpp:
+        (editorCommandForWebActions):
+        (QWebPagePrivate::QWebPagePrivate):
+        (QWebPagePrivate::createMainFrame):
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::setEditable):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
+2008-08-15  Håvard Wall  <hwall@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: compile with QT_NO_WHEELEVENT
         
 

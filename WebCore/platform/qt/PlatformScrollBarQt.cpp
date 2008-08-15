@@ -265,7 +265,7 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
             setValue((int)((float)(thumbPos + delta) * (m_totalSize - m_visibleSize) / (trackLen - thumbLen)));
             m_pressedPos += thumbPosition() - thumbPos;
         }
-        
+
         return true;
     }
 
@@ -289,7 +289,7 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
             invalidate();
         }
         m_hoveredPart = sc;
-    } 
+    }
 
     return true;
 }
@@ -366,6 +366,7 @@ bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
 {
+#ifndef QT_NO_CONTEXTMENU
     bool horizontal = (m_orientation == HorizontalScrollbar);
 
     QMenu menu;
@@ -403,7 +404,7 @@ bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
         scroll(horizontal ? ScrollLeft : ScrollUp, ScrollByLine, 1);
     else if (actionSelected == actScrollDown)
         scroll(horizontal ? ScrollRight : ScrollDown, ScrollByLine, 1);
-
+#endif // QT_NO_CONTEXTMENU
     return true;
 }
 
