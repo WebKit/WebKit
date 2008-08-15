@@ -27,6 +27,7 @@
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
 #include <limits>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -40,52 +41,91 @@ namespace KJS {
 
     /*
      * A JSValue*  is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
-     * signed int masquerading as a pointer). The low two bits in a JSValue* are available 
-     * for type tagging because allocator alignment guarantees they will be 00 in cell pointers.
+     * value masquerading as a pointer). The low two bits in a JSValue* are available for type tagging
+     * because allocator alignment guarantees they will be 00 in cell pointers.
      *
      * For example, on a 32 bit system:
      *
-     * JSCell*:       XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                 00
-     *               [ high 30 bits: pointer address ]  [ low 2 bits -- always 0 ]
+     * JSCell*:             XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     00
+     *                      [ high 30 bits: pointer address ]  [ low 2 bits -- always 0 ]
+     * JSImmediate:         XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     TT
+     *                      [ high 30 bits: 'payload' ]             [ low 2 bits -- tag ]
      *
-     * JSImmediate:   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                 TT
-     *               [ high 30 bits: signed int ]       [ low 2 bits -- type tag ]
+     * Where the bottom two bits are non-zero they either indicate that the immediate is a 31 bit signed
+     * integer, or they mark the value as being an immediate of a type other than integer, with a secondary
+     * tag used to indicate the exact type.
      *
-     * The bit "payload" (the high 30 bits) is a 30 bit signed int for immediate numbers, a flag to distinguish true/false
-     * and undefined/null.
+     * Where the lowest bit is set (TT is equal to 01 or 11) the high 31 bits form a 31 bit signed int value.
+     * Where TT is equal to 10 this indicates this is a type of immediate other than an integer, and the next
+     * two bits will form an extended tag.
      *
-     * Notice that the JSType value of NullType is 4, which requires 3 bits to encode. Since we only have 2 bits 
-     * available for type tagging, we tag the null immediate with UndefinedType, and JSImmediate::type() has 
-     * to sort them out.
+     * 31 bit signed int:   XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX                     X1
+     *                      [ high 30 bits of the value ]      [ high bit part of value ]
+     * Other:               YYYYYYYYYYYYYYYYYYYYYYYYYYYY      ZZ               10
+     *                      [ extended 'payload' ]  [  extended tag  ]  [  tag 'other'  ]
+     *
+     * Where the first bit of the extended tag is set this flags the value as being a boolean, and the following
+     * bit would flag the value as undefined.  If neither bits are set, the value is null.
+     *
+     * Other:               YYYYYYYYYYYYYYYYYYYYYYYYYYYY      UB               10
+     *                      [ extended 'payload' ]  [ undefined | bool ]  [ tag 'other' ]
+     *
+     * For boolean value the lowest bit in the payload holds the value of the bool, all remaining bits are zero.
+     * For undefined or null immediates the payload is zero.
+     *
+     * Boolean:             000000000000000000000000000V      01               10
+     *                      [ boolean value ]              [ bool ]       [ tag 'other' ]
+     * Undefined:           0000000000000000000000000000      10               10
+     *                      [ zero ]                    [ undefined ]     [ tag 'other' ]
+     * Null:                0000000000000000000000000000      00               10
+     *                      [ zero ]                       [ zero ]       [ tag 'other' ]
      */
 
     class JSImmediate {
+        static const uintptr_t TagMask           = 0x3u; // primary tag is 2 bits long
+        static const uintptr_t TagBitTypeInteger = 0x1u; // bottom bit set indicates int, this dominates the following bit
+        static const uintptr_t TagBitTypeOther   = 0x2u; // second bit set indicates immediate other than an integer
+
+        static const uintptr_t ExtendedTagMask         = 0xCu; // extended tag holds a further two bits
+        static const uintptr_t ExtendedTagBitBool      = 0x4u;
+        static const uintptr_t ExtendedTagBitUndefined = 0x8u;
+
+        static const uintptr_t FullTagTypeMask      = TagMask | ExtendedTagMask;
+        static const uintptr_t FullTagTypeBool      = TagBitTypeOther | ExtendedTagBitBool;
+        static const uintptr_t FullTagTypeUndefined = TagBitTypeOther | ExtendedTagBitUndefined;
+        static const uintptr_t FullTagTypeNull      = TagBitTypeOther;
+
+        static const uint32_t IntegerPayloadShift  = 1u;
+        static const uint32_t ExtendedPayloadShift = 4u;
+
+        static const uintptr_t ExtendedPayloadBitBoolValue = 1 << ExtendedPayloadShift;
+ 
     public:
         static ALWAYS_INLINE bool isImmediate(const JSValue* v)
         {
-            return getTag(v) != 0;
+            return (reinterpret_cast<uintptr_t>(v) & TagMask);
         }
         
         static ALWAYS_INLINE bool isNumber(const JSValue* v)
         {
-            return (getTag(v) == NumberType);
+            return (reinterpret_cast<uintptr_t>(v) & TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE bool isPositiveNumber(const JSValue* v)
         {
             // A single mask to check for the sign bit and the number tag all at once.
-            return (reinterpret_cast<uintptr_t>(v) & (0x80000000 | NumberType)) == NumberType;
+            return (reinterpret_cast<uintptr_t>(v) & (0x80000000 | TagBitTypeInteger)) == TagBitTypeInteger;
         }
         
         static ALWAYS_INLINE bool isBoolean(const JSValue* v)
         {
-            return (getTag(v) == BooleanType);
+            return ((reinterpret_cast<uintptr_t>(v) & FullTagTypeMask) == FullTagTypeBool);
         }
         
-        // Since we have room for only 3 unique tags, null and undefined have to share.
         static ALWAYS_INLINE bool isUndefinedOrNull(const JSValue* v)
         {
-            return (getTag(v) == UndefinedType);
+            // Undefined and null share the same value, bar the 'undefined' bit in the extended tag.
+            return ((reinterpret_cast<uintptr_t>(v) & ~ExtendedTagBitUndefined) == FullTagTypeNull);
         }
 
         static bool isNegative(const JSValue* v)
@@ -109,7 +149,7 @@ namespace KJS {
 
         static ALWAYS_INLINE bool areBothImmediateNumbers(const JSValue* v1, const JSValue* v2)
         {
-            return (reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagMask) == NumberType;
+             return (reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE JSValue* andImmediateNumbers(const JSValue* v1, const JSValue* v2)
@@ -121,7 +161,7 @@ namespace KJS {
         static ALWAYS_INLINE JSValue* xorImmediateNumbers(const JSValue* v1, const JSValue* v2)
         {
             ASSERT(areBothImmediateNumbers(v1, v2));
-            return tag(reinterpret_cast<uintptr_t>(v1) ^ reinterpret_cast<uintptr_t>(v2), NumberType);
+            return reinterpret_cast<JSValue*>((reinterpret_cast<uintptr_t>(v1) ^ reinterpret_cast<uintptr_t>(v2)) | TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE JSValue* orImmediateNumbers(const JSValue* v1, const JSValue* v2)
@@ -133,40 +173,40 @@ namespace KJS {
         static ALWAYS_INLINE JSValue* rightShiftImmediateNumbers(const JSValue* val, const JSValue* shift)
         {
             ASSERT(areBothImmediateNumbers(val, shift));
-            return reinterpret_cast<JSValue*>((reinterpret_cast<intptr_t>(val) >> ((reinterpret_cast<uintptr_t>(shift) >> 2) & 0x1f)) | NumberType);
+            return reinterpret_cast<JSValue*>((reinterpret_cast<intptr_t>(val) >> ((reinterpret_cast<uintptr_t>(shift) >> IntegerPayloadShift) & 0x1f)) | TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE bool canDoFastAdditiveOperations(const JSValue* v)
         {
             // Number is non-negative and an operation involving two of these can't overflow.
             // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return (reinterpret_cast<uintptr_t>(v) & (NumberType + (3 << 30))) == NumberType;
+            return (reinterpret_cast<uintptr_t>(v) & (TagBitTypeInteger + (3 << 30))) == TagBitTypeInteger;
         }
 
         static ALWAYS_INLINE JSValue* addImmediateNumbers(const JSValue* v1, const JSValue* v2)
         {
             ASSERT(canDoFastAdditiveOperations(v1));
             ASSERT(canDoFastAdditiveOperations(v2));
-            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) + (reinterpret_cast<uintptr_t>(v2) & ~NumberType));
+            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) + reinterpret_cast<uintptr_t>(v2) - TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE JSValue* subImmediateNumbers(const JSValue* v1, const JSValue* v2)
         {
             ASSERT(canDoFastAdditiveOperations(v1));
             ASSERT(canDoFastAdditiveOperations(v2));
-            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) - (reinterpret_cast<uintptr_t>(v2) & ~NumberType));
+            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v1) - reinterpret_cast<uintptr_t>(v2) + TagBitTypeInteger);
         }
 
         static ALWAYS_INLINE JSValue* incImmediateNumber(const JSValue* v)
         {
             ASSERT(canDoFastAdditiveOperations(v));
-            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v) + TagMask + 1);
+            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v) + (1 << IntegerPayloadShift));
         }
 
         static ALWAYS_INLINE JSValue* decImmediateNumber(const JSValue* v)
         {
             ASSERT(canDoFastAdditiveOperations(v));
-            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v) - (TagMask + 1));
+            return reinterpret_cast<JSValue*>(reinterpret_cast<uintptr_t>(v) - (1 << IntegerPayloadShift));
         }
 
         static double toDouble(const JSValue*);
@@ -192,115 +232,140 @@ namespace KJS {
         static JSObject* prototype(const JSValue*, ExecState*);
 
     private:
-        static const uintptr_t TagMask = 3; // type tags are 2 bits long
-
         // Immediate values are restricted to a 30 bit signed value.
-        static const int minImmediateInt = -(1 << 29);
-        static const int maxImmediateInt = (1 << 29) - 1;
+        static const int minImmediateInt = ((-INT_MAX) - 1) >> IntegerPayloadShift;
+        static const int maxImmediateInt = INT_MAX >> IntegerPayloadShift;
         static const unsigned maxImmediateUInt = maxImmediateInt;
         
-        static ALWAYS_INLINE JSValue* tag(uintptr_t bits, uintptr_t tag)
+        static ALWAYS_INLINE JSValue* makeInt(int32_t value)
         {
-            return reinterpret_cast<JSValue*>(bits | tag);
+            return reinterpret_cast<JSValue*>((value << IntegerPayloadShift) | TagBitTypeInteger);
         }
         
-        static ALWAYS_INLINE uintptr_t unTag(const JSValue* v)
+        static ALWAYS_INLINE JSValue* makeBool(bool b)
         {
-            return reinterpret_cast<uintptr_t>(v) & ~TagMask;
+            return reinterpret_cast<JSValue*>((static_cast<uintptr_t>(b) << ExtendedPayloadShift) | FullTagTypeBool);
         }
         
-        static ALWAYS_INLINE uintptr_t getTag(const JSValue* v)
+        static ALWAYS_INLINE JSValue* makeUndefined()
         {
-            return reinterpret_cast<uintptr_t>(v) & TagMask;
+            return reinterpret_cast<JSValue*>(FullTagTypeUndefined);
+        }
+        
+        static ALWAYS_INLINE JSValue* makeNull()
+        {
+            return reinterpret_cast<JSValue*>(FullTagTypeNull);
+        }
+        
+        static ALWAYS_INLINE int32_t intValue(const JSValue* v)
+        {
+            return reinterpret_cast<int32_t>(v) >> IntegerPayloadShift;
+        }
+        
+        static ALWAYS_INLINE uint32_t uintValue(const JSValue* v)
+        {
+            return reinterpret_cast<uint32_t>(v) >> IntegerPayloadShift;
+        }
+        
+        static ALWAYS_INLINE bool boolValue(const JSValue* v)
+        {
+            return (reinterpret_cast<uint32_t>(v) & ExtendedPayloadBitBoolValue) != 0;
+        }
+        
+        static ALWAYS_INLINE uintptr_t rawValue(const JSValue* v)
+        {
+            return reinterpret_cast<uintptr_t>(v);
         }
     };
 
-    ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return tag(1 << 2, BooleanType); }
-    ALWAYS_INLINE JSValue* JSImmediate::falseImmediate() { return tag(0, BooleanType); }
-    ALWAYS_INLINE JSValue* JSImmediate::undefinedImmediate() { return tag(1 << 2, UndefinedType); }
-    ALWAYS_INLINE JSValue* JSImmediate::nullImmediate() { return tag(0, UndefinedType); }
+    ALWAYS_INLINE JSValue* JSImmediate::trueImmediate() { return makeBool(true); }
+    ALWAYS_INLINE JSValue* JSImmediate::falseImmediate() { return makeBool(false); }
+    ALWAYS_INLINE JSValue* JSImmediate::undefinedImmediate() { return makeUndefined(); }
+    ALWAYS_INLINE JSValue* JSImmediate::nullImmediate() { return makeNull(); }
 
     // This value is impossible because 0x4 is not a valid pointer but a tag of 0 would indicate non-immediate
-    ALWAYS_INLINE JSValue* JSImmediate::impossibleValue() { return tag(1 << 2, 0); }
+    ALWAYS_INLINE JSValue* JSImmediate::impossibleValue() { return reinterpret_cast<JSValue*>(0x4); }
 
     ALWAYS_INLINE bool JSImmediate::toBoolean(const JSValue* v)
     {
         ASSERT(isImmediate(v));
-        uintptr_t bits = unTag(v);
-        return (bits != 0) & (JSImmediate::getTag(v) != UndefinedType);
+        uintptr_t bits = rawValue(v);
+        return
+            (bits & TagBitTypeInteger) ? (bits != TagBitTypeInteger) : // !0 ints
+            (bits == (FullTagTypeBool | ExtendedPayloadBitBoolValue)); // bool true
     }
 
     ALWAYS_INLINE uint32_t JSImmediate::toTruncatedUInt32(const JSValue* v)
     {
-        ASSERT(isImmediate(v));
-        return static_cast<uint32_t>(reinterpret_cast<intptr_t>(v) >> 2);
+        ASSERT(isNumber(v));
+        return intValue(v);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(char i)
     {
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(signed char i)
     {
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(unsigned char i)
     {
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(short i)
     {
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(unsigned short i)
     {
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(int i)
     {
         if ((i < minImmediateInt) | (i > maxImmediateInt))
             return 0;
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(unsigned i)
     {
         if (i > maxImmediateUInt)
             return 0;
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(long i)
     {
         if ((i < minImmediateInt) | (i > maxImmediateInt))
             return 0;
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(unsigned long i)
     {
         if (i > maxImmediateUInt)
             return 0;
-        return tag(i << 2, NumberType);
+        return makeInt(i);
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(long long i)
     {
         if ((i < minImmediateInt) | (i > maxImmediateInt))
             return 0;
-        return tag(static_cast<uintptr_t>(i) << 2, NumberType);
+        return makeInt(static_cast<uintptr_t>(i));
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(unsigned long long i)
     {
         if (i > maxImmediateUInt)
             return 0;
-        return tag(static_cast<uintptr_t>(i) << 2, NumberType);
+        return makeInt(static_cast<uintptr_t>(i));
     }
 
     ALWAYS_INLINE JSValue* JSImmediate::from(double d)
@@ -314,33 +379,36 @@ namespace KJS {
         if ((intVal != d) || (!intVal && signbit(d)))
             return 0;
 
-        return tag(intVal << 2, NumberType);
+        return makeInt(intVal);
     }
 
     ALWAYS_INLINE int32_t JSImmediate::getTruncatedInt32(const JSValue* v)
     {
         ASSERT(isNumber(v));
-        return static_cast<int32_t>(unTag(v)) >> 2;
+        return intValue(v);
     }
 
     ALWAYS_INLINE double JSImmediate::toDouble(const JSValue* v)
     {
         ASSERT(isImmediate(v));
-        const int32_t i = static_cast<int32_t>(unTag(v)) >> 2;
-        if (JSImmediate::getTag(v) == UndefinedType && i)
-            return std::numeric_limits<double>::quiet_NaN();
-        return i;
+        if (isNumber(v))
+            return intValue(v);
+        if (rawValue(v) == (FullTagTypeBool | ExtendedPayloadBitBoolValue))
+            return 1.0;
+        if (rawValue(v) != FullTagTypeUndefined)
+            return 0.0;
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     ALWAYS_INLINE bool JSImmediate::getUInt32(const JSValue* v, uint32_t& i)
     {
-        i = static_cast<uintptr_t>(unTag(v)) >> 2;
+        i = uintValue(v);
         return isPositiveNumber(v);
     }
 
     ALWAYS_INLINE bool JSImmediate::getTruncatedInt32(const JSValue* v, int32_t& i)
     {
-        i = static_cast<int32_t>(unTag(v)) >> 2;
+        i = intValue(v);
         return isNumber(v);
     }
 
@@ -353,10 +421,13 @@ namespace KJS {
     {
         ASSERT(isImmediate(v));
         
-        uintptr_t tag = getTag(v);
-        if (tag == UndefinedType)
-            return v == undefinedImmediate() ? UndefinedType : NullType;
-        return static_cast<JSType>(tag);
+        if (isNumber(v))
+            return NumberType;
+        if (isBoolean(v))
+            return BooleanType;
+        if (v != undefinedImmediate())
+            return NullType;
+        return UndefinedType;
     }
 
     ALWAYS_INLINE JSValue* jsUndefined()

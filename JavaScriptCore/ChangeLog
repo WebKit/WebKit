@@ -1,3 +1,20 @@
+2008-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Allow JSImmediate to hold 31 bit signed integer immediate values.  The low two bits of a
+        JSValue* are a tag, with the tag value 00 indicating the JSValue* is a pointer to a
+        JSCell.  Non-zero tag values used to indicate that the JSValue* is not a real pointer,
+        but instead holds an immediate value encoded within the pointer.  This patch changes the
+        encoding so both the tag values 01 and 11 indicate the value is a signed integer, allowing
+        a 31 bit value to be stored.  All other immediates are tagged with the value 10, and
+        distinguished by a secondary tag.
+
+        Roughly +2% on SunSpider.
+
+        * kjs/JSImmediate.h: Encoding of JSImmediates has changed - see comment at head of file for
+                             descption of new layout.
+
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
         More build fixes.
