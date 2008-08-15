@@ -1,3 +1,14 @@
+2008-08-15  David Boddie  <dboddie@trolltech.com>
+
+        Reviewed by Simon.
+
+        Doc: Renamed snippets that appear in the code directory.
+        
+
+        * Api/qwebview.cpp:
+        (QWebView::event):
+        (QWebView::print):
+
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Add a stub for InspectorClient::setAttachedWindowHeight.

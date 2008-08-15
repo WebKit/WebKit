@@ -322,7 +322,7 @@ void QWebView::setContent(const QByteArray &data, const QString &mimeType, const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 0
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 0
 */
 QWebHistory *QWebView::history() const
 {
@@ -334,7 +334,7 @@ QWebHistory *QWebView::history() const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 1
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 1
 
     \sa QWebSettings::globalSettings()
 */
@@ -418,7 +418,7 @@ QAction *QWebView::pageAction(QWebPage::WebAction action) const
     The following example triggers the copy action and therefore copies any
     selected text to the clipboard.
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 2
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 2
 
     \sa pageAction()
 */
@@ -579,7 +579,7 @@ void QWebView::print(QPrinter *printer) const
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 3
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 3
 
     \sa reload(), pageAction(), loadFinished()
 */
@@ -595,7 +595,7 @@ void QWebView::stop()
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 4
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 4
 
     \sa forward(), pageAction()
 */
@@ -611,7 +611,7 @@ void QWebView::back()
 
     It is equivalent to
 
-    \snippet doc/src/snippets/code/src.3rdparty.webkit.WebKit.qt.Api.qwebview.cpp 5
+    \snippet doc/src/snippets/code/src_3rdparty_webkit_WebKit_qt_Api_qwebview.cpp 5
 
     \sa back(), pageAction()
 */
