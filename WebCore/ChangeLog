@@ -1,3 +1,20 @@
+2008-08-14  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20388
+        <video> elements on Windows never becomes visible when a page is restored from the cache
+
+        Always pass "set" calls down to MediaPlayerPrivate instead of only when the
+        value is different from the cached value. Let the implementation decide when
+        to avoid work because nothing has changed.
+
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::MediaPlayer::setVolume):
+        (WebCore::MediaPlayer::setRate):
+        (WebCore::MediaPlayer::setRect):
+        (WebCore::MediaPlayer::setVisible):
+
 2008-08-14  Keishi Hattori  <casey.hattori@gmail.com>
 
         Make Firebug command line API respect predefined variables.
