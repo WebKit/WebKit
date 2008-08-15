@@ -180,7 +180,7 @@ namespace KJS {
         {
             // Number is non-negative and an operation involving two of these can't overflow.
             // Checking for allowed negative numbers takes more time than it's worth on SunSpider.
-            return (reinterpret_cast<uintptr_t>(v) & (TagBitTypeInteger + (3 << 30))) == TagBitTypeInteger;
+            return (reinterpret_cast<uintptr_t>(v) & (TagBitTypeInteger + (3u << 30))) == TagBitTypeInteger;
         }
 
         static ALWAYS_INLINE JSValue* addImmediateNumbers(const JSValue* v1, const JSValue* v2)
