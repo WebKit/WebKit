@@ -333,7 +333,7 @@ void JavaScriptDebugServer::setJavaScriptPaused(const PageGroup& pageGroup, bool
 
     HashSet<Page*>::const_iterator end = pages.end();
     for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it)
-        setJavaScriptPaused(*it, false);
+        setJavaScriptPaused(*it, paused);
 }
 
 void JavaScriptDebugServer::setJavaScriptPaused(Page* page, bool paused)

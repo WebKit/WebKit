@@ -1,3 +1,28 @@
+2008-08-15  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes two bugs where JavaScript could be executed from the page
+        while the debugger is paused.
+
+        The first issue was JSLazyEventListener not checking the paused
+        state before parsing the code.
+
+        The second issue was with the PageGroup version of
+        JavaScriptDebugServer::setJavaScriptPaused always passing false
+        to the Page version of JavaScriptDebugServer::setJavaScriptPaused,
+        and not the paused argument.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20284
+
+        Reviewed by Adam Roben.
+
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSLazyEventListener::parseCode): Check the paused
+        state of the ScriptController. Return early if paused.
+        * manual-tests/inspector/debugger-execution-while-paused.html: Added.
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused):
+        Pass the paused argument to the Page version of setJavaScriptPaused.
+
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

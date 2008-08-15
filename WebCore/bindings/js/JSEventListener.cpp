@@ -247,39 +247,43 @@ void JSLazyEventListener::parseCode() const
 {
     if (m_parsed)
         return;
-    m_parsed = true;
 
     Frame* frame = window()->impl()->frame();
-    if (frame && frame->script()->isEnabled()) {
-        ExecState* exec = window()->globalExec();
+    if (!frame)
+        return;
+    ScriptController* script = frame->script();
+    if (!script->isEnabled() || script->isPaused())
+        return;
 
-        ArgList args;
+    m_parsed = true;
 
-        UString sourceURL(frame->loader()->url().string());
-        args.append(eventParameterName());
-        args.append(jsString(exec, m_code));
+    ExecState* exec = window()->globalExec();
 
-        // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
-        // have been added with setAttribute from a script, and we should pass String() in that case.
-        m_listener = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
+    ArgList args;
+    UString sourceURL(frame->loader()->url().string());
+    args.append(eventParameterName());
+    args.append(jsString(exec, m_code));
 
-        JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
+    // FIXME: Passing the document's URL to construct is not always correct, since this event listener might
+    // have been added with setAttribute from a script, and we should pass String() in that case.
+    m_listener = constructFunction(exec, args, Identifier(exec, m_functionName), sourceURL, m_lineNumber); // FIXME: is globalExec ok?
 
-        if (exec->hadException()) {
-            exec->clearException();
+    JSFunction* listenerAsFunction = static_cast<JSFunction*>(m_listener.get());
 
-            // failed to parse, so let's just make this listener a no-op
-            m_listener = 0;
-        } else if (m_originalNode) {
-            // Add the event's home element to the scope
-            // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
-            ScopeChain scope = listenerAsFunction->scope();
+    if (exec->hadException()) {
+        exec->clearException();
 
-            JSValue* thisObj = toJS(exec, m_originalNode);
-            if (thisObj->isObject()) {
-                static_cast<JSEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
-                listenerAsFunction->setScope(scope);
-            }
+        // failed to parse, so let's just make this listener a no-op
+        m_listener = 0;
+    } else if (m_originalNode) {
+        // Add the event's home element to the scope
+        // (and the document, and the form - see JSHTMLElement::eventHandlerScope)
+        ScopeChain scope = listenerAsFunction->scope();
+
+        JSValue* thisObj = toJS(exec, m_originalNode);
+        if (thisObj->isObject()) {
+            static_cast<JSEventTargetNode*>(thisObj)->pushEventHandlerScope(exec, scope);
+            listenerAsFunction->setScope(scope);
         }
     }
 
