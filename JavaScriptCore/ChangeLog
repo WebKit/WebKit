@@ -1,5 +1,20 @@
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
+        Build fix.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Marked OpaqueJSString as private
+
+        * kjs/identifier.cpp:
+        (KJS::Identifier::checkSameIdentifierTable):
+        * kjs/identifier.h:
+        (KJS::Identifier::add):
+        Since checkSameIdentifierTable is exported for debug build's sake, gcc wants it to be
+        non-inline in release builds, too.
+
+        * JavaScriptCore.exp: Don't export inline OpaqueJSString destructor.
+
+2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
+
         Reviewed by Geoff Garen.
 
         JSStringRef is created context-free, but can get linked to one via an identifier table,

@@ -233,7 +233,14 @@ void Identifier::checkSameIdentifierTable(JSGlobalData* globalData, UString::Rep
 {
     ASSERT(rep->identifierTable() == globalData->identifierTable);
 }
+#else
+void Identifier::checkSameIdentifierTable(ExecState*, UString::Rep*)
+{
+}
 
+void Identifier::checkSameIdentifierTable(JSGlobalData*, UString::Rep*)
+{
+}
 #endif
 
 } // namespace KJS
