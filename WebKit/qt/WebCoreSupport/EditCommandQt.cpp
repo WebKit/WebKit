@@ -23,7 +23,12 @@
 using namespace WebCore;
 
 EditCommandQt::EditCommandQt(WTF::RefPtr<EditCommand> cmd, QUndoCommand *parent)
-: QUndoCommand(parent), _cmd(cmd), _first(true) {
+:
+#ifndef QT_NO_UNDOCOMMAND
+    QUndoCommand(parent),
+#endif
+    _cmd(cmd), _first(true)
+{
 }
 
 

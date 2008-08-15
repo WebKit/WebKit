@@ -2,6 +2,35 @@
 
         Reviewed by Simon.
 
+        Fixes: compile with QT_NO_UNDOCOMMAND/STACK
+        
+
+        * Api/qwebpage.cpp:
+        (SetCursorEvent::SetCursorEvent):
+        (QWebPagePrivate::createContextMenu):
+        (QWebPage::action):
+        * Api/qwebpage.h:
+        * Api/qwebpage_p.h:
+        * WebCoreSupport/EditCommandQt.cpp:
+        (EditCommandQt::EditCommandQt):
+        * WebCoreSupport/EditCommandQt.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (dumpPath):
+        (WebCore::EditorClientQt::shouldInsertText):
+        (WebCore::EditorClientQt::shouldChangeSelectedRange):
+        (WebCore::EditorClientQt::isEditable):
+        (WebCore::EditorClientQt::registerCommandForUndo):
+        (WebCore::EditorClientQt::clearUndoRedoOperations):
+        (WebCore::EditorClientQt::canUndo):
+        (WebCore::EditorClientQt::canRedo):
+        (WebCore::EditorClientQt::undo):
+        (WebCore::EditorClientQt::redo):
+        (WebCore::EditorClientQt::shouldInsertNode):
+
+2008-08-15  Håvard Wall  <hwall@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: compile with QT_NO_STYLE_STYLESHEET
         
 

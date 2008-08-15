@@ -226,7 +226,9 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 
     settings = new QWebSettings(page->settings());
 
+#ifndef QT_NO_UNDOSTACK
     undoStack = 0;
+#endif
     mainFrame = 0;
 #if QT_VERSION < 0x040400
     networkInterface = 0;
@@ -251,7 +253,9 @@ QWebPagePrivate::~QWebPagePrivate()
 #ifndef QT_NO_CONTEXTMENU
     delete currentContextMenu;
 #endif
+#ifndef QT_NO_UNDOSTACK
     delete undoStack;
+#endif
     delete settings;
     delete page;
 }
@@ -432,10 +436,12 @@ void QWebPagePrivate::updateAction(QWebPage::WebAction action)
         case QWebPage::Paste:
             enabled = editor->canPaste();
             break;
+#ifndef QT_NO_UNDOSTACK
         case QWebPage::Undo:
         case QWebPage::Redo:
             // those two are handled by QUndoStack
             break;
+#endif // QT_NO_UNDOSTACK
         case QWebPage::ToggleBold:
         case QWebPage::ToggleItalic:
         case QWebPage::ToggleUnderline:
@@ -1579,7 +1585,7 @@ QAction *QWebPage::action(WebAction action) const
         case Paste:
             text = contextMenuItemTagPaste();
             break;
-
+#ifndef QT_NO_UNDOSTACK
         case Undo: {
             QAction *a = undoStack()->createUndoAction(d->q);
             d->actions[action] = a;
@@ -1590,6 +1596,7 @@ QAction *QWebPage::action(WebAction action) const
             d->actions[action] = a;
             return a;
         }
+#endif // QT_NO_UNDOSTACK
         case MoveToNextChar:
         case MoveToPreviousChar:
         case MoveToNextWord:
@@ -1676,11 +1683,16 @@ QAction *QWebPage::action(WebAction action) const
 */
 bool QWebPage::isModified() const
 {
+#ifdef QT_NO_UNDOSTACK
+    return false;
+#else
     if (!d->undoStack)
         return false;
     return d->undoStack->canUndo();
+#endif // QT_NO_UNDOSTACK
 }
 
+#ifndef QT_NO_UNDOSTACK
 /*!
     Returns a pointer to the undo stack used for editable content.
 */
@@ -1691,6 +1703,7 @@ QUndoStack *QWebPage::undoStack() const
 
     return d->undoStack;
 }
+#endif // QT_NO_UNDOSTACK
 
 /*! \reimp
 */

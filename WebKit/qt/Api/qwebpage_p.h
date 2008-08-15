@@ -120,7 +120,9 @@ public:
     QPointer<QWebFrame> mainFrame;
 
     QWebPage *q;
+#ifndef QT_NO_UNDOSTACK
     QUndoStack *undoStack;
+#endif
     QWidget *view;
 
     bool insideOpenCall;
