@@ -578,6 +578,7 @@ QMenu *QWebPage::createStandardContextMenu()
     return menu;
 }
 
+#ifndef QT_NO_WHEELEVENT
 void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
 {
     WebCore::Frame* frame = QWebFramePrivate::core(mainFrame);
@@ -588,6 +589,7 @@ void QWebPagePrivate::wheelEvent(QWheelEvent *ev)
     bool accepted = frame->eventHandler()->handleWheelEvent(pev);
     ev->setAccepted(accepted);
 }
+#endif // QT_NO_WHEELEVENT
 
 static QWebPage::WebAction editorActionForKeyEvent(QKeyEvent* event)
 {
@@ -1698,9 +1700,11 @@ bool QWebPage::event(QEvent *ev)
     case QEvent::ContextMenu:
         d->contextMenuEvent(static_cast<QContextMenuEvent*>(ev));
         break;
+#ifndef QT_NO_WHEELEVENT
     case QEvent::Wheel:
         d->wheelEvent(static_cast<QWheelEvent*>(ev));
         break;
+#endif
     case QEvent::KeyPress:
         d->keyPressEvent(static_cast<QKeyEvent*>(ev));
         break;

@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Fixes: compile with QT_NO_WHEELEVENT
+        
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::updateEditorActions):
+        (QWebPage::event):
+        * Api/qwebpage_p.h:
+        * Api/qwebview.cpp:
+        * Api/qwebview.h:
+
+2008-08-15  Håvard Wall  <hwall@trolltech.com>
+
+        Reviewed by Simon.
+
         Fixes: compile with QT_NO_PRINTER
         
 

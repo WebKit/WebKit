@@ -82,14 +82,16 @@ public:
     void updateEditorActions();
 
     void timerEvent(QTimerEvent*);
-    
+
     void mouseMoveEvent(QMouseEvent*);
     void mousePressEvent(QMouseEvent*);
     void mouseDoubleClickEvent(QMouseEvent*);
     void mouseTripleClickEvent(QMouseEvent*);
     void mouseReleaseEvent(QMouseEvent*);
     void contextMenuEvent(QContextMenuEvent*);
+#ifndef QT_NO_WHEELEVENT
     void wheelEvent(QWheelEvent*);
+#endif
     void keyPressEvent(QKeyEvent*);
     void keyReleaseEvent(QKeyEvent*);
     void focusInEvent(QFocusEvent*);
@@ -120,7 +122,7 @@ public:
     bool insideOpenCall;
     quint64 m_totalBytes;
     quint64 m_bytesReceived;
-    
+
     QPoint tripleClick;
     QBasicTimer tripleClickTimer;
 
