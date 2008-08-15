@@ -1,3 +1,15 @@
+2008-08-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Add WebView SPI to set HTMLTokenizer yielding parameters.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::setCustomHTMLTokenizerTimeDelay):
+        (WebView::setCustomHTMLTokenizerChunkSize):
+        * WebView.h:
+
 2008-08-13  Eric Seidel  <eric@webkit.org>
 
         Attempt to fix the windows build, not review.

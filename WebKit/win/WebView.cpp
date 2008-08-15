@@ -4819,6 +4819,26 @@ HRESULT STDMETHODCALLTYPE WebView::paintDocumentRectToContext(
     return m_mainFrame->paintDocumentRectToContext(rect, deviceContext);
 }
 
+HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerTimeDelay(
+    /* [in] */ double timeDelay)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    m_page->setCustomHTMLTokenizerTimeDelay(timeDelay);
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerChunkSize(
+    /* [in] */ int chunkSize)
+{
+    if (!m_page)
+        return E_FAIL;
+
+    m_page->setCustomHTMLTokenizerChunkSize(chunkSize);
+    return S_OK;
+}
+
 bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const
 {
     lResult = 0;

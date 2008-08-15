@@ -126,4 +126,7 @@ interface IWebViewPrivate : IUnknown
     HRESULT windowAncestryDidChange();
 
     HRESULT paintDocumentRectToContext([in] RECT rect, [in] OLE_HANDLE dc);
+
+    HRESULT setCustomHTMLTokenizerTimeDelay([in] double timeDelay);
+    HRESULT setCustomHTMLTokenizerChunkSize([in] int chunkSize);
 }
