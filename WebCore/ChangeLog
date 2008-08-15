@@ -1,3 +1,13 @@
+2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Fix for error when the string doesn't contain a webkit-profile link.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20399
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/inspector.js:
+
 2008-08-15  Timothy Hatcher  <timothy@apple.com>
 
         Fixes two bugs where JavaScript could be executed from the page

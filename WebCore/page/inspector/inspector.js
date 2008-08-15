@@ -955,7 +955,10 @@ WebInspector.linkifyStringAsFragment = function(string)
         container.appendChild(document.createTextNode(nonLink));
 
         var profileStringRegEx = new RegExp("webkit-profile://(.+)/[0-9]+");
-        var profileTitle = profileStringRegEx.exec(title)[1];
+        var profileStringMatches = profileStringRegEx.exec(title);
+        var profileTitle;
+        if (profileStringMatches)
+            profileTitle = profileStringMatches[1];
         if (profileTitle)
             title = WebInspector.panels.profiles.displayTitleForProfileLink(profileTitle);
 
