@@ -41,7 +41,7 @@ JSStringRef JSStringCreateWithCFString(CFStringRef string)
         OwnArrayPtr<UniChar> buffer(new UniChar[length]);
         CFStringGetCharacters(string, CFRangeMake(0, length), buffer.get());
         COMPILE_ASSERT(sizeof(UniChar) == sizeof(UChar), unichar_and_uchar_must_be_same_size);
-        return OpaqueJSString::create(buffer.get(), length).releaseRef();
+        return OpaqueJSString::create(reinterpret_cast<UChar*>(buffer.get()), length).releaseRef();
     } else {
         return OpaqueJSString::create(0, 0).releaseRef();
     }

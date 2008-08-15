@@ -1,5 +1,13 @@
 2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
 
+        More build fixes.
+
+        * API/OpaqueJSString.h: Add a namespace to friend declaration to appease MSVC.
+        * API/JSStringRefCF.h: (JSStringCreateWithCFString) Cast UniChar* to UChar* explicitly.
+        * JavaScriptCore.exp: Added OpaqueJSString::create(const KJS::UString&) to fix WebCore build.
+
+2008-08-15  Alexey Proskuryakov  <ap@webkit.org>
+
         Build fix.
 
         * JavaScriptCore.xcodeproj/project.pbxproj: Marked OpaqueJSString as private
