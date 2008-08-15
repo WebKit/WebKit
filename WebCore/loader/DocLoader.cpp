@@ -299,7 +299,32 @@ int DocLoader::requestCount()
     return m_requestCount;
 }
     
-void DocLoader::preload(CachedResource::Type type, const String& url, const String& charset)
+void DocLoader::preload(CachedResource::Type type, const String& url, const String& charset, bool referencedFromBody)
+{
+    bool hasRendering = m_doc->body() && m_doc->body()->renderer();
+    if (!hasRendering && (referencedFromBody || type == CachedResource::ImageResource)) {
+        // Don't preload images or body resources before we have something to draw. This prevents
+        // preloads from body delaying first display when bandwidth is limited.
+        PendingPreload pendingPreload = { type, url, charset };
+        m_pendingPreloads.append(pendingPreload);
+        return;
+    }
+    requestPreload(type, url, charset);
+}
+
+void DocLoader::checkForPendingPreloads() 
+{
+    unsigned count = m_pendingPreloads.size();
+    if (!count || !m_doc->body() || !m_doc->body()->renderer())
+        return;
+    for (unsigned i = 0; i < count; ++i) {
+        PendingPreload& preload = m_pendingPreloads[i];
+        requestPreload(preload.m_type, preload.m_url, preload.m_charset);
+    }
+    m_pendingPreloads.clear();
+}
+
+void DocLoader::requestPreload(CachedResource::Type type, const String& url, const String& charset)
 {
     String encoding;
     if (type == CachedResource::Script || type == CachedResource::CSSStyleSheet)

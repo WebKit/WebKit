@@ -281,6 +281,8 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     delete request;
 
     docLoader->setLoadInProgress(false);
+    
+    docLoader->checkForPendingPreloads();
 
 #if REQUEST_DEBUG
     KURL u(resource->url());
@@ -320,6 +322,8 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
         cache()->remove(resource);
     
     delete request;
+    
+    docLoader->checkForPendingPreloads();
 
     servePendingRequests();
 }

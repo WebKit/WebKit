@@ -66,6 +66,7 @@ using namespace HTMLNames;
 PreloadScanner::PreloadScanner(Document* doc)
     : m_inProgress(false)
     , m_timeUsed(0)
+    , m_bodySeen(false)
     , m_document(doc)
 {
 #if PRELOAD_DEBUG
@@ -118,6 +119,11 @@ void PreloadScanner::reset()
     m_cssState = CSSInitial;
     m_cssRule.clear();
     m_cssRuleValue.clear();
+}
+    
+bool PreloadScanner::scanningBody() const
+{
+    return m_document->body() || m_bodySeen;
 }
     
 void PreloadScanner::write(const SegmentedString& source)
@@ -810,17 +816,20 @@ void PreloadScanner::emitTag()
     else
         m_contentModel = PCDATA;
     
+    if (tag == bodyTag)
+        m_bodySeen = true;
+    
     if (m_urlToLoad.isEmpty()) {
         m_linkIsStyleSheet = false;
         return;
     }
     
     if (tag == scriptTag)
-        m_document->docLoader()->preload(CachedResource::Script, m_urlToLoad, m_charset);
+        m_document->docLoader()->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody());
     else if (tag == imgTag) 
-        m_document->docLoader()->preload(CachedResource::ImageResource, m_urlToLoad, String());
+        m_document->docLoader()->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody());
     else if (tag == linkTag && m_linkIsStyleSheet) 
-        m_document->docLoader()->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset);
+        m_document->docLoader()->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody());
 
     m_urlToLoad = String();
     m_charset = String();
@@ -834,7 +843,7 @@ void PreloadScanner::emitCSSRule()
         String value(m_cssRuleValue.data(), m_cssRuleValue.size());
         String url = parseURL(value);
         if (!url.isEmpty())
-            m_document->docLoader()->preload(CachedResource::CSSStyleSheet, url, String());
+            m_document->docLoader()->preload(CachedResource::CSSStyleSheet, url, String(), scanningBody());
     }
     m_cssRule.clear();
     m_cssRuleValue.clear();

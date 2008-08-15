@@ -1,3 +1,32 @@
+2008-08-15  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Anders.
+
+        Don't start preloading body resources before the head is complete. This prevents
+        body preloads from slowing down initial display when there is limited amount
+        of bandwidth available.
+        
+        Works by queuing up found body preloads to DocLoader and only issuing them
+        after document has rendering.
+        
+        With bandwidth capped to 300kbit/s this speeds up cnn.com initial display by ~25% or 5s
+        without affecting complete load time.
+
+        * html/PreloadScanner.cpp:
+        (WebCore::PreloadScanner::PreloadScanner):
+        (WebCore::PreloadScanner::scanningBody):
+        (WebCore::PreloadScanner::emitTag):
+        (WebCore::PreloadScanner::emitCSSRule):
+        * html/PreloadScanner.h:
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::preload):
+        (WebCore::DocLoader::checkForPendingPreloads):
+        (WebCore::DocLoader::requestPreload):
+        * loader/DocLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+
 2008-08-15  Ada Chan  <adachan@apple.com>
 
         Use item's computed style if the render style is 0 before falling back to the <select>'s style.

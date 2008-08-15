@@ -46,6 +46,8 @@ namespace WebCore {
         void end();
         bool inProgress() const { return m_inProgress; }
         
+        bool scanningBody() const;
+        
         static unsigned consumeEntity(SegmentedString&, bool& notEnoughCharacters);
         
     private:
@@ -133,6 +135,7 @@ namespace WebCore {
         
         double m_timeUsed;
         
+        bool m_bodySeen;
         Document* m_document;
     };
 
