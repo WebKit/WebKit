@@ -352,6 +352,8 @@ WebInspector.Console.prototype = {
                 profile: function() { return console.profile.apply(console, arguments) }, \
                 profileEnd: function() { return console.profileEnd.apply(console, arguments) } \
             };");
+
+            inspectedWindow._inspectorCommandLineAPI.clear = InspectorController.wrapCallback(this.clearMessages.bind(this));
         }
 
         expression = "with (window._inspectorCommandLineAPI) { with (window) { " + expression + " } }";
