@@ -1,3 +1,13 @@
+2008-08-15  Ada Chan  <adachan@apple.com>
+
+        Use item's computed style if the render style is 0 before falling back to the <select>'s style.
+        This way style set on an <hr> within a <select> will be honored.
+
+        Reviewed by Dave Hyatt and Dan Bernstein.
+
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::itemStyle):
+
 2008-08-15  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver.
