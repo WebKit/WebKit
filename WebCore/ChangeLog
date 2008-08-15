@@ -1,5 +1,31 @@
 2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
 
+        Fixed Bug 20210: Console groups are incorrect when closing and reopening the Inspector
+
+        https://bugs.webkit.org/show_bug.cgi?id=20210
+
+        Reviewed by Tim Hatcher.
+
+        * page/Console.cpp:
+        (WebCore::Console::group):
+        (WebCore::Console::groupEnd):
+        * page/Console.h:
+        (WebCore::): Removed GroupTitleMessageLevel. Added StartGroupMessaageLevel and EndGroupMessageLevel.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::startGroup): Increments group level by
+        one and adds console message with StartGroupMessaageLevel.
+        (WebCore::InspectorController::endGroup): Decrements group level by one
+        and adds console message with EndGroupMessaageLevel.
+        * page/InspectorController.h:
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.addMessage): Creates new ConsoleGroup
+        if the message is StartGroupMessaageLevel.
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleGroup.prototype.addMessage):
+        * page/inspector/inspector.js:
+
+2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
+
         Adds support for console.dir to the Inspector
 
         https://bugs.webkit.org/show_bug.cgi?id=19155

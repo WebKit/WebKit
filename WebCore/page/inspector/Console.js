@@ -148,16 +148,25 @@ WebInspector.Console.prototype = {
 
         this.messages.push(msg);
 
-        if (msg.groupLevel === null)
-            msg.groupLevel = this.groupLevel
-        else {
-            while (msg.groupLevel > this.groupLevel)
-                this.startGroup();
-            while (msg.groupLevel < this.groupLevel)
-                this.endGroup();
+        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.EndGroup) {
+            if (this.groupLevel < 1)
+                return;
+
+            this.groupLevel--;
+
+            this.currentGroup = this.currentGroup.parentGroup;
+        } else {
+            if (msg.level === WebInspector.ConsoleMessage.MessageLevel.StartGroup) {
+                this.groupLevel++;
+
+                var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
+                this.currentGroup.messagesElement.appendChild(group.element);
+                this.currentGroup = group;
+            }
+
+            this.currentGroup.addMessage(msg);
         }
 
-        this.currentGroup.addMessage(msg);
         this.promptElement.scrollIntoView(false);
     },
 
@@ -223,23 +232,6 @@ WebInspector.Console.prototype = {
         }
 
         return results;
-    },
-
-    startGroup: function() {
-        this.groupLevel++;
-        
-        var group = new WebInspector.ConsoleGroup(this.currentGroup, this.groupLevel);
-        this.currentGroup.messagesElement.appendChild(group.element);
-        this.currentGroup = group;
-    },
-
-    endGroup: function() {
-        if (this.groupLevel < 1)
-            return;
-
-        this.groupLevel--;
-
-        this.currentGroup = this.currentGroup.parentGroup;
     },
 
     _toggleButtonClicked: function()
@@ -630,7 +622,7 @@ WebInspector.ConsoleMessage.prototype = {
             case WebInspector.ConsoleMessage.MessageLevel.Error:
                 element.addStyleClass("console-error-level");
                 break;
-            case WebInspector.ConsoleMessage.MessageLevel.GroupTitle:
+            case WebInspector.ConsoleMessage.MessageLevel.StartGroup:
                 element.addStyleClass("console-group-title-level");
         }
 
@@ -723,7 +715,8 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Warning: 2,
     Error: 3,
     Object: 4,
-    GroupTitle: 5
+    StartGroup: 5,
+    EndGroup: 6
 }
 
 WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)
@@ -790,7 +783,7 @@ WebInspector.ConsoleGroup.prototype = {
     {
         var element = msg.toMessageElement();
         
-        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.GroupTitle) {
+        if (msg.level === WebInspector.ConsoleMessage.MessageLevel.StartGroup) {
             this.messagesElement.parentNode.insertBefore(element, this.messagesElement);
             element.addEventListener("click", this._titleClicked.bind(this), true);
         } else

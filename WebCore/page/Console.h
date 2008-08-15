@@ -60,7 +60,8 @@ namespace WebCore {
         WarningMessageLevel,
         ErrorMessageLevel,
         ObjectMessageLevel,
-        GroupTitleMessageLevel
+        StartGroupMessageLevel,
+        EndGroupMessageLevel
     };
 
     class Console : public RefCounted<Console>, public KJS::ProfilerClient {

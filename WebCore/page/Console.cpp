@@ -327,12 +327,7 @@ void Console::group(ExecState* exec, const ArgList& arguments)
     if (!page)
         return;
 
-    page->inspectorController()->startGroup();
-
-    if (arguments.isEmpty())
-        page->inspectorController()->addMessageToConsole(JSMessageSource, GroupTitleMessageLevel, String(), 0, String());
-    else
-        page->inspectorController()->addMessageToConsole(JSMessageSource, GroupTitleMessageLevel, exec, arguments, 0, String());
+    page->inspectorController()->startGroup(JSMessageSource, exec, arguments, 0, String());
 }
 
 void Console::groupEnd()
@@ -344,7 +339,7 @@ void Console::groupEnd()
     if (!page)
         return;
 
-    page->inspectorController()->endGroup();
+    page->inspectorController()->endGroup(JSMessageSource, 0, String());
 }
 
 void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)

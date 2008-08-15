@@ -850,16 +850,6 @@ WebInspector.addMessageToConsole = function(msg)
     this.console.addMessage(msg);
 }
 
-WebInspector.startGroupInConsole = function()
-{
-    this.console.startGroup();
-}
-
-WebInspector.endGroupInConsole = function()
-{
-    this.console.endGroup();
-}
-
 WebInspector.addProfile = function(profile)
 {
     this.panels.profiles.addProfile(profile);

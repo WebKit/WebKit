@@ -180,8 +180,8 @@ public:
     void startTiming(const KJS::UString& title);
     bool stopTiming(const KJS::UString& title, double& elapsed);
 
-    void startGroup();
-    void endGroup();
+    void startGroup(MessageSource source, KJS::ExecState* exec, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceURL);
+    void endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL);
 
 private:
     void focusNode();
