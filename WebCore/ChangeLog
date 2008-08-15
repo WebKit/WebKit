@@ -1,3 +1,10 @@
+2008-08-14  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx !USE(WXGC) build fix. This is necessary until we find a way to replace GDI with
+        an alternative that performs reasonably well. (GDI+ is too slow in many cases.)
+
+        * platform/graphics/AffineTransform.h:
+
 2008-08-14  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele.
