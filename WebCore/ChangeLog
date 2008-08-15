@@ -1,3 +1,16 @@
+2008-08-15  Timothy Hatcher  <timothy@apple.com>
+
+        Detach the script debugger when the Web Inspector's window closes.
+        This has always been the intended design, but never fully implemented.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20402
+
+        Reviewed by Adam Roben.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::setWindowVisible): Call stopDebugging()
+        if the window is no longer visible.
+
 2008-08-15  Håvard Wall  <hwall@trolltech.com>
 
         Reviewed by Simon.

@@ -1230,8 +1230,10 @@ void InspectorController::setWindowVisible(bool visible, bool attached)
             startDebuggingAndReloadInspectedPage();
         if (m_showAfterVisible != CurrentPanel)
             showPanel(m_showAfterVisible);
-    } else
+    } else {
+        stopDebugging();
         resetScriptObjects();
+    }
 
     m_showAfterVisible = CurrentPanel;
 }
