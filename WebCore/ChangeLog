@@ -1,3 +1,17 @@
+2008-08-15  Anthony Ricaud  <rik24d@gmail.com>
+
+        Cmd-F on Mac or Ctrl-F on other platforms now focus the search field.
+
+        Platform distinction and modifier key matching adjusted
+        by Daniel Jalkut <jalkut@red-sweater.com>
+
+        Bug 16313: text search (find) keybindings should work in the Web Inspector
+        https://bugs.webkit.org/show_bug.cgi?id=16313
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/inspector.js: Added a case for the F key
+
 2008-08-15  Keishi Hattori  <casey.hattori@gmail.com>
 
         Fix for error when the string doesn't contain a webkit-profile link.

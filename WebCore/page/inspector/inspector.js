@@ -463,6 +463,20 @@ WebInspector.documentKeyDown = function(event)
                 this.console.visible = !this.console.visible;
                 event.preventDefault();
                 break;
+            case "U+0046": // F key
+                var isMac = InspectorController.platform().indexOf("mac-") === 0;
+                var isFindKey;
+                // We want cmd-F for Mac, or ctrl-F for non-Mac
+                if (isMac)
+                    isFindKey = event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey;
+                else
+                    isFindKey = event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey;
+
+                if (isFindKey) {
+                    document.getElementById("search").focus();
+                    event.preventDefault();
+                }
+                break;
         }
     }
 }
