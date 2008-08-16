@@ -291,6 +291,9 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			projectRoots = (
+				"",
+			);
 			targets = (
 				1422E8C409DE3EA600749B87 /* All */,
 				DD66F3B908F73ED700C75FD7 /* JavaScriptGlue */,
@@ -479,8 +482,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A00BA9F3050081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				GCC_OPTIMIZATION_LEVEL = 0;
-				STRIP_INSTALLED_PRODUCT = NO;
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+				STRIP_INSTALLED_PRODUCT = "$(STRIP_INSTALLED_PRODUCT_debug)";
 			};
 			name = Debug;
 		};
@@ -503,7 +507,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = "";
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Debug;
@@ -512,7 +515,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
 				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
 			};
 			name = Release;
@@ -521,7 +523,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051A10BA9F3050081E9D0 /* JavaScriptGlue.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
+				BUILD_VARIANTS = (
+					normal,
+					debug,
+				);
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,

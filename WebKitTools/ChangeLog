@@ -1,3 +1,11 @@
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        <rdar://problem/6139914> Please include a _debug version of JavaScriptCore framework
+
+        * Scripts/check-for-global-initializers: Ignore initializers when building the debug variant.
+
 2008-08-13  Simon Hausmann  <hausmann@webkit.org>
 
         Rubber-stamped by Holger.

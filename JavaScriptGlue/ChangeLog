@@ -1,3 +1,13 @@
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Geoff Garen.
+
+        <rdar://problem/6139914> Please include a _debug version of JavaScriptCore framework
+
+        * Configurations/Base.xcconfig: Factor out the debug-only settings so that they can shared
+        between the Debug configuration and debug Production variant.
+        * JavaScriptGlue.xcodeproj/project.pbxproj: Enable the debug variant.
+
 2008-07-31  Alexey Proskuryakov  <ap@webkit.org>
 
         Rubber-stamped by Maciej.

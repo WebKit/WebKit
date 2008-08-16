@@ -1625,6 +1625,9 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			projectRoots = (
+				"",
+			);
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
@@ -1923,6 +1926,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
 			buildSettings = {
+				BUILD_VARIANTS = (
+					normal,
+					debug,
+				);
 				SECTORDER_FLAGS = (
 					"-sectorder",
 					__TEXT,
@@ -1978,9 +1985,9 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = "";
-				GCC_OPTIMIZATION_LEVEL = 0;
-				STRIP_INSTALLED_PRODUCT = NO;
+				DEBUG_DEFINES = "$(DEBUG_DEFINES_debug)";
+				GCC_OPTIMIZATION_LEVEL = "$(GCC_OPTIMIZATION_LEVEL_debug)";
+				STRIP_INSTALLED_PRODUCT = "$(STRIP_INSTALLED_PRODUCT_debug)";
 			};
 			name = Debug;
 		};
@@ -1988,7 +1995,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = Release;
@@ -1997,7 +2003,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1C9051450BA9E8A70081E9D0 /* Base.xcconfig */;
 			buildSettings = {
-				DEBUG_DEFINES = NDEBUG;
 			};
 			name = Production;
 		};

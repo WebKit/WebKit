@@ -10,7 +10,6 @@ GCC_ENABLE_OBJC_GC = supported;
 GCC_ENABLE_SYMBOL_SEPARATION = NO;
 GCC_FAST_OBJC_DISPATCH = YES;
 GCC_MODEL_TUNING = G5;
-GCC_OPTIMIZATION_LEVEL = 2;
 GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
@@ -23,6 +22,21 @@ PREBINDING = NO;
 VALID_ARCHS = i386 ppc x86_64 ppc64;
 // FIXME: <rdar://problem/5070292> WebKit should build with -Wshorten-64-to-32
 WARNING_CFLAGS = -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wundef;
+
+
+// DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and STRIP_INSTALLED_PRODUCT vary between the debug and normal variants.
+// We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
+DEBUG_DEFINES_debug = DISABLE_THREAD_CHECK;
+DEBUG_DEFINES_normal = NDEBUG;
+DEBUG_DEFINES = $(DEBUG_DEFINES_$(CURRENT_VARIANT));
+
+GCC_OPTIMIZATION_LEVEL = $(GCC_OPTIMIZATION_LEVEL_$(CURRENT_VARIANT));
+GCC_OPTIMIZATION_LEVEL_normal = 2;
+GCC_OPTIMIZATION_LEVEL_debug = 0;
+
+STRIP_INSTALLED_PRODUCT = $(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT));
+STRIP_INSTALLED_PRODUCT_normal = YES;
+STRIP_INSTALLED_PRODUCT_debug = NO;
 
 
 // <rdar://problem/5488678>: Production builds on 10.4 PowerPC need to have debugging symbols disabled to prevent a huge STABS section being generated.

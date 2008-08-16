@@ -92,7 +92,7 @@ for my $file (sort @files) {
         $shortName =~ s/.*\///;
 
         # Special cases for files that have initializers in debug builds.
-        if ($configuration eq "Debug" or $debugRoot) {
+        if ($configuration eq "Debug" or $variant eq "debug" or $debugRoot) {
             if ($target eq "JavaScriptCore") {
                 next if $shortName eq "AllInOneFile.o";
                 next if $shortName eq "Opcode.o";
