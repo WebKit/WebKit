@@ -1,5 +1,18 @@
 2008-08-15  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/6143072> FastMallocZone's enumeration code makes assumptions about handling of remote memory regions that overlap
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects): Don't directly compare pointers mapped into the local process with
+        a pointer that has not been mapped.  Instead, calculate a local address for the pointer and compare with that.
+        (WTF::TCMallocStats::FreeObjectFinder::findFreeObjects): Pass in the remote address of the central free list so that it can
+        be used when calculating local addresses.
+        (WTF::TCMallocStats::FastMallocZone::enumerate): Ditto.
+
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Geoff Garen.
 
         <rdar://problem/6139914> Please include a _debug version of JavaScriptCore framework
