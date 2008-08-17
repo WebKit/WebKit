@@ -1362,9 +1362,6 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
-			projectRoots = (
-				"",
-			);
 			targets = (
 				9398100A0824BF01008DF038 /* WebKit */,
 			);

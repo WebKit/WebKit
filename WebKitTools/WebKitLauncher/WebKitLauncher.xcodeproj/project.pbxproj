@@ -199,7 +199,6 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* WebKit */;
 			projectDirPath = "";
 			projectRoot = "";
-			shouldCheckCompatibility = 1;
 			targets = (
 				8D1107260486CEB800E47090 /* WebKit */,
 				5D650F3309DB8B280075E9A8 /* WebKitNightlyEnabler */,

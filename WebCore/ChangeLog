@@ -1,6 +1,14 @@
 2008-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
+        
+        Updated project files to XCode 3.1.
+
+        * manual-tests/NPN_Invoke/NPN_Invoke.xcodeproj/project.pbxproj:
+
+2008-08-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
 
         Made room for a free word in JSCell.
         
