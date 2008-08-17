@@ -1,5 +1,14 @@
 2008-08-15  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Disable dead code stripping in debug builds.
+
+        * Configurations/Base.xcconfig:
+        * WebCore.xcodeproj/project.pbxproj:
+
+2008-08-15  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Geoff Garen.
 
         <rdar://problem/6139914> Please include a _debug version of JavaScriptCore framework
