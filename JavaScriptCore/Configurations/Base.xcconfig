@@ -1,4 +1,3 @@
-DEAD_CODE_STRIPPING = YES;
 DEBUG_INFORMATION_FORMAT = dwarf;
 GCC_C_LANGUAGE_STANDARD = gnu99;
 GCC_DEBUGGING_SYMBOLS = default;
@@ -34,7 +33,7 @@ WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
 HEADER_SEARCH_PATHS = . icu $(HEADER_SEARCH_PATHS);
 
 
-// DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and STRIP_INSTALLED_PRODUCT vary between the debug and normal variants.
+// DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL, STRIP_INSTALLED_PRODUCT and DEAD_CODE_STRIPPING vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
 DEBUG_DEFINES_debug = ;
 DEBUG_DEFINES_normal = NDEBUG;
@@ -47,6 +46,10 @@ GCC_OPTIMIZATION_LEVEL_debug = 0;
 STRIP_INSTALLED_PRODUCT = $(STRIP_INSTALLED_PRODUCT_$(CURRENT_VARIANT));
 STRIP_INSTALLED_PRODUCT_normal = YES;
 STRIP_INSTALLED_PRODUCT_debug = NO;
+
+DEAD_CODE_STRIPPING_debug = NO;
+DEAD_CODE_STRIPPING_normal = YES;
+DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
 
 // <rdar://problem/5488678>: Production builds on 10.4 PowerPC need to have debugging symbols disabled to prevent a huge STABS section being generated.
