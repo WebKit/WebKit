@@ -81,8 +81,6 @@ namespace KJS {
     private:
         virtual const ClassInfo* classInfo() const { return &info; }
 
-        static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
-
         bool getOwnPropertySlotSlowCase(ExecState*, unsigned propertyName, PropertySlot&);
         void putSlowCase(ExecState*, unsigned propertyName, JSValue*);
 

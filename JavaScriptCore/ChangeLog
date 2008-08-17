@@ -1,3 +1,19 @@
+2008-08-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+        
+        Sped up property access for array.length and string.length by adding a
+        mechanism for returning a temporary value directly instead of returning
+        a pointer to a function that retrieves the value.
+        
+        Also removed some unused cruft from PropertySlot.
+        
+        SunSpider says 0.5% - 1.2% faster.
+
+        NOTE: This optimization is not a good idea in general, because it's
+        actually a pessimization in the case of resolve for assignment,
+        and it may get in the way of other optimizations in the future.
+        
 2008-08-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Geoffrey Garen.

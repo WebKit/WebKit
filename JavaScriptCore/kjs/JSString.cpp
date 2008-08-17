@@ -82,21 +82,6 @@ JSObject* JSString::toThisObject(ExecState* exec) const
     return StringObject::create(exec, const_cast<JSString*>(this));
 }
 
-JSValue* JSString::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    return jsNumber(exec, static_cast<JSString*>(slot.slotBase())->value().size());
-}
-
-JSValue* JSString::indexGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    return jsString(exec, static_cast<JSString*>(slot.slotBase())->value().substr(slot.index(), 1));
-}
-
-JSValue* JSString::indexNumericPropertyGetter(ExecState* exec, unsigned index, const PropertySlot& slot)
-{
-    return jsString(exec, static_cast<JSString*>(slot.slotBase())->value().substr(index, 1));
-}
-
 bool JSString::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
@@ -119,7 +104,7 @@ bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Proper
 {
     // The semantics here are really getPropertySlot, not getOwnPropertySlot.
     // This function should only be called by JSValue::get.
-    if (getStringPropertySlot(propertyName, slot))
+    if (getStringPropertySlot(exec, propertyName, slot))
         return true;
     return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }

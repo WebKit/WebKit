@@ -27,6 +27,7 @@
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
 #include "JSCell.h"
+#include "JSNumberCell.h"
 #include "PropertySlot.h"
 #include "identifier.h"
 #include "ustring.h"
@@ -50,7 +51,7 @@ namespace KJS {
         const UString& value() const { return m_value; }
 
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
-        bool getStringPropertySlot(unsigned propertyName, PropertySlot&);
+        bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
         bool canGetIndex(unsigned i) { return i < static_cast<unsigned>(m_value.size()); }
         JSValue* getIndex(ExecState* exec, unsigned i)
@@ -77,10 +78,6 @@ namespace KJS {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        static JSValue* lengthGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue* indexGetter(ExecState*, const Identifier&, const PropertySlot&);
-        static JSValue* indexNumericPropertyGetter(ExecState*, unsigned, const PropertySlot&);
-
         UString m_value;
     };
 
@@ -95,24 +92,24 @@ namespace KJS {
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
     {
         if (propertyName == exec->propertyNames().length) {
-            slot.setCustom(this, lengthGetter);
+            slot.setValue(jsNumber(exec, value().size()));
             return true;
         }
 
         bool isStrictUInt32;
         unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
         if (isStrictUInt32 && i < static_cast<unsigned>(m_value.size())) {
-            slot.setCustomIndex(this, i, indexGetter);
+            slot.setValue(jsString(exec, value().substr(i, 1)));
             return true;
         }
 
         return false;
     }
         
-    ALWAYS_INLINE bool JSString::getStringPropertySlot(unsigned propertyName, PropertySlot& slot)
+    ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
     {
         if (propertyName < static_cast<unsigned>(m_value.size())) {
-            slot.setCustomNumeric(this, indexNumericPropertyGetter);
+            slot.setValue(jsString(exec, value().substr(propertyName, 1)));
             return true;
         }
 

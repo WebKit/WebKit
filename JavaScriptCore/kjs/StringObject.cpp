@@ -54,7 +54,7 @@ bool StringObject::getOwnPropertySlot(ExecState* exec, const Identifier& propert
     
 bool StringObject::getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
 {
-    if (internalValue()->getStringPropertySlot(propertyName, slot))
+    if (internalValue()->getStringPropertySlot(exec, propertyName, slot))
         return true;    
     return JSObject::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
 }

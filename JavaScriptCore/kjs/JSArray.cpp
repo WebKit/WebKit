@@ -173,11 +173,6 @@ JSArray::~JSArray()
     fastFree(m_storage);
 }
 
-JSValue* JSArray::lengthGetter(ExecState* exec, const Identifier&, const PropertySlot& slot)
-{
-    return jsNumber(exec, static_cast<JSArray*>(slot.slotBase())->m_length);
-}
-
 bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot)
 {
     ArrayStorage* storage = m_storage;
@@ -210,7 +205,7 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, unsigned i, PropertySlot& slot
 bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (propertyName == exec->propertyNames().length) {
-        slot.setCustom(this, lengthGetter);
+        slot.setValue(jsNumber(exec, getLength()));
         return true;
     }
 

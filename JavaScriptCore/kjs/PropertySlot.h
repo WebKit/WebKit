@@ -34,22 +34,22 @@ namespace KJS {
 
 #define KJS_VALUE_SLOT_MARKER 0
 #define KJS_REGISTER_SLOT_MARKER reinterpret_cast<GetValueFunc>(1)
-#define KJS_NUMERIC_PROPERTY_NAME_SLOT_MARKER reinterpret_cast<GetValueFunc>(2)
 
     class PropertySlot {
     public:
         PropertySlot()
         {
             clearBase();
+            clearValue();
         }
 
         explicit PropertySlot(JSValue* base)
             : m_slotBase(base)
         {
+            clearValue();
         }
 
         typedef JSValue* (*GetValueFunc)(ExecState*, const Identifier&, const PropertySlot&);
-        typedef JSValue* (*GetValueNumericFunc)(ExecState*, unsigned index, const PropertySlot&);
 
         JSValue* getValue(ExecState* exec, const Identifier& propertyName) const
         {
@@ -57,7 +57,6 @@ namespace KJS {
                 return *m_data.valueSlot;
             if (m_getValue == KJS_REGISTER_SLOT_MARKER)
                 return (*m_data.registerSlot).jsValue(exec);
-            ASSERT(m_getValue != KJS_NUMERIC_PROPERTY_NAME_SLOT_MARKER);
             return m_getValue(exec, propertyName, *this);
         }
 
@@ -65,8 +64,6 @@ namespace KJS {
         {
             if (m_getValue == KJS_VALUE_SLOT_MARKER)
                 return *m_data.valueSlot;
-            if (m_getValue == KJS_NUMERIC_PROPERTY_NAME_SLOT_MARKER)
-                return m_data.numericFunc(exec, propertyName, *this);
             if (m_getValue == KJS_REGISTER_SLOT_MARKER)
                 return (*m_data.registerSlot).jsValue(exec);
             return m_getValue(exec, Identifier::from(exec, propertyName), *this);
@@ -90,6 +87,15 @@ namespace KJS {
             m_data.valueSlot = valueSlot;
         }
         
+        void setValue(JSValue* value)
+        {
+            ASSERT(value);
+            m_getValue = KJS_VALUE_SLOT_MARKER;
+            clearBase();
+            m_value = value;
+            m_data.valueSlot = &m_value;
+        }
+
         void setRegisterSlot(Register* registerSlot)
         {
             ASSERT(registerSlot);
@@ -125,15 +131,6 @@ namespace KJS {
             m_data.index = index;
         }
         
-        void setCustomNumeric(JSValue* slotBase, GetValueNumericFunc getValue)
-        {
-            ASSERT(slotBase);
-            ASSERT(getValue);
-            m_slotBase = slotBase;
-            m_getValue = KJS_NUMERIC_PROPERTY_NAME_SLOT_MARKER;
-            m_data.numericFunc = getValue;
-        }
-        
         void setGetterSlot(JSObject* getterFunc)
         {
             ASSERT(getterFunc);
@@ -144,7 +141,7 @@ namespace KJS {
         void setUndefined()
         {
             clearBase();
-            m_getValue = undefinedGetter;
+            setValue(jsUndefined());
         }
 
         JSValue* slotBase() const
@@ -167,14 +164,22 @@ namespace KJS {
 #endif
         }
 
+        void clearValue()
+        {
+#ifndef NDEBUG
+            m_value = 0;
+#endif
+        }
+
         const HashEntry* staticEntry() const { return m_data.staticEntry; }
         unsigned index() const { return m_data.index; }
 
     private:
-        static JSValue* undefinedGetter(ExecState*, const Identifier&, const PropertySlot&);
         static JSValue* functionGetter(ExecState*, const Identifier&, const PropertySlot&);
 
         GetValueFunc m_getValue;
+        
+        JSValue* m_value;
 
         JSValue* m_slotBase;
         union {
@@ -183,7 +188,6 @@ namespace KJS {
             Register* registerSlot;
             const HashEntry* staticEntry;
             unsigned index;
-            GetValueNumericFunc numericFunc;
         } m_data;
     };
 
