@@ -1,3 +1,16 @@
+2008-08-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        <rdar://problem/6150322> In Gmail, a crash occurs at KJS::Machine::privateExecute() when applying list styling to text after a quote had been removed
+        <https://bugs.webkit.org/show_bug.cgi?id=20386>
+
+        Testcases for determining scope chain depth in a function with out a full scope chain.
+
+        * fast/js/exception-try-finally-scope-error-expected.txt: Added.
+        * fast/js/exception-try-finally-scope-error.html: Added.
+        * fast/js/resources/exception-try-finally-scope-error.js: Added.
+
 2008-08-15  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Tim Hatcher.

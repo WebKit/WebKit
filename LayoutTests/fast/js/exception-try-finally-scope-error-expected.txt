@@ -1,0 +1,10 @@
+This test makes sure stack unwinding works correctly when confronted with a 0-depth scope chain without an activation
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS result is "inner scope"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

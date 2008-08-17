@@ -1,3 +1,26 @@
+2008-08-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        <rdar://problem/6150322> In Gmail, a crash occurs at KJS::Machine::privateExecute() when applying list styling to text after a quote had been removed
+        <https://bugs.webkit.org/show_bug.cgi?id=20386>
+
+        This crash was caused by "depth()" incorrectly determining the scope depth 
+        of a 0 depth function without a full scope chain.  Because such a function
+        would not have an activation the depth function would return the scope depth
+        of the parent frame, thus triggering an incorrect unwind.  Any subsequent 
+        look up that walked the scope chain would result in incorrect behaviour,
+        leading to a crash or incorrect variable resolution.  This can only actually
+        happen in try...finally statements as that's the only path that can result in
+        the need to unwind the scope chain, but not force the function to need a
+        full scope chain.
+
+        The fix is simply to check for this case before attempting to walk the scope chain.
+
+        * VM/Machine.cpp:
+        (KJS::depth):
+        (KJS::Machine::throwException):
+
 2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.
