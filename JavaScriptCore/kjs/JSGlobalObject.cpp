@@ -62,6 +62,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(JSGlobalObject);
+
 // Default number of ticks before a timeout check should be done.
 static const int initialTickCountThreshold = 255;
 
@@ -311,19 +313,19 @@ void JSGlobalObject::reset(JSValue* prototype)
     // Set global functions.
 
     d()->evalFunction = new (exec) GlobalEvalFunction(exec, d()->functionPrototype, 1, exec->propertyNames().eval, globalFuncEval, this);
-    putDirectFunction(d()->evalFunction, DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
+    putDirectFunction(exec, d()->evalFunction, DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 2, Identifier(exec, "parseInt"), globalFuncParseInt), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "parseFloat"), globalFuncParseFloat), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isNaN"), globalFuncIsNaN), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "isFinite"), globalFuncIsFinite), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "escape"), globalFuncEscape), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "unescape"), globalFuncUnescape), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURI"), globalFuncDecodeURI), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "decodeURIComponent"), globalFuncDecodeURIComponent), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURI"), globalFuncEncodeURI), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "encodeURIComponent"), globalFuncEncodeURIComponent), DontEnum);
 #ifndef NDEBUG
-    putDirectFunction(new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
 #endif
 
     // Set prototype, and also insert the object prototype at the end of the chain.

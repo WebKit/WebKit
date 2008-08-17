@@ -32,6 +32,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSInspectedObjectWrapper)
+
 typedef HashMap<JSObject*, JSInspectedObjectWrapper*> WrapperMap;
 typedef HashMap<JSGlobalObject*, WrapperMap*> GlobalObjectWrapperMap;
 

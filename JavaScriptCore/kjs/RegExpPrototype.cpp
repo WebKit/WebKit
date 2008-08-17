@@ -34,6 +34,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
+
 static JSValue* regExpProtoFuncTest(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* regExpProtoFuncExec(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* regExpProtoFuncCompile(ExecState*, JSObject*, JSValue*, const ArgList&);
@@ -46,10 +48,10 @@ const ClassInfo RegExpPrototype::info = { "RegExpPrototype", 0, 0, 0 };
 RegExpPrototype::RegExpPrototype(ExecState* exec, ObjectPrototype* objectPrototype, FunctionPrototype* functionPrototype)
     : JSObject(objectPrototype)
 {
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------

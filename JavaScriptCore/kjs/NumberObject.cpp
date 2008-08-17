@@ -27,6 +27,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(NumberObject);
+
 const ClassInfo NumberObject::info = { "Number", 0, 0, 0 };
 
 NumberObject::NumberObject(JSObject* prototype)

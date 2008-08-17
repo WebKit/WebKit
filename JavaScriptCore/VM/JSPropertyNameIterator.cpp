@@ -36,7 +36,7 @@
 
 namespace KJS {
 
-COMPILE_ASSERT(sizeof(JSPropertyNameIterator) <= CellSize<sizeof(void*)>::m_value, JSPropertyNameIteratorSizeASSERT);
+ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSValue* v)
 {

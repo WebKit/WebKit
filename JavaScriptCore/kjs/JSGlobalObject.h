@@ -77,6 +77,10 @@ namespace KJS {
                 , globalScopeChain(globalObject, thisValue)
             {
             }
+            
+            virtual ~JSGlobalObjectData()
+            {
+            }
 
             JSGlobalObject* next;
             JSGlobalObject* prev;
@@ -133,8 +137,8 @@ namespace KJS {
         }
 
     protected:
-        JSGlobalObject(JSValue* prototype, JSObject* globalThisValue)
-            : JSVariableObject(prototype, new JSGlobalObjectData(this, globalThisValue))
+        JSGlobalObject(JSValue* prototype, JSGlobalObjectData* d, JSObject* globalThisValue)
+            : JSVariableObject(prototype, d)
         {
             init(globalThisValue);
         }

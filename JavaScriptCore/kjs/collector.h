@@ -34,6 +34,8 @@
 #include <pthread.h>
 #endif
 
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) <= CELL_SIZE, class_fits_in_cell)
+
 namespace KJS {
 
     class ArgList;

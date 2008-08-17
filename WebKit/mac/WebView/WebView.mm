@@ -3250,7 +3250,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
                     
                     JSArray* array = static_cast<JSArray*>(object);
                     aeDesc = [NSAppleEventDescriptor listDescriptor];
-                    unsigned numItems = array->getLength();
+                    unsigned numItems = array->length();
                     for (unsigned i = 0; i < numItems; ++i)
                         [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
                     

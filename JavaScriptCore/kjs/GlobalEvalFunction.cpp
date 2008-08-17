@@ -31,6 +31,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(GlobalEvalFunction);
+
 GlobalEvalFunction::GlobalEvalFunction(ExecState* exec, FunctionPrototype* functionPrototype, int len, const Identifier& name, NativeFunction function, JSGlobalObject* cachedGlobalObject)
     : PrototypeFunction(exec, functionPrototype, len, name, function)
     , m_cachedGlobalObject(cachedGlobalObject)

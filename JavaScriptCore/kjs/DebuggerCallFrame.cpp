@@ -49,7 +49,7 @@ const UString* DebuggerCallFrame::functionName() const
     JSFunction* function = static_cast<JSFunction*>(callFrame()[RegisterFile::Callee].getJSValue());
     if (!function)
         return 0;
-    return &function->functionName().ustring();
+    return &function->name(m_exec);
 }
 
 DebuggerCallFrame::Type DebuggerCallFrame::type() const

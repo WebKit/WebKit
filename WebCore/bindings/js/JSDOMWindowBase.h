@@ -60,7 +60,7 @@ namespace WebCore {
 
         void updateDocument();
 
-        DOMWindow* impl() const { return m_impl.get(); }
+        DOMWindow* impl() const { return d()->impl.get(); }
 
         void disconnectFrame();
 
@@ -146,6 +146,23 @@ namespace WebCore {
         };
 
     private:
+        struct JSDOMWindowBaseData : public JSGlobalObjectData {
+            JSDOMWindowBaseData(PassRefPtr<DOMWindow> window_, JSDOMWindowBase* jsWindow_, JSDOMWindowShell* shell_);
+
+            RefPtr<DOMWindow> impl;
+
+            JSDOMWindowBase::ListenersMap jsEventListeners;
+            JSDOMWindowBase::ListenersMap jsHTMLEventListeners;
+            JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedEventListeners;
+            JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
+            Event* evt;
+            KJS::JSValue** returnValueSlot;
+            JSDOMWindowShell* shell;
+
+            typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
+            TimeoutsMap timeouts;
+        };
+        
         KJS::JSValue* getListener(KJS::ExecState*, const AtomicString& eventType) const;
         void setListener(KJS::ExecState*, const AtomicString& eventType, KJS::JSValue* function);
 
@@ -159,9 +176,8 @@ namespace WebCore {
 
         bool allowsAccessFromPrivate(const KJS::JSGlobalObject*) const;
         String crossDomainAccessErrorMessage(const KJS::JSGlobalObject*) const;
-
-        RefPtr<DOMWindow> m_impl;
-        OwnPtr<JSDOMWindowBasePrivate> d;
+        
+        JSDOMWindowBaseData* d() const { return static_cast<JSDOMWindowBaseData*>(KJS::JSVariableObject::d); }
     };
 
     // Returns a JSDOMWindow or jsNull()

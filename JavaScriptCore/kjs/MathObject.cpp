@@ -29,6 +29,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(MathObject);
+
 static JSValue* mathProtoFuncAbs(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* mathProtoFuncACos(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* mathProtoFuncASin(ExecState*, JSObject*, JSValue*, const ArgList&);

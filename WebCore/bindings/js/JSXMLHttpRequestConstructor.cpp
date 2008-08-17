@@ -28,6 +28,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSXMLHttpRequestConstructor)
+
 const ClassInfo JSXMLHttpRequestConstructor::s_info = { "XMLHttpRequestConstructor", 0, 0, 0 };
 
 JSXMLHttpRequestConstructor::JSXMLHttpRequestConstructor(ExecState* exec, Document* document)

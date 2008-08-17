@@ -165,17 +165,18 @@ public:
     virtual UString className() const { return "global"; }
 };
 COMPILE_ASSERT(!IsInteger<GlobalObject>::value, WTF_IsInteger_GlobalObject_false);
+ASSERT_CLASS_FITS_IN_CELL(GlobalObject);
 
 GlobalObject::GlobalObject(Vector<UString>& arguments)
 {
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "debug"), functionDebug));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "print"), functionPrint));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "quit"), functionQuit));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "gc"), functionGC));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "version"), functionVersion));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "run"), functionRun));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
-    putDirectFunction(new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "debug"), functionDebug));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "print"), functionPrint));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "quit"), functionQuit));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "gc"), functionGC));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "version"), functionVersion));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "run"), functionRun));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 1, Identifier(globalExec(), "load"), functionLoad));
+    putDirectFunction(globalExec(), new (globalExec()) PrototypeFunction(globalExec(), functionPrototype(), 0, Identifier(globalExec(), "readline"), functionReadline));
 
     JSObject* array = constructEmptyArray(globalExec());
     for (size_t i = 0; i < arguments.size(); ++i)

@@ -29,17 +29,20 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
+
 static JSValue* functionProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* functionProtoFuncApply(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* functionProtoFuncCall(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 FunctionPrototype::FunctionPrototype(ExecState* exec)
+    : InternalFunction(exec)
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 0), DontDelete | ReadOnly | DontEnum);
 
-    putDirectFunction(new (exec) PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
-    putDirectFunction(new (exec) PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 2, exec->propertyNames().apply, functionProtoFuncApply), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, this, 1, exec->propertyNames().call, functionProtoFuncCall), DontEnum);
 }
 
 static JSValue* callFunctionPrototype(ExecState*, JSObject*, JSValue*, const ArgList&)
@@ -58,17 +61,17 @@ CallType FunctionPrototype::getCallData(CallData& callData)
 
 JSValue* functionProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    if (!thisValue->isObject(&InternalFunction::info))
-        return throwError(exec, TypeError);
-
-    InternalFunction* function = static_cast<InternalFunction*>(thisValue);
-
-    if (function->inherits(&JSFunction::info)) {
-        JSFunction* fi = static_cast<JSFunction*>(thisValue);
-        return jsString(exec, "function " + fi->functionName().ustring() + "(" + fi->m_body->paramString() + ") " + fi->m_body->toSourceString());
+    if (thisValue->isObject(&JSFunction::info)) {
+        JSFunction* function = static_cast<JSFunction*>(thisValue);
+        return jsString(exec, "function " + function->name(exec) + "(" + function->m_body->paramString() + ") " + function->m_body->toSourceString());
     }
 
-    return jsString(exec, "function " + function->functionName().ustring() + "() {\n    [native code]\n}");
+    if (thisValue->isObject(&InternalFunction::info)) {
+        InternalFunction* function = static_cast<InternalFunction*>(thisValue);
+        return jsString(exec, "function " + function->name(exec) + "() {\n    [native code]\n}");
+    }
+
+    return throwError(exec, TypeError);
 }
 
 JSValue* functionProtoFuncApply(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList& args)

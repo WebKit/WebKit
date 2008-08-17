@@ -34,6 +34,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(ArrayPrototype);
+
 static JSValue* arrayProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* arrayProtoFuncToLocaleString(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* arrayProtoFuncConcat(ExecState*, JSObject*, JSValue*, const ArgList&);
@@ -262,7 +264,7 @@ JSValue* arrayProtoFuncConcat(ExecState* exec, JSObject*, JSValue* thisValue, co
     while (1) {
         if (curArg->isObject(&JSArray::info)) {
             JSArray* curArray = static_cast<JSArray*>(curArg);
-            unsigned length = curArray->getLength();
+            unsigned length = curArray->length();
             for (unsigned k = 0; k < length; ++k) {
                 if (JSValue* v = getProperty(exec, curArray, k))
                     arr->put(exec, n, v);

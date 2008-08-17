@@ -34,6 +34,8 @@ namespace WebCore {
 
 using namespace KJS;
 
+ASSERT_CLASS_FITS_IN_CELL(JSEventTargetNode)
+
 JSEventTargetNode::JSEventTargetNode(JSObject* prototype, Node* node)
     : JSNode(prototype, node)
 {

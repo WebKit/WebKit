@@ -38,6 +38,7 @@ namespace KJS {
     class JSGlobalObject;
 
     class JSFunction : public InternalFunction {
+        typedef InternalFunction Base;
     public:
         JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
 

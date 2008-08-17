@@ -26,6 +26,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSHTMLInputElementBase)
+
 static JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 }

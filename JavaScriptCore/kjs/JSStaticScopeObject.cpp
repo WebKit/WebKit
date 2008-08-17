@@ -29,6 +29,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
+
 JSObject* JSStaticScopeObject::toThisObject(ExecState* exec) const
 {
     return exec->globalThisValue();

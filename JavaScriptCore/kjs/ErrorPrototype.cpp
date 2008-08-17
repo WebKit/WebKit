@@ -29,6 +29,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
+
 static JSValue* errorProtoFuncToString(ExecState*, JSObject*, JSValue*, const ArgList&);
 
 // ECMA 15.9.4
@@ -40,7 +42,7 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
     putDirect(exec->propertyNames().name, jsString(exec, "Error"), DontEnum);
     putDirect(exec->propertyNames().message, jsString(exec, "Unknown error"), DontEnum);
 
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
 
 JSValue* errorProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)

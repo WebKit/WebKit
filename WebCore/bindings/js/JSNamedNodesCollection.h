@@ -48,7 +48,7 @@ namespace WebCore {
         static KJS::JSValue* lengthGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
         static KJS::JSValue* indexGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
 
-        Vector<RefPtr<Node> > m_nodes;
+        OwnPtr<Vector<RefPtr<Node> > > m_nodes;
     };
 
 } // namespace WebCore

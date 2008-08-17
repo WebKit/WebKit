@@ -56,6 +56,8 @@ using namespace WTF;
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(DatePrototype);
+
 static JSValue* dateProtoFuncGetDate(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateProtoFuncGetDay(ExecState*, JSObject*, JSValue*, const ArgList&);
 static JSValue* dateProtoFuncGetFullYear(ExecState*, JSObject*, JSValue*, const ArgList&);

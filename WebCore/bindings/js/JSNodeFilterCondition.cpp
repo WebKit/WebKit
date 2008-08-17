@@ -28,6 +28,8 @@ namespace WebCore {
 
 using namespace KJS;
 
+ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition)
+
 JSNodeFilterCondition::JSNodeFilterCondition(JSValue* filter)
     : m_filter(filter)
 {

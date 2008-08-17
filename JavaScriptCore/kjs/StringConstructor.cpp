@@ -44,14 +44,16 @@ static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const A
     return jsString(exec, s);
 }
 
+ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
+
 StringConstructor::StringConstructor(ExecState* exec, FunctionPrototype* functionPrototype, StringPrototype* stringPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, stringPrototype->classInfo()->className))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, stringPrototype->classInfo()->className))
 {
     // ECMA 15.5.3.1 String.prototype
     putDirect(exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
 
     // ECMA 15.5.3.2 fromCharCode()
-    putDirectFunction(new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
+    putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
 
     // no. of arguments for constructor
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), ReadOnly | DontEnum | DontDelete);

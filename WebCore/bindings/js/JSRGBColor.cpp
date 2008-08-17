@@ -32,6 +32,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSRGBColor)
+
 const ClassInfo JSRGBColor::s_info = { "RGBColor", 0, &JSRGBColorTable, 0 };
 
 /*

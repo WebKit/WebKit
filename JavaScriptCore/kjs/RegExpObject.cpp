@@ -30,6 +30,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(RegExpObject);
+
 const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 
 /* Source for RegExpObject.lut.h
@@ -44,8 +46,7 @@ const ClassInfo RegExpObject::info = { "RegExp", 0, 0, ExecState::regExpTable };
 
 RegExpObject::RegExpObject(RegExpPrototype* regExpPrototype, PassRefPtr<RegExp> regExp)
     : JSObject(regExpPrototype)
-    , m_regExp(regExp)
-    , m_lastIndex(0)
+    , d(new RegExpObjectData(regExp, 0))
 {
 }
 
@@ -62,15 +63,15 @@ JSValue* RegExpObject::getValueProperty(ExecState* exec, int token) const
 {
     switch (token) {
         case Global:
-            return jsBoolean(m_regExp->global());
+            return jsBoolean(d->regExp->global());
         case IgnoreCase:
-            return jsBoolean(m_regExp->ignoreCase());
+            return jsBoolean(d->regExp->ignoreCase());
         case Multiline:
-            return jsBoolean(m_regExp->multiline());
+            return jsBoolean(d->regExp->multiline());
         case Source:
-            return jsString(exec, m_regExp->pattern());
+            return jsString(exec, d->regExp->pattern());
         case LastIndex:
-            return jsNumber(exec, m_lastIndex);
+            return jsNumber(exec, d->lastIndex);
     }
     
     ASSERT_NOT_REACHED();
@@ -86,7 +87,7 @@ void RegExpObject::putValueProperty(ExecState* exec, int token, JSValue* value)
 {
     UNUSED_PARAM(token);
     ASSERT(token == LastIndex);
-    m_lastIndex = value->toInteger(exec);
+    d->lastIndex = value->toInteger(exec);
 }
 
 bool RegExpObject::match(ExecState* exec, const ArgList& args)
@@ -107,20 +108,20 @@ bool RegExpObject::match(ExecState* exec, const ArgList& args)
     bool global = get(exec, exec->propertyNames().global)->toBoolean(exec);
     int lastIndex = 0;
     if (global) {
-        if (m_lastIndex < 0 || m_lastIndex > input.size()) {
-            m_lastIndex = 0;
+        if (d->lastIndex < 0 || d->lastIndex > input.size()) {
+            d->lastIndex = 0;
             return false;
         }
-        lastIndex = static_cast<int>(m_lastIndex);
+        lastIndex = static_cast<int>(d->lastIndex);
     }
 
     int foundIndex;
     int foundLength;
-    regExpObj->performMatch(m_regExp.get(), input, lastIndex, foundIndex, foundLength);
+    regExpObj->performMatch(d->regExp.get(), input, lastIndex, foundIndex, foundLength);
 
     if (global) {
         lastIndex = foundIndex < 0 ? 0 : foundIndex + foundLength;
-        m_lastIndex = lastIndex;
+        d->lastIndex = lastIndex;
     }
 
     return foundIndex >= 0;

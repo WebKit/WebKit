@@ -1,3 +1,14 @@
+2008-08-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Made room for a free word in JSCell.
+        
+        Changed JSDOMWindowBase to store its auxiliary data in a subclass of
+        JSGlobalData, so the two could share a pointer.
+        
+        Added a bunch of ASSERTs, to help catch over-sized objects.
+
 2008-08-15  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dan Bernstein.

@@ -27,6 +27,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(NativeErrorPrototype);
+
 NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* errorPrototype, const UString& name, const UString& message)
     : JSObject(errorPrototype)
 {

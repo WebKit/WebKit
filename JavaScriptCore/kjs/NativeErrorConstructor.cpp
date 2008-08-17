@@ -28,10 +28,12 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
+
 const ClassInfo NativeErrorConstructor::info = { "Function", &InternalFunction::info, 0, 0 };
 
 NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NativeErrorPrototype* nativeErrorPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name)->getString()))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, nativeErrorPrototype->getDirect(exec->propertyNames().name)->getString()))
     , m_proto(nativeErrorPrototype)
 {
     putDirect(exec->propertyNames().length, jsNumber(exec, 1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5

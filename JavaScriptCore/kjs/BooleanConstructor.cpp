@@ -26,8 +26,10 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(BooleanConstructor);
+
 BooleanConstructor::BooleanConstructor(ExecState* exec, FunctionPrototype* functionPrototype, BooleanPrototype* booleanPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, booleanPrototype->classInfo()->className))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, booleanPrototype->classInfo()->className))
 {
     putDirect(exec->propertyNames().prototype, booleanPrototype, DontEnum | DontDelete | ReadOnly);
 

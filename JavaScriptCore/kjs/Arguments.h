@@ -47,8 +47,18 @@ namespace KJS {
     private:
         static JSValue* mappedIndexGetter(ExecState*, const Identifier&, const PropertySlot& slot);
 
-        JSActivation* m_activationObject;
-        mutable IndexToNameMap m_indexToNameMap;
+        struct ArgumentsData {
+            ArgumentsData(JSActivation* activation_, JSFunction* function_, const ArgList& args_)
+                : activation(activation_)
+                , indexToNameMap(function_, args_)
+            {
+            }
+
+            JSActivation* activation;
+            mutable IndexToNameMap indexToNameMap;
+        };
+        
+        OwnPtr<ArgumentsData> d;
     };
 
 } // namespace KJS

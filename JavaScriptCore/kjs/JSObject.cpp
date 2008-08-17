@@ -42,6 +42,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(JSObject);
+
 void JSObject::mark()
 {
     JSCell::mark();
@@ -460,9 +462,9 @@ void JSObject::removeDirect(const Identifier& propertyName)
     m_propertyMap.remove(propertyName);
 }
 
-void JSObject::putDirectFunction(InternalFunction* function, unsigned attr)
+void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)
 {
-    putDirect(function->functionName(), function, attr);
+    putDirect(Identifier(exec, function->name(exec)), function, attr);
 }
 
 NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue** location)

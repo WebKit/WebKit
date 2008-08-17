@@ -39,6 +39,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSDOMWindowShell)
+
 const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", 0, 0, 0 };
 
 JSDOMWindowShell::JSDOMWindowShell(DOMWindow* domWindow)

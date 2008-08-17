@@ -69,115 +69,13 @@ namespace KJS {
         virtual void mark();
         virtual JSType type() const;
 
-        /**
-         * A pointer to a ClassInfo struct for this class. This provides a basic
-         * facility for run-time type information, and can be used to check an
-         * object's class an inheritance (see inherits()). This should
-         * always return a statically declared pointer, or 0 to indicate that
-         * there is no class information.
-         *
-         * This is primarily useful if you have application-defined classes that you
-         * wish to check against for casting purposes.
-         *
-         * For example, to specify the class info for classes FooImp and BarImp,
-         * where FooImp inherits from BarImp, you would add the following in your
-         * class declarations:
-         *
-         * \code
-         *   class BarImp : public JSObject {
-         *     virtual const ClassInfo *classInfo() const { return &info; }
-         *     static const ClassInfo info;
-         *     // ...
-         *   };
-         *
-         *   class FooImp : public JSObject {
-         *     virtual const ClassInfo *classInfo() const { return &info; }
-         *     static const ClassInfo info;
-         *     // ...
-         *   };
-         * \endcode
-         *
-         * And in your source file:
-         *
-         * \code
-         *   const ClassInfo BarImp::info = { "Bar", 0, 0, 0 }; // no parent class
-         *   const ClassInfo FooImp::info = { "Foo", &BarImp::info, 0, 0 };
-         * \endcode
-         *
-         * @see inherits()
-         */
-
-        /**
-         * Checks whether this object inherits from the class with the specified
-         * classInfo() pointer. This requires that both this class and the other
-         * class return a non-NULL pointer for their classInfo() methods (otherwise
-         * it will return false).
-         *
-         * For example, for two JSObject pointers obj1 and obj2, you can check
-         * if obj1's class inherits from obj2's class using the following:
-         *
-         *   if (obj1->inherits(obj2->classInfo())) {
-         *     // ...
-         *   }
-         *
-         * If you have a handle to a statically declared ClassInfo, such as in the
-         * classInfo() example, you can check for inheritance without needing
-         * an instance of the other class:
-         *
-         *   if (obj1->inherits(FooImp::info)) {
-         *     // ...
-         *   }
-         *
-         * @param cinfo The ClassInfo pointer for the class you want to check
-         * inheritance against.
-         * @return true if this object's class inherits from class with the
-         * ClassInfo pointer specified in cinfo
-         */
         bool inherits(const ClassInfo* classInfo) const { return isObject(classInfo); } // FIXME: Merge with isObject.
 
-        // internal properties (ECMA 262-3 8.6.2)
-
-        /**
-         * Returns the prototype of this object. Note that this is not the same as
-         * the "prototype" property.
-         *
-         * See ECMA 8.6.2
-         *
-         * @return The object's prototype
-         */
         JSValue* prototype() const;
         void setPrototype(JSValue* prototype);
 
-        /**
-         * Returns the class name of the object
-         *
-         * See ECMA 8.6.2
-         *
-         * @return The object's class name
-         */
-        /**
-         * Implementation of the [[Class]] internal property (implemented by all
-         * Objects)
-         *
-         * The default implementation uses classInfo().
-         * You should either implement classInfo(), or
-         * if you simply need a classname, you can reimplement className()
-         * instead.
-         */
         virtual UString className() const;
 
-        /**
-         * Retrieves the specified property from the object. If neither the object
-         * or any other object in its prototype chain have the property, this
-         * function will return Undefined.
-         *
-         * See ECMA 8.6.2.1
-         *
-         * @param exec The current execution state
-         * @param propertyName The name of the property to retrieve
-         *
-         * @return The specified property, or Undefined
-         */
         JSValue* get(ExecState*, const Identifier& propertyName) const;
         JSValue* get(ExecState*, unsigned propertyName) const;
 
@@ -187,97 +85,24 @@ namespace KJS {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        /**
-         * Sets the specified property.
-         *
-         * See ECMA 8.6.2.2
-         *
-         * @param exec The current execution state
-         * @param propertyName The name of the property to set
-         * @param propertyValue The value to set
-         */
         virtual void put(ExecState*, const Identifier& propertyName, JSValue* value);
         virtual void put(ExecState*, unsigned propertyName, JSValue* value);
 
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
         virtual void putWithAttributes(ExecState*, unsigned propertyName, JSValue* value, unsigned attributes);
 
-        /**
-         * Checks if a property is enumerable, that is if it doesn't have the DontEnum
-         * flag set
-         *
-         * See ECMA 15.2.4
-         * @param exec The current execution state
-         * @param propertyName The name of the property
-         * @return true if the property is enumerable, otherwise false
-         */
         bool propertyIsEnumerable(ExecState*, const Identifier& propertyName) const;
 
-        /**
-         * Checks to see whether the object (or any object in its prototype chain)
-         * has a property with the specified name.
-         *
-         * See ECMA 8.6.2.4
-         *
-         * @param exec The current execution state
-         * @param propertyName The name of the property to check for
-         * @return true if the object has the property, otherwise false
-         */
         bool hasProperty(ExecState*, const Identifier& propertyName) const;
         bool hasProperty(ExecState*, unsigned propertyName) const;
         bool hasOwnProperty(ExecState*, const Identifier& propertyName) const;
 
-        /**
-         * Removes the specified property from the object.
-         *
-         * See ECMA 8.6.2.5
-         *
-         * @param exec The current execution state
-         * @param propertyName The name of the property to delete
-         * @return true if the property was successfully deleted or did not
-         * exist on the object. false if deleting the specified property is not
-         * allowed.
-         */
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
-        /**
-         * Converts the object into a primitive value. The value return may differ
-         * depending on the supplied hint
-         *
-         * See ECMA 8.6.2.6
-         *
-         * @param exec The current execution state
-         * @param hint The desired primitive type to convert to
-         * @return A primitive value converted from the objetc. Note that the
-         * type of primitive value returned may not be the same as the requested
-         * hint.
-         */
-        /**
-         * Implementation of the [[DefaultValue]] internal property (implemented by
-         * all Objects)
-         */
         virtual JSValue* defaultValue(ExecState*, JSType hint) const;
 
-        /**
-         * Whether or not the object implements the hasInstance() method. If this
-         * returns false you should not call the hasInstance() method on this
-         * object (typically, an assertion will fail to indicate this).
-         *
-         * @return true if this object implements the hasInstance() method,
-         * otherwise false
-         */
         virtual bool implementsHasInstance() const;
-
-        /**
-         * Checks whether value delegates behavior to this object. Used by the
-         * instanceof operator.
-         *
-         * @param exec The current execution state
-         * @param value The value to check
-         * @return true if value delegates behavior to this object, otherwise
-         * false
-         */
         virtual bool hasInstance(ExecState*, JSValue*);
 
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
@@ -298,8 +123,6 @@ namespace KJS {
         virtual bool masqueradeAsUndefined() const { return false; }
 
         // This get function only looks at the property map.
-        // This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
-        // to look up in the prototype, it might already exist there)
         JSValue* getDirect(const Identifier& propertyName) const { return m_propertyMap.get(propertyName); }
         JSValue** getDirectLocation(const Identifier& propertyName) { return m_propertyMap.getLocation(propertyName); }
         JSValue** getDirectLocation(const Identifier& propertyName, bool& isWriteable) { return m_propertyMap.getLocation(propertyName, isWriteable); }
@@ -309,7 +132,7 @@ namespace KJS {
         bool hasCustomProperties() { return !m_propertyMap.isEmpty(); }
 
         // convenience to add a function property under the function's own built-in name
-        void putDirectFunction(InternalFunction*, unsigned attr = 0);
+        void putDirectFunction(ExecState*, InternalFunction*, unsigned attr = 0);
 
         void fillGetterPropertySlot(PropertySlot&, JSValue** location);
 

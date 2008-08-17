@@ -25,6 +25,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
+
 void JSWrapperObject::mark() 
 {
     JSObject::mark();

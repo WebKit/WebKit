@@ -25,26 +25,6 @@
 
 namespace WebCore {
 
-struct JSDOMWindowBasePrivate {
-    JSDOMWindowBasePrivate(JSDOMWindowShell* shell)
-        : m_evt(0)
-        , m_returnValueSlot(0)
-        , m_shell(shell)
-    {
-    }
-
-    JSDOMWindowBase::ListenersMap jsEventListeners;
-    JSDOMWindowBase::ListenersMap jsHTMLEventListeners;
-    JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedEventListeners;
-    JSDOMWindowBase::UnprotectedListenersMap jsUnprotectedHTMLEventListeners;
-    Event* m_evt;
-    KJS::JSValue** m_returnValueSlot;
-    JSDOMWindowShell* m_shell;
-
-    typedef HashMap<int, DOMWindowTimer*> TimeoutsMap;
-    TimeoutsMap m_timeouts;
-};
-
 inline JSDOMWindow* asJSDOMWindow(KJS::JSGlobalObject* globalObject)
 {
     return static_cast<JSDOMWindow*>(globalObject);
@@ -180,7 +160,7 @@ inline bool JSDOMWindowBase::allowsAccessFrom(KJS::ExecState* exec, String& mess
 ALWAYS_INLINE bool JSDOMWindowBase::allowsAccessFromPrivate(const JSGlobalObject* other) const
 {
     const JSDOMWindow* originWindow = asJSDOMWindow(other);
-    const JSDOMWindow* targetWindow = d->m_shell->window();
+    const JSDOMWindow* targetWindow = d()->shell->window();
 
     if (originWindow == targetWindow)
         return true;

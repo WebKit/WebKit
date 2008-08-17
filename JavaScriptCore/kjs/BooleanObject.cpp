@@ -23,6 +23,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(BooleanObject);
+
 const ClassInfo BooleanObject::info = { "Boolean", 0, 0, 0 };
 
 BooleanObject::BooleanObject(JSObject* prototype)

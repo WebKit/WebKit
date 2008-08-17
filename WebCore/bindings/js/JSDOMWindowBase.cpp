@@ -192,17 +192,24 @@ const ClassInfo JSDOMWindowBase::s_info = { "Window", 0, &JSDOMWindowBaseTable, 
 @end
 */
 
+JSDOMWindowBase::JSDOMWindowBaseData::JSDOMWindowBaseData(PassRefPtr<DOMWindow> window_, JSDOMWindowBase* jsWindow_, JSDOMWindowShell* shell_)
+    : JSGlobalObjectData(jsWindow_, shell_)
+    , impl(window_)
+    , evt(0)
+    , returnValueSlot(0)
+    , shell(shell_)
+{
+}
+
 JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window, JSDOMWindowShell* shell)
-    : JSGlobalObject(prototype, shell)
-    , m_impl(window)
-    , d(new JSDOMWindowBasePrivate(shell))
+    : JSGlobalObject(prototype, new JSDOMWindowBaseData(window, this, shell), shell)
 {
     // Time in milliseconds before the script timeout handler kicks in.
     setTimeoutTime(10000);
 
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(Identifier(globalExec(), "document"), jsNull(), DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(globalExec(), "window"), d->m_shell, DontDelete | ReadOnly)
+        GlobalPropertyInfo(Identifier(globalExec(), "window"), d()->shell, DontDelete | ReadOnly)
     };
     
     addStaticGlobals(staticGlobals, sizeof(staticGlobals) / sizeof(GlobalPropertyInfo));
@@ -210,35 +217,35 @@ JSDOMWindowBase::JSDOMWindowBase(JSObject* prototype, DOMWindow* window, JSDOMWi
 
 void JSDOMWindowBase::updateDocument()
 {
-    ASSERT(m_impl->document());
+    ASSERT(d()->impl->document());
     ExecState* exec = globalExec();
-    symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, m_impl->document()), DontDelete | ReadOnly);
+    symbolTablePutWithAttributes(Identifier(exec, "document"), toJS(exec, d()->impl->document()), DontDelete | ReadOnly);
 }
 
 JSDOMWindowBase::~JSDOMWindowBase()
 {
-    if (m_impl->frame())
-        m_impl->frame()->script()->clearFormerWindow(asJSDOMWindow(this));
+    if (d()->impl->frame())
+        d()->impl->frame()->script()->clearFormerWindow(asJSDOMWindow(this));
 
     clearAllTimeouts();
 
     // Clear any backpointers to the window
 
-    ListenersMap::iterator i2 = d->jsEventListeners.begin();
-    ListenersMap::iterator e2 = d->jsEventListeners.end();
+    ListenersMap::iterator i2 = d()->jsEventListeners.begin();
+    ListenersMap::iterator e2 = d()->jsEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
-    i2 = d->jsHTMLEventListeners.begin();
-    e2 = d->jsHTMLEventListeners.end();
+    i2 = d()->jsHTMLEventListeners.begin();
+    e2 = d()->jsHTMLEventListeners.end();
     for (; i2 != e2; ++i2)
         i2->second->clearWindow();
 
-    UnprotectedListenersMap::iterator i1 = d->jsUnprotectedEventListeners.begin();
-    UnprotectedListenersMap::iterator e1 = d->jsUnprotectedEventListeners.end();
+    UnprotectedListenersMap::iterator i1 = d()->jsUnprotectedEventListeners.begin();
+    UnprotectedListenersMap::iterator e1 = d()->jsUnprotectedEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
-    i1 = d->jsUnprotectedHTMLEventListeners.begin();
-    e1 = d->jsUnprotectedHTMLEventListeners.end();
+    i1 = d()->jsUnprotectedHTMLEventListeners.begin();
+    e1 = d()->jsUnprotectedHTMLEventListeners.end();
     for (; i1 != e1; ++i1)
         i1->second->clearWindow();
 }
@@ -431,9 +438,9 @@ JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
     case Event_:
       if (!allowsAccessFrom(exec))
         return jsUndefined();
-      if (!d->m_evt)
+      if (!d()->evt)
         return jsUndefined();
-      return toJS(exec, d->m_evt);
+      return toJS(exec, d()->evt);
     case Image:
       if (!allowsAccessFrom(exec))
         return jsUndefined();
@@ -834,7 +841,7 @@ JSEventListener* JSDOMWindowBase::findJSEventListener(JSValue* val, bool html)
     if (!val->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(val);
-    ListenersMap& listeners = html ? d->jsHTMLEventListeners : d->jsEventListeners;
+    ListenersMap& listeners = html ? d()->jsHTMLEventListeners : d()->jsEventListeners;
     return listeners.get(object);
 }
 
@@ -857,7 +864,7 @@ JSUnprotectedEventListener* JSDOMWindowBase::findJSUnprotectedEventListener(Exec
     if (!val->isObject())
         return 0;
     JSObject* object = static_cast<JSObject*>(val);
-    UnprotectedListenersMap& listeners = html ? d->jsUnprotectedHTMLEventListeners : d->jsUnprotectedEventListeners;
+    UnprotectedListenersMap& listeners = html ? d()->jsUnprotectedHTMLEventListeners : d()->jsUnprotectedEventListeners;
     return listeners.get(object);
 }
 
@@ -876,13 +883,13 @@ PassRefPtr<JSUnprotectedEventListener> JSDOMWindowBase::findOrCreateJSUnprotecte
 
 void JSDOMWindowBase::clearHelperObjectProperties()
 {
-    d->m_evt = 0;
+    d()->evt = 0;
 }
 
 void JSDOMWindowBase::clear()
 {
-    if (d->m_returnValueSlot && !*d->m_returnValueSlot)
-        *d->m_returnValueSlot = getDirect(Identifier(globalExec(), "returnValue"));
+    if (d()->returnValueSlot && !*d()->returnValueSlot)
+        *d()->returnValueSlot = getDirect(Identifier(globalExec(), "returnValue"));
 
     clearAllTimeouts();
     clearHelperObjectProperties();
@@ -890,12 +897,12 @@ void JSDOMWindowBase::clear()
 
 void JSDOMWindowBase::setCurrentEvent(Event* evt)
 {
-    d->m_evt = evt;
+    d()->evt = evt;
 }
 
 Event* JSDOMWindowBase::currentEvent()
 {
-    return d->m_evt;
+    return d()->evt;
 }
 
 JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
@@ -905,7 +912,7 @@ JSObject* JSDOMWindowBase::toThisObject(ExecState*) const
 
 JSDOMWindowShell* JSDOMWindowBase::shell() const
 {
-    return d->m_shell;
+    return d()->shell;
 }
 
 JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
@@ -1153,15 +1160,15 @@ JSValue* windowProtoFuncNotImplemented(ExecState* exec, JSObject*, JSValue* this
 
 void JSDOMWindowBase::setReturnValueSlot(JSValue** slot)
 {
-    d->m_returnValueSlot = slot;
+    d()->returnValueSlot = slot;
 }
 
 ////////////////////// timeouts ////////////////////////
 
 void JSDOMWindowBase::clearAllTimeouts()
 {
-    deleteAllValues(d->m_timeouts);
-    d->m_timeouts.clear();
+    deleteAllValues(d()->timeouts);
+    d()->timeouts.clear();
 }
 
 int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
@@ -1174,8 +1181,8 @@ int JSDOMWindowBase::installTimeout(ScheduledAction* a, int t, bool singleShot)
 
     int nestLevel = timerNestingLevel + 1;
     DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, nestLevel, this, a);
-    ASSERT(!d->m_timeouts.get(timeoutId));
-    d->m_timeouts.set(timeoutId, timer);
+    ASSERT(!d()->timeouts.get(timeoutId));
+    d()->timeouts.set(timeoutId, timer);
     // Use a minimum interval of 10 ms to match other browsers, but only once we've
     // nested enough to notice that we're repeating.
     // Faster timers might be "better", but they're incompatible.
@@ -1201,14 +1208,14 @@ int JSDOMWindowBase::installTimeout(ExecState* exec, JSValue* func, const ArgLis
 
 PausedTimeouts* JSDOMWindowBase::pauseTimeouts()
 {
-    size_t count = d->m_timeouts.size();
+    size_t count = d()->timeouts.size();
     if (count == 0)
         return 0;
 
     PausedTimeout* t = new PausedTimeout [count];
     PausedTimeouts* result = new PausedTimeouts(t, count);
 
-    JSDOMWindowBasePrivate::TimeoutsMap::iterator it = d->m_timeouts.begin();
+    JSDOMWindowBaseData::TimeoutsMap::iterator it = d()->timeouts.begin();
     for (size_t i = 0; i != count; ++i, ++it) {
         int timeoutId = it->first;
         DOMWindowTimer* timer = it->second;
@@ -1218,10 +1225,10 @@ PausedTimeouts* JSDOMWindowBase::pauseTimeouts()
         t[i].repeatInterval = timer->repeatInterval();
         t[i].action = timer->takeAction();
     }
-    ASSERT(it == d->m_timeouts.end());
+    ASSERT(it == d()->timeouts.end());
 
-    deleteAllValues(d->m_timeouts);
-    d->m_timeouts.clear();
+    deleteAllValues(d()->timeouts);
+    d()->timeouts.clear();
 
     return result;
 }
@@ -1235,7 +1242,7 @@ void JSDOMWindowBase::resumeTimeouts(PausedTimeouts* timeouts)
     for (size_t i = 0; i != count; ++i) {
         int timeoutId = array[i].timeoutId;
         DOMWindowTimer* timer = new DOMWindowTimer(timeoutId, array[i].nestingLevel, this, array[i].action);
-        d->m_timeouts.set(timeoutId, timer);
+        d()->timeouts.set(timeoutId, timer);
         timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
     delete [] array;
@@ -1249,7 +1256,7 @@ void JSDOMWindowBase::clearTimeout(int timeoutId, bool delAction)
     if (timeoutId <= 0)
         return;
 
-    delete d->m_timeouts.take(timeoutId);
+    delete d()->timeouts.take(timeoutId);
 }
 
 void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
@@ -1261,7 +1268,7 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
         timer->action()->execute(shell());
         // The DOMWindowTimer object may have been deleted or replaced during execution,
         // so we re-fetch it.
-        timer = d->m_timeouts.get(timeoutId);
+        timer = d()->timeouts.get(timeoutId);
         if (!timer)
             return;
 
@@ -1275,7 +1282,7 @@ void JSDOMWindowBase::timerFired(DOMWindowTimer* timer)
 
     // Delete timer before executing the action for one-shot timers.
     ScheduledAction* action = timer->takeAction();
-    d->m_timeouts.remove(timer->timeoutId());
+    d()->timeouts.remove(timer->timeoutId());
     delete timer;
     action->execute(shell());
 
@@ -1289,22 +1296,22 @@ void JSDOMWindowBase::disconnectFrame()
 
 JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsEventListeners()
 {
-    return d->jsEventListeners;
+    return d()->jsEventListeners;
 }
 
 JSDOMWindowBase::ListenersMap& JSDOMWindowBase::jsHTMLEventListeners()
 {
-    return d->jsHTMLEventListeners;
+    return d()->jsHTMLEventListeners;
 }
 
 JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedEventListeners()
 {
-    return d->jsUnprotectedEventListeners;
+    return d()->jsUnprotectedEventListeners;
 }
 
 JSDOMWindowBase::UnprotectedListenersMap& JSDOMWindowBase::jsUnprotectedHTMLEventListeners()
 {
-    return d->jsUnprotectedHTMLEventListeners;
+    return d()->jsUnprotectedHTMLEventListeners;
 }
 
 void DOMWindowTimer::fired()

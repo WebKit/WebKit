@@ -32,14 +32,17 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(Arguments);
+
 const ClassInfo Arguments::info = { "Arguments", 0, 0, 0 };
 
 // ECMA 10.1.8
 Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args, JSActivation* activation)
     : JSObject(exec->lexicalGlobalObject()->objectPrototype())
-    , m_activationObject(activation)
-    , m_indexToNameMap(function, args)
+    , d(new ArgumentsData(activation, function, args))
 {
+    ASSERT(activation);
+
     putDirect(exec->propertyNames().callee, function, DontEnum);
     putDirect(exec, exec->propertyNames().length, args.size(), DontEnum);
   
@@ -47,7 +50,7 @@ Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args,
     ArgList::const_iterator end = args.end();
     for (ArgList::const_iterator it = args.begin(); it != end; ++it, ++i) {
         Identifier name = Identifier::from(exec, i);
-        if (!m_indexToNameMap.isMapped(name))
+        if (!d->indexToNameMap.isMapped(name))
             putDirect(name, (*it).jsValue(exec), DontEnum);
     }
 }
@@ -55,19 +58,19 @@ Arguments::Arguments(ExecState* exec, JSFunction* function, const ArgList& args,
 void Arguments::mark() 
 {
     JSObject::mark();
-    if (m_activationObject && !m_activationObject->marked())
-        m_activationObject->mark();
+    if (!d->activation->marked())
+        d->activation->mark();
 }
 
 JSValue* Arguments::mappedIndexGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
 {
       Arguments* thisObj = static_cast<Arguments*>(slot.slotBase());
-      return thisObj->m_activationObject->get(exec, thisObj->m_indexToNameMap[propertyName]);
+      return thisObj->d->activation->get(exec, thisObj->d->indexToNameMap[propertyName]);
 }
 
 bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    if (m_indexToNameMap.isMapped(propertyName)) {
+    if (d->indexToNameMap.isMapped(propertyName)) {
         slot.setCustom(this, mappedIndexGetter);
         return true;
     }
@@ -77,16 +80,16 @@ bool Arguments::getOwnPropertySlot(ExecState* exec, const Identifier& propertyNa
 
 void Arguments::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
 {
-    if (m_indexToNameMap.isMapped(propertyName))
-        m_activationObject->put(exec, m_indexToNameMap[propertyName], value);
+    if (d->indexToNameMap.isMapped(propertyName))
+        d->activation->put(exec, d->indexToNameMap[propertyName], value);
     else
         JSObject::put(exec, propertyName, value);
 }
 
 bool Arguments::deleteProperty(ExecState* exec, const Identifier& propertyName) 
 {
-    if (m_indexToNameMap.isMapped(propertyName)) {
-        m_indexToNameMap.unMap(exec, propertyName);
+    if (d->indexToNameMap.isMapped(propertyName)) {
+        d->indexToNameMap.unMap(exec, propertyName);
         return true;
     }
 

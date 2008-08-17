@@ -25,6 +25,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(StringObject);
+
 const ClassInfo StringObject::info = { "String", 0, 0, 0 };
 
 StringObject::StringObject(ExecState* exec, JSObject* prototype)

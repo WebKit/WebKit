@@ -33,6 +33,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
+
 const ClassInfo RegExpConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::regExpConstructorTable };
 
 /* Source for RegExpConstructor.lut.h
@@ -76,7 +78,7 @@ struct RegExpConstructorPrivate {
 };
 
 RegExpConstructor::RegExpConstructor(ExecState* exec, FunctionPrototype* functionPrototype, RegExpPrototype* regExpPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, "RegExp"))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, "RegExp"))
     , d(new RegExpConstructorPrivate)
 {
     // ECMA 15.10.5.1 RegExp.prototype

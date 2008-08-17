@@ -31,8 +31,10 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(PrototypeFunction);
+
 PrototypeFunction::PrototypeFunction(ExecState* exec, int length, const Identifier& name, NativeFunction function)
-    : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), name)
+    : InternalFunction(exec, exec->lexicalGlobalObject()->functionPrototype(), name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);
@@ -40,7 +42,7 @@ PrototypeFunction::PrototypeFunction(ExecState* exec, int length, const Identifi
 }
 
 PrototypeFunction::PrototypeFunction(ExecState* exec, FunctionPrototype* functionPrototype, int length, const Identifier& name, NativeFunction function)
-    : InternalFunction(functionPrototype, name)
+    : InternalFunction(exec, functionPrototype, name)
     , m_function(function)
 {
     ASSERT_ARG(function, function);

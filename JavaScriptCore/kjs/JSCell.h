@@ -96,6 +96,8 @@ namespace KJS {
         // Base implementation, but for non-object classes implements getPropertySlot.
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        
+        intptr_t reserved; // Reserved for work in progress.
     };
 
     inline JSCell::JSCell()

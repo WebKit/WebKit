@@ -34,8 +34,10 @@ namespace KJS {
 
 using namespace Bindings;
 
+ASSERT_CLASS_FITS_IN_CELL(RuntimeMethod);
+
 RuntimeMethod::RuntimeMethod(ExecState *exec, const Identifier &ident, Bindings::MethodList &m) 
-    : InternalFunction(exec->lexicalGlobalObject()->functionPrototype(), ident)
+    : InternalFunction(exec, exec->lexicalGlobalObject()->functionPrototype(), ident)
     , _methodList(new MethodList(m))
 {
 }

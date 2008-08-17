@@ -1,3 +1,29 @@
+2008-08-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Made room for a free word in JSCell.
+        
+        SunSpider says no change.
+        
+        I changed JSCallbackObjectData, Arguments, JSArray, and RegExpObject to
+        store auxiliary data in a secondary structure.
+
+        I changed InternalFunction to store the function's name in the property
+        map.
+        
+        I changed JSGlobalObjectData to use a virtual destructor, so WebCore's
+        JSDOMWindowBaseData could inherit from it safely. (It's a strange design
+        for JSDOMWindowBase to allocate an object that JSGlobalObject deletes,
+        but that's really our only option, given the size constraint.)
+        
+        I also added a bunch of compile-time ASSERTs, and removed lots of comments
+        in JSObject.h because they were often out of date, and they got in the
+        way of reading what was actually going on.
+        
+        Also renamed JSArray::getLength to JSArray::length, to match our style
+        guidelines.
+
 2008-08-16  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

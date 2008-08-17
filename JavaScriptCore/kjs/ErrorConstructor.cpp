@@ -29,8 +29,10 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
+
 ErrorConstructor::ErrorConstructor(ExecState* exec, FunctionPrototype* functionPrototype, ErrorPrototype* errorPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, errorPrototype->classInfo()->className))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, errorPrototype->classInfo()->className))
 {
     // ECMA 15.11.3.1 Error.prototype
     putDirect(exec->propertyNames().prototype, errorPrototype, DontEnum | DontDelete | ReadOnly);

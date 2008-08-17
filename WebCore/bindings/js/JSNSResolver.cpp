@@ -35,6 +35,8 @@ using namespace KJS;
 
 namespace WebCore {
 
+ASSERT_CLASS_FITS_IN_CELL(JSNSResolver)
+
 JSNSResolver::JSNSResolver(JSValue* resolver)
     : m_resolver(resolver)
 {

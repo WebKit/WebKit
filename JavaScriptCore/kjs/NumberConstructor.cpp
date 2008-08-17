@@ -28,6 +28,8 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
+
 const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
 
 /* Source for NumberObject.lut.h
@@ -40,7 +42,7 @@ const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info,
 @end
 */
 NumberConstructor::NumberConstructor(ExecState* exec, FunctionPrototype* functionPrototype, NumberPrototype* numberPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, numberPrototype->info.className))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, numberPrototype->info.className))
 {
     // Number.Prototype
     putDirect(exec->propertyNames().prototype, numberPrototype, DontEnum | DontDelete | ReadOnly);

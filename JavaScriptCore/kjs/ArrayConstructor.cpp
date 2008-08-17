@@ -31,8 +31,10 @@
 
 namespace KJS {
 
+ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
+
 ArrayConstructor::ArrayConstructor(ExecState* exec, FunctionPrototype* functionPrototype, ArrayPrototype* arrayPrototype)
-    : InternalFunction(functionPrototype, Identifier(exec, arrayPrototype->classInfo()->className))
+    : InternalFunction(exec, functionPrototype, Identifier(exec, arrayPrototype->classInfo()->className))
 {
     // ECMA 15.4.3.1 Array.prototype
     putDirect(exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);

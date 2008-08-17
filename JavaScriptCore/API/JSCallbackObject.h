@@ -46,7 +46,7 @@ public:
 
     static const ClassInfo info;
 
-    JSClassRef classRef() const { return m_class; }
+    JSClassRef classRef() const { return m_callbackObjectData->jsClass; }
     bool inherits(JSClassRef) const;
 
 private:
@@ -82,9 +82,25 @@ private:
     static JSValue* staticValueGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* staticFunctionGetter(ExecState*, const Identifier&, const PropertySlot&);
     static JSValue* callbackGetter(ExecState*, const Identifier&, const PropertySlot&);
+
+    struct JSCallbackObjectData {
+        JSCallbackObjectData(void* privateData_, JSClassRef jsClass_)
+            : privateData(privateData_)
+            , jsClass(jsClass_)
+        {
+            JSClassRetain(jsClass);
+        }
+        
+        ~JSCallbackObjectData()
+        {
+            JSClassRelease(jsClass);
+        }
+        
+        void* privateData;
+        JSClassRef jsClass;
+    };
     
-    void* m_privateData;
-    JSClassRef m_class;
+    OwnPtr<JSCallbackObjectData> m_callbackObjectData;
 };
 
 } // namespace KJS
