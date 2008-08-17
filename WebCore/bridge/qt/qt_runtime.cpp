@@ -326,7 +326,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 JSArray* array = static_cast<JSArray*>(object);
 
                 QVariantList result;
-                int len = array->getLength();
+                int len = array->length();
                 int objdist = 0;
                 qConvDebug() << "converting a " << len << " length Array";
                 for (int i = 0; i < len; ++i) {
@@ -376,7 +376,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                 JSArray* array = static_cast<JSArray*>(object);
 
                 QStringList result;
-                int len = array->getLength();
+                int len = array->length();
                 for (int i = 0; i < len; ++i) {
                     JSValue* val = array->get(exec, i);
                     UString ustring = val->toString(exec);
@@ -598,7 +598,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     JSObject* object = value->toObject(exec);
                     JSArray* array = static_cast<JSArray *>(object);
                     QObjectList result;
-                    int len = array->getLength();
+                    int len = array->length();
                     for (int i = 0; i < len; ++i) {
                         JSValue* val = array->get(exec, i);
                         int itemdist = -1;
@@ -649,7 +649,7 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue* value, QMetaType::Type
                     JSArray* array = static_cast<JSArray *>(object);
 
                     QList<int> result;
-                    int len = array->getLength();
+                    int len = array->length();
                     for (int i = 0; i < len; ++i) {
                         JSValue* val = array->get(exec, i);
                         int itemdist = -1;
@@ -848,7 +848,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 #define QW_DS(Class,Instance) Class##Data* d = Instance->d_func()
 
 QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState *exec, const Identifier &ident, PassRefPtr<QtInstance> inst)
-    : InternalFunction (static_cast<FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), ident)
+    : InternalFunction (exec, static_cast<FunctionPrototype*>(exec->lexicalGlobalObject()->functionPrototype()), ident)
     , d_ptr(dd)
 {
     QW_D(QtRuntimeMethod);
