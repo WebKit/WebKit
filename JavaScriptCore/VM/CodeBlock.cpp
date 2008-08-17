@@ -537,13 +537,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printConditionalJump(begin, it, location, "jfalse");
             break;
         }
-        case op_jless: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            printf("[%4d] jless\t\t %s, %s, %d(->%d)\n", location, registerName(r0).c_str(), registerName(r1).c_str(), offset, jumpTarget(begin, it, offset));
-            break;
-        }
         case op_jnless: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;

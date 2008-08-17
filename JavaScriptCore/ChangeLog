@@ -1,5 +1,22 @@
 2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Maciej.
+
+        Bug 20419: Remove op_jless
+        <https://bugs.webkit.org/show_bug.cgi?id=20419>
+
+        Remove op_jless, which is rarely used now that we have op_loop_if_less.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitJumpIfTrue):
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * VM/Opcode.h:
+
+2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Dan Bernstein.
 
         Fix a typo in r35807 that is also causing build failures for

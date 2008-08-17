@@ -2214,29 +2214,6 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
-    BEGIN_OPCODE(op_jless) {
-        /* jless src1(r) src2(r) target(offset)
-
-           Checks whether register src1 is less than register src2, as
-           with the ECMAScript '<' operator, and then jumps to offset
-           target from the current instruction, if and only if the 
-           result of the comparison is true.
-        */
-        JSValue* src1 = r[(++vPC)->u.operand].jsValue(exec);
-        JSValue* src2 = r[(++vPC)->u.operand].jsValue(exec);
-        int target = (++vPC)->u.operand;
-
-        bool result = jsLess(exec, src1, src2);
-        VM_CHECK_EXCEPTION();
-        
-        if (result) {
-            vPC += target;
-            NEXT_OPCODE;
-        }
-
-        ++vPC;
-        NEXT_OPCODE;
-    }
     BEGIN_OPCODE(op_jnless) {
         /* jnless src1(r) src2(r) target(offset)
 
