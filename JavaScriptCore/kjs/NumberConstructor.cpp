@@ -28,7 +28,7 @@
 
 namespace KJS {
 
-ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
+ASSERT_CLASS_FITS_IN_CELL(NumberConstructor);
 
 const ClassInfo NumberConstructor::info = { "Function", &InternalFunction::info, 0, ExecState::numberTable };
 
