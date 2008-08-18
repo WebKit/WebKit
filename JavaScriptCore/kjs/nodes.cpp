@@ -662,7 +662,7 @@ RegisterID* PrefixResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
         if (generator.isLocalConstant(m_ident)) {
             if (dst == ignoredResult())
                 return 0;
-            RefPtr<RegisterID> r0 = generator.emitLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
+            RefPtr<RegisterID> r0 = generator.emitUnexpectedLoad(generator.finalDestination(dst), (m_operator == OpPlusPlus) ? 1.0 : -1.0);
             return generator.emitBinaryOp(op_add, r0.get(), local, r0.get());
         }
 

@@ -1,3 +1,15 @@
+2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej.
+
+        Change the counting of constants so that preincrement and predecrement of
+        const local variables are considered unexpected loads.
+
+        * kjs/nodes.cpp:
+        (KJS::PrefixResolveNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::ScopeNode::neededConstants):
+
 2008-08-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

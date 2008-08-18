@@ -2162,11 +2162,9 @@ namespace KJS {
 
         int neededConstants()
         {
-            // We may need 3 more constants than the count given by the parser,
-            // because of the various uses of jsUndefined() and the 1.0 / -1.0
-            // that are emitted for a preincrement or predecrement on a constant
-            // local variable. 
-            return m_numConstants + 3;
+            // We may need 1 more constant than the count given by the parser,
+            // because of the various uses of jsUndefined().
+            return m_numConstants + 1;
         }
 
     protected:

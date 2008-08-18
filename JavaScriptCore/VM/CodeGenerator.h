@@ -231,6 +231,7 @@ namespace KJS {
         RegisterID* emitLoad(RegisterID* dst, double);
         RegisterID* emitLoad(RegisterID* dst, JSValue*);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
+        RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
 
         RegisterID* emitNullaryOp(OpcodeID, RegisterID* dst);
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
