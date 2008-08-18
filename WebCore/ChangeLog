@@ -1,3 +1,15 @@
+2008-08-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Need to make sure we have an Animation in the AnimationList
+        before setting the initial value.
+        https://bugs.webkit.org/show_bug.cgi?id=20408
+
+        Test: fast/css/transition_shorthand_parsing.html
+
+        * css/CSSStyleSelector.cpp:
+
 2008-08-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

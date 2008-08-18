@@ -198,9 +198,10 @@ if (isInherit) { \
     /* Reset any remaining animations to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
         (*list)[i]->clear##Prop(); \
-} \
-if (isInitial) { \
+} else if (isInitial) { \
     AnimationList* list = m_style->accessAnimations(); \
+    if (list->isEmpty()) \
+        list->append(Animation::create()); \
     (*list)[0]->set##Prop(RenderStyle::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
         (*list)[0]->clear##Prop(); \
@@ -247,9 +248,10 @@ if (isInherit) { \
     /* Reset any remaining transitions to not have the property set. */ \
     for ( ; i < list->size(); ++i) \
         (*list)[i]->clear##Prop(); \
-} \
-if (isInitial) { \
+} else if (isInitial) { \
     AnimationList* list = m_style->accessTransitions(); \
+    if (list->isEmpty()) \
+        list->append(Animation::create()); \
     (*list)[0]->set##Prop(RenderStyle::initialAnimation##Prop()); \
     for (size_t i = 1; i < list->size(); ++i) \
         (*list)[0]->clear##Prop(); \
