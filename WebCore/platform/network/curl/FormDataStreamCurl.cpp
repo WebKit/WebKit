@@ -28,16 +28,6 @@
  */
 
 #include "config.h"
-
-// We need to define __STDC_LIMIT_MACROS to define SIZE_MAX.
-#ifndef __STDC_LIMIT_MACROS
-#define __STDC_LIMIT_MACROS
-#include <stdint.h>
-#undef __STDC_LIMIT_MACROS
-#else
-#include <stdint.h>
-#endif
-
 #include "FormDataStreamCurl.h"
 
 #include "CString.h"
@@ -55,7 +45,7 @@ FormDataStream::~FormDataStream()
 size_t FormDataStream::read(void* ptr, size_t blockSize, size_t numberOfBlocks)
 {
     // Check for overflow.
-    if (!numberOfBlocks || blockSize > SIZE_MAX / numberOfBlocks)
+    if (!numberOfBlocks || blockSize > std::numeric_limits<size_t>::max() / numberOfBlocks)
         return 0;
 
     Vector<FormDataElement> elements;

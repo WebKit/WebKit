@@ -1,4 +1,14 @@
-2008-08-15  Simon Fraser  <simon.fraser@apple.com>
+2008-08-18  Daniel Macks  <dmacks@netspace.org>
+
+        Reviewed by Mark Rowe.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20410
+        More portable/self-documenting replacement for SIZE_MAX.
+
+        * platform/network/curl/FormDataStreamCurl.cpp:
+        (WebCore::FormDataStream::read):
+
+2008-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
 
