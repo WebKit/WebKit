@@ -1,3 +1,16 @@
+2008-08-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        If there are no nodes in a profile all the time should be attributed to
+        (idle)
+
+        * profiler/Profile.cpp: If ther are no nodes make sure we still process
+        the head.
+        (KJS::Profile::forEach):
+        * profiler/ProfileGenerator.cpp: Remove some useless code.
+        (KJS::ProfileGenerator::stopProfiling):
+
 2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.

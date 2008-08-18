@@ -99,7 +99,6 @@ void ProfileGenerator::didExecute(const CallIdentifier& callIdentifier)
 
 void ProfileGenerator::stopProfiling()
 {
-    m_profile->setHead(m_head.get());
     m_profile->forEach(&ProfileNode::stopProfiling);
 
     removeProfileStart();
