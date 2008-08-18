@@ -1,3 +1,11 @@
+2008-08-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Make transition_shorthand_parsing.html a text-only test.
+
+        * fast/css/transition_shorthand_parsing-expected.txt: Added.
+        * fast/css/transition_shorthand_parsing.html:
+        * platform/mac/fast/css/transition_shorthand_parsing-expected.txt: Removed.
+
 2008-08-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
