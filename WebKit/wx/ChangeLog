@@ -1,3 +1,10 @@
+2008-08-18  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Build fix for Win. Don't include the libxml/libxslt directories in the
+        include path, it picks up the wrong Pattern.h in that case.
+
+        * dependencies.bkl:
+
 2008-08-12  Timothy Hatcher  <timothy@apple.com>
 
         Add a stub for InspectorClient::setAttachedWindowHeight.

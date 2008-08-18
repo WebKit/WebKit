@@ -107,7 +107,7 @@ and WebCore. Include this file to use these settings.
         </if>
 
         <if cond="PLATFORM_WIN32=='1'">
-            <include>$(WK_ROOT)/WebKitLibraries/win/include/libxml</include>
+            <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
             <sys-lib>libxml2</sys-lib>
         </if>
     </template>
@@ -129,7 +129,7 @@ and WebCore. Include this file to use these settings.
         </if>
 
         <if cond="PLATFORM_WIN32=='1'">
-            <include>$(WK_ROOT)/WebKitLibraries/win/include/libxslt</include>
+            <include>$(WK_ROOT)/WebKitLibraries/win/include</include>
             <sys-lib>libxslt</sys-lib>
         </if>
     </template>
