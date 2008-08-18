@@ -117,7 +117,7 @@ WebInspector.ProfilesPanel.prototype = {
         this.sidebarTree.removeChildren();
         this.profileViews.removeChildren();
 
-        this._shouldPopulateProfiles = true;
+        this.populateInterface();
     },
 
     handleKeyEvent: function(event)

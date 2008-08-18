@@ -1,5 +1,14 @@
 2008-08-18  Kevin McCullough  <kmccullough@apple.com>
 
+        Reviewed by Tim.
+
+        <rdar://problem/6150593> JSProfiler: Empty profiles disappear when there
+        is another profile.
+
+        * page/inspector/ProfilesPanel.js:
+
+2008-08-18  Kevin McCullough  <kmccullough@apple.com>
+
         Reviewed by Geoff.
 
         <rdar://problem/6150642> REGRESSION: Closing the Web Inspector clears
