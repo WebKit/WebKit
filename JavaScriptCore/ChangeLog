@@ -1,3 +1,21 @@
+2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Make JSGlobalContextRetain/Release actually work.
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextRetain):
+        (JSGlobalContextRelease):
+        Ref/deref global data to give checking for globalData.refCount() some sense.
+
+        * API/tests/testapi.c: (main): Added a test for this bug.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::~JSGlobalData):
+        While checking for memory leaks, found that JSGlobalData::emptyList has changed to
+        a pointer, but it was not destructed, causing a huge leak in run-webkit-tests --threaded.
+
 2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej.

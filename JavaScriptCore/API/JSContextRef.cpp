@@ -81,9 +81,12 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 JSGlobalContextRef JSGlobalContextRetain(JSGlobalContextRef ctx)
 {
     ExecState* exec = toJS(ctx);
-    exec->globalData().heap->registerThread();
+    JSGlobalData& globalData = exec->globalData();
+
+    globalData.heap->registerThread();
 
     gcProtect(exec->dynamicGlobalObject());
+    globalData.ref();
     return ctx;
 }
 
@@ -94,19 +97,18 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     gcUnprotect(exec->dynamicGlobalObject());
 
     JSGlobalData& globalData = exec->globalData();
-    if (globalData.refCount() == 1) {
+    if (globalData.refCount() == 2) { // One reference is held by JSGlobalObject, another added by JSGlobalContextRetain().
         // The last reference was released, this is our last chance to collect.
         Heap* heap = globalData.heap;
 
         ASSERT(!heap->protectedObjectCount());
         ASSERT(!heap->isBusy());
 
-        // Heap destructor will delete JSGlobalObject, which will in turn delete JSGlobalData, which will
-        // delete the heap, which would cause a crash if allowed.
-        globalData.heap = 0;
-
         delete heap;
+        globalData.heap = 0;
     }
+
+    globalData.deref();
 }
 
 JSObjectRef JSContextGetGlobalObject(JSContextRef ctx)

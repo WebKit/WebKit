@@ -581,7 +581,10 @@ int main(int argc, char* argv[])
     globalObjectClassDefinition.attributes = kJSClassAttributeNoAutomaticPrototype;
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
     context = JSGlobalContextCreate(globalObjectClass);
-    
+
+    JSGlobalContextRetain(context);
+    JSGlobalContextRelease(context);
+
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     ASSERT(JSValueIsObject(context, globalObject));
     
