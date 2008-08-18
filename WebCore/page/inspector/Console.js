@@ -170,9 +170,10 @@ WebInspector.Console.prototype = {
         this.promptElement.scrollIntoView(false);
     },
 
-    clearMessages: function()
+    clearMessages: function(clearInspectorController)
     {
-        InspectorController.clearMessages();
+        if (clearInspectorController)
+            InspectorController.clearMessages();
         WebInspector.panels.resources.clearMessages();
 
         this.messages = [];
@@ -248,7 +249,7 @@ WebInspector.Console.prototype = {
 
     _clearButtonClicked: function()
     {
-        this.clearMessages();
+        this.clearMessages(true);
     },
 
     _messagesSelectStart: function(event)

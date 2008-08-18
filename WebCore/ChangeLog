@@ -1,3 +1,12 @@
+2008-08-18  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/6150642> REGRESSION: Closing the Web Inspector clears
+        all console messages
+
+        * page/inspector/Console.js:
+
 2008-08-18  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.
