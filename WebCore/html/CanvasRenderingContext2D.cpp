@@ -574,6 +574,11 @@ void CanvasRenderingContext2D::fill()
     } else {
         if (state().m_fillStyle->pattern())
             applyFillPattern();
+        else {
+            float red, green, blue, alpha;
+            c->fillColor().getRGBA(red, green, blue, alpha);
+            cairo_set_source_rgba(cr, red, green, blue, alpha);
+        }
         cairo_fill(cr);
     }
     cairo_restore(cr);
@@ -638,6 +643,11 @@ void CanvasRenderingContext2D::stroke()
     } else {
         if (state().m_strokeStyle->pattern())
             applyStrokePattern();
+        else {
+            float red, green, blue, alpha;
+            c->strokeColor().getRGBA(red, green, blue, alpha);
+            cairo_set_source_rgba(cr, red, green, blue, alpha);
+        }
         c->addPath(m_path);
         cairo_stroke(cr);
     }
@@ -723,13 +733,16 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     cairo_t* cr = c->platformContext();
     cairo_save(cr);
     if (state().m_fillStyle->canvasGradient()) {
-        cairo_set_source(cr, state().m_fillStyle->canvasGradient()->gradient().platformGradient());
+        state().m_fillStyle->canvasGradient()->gradient().fill(c, rect);
     } else {
-        if (state().m_fillStyle->pattern())
+        if (state().m_fillStyle->pattern()) {
             applyFillPattern();
+            cairo_rectangle(cr, x, y, width, height);
+            cairo_fill(cr);
+        } else
+            c->fillRect(rect, c->fillColor());
     }
-    cairo_rectangle(cr, x, y, width, height);
-    cairo_fill(cr);
+    
     cairo_restore(cr);
 #endif
 }

@@ -1,3 +1,17 @@
+2008-08-18  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
+        Fixed Canvas for Cairo. Stroke and fill colors didn't work after
+        the canvas clean up.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20405
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+
 2008-08-17  Timothy Hatcher  <timothy@apple.com>
 
         Complete in scope variables in the Console when paused.
