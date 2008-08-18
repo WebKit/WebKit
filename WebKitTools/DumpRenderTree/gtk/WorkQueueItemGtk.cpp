@@ -25,7 +25,7 @@
 #include <string.h>
 
 // Returns a newly allocated UTF-8 character buffer which must be freed with g_free()
-static gchar* JSStringCopyUTF8CString(JSStringRef jsString)
+gchar* JSStringCopyUTF8CString(JSStringRef jsString)
 {
     size_t dataSize = JSStringGetMaximumUTF8CStringSize(jsString);
     gchar* utf8 = (gchar*)g_malloc(dataSize);
@@ -61,7 +61,6 @@ void ScriptItem::invoke() const
 {
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     gchar* scriptString = JSStringCopyUTF8CString(script());
-    // TODO: does this return something we need to free? If not, why not?
     webkit_web_view_execute_script(webView, scriptString);
     g_free(scriptString);
 }

@@ -122,6 +122,9 @@ extern "C" {
     webkit_web_frame_print (WebKitWebFrame* frame);
 
     WEBKIT_API gchar*
+    webkit_web_frame_dump_render_tree (WebKitWebFrame* frame);
+
+    WEBKIT_API gchar*
     webkit_web_view_get_selected_text (WebKitWebView* web_view);
 }
 

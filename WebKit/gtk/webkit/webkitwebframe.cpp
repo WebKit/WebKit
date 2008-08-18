@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Apple Inc.
  * Copyright (C) 2008 Christian Dywan <christian@imendio.com>
  * Copyright (C) 2008 Collabora Ltd.
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,6 +39,7 @@
 #include "JSDOMWindow.h"
 #include "PrintContext.h"
 #include "RenderView.h"
+#include "RenderTreeAsText.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 
@@ -482,6 +484,28 @@ gchar* webkit_web_frame_get_inner_text(WebKitWebFrame* frame)
 
     Element* documentElement = coreFrame->document()->documentElement();
     String string =  documentElement->innerText();
+    return g_strdup(string.utf8().data());
+}
+
+/**
+ * webkit_web_frame_dump_render_tree:
+ * @frame: a #WebKitWebFrame
+ *
+ * Return value: Non-recursive render tree dump of @frame
+ */
+gchar* webkit_web_frame_dump_render_tree(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), NULL);
+
+    Frame* coreFrame = core(frame);
+    ASSERT(coreFrame);
+
+    FrameView* view = coreFrame->view();
+
+    if (view && view->layoutPending())
+        view->layout();
+
+    String string = externalRepresentation(coreFrame->contentRenderer());
     return g_strdup(string.utf8().data());
 }
 

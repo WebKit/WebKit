@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
+ * Copyright (C) 2008 Nuanti Ltd.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -36,6 +37,7 @@
 #include <JavaScriptCore/JSStringRef.h>
 
 #include <glib.h>
+#include <webkit/webkit.h>
 
 LayoutTestController::~LayoutTestController()
 {
@@ -49,7 +51,20 @@ void LayoutTestController::addDisallowedURL(JSStringRef url)
 
 void LayoutTestController::clearBackForwardList()
 {
-    // FIXME: implement
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    WebKitWebBackForwardList* list = webkit_web_view_get_back_forward_list(webView);
+    WebKitWebHistoryItem* item = webkit_web_back_forward_list_get_current_item(list);
+    g_object_ref(item);
+
+    // We clear the history by setting the back/forward list's capacity to 0
+    // then restoring it back and adding back the current item.
+    gint limit = webkit_web_back_forward_list_get_limit(list);
+    webkit_web_back_forward_list_set_limit(list, 0);
+    webkit_web_back_forward_list_set_limit(list, limit);
+    // FIXME: implement add_item()
+    //webkit_web_back_forward_list_add_item(list, item);
+    webkit_web_back_forward_list_go_to_item(list, item);
+    g_object_unref(item);
 }
 
 JSStringRef LayoutTestController::copyDecodedHostName(JSStringRef name)
@@ -84,7 +99,7 @@ void LayoutTestController::notifyDone()
 JSStringRef LayoutTestController::pathToLocalResource(JSContextRef context, JSStringRef url)
 {
     // Function introduced in r28690. This may need special-casing on Windows.
-    return url; // Do nothing on Unix.
+    return JSStringRetain(url); // Do nothing on Unix.
 }
 
 void LayoutTestController::queueBackNavigation(int howFarBack)
@@ -113,9 +128,10 @@ void LayoutTestController::queueScript(JSStringRef script)
     WorkQueue::shared()->queue(new ScriptItem(script));
 }
 
-void LayoutTestController::setAcceptsEditing(bool newAcceptsEditing)
+void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
 {
-    // FIXME: implement
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    webkit_web_view_set_editable(webView, acceptsEditing);
 }
 
 void LayoutTestController::setCustomPolicyDelegate(bool setDelegate)
@@ -138,14 +154,27 @@ void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
     // FIXME: implement
 }
 
+static gchar* userStyleSheet = NULL;
+static gboolean userStyleSheetEnabled = TRUE;
+
 void LayoutTestController::setUserStyleSheetEnabled(bool flag)
 {
-    // FIXME: implement
+    userStyleSheetEnabled = flag;
+
+    WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
+    WebKitWebSettings* settings = webkit_web_view_get_settings(webView);
+    if (flag && userStyleSheet)
+        g_object_set(G_OBJECT(settings), "user-stylesheet-uri", userStyleSheet, NULL);
+    else
+        g_object_set(G_OBJECT(settings), "user-stylesheet-uri", "", NULL);
 }
 
 void LayoutTestController::setUserStyleSheetLocation(JSStringRef path)
 {
-    // FIXME: implement
+    g_free(userStyleSheet);
+    userStyleSheet = JSStringCopyUTF8CString(path);
+    if (userStyleSheetEnabled)
+        setUserStyleSheetEnabled(true);
 }
 
 void LayoutTestController::setWindowIsKey(bool windowIsKey)
@@ -158,6 +187,7 @@ static gboolean waitToDumpWatchdogFired(void*)
     const char* message = "FAIL: Timed out waiting for notifyDone to be called\n";
     fprintf(stderr, "%s", message);
     fprintf(stdout, "%s", message);
+    waitToDumpWatchdog = 0;
     dump();
     return FALSE;
 }
@@ -178,7 +208,7 @@ void LayoutTestController::setWaitToDump(bool waitUntilDone)
 int LayoutTestController::windowCount()
 {
     // FIXME: implement
-    return 0;
+    return 1;
 }
 
 void LayoutTestController::setPrivateBrowsingEnabled(bool privateBrowsingEnabled)

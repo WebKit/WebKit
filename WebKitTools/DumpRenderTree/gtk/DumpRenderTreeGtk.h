@@ -30,9 +30,12 @@
 #define DumpRenderTreeGtk_h
 
 #include <webkit/webkitdefines.h>
+#include <JavaScriptCore/JSBase.h>
 
 extern WebKitWebFrame* mainFrame;
 extern WebKitWebFrame* topLoadingFrame;
 extern guint waitToDumpWatchdog;
+
+gchar* JSStringCopyUTF8CString(JSStringRef jsString);
 
 #endif // DumpRenderTreeGtk_h

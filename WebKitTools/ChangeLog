@@ -1,3 +1,38 @@
+2008-08-18  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Holger Freyther.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20350
+        [GTK] Get DumpRenderTree working
+
+        Fixes and enhancements to DumpRenderTree. With these changes, the test
+        suite can now complete a run producing text and render tree dumps.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (dumpFramesAsText):
+        (dump):
+        (runTest):
+        (webViewLoadFinished):
+        (webViewWindowObjectCleared):
+        (webViewConsoleMessage):
+        (webViewScriptAlert):
+        (webViewScriptPrompt):
+        (webViewScriptConfirm):
+        (webViewTitleChanged):
+        (main):
+        * DumpRenderTree/gtk/DumpRenderTreeGtk.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::clearBackForwardList):
+        (LayoutTestController::pathToLocalResource):
+        (LayoutTestController::setAcceptsEditing):
+        (LayoutTestController::setUserStyleSheetEnabled):
+        (LayoutTestController::setUserStyleSheetLocation):
+        (waitToDumpWatchdogFired):
+        (LayoutTestController::windowCount):
+        * DumpRenderTree/gtk/WorkQueueItemGtk.cpp:
+        (JSStringCopyUTF8CString):
+        (ScriptItem::invoke):
+
 2008-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
