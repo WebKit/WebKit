@@ -1,3 +1,22 @@
+2008-08-17  Timothy Hatcher  <timothy@apple.com>
+
+        Complete in scope variables in the Console when paused.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19115
+
+        Reviewed by Geoffrey Garen.
+
+        * page/inspector/Console.js:
+        (WebInspector.Console.prototype.completions): If the expressionString
+        is null or empty and the debugger is paused, call variablesInScopeForSelectedCallFrame
+        to get an object that declares all the in scope variables. That way
+        "top level" expressions are completed.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.variablesInScopeForSelectedCallFrame):
+        Return an object that has all the variables that are in scope for the
+        selected call frame. The value of each property is just true.
+        The return object is useful for quick lookups or auto completion.
+
 2008-08-17  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Not reviewed.

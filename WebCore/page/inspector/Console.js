@@ -200,13 +200,20 @@ WebInspector.Console.prototype = {
         if (!expressionString && !prefix)
             return;
 
-        var result = InspectorController.inspectedWindow();
+        var result;
         if (expressionString) {
             try {
                 result = this._evalInInspectedWindow(expressionString);
             } catch(e) {
                 // Do nothing, the prefix will be considered a window property.
             }
+        } else {
+            // There is no expressionString, so the completion should happen against global properties.
+            // Or if the debugger is paused, against properties in scope of the selected call frame.
+            if (WebInspector.panels.scripts.paused)
+                result = WebInspector.panels.scripts.variablesInScopeForSelectedCallFrame();
+            else
+                result = InspectorController.inspectedWindow();
         }
 
         if (bracketNotation) {

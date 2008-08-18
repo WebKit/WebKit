@@ -293,6 +293,23 @@ WebInspector.ScriptsPanel.prototype = {
         return result;
     },
 
+    variablesInScopeForSelectedCallFrame: function()
+    {
+        var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
+        if (!this._paused || !selectedCallFrame)
+            return {};
+
+        var result = {};
+        var scopeChain = selectedCallFrame.scopeChain;
+        for (var i = 0; i < scopeChain.length; ++i) {
+            var scopeObject = scopeChain[i];
+            for (var property in scopeObject)
+                result[property] = true;
+        }
+
+        return result;
+    },
+
     debuggerPaused: function()
     {
         this._paused = true;
