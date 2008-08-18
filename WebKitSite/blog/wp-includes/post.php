@@ -511,6 +511,10 @@ function get_posts($args = null) {
 function add_post_meta($post_id, $meta_key, $meta_value, $unique = false) {
 	global $wpdb;
 
+	// make sure meta is added to the post, not a revision
+	if ( $the_post = wp_is_post_revision($post_id) )
+		$post_id = $the_post;
+
 	// expected_slashed ($meta_key)
 	$meta_key = stripslashes($meta_key);
 
@@ -1272,14 +1276,14 @@ function wp_insert_post($postarr = array(), $wp_error = false) {
 	}
 
 	// If the post date is empty (due to having been new or a draft) and status is not 'draft', set date to now
-	if (empty($post_date)) {
+	if ( empty($post_date) || '0000-00-00 00:00:00' == $post_date ) {
 		if ( !in_array($post_status, array('draft', 'pending')) )
 			$post_date = current_time('mysql');
 		else
 			$post_date = '0000-00-00 00:00:00';
 	}
 
-	if (empty($post_date_gmt)) {
+	if ( empty($post_date_gmt) || '0000-00-00 00:00:00' == $post_date_gmt ) {
 		if ( !in_array($post_status, array('draft', 'pending')) )
 			$post_date_gmt = get_gmt_from_date($post_date);
 		else
@@ -3113,7 +3117,6 @@ function _wp_post_revision_fields( $post = null, $autosave = false ) {
 		// Allow these to be versioned
 		$fields = array(
 			'post_title' => __( 'Title' ),
-			'post_author' => __( 'Author' ),
 			'post_content' => __( 'Content' ),
 			'post_excerpt' => __( 'Excerpt' ),
 		);
@@ -3122,7 +3125,7 @@ function _wp_post_revision_fields( $post = null, $autosave = false ) {
 		$fields = apply_filters( '_wp_post_revision_fields', $fields );
 
 		// WP uses these internally either in versioning or elsewhere - they cannot be versioned
-		foreach ( array( 'ID', 'post_name', 'post_parent', 'post_date', 'post_date_gmt', 'post_status', 'post_type', 'comment_count' ) as $protect )
+		foreach ( array( 'ID', 'post_name', 'post_parent', 'post_date', 'post_date_gmt', 'post_status', 'post_type', 'comment_count', 'post_author' ) as $protect )
 			unset( $fields[$protect] );
 	}
 

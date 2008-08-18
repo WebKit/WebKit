@@ -773,7 +773,7 @@ class WP_Query {
 			$qv['post_type'] = sanitize_user($qv['post_type'], true);
 
 		if ( !empty($qv['post_status']) )
-			$qv['post_status'] = sanitize_user($qv['post_status'], true);
+			$qv['post_status'] = preg_replace('|[^a-z0-9_,-]|', '', $qv['post_status']);
 
 		if ( $this->is_posts_page && !$qv['withcomments'] )
 			$this->is_comment_feed = false;
@@ -1123,9 +1123,9 @@ class WP_Query {
 			$whichcat .= " AND $wpdb->term_taxonomy.taxonomy = 'post_tag' ";
 			$include_tags = "'" . implode("', '", $q['tag_slug__in']) . "'";
 			$whichcat .= " AND $wpdb->terms.slug IN ($include_tags) ";
-			$reqtag = is_term( $q['tag_slug__in'][0], 'post_tag' );
+			$reqtag = get_term_by( 'slug', $q['tag_slug__in'][0], 'post_tag' );
 			if ( !empty($reqtag) )
-				$q['tag_id'] = $reqtag['term_id'];
+				$q['tag_id'] = $reqtag->term_id;
 		}
 
 		if ( !empty($q['tag__not_in']) ) {

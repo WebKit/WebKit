@@ -341,7 +341,7 @@ function get_option( $setting ) {
 
 		if ( false === $value ) {
 			if ( defined( 'WP_INSTALLING' ) )
-				$supress = $wpdb->suppress_errors();
+				$suppress = $wpdb->suppress_errors();
 			// expected_slashed ($setting)
 			$row = $wpdb->get_row( "SELECT option_value FROM $wpdb->options WHERE option_name = '$setting' LIMIT 1" );
 			if ( defined( 'WP_INSTALLING' ) )
@@ -630,12 +630,12 @@ function delete_option( $name ) {
  * @return mixed A scalar data
  */
 function maybe_serialize( $data ) {
-	if ( is_string( $data ) )
-		return $data;
-	elseif ( is_array( $data ) || is_object( $data ) )
+	if ( is_array( $data ) || is_object( $data ) )
 		return serialize( $data );
+
 	if ( is_serialized( $data ) )
 		return serialize( $data );
+
 	return $data;
 }
 
@@ -1481,15 +1481,21 @@ function path_join( $base, $path ) {
 function wp_upload_dir( $time = NULL ) {
 	$siteurl = get_option( 'siteurl' );
 	$upload_path = get_option( 'upload_path' );
-	if ( trim($upload_path) === '' )
-		$upload_path = WP_CONTENT_DIR . '/uploads';
-	$dir = $upload_path;
+	$upload_path = trim($upload_path);
+	if ( empty($upload_path) )
+		$dir = WP_CONTENT_DIR . '/uploads';
+	else 
+		$dir = $upload_path;
 
 	// $dir is absolute, $path is (maybe) relative to ABSPATH
-	$dir = path_join( ABSPATH, $upload_path );
-
-	if ( !$url = get_option( 'upload_url_path' ) )
-		$url = WP_CONTENT_URL . '/uploads';
+	$dir = path_join( ABSPATH, $dir );
+	
+	if ( !$url = get_option( 'upload_url_path' ) ) {
+		if ( empty($upload_path) or ( $upload_path == $dir ) )
+			$url = WP_CONTENT_URL . '/uploads';
+		else
+			$url = trailingslashit( $siteurl ) . $upload_path;
+	}
 
 	if ( defined('UPLOADS') ) {
 		$dir = ABSPATH . UPLOADS;
@@ -1517,8 +1523,9 @@ function wp_upload_dir( $time = NULL ) {
 		$message = sprintf( __( 'Unable to create directory %s. Is its parent directory writable by the server?' ), $dir );
 		return array( 'error' => $message );
 	}
-
+	
 	$uploads = array( 'path' => $dir, 'url' => $url, 'subdir' => $subdir, 'basedir' => $bdir, 'baseurl' => $burl, 'error' => false );
+
 	return apply_filters( 'upload_dir', $uploads );
 }
 

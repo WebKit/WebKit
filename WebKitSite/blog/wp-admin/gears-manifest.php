@@ -64,7 +64,7 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 ?>
 {
 "betaManifestVersion" : 1,
-"version" : "<?php echo $man_version; ?>_20080710a",
+"version" : "<?php echo $man_version; ?>_20080810",
 "entries" : [
 <?php echo $defaults; ?>
 
@@ -103,20 +103,7 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 { "url" : "images/no.png" },
 { "url" : "images/yes.png" },
 
-{ "url" : "../wp-includes/images/crystal/archive.png" },
-{ "url" : "../wp-includes/images/crystal/audio.png" },
-{ "url" : "../wp-includes/images/crystal/code.png" },
-{ "url" : "../wp-includes/images/crystal/default.png" },
-{ "url" : "../wp-includes/images/crystal/document.png" },
-{ "url" : "../wp-includes/images/crystal/interactive.png" },
-{ "url" : "../wp-includes/images/crystal/text.png" },
-{ "url" : "../wp-includes/images/crystal/video.png" },
-{ "url" : "../wp-includes/images/crystal/spreadsheet.png" },
-{ "url" : "../wp-includes/images/rss.png" },
-{ "url" : "../wp-includes/js/thickbox/loadingAnimation.gif" },
-{ "url" : "../wp-includes/js/thickbox/tb-close.png" },
-{ "url" : "../wp-includes/js/swfupload/swfupload_f9.swf" },
-
+<?php if ( is_file(ABSPATH.'/wp-includes/js/tinymce/tiny_mce.js') ) { ?>
 { "url" : "../wp-includes/js/tinymce/tiny_mce_popup.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/utils/mctabs.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/utils/validate.js?ver=311" },
@@ -131,7 +118,7 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 { "url" : "../wp-includes/js/tinymce/themes/advanced/js/link.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/themes/advanced/js/source_editor.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/themes/advanced/js/anchor.js?ver=311" },
-{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/js/editimage.js?ver=311d" },
+{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/js/editimage.js?ver=311g" },
 { "url" : "../wp-includes/js/tinymce/tiny_mce.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/themes/advanced/editor_template.js?ver=311" },
 { "url" : "../wp-includes/js/tinymce/plugins/inlinepopups/editor_plugin.js?ver=311" },
@@ -148,7 +135,7 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 { "url" : "../wp-includes/js/tinymce/plugins/paste/pastetext.htm?ver=311" },
 { "url" : "../wp-includes/js/tinymce/plugins/fullscreen/fullscreen.htm?ver=311" },
 { "url" : "../wp-includes/js/tinymce/plugins/inlinepopups/template.htm?ver=311" },
-{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/editimage.html?ver=311d" },
+{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/editimage.html?ver=311g" },
 { "url" : "../wp-includes/js/tinymce/wp-mce-help.php?ver=311" },
 
 { "url" : "../wp-includes/js/tinymce/themes/advanced/skins/wp_theme/ui.css?ver=311" },
@@ -161,7 +148,7 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 { "url" : "../wp-includes/js/tinymce/plugins/media/css/media.css?ver=311" },
 { "url" : "../wp-includes/js/tinymce/plugins/paste/css/pasteword.css?ver=311" },
 { "url" : "../wp-includes/js/tinymce/plugins/paste/css/blank.css?ver=311" },
-{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/css/editimage.css?ver=311d" },
+{ "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/css/editimage.css?ver=311g" },
 { "url" : "../wp-includes/js/tinymce/plugins/wpeditimage/css/editimage-rtl.css?ver=311" },
 { "url" : "../wp-includes/js/tinymce/wordpress.css?ver=311" },
 
@@ -203,5 +190,20 @@ header( 'Content-Type: application/x-javascript; charset=UTF-8' );
 { "url" : "../wp-includes/js/tinymce/plugins/wordpress/img/image.gif" },
 { "url" : "../wp-includes/js/tinymce/plugins/wordpress/img/media.gif" },
 { "url" : "../wp-includes/js/tinymce/plugins/wordpress/img/video.gif" },
-{ "url" : "../wp-includes/js/tinymce/plugins/wordpress/img/audio.gif" }
+{ "url" : "../wp-includes/js/tinymce/plugins/wordpress/img/audio.gif" },
+<?php } ?>
+
+{ "url" : "../wp-includes/images/crystal/archive.png" },
+{ "url" : "../wp-includes/images/crystal/audio.png" },
+{ "url" : "../wp-includes/images/crystal/code.png" },
+{ "url" : "../wp-includes/images/crystal/default.png" },
+{ "url" : "../wp-includes/images/crystal/document.png" },
+{ "url" : "../wp-includes/images/crystal/interactive.png" },
+{ "url" : "../wp-includes/images/crystal/text.png" },
+{ "url" : "../wp-includes/images/crystal/video.png" },
+{ "url" : "../wp-includes/images/crystal/spreadsheet.png" },
+{ "url" : "../wp-includes/images/rss.png" },
+{ "url" : "../wp-includes/js/thickbox/loadingAnimation.gif" },
+{ "url" : "../wp-includes/js/thickbox/tb-close.png" },
+{ "url" : "../wp-includes/js/swfupload/swfupload_f9.swf" }
 ]}

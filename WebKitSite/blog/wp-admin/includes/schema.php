@@ -15,11 +15,12 @@ if ( $wpdb->supports_collation() ) {
 
 $wp_queries="CREATE TABLE $wpdb->terms (
  term_id bigint(20) NOT NULL auto_increment,
- name varchar(55) NOT NULL default '',
+ name varchar(200) NOT NULL default '',
  slug varchar(200) NOT NULL default '',
  term_group bigint(10) NOT NULL default 0,
  PRIMARY KEY  (term_id),
- UNIQUE KEY slug (slug)
+ UNIQUE KEY slug (slug),
+ KEY name (name)
 ) $charset_collate;
 CREATE TABLE $wpdb->term_taxonomy (
  term_taxonomy_id bigint(20) NOT NULL auto_increment,

@@ -6,6 +6,9 @@ $messages[2] = __('Custom field updated.');
 $messages[3] = __('Custom field deleted.');
 $messages[4] = __('Page updated.');
 
+if ( isset($_GET['revision']) )
+	$messages[5] = sprintf( __('Page restored to revision from %s'), wp_post_revision_title( (int) $_GET['revision'], false ) );
+
 $notice = false;
 $notices[1] = __( 'There is an autosave of this page that is more recent than the version below.  <a href="%s">View the autosave</a>.' );
 
@@ -27,10 +30,6 @@ if (!isset($post_ID) || 0 == $post_ID) {
 $temp_ID = (int) $temp_ID;
 $user_ID = (int) $user_ID;
 
-$sendto = clean_url(stripslashes(wp_get_referer()));
-
-if ( 0 != $post_ID && $sendto == get_permalink($post_ID) )
-	$sendto = 'redo';
 ?>
 
 <?php if ( $notice ) : ?>
@@ -57,12 +56,7 @@ if (isset($mode) && 'bookmarklet' == $mode)
 <?php echo $form_extra ?>
 <input type="hidden" id="post_type" name="post_type" value="<?php echo $post->post_type ?>" />
 <input type="hidden" id="original_post_status" name="original_post_status" value="<?php echo $post->post_status ?>" />
-<input name="referredby" type="hidden" id="referredby" value="<?php
-if ( strpos( wp_get_referer(), '/wp-admin/' ) === false && $post_ID && url_to_postid(wp_get_referer()) === $post_ID )
-	echo 'redo';
-else
-	echo clean_url(stripslashes(wp_get_referer()));
-?>" />
+<input name="referredby" type="hidden" id="referredby" value="<?php echo clean_url(stripslashes(wp_get_referer())); ?>" />
 <?php if ( 'draft' != $post->post_status ) wp_original_referer_field(true, 'previous'); ?>
 
 <div id="poststuff">
@@ -95,7 +89,7 @@ if ( current_user_can('publish_pages') OR ( $post->post_status == 'publish' AND 
 </select>
 </p>
 <?php if ( current_user_can( 'publish_posts' ) ) : ?> 
-<p><label for="post_status_private" class="selectit"><input id="post_status_private" name="post_status" type="checkbox" value="private" <?php checked($post->post_status, 'private'); ?> tabindex='4' /> <?php _e('Keep this page private') ?></label></p>
+<p id="private-checkbox"><label for="post_status_private" class="selectit"><input id="post_status_private" name="post_status" type="checkbox" value="private" <?php checked($post->post_status, 'private'); ?> tabindex='4' /> <?php _e('Keep this page private') ?></label></p>
 <?php endif; ?>
 
 <?php

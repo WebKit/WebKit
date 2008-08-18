@@ -67,8 +67,7 @@ function get_image_send_to_editor($id, $alt, $title, $align, $url='', $rel = fal
 
 function image_add_caption( $html, $id, $alt, $title, $align, $url, $size ) {
 
-	// CAPTIONS_OFF is temporary. Do not use it.
-	if ( empty($alt) || ( defined('CAPTIONS_OFF') && true == CAPTIONS_OFF ) ) return $html;
+	if ( empty($alt) || apply_filters( 'disable_captions', '' ) ) return $html;
 	$id = ( 0 < (int) $id ) ? 'attachment_' . $id : '';
 
 	preg_match( '/width="([0-9]+)/', $html, $matches );
@@ -103,7 +102,7 @@ function media_handle_upload($file_id, $post_id, $post_data = array()) {
 	$file = wp_handle_upload($_FILES[$file_id], $overrides);
 
 	if ( isset($file['error']) )
-		return new wp_error( 'upload_error', $file['error'] );
+		return new WP_Error( 'upload_error', $file['error'] );
 
 	$url = $file['url'];
 	$type = $file['type'];
@@ -143,7 +142,7 @@ function media_handle_sideload($file_array, $post_id, $desc = null, $post_data =
 	$file = wp_handle_sideload($file_array, $overrides);
 
 	if ( isset($file['error']) )
-		return new wp_error( 'upload_error', $file['error'] );
+		return new WP_Error( 'upload_error', $file['error'] );
 
 	$url = $file['url'];
 	$type = $file['type'];
@@ -281,7 +280,7 @@ function media_upload_form_handler() {
 	if ( isset($_POST['send']) ) {
 		$keys = array_keys($_POST['send']);
 		$send_id = (int) array_shift($keys);
-		$attachment = $_POST['attachments'][$send_id];
+		$attachment = stripslashes_deep( $_POST['attachments'][$send_id] );
 		$html = $attachment['post_title'];
 		if ( !empty($attachment['url']) ) {
 			if ( strpos($attachment['url'], 'attachment_id') || false !== strpos($attachment['url'], get_permalink($_POST['post_id'])) )
@@ -510,14 +509,8 @@ function image_attachment_fields_to_edit($form_fields, $post) {
 	if ( substr($post->post_mime_type, 0, 5) == 'image' ) {
 		$form_fields['post_title']['required'] = true;
 
-		// CAPTIONS_OFF is temporary. Do not use it.
-		if ( defined('CAPTIONS_OFF') && true == CAPTIONS_OFF ) {
-			$form_fields['post_excerpt']['label'] = __('Alternate Text');
-			$form_fields['post_excerpt']['helps'][] = __('Alt text for the image, e.g. "The Mona Lisa"');
-		} else {
-			$form_fields['post_excerpt']['label'] = __('Caption');
-			$form_fields['post_excerpt']['helps'][] = __('Also used as alternate text for the image');
-		}
+		$form_fields['post_excerpt']['label'] = __('Caption');
+		$form_fields['post_excerpt']['helps'][] = __('Also used as alternate text for the image');
 
 		$form_fields['post_content']['label'] = __('Description');
 
@@ -606,19 +599,13 @@ function get_attachment_fields_to_edit($post, $errors = null) {
 	$file = wp_get_attachment_url($post->ID);
 	$link = get_attachment_link($post->ID);
 
-	// CAPTIONS_OFF is temporary. Do not use it.
-	if ( defined('CAPTIONS_OFF') && true == CAPTIONS_OFF )
-		$alt = __('Alternate Text');
-	else
-		$alt = __('Caption');
-
 	$form_fields = array(
 		'post_title'   => array(
 			'label'      => __('Title'),
 			'value'      => $edit_post->post_title,
 		),
 		'post_excerpt' => array(
-			'label'      => $alt,
+			'label'      => __('Caption'),
 			'value'      => $edit_post->post_excerpt,
 		),
 		'post_content' => array(
@@ -884,7 +871,6 @@ function media_upload_form( $errors = null ) {
 	$post_id = intval($_REQUEST['post_id']);
 
 ?>
-<input type='hidden' name='post_id' value='<?php echo (int) $post_id; ?>' />
 <div id="media-upload-notice">
 <?php if (isset($errors['upload_notice']) ) { ?>
 	<?php echo $errors['upload_notice']; ?>
@@ -947,9 +933,8 @@ jQuery(function($){
 <div id="html-upload-ui">
 <?php do_action('pre-html-upload-ui'); ?>
 	<p>
-	<input type="file" name="async-upload" id="async-upload" /> <input type="submit" class="button" name="html-upload" value="<?php echo attribute_escape(__('Upload')); ?>" /> <a href="#" onClick="return top.tb_remove();"><?php _e('Cancel'); ?></a>
+	<input type="file" name="async-upload" id="async-upload" /> <input type="submit" class="button" name="html-upload" value="<?php echo attribute_escape(__('Upload')); ?>" /> <a href="#" onclick="return top.tb_remove();"><?php _e('Cancel'); ?></a>
 	</p>
-	<input type="hidden" name="post_id" id="post_id" value="<?php echo (int) $post_id; ?>" />
 	<br class="clear" />
 	<?php if ( is_lighttpd_before_150() ): ?>
 	<p><?php _e('If you want to use all capabilities of the uploader, like uploading multiple files at once, please upgrade to lighttpd 1.5.'); ?></p>
@@ -1021,7 +1006,7 @@ var addExtImage = {
 
 		if ( f.alt.value ) {
 			alt = f.alt.value.replace(/['"<>]+/g, '');
-<?php if ( ! defined('CAPTIONS_OFF') || true != CAPTIONS_OFF ) { // CAPTIONS_OFF is temporary. Do not use it. ?>
+<?php if ( ! apply_filters( 'disable_captions', '' ) ) { ?>
 			caption = f.alt.value.replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 <?php } ?>
 		}
@@ -1082,6 +1067,7 @@ var addExtImage = {
 </div>
 </div>
 <input type="submit" class="button savebutton" name="save" value="<?php echo attribute_escape( __( 'Save all changes' ) ); ?>" />
+</form>
 <?php
 	endif;
 }
@@ -1278,14 +1264,23 @@ jQuery(function($){
 }
 
 function type_form_image() {
-	$form = '
+
+	if ( apply_filters( 'disable_captions', '' ) ) {
+		$alt = __('Alternate Text');
+		$alt_help = __('Alt text for the image, e.g. "The Mona Lisa"');
+	} else {
+		$alt = __('Image Caption');
+		$alt_help = __('Also used as alternate text for the image');
+	}
+
+	return '
 	<table class="describe"><tbody>
 		<tr>
 			<th valign="top" scope="row" class="label" style="width:120px;">
 				<span class="alignleft"><label for="src">' . __('Source') . '</label></span>
 				<span class="alignright"><img id="status_img" src="images/required.gif" title="required" alt="required" /></span>
 			</th>
-			<td class="field"><input id="src" name="src" value="" type="text" aria-required="true" onblur="addExtImage.getImageData()"></td>
+			<td class="field"><input id="src" name="src" value="" type="text" aria-required="true" onblur="addExtImage.getImageData()" /></td>
 		</tr>
 
 		<tr>
@@ -1295,31 +1290,15 @@ function type_form_image() {
 			</th>
 			<td class="field"><p><input id="title" name="title" value="" type="text" aria-required="true" /></p></td>
 		</tr>
-';
-	// CAPTIONS_OFF is temporary. Do not use it.
-	if ( defined('CAPTIONS_OFF') && true == CAPTIONS_OFF ) {
-		$form .= '
-		<tr>
-			<th valign="top" scope="row" class="label">
-				<span class="alignleft"><label for="alt">' . __('Alternate Text') . '</label></span>
-			</th>
-			<td class="field"><input id="alt" name="alt" value="" type="text" aria-required="true" />
-			<p class="help">' . __('Alt text for the image, e.g. "The Mona Lisa"') . '</p></td>
-		</tr>
-';
 
-	} else {
-		$form .= '
 		<tr>
 			<th valign="top" scope="row" class="label">
-				<span class="alignleft"><label for="alt">' . __('Image Caption') . '</label></span>
+				<span class="alignleft"><label for="alt">' . $alt . '</label></span>
 			</th>
 			<td class="field"><input id="alt" name="alt" value="" type="text" aria-required="true" />
-			<p class="help">' . __('Also used as alternate text for the image') . '</p></td>
+			<p class="help">' . $alt_help . '</p></td>
 		</tr>
-';
-	}
-		$form .= '
+
 		<tr class="align">
 			<th valign="top" scope="row" class="label"><p><label for="align">' . __('Alignment') . '</label></p></th>
 			<td class="field">
@@ -1354,7 +1333,6 @@ function type_form_image() {
 	</tbody></table>
 ';
 
-	return $form;
 }
 
 function type_form_audio() {

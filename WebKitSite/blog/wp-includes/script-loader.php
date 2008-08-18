@@ -37,7 +37,7 @@ function wp_default_scripts( &$scripts ) {
 	$scripts->add( 'editor_functions', '/wp-admin/js/editor.js', false, '20080710' );
 
 	// Modify this version when tinyMCE plugins are changed.
-	$mce_version = apply_filters('tiny_mce_version', '20080710');
+	$mce_version = apply_filters('tiny_mce_version', '20080810');
 	$scripts->add( 'tiny_mce', '/wp-includes/js/tinymce/tiny_mce_config.php', array('editor_functions'), $mce_version );
 
 	$scripts->add( 'prototype', '/wp-includes/js/prototype.js', false, '1.6');
@@ -50,7 +50,7 @@ function wp_default_scripts( &$scripts ) {
 
 	$scripts->add( 'autosave', '/wp-includes/js/autosave.js', array('schedule', 'wp-ajax-response'), '20080622' );
 
-	$scripts->add( 'wp-lists', '/wp-includes/js/wp-lists.js', array('wp-ajax-response'), '20080411' );
+	$scripts->add( 'wp-lists', '/wp-includes/js/wp-lists.js', array('wp-ajax-response'), '20080729' );
 	$scripts->localize( 'wp-lists', 'wpListL10n', array(
 		'url' => admin_url('admin-ajax.php')
 	) );
@@ -125,7 +125,7 @@ function wp_default_scripts( &$scripts ) {
 			'pending' => __('%i% pending') // must look like: "# blah blah"
 		) );
 		$scripts->add( 'admin-users', '/wp-admin/js/users.js', array('wp-lists'), '20070823' );
-		$scripts->add( 'admin-forms', '/wp-admin/js/forms.js', false, '20080401');
+		$scripts->add( 'admin-forms', '/wp-admin/js/forms.js', array('jquery'), '20080729');
 		$scripts->add( 'xfn', '/wp-admin/js/xfn.js', false, '3517' );
 		$scripts->add( 'upload', '/wp-admin/js/upload.js', array('jquery'), '20070518' );
 		$scripts->add( 'postbox', '/wp-admin/js/postbox.js', array('jquery'), '20080128' );
@@ -194,7 +194,7 @@ function wp_default_scripts( &$scripts ) {
 			'count' => __('Word count: %d')
 		));
 		
-		$scripts->add( 'wp-gears', '/wp-admin/js/wp-gears.js', false, '20080511' );
+		$scripts->add( 'wp-gears', '/wp-admin/js/wp-gears.js', false, '20080721' );
 		$scripts->localize( 'wp-gears', 'wpGearsL10n', array(
 			'updateCompleted' => __('Update completed.'),
 			'error' => __('Error:')

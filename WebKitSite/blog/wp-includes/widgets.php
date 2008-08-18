@@ -57,7 +57,7 @@ function register_sidebar($args = array()) {
 		'after_title' => "</h2>\n",
 	);
 
-	$sidebar = array_merge($defaults, $args);
+	$sidebar = array_merge($defaults, (array) $args);
 
 	$wp_registered_sidebars[$sidebar['id']] = $sidebar;
 
@@ -1043,7 +1043,7 @@ function wp_widget_recent_comments_register() {
 function wp_widget_rss($args, $widget_args = 1) {
 	extract($args, EXTR_SKIP);
 	if ( is_numeric($widget_args) )
-		$widget_args = array( 'number' => $widegt_args );
+		$widget_args = array( 'number' => $widget_args );
 	$widget_args = wp_parse_args( $widget_args, array( 'number' => -1 ) );
 	extract($widget_args, EXTR_SKIP);
 
@@ -1125,18 +1125,11 @@ function wp_widget_rss_output( $rss, $args = array() ) {
 			if ( empty($title) )
 				$title = __('Untitled');
 			$desc = '';
-				if ( isset( $item['description'] ) && is_string( $item['description'] ) )
-					$desc = str_replace(array("\n", "\r"), ' ', attribute_escape(strip_tags(html_entity_decode($item['description'], ENT_QUOTES))));
-				elseif ( isset( $item['summary'] ) && is_string( $item['summary'] ) )
-					$desc = str_replace(array("\n", "\r"), ' ', attribute_escape(strip_tags(html_entity_decode($item['summary'], ENT_QUOTES))));
-
 			$summary = '';
 			if ( isset( $item['description'] ) && is_string( $item['description'] ) )
-				$summary = $item['description'];
+				$desc = $summary = str_replace(array("\n", "\r"), ' ', attribute_escape(strip_tags(html_entity_decode($item['description'], ENT_QUOTES))));
 			elseif ( isset( $item['summary'] ) && is_string( $item['summary'] ) )
-				$summary = $item['summary'];
-
-			$desc = str_replace(array("\n", "\r"), ' ', attribute_escape(strip_tags(html_entity_decode($summary, ENT_QUOTES))));
+				$desc = $summary = str_replace(array("\n", "\r"), ' ', attribute_escape(strip_tags(html_entity_decode($item['summary'], ENT_QUOTES))));
 
 			if ( $show_summary ) {
 				$desc = '';

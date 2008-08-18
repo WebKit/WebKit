@@ -68,6 +68,10 @@ if ( empty( $_SERVER['REQUEST_URI'] ) ) {
 	}
 	else
 	{
+		// Use ORIG_PATH_INFO if there is no PATH_INFO
+		if ( !isset($_SERVER['PATH_INFO']) && isset($_SERVER['ORIG_PATH_INFO']) )
+			$_SERVER['PATH_INFO'] = $_SERVER['ORIG_PATH_INFO'];
+
 		// Some IIS + PHP configurations puts the script-name in the path-info (No need to append it twice)
 		if ( isset($_SERVER['PATH_INFO']) ) {
 			if ( $_SERVER['PATH_INFO'] == $_SERVER['SCRIPT_NAME'] )
@@ -417,7 +421,7 @@ if ( get_option('active_plugins') ) {
 	$current_plugins = get_option('active_plugins');
 	if ( is_array($current_plugins) ) {
 		foreach ($current_plugins as $plugin) {
-			if ('' != $plugin && file_exists(WP_PLUGIN_DIR . '/' . $plugin))
+			if ( '' != $plugin && 0 == validate_file($plugin) && file_exists(WP_PLUGIN_DIR . '/' . $plugin) )
 				include_once(WP_PLUGIN_DIR . '/' . $plugin);
 		}
 	}
