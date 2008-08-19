@@ -59,6 +59,58 @@ static JSValueRef parameterizedAttributeNamesCallback(JSContextRef context, JSOb
     return JSValueMakeString(context, parameterizedAttributeNames.get());
 }
 
+static JSValueRef attributesOfColumnHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfColumnHeaders(Adopt, toAXElement(thisObject)->attributesOfColumnHeaders());
+    return JSValueMakeString(context, attributesOfColumnHeaders.get());
+}
+
+static JSValueRef attributesOfRowHeadersCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfRowHeaders(Adopt, toAXElement(thisObject)->attributesOfRowHeaders());
+    return JSValueMakeString(context, attributesOfRowHeaders.get());
+}
+
+static JSValueRef attributesOfColumnsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfColumns(Adopt, toAXElement(thisObject)->attributesOfColumns());
+    return JSValueMakeString(context, attributesOfColumns.get());
+}
+
+static JSValueRef attributesOfRowsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfRows(Adopt, toAXElement(thisObject)->attributesOfRows());
+    return JSValueMakeString(context, attributesOfRows.get());
+}
+
+static JSValueRef attributesOfVisibleCellsCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfVisibleCells(Adopt, toAXElement(thisObject)->attributesOfVisibleCells());
+    return JSValueMakeString(context, attributesOfVisibleCells.get());
+}
+
+static JSValueRef attributesOfHeaderCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> attributesOfHeader(Adopt, toAXElement(thisObject)->attributesOfHeader());
+    return JSValueMakeString(context, attributesOfHeader.get());
+}
+
+static JSValueRef indexInTableCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    return JSValueMakeNumber(context, toAXElement(thisObject)->indexInTable());
+}
+
+static JSValueRef rowIndexRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> rowIndexRange(Adopt, toAXElement(thisObject)->rowIndexRange());
+    return JSValueMakeString(context, rowIndexRange.get());
+}
+
+static JSValueRef columnIndexRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    JSRetainPtr<JSStringRef> columnIndexRange(Adopt, toAXElement(thisObject)->columnIndexRange());
+    return JSValueMakeString(context, columnIndexRange.get());
+}
 
 static JSValueRef lineForIndexCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
@@ -87,7 +139,18 @@ static JSValueRef childAtIndexCallback(JSContextRef context, JSObjectRef functio
     if (argumentCount == 1)
         indexNumber = JSValueToNumber(context, arguments[0], exception);
     
-    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->getChildAtIndex(0));
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->getChildAtIndex(indexNumber));
+}
+
+static JSValueRef cellForColumnAndRowCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    unsigned column = 0, row = 0;
+    if (argumentCount == 2) {
+        column = JSValueToNumber(context, arguments[0], exception);
+        row = JSValueToNumber(context, arguments[1], exception);
+    }
+    
+    return AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->cellForColumnAndRow(column, row));
 }
 
 // Static Value Getters
@@ -177,6 +240,16 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "lineForIndex", lineForIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "boundsForRange", boundsForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfColumnHeaders", attributesOfColumnHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfRowHeaders", attributesOfRowHeadersCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfColumns", attributesOfColumnsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfRows", attributesOfRowsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfVisibleCells", attributesOfVisibleCellsCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "attributesOfHeader", attributesOfHeaderCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "indexInTable", indexInTableCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "rowIndexRange", rowIndexRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "columnIndexRange", columnIndexRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "cellForColumnAndRow", cellForColumnAndRowCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
 

@@ -70,10 +70,24 @@ public:
     double minValue();
     double maxValue();
     int insertionPointLineNumber();
-
+    
+    // table specific attributes
+    JSStringRef attributesOfColumnHeaders();
+    JSStringRef attributesOfRowHeaders();
+    JSStringRef attributesOfColumns();
+    JSStringRef attributesOfRows();
+    JSStringRef attributesOfVisibleCells();
+    JSStringRef attributesOfHeader();
+    int indexInTable();
+    JSStringRef rowIndexRange();
+    JSStringRef columnIndexRange();
+    
     // parameterized attributes
     int lineForIndex(int);
     JSStringRef boundsForRange(unsigned location, unsigned length);
+    
+    // table specific
+    AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
     
 private:
     static JSClassRef getJSClass();

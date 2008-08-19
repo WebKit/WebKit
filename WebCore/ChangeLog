@@ -1,3 +1,108 @@
+2008-08-19  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/4003764> Expose tables as AXTables
+ 
+        Tests: accessibility/table-attributes.html
+               accessibility/table-cell-spans.html
+               accessibility/table-cells.html
+               accessibility/table-detection.html
+               accessibility/table-sections.html
+               accessibility/table-with-rules.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AXObjectCache.cpp:
+        (WebCore::AXObjectCache::get):
+        * page/AccessibilityObject.h:
+        (WebCore::):
+        (WebCore::AccessibilityObject::isDataTable):
+        (WebCore::AccessibilityObject::isTableRow):
+        (WebCore::AccessibilityObject::isTableColumn):
+        (WebCore::AccessibilityObject::isTableCell):
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+        * page/AccessibilityTable.cpp: Added.
+        (WebCore::AccessibilityTable::AccessibilityTable):
+        (WebCore::AccessibilityTable::~AccessibilityTable):
+        (WebCore::AccessibilityTable::create):
+        (WebCore::AccessibilityTable::isTableExposableThroughAccessibility):
+        (WebCore::AccessibilityTable::clearChildren):
+        (WebCore::AccessibilityTable::addChildren):
+        (WebCore::AccessibilityTable::headerContainer):
+        (WebCore::AccessibilityTable::columns):
+        (WebCore::AccessibilityTable::rows):
+        (WebCore::AccessibilityTable::rowHeaders):
+        (WebCore::AccessibilityTable::columnHeaders):
+        (WebCore::AccessibilityTable::cells):
+        (WebCore::AccessibilityTable::columnCount):
+        (WebCore::AccessibilityTable::rowCount):
+        (WebCore::AccessibilityTable::cellForColumnAndRow):
+        (WebCore::AccessibilityTable::roleValue):
+        (WebCore::AccessibilityTable::accessibilityIsIgnored):
+        (WebCore::AccessibilityTable::title):
+        (WebCore::AccessibilityTable::isDataTable):
+        * page/AccessibilityTable.h: Added.
+        * page/AccessibilityTableCell.cpp: Added.
+        (WebCore::AccessibilityTableCell::AccessibilityTableCell):
+        (WebCore::AccessibilityTableCell::~AccessibilityTableCell):
+        (WebCore::AccessibilityTableCell::create):
+        (WebCore::AccessibilityTableCell::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableCell::rowIndexRange):
+        (WebCore::AccessibilityTableCell::columnIndexRange):
+        * page/AccessibilityTableCell.h: Added.
+        (WebCore::AccessibilityTableCell::isTableCell):
+        (WebCore::AccessibilityTableCell::roleValue):
+        * page/AccessibilityTableColumn.cpp: Added.
+        (WebCore::AccessibilityTableColumn::AccessibilityTableColumn):
+        (WebCore::AccessibilityTableColumn::~AccessibilityTableColumn):
+        (WebCore::AccessibilityTableColumn::create):
+        (WebCore::AccessibilityTableColumn::setParentTable):
+        (WebCore::AccessibilityTableColumn::elementRect):
+        (WebCore::AccessibilityTableColumn::size):
+        (WebCore::AccessibilityTableColumn::children):
+        (WebCore::AccessibilityTableColumn::headerObject):
+        (WebCore::AccessibilityTableColumn::headerObjectForSection):
+        (WebCore::AccessibilityTableColumn::addChildren):
+        * page/AccessibilityTableColumn.h: Added.
+        (WebCore::AccessibilityTableColumn::parentObject):
+        (WebCore::AccessibilityTableColumn::roleValue):
+        (WebCore::AccessibilityTableColumn::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableColumn::isTableColumn):
+        (WebCore::AccessibilityTableColumn::setColumnIndex):
+        (WebCore::AccessibilityTableColumn::columnIndex):
+        * page/AccessibilityTableHeaderContainer.cpp: Added.
+        (WebCore::AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer):
+        (WebCore::AccessibilityTableHeaderContainer::~AccessibilityTableHeaderContainer):
+        (WebCore::AccessibilityTableHeaderContainer::create):
+        (WebCore::AccessibilityTableHeaderContainer::children):
+        (WebCore::AccessibilityTableHeaderContainer::elementRect):
+        (WebCore::AccessibilityTableHeaderContainer::size):
+        (WebCore::AccessibilityTableHeaderContainer::addChildren):
+        * page/AccessibilityTableHeaderContainer.h: Added.
+        (WebCore::AccessibilityTableHeaderContainer::roleValue):
+        (WebCore::AccessibilityTableHeaderContainer::setParentTable):
+        (WebCore::AccessibilityTableHeaderContainer::parentObject):
+        (WebCore::AccessibilityTableHeaderContainer::accessibilityIsIgnored):
+        * page/AccessibilityTableRow.cpp: Added.
+        (WebCore::AccessibilityTableRow::AccessibilityTableRow):
+        (WebCore::AccessibilityTableRow::~AccessibilityTableRow):
+        (WebCore::AccessibilityTableRow::create):
+        (WebCore::AccessibilityTableRow::accessibilityIsIgnored):
+        (WebCore::AccessibilityTableRow::headerObject):
+        * page/AccessibilityTableRow.h: Added.
+        (WebCore::AccessibilityTableRow::isTableRow):
+        (WebCore::AccessibilityTableRow::roleValue):
+        (WebCore::AccessibilityTableRow::setRowIndex):
+        (WebCore::AccessibilityTableRow::rowIndex):
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeNames]):
+        (RoleEntry::):
+        (-[AccessibilityObjectWrapper roleDescription]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2008-08-19  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.

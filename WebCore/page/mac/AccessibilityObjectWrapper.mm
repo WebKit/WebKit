@@ -32,6 +32,10 @@
 #import "AXObjectCache.h"
 #import "AccessibilityListBox.h"
 #import "AccessibilityRenderObject.h"
+#import "AccessibilityTable.h"
+#import "AccessibilityTableCell.h"
+#import "AccessibilityTableRow.h"
+#import "AccessibilityTableColumn.h"
 #import "ColorMac.h"
 #import "Frame.h"
 #import "HTMLAnchorElement.h"
@@ -54,6 +58,35 @@
 
 using namespace WebCore;
 using namespace HTMLNames;
+
+// this is SnowLeopard API
+#ifndef NSAccessibilitySelectedCellsAttribute
+#define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
+#endif
+
+#ifndef NSAccessibilityVisibleCellsAttribute
+#define NSAccessibilityVisibleCellsAttribute @"AXVisibleCells"
+#endif
+
+#ifndef NSAccessibilityRowHeaderUIElementsAttribute
+#define NSAccessibilityRowHeaderUIElementsAttribute @"AXRowHeaderUIElements"
+#endif
+
+#ifndef NSAccessibilityRowIndexRangeAttribute
+#define NSAccessibilityRowIndexRangeAttribute @"AXRowIndexRange"
+#endif
+
+#ifndef NSAccessibilityColumnIndexRangeAttribute
+#define NSAccessibilityColumnIndexRangeAttribute @"AXColumnIndexRange"
+#endif
+
+#ifndef NSAccessibilityCellForColumnAndRowParameterizedAttribute
+#define NSAccessibilityCellForColumnAndRowParameterizedAttribute @"AXCellForColumnAndRow"
+#endif
+
+#ifndef NSAccessibilityCellRole
+#define NSAccessibilityCellRole @"AXCell"
+#endif
 
 @implementation AccessibilityObjectWrapper
 
@@ -541,6 +574,10 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     static NSArray* menuItemAttrs = nil;
     static NSArray* menuButtonAttrs = nil;
     static NSArray* controlAttrs = nil;
+    static NSArray* tableAttrs = nil;
+    static NSArray* tableRowAttrs = nil;
+    static NSArray* tableColAttrs = nil;
+    static NSArray* tableCellAttrs = nil;
     NSMutableArray* tempArray;
     if (attributes == nil) {
         attributes = [[NSArray alloc] initWithObjects: NSAccessibilityRoleAttribute,
@@ -670,7 +707,42 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
         controlAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
-
+    if (tableAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityRowsAttribute];
+        [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
+        [tempArray addObject:NSAccessibilityColumnsAttribute];
+        [tempArray addObject:NSAccessibilityVisibleColumnsAttribute];
+        [tempArray addObject:NSAccessibilityVisibleCellsAttribute];
+        [tempArray addObject:(NSString *)kAXColumnHeaderUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityRowHeaderUIElementsAttribute];
+        [tempArray addObject:NSAccessibilityHeaderAttribute];
+        tableAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (tableRowAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityIndexAttribute];
+        tableRowAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (tableColAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityIndexAttribute];
+        [tempArray addObject:NSAccessibilityHeaderAttribute];
+        [tempArray addObject:NSAccessibilityRowsAttribute];
+        [tempArray addObject:NSAccessibilityVisibleRowsAttribute];
+        tableColAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
+    if (tableCellAttrs == nil) {
+        tempArray = [[NSMutableArray alloc] initWithArray:attributes];
+        [tempArray addObject:NSAccessibilityRowIndexRangeAttribute];
+        [tempArray addObject:NSAccessibilityColumnIndexRangeAttribute];
+        tableCellAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];        
+    }
+    
     if (m_object->isPasswordField())
         return attributes;
 
@@ -683,6 +755,15 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isAnchor() || m_object->isImage())
         return anchorAttrs;
 
+    if (m_object->isDataTable())
+        return tableAttrs;
+    if (m_object->isTableRow())
+        return tableRowAttrs;
+    if (m_object->isTableColumn())
+        return tableColAttrs;
+    if (m_object->isTableCell())
+        return tableCellAttrs;
+    
     if (m_object->isListBox())
         return listBoxAttrs;
 
@@ -829,7 +910,15 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { WebAreaRole, @"AXWebArea" },
         { HeadingRole, @"AXHeading" },
         { ListBoxRole, NSAccessibilityListRole },
-        { ListBoxOptionRole, NSAccessibilityStaticTextRole }
+        { ListBoxOptionRole, NSAccessibilityStaticTextRole },
+        // cells exist only in SnowLeopard
+#if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
+        { CellRole, NSAccessibilityGroupRole },
+#else
+        { CellRole, NSAccessibilityCellRole },
+#endif
+        { TableHeaderContainerRole, NSAccessibilityGroupRole }
+        
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
     
@@ -914,6 +1003,18 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     if ([axRole isEqualToString:NSAccessibilityListRole])
         return NSAccessibilityRoleDescription(NSAccessibilityListRole, [self subrole]);
     
+    if ([axRole isEqualToString:NSAccessibilityTableRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityTableRole, [self subrole]);
+
+    if ([axRole isEqualToString:NSAccessibilityRowRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityRowRole, [self subrole]);
+
+    if ([axRole isEqualToString:NSAccessibilityColumnRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityColumnRole, [self subrole]);
+
+    if ([axRole isEqualToString:NSAccessibilityCellRole])
+        return NSAccessibilityRoleDescription(NSAccessibilityCellRole, [self subrole]);
+
     if ([axRole isEqualToString:@"AXWebArea"])
         return AXWebAreaText();
     
@@ -1102,6 +1203,85 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return nil;
     }
     
+    if (m_object->isDataTable()) {
+        // TODO: distinguish between visible and non-visible rows
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] || 
+            [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
+            return convertToNSArray(static_cast<AccessibilityTable*>(m_object)->rows());
+        }
+        // TODO: distinguish between visible and non-visible columns
+        if ([attributeName isEqualToString:NSAccessibilityColumnsAttribute] || 
+            [attributeName isEqualToString:NSAccessibilityVisibleColumnsAttribute]) {
+            return convertToNSArray(static_cast<AccessibilityTable*>(m_object)->columns());
+        }
+        
+        // HTML tables don't support these
+        if ([attributeName isEqualToString:NSAccessibilitySelectedColumnsAttribute] || 
+            [attributeName isEqualToString:NSAccessibilitySelectedRowsAttribute] ||
+            [attributeName isEqualToString:NSAccessibilitySelectedCellsAttribute])
+            return nil;
+        
+        if ([attributeName isEqualToString:(NSString *)kAXColumnHeaderUIElementsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector columnHeaders;
+            static_cast<AccessibilityTable*>(m_object)->columnHeaders(columnHeaders);
+            return convertToNSArray(columnHeaders);            
+        }
+        
+        if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
+            AccessibilityObject* headerContainer = static_cast<AccessibilityTable*>(m_object)->headerContainer();
+            if (headerContainer)
+                return headerContainer->wrapper();
+            return nil;
+        }
+
+        if ([attributeName isEqualToString:NSAccessibilityRowHeaderUIElementsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector rowHeaders;
+            static_cast<AccessibilityTable*>(m_object)->rowHeaders(rowHeaders);
+            return convertToNSArray(rowHeaders);                        
+        }
+        
+        if ([attributeName isEqualToString:NSAccessibilityVisibleCellsAttribute]) {
+            AccessibilityObject::AccessibilityChildrenVector cells;
+            static_cast<AccessibilityTable*>(m_object)->cells(cells);
+            return convertToNSArray(cells);
+        }        
+    }
+    
+    if (m_object->isTableRow()) {
+        if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
+            return [NSNumber numberWithInt:static_cast<AccessibilityTableRow*>(m_object)->rowIndex()];
+    }
+    
+    if (m_object->isTableColumn()) {
+        if ([attributeName isEqualToString:NSAccessibilityIndexAttribute])
+            return [NSNumber numberWithInt:static_cast<AccessibilityTableColumn*>(m_object)->columnIndex()];
+        
+        // rows attribute for a column is the list of all the elements in that column at each row
+        if ([attributeName isEqualToString:NSAccessibilityRowsAttribute] || 
+            [attributeName isEqualToString:NSAccessibilityVisibleRowsAttribute]) {
+            return convertToNSArray(static_cast<AccessibilityTableColumn*>(m_object)->children());
+        }
+        if ([attributeName isEqualToString:NSAccessibilityHeaderAttribute]) {
+            AccessibilityObject* header = static_cast<AccessibilityTableColumn*>(m_object)->headerObject();
+            if (!header)
+                return nil;
+            return header->wrapper();
+        }
+    }
+    
+    if (m_object->isTableCell()) {
+        if ([attributeName isEqualToString:NSAccessibilityRowIndexRangeAttribute]) {
+            pair<int, int> rowRange;
+            static_cast<AccessibilityTableCell*>(m_object)->rowIndexRange(rowRange);
+            return [NSValue valueWithRange:NSMakeRange(rowRange.first, rowRange.second)];
+        }  
+        if ([attributeName isEqualToString:NSAccessibilityColumnIndexRangeAttribute]) {
+            pair<int, int> columnRange;
+            static_cast<AccessibilityTableCell*>(m_object)->columnIndexRange(columnRange);
+            return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
+        }  
+    }
+    
     if (m_object->isListBox() && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
 
@@ -1215,6 +1395,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     static NSArray* paramAttrs = nil;
     static NSArray* textParamAttrs = nil;
+    static NSArray* tableParamAttrs = nil;
     if (paramAttrs == nil) {
         paramAttrs = [[NSArray alloc] initWithObjects:
                       @"AXUIElementForTextMarker",
@@ -1262,6 +1443,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         textParamAttrs = [[NSArray alloc] initWithArray:tempArray];
         [tempArray release];
     }
+    if (tableParamAttrs == nil) {
+        NSMutableArray* tempArray = [[NSMutableArray alloc] initWithArray:paramAttrs];
+        [tempArray addObject:NSAccessibilityCellForColumnAndRowParameterizedAttribute];
+        tableParamAttrs = [[NSArray alloc] initWithArray:tempArray];
+        [tempArray release];
+    }
     
     if (m_object->isPasswordField())
         return [NSArray array];
@@ -1271,7 +1458,10 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
     if (m_object->isTextControl())
         return textParamAttrs;
-        
+    
+    if (m_object->isDataTable())
+        return tableParamAttrs;
+    
     if (m_object->isMenuRelated())
         return nil;
 
@@ -1619,6 +1809,18 @@ static RenderObject* rendererForView(NSView* view)
         if (length < 0)
             return nil;
         return [NSNumber numberWithInt:length];
+    }
+
+    if (m_object->isDataTable()) {
+        if ([attribute isEqualToString:NSAccessibilityCellForColumnAndRowParameterizedAttribute]) {
+            if (array == nil || [array count] != 2)
+                return nil;
+            AccessibilityTableCell* cell = static_cast<AccessibilityTable*>(m_object)->cellForColumnAndRow([[array objectAtIndex:0] unsignedIntValue], [[array objectAtIndex:1] unsignedIntValue]);
+            if (!cell)
+                return nil;
+            
+            return cell->wrapper();
+        }
     }
 
     if (m_object->isTextControl()) {

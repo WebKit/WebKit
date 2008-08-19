@@ -1,0 +1,799 @@
+This should be a table because it has a thead
+asdf	asdf
+asdf	asdf
+This should be a table because cells have borders
+asdf	asdf
+This should not be a table because it's cells do not have borders
+asdf	asdf
+// This should be a table because a cell has a special attribute
+asdf	asdf
+// This should be a table because a cell has a special attribute
+asdf	asdf
+// This should be a table because a cell has a special attribute
+asdf	asdf
+asdf	asdf
+// This should be a table because cells have different colors
+asdf	asdf
+// This should not be a table because cells have different but no spacing
+asdf	asdf
+// This should not be a table because cells have the same colors even though there is spacing
+asdf	asdf
+// this should be a table because it has the "rules" attr
+asdf	asdf
+--------------------------
+
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 18}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+AXRole: AXGroup
+AXSubrole: (null)
+AXRoleDescription: group
+AXChildren: <array of size 1>
+AXHelp: 
+AXParent: <AXGroup>
+AXSize: NSSize: {784, 36}
+AXTitle: 
+AXDescription: 
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXGroup>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXGroup>
+AXEndTextMarker: <AXGroup>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+------------
+
+
+--------------------------
+
+

@@ -389,12 +389,22 @@
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
 		2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */; };
 		2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */; };
+		29800C3B0E522A5300025536 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C390E522A5300025536 /* AccessibilityTable.h */; };
+		29800C3C0E522A5300025536 /* AccessibilityTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29800C3A0E522A5300025536 /* AccessibilityTable.cpp */; };
+		29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C930E524C8B00025536 /* AccessibilityTableRow.h */; };
+		29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29800C940E524C8B00025536 /* AccessibilityTableRow.cpp */; };
+		29800C990E524DA500025536 /* AccessibilityTableColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C970E524DA500025536 /* AccessibilityTableColumn.h */; };
+		29800C9A0E524DA500025536 /* AccessibilityTableColumn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29800C980E524DA500025536 /* AccessibilityTableColumn.cpp */; };
 		299984BD0DC8598500F8D261 /* AccessibilityRenderObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */; };
 		299984BE0DC8598500F8D261 /* AccessibilityRenderObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */; };
 		2999869E0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h in Headers */ = {isa = PBXBuildFile; fileRef = 2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */; };
 		2999869F0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */; };
 		299986A00DD0DEEA00F8D261 /* AccessibilityListBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */; };
 		299986A10DD0DEEA00F8D261 /* AccessibilityListBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */; };
+		29AAC36D0E534E86008F9B3B /* AccessibilityTableCell.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AAC36B0E534E86008F9B3B /* AccessibilityTableCell.h */; };
+		29AAC36E0E534E86008F9B3B /* AccessibilityTableCell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29AAC36C0E534E86008F9B3B /* AccessibilityTableCell.cpp */; };
+		29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */; };
+		29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29AAC51E0E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp */; };
 		2D9066060BE141D400956998 /* LayoutState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2D9066040BE141D400956998 /* LayoutState.cpp */; };
 		2D9066070BE141D400956998 /* LayoutState.h in Headers */ = {isa = PBXBuildFile; fileRef = 2D9066050BE141D400956998 /* LayoutState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		31288E720E3005D6003619AE /* WebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */; };
@@ -4936,12 +4946,22 @@
 		1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
 		2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityImageMapLink.h; sourceTree = "<group>"; };
 		2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityImageMapLink.cpp; sourceTree = "<group>"; };
+		29800C390E522A5300025536 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
+		29800C3A0E522A5300025536 /* AccessibilityTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTable.cpp; sourceTree = "<group>"; };
+		29800C930E524C8B00025536 /* AccessibilityTableRow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableRow.h; sourceTree = "<group>"; };
+		29800C940E524C8B00025536 /* AccessibilityTableRow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableRow.cpp; sourceTree = "<group>"; };
+		29800C970E524DA500025536 /* AccessibilityTableColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableColumn.h; sourceTree = "<group>"; };
+		29800C980E524DA500025536 /* AccessibilityTableColumn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableColumn.cpp; sourceTree = "<group>"; };
 		299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityRenderObject.cpp; sourceTree = "<group>"; };
 		299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityRenderObject.h; sourceTree = "<group>"; };
 		2999869A0DD0DEEA00F8D261 /* AccessibilityListBoxOption.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBoxOption.h; sourceTree = "<group>"; };
 		2999869B0DD0DEEA00F8D261 /* AccessibilityListBoxOption.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBoxOption.cpp; sourceTree = "<group>"; };
 		2999869C0DD0DEEA00F8D261 /* AccessibilityListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityListBox.h; sourceTree = "<group>"; };
 		2999869D0DD0DEEA00F8D261 /* AccessibilityListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityListBox.cpp; sourceTree = "<group>"; };
+		29AAC36B0E534E86008F9B3B /* AccessibilityTableCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableCell.h; sourceTree = "<group>"; };
+		29AAC36C0E534E86008F9B3B /* AccessibilityTableCell.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableCell.cpp; sourceTree = "<group>"; };
+		29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTableHeaderContainer.h; sourceTree = "<group>"; };
+		29AAC51E0E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityTableHeaderContainer.cpp; sourceTree = "<group>"; };
 		2D9066040BE141D400956998 /* LayoutState.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutState.cpp; sourceTree = "<group>"; };
 		2D9066050BE141D400956998 /* LayoutState.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = LayoutState.h; sourceTree = "<group>"; };
 		2D90660B0665D937006B6F1A /* ClipboardMac.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = ClipboardMac.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
@@ -9183,6 +9203,16 @@
 				4B17CBC80D945B370053F183 /* AccessibilityObject.h */,
 				299984BB0DC8598500F8D261 /* AccessibilityRenderObject.cpp */,
 				299984BC0DC8598500F8D261 /* AccessibilityRenderObject.h */,
+				29800C3A0E522A5300025536 /* AccessibilityTable.cpp */,
+				29800C390E522A5300025536 /* AccessibilityTable.h */,
+				29AAC36C0E534E86008F9B3B /* AccessibilityTableCell.cpp */,
+				29AAC36B0E534E86008F9B3B /* AccessibilityTableCell.h */,
+				29800C980E524DA500025536 /* AccessibilityTableColumn.cpp */,
+				29800C970E524DA500025536 /* AccessibilityTableColumn.h */,
+				29AAC51E0E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp */,
+				29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */,
+				29800C940E524C8B00025536 /* AccessibilityTableRow.cpp */,
+				29800C930E524C8B00025536 /* AccessibilityTableRow.h */,
 				BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */,
 				BC80C98A0CD2950500A0B7B3 /* AnimationController.h */,
 				4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */,
@@ -15400,6 +15430,11 @@
 				31C0FF4B0E4CEFDD007D6FE5 /* DOMWebKitAnimationEventInternal.h in Headers */,
 				31C0FF4C0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.h in Headers */,
 				31C0FF4E0E4CEFDD007D6FE5 /* DOMWebKitTransitionEventInternal.h in Headers */,
+				29800C3B0E522A5300025536 /* AccessibilityTable.h in Headers */,
+				29800C950E524C8B00025536 /* AccessibilityTableRow.h in Headers */,
+				29800C990E524DA500025536 /* AccessibilityTableColumn.h in Headers */,
+				29AAC36D0E534E86008F9B3B /* AccessibilityTableCell.h in Headers */,
+				29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
 			);
@@ -17185,6 +17220,11 @@
 				31C0FF3F0E4CEFAC007D6FE5 /* JSWebKitTransitionEvent.cpp in Sources */,
 				31C0FF4A0E4CEFDD007D6FE5 /* DOMWebKitAnimationEvent.mm in Sources */,
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
+				29800C3C0E522A5300025536 /* AccessibilityTable.cpp in Sources */,
+				29800C960E524C8B00025536 /* AccessibilityTableRow.cpp in Sources */,
+				29800C9A0E524DA500025536 /* AccessibilityTableColumn.cpp in Sources */,
+				29AAC36E0E534E86008F9B3B /* AccessibilityTableCell.cpp in Sources */,
+				29AAC5200E53963B008F9B3B /* AccessibilityTableHeaderContainer.cpp in Sources */,
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,

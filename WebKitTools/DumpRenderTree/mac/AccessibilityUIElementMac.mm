@@ -142,20 +142,35 @@ static JSStringRef concatenateAttributeAndValue(NSString* attribute, NSString* v
     return JSStringCreateWithCharacters(buffer.data(), buffer.size());
 }
 
+static void convertNSArrayToVector(NSArray* array, Vector<AccessibilityUIElement>& elementVector)
+{
+    NSUInteger count = [array count];
+    for (NSUInteger i = 0; i < count; ++i)
+        elementVector.append(AccessibilityUIElement([array objectAtIndex:i]));
+}
+
+static JSStringRef descriptionOfElements(Vector<AccessibilityUIElement>& elementVector)
+{
+    NSMutableString* allElementString = [NSMutableString string];
+    size_t size = elementVector.size();
+    for (size_t i = 0; i < size; ++i) {
+        NSString* attributes = attributesOfElement(elementVector[i].platformUIElement());
+        [allElementString appendFormat:@"%@\n------------\n", attributes];
+    }
+    
+    return [allElementString createJSStringRef];
+}
+
 void AccessibilityUIElement::getLinkedUIElements(Vector<AccessibilityUIElement>& elementVector)
 {
     NSArray* linkedElements = [m_element accessibilityAttributeValue:NSAccessibilityLinkedUIElementsAttribute];
-    NSUInteger count = [linkedElements count];
-    for (NSUInteger i = 0; i < count; ++i)
-        elementVector.append(AccessibilityUIElement([linkedElements objectAtIndex:i]));
+    convertNSArrayToVector(linkedElements, elementVector);
 }
 
 void AccessibilityUIElement::getChildren(Vector<AccessibilityUIElement>& elementVector)
 {
     NSArray* children = [m_element accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-    NSUInteger count = [children count];
-    for (NSUInteger i = 0; i < count; ++i)
-        elementVector.append(AccessibilityUIElement([children objectAtIndex:i]));
+    convertNSArrayToVector(children, elementVector);
 }
 
 AccessibilityUIElement AccessibilityUIElement::getChildAtIndex(unsigned index)
@@ -172,30 +187,14 @@ JSStringRef AccessibilityUIElement::attributesOfLinkedUIElements()
 {
     Vector<AccessibilityUIElement> linkedElements;
     getLinkedUIElements(linkedElements);
-
-    NSMutableString* allElementString = [NSMutableString string];
-    size_t size = linkedElements.size();
-    for (size_t i = 0; i < size; ++i) {
-        NSString* attributes = attributesOfElement(linkedElements[i].platformUIElement());
-        [allElementString appendFormat:@"%@\n------------\n", attributes];
-    }
-
-    return [allElementString createJSStringRef];
+    return descriptionOfElements(linkedElements);
 }
 
 JSStringRef AccessibilityUIElement::attributesOfChildren()
 {
     Vector<AccessibilityUIElement> children;
     getChildren(children);
-
-    NSMutableString* allElementString = [NSMutableString string];
-    size_t size = children.size();
-    for (size_t i = 0; i < size; ++i) {
-        NSString* attributes = attributesOfElement(children[i].platformUIElement());
-        [allElementString appendFormat:@"%@\n------------\n", attributes];
-    }
-
-    return [allElementString createJSStringRef];
+    return descriptionOfElements(children);
 }
 
 JSStringRef AccessibilityUIElement::allAttributes()
@@ -300,3 +299,89 @@ JSStringRef AccessibilityUIElement::boundsForRange(unsigned location, unsigned l
     return [boundsDescription createJSStringRef];
 }
 
+JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
+{
+    // not yet defined in AppKit... odd
+    NSArray* columnHeadersArray = [m_element accessibilityAttributeValue:@"AXColumnHeaderUIElements"];
+    Vector<AccessibilityUIElement> columnHeadersVector;
+    convertNSArrayToVector(columnHeadersArray, columnHeadersVector);
+    return descriptionOfElements(columnHeadersVector);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfRowHeaders()
+{
+    // this attribute will appear in SnowLeopard
+    NSArray* rowHeadersArray = [m_element accessibilityAttributeValue:@"AXRowHeaderUIElements"];
+    Vector<AccessibilityUIElement> rowHeadersVector;
+    convertNSArrayToVector(rowHeadersArray, rowHeadersVector);
+    return descriptionOfElements(rowHeadersVector);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfColumns()
+{
+    NSArray* columnsArray = [m_element accessibilityAttributeValue:NSAccessibilityColumnsAttribute];
+    Vector<AccessibilityUIElement> columnsVector;
+    convertNSArrayToVector(columnsArray, columnsVector);
+    return descriptionOfElements(columnsVector);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfRows()
+{
+    NSArray* rowsArray = [m_element accessibilityAttributeValue:NSAccessibilityRowsAttribute];
+    Vector<AccessibilityUIElement> rowsVector;
+    convertNSArrayToVector(rowsArray, rowsVector);
+    return descriptionOfElements(rowsVector);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfVisibleCells()
+{
+    // this attribute will appear in SnowLeopard
+    NSArray* cellsArray = [m_element accessibilityAttributeValue:@"AXVisibleCells"];
+    Vector<AccessibilityUIElement> cellsVector;
+    convertNSArrayToVector(cellsArray, cellsVector);
+    return descriptionOfElements(cellsVector);
+}
+
+JSStringRef AccessibilityUIElement::attributesOfHeader()
+{
+    id headerObject = [m_element accessibilityAttributeValue:NSAccessibilityHeaderAttribute];
+    if (!headerObject)
+        return [@"" createJSStringRef];
+    
+    Vector<AccessibilityUIElement> headerVector;
+    headerVector.append(headerObject);
+    return descriptionOfElements(headerVector);
+}
+
+int AccessibilityUIElement::indexInTable()
+{
+    NSNumber* indexNumber = [m_element accessibilityAttributeValue:NSAccessibilityIndexAttribute];
+    if (!indexNumber)
+        return -1;
+    return [indexNumber intValue];
+}
+
+JSStringRef AccessibilityUIElement::rowIndexRange()
+{
+    // will appear in SnowLeopard
+    NSValue* indexRange = [m_element accessibilityAttributeValue:@"AXRowIndexRange"];
+    NSRange range = [indexRange rangeValue];
+    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
+    return [rangeDescription createJSStringRef];
+}
+
+JSStringRef AccessibilityUIElement::columnIndexRange()
+{
+    // will appear in SnowLeopard
+    NSNumber* indexRange = [m_element accessibilityAttributeValue:@"AXColumnIndexRange"];
+    NSRange range = [indexRange rangeValue];
+    NSMutableString* rangeDescription = [NSMutableString stringWithFormat:@"{%d, %d}",range.location, range.length];
+    return [rangeDescription createJSStringRef];    
+}
+
+AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned col, unsigned row)
+{
+    // will appear in SnowLeopard
+    NSArray *colRowArray = [NSArray arrayWithObjects:[NSNumber numberWithUnsignedInt:col], [NSNumber numberWithUnsignedInt:row], nil];
+    return [m_element accessibilityAttributeValue:@"AXCellForColumnAndRow" forParameter:colRowArray];
+}

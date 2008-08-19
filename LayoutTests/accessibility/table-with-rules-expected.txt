@@ -1,0 +1,118 @@
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf
+asdf	asdf
+
+------------------------------------
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+
+AXRole: AXStaticText
+AXSubrole: (null)
+AXRoleDescription: text
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXStaticText>
+AXSize: NSSize: {26, 18}
+AXTitle: 
+AXDescription: 
+AXValue: asdf
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXStaticText>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: <AXStaticText>
+AXEndTextMarker: <AXStaticText>
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+
+
+

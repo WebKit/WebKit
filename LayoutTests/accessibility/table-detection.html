@@ -1,0 +1,74 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body id="body">
+
+    This should be a table because it has a thead
+    <table border=0>
+    <thead><tr><td>asdf</td><td>asdf</td></tr></thead>
+    <tr><td>asdf</td><td>asdf</td></tr>
+    </table>
+
+    This should be a table because cells have borders
+    <table border=1>
+    <tr><td >asdf</td><td>asdf</td></tr>
+    </table>
+
+    This should not be a table because it's cells do not have borders
+    <table style='border: 1px solid black'>
+    <tr><td >asdf</td><td>asdf</td></tr>
+    </table>
+
+    // This should be a table because a cell has a special attribute
+    <table border=0 cellpadding=0>
+    <tr><td abbr="abbr tag">asdf</td><td>asdf</td></tr>
+    </table>
+
+    // This should be a table because a cell has a special attribute
+    <table border=0 cellpadding=0>
+    <tr><td axis="abbr tag">asdf</td><td>asdf</td></tr>
+    </table>
+
+    // This should be a table because a cell has a special attribute
+    <table border=0 cellpadding=0>
+    <tr><td id="test">asdf</td><td>asdf</td></tr>
+    <tr><td headers="test">asdf</td><td>asdf</td></tr>
+    </table>
+
+    // This should be a table because cells have different colors
+    <table border=0 cellpadding=0>
+    <tr><td bgcolor="red">asdf</td><td bgcolor="blue">asdf</td></tr>
+    </table>
+
+    // This should not be a table because cells have different but no spacing
+    <table border=0 cellpadding=0 cellspacing=0>
+    <tr><td style="background-color: red;">asdf</td><td style="background-color: blue;">asdf</td></tr>
+    </table>
+
+    // This should not be a table because cells have the same  colors even though there is spacing
+    <table border=0 cellpadding=0 bgcolor="green" cellspacing=3>
+    <tr><td style="background-color: green;">asdf</td><td style="background-color: green;">asdf</td></tr>
+    </table>
+
+    // this should be a table because it has the "rules" attr
+    <table rules="cols" border=0 cellpadding=0>
+    <tr><td>asdf</td><td>asdf</td></tr>
+    </table>
+
+    <div id="result"></div>
+    
+    <script>
+        if (window.accessibilityController) {
+            var body = document.getElementById("body");
+            body.focus();
+            var table = accessibilityController.focusedElement;
+            
+            result.innerText += "--------------------------\n\n"; 
+            result.innerText += table.attributesOfChildren() + "\n\n"; 
+            result.innerText += "--------------------------\n\n"; 
+        }
+    </script>
+</body>
+</html>

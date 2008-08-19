@@ -1,3 +1,46 @@
+2008-08-19  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add snowleopard platform in layout tests
+
+        Added support for accessing the attributes of
+        accessibility tables through the accessibility controller
+        in DumpRenderTree
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (attributesOfColumnHeadersCallback):
+        (attributesOfRowHeadersCallback):
+        (attributesOfColumnsCallback):
+        (attributesOfRowsCallback):
+        (attributesOfVisibleCellsCallback):
+        (attributesOfHeaderCallback):
+        (indexInTableCallback):
+        (rowIndexRangeCallback):
+        (columnIndexRangeCallback):
+        (childAtIndexCallback):
+        (cellForColumnAndRowCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (convertNSArrayToVector):
+        (descriptionOfElements):
+        (AccessibilityUIElement::getLinkedUIElements):
+        (AccessibilityUIElement::getChildren):
+        (AccessibilityUIElement::attributesOfLinkedUIElements):
+        (AccessibilityUIElement::attributesOfChildren):
+        (AccessibilityUIElement::attributesOfColumnHeaders):
+        (AccessibilityUIElement::attributesOfRowHeaders):
+        (AccessibilityUIElement::attributesOfColumns):
+        (AccessibilityUIElement::attributesOfRows):
+        (AccessibilityUIElement::attributesOfVisibleCells):
+        (AccessibilityUIElement::attributesOfHeader):
+        (AccessibilityUIElement::indexInTable):
+        (AccessibilityUIElement::rowIndexRange):
+        (AccessibilityUIElement::columnIndexRange):
+        (AccessibilityUIElement::cellForColumnAndRow):
+        * Scripts/run-webkit-tests:
+
 2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

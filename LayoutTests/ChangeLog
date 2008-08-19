@@ -1,3 +1,38 @@
+2008-08-19  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Tests for Tables through accessibility. Testing covers:
+          Attributes of tables
+          When cells have various cell spans
+          Retrieving cells
+          Detecting tables
+          When tables have multiple sections
+          When tables use the rules attribute
+
+        Tables only work on SnowLeopard, so a snow leopard folder was created
+
+        * accessibility/table-attributes-expected.txt: Added.
+        * accessibility/table-attributes.html: Added.
+        * accessibility/table-cell-spans-expected.txt: Added.
+        * accessibility/table-cell-spans.html: Added.
+        * accessibility/table-cells-expected.txt: Added.
+        * accessibility/table-cells.html: Added.
+        * accessibility/table-detection-expected.txt: Added.
+        * accessibility/table-detection.html: Added.
+        * accessibility/table-sections-expected.txt: Added.
+        * accessibility/table-sections.html: Added.
+        * accessibility/table-with-rules-expected.txt: Added.
+        * accessibility/table-with-rules.html: Added.
+        * platform/mac-snowleopard: Added.
+        * platform/mac-snowleopard/accessibility: Added.
+        * platform/mac-snowleopard/accessibility/table-attributes-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-cell-spans-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-cells-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-detection-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-sections-expected.txt: Added.
+        * platform/mac-snowleopard/accessibility/table-with-rules-expected.txt: Added.
+
 2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=19762

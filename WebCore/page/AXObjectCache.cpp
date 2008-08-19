@@ -33,6 +33,11 @@
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityImageMapLink.h"
 #include "AccessibilityRenderObject.h"
+#include "AccessibilityTable.h"
+#include "AccessibilityTableCell.h"
+#include "AccessibilityTableColumn.h"
+#include "AccessibilityTableHeaderContainer.h"
+#include "AccessibilityTableRow.h"
 #include "RenderObject.h"
 
 #include <wtf/PassRefPtr.h>
@@ -67,6 +72,12 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     if (!obj) {
         if (renderer->isListBox())
             obj = AccessibilityListBox::create(renderer);
+        else if (renderer->isTable())
+            obj = AccessibilityTable::create(renderer);
+        else if (renderer->isTableRow())
+            obj = AccessibilityTableRow::create(renderer);
+        else if (renderer->isTableCell())
+            obj = AccessibilityTableCell::create(renderer);
         else
             obj = AccessibilityRenderObject::create(renderer);
         
@@ -92,6 +103,12 @@ AccessibilityObject* AXObjectCache::get(AccessibilityRole role)
         case ImageMapLinkRole:
             obj = AccessibilityImageMapLink::create();
             break;
+        case ColumnRole:
+            obj = AccessibilityTableColumn::create();
+            break;            
+        case TableHeaderContainerRole:
+            obj = AccessibilityTableHeaderContainer::create();
+            break;            
         default:
             obj = 0;
     }

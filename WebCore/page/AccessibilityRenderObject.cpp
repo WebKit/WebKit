@@ -2098,53 +2098,7 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
         case CheckBoxRole:
         case RadioButtonRole:
             return true;
-        case UnknownRole:
-        case SliderRole:
-        case TabGroupRole:
-        case StaticTextRole:
-        case ScrollAreaRole:
-        case MenuButtonRole:
-        case TableRole:
-        case ApplicationRole:
-        case GroupRole:
-        case RadioGroupRole:
-        case ListRole:
-        case ScrollBarRole:
-        case ValueIndicatorRole:
-        case ImageRole:
-        case MenuBarRole:
-        case MenuRole:
-        case MenuItemRole:
-        case ColumnRole:
-        case RowRole:
-        case ToolbarRole:
-        case BusyIndicatorRole:
-        case ProgressIndicatorRole:
-        case WindowRole:
-        case DrawerRole:
-        case SystemWideRole:
-        case OutlineRole:
-        case IncrementorRole:
-        case BrowserRole:
-        case ComboBoxRole:
-        case SplitGroupRole:
-        case SplitterRole:
-        case ColorWellRole:
-        case GrowAreaRole:
-        case SheetRole:
-        case HelpTagRole:
-        case MatteRole:
-        case RulerRole:
-        case RulerMarkerRole:
-        case LinkRole:
-        case DisclosureTriangleRole:
-        case GridRole:
-        case ImageMapRole:
-        case ListMarkerRole:
-        case WebAreaRole:
-        case HeadingRole:
-        case ListBoxRole:
-        case ListBoxOptionRole:
+        default:
             return false;
     }
     ASSERT_NOT_REACHED();
