@@ -344,6 +344,8 @@ void WebInspectorClient::updateWindowTitle() const
     [self showWindow:nil];
 
     _movingWindows = NO;
+
+    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:WebKitInspectorAttachedKey];
 }
 
 - (void)detach
@@ -358,6 +360,8 @@ void WebInspectorClient::updateWindowTitle() const
     [self showWindow:nil];
 
     _movingWindows = NO;
+
+    [[NSUserDefaults standardUserDefaults] setBool:NO forKey:WebKitInspectorAttachedKey];
 }
 
 - (void)setAttachedWindowHeight:(unsigned)height

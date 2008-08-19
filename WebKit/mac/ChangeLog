@@ -1,3 +1,16 @@
+2008-08-19  Timothy Hatcher  <timothy@apple.com>
+
+        Correctly remembers the attached state of the Web Inspector so
+        it opens in that state for the next window, or next launch.
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.mm:
+        (-[WebInspectorWindowController attach]): Set WebKitInspectorAttachedKey
+        to YES in the user defaults.
+        (-[WebInspectorWindowController detach]): Set WebKitInspectorAttachedKey
+        to NO in the user defaults.
+
 2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
