@@ -4969,21 +4969,15 @@ static BOOL isTextInput(Frame* coreFrame)
     return coreFrame && !coreFrame->selection()->isNone() && coreFrame->selection()->isContentEditable();
 }
 
-// Work around for <rdar://problem/5522011>
-// Some input methods do not properly behave when TSM is in secure input mode
-// which can allow the password to be made visible.  We prevent this by overriding 
-// the active context if a password field is focused.
-- (NSTextInputContext *)inputContext
+static BOOL isInPasswordField(Frame* coreFrame)
 {
-    Frame* coreFrame = core([self _frame]);
-    if (coreFrame && coreFrame->selection()->isInPasswordField())
-        return nil;
-    return [super inputContext];
+    return coreFrame && coreFrame->selection()->isInPasswordField();
 }
 
 - (NSAttributedString *)textStorage
 {
-    if (!isTextInput(core([self _frame]))) {
+    Frame* coreFrame = core([self _frame]);
+    if (!isTextInput(coreFrame) || isInPasswordField(coreFrame)) {
         LOG(TextInput, "textStorage -> nil");
         return nil;
     }
@@ -5068,7 +5062,8 @@ static BOOL isTextInput(Frame* coreFrame)
 - (NSAttributedString *)attributedSubstringFromRange:(NSRange)nsRange
 {
     WebFrame *frame = [self _frame];
-    if (!isTextInput(core(frame))) {
+    Frame* coreFrame = core(frame);
+    if (!isTextInput(coreFrame) || isInPasswordField(coreFrame)) {
         LOG(TextInput, "attributedSubstringFromRange:(%u, %u) -> nil", nsRange.location, nsRange.length);
         return nil;
     }

@@ -1,3 +1,14 @@
+2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19347
+        <rdar://problem/5977562> Input methods do not work after switching to a password field
+        and back.
+
+        * platform/mac/editing/input/secure-input-expected.txt: Added.
+        * platform/mac/editing/input/secure-input.html: Added.
+
 2008-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

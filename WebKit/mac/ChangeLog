@@ -1,3 +1,27 @@
+2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19347
+        <rdar://problem/5977562> Input methods do not work after switching to a password field
+        and back.
+
+        Fix <rdar://problem/5522011> (The content of the password field of Safari is displayed by
+        reconversion) in a different way which doesn't conflict with context caching performed
+        by AppKit.
+
+        This original bug does not really occur in ToT or shipping Safari under Mac OS X 10.5.4,
+        because input methods are disabled in password fields. Attempting to reconvert text typed
+        with Romaji only yields a string of bullets. Still, it is probably better to match Cocoa
+        password field behavior and disable reconversion completely.
+
+        * WebView/WebHTMLView.mm:
+        (isInPasswordField): Factored out code to determine that the current selection is in
+        a password field.
+        (inputContext): Removed a hack that was breaking TSMGetActiveDocument().
+        (-[WebHTMLView attributedSubstringFromRange:]): Check for password fields.
+        (-[WebHTMLView textStorage]): Ditto.
+
 2008-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
