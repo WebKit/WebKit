@@ -490,20 +490,17 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
     // Java instance -> Java instance
     // Everything else -> JavaJSObject
     
-    JSType type = value->type();
-    if (type == NumberType) {
+    if (value->isNumber()) {
         jclass JSObjectClass = env->FindClass ("java/lang/Double");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(D)V");
         if (constructorID != NULL) {
             result = env->NewObject (JSObjectClass, constructorID, (jdouble)value->toNumber(exec));
         }
-    }
-    else if (type == StringType) {
+    } else if (value->isString()) {
         UString stringValue = value->toString(exec);
         JNIEnv *env = getJNIEnv();
         result = env->NewString ((const jchar *)stringValue.data(), stringValue.size());
-    }
-    else if (type == BooleanType) {
+    } else if (value->isBoolean()) {
         jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
         jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");
         if (constructorID != NULL) {
@@ -514,7 +511,7 @@ jobject JavaJSObject::convertValueToJObject (JSValue *value) const
         // Create a JavaJSObject.
         jlong nativeHandle;
         
-        if (type == ObjectType){
+        if (value->isObject()) {
             JSObject *imp = static_cast<JSObject*>(value);
             
             // We either have a wrapper around a Java instance or a JavaScript

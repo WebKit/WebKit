@@ -3214,73 +3214,56 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
-    switch (jsValue->type()) {
-        case BooleanType:
-            aeDesc = [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
-            break;
-        case StringType:
-            aeDesc = [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
-            break;
-        case NumberType: {
-            double value = jsValue->getNumber();
-            int intValue = (int)value;
-            if (value == intValue)
-                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];
-            else
-                aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
-            break;
-        }
-        case ObjectType: {
-            JSObject* object = jsValue->getObject();
-            if (object->inherits(&DateInstance::info)) {
-                DateInstance* date = static_cast<DateInstance*>(object);
-                double ms = 0;
-                int tzOffset = 0;
-                if (date->getTime(ms, tzOffset)) {
-                    CFAbsoluteTime utcSeconds = ms / 1000 - kCFAbsoluteTimeIntervalSince1970;
-                    LongDateTime ldt;
-                    if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
-                        aeDesc = [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
-                }
-            }
-            else if (object->inherits(&JSArray::info)) {
-                static HashSet<JSObject*> visitedElems;
-                if (!visitedElems.contains(object)) {
-                    visitedElems.add(object);
-                    
-                    JSArray* array = static_cast<JSArray*>(object);
-                    aeDesc = [NSAppleEventDescriptor listDescriptor];
-                    unsigned numItems = array->length();
-                    for (unsigned i = 0; i < numItems; ++i)
-                        [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
-                    
-                    visitedElems.remove(object);
-                }
-            }
-            if (!aeDesc) {
-                JSValue* primitive = object->toPrimitive(exec);
-                if (exec->hadException()) {
-                    exec->clearException();
-                    return [NSAppleEventDescriptor nullDescriptor];
-                }
-                return aeDescFromJSValue(exec, primitive);
-            }
-            break;
-        }
-        case UndefinedType:
-            aeDesc = [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
-            break;
-        default:
-            LOG_ERROR("Unknown JavaScript type: %d", jsValue->type());
-            // no break;
-        case UnspecifiedType:
-        case NullType:
-        case GetterSetterType:
-            aeDesc = [NSAppleEventDescriptor nullDescriptor];
-            break;
+    if (jsValue->isBoolean())
+        return [NSAppleEventDescriptor descriptorWithBoolean:jsValue->getBoolean()];
+    if (jsValue->isString())
+        return [NSAppleEventDescriptor descriptorWithString:String(jsValue->getString())];
+    if (jsValue->isNumber()) {
+        double value = jsValue->getNumber();
+        int intValue = value;
+        if (value == intValue)
+            return [NSAppleEventDescriptor descriptorWithDescriptorType:typeSInt32 bytes:&intValue length:sizeof(intValue)];
+        return [NSAppleEventDescriptor descriptorWithDescriptorType:typeIEEE64BitFloatingPoint bytes:&value length:sizeof(value)];
     }
-    
-    return aeDesc;
+    if (jsValue->isObject()) {
+        JSObject* object = jsValue->getObject();
+        if (object->inherits(&DateInstance::info)) {
+            DateInstance* date = static_cast<DateInstance*>(object);
+            double ms = 0;
+            int tzOffset = 0;
+            if (date->getTime(ms, tzOffset)) {
+                CFAbsoluteTime utcSeconds = ms / 1000 - kCFAbsoluteTimeIntervalSince1970;
+                LongDateTime ldt;
+                if (noErr == UCConvertCFAbsoluteTimeToLongDateTime(utcSeconds, &ldt))
+                    return [NSAppleEventDescriptor descriptorWithDescriptorType:typeLongDateTime bytes:&ldt length:sizeof(ldt)];
+            }
+        }
+        else if (object->inherits(&JSArray::info)) {
+            static HashSet<JSObject*> visitedElems;
+            if (!visitedElems.contains(object)) {
+                visitedElems.add(object);
+                
+                JSArray* array = static_cast<JSArray*>(object);
+                aeDesc = [NSAppleEventDescriptor listDescriptor];
+                unsigned numItems = array->length();
+                for (unsigned i = 0; i < numItems; ++i)
+                    [aeDesc insertDescriptor:aeDescFromJSValue(exec, array->get(exec, i)) atIndex:0];
+                
+                visitedElems.remove(object);
+                return aeDesc;
+            }
+        }
+        JSValue* primitive = object->toPrimitive(exec);
+        if (exec->hadException()) {
+            exec->clearException();
+            return [NSAppleEventDescriptor nullDescriptor];
+        }
+        return aeDescFromJSValue(exec, primitive);
+    }
+    if (jsValue->isUndefined())
+        return [NSAppleEventDescriptor descriptorWithTypeCode:cMissingValue];
+    ASSERT(jsValue->isNull());
+    return [NSAppleEventDescriptor nullDescriptor];
 }
 
 - (NSAppleEventDescriptor *)aeDescByEvaluatingJavaScriptFromString:(NSString *)script

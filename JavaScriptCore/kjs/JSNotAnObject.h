@@ -57,7 +57,7 @@ namespace KJS {
 
      private:
         // JSValue methods
-        virtual JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;

@@ -63,12 +63,7 @@ JSPropertyNameIterator::~JSPropertyNameIterator()
     invalidate();
 }
 
-JSType JSPropertyNameIterator::type() const
-{
-    return UnspecifiedType;
-}
-
-JSValue* JSPropertyNameIterator::toPrimitive(ExecState*, JSType) const
+JSValue* JSPropertyNameIterator::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     ASSERT_NOT_REACHED();
     return 0;

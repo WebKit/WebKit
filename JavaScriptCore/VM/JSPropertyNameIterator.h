@@ -42,8 +42,7 @@ namespace KJS {
 
         virtual ~JSPropertyNameIterator();
 
-        virtual JSType type() const;
-        virtual JSValue* toPrimitive(ExecState*, JSType) const;
+        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double&, JSValue*&);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;

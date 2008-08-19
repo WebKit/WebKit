@@ -58,13 +58,13 @@ namespace KJS {
 
     public:
         // Querying the type.
-        JSType type() const;
         bool isUndefined() const;
         bool isNull() const;
         bool isUndefinedOrNull() const;
         bool isBoolean() const;
         bool isNumber() const;
         bool isString() const;
+        bool isGetterSetter() const;
         bool isObject() const;
         bool isObject(const ClassInfo*) const; // FIXME: Merge with inherits.
 
@@ -88,7 +88,8 @@ namespace KJS {
         bool getTruncatedUInt32(uint32_t&) const;
         
         // Basic conversions.
-        JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+        enum PreferredPrimitiveType { NoPreference, PreferNumber, PreferString };
+        JSValue* toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
         bool getPrimitiveNumber(ExecState*, double& number, JSValue*&);
 
         bool toBoolean(ExecState*) const;
@@ -187,7 +188,7 @@ namespace KJS {
 
     inline bool JSValue::getBoolean() const
     {
-        return JSImmediate::isBoolean(this) ? JSImmediate::toBoolean(this) : false;
+        return this == jsBoolean(true);
     }
 
     ALWAYS_INLINE int32_t JSValue::toInt32(ExecState* exec) const

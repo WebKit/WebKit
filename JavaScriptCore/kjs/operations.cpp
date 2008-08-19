@@ -36,83 +36,96 @@
 namespace KJS {
 
 // ECMA 11.9.3
-bool equal(ExecState *exec, JSValue *v1, JSValue *v2)
+bool equal(ExecState* exec, JSValue* v1, JSValue* v2)
 {
-    JSType t1 = v1->type();
-    JSType t2 = v2->type();
-    
-    if (t1 != t2) {
-        if (t1 == UndefinedType)
-            t1 = NullType;
-        if (t2 == UndefinedType)
-            t2 = NullType;
-        
-        if (t1 == BooleanType)
-            t1 = NumberType;
-        if (t2 == BooleanType)
-            t2 = NumberType;
-        
-        if (t1 == NumberType && t2 == StringType) {
-            // use toNumber
-        } else if (t1 == StringType && t2 == NumberType)
-            t1 = NumberType;
-            // use toNumber
-        else {
-            if ((t1 == StringType || t1 == NumberType) && t2 == ObjectType) {
-                v2 = v2->toPrimitive(exec);
-                if (exec->hadException())
-                    return false;
-                return equal(exec, v1, v2);
-            }
-            if (t1 == NullType && t2 == ObjectType)
-                return static_cast<JSObject *>(v2)->masqueradeAsUndefined();
-            if (t1 == ObjectType && (t2 == StringType || t2 == NumberType)) {
-                v1 = v1->toPrimitive(exec);
-                if (exec->hadException())
-                    return false;
-                return equal(exec, v1, v2);
-            }
-            if (t1 == ObjectType && t2 == NullType)
-                return static_cast<JSObject *>(v1)->masqueradeAsUndefined();
-            if (t1 != t2)
-                return false;
-        }
+startOver:
+    if (JSImmediate::areBothImmediateNumbers(v1, v2))
+        return v1 == v2;
+
+    if (v1->isNumber() && v2->isNumber())
+        return v1->uncheckedGetNumber() == v2->uncheckedGetNumber();
+
+    bool s1 = v1->isString();
+    bool s2 = v2->isString();
+    if (s1 && s2)
+        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
+
+    if (v1->isUndefinedOrNull()) {
+        if (v2->isUndefinedOrNull())
+            return true;
+        if (!v2->isObject())
+            return false;
+        return static_cast<JSObject*>(v2)->masqueradeAsUndefined();
     }
-    
-    if (t1 == UndefinedType || t1 == NullType)
-        return true;
-    
-    if (t1 == NumberType) {
+
+    if (v2->isUndefinedOrNull()) {
+        if (!v1->isObject())
+            return false;
+        return static_cast<JSObject*>(v1)->masqueradeAsUndefined();
+    }
+
+    if (v1->isObject()) {
+        if (v2->isObject())
+            return v1 == v2;
+        JSValue* p1 = v1->toPrimitive(exec);
+        if (exec->hadException())
+            return false;
+        v1 = p1;
+        goto startOver;
+    }
+
+    if (v2->isObject()) {
+        JSValue* p2 = v2->toPrimitive(exec);
+        if (exec->hadException())
+            return false;
+        v2 = p2;
+        goto startOver;
+    }
+
+    if (s1 || s2) {
         double d1 = v1->toNumber(exec);
         double d2 = v2->toNumber(exec);
         return d1 == d2;
     }
-    
-    if (t1 == StringType)
-        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
-    
-    if (t1 == BooleanType)
-        return v1->toBoolean(exec) == v2->toBoolean(exec);
-    
-    // types are Object
+
+    if (v1->isBoolean()) {
+        if (v2->isNumber())
+            return v1->getBoolean() == v2->uncheckedGetNumber();
+    } else if (v2->isBoolean()) {
+        if (v1->isNumber())
+            return v1->uncheckedGetNumber() == v2->getBoolean();
+    }
+
     return v1 == v2;
 }
 
 bool strictEqual(JSValue* v1, JSValue* v2)
 {
-    JSType t1 = v1->type();
-    JSType t2 = v2->type();
-    
-    if (t1 != t2)
-        return false;
+    if (JSImmediate::isEitherImmediate(v1, v2)) {
+        if (v1 == v2)
+            return true;
 
-    if (t1 == NumberType)
-        return v1->getNumber() == v2->getNumber();
-    
-    if (t1 == StringType)
-        return static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
-    
-    return v1 == v2; // covers object, boolean, null, and undefined types
+        // The reason we can't just return false here is that 0 === -0,
+        // and while the former is an immediate number, the latter is not.
+        if (v1 == JSImmediate::from(0))
+            return !JSImmediate::isImmediate(v2)
+                && static_cast<JSCell*>(v2)->isNumber()
+                && static_cast<JSNumberCell*>(v2)->value() == 0;
+        return v2 == JSImmediate::from(0)
+            && !JSImmediate::isImmediate(v1)
+            && static_cast<JSCell*>(v1)->isNumber()
+            && static_cast<JSNumberCell*>(v1)->value() == 0;
+    }
+
+    if (static_cast<JSCell*>(v1)->isNumber())
+        return static_cast<JSCell*>(v2)->isNumber()
+            && static_cast<JSNumberCell*>(v1)->value() == static_cast<JSNumberCell*>(v2)->value();
+
+    if (static_cast<JSCell*>(v1)->isString())
+        return static_cast<JSCell*>(v2)->isString()
+            && static_cast<JSString*>(v1)->value() == static_cast<JSString*>(v2)->value();
+
+    return v1 == v2;
 }
 
 JSValue* throwOutOfMemoryError(ExecState* exec)

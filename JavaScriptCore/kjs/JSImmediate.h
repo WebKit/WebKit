@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@webkit.org)
  *
  *  This library is free software; you can redistribute it and/or
@@ -22,7 +22,6 @@
 #ifndef KJS_JS_IMMEDIATE_H
 #define KJS_JS_IMMEDIATE_H
 
-#include "JSType.h"
 #include <wtf/Assertions.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/MathExtras.h>
@@ -40,7 +39,7 @@ namespace KJS {
     class UString;
 
     /*
-     * A JSValue*  is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
+     * A JSValue* is either a pointer to a cell (a heap-allocated object) or an immediate (a type-tagged 
      * value masquerading as a pointer). The low two bits in a JSValue* are available for type tagging
      * because allocator alignment guarantees they will be 00 in cell pointers.
      *
@@ -82,8 +81,9 @@ namespace KJS {
      */
 
     class JSImmediate {
+    private:
         static const uintptr_t TagMask           = 0x3u; // primary tag is 2 bits long
-        static const uintptr_t TagBitTypeInteger = 0x1u; // bottom bit set indicates int, this dominates the following bit
+        static const uintptr_t TagBitTypeInteger = 0x1u; // bottom bit set indicates integer, this dominates the following bit
         static const uintptr_t TagBitTypeOther   = 0x2u; // second bit set indicates immediate other than an integer
 
         static const uintptr_t ExtendedTagMask         = 0xCu; // extended tag holds a further two bits
@@ -103,12 +103,12 @@ namespace KJS {
     public:
         static ALWAYS_INLINE bool isImmediate(const JSValue* v)
         {
-            return (reinterpret_cast<uintptr_t>(v) & TagMask);
+            return reinterpret_cast<uintptr_t>(v) & TagMask;
         }
         
         static ALWAYS_INLINE bool isNumber(const JSValue* v)
         {
-            return (reinterpret_cast<uintptr_t>(v) & TagBitTypeInteger);
+            return reinterpret_cast<uintptr_t>(v) & TagBitTypeInteger;
         }
 
         static ALWAYS_INLINE bool isPositiveNumber(const JSValue* v)
@@ -119,13 +119,13 @@ namespace KJS {
         
         static ALWAYS_INLINE bool isBoolean(const JSValue* v)
         {
-            return ((reinterpret_cast<uintptr_t>(v) & FullTagTypeMask) == FullTagTypeBool);
+            return (reinterpret_cast<uintptr_t>(v) & FullTagTypeMask) == FullTagTypeBool;
         }
         
         static ALWAYS_INLINE bool isUndefinedOrNull(const JSValue* v)
         {
             // Undefined and null share the same value, bar the 'undefined' bit in the extended tag.
-            return ((reinterpret_cast<uintptr_t>(v) & ~ExtendedTagBitUndefined) == FullTagTypeNull);
+            return (reinterpret_cast<uintptr_t>(v) & ~ExtendedTagBitUndefined) == FullTagTypeNull;
         }
 
         static bool isNegative(const JSValue* v)
@@ -147,9 +147,14 @@ namespace KJS {
         static JSValue* from(unsigned long long);
         static JSValue* from(double);
 
+        static ALWAYS_INLINE bool isEitherImmediate(const JSValue* v1, const JSValue* v2)
+        {
+            return (reinterpret_cast<uintptr_t>(v1) | reinterpret_cast<uintptr_t>(v2)) & TagMask;
+        }
+
         static ALWAYS_INLINE bool areBothImmediateNumbers(const JSValue* v1, const JSValue* v2)
         {
-             return (reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagBitTypeInteger);
+            return reinterpret_cast<uintptr_t>(v1) & reinterpret_cast<uintptr_t>(v2) & TagBitTypeInteger;
         }
 
         static ALWAYS_INLINE JSValue* andImmediateNumbers(const JSValue* v1, const JSValue* v2)
@@ -213,14 +218,13 @@ namespace KJS {
         static bool toBoolean(const JSValue*);
         static JSObject* toObject(const JSValue*, ExecState*);
         static UString toString(const JSValue*);
-        static uint32_t toTruncatedUInt32(const JSValue*);
-        static JSType type(const JSValue*);
 
         static bool getUInt32(const JSValue*, uint32_t&);
         static bool getTruncatedInt32(const JSValue*, int32_t&);
         static bool getTruncatedUInt32(const JSValue*, uint32_t&);
 
         static int32_t getTruncatedInt32(const JSValue*);
+        static uint32_t getTruncatedUInt32(const JSValue*);
 
         static JSValue* trueImmediate();
         static JSValue* falseImmediate();
@@ -232,7 +236,6 @@ namespace KJS {
         static JSObject* prototype(const JSValue*, ExecState*);
 
     private:
-        // Immediate values are restricted to a 30 bit signed value.
         static const int minImmediateInt = ((-INT_MAX) - 1) >> IntegerPayloadShift;
         static const int maxImmediateInt = INT_MAX >> IntegerPayloadShift;
         static const unsigned maxImmediateUInt = maxImmediateInt;
@@ -269,7 +272,7 @@ namespace KJS {
         
         static ALWAYS_INLINE bool boolValue(const JSValue* v)
         {
-            return (rawValue(v) & ExtendedPayloadBitBoolValue) != 0;
+            return rawValue(v) & ExtendedPayloadBitBoolValue;
         }
         
         static ALWAYS_INLINE uintptr_t rawValue(const JSValue* v)
@@ -290,12 +293,12 @@ namespace KJS {
     {
         ASSERT(isImmediate(v));
         uintptr_t bits = rawValue(v);
-        return
-            (bits & TagBitTypeInteger) ? (bits != TagBitTypeInteger) : // !0 ints
-            (bits == (FullTagTypeBool | ExtendedPayloadBitBoolValue)); // bool true
+        return (bits & TagBitTypeInteger)
+            ? bits != TagBitTypeInteger // !0 ints
+            : bits == (FullTagTypeBool | ExtendedPayloadBitBoolValue); // bool true
     }
 
-    ALWAYS_INLINE uint32_t JSImmediate::toTruncatedUInt32(const JSValue* v)
+    ALWAYS_INLINE uint32_t JSImmediate::getTruncatedUInt32(const JSValue* v)
     {
         ASSERT(isNumber(v));
         return intValue(v);
@@ -376,7 +379,7 @@ namespace KJS {
             return 0;
 
         // Check for data loss from conversion to int.
-        if ((intVal != d) || (!intVal && signbit(d)))
+        if (intVal != d || (!intVal && signbit(d)))
             return 0;
 
         return makeInt(intVal);
@@ -415,19 +418,6 @@ namespace KJS {
     ALWAYS_INLINE bool JSImmediate::getTruncatedUInt32(const JSValue* v, uint32_t& i)
     {
         return getUInt32(v, i);
-    }
-
-    ALWAYS_INLINE JSType JSImmediate::type(const JSValue* v)
-    {
-        ASSERT(isImmediate(v));
-        
-        if (isNumber(v))
-            return NumberType;
-        if (isBoolean(v))
-            return BooleanType;
-        if (v != undefinedImmediate())
-            return NullType;
-        return UndefinedType;
     }
 
     ALWAYS_INLINE JSValue* jsUndefined()

@@ -1023,35 +1023,15 @@ size_t Heap::protectedObjectCount()
 
 static const char* typeName(JSCell* val)
 {
-    const char* name = "???";
-    switch (val->type()) {
-        case UnspecifiedType:
-            break;
-        case UndefinedType:
-            name = "undefined";
-            break;
-        case NullType:
-            name = "null";
-            break;
-        case BooleanType:
-            name = "boolean";
-            break;
-        case StringType:
-            name = "string";
-            break;
-        case NumberType:
-            name = "number";
-            break;
-        case ObjectType: {
-            const ClassInfo* info = static_cast<JSObject*>(val)->classInfo();
-            name = info ? info->className : "Object";
-            break;
-        }
-        case GetterSetterType:
-            name = "gettersetter";
-            break;
-    }
-    return name;
+    if (val->isString())
+        return "string";
+    if (val->isNumber())
+        return "number";
+    if (val->isGetterSetter())
+        return "gettersetter";
+    ASSERT(val->isObject());
+    const ClassInfo* info = static_cast<JSObject*>(val)->classInfo();
+    return info ? info->className : "Object";
 }
 
 HashCountedSet<const char*>* Heap::protectedObjectTypeCounts()

@@ -1,0 +1,401 @@
+Test for equality of many combinations types.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS 0 == 0 is true
+PASS 0 == 1 is false
+PASS 0 == 0.1 is false
+PASS 0 == -0 is true
+PASS 0 == "0" is true
+PASS 0 == "1" is false
+PASS 0 == "0.1" is false
+PASS 0 == "-0" is true
+PASS 0 == null is false
+PASS 0 == undefined is false
+PASS 0 == false is true
+PASS 0 == true is false
+PASS 0 == new String("0") is true
+PASS 0 == new Object is false
+PASS 1 == 0 is false
+PASS 1 == 1 is true
+PASS 1 == 0.1 is false
+PASS 1 == -0 is false
+PASS 1 == "0" is false
+PASS 1 == "1" is true
+PASS 1 == "0.1" is false
+PASS 1 == "-0" is false
+PASS 1 == null is false
+PASS 1 == undefined is false
+PASS 1 == false is false
+PASS 1 == true is true
+PASS 1 == new String("0") is false
+PASS 1 == new Object is false
+PASS 0.1 == 0 is false
+PASS 0.1 == 1 is false
+PASS 0.1 == 0.1 is true
+PASS 0.1 == -0 is false
+PASS 0.1 == "0" is false
+PASS 0.1 == "1" is false
+PASS 0.1 == "0.1" is true
+PASS 0.1 == "-0" is false
+PASS 0.1 == null is false
+PASS 0.1 == undefined is false
+PASS 0.1 == false is false
+PASS 0.1 == true is false
+PASS 0.1 == new String("0") is false
+PASS 0.1 == new Object is false
+PASS -0 == 0 is true
+PASS -0 == 1 is false
+PASS -0 == 0.1 is false
+PASS -0 == -0 is true
+PASS -0 == "0" is true
+PASS -0 == "1" is false
+PASS -0 == "0.1" is false
+PASS -0 == "-0" is true
+PASS -0 == null is false
+PASS -0 == undefined is false
+PASS -0 == false is true
+PASS -0 == true is false
+PASS -0 == new String("0") is true
+PASS -0 == new Object is false
+PASS "0" == 0 is true
+PASS "0" == 1 is false
+PASS "0" == 0.1 is false
+PASS "0" == -0 is true
+PASS "0" == "0" is true
+PASS "0" == "1" is false
+PASS "0" == "0.1" is false
+PASS "0" == "-0" is false
+PASS "0" == null is false
+PASS "0" == undefined is false
+PASS "0" == false is true
+PASS "0" == true is false
+PASS "0" == new String("0") is true
+PASS "0" == new Object is false
+PASS "1" == 0 is false
+PASS "1" == 1 is true
+PASS "1" == 0.1 is false
+PASS "1" == -0 is false
+PASS "1" == "0" is false
+PASS "1" == "1" is true
+PASS "1" == "0.1" is false
+PASS "1" == "-0" is false
+PASS "1" == null is false
+PASS "1" == undefined is false
+PASS "1" == false is false
+PASS "1" == true is true
+PASS "1" == new String("0") is false
+PASS "1" == new Object is false
+PASS "0.1" == 0 is false
+PASS "0.1" == 1 is false
+PASS "0.1" == 0.1 is true
+PASS "0.1" == -0 is false
+PASS "0.1" == "0" is false
+PASS "0.1" == "1" is false
+PASS "0.1" == "0.1" is true
+PASS "0.1" == "-0" is false
+PASS "0.1" == null is false
+PASS "0.1" == undefined is false
+PASS "0.1" == false is false
+PASS "0.1" == true is false
+PASS "0.1" == new String("0") is false
+PASS "0.1" == new Object is false
+PASS "-0" == 0 is true
+PASS "-0" == 1 is false
+PASS "-0" == 0.1 is false
+PASS "-0" == -0 is true
+PASS "-0" == "0" is false
+PASS "-0" == "1" is false
+PASS "-0" == "0.1" is false
+PASS "-0" == "-0" is true
+PASS "-0" == null is false
+PASS "-0" == undefined is false
+PASS "-0" == false is true
+PASS "-0" == true is false
+PASS "-0" == new String("0") is false
+PASS "-0" == new Object is false
+PASS null == 0 is false
+PASS null == 1 is false
+PASS null == 0.1 is false
+PASS null == -0 is false
+PASS null == "0" is false
+PASS null == "1" is false
+PASS null == "0.1" is false
+PASS null == "-0" is false
+PASS null == null is true
+PASS null == undefined is true
+PASS null == false is false
+PASS null == true is false
+PASS null == new String("0") is false
+PASS null == new Object is false
+PASS undefined == 0 is false
+PASS undefined == 1 is false
+PASS undefined == 0.1 is false
+PASS undefined == -0 is false
+PASS undefined == "0" is false
+PASS undefined == "1" is false
+PASS undefined == "0.1" is false
+PASS undefined == "-0" is false
+PASS undefined == null is true
+PASS undefined == undefined is true
+PASS undefined == false is false
+PASS undefined == true is false
+PASS undefined == new String("0") is false
+PASS undefined == new Object is false
+PASS false == 0 is true
+PASS false == 1 is false
+PASS false == 0.1 is false
+PASS false == -0 is true
+PASS false == "0" is true
+PASS false == "1" is false
+PASS false == "0.1" is false
+PASS false == "-0" is true
+PASS false == null is false
+PASS false == undefined is false
+PASS false == false is true
+PASS false == true is false
+PASS false == new String("0") is true
+PASS false == new Object is false
+PASS true == 0 is false
+PASS true == 1 is true
+PASS true == 0.1 is false
+PASS true == -0 is false
+PASS true == "0" is false
+PASS true == "1" is true
+PASS true == "0.1" is false
+PASS true == "-0" is false
+PASS true == null is false
+PASS true == undefined is false
+PASS true == false is false
+PASS true == true is true
+PASS true == new String("0") is false
+PASS true == new Object is false
+PASS new String("0") == 0 is true
+PASS new String("0") == 1 is false
+PASS new String("0") == 0.1 is false
+PASS new String("0") == -0 is true
+PASS new String("0") == "0" is true
+PASS new String("0") == "1" is false
+PASS new String("0") == "0.1" is false
+PASS new String("0") == "-0" is false
+PASS new String("0") == null is false
+PASS new String("0") == undefined is false
+PASS new String("0") == false is true
+PASS new String("0") == true is false
+PASS new String("0") == new String("0") is false
+PASS new String("0") == new Object is false
+PASS new Object == 0 is false
+PASS new Object == 1 is false
+PASS new Object == 0.1 is false
+PASS new Object == -0 is false
+PASS new Object == "0" is false
+PASS new Object == "1" is false
+PASS new Object == "0.1" is false
+PASS new Object == "-0" is false
+PASS new Object == null is false
+PASS new Object == undefined is false
+PASS new Object == false is false
+PASS new Object == true is false
+PASS new Object == new String("0") is false
+PASS new Object == new Object is false
+PASS 0 === 0 is true
+PASS 0 === 1 is false
+PASS 0 === 0.1 is false
+PASS 0 === -0 is true
+PASS 0 === "0" is false
+PASS 0 === "1" is false
+PASS 0 === "0.1" is false
+PASS 0 === "-0" is false
+PASS 0 === null is false
+PASS 0 === undefined is false
+PASS 0 === false is false
+PASS 0 === true is false
+PASS 0 === new String("0") is false
+PASS 0 === new Object is false
+PASS 1 === 0 is false
+PASS 1 === 1 is true
+PASS 1 === 0.1 is false
+PASS 1 === -0 is false
+PASS 1 === "0" is false
+PASS 1 === "1" is false
+PASS 1 === "0.1" is false
+PASS 1 === "-0" is false
+PASS 1 === null is false
+PASS 1 === undefined is false
+PASS 1 === false is false
+PASS 1 === true is false
+PASS 1 === new String("0") is false
+PASS 1 === new Object is false
+PASS 0.1 === 0 is false
+PASS 0.1 === 1 is false
+PASS 0.1 === 0.1 is true
+PASS 0.1 === -0 is false
+PASS 0.1 === "0" is false
+PASS 0.1 === "1" is false
+PASS 0.1 === "0.1" is false
+PASS 0.1 === "-0" is false
+PASS 0.1 === null is false
+PASS 0.1 === undefined is false
+PASS 0.1 === false is false
+PASS 0.1 === true is false
+PASS 0.1 === new String("0") is false
+PASS 0.1 === new Object is false
+PASS -0 === 0 is true
+PASS -0 === 1 is false
+PASS -0 === 0.1 is false
+PASS -0 === -0 is true
+PASS -0 === "0" is false
+PASS -0 === "1" is false
+PASS -0 === "0.1" is false
+PASS -0 === "-0" is false
+PASS -0 === null is false
+PASS -0 === undefined is false
+PASS -0 === false is false
+PASS -0 === true is false
+PASS -0 === new String("0") is false
+PASS -0 === new Object is false
+PASS "0" === 0 is false
+PASS "0" === 1 is false
+PASS "0" === 0.1 is false
+PASS "0" === -0 is false
+PASS "0" === "0" is true
+PASS "0" === "1" is false
+PASS "0" === "0.1" is false
+PASS "0" === "-0" is false
+PASS "0" === null is false
+PASS "0" === undefined is false
+PASS "0" === false is false
+PASS "0" === true is false
+PASS "0" === new String("0") is false
+PASS "0" === new Object is false
+PASS "1" === 0 is false
+PASS "1" === 1 is false
+PASS "1" === 0.1 is false
+PASS "1" === -0 is false
+PASS "1" === "0" is false
+PASS "1" === "1" is true
+PASS "1" === "0.1" is false
+PASS "1" === "-0" is false
+PASS "1" === null is false
+PASS "1" === undefined is false
+PASS "1" === false is false
+PASS "1" === true is false
+PASS "1" === new String("0") is false
+PASS "1" === new Object is false
+PASS "0.1" === 0 is false
+PASS "0.1" === 1 is false
+PASS "0.1" === 0.1 is false
+PASS "0.1" === -0 is false
+PASS "0.1" === "0" is false
+PASS "0.1" === "1" is false
+PASS "0.1" === "0.1" is true
+PASS "0.1" === "-0" is false
+PASS "0.1" === null is false
+PASS "0.1" === undefined is false
+PASS "0.1" === false is false
+PASS "0.1" === true is false
+PASS "0.1" === new String("0") is false
+PASS "0.1" === new Object is false
+PASS "-0" === 0 is false
+PASS "-0" === 1 is false
+PASS "-0" === 0.1 is false
+PASS "-0" === -0 is false
+PASS "-0" === "0" is false
+PASS "-0" === "1" is false
+PASS "-0" === "0.1" is false
+PASS "-0" === "-0" is true
+PASS "-0" === null is false
+PASS "-0" === undefined is false
+PASS "-0" === false is false
+PASS "-0" === true is false
+PASS "-0" === new String("0") is false
+PASS "-0" === new Object is false
+PASS null === 0 is false
+PASS null === 1 is false
+PASS null === 0.1 is false
+PASS null === -0 is false
+PASS null === "0" is false
+PASS null === "1" is false
+PASS null === "0.1" is false
+PASS null === "-0" is false
+PASS null === null is true
+PASS null === undefined is false
+PASS null === false is false
+PASS null === true is false
+PASS null === new String("0") is false
+PASS null === new Object is false
+PASS undefined === 0 is false
+PASS undefined === 1 is false
+PASS undefined === 0.1 is false
+PASS undefined === -0 is false
+PASS undefined === "0" is false
+PASS undefined === "1" is false
+PASS undefined === "0.1" is false
+PASS undefined === "-0" is false
+PASS undefined === null is false
+PASS undefined === undefined is true
+PASS undefined === false is false
+PASS undefined === true is false
+PASS undefined === new String("0") is false
+PASS undefined === new Object is false
+PASS false === 0 is false
+PASS false === 1 is false
+PASS false === 0.1 is false
+PASS false === -0 is false
+PASS false === "0" is false
+PASS false === "1" is false
+PASS false === "0.1" is false
+PASS false === "-0" is false
+PASS false === null is false
+PASS false === undefined is false
+PASS false === false is true
+PASS false === true is false
+PASS false === new String("0") is false
+PASS false === new Object is false
+PASS true === 0 is false
+PASS true === 1 is false
+PASS true === 0.1 is false
+PASS true === -0 is false
+PASS true === "0" is false
+PASS true === "1" is false
+PASS true === "0.1" is false
+PASS true === "-0" is false
+PASS true === null is false
+PASS true === undefined is false
+PASS true === false is false
+PASS true === true is true
+PASS true === new String("0") is false
+PASS true === new Object is false
+PASS new String("0") === 0 is false
+PASS new String("0") === 1 is false
+PASS new String("0") === 0.1 is false
+PASS new String("0") === -0 is false
+PASS new String("0") === "0" is false
+PASS new String("0") === "1" is false
+PASS new String("0") === "0.1" is false
+PASS new String("0") === "-0" is false
+PASS new String("0") === null is false
+PASS new String("0") === undefined is false
+PASS new String("0") === false is false
+PASS new String("0") === true is false
+PASS new String("0") === new String("0") is false
+PASS new String("0") === new Object is false
+PASS new Object === 0 is false
+PASS new Object === 1 is false
+PASS new Object === 0.1 is false
+PASS new Object === -0 is false
+PASS new Object === "0" is false
+PASS new Object === "1" is false
+PASS new Object === "0.1" is false
+PASS new Object === "-0" is false
+PASS new Object === null is false
+PASS new Object === undefined is false
+PASS new Object === false is false
+PASS new Object === true is false
+PASS new Object === new String("0") is false
+PASS new Object === new Object is false
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

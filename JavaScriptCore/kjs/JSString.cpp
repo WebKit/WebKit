@@ -30,7 +30,7 @@
 
 namespace KJS {
 
-JSValue* JSString::toPrimitive(ExecState*, JSType) const
+JSValue* JSString::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     return const_cast<JSString*>(this);
 }
@@ -107,6 +107,12 @@ bool JSString::getOwnPropertySlot(ExecState* exec, unsigned propertyName, Proper
     if (getStringPropertySlot(exec, propertyName, slot))
         return true;
     return JSString::getOwnPropertySlot(exec, Identifier::from(exec, propertyName), slot);
+}
+
+bool JSString::isString() const
+{
+    // FIXME: Change JSCell::isString to a non-virtual implementation like the one in Machine::isJSString.
+    return true;
 }
 
 JSString* jsString(ExecState* exec, const char* s)

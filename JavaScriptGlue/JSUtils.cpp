@@ -200,23 +200,21 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
 
     CFTypeRef result = 0;
 
-    switch (inValue->type())
-    {
-        case BooleanType:
+        if (inValue->isBoolean())
             {
                 result = inValue->toBoolean(exec) ? kCFBooleanTrue : kCFBooleanFalse;
                 RetainCFType(result);
+                return result;
             }
-            break;
 
-        case StringType:
+        if (inValue->isString())
             {
                 UString uString = inValue->toString(exec);
                 result = UStringToCFString(uString);
+                return result;
             }
-            break;
 
-        case NumberType:
+        if (inValue->isNumber())
             {
                 double number1 = inValue->toNumber(exec);
                 double number2 = (double)inValue->toInteger(exec);
@@ -229,10 +227,10 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                 {
                     result = CFNumberCreate(0, kCFNumberDoubleType, &number1);
                 }
+                return result;
             }
-            break;
 
-        case ObjectType:
+        if (inValue->isObject())
             {
                             if (inValue->isObject(&UserObjectImp::info)) {
                                 UserObjectImp* userObjectImp = static_cast<UserObjectImp *>(inValue);
@@ -342,21 +340,17 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
                         }
                     }
                 }
+                return result;
             }
-            break;
 
-        case NullType:
-        case UndefinedType:
-        case UnspecifiedType:
+    if (inValue->isUndefinedOrNull())
+        {
             result = RetainCFType(GetCFNull());
-            break;
+            return result;
+        }
 
-        default:
-            fprintf(stderr, "KJSValueToCFType: wrong value type %d\n", inValue->type());
-            break;
-    }
-
-    return result;
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 CFTypeRef KJSValueToCFType(JSValue *inValue, ExecState *exec)

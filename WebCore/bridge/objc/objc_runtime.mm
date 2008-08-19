@@ -209,16 +209,6 @@ void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*)
 {
 }
 
-JSType ObjcFallbackObjectImp::type() const
-{
-    id targetObject = _instance->getObject();
-    
-    if ([targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
-        return ObjectType;
-    
-    return UndefinedType;
-}
-
 static JSValue* callObjCFallbackObject(ExecState* exec, JSObject* function, JSValue* thisValue, const ArgList& args)
 {
     if (!thisValue->isObject(&RuntimeObjectImp::s_info))
@@ -267,9 +257,9 @@ bool ObjcFallbackObjectImp::deleteProperty(ExecState*, const Identifier&)
     return false;
 }
 
-JSValue* ObjcFallbackObjectImp::defaultValue(ExecState* exec, JSType hint) const
+JSValue* ObjcFallbackObjectImp::defaultValue(ExecState* exec, PreferredPrimitiveType) const
 {
-    return _instance->getValueOfUndefinedField(exec, _item, hint);
+    return _instance->getValueOfUndefinedField(exec, _item);
 }
 
 bool ObjcFallbackObjectImp::toBoolean(ExecState *) const

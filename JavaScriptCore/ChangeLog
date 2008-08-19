@@ -1,3 +1,123 @@
+2008-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - eliminate JSValue::type()
+
+        This will make it slightly easier to change the JSImmediate design without
+        having to touch so many call sites.
+
+        SunSpider says this change is a wash (looked like a slight speedup, but not
+        statistically significant).
+
+        * API/JSStringRef.cpp: Removed include of JSType.h.
+        * API/JSValueRef.cpp: Removed include of JSType.h.
+        (JSValueGetType): Replaced use of JSValue::type() with
+        JSValue::is functions.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/JSPropertyNameIterator.cpp: Removed type() implementation.
+        (KJS::JSPropertyNameIterator::toPrimitive): Changed to take
+        PreferredPrimitiveType argument instead of JSType.
+        * VM/JSPropertyNameIterator.h: Ditto.
+
+        * VM/Machine.cpp:
+        (KJS::fastIsNumber): Updated for name change.
+        (KJS::fastToInt32): Ditto.
+        (KJS::fastToUInt32): Ditto.
+        (KJS::jsAddSlowCase): Updated toPrimitive caller for change from
+        JSType to PreferredPrimitiveType.
+        (KJS::jsAdd): Replaced calls to JSValue::type() with calls to
+        JSValue::isString().
+        (KJS::jsTypeStringForValue): Replaced calls to JSValue::type()
+        with multiple calls to JSValue::is -- we could make this a
+        virtual function instead if we want to have faster performance.
+        (KJS::Machine::privateExecute): Renamed JSImmediate::toTruncatedUInt32
+        to JSImmediate::getTruncatedUInt32 for consistency with other functions.
+        Changed two calls of JSValue::type() to JSValue::isString().
+
+        * kjs/GetterSetter.cpp:
+        (KJS::GetterSetter::toPrimitive): Changed to take
+        PreferredPrimitiveType argument instead of JSType.
+        (KJS::GetterSetter::isGetterSetter): Added.
+        * kjs/GetterSetter.h:
+
+        * kjs/JSCell.cpp:
+        (KJS::JSCell::isString): Added.
+        (KJS::JSCell::isGetterSetter): Added.
+        (KJS::JSCell::isObject): Added.
+
+        * kjs/JSCell.h: Eliminated type function. Added isGetterSetter.
+        Made isString and isObject virtual. Changed toPrimitive to take
+        PreferredPrimitiveType argument instead of JSType.
+        (KJS::JSCell::isNumber): Use Heap::isNumber for faster performance.
+        (KJS::JSValue::isGetterSetter): Added.
+        (KJS::JSValue::toPrimitive): Changed to take
+        PreferredPrimitiveType argument instead of JSType.
+
+        * kjs/JSImmediate.h: Removed JSValue::type() and replaced
+        JSValue::toTruncatedUInt32 with JSValue::getTruncatedUInt32.
+        (KJS::JSImmediate::isEitherImmediate): Added.
+
+        * kjs/JSNotAnObject.cpp:
+        (KJS::JSNotAnObject::toPrimitive): Changed to take
+        PreferredPrimitiveType argument instead of JSType.
+        * kjs/JSNotAnObject.h: Ditto.
+        * kjs/JSNumberCell.cpp:
+        (KJS::JSNumberCell::toPrimitive): Ditto.
+        * kjs/JSNumberCell.h:
+        (KJS::JSNumberCell::toInt32): Renamed from fastToInt32. There's no
+        other "slow" version of this once you have a JSNumberCell, so there's
+        no need for "fast" in the name. It's a feature that this hides the
+        base class toInt32, which does the same job less efficiently (and has
+        an additional ExecState argument).
+        (KJS::JSNumberCell::toUInt32): Ditto.
+
+        * kjs/JSObject.cpp:
+        (KJS::callDefaultValueFunction): Use isGetterSetter instead of type.
+        (KJS::JSObject::getPrimitiveNumber): Use PreferredPrimitiveType.
+        (KJS::JSObject::defaultValue): Ditto.
+        (KJS::JSObject::defineGetter): Use isGetterSetter.
+        (KJS::JSObject::defineSetter): Ditto.
+        (KJS::JSObject::lookupGetter): Ditto.
+        (KJS::JSObject::lookupSetter): Ditto.
+        (KJS::JSObject::toNumber): Use PreferredPrimitiveType.
+        (KJS::JSObject::toString): Ditto.
+        (KJS::JSObject::isObject): Added.
+
+        * kjs/JSObject.h:
+        (KJS::JSObject::inherits): Call the isObject from JSCell; it's now
+        hidden by our override of isObject.
+        (KJS::JSObject::getOwnPropertySlotForWrite): Use isGetterSetter
+        instead of type.
+        (KJS::JSObject::getOwnPropertySlot): Ditto.
+        (KJS::JSObject::toPrimitive): Use PreferredPrimitiveType.
+
+        * kjs/JSString.cpp:
+        (KJS::JSString::toPrimitive): Use PreferredPrimitiveType.
+        (KJS::JSString::isString): Added.
+        * kjs/JSString.h: Ditto.
+
+        * kjs/JSValue.h: Removed type(), added isGetterSetter(). Added
+        PreferredPrimitiveType enum and used it as the argument for the
+        toPrimitive function.
+        (KJS::JSValue::getBoolean): Simplified a bit an removed a branch.
+
+        * kjs/collector.cpp:
+        (KJS::typeName): Changed to use JSCell::is functions instead of
+        calling JSCell::type.
+
+        * kjs/collector.h:
+        (KJS::Heap::isNumber): Renamed from fastIsNumber.
+
+        * kjs/nodes.h: Added now-needed include of JSType, since the type
+        is used here to record types of values in the tree.
+
+        * kjs/operations.cpp:
+        (KJS::equal): Rewrote to no longer depend on type().
+        (KJS::strictEqual): Ditto.
+
 2008-08-18  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

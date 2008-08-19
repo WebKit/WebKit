@@ -135,7 +135,7 @@ bool UserObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& proper
         return true;
     } else {
         JSValue *kjsValue = toPrimitive(exec);
-        if (kjsValue->type() != NullType && kjsValue->type() != UndefinedType) {
+        if (!kjsValue->isUndefinedOrNull()) {
             JSObject *kjsObject = kjsValue->toObject(exec);
             if (kjsObject->getPropertySlot(exec, propertyName, slot))
                 return true;
@@ -163,7 +163,7 @@ JSUserObject* UserObjectImp::GetJSUserObject() const
     return fJSUserObject;
 }
 
-JSValue *UserObjectImp::toPrimitive(ExecState *exec, JSType preferredType) const
+JSValue *UserObjectImp::toPrimitive(ExecState *exec, PreferredPrimitiveType) const
 {
     JSValue *result = jsUndefined();
     JSUserObject* jsObjPtr = KJSValueToJSObject(toObject(exec), exec);

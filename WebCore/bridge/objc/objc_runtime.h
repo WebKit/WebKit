@@ -105,9 +105,8 @@ private:
     virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
     virtual CallType getCallData(CallData&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
-    virtual JSValue* defaultValue(ExecState*, JSType hint) const;
+    virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
 
-    virtual JSType type() const;
     virtual bool toBoolean(ExecState*) const;
 
     virtual const ClassInfo* classInfo() const { return &info; }

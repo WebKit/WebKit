@@ -318,7 +318,7 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
     }
 }
 
-JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier& property, JSType) const
+JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifier& property) const
 {
     JSValue* result = jsUndefined();
     
@@ -343,23 +343,17 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
     return result;
 }
 
-JSValue* ObjcInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* ObjcInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    switch (hint) {
-    case StringType:
+    if (hint == JSValue::PreferString)
         return stringValue(exec);
-    case NumberType:
+    if (hint == JSValue::PreferNumber)
         return numberValue(exec);
-    case BooleanType:
-        return booleanValue();
-    case UnspecifiedType:
-        if ([_instance.get() isKindOfClass:[NSString class]])
-            return stringValue(exec);
-        if ([_instance.get() isKindOfClass:[NSNumber class]])
-            return numberValue(exec);
-    default:
-        return valueOf(exec);
-    }
+    if ([_instance.get() isKindOfClass:[NSString class]])
+        return stringValue(exec);
+    if ([_instance.get() isKindOfClass:[NSNumber class]])
+        return numberValue(exec);
+    return valueOf(exec);
 }
 
 JSValue* ObjcInstance::stringValue(ExecState* exec) const

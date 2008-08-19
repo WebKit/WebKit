@@ -37,7 +37,7 @@ namespace KJS {
 ASSERT_CLASS_FITS_IN_CELL(JSNotAnObject);
 
 // JSValue methods
-JSValue* JSNotAnObject::toPrimitive(ExecState* exec, JSType) const
+JSValue* JSNotAnObject::toPrimitive(ExecState* exec, PreferredPrimitiveType) const
 {
     UNUSED_PARAM(exec);
     ASSERT(exec->hadException() && exec->exception() == m_exception);

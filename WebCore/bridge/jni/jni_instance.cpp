@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -280,24 +280,19 @@ JSValue *JavaInstance::invokeMethod (ExecState *exec, const MethodList &methodLi
     return resultValue;
 }
 
-JSValue* JavaInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* JavaInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == StringType)
+    if (hint == JSValue::PreferString)
         return stringValue(exec);
-    if (hint == NumberType)
+    if (hint == JSValue::PreferNumber)
         return numberValue(exec);
-    if (hint == BooleanType)
+    JavaClass *aClass = static_cast<JavaClass*>(getClass());
+    if (aClass->isStringClass())
+        return stringValue(exec);
+    if (aClass->isNumberClass())
+        return numberValue(exec);
+    if (aClass->isBooleanClass())
         return booleanValue();
-    if (hint == UnspecifiedType) {
-        JavaClass *aClass = static_cast<JavaClass*>(getClass());
-        if (aClass->isStringClass())
-            return stringValue(exec);
-        if (aClass->isNumberClass())
-            return numberValue(exec);
-        if (aClass->isBooleanClass())
-            return booleanValue();
-    }
-    
     return valueOf(exec);
 }
 

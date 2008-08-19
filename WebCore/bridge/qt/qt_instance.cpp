@@ -285,14 +285,12 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
         return throwError(exec, TypeError, "not a function");
 }
 
-JSValue* QtInstance::defaultValue(ExecState* exec, JSType hint) const
+JSValue* QtInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == StringType)
+    if (hint == PreferString)
         return stringValue(exec);
-    if (hint == NumberType)
+    if (hint == PreferNumber)
         return numberValue(exec);
-    if (hint == BooleanType)
-        return booleanValue();
     return valueOf(exec);
 }
 

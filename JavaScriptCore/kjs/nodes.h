@@ -28,6 +28,7 @@
 
 #include "Error.h"
 #include "JSString.h"
+#include "JSType.h"
 #include "LabelStack.h"
 #include "Opcode.h"
 #include "RegisterID.h"

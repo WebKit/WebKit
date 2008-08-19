@@ -1,3 +1,60 @@
+2008-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - eliminate JSValue::type()
+
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::defaultValue): Take PreferredPrimitiveType
+        argument instead of JSType argument. Removed unneeded code to handle
+        boolean, since that's never passed.
+        * bridge/c/c_instance.h: Ditto.
+
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant): Use JSValue::is functions
+        instead of JSValue::type(). Removed unneeded code to handle
+        "unspecified".
+
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::defaultValue): Take PreferredPrimitiveType argument
+        instead of JSType argument. Removed unneeded code to handle boolean.
+        * bridge/jni/jni_instance.h: Ditto.
+
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::convertValueToJObject): Use JSValue::is functions
+        instead of JSValue::type().
+
+        * bridge/objc/objc_instance.h: Take PreferredPrimitiveType argument
+        instead of JSType argument. Removed unused argument.
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::getValueOfUndefinedField): Removed unused argument.
+        (ObjcInstance::defaultValue): Take PreferredPrimitiveType argument
+        instead of JSType argument. Removed unneeded code to handle boolean
+        and another dead code path for unknown types.
+
+        * bridge/objc/objc_runtime.h: Take PreferredPrimitiveType argument
+        instead of JSType argument. Removed override of type() that caused
+        the fallback object to return "UndefinedType" when there is no
+        invokeUndefinedMethodFromWebScript:withArguments: method defined.
+        That didn't accomplish much, since most checks for undefined don't
+        ever call type().
+        * bridge/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::defaultValue): Ditto.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtInstance::defaultValue): Take PreferredPrimitiveType
+        argument instead of JSType argument. Removed unneeded code to handle
+        boolean.
+        * bridge/qt/qt_instance.h: Ditto.
+
+        * bridge/runtime.h:
+        (KJS::Bindings::Instance::getValueOfUndefinedField): Removed
+        unsed argument.
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::defaultValue): Take PreferredPrimitiveType
+        argument instead of JSType argument.
+        * bridge/runtime_object.h: Ditto.
+
 2008-08-18  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.

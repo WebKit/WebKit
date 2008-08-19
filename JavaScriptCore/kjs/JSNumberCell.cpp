@@ -23,18 +23,12 @@
 #include "config.h"
 #include "JSNumberCell.h"
 
-#include "JSType.h"
 #include "NumberObject.h"
 #include "ustring.h"
 
 namespace KJS {
 
-JSType JSNumberCell::type() const
-{
-    return NumberType;
-}
-
-JSValue* JSNumberCell::toPrimitive(ExecState*, JSType) const
+JSValue* JSNumberCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
     return const_cast<JSNumberCell*>(this);
 }

@@ -31,7 +31,6 @@
 #include "APICast.h"
 #include "JSCallbackObject.h"
 
-#include <kjs/JSType.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/JSString.h>
 #include <kjs/operations.h>
@@ -46,23 +45,18 @@
 JSType JSValueGetType(JSContextRef, JSValueRef value)
 {
     KJS::JSValue* jsValue = toJS(value);
-    switch (jsValue->type()) {
-        case KJS::UndefinedType:
-            return kJSTypeUndefined;
-        case KJS::NullType:
-            return kJSTypeNull;
-        case KJS::BooleanType:
-            return kJSTypeBoolean;
-        case KJS::NumberType:
-            return kJSTypeNumber;
-        case KJS::StringType:
-            return kJSTypeString;
-        case KJS::ObjectType:
-            return kJSTypeObject;
-        default:
-            ASSERT(!"JSValueGetType: unknown type code.\n");
-            return kJSTypeUndefined;
-    }
+    if (jsValue->isUndefined())
+        return kJSTypeUndefined;
+    if (jsValue->isNull())
+        return kJSTypeNull;
+    if (jsValue->isBoolean())
+        return kJSTypeBoolean;
+    if (jsValue->isNumber())
+        return kJSTypeNumber;
+    if (jsValue->isString())
+        return kJSTypeString;
+    ASSERT(jsValue->isObject());
+    return kJSTypeObject;
 }
 
 using namespace KJS; // placed here to avoid conflict between KJS::JSType and JSType, above.

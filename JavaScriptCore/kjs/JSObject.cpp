@@ -67,11 +67,6 @@ void JSObject::mark()
 #endif
 }
 
-JSType JSObject::type() const
-{
-    return ObjectType;
-}
-
 UString JSObject::className() const
 {
     const ClassInfo* info = classInfo();
@@ -234,7 +229,7 @@ static ALWAYS_INLINE JSValue* callDefaultValueFunction(ExecState* exec, const JS
         return exec->exception();
 
     JSValue* result = call(exec, function, callType, callData, const_cast<JSObject*>(object), exec->emptyList());
-    ASSERT(result->type() != GetterSetterType);
+    ASSERT(!result->isGetterSetter());
     if (exec->hadException())
         return exec->exception();
     if (result->isObject())
@@ -244,16 +239,16 @@ static ALWAYS_INLINE JSValue* callDefaultValueFunction(ExecState* exec, const JS
 
 bool JSObject::getPrimitiveNumber(ExecState* exec, double& number, JSValue*& result)
 {
-    result = defaultValue(exec, NumberType);
+    result = defaultValue(exec, PreferNumber);
     number = result->toNumber(exec);
     return !result->isString();
 }
 
 // ECMA 8.6.2.6
-JSValue* JSObject::defaultValue(ExecState* exec, JSType hint) const
+JSValue* JSObject::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
     // Must call toString first for Date objects.
-    if ((hint == StringType) || (hint != NumberType && m_prototype == exec->lexicalGlobalObject()->datePrototype())) {
+    if ((hint == PreferString) || (hint != PreferNumber && m_prototype == exec->lexicalGlobalObject()->datePrototype())) {
         if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().toString))
             return value;
         if (JSValue* value = callDefaultValueFunction(exec, this, exec->propertyNames().valueOf))
@@ -285,7 +280,7 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
 {
     JSValue* object = getDirect(propertyName);
     GetterSetter* getterSetter;
-    if (object && object->type() == GetterSetterType)
+    if (object && object->isGetterSetter())
         getterSetter = static_cast<GetterSetter*>(object);
     else {
         getterSetter = new (exec) GetterSetter;
@@ -300,7 +295,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
 {
     JSValue* object = getDirect(propertyName);
     GetterSetter* getterSetter;
-    if (object && object->type() == GetterSetterType)
+    if (object && object->isGetterSetter())
         getterSetter = static_cast<GetterSetter*>(object);
     else {
         getterSetter = new (exec) GetterSetter;
@@ -317,7 +312,7 @@ JSValue* JSObject::lookupGetter(ExecState*, const Identifier& propertyName)
     while (true) {
         JSValue* value = object->getDirect(propertyName);
         if (value) {
-            if (value->type() != GetterSetterType)
+            if (!value->isGetterSetter())
                 return jsUndefined();
             JSObject* functionObject = static_cast<GetterSetter*>(value)->getter();
             if (!functionObject)
@@ -337,7 +332,7 @@ JSValue* JSObject::lookupSetter(ExecState*, const Identifier& propertyName)
     while (true) {
         JSValue* value = object->getDirect(propertyName);
         if (value) {
-            if (value->type() != GetterSetterType)
+            if (!value->isGetterSetter())
                 return jsUndefined();
             JSObject* functionObject = static_cast<GetterSetter*>(value)->setter();
             if (!functionObject)
@@ -428,7 +423,7 @@ bool JSObject::toBoolean(ExecState*) const
 
 double JSObject::toNumber(ExecState* exec) const
 {
-    JSValue* primitive = toPrimitive(exec, NumberType);
+    JSValue* primitive = toPrimitive(exec, PreferNumber);
     if (exec->hadException()) // should be picked up soon in nodes.cpp
         return 0.0;
     return primitive->toNumber(exec);
@@ -436,7 +431,7 @@ double JSObject::toNumber(ExecState* exec) const
 
 UString JSObject::toString(ExecState* exec) const
 {
-    JSValue* primitive = toPrimitive(exec, StringType);
+    JSValue* primitive = toPrimitive(exec, PreferString);
     if (exec->hadException())
         return "";
     return primitive->toString(exec);
@@ -473,6 +468,11 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue**
         slot.setGetterSlot(getterFunction);
     else
         slot.setUndefined();
+}
+
+bool JSObject::isObject() const
+{
+    return true;
 }
 
 JSObject* constructEmptyObject(ExecState* exec)

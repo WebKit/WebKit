@@ -46,9 +46,7 @@ namespace KJS {
     public:
         double value() const { return m_value; }
 
-        virtual JSType type() const;
-
-        virtual JSValue* toPrimitive(ExecState*, JSType preferred = UnspecifiedType) const;
+        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
@@ -58,8 +56,9 @@ namespace KJS {
         virtual UString toThisString(ExecState*) const;
         virtual JSObject* toThisObject(ExecState*) const;
         virtual JSValue* getJSNumber();
-        int32_t fastToInt32() const;
-        uint32_t fastToUInt32() const;
+
+        int32_t toInt32() const;
+        uint32_t toUInt32() const;
 
         void* operator new(size_t size, ExecState* exec)
         {
@@ -148,7 +147,7 @@ namespace KJS {
         return JSImmediate::isImmediate(this) ? JSImmediate::toDouble(this) : static_cast<const JSNumberCell*>(this)->value();
     }
 
-    inline int32_t JSNumberCell::fastToInt32() const
+    inline int32_t JSNumberCell::toInt32() const
     {
         if (m_value >= -2147483648.0 && m_value < 2147483648.0)
             return static_cast<int32_t>(m_value);
@@ -156,7 +155,7 @@ namespace KJS {
         return JSValue::toInt32SlowCase(m_value, scratch);
     }
 
-    inline uint32_t JSNumberCell::fastToUInt32() const
+    inline uint32_t JSNumberCell::toUInt32() const
     {
         if (m_value >= 0.0 && m_value < 4294967296.0)
             return static_cast<uint32_t>(m_value);

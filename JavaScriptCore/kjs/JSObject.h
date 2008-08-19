@@ -28,7 +28,6 @@
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
 #include "JSNumberCell.h"
-#include "JSType.h"
 #include "PropertyMap.h"
 #include "PropertySlot.h"
 #include "ScopeChain.h"
@@ -67,9 +66,8 @@ namespace KJS {
         JSObject();
 
         virtual void mark();
-        virtual JSType type() const;
 
-        bool inherits(const ClassInfo* classInfo) const { return isObject(classInfo); } // FIXME: Merge with isObject.
+        bool inherits(const ClassInfo* classInfo) const { return JSCell::isObject(classInfo); }
 
         JSValue* prototype() const;
         void setPrototype(JSValue* prototype);
@@ -100,14 +98,14 @@ namespace KJS {
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual bool deleteProperty(ExecState*, unsigned propertyName);
 
-        virtual JSValue* defaultValue(ExecState*, JSType hint) const;
+        virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;
 
         virtual bool implementsHasInstance() const;
         virtual bool hasInstance(ExecState*, JSValue*);
 
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
-        virtual JSValue* toPrimitive(ExecState*, JSType preferredType = UnspecifiedType) const;
+        virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType = NoPreference) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);
         virtual bool toBoolean(ExecState*) const;
         virtual double toNumber(ExecState*) const;
@@ -154,6 +152,8 @@ namespace KJS {
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 
     private:
+        virtual bool isObject() const;
+
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         JSValue* m_prototype;
     };
@@ -257,7 +257,7 @@ inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, Pr
 ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
 {
     if (JSValue** location = getDirectLocation(propertyName, slotIsWriteable)) {
-        if (m_propertyMap.hasGetterSetterProperties() && location[0]->type() == GetterSetterType) {
+        if (m_propertyMap.hasGetterSetterProperties() && location[0]->isGetterSetter()) {
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
         } else
@@ -281,7 +281,7 @@ ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const I
 ALWAYS_INLINE bool JSObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (JSValue** location = getDirectLocation(propertyName)) {
-        if (m_propertyMap.hasGetterSetterProperties() && location[0]->type() == GetterSetterType)
+        if (m_propertyMap.hasGetterSetterProperties() && location[0]->isGetterSetter())
             fillGetterPropertySlot(slot, location);
         else
             slot.setValueSlot(location);
@@ -309,7 +309,7 @@ inline void JSObject::putDirect(ExecState* exec, const Identifier& propertyName,
     m_propertyMap.put(propertyName, jsNumber(exec, value), attr);
 }
 
-inline JSValue* JSObject::toPrimitive(ExecState* exec, JSType preferredType) const
+inline JSValue* JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const
 {
     return defaultValue(exec, preferredType);
 }

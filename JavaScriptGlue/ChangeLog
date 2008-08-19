@@ -1,3 +1,18 @@
+2008-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff.
+
+        - eliminate JSValue::type()
+
+        * JSUtils.cpp:
+        (KJSValueToCFTypeInternal): Replaced uses of JSValue::type() with
+        JSValue::is functions.
+        * UserObjectImp.cpp:
+        (UserObjectImp::getOwnPropertySlot): Ditto.
+        (UserObjectImp::toPrimitive): Take PreferredPrimitiveType argument
+        instead of JSType argument.
+        * UserObjectImp.h: Ditto.
+
 2008-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
