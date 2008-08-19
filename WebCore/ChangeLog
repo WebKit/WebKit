@@ -1,3 +1,18 @@
+2008-08-19  Timothy Hatcher  <timothy@apple.com>
+
+        Surround the expression to be evaluated in parenthesis so the
+        result of the eval is the result of the whole expression not
+        the last potential sub-expression. So evaluating {x: 123}
+        will show the Object not 123.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20428
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/Console.js:
+        (Console.prototype._evalInInspectedWindow): Add parenthesis
+        around the expression. And add couple comments.
+
 2008-08-19 Kevin McCullough <kmccullough@apple.com>
 
         Reviewed by Geoff.
