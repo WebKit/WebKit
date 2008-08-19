@@ -90,10 +90,10 @@ startOver:
 
     if (v1->isBoolean()) {
         if (v2->isNumber())
-            return v1->getBoolean() == v2->uncheckedGetNumber();
+            return static_cast<double>(v1->getBoolean()) == v2->uncheckedGetNumber();
     } else if (v2->isBoolean()) {
         if (v1->isNumber())
-            return v1->uncheckedGetNumber() == v2->getBoolean();
+            return v1->uncheckedGetNumber() == static_cast<double>(v2->getBoolean());
     }
 
     return v1 == v2;
