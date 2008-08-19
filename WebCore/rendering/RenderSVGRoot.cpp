@@ -39,6 +39,8 @@
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
 
+using namespace std;
+
 namespace WebCore {
 
 RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
@@ -65,7 +67,12 @@ void RenderSVGRoot::calcPrefWidths()
 {
     ASSERT(prefWidthsDirty());
 
-    int width = calcReplacedWidth() + paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    int paddingAndBorders = paddingLeft() + paddingRight() + borderLeft() + borderRight();
+    int width = calcReplacedWidth(false) + paddingAndBorders;
+
+    if (style()->maxWidth().isFixed() && style()->maxWidth().value() != undefinedLength)
+        width = min(width, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? paddingAndBorders : 0));
+
     if (style()->width().isPercent() || (style()->width().isAuto() && style()->height().isPercent())) {
         m_minPrefWidth = 0;
         m_maxPrefWidth = width;

@@ -1,3 +1,34 @@
+2008-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/5862634> REGRESSION (3.1.1): In iChat, inline image not resizable past current size after another IM is received
+
+        Test: fast/replaced/max-width-percent.html
+
+        Added an includeMaxWidth boolean to RenderBox::calcReplaedWidth().
+        When false, max-width is not factored into the
+        calculation.
+        Changed RenderReplaced and subclasses' calcPrefWidths() to call
+        calcReplacedWidth(false) and then apply max-width only if it has a
+        fixed, positive value.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::calcReplacedWidth):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::calcReplacedWidth):
+        (WebCore::RenderImage::calcPrefWidths): 
+        * rendering/RenderImage.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::calcPrefWidths):
+        * rendering/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::calcPrefWidths):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::calcReplacedWidth):
+        (WebCore::RenderVideo::calcPrefWidths):
+        * rendering/RenderVideo.h:
+
 2008-08-18  Daniel Macks  <dmacks@netspace.org>
 
         Reviewed by Mark Rowe.

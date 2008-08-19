@@ -1,3 +1,14 @@
+2008-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test for <rdar://problem/5862634> REGRESSION (3.1.1): In iChat, inline image not resizable past current size after another IM is received
+
+        * fast/replaced/max-width-percent.html: Added.
+        * platform/mac/fast/replaced/max-width-percent-expected.checksum: Added.
+        * platform/mac/fast/replaced/max-width-percent-expected.png: Added.
+        * platform/mac/fast/replaced/max-width-percent-expected.txt: Added.
+
 2008-08-18  Simon Fraser  <simon.fraser@apple.com>
 
         Make transition_shorthand_parsing.html a text-only test.

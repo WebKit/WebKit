@@ -1579,11 +1579,11 @@ int RenderBox::calcPercentageHeight(const Length& height)
     return result;
 }
 
-int RenderBox::calcReplacedWidth() const
+int RenderBox::calcReplacedWidth(bool includeMaxWidth) const
 {
     int width = calcReplacedWidthUsing(style()->width());
     int minW = calcReplacedWidthUsing(style()->minWidth());
-    int maxW = style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
+    int maxW = !includeMaxWidth || style()->maxWidth().isUndefined() ? width : calcReplacedWidthUsing(style()->maxWidth());
 
     return max(minW, min(width, maxW));
 }
