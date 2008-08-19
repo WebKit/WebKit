@@ -556,7 +556,10 @@ TreeElement.prototype._attach = function()
             this.onattach(this);
     }
 
-    this.parent._childrenListNode.insertBefore(this._listItemNode, (this.nextSibling ? this.nextSibling._listItemNode : null));
+    var nextSibling = null;
+    if (this.nextSibling && this.nextSibling._listItemNode && this.nextSibling._listItemNode.parentNode === this.parent._childrenListNode)
+        nextSibling = this.nextSibling._listItemNode;
+    this.parent._childrenListNode.insertBefore(this._listItemNode, nextSibling);
     if (this._childrenListNode)
         this.parent._childrenListNode.insertBefore(this._childrenListNode, this._listItemNode.nextSibling);
     if (this.selected)

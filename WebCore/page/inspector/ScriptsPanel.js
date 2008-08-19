@@ -283,13 +283,16 @@ WebInspector.ScriptsPanel.prototype = {
             sourceFrame.removeBreakpoint(breakpoint);
     },
 
-    evaluateInSelectedCallFrame: function(code)
+    evaluateInSelectedCallFrame: function(code, updateInterface)
     {
         var selectedCallFrame = this.sidebarPanes.callstack.selectedCallFrame;
         if (!this._paused || !selectedCallFrame)
             return;
+        if (typeof updateInterface === "undefined")
+            updateInterface = true;
         var result = selectedCallFrame.evaluate(code);
-        this.sidebarPanes.scopechain.update(selectedCallFrame);
+        if (updateInterface)
+            this.sidebarPanes.scopechain.update(selectedCallFrame);
         return result;
     },
 

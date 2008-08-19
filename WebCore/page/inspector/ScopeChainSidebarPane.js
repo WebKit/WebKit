@@ -86,6 +86,7 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                 subtitle = null;
 
             var section = new WebInspector.ObjectPropertiesSection(scopeObject, title, subtitle, emptyPlaceholder, true, extraProperties, WebInspector.ScopeVariableTreeElement);
+            section.editInSelectedCallFrameWhenPaused = true;
             section.pane = this;
 
             if (!foundLocalScope || localScope)
@@ -107,6 +108,7 @@ WebInspector.ScopeVariableTreeElement = function(parentObject, propertyName)
 WebInspector.ScopeVariableTreeElement.prototype = {
     onattach: function()
     {
+        WebInspector.ObjectPropertyTreeElement.prototype.onattach.call(this);
         if (this.hasChildren && this.propertyIdentifier in this.treeOutline.section.pane.callFrame._expandedProperties)
             this.expand();
     },

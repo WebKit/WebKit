@@ -39,12 +39,18 @@ WebInspector.ObjectPropertiesSection = function(object, title, subtitle, emptyPl
     this.ignoreHasOwnProperty = ignoreHasOwnProperty;
     this.extraProperties = extraProperties;
     this.treeElementConstructor = treeElementConstructor || WebInspector.ObjectPropertyTreeElement;
+    this.editable = true;
 
     WebInspector.PropertiesSection.call(this, title, subtitle);
 }
 
 WebInspector.ObjectPropertiesSection.prototype = {
     onpopulate: function()
+    {
+        this.update();
+    },
+
+    update: function()
     {
         var properties = [];
         for (var prop in this.object)
@@ -53,6 +59,8 @@ WebInspector.ObjectPropertiesSection.prototype = {
             for (var prop in this.extraProperties)
                 properties.push(prop);
         properties.sort();
+
+        this.propertiesTreeOutline.removeChildren();
 
         for (var i = 0; i < properties.length; ++i) {
             var object = this.object;
@@ -81,28 +89,8 @@ WebInspector.ObjectPropertyTreeElement = function(parentObject, propertyName)
     this.parentObject = parentObject;
     this.propertyName = propertyName;
 
-    var childObject = this.safePropertyValue(parentObject, propertyName);
-    var isGetter = ("__lookupGetter__" in parentObject && parentObject.__lookupGetter__(propertyName));
-
-    var title = "<span class=\"name\">" + propertyName.escapeHTML() + "</span>: ";
-    if (!isGetter)
-        title += "<span class=\"value\">" + Object.describe(childObject, true).escapeHTML() + "</span>";
-    else
-        // FIXME: this should show something like "getter" once we can change localization (bug 16734).
-        title += "<span class=\"value dimmed\">&mdash;</span>";
-
-    var hasSubProperties = false;
-    var type = typeof childObject;
-    if (childObject && (type === "object" || type === "function")) {
-        for (subPropertyName in childObject) {
-            if (subPropertyName === "__treeElementIdentifier")
-                continue;
-            hasSubProperties = true;
-            break;
-        }
-    }
-
-    TreeElement.call(this, title, null, hasSubProperties);
+    // Pass an empty title, the title gets made later in onattach.
+    TreeElement.call(this, "", null, false);
 }
 
 WebInspector.ObjectPropertyTreeElement.prototype = {
@@ -115,8 +103,10 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     onpopulate: function()
     {
-        if (this.children.length)
+        if (this.children.length && !this.shouldRefreshChildren)
             return;
+
+        this.removeChildren();
 
         var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
         var properties = Object.sortedProperties(childObject);
@@ -125,6 +115,150 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             if (propertyName === "__treeElementIdentifier")
                 continue;
             this.appendChild(new this.treeOutline.section.treeElementConstructor(childObject, propertyName));
+        }
+    },
+
+    ondblclick: function(element, event)
+    {
+        this.startEditing();
+    },
+
+    onattach: function()
+    {
+        this.update();
+    },
+
+    update: function()
+    {
+        var childObject = this.safePropertyValue(this.parentObject, this.propertyName);
+        var isGetter = ("__lookupGetter__" in this.parentObject && this.parentObject.__lookupGetter__(this.propertyName));
+
+        var nameElement = document.createElement("span");
+        nameElement.className = "name";
+        nameElement.textContent = this.propertyName;
+
+        this.valueElement = document.createElement("span");
+        this.valueElement.className = "value";
+        if (!isGetter) {
+            this.valueElement.textContent = Object.describe(childObject, true);
+        } else {
+            // FIXME: this should show something like "getter" (bug 16734).
+            this.valueElement.textContent = "\u2014"; // em dash
+            this.valueElement.addStyleClass("dimmed");
+        }
+
+        this.listItemElement.removeChildren();
+
+        this.listItemElement.appendChild(nameElement);
+        this.listItemElement.appendChild(document.createTextNode(": "));
+        this.listItemElement.appendChild(this.valueElement);
+
+        var hasSubProperties = false;
+        var type = typeof childObject;
+        if (childObject && (type === "object" || type === "function")) {
+            for (subPropertyName in childObject) {
+                if (subPropertyName === "__treeElementIdentifier")
+                    continue;
+                hasSubProperties = true;
+                break;
+            }
+        }
+
+        this.hasChildren = hasSubProperties;
+    },
+
+    updateSiblings: function()
+    {
+        if (this.parent.root)
+            this.treeOutline.section.update();
+        else
+            this.parent.shouldRefreshChildren = true;
+    },
+
+    startEditing: function()
+    {
+        if (WebInspector.isBeingEdited(this.valueElement) || !this.treeOutline.section.editable)
+            return;
+
+        var context = { expanded: this.expanded };
+
+        // Lie about our children to prevent expanding on double click and to collapse subproperties.
+        this.hasChildren = false;
+
+        this.listItemElement.addStyleClass("editing-sub-part");
+
+        WebInspector.startEditing(this.valueElement, this.editingCommitted.bind(this), this.editingCancelled.bind(this), context);
+    },
+
+    editingEnded: function(context)
+    {
+        this.listItemElement.scrollLeft = 0;
+        this.listItemElement.removeStyleClass("editing-sub-part");
+        if (context.expanded)
+            this.expand();
+    },
+
+    editingCancelled: function(element, context)
+    {
+        this.update();
+        this.editingEnded(context);
+    },
+
+    editingCommitted: function(element, userInput, previousContent, context)
+    {
+        if (userInput === previousContent)
+            return this.editingCancelled(element, context); // nothing changed, so cancel
+
+        this.applyExpression(userInput, true);
+
+        this.editingEnded(context);
+    },
+
+    applyExpression: function(expression, updateInterface)
+    {
+        var expressionLength = expression.trimWhitespace().length;
+
+        if (!expressionLength) {
+            // The user deleted everything, so try to delete the property.
+            delete this.parentObject[this.propertyName];
+
+            if (updateInterface) {
+                if (this.propertyName in this.parentObject) {
+                    // The property was not deleted, so update.
+                    this.update();
+                } else {
+                    // The property was deleted, so remove this tree element.
+                    this.parent.removeChild(this);
+                }
+            }
+
+            return;
+        }
+
+        // Surround the expression in parenthesis so the result of the eval is the result
+        // of the whole expression not the last potential sub-expression.
+        expression = "(" + expression + ")";
+
+        try {
+            // Evaluate in the currently selected call frame if the debugger is paused.
+            // Otherwise evaluate in against the inspected window.
+            if (WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
+                var result = WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false);
+            else
+                var result = InspectorController.inspectedWindow().eval(expression);
+
+            // Store the result in the property.
+            this.parentObject[this.propertyName] = result;
+        } catch(e) {
+            // The expression failed so don't change the value. So just update and return.
+            if (updateInterface)
+                this.update();
+            return;
+        }
+
+        if (updateInterface) {
+            // Call updateSiblings since their value might be based on the value that just changed.
+            this.updateSiblings();
         }
     }
 }

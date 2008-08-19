@@ -1,5 +1,56 @@
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
+        Add support for editing DOM properties and scope variables by double
+        clicking a property to enter edit mode.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20415
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertiesSection): Set editable to true by default.
+        (WebInspector.ObjectPropertiesSection.prototype.onpopulate):
+        Factored out code into update, and calls update.
+        (WebInspector.ObjectPropertiesSection.prototype.update): Moved from onpopulate.
+        Call removeChildren since this method can be called multiple times now.
+        (WebInspector.ObjectPropertyTreeElement): Pass an empty title, the title
+        gets made later in onattach.
+        (WebInspector.ObjectPropertyTreeElement.prototype.onpopulate): Don't return early
+        if shouldRefreshChildren is true. Call removeChildren since this method can be
+        called multiple times now.
+        (WebInspector.ObjectPropertyTreeElement.prototype.ondblclick): Call startEditing.
+        (WebInspector.ObjectPropertyTreeElement.prototype.onattach): Call update.
+        (WebInspector.ObjectPropertyTreeElement.prototype.update): Update the title for
+        this element (code moved from the constructor.)
+        (WebInspector.ObjectPropertyTreeElement.prototype.updateSiblings): Recreate all
+        sibling property elements.
+        (WebInspector.ObjectPropertyTreeElement.prototype.startEditing): Call
+        WebInspector.startEditing after rememebring some context.
+        (WebInspector.ObjectPropertyTreeElement.prototype.editingEnded): Reset the scrollLeft
+        for the list element, since it might have scrolled during editing.
+        (WebInspector.ObjectPropertyTreeElement.prototype.editingCancelled): Call editingEnded
+        then restore the state from the context. Then call update to restore the title.
+        (WebInspector.ObjectPropertyTreeElement.prototype.editingCommitted): Call editingCancelled
+        if the user input and the previous input are the same. Call editingEnded, then call applyExpression
+        to commit the user input.
+        (WebInspector.ObjectPropertyTreeElement.prototype.applyExpression): Evaluates the input expression
+        and stores the result on the object for the property name of this element. If the expression is
+        empty, delete the property and remove the tree element.
+        * page/inspector/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update): Set the editInSelectedCallFrameWhenPaused
+        property on each ObjectPropertiesSection.
+        (WebInspector.ScopeVariableTreeElement.prototype.onattach): Call ObjectPropertyTreeElement's onattach
+        since it is now implemented.
+        * page/inspector/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame): Added an updateInterface argument
+        that defaults to true if omitted. It specifies whether to call update on the scope chain.
+        * page/inspector/inspector.css: New styles.
+        * page/inspector/treeoutline.js:
+        (TreeElement.prototype._attach): Fixed an exception that fired when handling the shouldRefreshChildren
+        change. The nextSibling would exist but have a _listItemNode that didn't match the new parent.
+
+2008-08-18  Timothy Hatcher  <timothy@apple.com>
+
         Surround the expression to be evaluated in parenthesis so the
         result of the eval is the result of the whole expression not
         the last potential sub-expression. So evaluating {x: 123}

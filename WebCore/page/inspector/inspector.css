@@ -1208,6 +1208,9 @@ body.inactive .placard.selected {
     -webkit-user-modify: read-write-plaintext-only;
     text-overflow: clip;
     padding-left: 2px;
+    margin-left: -2px;
+    padding-right: 2px;
+    margin-right: -2px;
     margin-bottom: -1px;
     padding-bottom: 1px;
     opacity: 1.0 !important;
@@ -1225,6 +1228,12 @@ body.inactive .placard.selected {
 
 li.editing .swatch, li.editing .enabled-button {
     display: none !important;
+}
+
+.section .properties li.editing-sub-part {
+    padding: 3px 6px 8px 18px;
+    margin: -3px -6px -8px -6px;
+    text-overflow: clip;
 }
 
 .section .properties .overloaded, .section .properties .disabled {
