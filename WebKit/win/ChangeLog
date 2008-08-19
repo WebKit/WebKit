@@ -1,3 +1,10 @@
+2008-08-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix build.
+
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+
 2008-08-14  Steve Falkenburg  <sfalken@apple.com>
 
         Update cache capacities to match values used on Mac.
