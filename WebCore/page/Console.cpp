@@ -143,10 +143,7 @@ static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgLis
 
 void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -172,7 +169,7 @@ void Console::error(ExecState* exec, const ArgList& args)
     if (!m_frame)
         return;
 
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -194,7 +191,7 @@ void Console::info(ExecState* exec, const ArgList& args)
     if (!m_frame)
         return;
 
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -216,7 +213,7 @@ void Console::log(ExecState* exec, const ArgList& args)
     if (!m_frame)
         return;
 
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -235,10 +232,7 @@ void Console::dir(ExecState* exec, const ArgList& args)
     if (args.isEmpty())
         return;
 
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -253,7 +247,7 @@ void Console::assertCondition(bool condition, ExecState* exec, const ArgList& ar
     if (!m_frame)
         return;
 
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -287,10 +281,7 @@ void Console::time(const UString& title)
     if (title.isNull())
         return;
     
-    if (!m_frame)
-        return;
-    
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
     
@@ -301,18 +292,15 @@ void Console::timeEnd(const UString& title)
 {
     if (title.isNull())
         return;
-    
-    if (!m_frame)
-        return;
-    
-    Page* page = m_frame->page();
+
+    Page* page = this->page();
     if (!page)
         return;
-    
+
     double elapsed;
     if (!page->inspectorController()->stopTiming(title, elapsed))
         return;
-    
+
     String message = String(title) + String::format(": %.0fms", elapsed);
     // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19791> We should pass in the real sourceURL here so that the Inspector can show it.
     page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, String());
@@ -320,10 +308,7 @@ void Console::timeEnd(const UString& title)
 
 void Console::group(ExecState* exec, const ArgList& arguments)
 {
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -332,10 +317,7 @@ void Console::group(ExecState* exec, const ArgList& arguments)
 
 void Console::groupEnd()
 {
-    if (!m_frame)
-        return;
-
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -344,10 +326,7 @@ void Console::groupEnd()
 
 void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
 {
-    if (!m_frame)
-        return;
-
-    if (Page* page = m_frame->page())
+    if (Page* page = this->page())
         page->inspectorController()->addProfile(prpProfile);
 }
 
@@ -359,7 +338,7 @@ void Console::warn(ExecState* exec, const ArgList& args)
     if (!m_frame)
         return;
 
-    Page* page = m_frame->page();
+    Page* page = this->page();
     if (!page)
         return;
 
@@ -387,6 +366,14 @@ void Console::reportCurrentException(ExecState* exec)
     JSValue* exception = exec->exception();
     exec->clearException();
     reportException(exec, exception);
+}
+
+Page* Console::page() const
+{
+    if (!m_frame)
+        return 0;
+
+    return m_frame->page();
 }
 
 } // namespace WebCore

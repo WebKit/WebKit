@@ -1,3 +1,26 @@
+2008-08-19 Kevin McCullough <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        -Implement a page() function to extract a common code pattern.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/Console.cpp:
+        (WebCore::Console::addMessage):
+        (WebCore::Console::error):
+        (WebCore::Console::info):
+        (WebCore::Console::log):
+        (WebCore::Console::dir):
+        (WebCore::Console::assertCondition):
+        (WebCore::Console::time):
+        (WebCore::Console::timeEnd):
+        (WebCore::Console::group):
+        (WebCore::Console::groupEnd):
+        (WebCore::Console::finishedProfiling):
+        (WebCore::Console::warn):
+        (WebCore::Console::framePage):
+        * page/Console.h:
+
 2008-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

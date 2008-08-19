@@ -44,6 +44,7 @@ namespace KJS {
 namespace WebCore {
 
     class Frame;
+    class Page;
     class String;
 
     enum MessageSource {
@@ -91,6 +92,8 @@ namespace WebCore {
         void reportException(KJS::ExecState*, KJS::JSValue*);
         void reportCurrentException(KJS::ExecState*);
     private:
+        inline Page* page() const;
+    
         Console(Frame*);
         
         Frame* m_frame;
