@@ -90,6 +90,7 @@
 		932F5BEA0822A1C700736975 /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		937013480CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 937013470CA97E0E00FA14D3 /* pcre_ucp_searchfuncs.cpp */; settings = {COMPILER_FLAGS = "-Wno-sign-compare"; }; };
 		93E26BD408B1514100F85226 /* pcre_xclass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E26BD308B1514100F85226 /* pcre_xclass.cpp */; };
+		9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		95742F650DD11F5A000917FB /* Profile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95742F630DD11F5A000917FB /* Profile.cpp */; };
 		95AB83420DA4322500BC83F3 /* Profiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */; };
 		95AB83560DA43C3000BC83F3 /* ProfileNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */; };
@@ -98,6 +99,7 @@
 		95CD45760E1C4FDD0085358E /* ProfileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95CD45740E1C4FDD0085358E /* ProfileGenerator.cpp */; };
 		95CD45770E1C4FDD0085358E /* ProfileGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 95CD45750E1C4FDD0085358E /* ProfileGenerator.h */; settings = {ATTRIBUTES = (); }; };
 		95E3BC050E1AE68200B2D1C1 /* CallIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 95E3BC040E1AE68200B2D1C1 /* CallIdentifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */; };
 		95FDFA140E22998F0006FB00 /* HeavyProfile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 95FDFA130E22998F0006FB00 /* HeavyProfile.cpp */; };
 		95FDFA160E2299980006FB00 /* HeavyProfile.h in Headers */ = {isa = PBXBuildFile; fileRef = 95FDFA150E2299980006FB00 /* HeavyProfile.h */; };
 		A72700900DAC6BBC00E548D7 /* JSNotAnObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72700780DAC605600E548D7 /* JSNotAnObject.cpp */; };
@@ -592,8 +594,10 @@
 		93F0B3A909BB4DC00068FCE3 /* Parser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Parser.cpp; path = kjs/Parser.cpp; sourceTree = "<group>"; };
 		93F0B3AA09BB4DC00068FCE3 /* Parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Parser.h; path = kjs/Parser.h; sourceTree = "<group>"; };
 		93F1981A08245AAE001E9ABC /* keywords.table */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = text; path = keywords.table; sourceTree = "<group>"; tabWidth = 8; };
+		952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSProfilerPrivate.h; sourceTree = "<group>"; };
 		95742F630DD11F5A000917FB /* Profile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profile.cpp; path = profiler/Profile.cpp; sourceTree = "<group>"; };
 		95742F640DD11F5A000917FB /* Profile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profile.h; path = profiler/Profile.h; sourceTree = "<group>"; };
+		95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSProfilerPrivate.cpp; sourceTree = "<group>"; };
 		95AB832E0DA42CAD00BC83F3 /* Profiler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Profiler.cpp; path = profiler/Profiler.cpp; sourceTree = "<group>"; };
 		95AB832F0DA42CAD00BC83F3 /* Profiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Profiler.h; path = profiler/Profiler.h; sourceTree = "<group>"; };
 		95AB83540DA43B4400BC83F3 /* ProfileNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ProfileNode.cpp; path = profiler/ProfileNode.cpp; sourceTree = "<group>"; };
@@ -903,6 +907,8 @@
 				14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */,
 				1482B7E20A43076000517CFC /* JSObjectRef.cpp */,
 				1482B7E10A43076000517CFC /* JSObjectRef.h */,
+				95988BA90E477BEC00D28D4D /* JSProfilerPrivate.cpp */,
+				952C63AC0E4777D600C13936 /* JSProfilerPrivate.h */,
 				95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */,
 				1482B74C0A43032800517CFC /* JSStringRef.cpp */,
 				1482B74B0A43032800517CFC /* JSStringRef.h */,
@@ -1520,6 +1526,7 @@
 				8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */,
 				C0A272630E50A06300E96E15 /* NotFound.h in Headers */,
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
+				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1625,6 +1632,9 @@
 			productRefGroup = 034768DFFF38A50411DB9C8B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
+			projectRoots = (
+				"",
+			);
 			targets = (
 				932F5BE30822A1C700736975 /* All */,
 				932F5B3E0822A1C700736975 /* JavaScriptCore */,
@@ -1825,6 +1835,7 @@
 				905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */,
 				8613F45A0E3A433E00C948FD /* SamplingTool.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
+				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

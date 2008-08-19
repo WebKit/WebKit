@@ -3,6 +3,7 @@ _JSClassCreate
 _JSClassRelease
 _JSClassRetain
 _JSContextGetGlobalObject
+_JSEndProfiling
 _JSEvaluateScript
 _JSGarbageCollect
 _JSGlobalContextCreate
@@ -32,6 +33,7 @@ _JSPropertyNameArrayGetCount
 _JSPropertyNameArrayGetNameAtIndex
 _JSPropertyNameArrayRelease
 _JSPropertyNameArrayRetain
+_JSStartProfiling
 _JSStringCopyCFString
 _JSStringCreateWithCFString
 _JSStringCreateWithCharacters

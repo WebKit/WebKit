@@ -1,3 +1,25 @@
+2008-08-19  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim and Mark.
+
+        Implement DTrace hooks for dashcode and instruments.
+
+        * API/JSProfilerPrivate.cpp: Added. Expose SPI so that profiling can be
+        turned on from a client.  The DTrace probes were added within the
+        profiler mechanism for performance reasons so the profiler must be
+        started to enable tracing.
+        (JSStartProfiling):
+        (JSEndProfiling):
+        * API/JSProfilerPrivate.h: Added. Ditto.
+        * JavaScriptCore.exp: Exposing the start/stop methods to clients.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/Tracing.d: Define the DTrace probes.
+        * kjs/Tracing.h: Ditto.
+        * profiler/ProfileGenerator.cpp: Implement the DTrace probes in the
+        profiler.
+        (KJS::ProfileGenerator::willExecute):
+        (KJS::ProfileGenerator::didExecute):
+
 2008-08-19  Steve Falkenburg  <sfalken@apple.com>
 
         Build fix.
