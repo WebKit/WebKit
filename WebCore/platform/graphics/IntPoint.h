@@ -59,6 +59,11 @@ class TPoint;
 class wxPoint;
 #endif
 
+#if PLATFORM(SKIA)
+struct SkPoint;
+struct SkIPoint;
+#endif
+
 namespace WebCore {
 
 class IntPoint {
@@ -104,6 +109,12 @@ public:
 #if PLATFORM(WX)
     IntPoint(const wxPoint&);
     operator wxPoint() const;
+#endif
+
+#if PLATFORM(SKIA)
+    IntPoint(const SkIPoint&);
+    operator SkIPoint() const;
+    operator SkPoint() const;
 #endif
 
 private:

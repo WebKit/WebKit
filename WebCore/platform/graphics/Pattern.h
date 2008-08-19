@@ -36,6 +36,9 @@ typedef CGPatternRef PlatformPatternPtr;
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
 typedef cairo_pattern_t* PlatformPatternPtr;
+#elif PLATFORM(SKIA)
+class SkShader;
+typedef SkShader* PlatformPatternPtr;
 #elif PLATFORM(QT)
 #include <QBrush>
 typedef QBrush* PlatformPatternPtr;

@@ -43,6 +43,9 @@ namespace WebCore {
     struct CairoPath;
 }
 typedef WebCore::CairoPath PlatformPath;
+#elif PLATFORM(SKIA)
+class SkPath;
+typedef SkPath PlatformPath;
 #else
 typedef void PlatformPath;
 #endif

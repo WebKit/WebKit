@@ -35,6 +35,9 @@ typedef QMatrix PlatformAffineTransform;
 #elif PLATFORM(CAIRO)
 #include <cairo.h>
 typedef cairo_matrix_t PlatformAffineTransform;
+#elif PLATFORM(SKIA)
+#include "SkMatrix.h"
+typedef SkMatrix PlatformAffineTransform;
 #elif PLATFORM(WX) && USE(WXGC)
 #include <wx/defs.h>
 #include <wx/graphics.h>

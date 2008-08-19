@@ -62,6 +62,8 @@ class wxWindowDC;
 #else
     typedef wxWindowDC PlatformGraphicsContext;
 #endif
+#elif PLATFORM(SKIA)
+typedef class PlatformContextSkia PlatformGraphicsContext;
 #else
 typedef void PlatformGraphicsContext;
 #endif
@@ -73,6 +75,10 @@ typedef struct _GdkEventExpose GdkEventExpose;
 
 #if PLATFORM(WIN)
 typedef struct HDC__* HDC;
+#if !PLATFORM(CG)
+// UInt8 is defined in CoreFoundation/CFBase.h
+typedef unsigned char UInt8;
+#endif
 #endif
 
 #if PLATFORM(QT) && defined(Q_WS_WIN)

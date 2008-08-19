@@ -45,9 +45,7 @@ namespace WebCore {
 
         virtual TextStream& externalRepresentation(TextStream&) const;
 
-#if PLATFORM(CG) || PLATFORM(QT) || PLATFORM(CAIRO)
         virtual bool setup(GraphicsContext*&, const RenderObject*, SVGPaintTargetType, bool isPaintingText) const;
-#endif
 
     private:
         SVGPaintServerSolid();

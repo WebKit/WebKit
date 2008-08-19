@@ -53,6 +53,10 @@ QT_END_NAMESPACE
 class TPoint;
 #endif
 
+#if PLATFORM(SKIA)
+struct SkPoint;
+#endif
+
 namespace WebCore {
 
 class AffineTransform;
@@ -90,7 +94,12 @@ public:
 
 #if PLATFORM(SYMBIAN)
     operator TPoint() const;
-    FloatPoint(const TPoint& );
+    FloatPoint(const TPoint&);
+#endif
+
+#if PLATFORM(SKIA)
+    operator SkPoint() const;
+    FloatPoint(const SkPoint&);
 #endif
 
     FloatPoint matrixTransform(const AffineTransform&) const;

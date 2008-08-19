@@ -50,6 +50,10 @@ struct CGContext;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 
+#if PLATFORM(SKIA)
+class NativeImageSkia;
+#endif
+
 #if PLATFORM(QT)
 #include <QPixmap>
 #endif

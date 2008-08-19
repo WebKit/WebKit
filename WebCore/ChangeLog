@@ -1,3 +1,28 @@
+2008-08-19  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Add the beginnings of Skia graphics support to WebCore
+        as I try to begin the long process of un-forking the changes
+        needed to WebCore to make Andriod's WebCore build.
+
+        I'll follow this up with actual *Skia.cpp files in a separate patch.
+
+        * platform/graphics/AffineTransform.h:
+        * platform/graphics/FloatPoint.h:
+        * platform/graphics/FloatRect.h:
+        * platform/graphics/Gradient.h:
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/ImageBuffer.h:
+        * platform/graphics/ImageSource.h:
+        * platform/graphics/IntPoint.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        * svg/graphics/SVGPaintServerPattern.h:
+        * svg/graphics/SVGPaintServerSolid.h:
+
 2008-08-19  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows build more.
