@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="windows-1251"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
@@ -1861,6 +1861,46 @@
 			</File>
 			<File
 				RelativePath="..\page\AccessibilityRenderObject.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableCell.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableCell.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableColumn.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableColumn.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableHeaderContainer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableHeaderContainer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableRow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\page\AccessibilityTableRow.h"
 				>
 			</File>
 			<File
@@ -3893,19 +3933,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\graphics\Pattern.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\graphics\Pattern.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\graphics\PathTraversalState.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\platform\graphics\PathTraversalState.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\Pattern.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\Pattern.h"
 					>
 				</File>
 				<File

@@ -1,5 +1,11 @@
 2008-08-19  Steve Falkenburg  <sfalken@apple.com>
 
+        Fix Windows build more.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-08-19  Steve Falkenburg  <sfalken@apple.com>
+
         Fix Windows build.
 
         * page/AccessibilityRenderObject.cpp:
