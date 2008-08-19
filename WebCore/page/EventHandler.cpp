@@ -711,6 +711,7 @@ void EventHandler::stopAutoscrollTimer(bool rendererIsBeingDestroyed)
 #if PLATFORM(WIN)
         if (m_panScrollInProgress) {
             m_frame->view()->removePanScrollIcon();
+            m_frame->view()->setCursor(pointerCursor());
         }
 #endif
 
@@ -1628,10 +1629,15 @@ bool EventHandler::needsKeyboardEventDisambiguationQuirks() const
 bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
 {
 #if PLATFORM(WIN) || (PLATFORM(WX) && PLATFORM(WIN_OS))
-    String escKeyId = "U+001B";
-    // If a key is pressed while the autoscroll/panScroll is in progress then we want to stop
-    if (initialKeyEvent.keyIdentifier() == escKeyId && m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) 
-        stopAutoscrollTimer();
+    if (m_frame->page()->mainFrame()->eventHandler()->panScrollInProgress() || m_autoscrollInProgress) {
+        String escKeyId = "U+001B";
+        // If a key is pressed while the autoscroll/panScroll is in progress then we want to stop
+        if (initialKeyEvent.keyIdentifier() == escKeyId && initialKeyEvent.type() == PlatformKeyboardEvent::KeyUp) 
+            stopAutoscrollTimer();
+
+        // If we were in autoscroll/panscroll mode, we swallow the key event
+        return true;
+    }
 #endif
 
     // Check for cases where we are too early for events -- possible unmatched key up
