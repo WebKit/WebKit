@@ -2086,6 +2086,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_groupLevel = 0;
 
         m_times.clear();
+        m_counts.clear();
         m_profiles.clear();
 
 #if ENABLE(DATABASE)
@@ -2561,6 +2562,24 @@ void InspectorController::drawNodeHighlight(GraphicsContext& context) const
     context.translate(-overlayRect.x(), -overlayRect.y());
 
     drawHighlightForBoxes(context, lineBoxRects, contentBox, paddingBox, borderBox, marginBox);
+}
+
+void InspectorController::count(const UString& title, unsigned lineNumber, const String& sourceID)
+{
+    String identifier = String(title) + String::format("@%s:%d", sourceID.utf8().data(), lineNumber);
+    HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
+    int count;
+    if (it == m_counts.end())
+        count = 1;
+    else {
+        count = it->second + 1;
+        m_counts.remove(it);
+    }
+
+    m_counts.add(identifier, count);
+
+    String message = String::format("%s: %d", title.UTF8String().c_str(), count);
+    addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, sourceID);
 }
 
 void InspectorController::startTiming(const UString& title)

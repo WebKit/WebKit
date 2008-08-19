@@ -1,5 +1,22 @@
 2008-08-19  Keishi Hattori  <casey.hattori@gmail.com>
 
+        Added support for console.count in the inspector.
+
+        Reviewed by Geoff Garen.
+
+        * page/Console.cpp:
+        (WebCore::Console::count):
+        * page/Console.h:
+        * page/Console.idl: Added console.count.
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad): Clears m_counts.
+        (WebCore::InspectorController::count): Updates the count number
+        sing "title@source:line" as the identifier, and adds a
+        message to the console.
+        * page/InspectorController.h: Added m_counts.
+
+2008-08-19  Keishi Hattori  <casey.hattori@gmail.com>
+
         Clear console.time timers when changing page.
 
         Reviewed by Geoff Garen.

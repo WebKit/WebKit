@@ -36,6 +36,7 @@ module window {
         [Custom] void warn();
         [Custom] void dir();
         [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
+        void count(in [ConvertUndefinedOrNullToNullString] DOMString title);
 
         [Custom] void profile(in DOMString title);
         [Custom] void profileEnd();

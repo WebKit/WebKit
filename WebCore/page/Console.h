@@ -80,6 +80,7 @@ namespace WebCore {
         void warn(KJS::ExecState*, const KJS::ArgList& arguments);
         void dir(KJS::ExecState*, const KJS::ArgList& arguments);
         void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList& arguments);
+        void count(const KJS::UString& title);
         void profile(KJS::ExecState*, const KJS::ArgList& arguments);
         void profileEnd(KJS::ExecState*, const KJS::ArgList& arguments);
         void time(const KJS::UString& title);
