@@ -80,7 +80,7 @@ namespace WTF {
 
     template<> struct HashTraits<KJS::CallIdentifier> : GenericHashTraits<KJS::CallIdentifier> {
         static const bool emptyValueIsZero = false;
-        static KJS::CallIdentifier emptyValue() { return KJS::CallIdentifier(KJS::UString(), KJS::UString(), 0); }
+        static KJS::CallIdentifier emptyValue() { return KJS::CallIdentifier("", "", 0); }
         static const bool needsDestruction = false;
         static void constructDeletedValue(KJS::CallIdentifier& slot) { new (&slot) KJS::CallIdentifier(KJS::UString(), KJS::UString(), 0); }
         static bool isDeletedValue(const KJS::CallIdentifier& value) { return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == 0; }

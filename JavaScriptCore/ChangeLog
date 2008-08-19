@@ -1,3 +1,15 @@
+2008-08-18  Timothy Hatcher  <timothy@apple.com>
+
+        Fix an assertion when generating a heavy profile because the
+        empty value and deleted value of CallIdentifier where equal.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20439
+
+        Reviewed by Dan Bernstein.
+
+        * profiler/CallIdentifier.h: Make the emptyValue for CallIdentifier
+        use empty strings for URL and function name.
+
 2008-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.
