@@ -1,3 +1,11 @@
+2008-08-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix.
+        Add buildfailed support to stop builds early (preventing inaccurate error messages).
+        Add missing post-build rule to Release.
+
+        * WebCore.vcproj/QTMovieWin.vcproj:
+
 2008-08-19  Keishi Hattori  <casey.hattori@gmail.com>
 
         Added support for console.count in the inspector.
