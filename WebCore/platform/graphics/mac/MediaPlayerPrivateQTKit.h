@@ -135,6 +135,7 @@ private:
     MediaPlayer::ReadyState m_readyState;
     bool m_startedPlaying;
     bool m_isStreaming;
+    bool m_visible;
 #if DRAW_FRAME_RATE
     int  m_frameCountWhilePlaying;
     double m_timeStartedPlaying;

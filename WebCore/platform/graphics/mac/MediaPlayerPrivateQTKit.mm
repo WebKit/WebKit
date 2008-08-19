@@ -167,6 +167,7 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
     , m_readyState(MediaPlayer::DataUnavailable)
     , m_startedPlaying(false)
     , m_isStreaming(false)
+    , m_visible(false)
 #if DRAW_FRAME_RATE
     , m_frameCountWhilePlaying(0)
     , m_timeStartedPlaying(0)
@@ -731,12 +732,14 @@ void MediaPlayerPrivate::setRect(const IntRect& r)
 
 void MediaPlayerPrivate::setVisible(bool b)
 {
-    // MediaPlayer invokes this method only when the visibility state is changing
-    if (b) {
-        if (m_networkState >= MediaPlayer::LoadedMetaData)
-            setUpVideoRendering();
-    } else
-        tearDownVideoRendering();
+    if (m_visible != b) {
+        m_visible = b;
+        if (b) {
+            if (m_networkState >= MediaPlayer::LoadedMetaData)
+                setUpVideoRendering();
+        } else
+            tearDownVideoRendering();
+    }
 }
 
 void MediaPlayerPrivate::repaint()

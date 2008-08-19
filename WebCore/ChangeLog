@@ -1,3 +1,17 @@
+2008-08-19  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for <rdar://problem/6154695> Full-page movies flicker while playing
+        https://bugs.webkit.org/show_bug.cgi?id=20404
+
+        Ignore setVisible() when visibility doesn't change.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivate::MediaPlayerPrivate):
+        (WebCore::MediaPlayerPrivate::setVisible):
+
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug in the Profile view where switching sort order, then
