@@ -1216,7 +1216,17 @@ sub dumpToolDidCrash()
     return 0 unless $isDumpToolOpen;
 
     my $pid = waitpid(-1, WNOHANG);
-    return $pid == $dumpToolPID;
+    return 1 if ($pid == $dumpToolPID);
+
+    # On Mac OS X, crashing may be significantly delayed by crash reporter.
+    return 0 unless isOSX();
+
+    my $tryingToExit = 0;
+    open PS, "ps -o state -p $dumpToolPID |";
+    <PS>; # skip header
+    $tryingToExit = 1 if <PS> =~ /E/;
+    close PS;
+    return $tryingToExit;
 }
 
 sub openHTTPDIfNeeded()
@@ -1735,7 +1745,7 @@ sub readFromDumpToolWithTimer(*;$)
 
     while (1) {
         if (time - $timeOfLastSuccessfulRead > $maximumSecondsWithoutOutput) {
-            $status = "timedOut";
+            $status = dumpToolDidCrash() ? "crashed" : "timedOut";
             last;
         }
 
