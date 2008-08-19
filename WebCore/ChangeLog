@@ -1,3 +1,10 @@
+2008-08-19  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows build.
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
+
 2008-08-19  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.

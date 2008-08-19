@@ -2101,8 +2101,6 @@ bool AccessibilityRenderObject::canSetFocusAttribute() const
         default:
             return false;
     }
-    ASSERT_NOT_REACHED();
-    return false;
 }
 
 bool AccessibilityRenderObject::canSetValueAttribute() const
