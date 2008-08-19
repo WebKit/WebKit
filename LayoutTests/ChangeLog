@@ -1,3 +1,13 @@
+2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=19762
+        Crash in svg/webarchive/svg-cursor-subresources.svg
+
+        Disabling the test while the crash is being investigated.
+
+        * svg/webarchive/svg-cursor-subresources.svg: Removed.
+        * svg/webarchive/svg-cursor-subresources.svg-disabled: Copied from LayoutTests/svg/webarchive/svg-cursor-subresources.svg.
+
 2008-08-18  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Dan Bernstein.
