@@ -1,5 +1,21 @@
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes the Web Inspector flashing white while resizing after
+        highlighting a page element. Calling disableScreenUpdatesUntilFlush
+        when attaching and detaching the Inspector page highlight is bad,
+        since the browser window might not flush again for a while. So screen
+        updates could be disabled for long periods of time, causing backing store
+        flashing while resizing. There is no need to call disableScreenUpdatesUntilFlush
+        when attaching or detaching the child window.
+
+        Reviewed by John Sullivan and Kevin McCullough.
+
+        * WebInspector/WebNodeHighlight.m:
+        (-[WebNodeHighlight attach]): Remove the call to disableScreenUpdatesUntilFlush.
+        (-[WebNodeHighlight detach]): Ditto.
+
+2008-08-19  Timothy Hatcher  <timothy@apple.com>
+
         Correctly remembers the attached state of the Web Inspector so
         it opens in that state for the next window, or next launch.
 

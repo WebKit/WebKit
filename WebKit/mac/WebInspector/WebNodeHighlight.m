@@ -84,8 +84,6 @@ using namespace WebCore;
     if (!_highlightWindow || !_targetView || ![_targetView window])
         return;
 
-    // Disable screen updates so the highlight moves in sync with the view.
-    [[_targetView window] disableScreenUpdatesUntilFlush];
     [[_targetView window] addChildWindow:_highlightWindow ordered:NSWindowAbove];
 
     // Observe both frame-changed and bounds-changed notifications because either one could leave
@@ -116,9 +114,6 @@ using namespace WebCore;
 
     if (_delegate && [_delegate respondsToSelector:@selector(willDetachWebNodeHighlight:)])
         [_delegate willDetachWebNodeHighlight:self];
-
-    // FIXME: is this necessary while detaching? Should test.
-    [[_targetView window] disableScreenUpdatesUntilFlush];
 
     NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
     [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification object:nil];
