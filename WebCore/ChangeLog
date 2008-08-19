@@ -1,5 +1,23 @@
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
+        Fixes a bug in the Profile view where switching sort order, then
+        switching from heavy to tree mode would show the tree in the
+        previous sort order.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20441
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView.prototype._changeView): Call _sortProfile
+        on the next profile before assigning it to this.profile.
+        (WebInspector.ProfileView.prototype._sortData): Call _sortProfile.
+        (WebInspector.ProfileView.prototype._sortProfile): Moves from
+        _sortData and takes a profile argument. If the profile passed in
+        matches the this.profile, then call refresh.
+
+2008-08-18  Timothy Hatcher  <timothy@apple.com>
+
         Changed the default sort order now that heavy view is the default.
         Also fixes a bug where the heavy profile was not sorted at first.
 

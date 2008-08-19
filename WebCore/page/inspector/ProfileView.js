@@ -126,9 +126,11 @@ WebInspector.ProfileView.prototype = {
             return;
 
         if (event.target.selectedIndex == 1 && this.view == "Heavy") {
+            this._sortProfile(this.profile.treeProfile);
             this.profile = this.profile.treeProfile;
             this.view = "Tree"
         } else if (event.target.selectedIndex == 0 && this.view == "Tree") {
+            this._sortProfile(this.profile.heavyProfile);
             this.profile = this.profile.heavyProfile;
             this.view = "Heavy"
         }
@@ -204,6 +206,14 @@ WebInspector.ProfileView.prototype = {
 
     _sortData: function(event)
     {
+        this._sortProfile(this.profile);
+    },
+
+    _sortProfile: function(profile)
+    {
+        if (!profile)
+            return;
+
         var sortOrder = this.dataGrid.sortOrder;
         var sortColumnIdentifier = this.dataGrid.sortColumnIdentifier;
 
@@ -226,9 +236,10 @@ WebInspector.ProfileView.prototype = {
         if (!(sortingFunctionName in this.profile))
             return;
 
-        this.profile[sortingFunctionName]();
+        profile[sortingFunctionName]();
 
-        this.refresh();
+        if (profile === this.profile)
+            this.refresh();
     },
 
     _mouseDownInDataGrid: function(event)
