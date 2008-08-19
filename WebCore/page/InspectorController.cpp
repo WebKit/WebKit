@@ -2085,6 +2085,7 @@ void InspectorController::didCommitLoad(DocumentLoader* loader)
         m_consoleMessages.clear();
         m_groupLevel = 0;
 
+        m_times.clear();
         m_profiles.clear();
 
 #if ENABLE(DATABASE)

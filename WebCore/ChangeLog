@@ -1,3 +1,12 @@
+2008-08-19  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Clear console.time timers when changing page.
+
+        Reviewed by Geoff Garen.
+
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::didCommitLoad):
+
 2008-08-19  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele.
