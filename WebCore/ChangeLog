@@ -1,5 +1,19 @@
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
+        Changed the default sort order now that heavy view is the default.
+        Also fixes a bug where the heavy profile was not sorted at first.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20440
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ProfileView.js:
+        (WebInspector.ProfileView): Changed the default sort column. Also assign
+        heavyProfile to profile, so the sortSelfTimeDescending call happens
+        on the heavy profile before assigning to this.profile.
+
+2008-08-18  Timothy Hatcher  <timothy@apple.com>
+
         Add support for editing DOM properties and scope variables by double
         clicking a property to enter edit mode.
 

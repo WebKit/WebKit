@@ -32,8 +32,8 @@ WebInspector.ProfileView = function(profile)
     this.showSelfTimeAsPercent = true;
     this.showTotalTimeAsPercent = true;
 
-    var columns = { "self": { title: WebInspector.UIString("Self"), width: "72px", sortable: true },
-                    "total": { title: WebInspector.UIString("Total"), width: "72px", sort: "descending", sortable: true },
+    var columns = { "self": { title: WebInspector.UIString("Self"), width: "72px", sort: "descending", sortable: true },
+                    "total": { title: WebInspector.UIString("Total"), width: "72px", sortable: true },
                     "calls": { title: WebInspector.UIString("Calls"), width: "54px", sortable: true },
                     "function": { title: WebInspector.UIString("Function"), disclosure: true, sortable: true } };
 
@@ -75,13 +75,16 @@ WebInspector.ProfileView = function(profile)
     this.resetButton.className = "reset-profile-status-bar-item status-bar-item hidden";
     this.resetButton.addEventListener("click", this._resetClicked.bind(this), false);
 
+    // Default to the heavy profile.
+    profile = profile.heavyProfile;
+
     // By default the profile isn't sorted, so sort based on our default sort
-    // column and direction padded to the DataGrid above.
-    profile.sortTotalTimeDescending();
+    // column and direction added to the DataGrid columns above.
+    profile.sortSelfTimeDescending();
 
     this._updatePercentButton();
 
-    this.profile = profile.heavyProfile;
+    this.profile = profile;
 }
 
 WebInspector.ProfileView.prototype = {
