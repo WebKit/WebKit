@@ -726,6 +726,11 @@ SOURCES += \
     page/AccessibilityListBox.cpp \    
     page/AccessibilityListBoxOption.cpp \    
     page/AccessibilityRenderObject.cpp \    
+    page/AccessibilityTable.cpp \    
+    page/AccessibilityTableCell.cpp \    
+    page/AccessibilityTableColumn.cpp \    
+    page/AccessibilityTableHeaderContainer.cpp \    
+    page/AccessibilityTableRow.cpp \    
     page/AnimationController.cpp \    
     page/AXObjectCache.cpp \
     page/BarInfo.cpp \

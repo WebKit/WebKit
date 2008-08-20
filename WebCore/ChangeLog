@@ -1,3 +1,11 @@
+2008-08-20  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Qt build fix
+
+        * WebCore.pro:
+
 2008-08-20  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.
