@@ -50,12 +50,19 @@ WebInspector.MetricsSidebarPane.prototype = {
         var metricsElement = document.createElement("div");
         metricsElement.className = "metrics";
 
-        function boxPartValue(style, name, suffix)
+        function createBoxPartElement(style, name, side, suffix)
         {
-            var value = style.getPropertyValue(name + suffix);
-            if (value === "" || value === "0px")
+            var value = style.getPropertyValue((name !== "position" ? name + "-" : "") + side + suffix);
+            if (value === "" || (name !== "position" && value === "0px"))
                 value = "\u2012";
-            return value.replace(/px$/, "");
+            else if (name === "position" && value === "auto")
+                value = "\u2012";
+            value = value.replace(/px$/, "");
+
+            var element = document.createElement("div");
+            element.className = side;
+            element.textContent = value;
+            return element;
         }
 
         // Display types for which margin is ignored.
@@ -79,8 +86,13 @@ WebInspector.MetricsSidebarPane.prototype = {
             "table-row-group": true
         };
 
-        var boxes = ["content", "padding", "border", "margin"];
-        var boxLabels = [WebInspector.UIString("content"), WebInspector.UIString("padding"), WebInspector.UIString("border"), WebInspector.UIString("margin")];
+        // Position types for which top, left, bottom and right are ignored.
+        var noPositionType = {
+            "static": true
+        };
+
+        var boxes = ["content", "padding", "border", "margin", "position"];
+        var boxLabels = [WebInspector.UIString("content"), WebInspector.UIString("padding"), WebInspector.UIString("border"), WebInspector.UIString("margin"), WebInspector.UIString("position")];
         var previousBox;
         for (var i = 0; i < boxes.length; ++i) {
             var name = boxes[i];
@@ -88,6 +100,8 @@ WebInspector.MetricsSidebarPane.prototype = {
             if (name === "margin" && noMarginDisplayType[style.display])
                 continue;
             if (name === "padding" && noPaddingDisplayType[style.display])
+                continue;
+            if (name === "position" && noPositionType[style.position])
                 continue;
 
             var boxElement = document.createElement("div");
@@ -105,28 +119,14 @@ WebInspector.MetricsSidebarPane.prototype = {
                 labelElement.textContent = boxLabels[i];
                 boxElement.appendChild(labelElement);
 
-                var topElement = document.createElement("div");
-                topElement.className = "top";
-                topElement.textContent = boxPartValue(style, name + "-top", suffix);
-                boxElement.appendChild(topElement);
-
-                var leftElement = document.createElement("div");
-                leftElement.className = "left";
-                leftElement.textContent = boxPartValue(style, name + "-left", suffix);
-                boxElement.appendChild(leftElement);
+                boxElement.appendChild(createBoxPartElement(style, name, "top", suffix));
+                boxElement.appendChild(createBoxPartElement(style, name, "left", suffix));
 
                 if (previousBox)
                     boxElement.appendChild(previousBox);
 
-                var rightElement = document.createElement("div");
-                rightElement.className = "right";
-                rightElement.textContent = boxPartValue(style, name + "-right", suffix);
-                boxElement.appendChild(rightElement);
-
-                var bottomElement = document.createElement("div");
-                bottomElement.className = "bottom";
-                bottomElement.textContent = boxPartValue(style, name + "-bottom", suffix);
-                boxElement.appendChild(bottomElement);
+                boxElement.appendChild(createBoxPartElement(style, name, "right", suffix));
+                boxElement.appendChild(createBoxPartElement(style, name, "bottom", suffix));
             }
 
             previousBox = boxElement;

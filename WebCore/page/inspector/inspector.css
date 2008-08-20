@@ -1389,9 +1389,17 @@ li.editing .swatch, li.editing .enabled-button {
     padding-right: 2px;
 }
 
+.metrics .position {
+    border: 1px rgb(66%, 66%, 66%) dotted;
+    display: inline-block;
+    padding: 3px;
+    margin: 3px;
+}
+
 .metrics .margin {
     border: 1px dashed;
     display: inline-block;
+    vertical-align: middle;
     padding: 3px;
     margin: 3px;
 }

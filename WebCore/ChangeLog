@@ -1,3 +1,22 @@
+2008-08-20  Timothy Hatcher  <timothy@apple.com>
+
+        Adds a positon box to the Inspector's Metrics sidebar
+        pane. When an element is not statically positioned, there
+        is now a position box that show top, right, bottom and
+        left computed values.
+
+        Reviewed by Kevin McCullough.
+
+        * English.lproj/localizedStrings.js: Updated the strings.
+        * page/inspector/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype.update):
+        Renamed the boxPartValue function to createBoxPartElement
+        and made it create the entire element. Made it understand
+        how to get position style properties. Don't use the figure dash
+        when 0px is used for positions, since the 0 is meaningful there.
+        Instead use the figure dash when a position is auto.
+        * page/inspector/inspector.css: Added a new rule for position.
+
 2008-08-20  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
