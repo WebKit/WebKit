@@ -26,16 +26,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebKitSystemBits.h>
+#import "WebKitSystemBits.h"
 
+#import "WebNSFileManagerExtras.h"
+#import <mach/host_info.h>
+#import <mach/mach.h>
+#import <mach/mach_error.h>
+#import <sys/sysctl.h>
+#import <sys/types.h>
 #import <wtf/Assertions.h>
-
-#include <mach/mach.h>
-#include <mach/host_info.h>
-#include <mach/mach_error.h>
-
-#include <sys/types.h>
-#include <sys/sysctl.h>
 
 static host_basic_info_data_t gHostBasicInfo;
 static pthread_once_t initControl = PTHREAD_ONCE_INIT;
@@ -80,6 +79,6 @@ int WebNumberOfCPUs(void)
 
 unsigned long long WebVolumeFreeSize(NSString *path)
 {
-    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] fileSystemAttributesAtPath:path];
+    NSDictionary *fileSystemAttributesDictionary = [[NSFileManager defaultManager] attributesOfFileSystemForPath:path error:NULL];
     return [[fileSystemAttributesDictionary objectForKey:NSFileSystemFreeSize] unsignedLongLongValue];
 }

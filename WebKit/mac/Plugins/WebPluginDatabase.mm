@@ -26,21 +26,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WebPluginDatabase.h>
+#import "WebPluginDatabase.h"
 
-#import <WebKit/WebBasePluginPackage.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebFrame.h>
-#import <WebKit/WebFrameViewInternal.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNetscapePluginPackage.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebBaseNetscapePluginView.h>
-#import <WebKit/WebPluginPackage.h>
-#import <WebKit/WebViewPrivate.h>
-#import <Webkit/WebHTMLView.h>
+#import "WebBasePluginPackage.h"
+#import "WebDataSourcePrivate.h"
+#import "WebFrame.h"
+#import "WebFrameViewInternal.h"
+#import "WebHTMLRepresentation.h"
+#import "WebHTMLView.h"
+#import "WebKitLogging.h"
+#import "WebNetscapePluginPackage.h"
+#import "WebNSFileManagerExtras.h"
+#import "WebPluginController.h"
+#import "WebBaseNetscapePluginView.h"
+#import "WebPluginPackage.h"
+#import "WebViewPrivate.h"
+#import "WebHTMLView.h"
 #import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
@@ -430,7 +431,7 @@ static NSArray *additionalWebPlugInPaths;
     NSString *pluginDirectory;
     while ((pluginDirectory = [directoryEnumerator nextObject]) != nil) {
         // Get contents of each plug-in directory
-        NSEnumerator *filenameEnumerator = [[fileManager directoryContentsAtPath:pluginDirectory] objectEnumerator];
+        NSEnumerator *filenameEnumerator = [[fileManager contentsOfDirectoryAtPath:pluginDirectory error:NULL] objectEnumerator];
         NSString *filename;
         while ((filename = [filenameEnumerator nextObject]) != nil) {
             // Unique plug-ins by filename

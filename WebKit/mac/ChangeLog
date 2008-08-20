@@ -1,3 +1,27 @@
+2008-08-18  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Switch to non-deprecated NSFileManager API.
+
+        In order to minimize #if's the new NSFileManager APIs have been implemented for
+        Tiger and call sites updated to use the new methods.
+
+        * Misc/WebIconDatabase.mm:
+        (importToWebCoreFormat):
+        * Misc/WebKitNSStringExtras.m:
+        (-[NSString _webkit_fixedCarbonPOSIXPath]):
+        * Misc/WebKitSystemBits.m:
+        * Misc/WebNSFileManagerExtras.h:
+        * Misc/WebNSFileManagerExtras.m: Remove implementations of methods that are not used.
+        (-[NSFileManager _webkit_backgroundRemoveFileAtPath:]):
+        (-[NSFileManager attributesOfFileSystemForPath:error:]): Implement new API for Tiger in terms of Tiger API.
+        (-[NSFileManager contentsOfDirectoryAtPath:error:]): Ditto.
+        (-[NSFileManager moveItemAtPath:toPath:error:]): Ditto.
+        (-[NSFileManager removeItemAtPath:error:]): Ditto.
+        * Plugins/WebPluginDatabase.mm:
+        (-[WebPluginDatabase _scanForNewPlugins]):
+
 2008-08-20  Josh Aas  <joshmoz@gmail.com>
 
         Reviewed and landed by Anders.

@@ -32,6 +32,7 @@
 #import "WebIconDatabaseDelegate.h"
 #import "WebKitLogging.h"
 #import "WebKitNSStringExtras.h"
+#import "WebNSFileManagerExtras.h"
 #import "WebNSNotificationCenterExtras.h"
 #import "WebNSURLExtras.h"
 #import "WebPreferences.h"
@@ -624,8 +625,8 @@ bool importToWebCoreFormat()
     // After we're done importing old style icons over to webcore icons, we delete the entire directory hierarchy 
     // for the old icon DB (skipping the new iconDB if it is in the same directory)
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    enumerator = [[fileManager directoryContentsAtPath:databaseDirectory] objectEnumerator];
-    
+    enumerator = [[fileManager contentsOfDirectoryAtPath:databaseDirectory error:NULL] objectEnumerator];
+
     NSString *databaseFilename = iconDatabase()->defaultDatabaseFilename();
 
     BOOL foundIconDB = NO;
@@ -636,7 +637,7 @@ bool importToWebCoreFormat()
             continue;
         }
         NSString *filePath = [databaseDirectory stringByAppendingPathComponent:file];
-        if (![fileManager removeFileAtPath:filePath handler:nil])
+        if (![fileManager removeItemAtPath:filePath error:NULL])
             LOG_ERROR("Failed to delete %@ from old icon directory", filePath);
     }
     
