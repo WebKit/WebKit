@@ -1,3 +1,215 @@
+2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Bring back shared JSGlobalData and implicit locking, because too many clients rely on it.
+
+        * ForwardingHeaders/kjs/JSLock.h: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+        * bindings/js/GCController.cpp:
+        (WebCore::collect):
+        (WebCore::GCController::gcTimerFired):
+        (WebCore::GCController::garbageCollectNow):
+        * bindings/js/JSCustomSQLStatementCallback.cpp:
+        (WebCore::JSCustomSQLStatementCallback::handleEvent):
+        * bindings/js/JSCustomSQLStatementErrorCallback.cpp:
+        (WebCore::JSCustomSQLStatementErrorCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionCallback.cpp:
+        (WebCore::JSCustomSQLTransactionCallback::handleEvent):
+        * bindings/js/JSCustomSQLTransactionErrorCallback.cpp:
+        (WebCore::JSCustomSQLTransactionErrorCallback::handleEvent):
+        * bindings/js/JSCustomVoidCallback.cpp:
+        (WebCore::JSCustomVoidCallback::handleEvent):
+        * bindings/js/JSCustomXPathNSResolver.cpp:
+        (WebCore::JSCustomXPathNSResolver::lookupNamespaceURI):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::DOMWindowTimer::~DOMWindowTimer):
+        (WebCore::JSDOMWindowBase::clear):
+        (WebCore::JSDOMWindowBase::timerFired):
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSAbstractEventListener::handleEvent):
+        * bindings/js/JSNSResolver.cpp:
+        (WebCore::JSNSResolver::lookupNamespaceURI):
+        * bindings/js/JSNodeFilterCondition.cpp:
+        (WebCore::JSNodeFilterCondition::acceptNode):
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::evaluate):
+        (WebCore::ScriptController::clearWindowShell):
+        (WebCore::ScriptController::createHTMLEventHandler):
+        (WebCore::ScriptController::createSVGEventHandler):
+        (WebCore::ScriptController::initScript):
+        (WebCore::ScriptController::updateDocument):
+        (WebCore::ScriptController::bindingRootObject):
+        (WebCore::ScriptController::windowScriptNPObject):
+        (WebCore::ScriptController::createScriptObjectForPluginElement):
+        (WebCore::ScriptController::clearScriptObjects):
+        * bindings/js/ScriptControllerMac.mm:
+        (WebCore::ScriptController::windowScriptObject):
+        * bindings/objc/WebScriptObject.mm:
+        (_didExecute):
+        (-[WebScriptObject callWebScriptMethod:withArguments:]):
+        (-[WebScriptObject evaluateWebScript:]):
+        (-[WebScriptObject setValue:forKey:]):
+        (-[WebScriptObject valueForKey:]):
+        (-[WebScriptObject removeWebScriptKey:]):
+        (-[WebScriptObject stringRepresentation]):
+        (-[WebScriptObject webScriptValueAtIndex:]):
+        (-[WebScriptObject setWebScriptValueAtIndex:value:]):
+        (+[WebScriptObject _convertValueToObjcValue:originRootObject:rootObject:]):
+        * bridge/NP_jsobject.cpp:
+        (_NPN_InvokeDefault):
+        (_NPN_Invoke):
+        (_NPN_Evaluate):
+        (_NPN_GetProperty):
+        (_NPN_SetProperty):
+        (_NPN_RemoveProperty):
+        (_NPN_HasProperty):
+        (_NPN_HasMethod):
+        (_NPN_Enumerate):
+        * bridge/c/c_class.cpp:
+        (KJS::Bindings::CClass::~CClass):
+        (KJS::Bindings::CClass::methodsNamed):
+        (KJS::Bindings::CClass::fieldNamed):
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::invokeMethod):
+        (KJS::Bindings::CInstance::invokeDefaultMethod):
+        (KJS::Bindings::CInstance::getPropertyNames):
+        * bridge/c/c_runtime.cpp:
+        (KJS::Bindings::CField::valueFromInstance):
+        (KJS::Bindings::CField::setValueToInstance):
+        * bridge/c/c_utility.cpp:
+        (KJS::Bindings::convertValueToNPVariant):
+        (KJS::Bindings::convertNPVariantToValue):
+        * bridge/jni/jni_class.cpp:
+        (JavaClass::JavaClass):
+        (JavaClass::~JavaClass):
+        * bridge/jni/jni_instance.cpp:
+        (JavaInstance::stringValue):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::call):
+        (JavaJSObject::eval):
+        (JavaJSObject::getMember):
+        (JavaJSObject::setMember):
+        (JavaJSObject::removeMember):
+        (JavaJSObject::getSlot):
+        (JavaJSObject::setSlot):
+        (JavaJSObject::toString):
+        (JavaJSObject::convertValueToJObject):
+        (JavaJSObject::convertJObjectToValue):
+        * bridge/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bridge/jni/jni_runtime.cpp:
+        (appendClassName):
+        (JavaMethod::signature):
+        * bridge/jni/jni_runtime.h:
+        (KJS::Bindings::JavaString::JavaString):
+        (KJS::Bindings::JavaString::_commonInit):
+        (KJS::Bindings::JavaString::~JavaString):
+        (KJS::Bindings::JavaString::UTF8String):
+        * bridge/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+        * bridge/npruntime.cpp:
+        (_NPN_GetStringIdentifier):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::moveGlobalExceptionToExecState):
+        (ObjcInstance::invokeMethod):
+        (ObjcInstance::invokeDefaultMethod):
+        (ObjcInstance::setValueOfUndefinedField):
+        (ObjcInstance::getValueOfUndefinedField):
+        * bridge/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        * bridge/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertNSStringToString):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::removeFromCache):
+        (KJS::Bindings::QtInstance::~QtInstance):
+        (KJS::Bindings::QtInstance::getQtInstance):
+        (KJS::Bindings::QtInstance::getRuntimeObject):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::convertValueToQVariant):
+        (KJS::Bindings::convertQVariantToValue):
+        (KJS::Bindings::QtRuntimeMetaMethod::call):
+        (KJS::Bindings::QtRuntimeConnectionMethod::call):
+        (KJS::Bindings::QtConnectionObject::QtConnectionObject):
+        (KJS::Bindings::QtConnectionObject::execute):
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bridge/testbindings.cpp:
+        (main):
+        * bridge/testbindings.mm:
+        (main):
+        * bridge/testqtbindings.cpp:
+        (main):
+        * dom/Document.cpp:
+        (WebCore::Document::~Document):
+        * dom/Node.cpp:
+        (WebCore::Node::setDocument):
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * loader/FrameLoader.cpp:
+        (WebCore::getString):
+        * page/InspectorController.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::XMLHttpRequestResource::XMLHttpRequestResource):
+        (WebCore::XMLHttpRequestResource::~XMLHttpRequestResource):
+        (WebCore::getResourceDocumentNode):
+        (WebCore::search):
+        (WebCore::inspectedWindow):
+        (WebCore::wrapCallback):
+        (WebCore::currentCallFrame):
+        (WebCore::profiles):
+        (WebCore::InspectorController::focusNode):
+        (WebCore::InspectorController::inspectedWindowScriptObjectCleared):
+        (WebCore::InspectorController::addDatabaseScriptResource):
+        (WebCore::InspectorController::addScriptProfile):
+        * page/JavaScriptCallFrame.cpp:
+        (WebCore::JavaScriptCallFrame::evaluate):
+        * page/JavaScriptProfileNode.cpp:
+        (WebCore::getTotalTime):
+        (WebCore::getSelfTime):
+        (WebCore::getTotalPercent):
+        (WebCore::getSelfPercent):
+        (WebCore::getNumberOfCalls):
+        (WebCore::getChildren):
+        (WebCore::getVisible):
+        * page/Page.cpp:
+        * page/mac/FrameMac.mm:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::start):
+        (WebCore::getString):
+        (WebCore::PluginView::performRequest):
+        (WebCore::PluginView::bindingInstance):
+        * plugins/gtk/PluginViewGtk.cpp:
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::init):
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        (WebCore::PluginView::init):
+        * plugins/win/PluginViewWin.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+        (WebCore::PluginView::handleKeyboardEvent):
+        (WebCore::PluginView::handleMouseEvent):
+        (WebCore::PluginView::setNPWindowRect):
+        (WebCore::PluginView::stop):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::clearResponse):
+        (WebCore::XMLHttpRequest::didFinishLoading):
+        (WebCore::XMLHttpRequest::didReceiveData):
+
 2008-08-19  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Geoff Garen.

@@ -54,6 +54,9 @@ namespace KJS {
 
     class JSGlobalData : public RefCounted<JSGlobalData> {
     public:
+        static bool sharedInstanceExists();
+        static JSGlobalData& sharedInstance();
+
         static PassRefPtr<JSGlobalData> create();
         ~JSGlobalData();
 
@@ -82,8 +85,12 @@ namespace KJS {
 
         JSGlobalObject* head;
 
+        bool isSharedInstance;
+
     private:
-        JSGlobalData();
+        JSGlobalData(bool isShared = false);
+
+        static JSGlobalData*& sharedInstanceInternal();
     };
 
 }

@@ -1,0 +1,1 @@
+#include <JavaScriptCore/JSLock.h>

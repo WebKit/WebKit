@@ -59,6 +59,7 @@
 #import "visible_units.h"
 
 #import <Carbon/Carbon.h>
+#import <kjs/JSLock.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import "WebDashboardRegion.h"
@@ -69,6 +70,8 @@
 @end
  
 using namespace std;
+
+using KJS::JSLock;
 
 namespace WebCore {
 

@@ -30,6 +30,7 @@
 
 #include <jni_utility.h>
 #include <jni_instance.h>
+#include <kjs/JSLock.h>
 
 
 namespace KJS
@@ -45,15 +46,19 @@ class JavaString
 public:
     JavaString()
     {
+        JSLock lock(false);
         _rep = UString().rep();
     }
 
-    void _commonInit(JNIEnv* e, jstring s)
+    void _commonInit (JNIEnv *e, jstring s)
     {
-        int _size = e->GetStringLength(s);
-        const jchar* uc = getUCharactersFromJStringInEnv(e, s);
-        _rep = UString((UChar *)uc,_size).rep();
-        releaseUCharactersForJStringInEnv(e, s, uc);
+        int _size = e->GetStringLength (s);
+        const jchar *uc = getUCharactersFromJStringInEnv (e, s);
+        {
+            JSLock lock(false);
+            _rep = UString((UChar *)uc,_size).rep();
+        }
+        releaseUCharactersForJStringInEnv (e, s, uc);
     }
     
     JavaString (JNIEnv *e, jstring s) {
@@ -66,12 +71,15 @@ public:
     
     ~JavaString()
     {
+        JSLock lock(false);
         _rep = 0;
     }
     
     const char *UTF8String() const { 
-        if (_utf8String.c_str() == 0)
+        if (_utf8String.c_str() == 0) {
+            JSLock lock(false);
             _utf8String = UString(_rep).UTF8String();
+        }
         return _utf8String.c_str();
     }
     const jchar *uchars() const { return (const jchar *)_rep->data(); }

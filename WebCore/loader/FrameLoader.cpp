@@ -86,6 +86,7 @@
 #include "XMLTokenizer.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 #include <kjs/JSObject.h>
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
@@ -104,6 +105,7 @@
 #endif
 
 using KJS::UString;
+using KJS::JSLock;
 using KJS::JSValue;
 
 namespace WebCore {
@@ -190,6 +192,7 @@ static bool getString(JSValue* result, String& string)
 {
     if (!result)
         return false;
+    JSLock lock(false);
     UString ustring;
     if (!result->getString(ustring))
         return false;

@@ -35,6 +35,7 @@
 #include <JavaScriptCore/Interpreter.h>
 #include <JavaScriptCore/JSFunction.h>
 #include <JavaScriptCore/JSGlobalObject.h>
+#include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSStringRefBSTR.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <JavaScriptCore/PropertyNameArray.h>
@@ -178,6 +179,8 @@ HRESULT STDMETHODCALLTYPE WebScriptCallFrame::stringByEvaluatingJavaScriptFromSt
         return E_POINTER;
 
     *result = 0;
+
+    JSLock lock(false);
 
     JSValue* scriptExecutionResult = valueByEvaluatingJavaScriptFromString(script);
     *result = WebCore::BString(jsValueToString(m_state, scriptExecutionResult)).release();

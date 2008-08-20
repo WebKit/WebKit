@@ -31,6 +31,7 @@
 #include "runtime_object.h"
 #include "WebScriptObject.h"
 #include <kjs/JSGlobalObject.h>
+#include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 
 #if !defined(_C_LNG_LNG)
@@ -135,6 +136,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
 
     switch (type) {
         case ObjcObjectType: {
+            JSLock lock(false);
+            
             JSGlobalObject *originGlobalObject = exec->dynamicGlobalObject();
             RootObject* originRootObject = findRootObject(originGlobalObject);
 
@@ -193,6 +196,8 @@ ObjcValue convertValueToObjcValue(ExecState *exec, JSValue *value, ObjcValueType
 
 JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
 {
+    JSLock lock(false);
+    
     unichar *chars;
     unsigned int length = [nsstring length];
     chars = (unichar *)malloc(sizeof(unichar)*length);
@@ -223,6 +228,8 @@ JSValue* convertNSStringToString(ExecState* exec, NSString *nsstring)
 */
 JSValue* convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType type, RootObject* rootObject)
 {
+    JSLock lock(false);
+    
     switch (type) {
         case ObjcObjectType: {
             id obj = *(id*)buffer;

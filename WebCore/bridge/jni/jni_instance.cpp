@@ -35,6 +35,7 @@
 #include "runtime_root.h"
 #include <kjs/ArgList.h>
 #include <kjs/Error.h>
+#include <kjs/JSLock.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -81,6 +82,8 @@ Class *JavaInstance::getClass() const
 
 JSValue* JavaInstance::stringValue(ExecState* exec) const
 {
+    JSLock lock(false);
+    
     jstring stringValue = (jstring)callJNIMethod<jobject>(_instance->_instance, "toString", "()Ljava/lang/String;");
     JNIEnv *env = getJNIEnv();
     const jchar *c = getUCharactersFromJStringInEnv(env, stringValue);

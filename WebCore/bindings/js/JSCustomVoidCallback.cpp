@@ -36,6 +36,7 @@
 #include "JSDOMWindowCustom.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 
 namespace WebCore {
     
@@ -57,6 +58,8 @@ void JSCustomVoidCallback::handleEvent()
         
     JSGlobalObject* globalObject = m_frame->script()->globalObject();
     ExecState* exec = globalObject->globalExec();
+        
+    KJS::JSLock lock(false);
         
     JSValue* function = m_callback->get(exec, Identifier(exec, "handleEvent"));
     CallData callData;

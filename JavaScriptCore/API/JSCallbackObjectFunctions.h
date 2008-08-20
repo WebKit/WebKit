@@ -30,6 +30,7 @@
 #include "JSCallbackFunction.h"
 #include "JSClassRef.h"
 #include "JSGlobalObject.h"
+#include "JSLock.h"
 #include "JSObjectRef.h"
 #include "JSString.h"
 #include "JSStringRef.h"
@@ -71,6 +72,7 @@ void JSCallbackObject<Base>::init(ExecState* exec)
     
     // initialize from base to derived
     for (int i = static_cast<int>(initRoutines.size()) - 1; i >= 0; i--) {
+        JSLock::DropAllLocks dropAllLocks(exec);
         JSObjectInitializeCallback initialize = initRoutines[i];
         initialize(toRef(exec), toRef(this));
     }
@@ -108,6 +110,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
         if (JSObjectHasPropertyCallback hasProperty = jsClass->hasProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (hasProperty(ctx, thisRef, propertyNameRef.get())) {
                 slot.setCustom(this, callbackGetter);
                 return true;
@@ -115,6 +118,7 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
         } else if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (JSValueRef value = getProperty(ctx, thisRef, propertyNameRef.get(), toRef(exec->exceptionSlot()))) {
                 // cache the value so we don't have to compute it again
                 // FIXME: This violates the PropertySlot design a little bit.
@@ -160,6 +164,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
         if (JSObjectSetPropertyCallback setProperty = jsClass->setProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, toRef(exec->exceptionSlot())))
                 return;
         }
@@ -171,6 +176,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                 if (JSObjectSetPropertyCallback setProperty = entry->setProperty) {
                     if (!propertyNameRef)
                         propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     if (setProperty(ctx, thisRef, propertyNameRef.get(), valueRef, toRef(exec->exceptionSlot())))
                         return;
                 } else
@@ -208,6 +214,7 @@ bool JSCallbackObject<Base>::deleteProperty(ExecState* exec, const Identifier& p
         if (JSObjectDeletePropertyCallback deleteProperty = jsClass->deleteProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (deleteProperty(ctx, thisRef, propertyNameRef.get(), toRef(exec->exceptionSlot())))
                 return true;
         }
@@ -262,6 +269,7 @@ JSObject* JSCallbackObject<Base>::construct(ExecState* exec, JSObject* construct
             Vector<JSValueRef, 16> arguments(argumentCount);
             for (int i = 0; i < argumentCount; i++)
                 arguments[i] = toRef(args.at(exec, i));
+            JSLock::DropAllLocks dropAllLocks(exec);
             return toJS(callAsConstructor(execRef, constructorRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
         }
     }
@@ -287,8 +295,10 @@ bool JSCallbackObject<Base>::hasInstance(ExecState *exec, JSValue *value)
     JSObjectRef thisRef = toRef(this);
     
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
-        if (JSObjectHasInstanceCallback hasInstance = jsClass->hasInstance)
+        if (JSObjectHasInstanceCallback hasInstance = jsClass->hasInstance) {
+            JSLock::DropAllLocks dropAllLocks(exec);
             return hasInstance(execRef, thisRef, toRef(value), toRef(exec->exceptionSlot()));
+        }
     }
     ASSERT_NOT_REACHED(); // implementsHasInstance should prevent us from reaching here
     return 0;
@@ -319,6 +329,7 @@ JSValue* JSCallbackObject<Base>::call(ExecState* exec, JSObject* functionObject,
             Vector<JSValueRef, 16> arguments(argumentCount);
             for (int i = 0; i < argumentCount; i++)
                 arguments[i] = toRef(args.at(exec, i));
+            JSLock::DropAllLocks dropAllLocks(exec);
             return toJS(callAsFunction(execRef, functionRef, thisObjRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
         }
     }
@@ -334,8 +345,10 @@ void JSCallbackObject<Base>::getPropertyNames(ExecState* exec, PropertyNameArray
     JSObjectRef thisRef = toRef(this);
     
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass) {
-        if (JSObjectGetPropertyNamesCallback getPropertyNames = jsClass->getPropertyNames)
+        if (JSObjectGetPropertyNamesCallback getPropertyNames = jsClass->getPropertyNames) {
+            JSLock::DropAllLocks dropAllLocks(exec);
             getPropertyNames(execRef, thisRef, toRef(&propertyNames));
+        }
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             typedef OpaqueJSClassStaticValuesTable::const_iterator iterator;
@@ -376,6 +389,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
     
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (JSValueRef value = convertToType(ctx, thisRef, kJSTypeNumber, toRef(exec->exceptionSlot())))
                 return toJS(value)->getNumber();
         }
@@ -391,7 +405,11 @@ UString JSCallbackObject<Base>::toString(ExecState* exec) const
     
     for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
         if (JSObjectConvertToTypeCallback convertToType = jsClass->convertToType) {
-            JSValueRef value = convertToType(ctx, thisRef, kJSTypeString, toRef(exec->exceptionSlot()));
+            JSValueRef value;
+            {
+                JSLock::DropAllLocks dropAllLocks(exec);
+                value = convertToType(ctx, thisRef, kJSTypeString, toRef(exec->exceptionSlot()));
+            }
             if (value)
                 return toJS(value)->getString();
         }
@@ -444,6 +462,7 @@ JSValue* JSCallbackObject<Base>::staticValueGetter(ExecState* exec, const Identi
                 if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
                     if (!propertyNameRef)
                         propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+                    JSLock::DropAllLocks dropAllLocks(exec);
                     if (JSValueRef value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), toRef(exec->exceptionSlot())))
                         return toJS(value);
                 }
@@ -490,6 +509,7 @@ JSValue* JSCallbackObject<Base>::callbackGetter(ExecState* exec, const Identifie
         if (JSObjectGetPropertyCallback getProperty = jsClass->getProperty) {
             if (!propertyNameRef)
                 propertyNameRef = OpaqueJSString::create(propertyName.ustring());
+            JSLock::DropAllLocks dropAllLocks(exec);
             if (JSValueRef value = getProperty(toRef(exec), thisRef, propertyNameRef.get(), toRef(exec->exceptionSlot())))
                 return toJS(value);
         }

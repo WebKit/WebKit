@@ -313,6 +313,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSGlobalObject.cpp \
 	JavaScriptCore/kjs/JSGlobalObjectFunctions.cpp \
 	JavaScriptCore/kjs/JSImmediate.cpp \
+	JavaScriptCore/kjs/JSLock.cpp \
 	JavaScriptCore/kjs/JSNumberCell.cpp \
 	JavaScriptCore/kjs/JSObject.cpp \
 	JavaScriptCore/kjs/JSStaticScopeObject.cpp \

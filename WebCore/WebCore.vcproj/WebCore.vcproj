@@ -15283,6 +15283,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\ForwardingHeaders\kjs\JSLock.h"
+					>
+				</File>
+				<File
 					RelativePath="..\ForwardingHeaders\kjs\JSObject.h"
 					>
 				</File>

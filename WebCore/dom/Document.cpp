@@ -110,6 +110,7 @@
 #include "XMLTokenizer.h"
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
+#include <kjs/JSLock.h>
 
 #if ENABLE(DATABASE)
 #include "Database.h"
@@ -406,7 +407,10 @@ Document::~Document()
 #endif
 
     XMLHttpRequest::detachRequests(this);
-    ScriptInterpreter::forgetAllDOMNodesForDocument(this);
+    {
+        KJS::JSLock lock(false);
+        ScriptInterpreter::forgetAllDOMNodesForDocument(this);
+    }
 
     if (m_docChanged && changedDocuments)
         changedDocuments->remove(this);

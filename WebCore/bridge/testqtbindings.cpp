@@ -94,6 +94,8 @@ int main(int argc, char** argv)
     // expecting a filename
     bool ret = true;
     {
+        JSLock lock;
+        
         // create interpreter w/ global object
         Global* global = new Global();
 

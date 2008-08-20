@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebCoreStatistics.h"
 
+#include <JavaScriptCore/JSLock.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GlyphPageTreeNode.h>
 #include <WebCore/IconDatabase.h>
@@ -95,6 +96,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptObjectsCount(
     if (!count)
         return E_POINTER;
 
+    JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->size();
     return S_OK;
 }
@@ -105,6 +107,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptGlobalObjectsCount(
     if (!count)
         return E_POINTER;
 
+    JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->globalObjectCount();
     return S_OK;
 }
@@ -115,6 +118,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectsCount(
     if (!count)
         return E_POINTER;
 
+    JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->protectedObjectCount();
     return S_OK;
 }
@@ -125,6 +129,7 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
     if (!count)
         return E_POINTER;
 
+    JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->protectedGlobalObjectCount();
     return S_OK;
 }

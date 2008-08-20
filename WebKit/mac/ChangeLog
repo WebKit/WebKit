@@ -1,3 +1,44 @@
+2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Bring back shared JSGlobalData and implicit locking, because too many clients rely on it.
+
+        * ForwardingHeaders/kjs/JSLock.h: Added.
+        * Misc/WebCoreStatistics.mm:
+        (+[WebCoreStatistics javaScriptObjectsCount]):
+        (+[WebCoreStatistics javaScriptGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedGlobalObjectsCount]):
+        (+[WebCoreStatistics javaScriptProtectedObjectTypeCounts]):
+        (+[WebCoreStatistics shouldPrintExceptions]):
+        (+[WebCoreStatistics setShouldPrintExceptions:]):
+        (+[WebCoreStatistics javaScriptReferencedObjectsCount]):
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream wantsAllStreams]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView sendEvent:isDrawRect:]):
+        (-[WebBaseNetscapePluginView setWindowIfNecessary]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView createPluginScriptableObject]):
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]):
+        (-[WebBaseNetscapePluginView webFrame:didFinishLoadWithReason:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView _printedPluginBitmap]):
+        * Plugins/WebPluginController.mm:
+        (+[WebPluginController plugInViewWithArguments:fromPluginPackage:]):
+        (-[WebPluginController startAllPlugins]):
+        (-[WebPluginController stopAllPlugins]):
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController destroyPlugin:]):
+        (-[WebPluginController destroyAllPlugins]):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]):
+        * WebView/WebScriptDebugDelegate.mm:
+        (-[WebScriptCallFrame evaluateWebScript:]):
+        * WebView/WebView.mm:
+        (-[WebView aeDescByEvaluatingJavaScriptFromString:]):
+
 2008-08-19  Timothy Hatcher  <timothy@apple.com>
 
         Fixes the Web Inspector flashing white while resizing after

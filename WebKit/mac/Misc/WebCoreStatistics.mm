@@ -31,6 +31,7 @@
 #import "WebCache.h"
 #import "WebFrameInternal.h"
 #import <kjs/interpreter.h>
+#import <kjs/JSLock.h>
 #import <WebCore/FontCache.h>
 #import <WebCore/Frame.h>
 #import <WebCore/GCController.h>
@@ -52,26 +53,32 @@ using namespace WebCore;
 
 + (size_t)javaScriptObjectsCount
 {
+    JSLock lock(false);
     return JSDOMWindow::commonJSGlobalData()->heap->size();
 }
 
 + (size_t)javaScriptGlobalObjectsCount
 {
+    JSLock lock(false);
     return JSDOMWindow::commonJSGlobalData()->heap->globalObjectCount();
 }
 
 + (size_t)javaScriptProtectedObjectsCount
 {
+    JSLock lock(false);
     return JSDOMWindow::commonJSGlobalData()->heap->protectedObjectCount();
 }
 
 + (size_t)javaScriptProtectedGlobalObjectsCount
 {
+    JSLock lock(false);
     return JSDOMWindow::commonJSGlobalData()->heap->protectedGlobalObjectCount();
 }
 
 + (NSCountedSet *)javaScriptProtectedObjectTypeCounts
 {
+    JSLock lock(false);
+    
     NSCountedSet *result = [NSCountedSet set];
 
     OwnPtr<HashCountedSet<const char*> > counts(JSDOMWindow::commonJSGlobalData()->heap->protectedObjectTypeCounts());
@@ -135,11 +142,13 @@ using namespace WebCore;
 
 + (BOOL)shouldPrintExceptions
 {
+    JSLock lock(false);
     return Interpreter::shouldPrintExceptions();
 }
 
 + (void)setShouldPrintExceptions:(BOOL)print
 {
+    JSLock lock(false);
     Interpreter::setShouldPrintExceptions(print);
 }
 
@@ -171,6 +180,7 @@ using namespace WebCore;
 
 + (size_t)javaScriptReferencedObjectsCount
 {
+    JSLock lock(false);
     return JSDOMWindow::commonJSGlobalData()->heap->protectedObjectCount();
 }
 

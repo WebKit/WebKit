@@ -29,6 +29,7 @@
 
 #include "APICast.h"
 #include <kjs/JSGlobalObject.h>
+#include <kjs/JSLock.h>
 #include <kjs/ObjectPrototype.h>
 #include <wtf/Vector.h>
 
@@ -68,6 +69,7 @@ static JSObject* constructJSCallback(ExecState* exec, JSObject* constructor, con
         for (int i = 0; i < argumentCount; i++)
             arguments[i] = toRef(args.at(exec, i));
             
+        JSLock::DropAllLocks dropAllLocks(exec);
         return toJS(callback(ctx, constructorRef, argumentCount, arguments.data(), toRef(exec->exceptionSlot())));
     }
     

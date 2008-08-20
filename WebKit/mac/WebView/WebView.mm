@@ -90,6 +90,7 @@
 #import <kjs/ArrayPrototype.h>
 #import <kjs/DateInstance.h>
 #import <kjs/InitializeThreading.h>
+#import <kjs/JSLock.h>
 #import <WebCore/ApplicationCacheStorage.h>
 #import <WebCore/Cache.h>
 #import <WebCore/ColorMac.h>
@@ -3276,6 +3277,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
     JSValue* result = coreFrame->loader()->executeScript(script, true);
     if (!result) // FIXME: pass errors
         return 0;
+    JSLock lock(false);
     return aeDescFromJSValue(coreFrame->script()->globalObject()->globalExec(), result);
 }
 

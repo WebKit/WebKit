@@ -33,6 +33,7 @@
 #include "JSEventTargetNode.h"
 #include "ScriptController.h"
 #include <kjs/FunctionConstructor.h>
+#include <kjs/JSLock.h>
 #include <wtf/RefCountedLeakCounter.h>
 
 using namespace KJS;
@@ -45,6 +46,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSAbstractEventListener)
 
 void JSAbstractEventListener::handleEvent(Event* event, bool isWindowEvent)
 {
+    JSLock lock(false);
+
     JSObject* listener = listenerObj();
     if (!listener)
         return;

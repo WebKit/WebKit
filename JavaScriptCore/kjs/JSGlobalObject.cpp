@@ -43,6 +43,7 @@
 #include "FunctionPrototype.h"
 #include "GlobalEvalFunction.h"
 #include "JSGlobalObjectFunctions.h"
+#include "JSLock.h"
 #include "Machine.h"
 #include "MathObject.h"
 #include "NativeErrorConstructor.h"
@@ -78,6 +79,8 @@ static inline void markIfNeeded(JSValue* v)
 
 JSGlobalObject::~JSGlobalObject()
 {
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+
     if (d()->debugger)
         d()->debugger->detach(this);
 
@@ -109,6 +112,8 @@ JSGlobalObject::~JSGlobalObject()
 
 void JSGlobalObject::init(JSObject* thisValue)
 {
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+
     d()->globalData = Heap::heap(this)->globalData();
 
     if (JSGlobalObject*& headObject = head()) {

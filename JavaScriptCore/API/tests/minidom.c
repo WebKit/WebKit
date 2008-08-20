@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
         scriptPath = argv[1];
     }
     
-    JSGlobalContextRef context = JSGlobalContextCreate(NULL);
+    JSGlobalContextRef context = JSGlobalContextCreateInGroup(NULL, NULL);
     JSObjectRef globalObject = JSContextGetGlobalObject(context);
     
     JSStringRef printIString = JSStringCreateWithUTF8CString("print");
@@ -76,7 +76,6 @@ int main(int argc, char* argv[])
 
     globalObject = 0;
     JSGlobalContextRelease(context);
-    JSGarbageCollect(context);
     printf("PASS: Program exited normally.\n");
     return 0;
 }

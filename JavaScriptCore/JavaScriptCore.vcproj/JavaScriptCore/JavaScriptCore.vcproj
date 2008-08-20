@@ -589,6 +589,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\kjs\JSLock.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\JSLock.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\kjs\JSNotAnObject.cpp"
 				>
 			</File>

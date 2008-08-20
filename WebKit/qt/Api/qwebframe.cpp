@@ -60,6 +60,7 @@
 #include "ScriptController.h"
 #include "JSDOMBinding.h"
 #include "ExecState.h"
+#include "JSLock.h"
 #include "JSObject.h"
 #include "qt_runtime.h"
 
@@ -210,6 +211,7 @@ QWebFrame::~QWebFrame()
 */
 void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object)
 {
+      KJS::JSLock lock(false);
       JSDOMWindow *window = toJSDOMWindow(d->frame);
       KJS::Bindings::RootObject *root = d->frame->script()->bindingRootObject();
       if (!window) {

@@ -1,3 +1,32 @@
+2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Bring back shared JSGlobalData and implicit locking, because too many clients rely on it.
+
+        * JSBase.cpp:
+        (JSBase::Release):
+        * JSUtils.cpp:
+        (JSObjectKJSValue):
+        (KJSValueToCFTypeInternal):
+        (unprotectGlobalObject):
+        * JSUtils.h:
+        * JSValueWrapper.cpp:
+        (JSValueWrapper::JSObjectCopyPropertyNames):
+        (JSValueWrapper::JSObjectCopyProperty):
+        (JSValueWrapper::JSObjectSetProperty):
+        (JSValueWrapper::JSObjectCallFunction):
+        (JSValueWrapper::JSObjectCopyCFValue):
+        * JavaScriptGlue.cpp:
+        (JSRunCreate):
+        (JSRunEvaluate):
+        (JSRunCheckSyntax):
+        (JSCollect):
+        (JSLockInterpreter):
+        (JSUnlockInterpreter):
+        * UserObjectImp.cpp:
+        (UserObjectImp::callAsFunction):
+
 2008-08-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Geoff.

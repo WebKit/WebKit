@@ -1,3 +1,119 @@
+2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Bring back shared JSGlobalData and implicit locking, because too many clients rely on it.
+
+        * kjs/JSGlobalData.cpp:
+        (KJS::JSGlobalData::~JSGlobalData):
+        (KJS::JSGlobalData::JSGlobalData): Re-add shared instance.
+        (KJS::JSGlobalData::sharedInstanceExists): Ditto.
+        (KJS::JSGlobalData::sharedInstance): Ditto.
+        (KJS::JSGlobalData::sharedInstanceInternal): Ditto.
+
+        * API/JSContextRef.h: Deprecated JSGlobalContextCreate(). Added a very conservative
+        description of its threading model (nothing is allowed).
+
+        * API/JSContextRef.cpp:
+        (JSGlobalContextCreate): Use shared JSGlobalData.
+        (JSGlobalContextCreateInGroup): Support passing NULL group to request a unique one.
+        (JSGlobalContextRetain): Added back locking.
+        (JSGlobalContextRelease): Ditto.
+        (JSContextGetGlobalObject): Ditto.
+
+        * API/tests/minidom.c: (main):
+        * API/tests/testapi.c: (main):
+        Switched to JSGlobalContextCreateInGroup() to avoid deprecation warnings.
+
+        * JavaScriptCore.exp: Re-added JSLock methods. Added JSGlobalContextCreateInGroup (d'oh!).
+
+        * API/JSBase.cpp:
+        (JSEvaluateScript):
+        (JSCheckScriptSyntax):
+        (JSGarbageCollect):
+        * API/JSCallbackConstructor.cpp:
+        (KJS::constructJSCallback):
+        * API/JSCallbackFunction.cpp:
+        (KJS::JSCallbackFunction::call):
+        * API/JSCallbackObjectFunctions.h:
+        (KJS::::init):
+        (KJS::::getOwnPropertySlot):
+        (KJS::::put):
+        (KJS::::deleteProperty):
+        (KJS::::construct):
+        (KJS::::hasInstance):
+        (KJS::::call):
+        (KJS::::getPropertyNames):
+        (KJS::::toNumber):
+        (KJS::::toString):
+        (KJS::::staticValueGetter):
+        (KJS::::callbackGetter):
+        * API/JSObjectRef.cpp:
+        (JSObjectMake):
+        (JSObjectMakeFunctionWithCallback):
+        (JSObjectMakeConstructor):
+        (JSObjectMakeFunction):
+        (JSObjectHasProperty):
+        (JSObjectGetProperty):
+        (JSObjectSetProperty):
+        (JSObjectGetPropertyAtIndex):
+        (JSObjectSetPropertyAtIndex):
+        (JSObjectDeleteProperty):
+        (JSObjectCallAsFunction):
+        (JSObjectCallAsConstructor):
+        (JSObjectCopyPropertyNames):
+        (JSPropertyNameArrayRelease):
+        (JSPropertyNameAccumulatorAddName):
+        * API/JSValueRef.cpp:
+        (JSValueIsEqual):
+        (JSValueIsInstanceOfConstructor):
+        (JSValueMakeNumber):
+        (JSValueMakeString):
+        (JSValueToNumber):
+        (JSValueToStringCopy):
+        (JSValueToObject):
+        (JSValueProtect):
+        (JSValueUnprotect):
+        * ForwardingHeaders/JavaScriptCore/JSLock.h: Added.
+        * GNUmakefile.am:
+        * JavaScriptCore.pri:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * JavaScriptCoreSources.bkl:
+        * kjs/AllInOneFile.cpp:
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject):
+        (KJS::JSGlobalObject::init):
+        * kjs/JSLock.cpp: Added.
+        (KJS::createJSLockCount):
+        (KJS::JSLock::lockCount):
+        (KJS::setLockCount):
+        (KJS::JSLock::JSLock):
+        (KJS::JSLock::lock):
+        (KJS::JSLock::unlock):
+        (KJS::JSLock::currentThreadIsHoldingLock):
+        (KJS::JSLock::DropAllLocks::DropAllLocks):
+        (KJS::JSLock::DropAllLocks::~DropAllLocks):
+        * kjs/JSLock.h: Added.
+        (KJS::JSLock::JSLock):
+        (KJS::JSLock::~JSLock):
+        * kjs/Shell.cpp:
+        (functionGC):
+        (jscmain):
+        * kjs/collector.cpp:
+        (KJS::Heap::~Heap):
+        (KJS::Heap::heapAllocate):
+        (KJS::Heap::setGCProtectNeedsLocking):
+        (KJS::Heap::protect):
+        (KJS::Heap::unprotect):
+        (KJS::Heap::collect):
+        * kjs/identifier.cpp:
+        * kjs/interpreter.cpp:
+        (KJS::Interpreter::checkSyntax):
+        (KJS::Interpreter::evaluate):
+        Re-added implicit locking.
+
 2008-08-19  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim and Mark.

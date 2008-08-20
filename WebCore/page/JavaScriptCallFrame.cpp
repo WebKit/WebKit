@@ -30,6 +30,7 @@
 #include <kjs/DebuggerCallFrame.h>
 #include <kjs/JSGlobalObject.h>
 #include <kjs/interpreter.h>
+#include <kjs/JSLock.h>
 #include <kjs/JSObject.h>
 #include <kjs/JSValue.h>
 
@@ -93,6 +94,7 @@ JSValue* JavaScriptCallFrame::evaluate(const UString& script, JSValue*& exceptio
     if (!m_isValid)
         return jsNull();
 
+    JSLock lock(false);
     return m_debuggerCallFrame.evaluate(script, exception);
 }
 

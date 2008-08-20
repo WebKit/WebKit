@@ -32,6 +32,7 @@
 #include <JavaScriptCore/collector.h>
 #include <WebCore/GCController.h>
 #include <WebCore/JSDOMWindow.h>
+#include <kjs/JSLock.h>
 #pragma warning(pop)
 
 using namespace KJS;
@@ -112,6 +113,7 @@ HRESULT STDMETHODCALLTYPE WebJavaScriptCollector::objectCount(
         return E_POINTER;
     }
 
+    JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->size();
     return S_OK;
 }

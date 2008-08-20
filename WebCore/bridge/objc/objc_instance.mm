@@ -29,6 +29,7 @@
 #import "FoundationExtras.h"
 #import "WebScriptObject.h"
 #include <kjs/Error.h>
+#include <kjs/JSLock.h>
 #include <wtf/Assertions.h>
 
 #ifdef NDEBUG
@@ -62,8 +63,10 @@ void ObjcInstance::moveGlobalExceptionToExecState(ExecState* exec)
         return;
     }
 
-    if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->dynamicGlobalObject())
+    if (!s_exceptionEnvironment || s_exceptionEnvironment == exec->dynamicGlobalObject()) {
+        JSLock lock(false);
         throwError(exec, GeneralError, s_exception);
+    }
 
     HardRelease(s_exception);
     s_exception = 0;
@@ -125,6 +128,8 @@ JSValue* ObjcInstance::invokeMethod(ExecState* exec, const MethodList &methodLis
 {
     JSValue* result = jsUndefined();
     
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+
     setGlobalException(nil);
     
     // Overloading methods is not allowed in ObjectiveC.  Should only be one
@@ -245,6 +250,7 @@ JSValue* ObjcInstance::invokeDefaultMethod(ExecState* exec, const ArgList &args)
 {
     JSValue* result = jsUndefined();
 
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
     setGlobalException(nil);
     
 @try {
@@ -300,6 +306,8 @@ void ObjcInstance::setValueOfUndefinedField(ExecState* exec, const Identifier &p
 {
     id targetObject = getObject();
 
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
+
     // This check is not really necessary because NSObject implements
     // setValue:forUndefinedKey:, and unfortnately the default implementation
     // throws an exception.
@@ -323,6 +331,8 @@ JSValue* ObjcInstance::getValueOfUndefinedField(ExecState* exec, const Identifie
     JSValue* result = jsUndefined();
     
     id targetObject = getObject();
+
+    JSLock::DropAllLocks dropAllLocks(false); // Can't put this inside the @try scope because it unwinds incorrectly.
 
     // This check is not really necessary because NSObject implements
     // valueForUndefinedKey:, and unfortnately the default implementation

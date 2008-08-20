@@ -101,6 +101,7 @@ SOURCES += \
     kjs/JSFunction.cpp \
     kjs/JSGlobalObjectFunctions.cpp \
     kjs/JSImmediate.cpp \
+    kjs/JSLock.cpp \
     kjs/JSNumberCell.cpp \
     kjs/JSObject.cpp \
     kjs/JSString.cpp \

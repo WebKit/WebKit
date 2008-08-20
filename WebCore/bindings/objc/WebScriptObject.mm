@@ -41,6 +41,7 @@
 #import <JavaScriptCore/APICast.h>
 #import <kjs/ExecState.h>
 #import <kjs/JSGlobalObject.h>
+#import <kjs/JSLock.h>
 #import <kjs/completion.h>
 #import <kjs/interpreter.h>
 
@@ -118,6 +119,8 @@ static void addExceptionToConsole(ExecState* exec)
 
 static void _didExecute(WebScriptObject *obj)
 {
+    ASSERT(JSLock::lockCount() > 0);
+    
     RootObject* root = [obj _rootObject];
     if (!root)
         return;
@@ -278,6 +281,8 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (![self _isSafeScript])
         return nil;
 
+    JSLock lock(false);
+    
     // Look up the function object.
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
@@ -321,6 +326,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSValue *result;
+    JSLock lock(false);
     
     [self _rootObject]->globalObject()->startTimeoutCheck();
     Completion completion = Interpreter::evaluate([self _rootObject]->globalObject()->globalExec(), [self _rootObject]->globalObject()->globalScopeChain(), UString(), 1, String(script));
@@ -355,6 +361,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
+    JSLock lock(false);
     [self _imp]->put(exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
@@ -374,20 +381,27 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     id resultObj;
+    {
+        // Need to scope this lock to ensure that we release the lock before calling
+        // [super valueForKey:key] which might throw an exception and bypass the JSLock destructor,
+        // leaving the lock permanently held
+        JSLock lock(false);
+        
+        JSValue *result = [self _imp]->get(exec, Identifier(exec, String(key)));
+        
+        if (exec->hadException()) {
+            addExceptionToConsole(exec);
+            result = jsUndefined();
+            exec->clearException();
+        }
 
-    JSValue *result = [self _imp]->get(exec, Identifier(exec, String(key)));
-    
-    if (exec->hadException()) {
-        addExceptionToConsole(exec);
-        result = jsUndefined();
-        exec->clearException();
+        resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     }
-
-    resultObj = [WebScriptObject _convertValueToObjcValue:result originRootObject:[self _originRootObject] rootObject:[self _rootObject]];
     
     if ([resultObj isKindOfClass:[WebUndefined class]])
         resultObj = [super valueForKey:key];    // defaults to throwing an exception
 
+    JSLock lock(false);
     _didExecute(self);
     
     return resultObj;
@@ -401,6 +415,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
+    JSLock lock(false);
     [self _imp]->deleteProperty(exec, Identifier(exec, String(key)));
 
     if (exec->hadException()) {
@@ -417,6 +432,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
         // This is a workaround for a gcc 3.3 internal compiler error.
         return @"Undefined";
 
+    JSLock lock(false);
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     
     id result = convertValueToObjcValue(exec, [self _imp], ObjcObjectType).objectValue;
@@ -436,6 +452,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
+    JSLock lock(false);
     JSValue *result = [self _imp]->get(exec, index);
 
     if (exec->hadException()) {
@@ -459,6 +476,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ExecState* exec = [self _rootObject]->globalObject()->globalExec();
     ASSERT(!exec->hadException());
 
+    JSLock lock(false);
     [self _imp]->put(exec, index, convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
 
     if (exec->hadException()) {
@@ -489,6 +507,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     if (value->isObject()) {
         JSObject* object = static_cast<JSObject*>(value);
         ExecState* exec = rootObject->globalObject()->globalExec();
+        JSLock lock(false);
         
         if (object->classInfo() != &RuntimeObjectImp::s_info) {
             JSValue* runtimeObject = object->get(exec, Identifier(exec, "__apple_runtime_object"));

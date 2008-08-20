@@ -62,6 +62,7 @@
 #include "runtime_root.h"
 #include "Settings.h"
 #include "runtime.h"
+#include <kjs/JSLock.h>
 #include <kjs/JSValue.h>
 #include <wtf/ASCIICType.h>
 
@@ -81,6 +82,7 @@ static inline HWND windowHandleForPlatformWidget(PlatformWidget widget)
 }
 
 using KJS::ExecState;
+using KJS::JSLock;
 using KJS::JSObject;
 using KJS::JSValue;
 using KJS::UString;
@@ -316,6 +318,7 @@ bool PluginView::dispatchNPEvent(NPEvent& npEvent)
         shouldPop = true;
     }
 
+    KJS::JSLock::DropAllLocks dropAllLocks(false);
     setCallingPlugin(true);
     bool result = m_plugin->pluginFuncs()->event(m_instance, &npEvent);
     setCallingPlugin(false);
@@ -403,6 +406,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
         npEvent.lParam = 0x8000;
     }
 
+    KJS::JSLock::DropAllLocks dropAllLocks(false);
     if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 }
@@ -474,6 +478,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 
     HCURSOR currentCursor = ::GetCursor();
 
+    KJS::JSLock::DropAllLocks dropAllLocks(false);
     if (!dispatchNPEvent(npEvent))
         event->setDefaultHandled();
 
@@ -543,6 +548,7 @@ void PluginView::setNPWindowRect(const IntRect& rect)
     m_npWindow.clipRect.bottom = rect.height();
 
     if (m_plugin->pluginFuncs()->setwindow) {
+        KJS::JSLock::DropAllLocks dropAllLocks(false);
         setCallingPlugin(true);
         m_plugin->pluginFuncs()->setwindow(m_instance, &m_npWindow);
         setCallingPlugin(false);
@@ -581,6 +587,8 @@ void PluginView::stop()
         if (currentWndProc == PluginViewWndProc)
             SetWindowLongPtr(m_window, GWLP_WNDPROC, (LONG)m_pluginWndProc);
     }
+
+    KJS::JSLock::DropAllLocks dropAllLocks(false);
 
     // Clear the window
     m_npWindow.window = 0;

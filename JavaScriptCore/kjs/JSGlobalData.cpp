@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "CommonIdentifiers.h"
 #include "JSClassRef.h"
+#include "JSLock.h"
 #include "Machine.h"
 #include "Parser.h"
 #include "collector.h"
@@ -55,7 +56,7 @@ extern const HashTable regExpTable;
 extern const HashTable regExpConstructorTable;
 extern const HashTable stringTable;
 
-JSGlobalData::JSGlobalData()
+JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
     , heap(new Heap(this))
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -84,15 +85,19 @@ JSGlobalData::JSGlobalData()
     , lexer(new Lexer(this))
     , parser(new Parser)
     , head(0)
+    , isSharedInstance(isShared)
 {
 }
 
 JSGlobalData::~JSGlobalData()
 {
     delete heap;
-    heap = 0; // zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
     delete machine;
+#ifndef NDEBUG
+    // Zeroing out to make the behavior more predictable when someone attempts to use a deleted instance.
+    heap = 0;
     machine = 0;
+#endif
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
     arrayTable->deleteTable();
@@ -129,6 +134,26 @@ JSGlobalData::~JSGlobalData()
 PassRefPtr<JSGlobalData> JSGlobalData::create()
 {
     return adoptRef(new JSGlobalData);
+}
+
+bool JSGlobalData::sharedInstanceExists()
+{
+    return sharedInstanceInternal();
+}
+
+JSGlobalData& JSGlobalData::sharedInstance()
+{
+    JSGlobalData*& instance = sharedInstanceInternal();
+    if (!instance)
+        instance = new JSGlobalData(true);
+    return *instance;
+}
+
+JSGlobalData*& JSGlobalData::sharedInstanceInternal()
+{
+    ASSERT(JSLock::currentThreadIsHoldingLock());
+    static JSGlobalData* sharedInstance;
+    return sharedInstance;
 }
 
 }

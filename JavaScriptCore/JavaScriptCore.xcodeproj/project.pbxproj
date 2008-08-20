@@ -172,6 +172,7 @@
 		BC18C4200E16F5CD00B34460 /* JSGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E3A560DF9278C00D90B34 /* JSGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */ = {isa = PBXBuildFile; fileRef = A8E894330CD0603F00367179 /* JSGlobalObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4220E16F5CD00B34460 /* JSImmediate.h in Headers */ = {isa = PBXBuildFile; fileRef = 1483B589099BC1950016E4F0 /* JSImmediate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC18C4230E16F5CD00B34460 /* JSLock.h in Headers */ = {isa = PBXBuildFile; fileRef = 65EA4C9A092AF9E20093D800 /* JSLock.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4240E16F5CD00B34460 /* JSObject.h in Headers */ = {isa = PBXBuildFile; fileRef = BC22A3990E16E14800AF21C8 /* JSObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4250E16F5CD00B34460 /* JSObjectRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 1482B7E10A43076000517CFC /* JSObjectRef.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 95C18D3E0C90E7EF00E72F73 /* JSRetainPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -554,6 +555,8 @@
 		65E217BA08E7EECC0023E5F6 /* FastMalloc.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = FastMalloc.h; sourceTree = "<group>"; tabWidth = 8; };
 		65E866ED0DD59AFA00A2B2A1 /* SourceProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceProvider.h; sourceTree = "<group>"; };
 		65E866EE0DD59AFA00A2B2A1 /* SourceRange.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SourceRange.h; sourceTree = "<group>"; };
+		65EA4C99092AF9E20093D800 /* JSLock.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSLock.cpp; sourceTree = "<group>"; tabWidth = 8; };
+		65EA4C9A092AF9E20093D800 /* JSLock.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = JSLock.h; sourceTree = "<group>"; tabWidth = 8; };
 		65EA73620BAE35D1001BB560 /* CommonIdentifiers.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CommonIdentifiers.cpp; sourceTree = "<group>"; };
 		65EA73630BAE35D1001BB560 /* CommonIdentifiers.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CommonIdentifiers.h; sourceTree = "<group>"; };
 		65FB3F4809D11B2400F49DEB /* grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = grammar.cpp; sourceTree = "<group>"; };
@@ -1178,6 +1181,8 @@
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
 				14760863099C633800437128 /* JSImmediate.cpp */,
 				1483B589099BC1950016E4F0 /* JSImmediate.h */,
+				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
+				65EA4C9A092AF9E20093D800 /* JSLock.h */,
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,
 				A72700770DAC605600E548D7 /* JSNotAnObject.h */,
 				BC02E9B90E184580000F9297 /* JSNumberCell.cpp */,
@@ -1405,6 +1410,7 @@
 				BC18C4200E16F5CD00B34460 /* JSGlobalData.h in Headers */,
 				BC18C4210E16F5CD00B34460 /* JSGlobalObject.h in Headers */,
 				BC18C4220E16F5CD00B34460 /* JSImmediate.h in Headers */,
+				BC18C4230E16F5CD00B34460 /* JSLock.h in Headers */,
 				BC18C4240E16F5CD00B34460 /* JSObject.h in Headers */,
 				BC18C4250E16F5CD00B34460 /* JSObjectRef.h in Headers */,
 				BC18C4260E16F5CD00B34460 /* JSRetainPtr.h in Headers */,

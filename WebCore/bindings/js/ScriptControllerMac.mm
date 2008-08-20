@@ -38,6 +38,7 @@
 #import "WebScriptObjectPrivate.h"
 #import "Widget.h"
 #import <JavaScriptCore/APICast.h>
+#import <kjs/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 #import "c_instance.h"
@@ -107,6 +108,7 @@ WebScriptObject* ScriptController::windowScriptObject()
         return 0;
 
     if (!m_windowScriptObject) {
+        KJS::JSLock lock(false);
         KJS::Bindings::RootObject* root = bindingRootObject();
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell()) originRootObject:root rootObject:root];
     }

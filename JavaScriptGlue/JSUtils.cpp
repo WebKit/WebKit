@@ -128,6 +128,8 @@ JSUserObject* KJSValueToJSObject(JSValue *inValue, ExecState *exec)
 //--------------------------------------------------------------------------
 JSValue *JSObjectKJSValue(JSUserObject* ptr)
 {
+    JSLock lock(true);
+
     JSValue *result = jsUndefined();
     if (ptr)
     {
@@ -199,6 +201,8 @@ CFTypeRef KJSValueToCFTypeInternal(JSValue *inValue, ExecState *exec, ObjectImpL
         return 0;
 
     CFTypeRef result = 0;
+
+    JSLock lock(true);
 
         if (inValue->isBoolean())
             {
@@ -390,6 +394,7 @@ JSGlobalData* sharedGlobalData;
 
 static void unprotectGlobalObject(void* data) 
 {
+    JSLock lock(true);
     gcUnprotect(static_cast<JSGlobalObject*>(data));
 }
 

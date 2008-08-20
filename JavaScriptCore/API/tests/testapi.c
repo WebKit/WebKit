@@ -566,7 +566,7 @@ int main(int argc, char* argv[])
     }
     
     // Test garbage collection with a fresh context
-    context = JSGlobalContextCreate(NULL);
+    context = JSGlobalContextCreateInGroup(NULL, NULL);
     TestInitializeFinalize = true;
     testInitializeFinalize();
     JSGlobalContextRelease(context);
@@ -580,7 +580,7 @@ int main(int argc, char* argv[])
     globalObjectClassDefinition.staticFunctions = globalObject_staticFunctions;
     globalObjectClassDefinition.attributes = kJSClassAttributeNoAutomaticPrototype;
     JSClassRef globalObjectClass = JSClassCreate(&globalObjectClassDefinition);
-    context = JSGlobalContextCreate(globalObjectClass);
+    context = JSGlobalContextCreateInGroup(NULL, globalObjectClass);
 
     JSGlobalContextRetain(context);
     JSGlobalContextRelease(context);
