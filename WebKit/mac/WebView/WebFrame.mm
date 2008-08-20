@@ -1096,6 +1096,11 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     _private->coreFrame->setIsDisconnected(isDisconnected);
 }
 
+- (void)_setExcludeFromTextSearch:(bool)exclude
+{
+    _private->coreFrame->setExcludeFromTextSearch(exclude);
+}
+
 #if ENABLE(NETSCAPE_PLUGIN_API)
 - (void)_recursive_resumeNullEventsForAllNetscapePlugins
 {

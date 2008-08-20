@@ -1104,6 +1104,14 @@ Node* Node::shadowTreeRootNode()
     return 0;
 }
 
+bool Node::isInShadowTree()
+{
+    for (Node* n = this; n; n = n->parentNode())
+        if (n->isShadowNode())
+            return true;
+    return false;
+}
+
 bool Node::isBlockFlow() const
 {
     return renderer() && renderer()->isBlockFlow();

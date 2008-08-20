@@ -1,3 +1,52 @@
+2008-08-20  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/6145626> 
+        This patch fixes a number of remaining problems getting 
+        disconnected frames to work correctly with markAllMatchesForText() 
+        and findString(). Details inline. 
+
+        This was a static helper function in Frame, but this patch requires 
+        the same functionality in Editor, so I just added it as a function 
+        on Node.
+        * dom/Node.cpp:
+        (WebCore::Node::isInShadowTree):
+        * dom/Node.h:
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea): Returns false if 
+        excludeFromTextSearch() is true.
+
+        In a normal (non-disconnected) frame, findString returns a range of 
+        the document node if the text is not found in the frame. I changed 
+        firstVisibleRange and lastVisibleRange to match that behavior when 
+        the text is not found
+        (WebCore::Editor::firstVisibleRange):
+        (WebCore::Editor::lastVisibleRange):
+
+        Here are the bulk of the changes in the patch. A lot of text was 
+        not being found in disconnected frames because I failed to account 
+        for all of the possible problems associated with shadow trees. That 
+        is fixed here.
+        (WebCore::Editor::nextVisibleRange):
+        * editing/Editor.h:
+
+        excludeFromTextSearch() is new. It allows a WebKit client to mark a 
+        frame as not-text-searchable through SPI. 
+        * WebCore.base.exp:
+        * page/Frame.cpp:
+        (WebCore::Frame::excludeFromTextSearch):
+        (WebCore::Frame::setExcludeFromTextSearch):
+        (WebCore::FramePrivate::FramePrivate):
+        * page/Frame.h:
+        * page/FramePrivate.h:
+
+        (WebCore::Frame::findString):
+        (WebCore::Frame::markAllMatchesForText):  I kept running into an 
+        assertion failure in paining code because of the forced paint on 
+        empty visible rects.
+
 2008-08-20  Timothy Hatcher  <timothy@apple.com>
 
         Adds a positon box to the Inspector's Metrics sidebar

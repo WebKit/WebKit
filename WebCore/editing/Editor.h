@@ -256,7 +256,7 @@ public:
     
     // We should make these functions private when their callers in Frame are moved over here to Editor
     bool insideVisibleArea(Range*) const;
-    PassRefPtr<Range> nextVisibleRange(Range*, const String&, bool forward, bool caseFlag);
+    PassRefPtr<Range> nextVisibleRange(Range*, const String&, bool forward, bool caseFlag, bool wrapFlag);
 
 private:
     Frame* m_frame;

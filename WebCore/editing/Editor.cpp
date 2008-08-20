@@ -1937,6 +1937,9 @@ bool Editor::insideVisibleArea(Range* range) const
 {
     if (!range)
         return true;
+
+    if (m_frame->excludeFromTextSearch())
+        return false;
     
     // Right now, we only check the visibility of a range for disconnected frames. For all other
     // frames, we assume visibility.
@@ -1968,7 +1971,7 @@ PassRefPtr<Range> Editor::firstVisibleRange(const String& target, bool caseFlag)
     while (!insideVisibleArea(resultRange.get())) {
         searchRange->setStartAfter(resultRange->endContainer(), ec);
         if (searchRange->startContainer() == searchRange->endContainer())
-            return 0;
+            return Range::create(m_frame->document());
         resultRange = findPlainText(searchRange.get(), target, true, caseFlag);
     }
     
@@ -1984,38 +1987,61 @@ PassRefPtr<Range> Editor::lastVisibleRange(const String& target, bool caseFlag)
     while (!insideVisibleArea(resultRange.get())) {
         searchRange->setEndBefore(resultRange->startContainer(), ec);
         if (searchRange->startContainer() == searchRange->endContainer())
-            return 0;
+            return Range::create(m_frame->document());
         resultRange = findPlainText(searchRange.get(), target, false, caseFlag);
     }
     
     return resultRange;
 }
 
-PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& target, bool forward, bool caseFlag)
+PassRefPtr<Range> Editor::nextVisibleRange(Range* currentRange, const String& target, bool forward, bool caseFlag, bool wrapFlag)
 {
+    if (m_frame->excludeFromTextSearch())
+        return Range::create(m_frame->document());
+
     RefPtr<Range> resultRange = currentRange;
     RefPtr<Range> searchRange(rangeOfContents(m_frame->document()));
     ExceptionCode ec = 0;
     
-    while (!insideVisibleArea(resultRange.get())) {
+    for ( ; !insideVisibleArea(resultRange.get()); resultRange = findPlainText(searchRange.get(), target, forward, caseFlag)) {
+        if (resultRange->collapsed(ec)) {
+            if (!resultRange->startContainer()->isInShadowTree())
+                break;
+            searchRange = rangeOfContents(m_frame->document());
+            if (forward)
+                searchRange->setStartAfter(resultRange->startContainer()->shadowAncestorNode(), ec);
+            else
+                searchRange->setEndBefore(resultRange->startContainer()->shadowAncestorNode(), ec);
+            continue;
+        }
+
         if (forward)
             searchRange->setStartAfter(resultRange->endContainer(), ec);
         else
             searchRange->setEndBefore(resultRange->startContainer(), ec);
 
-        // If we have made it to the beginning or the end of the document, then either there is no search result
-        // or we have to wrap around to find it.
-        if (resultRange->startContainer()->isDocumentNode()) {
+        Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
+        if (searchRange->collapsed(ec) && shadowTreeRoot) {
             if (forward)
-                return firstVisibleRange(target, caseFlag);
+                searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), ec);
             else
-                return lastVisibleRange(target, caseFlag);
+                searchRange->setStartBefore(shadowTreeRoot, ec);
         }
         
-        resultRange = findPlainText(searchRange.get(), target, forward, caseFlag);
+        if (searchRange->startContainer()->isDocumentNode() && searchRange->endContainer()->isDocumentNode())
+            break;
     }
     
-    return resultRange;
+    if (insideVisibleArea(resultRange.get()))
+        return resultRange;
+    
+    if (!wrapFlag)
+        return Range::create(m_frame->document());
+
+    if (forward)
+        return firstVisibleRange(target, caseFlag);
+
+    return lastVisibleRange(target, caseFlag);
 }
 
 } // namespace WebCore

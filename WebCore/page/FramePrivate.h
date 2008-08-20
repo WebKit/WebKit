@@ -93,6 +93,7 @@ namespace WebCore {
         bool m_prohibitsScrolling;
         bool m_needsReapplyStyles;
         bool m_isDisconnected;
+        bool m_excludeFromTextSearch;
 
 #if FRAME_LOADS_USER_STYLESHEET
         UserStyleSheetLoader* m_userStyleSheetLoader;
