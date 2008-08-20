@@ -5032,13 +5032,12 @@ void FrameLoader::switchOutLowBandwidthDisplayIfReady()
             oldDoc->cancelParsing();
             oldDoc->detach();
             if (m_frame->script()->isEnabled())
-                m_frame->script()->clear();
+                m_frame->script()->clearWindowShell();
             if (m_frame->view())
                 m_frame->view()->clear();
             
             // similar to begin(), should be refactored to share more code
-            RefPtr<Document> newDoc = DOMImplementation::instance()->
-                createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
+            RefPtr<Document> newDoc = DOMImplementation::createDocument(m_responseMIMEType, m_frame, m_frame->inViewSourceMode());
             m_frame->setDocument(newDoc);
             newDoc->setURL(m_URL);
             if (m_decoder)

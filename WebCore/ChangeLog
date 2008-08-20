@@ -1,3 +1,14 @@
+2008-08-20  Chris Teague  <chris.teague@gmail.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20449
+        Bug 20449: Build fails if LOW_BANDWIDTH_DISPLAY is defined
+
+        * ChangeLog:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::switchOutLowBandwidthDisplayIfReady):
+
 2008-08-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt
