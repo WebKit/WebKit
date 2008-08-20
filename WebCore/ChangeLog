@@ -1,3 +1,13 @@
+2008-08-20  Josh Aas  <joshmoz@gmail.com>
+
+        Reviewed and landed by Anders.
+
+        <rdar://problem/6163636> 
+        rename NPCocoaEvent's "event" struct to "data" (20446)
+        
+        * bridge/npapi.h:
+        (_NPCocoaEvent::):
+
 2008-08-20  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Darin.

@@ -45,10 +45,10 @@ void WebNetscapePluginEventHandlerCocoa::drawRect(const NSRect& rect)
     NPCocoaEvent event;
     
     initializeEvent(&event, NPCocoaEventDrawRect);
-    event.event.draw.x = rect.origin.x;
-    event.event.draw.y = rect.origin.y;
-    event.event.draw.width = rect.size.width;
-    event.event.draw.height = rect.size.height;
+    event.data.draw.x = rect.origin.x;
+    event.data.draw.y = rect.origin.y;
+    event.data.draw.width = rect.size.width;
+    event.data.draw.height = rect.size.height;
     
     sendEvent(&event);
 }
@@ -101,14 +101,14 @@ bool WebNetscapePluginEventHandlerCocoa::sendMouseEvent(NSEvent *nsEvent, NPCoco
         clickCount = [nsEvent clickCount];
     
     initializeEvent(&event, type);
-    event.event.mouse.modifierFlags = [nsEvent modifierFlags];
-    event.event.mouse.buttonNumber = [nsEvent buttonNumber];
-    event.event.mouse.clickCount = clickCount;
-    event.event.mouse.pluginX = point.x;
-    event.event.mouse.pluginY = point.y;
-    event.event.mouse.deltaX = [nsEvent deltaX];
-    event.event.mouse.deltaY = [nsEvent deltaY];
-    event.event.mouse.deltaZ = [nsEvent deltaZ];
+    event.data.mouse.modifierFlags = [nsEvent modifierFlags];
+    event.data.mouse.buttonNumber = [nsEvent buttonNumber];
+    event.data.mouse.clickCount = clickCount;
+    event.data.mouse.pluginX = point.x;
+    event.data.mouse.pluginY = point.y;
+    event.data.mouse.deltaX = [nsEvent deltaX];
+    event.data.mouse.deltaY = [nsEvent deltaY];
+    event.data.mouse.deltaZ = [nsEvent deltaZ];
     
     return sendEvent(&event);
 }
@@ -132,11 +132,11 @@ void WebNetscapePluginEventHandlerCocoa::flagsChanged(NSEvent *nsEvent)
     NPCocoaEvent event;
         
     initializeEvent(&event, NPCocoaEventFlagsChanged);
-    event.event.key.modifierFlags = [nsEvent modifierFlags];
-    event.event.key.keyCode = [nsEvent keyCode];
-    event.event.key.isARepeat = false;
-    event.event.key.characters = 0;
-    event.event.key.charactersIgnoringModifiers = 0;
+    event.data.key.modifierFlags = [nsEvent modifierFlags];
+    event.data.key.keyCode = [nsEvent keyCode];
+    event.data.key.isARepeat = false;
+    event.data.key.characters = 0;
+    event.data.key.charactersIgnoringModifiers = 0;
     
     sendEvent(&event);
 }
@@ -146,11 +146,11 @@ bool WebNetscapePluginEventHandlerCocoa::sendKeyEvent(NSEvent* nsEvent, NPCocoaE
     NPCocoaEvent event;
 
     initializeEvent(&event, type);
-    event.event.key.modifierFlags = [nsEvent modifierFlags];
-    event.event.key.keyCode = [nsEvent keyCode];
-    event.event.key.isARepeat = [nsEvent isARepeat];
-    event.event.key.characters = (NPNSString *)[nsEvent characters];
-    event.event.key.charactersIgnoringModifiers = (NPNSString *)[nsEvent charactersIgnoringModifiers];
+    event.data.key.modifierFlags = [nsEvent modifierFlags];
+    event.data.key.keyCode = [nsEvent keyCode];
+    event.data.key.isARepeat = [nsEvent isARepeat];
+    event.data.key.characters = (NPNSString *)[nsEvent characters];
+    event.data.key.charactersIgnoringModifiers = (NPNSString *)[nsEvent charactersIgnoringModifiers];
      
     return sendEvent(&event);
 }
@@ -160,7 +160,7 @@ void WebNetscapePluginEventHandlerCocoa::windowFocusChanged(bool hasFocus)
     NPCocoaEvent event;
     
     initializeEvent(&event, NPCocoaEventWindowFocusChanged);
-    event.event.focus.hasFocus = hasFocus;
+    event.data.focus.hasFocus = hasFocus;
     
     sendEvent(&event);
 }
@@ -170,7 +170,7 @@ void WebNetscapePluginEventHandlerCocoa::focusChanged(bool hasFocus)
     NPCocoaEvent event;
 
     initializeEvent(&event, NPCocoaEventFocusChanged);
-    event.event.focus.hasFocus = hasFocus;
+    event.data.focus.hasFocus = hasFocus;
     
     sendEvent(&event);
 }

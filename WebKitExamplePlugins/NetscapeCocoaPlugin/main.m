@@ -271,12 +271,12 @@ static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
                                                    "Click count: %d\n"
                                                    "Delta: (%g, %g, %g)",
                                                    eventType(event->type), 
-                                                   event->event.mouse.modifierFlags,
-                                                   event->event.mouse.pluginX,
-                                                   event->event.mouse.pluginY,
-                                                   event->event.mouse.buttonNumber,
-                                                   event->event.mouse.clickCount,
-                                                   event->event.mouse.deltaX, event->event.mouse.deltaY, event->event.mouse.deltaZ];
+                                                   event->data.mouse.modifierFlags,
+                                                   event->data.mouse.pluginX,
+                                                   event->data.mouse.pluginY,
+                                                   event->data.mouse.buttonNumber,
+                                                   event->data.mouse.clickCount,
+                                                   event->data.mouse.deltaX, event->data.mouse.deltaY, event->data.mouse.deltaZ];
     
     
     [obj->string release];
@@ -284,7 +284,7 @@ static void handleMouseEvent(PluginObject *obj, NPCocoaEvent *event)
  
     invalidatePlugin(obj);
     
-    if (event->event.mouse.buttonNumber == 1) {
+    if (event->data.mouse.buttonNumber == 1) {
         if (!obj->menuHandler)
             obj->menuHandler = [[MenuHandler alloc] initWithBrowserFuncs:browser instance:obj->npp];
         
@@ -302,11 +302,11 @@ static void handleKeyboardEvent(PluginObject *obj, NPCocoaEvent *event)
                         "Is a repeat: %@\n"
                         "Key code: %d",
                         eventType(event->type), 
-                        event->event.key.modifierFlags,
-                        event->event.key.characters,
-                        event->event.key.charactersIgnoringModifiers,
-                        event->event.key.isARepeat ? @"YES" : @"NO",
-                        event->event.key.keyCode];
+                        event->data.key.modifierFlags,
+                        event->data.key.characters,
+                        event->data.key.charactersIgnoringModifiers,
+                        event->data.key.isARepeat ? @"YES" : @"NO",
+                        event->data.key.keyCode];
     
     
     [obj->string release];
@@ -323,7 +323,7 @@ int16 NPP_HandleEvent(NPP instance, void* event)
     
     switch(cocoaEvent->type) {
         case NPCocoaEventFocusChanged:
-            obj->hasFocus = cocoaEvent->event.focus.hasFocus;
+            obj->hasFocus = cocoaEvent->data.focus.hasFocus;
             invalidatePlugin(obj);
             return 1;
             
