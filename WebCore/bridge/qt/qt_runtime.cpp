@@ -1416,7 +1416,7 @@ JSValue* QtRuntimeConnectionMethod::call(ExecState* exec, JSObject* functionObje
                         return throwError(exec, TypeError, "QtMetaMethod.disconnect: target is not a function");
                 }
             } else if (args.size() >= 2) {
-                if (args.at(exec, 0)->type() == ObjectType) {
+                if (args.at(exec, 0)->isObject()) {
                     thisObject = args.at(exec, 0)->toObject(exec);
 
                     // Get the actual function to call

@@ -1,3 +1,15 @@
+2008-08-20  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Unreviewed compile fix
+
+        Catch up with the JSValue::type elimination.
+
+        * bridge/qt/qt_instance.cpp:
+        (KJS::Bindings::QtRuntimeObjectImp::construct):
+        (KJS::Bindings::QtInstance::defaultValue):
+        * bridge/qt/qt_runtime.cpp:
+        (KJS::Bindings::QtRuntimeConnectionMethod::call):
+
 2008-08-20  Chris Teague  <chris.teague@gmail.com>
 
         Reviewed by Mark Rowe.

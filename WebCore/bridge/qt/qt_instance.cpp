@@ -117,7 +117,7 @@ JSObject* QtRuntimeObjectImp::construct(ExecState* exec, const ArgList& args)
     CallType callType = getCallData(callData);
     JSValue* val = call(exec, this, callType, callData, this, args);
 
-    if (!val || val->type() == NullType || val->type() == UndefinedType)
+    if (!val || val->isUndefinedOrNull())
         return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
     else
         return val->toObject(exec);
@@ -294,9 +294,9 @@ JSValue* QtInstance::invokeDefaultMethod(ExecState* exec, const ArgList& args)
 
 JSValue* QtInstance::defaultValue(ExecState* exec, PreferredPrimitiveType hint) const
 {
-    if (hint == PreferString)
+    if (hint == JSValue::PreferString)
         return stringValue(exec);
-    if (hint == PreferNumber)
+    if (hint == JSValue::PreferNumber)
         return numberValue(exec);
     return valueOf(exec);
 }
