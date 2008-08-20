@@ -129,8 +129,11 @@ void PlatformScrollbar::updateThumbPosition()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
-    [bar setFloatValue:(float)m_currentPos / (m_totalSize - m_visibleSize)
-        knobProportion:[bar knobProportion]];
+#ifdef BUILDING_ON_TIGER
+    [bar setFloatValue:static_cast<float>(m_currentPos) / (m_totalSize - m_visibleSize) knobProportion:[bar knobProportion]];
+#else
+    [bar setDoubleValue:static_cast<double>(m_currentPos) / (m_totalSize - m_visibleSize)];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
@@ -141,7 +144,11 @@ void PlatformScrollbar::updateThumbProportion()
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
     WebCoreScrollBar *bar = (WebCoreScrollBar *)getView();
     if (val != [bar knobProportion] && val >= 0)
+#ifdef BUILDING_ON_TIGER
         [bar setFloatValue:static_cast<float>(m_currentPos) / (m_totalSize - m_visibleSize) knobProportion:val];
+#else
+        [bar setKnobProportion:static_cast<CGFloat>(val)];
+#endif
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
