@@ -1395,6 +1395,16 @@ webcore_sources += \
 	WebCore/page/AccessibilityObject.h \
 	WebCore/page/AccessibilityRenderObject.cpp \
 	WebCore/page/AccessibilityRenderObject.h \
+	WebCore/page/AccessibilityTable.cpp \
+	WebCore/page/AccessibilityTable.h \
+	WebCore/page/AccessibilityTableCell.cpp \
+	WebCore/page/AccessibilityTableCell.h \
+	WebCore/page/AccessibilityTableColumn.cpp \
+	WebCore/page/AccessibilityTableColumn.h \
+	WebCore/page/AccessibilityTableHeaderContainer.cpp \
+	WebCore/page/AccessibilityTableHeaderContainer.h \
+	WebCore/page/AccessibilityTableRow.cpp \
+	WebCore/page/AccessibilityTableRow.h \
 	WebCore/page/AnimationController.cpp \
 	WebCore/page/AnimationController.h \
 	WebCore/page/BarInfo.cpp \
