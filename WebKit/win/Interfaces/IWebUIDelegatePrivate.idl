@@ -87,4 +87,5 @@ interface IWebUIDelegatePrivate3 : IWebUIDelegatePrivate2
 interface IWebUIDelegatePrivate4 : IWebUIDelegatePrivate3
 {
     HRESULT embeddedViewWithArguments([in] IWebView* sender, [in] IWebFrame* frame, [in] IPropertyBag* arguments, [out, retval] IWebEmbeddedView** view);
+    HRESULT webViewSendResizeMessage([in] UINT uMsg, [in] WPARAM wParam, [in] LPARAM lParam);
 }

@@ -1,3 +1,15 @@
+2008-08-20  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Ada Chan.
+
+        rdar://5259746
+        Mouse events are sent to page while resizing window (affects Gmail)
+        In the WebView, if the MouseEvent is located in the resize corner, we send it back to the UIDelegate and early return.
+
+        * Interfaces/IWebUIDelegatePrivate.idl: Add a new method to the UIDelegate to send the resize message
+        * WebView.cpp:
+        (WebView::handleMouseEvent): If the mouse event is in the resize corner and our UIDelegate supports the message it sends the new message and early returns
+
 2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

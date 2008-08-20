@@ -1,3 +1,13 @@
+2008-08-20  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Ada Chan.
+
+         rdar://5259746
+        Mouse events are sent to page while resizing window (affects Gmail)
+
+        * DumpRenderTree/win/UIDelegate.h:
+        (UIDelegate::webViewSendResizeMessage): Add the new interface method, not implemented.
+
 2008-08-19  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
