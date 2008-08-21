@@ -614,15 +614,7 @@ WebInspector.ResourcesPanel.prototype = {
                 divider.addStyleClass("last");
             divider.style.left = ((i / dividerCount) * 100) + "%";
 
-            this.dividersElement.appendChild(divider);
-        }
-
-        for (var i = 1; i <= dividerCount; ++i) {
-            var divider = document.createElement("div");
-            divider.className = "resources-divider";
-            if (i === dividerCount)
-                divider.addStyleClass("last");
-            divider.style.left = ((i / dividerCount) * 100) + "%";
+            this.dividersElement.appendChild(divider.cloneNode());
 
             var label = document.createElement("div");
             label.className = "resources-divider-label";

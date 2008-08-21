@@ -1,3 +1,14 @@
+2008-08-21  Anthony Ricaud  <rik24d@gmail.com>
+
+        Small optimization for when the dividers in the Inspector's
+        Resources panel are updated.
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/ResourcesPanel.js:
+        (WebInsector.ResourcesPanel.prototype._updateGraphDividersIfNeeded):
+        Combind a for loop and clone the divider element.
+
 2008-08-21  Chris Marrin  <cmarrin@apple.com>
 
         Allow 0 (without units) for Time eg. duration
