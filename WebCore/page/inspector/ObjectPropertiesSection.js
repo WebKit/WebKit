@@ -214,6 +214,15 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.editingEnded(context);
     },
 
+    evaluateExpression: function(expression)
+    {
+        // Evaluate in the currently selected call frame if the debugger is paused.
+        // Otherwise evaluate in against the inspected window.
+        if (WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
+            return WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false);
+        return InspectorController.inspectedWindow().eval(expression);
+    },
+
     applyExpression: function(expression, updateInterface)
     {
         var expressionLength = expression.trimWhitespace().length;
@@ -235,25 +244,26 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             return;
         }
 
-        // Surround the expression in parenthesis so the result of the eval is the result
-        // of the whole expression not the last potential sub-expression.
-        expression = "(" + expression + ")";
-
         try {
-            // Evaluate in the currently selected call frame if the debugger is paused.
-            // Otherwise evaluate in against the inspected window.
-            if (WebInspector.panels.scripts.paused && this.treeOutline.section.editInSelectedCallFrameWhenPaused)
-                var result = WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, false);
-            else
-                var result = InspectorController.inspectedWindow().eval(expression);
+            // Surround the expression in parenthesis so the result of the eval is the result
+            // of the whole expression not the last potential sub-expression.
+            var result = this.evaluateExpression("(" + expression + ")");
 
             // Store the result in the property.
             this.parentObject[this.propertyName] = result;
         } catch(e) {
-            // The expression failed so don't change the value. So just update and return.
-            if (updateInterface)
-                this.update();
-            return;
+            try {
+                // Try to update as a string
+                var result = this.evaluateExpression("\"" + expression.escapeCharacters("\"") + "\"");
+
+                // Store the result in the property.
+                this.parentObject[this.propertyName] = result;
+            } catch(e) {
+                // The expression failed so don't change the value. So just update and return.
+                if (updateInterface)
+                    this.update();
+                return;
+            }
         }
 
         if (updateInterface) {
