@@ -61,6 +61,8 @@ WebInspector.ElementsPanel = function()
 
     this.sidebarPanes.styles.expanded = true;
 
+    this.sidebarPanes.styles.addEventListener("style edited", this._stylesPaneEdited, this);
+    this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
 
     this.sidebarElement = document.createElement("div");
@@ -411,6 +413,12 @@ WebInspector.ElementsPanel.prototype = {
             InspectorController.highlightDOMNode(this._hoveredDOMNode);
         else
             InspectorController.hideDOMNodeHighlight();
+    },
+
+    _stylesPaneEdited: function()
+    {
+        this.sidebarPanes.metrics.needsUpdate = true;
+        this.updateMetrics();
     },
 
     _metricsPaneEdited: function()

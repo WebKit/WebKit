@@ -1,5 +1,29 @@
 2008-08-21  Timothy Hatcher  <timothy@apple.com>
 
+        Update the Inspector's Metrics pane when editing in
+        the Styles pane. This makes sure the metrics shown
+        always match what the Styles pane shows.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20470
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel): Add event listeners for
+        the "style edited" and "style property toggled" events,
+        so the Metrics pane is updated.
+        (WebInspector.ElementsPanel.prototype._stylesPaneEdited):
+        Update the Metrics pane.
+        * page/inspector/StylesSidebarPane.js:
+        (WebInspector.StylePropertyTreeElement.prototype.toggleEnabled):
+        Dispatch the "style property toggled" event.
+        (WebInspector.StylePropertyTreeElement.prototype.editingCancelled):
+        Dispatch the "style edited" event when the CSS text is restored.
+        (WebInspector.StylePropertyTreeElement.prototype.applyStyleText):
+        Dispatch the "style edited" event.
+
+2008-08-21  Timothy Hatcher  <timothy@apple.com>
+
         Make the Inspector's Metrics sidebar pane editable.
 
         https://bugs.webkit.org/show_bug.cgi?id=17218

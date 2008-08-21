@@ -616,6 +616,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
         // until after the value and priority are retrieved.
         this.disabled = disabled;
 
+        if (this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane.dispatchEventToListeners("style property toggled");
+
         this.updateAll(true);
     },
 
@@ -797,6 +800,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
     {
         if (this.originalCSSText) {
             this.style.cssText = this.originalCSSText;
+
+            if (this.treeOutline.section && this.treeOutline.section.pane)
+                this.treeOutline.section.pane.dispatchEventToListeners("style edited");
+
             this.updateAll();
         } else
             this.updateTitle();
@@ -876,6 +883,9 @@ WebInspector.StylePropertyTreeElement.prototype = {
             // Set the property on the real style declaration.
             this.style.setProperty((shorthand || name), value, priority);
         }
+
+        if (this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane.dispatchEventToListeners("style edited");
 
         if (updateInterface)
             this.updateAll(true);
