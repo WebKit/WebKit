@@ -1,5 +1,15 @@
 2008-08-20  Mark Rowe  <mrowe@apple.com>
 
+        Reviewed by Jon Honeycutt.
+
+        Fix build failure.
+
+        * bridge/c/c_instance.cpp:
+        (KJS::Bindings::CInstance::getPropertyNames): Declare count as uint32_t rather than unsigned
+        as that is what NPEnumerationFunctionPtr is declared as accepting.
+
+2008-08-20  Mark Rowe  <mrowe@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Build fix.  Handle kCGInterpolationMedium in switch statements if it is available.
