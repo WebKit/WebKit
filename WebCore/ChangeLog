@@ -1,3 +1,26 @@
+2008-08-21  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Inspector's Metrics sidebar pane editable.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17218
+        rdar://problem/5732818
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.ElementsPanel): Add an event listener for
+        the "metrics edited" event, so the Styles pane is updated.
+        * page/inspector/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype.update): Remember the node
+        so future updates work. Add a double click event listener for the
+        metric values to start editing.
+        (WebInspector.MetricsSidebarPane.prototype.startEditing):
+        Call WebInspector.startEditing with some context.
+        (WebInspector.MetricsSidebarPane.prototype.editingCancelled):
+        (WebInspector.MetricsSidebarPane.prototype.editingCommitted):
+        Set the user input on the elements inline style. Fire the
+        "metrics edited" event.
+
 2008-08-21  Steve Falkenburg  <sfalken@apple.com>
 
         Fix a race condition in Windows timer code.

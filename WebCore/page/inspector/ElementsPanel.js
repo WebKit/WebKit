@@ -61,6 +61,8 @@ WebInspector.ElementsPanel = function()
 
     this.sidebarPanes.styles.expanded = true;
 
+    this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
+
     this.sidebarElement = document.createElement("div");
     this.sidebarElement.id = "elements-sidebar";
 
@@ -409,6 +411,12 @@ WebInspector.ElementsPanel.prototype = {
             InspectorController.highlightDOMNode(this._hoveredDOMNode);
         else
             InspectorController.hideDOMNodeHighlight();
+    },
+
+    _metricsPaneEdited: function()
+    {
+        this.sidebarPanes.styles.needsUpdate = true;
+        this.updateStyles(true);
     },
 
     _focusedNodeChanged: function(forceUpdate)

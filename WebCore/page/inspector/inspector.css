@@ -1392,6 +1392,7 @@ li.editing .swatch, li.editing .enabled-button {
 .metrics .position {
     border: 1px rgb(66%, 66%, 66%) dotted;
     display: inline-block;
+    text-align: center;
     padding: 3px;
     margin: 3px;
 }
@@ -1399,6 +1400,7 @@ li.editing .swatch, li.editing .enabled-button {
 .metrics .margin {
     border: 1px dashed;
     display: inline-block;
+    text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
@@ -1407,6 +1409,7 @@ li.editing .swatch, li.editing .enabled-button {
 .metrics .border {
     border: 1px black solid;
     display: inline-block;
+    text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
@@ -1415,6 +1418,7 @@ li.editing .swatch, li.editing .enabled-button {
 .metrics .padding {
     border: 1px grey dashed;
     display: inline-block;
+    text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
@@ -1424,6 +1428,7 @@ li.editing .swatch, li.editing .enabled-button {
     position: static;
     border: 1px grey solid;
     display: inline-block;
+    text-align: center;
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
@@ -1432,24 +1437,31 @@ li.editing .swatch, li.editing .enabled-button {
     overflow: visible;
 }
 
+.metrics .content span {
+    display: inline-block;
+}
+
+.metrics .editing {
+    position: relative;
+    z-index: 100;
+}
+
 .metrics .left {
     display: inline-block;
-    text-align: center;
     vertical-align: middle;
 }
 
 .metrics .right {
     display: inline-block;
-    text-align: center;
     vertical-align: middle;
 }
 
 .metrics .top {
-    text-align: center;
+    display: inline-block;
 }
 
 .metrics .bottom {
-    text-align: center;
+    display: inline-block;
 }
 
 .sidebar {
