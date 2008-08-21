@@ -543,7 +543,7 @@ PassRefPtr<ArchiveResource> DocumentLoader::subresource(const KURL& url) const
         return archiveResourceForURL(url);
         
     CachedResource* resource = doc->docLoader()->cachedResource(url);
-    if (!resource)
+    if (!resource || resource->preloadResult() == CachedResource::PreloadReferenced)
         return archiveResourceForURL(url);
         
     return ArchiveResource::create(resource->data(), url, resource->response());

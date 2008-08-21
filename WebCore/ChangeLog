@@ -1,3 +1,20 @@
+2008-08-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitzpettel
+
+        <rdar://problem/6163636> - Many images broken in Mail
+
+        This can be traced back to the preload scanner.  With that change, CachedResources are created a lot 
+        sooner than before and confuse the WebArchive machinery.  
+
+        When referencing WebArchive subresources directly through the WebKit API it is appropriate to ignore 
+        such CachedResources since they are placeholders and have not been submitted to the ResourceLoadDelegate 
+        machinery and nothing is known about where the data will eventually come from.
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::subresource):  Ignore a CachedResource if its preloadResult is 
+          CachedResource::PreloadReferenced.
+
 2008-08-20  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Unreviewed compile fix
