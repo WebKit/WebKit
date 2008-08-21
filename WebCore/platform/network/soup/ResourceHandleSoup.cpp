@@ -387,6 +387,15 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest&, ResourceE
 
 // GIO-based loader
 
+static inline ResourceError networkErrorForFile(GFile* file, GError* error)
+{
+    // FIXME: Map gio errors to a more detailed error code when we have it in WebKit.
+    gchar* uri = g_file_get_uri(file);
+    ResourceError resourceError("webkit-network-error", ERROR_TRANSPORT, uri, String::fromUTF8(error->message));
+    g_free(uri);
+    return resourceError;
+}
+
 static void cleanupGioOperation(ResourceHandle* handle)
 {
     ResourceHandleInternal* d = handle->getInternal();
@@ -436,9 +445,8 @@ static void readCallback(GObject* source, GAsyncResult* res, gpointer data)
 
     nread = g_input_stream_read_finish(d->m_input_stream, res, &error);
     if (error) {
+        client->didFail(handle, networkErrorForFile(d->m_gfile, error));
         cleanupGioOperation(handle);
-        // FIXME: error
-        client->didFinishLoading(handle);
         return;
     } else if (!nread) {
         g_input_stream_close_async(d->m_input_stream, G_PRIORITY_DEFAULT,
@@ -469,9 +477,8 @@ static void openCallback(GObject* source, GAsyncResult* res, gpointer data)
     GError *error = NULL;
     in = g_file_read_finish(G_FILE(source), res, &error);
     if (error) {
+        client->didFail(handle, networkErrorForFile(d->m_gfile, error));
         cleanupGioOperation(handle);
-        // FIXME: error
-        client->didFinishLoading(handle);
         return;
     }
 
@@ -512,23 +519,8 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer data)
         // and set a timeout to unmount it later after it's been idle
         // for a while).
 
+        client->didFail(handle, networkErrorForFile(d->m_gfile, error));
         cleanupGioOperation(handle);
-
-        if (error->domain == G_IO_ERROR &&
-            error->code == G_IO_ERROR_NOT_FOUND)
-            response.setHTTPStatusCode(SOUP_STATUS_NOT_FOUND);
-        else if (error->domain == G_IO_ERROR &&
-                 error->code == G_IO_ERROR_PERMISSION_DENIED)
-            response.setHTTPStatusCode(SOUP_STATUS_FORBIDDEN);
-        else
-            response.setHTTPStatusCode(SOUP_STATUS_BAD_REQUEST); // ?
-        g_error_free(error);
-
-        // FIXME: do we need to fake up a response body containing the
-        // error message?
-
-        client->didReceiveResponse(handle, response);
-        client->didFinishLoading(handle);
         return;
     }
 
@@ -536,10 +528,8 @@ static void queryInfoCallback(GObject* source, GAsyncResult* res, gpointer data)
         // FIXME: what if the URI points to a directory? Should we
         // generate a listing? How? What do other backends do here?
 
+        client->didFail(handle, networkErrorForFile(d->m_gfile, error));
         cleanupGioOperation(handle);
-        response.setHTTPStatusCode(SOUP_STATUS_FORBIDDEN); // ?
-        client->didReceiveResponse(handle, response);
-        client->didFinishLoading(handle);
         return;
     }
 

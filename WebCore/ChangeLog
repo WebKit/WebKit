@@ -1,3 +1,20 @@
+2008-08-21  Marco Barisione  <marco.barisione@collabora.co.uk>
+
+        Reviewed by Mark Rowe.
+
+        http://bugs.webkit.org/show_bug.cgi?id=19656
+        [SOUP] The gio code should call didFail() instead of
+        didFinishLoading() in case of error
+
+        In case of error call didFail() instead of didReceiveResponse() and
+        didFinishLoading().
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::networkErrorForFile):
+        (WebCore::readCallback):
+        (WebCore::openCallback):
+        (WebCore::queryInfoCallback):
+
 2008-08-20  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Jon Honeycutt.
