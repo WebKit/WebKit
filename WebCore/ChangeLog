@@ -1,3 +1,18 @@
+2008-08-21  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix a race condition in Windows timer code.
+        Timer function could end up being called with a 0 timer, leading to a Windows exception.
+        
+        Don't post a timer message if one is already pending.
+        
+        Reviewed by Ada Chan.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::TimerWindowWndProc):
+        (WebCore::clearTimer):
+        (WebCore::queueTimerProc):
+        (WebCore::setSharedTimerFireTime):
+
 2008-08-21  Anthony Ricaud  <rik24d@gmail.com>
 
         After trying to add the expression, try again with quotes for
