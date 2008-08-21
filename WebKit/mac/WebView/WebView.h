@@ -617,6 +617,22 @@ extern NSString *WebViewProgressFinishedNotification;
 - (BOOL)drawsBackground;
 
 /*!
+    @method setShouldUpdateWhileOffscreen:
+    @abstract Sets whether the receiver must update even when it is not in a window that is currently visible.
+    @param updateWhileOffscreen whether the receiver is required to render updates to the web page when it is not in a visible window.
+    @abstract If set to NO, then whenever the web view is not in a visible window, updates to the web page will not necessarily be rendered in the view.
+    However, when the window is made visible, the view will be updated automatically. Not updating while hidden can improve performance. If set to is YES,
+    hidden web views are always updated. This is the default.
+*/
+- (void)setShouldUpdateWhileOffscreen:(BOOL)updateWhileOffscreen;
+
+/*!
+    @method shouldUpdateWhileOffscreen
+    @result Returns whether the web view is always updated even when it is not in a window that is currently visible.
+*/
+- (BOOL)shouldUpdateWhileOffscreen;
+
+/*!
     @method setMainFrameURL:
     @param URLString The URL to load in the mainFrame.
 */

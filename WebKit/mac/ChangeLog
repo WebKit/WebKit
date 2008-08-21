@@ -1,3 +1,28 @@
+2008-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        - rename shouldUpdateWhileHidden to shouldUpdateWhileOffscreen,
+          rename related methods and variables accordingly, and make
+          -setShouldUpdateWhileOffscreen: and -shouldUpdateWhileOffscreen
+          WebView API.
+
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage):
+        * WebView/WebFrame.mm:
+        (-[WebFrame _updateBackgroundAndUpdatesWhileOffscreen]):
+        * WebView/WebFrameInternal.h:
+        * WebView/WebHTMLView.mm:
+        (-[WebHTMLView windowWillOrderOnScreen:]):
+        * WebView/WebView.h:
+        * WebView/WebView.mm:
+        (-[WebViewPrivate init]):
+        (-[WebView setBackgroundColor:]):
+        (-[WebView setDrawsBackground:]):
+        (-[WebView setShouldUpdateWhileOffscreen:]):
+        (-[WebView shouldUpdateWhileOffscreen]):
+        * WebView/WebViewPrivate.h:
+
 2008-08-18  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Darin Adler.

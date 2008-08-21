@@ -956,7 +956,7 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     if (marginHeight >= 0)
         coreView->setMarginHeight(marginHeight);
 
-    [m_webFrame.get() _updateBackgroundAndUpdatesWhileHidden];
+    [m_webFrame.get() _updateBackgroundAndUpdatesWhileOffscreen];
 
     [v _install];
 

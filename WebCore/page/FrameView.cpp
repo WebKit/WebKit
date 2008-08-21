@@ -69,7 +69,7 @@ public:
         , m_viewportRenderer(0)
         , m_wasScrolledByUser(false)
         , m_inProgrammaticScroll(false)
-        , m_shouldUpdateWhileHidden(true)
+        , m_shouldUpdateWhileOffscreen(true)
     {
         m_isTransparent = false;
         m_baseBackgroundColor = Color::white;
@@ -147,7 +147,7 @@ public:
     IntRect m_repaintRect;
     Vector<IntRect> m_repaintRects;
 
-    bool m_shouldUpdateWhileHidden;
+    bool m_shouldUpdateWhileOffscreen;
 };
 
 FrameView::FrameView(Frame* frame)
@@ -910,14 +910,14 @@ void FrameView::setBaseBackgroundColor(Color bc)
     d->m_baseBackgroundColor = bc;
 }
 
-bool FrameView::shouldUpdateWhileHidden() const
+bool FrameView::shouldUpdateWhileOffscreen() const
 {
-    return d->m_shouldUpdateWhileHidden;
+    return d->m_shouldUpdateWhileOffscreen;
 }
 
-void FrameView::setShouldUpdateWhileHidden(bool shouldUpdateWhileHidden)
+void FrameView::setShouldUpdateWhileOffscreen(bool shouldUpdateWhileOffscreen)
 {
-    d->m_shouldUpdateWhileHidden = shouldUpdateWhileHidden;
+    d->m_shouldUpdateWhileOffscreen = shouldUpdateWhileOffscreen;
 }
 
 void FrameView::scheduleEvent(PassRefPtr<Event> event, PassRefPtr<EventTargetNode> eventTarget, bool tempEvent)

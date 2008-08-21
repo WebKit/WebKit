@@ -356,7 +356,7 @@ WebView *getWebView(WebFrame *webFrame)
     _private->coreFrame = 0;
 }
 
-- (void)_updateBackgroundAndUpdatesWhileHidden
+- (void)_updateBackgroundAndUpdatesWhileOffscreen
 {
     WebView *webView = getWebView(self);
     BOOL drawsBackground = [webView drawsBackground];
@@ -379,7 +379,7 @@ WebView *getWebView(WebFrame *webFrame)
             frame->view()->setTransparent(!drawsBackground);
             Color color = colorFromNSColor([backgroundColor colorUsingColorSpaceName:NSDeviceRGBColorSpace]);
             frame->view()->setBaseBackgroundColor(color);
-            frame->view()->setShouldUpdateWhileHidden([webView shouldUpdateWhileHidden]);
+            frame->view()->setShouldUpdateWhileOffscreen([webView shouldUpdateWhileOffscreen]);
         }
     }
 }

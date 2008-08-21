@@ -381,7 +381,7 @@ static int pluginDatabaseClientCount = 0;
     BOOL _keyboardUIModeAccessed;
     KeyboardUIMode _keyboardUIMode;
 
-    BOOL shouldUpdateWhileHidden;
+    BOOL shouldUpdateWhileOffscreen;
 }
 @end
 
@@ -489,7 +489,7 @@ static BOOL grammarCheckingEnabled;
     identifierMap = new HashMap<unsigned long, RetainPtr<id> >();
     pluginDatabaseClientCount++;
 
-    shouldUpdateWhileHidden = YES;
+    shouldUpdateWhileOffscreen = YES;
 
     return self;
 }
@@ -1607,7 +1607,7 @@ WebFrameLoadDelegateImplementationCache* WebViewGetFrameLoadDelegateImplementati
     _private->backgroundColor = [backgroundColor retain];
     [old release];
 
-    [[self mainFrame] _updateBackgroundAndUpdatesWhileHidden];
+    [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
 }
 
 - (NSColor *)backgroundColor
@@ -2883,12 +2883,25 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     if (_private->drawsBackground == drawsBackground)
         return;
     _private->drawsBackground = drawsBackground;
-    [[self mainFrame] _updateBackgroundAndUpdatesWhileHidden];
+    [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
 }
 
 - (BOOL)drawsBackground
 {
     return _private->drawsBackground;
+}
+
+- (void)setShouldUpdateWhileOffscreen:(BOOL)updateWhileOffscreen
+{
+    if (_private->shouldUpdateWhileOffscreen == updateWhileOffscreen)
+        return;
+    _private->shouldUpdateWhileOffscreen = updateWhileOffscreen;
+    [[self mainFrame] _updateBackgroundAndUpdatesWhileOffscreen];
+}
+
+- (BOOL)shouldUpdateWhileOffscreen
+{
+    return _private->shouldUpdateWhileOffscreen;
 }
 
 @end
@@ -3420,19 +3433,6 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue* jsVal
 - (IBAction)resetPageZoom:(id)sender
 {
     return [self _resetZoom:sender isTextOnly:NO];
-}
-
-- (BOOL)shouldUpdateWhileHidden
-{
-    return _private->shouldUpdateWhileHidden;
-}
-
-- (void)setShouldUpdateWhileHidden:(BOOL)flag
-{
-    if (_private->shouldUpdateWhileHidden == flag)
-        return;
-    _private->shouldUpdateWhileHidden = flag;
-    [[self mainFrame] _updateBackgroundAndUpdatesWhileHidden];
 }
 
 @end

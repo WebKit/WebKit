@@ -1,3 +1,20 @@
+2008-08-20  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by John Sullivan.
+
+        - rename shouldUpdateWhileHidden to shouldUpdateWhileOffscreen and
+          rename related methods and variables accordingly.
+
+        * WebCore.base.exp:
+        * page/FrameView.cpp:
+        (WebCore::FrameViewPrivate::FrameViewPrivate):
+        (WebCore::FrameView::shouldUpdateWhileOffscreen):
+        (WebCore::FrameView::setShouldUpdateWhileOffscreen):
+        * page/FrameView.h:
+        * platform/ScrollView.h:
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::updateContents):
+
 2008-08-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitzpettel
