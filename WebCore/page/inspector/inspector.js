@@ -344,6 +344,7 @@ WebInspector.loaded = function()
     document.getElementById("search-toolbar-label").textContent = WebInspector.UIString("Search");
     var searchField = document.getElementById("search");
     searchField.addEventListener("keyup", this.performSearch.bind(this), false);
+    searchField.addEventListener("search", this.performSearch.bind(this), false); // when the search is emptied
 
     document.getElementById("toolbar").addEventListener("mousedown", this.toolbarDragStart, true);
     document.getElementById("close-button").addEventListener("click", this.close, true);
@@ -1021,6 +1022,7 @@ WebInspector.performSearch = function(event)
     var query = event.target.value;
 
     if (!query || !query.length) {
+        delete this.lastQuery;
         this.showingSearchResults = false;
         return;
     }

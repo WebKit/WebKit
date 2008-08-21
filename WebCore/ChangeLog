@@ -1,3 +1,16 @@
+2008-08-21  Anthony Ricaud  <rik24d@gmail.com>
+
+        Perform Inspector searches on search event to clear results when
+        clicking the cross to empty it. Delete the lastQuery when the field
+        is emptied in order to perform the search if exactly the same query
+        is entered next.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20462
+
+        Reviewed by Tim Hatcher.
+
+        * page/inspector/inspector.js:
+
 2008-08-21  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Mark Rowe.
