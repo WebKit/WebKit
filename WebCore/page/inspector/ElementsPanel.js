@@ -1384,8 +1384,8 @@ WebInspector.DOMNodeTreeElement.prototype = {
         var parseContainerElement = document.createElement("span");
         parseContainerElement.innerHTML = "<span " + newText + "></span>";
         var parseElement = parseContainerElement.firstChild;
-        if (!parseElement || !parseElement.hasAttributes()) {
-            editingCancelled(element, context);
+        if (!parseElement) {
+            this._editingCancelled(element, attributeName);
             return;
         }
 

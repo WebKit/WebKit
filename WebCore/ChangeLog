@@ -1,5 +1,22 @@
 2008-08-21  Timothy Hatcher  <timothy@apple.com>
 
+        Make deleting all text while editing a DOM attribute in
+        the Inspector delete the attribute. This also fixes
+        an exception that would happen before.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20472
+
+        Reviewed by Kevin McCullough.
+
+        * page/inspector/ElementsPanel.js:
+        (WebInspector.DOMNodeTreeElement.prototype._attributeEditingCommitted):
+        Don't check for hasAttributes on the parseElement, continuing
+        through the function will correctly remove the attribute.
+        If the parseElement is null, call _editingCancelled not
+        editingCancelled, this fixes an exception.
+
+2008-08-21  Timothy Hatcher  <timothy@apple.com>
+
         Update the Inspector's Metrics pane when editing in
         the Styles pane. This makes sure the metrics shown
         always match what the Styles pane shows.
