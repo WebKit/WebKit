@@ -47,21 +47,40 @@ sub buildNightlyLauncher
     chdirWebKit();
 }
 
-sub currentSVNBranch
+sub currentRevision
 {
     my $sourceDir = sourceDir();
-    my $svnInfo = `LC_ALL=C svn info $sourceDir | grep URL:`;
-    (my $url) = ($svnInfo =~ m/URL: (.+)/g);
-    (my $branch) = ($url =~ m/\/svn\/webkit\/(trunk|branches\/[^\/]+)/);
+    if (isSVNDirectory($sourceDir)) {
+        return currentSVNRevision();
+    } elsif (isGitDirectory($sourceDir)) {
+        my $gitLog = `cd $sourceDir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
+        (my $revision) = ($gitLog =~ m/ +git-svn-id: .+@(\d+) /g);
+        return $revision;
+    }
+}
+
+sub currentBranch
+{
+    my $sourceDir = sourceDir();
+    my ($url, $branch);
+    if (isSVNDirectory($sourceDir)) {
+        my $svnInfo = `LC_ALL=C svn info $sourceDir | grep URL:`;
+        ($url) = ($svnInfo =~ m/URL: (.+)/g);
+    } elsif (isGitDirectory($sourceDir)) {
+        my $gitLog = `cd $sourceDir && LC_ALL=C git log --grep='git-svn-id: ' -n 1 | grep git-svn-id:`;
+        ($url) = ($gitLog =~ m/ +git-svn-id: (.+)@\d+ /g);
+    }
+    ($branch) = ($url =~ m/\/webkit\/(trunk|branches\/[^\/]+)/);
     die "Unable to determine current SVN branch in $sourceDir" unless (defined $branch);
     $branch =~ s/^branches\///;
-    return $branch
+    return $branch;
 }
 
 sub copyNightlyLauncher
 {
-    my $revision = currentSVNRevision();
-    my $branch = currentSVNBranch();
+    my $revision = currentRevision();
+    my $branch = currentBranch();
+
     my $infoPlist = "$nightlyLauncherStagingPath/Contents/Info.plist";
     my $versionFile = "$nightlyLauncherStagingPath/Contents/Resources/VERSION";
     my $branchFile = "$nightlyLauncherStagingPath/Contents/Resources/BRANCH";
@@ -90,6 +109,11 @@ sub copyNightlyLauncher
         system("ditto", productDir() . "/$framework.framework", "$nightlyLauncherStagingPath/Contents/Resources/$framework.framework") == 0 or die "Failed copying $framework.framework into $nightlyLauncherStagingPath";
     }
 }
+
+my $b = currentBranch();
+my $r = currentRevision();
+print "Branch: ", $b, "\n";
+print "Revision: ", $r, "\n";
 
 chdirWebKit();
 buildNightlyLauncher();
