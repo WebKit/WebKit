@@ -40,6 +40,10 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+#define HAVE_CG_INTERPOLATION_MEDIUM 1
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -830,6 +834,14 @@ void GraphicsContext::setImageInterpolationQuality(InterpolationQuality mode)
         case InterpolationLow:
             quality = kCGInterpolationLow;
             break;
+
+        // Fall through to InterpolationHigh if kCGInterpolationMedium is not available
+        case InterpolationMedium:
+#if HAVE(CG_INTERPOLATION_MEDIUM)
+            // FIXME: <rdar://problem/6164952> Use constant kCGInterpolationMedium when everyone has a version of CG that defines it.
+            quality = static_cast<CGInterpolationQuality>(4); 
+            break;
+#endif
         case InterpolationHigh:
             quality = kCGInterpolationHigh;
             break;
@@ -852,6 +864,11 @@ InterpolationQuality GraphicsContext::imageInterpolationQuality() const
             return InterpolationLow;
         case kCGInterpolationHigh:
             return InterpolationHigh;
+#if HAVE(CG_INTERPOLATION_MEDIUM)
+        // FIXME: <rdar://problem/6164952> Use constant kCGInterpolationMedium when everyone has a version of CG that defines it.
+        default:
+            return InterpolationMedium;
+#endif
     }
     return InterpolationDefault;
 }

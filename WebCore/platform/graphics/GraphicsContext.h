@@ -119,6 +119,7 @@ namespace WebCore {
         InterpolationDefault,
         InterpolationNone,
         InterpolationLow,
+        InterpolationMedium,
         InterpolationHigh
     };
 
