@@ -1,3 +1,18 @@
+2008-08-22  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where while editing in the Inspector the
+        sidebar scroll position would jump to the top.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20484
+
+        Reviewed by Darin Adler.
+
+        * page/inspector/treeoutline.js:
+        (TreeOutline._removeChildren): Remove the offsetTop call that
+        was forcing a layout, since layout causes scroll positions
+        to be clamped to the new scrollHeight/Width. Layout will happen
+        normally when needed.
+
 2008-08-22  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix. Add AccessibilityTable sources.

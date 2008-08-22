@@ -184,9 +184,6 @@ TreeOutline._removeChildren = function()
     }
 
     this.children = [];
-
-    if (this._childrenListNode)
-        this._childrenListNode.offsetTop; // force layout
 }
 
 TreeOutline._removeChildrenRecursive = function()
