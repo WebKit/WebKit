@@ -1,5 +1,19 @@
 2008-08-22  Timothy Hatcher  <timothy@apple.com>
 
+        Makes getStyleProperty return a value for the overflow property
+        when overflow-x and overflow-y are equal.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20485
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/css/overflow-property.html
+
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::getPropertyValue):
+
+2008-08-22  Timothy Hatcher  <timothy@apple.com>
+
         Fixes a bug where while editing in the Inspector the
         sidebar scroll position would jump to the top.
 

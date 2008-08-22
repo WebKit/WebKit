@@ -168,6 +168,10 @@ String CSSMutableStyleDeclaration::getPropertyValue(int propertyID) const
                                         CSSPropertyMarginBottom, CSSPropertyMarginLeft };
             return get4Values(properties);
         }
+        case CSSPropertyOverflow: {
+            const int properties[2] = { CSSPropertyOverflowX, CSSPropertyOverflowY };
+            return getCommonValue(properties, 2);
+        }
         case CSSPropertyPadding: {
             const int properties[4] = { CSSPropertyPaddingTop, CSSPropertyPaddingRight,
                                         CSSPropertyPaddingBottom, CSSPropertyPaddingLeft };
