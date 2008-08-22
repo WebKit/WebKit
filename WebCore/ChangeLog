@@ -1,3 +1,13 @@
+2008-08-21  Kevin Watters  <kevinwatters@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Follow other ports (and IE) in ImageSourceWx.cpp never to return an
+        animated GIF frame duration of less than 50ms.
+
+        * platform/graphics/wx/ImageSourceWx.cpp:
+        (WebCore::ImageSource::frameDurationAtIndex):
+
 2008-08-21  Maxime Britto  <britto@apple.com>
 
         Reviewed by Kevin McCullough.
