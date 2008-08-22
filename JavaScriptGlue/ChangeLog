@@ -1,5 +1,11 @@
 2008-08-22  Anders Carlsson  <andersca@apple.com>
 
+        Fix build for real this time.
+        
+        * UserObjectImp.h:
+
+2008-08-22  Anders Carlsson  <andersca@apple.com>
+
         Fix build.
         
         * UserObjectImp.cpp:

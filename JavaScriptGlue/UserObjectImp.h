@@ -32,6 +32,7 @@
 #include "JSUtils.h"
 #include "JSBase.h"
 #include "JSObject.h"
+#include <JavaScriptCore/JSType.h>
 
 class UserObjectImp : public JSObject
 {
