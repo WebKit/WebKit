@@ -1,3 +1,16 @@
+2008-08-21 Jonas Klink <klinktech@gmail.com>
+
+        Reviewed by Jon Honeycutt.
+
+        Fix http://bugs.webkit.org/show_bug.cgi?id=20230
+        Bug 20230: get_accState should be testing state on childObj
+
+        Also initializes output parameter action to 0 in get_accDefaultAction.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accState):
+        (AccessibleBase::get_accDefaultAction):
+
 2008-08-20  Maxime Britto  <britto@apple.com>
 
         Reviewed by Ada Chan.

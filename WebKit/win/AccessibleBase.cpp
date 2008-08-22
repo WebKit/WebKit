@@ -227,43 +227,43 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accState(VARIANT vChild, VARIANT* 
     pvState->vt = VT_I4;
     pvState->lVal = 0;
 
-    if (m_object->isAnchor())
+    if (childObj->isAnchor())
         pvState->lVal |= STATE_SYSTEM_LINKED;
 
-    if (m_object->isHovered())
+    if (childObj->isHovered())
         pvState->lVal |= STATE_SYSTEM_HOTTRACKED;
 
-    if (!m_object->isEnabled())
+    if (!childObj->isEnabled())
         pvState->lVal |= STATE_SYSTEM_UNAVAILABLE;
 
-    if (m_object->isReadOnly())
+    if (childObj->isReadOnly())
         pvState->lVal |= STATE_SYSTEM_READONLY;
 
-    if (m_object->isOffScreen())
+    if (childObj->isOffScreen())
         pvState->lVal |= STATE_SYSTEM_OFFSCREEN;
 
-    if (m_object->isMultiSelect())
+    if (childObj->isMultiSelect())
         pvState->lVal |= STATE_SYSTEM_MULTISELECTABLE;
 
-    if (m_object->isPasswordField())
+    if (childObj->isPasswordField())
         pvState->lVal |= STATE_SYSTEM_PROTECTED;
 
-    if (m_object->isIndeterminate())
+    if (childObj->isIndeterminate())
         pvState->lVal |= STATE_SYSTEM_INDETERMINATE;
 
-    if (m_object->isChecked())
+    if (childObj->isChecked())
         pvState->lVal |= STATE_SYSTEM_CHECKED;
 
-    if (m_object->isPressed())
+    if (childObj->isPressed())
         pvState->lVal |= STATE_SYSTEM_PRESSED;
 
-    if (m_object->isFocused())
+    if (childObj->isFocused())
         pvState->lVal |= STATE_SYSTEM_FOCUSED;
 
-    if (m_object->isVisited())
+    if (childObj->isVisited())
         pvState->lVal |= STATE_SYSTEM_TRAVERSED;
 
-    if (m_object->canSetFocusAttribute())
+    if (childObj->canSetFocusAttribute())
         pvState->lVal |= STATE_SYSTEM_FOCUSABLE;
 
     // TODO: Add selected and selectable states.
@@ -367,6 +367,8 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accDefaultAction(VARIANT vChild, B
 {
     if (!action)
         return E_POINTER;
+
+    *action = 0;
 
     AccessibilityObject* childObj;
     HRESULT hr = getAccessibilityObjectForChild(vChild, childObj);
