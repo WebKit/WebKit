@@ -1,5 +1,16 @@
 2008-08-22  Timothy Hatcher  <timothy@apple.com>
 
+        Rolls out r35834 because it caused a regression in the Inspector's
+        Console where some expressions always threw a syntax error.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20487
+
+        * page/inspector/Console.js:
+        (Console.prototype._evalInInspectedWindow): Removes parenthesis
+        around the expression.
+
+2008-08-22  Timothy Hatcher  <timothy@apple.com>
+
         Makes getStyleProperty return a value for the overflow property
         when overflow-x and overflow-y are equal.
 
