@@ -233,6 +233,13 @@ void SimpleFontData::platformInit()
     NSString *familyName = [m_font.font() familyName];
     if ([familyName isEqualToString:@"Times"] || [familyName isEqualToString:@"Helvetica"] || [familyName isEqualToString:@"Courier"])
         fAscent += floorf(((fAscent + fDescent) * 0.15f) + 0.5f);
+    else if ([familyName isEqualToString:@"Geeza Pro"]) {
+        // Geeza Pro has glyphs that draw slightly above the ascent or far below the descent. Adjust
+        // those vertical metrics to better match reality, so that diacritics at the bottom of one line
+        // do not overlap diacritics at the top of the next line.
+        fAscent *= 1.08f;
+        fDescent *= 2.f;
+    }
 
     m_ascent = lroundf(fAscent);
     m_descent = lroundf(fDescent);

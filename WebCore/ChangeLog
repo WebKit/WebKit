@@ -1,3 +1,15 @@
+2008-08-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt and Alexey Proskuryakov.
+
+        - fix <rdar://problem/6162701> WebKit should correct Geeza Pro's font metrics
+
+        Test: platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): Add 8% to Geeza Pro's reported
+        ascent and 100% to its reported descent.
+
 2008-08-21  Kalle Vahlman  <kalle.vahlman@movial.com>
 
         Reviewed by Darin Adler.

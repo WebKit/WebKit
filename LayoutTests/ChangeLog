@@ -1,3 +1,14 @@
+2008-08-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Jon Honeycutt and Alexey Proskuryakov.
+
+        - test for <rdar://problem/6162701> WebKit should correct Geeza Pro's font metrics
+
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.checksum: Added.
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html: Added.
+
 2008-08-21  Maxime Britto  <britto@apple.com>
 
         Reviewed by Kevin McCullough.
