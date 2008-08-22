@@ -2,6 +2,19 @@
 
         Reviewed by Jon Honeycutt.
 
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20231
+        Bug 20231: accNavigate: no screen element found in the specified direction should return S_FALSE
+
+        Per <http://msdn.microsoft.com/en-us/library/ms696145(VS.85).aspx>, we should return S_FALSE
+        from accNavigate if no screen element is found in the specified direction.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::accNavigate):
+
+2008-08-21 Jonas Klink <klinktech@gmail.com>
+
+        Reviewed by Jon Honeycutt.
+
         Fix http://bugs.webkit.org/show_bug.cgi?id=20230
         Bug 20230: get_accState should be testing state on childObj
 

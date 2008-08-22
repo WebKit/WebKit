@@ -451,7 +451,7 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::accNavigate(long direction, VARIANT vF
     }
 
     if (!childObj)
-        return E_FAIL;
+        return S_FALSE;
 
     V_VT(pvNavigatedTo) = VT_DISPATCH;
     V_DISPATCH(pvNavigatedTo) = wrapper(childObj);
