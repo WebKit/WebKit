@@ -291,6 +291,8 @@ public:
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 
+    void updateBackground();
+
     // WebFrame (matching WebCoreFrameBridge)
     void setTextSizeMultiplier(float multiplier);
     HRESULT inViewSourceMode(BOOL *flag);

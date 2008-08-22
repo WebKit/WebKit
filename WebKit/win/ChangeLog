@@ -1,3 +1,25 @@
+2008-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to make a Windows WebView transparent.
+
+        Reviewed by Dan Bernstein.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebFrameLoaderClient::transitionToCommittedForNewPage): Call
+        updateBackground() when a new frame is attached, matching the Mac.
+        * WebFrame.cpp:
+        (WebFrame::updateBackground): Propagate WebView transparency to ourself
+        and our child frames.
+        * WebFrame.h:
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::paintIntoBackingStore): Pass m_transparent when creating a
+        GraphicsContext, so the context will be created with an alpha channel.
+        (WebView::setTransparent):
+        (WebView::transparent):
+        * WebView.h:
+
 2008-08-12  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to get a handle to the WebView's backing store bitmap.

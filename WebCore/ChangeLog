@@ -1,3 +1,14 @@
+2008-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Add SPI to make a Windows WebView transparent.
+
+        Reviewed by Dan Bernstein.
+
+        * platform/graphics/GraphicsContext.h: Add a parameter, hasAlpha, that
+        determines whether the created context has an alpha channel.
+        * platform/graphics/win/GraphicsContextCGWin.cpp:
+        (WebCore::CGContextWithHDC):
+
 2008-08-22  Timothy Hatcher  <timothy@apple.com>
 
         Rolls out r35834 because it caused a regression in the Inspector's

@@ -2022,3 +2022,17 @@ COMPtr<IAccessible> WebFrame::accessible() const
     return m_accessible.get();
 }
 
+void WebFrame::updateBackground()
+{
+    Color backgroundColor = webView()->transparent() ? Color::transparent : Color::white;
+    Frame* coreFrame = core(this);
+    for (Frame* frame = coreFrame; frame; frame = frame->tree()->traverseNext(coreFrame)) {
+        FrameView* view = frame->view();
+        if (!view)
+            continue;
+
+        view->setTransparent(webView()->transparent());
+        view->setBaseBackgroundColor(backgroundColor);
+    }
+}
+

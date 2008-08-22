@@ -509,6 +509,8 @@ void WebFrameLoaderClient::transitionToCommittedForNewPage()
     frame->setView(frameView);
     frameView->deref(); // FrameViews are created with a ref count of 1. Release this ref since we've assigned it to frame.
 
+    m_webFrame->updateBackground();
+
     HWND viewWindow;
     if (SUCCEEDED(webView->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))))
         frameView->setContainingWindow(viewWindow);

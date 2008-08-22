@@ -672,6 +672,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE backingStore(
         /* [out, retval] */ OLE_HANDLE* hBitmap);
 
+    virtual HRESULT STDMETHODCALLTYPE setTransparent(
+        /* [in] */ BOOL transparent);
+
+    virtual HRESULT STDMETHODCALLTYPE transparent(
+        /* [out, retval] */ BOOL* transparent);
+
     // WebView
     WebCore::Page* page();
     bool handleMouseEvent(UINT, WPARAM, LPARAM);
@@ -702,6 +708,8 @@ public:
     void closeWindowSoon();
     void close();
     bool didClose() const { return m_didClose; }
+
+    bool transparent() const { return m_transparent; }
 
     bool onIMEStartComposition();
     bool onIMEComposition(LPARAM);
@@ -833,6 +841,8 @@ protected:
     HWND m_toolTipHwnd;
     WebCore::String m_toolTip;
     bool m_deleteBackingStoreTimerActive;
+
+    bool m_transparent;
 
     static bool s_allowSiteSpecificHacks;
 
