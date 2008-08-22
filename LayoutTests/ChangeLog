@@ -1,3 +1,14 @@
+2008-08-21  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler
+
+        css3/transform-computed-style-001.html is better tested
+        by fast/css/getComputedStyle-transform.html, so removed.
+        https://bugs.webkit.org/show_bug.cgi?id=20477
+
+        * css3/transform-computed-style-001-expected.txt: Removed.
+        * css3/transform-computed-style-001.fhtml: Removed.
+
 2008-08-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Jon Honeycutt and Alexey Proskuryakov.
