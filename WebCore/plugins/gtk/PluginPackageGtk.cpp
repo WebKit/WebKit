@@ -74,6 +74,10 @@ bool PluginPackage::fetchInfo()
     gchar** mimeDescs = g_strsplit(types, ";", -1);
     for (int i = 0; mimeDescs[i] && mimeDescs[i][0]; i++) {
         gchar** mimeData = g_strsplit(mimeDescs[i], ":", 3);
+        if (g_strv_length(mimeData) < 3) {
+            g_strfreev(mimeData);
+            continue;
+        }
 
         String description = String::fromUTF8(mimeData[2]);
         gchar** extensions = g_strsplit(mimeData[1], ",", -1);

@@ -1,3 +1,15 @@
+2008-08-21  Kalle Vahlman  <kalle.vahlman@movial.com>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19171
+        [GTK] Crash on some pages due to a plugin
+
+        Fix handling of badly formatted and empty plugin mime descriptions
+
+        * plugins/gtk/PluginPackageGtk.cpp:
+        (WebCore::PluginPackage::fetchInfo):
+
 2008-08-21  Kevin Watters  <kevinwatters@gmail.com>
 
         Reviewed by Darin Adler.
