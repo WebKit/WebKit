@@ -4838,6 +4838,15 @@ HRESULT STDMETHODCALLTYPE WebView::setCustomHTMLTokenizerChunkSize(
     return S_OK;
 }
 
+HRESULT STDMETHODCALLTYPE WebView::backingStore(
+    /* [out, retval] */ OLE_HANDLE* hBitmap)
+{
+    if (!hBitmap)
+        return E_POINTER;
+    *hBitmap = reinterpret_cast<OLE_HANDLE>(m_backingStoreBitmap.get());
+    return S_OK;
+}
+
 bool WebView::onGetObject(WPARAM wParam, LPARAM lParam, LRESULT& lResult) const
 {
     lResult = 0;

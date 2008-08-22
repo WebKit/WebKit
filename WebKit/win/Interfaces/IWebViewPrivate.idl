@@ -129,4 +129,6 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setCustomHTMLTokenizerTimeDelay([in] double timeDelay);
     HRESULT setCustomHTMLTokenizerChunkSize([in] int chunkSize);
+
+    HRESULT backingStore([out, retval] OLE_HANDLE* hBitmap);
 }
