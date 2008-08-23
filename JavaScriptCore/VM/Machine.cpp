@@ -1922,7 +1922,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = (++vPC)->u.operand;
 
         Identifier& ident = codeBlock->identifiers[property];
-        JSValue *result = r[base].jsValue(exec)->get(exec, ident);
+        JSValue* result = r[base].jsValue(exec)->get(exec, ident);
         VM_CHECK_EXCEPTION();
         r[dst] = result;
         ++vPC;

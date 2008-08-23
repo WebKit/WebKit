@@ -19,7 +19,6 @@
  */
 
 #include "config.h"
-
 #include "identifier.h"
 
 #include "ExecState.h"
@@ -76,21 +75,21 @@ void deleteIdentifierTable(IdentifierTable* table)
     delete table;
 }
 
-bool Identifier::equal(const UString::Rep *r, const char *s)
+bool Identifier::equal(const UString::Rep* r, const char* s)
 {
     int length = r->len;
-    const UChar *d = r->data();
+    const UChar* d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i] != (unsigned char)s[i])
             return false;
     return s[length] == 0;
 }
 
-bool Identifier::equal(const UString::Rep *r, const UChar *s, int length)
+bool Identifier::equal(const UString::Rep* r, const UChar* s, int length)
 {
     if (r->len != length)
         return false;
-    const UChar *d = r->data();
+    const UChar* d = r->data();
     for (int i = 0; i != length; ++i)
         if (d[i] != s[i])
             return false;
@@ -99,24 +98,24 @@ bool Identifier::equal(const UString::Rep *r, const UChar *s, int length)
 
 struct CStringTranslator
 {
-    static unsigned hash(const char *c)
+    static unsigned hash(const char* c)
     {
         return UString::Rep::computeHash(c);
     }
 
-    static bool equal(UString::Rep *r, const char *s)
+    static bool equal(UString::Rep* r, const char* s)
     {
         return Identifier::equal(r, s);
     }
 
-    static void translate(UString::Rep*& location, const char *c, unsigned hash)
+    static void translate(UString::Rep*& location, const char* c, unsigned hash)
     {
         size_t length = strlen(c);
-        UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * length));
+        UChar* d = static_cast<UChar*>(fastMalloc(sizeof(UChar) * length));
         for (size_t i = 0; i != length; i++)
             d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
         
-        UString::Rep *r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
+        UString::Rep* r = UString::Rep::create(d, static_cast<int>(length)).releaseRef();
         r->rc = 0;
         r->_hash = hash;
 
@@ -155,7 +154,7 @@ PassRefPtr<UString::Rep> Identifier::add(ExecState* exec, const char* c)
 }
 
 struct UCharBuffer {
-    const UChar *s;
+    const UChar* s;
     unsigned int length;
 };
 
@@ -166,18 +165,18 @@ struct UCharBufferTranslator
         return UString::Rep::computeHash(buf.s, buf.length);
     }
 
-    static bool equal(UString::Rep *str, const UCharBuffer& buf)
+    static bool equal(UString::Rep* str, const UCharBuffer& buf)
     {
         return Identifier::equal(str, buf.s, buf.length);
     }
 
-    static void translate(UString::Rep *& location, const UCharBuffer& buf, unsigned hash)
+    static void translate(UString::Rep*& location, const UCharBuffer& buf, unsigned hash)
     {
-        UChar *d = static_cast<UChar *>(fastMalloc(sizeof(UChar) * buf.length));
+        UChar* d = static_cast<UChar*>(fastMalloc(sizeof(UChar) * buf.length));
         for (unsigned i = 0; i != buf.length; i++)
             d[i] = buf.s[i];
         
-        UString::Rep *r = UString::Rep::create(d, buf.length).releaseRef();
+        UString::Rep* r = UString::Rep::create(d, buf.length).releaseRef();
         r->rc = 0;
         r->_hash = hash;
         
@@ -218,7 +217,7 @@ PassRefPtr<UString::Rep> Identifier::addSlowCase(ExecState* exec, UString::Rep* 
     return addSlowCase(&exec->globalData(), r);
 }
 
-void Identifier::remove(UString::Rep *r)
+void Identifier::remove(UString::Rep* r)
 {
     r->identifierTable()->remove(r);
 }

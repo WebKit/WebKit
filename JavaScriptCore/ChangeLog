@@ -1,3 +1,25 @@
+2008-08-22  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Some cleanup to match our coding style.
+
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        * kjs/ExecState.cpp:
+        * kjs/ExecState.h:
+        * kjs/completion.h:
+        * kjs/identifier.cpp:
+        (KJS::Identifier::equal):
+        (KJS::CStringTranslator::hash):
+        (KJS::CStringTranslator::equal):
+        (KJS::CStringTranslator::translate):
+        (KJS::UCharBufferTranslator::equal):
+        (KJS::UCharBufferTranslator::translate):
+        (KJS::Identifier::remove):
+        * kjs/operations.h:
+
 2008-08-20  Alexey Proskuryakov  <ap@webkit.org>
 
         Windows build fix.
