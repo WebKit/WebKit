@@ -1,3 +1,52 @@
+2008-08-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove modelines.
+
+        * WebCore.pro:
+        * bridge/testbindings.cpp:
+        * dom/DocPtr.h:
+        * loader/SubstituteData.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/Frame.h:
+        * page/FrameLoadRequest.h:
+        * page/FrameTree.cpp:
+        * page/FrameTree.h:
+        * page/Page.h:
+        * page/mac/ChromeMac.mm:
+        * platform/network/HTTPHeaderMap.h:
+        * platform/network/ResourceErrorBase.cpp:
+        * platform/network/ResourceErrorBase.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/ResourceRequestBase.cpp:
+        * platform/network/ResourceRequestBase.h:
+        * platform/network/ResourceResponseBase.cpp:
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceError.h:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/cf/ResourceRequestCFNet.h:
+        * platform/network/cf/ResourceResponse.h:
+        * platform/network/cf/ResourceResponseCFNet.h:
+        * platform/network/curl/ResourceError.h:
+        * platform/network/curl/ResourceRequest.h:
+        * platform/network/curl/ResourceResponse.h:
+        * platform/network/mac/ResourceError.h:
+        * platform/network/mac/ResourceErrorMac.mm:
+        * platform/network/mac/ResourceRequest.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        * platform/network/mac/ResourceResponse.h:
+        * platform/network/mac/ResourceResponseMac.mm:
+        * platform/network/qt/ResourceError.h:
+        * platform/network/qt/ResourceRequest.h:
+        * platform/network/qt/ResourceResponse.h:
+        * platform/network/soup/CookieJarSoup.cpp:
+        * platform/network/soup/ResourceError.h:
+        * platform/network/soup/ResourceRequest.h:
+        * platform/network/soup/ResourceResponse.h:
+
 2008-08-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

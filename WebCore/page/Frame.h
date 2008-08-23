@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 4 -*-
 /*
  * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
  *                     1999-2001 Lars Knoll <knoll@kde.org>

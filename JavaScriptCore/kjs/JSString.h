@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)

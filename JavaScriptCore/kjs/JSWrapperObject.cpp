@@ -1,4 +1,3 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  Copyright (C) 2006 Maks Orlovich
  *  Copyright (C) 2006 Apple Computer, Inc.

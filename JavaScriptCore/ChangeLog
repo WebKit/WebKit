@@ -1,3 +1,74 @@
+2008-08-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Mark Rowe.
+
+        Remove modelines.
+
+        * API/APICast.h:
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSClassRef.cpp:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSProfilerPrivate.cpp:
+        * API/JSStringRef.cpp:
+        * API/JSStringRefBSTR.cpp:
+        * API/JSStringRefCF.cpp:
+        * API/JSValueRef.cpp:
+        * API/tests/JSNode.c:
+        * API/tests/JSNode.h:
+        * API/tests/JSNodeList.c:
+        * API/tests/JSNodeList.h:
+        * API/tests/Node.c:
+        * API/tests/Node.h:
+        * API/tests/NodeList.c:
+        * API/tests/NodeList.h:
+        * API/tests/minidom.c:
+        * API/tests/minidom.js:
+        * API/tests/testapi.c:
+        * API/tests/testapi.js:
+        * JavaScriptCore.pro:
+        * kjs/FunctionConstructor.h:
+        * kjs/FunctionPrototype.h:
+        * kjs/JSArray.h:
+        * kjs/JSString.h:
+        * kjs/JSWrapperObject.cpp:
+        * kjs/NumberConstructor.h:
+        * kjs/NumberObject.h:
+        * kjs/NumberPrototype.h:
+        * kjs/lexer.h:
+        * kjs/lookup.h:
+        * wtf/Assertions.cpp:
+        * wtf/Assertions.h:
+        * wtf/HashCountedSet.h:
+        * wtf/HashFunctions.h:
+        * wtf/HashIterators.h:
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+        * wtf/HashTable.h:
+        * wtf/HashTraits.h:
+        * wtf/ListHashSet.h:
+        * wtf/ListRefPtr.h:
+        * wtf/Noncopyable.h:
+        * wtf/OwnArrayPtr.h:
+        * wtf/OwnPtr.h:
+        * wtf/PassRefPtr.h:
+        * wtf/Platform.h:
+        * wtf/RefPtr.h:
+        * wtf/RefPtrHashMap.h:
+        * wtf/RetainPtr.h:
+        * wtf/UnusedParam.h:
+        * wtf/Vector.h:
+        * wtf/VectorTraits.h:
+        * wtf/unicode/Unicode.h:
+        * wtf/unicode/icu/UnicodeIcu.h:
+
 2008-08-22  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

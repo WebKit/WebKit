@@ -1,4 +1,3 @@
-# -*- Mode:makefile -*-
 # WebCore - qmake build info
 CONFIG += building-libs
 CONFIG += depend_includepath

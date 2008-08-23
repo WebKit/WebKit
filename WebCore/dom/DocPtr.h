@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * This file is part of the DOM implementation for KDE.
  * Copyright (C) 2005, 2006 Apple Computer, Inc.

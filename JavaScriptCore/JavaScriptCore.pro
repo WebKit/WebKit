@@ -1,4 +1,3 @@
-# -*- Mode:makefile -*-
 # JavaScriptCore - qmake build info
 CONFIG += building-libs
 include($$PWD/../WebKit.pri)
