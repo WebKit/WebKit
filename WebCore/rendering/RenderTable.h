@@ -102,6 +102,8 @@ public:
     virtual void layout();
     virtual void calcPrefWidths();
 
+    virtual int getBaselineOfFirstLineBox() const;
+
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
     

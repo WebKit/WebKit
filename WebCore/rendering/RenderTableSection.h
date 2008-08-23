@@ -52,6 +52,8 @@ public:
     virtual int lineHeight(bool firstLine, bool isRootLineBox = false) const { return 0; }
     virtual void position(InlineBox*) { }
 
+    virtual int getBaselineOfFirstLineBox() const;
+
     void addCell(RenderTableCell*, RenderObject* row);
 
     void setCellWidths();

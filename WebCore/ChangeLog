@@ -1,3 +1,23 @@
+2008-08-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix <rdar://problem/6065143> Reflowed image in first line of table doesn't affect baseline
+
+        Test: fast/table/vertical-align-baseline.html
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::getBaselineOfFirstLineBox): Added. Returns the
+        baseline of the first table row, if there is one, -1 otherwise.
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::baselinePosition): Changed to follow the
+        CSS2.1 definition of the baseline of a table cell.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::getBaselineOfFirstLineBox): Added. Returns
+        the baseline of the first row in the section.
+        * rendering/RenderTableSection.h:
+
 2008-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to make a Windows WebView transparent.

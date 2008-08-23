@@ -850,6 +850,25 @@ void RenderTableSection::recalcOuterBorder()
     m_outerBorderRight = calcOuterBorderRight(rtl);
 }
 
+int RenderTableSection::getBaselineOfFirstLineBox() const
+{
+    if (!m_gridRows)
+        return -1;
+
+    int firstLineBaseline = m_grid[0].baseline;
+    if (firstLineBaseline)
+        return firstLineBaseline + m_rowPos[0];
+
+    firstLineBaseline = -1;
+    Row* firstRow = m_grid[0].row;
+    for (size_t i = 0; i < firstRow->size(); ++i) {
+        RenderTableCell* cell = firstRow->at(i).cell;
+        if (cell)
+            firstLineBaseline = max(firstLineBaseline, cell->yPos() + cell->paddingTop() + cell->borderTop() + cell->contentHeight());
+    }
+
+    return firstLineBaseline;
+}
 
 void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 {

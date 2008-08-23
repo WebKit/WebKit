@@ -1,3 +1,21 @@
+2008-08-23  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - test and updated results for <rdar://problem/6065143> Reflowed image in first line of table doesn't affect baseline
+
+        * fast/table/vertical-align-baseline.html: Added.
+        * platform/mac/fast/table/form-with-table-style-expected.checksum:
+        * platform/mac/fast/table/form-with-table-style-expected.png:
+        * platform/mac/fast/table/form-with-table-style-expected.txt:
+        * platform/mac/fast/table/vertical-align-baseline-expected.checksum: Added.
+        * platform/mac/fast/table/vertical-align-baseline-expected.png: Added.
+        * platform/mac/fast/table/vertical-align-baseline-expected.txt: Added.
+        * platform/mac/tables/mozilla/bugs/bug3037-1-expected.txt:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.checksum:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.png:
+        * platform/mac/tables/mozilla_expected_failures/bugs/bug2479-5-expected.txt:
+
 2008-08-22  Timothy Hatcher  <timothy@apple.com>
 
         Test for the tests the parsing and retrieval of the overflow,
