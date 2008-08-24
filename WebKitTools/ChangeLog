@@ -1,3 +1,69 @@
+2008-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Initial support for accessibility layout tests on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=20497
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/AccessibilityController.h: Fix typos.
+        * DumpRenderTree/AccessibilityUIElement.cpp: Change #import to #include.
+        * DumpRenderTree/AccessibilityUIElement.h: Define _WINSOCKAPI_ to
+        prevent oleacc.h, which includes windows.h, from including winsock.h.
+        Fixed typos.
+        * DumpRenderTree/win/AccessibilityControllerWin.cpp: Added.
+        (AccessibilityController::AccessibilityController):
+        (AccessibilityController::~AccessibilityController):
+        (AccessibilityController::focusedElement): Get the root element, and
+        request its focused object.
+        (AccessibilityController::rootElement): Query Windows for the 
+        accessible client object for the WebView's window.
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp: Added.
+        (AccessibilityUIElement::AccessibilityUIElement):
+        (AccessibilityUIElement::~AccessibilityUIElement):
+        (AccessibilityUIElement::getLinkedUIElements): Not implemented.
+        (AccessibilityUIElement::getChildren): Get the child count, and append
+        each child.
+        (AccessibilityUIElement::getChildAtIndex): Get the child at the given
+        index offset by 1. In MSAA, child 0 is the object itself.
+        (AccessibilityUIElement::allAttributes): Not implemented.
+        (AccessibilityUIElement::attributesOfLinkedUIElements): Same.
+        (AccessibilityUIElement::attributesOfChildren): Same.
+        (AccessibilityUIElement::parameterizedAttributeNames): Same.
+        (self): Return a VARIANT representing the "self" object. This is used
+        when calling methods that require a child variant.
+        (AccessibilityUIElement::role): Get the MSAA role, a long value, and
+        convert it into a string with GetRoleText().
+        (AccessibilityUIElement::title): Get the element's title, and convert
+        it to a JS String.
+        (AccessibilityUIElement::description): Same, for description.
+        (AccessibilityUIElement::width):
+        (AccessibilityUIElement::height):
+        (AccessibilityUIElement::intValue): Get the object's value as a string,
+        and convert the string to a double.
+        (AccessibilityUIElement::minValue): Not implemented.
+        (AccessibilityUIElement::maxValue): Same.
+        (AccessibilityUIElement::insertionPointLineNumber): Same.
+        (AccessibilityUIElement::attributesOfColumnHeaders): Same.
+        (AccessibilityUIElement::attributesOfRowHeaders): Same.
+        (AccessibilityUIElement::attributesOfColumns): Same.
+        (AccessibilityUIElement::attributesOfRows): Same.
+        (AccessibilityUIElement::attributesOfVisibleCells): Same.
+        (AccessibilityUIElement::attributesOfHeader): Same.
+        (AccessibilityUIElement::indexInTable): Same.
+        (AccessibilityUIElement::rowIndexRange): Same.
+        (AccessibilityUIElement::columnIndexRange): Same.
+        (AccessibilityUIElement::lineForIndex): Same.
+        (AccessibilityUIElement::boundsForRange): Same.
+        (AccessibilityUIElement::cellForColumnAndRow): Same.
+        * DumpRenderTree/win/DumpRenderTree.vcproj: Add accessibility files to
+        project.  Link to oleacc.lib, the MSAA library.
+        * DumpRenderTree/win/FrameLoadDelegate.cpp:
+        (FrameLoadDelegate::FrameLoadDelegate): Initialize the accessibility
+        controller.
+        (FrameLoadDelegate::didClearWindowObject): Create a new window object
+        for the accessibility controller.
+        * DumpRenderTree/win/FrameLoadDelegate.h:
+
 2008-08-21  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Mark Rowe

@@ -54,7 +54,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -128,7 +128,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -201,7 +201,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib"
+				AdditionalDependencies="WebKitGUID$(WebKitConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib WTF$(WebKitConfigSuffix).lib CoreGraphics$(LibraryConfigSuffix).lib CoreFoundation$(LibraryConfigSuffix).lib CFNetwork$(LibraryConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib gdi32.lib ole32.lib oleaut32.lib user32.lib shlwapi.lib oleacc.lib"
 				AdditionalLibraryDirectories=""
 				DelayLoadDLLs=""
 				SubSystem="1"
@@ -241,6 +241,18 @@
 		<Filter
 			Name="Controllers"
 			>
+			<File
+				RelativePath="..\AccessibilityController.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\AccessibilityController.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AccessibilityControllerWin.cpp"
+				>
+			</File>
 			<File
 				RelativePath=".\EventSender.cpp"
 				>
@@ -318,6 +330,18 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="..\AccessibilityUIElement.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\AccessibilityUIElement.h"
+			>
+		</File>
+		<File
+			RelativePath=".\AccessibilityUIElementWin.cpp"
+			>
+		</File>
 		<File
 			RelativePath=".\DraggingInfo.h"
 			>

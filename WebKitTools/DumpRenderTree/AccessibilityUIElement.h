@@ -36,6 +36,14 @@ typedef id PlatformUIElement;
 #else
 typedef struct objc_object* PlatformUIElement;
 #endif
+#elif PLATFORM(WIN)
+#undef _WINSOCKAPI_
+#define _WINSOCKAPI_ // Prevent inclusion of winsock.h in windows.h
+
+#include <oleacc.h>
+#include <WebCore/COMPtr.h>
+
+typedef COMPtr<IAccessible> PlatformUIElement;
 #else
 typedef void* PlatformUIElement;
 #endif
@@ -54,13 +62,13 @@ public:
     void getChildren(Vector<AccessibilityUIElement>&);
     AccessibilityUIElement getChildAtIndex(unsigned);
     
-    // Methods - platfrom independant implementations
+    // Methods - platform-independent implementations
     JSStringRef allAttributes();
     JSStringRef attributesOfLinkedUIElements();
     JSStringRef attributesOfChildren();
     JSStringRef parameterizedAttributeNames();
     
-    // Attributes - platfrom independant implementations
+    // Attributes - platform-independent implementations
     JSStringRef role();
     JSStringRef title();
     JSStringRef description();
@@ -71,7 +79,7 @@ public:
     double maxValue();
     int insertionPointLineNumber();
     
-    // table specific attributes
+    // Table-specific attributes
     JSStringRef attributesOfColumnHeaders();
     JSStringRef attributesOfRowHeaders();
     JSStringRef attributesOfColumns();
@@ -82,11 +90,11 @@ public:
     JSStringRef rowIndexRange();
     JSStringRef columnIndexRange();
     
-    // parameterized attributes
+    // Parameterized attributes
     int lineForIndex(int);
     JSStringRef boundsForRange(unsigned location, unsigned length);
     
-    // table specific
+    // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
     
 private:

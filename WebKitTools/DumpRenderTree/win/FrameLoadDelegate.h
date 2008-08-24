@@ -32,6 +32,7 @@
 #include <WebKit/WebKit.h>
 #include <wtf/OwnPtr.h>
 
+class AccessibilityController;
 class GCController;
 
 class FrameLoadDelegate : public IWebFrameLoadDelegate2, public IWebFrameLoadDelegatePrivate {
@@ -132,6 +133,7 @@ protected:
 
     ULONG m_refCount;
     OwnPtr<GCController> m_gcController;
+    OwnPtr<AccessibilityController> m_accessibilityController;
 };
 
 #endif // FrameLoadDelegate_h
