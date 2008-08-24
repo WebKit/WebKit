@@ -349,17 +349,15 @@ HRESULT STDMETHODCALLTYPE AccessibleBase::get_accFocus(VARIANT* pvFocusedChild)
     if (!focusedObj)
         return S_FALSE;
 
-    // Only return the focused child if it's us or a child of us. Otherwise,
-    // report VT_EMPTY.
     if (focusedObj == m_object) {
         V_VT(pvFocusedChild) = VT_I4;
         V_I4(pvFocusedChild) = CHILDID_SELF;
-    } else if (focusedObj->parentObject() == m_object) {
-        V_VT(pvFocusedChild) = VT_DISPATCH;
-        V_DISPATCH(pvFocusedChild) = wrapper(focusedObj);
-        V_DISPATCH(pvFocusedChild)->AddRef();
+        return S_OK;
     }
 
+    V_VT(pvFocusedChild) = VT_DISPATCH;
+    V_DISPATCH(pvFocusedChild) = wrapper(focusedObj);
+    V_DISPATCH(pvFocusedChild)->AddRef();
     return S_OK;
 }
 

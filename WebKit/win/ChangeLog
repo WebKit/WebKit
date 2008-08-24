@@ -1,3 +1,19 @@
+2008-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        Cannot get the focused accessible object from the root object.
+
+        AccessibleBase::get_AccFocus() checks whether the focused object is a
+        child of the current object, but 
+        http://msdn.microsoft.com/en-us/library/ms696150(VS.85).aspx states that
+        the result is the object itself, if it has focus, or a child object of
+        the active window, not a child of the object.
+
+        Reviewed by Sam Weinig.
+
+        * AccessibleBase.cpp:
+        (AccessibleBase::get_accFocus): Don't check whether the focused object
+        is our child.
+
 2008-08-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Add SPI to make a Windows WebView transparent.
