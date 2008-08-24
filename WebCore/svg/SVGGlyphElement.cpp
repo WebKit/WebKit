@@ -1,6 +1,7 @@
 /*
    Copyright (C) 2007 Eric Seidel <eric@webkit.org>
    Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
+   Copyright (C) 2008 Rob Buis <buis@kde.org>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Library General Public
@@ -44,23 +45,32 @@ SVGGlyphElement::~SVGGlyphElement()
 {
 }
 
-void SVGGlyphElement::insertedIntoDocument()
+void SVGGlyphElement::invalidateGlyphCache()
 {
     Node* fontNode = parentNode();
     if (fontNode && fontNode->hasTagName(fontTag)) {
         if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
             element->invalidateGlyphCache();
     }
+}
+
+void SVGGlyphElement::parseMappedAttribute(MappedAttribute* attr)
+{
+    if (attr->name() == SVGNames::dAttr)
+        invalidateGlyphCache();
+    else
+        SVGStyledElement::parseMappedAttribute(attr);
+}
+
+void SVGGlyphElement::insertedIntoDocument()
+{
+    invalidateGlyphCache();
     SVGStyledElement::insertedIntoDocument();
 }
 
 void SVGGlyphElement::removedFromDocument()
 {
-    Node* fontNode = parentNode();
-    if (fontNode && fontNode->hasTagName(fontTag)) {
-        if (SVGFontElement* element = static_cast<SVGFontElement*>(fontNode))
-            element->invalidateGlyphCache();
-    }
+    invalidateGlyphCache();
     SVGStyledElement::removedFromDocument();
 }
 

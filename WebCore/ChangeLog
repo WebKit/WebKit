@@ -1,3 +1,21 @@
+2008-08-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20324
+        A change in SVG Glyph wont show up
+
+        Invalidate the glyph cache when the d attribute is set.
+
+        Test: svg/custom/glyph-setting-d-attribute.svg
+
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::invalidateGlyphCache):
+        (WebCore::SVGGlyphElement::parseMappedAttribute):
+        (WebCore::SVGGlyphElement::insertedIntoDocument):
+        (WebCore::SVGGlyphElement::removedFromDocument):
+        * svg/SVGGlyphElement.h:
+
 2008-08-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

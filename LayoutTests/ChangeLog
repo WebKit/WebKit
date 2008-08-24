@@ -1,3 +1,16 @@
+2008-08-24  Rob Buis  <buis@kde.org>
+
+        Reviewed by Sam Weinig.
+
+        Test for:
+        https://bugs.webkit.org/show_bug.cgi?id=20324
+        A change in SVG Glyph wont show up
+
+        * svg/custom/glyph-setting-d-attribute-expected.checksum: Added.
+        * svg/custom/glyph-setting-d-attribute-expected.png: Added.
+        * svg/custom/glyph-setting-d-attribute-expected.txt: Added.
+        * svg/custom/glyph-setting-d-attribute.svg: Added.
+
 2008-08-23  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
