@@ -587,10 +587,10 @@ RegisterID* DeleteResolveNode::emitCode(CodeGenerator& generator, RegisterID* ds
 RegisterID* DeleteBracketNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     RefPtr<RegisterID> r0 = generator.emitNode(m_base.get());
-    RefPtr<RegisterID> r1 = generator.emitNode(m_subscript.get());
+    RegisterID* r1 = generator.emitNode(m_subscript.get());
 
     generator.emitExpressionInfo(m_divot, m_startOffset, m_endOffset);
-    return generator.emitDeleteByVal(generator.finalDestination(dst), r0.get(), r1.get());
+    return generator.emitDeleteByVal(generator.finalDestination(dst), r0.get(), r1);
 }
 
 // ------------------------------ DeleteDotNode -----------------------------------
