@@ -1,3 +1,21 @@
+2008-08-24  Timothy Hatcher  <timothy@apple.com>
+
+        Fixes a bug where the Inspector's UI would not animate or
+        fully function because JavaScript timeouts, intervals and
+        CSS animation timers where not firing while paused at a
+        a breakpoint in the inspected page.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20042
+
+        Reviewed by Darin Adler.
+
+        Test: manual-tests/inspector/forzen-ui-while-paused.html
+
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::pauseIfNeeded):
+        Add a call to TimerBase::fireTimersInNestedEventLoop before
+        spinning the EventLoop.
+
 2008-08-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam Weinig.

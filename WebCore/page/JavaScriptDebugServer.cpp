@@ -406,6 +406,8 @@ void JavaScriptDebugServer::pauseIfNeeded(Page* page)
 
     setJavaScriptPaused(page->group(), true);
 
+    TimerBase::fireTimersInNestedEventLoop();
+
     EventLoop loop;
     m_doneProcessingDebuggerEvents = false;
     while (!m_doneProcessingDebuggerEvents && !loop.ended())
