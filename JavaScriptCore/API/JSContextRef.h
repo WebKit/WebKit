@@ -77,7 +77,7 @@ JS_EXPORT void JSContextGroupRelease(JSContextGroupRef group) AVAILABLE_AFTER_WE
  NULL to use the default object class.
 @result A JSGlobalContext with a global object of class globalObjectClass.
 */
-JS_EXPORT JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass) AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
+JS_EXPORT JSGlobalContextRef JSGlobalContextCreate(JSClassRef globalObjectClass) AVAILABLE_WEBKIT_VERSION_3_0_AND_LATER_BUT_DEPRECATED_AFTER_WEBKIT_VERSION_3_1;
 
 /*!
 @function
