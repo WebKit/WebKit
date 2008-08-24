@@ -410,7 +410,11 @@ void RenderText::trimmedPrefWidths(int leadWidth,
     if (m_hasTab || prefWidthsDirty())
         calcPrefWidths(leadWidth);
 
+    beginWS = !stripFrontSpaces && m_hasBeginWS;
+    endWS = m_hasEndWS;
+
     int len = textLength();
+
     if (!len || (stripFrontSpaces && m_text->containsOnlyWhitespace())) {
         beginMinW = 0;
         endMinW = 0;
@@ -424,8 +428,6 @@ void RenderText::trimmedPrefWidths(int leadWidth,
 
     minW = m_minWidth;
     maxW = m_maxWidth;
-    beginWS = !stripFrontSpaces && m_hasBeginWS;
-    endWS = m_hasEndWS;
 
     beginMinW = m_beginMinWidth;
     endMinW = m_endMinWidth;

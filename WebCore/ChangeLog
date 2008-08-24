@@ -1,3 +1,15 @@
+2008-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=13864
+          <rdar://problem/5451470> REGRESSION: Uninitialized value in RenderBlock::calcInlinePrefWidths()
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::trimmedPrefWidths): Moved the assignment to
+        beginWS and endWS before the early return to ensure that they are
+        initialized in that case.
+
 2008-08-23  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Mark Rowe.
