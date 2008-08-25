@@ -33,12 +33,18 @@
 #include <objc/objc-runtime.h>
 #include <wtf/Assertions.h>
 #include <wtf/MainThread.h>
+#include <wtf/Threading.h>
 
 void WebCoreObjCFinalizeOnMainThread(Class cls)
 {
 #if !defined(BUILDING_ON_TIGER) && !defined(DONT_FINALIZE_ON_MAIN_THREAD)
     objc_finalizeOnMainThread(cls);
 #endif
+    
+    // The reason we call initializeThreading here is that we'd like to have 
+    // threading initialized early, otherwise WebCoreObjCScheduleDeallocateOnMainThread
+    // will crash
+    WTF::initializeThreading();
 }
 
 #ifdef BUILDING_ON_TIGER

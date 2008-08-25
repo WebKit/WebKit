@@ -1,3 +1,17 @@
+2008-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mark.
+
+        <rdar://problem/6149787> crash @ com.apple.JavaScriptCore: WTF::callOnMainThread + 37.
+        
+        Initialize threading in the call to WebCoreObjCFinalizeOnMainThread. We currently assume 
+        (safely) that any class that needs finalization on the main thread will also need to be deallocated
+        on the main thread, and calling initializeThreading from WebCoreObjCFinalizeOnMainThread instead of
+        calling it from WebCoreObjCScheduleDeallocateOnMainThread seems safer.
+
+        * platform/mac/WebCoreObjCExtras.c:
+        (WebCoreObjCFinalizeOnMainThread):
+
 2008-08-25  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dan Bernstein.
