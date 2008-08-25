@@ -1,3 +1,16 @@
+2008-08-25  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Simon.
+
+        Transformed the radian to degree, to get rotate()
+        in canvas work as expected.
+
+        [Qt] Canvas.rotate() doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=20496
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::rotate):
+
 2008-08-24  Steve Falkenburg  <sfalken@apple.com>
 
         Add a "last chance" WM_TIMER to the Windows shared timer.

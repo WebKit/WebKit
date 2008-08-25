@@ -808,7 +808,7 @@ void GraphicsContext::rotate(float radians)
     if (paintingDisabled())
         return;
 
-    m_data->p()->rotate(radians);
+    m_data->p()->rotate(180/M_PI*radians);
 }
 
 void GraphicsContext::scale(const FloatSize& s)
