@@ -28,14 +28,14 @@
     <file>Resource.js</file>
     <file>ResourcesPanel.js</file>
     <file>ResourceView.js</file>
-    <file>ScriptsPanel.js</file>
     <file>ScopeChainSidebarPane.js</file>
+    <file>Script.js</file>
+    <file>ScriptsPanel.js</file>
+    <file>ScriptView.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
-    <file>SourceView.js</file>
-    <file>Script.js</file>
-    <file>ScriptView.js</file>
     <file>SourceFrame.js</file>
+    <file>SourceView.js</file>
     <file>StylesSidebarPane.js</file>
     <file>TextPrompt.js</file>
     <file>treeoutline.js</file>
@@ -44,6 +44,7 @@
     <file>Images/back.png</file>
     <file>Images/checker.png</file>
     <file>Images/clearConsoleButtons.png</file>
+    <file>Images/closeButtons.png</file>
     <file>Images/consoleButtons.png</file>
     <file>Images/database.png</file>
     <file>Images/databasesIcon.png</file>
@@ -67,14 +68,26 @@
     <file>Images/elementsIcon.png</file>
     <file>Images/errorIcon.png</file>
     <file>Images/errorMediumIcon.png</file>
+    <file>Images/excludeButtons.png</file>
+    <file>Images/focusButtons.png</file>
     <file>Images/forward.png</file>
     <file>Images/glossyHeader.png</file>
     <file>Images/glossyHeaderPressed.png</file>
+    <file>Images/glossyHeaderSelected.png</file>
+    <file>Images/glossyHeaderSelectedPressed.png</file>
     <file>Images/goArrow.png</file>
     <file>Images/largerResourcesButtons.png</file>
     <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneGrowHandleLine.png</file>
+    <file>Images/pauseOnExceptionButtons.png</file>
+    <file>Images/percentButtons.png</file>
+    <file>Images/profileGroupIcon.png</file>
+    <file>Images/profileIcon.png</file>
+    <file>Images/profilesIcon.png</file>
+    <file>Images/profileSmallIcon.png</file>
+    <file>Images/recordButtons.png</file>
+    <file>Images/reloadButtons.png</file>
     <file>Images/resourceCSSIcon.png</file>
     <file>Images/resourceDocumentIcon.png</file>
     <file>Images/resourceDocumentIconSmall.png</file>
@@ -116,6 +129,8 @@
     <file>Images/treeDownTriangleWhite.png</file>
     <file>Images/treeRightTriangleBlack.png</file>
     <file>Images/treeRightTriangleWhite.png</file>
+    <file>Images/treeUpTriangleBlack.png</file>
+    <file>Images/treeUpTriangleWhite.png</file>
     <file>Images/userInputIcon.png</file>
     <file>Images/userInputPreviousIcon.png</file>
     <file>Images/warningIcon.png</file>

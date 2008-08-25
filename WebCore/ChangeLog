@@ -1,3 +1,12 @@
+2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [inspector] Update the WebKit.qrc Qt resources file
+        Catchup with the changes in the directory.
+
+        * page/inspector/WebKit.qrc:
+
 2008-08-25  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Simon.
