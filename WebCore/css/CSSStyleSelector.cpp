@@ -188,8 +188,8 @@ HANDLE_FILL_LAYER_VALUE(mask, Mask, prop, Prop, value)
 if (isInherit) { \
     AnimationList* list = m_style->accessAnimations(); \
     const AnimationList* parentList = m_parentStyle->animations(); \
-    size_t i = 0; \
-    for ( ; i < parentList->size() && (*parentList)[i]->is##Prop##Set(); ++i) { \
+    size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
+    for ( ; i < parentSize && (*parentList)[i]->is##Prop##Set(); ++i) { \
         if (list->size() <= i) \
             list->append(Animation::create()); \
         (*list)[i]->set##Prop((*parentList)[i]->prop()); \
@@ -238,8 +238,8 @@ for ( ; childIndex < list->size(); ++childIndex) { \
 if (isInherit) { \
     AnimationList* list = m_style->accessTransitions(); \
     const AnimationList* parentList = m_parentStyle->transitions(); \
-    size_t i = 0; \
-    for ( ; i < parentList->size() && (*parentList)[i]->is##Prop##Set(); ++i) { \
+    size_t i = 0, parentSize = parentList ? parentList->size() : 0; \
+    for ( ; i < parentSize && (*parentList)[i]->is##Prop##Set(); ++i) { \
         if (list->size() <= i) \
             list->append(Animation::create()); \
         (*list)[i]->set##Prop((*parentList)[i]->prop()); \

@@ -1,3 +1,16 @@
+2008-08-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Make sure 'inherit' is handled by transition property.
+        https://bugs.webkit.org/show_bug.cgi?id=20513
+
+        Test: transitions/inherit.html
+        Test: transitions/inherit-other-props.html
+
+        * css/CSSStyleSelector.cpp:
+          fix macro to check existence of list before getting size
+
 2008-08-25  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Mark.

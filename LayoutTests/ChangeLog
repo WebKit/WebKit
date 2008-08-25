@@ -1,3 +1,15 @@
+2008-08-25  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Tests for 'inherit' keyword in transition property.
+        https://bugs.webkit.org/show_bug.cgi?id=20513
+
+        * transitions/inherit-expected.txt: Added.
+        * transitions/inherit.html: Added.
+        * transitions/inherit-other-props-expected.txt: Added.
+        * transitions/inherit-other-props.html: Added.
+
 2008-08-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
