@@ -1,3 +1,18 @@
+2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [inspector] Emit signals from attachWindow and detachWindow in the Qt platform
+        Allow the user of the API to honor the attachWindow and detachWindow
+        requests and attach the QWebPage/QWebView wherever it is wanted. This needs
+        some more API in QWebPage to be properly exposed.
+
+        * WebCoreSupport/InspectorClientQt.cpp:
+        (WebCore::InspectorClientQt::createPage):
+        (WebCore::InspectorClientQt::attachWindow):
+        (WebCore::InspectorClientQt::detachWindow):
+        * WebCoreSupport/InspectorClientQt.h:
+
 2008-08-19  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff Garen.

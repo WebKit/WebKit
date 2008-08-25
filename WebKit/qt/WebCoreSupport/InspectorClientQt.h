@@ -40,6 +40,7 @@ namespace WebCore {
     class Node;
     class Page;
     class String;
+    class InspectorClientWebPage;
 
     class InspectorClientQt : public InspectorClient {
     public:
@@ -67,8 +68,7 @@ namespace WebCore {
     private:
         void updateWindowTitle();
         QWebPage* m_inspectedWebPage;
-        OwnPtr<QWebPage> m_webPage;
-        bool m_attached;
+        OwnPtr<InspectorClientWebPage> m_webPage;
         QString m_inspectedURL;
     };
 }

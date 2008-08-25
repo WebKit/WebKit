@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -45,6 +46,8 @@ namespace WebCore {
 
 class InspectorClientWebPage : public QWebPage
 {
+    Q_OBJECT
+    friend class InspectorClientQt;
 public:
     QWebPage* createWindow(QWebPage::WebWindowType)
     {
@@ -54,6 +57,10 @@ public:
         connect(page, SIGNAL(destroyed()), w, SLOT(deleteLater()));
         return page;
     }
+
+Q_SIGNALS:
+    void attachRequested();
+    void detachRequested();
 };
 
 
@@ -82,7 +89,6 @@ private:
 
 InspectorClientQt::InspectorClientQt(QWebPage* page)
     : m_inspectedWebPage(page)
-    , m_attached(false)
 {}
 
 void InspectorClientQt::inspectorDestroyed()
@@ -96,7 +102,7 @@ Page* InspectorClientQt::createPage()
         return m_webPage->d->page;
 
     InspectorClientView* view = new InspectorClientView(m_inspectedWebPage->d->page->inspectorController());
-    m_webPage.set(view->page());
+    m_webPage.set(qobject_cast<InspectorClientWebPage*>(view->page()));
     m_webPage->mainFrame()->load(QString::fromLatin1("qrc:/webkit/inspector/inspector.html"));
     m_webPage->view()->setMinimumSize(400,300);
     return m_webPage->d->page;
@@ -136,22 +142,18 @@ bool InspectorClientQt::windowVisible()
 
 void InspectorClientQt::attachWindow()
 {
-    ASSERT(m_inspectedWebPage);
-    ASSERT(m_webPage);
-    ASSERT(!m_attached);
+    if (!m_webPage)
+        return;
 
-    m_attached = true;
-    notImplemented();
+    emit m_webPage->attachRequested();
 }
 
 void InspectorClientQt::detachWindow()
 {
-    ASSERT(m_inspectedWebPage);
-    ASSERT(m_webPage);
-    ASSERT(m_attached);
+    if (!m_webPage)
+        return;
 
-    m_attached = false;
-    notImplemented();
+    emit m_webPage->detachRequested();
 }
 
 void InspectorClientQt::setAttachedWindowHeight(unsigned height)
@@ -185,3 +187,5 @@ void InspectorClientQt::updateWindowTitle()
 }
 
 }
+
+#include "InspectorClientQt.moc"
