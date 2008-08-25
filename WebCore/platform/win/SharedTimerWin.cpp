@@ -62,6 +62,7 @@
 namespace WebCore {
 
 static UINT timerID;
+static UINT lastChanceTimerID;
 static void (*sharedTimerFiredFunction)();
 
 static HWND timerWindowHandle = 0;
@@ -77,10 +78,12 @@ const LPCWSTR kTimerWindowClassName = L"TimerWindowClass";
 const int timerResolution = 1;
 const int highResolutionThresholdMsec = 16;
 const int stopHighResTimerInMsec = 20;
+const int lastChanceTimerIntervalInMS = 5000;
 
 enum {
     sharedTimerID = 1000,
-    endHighResTimerID = 1001
+    endHighResTimerID = 1001,
+    lastChanceSharedTimerID = 1002,
 };
 
 static bool isRunningOnVistaOrLater()
@@ -119,7 +122,7 @@ LRESULT CALLBACK TimerWindowWndProc(HWND hWnd, UINT message, WPARAM wParam, LPAR
         sharedTimerFiredFunction();
         processingCustomTimerMessage = false;
     } else if (message == WM_TIMER) {
-        if (wParam == sharedTimerID) {
+        if (wParam == sharedTimerID || wParam == lastChanceSharedTimerID) {
             KillTimer(timerWindowHandle, sharedTimerID);
             sharedTimerFiredFunction();
         } else if (wParam == endHighResTimerID) {
@@ -227,8 +230,19 @@ void setSharedTimerFireTime(double fireTime)
             KillTimer(timerWindowHandle, timerID);
             timerID = 0;
         }
-    } else
+    } else {
         timerID = SetTimer(timerWindowHandle, sharedTimerID, intervalInMS, 0);
+        if (!lastChanceTimerID) {
+            // The last chance timer fires every 5 seconds to run any lost WM_TIMER based timers.
+            // Failure to fire a timer is fatal to the cross-platform Timer code, since it won't re-schedule
+            // timers if a timer with an earlier expiration is already pending. This results in no timers
+            // firing from that point on.
+            // We lose WM_TIMER messages occasionally (in the neighborhood of 1 per hour) probably due to a
+            // buggy window message hook. This timer will start when the first WM_TIMER is scheduled, and will
+            // fire every 5 seconds thereafter.
+            lastChanceTimerID = SetTimer(timerWindowHandle, lastChanceSharedTimerID, lastChanceTimerIntervalInMS, 0);
+        }
+    }
 }
 
 void stopSharedTimer()

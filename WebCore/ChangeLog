@@ -1,3 +1,28 @@
+2008-08-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Add a "last chance" WM_TIMER to the Windows shared timer.
+        
+        The last chance timer fires every 5 seconds to run any lost WM_TIMER based timers.
+        Failure to fire a timer is fatal to the cross-platform Timer code, since it won't re-schedule
+        timers if a timer with an earlier expiration is already pending. This results in no timers
+        firing from that point on.
+        
+        We lose WM_TIMER messages occasionally (in the neighborhood of 1 per hour) probably due to a
+        buggy window message hook.
+        
+        This timer will start when the first WM_TIMER is scheduled, and will
+        fire every 5 seconds thereafter, causing any lost timers to be fired.
+        
+        Found this via one of its symptoms: leaking WebFrames. The fix prevents timers from stalling
+        and prevents the WebFrame leak.
+        
+        Reviewed by Darin Adler, Geoff Garen.
+
+        * platform/win/SharedTimerWin.cpp:
+        (WebCore::):
+        (WebCore::TimerWindowWndProc):
+        (WebCore::setSharedTimerFireTime):
+
 2008-08-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
