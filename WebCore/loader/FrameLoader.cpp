@@ -2504,11 +2504,13 @@ void FrameLoader::stopAllLoaders()
     stopLoadingSubframes();
     if (m_provisionalDocumentLoader)
         m_provisionalDocumentLoader->stopLoading();
-    if (m_documentLoader) {
+    if (m_documentLoader)
         m_documentLoader->stopLoading();
-        m_documentLoader->clearArchiveResources();
-    }
+
     setProvisionalDocumentLoader(0);
+    
+    if (m_documentLoader)
+        m_documentLoader->clearArchiveResources();
 
     m_inStopAllLoaders = false;    
 }

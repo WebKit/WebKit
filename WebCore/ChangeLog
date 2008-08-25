@@ -1,3 +1,17 @@
+2008-08-25  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Speculative fix for <rdar://problem/6173217>
+
+        Moves the "clearArchivedResources()" call to exactly where it used to be in the old version of WebArchive code.
+        Also, adds a null check for m_documentLoader since DocumentLoader::stopLoading() can end up clearing it, rendering
+        the first null check invalid.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopAllLoaders):
+
+
 2008-08-25  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.
