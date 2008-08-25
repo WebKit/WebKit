@@ -350,11 +350,13 @@ static bool runWithScripts(GlobalObject* globalObject, const Vector<UString>& fi
             Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), fileName, 1, script.data());
             success = success && completion.complType() != Throw;
             if (dump) {
-                if (success)
-                    printf("End: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());
-                else
+                if (completion.complType() == Throw)
                     printf("Exception: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());
+                else
+                    printf("End: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());
             }
+
+            globalObject->globalExec()->clearException();
 
 #if ENABLE(SAMPLING_TOOL)
             machine->m_sampler->stop();
@@ -390,8 +392,12 @@ static void runInteractive(GlobalObject* globalObject)
         line.append('\0');
         Completion completion = Interpreter::evaluate(globalObject->globalExec(), globalObject->globalScopeChain(), interpreterName, 1, line.data());
 #endif
-        if (completion.isValueCompletion())
+        if (completion.complType() == Throw)
+            printf("Exception: %s\n", completion.value()->toString(globalObject->globalExec()).ascii());
+        else
             printf("%s\n", completion.value()->toString(globalObject->globalExec()).UTF8String().c_str());
+
+        globalObject->globalExec()->clearException();
     }
     printf("\n");
 }

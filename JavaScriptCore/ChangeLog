@@ -1,3 +1,21 @@
+2008-08-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20093: JSC shell does not clear exceptions after it executes toString on an expression
+        <https://bugs.webkit.org/show_bug.cgi?id=20093>
+
+        Clear exceptions after evaluating any code in the JSC shell. We do not
+        report exceptions that are caused by calling toString on the final
+        valued, but at least we avoid incorrect behaviour.
+
+        Also, print any exceptions that occurred while evaluating code at the
+        interactive prompt, not just while evaluating code from a file.
+
+        * kjs/Shell.cpp:
+        (runWithScripts):
+        (runInteractive):
+
 2008-08-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.
