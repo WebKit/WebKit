@@ -120,9 +120,9 @@ namespace WebCore {
 
         static bool parseColor(const String&, RGBA32& rgb, bool strict);
 
-        bool parseFontStyle();
-        bool parseFontVariant();
-        bool parseFontWeight();
+        bool parseFontStyle(bool important);
+        bool parseFontVariant(bool important);
+        bool parseFontWeight(bool important);
         bool parseFontFaceSrc();
         bool parseFontFaceUnicodeRange();
 

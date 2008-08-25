@@ -1,3 +1,12 @@
+2008-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - test for <rdar://problem/6065547> REGRESSION (r34879): "Subject" in unread emails in Yahoo mail is not shown in bold
+
+        * fast/css/font-property-priority-expected.txt: Added.
+        * fast/css/font-property-priority.html: Added.
+
 2008-08-24  Rob Buis  <buis@kde.org>
 
         Reviewed by Sam Weinig.

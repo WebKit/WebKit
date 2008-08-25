@@ -735,7 +735,7 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyFontWeight:  // normal | bold | bolder | lighter | 100 | 200 | 300 | 400 | 500 | 600 | 700 | 800 | 900 | inherit
-        return parseFontWeight();
+        return parseFontWeight(important);
 
     case CSSPropertyBorderSpacing: {
         const int properties[2] = { CSSPropertyWebkitBorderHorizontalSpacing,
@@ -970,10 +970,10 @@ bool CSSParser::parseValue(int propId, bool important)
         break;
 
     case CSSPropertyFontStyle:           // normal | italic | oblique | inherit
-        return parseFontStyle();
+        return parseFontStyle(important);
 
     case CSSPropertyFontVariant:         // normal | small-caps | inherit
-        return parseFontVariant();
+        return parseFontVariant(important);
 
     case CSSPropertyVerticalAlign:
         // baseline | sub | super | top | text-top | middle | bottom | text-bottom |
@@ -2917,7 +2917,7 @@ PassRefPtr<CSSValueList> CSSParser::parseFontFamily()
     return list.release();
 }
 
-bool CSSParser::parseFontStyle()
+bool CSSParser::parseFontStyle(bool important)
 {
     RefPtr<CSSValueList> values;
     if (m_valueList->size() > 1)
@@ -2950,21 +2950,21 @@ bool CSSParser::parseFontStyle()
         if (values)
             values->append(parsedValue.release());
         else {
-            addProperty(CSSPropertyFontStyle, parsedValue.release(), m_important);
+            addProperty(CSSPropertyFontStyle, parsedValue.release(), important);
             return true;
         }
     }
 
     if (values && values->length()) {
         m_hasFontFaceOnlyValues = true;
-        addProperty(CSSPropertyFontStyle, values.release(), m_important);
+        addProperty(CSSPropertyFontStyle, values.release(), important);
         return true;
     }
 
     return false;
 }
 
-bool CSSParser::parseFontVariant()
+bool CSSParser::parseFontVariant(bool important)
 {
     RefPtr<CSSValueList> values;
     if (m_valueList->size() > 1)
@@ -2997,21 +2997,21 @@ bool CSSParser::parseFontVariant()
         if (values)
             values->append(parsedValue.release());
         else {
-            addProperty(CSSPropertyFontVariant, parsedValue.release(), m_important);
+            addProperty(CSSPropertyFontVariant, parsedValue.release(), important);
             return true;
         }
     }
 
     if (values && values->length()) {
         m_hasFontFaceOnlyValues = true;
-        addProperty(CSSPropertyFontVariant, values.release(), m_important);
+        addProperty(CSSPropertyFontVariant, values.release(), important);
         return true;
     }
 
     return false;
 }
 
-bool CSSParser::parseFontWeight()
+bool CSSParser::parseFontWeight(bool important)
 {
     RefPtr<CSSValueList> values;
     if (m_valueList->size() > 1)
@@ -3050,14 +3050,14 @@ bool CSSParser::parseFontWeight()
         if (values)
             values->append(parsedValue.release());
         else {
-            addProperty(CSSPropertyFontWeight, parsedValue.release(), m_important);
+            addProperty(CSSPropertyFontWeight, parsedValue.release(), important);
             return true;
         }
     }
 
     if (values && values->length()) {
         m_hasFontFaceOnlyValues = true;
-        addProperty(CSSPropertyFontWeight, values.release(), m_important);
+        addProperty(CSSPropertyFontWeight, values.release(), important);
         return true;
     }
 

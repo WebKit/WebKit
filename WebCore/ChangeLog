@@ -1,3 +1,20 @@
+2008-08-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - fix <rdar://problem/6065547> REGRESSION (r34879): "Subject" in unread emails in Yahoo mail is not shown in bold
+
+        Test: fast/css/font-property-priority.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Changed to pass the 'important' flag
+        to the font-property-parsing functions.
+        (WebCore::CSSParser::parseFontStyle): Added an 'important' argument and
+        changed to use it rather than the m_important member.
+        (WebCore::CSSParser::parseFontVariant): Ditto.
+        (WebCore::CSSParser::parseFontWeight): Ditto.
+        * css/CSSParser.h:
+
 2008-08-24  Timothy Hatcher  <timothy@apple.com>
 
         Fixes a bug where the Inspector's UI would not animate or
