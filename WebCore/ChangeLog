@@ -1,3 +1,13 @@
+2008-08-25  Anthony Ricaud  <rik24d@gmail.com>
+
+        Add a missing Inspector localized string for "other".
+
+        https://bugs.webkit.org/show_bug.cgi?id=20509
+
+        Reviewed by Tim Hatcher.
+
+        * English.lproj/localizedStrings.js:
+
 2008-08-22  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff, Mark and Tim.
