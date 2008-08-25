@@ -952,7 +952,7 @@ print HTML "</html>\n";
 close HTML;
 
 if (isQt()) {
-  system "konqueror", $testResults if $launchSafari;
+  system "WebKitTools/Scripts/run-launcher", "--qt", $configurationOption, $testResults if $launchSafari;
 } elsif (isGtk()) {
   system "WebKitTools/Scripts/run-launcher", "--gtk", $configurationOption, $testResults if $launchSafari;
 } elsif (isCygwin()) {

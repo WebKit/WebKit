@@ -1,3 +1,13 @@
+2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [run-webkit-tests] Use QtLauncher to show the results of the tests
+        konqueror might not be installed, xdg-open might not be installed but the
+        QtLauncher should be present.
+
+        * Scripts/run-webkit-tests:
+
 2008-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Initial support for accessibility layout tests on Windows.
