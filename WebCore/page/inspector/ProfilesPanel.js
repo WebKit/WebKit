@@ -118,6 +118,8 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViews.removeChildren();
 
         this.populateInterface();
+
+        this.profileViewStatusBarItemsContainer.removeChildren();
     },
 
     handleKeyEvent: function(event)

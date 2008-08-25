@@ -1,3 +1,12 @@
+2008-08-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        <rdar://problem/6157711> Heavy/Tree view selector is not grayed out if
+        there is no profile, can cause crash
+
+        * page/inspector/ProfilesPanel.js:
+
 2008-08-25  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dave Hyatt
