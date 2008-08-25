@@ -111,7 +111,8 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
 
         delete heap;
         globalData.heap = 0;
-    }
+    } else
+        globalData.heap->collect();
 
     globalData.deref();
 }

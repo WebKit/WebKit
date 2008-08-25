@@ -1,3 +1,16 @@
+2008-08-25  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin.
+
+        Ensure that JSGlobalContextRelease() performs garbage collection, even if there are other
+        contexts in the current context's group.
+
+        This is only really necessary when the last reference is released, but there is no way to
+        determine that, and no harm in collecting slightly more often.
+
+        * API/JSContextRef.cpp: (JSGlobalContextRelease): Explicitly collect the heap if it is not
+        being destroyed.
+
 2008-08-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
