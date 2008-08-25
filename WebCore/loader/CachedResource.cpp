@@ -120,7 +120,7 @@ void CachedResource::addClient(CachedResourceClient *c)
         else
             m_preloadResult = PreloadReferenced;
     }
-    if (!referenced() && inCache())
+    if (!hasClients() && inCache())
         cache()->addToLiveResourcesSize(this);
     m_clients.add(c);
 }
@@ -131,7 +131,7 @@ void CachedResource::removeClient(CachedResourceClient *c)
     m_clients.remove(c);
     if (canDelete() && !inCache())
         delete this;
-    else if (!referenced() && inCache()) {
+    else if (!hasClients() && inCache()) {
         cache()->removeFromLiveResourcesSize(this);
         cache()->removeFromLiveDecodedResourcesList(this);
         allReferencesRemoved();
@@ -159,13 +159,13 @@ void CachedResource::setDecodedSize(unsigned size)
         cache()->insertInLRUList(this);
         
         // Insert into or remove from the live decoded list if necessary.
-        if (m_decodedSize && !m_inLiveDecodedResourcesList && referenced())
+        if (m_decodedSize && !m_inLiveDecodedResourcesList && hasClients())
             cache()->insertInLiveDecodedResourcesList(this);
         else if (!m_decodedSize && m_inLiveDecodedResourcesList)
             cache()->removeFromLiveDecodedResourcesList(this);
 
         // Update the cache's size totals.
-        cache()->adjustSize(referenced(), delta);
+        cache()->adjustSize(hasClients(), delta);
     }
 }
 
@@ -192,7 +192,7 @@ void CachedResource::setEncodedSize(unsigned size)
         cache()->insertInLRUList(this);
         
         // Update the cache's size totals.
-        cache()->adjustSize(referenced(), delta);
+        cache()->adjustSize(hasClients(), delta);
     }
 }
 

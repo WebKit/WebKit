@@ -227,7 +227,7 @@ void Cache::pruneLiveResources()
     CachedResource* current = m_liveDecodedResources.m_tail;
     while (current) {
         CachedResource* prev = current->m_prevInLiveResourcesList;
-        ASSERT(current->referenced());
+        ASSERT(current->hasClients());
         if (current->isLoaded() && current->decodedSize()) {
             // Check to see if the remaining resources are too new to prune.
             double elapsedTime = currentTime - current->m_lastDecodedAccessTime;
@@ -265,7 +265,7 @@ void Cache::pruneDeadResources()
         // First flush all the decoded data in this queue.
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->referenced() && !current->isPreloaded() && current->isLoaded() && current->decodedSize()) {
+            if (!current->hasClients() && !current->isPreloaded() && current->isLoaded() && current->decodedSize()) {
                 // Destroy our decoded data. This will remove us from 
                 // m_liveDecodedResources, and possibly move us to a differnt 
                 // LRU list in m_allResources.
@@ -281,7 +281,7 @@ void Cache::pruneDeadResources()
         current = m_allResources[i].m_tail;
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (!current->referenced() && !current->isPreloaded()) {
+            if (!current->hasClients() && !current->isPreloaded()) {
                 remove(current);
 
                 if (m_deadSize <= targetSize)
@@ -331,7 +331,7 @@ void Cache::remove(CachedResource* resource)
         // Subtract from our size totals.
         int delta = -static_cast<int>(resource->size());
         if (delta)
-            adjustSize(resource->referenced(), delta);
+            adjustSize(resource->hasClients(), delta);
     } else
         ASSERT(m_resources.get(resource->url()) != resource);
 
@@ -573,42 +573,42 @@ Cache::Statistics Cache::getStatistics()
             case CachedResource::ImageResource:
                 stats.images.count++;
                 stats.images.size += o->size();
-                stats.images.liveSize += o->referenced() ? o->size() : 0;
+                stats.images.liveSize += o->hasClients() ? o->size() : 0;
                 stats.images.decodedSize += o->decodedSize();
                 break;
 
             case CachedResource::CSSStyleSheet:
                 stats.cssStyleSheets.count++;
                 stats.cssStyleSheets.size += o->size();
-                stats.cssStyleSheets.liveSize += o->referenced() ? o->size() : 0;
+                stats.cssStyleSheets.liveSize += o->hasClients() ? o->size() : 0;
                 stats.cssStyleSheets.decodedSize += o->decodedSize();
                 break;
 
             case CachedResource::Script:
                 stats.scripts.count++;
                 stats.scripts.size += o->size();
-                stats.scripts.liveSize += o->referenced() ? o->size() : 0;
+                stats.scripts.liveSize += o->hasClients() ? o->size() : 0;
                 stats.scripts.decodedSize += o->decodedSize();
                 break;
 #if ENABLE(XSLT)
             case CachedResource::XSLStyleSheet:
                 stats.xslStyleSheets.count++;
                 stats.xslStyleSheets.size += o->size();
-                stats.xslStyleSheets.liveSize += o->referenced() ? o->size() : 0;
+                stats.xslStyleSheets.liveSize += o->hasClients() ? o->size() : 0;
                 stats.xslStyleSheets.decodedSize += o->decodedSize();
                 break;
 #endif
             case CachedResource::FontResource:
                 stats.fonts.count++;
                 stats.fonts.size += o->size();
-                stats.fonts.liveSize += o->referenced() ? o->size() : 0;
+                stats.fonts.liveSize += o->hasClients() ? o->size() : 0;
                 stats.fonts.decodedSize += o->decodedSize();
                 break;
 #if ENABLE(XBL)
             case CachedResource::XBL:
                 stats.xblDocs.count++;
                 stats.xblDocs.size += o->size();
-                stats.xblDocs.liveSize += o->referenced() ? o->size() : 0;
+                stats.xblDocs.liveSize += o->hasClients() ? o->size() : 0;
                 stats.xblDocs.decodedSize += o->decodedSize();
                 break;
 #endif
@@ -645,8 +645,8 @@ void Cache::dumpLRULists(bool includeLive) const
         CachedResource* current = m_allResources[i].m_tail;
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
-            if (includeLive || !current->referenced())
-                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, current->encodedSize() / 1024.0f, current->accessCount(), current->referenced());
+            if (includeLive || !current->hasClients())
+                printf("(%.1fK, %.1fK, %uA, %dR); ", current->decodedSize() / 1024.0f, current->encodedSize() / 1024.0f, current->accessCount(), current->hasClients());
             current = prev;
         }
     }

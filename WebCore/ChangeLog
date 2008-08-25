@@ -1,3 +1,25 @@
+2008-08-25  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Rename CachedResource::referenced() to CachedResource::hasClients() to
+        match previous ref() -> addClient() rename.
+
+        * loader/Cache.cpp:
+        (WebCore::Cache::pruneLiveResources):
+        (WebCore::Cache::pruneDeadResources):
+        (WebCore::Cache::remove):
+        (WebCore::Cache::getStatistics):
+        (WebCore::Cache::dumpLRULists):
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::addClient):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::setDecodedSize):
+        (WebCore::CachedResource::setEncodedSize):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::hasClients):
+        (WebCore::CachedResource::canDelete):
+
 2008-08-25  Anthony Ricaud  <rik24d@gmail.com>
 
         Add a missing Inspector localized string for "other".
