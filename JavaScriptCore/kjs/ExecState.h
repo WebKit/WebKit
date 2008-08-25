@@ -30,7 +30,6 @@ namespace KJS  {
 
     class EvalNode;
     class FunctionBodyNode;
-    class JSFunction;
     class JSValue;
     class GlobalFuncImp;
     class Interpreter;

@@ -97,6 +97,7 @@ namespace KJS {
 
         JSValue* retrieveArguments(ExecState*, JSFunction*) const;
         JSValue* retrieveCaller(ExecState*, JSFunction*) const;
+        void retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId, UString& sourceURL) const;
 
         void getArgumentsData(Register* callFrame, JSFunction*&, Register*& argv, int& argc);
         void setTimeoutTime(unsigned timeoutTime) { m_timeoutTime = timeoutTime; }

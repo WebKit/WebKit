@@ -98,6 +98,11 @@ namespace WebCore {
         Console(Frame*);
         
         Frame* m_frame;
+        
+        // FIXME: We won't need these once we remove the profiler "zombie" mode
+        int m_profileLineNumber;
+        KJS::UString m_profileSourceURL;
+        
     };
 
 } // namespace WebCore

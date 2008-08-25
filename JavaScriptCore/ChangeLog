@@ -1,3 +1,26 @@
+2008-08-25  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff, Tim and Mark.
+
+        <rdar://problem/6150623> JSProfiler: It would be nice if the profiles
+        in the console said what file and line number they came from
+        - Lay the foundation for getting line numbers and other data from the
+        JavaScript engine.  With the cleanup in kjs/ExecState this is actually
+        a slight performance improvement.
+
+        * JavaScriptCore.exp: Export retrieveLastCaller() for WebCore.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/Machine.cpp: Now Host and JS functions set a call frame on the
+        exec state, so this and the profiler code were pulled out of the
+        branches.
+        (KJS::Machine::privateExecute):
+        (KJS::Machine::retrieveLastCaller): This get's the lineNumber, sourceID
+        and sourceURL for the previously called function.
+        * VM/Machine.h:
+        * kjs/ExecState.cpp: Remove references to JSFunction since it's not used
+        anywhere.
+        * kjs/ExecState.h:
+
 2008-08-25  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin.

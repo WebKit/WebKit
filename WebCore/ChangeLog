@@ -1,3 +1,30 @@
+2008-08-22  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff, Mark and Tim.
+
+        <rdar://problem/6150623> JSProfiler: It would be nice if the profiles
+        in the console said what file and line number they came from
+        - Lay the foundation for getting line numbers and other data from the
+        JavaScript engine.
+
+        * ForwardingHeaders/VM: Added.
+        * ForwardingHeaders/VM/Machine.h: Added.
+        * page/Console.cpp: Gather the line number and file information when 
+        profileEnd has been called, but don't use it until didFinishProfiling is
+        called.  We won't need to wait once we remove the profiler "zombie" mode
+        which this patch helps pave the foundation for.
+        (WebCore::Console::Console):
+        (WebCore::Console::profileEnd):
+        (WebCore::Console::finishedProfiling):
+        * page/Console.h:
+        * page/InspectorController.cpp: Modify calls to
+        addProfileMessageToConsole to satisfy the new arguments it takes.
+        (WebCore::InspectorController::finishedProfiling):
+        (WebCore::InspectorController::addProfile):
+        (WebCore::InspectorController::addProfileMessageToConsole):
+        (WebCore::InspectorController::finishedProfiling):
+        * page/InspectorController.h:
+
 2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

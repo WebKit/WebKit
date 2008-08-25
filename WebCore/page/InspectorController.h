@@ -112,8 +112,8 @@ public:
     void clearConsoleMessages();
     void toggleRecordButton(bool);
 
-    void addProfile(PassRefPtr<KJS::Profile>);
-    void addProfileMessageToConsole(PassRefPtr<KJS::Profile> prpProfile);
+    void addProfile(PassRefPtr<KJS::Profile>, int lineNumber, const KJS::UString& sourceURL);
+    void addProfileMessageToConsole(PassRefPtr<KJS::Profile> prpProfile, int lineNumber, const KJS::UString& sourceURL);
     void addScriptProfile(KJS::Profile* profile);
     const Vector<RefPtr<KJS::Profile> >& profiles() const { return m_profiles; }
 

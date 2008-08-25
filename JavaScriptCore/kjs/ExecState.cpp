@@ -22,9 +22,7 @@
 
 #include "config.h"
 #include "ExecState.h"
-
 #include "JSGlobalObject.h"
-#include "JSFunction.h"
 #include "JSString.h"
 #include "ScopeChainMark.h"
 
