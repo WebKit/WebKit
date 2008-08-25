@@ -228,8 +228,10 @@ void WebInspectorClient::attachWindow()
 {
     ASSERT(m_hwnd);
     ASSERT(m_webView);
-    ASSERT(!m_attached);
     ASSERT(m_inspectedWebViewHwnd);
+
+    if (m_attached)
+        return;
 
     WindowMessageBroadcaster::addListener(m_inspectedWebViewHwnd, this);
 
@@ -249,7 +251,8 @@ void WebInspectorClient::attachWindow()
 
 void WebInspectorClient::detachWindow()
 {
-    ASSERT(m_attached);
+    if (!m_attached)
+        return;
 
     WindowMessageBroadcaster::removeListener(m_inspectedWebViewHwnd, this);
 

@@ -1,3 +1,17 @@
+2008-08-25  Adam Roben  <aroben@apple.com>
+
+        Fix an assertion when showing the Web Inspector
+
+        Reviewed by Kevin McCullough.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::attachWindow):
+        (WebInspectorClient::detachWindow):
+        Recent code changes have caused these functions to get called even
+        when the window is already attached/detached, respectively. Handle
+        this case gracefully instead of asserting something that is no longer
+        true.
+
 2008-08-24  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by John Sullivan.
