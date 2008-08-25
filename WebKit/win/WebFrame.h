@@ -213,6 +213,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE setIsDisconnected(
         /* [in] */ BOOL flag);
 
+    virtual HRESULT STDMETHODCALLTYPE setExcludeFromTextSearch(
+        /* [in] */ BOOL flag);
+
     virtual HRESULT STDMETHODCALLTYPE paintDocumentRectToContext(
         /* [in] */ RECT rect,
         /* [in] */ OLE_HANDLE deviceContext);

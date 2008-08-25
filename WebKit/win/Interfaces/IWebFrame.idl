@@ -247,4 +247,11 @@ interface IWebFrame : IUnknown
         @param flag YES to mark the frame as disconnected, NO keeps it a regular frame
    */
    HRESULT setIsDisconnected([in] BOOL flag);
+
+      /*!
+        @method setExcludeFromTextSearch
+        @abstract Set whether a frame should be excluded from text search
+        @param flag YES to mark the frame as not searchable
+   */
+   HRESULT setExcludeFromTextSearch([in] BOOL flag);
 }

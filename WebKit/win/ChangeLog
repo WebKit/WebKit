@@ -1,3 +1,14 @@
+2008-08-24  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        Provide the excludeFromTextSearch SPI on Windows as well.
+
+        * Interfaces/IWebFrame.idl:
+        * WebFrame.cpp:
+        (WebFrame::setExcludeFromTextSearch):
+        * WebFrame.h:
+
 2008-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
         Cannot get the focused accessible object from the root object.
