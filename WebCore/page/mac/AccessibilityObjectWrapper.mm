@@ -1481,7 +1481,6 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     // This needs to be performed in an iteration of the run loop that did not start from an AX call. 
     // If it's the same run loop iteration, the menu open notification won't be sent
     [self performSelector:@selector(accessibilityShowContextMenu) withObject:nil afterDelay:0.0];
-    
 }
 
 - (void)accessibilityShowContextMenu
@@ -1494,13 +1493,23 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     IntPoint clickPoint = m_object->clickPoint();
     NSPoint nsClickPoint = NSMakePoint(clickPoint.x(), clickPoint.y());
     
-    NSView* view = frameView->documentView();
+    NSView* view = nil;
+    if (m_object->isAttachment())
+        view = [self attachmentView];
+    else
+        view = frameView->documentView();
+    
+    if (!view)
+        return;
+    
     NSPoint nsScreenPoint = [view convertPoint:nsClickPoint toView:nil];
     
-    // Simulate a context menu event with a right click. This has to be sent through the window, because AppKit is responsible
-    // for eventually showing the context menu, even though WebCore creates the context menu
+    // Show the contextual menu for this event.
     NSEvent* event = [NSEvent mouseEventWithType:NSRightMouseDown location:nsScreenPoint modifierFlags:0 timestamp:0 windowNumber:[[view window] windowNumber] context:0 eventNumber:0 clickCount:1 pressure:1];
-    [[view window] sendEvent:event];
+    NSMenu* menu = [view menuForEvent:event];
+    
+    if (menu)
+        [NSMenu popUpContextMenu:menu withEvent:event forView:view];    
 }
 
 - (void)accessibilityPerformAction:(NSString*)action

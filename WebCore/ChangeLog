@@ -1,5 +1,15 @@
 2008-08-26  chris fleizach  <cfleizach@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        <rdar://problem/5817770> can't bring up contextual menu for embedded objects in WebText
+
+        * page/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
+        (-[AccessibilityObjectWrapper accessibilityShowContextMenu]):
+
+2008-08-26  chris fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         <rdar://problem/6176924> CrashTracer: [USER] 4 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::numColumns
