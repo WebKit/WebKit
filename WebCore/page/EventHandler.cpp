@@ -646,6 +646,20 @@ RenderObject* EventHandler::autoscrollRenderer() const
     return m_autoscrollRenderer;
 }
 
+void EventHandler::updateAutoscrollRenderer()
+{
+    if (!m_autoscrollRenderer)
+        return;
+
+    HitTestResult hitTest = hitTestResultAtPoint(m_panScrollStartPos, true);
+
+    if (Node* nodeAtPoint = hitTest.innerNode())
+        m_autoscrollRenderer = nodeAtPoint->renderer();
+
+    while (m_autoscrollRenderer && !m_autoscrollRenderer->canBeProgramaticallyScrolled(false))
+        m_autoscrollRenderer = m_autoscrollRenderer->parent();
+}
+
 void EventHandler::setAutoscrollRenderer(RenderObject* renderer)
 {
     m_autoscrollRenderer = renderer;

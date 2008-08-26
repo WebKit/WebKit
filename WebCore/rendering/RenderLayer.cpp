@@ -724,17 +724,33 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
     if (abs(yDelta) < shortDistanceLimit)
         yDelta /= speedReducer;
 
+    scrollByRecursively(xDelta, yDelta);
+}
+
+void RenderLayer::scrollByRecursively(int xDelta, int yDelta)
+{
     bool restrictedByLineClamp = false;
     if (m_object->parent())
         restrictedByLineClamp = m_object->parent()->style()->lineClamp() >= 0;
 
     if (m_object->hasOverflowClip() && !restrictedByLineClamp) {
-        int newOffsetX = max(0, scrollXOffset() + xDelta);
-        int newOffsetY = max(0, scrollYOffset() + yDelta);
-        scrollToOffset(newOffsetX, newOffsetY); 
+        int newOffsetX = scrollXOffset() + xDelta;
+        int newOffsetY = scrollYOffset() + yDelta;
+        scrollToOffset(newOffsetX, newOffsetY);
+
+        // If this layer can't do the scroll we ask its parent
+        int leftToScrollX = newOffsetX - scrollXOffset();
+        int leftToScrollY = newOffsetY - scrollYOffset();
+        if ((leftToScrollX || leftToScrollY) && m_object->parent()) {
+            m_object->parent()->enclosingLayer()->scrollByRecursively(leftToScrollX, leftToScrollY);
+            Frame* frame = renderer()->document()->frame();
+            if (frame)
+                frame->eventHandler()->updateAutoscrollRenderer();
+        }
     } else if (m_object->view()->frameView())
         m_object->view()->frameView()->scrollBy(xDelta, yDelta);
 }
+
 
 void
 RenderLayer::scrollOffset(int& x, int& y)

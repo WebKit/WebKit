@@ -1,3 +1,23 @@
+2008-08-26  Maxime Britto  <britto@apple.com>
+
+        Reviewed by Adele.
+
+        <rdar://6159244> Pan-scrolling does not work on particular sites (starmagazine.com, nytimes.com)
+        This patch fixes the issues and modify the behavior of the panscroll by allowing it to jump to a parent layer when it reaches the end of its scrollable area.
+        This is matching the behavior of the mouse wheel when trying to scroll in a smaller layer of the page (div, textarea, ...) and when we reach the edge and keep scrolling then the whole page scrolls.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateAutoscrollRenderer): if we switch to the parent layer to do the scroll we want to change the renderer for the panning
+        * page/EventHandler.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::panScrollFromPoint): now calls the scrollByRecursively method when it has computed the xDelta and yDelta
+        (WebCore::RenderLayer::scrollByRecursively): try to scroll the current layer by the xDelta and yDelta provided, if it can't it ask its parent layer to do so.
+        * rendering/RenderLayer.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeProgramaticallyScrolled): a RenderObject must have a RenderLayer to be programatically scrolled
+        (WebCore::RenderObject::autoscroll): No need to check for the layer anymore since we verify it's present in the upmentionned method
+        (WebCore::RenderObject::panScroll): No need to check for the layer anymore too.
+
 2008-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.

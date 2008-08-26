@@ -94,6 +94,7 @@ public:
 
     void stopAutoscrollTimer(bool rendererIsBeingDestroyed = false);
     RenderObject* autoscrollRenderer() const;
+    void updateAutoscrollRenderer();
 
     HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent);
 
