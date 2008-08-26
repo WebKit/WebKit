@@ -1,3 +1,11 @@
+2008-08-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Modernize the bug reporting guidelines and make them a little less Mac-specific.
+
+        * quality/bugwriting.html:
+
 2008-08-18  Mark Rowe  <mrowe@apple.com>
 
         Upgrade to WordPress 2.6.1.
