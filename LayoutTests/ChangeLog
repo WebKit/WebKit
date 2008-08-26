@@ -1,3 +1,15 @@
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for  https://bugs.webkit.org/show_bug.cgi?id=20479
+
+        * http/tests/security/canvas-remote-read-redirect-to-remote-image-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-redirect-to-remote-image.html: Added.
+        * http/tests/security/canvas-remote-read-svg-image-expected.txt:
+        * http/tests/security/canvas-remote-read-svg-image.html: Fix incorrect log message.
+        * http/tests/security/resources/redir.php: Added.
+
 2008-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin.

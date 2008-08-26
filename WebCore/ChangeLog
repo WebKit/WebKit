@@ -1,5 +1,19 @@
 2008-08-26  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20479
+        <rdar://problem/6167660>
+        Take image redirects into account when tainting the canvas.
+
+        Test: http/tests/security/canvas-remote-read-redirect-to-remote-image.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Darin Adler.
 
         Change canvas tainting logic to ask the image if it contains

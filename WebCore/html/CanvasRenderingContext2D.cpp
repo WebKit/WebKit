@@ -1011,7 +1011,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
         return;
 
     if (m_canvas->originClean())
-        checkOrigin(KURL(cachedImage->url()));
+        checkOrigin(cachedImage->response().url());
 
     if (m_canvas->originClean() && !cachedImage->image()->hasSingleSecurityOrigin())
         m_canvas->setOriginTainted();
@@ -1087,7 +1087,7 @@ void CanvasRenderingContext2D::drawImageFromRect(HTMLImageElement* image,
         return;
 
     if (m_canvas->originClean())
-        checkOrigin(KURL(cachedImage->url()));
+        checkOrigin(cachedImage->response().url());
 
     if (m_canvas->originClean() && !cachedImage->image()->hasSingleSecurityOrigin())
         m_canvas->setOriginTainted();
