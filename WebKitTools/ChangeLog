@@ -1,3 +1,9 @@
+2008-08-25  Steve Falkenburg  <sfalken@apple.com>
+
+        Build fix. Copy correct version of ICU.
+
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
