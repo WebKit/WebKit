@@ -1,3 +1,18 @@
+2008-08-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Cameron.
+
+        <rdar://problem/6174603> Hitting assertion in Register::codeBlock when
+        loading facebook (20516).
+
+        - This was a result of my line numbers change.  After a host function is
+        called the stack does not get reset correctly.
+        - Oddly this also appears to be a slight speedup on SunSpider.
+
+        * fast/js/resources/stack-unwinding.js: Added.
+        * fast/js/stack-unwinding-expected.txt: Added.
+        * fast/js/stack-unwinding.html: Added.
+
 2008-08-26  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin

@@ -2459,6 +2459,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             MACHINE_SAMPLING_callingHostFunction();
 
             JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(v), thisValue, args);
+            exec->m_callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
             VM_CHECK_EXCEPTION();
 
             r[dst] = returnValue;
@@ -2473,6 +2474,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ASSERT(callType == CallTypeNone);
 
         exceptionValue = createNotAFunctionError(exec, v, vPC, codeBlock);
+        exec->m_callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
         goto vm_throw;
     }
     BEGIN_OPCODE(op_ret) {

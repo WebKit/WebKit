@@ -1,3 +1,17 @@
+2008-08-26  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff and Cameron.
+
+        <rdar://problem/6174603> Hitting assertion in Register::codeBlock when
+        loading facebook (20516).
+
+        - This was a result of my line numbers change.  After a host function is
+        called the stack does not get reset correctly.
+        - Oddly this also appears to be a slight speedup on SunSpider.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
 2008-08-26  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Geoff and Tim.
