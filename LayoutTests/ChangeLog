@@ -1,3 +1,11 @@
+2008-08-26  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <rdar://problem/6176924> CrashTracer: [USER] 4 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::numColumns
+
+        * accessibility/table-notbody.html: Added.
+
 2008-08-26  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
