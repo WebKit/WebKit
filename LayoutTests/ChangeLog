@@ -1,3 +1,13 @@
+2008-08-25  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=20514
+
+        * http/tests/security/canvas-remote-read-svg-image-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-svg-image.html: Added.
+        * http/tests/security/resources/image-wrapper.svg: Added.
+
 2008-08-25  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dave Hyatt.

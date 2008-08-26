@@ -1,5 +1,23 @@
 2008-08-25  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Oliver Hunt.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20514
+        <rdar://problem/6174096>
+        Treat SVG images as dirty when drawing to a canvas.
+
+        Test: http/tests/security/canvas-remote-read-svg-image.html
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        * platform/graphics/Image.h:
+        (WebCore::Image::isSVGImage):
+        * svg/graphics/SVGImage.h:
+        (WebCore::SVGImage::isSVGImage):
+
+2008-08-25  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Fix https://bugs.webkit.org/show_bug.cgi?id=20377
