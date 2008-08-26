@@ -490,7 +490,7 @@ const AtomicString& Element::getAttribute(const String& name) const
 #endif
 
     if (namedAttrMap)
-        if (Attribute* a = namedAttrMap->getAttributeItem(localName))
+        if (Attribute* a = namedAttrMap->getAttributeItem(name, shouldIgnoreAttributeCase(this)))
             return a->value();
     
     return nullAtom;
@@ -511,7 +511,7 @@ void Element::setAttribute(const AtomicString& name, const AtomicString& value, 
     const AtomicString& localName = (shouldIgnoreAttributeCase(this) && !name.string().impl()->isLower()) ? AtomicString(name.string().lower()) : name;
 
     // allocate attributemap if necessary
-    Attribute* old = attributes(false)->getAttributeItem(localName);
+    Attribute* old = attributes(false)->getAttributeItem(localName, false);
 
     document()->incDOMTreeVersion();
 
@@ -1120,8 +1120,11 @@ bool Element::hasAttribute(const String& name) const
     NamedAttrMap* attrs = attributes(true);
     if (!attrs)
         return false;
+
+    // This call to String::lower() seems to be required but
+    // there may be a way to remove it.
     String localName = shouldIgnoreAttributeCase(this) ? name.lower() : name;
-    return attrs->getAttributeItem(localName);
+    return attrs->getAttributeItem(localName, false);
 }
 
 bool Element::hasAttributeNS(const String& namespaceURI, const String& localName) const

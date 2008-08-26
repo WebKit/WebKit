@@ -57,7 +57,7 @@ public:
     MappedAttribute* getAttributeItem(const QualifiedName& name) const
         { return static_cast<MappedAttribute*>(NamedAttrMap::getAttributeItem(name)); }
     MappedAttribute* getAttributeItem(const String& name) const
-        { return static_cast<MappedAttribute*>(NamedAttrMap::getAttributeItem(name)); }
+        { return static_cast<MappedAttribute*>(NamedAttrMap::getAttributeItem(name, false)); }
 
 private:
     ClassNames m_classNames;

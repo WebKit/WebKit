@@ -1,3 +1,20 @@
+2008-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin.
+
+        Test case for Bug 20247: setAttributeNode() does not work when attribute name
+        has a capital letter in it
+        https://bugs.webkit.org/show_bug.cgi?id=20247
+
+        <rdar://problem/6118218>
+
+        Most of this test case was done by Eric Roman <minatoar@gmail.com>, the rest by ap and was
+        tweaked by me.
+
+        * fast/dom/Element/getAttribute-check-case-sensitivity-expected.txt: Added.
+        * fast/dom/Element/getAttribute-check-case-sensitivity.html: Added.
+        * fast/dom/Element/resources/getAttribute-check-case-sensitivity.js: Added.
+
 2008-08-25  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

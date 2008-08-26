@@ -51,8 +51,7 @@ bool NamedAttrMap::isMappedAttributeMap() const
 
 PassRefPtr<Node> NamedAttrMap::getNamedItem(const String& name) const
 {
-    String localName = shouldIgnoreAttributeCase(m_element) ? name.lower() : name;
-    Attribute* a = getAttributeItem(localName);
+    Attribute* a = getAttributeItem(name, shouldIgnoreAttributeCase(m_element));
     if (!a)
         return 0;
     
@@ -66,8 +65,7 @@ PassRefPtr<Node> NamedAttrMap::getNamedItemNS(const String& namespaceURI, const 
 
 PassRefPtr<Node> NamedAttrMap::removeNamedItem(const String& name, ExceptionCode& ec)
 {
-    String localName = shouldIgnoreAttributeCase(m_element) ? name.lower() : name;
-    Attribute* a = getAttributeItem(localName);
+    Attribute* a = getAttributeItem(name, shouldIgnoreAttributeCase(m_element));
     if (!a) {
         ec = NOT_FOUND_ERR;
         return 0;
@@ -164,15 +162,17 @@ PassRefPtr<Node> NamedAttrMap::item (unsigned index) const
     return m_attributes[index]->createAttrIfNeeded(m_element);
 }
 
-Attribute* NamedAttrMap::getAttributeItem(const String& name) const
+// We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
+// can tune the behaviour (hasAttribute is case sensitive whereas getAttribute is not).
+Attribute* NamedAttrMap::getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();
     for (unsigned i = 0; i < len; ++i) {
         if (!m_attributes[i]->name().hasPrefix() && 
             m_attributes[i]->name().localName() == name)
                 return m_attributes[i].get();
-        
-        if (m_attributes[i]->name().toString() == name)
+
+        if (shouldIgnoreAttributeCase ? equalIgnoringCase(m_attributes[i]->name().toString(), name) : name == m_attributes[i]->name().toString())
             return m_attributes[i].get();
     }
     return 0;

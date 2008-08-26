@@ -68,7 +68,7 @@ public:
     // Other methods (not part of DOM)
     Attribute* attributeItem(unsigned index) const { return m_attributes[index].get(); }
     Attribute* getAttributeItem(const QualifiedName& name) const;
-    Attribute* getAttributeItem(const String& name) const;
+    Attribute* getAttributeItem(const String& name, bool shouldIgnoreAttributeCase) const;
     
     void shrinkToLength() { m_attributes.shrinkCapacity(length()); }
     void reserveCapacity(unsigned capacity) { m_attributes.reserveCapacity(capacity); }

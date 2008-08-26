@@ -1,0 +1,23 @@
+This file test the behaviour of getAttribute with regard to case.
+
+See Bug 20247: setAttributeNode() does not work when attribute name has a capital letter in it
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS testGetAttributeCaseInsensitive() is "x"
+PASS testGetAttributeNodeMixedCase() is "x"
+PASS testGetAttributeNodeLowerCase() is "x"
+PASS testSetAttributeNodeKeepsRef() is "1"
+PASS testAttribNodeNamePreservesCase() is "A,A"
+PASS testAttribNodeNamePreservesCaseGetNode() is "A,A"
+PASS testAttribNodeNamePreservesCaseGetNode2() is "B,B"
+PASS testAttribNodeNameGetMutate() is "1"
+PASS (new XMLSerializer).serializeToString(node) is "<div myAttrib=\"XXX\"></div>"
+PASS node.getAttributeNode('myAttrib').name is "myAttrib"
+PASS node.getAttributeNode('myattrib').name is "myAttrib"
+PASS attrib.name is "myAttrib"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
