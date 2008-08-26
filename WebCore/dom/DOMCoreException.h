@@ -27,7 +27,7 @@
  */
 
 #ifndef DOMCoreException_h
-#define DOMCodeException_h
+#define DOMCoreException_h
 
 #include "ExceptionBase.h"
 
