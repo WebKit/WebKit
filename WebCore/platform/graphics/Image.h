@@ -84,7 +84,10 @@ public:
     static bool supportsType(const String&); 
 
     virtual bool isBitmapImage() const { return false; }
-    virtual bool isSVGImage() const { return false; }
+
+    // Derived classes should override this if they can assure that 
+    // the image contains only resources from its own security origin.
+    virtual bool hasSingleSecurityOrigin() const { return false; }
 
     static Image* nullImage();
     bool isNull() const;

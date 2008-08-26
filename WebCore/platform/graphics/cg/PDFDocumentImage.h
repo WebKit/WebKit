@@ -43,7 +43,9 @@ namespace WebCore {
             return adoptRef(new PDFDocumentImage);
         }
         ~PDFDocumentImage();
-        
+
+        virtual bool hasSingleSecurityOrigin() const { return true; }
+
         virtual bool dataChanged(bool allDataReceived);
 
         // FIXME: PDF Images are underreporting decoded sizes and will be unable

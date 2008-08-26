@@ -43,6 +43,8 @@ public:
     }
     virtual ~GeneratedImage() {}
 
+    virtual bool hasSingleSecurityOrigin() const { return true; }
+
     // These are only used for SVGGeneratedImage right now
     virtual void setContainerSize(const IntSize& size) { m_size = size; }
     virtual bool usesContainerSize() const { return true; }

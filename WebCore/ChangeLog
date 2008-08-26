@@ -1,3 +1,25 @@
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Change canvas tainting logic to ask the image if it contains
+        any resources outside of its own origin. Since there is no 
+        way to determine if SVG images contain any resources outside its
+        origin, we always assume it does.
+
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        (WebCore::CanvasRenderingContext2D::drawImageFromRect):
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::hasSingleSecurityOrigin):
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::hasSingleSecurityOrigin):
+        * platform/graphics/Image.h:
+        (WebCore::Image::hasSingleSecurityOrigin):
+        * platform/graphics/cg/PDFDocumentImage.h:
+        (WebCore::PDFDocumentImage::hasSingleSecurityOrigin):
+        * svg/graphics/SVGImage.h:
+
 2008-08-26  Maxime Britto  <britto@apple.com>
 
         Reviewed by Adele.
