@@ -3,6 +3,10 @@ _JSClassCreate
 _JSClassRelease
 _JSClassRetain
 _JSContextGetGlobalObject
+_JSContextGetGroup
+_JSContextGroupCreate
+_JSContextGroupRelease
+_JSContextGroupRetain
 _JSEndProfiling
 _JSEvaluateScript
 _JSGarbageCollect
