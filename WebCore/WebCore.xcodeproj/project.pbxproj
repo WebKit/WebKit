@@ -387,6 +387,7 @@
 		1CFCEED50AACC66900348750 /* DOMHTMLOptionsCollectionPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */; };
 		1CFCEEDF0AACC6A300348750 /* DOMHTMLPreElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEDA0AACC68300348750 /* DOMHTMLPreElementPrivate.h */; };
 		1CFCEEFA0AACC7A700348750 /* DOMHTMLInputElementPrivate.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */; };
+		2951A2AE0E646C8800DB9ADE /* AccessibilityObjectMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */; };
 		2955BE2C0E2548EC00893AB5 /* AccessibilityImageMapLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */; };
 		2955BE2D0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */; };
 		29800C3B0E522A5300025536 /* AccessibilityTable.h in Headers */ = {isa = PBXBuildFile; fileRef = 29800C390E522A5300025536 /* AccessibilityTable.h */; };
@@ -4944,6 +4945,7 @@
 		1CFCEED40AACC65D00348750 /* DOMHTMLOptionsCollectionPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLOptionsCollectionPrivate.h; sourceTree = "<group>"; };
 		1CFCEEDA0AACC68300348750 /* DOMHTMLPreElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLPreElementPrivate.h; sourceTree = "<group>"; };
 		1CFCEEF90AACC79000348750 /* DOMHTMLInputElementPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMHTMLInputElementPrivate.h; sourceTree = "<group>"; };
+		2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectMac.mm; sourceTree = "<group>"; };
 		2955BE2A0E2548EC00893AB5 /* AccessibilityImageMapLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityImageMapLink.h; sourceTree = "<group>"; };
 		2955BE2B0E2548EC00893AB5 /* AccessibilityImageMapLink.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityImageMapLink.cpp; sourceTree = "<group>"; };
 		29800C390E522A5300025536 /* AccessibilityTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityTable.h; sourceTree = "<group>"; };
@@ -10601,6 +10603,7 @@
 		93C09A820B064F05005ABD4D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				2951A2AD0E646C8800DB9ADE /* AccessibilityObjectMac.mm */,
 				4B17CBCB0D945B910053F183 /* AccessibilityObjectWrapper.h */,
 				4B17CBCA0D945B910053F183 /* AccessibilityObjectWrapper.mm */,
 				1AF326400D78B5530068F0C4 /* AXObjectCacheMac.mm */,
@@ -17228,6 +17231,7 @@
 				08A484770E5272C500C3FE76 /* ScriptElement.cpp in Sources */,
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
+				2951A2AE0E646C8800DB9ADE /* AccessibilityObjectMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

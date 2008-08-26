@@ -1859,6 +1859,7 @@ endif
 
 webcoregtk_sources += \
 	WebCore/page/gtk/AXObjectCacheAtk.cpp \
+	WebCore/page/gtk/AccessibilityObjectAtk.cpp \
 	WebCore/page/gtk/AccessibilityObjectWrapperAtk.cpp \
 	WebCore/page/gtk/AccessibilityObjectWrapperAtk.h \
 	WebCore/page/gtk/DragControllerGtk.cpp \

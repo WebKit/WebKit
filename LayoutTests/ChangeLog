@@ -1,5 +1,15 @@
 2008-08-26  chris fleizach  <cfleizach@apple.com>
 
+        Reviewed by Beth Dakin
+
+        Tests to make sure inaccessible plugins do not appear
+
+        * accessibility/plugin-expected.txt: Added.
+        * accessibility/plugin.html: Added.
+        * accessibility/resources/test.swf: Added.
+
+2008-08-26  chris fleizach  <cfleizach@apple.com>
+
         Reviewed by Darin Adler.
 
         Test for <rdar://problem/6176924> CrashTracer: [USER] 4 crashes in Safari at com.apple.WebCore: WebCore::RenderTableSection::numColumns

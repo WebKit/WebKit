@@ -50,4 +50,6 @@ namespace WebCore {
 - (void)detach;
 - (WebCore::AccessibilityObject*)accessibilityObject;
 
+- (NSView*)attachmentView;
+
 @end

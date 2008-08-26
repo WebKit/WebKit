@@ -2,6 +2,32 @@
 
         Reviewed by Beth Dakin.
 
+        <rdar://problem/6069462> REGRESSION: webkit is returning flash objects as AXUnknown
+
+        Added platform-specific accessibilityIgnoreAttachment, which allows the platform
+        to determine if an attachment is ignored through accessibility. Added equivalent
+        methods in Gtk, Win and Mac
+
+        Test: accessibility/plugin.html
+
+        * GNUmakefile.am:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/AccessibilityObject.h:
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        * page/gtk/AccessibilityObjectAtk.cpp: Added.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * page/mac/AccessibilityObjectMac.mm: Added.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * page/mac/AccessibilityObjectWrapper.h:
+        * page/win/AccessibilityObjectWin.cpp: Added.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+
+2008-08-26  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin.
+
         <rdar://problem/5817770> can't bring up contextual menu for embedded objects in WebText
 
         * page/mac/AccessibilityObjectWrapper.mm:
