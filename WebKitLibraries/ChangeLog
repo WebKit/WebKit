@@ -1,3 +1,15 @@
+2008-08-27  Timothy Hatcher  <timothy@apple.com>
+
+        Adds the WKAdvanceDefaultButtonPulseAnimation function.
+
+        <rdar://problem/6173530> Add Mac support for -webkit-appearance: default-button
+
+        Reviewed by Adele Peterson.
+
+        * WebKitSystemInterface.h: Added WKAdvanceDefaultButtonPulseAnimation.
+        * libWebKitSystemInterfaceLeopard.a: Updated.
+        * libWebKitSystemInterfaceTiger.a: Updated.
+
 2008-08-26  Adam Roben  <aroben@apple.com>
 
         Disable a truncation warning that is disabled/doesn't exist on Mac
