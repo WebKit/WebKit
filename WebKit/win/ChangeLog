@@ -1,3 +1,10 @@
+2008-08-27  Ada Chan  <adachan@apple.com>
+
+        Fixed build.
+
+        * WebFrame.cpp:
+        (WebFrame::pluginWillHandleLoadError):
+
 2008-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
