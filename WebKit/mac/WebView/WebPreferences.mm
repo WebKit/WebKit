@@ -333,6 +333,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithInt:cacheModelForMainBundle()], WebKitCacheModelPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitDeveloperExtrasEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAuthorAndUserStylesEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitApplicationChromeModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitWebArchiveDebugModeEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitOfflineWebApplicationCacheEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitZoomsTextOnlyPreferenceKey,
@@ -762,6 +763,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setAuthorAndUserStylesEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitAuthorAndUserStylesEnabledPreferenceKey];
+}
+
+- (BOOL)applicationChromeModeEnabled
+{
+    return [self _boolValueForKey:WebKitApplicationChromeModeEnabledPreferenceKey];
+}
+
+- (void)setApplicationChromeModeEnabledEnabled:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitApplicationChromeModeEnabledPreferenceKey];
 }
 
 - (BOOL)webArchiveDebugModeEnabled

@@ -1016,6 +1016,7 @@ static bool debugWidget = true;
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
     settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
     settings->setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
+    settings->setApplicationChromeMode([preferences applicationChromeModeEnabled]);
     if ([preferences userStyleSheetEnabled]) {
         NSString* location = [[preferences userStyleSheetLocation] _web_originalDataAsString];
         settings->setUserStyleSheetLocation([NSURL URLWithString:(location ? location : @"")]);

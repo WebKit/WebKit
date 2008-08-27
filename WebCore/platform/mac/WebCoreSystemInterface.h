@@ -40,6 +40,7 @@ typedef struct _NSRect NSRect;
 #endif
 
 #ifdef __OBJC__
+@class NSButtonCell;
 @class NSData;
 @class NSEvent;
 @class NSFont;
@@ -49,6 +50,7 @@ typedef struct _NSRect NSRect;
 @class QTMovieView;
 #else
 typedef struct NSArray NSArray;
+typedef struct NSButtonCell NSButtonCell;
 typedef struct NSData NSData;
 typedef struct NSDate NSDate;
 typedef struct NSEvent NSEvent;
@@ -75,6 +77,7 @@ extern "C" {
 
 // In alphabetical order.
 
+extern void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 extern BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 extern void (*wkClearGlyphVector)(void* glyphs);
 extern CFReadStreamRef (*wkCreateCustomCFReadStream)(void *(*formCreate)(CFReadStreamRef, void *), 

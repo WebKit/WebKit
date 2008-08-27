@@ -1,3 +1,26 @@
+2008-08-27  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for support for -webkit-appearance: default-button on the Mac platform.
+
+        <rdar://problem/6173530>
+
+        Reviewed by Dave Hyatt.
+
+        * WebCore.base.exp: Export new symbols.
+        * platform/mac/WebCoreSystemInterface.h: Add wkAdvanceDefaultButtonPulseAnimation.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton): Remove #if PLATFORM(WIN).
+        (WebCore::RenderButton::setStyle): Ditto.
+        * rendering/RenderButton.h: Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect): Add a case for DefaultButtonAppearance.
+        (WebCore::RenderThemeMac::setButtonCellState): Set the key equivalent to the return
+        key if the button is default, otherwise reset the key equivalent.
+        (WebCore::RenderThemeMac::paintButton): If the button is default call setDefaultButtonCell:
+        on the window, then wkAdvanceDefaultButtonPulseAnimation before painting. Restore
+        the window's previous default button cell when finished.
+
 2008-08-26  David Hyatt  <hyatt@apple.com>
 
         First cut at making form controls on OS X respect full page zoom.  There are lots of bugs.

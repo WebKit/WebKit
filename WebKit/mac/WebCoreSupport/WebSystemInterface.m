@@ -39,6 +39,7 @@ void InitWebCoreSystemInterface(void)
     if (didInit)
         return;
 
+    INIT(AdvanceDefaultButtonPulseAnimation);
     INIT(CGContextGetShouldSmoothFonts);
     INIT(ClearGlyphVector);
     INIT(ConvertCharToGlyphs);

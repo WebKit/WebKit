@@ -1,3 +1,23 @@
+2008-08-27  Timothy Hatcher  <timothy@apple.com>
+
+        Add support for support for -webkit-appearance: default-button on the Mac platform.
+
+        <rdar://problem/6173530>
+
+        Reviewed by Dave Hyatt.
+
+        * WebCoreSupport/WebSystemInterface.m:
+        (InitWebCoreSystemInterface): Init AdvanceDefaultButtonPulseAnimation.
+        * WebView/WebPreferenceKeysPrivate.h: Added WebKitApplicationChromeModeEnabledPreferenceKey.
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]): Set WebKitApplicationChromeModeEnabledPreferenceKey to NO.
+        (-[WebPreferences applicationChromeModeEnabled]): Added.
+        (-[WebPreferences setApplicationChromeModeEnabledEnabled:]): Added.
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _preferencesChangedNotification:]): Call Settings::setApplicationChromeMode
+        with the value of -[WebPreferences applicationChromeModeEnabled].
+
 2008-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCoreSystemInterface.h"
 
+void (*wkAdvanceDefaultButtonPulseAnimation)(NSButtonCell *);
 BOOL (*wkCGContextGetShouldSmoothFonts)(CGContextRef);
 void (*wkClearGlyphVector)(void* glyphs);
 OSStatus (*wkConvertCharToGlyphs)(void* styleGroup, const UniChar*, unsigned numCharacters, void* glyphs);

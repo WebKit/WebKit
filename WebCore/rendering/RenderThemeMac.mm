@@ -449,6 +449,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
             break;
         }
         case PushButtonAppearance:
+        case DefaultButtonAppearance:
         case ButtonAppearance: {
             // Since we query the prototype cell, we need to update its state to match.
             setButtonCellState(o, r);
@@ -891,6 +892,10 @@ void RenderThemeMac::setButtonCellState(const RenderObject* o, const IntRect& r)
 
     setControlSize(button, buttonSizes(), r.size(), o->style()->effectiveZoom());
 
+    NSWindow *window = [o->view()->frameView()->documentView() window];
+    BOOL isDefaultButton = (isDefault(o) && [window isKeyWindow]);
+    [button setKeyEquivalent:(isDefaultButton ? @"\r" : @"")];
+
     // Update the various states we respond to.
     updateCheckedState(button, o);
     updateEnabledState(button, o);
@@ -934,8 +939,21 @@ bool RenderThemeMac::paintButton(RenderObject* o, const RenderObject::PaintInfo&
         }
     } 
 
-    [button drawWithFrame:NSRect(inflatedRect) inView:o->view()->frameView()->documentView()];
+    NSView *view = o->view()->frameView()->documentView();
+    NSWindow *window = [view window];
+    NSButtonCell *previousDefaultButtonCell = [window defaultButtonCell];
+
+    if (isDefault(o) && [window isKeyWindow]) {
+        [window setDefaultButtonCell:button];
+        wkAdvanceDefaultButtonPulseAnimation(button);
+    } else if ([previousDefaultButtonCell isEqual:button])
+        [window setDefaultButtonCell:nil];
+
+    [button drawWithFrame:NSRect(inflatedRect) inView:view];
     [button setControlView:nil];
+
+    if (![previousDefaultButtonCell isEqual:button])
+        [window setDefaultButtonCell:previousDefaultButtonCell];
 
     paintInfo.context->restore();
 

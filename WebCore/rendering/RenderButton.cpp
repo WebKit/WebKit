@@ -38,9 +38,7 @@ RenderButton::RenderButton(Node* node)
     : RenderFlexibleBox(node)
     , m_buttonText(0)
     , m_inner(0)
-#if PLATFORM(WIN)
     , m_default(false)
-#endif
 {
 }
 
@@ -75,7 +73,6 @@ void RenderButton::setStyle(RenderStyle* style)
         m_inner->style()->setBoxFlex(1.0f);
     setReplaced(isInline());
 
-#if PLATFORM(WIN)
     if (!m_default && theme()->isDefault(this)) {
         if (!m_timer)
             m_timer.set(new Timer<RenderButton>(this, &RenderButton::timerFired));
@@ -85,7 +82,6 @@ void RenderButton::setStyle(RenderStyle* style)
         m_default = false;
         m_timer.clear();
     }
-#endif
 }
 
 void RenderButton::updateFromElement()
@@ -138,13 +134,9 @@ IntRect RenderButton::controlClipRect(int tx, int ty) const
     return IntRect(tx + borderLeft(), ty + borderTop(), m_width - borderLeft() - borderRight(), m_height - borderTop() - borderBottom());
 }
 
-#if PLATFORM(WIN)
-
 void RenderButton::timerFired(Timer<RenderButton>*)
 {
     repaint();
 }
-
-#endif
 
 } // namespace WebCore
