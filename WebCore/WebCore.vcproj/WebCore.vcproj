@@ -2395,7 +2395,7 @@
 				Name="win"
 				>
 				<File
-					RelativePath="..\page\win\AccessibilityObjectWin.h"
+					RelativePath="..\page\win\AccessibilityObjectWin.cpp"
 					>
 				</File>
 				<File

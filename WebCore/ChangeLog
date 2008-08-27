@@ -1,3 +1,9 @@
+2008-08-27  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * WebCore.vcproj/WebCore.vcproj: Fix file extension.
+
 2008-08-26  chris fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
