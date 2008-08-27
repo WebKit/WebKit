@@ -1,3 +1,14 @@
+2008-08-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=20456
+
+        * http/tests/security/object-literals-expected.txt: Added.
+        * http/tests/security/object-literals.html: Added.
+        * http/tests/security/resources/object-literals-cross-origin.html: Added.
+        * http/tests/security/resources/object-literals-same-origin.html: Added.
+
 2008-08-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff and Cameron.
