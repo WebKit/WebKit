@@ -580,68 +580,68 @@ bool TransformOperations::operator==(const TransformOperations& o) const
     return true;
 }
 
-TransformOperation* ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+PassRefPtr<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isScaleOperation())
         return this;
     
     if (blendToIdentity)
-        return new ScaleTransformOperation(m_x + (1. - m_x) * progress, m_y + (1. - m_y) * progress);
+        return ScaleTransformOperation::create(m_x + (1. - m_x) * progress, m_y + (1. - m_y) * progress);
     
     const ScaleTransformOperation* fromOp = static_cast<const ScaleTransformOperation*>(from);
     double fromX = fromOp ? fromOp->m_x : 1.;
     double fromY = fromOp ? fromOp->m_y : 1.;
-    return new ScaleTransformOperation(fromX + (m_x - fromX) * progress, fromY + (m_y - fromY) * progress);
+    return ScaleTransformOperation::create(fromX + (m_x - fromX) * progress, fromY + (m_y - fromY) * progress);
 }
 
-TransformOperation* RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isRotateOperation())
         return this;
     
     if (blendToIdentity)
-        return new RotateTransformOperation(m_angle - m_angle * progress);
+        return RotateTransformOperation::create(m_angle - m_angle * progress);
     
     const RotateTransformOperation* fromOp = static_cast<const RotateTransformOperation*>(from);
     double fromAngle = fromOp ? fromOp->m_angle : 0;
-    return new RotateTransformOperation(fromAngle + (m_angle - fromAngle) * progress);
+    return RotateTransformOperation::create(fromAngle + (m_angle - fromAngle) * progress);
 }
 
-TransformOperation* SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isSkewOperation())
         return this;
     
     if (blendToIdentity)
-        return new SkewTransformOperation(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress);
+        return SkewTransformOperation::create(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress);
     
     const SkewTransformOperation* fromOp = static_cast<const SkewTransformOperation*>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
-    return new SkewTransformOperation(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress);
+    return SkewTransformOperation::create(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress);
 }
 
-TransformOperation* TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+PassRefPtr<TransformOperation> TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isTranslateOperation())
         return this;
     
     if (blendToIdentity)
-        return new TranslateTransformOperation(Length(m_x.type()).blend(m_x, progress), Length(m_y.type()).blend(m_y, progress));
+        return TranslateTransformOperation::create(Length(m_x.type()).blend(m_x, progress), Length(m_y.type()).blend(m_y, progress));
 
     const TranslateTransformOperation* fromOp = static_cast<const TranslateTransformOperation*>(from);
     Length fromX = fromOp ? fromOp->m_x : Length(m_x.type());
     Length fromY = fromOp ? fromOp->m_y : Length(m_y.type());
-    return new TranslateTransformOperation(m_x.blend(fromX, progress), m_y.blend(fromY, progress));
+    return TranslateTransformOperation::create(m_x.blend(fromX, progress), m_y.blend(fromY, progress));
 }
 
-TransformOperation* MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
+PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
     if (from && !from->isMatrixOperation())
         return this;
     
     if (blendToIdentity)
-        return new MatrixTransformOperation(m_a * (1. - progress) + progress,
+        return MatrixTransformOperation::create(m_a * (1. - progress) + progress,
                                             m_b * (1. - progress),
                                             m_c * (1. - progress),
                                             m_d * (1. - progress) + progress,
@@ -656,7 +656,7 @@ TransformOperation* MatrixTransformOperation::blend(const TransformOperation* fr
     double fromE = fromOp ? fromOp->m_e : 0;
     double fromF = fromOp ? fromOp->m_f : 0;
     
-    return new MatrixTransformOperation(fromA + (m_a - fromA) * progress,
+    return MatrixTransformOperation::create(fromA + (m_a - fromA) * progress,
                                         fromB + (m_b - fromB) * progress,
                                         fromC + (m_c - fromC) * progress,
                                         fromD + (m_d - fromD) * progress,
