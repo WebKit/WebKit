@@ -5239,19 +5239,19 @@ void CSSStyleSelector::mapAnimationTimingFunction(Animation* animation, CSSValue
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         switch (primitiveValue->getIdent()) {
             case CSSValueLinear:
-                animation->setTimingFunction(TimingFunction(LinearTimingFunction));
+                animation->setTimingFunction(TimingFunction(LinearTimingFunction, 0.0, 0.0, 1.0, 1.0));
                 break;
             case CSSValueEase:
                 animation->setTimingFunction(TimingFunction());
                 break;
             case CSSValueEaseIn:
-                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, .42, .0, 1.0, 1.0));
+                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, 0.42, 0.0, 1.0, 1.0));
                 break;
             case CSSValueEaseOut:
-                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, .0, .0, .58, 1.0));
+                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, 0.0, 0.0, 0.58, 1.0));
                 break;
             case CSSValueEaseInOut:
-                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, .42, .0, .58, 1.0));
+                animation->setTimingFunction(TimingFunction(CubicBezierTimingFunction, 0.42, 0.0, 0.58, 1.0));
                 break;
         }
         return;

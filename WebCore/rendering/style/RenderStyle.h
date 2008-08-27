@@ -1225,13 +1225,13 @@ struct TimingFunction
 {
     TimingFunction()
     : m_type(CubicBezierTimingFunction)
-    , m_x1(.25)
-    , m_y1(.1)
-    , m_x2(.25)
+    , m_x1(0.25)
+    , m_y1(0.1)
+    , m_x2(0.25)
     , m_y2(1.0)
     {}
 
-    TimingFunction(ETimingFunctionType timingFunction, double x1 = .0, double y1 = .0, double x2 = .0, double y2 = .0)
+    TimingFunction(ETimingFunctionType timingFunction, double x1 = 0.0, double y1 = 0.0, double x2 = 1.0, double y2 = 1.0)
     : m_type(timingFunction)
     , m_x1(x1)
     , m_y1(y1)
