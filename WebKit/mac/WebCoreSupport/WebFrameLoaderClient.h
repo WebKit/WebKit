@@ -148,6 +148,7 @@ private:
 
     virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
     virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);
+    virtual WebCore::ResourceError pluginWillHandleLoadError(const WebCore::ResourceResponse&);
 
     virtual bool shouldFallBack(const WebCore::ResourceError&);
 

@@ -1,3 +1,13 @@
+2008-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6134133> - Crash when loading large movie as a standalone document
+
+        * WebFrame.cpp:
+        (WebFrame::pluginWillHandleLoadError):
+        * WebFrame.h:
+
 2008-08-26  Alice Liu  <alice.liu@apple.com>
 
         Implement COMPropertyBag::GetPropertyInfo

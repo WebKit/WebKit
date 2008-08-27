@@ -156,6 +156,7 @@ namespace WebCore {
 
         virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&);
         virtual ResourceError fileDoesNotExistError(const ResourceResponse&);
+        virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&);
 
         virtual bool shouldFallBack(const ResourceError&);
 

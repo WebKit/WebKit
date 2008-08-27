@@ -1,3 +1,13 @@
+2008-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6134133> - Crash when loading large movie as a standalone document
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::FrameLoaderClient::pluginWillHandleLoadError): Stubbed for now
+        * WebCoreSupport/FrameLoaderClientGtk.h:
+
 2008-08-18  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Holger Freyther.

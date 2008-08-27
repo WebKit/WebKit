@@ -1,3 +1,13 @@
+2008-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6134133> - Crash when loading large movie as a standalone document
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::pluginWillHandleLoadError): Stubbed for now
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2008-08-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.

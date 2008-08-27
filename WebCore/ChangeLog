@@ -1,3 +1,24 @@
+2008-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6134133> - Crash when loading large movie as a standalone document
+
+        We hand off these loads to Quicktime which manages and spools the data itself, but we also continued
+        to load and buffer the data for the movie in WebCore.  With large media files, this results in blowing
+        away the virtual address space and a crash.
+
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::pluginWillHandleLoadError):
+        * loader/FrameLoaderClient.h:  Added client method to get platform specific error for
+          "plugin will handle load"
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaTokenizer::createDocumentStructure): Tell the MainResourceLoader to not buffer data,
+          and cancel the WebCore-managed load
+        (WebCore::MediaTokenizer::writeRawData):
+        (WebCore::MediaTokenizer::finish):
+
 2008-08-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel

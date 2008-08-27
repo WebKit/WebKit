@@ -1,3 +1,13 @@
+2008-08-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        <rdar://problem/6134133> - Crash when loading large movie as a standalone document
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::pluginWillHandleLoadError):
+
 2008-08-20  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by John Sullivan.

@@ -759,6 +759,16 @@ ResourceError WebFrameLoaderClient::fileDoesNotExistError(const ResourceResponse
     return [NSError _webKitErrorWithDomain:NSURLErrorDomain code:NSURLErrorFileDoesNotExist URL:response.url()];    
 }
 
+ResourceError WebFrameLoaderClient::pluginWillHandleLoadError(const ResourceResponse& response)
+{
+    NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInWillHandleLoad
+                                                    contentURL:response.url()
+                                                 pluginPageURL:nil
+                                                    pluginName:nil
+                                                      MIMEType:response.mimeType()];
+    return [error autorelease];
+}
+
 bool WebFrameLoaderClient::shouldFallBack(const ResourceError& error)
 {
     // FIXME: Needs to check domain.

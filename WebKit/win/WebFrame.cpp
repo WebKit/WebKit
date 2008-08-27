@@ -1372,6 +1372,11 @@ ResourceError WebFrame::fileDoesNotExistError(const ResourceResponse&)
     return ResourceError();
 }
 
+ResourceError WebFrame::pluginWillHandleLoadError(const ResourceResponse&)
+{
+    return ResourceError(String(WebKitErrorDomain), WebKitErrorPlugInWillHandleLoad, request.url().string(), String());
+}
+
 bool WebFrame::shouldFallBack(const ResourceError& error)
 {
     return error.errorCode() != WebURLErrorCancelled;

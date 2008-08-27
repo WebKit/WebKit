@@ -216,6 +216,7 @@ public:
 
     virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&) { return ResourceError(); }
     virtual ResourceError fileDoesNotExistError(const ResourceResponse&) { return ResourceError(); }
+    virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&) { return ResourceError(); }
 
     virtual bool shouldFallBack(const ResourceError&) { return false; }
 
