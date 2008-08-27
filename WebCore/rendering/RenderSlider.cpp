@@ -142,7 +142,7 @@ void RenderSlider::calcPrefWidths()
     if (style()->width().isFixed() && style()->width().value() > 0)
         m_minPrefWidth = m_maxPrefWidth = calcContentBoxWidth(style()->width().value());
     else
-        m_maxPrefWidth = defaultTrackLength;
+        m_maxPrefWidth = defaultTrackLength * style()->effectiveZoom();
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
         m_maxPrefWidth = max(m_maxPrefWidth, calcContentBoxWidth(style()->minWidth().value()));

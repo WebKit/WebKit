@@ -134,12 +134,12 @@ protected:
     virtual bool paintMediaSliderThumb(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
 
 private:
-    IntRect inflateRect(const IntRect&, const IntSize&, const int* margins) const;
+    IntRect inflateRect(const IntRect&, const IntSize&, const int* margins, float zoomLevel = 1.0f) const;
 
     // Get the control size based off the font.  Used by some of the controls (like buttons).
     NSControlSize controlSizeForFont(RenderStyle*) const;
     NSControlSize controlSizeForSystemFont(RenderStyle*) const;
-    void setControlSize(NSCell*, const IntSize* sizes, const IntSize& minSize);
+    void setControlSize(NSCell*, const IntSize* sizes, const IntSize& minSize, float zoomLevel = 1.0f);
     void setSizeFromFont(RenderStyle*, const IntSize* sizes) const;
     IntSize sizeForFont(RenderStyle*, const IntSize* sizes) const;
     IntSize sizeForSystemFont(RenderStyle*, const IntSize* sizes) const;

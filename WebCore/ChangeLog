@@ -1,3 +1,47 @@
+2008-08-26  David Hyatt  <hyatt@apple.com>
+
+        First cut at making form controls on OS X respect full page zoom.  There are lots of bugs.
+
+        Reviewed by weinig
+
+        Added fast/forms/zoomed-controls.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::addIntrinsicMargins):
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::calcPrefWidths):
+        * rendering/RenderThemeMac.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+        (WebCore::RenderThemeMac::inflateRect):
+        (WebCore::RenderThemeMac::baselinePosition):
+        (WebCore::RenderThemeMac::setControlSize):
+        (WebCore::RenderThemeMac::sizeForFont):
+        (WebCore::RenderThemeMac::sizeForSystemFont):
+        (WebCore::RenderThemeMac::setFontFromControlSize):
+        (WebCore::RenderThemeMac::paintCheckbox):
+        (WebCore::RenderThemeMac::setCheckboxCellState):
+        (WebCore::RenderThemeMac::paintRadio):
+        (WebCore::RenderThemeMac::setRadioCellState):
+        (WebCore::RenderThemeMac::setButtonPaddingFromControlSize):
+        (WebCore::RenderThemeMac::adjustButtonStyle):
+        (WebCore::RenderThemeMac::setButtonCellState):
+        (WebCore::RenderThemeMac::paintButton):
+        (WebCore::RenderThemeMac::paintMenuList):
+        (WebCore::RenderThemeMac::paintMenuListButton):
+        (WebCore::RenderThemeMac::popupInternalPaddingLeft):
+        (WebCore::RenderThemeMac::popupInternalPaddingRight):
+        (WebCore::RenderThemeMac::popupInternalPaddingTop):
+        (WebCore::RenderThemeMac::popupInternalPaddingBottom):
+        (WebCore::RenderThemeMac::setPopupButtonCellState):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintSliderThumb):
+        (WebCore::RenderThemeMac::adjustSliderThumbSize):
+        (WebCore::RenderThemeMac::paintSearchField):
+        (WebCore::RenderThemeMac::adjustSearchFieldStyle):
+        (WebCore::RenderThemeMac::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeMac::paintSearchFieldResultsButton):
+
 2008-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders
