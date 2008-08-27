@@ -1,3 +1,14 @@
+2008-08-26  Alice Liu  <alice.liu@apple.com>
+
+        Implement COMPropertyBag::GetPropertyInfo
+        and a variant setter for type int
+
+        Reviewed by Anders Carlsson.
+
+        * COMPropertyBag.h:
+        (::GetPropertyInfo):
+        * COMVariantSetter.h:
+
 2008-08-25  Adam Roben  <aroben@apple.com>
 
         Fix an assertion when showing the Web Inspector

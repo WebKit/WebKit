@@ -182,7 +182,33 @@ HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::CountProperties(U
 template<typename ValueType, typename HashType>
 HRESULT STDMETHODCALLTYPE COMPropertyBag<ValueType, HashType>::GetPropertyInfo(ULONG iProperty, ULONG cProperties, PROPBAG2* pPropBag, ULONG* pcProperties)
 {
-    return E_NOTIMPL;
+    if (!pPropBag || !pcProperties)
+        return E_POINTER;
+
+    if (m_hashMap.size() <= iProperty)
+        return E_INVALIDARG;
+
+    *pcProperties = 0;
+    typedef HashMapType::const_iterator Iterator;
+    Iterator current = m_hashMap.begin();
+    Iterator end = m_hashMap.end();
+    for (ULONG i = 0; i < iProperty; ++i, ++current)
+        ;
+    for (ULONG j = 0; j < cProperties, current != end; ++j, ++current) {
+        // FIXME: the following fields aren't filled in
+        //pPropBag[j].dwType;   // (DWORD) Type of property. This will be one of the PROPBAG2_TYPE values.
+        //pPropBag[j].cfType;   // (CLIPFORMAT) Clipboard format or MIME type of the property.
+        //pPropBag[j].clsid;    // (CLSID) CLSID of the object. This member is valid only if dwType is PROPBAG2_TYPE_OBJECT.
+
+        pPropBag[j].vt = COMVariantSetter<ValueType>::VariantType;
+        pPropBag[j].dwHint = iProperty + j;
+        pPropBag[j].pstrName = (LPOLESTR)CoTaskMemAlloc(sizeof(wchar_t)*(current->first.length()+1));
+        if (!pPropBag[j].pstrName)
+            return E_OUTOFMEMORY;
+        wcscpy_s(pPropBag[j].pstrName, current->first.length()+1, static_cast<String>(current->first).charactersWithNullTermination());
+        ++*pcProperties;
+    }
+    return S_OK;
 }
 
 template<typename ValueType, typename HashType>

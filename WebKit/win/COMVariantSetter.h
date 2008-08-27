@@ -62,6 +62,19 @@ template<> struct COMVariantSetter<unsigned long long>
     }
 };
 
+template<> struct COMVariantSetter<int>
+{
+    static const VARENUM VariantType = VT_I4;
+
+    static void setVariant(VARIANT* variant, int value)
+    {
+        ASSERT(V_VT(variant) == VT_EMPTY);
+
+        V_VT(variant) = VariantType;
+        V_I4(variant) = value;
+    }
+};
+
 template<typename T> struct COMVariantSetter<COMPtr<T> >
 {
     static const VARENUM VariantType = VT_UNKNOWN;
