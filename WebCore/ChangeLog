@@ -2,6 +2,52 @@
 
         Reviewed by Oliver Hunt.
 
+        Qt and Cairo support from krit (and blind stab @ wx compile support)
+        https://bugs.webkit.org/show_bug.cgi?id=20373
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformFillColor):
+        (WebCore::GraphicsContext::setPlatformStrokeColor):
+        (WebCore::GraphicsContext::setPlatformStrokeStyle):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+        (WebCore::GraphicsContext::setPlatformStrokeGradient):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::strokeRect):
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+        (WebCore::GraphicsContext::setPlatformStrokeGradient):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        (WebCore::GraphicsContext::clipToImageBuffer):
+        (WebCore::GraphicsContext::setImageInterpolationQuality):
+        (WebCore::GraphicsContext::imageInterpolationQuality):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+
+2008-08-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
         Add stroke/fill Gradient and Pattern support to GraphicsContext and update <canvas> to use it.
         https://bugs.webkit.org/show_bug.cgi?id=20373
 

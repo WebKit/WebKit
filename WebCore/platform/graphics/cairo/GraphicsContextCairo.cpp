@@ -51,6 +51,7 @@
 #elif PLATFORM(WIN)
 #include <cairo-win32.h>
 #endif
+#include "GraphicsContextPrivate.h"
 #include "GraphicsContextPlatformPrivateCairo.h"
 
 #ifndef M_PI
@@ -355,13 +356,70 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     cairo_restore(cr);
 }
 
-void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
+void GraphicsContext::fillPath()
 {
     if (paintingDisabled())
         return;
 
-    if (color.alpha())
-        fillRectSourceOver(m_data->cr, rect, color);
+    cairo_t* cr = m_data->cr;
+
+    switch (m_common->state.fillColorSpace) {
+    case SolidColorSpace:
+        if (fillColor().alpha()) {
+            setColor(cr, fillColor());
+            cairo_fill(cr);
+        }
+        break;
+    case PatternColorSpace:
+        cairo_set_source(cr, m_common->state.fillPattern.get()->createPlatformPattern(getCTM()));
+        cairo_fill(cr);
+        break;
+    case GradientColorSpace:
+        cairo_set_source(cr, m_common->state.fillGradient.get()->platformGradient());
+        cairo_fill(cr);
+        break;
+    }
+}
+
+void GraphicsContext::strokePath()
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+
+    switch (m_common->state.strokeColorSpace) {
+    case SolidColorSpace:
+        if (strokeColor().alpha()) {
+            setColor(cr, strokeColor());
+            cairo_stroke(cr);
+        }
+        break;
+    case PatternColorSpace:
+        cairo_set_source(cr, m_common->state.strokePattern.get()->createPlatformPattern(getCTM()));
+        cairo_stroke(cr);
+        break;
+    case GradientColorSpace:
+        cairo_set_source(cr, m_common->state.strokeGradient.get()->platformGradient());
+        cairo_stroke(cr);
+        break;
+    }
+}
+
+void GraphicsContext::drawPath()
+{
+    fillPath();
+    strokePath();
+}
+
+void GraphicsContext::fillRect(const FloatRect& rect)
+{
+    if (paintingDisabled())
+        return;
+
+    cairo_t* cr = m_data->cr;
+    cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
+    fillPath();
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color)
@@ -497,33 +555,16 @@ IntPoint GraphicsContext::origin()
     return IntPoint(static_cast<int>(matrix.x0), static_cast<int>(matrix.y0));
 }
 
-void GraphicsContext::applyStrokePattern(const Pattern& pattern)
-{
-    cairo_pattern_t* platformPattern = pattern.createPlatformPattern(getCTM());
-    if (!platformPattern)
-        return;
-
-    cairo_set_source(platformContext(), platformPattern);
-    cairo_pattern_destroy(platformPattern);
-}
-
-void GraphicsContext::applyFillPattern(const Pattern& pattern)
-{
-    // The Cairo codepath doesn't seem to support separate stroke/fill?
-    // The code I refactored to create these methods was identical for Cairo
-    applyStrokePattern(pattern);
-}
-
 void GraphicsContext::setPlatformFillColor(const Color& col)
 {
-    // FIXME: this is probably a no-op but I'm not sure
-    // notImplemented(); // commented-out because it's chatty and clutters output
+    // Cairo contexts can't hold separate fill and stroke colors
+    // so we set them just before we actually fill or stroke
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& col)
 {
-    // FIXME: this is probably a no-op but I'm not sure
-    //notImplemented(); // commented-out because it's chatty and clutters output
+    // Cairo contexts can't hold separate fill and stroke colors
+    // so we set them just before we actually fill or stroke
 }
 
 void GraphicsContext::setPlatformStrokeThickness(float strokeThickness)
@@ -555,9 +596,6 @@ void GraphicsContext::setPlatformStrokeStyle(const StrokeStyle& strokeStyle)
         break;
     case DashedStroke:
         cairo_set_dash(m_data->cr, dashPattern, 2, 0);
-        break;
-    default:
-        notImplemented();
         break;
     }
 }
@@ -665,9 +703,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     cairo_t* cr = m_data->cr;
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    setColor(cr, strokeColor());
     cairo_set_line_width(cr, width);
-    cairo_stroke(cr);
+    strokePath();
     cairo_restore(cr);
 }
 
@@ -910,6 +947,32 @@ void GraphicsContext::setUseAntialiasing(bool enable)
     // antialiasing. This is the same strategy as used in drawConvexPolygon().
     cairo_set_antialias(m_data->cr, enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
+
+void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
+{
+}
+
+InterpolationQuality GraphicsContext::imageInterpolationQuality() const
+{
+    return InterpolationDefault;
+}
+
+void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
+{
+}
+
+void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
+{
+}
+
+void GraphicsContext::setPlatformFillGradient(Gradient* gradient)
+{
+}
+
+void GraphicsContext::setPlatformStrokeGradient(Gradient* gradient)
+{
+}
+
 
 } // namespace WebCore
 
