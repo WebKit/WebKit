@@ -34,18 +34,19 @@ namespace WebCore {
 
 class WebKitCSSTransformValue : public CSSValueList {
 public:
+    // NOTE: these have to match the values in the IDL
     enum TransformOperationType {
         UnknownTransformOperation,
-        ScaleTransformOperation,
-        ScaleXTransformOperation,
-        ScaleYTransformOperation,
-        RotateTransformOperation,
-        SkewTransformOperation,
-        SkewXTransformOperation,
-        SkewYTransformOperation,
         TranslateTransformOperation,
         TranslateXTransformOperation,
         TranslateYTransformOperation,
+        RotateTransformOperation,
+        ScaleTransformOperation,
+        ScaleXTransformOperation,
+        ScaleYTransformOperation,
+        SkewTransformOperation,
+        SkewXTransformOperation,
+        SkewYTransformOperation,
         MatrixTransformOperation
     };
 
@@ -62,6 +63,8 @@ public:
     
 private:
     WebKitCSSTransformValue(TransformOperationType);
+
+    virtual bool isWebKitCSSTransformValue() const { return true; }
 
     TransformOperationType m_type;
 };

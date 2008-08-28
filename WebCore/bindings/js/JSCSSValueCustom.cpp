@@ -30,6 +30,8 @@
 #include "CSSValueList.h"
 #include "JSCSSPrimitiveValue.h"
 #include "JSCSSValueList.h"
+#include "JSWebKitCSSTransformValue.h"
+#include "WebKitCSSTransformValue.h"
 
 #if ENABLE(SVG)
 #include "JSSVGColor.h"
@@ -52,7 +54,9 @@ JSValue* toJS(ExecState* exec, CSSValue* value)
     if (ret)
         return ret;
 
-    if (value->isValueList())
+    if (value->isWebKitCSSTransformValue())
+        ret = new (exec) JSWebKitCSSTransformValue(JSWebKitCSSTransformValuePrototype::self(exec), static_cast<WebKitCSSTransformValue*>(value));
+    else if (value->isValueList())
         ret = new (exec) JSCSSValueList(JSCSSValueListPrototype::self(exec), static_cast<CSSValueList*>(value));
 #if ENABLE(SVG)
     else if (value->isSVGPaint())
