@@ -51,4 +51,6 @@ interface IWebCoreStatistics : IUnknown
     HRESULT cachedFontDataInactiveCount([out, retval] UINT* count);
     HRESULT purgeInactiveFontData();
     HRESULT glyphPageCount([out, retval] UINT* count);
+
+    HRESULT javaScriptProtectedObjectTypeCounts([out, retval] IPropertyBag2** typeNamesAndCounts);
 }

@@ -1,3 +1,14 @@
+2008-08-27  Alice Liu  <alice.liu@apple.com>
+
+        Add interface for obtaining JS object counts broken down by type
+
+        Reviewed by Steve Falkenburg.
+
+        * Interfaces/IWebCoreStatistics.idl:
+        * WebCoreStatistics.cpp:
+        (WebCoreStatistics::javaScriptProtectedObjectTypeCounts):
+        * WebCoreStatistics.h:
+
 2008-08-27  Ada Chan  <adachan@apple.com>
 
         Fixed build.

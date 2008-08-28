@@ -27,6 +27,7 @@
 #include "WebKitDLL.h"
 #include "WebCoreStatistics.h"
 
+#include "COMPropertyBag.h"
 #include <JavaScriptCore/JSLock.h>
 #include <WebCore/FontCache.h>
 #include <WebCore/GlyphPageTreeNode.h>
@@ -131,6 +132,22 @@ HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedGlobalObjectsCou
 
     JSLock lock(false);
     *count = (UINT)JSDOMWindow::commonJSGlobalData()->heap->protectedGlobalObjectCount();
+    return S_OK;
+}
+
+HRESULT STDMETHODCALLTYPE WebCoreStatistics::javaScriptProtectedObjectTypeCounts( 
+    /* [retval][out] */ IPropertyBag2** typeNamesAndCounts)
+{
+    JSLock lock(false);
+    OwnPtr<HashCountedSet<const char*> > jsObjectTypeNames(JSDOMWindow::commonJSGlobalData()->heap->protectedObjectTypeCounts());
+    typedef HashCountedSet<const char*>::const_iterator Iterator;
+    Iterator end = jsObjectTypeNames->end();
+    HashMap<String, int> typeCountMap;
+    for (Iterator current = jsObjectTypeNames->begin(); current != end; ++current)
+        typeCountMap.set(current->first, current->second);
+
+    COMPtr<IPropertyBag2> results(AdoptCOM, COMPropertyBag<int>::createInstance(typeCountMap));
+    results.copyRefTo(typeNamesAndCounts);
     return S_OK;
 }
 
