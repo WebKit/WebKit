@@ -33,6 +33,7 @@
 #include "PageGroup.h"
 #include "PausedTimeouts.h"
 #include "ResourceHandle.h"
+#include "ScriptController.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WindowFeatures.h"
@@ -430,7 +431,7 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
                 OwnPtr<PausedTimeouts> timeouts;
                 frame->script()->pauseTimeouts(timeouts);
                 if (timeouts)
-                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts.take()));
+                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts.release()));
             }
 #endif
         }

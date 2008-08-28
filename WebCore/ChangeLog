@@ -1,3 +1,10 @@
+2008-08-28  Adam Roben  <aroben@apple.com>
+
+        Windows (and others?) build fix
+
+        * page/Chrome.cpp: Added a missing #include.
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer): Fixed typo.
+
 2008-08-27  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Oliver Hunt.
