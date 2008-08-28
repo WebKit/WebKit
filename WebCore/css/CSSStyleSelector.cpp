@@ -67,6 +67,8 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "ShadowValue.h"
+#include "StyleCachedImage.h"
+#include "StyleGeneratedImage.h"
 #include "StyleSheetList.h"
 #include "Text.h"
 #include "UserAgentStyleSheets.h"

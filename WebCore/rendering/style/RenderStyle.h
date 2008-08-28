@@ -47,6 +47,7 @@
 #include "GraphicsTypes.h"
 #include "IntRect.h"
 #include "Length.h"
+#include "NinePieceImage.h"
 #include "Pair.h"
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
@@ -77,6 +78,7 @@ class Pair;
 class RenderArena;
 class ShadowValue;
 class StringImpl;
+class StyleImage;
 
 struct CursorData;
 
@@ -93,107 +95,6 @@ enum EPosition {
 
 enum EFloat {
     FNONE = 0, FLEFT, FRIGHT
-};
-
-typedef void* WrappedImagePtr;
-
-class StyleImage : public RefCounted<StyleImage>
-{
-public:
-    virtual ~StyleImage() { }
-
-    bool operator==(const StyleImage& other)
-    {
-        return data() == other.data();
-    }
-    
-    virtual PassRefPtr<CSSValue> cssValue() = 0;
-
-    virtual bool canRender(float multiplier) const { return true; }
-    virtual bool isLoaded() const { return true; }
-    virtual bool errorOccurred() const { return false; }
-    virtual IntSize imageSize(const RenderObject*, float multiplier) const = 0;
-    virtual bool imageHasRelativeWidth() const = 0;
-    virtual bool imageHasRelativeHeight() const = 0;
-    virtual bool usesImageContainerSize() const = 0;
-    virtual void setImageContainerSize(const IntSize&) = 0;
-    virtual void addClient(RenderObject*) = 0;
-    virtual void removeClient(RenderObject*) = 0;
-    virtual Image* image(RenderObject*, const IntSize&) const = 0;
-    virtual WrappedImagePtr data() const = 0;
-    virtual bool isCachedImage() const { return false; }
-    virtual bool isGeneratedImage() const { return false; }
-    
-protected:
-    StyleImage() { }
-};
-
-class StyleCachedImage : public StyleImage
-{
-public:
-    static PassRefPtr<StyleCachedImage> create(CachedImage* image) { return adoptRef(new StyleCachedImage(image)); }
-    virtual WrappedImagePtr data() const { return m_image; }
-
-    virtual bool isCachedImage() const { return true; }
-    
-    virtual PassRefPtr<CSSValue> cssValue();
-    
-    CachedImage* cachedImage() const { return m_image; }
-
-    virtual bool canRender(float multiplier) const;
-    virtual bool isLoaded() const;
-    virtual bool errorOccurred() const;
-    virtual IntSize imageSize(const RenderObject*, float multiplier) const;
-    virtual bool imageHasRelativeWidth() const;
-    virtual bool imageHasRelativeHeight() const;
-    virtual bool usesImageContainerSize() const;
-    virtual void setImageContainerSize(const IntSize&);
-    virtual void addClient(RenderObject*);
-    virtual void removeClient(RenderObject*);
-    virtual Image* image(RenderObject*, const IntSize&) const;
-    
-private:
-    StyleCachedImage(CachedImage* image)
-        : m_image(image)
-    {
-    }
-    
-    CachedImage* m_image;
-};
-
-class StyleGeneratedImage : public StyleImage
-{
-public:
-    static PassRefPtr<StyleGeneratedImage> create(CSSImageGeneratorValue* val, bool fixedSize)
-    {
-        return adoptRef(new StyleGeneratedImage(val, fixedSize));
-    }
-
-    virtual WrappedImagePtr data() const { return m_generator; }
-
-    virtual bool isGeneratedImage() const { return true; }
-    
-    virtual PassRefPtr<CSSValue> cssValue();
-
-    virtual IntSize imageSize(const RenderObject*, float multiplier) const;
-    virtual bool imageHasRelativeWidth() const { return !m_fixedSize; }
-    virtual bool imageHasRelativeHeight() const { return !m_fixedSize; }
-    virtual bool usesImageContainerSize() const { return !m_fixedSize; }
-    virtual void setImageContainerSize(const IntSize&);
-    virtual void addClient(RenderObject*);
-    virtual void removeClient(RenderObject*);
-    virtual Image* image(RenderObject*, const IntSize&) const;
-    
-private:
-    StyleGeneratedImage(CSSImageGeneratorValue* val, bool fixedSize)
-        : m_generator(val)
-        , m_fixedSize(fixedSize)
-    {
-    }
-    
-    CSSImageGeneratorValue* m_generator; // The generator holds a reference to us.
-    IntSize m_containerSize;
-    bool m_fixedSize;
 };
 
 //------------------------------------------------
@@ -284,31 +185,6 @@ struct CollapsedBorderValue {
     
     const BorderValue* border;
     EBorderPrecedence precedence;    
-};
-
-enum ENinePieceImageRule {
-    StretchImageRule, RoundImageRule, RepeatImageRule
-};
-
-class NinePieceImage {
-public:
-    NinePieceImage() :m_image(0), m_horizontalRule(StretchImageRule), m_verticalRule(StretchImageRule) {}
-    NinePieceImage(StyleImage* image, LengthBox slices, ENinePieceImageRule h, ENinePieceImageRule v) 
-      :m_image(image), m_slices(slices), m_horizontalRule(h), m_verticalRule(v) {}
-
-    bool operator==(const NinePieceImage& o) const;
-    bool operator!=(const NinePieceImage& o) const { return !(*this == o); }
-
-    bool hasImage() const { return m_image != 0; }
-    StyleImage* image() const { return m_image.get(); }
-    
-    ENinePieceImageRule horizontalRule() const { return static_cast<ENinePieceImageRule>(m_horizontalRule); }
-    ENinePieceImageRule verticalRule() const { return static_cast<ENinePieceImageRule>(m_verticalRule); }
-    
-    RefPtr<StyleImage> m_image;
-    LengthBox m_slices;
-    unsigned m_horizontalRule : 2; // ENinePieceImageRule
-    unsigned m_verticalRule : 2; // ENinePieceImageRule
 };
 
 class BorderData {
@@ -588,16 +464,8 @@ public:
         return !(*this == o);
     }
 
-    bool containsImage(StyleImage* s) const {
-        if (!s)
-            return false;
-        if (m_image && *s == *m_image)
-            return true;
-        if (m_next)
-            return m_next->containsImage(s);
-        return false;
-    }
-    
+    bool containsImage(StyleImage*) const;
+
     bool hasImage() const {
         if (m_image)
             return true;

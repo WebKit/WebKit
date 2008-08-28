@@ -8625,6 +8625,58 @@
 				RelativePath="..\rendering\style\RenderStyle.h"
 				>
 			</File>
+                        <File
+				RelativePath="..\rendering\style\StyleCachedImage.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleCachedImage.h"
+				>
+			</File>
+                        <File
+				RelativePath="..\rendering\style\StyleGeneratedImage.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleGeneratedImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\NinePieceImage.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\rendering\style\NinePieceImage.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\style\StyleImage.h"
+				>
+			</File>
 			<File
 				RelativePath="..\rendering\RenderSVGBlock.cpp"
 				>

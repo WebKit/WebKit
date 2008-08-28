@@ -28,6 +28,7 @@
 
 #include "RenderBlock.h"
 #include "RenderStyle.h"
+#include "StyleCachedImage.h"
 
 namespace WebCore {
 

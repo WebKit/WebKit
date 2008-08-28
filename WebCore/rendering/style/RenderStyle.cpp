@@ -27,26 +27,11 @@
 #include "FontSelector.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
+#include "StyleImage.h"
 
 namespace WebCore {
 
 static RenderStyle* defaultStyle;
-
-static bool imagesEquivalent(StyleImage* image1, StyleImage* image2)
-{
-    if (image1 != image2) {
-        if (!image1 || !image2)
-            return false;
-        return *image1 == *image2;
-    }
-    return true;
-}
-
-bool NinePieceImage::operator==(const NinePieceImage& o) const
-{
-    return imagesEquivalent(m_image.get(), o.m_image.get()) && m_slices == o.m_slices && m_horizontalRule == o.m_horizontalRule &&
-           m_verticalRule == o.m_verticalRule;
-}
 
 StyleSurroundData::StyleSurroundData()
     : margin(Fixed)
@@ -127,99 +112,6 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o)
     , counterReset(o.counterReset)
     , m_zoom(RenderStyle::initialZoom())
 {
-}
-
-PassRefPtr<CSSValue> StyleCachedImage::cssValue()
-{
-    return CSSPrimitiveValue::create(m_image->url(), CSSPrimitiveValue::CSS_URI);
-}
-
-bool StyleCachedImage::canRender(float multiplier) const
-{
-    return m_image->canRender(multiplier);
-}
-
-bool StyleCachedImage::isLoaded() const
-{
-    return m_image->isLoaded();
-}
-
-bool StyleCachedImage::errorOccurred() const
-{
-    return m_image->errorOccurred();
-}
-
-IntSize StyleCachedImage::imageSize(const RenderObject* /*renderer*/, float multiplier) const
-{
-    return m_image->imageSize(multiplier);
-}
-
-bool StyleCachedImage::imageHasRelativeWidth() const
-{
-    return m_image->imageHasRelativeWidth();
-}
-
-bool StyleCachedImage::imageHasRelativeHeight() const
-{
-    return m_image->imageHasRelativeHeight();
-}
-
-bool StyleCachedImage::usesImageContainerSize() const
-{
-    return m_image->usesImageContainerSize();
-}
-
-void StyleCachedImage::setImageContainerSize(const IntSize& size)
-{
-    return m_image->setImageContainerSize(size);
-}
-
-void StyleCachedImage::addClient(RenderObject* renderer)
-{
-    return m_image->addClient(renderer);
-}
-
-void StyleCachedImage::removeClient(RenderObject* renderer)
-{
-    return m_image->removeClient(renderer);
-}
-
-Image* StyleCachedImage::image(RenderObject* renderer, const IntSize&) const
-{
-    return m_image->image();
-}
-
-PassRefPtr<CSSValue> StyleGeneratedImage::cssValue()
-{
-    return m_generator;
-}
-
-IntSize StyleGeneratedImage::imageSize(const RenderObject* renderer, float /* multiplier */) const
-{
-    // We can ignore the multiplier, since we always store a raw zoomed size.
-    if (m_fixedSize)
-        return m_generator->fixedSize(renderer);
-    return m_containerSize;
-}
-
-void StyleGeneratedImage::setImageContainerSize(const IntSize& size)
-{
-    m_containerSize = size;
-}
-
-void StyleGeneratedImage::addClient(RenderObject* renderer)
-{
-    m_generator->addClient(renderer, IntSize());
-}
-
-void StyleGeneratedImage::removeClient(RenderObject* renderer)
-{
-    m_generator->removeClient(renderer);
-}
-
-Image* StyleGeneratedImage::image(RenderObject* renderer, const IntSize& size) const
-{
-    return m_generator->image(renderer, size);
 }
 
 FillLayer::FillLayer(EFillLayerType type)
@@ -311,7 +203,7 @@ bool FillLayer::operator==(const FillLayer& o) const
 {
     // We do not check the "isSet" booleans for each property, since those are only used during initial construction
     // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
-    return imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
+    return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition &&
            m_attachment == o.m_attachment && m_clip == o.m_clip && 
            m_composite == o.m_composite && m_origin == o.m_origin && m_repeat == o.m_repeat &&
            m_size.width == o.m_size.width && m_size.height == o.m_size.height && m_type == o.m_type &&
@@ -436,6 +328,17 @@ void FillLayer::cullEmptyLayers()
             break;
         }
     }
+}
+
+bool FillLayer::containsImage(StyleImage* s) const
+{
+    if (!s)
+        return false;
+    if (m_image && *s == *m_image)
+        return true;
+    if (m_next)
+        return m_next->containsImage(s);
+    return false;
 }
 
 StyleBackgroundData::StyleBackgroundData()
@@ -1107,7 +1010,7 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
     return
         indent == o.indent &&
         line_height == o.line_height &&
-        imagesEquivalent(list_style_image.get(), o.list_style_image.get()) &&
+        StyleImage::imagesEquivalent(list_style_image.get(), o.list_style_image.get()) &&
         cursorDataEquivalent(cursorData.get(), o.cursorData.get()) &&
         font == o.font &&
         color == o.color &&
@@ -1635,7 +1538,7 @@ bool RenderStyle::contentDataEquivalent(const RenderStyle* otherStyle) const
                     return false;
                 break;
             case CONTENT_OBJECT:
-                if (!imagesEquivalent(c1->m_content.m_image, c2->m_content.m_image))
+                if (!StyleImage::imagesEquivalent(c1->m_content.m_image, c2->m_content.m_image))
                     return false;
                 break;
             case CONTENT_COUNTER:

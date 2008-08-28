@@ -31,6 +31,7 @@
 #include "IntSizeHash.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
+#include "StyleGeneratedImage.h"
 
 namespace WebCore {
 

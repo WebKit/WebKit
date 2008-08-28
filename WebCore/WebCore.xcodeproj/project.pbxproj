@@ -3961,6 +3961,13 @@
 		BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCEF3434087B563E00BBF833 /* HTMLElementFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */; };
 		BCEF3435087B563E00BBF833 /* HTMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */; };
+		BCEF43CF0E673DA1001C1287 /* StyleImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF43CE0E673DA1001C1287 /* StyleImage.h */; };
+		BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF43DC0E674012001C1287 /* NinePieceImage.h */; };
+		BCEF43E00E674110001C1287 /* NinePieceImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */; };
+		BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */; };
+		BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEF444C0E674628001C1287 /* StyleCachedImage.h */; };
+		BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */; };
+		BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */; };
 		BCEFAF4E0C317E6900FA81F6 /* JSEventCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */; };
 		BCEFE1E50DCA5F3300739219 /* JSXSLTProcessorCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */; };
 		BCEFE1EA0DCA5F6400739219 /* JSXSLTProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEFE1E80DCA5F6400739219 /* JSXSLTProcessor.cpp */; };
@@ -8379,6 +8386,13 @@
 		BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PlatformScreen.h; sourceTree = "<group>"; };
 		BCEF3432087B563E00BBF833 /* HTMLElementFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLElementFactory.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BCEF3433087B563E00BBF833 /* HTMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = HTMLElementFactory.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
+		BCEF43CE0E673DA1001C1287 /* StyleImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleImage.h; path = style/StyleImage.h; sourceTree = "<group>"; };
+		BCEF43DC0E674012001C1287 /* NinePieceImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NinePieceImage.h; path = style/NinePieceImage.h; sourceTree = "<group>"; };
+		BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NinePieceImage.cpp; path = style/NinePieceImage.cpp; sourceTree = "<group>"; };
+		BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleGeneratedImage.h; path = style/StyleGeneratedImage.h; sourceTree = "<group>"; };
+		BCEF444C0E674628001C1287 /* StyleCachedImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleCachedImage.h; path = style/StyleCachedImage.h; sourceTree = "<group>"; };
+		BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleCachedImage.cpp; path = style/StyleCachedImage.cpp; sourceTree = "<group>"; };
+		BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleGeneratedImage.cpp; path = style/StyleGeneratedImage.cpp; sourceTree = "<group>"; };
 		BCEFAF4D0C317E6900FA81F6 /* JSEventCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSEventCustom.cpp; sourceTree = "<group>"; };
 		BCEFE1DC0DCA5CFD00739219 /* XSLTProcessor.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = XSLTProcessor.idl; sourceTree = "<group>"; };
 		BCEFE1E40DCA5F3300739219 /* JSXSLTProcessorCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSXSLTProcessorCustom.cpp; sourceTree = "<group>"; };
@@ -12552,6 +12566,13 @@
 			children = (
 				BC8C8FAB0DDCD31B00B592F4 /* RenderStyle.cpp */,
 				BC8C8FAC0DDCD31B00B592F4 /* RenderStyle.h */,
+				BCEF43CE0E673DA1001C1287 /* StyleImage.h */,
+				BCEF447C0E674806001C1287 /* StyleGeneratedImage.cpp */,
+				BCEF44490E6745E0001C1287 /* StyleGeneratedImage.h */,
+				BCEF44790E6747D0001C1287 /* StyleCachedImage.cpp */,
+				BCEF444C0E674628001C1287 /* StyleCachedImage.h */,
+				BCEF43DF0E674110001C1287 /* NinePieceImage.cpp */,
+				BCEF43DC0E674012001C1287 /* NinePieceImage.h */,
 			);
 			name = style;
 			sourceTree = "<group>";
@@ -15443,6 +15464,10 @@
 				29AAC51F0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h in Headers */,
 				08A484780E5272C500C3FE76 /* ScriptElement.h in Headers */,
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
+				BCEF43CF0E673DA1001C1287 /* StyleImage.h in Headers */,
+				BCEF43DD0E674012001C1287 /* NinePieceImage.h in Headers */,
+				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
+				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
 				A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -17236,6 +17261,9 @@
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				2951A2AE0E646C8800DB9ADE /* AccessibilityObjectMac.mm in Sources */,
+				BCEF43E00E674110001C1287 /* NinePieceImage.cpp in Sources */,
+				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
+				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

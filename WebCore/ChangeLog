@@ -1,3 +1,29 @@
+2008-08-28  David Hyatt  <hyatt@apple.com>
+
+        RenderStyle cleanup.
+
+        Break out StyleImage, StyleGeneratedImage, StyleCachedImage and NinePieceImage into separate files.
+
+        Reviewed by Adam
+
+        * css/CSSImageGeneratorValue.cpp:
+        * css/CSSImageValue.cpp:
+        * css/CSSStyleSelector.cpp:
+        * rendering/RenderImageGeneratedContent.cpp:
+        * rendering/style/NinePieceImage.cpp: Added.
+        * rendering/style/NinePieceImage.h: Added.
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::FillLayer::operator==):
+        (WebCore::FillLayer::containsImage):
+        (WebCore::StyleInheritedData::operator==):
+        (WebCore::RenderStyle::contentDataEquivalent):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleCachedImage.cpp: Added.
+        * rendering/style/StyleCachedImage.h: Added.
+        * rendering/style/StyleGeneratedImage.cpp: Added.
+        * rendering/style/StyleGeneratedImage.h: Added.
+        * rendering/style/StyleImage.h: Added.
+
 2008-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

@@ -894,6 +894,9 @@ SOURCES += \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
     rendering/style/RenderStyle.cpp \
+    rendering/style/StyleCachedImage.cpp \
+    rendering/style/StyleGeneratedImage.cpp \
+    rendering/style/NinePieceImage.cpp \
     xml/DOMParser.cpp \
     xml/NativeXPathNSResolver.cpp \
     xml/XMLHttpRequest.cpp \

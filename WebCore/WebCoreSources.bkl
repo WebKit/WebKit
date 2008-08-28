@@ -848,6 +848,9 @@ This file contains the list of files needed to build WebCore.
         rendering/bidi.cpp
         rendering/break_lines.cpp
         rendering/style/RenderStyle.cpp
+        rendering/style/StyleCachedImage.cpp
+        rendering/style/StyleGeneratedImage.cpp
+        rendering/style/NinePieceImage.cpp
     </set>
 
     <set append="1" var="WEBCORE_SOURCES_STORAGE">

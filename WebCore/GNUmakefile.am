@@ -1833,6 +1833,13 @@ webcore_sources += \
 	WebCore/rendering/break_lines.h \
 	WebCore/rendering/style/RenderStyle.cpp \
 	WebCore/rendering/style/RenderStyle.h \
+	WebCore/rendering/style/NinePieceImage.cpp \
+	WebCore/rendering/style/NinePieceImage.h \
+	WebCore/rendering/style/StyleCachedImage.cpp \
+	WebCore/rendering/style/StyleCachedImage.h \
+	WebCore/rendering/style/StyleGeneratedImage.cpp \
+	WebCore/rendering/style/StyleGeneratedImage.h \
+	WebCore/rendering/style/StyleImage.h \
 	WebCore/xml/DOMParser.cpp \
 	WebCore/xml/DOMParser.h \
 	WebCore/xml/XMLHttpRequest.cpp \
