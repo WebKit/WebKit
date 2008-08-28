@@ -1,3 +1,10 @@
+2008-08-27  Mike Hommey <glandium@debian.org>
+
+        Reviewed by Holger.
+
+        * GNUmakefile.am:
+        * symbols.filter: Added.
+
 2008-08-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver.

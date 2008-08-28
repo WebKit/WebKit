@@ -250,6 +250,7 @@ libwebkit_1_0_la_CPPFLAGS = \
 libwebkit_1_0_la_LDFLAGS = \
 	$(COVERAGE_LDFLAGS) \
 	-version-info @LIBWEBKITGTK_VERSION@ \
+	-Wl,--version-script,$(srcdir)/symbols.filter \
 	$(no_undefined)
 
 libwebkit_1_0_la_LIBADD = \
