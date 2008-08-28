@@ -182,12 +182,10 @@ void WebScriptDebugger::exception(const DebuggerCallFrame& debuggerCallFrame, in
 
 void WebScriptDebugger::willExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
 {
-    [m_topCallFrame.get() _setDebuggerCallFrame:debuggerCallFrame];
 }
 
 void WebScriptDebugger::didExecuteProgram(const DebuggerCallFrame& debuggerCallFrame, int sourceId, int lineno)
 {
-    [m_topCallFrame.get() _clearDebuggerCallFrame];
 }
 
 void WebScriptDebugger::didReachBreakpoint(const DebuggerCallFrame&, int, int)

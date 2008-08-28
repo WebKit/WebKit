@@ -1,3 +1,17 @@
+2008-08-28  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+        <rdar://problem/6095949> REGRESSION (5525.8-6527.1?): "this" is null
+        when you first hit a breakpoint in Dashcode
+        - We wanted to reset the callframe whenever eval() was called but
+        dashcode uses eval() when broken to evaluate the state of the current
+        call frame.
+
+        * WebView/WebScriptDebugger.mm:
+        (WebScriptDebugger::willExecuteProgram):
+        (WebScriptDebugger::didExecuteProgram):
+
 2008-08-27  Robert Kroeger  <rjkroege@liqui.org>
 
         Tweaked by Sam Weinig.
