@@ -1,3 +1,15 @@
+2008-08-28  Brad Garcia  <bgarcia@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20549
+        Correctly determine when cursor is over a resizable border within
+        a nested frameset.
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::canResizeRow):
+        (WebCore::RenderFrameSet::canResizeColumn):
+
 2008-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Eric Seidel

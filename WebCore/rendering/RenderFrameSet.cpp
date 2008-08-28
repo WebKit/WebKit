@@ -614,13 +614,13 @@ bool RenderFrameSet::canResize(const IntPoint& p) const
 
 bool RenderFrameSet::canResizeRow(const IntPoint& p) const
 {
-    int r = hitTestSplit(m_rows, p.y() - yPos());
+    int r = hitTestSplit(m_rows, p.y());
     return r != noSplit && m_rows.m_allowBorder[r] && !m_rows.m_preventResize[r];
 }
 
 bool RenderFrameSet::canResizeColumn(const IntPoint& p) const
 {
-    int c = hitTestSplit(m_cols, p.x() - xPos());
+    int c = hitTestSplit(m_cols, p.x());
     return c != noSplit && m_cols.m_allowBorder[c] && !m_cols.m_preventResize[c];
 }
 
