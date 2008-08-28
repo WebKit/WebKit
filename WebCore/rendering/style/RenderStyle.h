@@ -87,38 +87,6 @@ enum PseudoState { PseudoUnknown, PseudoNone, PseudoAnyLink, PseudoLink, PseudoV
 //------------------------------------------------
 // Box model attributes. Not inherited.
 
-struct LengthBox {
-    LengthBox() { }
-    LengthBox(LengthType t)
-        : left(t), right(t), top(t), bottom(t) { }
-
-    Length left;
-    Length right;
-    Length top;
-    Length bottom;
-
-    LengthBox& operator=(const Length& len)
-    {
-        left = len;
-        right = len;
-        top = len;
-        bottom = len;
-        return *this;
-    }
-
-    bool operator==(const LengthBox& o) const
-    {
-        return left == o.left && right == o.right && top == o.top && bottom == o.bottom;
-    }
-
-    bool operator!=(const LengthBox& o) const
-    {
-        return !(*this == o);
-    }
-
-    bool nonZero() const { return !(left.isZero() && right.isZero() && top.isZero() && bottom.isZero()); }
-};
-
 enum EPosition {
     StaticPosition, RelativePosition, AbsolutePosition, FixedPosition
 };
@@ -556,19 +524,6 @@ enum EFillBox {
 
 enum EFillRepeat {
     RepeatFill, RepeatXFill, RepeatYFill, NoRepeatFill
-};
-
-struct LengthSize {
-    Length width;
-    Length height;
-    
-    LengthSize()
-    {}
-    
-    LengthSize(const Length& w, const Length& h)
-    : width(w)
-    , height(h)
-    {}
 };
 
 enum EFillLayerType {

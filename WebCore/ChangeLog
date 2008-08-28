@@ -1,5 +1,47 @@
 2008-08-28  David Hyatt  <hyatt@apple.com>
 
+        The great RenderStyle cleanup begins!
+
+        Move LengthBox and LengthSize out of RenderStyle and into Length.
+
+        Reviewed by Adam
+
+        * rendering/Length.h:
+        (WebCore::):
+        (WebCore::Length::Length):
+        (WebCore::Length::operator==):
+        (WebCore::Length::operator!=):
+        (WebCore::Length::value):
+        (WebCore::Length::rawValue):
+        (WebCore::Length::percent):
+        (WebCore::Length::type):
+        (WebCore::Length::quirk):
+        (WebCore::Length::setValue):
+        (WebCore::Length::setRawValue):
+        (WebCore::Length::calcValue):
+        (WebCore::Length::calcMinValue):
+        (WebCore::Length::calcFloatValue):
+        (WebCore::Length::isUndefined):
+        (WebCore::Length::isZero):
+        (WebCore::Length::isPositive):
+        (WebCore::Length::isNegative):
+        (WebCore::Length::isAuto):
+        (WebCore::Length::isRelative):
+        (WebCore::Length::isPercent):
+        (WebCore::Length::isFixed):
+        (WebCore::Length::isStatic):
+        (WebCore::Length::isIntrinsicOrAuto):
+        (WebCore::Length::blend):
+        (WebCore::LengthBox::LengthBox):
+        (WebCore::LengthBox::operator=):
+        (WebCore::LengthBox::operator==):
+        (WebCore::LengthBox::operator!=):
+        (WebCore::LengthBox::nonZero):
+        (WebCore::LengthSize::LengthSize):
+        * rendering/style/RenderStyle.h:
+
+2008-08-28  David Hyatt  <hyatt@apple.com>
+
         Reviewed by Darin
 
         https://bugs.webkit.org/show_bug.cgi?id=18091
