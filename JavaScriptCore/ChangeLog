@@ -1,3 +1,12 @@
+2008-08-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Not reviewed, build fix (at least for OpenBSD, posssibly more).
+
+        https://bugs.webkit.org/show_bug.cgi?id=20545
+        missing #include <unistd.h> in JavaScriptCore/VM/SamplingTool.cpp
+
+        * VM/SamplingTool.cpp: add the missing include.
+
 2008-08-26  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff and Cameron.

@@ -33,6 +33,10 @@
 #include "Machine.h"
 #include "Opcode.h"
 
+#if !PLATFORM(WIN_OS)
+#include <unistd.h>
+#endif
+
 namespace KJS {
 
 void ScopeSampleRecord::sample(CodeBlock* codeBlock, Instruction* vPC)
