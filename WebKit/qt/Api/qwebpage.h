@@ -273,6 +273,7 @@ Q_SIGNALS:
 #endif
 
     void microFocusChanged();
+    void contentsChanged();
 
 protected:
     virtual QWebPage *createWindow(WebWindowType type);

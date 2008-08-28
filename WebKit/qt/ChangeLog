@@ -1,3 +1,16 @@
+2008-08-27  Erik Bunce  <elbunce@thehive.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20223
+
+        Add QWebPage::contentsChanged() signal to notify of content changes.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::respondToChangedContents):
+
 2008-08-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders

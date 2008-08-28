@@ -2411,6 +2411,14 @@ quint64 QWebPage::bytesReceived() const {
 */
 
 /*!
+    \fn void QWebPage::contentsChanged()
+
+    This signal is emitted whenever the content changes during editing.
+
+    \sa selectedText()
+*/
+
+/*!
     \fn void QWebPage::geometryChangeRequested(const QRect& geom)
 
     This signal is emitted whenever the document wants to change the position and size of the
