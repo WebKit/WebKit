@@ -24,6 +24,7 @@
 
 #include "CachedImage.h"
 #include "CSSStyleSelector.h"
+#include "FontSelector.h"
 #include "RenderArena.h"
 #include "RenderObject.h"
 
@@ -2045,6 +2046,15 @@ const Animation* RenderStyle::transitionForProperty(int property)
         }
     }
     return 0;
+}
+
+void RenderStyle::setBlendedFontSize(int size)
+{
+    FontDescription desc(fontDescription());
+    desc.setSpecifiedSize(size);
+    desc.setComputedSize(size);
+    setFontDescription(desc);
+    font().update(font().fontSelector());
 }
 
 }

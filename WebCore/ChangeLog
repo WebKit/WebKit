@@ -1,3 +1,16 @@
+2008-08-28  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by Darin
+
+        https://bugs.webkit.org/show_bug.cgi?id=18091
+
+        font-size should be animatable using -webkit-transition.
+
+        * page/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::ensurePropertyMap):
+        * rendering/style/RenderStyle.h:
+        (WebCore::RenderStyle::setFontSize):
+
 2008-08-28  Brad Garcia  <bgarcia@google.com>
 
         Reviewed by Dan Bernstein.
