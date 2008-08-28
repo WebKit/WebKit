@@ -134,6 +134,7 @@ void GraphicsContext::setStrokeStyle(const StrokeStyle& style)
 
 void GraphicsContext::setStrokeColor(const Color& color)
 {
+    m_common->state.strokeColorSpace = SolidColorSpace;
     m_common->state.strokeColor = color;
     setPlatformStrokeColor(color);
 }
@@ -178,8 +179,19 @@ Color GraphicsContext::strokeColor() const
     return m_common->state.strokeColor;
 }
 
+WindRule GraphicsContext::fillRule() const
+{
+    return m_common->state.fillRule;
+}
+
+void GraphicsContext::setFillRule(WindRule fillRule)
+{
+    m_common->state.fillRule = fillRule;
+}
+
 void GraphicsContext::setFillColor(const Color& color)
 {
+    m_common->state.fillColorSpace = SolidColorSpace;
     m_common->state.fillColor = color;
     setPlatformFillColor(color);
 }
@@ -187,6 +199,54 @@ void GraphicsContext::setFillColor(const Color& color)
 Color GraphicsContext::fillColor() const
 {
     return m_common->state.fillColor;
+}
+
+void GraphicsContext::setStrokePattern(PassRefPtr<Pattern> pattern)
+{
+    ASSERT(pattern);
+    if (!pattern) {
+        setStrokeColor(Color::black);
+        return;
+    }
+    m_common->state.strokeColorSpace = PatternColorSpace;
+    m_common->state.strokePattern = pattern;
+    setPlatformStrokePattern(m_common->state.strokePattern.get());
+}
+
+void GraphicsContext::setFillPattern(PassRefPtr<Pattern> pattern)
+{
+    ASSERT(pattern);
+    if (!pattern) {
+        setFillColor(Color::black);
+        return;
+    }
+    m_common->state.fillColorSpace = PatternColorSpace;
+    m_common->state.fillPattern = pattern;
+    setPlatformFillPattern(m_common->state.fillPattern.get());
+}
+
+void GraphicsContext::setStrokeGradient(PassRefPtr<Gradient> gradient)
+{
+    ASSERT(gradient);
+    if (!gradient) {
+        setStrokeColor(Color::black);
+        return;
+    }
+    m_common->state.strokeColorSpace = GradientColorSpace;
+    m_common->state.strokeGradient = gradient;
+    setPlatformStrokeGradient(m_common->state.strokeGradient.get());
+}
+
+void GraphicsContext::setFillGradient(PassRefPtr<Gradient> gradient)
+{
+    ASSERT(gradient);
+    if (!gradient) {
+        setFillColor(Color::black);
+        return;
+    }
+    m_common->state.fillColorSpace = GradientColorSpace;
+    m_common->state.fillGradient = gradient;
+    setPlatformFillGradient(m_common->state.fillGradient.get());
 }
 
 bool GraphicsContext::updatingControlTints() const
@@ -423,14 +483,6 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
 // immediately.
 void GraphicsContext::setPlatformTextDrawingMode(int mode)
 {
-}
-#endif
-
-#if !PLATFORM(CG) && !PLATFORM(CAIRO)
-// Other platforms need to implement this.
-void GraphicsContext::clipToImageBuffer(const FloatRect&, const ImageBuffer*)
-{
-    notImplemented();
 }
 #endif
 

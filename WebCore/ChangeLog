@@ -1,3 +1,86 @@
+2008-08-27  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Add stroke/fill Gradient and Pattern support to GraphicsContext and update <canvas> to use it.
+        https://bugs.webkit.org/show_bug.cgi?id=20373
+
+        Changed pattern() to canvasPattern() on CanvasStyle to match canvasGradient()
+        
+        Made Generator (aka Gradient) RefCounted so that GraphicsContext didn't
+        have to store large Gradient objects in the GraphicsContextState
+        
+        Made Pattern RefCounted for the same reason.
+        
+        Many updates to GraphicsContext to support easier drawing with
+        Patterns and Gradients.
+
+        * WebCore.xcodeproj/project.pbxproj: Add pre-existing GraphicsContextPrivate.h
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::toJS):
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::createGradient):
+        * css/CSSGradientValue.h:
+        * html/CanvasGradient.cpp:
+        (WebCore::CanvasGradient::CanvasGradient):
+        * html/CanvasGradient.h:
+        (WebCore::CanvasGradient::gradient):
+        (WebCore::CanvasGradient::addColorStop):
+        (WebCore::CanvasGradient::getColor):
+        * html/CanvasPattern.cpp:
+        * html/CanvasPattern.h:
+        (WebCore::CanvasPattern::pattern):
+        (WebCore::CanvasPattern::originClean):
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
+        (WebCore::CanvasRenderingContext2D::setFillStyle):
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::stroke):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::strokeRect):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasStyle.cpp:
+        (WebCore::CanvasStyle::applyStrokeColor):
+        (WebCore::CanvasStyle::applyFillColor):
+        * html/CanvasStyle.h:
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::GeneratedImage):
+        * platform/graphics/Generator.h:
+        * platform/graphics/Gradient.h:
+        (WebCore::Gradient::create):
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRule):
+        (WebCore::GraphicsContext::setFillRule):
+        (WebCore::GraphicsContext::setStrokePattern):
+        (WebCore::GraphicsContext::setFillPattern):
+        (WebCore::GraphicsContext::setStrokeGradient):
+        (WebCore::GraphicsContext::setFillGradient):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsContextPrivate.h:
+        (WebCore::):
+        (WebCore::GraphicsContextState::GraphicsContextState):
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/Path.h:
+        * platform/graphics/Pattern.h:
+        (WebCore::Pattern::create):
+        (WebCore::Pattern::tileImage):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawRect):
+        (WebCore::GraphicsContext::drawEllipse):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::calculateDrawingMode):
+        (WebCore::GraphicsContext::drawPath):
+        (WebCore::fillPathWithFillRule):
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        (WebCore::GraphicsContext::fillRoundedRect):
+        (WebCore::GraphicsContext::setPlatformStrokePattern):
+        (WebCore::GraphicsContext::setPlatformFillPattern):
+        (WebCore::GraphicsContext::setPlatformStrokeGradient):
+        (WebCore::GraphicsContext::setPlatformFillGradient):
+
 2008-08-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Darin and Alexey.

@@ -45,15 +45,15 @@ namespace WebCore {
         {
             return adoptRef(new CanvasPattern(image, repeatX, repeatY, originClean));
         }
-        
-        const Pattern& pattern() { return m_pattern; }
+
+        Pattern* pattern() const { return m_pattern.get(); }
 
         bool originClean() const { return m_originClean; }
 
     private:
         CanvasPattern(Image*, bool repeatX, bool repeatY, bool originClean);
 
-        Pattern m_pattern;
+        RefPtr<Pattern> m_pattern;
         bool m_originClean;
     };
 

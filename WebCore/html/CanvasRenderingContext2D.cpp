@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -101,8 +102,6 @@ CanvasRenderingContext2D::State::State()
     , m_shadowColor("black")
     , m_globalAlpha(1)
     , m_globalComposite(CompositeSourceOver)
-    , m_appliedStrokePattern(false)
-    , m_appliedFillPattern(false)
 {
 }
 
@@ -141,7 +140,7 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
         return;
 
     if (m_canvas->originClean()) {
-        if (CanvasPattern* pattern = style->pattern()) {
+        if (CanvasPattern* pattern = style->canvasPattern()) {
             if (!pattern->originClean())
                 m_canvas->setOriginTainted();
         }
@@ -152,7 +151,6 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     if (!c)
         return;
     state().m_strokeStyle->applyStrokeColor(c);
-    state().m_appliedStrokePattern = false;
 }
 
 CanvasStyle* CanvasRenderingContext2D::fillStyle() const
@@ -166,7 +164,7 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
         return;
  
     if (m_canvas->originClean()) {
-        if (CanvasPattern* pattern = style->pattern()) {
+        if (CanvasPattern* pattern = style->canvasPattern()) {
             if (!pattern->originClean())
                 m_canvas->setOriginTainted();
         }
@@ -177,7 +175,6 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     if (!c)
         return;
     state().m_fillStyle->applyFillColor(c);
-    state().m_appliedFillPattern = false;
 }
 
 float CanvasRenderingContext2D::lineWidth() const
@@ -542,47 +539,7 @@ void CanvasRenderingContext2D::fill()
     if (!m_path.isEmpty())
         willDraw(m_path.boundingRect());
 
-#if PLATFORM(CG)
-    if (state().m_fillStyle->canvasGradient()) {
-        // Shading works on the entire clip region, so convert the current path to a clip.
-        c->save();
-        CGContextClip(c->platformContext());
-        CGContextDrawShading(c->platformContext(), state().m_fillStyle->canvasGradient()->gradient().platformGradient());        
-        c->restore();
-    } else {
-        if (state().m_fillStyle->pattern())
-            applyFillPattern();
-        CGContextFillPath(c->platformContext());
-    }
-#elif PLATFORM(QT)
-    QPainterPath* path = m_path.platformPath();
-    QPainter* p = static_cast<QPainter*>(c->platformContext());
-    if (state().m_fillStyle->canvasGradient()) {
-        p->fillPath(*path, QBrush(*(state().m_fillStyle->canvasGradient()->gradient().platformGradient())));
-    } else {
-        if (state().m_fillStyle->pattern())
-            applyFillPattern();
-        p->fillPath(*path, p->brush());
-    }
-#elif PLATFORM(CAIRO)
-    cairo_t* cr = c->platformContext();
-    cairo_save(cr);
-
-    if (state().m_fillStyle->canvasGradient()) {
-        cairo_set_source(cr, state().m_fillStyle->canvasGradient()->gradient().platformGradient());
-        cairo_fill(cr);
-    } else {
-        if (state().m_fillStyle->pattern())
-            applyFillPattern();
-        else {
-            float red, green, blue, alpha;
-            c->fillColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha);
-        }
-        cairo_fill(cr);
-    }
-    cairo_restore(cr);
-#endif
+    c->fillPath();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
@@ -605,54 +562,8 @@ void CanvasRenderingContext2D::stroke()
         boundingRect.inflate(inset);
         willDraw(boundingRect);
     }
-    
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    if (state().m_strokeStyle->canvasGradient()) {
-        // Shading works on the entire clip region, so convert the current path to a clip.
-        c->save();
-        CGContextReplacePathWithStrokedPath(c->platformContext());
-        CGContextClip(c->platformContext());
-        CGContextDrawShading(c->platformContext(), state().m_strokeStyle->canvasGradient()->gradient().platformGradient());        
-        c->restore();
-    } else {
-        if (state().m_strokeStyle->pattern())
-            applyStrokePattern();
-        CGContextStrokePath(c->platformContext());
-    }
-#elif PLATFORM(QT)
-    QPainterPath* path = m_path.platformPath();
-    QPainter* p = static_cast<QPainter*>(c->platformContext());
-    if (state().m_strokeStyle->canvasGradient()) {
-        p->save();
-        p->setBrush(*(state().m_strokeStyle->canvasGradient()->gradient().platformGradient()));
-        p->strokePath(*path, p->pen());
-        p->restore();
-    } else {
-        if (state().m_strokeStyle->pattern())
-            applyStrokePattern();
-        p->strokePath(*path, p->pen());
-    }
-#elif PLATFORM(CAIRO)
-    cairo_t* cr = c->platformContext();
-    cairo_save(cr);
-    if (state().m_strokeStyle->canvasGradient()) {
-        cairo_set_source(cr, state().m_strokeStyle->canvasGradient()->gradient().platformGradient());
-        c->addPath(m_path);
-        cairo_stroke(cr);
-    } else {
-        if (state().m_strokeStyle->pattern())
-            applyStrokePattern();
-        else {
-            float red, green, blue, alpha;
-            c->strokeColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha);
-        }
-        c->addPath(m_path);
-        cairo_stroke(cr);
-    }
-    cairo_restore(cr);
-#endif
+
+    c->strokePath();
 
 #if ENABLE(DASHBOARD_SUPPORT)
     clearPathForDashboardBackwardCompatibilityMode();
@@ -709,42 +620,9 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     FloatRect rect(x, y, width, height);
     willDraw(rect);
 
-    // FIXME: Do this through platform-independent GraphicsContext API.
-#if PLATFORM(CG)
-    if (state().m_fillStyle->canvasGradient()) {
-        c->save();
-        state().m_fillStyle->canvasGradient()->gradient().fill(c, rect);
-        c->restore();
-    } else {
-        if (state().m_fillStyle->pattern())
-            applyFillPattern();
-        CGContextFillRect(c->platformContext(), rect);
-    }
-#elif PLATFORM(QT)
-    QPainter* p = static_cast<QPainter*>(c->platformContext());
-    if (state().m_fillStyle->canvasGradient()) {
-        p->fillRect(rect, QBrush(*(state().m_fillStyle->canvasGradient()->gradient().platformGradient())));
-    } else {
-        if (state().m_fillStyle->pattern())
-            applyFillPattern();
-        p->fillRect(rect, p->brush());
-    }
-#elif PLATFORM(CAIRO)
-    cairo_t* cr = c->platformContext();
-    cairo_save(cr);
-    if (state().m_fillStyle->canvasGradient()) {
-        state().m_fillStyle->canvasGradient()->gradient().fill(c, rect);
-    } else {
-        if (state().m_fillStyle->pattern()) {
-            applyFillPattern();
-            cairo_rectangle(cr, x, y, width, height);
-            cairo_fill(cr);
-        } else
-            c->fillRect(rect, c->fillColor());
-    }
-    
-    cairo_restore(cr);
-#endif
+    c->save();
+    c->fillRect(rect);
+    c->restore();
 }
 
 void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float height)
@@ -771,10 +649,6 @@ void CanvasRenderingContext2D::strokeRect(float x, float y, float width, float h
     FloatRect boundingRect = rect;
     boundingRect.inflate(lineWidth / 2);
     willDraw(boundingRect);
-
-    // FIXME: No support for gradients!
-    if (state().m_strokeStyle->pattern())
-        applyStrokePattern();
 
     c->strokeRect(rect, lineWidth);
 }
@@ -1172,58 +1046,6 @@ void CanvasRenderingContext2D::willDraw(const FloatRect& r)
 GraphicsContext* CanvasRenderingContext2D::drawingContext() const
 {
     return m_canvas->drawingContext();
-}
-
-void CanvasRenderingContext2D::applyStrokePattern()
-{
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
-    // FIXME: Can this check be moved into GraphicsContext? or removed?
-#if PLATFORM(CG)
-    // Check for case where the pattern is already set.
-    AffineTransform ctm = c->getCTM();
-    if (state().m_appliedStrokePattern && ctm == state().m_strokeStylePatternTransform)
-        return;
-#endif
-
-    CanvasPattern* pattern = state().m_strokeStyle->pattern();
-    if (!pattern)
-        return;
-
-    c->applyStrokePattern(pattern->pattern());
-
-#if PLATFORM(CG)
-    state().m_strokeStylePatternTransform = ctm;
-#endif
-    state().m_appliedStrokePattern = true;
-}
-
-void CanvasRenderingContext2D::applyFillPattern()
-{
-    GraphicsContext* c = drawingContext();
-    if (!c)
-        return;
-
-    // FIXME: Can this check be moved into GraphicsContext? or removed?
-#if PLATFORM(CG)
-    // Check for case where the pattern is already set.
-    AffineTransform ctm = c->getCTM();
-    if (state().m_appliedFillPattern && ctm == state().m_fillStylePatternTransform)
-        return;
-#endif
-
-    CanvasPattern* pattern = state().m_fillStyle->pattern();
-    if (!pattern)
-        return;
-
-    c->applyFillPattern(pattern->pattern());
-
-#if PLATFORM(CG)
-    state().m_fillStylePatternTransform = ctm;
-#endif
-    state().m_appliedFillPattern = true;
 }
 
 static PassRefPtr<ImageData> createEmptyImageData(const IntSize& size)

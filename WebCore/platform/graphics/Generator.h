@@ -26,14 +26,14 @@
 #ifndef Generator_h
 #define Generator_h
 
-#include <wtf/Noncopyable.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class FloatRect;
 class GraphicsContext;
 
-class Generator : Noncopyable {
+class Generator : public RefCounted<Generator> {
 public:
     virtual ~Generator() {};
     

@@ -27,7 +27,8 @@
 #ifndef Pattern_h
 #define Pattern_h
 
-#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 #if PLATFORM(CG)
@@ -56,17 +57,21 @@ namespace WebCore {
     class AffineTransform;
     class Image;
 
-    class Pattern : Noncopyable {
+    class Pattern : public RefCounted<Pattern> {
     public:
-        Pattern(Image*, bool repeatX, bool repeatY);
-
+        static PassRefPtr<Pattern> create(Image* tileImage, bool repeatX, bool repeatY)
+        {
+            return adoptRef(new Pattern(tileImage, repeatX, repeatY));
+        }
         virtual ~Pattern();
-        
+
         Image* tileImage() const { return m_tileImage.get(); }
 
         PlatformPatternPtr createPlatformPattern(const AffineTransform& patternTransform) const;
 
     private:
+        Pattern(Image*, bool repeatX, bool repeatY);
+
         RefPtr<Image> m_tileImage;
         bool m_repeatX;
         bool m_repeatY;

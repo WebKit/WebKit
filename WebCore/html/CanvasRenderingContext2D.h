@@ -191,13 +191,7 @@ namespace WebCore {
             String m_shadowColor;
             float m_globalAlpha;
             CompositeOperator m_globalComposite;
-            bool m_appliedStrokePattern;
-            bool m_appliedFillPattern;
             AffineTransform m_transform;
-#if PLATFORM(CG)
-            AffineTransform m_strokeStylePatternTransform;
-            AffineTransform m_fillStylePatternTransform;
-#endif
         };
         Path m_path;
 

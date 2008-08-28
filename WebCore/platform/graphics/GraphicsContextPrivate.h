@@ -27,28 +27,56 @@
 #define GraphicsContextPrivate_h
 
 #include "Font.h"
+#include "Gradient.h"
+#include "Pattern.h"
 
 namespace WebCore {
 
+// FIXME: This is a place-holder until we decide to add
+// real color space support to WebCore.  At that time, ColorSpace will be a
+// class and instances will be held  off of Colors.   There will be
+// special singleton Gradient and Pattern color spaces to mark when
+// a fill or stroke is using a gradient or pattern instead of a solid color.
+// https://bugs.webkit.org/show_bug.cgi?id=20558
+    enum ColorSpace {
+        SolidColorSpace,
+        PatternColorSpace,
+        GradientColorSpace
+    };
+
     struct GraphicsContextState {
         GraphicsContextState()
-            : strokeStyle(SolidStroke)
+            : textDrawingMode(cTextFill)
+            , strokeStyle(SolidStroke)
             , strokeThickness(0)
+            , strokeColorSpace(SolidColorSpace)
             , strokeColor(Color::black)
+            , fillRule(RULE_NONZERO)
+            , fillColorSpace(SolidColorSpace)
             , fillColor(Color::black)
-            , textDrawingMode(cTextFill)
             , paintingDisabled(false)
             , shadowBlur(0)
         {
         }
 
         Font font;
+        int textDrawingMode;
+        
         StrokeStyle strokeStyle;
         float strokeThickness;
+        ColorSpace strokeColorSpace;
         Color strokeColor;
+        RefPtr<Gradient> strokeGradient;
+        RefPtr<Pattern> strokePattern;
+        
+        WindRule fillRule;
+        ColorSpace fillColorSpace;
         Color fillColor;
-        int textDrawingMode;
+        RefPtr<Gradient> fillGradient;
+        RefPtr<Pattern> fillPattern;
+
         bool paintingDisabled;
+        
         IntSize shadowSize;
         unsigned shadowBlur;
         Color shadowColor;

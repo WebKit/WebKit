@@ -2,6 +2,7 @@
  * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Trolltech ASA
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -141,7 +142,10 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
             break;
         }
         case Gradient:
+            context->setStrokeGradient(canvasGradient()->gradient());
+            break;
         case ImagePattern:
+            context->setStrokePattern(canvasPattern()->pattern());
             break;
     }
 }
@@ -187,7 +191,10 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
             break;
         }
         case Gradient:
+            context->setFillGradient(canvasGradient()->gradient());
+            break;
         case ImagePattern:
+            context->setFillPattern(canvasPattern()->pattern());
             break;
     }
 }

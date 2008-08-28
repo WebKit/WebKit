@@ -65,6 +65,6 @@ namespace WebCore {
     String lineJoinName(LineJoin);
     bool parseLineJoin(const String&, LineJoin&);
 
-}
+} // namespace WebCore
 
 #endif

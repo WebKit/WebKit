@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2003, 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +30,7 @@
 
 #include "AffineTransform.h"
 #include "FloatConversion.h"
+#include "GraphicsContextPrivate.h"
 #include "GraphicsContextPlatformPrivateCG.h"
 #include "ImageBuffer.h"
 #include "KURL.h"
@@ -107,6 +109,8 @@ void GraphicsContext::restorePlatformState()
 // Draws a filled rectangle with a stroked border.
 void GraphicsContext::drawRect(const IntRect& rect)
 {
+    // FIXME: this function does not handle patterns and gradients
+    // like drawPath does, it probably should.
     if (paintingDisabled())
         return;
 
@@ -261,14 +265,7 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     CGContextAddArc(context, rect.x() + r, rect.y() + r, r, 0.0f, 2.0f * piFloat, 0);
     CGContextClosePath(context);
 
-    if (fillColor().alpha()) {
-        if (strokeStyle() != NoStroke)
-            // stroke and fill
-            CGContextDrawPath(context, kCGPathFillStroke);
-        else
-            CGContextFillPath(context);
-    } else if (strokeStyle() != NoStroke)
-        CGContextStrokePath(context);
+    drawPath();
 }
 
 
@@ -381,29 +378,125 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
         CGContextAddLineToPoint(context, points[i].x(), points[i].y());
     CGContextClosePath(context);
 
-    if (fillColor().alpha()) {
-        if (strokeStyle() != NoStroke)
-            CGContextDrawPath(context, kCGPathEOFillStroke);
-        else
-            CGContextEOFillPath(context);
-    } else
-        CGContextStrokePath(context);
+    drawPath();
 
     CGContextRestoreGState(context);
 }
 
-void GraphicsContext::fillRect(const IntRect& rect, const Color& color)
+static inline bool calculateDrawingMode(const GraphicsContextState& state, CGPathDrawingMode& mode)
+{
+    bool shouldFill = state.fillColorSpace == PatternColorSpace || state.fillColor.alpha();
+    bool shouldStroke = state.strokeColorSpace == PatternColorSpace || (state.strokeStyle != NoStroke && state.strokeColor.alpha());
+    bool useEOFill = state.fillRule == RULE_EVENODD;
+
+    if (shouldFill) {
+        if (shouldStroke) {
+            if (useEOFill)
+                mode = kCGPathEOFillStroke;
+            else
+                mode = kCGPathFillStroke;
+        } else { // fill, no stroke
+            if (useEOFill)
+                mode = kCGPathEOFill;
+            else
+                mode = kCGPathFill;
+        }
+    } else if (shouldStroke) // no fill, just stroke
+        mode = kCGPathStroke;
+
+    return shouldFill || shouldStroke;
+}
+
+void GraphicsContext::drawPath()
 {
     if (paintingDisabled())
         return;
-    if (color.alpha()) {
-        CGContextRef context = platformContext();
-        Color oldFillColor = fillColor();
-        if (oldFillColor != color)
-            setCGFillColor(context, color);
-        CGContextFillRect(context, rect);
-        if (oldFillColor != color)
-            setCGFillColor(context, oldFillColor);
+
+    CGContextRef context = platformContext();
+    const GraphicsContextState& state = m_common->state;
+
+    if (state.fillColorSpace == GradientColorSpace || state.strokeColorSpace == GradientColorSpace) {
+        // We don't have any optimized way to fill & stroke a path using gradients
+        fillPath();
+        strokePath();
+        return;
+    }
+
+    CGPathDrawingMode drawingMode;
+    if (calculateDrawingMode(state, drawingMode))
+        CGContextDrawPath(context, drawingMode);
+}
+
+static inline void fillPathWithFillRule(CGContextRef context, WindRule fillRule)
+{
+    if (fillRule == RULE_EVENODD)
+        CGContextEOFillPath(context);
+    else
+        CGContextFillPath(context);
+}
+
+void GraphicsContext::fillPath()
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+    switch (m_common->state.fillColorSpace) {
+    case SolidColorSpace:
+        if (!fillColor().alpha())
+            return;
+        // fall through
+    case PatternColorSpace:
+        fillPathWithFillRule(context, fillRule());
+        break;
+    case GradientColorSpace:
+        if (fillRule() == RULE_EVENODD)
+            CGContextEOClip(context);
+        else
+            CGContextClip(context);
+        CGContextDrawShading(context, m_common->state.fillGradient->platformGradient());
+        break;
+    }
+}
+
+void GraphicsContext::strokePath()
+{
+    if (paintingDisabled())
+        return;
+
+    CGContextRef context = platformContext();
+    switch (m_common->state.strokeColorSpace) {
+    case SolidColorSpace:
+        if (!fillColor().alpha())
+            return;
+        // fall through
+    case PatternColorSpace:
+        CGContextStrokePath(context);
+        break;
+    case GradientColorSpace:
+        CGContextReplacePathWithStrokedPath(context);
+        CGContextClip(context);
+        CGContextDrawShading(context, m_common->state.strokeGradient->platformGradient());
+        break;
+    }
+}
+
+void GraphicsContext::fillRect(const FloatRect& rect)
+{
+    if (paintingDisabled())
+        return;
+    switch (m_common->state.fillColorSpace) {
+    case SolidColorSpace:
+        if (fillColor().alpha())
+            CGContextFillRect(platformContext(), rect);
+        break;
+    case PatternColorSpace:
+        CGContextFillRect(platformContext(), rect);
+        break;
+    case GradientColorSpace:
+        clip(rect);
+        CGContextDrawShading(platformContext(), m_common->state.fillGradient->platformGradient());
+        break;
     }
 }
 
@@ -433,12 +526,11 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
         setCGFillColor(context, color);
 
     addPath(Path::createRoundedRectangle(rect, topLeft, topRight, bottomLeft, bottomRight));
-    CGContextFillPath(context);
+    fillPath();
 
     if (oldFillColor != color)
         setCGFillColor(context, oldFillColor);
 }
-
 
 void GraphicsContext::clip(const FloatRect& rect)
 {
@@ -910,9 +1002,16 @@ void GraphicsContext::setPlatformTextDrawingMode(int mode)
     }
 }
 
-void GraphicsContext::applyStrokePattern(const Pattern& pattern)
+// FIXME: It is unclear if setting patterns on the CGContext at
+// setStrokePattern/setFillPattern time is safe.  Our Pattern object currently
+// depends on the CTM for CGShading creation, thus setting a pattern and then
+// transforming the GraphicsContext may cause the pattern to draw incorrectly.
+// I believe we can fix our Pattern object to not depend on the CTM.
+void GraphicsContext::setPlatformStrokePattern(Pattern* pattern)
 {
-    CGPatternRef platformPattern = pattern.createPlatformPattern(getCTM());
+    if (paintingDisabled())
+        return;
+    CGPatternRef platformPattern = pattern->createPlatformPattern(getCTM());
     if (!platformPattern)
         return;
 
@@ -925,9 +1024,11 @@ void GraphicsContext::applyStrokePattern(const Pattern& pattern)
     CGPatternRelease(platformPattern);
 }
 
-void GraphicsContext::applyFillPattern(const Pattern& pattern)
+void GraphicsContext::setPlatformFillPattern(Pattern* pattern)
 {
-    CGPatternRef platformPattern = pattern.createPlatformPattern(getCTM());
+    if (paintingDisabled())
+        return;
+    CGPatternRef platformPattern = pattern->createPlatformPattern(getCTM());
     if (!platformPattern)
         return;
 
@@ -938,6 +1039,18 @@ void GraphicsContext::applyFillPattern(const Pattern& pattern)
     const CGFloat patternAlpha = 1;
     CGContextSetFillPattern(platformContext(), platformPattern, &patternAlpha);
     CGPatternRelease(platformPattern);
+}
+
+void GraphicsContext::setPlatformStrokeGradient(Gradient*)
+{
+    // CoreGraphics does not support setting a "stroke gradient", only
+    // filling a clip region with a gradient, which we do at draw time
+}
+
+void GraphicsContext::setPlatformFillGradient(Gradient*)
+{
+    // CoreGraphics does not support setting a "fill gradient", only
+    // filling a clip region with a gradient, which we do at draw time
 }
 
 void GraphicsContext::setPlatformStrokeColor(const Color& color)

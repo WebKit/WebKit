@@ -71,7 +71,7 @@ String CSSGradientValue::cssText() const
     return result;
 }
 
-Gradient* CSSGradientValue::createGradient(RenderObject* renderer, const IntSize& size)
+PassRefPtr<Gradient> CSSGradientValue::createGradient(RenderObject* renderer, const IntSize& size)
 {
     ASSERT(!size.isEmpty());
     
@@ -80,13 +80,13 @@ Gradient* CSSGradientValue::createGradient(RenderObject* renderer, const IntSize
     FloatPoint firstPoint = resolvePoint(m_firstX.get(), m_firstY.get(), size, zoomFactor);
     FloatPoint secondPoint = resolvePoint(m_secondX.get(), m_secondY.get(), size, zoomFactor);
     
-    Gradient* gradient = 0;
+    RefPtr<Gradient> gradient;
     if (m_type == CSSLinearGradient)
-        gradient = new Gradient(firstPoint, secondPoint);
+        gradient = Gradient::create(firstPoint, secondPoint);
     else {
         float firstRadius = resolveRadius(m_firstRadius.get(), zoomFactor);
         float secondRadius = resolveRadius(m_secondRadius.get(), zoomFactor);
-        gradient = new Gradient(firstPoint, firstRadius, secondPoint, secondRadius);
+        gradient = Gradient::create(firstPoint, firstRadius, secondPoint, secondRadius);
     }
 
     // Now add the stops.
@@ -101,7 +101,7 @@ Gradient* CSSGradientValue::createGradient(RenderObject* renderer, const IntSize
     // The back end already sorted the stops.
     gradient->setStopsSorted(true);
 
-    return gradient;
+    return gradient.release();
 }
 
 Image* CSSGradientValue::image(RenderObject* renderer, const IntSize& size)

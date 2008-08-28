@@ -82,7 +82,7 @@ private:
     }
     
     // Create the gradient for a given size.
-    Gradient* createGradient(RenderObject*, const IntSize&);
+    PassRefPtr<Gradient> createGradient(RenderObject*, const IntSize&);
     
     // Resolve points/radii to front end values.
     FloatPoint resolvePoint(CSSPrimitiveValue*, CSSPrimitiveValue*, const IntSize&, float zoomFactor);
