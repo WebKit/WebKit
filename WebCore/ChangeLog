@@ -1,3 +1,15 @@
+2008-08-27  Mario Bensi  <mbensi@pleyo.com>
+
+        Reviewed by Eric Seidel.
+        
+        Fix the data content of an image with a base64.
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::parseDataUrl): Remove the String and use only the data
+        Vector because the data.latin1().data() convert the data content and
+        the image test ( https://bugs.webkit.org/attachment.cgi?id=21726 ) is
+        not drawn correctly.
+
 2008-08-27  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Eric Seidel.

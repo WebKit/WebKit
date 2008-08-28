@@ -460,17 +460,14 @@ static void parseDataUrl(ResourceHandle* handle)
 
     size_t outLength = 0;
     char* outData = 0;
+    Vector<char> out;
     if (base64 && !data.isEmpty()) {
         // Use the GLib Base64 if available, since WebCore's decoder isn't
         // general-purpose and fails on Acid3 test 97 (whitespace).
 #ifdef USE_GLIB_BASE64
         outData = reinterpret_cast<char*>(g_base64_decode(data.utf8().data(), &outLength));
 #else
-        Vector<char> out;
-        if (base64Decode(data.latin1().data(), data.length(), out))
-            data = String(out.data(), out.size());
-        else
-            data = String();
+        base64Decode(data.latin1().data(), data.length(), out);
 #endif
     }
 
@@ -494,7 +491,7 @@ static void parseDataUrl(ResourceHandle* handle)
     if (outData)
         client->didReceiveData(handle, outData, outLength, 0);
     else
-        client->didReceiveData(handle, data.latin1().data(), data.length(), 0);
+        client->didReceiveData(handle, out.data(), out.size(), 0);
 
 #ifdef USE_GLIB_BASE64
     g_free(outData);
