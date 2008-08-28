@@ -1,3 +1,22 @@
+2008-08-28  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Rubber-stamped by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17261
+
+        Remove the urlIcon.png from the project and the resource file. Remove
+        the usage of this icon from WebKitDLL.cpp and change WebIconDatabase
+        to get the icon from the IconDatabase code which is using a version of
+        the icon that is compiled into the code.
+
+        * WebIconDatabase.cpp:
+        (WebIconDatabase::getOrCreateDefaultIconBitmap): Use the icon from the
+        IconDatabase.cpp
+        * WebKit.vcproj/WebKit.rc: Remove urlIcon.cpp
+        * WebKit.vcproj/urlIcon.png: Removed.
+        * WebKitDLL.cpp:
+        (loadResourceIntoBuffer): Remove "urlIcon"
+
 2008-08-27  Alice Liu  <alice.liu@apple.com>
 
         Add interface for obtaining JS object counts broken down by type

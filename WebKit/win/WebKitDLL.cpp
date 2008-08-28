@@ -143,8 +143,6 @@ PassRefPtr<WebCore::SharedBuffer> loadResourceIntoBuffer(const char* name)
         idr = IDR_RESIZE_CORNER;
     else if (!strcmp(name, "missingImage"))
         idr = IDR_MISSING_IMAGE;
-    else if (!strcmp(name, "urlIcon"))
-        idr = IDR_URL_ICON;
     else if (!strcmp(name, "nullPlugin"))
         idr = IDR_NULL_PLUGIN;
     else if (!strcmp(name, "panIcon"))

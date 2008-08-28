@@ -65,6 +65,10 @@
 #define IS_ICON_SYNC_THREAD() (m_syncThread == currentThread())
 #define ASSERT_ICON_SYNC_THREAD() ASSERT(IS_ICON_SYNC_THREAD())
 
+#if PLATFORM(QT)
+#define CAN_THEME_URL_ICON
+#endif
+
 namespace WebCore {
 
 static IconDatabase* sharedIconDatabase = 0;
@@ -330,10 +334,14 @@ String IconDatabase::iconURLForPageURL(const String& pageURLOriginal)
     return pageRecord->iconRecord() ? pageRecord->iconRecord()->iconURL().copy() : String();
 }
 
-Image* IconDatabase::defaultIcon(const IntSize& size)
+#ifdef CAN_THEME_URL_ICON
+static inline void loadDefaultIconRecord(IconRecord* defaultIconRecord)
 {
-    ASSERT_NOT_SYNC_THREAD();
-
+     defaultIconRecord->loadImageFromResource("urlIcon");
+}
+#else
+static inline void loadDefaultIconRecord(IconRecord* defaultIconRecord)
+{
     static const unsigned char defaultIconData[] = { 0x4D, 0x4D, 0x00, 0x2A, 0x00, 0x00, 0x03, 0x32, 0x80, 0x00, 0x20, 0x50, 0x38, 0x24, 0x16, 0x0D, 0x07, 0x84, 0x42, 0x61, 0x50, 0xB8, 
         0x64, 0x08, 0x18, 0x0D, 0x0A, 0x0B, 0x84, 0xA2, 0xA1, 0xE2, 0x08, 0x5E, 0x39, 0x28, 0xAF, 0x48, 0x24, 0xD3, 0x53, 0x9A, 0x37, 0x1D, 0x18, 0x0E, 0x8A, 0x4B, 0xD1, 0x38, 
         0xB0, 0x7C, 0x82, 0x07, 0x03, 0x82, 0xA2, 0xE8, 0x6C, 0x2C, 0x03, 0x2F, 0x02, 0x82, 0x41, 0xA1, 0xE2, 0xF8, 0xC8, 0x84, 0x68, 0x6D, 0x1C, 0x11, 0x0A, 0xB7, 0xFA, 0x91, 
@@ -373,10 +381,18 @@ Image* IconDatabase::defaultIcon(const IntSize& size)
         0xFC, 0x80, 0x00, 0x00, 0x27, 0x10, 0x00, 0x0A, 0xFC, 0x80, 0x00, 0x00, 0x27, 0x10 };
         
     static RefPtr<SharedBuffer> defaultIconBuffer(SharedBuffer::create(defaultIconData, sizeof(defaultIconData)));
+    defaultIconRecord->setImageData(defaultIconBuffer);
+}
+#endif
+
+Image* IconDatabase::defaultIcon(const IntSize& size)
+{
+    ASSERT_NOT_SYNC_THREAD();
+
     
     if (!m_defaultIconRecord) {
         m_defaultIconRecord = IconRecord::create("urlIcon");
-        m_defaultIconRecord->setImageData(defaultIconBuffer);
+        loadDefaultIconRecord(m_defaultIconRecord.get());
     }
     
     return m_defaultIconRecord->image(size);
