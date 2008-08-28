@@ -1210,17 +1210,19 @@ int JSDOMWindowBase::installTimeout(ExecState* exec, JSValue* func, const ArgLis
     return installTimeout(new ScheduledAction(exec, func, args), t, singleShot);
 }
 
-PausedTimeouts* JSDOMWindowBase::pauseTimeouts()
+void JSDOMWindowBase::pauseTimeouts(OwnPtr<PausedTimeouts>& result)
 {
-    size_t count = d()->timeouts.size();
-    if (count == 0)
-        return 0;
+    size_t timeoutsCount = d()->timeouts.size();
+    if (!timeoutsCount) {
+        result.clear();
+        return;
+    }
 
-    PausedTimeout* t = new PausedTimeout [count];
-    PausedTimeouts* result = new PausedTimeouts(t, count);
+    PausedTimeout* t = new PausedTimeout[timeoutsCount];
+    result.set(new PausedTimeouts(t, timeoutsCount));
 
     JSDOMWindowBaseData::TimeoutsMap::iterator it = d()->timeouts.begin();
-    for (size_t i = 0; i != count; ++i, ++it) {
+    for (size_t i = 0; i != timeoutsCount; ++i, ++it) {
         int timeoutId = it->first;
         DOMWindowTimer* timer = it->second;
         t[i].timeoutId = timeoutId;
@@ -1233,11 +1235,9 @@ PausedTimeouts* JSDOMWindowBase::pauseTimeouts()
 
     deleteAllValues(d()->timeouts);
     d()->timeouts.clear();
-
-    return result;
 }
 
-void JSDOMWindowBase::resumeTimeouts(PausedTimeouts* timeouts)
+void JSDOMWindowBase::resumeTimeouts(OwnPtr<PausedTimeouts>& timeouts)
 {
     if (!timeouts)
         return;
@@ -1250,6 +1250,7 @@ void JSDOMWindowBase::resumeTimeouts(PausedTimeouts* timeouts)
         timer->start(array[i].nextFireInterval, array[i].repeatInterval);
     }
     delete [] array;
+    timeouts.clear();
 }
 
 void JSDOMWindowBase::clearTimeout(int timeoutId, bool delAction)

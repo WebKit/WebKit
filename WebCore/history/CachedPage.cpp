@@ -86,7 +86,7 @@ CachedPage::CachedPage(Page* page)
     ScriptController* proxy = mainFrame->script();
     if (proxy->haveWindowShell()) {
         m_window = proxy->windowShell()->window();
-        m_pausedTimeouts.set(m_window->pauseTimeouts());
+        m_window->pauseTimeouts(m_pausedTimeouts);
     }
 
     m_document->setInPageCache(true);
@@ -114,7 +114,7 @@ void CachedPage::restore(Page* page)
         JSDOMWindowShell* windowShell = proxy->windowShell();
         if (m_window) {
             windowShell->setWindow(m_window.get());
-            windowShell->window()->resumeTimeouts(m_pausedTimeouts.get());
+            windowShell->window()->resumeTimeouts(m_pausedTimeouts);
         } else {
             windowShell->setWindow(new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(mainFrame->domWindow(), windowShell));
             proxy->attachDebugger(page->debugger());

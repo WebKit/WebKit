@@ -29,7 +29,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
-#include "JSDOMWindow.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PausedTimeouts.h"
@@ -428,11 +427,10 @@ PageGroupLoadDeferrer::PageGroupLoadDeferrer(Page* page, bool deferSelf)
 
 #if !PLATFORM(MAC)
             for (Frame* frame = otherPage->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-                if (JSDOMWindow* window = toJSDOMWindow(frame)) {
-                    PausedTimeouts* timeouts = window->pauseTimeouts();
-
-                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts));
-                }
+                OwnPtr<PausedTimeouts> timeouts;
+                frame->script()->pauseTimeouts(timeouts);
+                if (timeouts)
+                    m_pausedTimeouts.append(make_pair(RefPtr<Frame>(frame), timeouts.take()));
             }
 #endif
         }
@@ -448,20 +446,16 @@ PageGroupLoadDeferrer::~PageGroupLoadDeferrer()
 {
     if (!m_wasDeferringTimers)
         setDeferringTimers(false);
-    
-    size_t count = m_deferredFrames.size();
-    for (size_t i = 0; i < count; ++i)
+
+    for (size_t i = 0; i < m_deferredFrames.size(); ++i)
         if (Page* page = m_deferredFrames[i]->page())
             page->setDefersLoading(false);
 
 #if !PLATFORM(MAC)
-    count = m_pausedTimeouts.size();
-
-    for (size_t i = 0; i < count; i++) {
-        JSDOMWindow* window = toJSDOMWindow(m_pausedTimeouts[i].first.get());
-        if (window)
-            window->resumeTimeouts(m_pausedTimeouts[i].second);
-        delete m_pausedTimeouts[i].second;
+    for (size_t i = 0; i < m_pausedTimeouts.size(); i++) {
+        Frame* frame = m_pausedTimeouts[i].first.get();
+        OwnPtr<PausedTimeouts> timeouts(m_pausedTimeouts[i].second);
+        frame->script()->resumeTimeouts(timeouts);
     }
 #endif
 }

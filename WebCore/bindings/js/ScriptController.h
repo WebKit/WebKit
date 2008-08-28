@@ -103,6 +103,9 @@ public:
     void clearFormerWindow(JSDOMWindow* window) { m_liveFormerWindows.remove(window); }
     void updateDocument();
 
+    void pauseTimeouts(OwnPtr<PausedTimeouts>&);
+    void resumeTimeouts(OwnPtr<PausedTimeouts>&);
+
     void clearScriptObjects();
     void cleanupScriptObjectsForPlugin(void*);
 

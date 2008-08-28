@@ -1,3 +1,39 @@
+2008-08-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin and Alexey.
+
+        Close a leak of PausedTimeouts if the JavaScriptDebugServer was destroyed
+        with timeouts paused.
+        https://bugs.webkit.org/show_bug.cgi?id=20469
+        
+        I attempted to clean up the memory management of PausedTimeouts, I'm not
+        sure the solution I came up with is "cleaner", but it's in some ways
+        "safer", since it no longer uses raw pointers and manual new/delete.
+        
+        This also now prevents CachedPage from needlessly creating Window
+        objects when caching pages which didn't already have one. :)
+        
+        I also made Chrome.cpp no longer depend on the JavaScript bindings
+        (aka JSDOMWindowBase.h), since there was no real reason for it to.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::pauseTimeouts):
+        (WebCore::JSDOMWindowBase::resumeTimeouts):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::pauseTimeouts):
+        (WebCore::ScriptController::resumeTimeouts):
+        * bindings/js/ScriptController.h:
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        * page/Chrome.cpp:
+        (WebCore::PageGroupLoadDeferrer::PageGroupLoadDeferrer):
+        (WebCore::PageGroupLoadDeferrer::~PageGroupLoadDeferrer):
+        * page/JavaScriptDebugServer.cpp:
+        (WebCore::JavaScriptDebugServer::~JavaScriptDebugServer):
+        (WebCore::JavaScriptDebugServer::setJavaScriptPaused):
+
 2008-08-27  Holger Hans Peter Freyther <zecke@selfish.org>
 
         Unreviewed compile fix

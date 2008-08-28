@@ -71,8 +71,9 @@ namespace WebCore {
         int installTimeout(const KJS::UString& handler, int t, bool singleShot);
         int installTimeout(KJS::ExecState*, KJS::JSValue* function, const KJS::ArgList& args, int t, bool singleShot);
         void clearTimeout(int timerId, bool delAction = true);
-        PausedTimeouts* pauseTimeouts();
-        void resumeTimeouts(PausedTimeouts*);
+
+        void pauseTimeouts(OwnPtr<PausedTimeouts>&);
+        void resumeTimeouts(OwnPtr<PausedTimeouts>&);
 
         void timerFired(DOMWindowTimer*);
 

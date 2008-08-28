@@ -36,6 +36,7 @@
 #include "NP_jsobject.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PausedTimeouts.h"
 #include "runtime_root.h"
 #include "Settings.h"
 #include "StringSourceProvider.h"
@@ -358,6 +359,27 @@ void ScriptController::clearScriptObjects()
 #endif
 
     clearPlatformScriptObjects();
+}
+
+void ScriptController::pauseTimeouts(OwnPtr<PausedTimeouts>& result)
+{
+    if (!haveWindowShell()) {
+        result.clear();
+        return;
+    }
+
+    windowShell()->window()->pauseTimeouts(result);
+}
+
+void ScriptController::resumeTimeouts(OwnPtr<PausedTimeouts>& pausedTimeouts)
+{
+    if (!haveWindowShell()) {
+        // Callers can assume we will always clear the passed in timeouts
+        pausedTimeouts.clear();
+        return;
+    }
+
+    windowShell()->window()->resumeTimeouts(pausedTimeouts);
 }
 
 } // namespace WebCore
