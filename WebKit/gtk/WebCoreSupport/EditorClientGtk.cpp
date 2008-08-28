@@ -317,10 +317,10 @@ void EditorClient::handleKeyboardEvent(KeyboardEvent* event)
                         true);
                 break;
             case VK_PRIOR:  // PageUp
-                frame->editor()->command("MovePageUp").execute();
+                frame->editor()->command(kevent->shiftKey() ? "MovePageUpAndModifySelection" : "MovePageUp").execute();
                 break;
             case VK_NEXT:  // PageDown
-                frame->editor()->command("MovePageDown").execute();
+                frame->editor()->command(kevent->shiftKey() ? "MovePageDownAndModifySelection" : "MovePageDown").execute();
                 break;
             case VK_HOME:
                 if (kevent->ctrlKey() && kevent->shiftKey())
