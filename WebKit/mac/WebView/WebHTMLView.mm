@@ -2834,6 +2834,14 @@ static void _updateFocusedAndActiveStateTimerCallback(CFRunLoopTimerRef timer, v
     [self layoutToMinimumPageWidth:0.0f maximumPageWidth:0.0f adjustingViewSize:NO];
 }
 
+// Deliver mouseup events to the DOM for button 2.
+- (void)rightMouseUp:(NSEvent *)event
+{
+    [super rightMouseUp:event];
+    if (Frame* coreframe = core([self _frame]))
+        coreframe->eventHandler()->mouseUp(event);
+}
+
 - (NSMenu *)menuForEvent:(NSEvent *)event
 {
     [_private->compController endRevertingChange:NO moveLeft:NO];
