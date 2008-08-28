@@ -54,7 +54,7 @@ private:
     {
     }
 
-    virtual bool isTimingFunctionValue() { return true; }
+    virtual bool isTimingFunctionValue() const { return true; }
     
     double m_x1;
     double m_y1;

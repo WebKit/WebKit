@@ -49,7 +49,7 @@ public:
 private:
     FontValue() { }
 
-    virtual bool isFontValue() { return true; }
+    virtual bool isFontValue() const { return true; }
 };
 
 } // namespace

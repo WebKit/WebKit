@@ -46,8 +46,6 @@ public:
 
     virtual ~CSSValueList();
 
-    virtual bool isValueList() const { return true; }
-
     size_t length() const { return m_values.size(); }
     CSSValue* item(unsigned);
     CSSValue* itemWithoutBoundsCheck(unsigned index) { return m_values[index].get(); }
@@ -64,7 +62,7 @@ protected:
     CSSValueList(CSSParserValueList*);
 
 private:
-    virtual bool isValueList() { return true; }
+    virtual bool isValueList() const { return true; }
 
     virtual unsigned short cssValueType() const;
 

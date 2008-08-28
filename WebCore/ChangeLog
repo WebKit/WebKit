@@ -1,3 +1,21 @@
+2008-08-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Make all the 'isFoo()' methods on CSSValue const,
+        and fix the subclasses.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20561
+        
+        * css/CSSTimingFunctionValue.h:
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontValue):
+        (WebCore::CSSValue::isImageGeneratorValue):
+        (WebCore::CSSValue::isImageValue):
+        (WebCore::CSSValue::isImplicitInitialValue):
+        * css/CSSValueList.h:
+        * css/FontValue.h:
+
 2008-08-28  David Hyatt  <hyatt@apple.com>
 
         The great RenderStyle cleanup begins!
