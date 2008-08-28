@@ -1,3 +1,9 @@
+2008-08-28  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * WebIconDatabase.cpp: (WebIconDatabase::getOrCreateDefaultIconBitmap):
+
 2008-08-28  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Rubber-stamped by Darin Adler.

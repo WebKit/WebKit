@@ -263,7 +263,7 @@ HBITMAP WebIconDatabase::getOrCreateDefaultIconBitmap(LPSIZE size)
     result = createDIB(size);
 
     m_defaultIconMap.set(*size, result);
-    if (!iconDatabase()->defaultIcon(size)->getHBITMAPOfSize(result, size)) {
+    if (!iconDatabase()->defaultIcon(*size)->getHBITMAPOfSize(result, size)) {
         LOG_ERROR("Failed to draw Image to HBITMAP");
         return 0;
     }
