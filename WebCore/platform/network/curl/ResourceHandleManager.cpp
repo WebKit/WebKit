@@ -427,8 +427,8 @@ bool ResourceHandleManager::startScheduledJobs()
     bool started = false;
     while (!m_resourceHandleList.isEmpty() && m_runningJobs < maxRunningJobs) {
         ResourceHandle* job = m_resourceHandleList[0];
-        startJob(job);
         m_resourceHandleList.remove(0);
+        startJob(job);
         started = true;
     }
     return started;

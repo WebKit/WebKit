@@ -1,3 +1,18 @@
+2008-08-27  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Eric.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20551
+        [GTK] curl crashers
+
+        * platform/network/curl/ResourceHandleManager.cpp:
+        (WebCore::ResourceHandleManager::startScheduledJobs):
+        Remove the resource handle from the pending list before starting the
+        job, not afterwards. Fixes crashers in the test suite.
+
+        Test: fast/dom/clientWidthAfterDocumentIsRemoved.html
+        Test: fast/encoding/char-encoding.html
+
 2008-08-27  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by eseidel.
