@@ -1068,7 +1068,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     if (!canvas->originClean())
         m_canvas->setOriginTainted();
 
-    c->drawImage(buffer->image(), destRect, sourceRect);
+    c->drawImage(buffer->image(), destRect, sourceRect, state().m_globalComposite);
     willDraw(destRect); // This call comes after drawImage, since the buffer we draw into may be our own, and we need to make sure it is dirty.
                         // FIXME: Arguably willDraw should become didDraw and occur after drawing calls and not before them to avoid problems like this.
 }
