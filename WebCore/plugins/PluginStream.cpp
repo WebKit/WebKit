@@ -142,12 +142,16 @@ void PluginStream::startStream()
         Vector<UChar> stringBuilder;
         String separator(": ");
 
+        String statusLine = String::format("HTTP %lu OK\n", m_resourceResponse.httpStatusCode());
+
+        stringBuilder.append(statusLine.characters(), statusLine.length());
+
         HTTPHeaderMap::const_iterator end = m_resourceResponse.httpHeaderFields().end();
         for (HTTPHeaderMap::const_iterator it = m_resourceResponse.httpHeaderFields().begin(); it != end; ++it) {
             stringBuilder.append(it->first.characters(), it->first.length());
             stringBuilder.append(separator.characters(), separator.length());
             stringBuilder.append(it->second.characters(), it->second.length());
-            stringBuilder.append((UChar)'\n');
+            stringBuilder.append('\n');
         }
 
         m_headers = String::adopt(stringBuilder).utf8();
