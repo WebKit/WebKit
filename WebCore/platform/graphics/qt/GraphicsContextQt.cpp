@@ -510,7 +510,7 @@ void GraphicsContext::fillPath()
             p->fillPath(path, p->brush());
         break;
     case PatternColorSpace:
-        p->fillPath(path, QBrush(*(m_common->state.fillPattern.get()->createPlatformPattern(getCTM()))));
+        p->fillPath(path, QBrush(m_common->state.fillPattern.get()->createPlatformPattern(getCTM())));
         break;
     case GradientColorSpace:
         p->fillPath(path, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));
@@ -532,7 +532,7 @@ void GraphicsContext::strokePath()
             p->strokePath(path, p->pen());
         break;
     case PatternColorSpace:
-        p->setBrush(*(m_common->state.strokePattern.get()->createPlatformPattern(getCTM())));
+        p->setBrush(m_common->state.strokePattern.get()->createPlatformPattern(getCTM()));
         p->strokePath(path, p->pen());
         break;
     case GradientColorSpace:
@@ -555,7 +555,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
             p->fillRect(rect, p->brush());
         break;
     case PatternColorSpace:
-        p->fillRect(rect, QBrush(*(m_common->state.fillPattern.get()->createPlatformPattern(getCTM()))));
+        p->fillRect(rect, QBrush(m_common->state.fillPattern.get()->createPlatformPattern(getCTM())));
         break;
     case GradientColorSpace:
         p->fillRect(rect, QBrush(*(m_common->state.fillGradient.get()->platformGradient())));

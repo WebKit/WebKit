@@ -1,5 +1,22 @@
 2008-08-29  Simon Hausmann  <hausmann@webkit.org>
 
+        Reviewed by Holger.
+
+        Don't crash when drawing patterns with the HTML canvas. Patterns
+        remain unimplemented but at least they don't crash anymore. This is
+        done by changing the PlatformPatternPtr to be a brush for the Qt
+        platform.
+
+        * platform/graphics/Pattern.h:
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::fillPath):
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
+2008-08-29  Simon Hausmann  <hausmann@webkit.org>
+
         Fix the Qt build, fontSelector() is not used by the Qt port yet
         and we just return 0 in Font::fontSelector().
 
