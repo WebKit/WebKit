@@ -1,3 +1,26 @@
+2008-08-29  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by hyatt.
+
+        Fix GeneratedImage to respect Image's refcounting
+        Fixing potential crashers (future if not current)
+        https://bugs.webkit.org/show_bug.cgi?id=20567
+        
+        I don't know if it's possible to make the current code
+        crash, thus I've not made a test.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::image):
+        * css/CSSImageGeneratorValue.cpp:
+        (WebCore::CSSImageGeneratorValue::removeClient):
+        (WebCore::CSSImageGeneratorValue::getImage):
+        * css/CSSImageGeneratorValue.h:
+        * platform/graphics/GeneratedImage.h:
+        (WebCore::GeneratedImage::GeneratedImage):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setContent):
+        * rendering/style/RenderStyle.h:
+
 2008-08-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele.
