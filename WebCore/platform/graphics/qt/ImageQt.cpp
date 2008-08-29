@@ -164,11 +164,6 @@ void BitmapImage::checkForSolidColor()
     m_isSolidColor = false;
 }
 
-QPixmap* BitmapImage::getPixmap() const
-{
-    return const_cast<BitmapImage*>(this)->frameAtIndex(0);
-}
-
 }
 
 

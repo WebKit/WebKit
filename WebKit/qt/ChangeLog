@@ -1,5 +1,23 @@
 2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Eric Seidel.
+
+        [janitor/qt] Start replacing port specific getters with the generic native getter
+        To get the native presentation of an image we currently have platform
+        specific #ifdef's and a generic getter using NativeImagePtr. This patch
+        extends this to the ImageBuffer and updates the Qt platform to get rid
+        of the special #ifdefs.
+
+        https://bugs.webkit.org/attachment.cgi?id=22861
+
+        * Api/qwebframe.cpp:
+        (QWebHitTestResultPrivate::QWebHitTestResultPrivate):
+        * Api/qwebhistory.cpp:
+        * Api/qwebsettings.cpp:
+        (QWebSettings::iconForUrl):
+
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Simon.
 
         Catch up with the introduction of PageGroup in r30840. Enable tracking of

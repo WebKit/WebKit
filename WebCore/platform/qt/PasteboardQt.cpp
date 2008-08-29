@@ -144,7 +144,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String&)
     Image* image = cachedImage->image();
     ASSERT(image);
 
-    QPixmap* pixmap = image->getPixmap();
+    QPixmap* pixmap = image->nativeImageForCurrentFrame();
     ASSERT(pixmap);
 
     QApplication::clipboard()->setPixmap(*pixmap, QClipboard::Clipboard);

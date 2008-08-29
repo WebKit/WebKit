@@ -45,7 +45,7 @@ namespace WebCore {
         virtual unsigned decodedSize() const { return 0; }
 
         virtual IntSize size() const;
-        virtual QPixmap* getPixmap() const;
+        virtual NativeImagePtr nativeImageForCurrentFrame();
         virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, CompositeOperator);
 
     private:

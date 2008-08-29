@@ -44,9 +44,9 @@ IntSize StillImage::size() const
     return IntSize(m_pixmap.width(), m_pixmap.height());
 }
 
-QPixmap* StillImage::getPixmap() const
+NativeImagePtr StillImage::nativeImageForCurrentFrame()
 {
-    return const_cast<QPixmap*>(&m_pixmap);
+    return const_cast<NativeImagePtr>(&m_pixmap);
 }
 
 void StillImage::draw(GraphicsContext* ctxt, const FloatRect& dst,

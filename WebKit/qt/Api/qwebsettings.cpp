@@ -438,7 +438,7 @@ QIcon QWebSettings::iconForUrl(const QUrl &url)
     if (!image) {
         return QPixmap();
     }
-    QPixmap *icon = image->getPixmap();
+    QPixmap *icon = image->nativeImageForCurrentFrame();
     if (!icon) {
         return QPixmap();
     }

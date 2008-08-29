@@ -1,5 +1,29 @@
 2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
 
+        Reviewed by Eric Seidel.
+
+        [janitor/qt] Start replacing port specific getters with the generic native getter
+        To get the native presentation of an image we currently have platform
+        specific #ifdef's and a generic getter using NativeImagePtr. This patch
+        extends this to the ImageBuffer and updates the Qt platform to get rid
+        of the special #ifdefs.
+
+        https://bugs.webkit.org/attachment.cgi?id=22861
+
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/Image.h:
+        * platform/graphics/qt/ImageQt.cpp:
+        * platform/graphics/qt/StillImageQt.cpp:
+        * platform/graphics/qt/StillImageQt.h:
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::createDragImage):
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        * platform/qt/CursorQt.cpp:
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
         Reviewed by Simon.
 
         [svg/qt] Stop crashing... when no RenderPath/RenderObject is given...

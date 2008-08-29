@@ -59,7 +59,7 @@ Cursor::~Cursor()
 
 Cursor::Cursor(Image* image, const IntPoint& hotspot)
 #ifndef QT_NO_CURSOR
-    : m_impl(*(image->getPixmap()), hotspot.x(), hotspot.y())
+    : m_impl(*(image->nativeImageForCurrentFrame()), hotspot.x(), hotspot.y())
 #endif
 {
 }

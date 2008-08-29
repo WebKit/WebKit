@@ -982,7 +982,7 @@ QWebHitTestResultPrivate::QWebHitTestResultPrivate(const WebCore::HitTestResult 
     innerNonSharedNode = hitTest.innerNonSharedNode();
     WebCore::Image *img = hitTest.image();
     if (img) {
-        QPixmap *pix = img->getPixmap();
+        QPixmap *pix = img->nativeImageForCurrentFrame();
         if (pix)
             pixmap = *pix;
     }

@@ -208,7 +208,7 @@ DragImageRef ClipboardQt::createDragImage(IntPoint& dragLoc) const
     if (!m_dragImage)
         return 0;
     dragLoc = m_dragLoc;
-    return m_dragImage->image()->getPixmap();
+    return m_dragImage->image()->nativeImageForCurrentFrame();
 }
 
 
@@ -240,7 +240,7 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     CachedImage* cachedImage = getCachedImage(element);
     if (!cachedImage || !cachedImage->image() || !cachedImage->isLoaded())
         return;
-    QPixmap *pixmap = cachedImage->image()->getPixmap();
+    QPixmap *pixmap = cachedImage->image()->nativeImageForCurrentFrame();
     if (pixmap)
         m_writableData->setImageData(pixmap);
 
