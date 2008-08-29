@@ -2751,8 +2751,8 @@
 		AA31B5B50C1DFD1000AE7083 /* RenderSVGRoot.h in Headers */ = {isa = PBXBuildFile; fileRef = AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
-		AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */; };
-		AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */; };
+		AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */; };
+		AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */ = {isa = PBXBuildFile; fileRef = AB014DE20E689A4300E10445 /* TextControlInnerElements.h */; };
 		AB23A32709BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */; };
 		AB23A32809BBA7D00067CC53 /* BeforeTextInsertedEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */; };
 		AB247A6C0AFD6383003FA5FD /* RenderSlider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */; };
@@ -7009,8 +7009,8 @@
 		AA31B5B30C1DFD1000AE7083 /* RenderSVGRoot.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderSVGRoot.h; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
-		AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLTextFieldInnerElement.cpp; sourceTree = "<group>"; };
-		AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLTextFieldInnerElement.h; sourceTree = "<group>"; };
+		AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextControlInnerElements.cpp; sourceTree = "<group>"; };
+		AB014DE20E689A4300E10445 /* TextControlInnerElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextControlInnerElements.h; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
 		AB247A6A0AFD6383003FA5FD /* RenderSlider.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSlider.cpp; sourceTree = "<group>"; };
@@ -10876,8 +10876,6 @@
 				A81369BB097374F500D74463 /* HTMLTextAreaElement.cpp */,
 				A81369BA097374F500D74463 /* HTMLTextAreaElement.h */,
 				A80E7E160A1A7CCB007FB8C5 /* HTMLTextAreaElement.idl */,
-				AB23A31009BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp */,
-				AB23A31109BBA7760067CC53 /* HTMLTextFieldInnerElement.h */,
 				A871DC1D0A15205700B12A68 /* HTMLTitleElement.cpp */,
 				A871DC1C0A15205700B12A68 /* HTMLTitleElement.h */,
 				A80E7AAE0A19D1F1007FB8C5 /* HTMLTitleElement.idl */,
@@ -13058,6 +13056,8 @@
 		F523D2F302DE443B018635CA /* rendering */ = {
 			isa = PBXGroup;
 			children = (
+				AB014DE10E689A4300E10445 /* TextControlInnerElements.cpp */,
+				AB014DE20E689A4300E10445 /* TextControlInnerElements.h */,
 				BC8C8FAA0DDCD2F200B592F4 /* style */,
 				A8CFF04B0A154F09000A4234 /* AutoTableLayout.cpp */,
 				A8CFF0490A154F09000A4234 /* AutoTableLayout.h */,
@@ -14417,7 +14417,6 @@
 				A871DB310A150BD600B12A68 /* HTMLTableRowElement.h in Headers */,
 				A871DB250A150BD600B12A68 /* HTMLTableSectionElement.h in Headers */,
 				A81369D6097374F600D74463 /* HTMLTextAreaElement.h in Headers */,
-				AB23A31309BBA7760067CC53 /* HTMLTextFieldInnerElement.h in Headers */,
 				A871DC280A15205700B12A68 /* HTMLTitleElement.h in Headers */,
 				93F198F008245E59001E9ABC /* HTMLTokenizer.h in Headers */,
 				A8EA79F20A1916DF00A8EF5F /* HTMLUListElement.h in Headers */,
@@ -15469,6 +15468,7 @@
 				BCEF444A0E6745E0001C1287 /* StyleGeneratedImage.h in Headers */,
 				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
 				A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */,
+				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -16220,7 +16220,6 @@
 				A871DB300A150BD600B12A68 /* HTMLTableRowElement.cpp in Sources */,
 				A871DB260A150BD600B12A68 /* HTMLTableSectionElement.cpp in Sources */,
 				A81369D7097374F600D74463 /* HTMLTextAreaElement.cpp in Sources */,
-				AB23A31209BBA7760067CC53 /* HTMLTextFieldInnerElement.cpp in Sources */,
 				A871DC290A15205700B12A68 /* HTMLTitleElement.cpp in Sources */,
 				93F19A9C08245E59001E9ABC /* HTMLTokenizer.cpp in Sources */,
 				A8EA79F30A1916DF00A8EF5F /* HTMLUListElement.cpp in Sources */,
@@ -17264,6 +17263,7 @@
 				BCEF43E00E674110001C1287 /* NinePieceImage.cpp in Sources */,
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
+				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

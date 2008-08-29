@@ -34,7 +34,6 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
-#include "HTMLTextFieldInnerElement.h"
 #include "HitTestResult.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
@@ -45,6 +44,7 @@
 #include "SelectionController.h"
 #include "Settings.h"
 #include "Text.h"
+#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -304,7 +304,7 @@ void RenderTextControl::createSubtreeIfNeeded()
     bool isSearchField = !m_multiLine && static_cast<HTMLInputElement*>(node())->isSearchField();
     if (isSearchField && !m_innerBlock) {
         // Create the inner block element and give it a parent, renderer, and style
-        m_innerBlock = new HTMLTextFieldInnerElement(document(), node());
+        m_innerBlock = new TextControlInnerElement(document(), node());
         RenderBlock* innerBlockRenderer = new (renderArena()) RenderBlock(m_innerBlock.get());
         m_innerBlock->setRenderer(innerBlockRenderer);
         m_innerBlock->setAttached();
@@ -316,7 +316,7 @@ void RenderTextControl::createSubtreeIfNeeded()
     }
     if (isSearchField && !m_resultsButton) {
         // Create the results block element and give it a parent, renderer, and style
-        m_resultsButton = new HTMLSearchFieldResultsButtonElement(document());
+        m_resultsButton = new SearchFieldResultsButtonElement(document());
         RenderBlock* resultsBlockRenderer = new (renderArena()) RenderBlock(m_resultsButton.get());
         m_resultsButton->setRenderer(resultsBlockRenderer);
         m_resultsButton->setAttached();
@@ -334,7 +334,7 @@ void RenderTextControl::createSubtreeIfNeeded()
         // Create the text block element and give it a parent, renderer, and style
         // For non-search fields, there is no intermediate m_innerBlock as the shadow node.
         // m_innerText will be the shadow node in that case.
-        m_innerText = new HTMLTextFieldInnerTextElement(document(), m_innerBlock ? 0 : node());
+        m_innerText = new TextControlInnerTextElement(document(), m_innerBlock ? 0 : node());
         RenderTextControlInnerBlock* textBlockRenderer = new (renderArena()) RenderTextControlInnerBlock(m_innerText.get());
         m_innerText->setRenderer(textBlockRenderer);
         m_innerText->setAttached();
@@ -357,7 +357,7 @@ void RenderTextControl::createSubtreeIfNeeded()
     }
     if (isSearchField && !m_cancelButton) {
         // Create the close block element and give it a parent, renderer, and style
-        m_cancelButton = new HTMLSearchFieldCancelButtonElement(document());
+        m_cancelButton = new SearchFieldCancelButtonElement(document());
         RenderBlock* closeBlockRenderer = new (renderArena()) RenderBlock(m_cancelButton.get());
         m_cancelButton->setRenderer(closeBlockRenderer);
         m_cancelButton->setAttached();

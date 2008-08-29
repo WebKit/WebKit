@@ -1267,8 +1267,6 @@ webcore_sources += \
 	WebCore/html/HTMLTableSectionElement.h \
 	WebCore/html/HTMLTextAreaElement.cpp \
 	WebCore/html/HTMLTextAreaElement.h \
-	WebCore/html/HTMLTextFieldInnerElement.cpp \
-	WebCore/html/HTMLTextFieldInnerElement.h \
 	WebCore/html/HTMLTitleElement.cpp \
 	WebCore/html/HTMLTitleElement.h \
 	WebCore/html/HTMLTokenizer.cpp \
@@ -1827,6 +1825,8 @@ webcore_sources += \
 	WebCore/rendering/RootInlineBox.cpp \
 	WebCore/rendering/RootInlineBox.h \
 	WebCore/rendering/TableLayout.h \
+	WebCore/rendering/TextControlInnerElements.cpp \
+	WebCore/rendering/TextControlInnerElements.h \
 	WebCore/rendering/bidi.cpp \
 	WebCore/rendering/bidi.h \
 	WebCore/rendering/break_lines.cpp \

@@ -682,7 +682,6 @@ SOURCES += \
     html/HTMLTableRowsCollection.cpp \
     html/HTMLTableSectionElement.cpp \
     html/HTMLTextAreaElement.cpp \
-    html/HTMLTextFieldInnerElement.cpp \
     html/HTMLTitleElement.cpp \
     html/HTMLTokenizer.cpp \
     html/HTMLUListElement.cpp \
@@ -893,6 +892,7 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
+    rendering/TextControlInnerElements.h \
     rendering/style/RenderStyle.cpp \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleGeneratedImage.cpp \

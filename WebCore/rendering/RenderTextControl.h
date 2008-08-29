@@ -28,12 +28,12 @@
 namespace WebCore {
 
 class FontSelector;
-class HTMLTextFieldInnerElement;
-class HTMLTextFieldInnerTextElement;
-class HTMLSearchFieldCancelButtonElement;
-class HTMLSearchFieldResultsButtonElement;
+class SearchFieldCancelButtonElement;
+class SearchFieldResultsButtonElement;
 class SearchPopupMenu;
 class Selection;
+class TextControlInnerElement;
+class TextControlInnerTextElement;
 
 class RenderTextControl : public RenderBlock, private PopupMenuClient {
 public:
@@ -145,10 +145,10 @@ private:
     friend class TextIterator;
     HTMLElement* innerTextElement() const;
 
-    RefPtr<HTMLTextFieldInnerElement> m_innerBlock;
-    RefPtr<HTMLTextFieldInnerTextElement> m_innerText;
-    RefPtr<HTMLSearchFieldResultsButtonElement> m_resultsButton;
-    RefPtr<HTMLSearchFieldCancelButtonElement> m_cancelButton;
+    RefPtr<TextControlInnerElement> m_innerBlock;
+    RefPtr<TextControlInnerTextElement> m_innerText;
+    RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
+    RefPtr<SearchFieldCancelButtonElement> m_cancelButton;
 
     bool m_dirty;
     bool m_multiLine;

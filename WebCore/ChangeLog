@@ -1,3 +1,29 @@
+2008-08-29  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Adam Roben. 
+
+        Rename HTMLTextFieldInnerElement.h/.cpp to TextControlInnerElements.h/.cpp
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+        * html/HTMLTextFieldInnerElement.cpp: Removed.
+        * html/HTMLTextFieldInnerElement.h: Removed.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        * rendering/RenderTextControl.h:
+        * rendering/TextControlInnerElements.cpp: Copied from html/HTMLTextFieldInnerElement.cpp.
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::TextControlInnerTextElement::defaultEventHandler):
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        (WebCore::SearchFieldResultsButtonElement::defaultEventHandler):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::defaultEventHandler):
+        * rendering/TextControlInnerElements.h: Copied from html/HTMLTextFieldInnerElement.h.
+
 2008-08-29  Eric Seidel  <eric@webkit.org>
 
         Rubber-stamped by aroben.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef HTMLTextFieldInnerElement_h
-#define HTMLTextFieldInnerElement_h
+#ifndef TextControlInnerElements_h
+#define TextControlInnerElements_h
 
 #include "HTMLDivElement.h"
 
@@ -32,10 +32,10 @@ namespace WebCore {
 
 class String;
 
-class HTMLTextFieldInnerElement : public HTMLDivElement
+class TextControlInnerElement : public HTMLDivElement
 {
 public:
-    HTMLTextFieldInnerElement(Document*, Node* shadowParent = 0);
+    TextControlInnerElement(Document*, Node* shadowParent = 0);
     
     virtual bool isMouseFocusable() const { return false; } 
     virtual bool isShadowNode() const { return m_shadowParent; }
@@ -46,21 +46,21 @@ private:
     Node* m_shadowParent;
 };
 
-class HTMLTextFieldInnerTextElement : public HTMLTextFieldInnerElement {
+class TextControlInnerTextElement : public TextControlInnerElement {
 public:
-    HTMLTextFieldInnerTextElement(Document*, Node* shadowParent);        
+    TextControlInnerTextElement(Document*, Node* shadowParent);        
     virtual void defaultEventHandler(Event*);
 };
 
-class HTMLSearchFieldResultsButtonElement : public HTMLTextFieldInnerElement {
+class SearchFieldResultsButtonElement : public TextControlInnerElement {
 public:
-    HTMLSearchFieldResultsButtonElement(Document*);
+    SearchFieldResultsButtonElement(Document*);
     virtual void defaultEventHandler(Event*);
 };
 
-class HTMLSearchFieldCancelButtonElement : public HTMLTextFieldInnerElement {
+class SearchFieldCancelButtonElement : public TextControlInnerElement {
 public:
-    HTMLSearchFieldCancelButtonElement(Document*);
+    SearchFieldCancelButtonElement(Document*);
     virtual void defaultEventHandler(Event*);
 private:
     bool m_capturing;

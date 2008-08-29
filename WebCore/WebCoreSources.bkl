@@ -562,7 +562,6 @@ This file contains the list of files needed to build WebCore.
         html/HTMLTableRowsCollection.cpp
         html/HTMLTableSectionElement.cpp
         html/HTMLTextAreaElement.cpp
-        html/HTMLTextFieldInnerElement.cpp
         html/HTMLTitleElement.cpp
         html/HTMLTokenizer.cpp
         html/HTMLUListElement.cpp
@@ -845,6 +844,7 @@ This file contains the list of files needed to build WebCore.
         rendering/RenderWidget.cpp
         rendering/RenderWordBreak.cpp
         rendering/RootInlineBox.cpp
+        rendering/TextControlInnerElements.h
         rendering/bidi.cpp
         rendering/break_lines.cpp
         rendering/style/RenderStyle.cpp

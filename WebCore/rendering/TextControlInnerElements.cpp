@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2008 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,7 +24,7 @@
  */
  
 #include "config.h"
-#include "HTMLTextFieldInnerElement.h"
+#include "TextControlInnerElements.h"
 
 #include "BeforeTextInsertedEvent.h"
 #include "Document.h"
@@ -40,17 +40,17 @@ namespace WebCore {
 
 using namespace EventNames;
 
-HTMLTextFieldInnerElement::HTMLTextFieldInnerElement(Document* doc, Node* shadowParent)
+TextControlInnerElement::TextControlInnerElement(Document* doc, Node* shadowParent)
     : HTMLDivElement(doc), m_shadowParent(shadowParent)
 {
 }
 
-HTMLTextFieldInnerTextElement::HTMLTextFieldInnerTextElement(Document* doc, Node* shadowParent)
-    : HTMLTextFieldInnerElement(doc, shadowParent)
+TextControlInnerTextElement::TextControlInnerTextElement(Document* doc, Node* shadowParent)
+    : TextControlInnerElement(doc, shadowParent)
 {
 }
 
-void HTMLTextFieldInnerTextElement::defaultEventHandler(Event* evt)
+void TextControlInnerTextElement::defaultEventHandler(Event* evt)
 {
     // FIXME: In the future, we should add a way to have default event listeners.  Then we would add one to the text field's inner div, and we wouldn't need this subclass.
     Node* shadowAncestor = shadowAncestorNode();
@@ -68,12 +68,12 @@ void HTMLTextFieldInnerTextElement::defaultEventHandler(Event* evt)
         HTMLDivElement::defaultEventHandler(evt);
 }
 
-HTMLSearchFieldResultsButtonElement::HTMLSearchFieldResultsButtonElement(Document* doc)
-    : HTMLTextFieldInnerElement(doc)
+SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document* doc)
+    : TextControlInnerElement(doc)
 {
 }
 
-void HTMLSearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
+void SearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
 {
     // On mousedown, bring up a menu, if needed
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
@@ -90,13 +90,13 @@ void HTMLSearchFieldResultsButtonElement::defaultEventHandler(Event* evt)
         HTMLDivElement::defaultEventHandler(evt);
 }
 
-HTMLSearchFieldCancelButtonElement::HTMLSearchFieldCancelButtonElement(Document* doc)
-    : HTMLTextFieldInnerElement(doc)
+SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* doc)
+    : TextControlInnerElement(doc)
     , m_capturing(false)
 {
 }
 
-void HTMLSearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
+void SearchFieldCancelButtonElement::defaultEventHandler(Event* evt)
 {
     // If the element is visible, on mouseup, clear the value, and set selection
     HTMLInputElement* input = static_cast<HTMLInputElement*>(shadowAncestorNode());
