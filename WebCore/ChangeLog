@@ -1,3 +1,10 @@
+2008-08-29  Simon Hausmann  <hausmann@webkit.org>
+
+        Fix the Qt build, fontSelector() is not used by the Qt port yet
+        and we just return 0 in Font::fontSelector().
+
+        * platform/graphics/Font.h:
+
 2008-08-28  Alp Toker  <alp@nuanti.com>
 
         GTK+ dist/build fix. List newly added header files.
