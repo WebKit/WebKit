@@ -107,18 +107,19 @@ PassRefPtr<Gradient> CSSGradientValue::createGradient(RenderObject* renderer, co
 Image* CSSGradientValue::image(RenderObject* renderer, const IntSize& size)
 {
     ASSERT(m_clients.contains(renderer));
-    
+
     // Need to look up our size.  Create a string of width*height to use as a hash key.
     Image* result = getImage(renderer, size);
     if (result)
         return result;
-    
+
     if (size.isEmpty())
         return 0;
-    
+
     // We need to create an image.
-    result = new GeneratedImage(createGradient(renderer, size), size);
-    putImage(size, result);
+    RefPtr<Image> newImage = GeneratedImage::create(createGradient(renderer, size), size);
+    result = newImage.get();
+    putImage(size, newImage.release());
 
     return result;
 }

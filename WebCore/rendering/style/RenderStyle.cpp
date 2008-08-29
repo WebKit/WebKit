@@ -1560,7 +1560,7 @@ void RenderStyle::clearContent()
         rareNonInheritedData->m_content->clear();
 }
 
-void RenderStyle::setContent(StyleImage* image, bool add)
+void RenderStyle::setContent(PassRefPtr<StyleImage> image, bool add)
 {
     if (!image)
         return; // The object is null. Nothing to do. Just bail.
@@ -1583,9 +1583,8 @@ void RenderStyle::setContent(StyleImage* image, bool add)
     else
         content.set(newContentData);
 
-    newContentData->m_content.m_image = image;
+    newContentData->m_content.m_image = image.releaseRef();
     newContentData->m_type = CONTENT_OBJECT;
-    image->ref();
 }
 
 void RenderStyle::setContent(StringImpl* s, bool add)

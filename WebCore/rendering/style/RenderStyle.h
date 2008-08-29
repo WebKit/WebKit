@@ -2279,7 +2279,7 @@ public:
     bool contentDataEquivalent(const RenderStyle* otherStyle) const;
     void clearContent();
     void setContent(StringImpl*, bool add = false);
-    void setContent(StyleImage*, bool add = false);
+    void setContent(PassRefPtr<StyleImage>, bool add = false);
     void setContent(CounterContent*, bool add = false);
 
     const CounterDirectiveMap* counterDirectives() const;
