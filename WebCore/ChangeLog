@@ -1,5 +1,18 @@
 2008-08-29  Eric Seidel  <eric@webkit.org>
 
+        Rubber-stamped by aroben.
+
+        Add GraphicsContext.h include to GraphcisContextPrivate.h
+
+        GraphicsContextPrivate uses StrokeStyle which is defined
+        in GraphicsContext.h but it doesn't include that header.
+        CoreGraphics build doesn't fail here due to the order
+        it happens to include files.
+
+        * platform/graphics/GraphicsContextPrivate.h:
+
+2008-08-29  Eric Seidel  <eric@webkit.org>
+
         Reviewed by hyatt.
 
         Fix GeneratedImage to respect Image's refcounting
