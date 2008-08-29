@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This file is part of the KDE project
 
@@ -36,26 +37,31 @@ bool SVGPaintServerSolid::setup(GraphicsContext*& context, const RenderObject* o
     QPainter* painter(context ? context->platformContext() : 0);
     Q_ASSERT(painter);
 
-    RenderStyle* renderStyle = object->style();
+    RenderStyle* renderStyle = object ? object->style() : 0;
     // TODO? painter->setOpacity(renderStyle->opacity());
 
     QColor c = color();
 
-    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill()) {
-        c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
+    if ((type & ApplyToFillTargetType) && (!renderStyle || renderStyle->svgStyle()->hasFill())) {
+        if (renderStyle)
+            c.setAlphaF(renderStyle->svgStyle()->fillOpacity());
 
         QBrush brush(c);
         painter->setBrush(brush);
-        context->setFillRule(renderStyle->svgStyle()->fillRule());
+
+        if (renderStyle)
+            context->setFillRule(renderStyle->svgStyle()->fillRule());
 
         /* if(isPaintingText()) ... */
     }
 
-    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke()) {
-        c.setAlphaF(renderStyle->svgStyle()->strokeOpacity());
+    if ((type & ApplyToStrokeTargetType) && (!renderStyle || renderStyle->svgStyle()->hasStroke())) {
+        if (renderStyle)
+            c.setAlphaF(renderStyle->svgStyle()->strokeOpacity());
 
         QPen pen(c);
-        setPenProperties(object, renderStyle, pen);
+        if (renderStyle)
+            setPenProperties(object, renderStyle, pen);
         painter->setPen(pen);
 
         /* if(isPaintingText()) ... */

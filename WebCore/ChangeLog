@@ -2,6 +2,17 @@
 
         Reviewed by Simon.
 
+        [svg/qt] Stop crashing... when no RenderPath/RenderObject is given...
+
+        * svg/graphics/qt/SVGPaintServerQt.cpp:
+        (WebCore::SVGPaintServer::renderPath):
+        * svg/graphics/qt/SVGPaintServerSolidQt.cpp:
+        (WebCore::SVGPaintServerSolid::setup):
+
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         [network/qt] Implement defering of loading ResourceHandle's
         This is needed otherwise we end in an ASSERT in the MainResourceLoader. The
         implementation is simply not forwarding anything to the

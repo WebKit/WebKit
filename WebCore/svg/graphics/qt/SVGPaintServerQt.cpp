@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2006 Nikolas Zimmermann <wildfox@kde.org>
+    Copyright (C) 2008 Holger Hans Peter Freyther
 
     This file is part of the KDE project
 
@@ -82,7 +83,7 @@ void SVGPaintServer::teardown(GraphicsContext*&, const RenderObject*, SVGPaintTa
 
 void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderObject* path, SVGPaintTargetType type) const
 {
-    RenderStyle* renderStyle = path->style();
+    RenderStyle* renderStyle = path ? path->style(): 0;
 
     QPainter* painter(context ? context->platformContext() : 0);
     Q_ASSERT(painter);
@@ -90,10 +91,10 @@ void SVGPaintServer::renderPath(GraphicsContext*& context, const RenderObject* p
     QPainterPath* painterPath(context ? context->currentPath() : 0);
     Q_ASSERT(painterPath);
 
-    if ((type & ApplyToFillTargetType) && renderStyle->svgStyle()->hasFill())
+    if ((type & ApplyToFillTargetType) && (!renderStyle || renderStyle->svgStyle()->hasFill()))
         painter->fillPath(*painterPath, painter->brush());
 
-    if ((type & ApplyToStrokeTargetType) && renderStyle->svgStyle()->hasStroke())
+    if ((type & ApplyToStrokeTargetType) && (!renderStyle || renderStyle->svgStyle()->hasStroke()))
         painter->strokePath(*painterPath, painter->pen());
 }
 
