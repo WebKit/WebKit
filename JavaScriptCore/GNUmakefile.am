@@ -48,6 +48,7 @@ javascriptcore_sources += \
 	JavaScriptCore/API/JSStringRef.cpp \
 	JavaScriptCore/API/JSValueRef.cpp \
 	JavaScriptCore/API/OpaqueJSString.cpp \
+	JavaScriptCore/API/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/APICast.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSBase.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSContextRef.h \
@@ -58,6 +59,7 @@ javascriptcore_sources += \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JSValueRef.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScript.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/JavaScriptCore.h \
+	JavaScriptCore/ForwardingHeaders/JavaScriptCore/OpaqueJSString.h \
 	JavaScriptCore/ForwardingHeaders/JavaScriptCore/WebKitAvailability.h \
 	JavaScriptCore/JavaScriptCorePrefix.h \
 	JavaScriptCore/VM/CodeBlock.cpp \
@@ -244,6 +246,7 @@ javascriptcore_sources += \
 	JavaScriptCore/wtf/MathExtras.h \
 	JavaScriptCore/wtf/MessageQueue.h \
 	JavaScriptCore/wtf/Noncopyable.h \
+	JavaScriptCore/wtf/NotFound.h \
 	JavaScriptCore/wtf/OwnArrayPtr.h \
 	JavaScriptCore/wtf/OwnPtr.h \
 	JavaScriptCore/wtf/PassRefPtr.h \
@@ -314,6 +317,7 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/JSGlobalObjectFunctions.cpp \
 	JavaScriptCore/kjs/JSImmediate.cpp \
 	JavaScriptCore/kjs/JSLock.cpp \
+	JavaScriptCore/kjs/JSLock.h \
 	JavaScriptCore/kjs/JSNumberCell.cpp \
 	JavaScriptCore/kjs/JSObject.cpp \
 	JavaScriptCore/kjs/JSStaticScopeObject.cpp \

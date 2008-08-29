@@ -1,3 +1,9 @@
+2008-08-28  Alp Toker  <alp@nuanti.com>
+
+        GTK+ dist/build fix. List newly added header files.
+
+        * GNUmakefile.am:
+
 2008-08-27  Mike Hommey <glandium@debian.org>
 
         Reviewed by Holger.

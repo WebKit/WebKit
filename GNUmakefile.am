@@ -448,7 +448,8 @@ DerivedSources/webkitenumtypes.cpp: $(webkitgtk_h_api) GNUmakefile
 # Files that will be distributed
 EXTRA_DIST = \
 	$(javascriptcore_dist) \
-	$(webcore_dist)
+	$(webcore_dist) \
+	symbols.filter
 
 # Files that will be cleaned
 MAINTAINERCLEANFILES := $(stamp_files) $(BUILT_SOURCES)
