@@ -1,3 +1,15 @@
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Revert revision 34348 which removed the global historyContains() function.
+
+        This function was needed to implement the public API of QWebHistoryInterface
+        and will be used again in the near future.
+
+        * Api/qwebhistoryinterface.cpp:
+        (WebCore::historyContains):
+
 2008-08-27  Erik Bunce  <elbunce@thehive.com>
 
         Reviewed by Eric Seidel.
