@@ -1201,18 +1201,18 @@ namespace KJS {
 
     class BinaryOpNode : public ExpressionNode {
     public:
-        BinaryOpNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+        BinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
             : ExpressionNode(globalData)
-            , m_term1(term1)
-            , m_term2(term2)
+            , m_expr1(expr1)
+            , m_expr2(expr2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
-        BinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+        BinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
             : ExpressionNode(globalData, type)
-            , m_term1(term1)
-            , m_term2(term2)
+            , m_expr1(expr1)
+            , m_expr2(expr2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
@@ -1221,25 +1221,25 @@ namespace KJS {
         virtual OpcodeID opcode() const KJS_FAST_CALL = 0;
 
     protected:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
+        RefPtr<ExpressionNode> m_expr1;
+        RefPtr<ExpressionNode> m_expr2;
         bool m_rightHasAssignments;
     };
 
     class ReverseBinaryOpNode : public ExpressionNode {
     public:
-        ReverseBinaryOpNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+        ReverseBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
             : ExpressionNode(globalData)
-            , m_term1(term1)
-            , m_term2(term2)
+            , m_expr1(expr1)
+            , m_expr2(expr2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
 
-        ReverseBinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments)
+        ReverseBinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
             : ExpressionNode(globalData, type)
-            , m_term1(term1)
-            , m_term2(term2)
+            , m_expr1(expr1)
+            , m_expr2(expr2)
             , m_rightHasAssignments(rightHasAssignments)
         {
         }
@@ -1248,15 +1248,15 @@ namespace KJS {
         virtual OpcodeID opcode() const KJS_FAST_CALL = 0;
 
     protected:
-        RefPtr<ExpressionNode> m_term1;
-        RefPtr<ExpressionNode> m_term2;
+        RefPtr<ExpressionNode> m_expr1;
+        RefPtr<ExpressionNode> m_expr2;
         bool m_rightHasAssignments;
     };
 
     class MultNode : public BinaryOpNode {
     public:
-        MultNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        MultNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1267,8 +1267,8 @@ namespace KJS {
 
     class DivNode : public BinaryOpNode {
     public:
-        DivNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        DivNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1279,8 +1279,8 @@ namespace KJS {
 
     class ModNode : public BinaryOpNode {
     public:
-        ModNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        ModNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1291,8 +1291,8 @@ namespace KJS {
 
     class AddNode : public BinaryOpNode {
     public:
-        AddNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
+        AddNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1303,8 +1303,8 @@ namespace KJS {
 
     class SubNode : public BinaryOpNode {
     public:
-        SubNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
+        SubNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1315,8 +1315,8 @@ namespace KJS {
 
     class LeftShiftNode : public BinaryOpNode {
     public:
-        LeftShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        LeftShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1327,8 +1327,8 @@ namespace KJS {
 
     class RightShiftNode : public BinaryOpNode {
     public:
-        RightShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        RightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1339,8 +1339,8 @@ namespace KJS {
 
     class UnsignedRightShiftNode : public BinaryOpNode {
     public:
-        UnsignedRightShiftNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        UnsignedRightShiftNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1351,8 +1351,8 @@ namespace KJS {
 
     class LessNode : public BinaryOpNode {
     public:
-        LessNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        LessNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1363,8 +1363,8 @@ namespace KJS {
 
     class GreaterNode : public ReverseBinaryOpNode {
     public:
-        GreaterNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ReverseBinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        GreaterNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1375,8 +1375,8 @@ namespace KJS {
 
     class LessEqNode : public BinaryOpNode {
     public:
-        LessEqNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        LessEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1387,8 +1387,8 @@ namespace KJS {
 
     class GreaterEqNode : public ReverseBinaryOpNode {
     public:
-        GreaterEqNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ReverseBinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        GreaterEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : ReverseBinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1399,12 +1399,12 @@ namespace KJS {
 
     class ThrowableBinaryOpNode : public BinaryOpNode, public ThrowableExpressionData {
     public:
-        ThrowableBinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, type, term1, term2, rightHasAssignments)
+        ThrowableBinaryOpNode(JSGlobalData* globalData, JSType type, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, type, expr1, expr2, rightHasAssignments)
         {
         }
-        ThrowableBinaryOpNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, term1, term2, rightHasAssignments)
+        ThrowableBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
         {
         }
         virtual RegisterID* emitCode(CodeGenerator&, RegisterID* = 0) KJS_FAST_CALL;
@@ -1412,8 +1412,8 @@ namespace KJS {
     
     class InstanceOfNode : public ThrowableBinaryOpNode {
     public:
-        InstanceOfNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ThrowableBinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        InstanceOfNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : ThrowableBinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1424,8 +1424,8 @@ namespace KJS {
 
     class InNode : public ThrowableBinaryOpNode {
     public:
-        InNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : ThrowableBinaryOpNode(globalData, term1, term2, rightHasAssignments)
+        InNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : ThrowableBinaryOpNode(globalData, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1436,8 +1436,8 @@ namespace KJS {
 
     class EqualNode : public BinaryOpNode {
     public:
-        EqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        EqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1448,8 +1448,8 @@ namespace KJS {
 
     class NotEqualNode : public BinaryOpNode {
     public:
-        NotEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        NotEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1460,8 +1460,8 @@ namespace KJS {
 
     class StrictEqualNode : public BinaryOpNode {
     public:
-        StrictEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        StrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1472,8 +1472,8 @@ namespace KJS {
 
     class NotStrictEqualNode : public BinaryOpNode {
     public:
-        NotStrictEqualNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, BooleanType, term1, term2, rightHasAssignments)
+        NotStrictEqualNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, BooleanType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1484,8 +1484,8 @@ namespace KJS {
 
     class BitAndNode : public BinaryOpNode {
     public:
-        BitAndNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        BitAndNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1496,8 +1496,8 @@ namespace KJS {
 
     class BitOrNode : public BinaryOpNode {
     public:
-        BitOrNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        BitOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 
@@ -1508,8 +1508,8 @@ namespace KJS {
 
     class BitXOrNode : public BinaryOpNode {
     public:
-        BitXOrNode(JSGlobalData* globalData, ExpressionNode* term1, ExpressionNode* term2, bool rightHasAssignments) KJS_FAST_CALL
-            : BinaryOpNode(globalData, NumberType, term1, term2, rightHasAssignments)
+        BitXOrNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments) KJS_FAST_CALL
+            : BinaryOpNode(globalData, NumberType, expr1, expr2, rightHasAssignments)
         {
         }
 

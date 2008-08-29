@@ -1,3 +1,61 @@
+2008-08-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Sam Weinig.
+
+        Change 'term' to 'expr' in variable names to standardize terminology.
+
+        * kjs/nodes.cpp:
+        (KJS::BinaryOpNode::emitCode):
+        (KJS::ReverseBinaryOpNode::emitCode):
+        (KJS::ThrowableBinaryOpNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::BinaryOpNode::BinaryOpNode):
+        (KJS::ReverseBinaryOpNode::ReverseBinaryOpNode):
+        (KJS::MultNode::):
+        (KJS::DivNode::):
+        (KJS::ModNode::):
+        (KJS::AddNode::):
+        (KJS::SubNode::):
+        (KJS::LeftShiftNode::):
+        (KJS::RightShiftNode::):
+        (KJS::UnsignedRightShiftNode::):
+        (KJS::LessNode::):
+        (KJS::GreaterNode::):
+        (KJS::LessEqNode::):
+        (KJS::GreaterEqNode::):
+        (KJS::ThrowableBinaryOpNode::):
+        (KJS::InstanceOfNode::):
+        (KJS::InNode::):
+        (KJS::EqualNode::):
+        (KJS::NotEqualNode::):
+        (KJS::StrictEqualNode::):
+        (KJS::NotStrictEqualNode::):
+        (KJS::BitAndNode::):
+        (KJS::BitOrNode::):
+        (KJS::BitXOrNode::):
+        * kjs/nodes2string.cpp:
+        (KJS::MultNode::streamTo):
+        (KJS::DivNode::streamTo):
+        (KJS::ModNode::streamTo):
+        (KJS::AddNode::streamTo):
+        (KJS::SubNode::streamTo):
+        (KJS::LeftShiftNode::streamTo):
+        (KJS::RightShiftNode::streamTo):
+        (KJS::UnsignedRightShiftNode::streamTo):
+        (KJS::LessNode::streamTo):
+        (KJS::GreaterNode::streamTo):
+        (KJS::LessEqNode::streamTo):
+        (KJS::GreaterEqNode::streamTo):
+        (KJS::InstanceOfNode::streamTo):
+        (KJS::InNode::streamTo):
+        (KJS::EqualNode::streamTo):
+        (KJS::NotEqualNode::streamTo):
+        (KJS::StrictEqualNode::streamTo):
+        (KJS::NotStrictEqualNode::streamTo):
+        (KJS::BitAndNode::streamTo):
+        (KJS::BitXOrNode::streamTo):
+        (KJS::BitOrNode::streamTo):
+
 2008-08-28  Alp Toker  <alp@nuanti.com>
 
         GTK+ dist/build fix. List newly added header files.

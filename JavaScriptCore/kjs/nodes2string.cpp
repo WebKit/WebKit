@@ -555,107 +555,107 @@ void LogicalNotNode::streamTo(SourceStream& s) const
 
 void MultNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "*", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "*", m_expr1, m_expr2);
 }
 
 void DivNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "/", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "/", m_expr1, m_expr2);
 }
 
 void ModNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "%", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "%", m_expr1, m_expr2);
 }
 
 void AddNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "+", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "+", m_expr1, m_expr2);
 }
 
 void SubNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "-", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "-", m_expr1, m_expr2);
 }
 
 void LeftShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<<", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<<", m_expr1, m_expr2);
 }
 
 void RightShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">>", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">>", m_expr1, m_expr2);
 }
 
 void UnsignedRightShiftNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">>>", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">>>", m_expr1, m_expr2);
 }
 
 void LessNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<", m_expr1, m_expr2);
 }
 
 void GreaterNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">", m_expr1, m_expr2);
 }
 
 void LessEqNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "<=", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "<=", m_expr1, m_expr2);
 }
 
 void GreaterEqNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), ">=", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), ">=", m_expr1, m_expr2);
 }
 
 void InstanceOfNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "instanceof", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "instanceof", m_expr1, m_expr2);
 }
 
 void InNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "in", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "in", m_expr1, m_expr2);
 }
 
 void EqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "==", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "==", m_expr1, m_expr2);
 }
 
 void NotEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "!=", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "!=", m_expr1, m_expr2);
 }
 
 void StrictEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "===", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "===", m_expr1, m_expr2);
 }
 
 void NotStrictEqualNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "!==", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "!==", m_expr1, m_expr2);
 }
 
 void BitAndNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "&", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "&", m_expr1, m_expr2);
 }
 
 void BitXOrNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "^", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "^", m_expr1, m_expr2);
 }
 
 void BitOrNode::streamTo(SourceStream& s) const
 {
-    streamLeftAssociativeBinaryOperator(s, precedence(), "|", m_term1, m_term2);
+    streamLeftAssociativeBinaryOperator(s, precedence(), "|", m_expr1, m_expr2);
 }
 
 void LogicalOpNode::streamTo(SourceStream& s) const
