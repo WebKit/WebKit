@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2007 Trolltech AS
+ * Copyright (C) 2008 Holger Hans Peter Freyther
  *
  * All rights reserved.
  *
@@ -133,7 +134,7 @@ bool ResourceHandle::start(Frame* frame)
     return QWebNetworkManager::self()->add(this, getInternal()->m_frame->page()->d->networkInterface);
 #else
     ResourceHandleInternal *d = getInternal();
-    d->m_job = new QNetworkReplyHandler(this);
+    d->m_job = new QNetworkReplyHandler(this, QNetworkReplyHandler::LoadMode(d->m_defersLoading));
     return true;
 #endif
 }
@@ -184,7 +185,7 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 #else
     ResourceHandleInternal *d = handle.getInternal();
     d->m_frame = static_cast<FrameLoaderClientQt*>(frame->loader()->client())->webFrame();
-    d->m_job = new QNetworkReplyHandler(&handle);
+    d->m_job = new QNetworkReplyHandler(&handle, QNetworkReplyHandler::LoadNormal);
 #endif
 
     syncLoader.waitForCompletion();
@@ -197,6 +198,11 @@ void ResourceHandle::loadResourceSynchronously(const ResourceRequest& request, R
 void ResourceHandle::setDefersLoading(bool defers)
 {
     d->m_defersLoading = defers;
+
+#if QT_VERSION >= 0x040400
+    if (d->m_job)
+        d->m_job->setLoadMode(QNetworkReplyHandler::LoadMode(defers));
+#endif
 }
 
 } // namespace WebCore

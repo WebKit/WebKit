@@ -1,3 +1,38 @@
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        [network/qt] Implement defering of loading ResourceHandle's
+        This is needed otherwise we end in an ASSERT in the MainResourceLoader. The
+        implementation is simply not forwarding anything to the
+        ResourceHandleClient until we are allowed to. This might lead to a deadlock
+        in Qt as we do not empty the QNetworkReply input buffer and wait until we
+        are allowed to read. If that happens we are forced to buffer the data
+        within QNetworkReplyHandler, for now this is not done.
+
+        Manual test:
+        - Open http://acid3.acidtests.org
+        - Wait for the test to complete
+        - Click on the Reference Rendering link
+        - Be fast and see the results of acid3
+        => assert
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::QNetworkReplyHandler):
+        (WebCore::QNetworkReplyHandler::setLoadMode):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::sendResponseIfNeeded):
+        (WebCore::QNetworkReplyHandler::forwardData):
+        (WebCore::QNetworkReplyHandler::start):
+        (WebCore::QNetworkReplyHandler::resetState):
+        (WebCore::QNetworkReplyHandler::sendQueuedItems):
+        * platform/network/qt/QNetworkReplyHandler.h:
+        (WebCore::QNetworkReplyHandler::):
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::ResourceHandle::start):
+        (WebCore::ResourceHandle::loadResourceSynchronously):
+        (WebCore::ResourceHandle::setDefersLoading):
+
 2008-08-29  Simon Hausmann  <hausmann@webkit.org>
 
         Reviewed by Holger.
