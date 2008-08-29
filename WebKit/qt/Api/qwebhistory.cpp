@@ -24,6 +24,7 @@
 #include "PlatformString.h"
 #include "Image.h"
 #include "Page.h"
+#include "PageGroup.h"
 
 #include <QSharedData>
 
@@ -189,6 +190,11 @@ void QWebHistory::clear()
     RefPtr<WebCore::HistoryItem> current = d->lst->currentItem();
     int capacity = d->lst->capacity();
     d->lst->setCapacity(0);    
+
+    WebCore::Page* page = d->lst->page();
+    if (page && page->groupPtr())
+        page->groupPtr()->removeVisitedLinks();
+
     d->lst->setCapacity(capacity);
     d->lst->addItem(current.get());
     d->lst->goToItem(current.get());

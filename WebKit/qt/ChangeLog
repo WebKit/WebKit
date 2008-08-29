@@ -2,6 +2,22 @@
 
         Reviewed by Simon.
 
+        Catch up with the introduction of PageGroup in r30840. Enable tracking of
+        visited links, enable this in QWebPage next to the other WebCore init call.
+        Calling this more than once is no issue and a cheap operation, we also do not
+        reset the state. When clearing the history of a page, clear the link state.
+
+        * Api/qwebhistory.cpp:
+        (QWebHistory::clear):
+        * Api/qwebhistoryinterface.cpp:
+        (QWebHistoryInterface::setDefaultInterface):
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+
+2008-08-29  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
         Revert revision 34348 which removed the global historyContains() function.
 
         This function was needed to implement the public API of QWebHistoryInterface

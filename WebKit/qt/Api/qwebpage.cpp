@@ -43,6 +43,7 @@
 #include "EditorClientQt.h"
 #include "Settings.h"
 #include "Page.h"
+#include "PageGroup.h"
 #include "Pasteboard.h"
 #include "FrameLoader.h"
 #include "FrameLoadRequest.h"
@@ -214,6 +215,7 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     , viewportSize(QSize(0,0))
 {
     WebCore::InitializeLoggingChannelsIfNecessary();
+    WebCore::PageGroup::setShouldTrackVisitedLinks(true);
 
     chromeClient = new ChromeClientQt(q);
     contextMenuClient = new ContextMenuClientQt();
