@@ -1,3 +1,15 @@
+2008-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Change to throw a ReferenceError at runtime instead of a ParseError
+        at parse time, when the left hand side expression of a for-in statement
+        is not an lvalue.
+
+        * kjs/grammar.y:
+        * kjs/nodes.cpp:
+        (KJS::ForInNode::emitCode):
+
 2008-08-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Not reviewed, build fix (at least for OpenBSD, posssibly more).

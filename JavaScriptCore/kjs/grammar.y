@@ -971,9 +971,6 @@ IterationStatement:
                                           DBG($$.m_node, @1, @9); }
   | FOR '(' LeftHandSideExpr INTOKEN Expr ')' Statement
                                         {
-                                            ExpressionNode* n = $3.m_node;
-                                            if (!n->isLocation())
-                                                YYABORT;
                                             ForInNode* node = new ForInNode(GLOBAL_DATA, $3.m_node, $5.m_node, $7.m_node);
                                             SET_EXCEPTION_LOCATION(node, @3.first_column, @3.last_column, @5.last_column);
                                             $$ = createNodeDeclarationInfo<StatementNode*>(node, $7.m_varDeclarations, $7.m_funcDeclarations,

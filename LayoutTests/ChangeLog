@@ -1,3 +1,12 @@
+2008-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Update test results now that test actually works.
+
+        * fast/js/kde/exception_propagation-expected.txt:
+        * fast/js/kde/resources/exception_propagation.js:
+
 2008-08-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt

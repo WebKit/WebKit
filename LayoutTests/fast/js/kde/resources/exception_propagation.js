@@ -378,7 +378,6 @@ catch (e) {
 shouldBe("for_val_part3_throwbody","4");
 
 // ---------------------------------
-// ### mozilla gives a syntax error on for (throwex() in forin_test_obj)... should we?
 var forin_test_obj = new Object();
 forin_test_obj.a = 1;
 forin_test_obj.b = 2;
