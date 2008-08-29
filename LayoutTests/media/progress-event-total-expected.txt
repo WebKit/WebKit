@@ -1,0 +1,4 @@
+EVENT(begin) TEST(!event.lengthComputable && event.loaded==0 && event.total==0) OK
+EVENT(load) TEST(event.lengthComputable && event.loaded>0 && event.total==239528) OK
+END OF TEST
+

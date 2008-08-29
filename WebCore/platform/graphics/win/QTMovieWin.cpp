@@ -425,8 +425,9 @@ void QTMovieWin::setVolume(float volume)
 
 unsigned QTMovieWin::dataSize() const
 {
-    // FIXME: How to get this?
-    return 1000;
+    if (!m_private->m_movie)
+        return 0;
+    return GetMovieDataSize(m_private->m_movie, 0, GetMovieDuration(m_private->m_movie));
 }
 
 float QTMovieWin::maxTimeLoaded() const

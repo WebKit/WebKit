@@ -1,3 +1,16 @@
+2008-08-29  Eric Carlson  <eric.carlson@apple.com>
+
+        Reviewed by Adele.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=20525
+        <rdar://problem/6169301>
+        
+        Return the size of the movie data instead of 1000. The value is used for the progress
+        event "total" attribute.
+
+       * media/progress-event-total-expected.txt: Added.
+       * media/progress-event-total.html: Added.
+
 2008-08-28  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.
