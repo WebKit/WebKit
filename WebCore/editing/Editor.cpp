@@ -1933,6 +1933,29 @@ void Editor::setKillRingToYankedState()
 
 #endif
 
+bool Editor::insideVisibleArea(const IntPoint& point) const
+{
+    if (m_frame->excludeFromTextSearch())
+        return false;
+    
+    // Right now, we only check the visibility of a point for disconnected frames. For all other
+    // frames, we assume visibility.
+    Frame* frame = m_frame->isDisconnected() ? m_frame : m_frame->tree()->top(true);
+    if (!frame->isDisconnected())
+        return true;
+    
+    RenderPart* renderer = frame->ownerRenderer();
+    RenderBlock* container = renderer->containingBlock();
+    if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
+        return true;
+
+    IntRect rectInPageCoords = container->getOverflowClipRect(0, 0);
+    IntRect rectInFrameCoords = IntRect(renderer->xPos() * -1, renderer->yPos() * -1,
+                                    rectInPageCoords.width(), rectInPageCoords.height());
+
+    return rectInFrameCoords.contains(point);
+}
+
 bool Editor::insideVisibleArea(Range* range) const
 {
     if (!range)
@@ -1957,9 +1980,7 @@ bool Editor::insideVisibleArea(Range* range) const
                                     rectInPageCoords.width(), rectInPageCoords.height());
     IntRect resultRect = range->boundingBox();
     
-    if (rectInFrameCoords.contains(resultRect))
-        return true;
-    return false;
+    return rectInFrameCoords.contains(resultRect);
 }
 
 PassRefPtr<Range> Editor::firstVisibleRange(const String& target, bool caseFlag)

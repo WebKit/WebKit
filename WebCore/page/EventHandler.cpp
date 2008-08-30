@@ -701,6 +701,16 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         frame->contentRenderer()->layer()->hitTest(HitTestRequest(true, true), widgetHitTestResult);
         result = widgetHitTestResult;
     }
+    
+    // If our HitTestResult is not visible, then we started hit testing too far down the frame chain. 
+    // Another hit test at the main frame level should get us the correct visible result.
+    Frame* resultFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : 0;
+    Frame* mainFrame = m_frame->page()->mainFrame();
+    if (resultFrame && resultFrame != mainFrame && !resultFrame->editor()->insideVisibleArea(result.point())) {
+        IntPoint windowPoint = resultFrame->view()->contentsToWindow(result.point());
+        IntPoint mainFramePoint = mainFrame->view()->windowToContents(windowPoint);
+        result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent);
+    }
 
     if (!allowShadowContent)
         result.setToNonShadowAncestor();

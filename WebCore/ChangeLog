@@ -1,3 +1,24 @@
+2008-08-29  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix for <rdar://problem/6181588>
+
+        This patch makes hit testing take into account the new concept of a 
+        disconnected frame, in which some of the content may not be 
+        visible. The current hit testing mechanism starts at a target frame 
+        and drills down for a HitTestResult. In some cases, drilling down 
+        will find a non-visible result. When this happens, we need to try 
+        again, starting at a higher level -- namely, starting at the main 
+        frame.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea): New function that tests if a 
+        point is inside the visible area for a disconnected frame.
+        * editing/Editor.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::hitTestResultAtPoint):
+
 2008-08-29  Adele Peterson  <adele@apple.com>
 
         Reviewed by Adam Roben. 
