@@ -96,28 +96,26 @@ void PluginTokenizer::createDocumentStructure()
     
 bool PluginTokenizer::writeRawData(const char* data, int len)
 {
-    if (!m_embedElement) {
-        createDocumentStructure();
-
-        if (Frame* frame = m_doc->frame()) {
-            Settings* settings = frame->settings();
-            if (settings && settings->arePluginsEnabled()) {
-                m_doc->updateLayout();
-            
-                if (RenderWidget* renderer = static_cast<RenderWidget*>(m_embedElement->renderer())) {
-                    frame->loader()->client()->redirectDataToPlugin(renderer->widget());
-                    frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
-                }
-            
-                finish();
-            }
-        }
-        
+    ASSERT(!m_embedElement);
+    if (m_embedElement)
         return false;
+    
+    createDocumentStructure();
+
+    if (Frame* frame = m_doc->frame()) {
+        Settings* settings = frame->settings();
+        if (settings && settings->arePluginsEnabled()) {
+            m_doc->updateLayout();
+        
+            if (RenderWidget* renderer = static_cast<RenderWidget*>(m_embedElement->renderer())) {
+                frame->loader()->client()->redirectDataToPlugin(renderer->widget());
+                frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
+            }
+        
+            finish();
+        }
     }
-    
-    ASSERT_NOT_REACHED();
-    
+
     return false;
 }
     

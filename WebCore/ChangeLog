@@ -1,5 +1,14 @@
 2008-08-29  Brady Eidson  <beidson@apple.com>
 
+        Reviewed by Anders' rubberstamp
+
+        Style cleanup to match MediaTokenizer::writeRawData()
+
+        * loader/PluginDocument.cpp:
+        (WebCore::PluginTokenizer::writeRawData):
+
+2008-08-29  Brady Eidson  <beidson@apple.com>
+
         Reviewed by Anders
 
         Fix regression I introducted in 35946
