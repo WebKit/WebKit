@@ -134,4 +134,7 @@ interface IWebViewPrivate : IUnknown
 
     HRESULT setTransparent([in] BOOL transparent);
     HRESULT transparent([out, retval] BOOL* transparent);
+
+    HRESULT setDefersCallbacks([in] BOOL defersCallbacks);
+    HRESULT defersCallbacks([out, retval] BOOL* defersCallbacks);
 }

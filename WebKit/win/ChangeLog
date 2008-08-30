@@ -1,3 +1,15 @@
+2008-08-30  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add WebView SPI to defer loading callbacks.
+
+        * Interfaces/IWebViewPrivate.idl:
+        * WebView.cpp:
+        (WebView::setDefersCallbacks):
+        (WebView::defersCallbacks):
+        * WebView.h:
+
 2008-08-28  Adele Peterson  <adele@apple.com>
 
         Build fix.
