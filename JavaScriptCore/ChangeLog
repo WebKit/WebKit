@@ -1,5 +1,12 @@
 2008-08-29  Anders Carlsson  <andersca@apple.com>
 
+        Build fix.
+
+        * VM/Machine.cpp:
+        (KJS::getCPUTime):
+
+2008-08-29  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/6174667> 

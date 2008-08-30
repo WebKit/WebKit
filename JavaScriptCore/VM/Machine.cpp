@@ -1027,7 +1027,7 @@ static inline unsigned getCPUTime()
     
     GetThreadTimes(GetCurrentThread(), &creationTime, &exitTime, &kernelTime.fileTime, &userTime.fileTime);
     
-    return userTime / 10000 + kernelTime / 10000;
+    return userTime.fileTimeAsLong / 10000 + kernelTime.fileTimeAsLong / 10000;
 #else
 #error Platform does not have getCurrentTime function
 #endif
