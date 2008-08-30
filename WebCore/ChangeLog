@@ -1,3 +1,16 @@
+2008-08-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Fix regression I introducted in 35946
+        Already covered by media/video-click-dlbclick-standalone.html
+
+        * loader/MediaDocument.cpp:
+        (WebCore::MediaTokenizer::createDocumentStructure): Don't cancel the load here - too early!
+        (WebCore::MediaTokenizer::writeRawData): Call finish() here so onload() can be called.  Also add
+          an ASSERT signifying that this method should only be called once, to more closely follow the
+          PluginDocument case.
+
 2008-08-29  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

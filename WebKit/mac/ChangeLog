@@ -1,3 +1,14 @@
+2008-08-29  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders
+
+        Fix regression I introducted in 35946
+        Already covered by media/video-click-dlbclick-standalone.html
+
+        * WebView/WebHTMLRepresentation.mm:
+        (-[WebHTMLRepresentation receivedData:withDataSource:]): Cancel the load here after
+          calling [WebFrame _receivedData:] which more closely follows the path taken by PluginDocuments
+
 2008-08-28  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Geoff.

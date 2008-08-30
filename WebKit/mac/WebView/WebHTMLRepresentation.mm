@@ -46,6 +46,7 @@
 #import <WebCore/DocumentLoader.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/HTMLFormControlElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
@@ -157,10 +158,15 @@ static NSArray *concatenateArrays(NSArray *first, NSArray *second)
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
-    WebFrame *frame = [dataSource webFrame];
-    if (frame) {
+    WebFrame *webFrame = [dataSource webFrame];
+    if (webFrame) {
         if (!_private->pluginView)
-            [frame _receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
+            [webFrame _receivedData:data textEncodingName:[[_private->dataSource response] textEncodingName]];
+        
+        // If the document is a stand-alone media document, now is the right time to cancel the WebKit load
+        Frame* coreFrame = core(webFrame);
+        if (coreFrame->document() && coreFrame->document()->isMediaDocument())
+            coreFrame->loader()->documentLoader()->cancelMainResourceLoad(coreFrame->loader()->client()->pluginWillHandleLoadError(coreFrame->loader()->documentLoader()->response()));
 
         if (_private->pluginView) {
             if (!_private->hasSentResponseToPlugin) {
