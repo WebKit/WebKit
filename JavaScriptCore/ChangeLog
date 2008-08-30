@@ -1,3 +1,17 @@
+2008-08-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/6174667> 
+        When a machine is under heavy load, the Slow Script dialog often comes up many times and just gets in the way
+        
+        Instead of using clock time, use the CPU time spent executing the current thread when
+        determining if the script has been running for too long.
+        
+        * VM/Machine.cpp:
+        (KJS::getCPUTime):
+        (KJS::Machine::checkTimeout):
+
 2008-08-28  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Sam Weinig.
