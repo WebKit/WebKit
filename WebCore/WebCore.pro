@@ -892,7 +892,7 @@ SOURCES += \
     rendering/RenderWordBreak.cpp \
     rendering/RootInlineBox.cpp \
     rendering/SVGRenderTreeAsText.cpp \
-    rendering/TextControlInnerElements.h \
+    rendering/TextControlInnerElements.cpp \
     rendering/style/RenderStyle.cpp \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleGeneratedImage.cpp \

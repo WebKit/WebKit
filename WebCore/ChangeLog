@@ -1,3 +1,10 @@
+2008-08-31  Simon Hausmann  <hausmann@webkit.org>
+
+        Unreviewed Qt build fix.
+
+        * WebCore.pro: Add TextControlInnerElements.cpp to SOURCES instead of
+        the .h file
+
 2008-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
