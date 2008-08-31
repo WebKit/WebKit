@@ -1,3 +1,10 @@
+2008-08-31  Simon Hausmann  <hausmann@wekit.org>
+
+        Unreviewed build fix (with gcc 4.3)
+
+        * kjs/ustring.h: Properly forward declare operator== for UString and
+        the the concatenate functions inside the KJS namespace.
+
 2008-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

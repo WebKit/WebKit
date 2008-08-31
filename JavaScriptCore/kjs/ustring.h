@@ -252,6 +252,8 @@ namespace KJS {
         friend bool operator==(const UString&, const UString&);
         friend PassRefPtr<Rep> concatenate(Rep*, Rep*); // returns 0 if out of memory
     };
+    PassRefPtr<UString::Rep> concatenate(UString::Rep*, UString::Rep*);
+    bool operator==(const UString&, const UString&);
 
     inline bool operator!=(const UString& s1, const UString& s2)
     {
