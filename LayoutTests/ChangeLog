@@ -1,3 +1,14 @@
+2008-08-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Tests for bug 20577: REGRESSION (r35006): Gmail is broken
+        <https://bugs.webkit.org/show_bug.cgi?id=20577>
+
+        * fast/js/resources/string-substr.js: Added.
+        * fast/js/string-substr-expected.txt: Added.
+        * fast/js/string-substr.html: Added.
+
 2008-08-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

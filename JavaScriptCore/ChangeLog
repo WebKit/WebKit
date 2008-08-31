@@ -1,3 +1,19 @@
+2008-08-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20577: REGRESSION (r35006): Gmail is broken
+        <https://bugs.webkit.org/show_bug.cgi?id=20577>
+
+        r35006 changed stringProtoFuncSubstr() so that it is uses the more
+        efficient jsSubstring(), rather than using UString::substr() and then
+        calling jsString(). However, the change did not account for the case
+        where the start and the length of the substring extend beyond the length
+        of the original string. This patch corrects that.
+
+        * kjs/StringPrototype.cpp:
+        (KJS::stringProtoFuncSubstr):
+
 2008-08-31  Simon Hausmann  <hausmann@wekit.org>
 
         Unreviewed build fix (with gcc 4.3)

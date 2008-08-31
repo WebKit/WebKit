@@ -564,17 +564,15 @@ JSValue* stringProtoFuncSubstr(ExecState* exec, JSObject*, JSValue* thisValue, c
 
     double start = a0->toInteger(exec);
     double length = a1->isUndefined() ? len : a1->toInteger(exec);
-    if (start >= len)
-        return jsEmptyString(exec);
-    if (length < 0)
+    if (start >= len || length <= 0)
         return jsEmptyString(exec);
     if (start < 0) {
         start += len;
         if (start < 0)
             start = 0;
     }
-    if (length > len)
-        length = len;
+    if (start + length > len)
+        length = len - start;
     return jsSubstring(exec, s, static_cast<unsigned>(start), static_cast<unsigned>(length));
 }
 
