@@ -124,7 +124,7 @@ static JSValue* callDate(ExecState* exec, JSObject*, JSValue*, const ArgList&)
     tm localTM;
     getLocalTime(&localTime, &localTM);
     GregorianDateTime ts(localTM);
-    return jsString(exec, formatDate(ts) + " " + formatTime(ts, false));
+    return jsNontrivialString(exec, formatDate(ts) + " " + formatTime(ts, false));
 }
 
 CallType DateConstructor::getCallData(CallData& callData)

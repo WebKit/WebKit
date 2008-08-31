@@ -1,3 +1,16 @@
+2008-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - updated incorrect results that reflected a bug in the RegExp object
+
+        * fast/js/regexp-caching-expected.txt: Updated results to
+        correctly show that $1 through $9, lastMatch, lastParen,
+        leftContext, and rightContext are left alone both when
+        a program changes the value of RegExp.input and when it
+        performs an unsuccessful match. The new results match
+        Gecko behavior (I tested both Firefox 2 and 3).
+
 2008-08-29  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Adele.

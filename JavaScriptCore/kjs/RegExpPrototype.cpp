@@ -101,18 +101,19 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
 {
     if (!thisValue->isObject(&RegExpObject::info)) {
         if (thisValue->isObject(&RegExpPrototype::info))
-            return jsString(exec, "//");
+            return jsNontrivialString(exec, "//");
         return throwError(exec, TypeError);
     }
 
-    UString result = "/" + static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().source)->toString(exec) + "/";
+    UString result = "/" + static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().source)->toString(exec);
+    result.append('/');
     if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().global)->toBoolean(exec))
-        result += "g";
+        result.append('g');
     if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().ignoreCase)->toBoolean(exec))
-        result += "i";
+        result.append('i');
     if (static_cast<RegExpObject*>(thisValue)->get(exec, exec->propertyNames().multiline)->toBoolean(exec))
-        result += "m";
-    return jsString(exec, result);
+        result.append('m');
+    return jsNontrivialString(exec, result);
 }
 
 } // namespace KJS

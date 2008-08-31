@@ -394,7 +394,7 @@ void UString::Rep::checkConsistency() const
 #endif
 
 // put these early so they can be inlined
-inline size_t UString::expandedSize(size_t size, size_t otherSize) const
+inline size_t UString::expandedSize(size_t size, size_t otherSize)
 {
     // Do the size calculation in two parts, returning overflowIndicator if
     // we overflow the maximum value that we can handle.
@@ -431,7 +431,7 @@ void UString::expandCapacity(int requiredLength)
         r->buf = reallocChars(r->buf, newCapacity);
         if (!r->buf) {
             r->buf = oldBuf;
-            m_rep = &Rep::null;
+            makeNull();
             return;
         }
         r->capacity = newCapacity - r->preCapacity;
@@ -454,7 +454,7 @@ void UString::expandPreCapacity(int requiredPreCap)
 
         UChar* newBuf = allocChars(newCapacity);
         if (!newBuf) {
-            m_rep = &Rep::null;
+            makeNull();
             return;
         }
         memcpy(newBuf + delta, r->buf, (r->capacity + r->preCapacity) * sizeof(UChar));
@@ -484,7 +484,7 @@ UString::UString(const char* c)
     size_t length = strlen(c);
     UChar* d = allocChars(length);
     if (!d)
-        m_rep = &Rep::null;
+        makeNull();
     else {
         for (size_t i = 0; i < length; i++)
             d[i] = static_cast<unsigned char>(c[i]); // use unsigned char to zero-extend instead of sign-extend
@@ -518,66 +518,86 @@ UString::UString(const Vector<UChar>& buffer)
         m_rep = Rep::createCopying(buffer.data(), buffer.size());
 }
 
-
-UString::UString(const UString& a, const UString& b)
+PassRefPtr<UString::Rep> concatenate(UString::Rep* a, UString::Rep* b)
 {
-    a.rep()->checkConsistency();
-    b.rep()->checkConsistency();
+    a->checkConsistency();
+    b->checkConsistency();
 
-    int aSize = a.size();
-    int aOffset = a.m_rep->offset;
-    int bSize = b.size();
-    int bOffset = b.m_rep->offset;
+    int aSize = a->size();
+    int aOffset = a->offset;
+    int bSize = b->size();
+    int bOffset = b->offset;
     int length = aSize + bSize;
 
     // possible cases:
 
-    if (aSize == 0) {
-        // a is empty
-        m_rep = b.m_rep;
-    } else if (bSize == 0) {
-        // b is empty
-        m_rep = a.m_rep;
-    } else if (aOffset + aSize == a.usedCapacity() && aSize >= minShareSize && 4 * aSize >= bSize &&
-               (-bOffset != b.usedPreCapacity() || aSize >= bSize)) {
+    // a is empty
+    if (aSize == 0)
+        return b;
+    // b is empty
+    if (bSize == 0)
+        return a;
+
+    if (bSize == 1 && aOffset + aSize == a->baseString->usedCapacity && aOffset + length <= a->baseString->capacity) {
+        // b is a single character (common fast case)
+        a->baseString->usedCapacity = aOffset + length;
+        a->data()[aSize] = b->data()[0];
+        return UString::Rep::create(a, 0, length);
+    }
+
+    if (aOffset + aSize == a->baseString->usedCapacity && aSize >= minShareSize && 4 * aSize >= bSize &&
+               (-bOffset != b->baseString->usedPreCapacity || aSize >= bSize)) {
         // - a reaches the end of its buffer so it qualifies for shared append
         // - also, it's at least a quarter the length of b - appending to a much shorter
         //   string does more harm than good
         // - however, if b qualifies for prepend and is longer than a, we'd rather prepend
         UString x(a);
         x.expandCapacity(aOffset + length);
-        if (a.data() && x.data()) {
-            memcpy(const_cast<UChar*>(a.data() + aSize), b.data(), bSize * sizeof(UChar));
-            m_rep = Rep::create(a.m_rep, 0, length);
-        } else
-            m_rep = &Rep::null;
-    } else if (-bOffset == b.usedPreCapacity() && bSize >= minShareSize  && 4 * bSize >= aSize) {
+        if (!a->data() || !x.data())
+            return 0;
+        memcpy(a->data() + aSize, b->data(), bSize * sizeof(UChar));
+        PassRefPtr<UString::Rep> result = UString::Rep::create(a, 0, length);
+
+        a->checkConsistency();
+        b->checkConsistency();
+        result->checkConsistency();
+
+        return result;
+    }
+
+    if (-bOffset == b->baseString->usedPreCapacity && bSize >= minShareSize  && 4 * bSize >= aSize) {
         // - b reaches the beginning of its buffer so it qualifies for shared prepend
         // - also, it's at least a quarter the length of a - prepending to a much shorter
         //   string does more harm than good
         UString y(b);
         y.expandPreCapacity(-bOffset + aSize);
-        if (b.data() && y.data()) {
-            memcpy(const_cast<UChar *>(b.data() - aSize), a.data(), aSize * sizeof(UChar));
-            m_rep = Rep::create(b.m_rep, -aSize, length);
-        } else
-            m_rep = &Rep::null;
-    } else {
-        // a does not qualify for append, and b does not qualify for prepend, gotta make a whole new string
-        size_t newCapacity = expandedSize(length, 0);
-        UChar* d = allocChars(newCapacity);
-        if (!d)
-            m_rep = &Rep::null;
-        else {
-            memcpy(d, a.data(), aSize * sizeof(UChar));
-            memcpy(d + aSize, b.data(), bSize * sizeof(UChar));
-            m_rep = Rep::create(d, length);
-            m_rep->capacity = newCapacity;
-        }
+        if (!b->data() || !y.data())
+            return 0;
+        memcpy(b->data() - aSize, a->data(), aSize * sizeof(UChar));
+        PassRefPtr<UString::Rep> result = UString::Rep::create(b, -aSize, length);
+
+        a->checkConsistency();
+        b->checkConsistency();
+        result->checkConsistency();
+
+        return result;
     }
-    a.rep()->checkConsistency();
-    b.rep()->checkConsistency();
-    m_rep->checkConsistency();
+
+    // a does not qualify for append, and b does not qualify for prepend, gotta make a whole new string
+    size_t newCapacity = UString::expandedSize(length, 0);
+    UChar* d = allocChars(newCapacity);
+    if (!d)
+        return 0;
+    memcpy(d, a->data(), aSize * sizeof(UChar));
+    memcpy(d + aSize, b->data(), bSize * sizeof(UChar));
+    PassRefPtr<UString::Rep> result = UString::Rep::create(d, length);
+    result->capacity = newCapacity;
+
+    a->checkConsistency();
+    b->checkConsistency();
+    result->checkConsistency();
+
+    return result;
 }
 
 const UString& UString::null()
@@ -806,7 +826,7 @@ UString& UString::append(const UString &t)
         size_t newCapacity = expandedSize(length, 0);
         UChar* d = allocChars(newCapacity);
         if (!d)
-            m_rep = &Rep::null;
+            makeNull();
         else {
             memcpy(d, data(), thisSize * sizeof(UChar));
             memcpy(const_cast<UChar*>(d + thisSize), t.data(), tSize * sizeof(UChar));
@@ -855,7 +875,7 @@ UString& UString::append(const UChar* tData, int tSize)
         size_t newCapacity = expandedSize(length, 0);
         UChar* d = allocChars(newCapacity);
         if (!d)
-            m_rep = &Rep::null;
+            makeNull();
         else {
             memcpy(d, data(), thisSize * sizeof(UChar));
             memcpy(const_cast<UChar*>(d + thisSize), tData, tSize * sizeof(UChar));
@@ -908,7 +928,7 @@ UString& UString::append(const char* t)
         size_t newCapacity = expandedSize(length, 0);
         UChar* d = allocChars(newCapacity);
         if (!d)
-            m_rep = &Rep::null;
+            makeNull();
         else {
             memcpy(d, data(), thisSize * sizeof(UChar));
             for (int i = 0; i < tSize; ++i)
@@ -936,7 +956,7 @@ UString& UString::append(UChar c)
         size_t newCapacity = expandedSize(1, 0);
         UChar* d = allocChars(newCapacity);
         if (!d)
-            m_rep = &Rep::null;
+            makeNull();
         else {
             d[0] = c;
             m_rep = Rep::create(d, 1);
@@ -964,7 +984,7 @@ UString& UString::append(UChar c)
         size_t newCapacity = expandedSize(length + 1, 0);
         UChar* d = allocChars(newCapacity);
         if (!d)
-            m_rep = &Rep::null;
+            makeNull();
         else {
             memcpy(d, data(), length * sizeof(UChar));
             d[length] = c;
@@ -1042,7 +1062,7 @@ UString& UString::operator=(const char* c)
     } else {
         d = allocChars(l);
         if (!d) {
-            m_rep = &Rep::null;
+            makeNull();
             return *this;
         }
         m_rep = Rep::create(d, l);
@@ -1075,7 +1095,14 @@ UChar UString::operator[](int pos) const
 
 double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const
 {
-    double d;
+    if (size() == 1) {
+        UChar c = data()[0];
+        if (isASCIIDigit(c))
+            return c - '0';
+        if (isASCIISpace(c) && tolerateEmptyString)
+            return 0;
+        return NaN;
+    }
 
     // FIXME: If tolerateTrailingJunk is true, then we want to tolerate non-8-bit junk
     // after the number, so this is too strict a check.
@@ -1091,6 +1118,8 @@ double UString::toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) co
     // empty string ?
     if (*c == '\0')
         return tolerateEmptyString ? 0.0 : NaN;
+
+    double d;
 
     // hex number ?
     if (*c == '0' && (*(c + 1) == 'x' || *(c + 1) == 'X')) {
@@ -1334,10 +1363,15 @@ UString UString::substr(int pos, int len) const
 
 bool operator==(const UString& s1, const UString& s2)
 {
-    if (s1.m_rep->len != s2.m_rep->len)
-        return false;
-
-    return (memcmp(s1.m_rep->data(), s2.m_rep->data(), s1.m_rep->len * sizeof(UChar)) == 0);
+    int size = s1.size();
+    switch (size) {
+        case 0:
+            return !s2.size();
+        case 1:
+            return s2.size() == 1 && s1.data()[0] == s2.data()[0];
+        default:
+            return s2.size() == size && memcmp(s1.data(), s2.data(), size * sizeof(UChar)) == 0;
+    }
 }
 
 bool operator==(const UString& s1, const char *s2)
@@ -1446,6 +1480,18 @@ CString UString::UTF8String(bool strict) const
         return CString();
 
     return CString(buffer.data(), p - buffer.data());
+}
+
+// For use in error handling code paths -- having this not be inlined helps avoid PIC branches to fetch the global on Mac OS X.
+NEVER_INLINE void UString::makeNull()
+{
+    m_rep = &Rep::null;
+}
+
+// For use in error handling code paths -- having this not be inlined helps avoid PIC branches to fetch the global on Mac OS X.
+NEVER_INLINE UString::Rep* UString::nullRep()
+{
+    return &Rep::null;
 }
 
 } // namespace KJS

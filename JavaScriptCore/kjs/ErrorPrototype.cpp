@@ -39,8 +39,8 @@ ErrorPrototype::ErrorPrototype(ExecState* exec, ObjectPrototype* objectPrototype
 {
     // The constructor will be added later in ErrorConstructor's constructor
 
-    putDirect(exec->propertyNames().name, jsString(exec, "Error"), DontEnum);
-    putDirect(exec->propertyNames().message, jsString(exec, "Unknown error"), DontEnum);
+    putDirect(exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
+    putDirect(exec->propertyNames().message, jsNontrivialString(exec, "Unknown error"), DontEnum);
 
     putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
 }
@@ -62,7 +62,7 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, 
         s += v->toString(exec);
     }
 
-    return jsString(exec, s);
+    return jsNontrivialString(exec, s);
 }
 
 } // namespace KJS

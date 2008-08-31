@@ -125,12 +125,12 @@ JSValue* objectProtoFuncPropertyIsEnumerable(ExecState* exec, JSObject*, JSValue
 
 JSValue* objectProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    return jsString(exec, thisValue->toThisObject(exec)->toString(exec));
+    return thisValue->toThisJSString(exec);
 }
 
 JSValue* objectProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, const ArgList&)
 {
-    return jsString(exec, "[object " + thisValue->toThisObject(exec)->className() + "]");
+    return jsNontrivialString(exec, "[object " + thisValue->toThisObject(exec)->className() + "]");
 }
 
 } // namespace KJS

@@ -32,7 +32,7 @@ const ClassInfo StringObject::info = { "String", 0, 0, 0 };
 StringObject::StringObject(ExecState* exec, JSObject* prototype)
     : JSWrapperObject(prototype)
 {
-    setInternalValue(jsString(exec, ""));
+    setInternalValue(jsEmptyString(exec));
 }
 
 StringObject::StringObject(JSObject* prototype, JSString* string)

@@ -969,6 +969,7 @@ bool Heap::collect()
     if (m_markListSet && m_markListSet->size())
         ArgList::markLists(*m_markListSet);
     m_globalData->machine->registerFile().markCallFrames(this);
+    m_globalData->smallStrings.mark();
 
     JAVASCRIPTCORE_GC_MARKED();
 

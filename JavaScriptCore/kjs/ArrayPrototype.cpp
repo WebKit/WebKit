@@ -126,7 +126,7 @@ JSValue* arrayProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, 
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsEmptyString(exec); // return an empty string, avoiding infinite recursion.
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned k = 0; k < length; k++) {
@@ -170,7 +170,7 @@ JSValue* arrayProtoFuncToLocaleString(ExecState* exec, JSObject*, JSValue* thisV
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsEmptyString(exec); // return an empty string, avoding infinite recursion.
 
     unsigned length = thisObj->get(exec, exec->propertyNames().length)->toUInt32(exec);
     for (unsigned k = 0; k < length; k++) {
@@ -220,7 +220,7 @@ JSValue* arrayProtoFuncJoin(ExecState* exec, JSObject*, JSValue* thisValue, cons
     bool alreadyVisited = !arrayVisitedElements.add(thisObj).second;
     Vector<UChar, 256> strBuffer;
     if (alreadyVisited)
-        return jsString(exec, UString(0, 0)); // return an empty string, avoding infinite recursion.
+        return jsEmptyString(exec); // return an empty string, avoding infinite recursion.
 
     UChar comma = ',';
     UString separator = args.at(exec, 0)->isUndefined() ? UString(&comma, 1) : args.at(exec, 0)->toString(exec);

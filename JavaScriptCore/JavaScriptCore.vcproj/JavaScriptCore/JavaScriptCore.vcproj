@@ -837,7 +837,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\simple_number.h"
+				RelativePath="..\..\kjs\SmallStrings.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\SmallStrings.cpp"
 				>
 			</File>
 			<File

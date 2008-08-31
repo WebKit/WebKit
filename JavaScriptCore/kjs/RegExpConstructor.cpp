@@ -71,6 +71,7 @@ struct RegExpConstructorPrivate {
     {
     }
 
+    UString input;
     UString lastInput;
     OwnArrayPtr<int> lastOvector;
     unsigned lastNumSubPatterns : 31;
@@ -106,6 +107,7 @@ void RegExpConstructor::performMatch(RegExp* r, const UString& s, int startOffse
 
         length = tmpOvector[1] - tmpOvector[0];
 
+        d->input = s;
         d->lastInput = s;
         d->lastOvector.set(tmpOvector.release());
         d->lastNumSubPatterns = r->numSubpatterns();
@@ -133,6 +135,7 @@ RegExpMatchesArray::RegExpMatchesArray(ExecState* exec, RegExpConstructorPrivate
     : JSArray(exec->lexicalGlobalObject()->arrayPrototype(), data->lastNumSubPatterns + 1)
 {
     RegExpConstructorPrivate* d = new RegExpConstructorPrivate;
+    d->input = data->lastInput;
     d->lastInput = data->lastInput;
     d->lastNumSubPatterns = data->lastNumSubPatterns;
     unsigned offsetVectorSize = (data->lastNumSubPatterns + 1) * 2; // only copying the result part of the vector
@@ -158,10 +161,10 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
     for (unsigned i = 0; i <= lastNumSubpatterns; ++i) {
         int start = d->lastOvector[2 * i];
         if (start >= 0)
-            JSArray::put(exec, i, jsString(exec, d->lastInput.substr(start, d->lastOvector[2 * i + 1] - start)));
+            JSArray::put(exec, i, jsSubstring(exec, d->lastInput, start, d->lastOvector[2 * i + 1] - start));
     }
     JSArray::put(exec, exec->propertyNames().index, jsNumber(exec, d->lastOvector[0]));
-    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->lastInput));
+    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input));
 
     delete d;
     setLazyCreationData(0);
@@ -174,9 +177,12 @@ JSObject* RegExpConstructor::arrayOfMatches(ExecState* exec) const
 
 JSValue* RegExpConstructor::getBackref(ExecState* exec, unsigned i) const
 {
-    if (d->lastOvector && i <= d->lastNumSubPatterns)
-        return jsString(exec, d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
-    return jsString(exec, "");
+    if (d->lastOvector && i <= d->lastNumSubPatterns) {
+        int start = d->lastOvector[2 * i];
+        if (start >= 0)
+            return jsSubstring(exec, d->lastInput, start, d->lastOvector[2 * i + 1] - start);
+    }
+    return jsEmptyString(exec);
 }
 
 JSValue* RegExpConstructor::getLastParen(ExecState* exec) const
@@ -184,25 +190,25 @@ JSValue* RegExpConstructor::getLastParen(ExecState* exec) const
     unsigned i = d->lastNumSubPatterns;
     if (i > 0) {
         ASSERT(d->lastOvector);
-        return jsString(exec, d->lastInput.substr(d->lastOvector[2 * i], d->lastOvector[2 * i + 1] - d->lastOvector[2 * i]));
+        int start = d->lastOvector[2 * i];
+        if (start >= 0)
+            return jsSubstring(exec, d->lastInput, start, d->lastOvector[2 * i + 1] - start);
     }
-    return jsString(exec, "");
+    return jsEmptyString(exec);
 }
 
 JSValue* RegExpConstructor::getLeftContext(ExecState* exec) const
 {
     if (d->lastOvector)
-        return jsString(exec, d->lastInput.substr(0, d->lastOvector[0]));
-    return jsString(exec, "");
+        return jsSubstring(exec, d->lastInput, 0, d->lastOvector[0]);
+    return jsEmptyString(exec);
 }
 
 JSValue* RegExpConstructor::getRightContext(ExecState* exec) const
 {
-    if (d->lastOvector) {
-        UString s = d->lastInput;
-        return jsString(exec, s.substr(d->lastOvector[1], s.size() - d->lastOvector[1]));
-    }
-    return jsString(exec, "");
+    if (d->lastOvector)
+        return jsSubstring(exec, d->lastInput, d->lastOvector[1], d->lastInput.size() - d->lastOvector[1]);
+    return jsEmptyString(exec);
 }
     
 bool RegExpConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
@@ -232,7 +238,7 @@ JSValue* RegExpConstructor::getValueProperty(ExecState* exec, int token) const
         case Dollar9:
             return getBackref(exec, 9);
         case Input:
-            return jsString(exec, d->lastInput);
+            return jsString(exec, d->input);
         case Multiline:
             return jsBoolean(d->multiline);
         case LastMatch:
@@ -247,7 +253,7 @@ JSValue* RegExpConstructor::getValueProperty(ExecState* exec, int token) const
             ASSERT_NOT_REACHED();
     }
 
-    return jsString(exec, "");
+    return jsEmptyString(exec);
 }
 
 void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
@@ -259,7 +265,7 @@ void RegExpConstructor::putValueProperty(ExecState* exec, int token, JSValue* va
 {
     switch (token) {
         case Input:
-            d->lastInput = value->toString(exec);
+            d->input = value->toString(exec);
             break;
         case Multiline:
             d->multiline = value->toBoolean(exec);
@@ -317,7 +323,7 @@ const UString& RegExpConstructor::input() const
 {
     // Can detect a distinct initial state that is invisible to JavaScript, by checking for null
     // state (since jsString turns null strings to empty strings).
-    return d->lastInput;
+    return d->input;
 }
 
 } // namespace KJS

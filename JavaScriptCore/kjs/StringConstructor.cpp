@@ -28,20 +28,21 @@
 
 namespace KJS {
 
+static NEVER_INLINE JSValue* stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
+{
+    UChar* buf = static_cast<UChar*>(fastMalloc(args.size() * sizeof(UChar)));
+    UChar* p = buf;
+    ArgList::const_iterator end = args.end();
+    for (ArgList::const_iterator it = args.begin(); it != end; ++it)
+        *p++ = static_cast<UChar>((*it).jsValue(exec)->toUInt32(exec));
+    return jsString(exec, UString(buf, p - buf, false));
+}
+
 static JSValue* stringFromCharCode(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
-    UString s;
-    if (args.size()) {
-        UChar* buf = static_cast<UChar*>(fastMalloc(args.size() * sizeof(UChar)));
-        UChar* p = buf;
-        ArgList::const_iterator end = args.end();
-        for (ArgList::const_iterator it = args.begin(); it != end; ++it)
-            *p++ = static_cast<UChar>((*it).jsValue(exec)->toUInt32(exec));
-        s = UString(buf, args.size(), false);
-    } else
-        s = "";
-
-    return jsString(exec, s);
+    if (LIKELY(args.size() == 1))
+        return jsSingleCharacterString(exec, args.at(exec, 0)->toUInt32(exec));
+    return stringFromCharCodeSlowCase(exec, args);
 }
 
 ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
@@ -78,7 +79,7 @@ ConstructType StringConstructor::getConstructData(ConstructData& constructData)
 static JSValue* callStringConstructor(ExecState* exec, JSObject*, JSValue*, const ArgList& args)
 {
     if (args.isEmpty())
-        return jsString(exec, "");
+        return jsEmptyString(exec);
     return jsString(exec, args.at(exec, 0)->toString(exec));
 }
 

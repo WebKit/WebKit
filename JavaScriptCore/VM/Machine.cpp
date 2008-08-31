@@ -191,10 +191,10 @@ static JSValue* jsAddSlowCase(ExecState* exec, JSValue* v1, JSValue* v2)
     JSValue* p2 = v2->toPrimitive(exec);
 
     if (p1->isString() || p2->isString()) {
-        UString value = p1->toString(exec) + p2->toString(exec);
-        if (value.isNull())
+        RefPtr<UString::Rep> value = concatenate(p1->toString(exec).rep(), p2->toString(exec).rep());
+        if (!value)
             return throwOutOfMemoryError(exec);
-        return jsString(exec, value);
+        return jsString(exec, value.release());
     }
 
     return jsNumber(exec, p1->toNumber(exec) + p2->toNumber(exec));
@@ -217,10 +217,10 @@ static inline JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
         return jsNumber(exec, left + right);
     
     if (v1->isString() && v2->isString()) {
-        UString value = static_cast<JSString*>(v1)->value() + static_cast<JSString*>(v2)->value();
-        if (value.isNull())
+        RefPtr<UString::Rep> value = concatenate(static_cast<JSString*>(v1)->value().rep(), static_cast<JSString*>(v2)->value().rep());
+        if (!value)
             return throwOutOfMemoryError(exec);
-        return jsString(exec, value);
+        return jsString(exec, value.release());
     }
 
     // All other cases are pretty uncommon
@@ -230,23 +230,23 @@ static inline JSValue* jsAdd(ExecState* exec, JSValue* v1, JSValue* v2)
 static JSValue* jsTypeStringForValue(ExecState* exec, JSValue* v)
 {
     if (v->isUndefined())
-        return jsString(exec, "undefined");
+        return jsNontrivialString(exec, "undefined");
     if (v->isBoolean())
-        return jsString(exec, "boolean");
+        return jsNontrivialString(exec, "boolean");
     if (v->isNumber())
-        return jsString(exec, "number");
+        return jsNontrivialString(exec, "number");
     if (v->isString())
-        return jsString(exec, "string");
+        return jsNontrivialString(exec, "string");
     if (v->isObject()) {
         // Return "undefined" for objects that should be treated
         // as null when doing comparisons.
         if (static_cast<JSObject*>(v)->masqueradeAsUndefined())
-            return jsString(exec, "undefined");
+            return jsNontrivialString(exec, "undefined");
         CallData callData;
         if (static_cast<JSObject*>(v)->getCallData(callData) != CallTypeNone)
-            return jsString(exec, "function");
+            return jsNontrivialString(exec, "function");
     }
-    return jsString(exec, "object");
+    return jsNontrivialString(exec, "object");
 }
 
 static bool NEVER_INLINE resolve(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue*& exceptionValue)

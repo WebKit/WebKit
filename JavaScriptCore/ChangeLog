@@ -1,3 +1,195 @@
+2008-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20333
+          improve JavaScript speed when handling single-character strings
+
+        1.035x as fast on SunSpider overall.
+        1.127x as fast on SunSpider string tests.
+        1.910x as fast on SunSpider string-base64 test.
+
+        * API/JSObjectRef.cpp:
+        (JSObjectMakeFunction): Removed unneeded explicit construction of UString.
+
+        * GNUmakefile.am: Added SmallStrings.h and SmallStrings.cpp.
+        * JavaScriptCore.pri: Ditto.
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * JavaScriptCoreSources.bkl: Ditto.
+
+        * JavaScriptCore.exp: Updated.
+
+        * VM/Machine.cpp:
+        (KJS::jsAddSlowCase): Changed to use a code path that doesn't involve
+        a UString constructor. This avoids an extra jump caused by the "in charge"
+        vs. "not in charge" constructors.
+        (KJS::jsAdd): Ditto.
+        (KJS::jsTypeStringForValue): Adopted jsNontrivialString.
+
+        * kjs/ArrayPrototype.cpp:
+        (KJS::arrayProtoFuncToString): Adopted jsEmptyString.
+        (KJS::arrayProtoFuncToLocaleString): Ditto.
+        (KJS::arrayProtoFuncJoin): Ditto.
+        * kjs/BooleanPrototype.cpp:
+        (KJS::booleanProtoFuncToString): Adopted jsNontrivialString.
+        * kjs/DateConstructor.cpp:
+        (KJS::callDate): Ditto.
+        * kjs/DatePrototype.cpp:
+        (KJS::formatLocaleDate): Adopted jsEmptyString and jsNontrivialString.
+        (KJS::dateProtoFuncToString): Ditto.
+        (KJS::dateProtoFuncToUTCString): Ditto.
+        (KJS::dateProtoFuncToDateString): Ditto.
+        (KJS::dateProtoFuncToTimeString): Ditto.
+        (KJS::dateProtoFuncToLocaleString): Ditto.
+        (KJS::dateProtoFuncToLocaleDateString): Ditto.
+        (KJS::dateProtoFuncToLocaleTimeString): Ditto.
+        (KJS::dateProtoFuncToGMTString): Ditto.
+
+        * kjs/ErrorPrototype.cpp:
+        (KJS::ErrorPrototype::ErrorPrototype): Ditto.
+        (KJS::errorProtoFuncToString): Ditto.
+
+        * kjs/JSGlobalData.h: Added SmallStrings.
+
+        * kjs/JSString.cpp:
+        (KJS::jsString): Eliminated the overload that takes a const char*.
+        Added code to use SmallStrings to get strings of small sizes rather
+        than creating a new JSString every time.
+        (KJS::jsSubstring): Added. Used when creating a string from a substring
+        to avoid creating a JSString in cases where the substring will end up
+        empty or as one character.
+        (KJS::jsOwnedString): Added the same code as in jsString.
+
+        * kjs/JSString.h: Added new functions jsEmptyString, jsSingleCharacterString,
+        jsSingleCharacterSubstring, jsSubstring, and jsNontrivialString for various
+        cases where we want to create JSString, and want special handling for small
+        strings.
+        (KJS::JSString::JSString): Added an overload that takes a PassRefPtr of
+        a UString::Rep so you don't have to construct a UString; PassRefPtr can be
+        more efficient.
+        (KJS::jsEmptyString): Added.
+        (KJS::jsSingleCharacterString): Added.
+        (KJS::jsSingleCharacterSubstring): Added.
+        (KJS::jsNontrivialString): Added.
+        (KJS::JSString::getIndex): Adopted jsSingleCharacterSubstring.
+        (KJS::JSString::getStringPropertySlot): Ditto.
+
+        * kjs/NumberPrototype.cpp:
+        (KJS::numberProtoFuncToFixed): Adopted jsNontrivialString.
+        (KJS::numberProtoFuncToExponential): Ditto.
+        (KJS::numberProtoFuncToPrecision): Ditto.
+
+        * kjs/ObjectPrototype.cpp:
+        (KJS::objectProtoFuncToLocaleString): Adopted toThisJSString.
+        (KJS::objectProtoFuncToString): Adopted jsNontrivialString.
+
+        * kjs/RegExpConstructor.cpp: Separated the lastInput value that's used
+        with the lastOvector to return matches from the input value that can be
+        changed via JavaScript. They will be equal in many cases, but not all.
+        (KJS::RegExpConstructor::performMatch): Set input.
+        (KJS::RegExpMatchesArray::RegExpMatchesArray): Ditto.
+        (KJS::RegExpMatchesArray::fillArrayInstance): Adopted jsSubstring. Also,
+        use input rather than lastInput in the appropriate place.
+        (KJS::RegExpConstructor::getBackref): Adopted jsSubstring and jsEmptyString.
+        Added code to handle the case where there is no backref -- before this
+        depended on range checking in UString::substr which is not present in
+        jsSubstring.
+        (KJS::RegExpConstructor::getLastParen): Ditto.
+        (KJS::RegExpConstructor::getLeftContext): Ditto.
+        (KJS::RegExpConstructor::getRightContext): Ditto.
+        (KJS::RegExpConstructor::getValueProperty): Use input rather than lastInput.
+        Also adopt jsEmptyString.
+        (KJS::RegExpConstructor::putValueProperty): Ditto.
+        (KJS::RegExpConstructor::input): Ditto.
+
+        * kjs/RegExpPrototype.cpp:
+        (KJS::regExpProtoFuncToString): Adopt jsNonTrivialString. Also changed to
+        use UString::append to append single characters rather than using += and
+        a C-style string.
+
+        * kjs/SmallStrings.cpp: Added.
+        (KJS::SmallStringsStorage::SmallStringsStorage): Construct the
+        buffer and UString::Rep for all 256 single-character strings for
+        the U+0000 through U+00FF. This covers all the values used in
+        the base64 test as well as most values seen elsewhere on the web
+        as well. It's possible that later we might fix this to only work
+        for U+0000 through U+007F but the others are used quite a bit in
+        the current version of the base64 test.
+        (KJS::SmallStringsStorage::~SmallStringsStorage): Free memory.
+        (KJS::SmallStrings::SmallStrings): Create a set of small strings,
+        initially not created; created later when they are used.
+        (KJS::SmallStrings::~SmallStrings): Deallocate. Not left compiler
+        generated because the SmallStringsStorage class's destructor needs
+        to be visible.
+        (KJS::SmallStrings::mark): Mark all the strings.
+        (KJS::SmallStrings::createEmptyString): Create a cell for the
+        empty string. Called only the first time.
+        (KJS::SmallStrings::createSingleCharacterString): Create a cell
+        for one of the single-character strings. Called only the first time.
+        * kjs/SmallStrings.h: Added.
+
+        * kjs/StringConstructor.cpp:
+        (KJS::stringFromCharCodeSlowCase): Factored out of strinFromCharCode.
+        Only used for cases where the caller does not pass exactly one argument.
+        (KJS::stringFromCharCode): Adopted jsSingleCharacterString.
+        (KJS::callStringConstructor): Adopted jsEmptyString.
+
+        * kjs/StringObject.cpp:
+        (KJS::StringObject::StringObject): Adopted jsEmptyString.
+
+        * kjs/StringPrototype.cpp:
+        (KJS::stringProtoFuncReplace): Adopted jsSubstring.
+        (KJS::stringProtoFuncCharAt): Adopted jsEmptyString and
+        jsSingleCharacterSubstring and also added a special case when the
+        index is an immediate number to avoid conversion to and from floating
+        point, since that's the common case.
+        (KJS::stringProtoFuncCharCodeAt): Ditto.
+        (KJS::stringProtoFuncMatch): Adopted jsSubstring and jsEmptyString.
+        (KJS::stringProtoFuncSlice): Adopted jsSubstring and
+        jsSingleCharacterSubstring. Also got rid of some unneeded locals and
+        removed unneeded code to set the length property of the array, since it
+        is automatically updated as values are added to the array.
+        (KJS::stringProtoFuncSplit): Adopted jsEmptyString.
+        (KJS::stringProtoFuncSubstr): Adopted jsSubstring.
+        (KJS::stringProtoFuncSubstring): Ditto.
+
+        * kjs/collector.cpp:
+        (KJS::Heap::collect): Added a call to mark SmallStrings.
+
+        * kjs/ustring.cpp:
+        (KJS::UString::expandedSize): Made this a static member function since
+        it doesn't need to look at any data members.
+        (KJS::UString::expandCapacity): Use a non-inline function, makeNull, to
+        set the rep to null in failure cases. This avoids adding a PIC branch for
+        the normal case when there is no failure.
+        (KJS::UString::expandPreCapacity): Ditto.
+        (KJS::UString::UString): Ditto.
+        (KJS::concatenate): Refactored the concatenation constructor into this
+        separate function. Calling the concatenation constructor was leading to
+        an extra branch because of the in-charge vs. not-in-charge versions not
+        both being inlined, and this was showing up as nearly 1% on Shark. Also
+        added a special case for when the second string is a single character,
+        since it's a common idiom to build up a string that way and we can do
+        things much more quickly, without involving memcpy for example. Also
+        adopted the non-inline function, nullRep, for the same reason given for
+        makeNull above.
+        (KJS::UString::append): Adopted makeNull for failure cases.
+        (KJS::UString::operator=): Ditto.
+        (KJS::UString::toDouble): Added a special case for converting single
+        character strings to numbers. We're doing this a ton of times while
+        running the base64 test.
+        (KJS::operator==): Added special cases so we can compare single-character
+        strings without calling memcmp. Later we might want to special case other
+        short lengths similarly.
+        (KJS::UString::makeNull): Added.
+        (KJS::UString::nullRep): Added.
+        * kjs/ustring.h: Added declarations for the nullRep and makeNull. Changed
+        expandedSize to be a static member function. Added a declaration of the
+        concatenate function. Removed the concatenation constructor. Rewrote
+        operator+ to use the concatenate function.
+
 2008-08-29  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

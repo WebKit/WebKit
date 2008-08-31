@@ -938,7 +938,7 @@ JSValue* windowProtoFuncAToB(ExecState* exec, JSObject*, JSValue* thisValue, con
 
     JSValue* v = args.at(exec, 0);
     if (v->isNull())
-        return jsString(exec);
+        return jsEmptyString(exec);
 
     UString s = v->toString(exec);
     if (!s.is8Bit()) {
@@ -970,7 +970,7 @@ JSValue* windowProtoFuncBToA(ExecState* exec, JSObject*, JSValue* thisValue, con
 
     JSValue* v = args.at(exec, 0);
     if (v->isNull())
-        return jsString(exec);
+        return jsEmptyString(exec);
 
     UString s = v->toString(exec);
     if (!s.is8Bit()) {

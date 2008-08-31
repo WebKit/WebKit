@@ -233,7 +233,7 @@ JSValue* numberProtoFuncToFixed(ExecState* exec, JSObject*, JSValue* thisValue, 
 
     double x = v->uncheckedGetNumber();
     if (isnan(x))
-        return jsString(exec, "NaN");
+        return jsNontrivialString(exec, "NaN");
 
     UString s;
     if (x < 0) {
@@ -339,7 +339,7 @@ JSValue* numberProtoFuncToExponential(ExecState* exec, JSObject*, JSValue* thisV
     }
 
     if (isnan(x))
-        return jsString(exec, "NaN");
+        return jsNontrivialString(exec, "NaN");
 
     if (x == -0.0) // (-0.0).toExponential() should print as 0 instead of -0
         x = 0;
@@ -422,8 +422,8 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValue* thisVal
             if (m.size() > 1)
                 m = m.substr(0, 1) + "." + m.substr(1);
             if (e >= 0)
-                return jsString(exec, s + m + "e+" + UString::from(e));
-            return jsString(exec, s + m + "e-" + UString::from(-e));
+                return jsNontrivialString(exec, s + m + "e+" + UString::from(e));
+            return jsNontrivialString(exec, s + m + "e-" + UString::from(-e));
         }
     } else {
         m = charSequence('0', precision);
@@ -437,7 +437,7 @@ JSValue* numberProtoFuncToPrecision(ExecState* exec, JSObject*, JSValue* thisVal
             return jsString(exec, s + m.substr(0, e + 1) + "." + m.substr(e + 1));
         return jsString(exec, s + m);
     }
-    return jsString(exec, s + "0." + charSequence('0', -(e + 1)) + m);
+    return jsNontrivialString(exec, s + "0." + charSequence('0', -(e + 1)) + m);
 }
 
 } // namespace KJS

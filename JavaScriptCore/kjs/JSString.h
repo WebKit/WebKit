@@ -25,13 +25,30 @@
 
 #include "CommonIdentifiers.h"
 #include "ExecState.h"
-#include "JSCell.h"
 #include "JSNumberCell.h"
 #include "PropertySlot.h"
 #include "identifier.h"
-#include "ustring.h"
 
 namespace KJS {
+
+    class JSString;
+
+    JSString* jsEmptyString(ExecState*);
+    JSString* jsString(ExecState*, const UString&); // returns empty string if passed null string
+
+    JSString* jsSingleCharacterString(ExecState*, UChar);
+    JSString* jsSingleCharacterSubstring(ExecState*, const UString&, unsigned offset);
+    JSString* jsSubstring(ExecState*, const UString&, unsigned offset, unsigned length);
+
+    // Non-trivial strings are two or more characters long.
+    // These functions are faster than just calling jsString.
+    JSString* jsNontrivialString(ExecState*, const UString&);
+    JSString* jsNontrivialString(ExecState*, const char*);
+
+    // Should be used for strings that are owned by an object that will
+    // likely outlive the JSValue this makes, such as the parse tree or a
+    // DOM object that contains a UString
+    JSString* jsOwnedString(ExecState*, const UString&); 
 
     class JSString : public JSCell {
     public:
@@ -46,18 +63,18 @@ namespace KJS {
             : m_value(value)
         {
         }
-
+        JSString(PassRefPtr<UString::Rep> value, HasOtherOwnerType)
+            : m_value(value)
+        {
+        }
+        
         const UString& value() const { return m_value; }
 
         bool getStringPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         bool getStringPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
         bool canGetIndex(unsigned i) { return i < static_cast<unsigned>(m_value.size()); }
-        JSValue* getIndex(ExecState* exec, unsigned i)
-        {
-            ASSERT(canGetIndex(i));
-            return new (exec) JSString(m_value.substr(i, 1));
-        }
+        JSString* getIndex(ExecState*, unsigned);
 
     private:
         virtual bool isString() const;
@@ -80,25 +97,58 @@ namespace KJS {
         UString m_value;
     };
 
-    JSString* jsString(ExecState*, const UString&); // returns empty string if passed null string
-    JSString* jsString(ExecState*, const char* = ""); // returns empty string if passed 0
+    inline JSString* jsEmptyString(ExecState* exec)
+    {
+        return exec->globalData().smallStrings.emptyString(exec);
+    }
 
-    // Should be used for strings that are owned by an object that will
-    // likely outlive the JSValue this makes, such as the parse tree or a
-    // DOM object that contains a UString
-    JSString* jsOwnedString(ExecState*, const UString&); 
+    inline JSString* jsSingleCharacterString(ExecState* exec, UChar c)
+    {
+        if (c <= 0xFF)
+            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+        return new (exec) JSString(UString(&c, 1));
+    }
+
+    inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
+    {
+        ASSERT(offset < static_cast<unsigned>(s.size()));
+        UChar c = s.data()[offset];
+        if (c <= 0xFF)
+            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+        return new (exec) JSString(UString::Rep::create(s.rep(), offset, 1));
+    }
+
+    inline JSString* jsNontrivialString(ExecState* exec, const char* s)
+    {
+        ASSERT(s);
+        ASSERT(s[0]);
+        ASSERT(s[1]);
+        return new (exec) JSString(s);
+    }
+
+    inline JSString* jsNontrivialString(ExecState* exec, const UString& s)
+    {
+        ASSERT(s.size() > 1);
+        return new (exec) JSString(s);
+    }
+
+    inline JSString* JSString::getIndex(ExecState* exec, unsigned i)
+    {
+        ASSERT(canGetIndex(i));
+        return jsSingleCharacterSubstring(exec, m_value, i);
+    }
 
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
     {
         if (propertyName == exec->propertyNames().length) {
-            slot.setValue(jsNumber(exec, value().size()));
+            slot.setValue(jsNumber(exec, m_value.size()));
             return true;
         }
 
         bool isStrictUInt32;
         unsigned i = propertyName.toStrictUInt32(&isStrictUInt32);
         if (isStrictUInt32 && i < static_cast<unsigned>(m_value.size())) {
-            slot.setValue(jsString(exec, value().substr(i, 1)));
+            slot.setValue(jsSingleCharacterSubstring(exec, m_value, i));
             return true;
         }
 
@@ -108,7 +158,7 @@ namespace KJS {
     ALWAYS_INLINE bool JSString::getStringPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot)
     {
         if (propertyName < static_cast<unsigned>(m_value.size())) {
-            slot.setValue(jsString(exec, value().substr(propertyName, 1)));
+            slot.setValue(jsSingleCharacterSubstring(exec, m_value, propertyName));
             return true;
         }
 

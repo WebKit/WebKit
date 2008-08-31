@@ -115,19 +115,45 @@ bool JSString::isString() const
     return true;
 }
 
-JSString* jsString(ExecState* exec, const char* s)
-{
-    return new (exec) JSString(s ? s : "");
-}
-
 JSString* jsString(ExecState* exec, const UString& s)
 {
-    return s.isNull() ? new (exec) JSString("") : new (exec) JSString(s);
+    int size = s.size();
+    if (!size)
+        return exec->globalData().smallStrings.emptyString(exec);
+    if (size == 1) {
+        UChar c = s.data()[0];
+        if (c <= 0xFF)
+            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+    }
+    return new (exec) JSString(s);
+}
+    
+JSString* jsSubstring(ExecState* exec, const UString& s, unsigned offset, unsigned length)
+{
+    ASSERT(offset <= static_cast<unsigned>(s.size()));
+    ASSERT(length <= static_cast<unsigned>(s.size()));
+    ASSERT(offset + length <= static_cast<unsigned>(s.size()));
+    if (!length)
+        return exec->globalData().smallStrings.emptyString(exec);
+    if (length == 1) {
+        UChar c = s.data()[offset];
+        if (c <= 0xFF)
+            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+    }
+    return new (exec) JSString(UString::Rep::create(s.rep(), offset, length));
 }
 
 JSString* jsOwnedString(ExecState* exec, const UString& s)
 {
-    return s.isNull() ? new (exec) JSString("", JSString::HasOtherOwner) : new (exec) JSString(s, JSString::HasOtherOwner);
+    int size = s.size();
+    if (!size)
+        return exec->globalData().smallStrings.emptyString(exec);
+    if (size == 1) {
+        UChar c = s.data()[0];
+        if (c <= 0xFF)
+            return exec->globalData().smallStrings.singleCharacterString(exec, c);
+    }
+    return new (exec) JSString(s, JSString::HasOtherOwner);
 }
 
 } // namespace KJS

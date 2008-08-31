@@ -1,3 +1,18 @@
+2008-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - adopt some new JavaScriptCore functions where appropriate
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::windowProtoFuncAToB): Adopted jsEmptyString.
+        (WebCore::windowProtoFuncBToA): Ditto.
+        * bindings/js/JSEventListener.cpp:
+        (WebCore::JSLazyEventListener::eventParameterName): Adopted
+        jsNontrivialString.
+        * bindings/js/JSSVGLazyEventListener.cpp:
+        (WebCore::JSSVGLazyEventListener::eventParameterName): Ditto.
+
 2008-08-29  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders' rubberstamp
