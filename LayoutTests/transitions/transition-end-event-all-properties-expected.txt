@@ -1,0 +1,10 @@
+Initiating transitions on various properties of all boxes.
+
+Expected Property: Target: box1 Type: webkitTransitionEnd Elapsed Time: 0.5 -- PASS
+Expected Property: Target: box2 Type: webkitTransitionEnd Elapsed Time: 0.5 -- PASS
+Expected Property: Target: box2 Type: webkitTransitionEnd Elapsed Time: 0.5 -- PASS
+Expected Property: Target: box3 Type: webkitTransitionEnd Elapsed Time: 0.7 -- PASS
+Expected Property: Target: box3 Type: webkitTransitionEnd Elapsed Time: 0.7 -- PASS
+Expected Property: Target: box3 Type: webkitTransitionEnd Elapsed Time: 0.7 -- PASS
+Expected Property: Target: box3 Type: webkitTransitionEnd Elapsed Time: 0.7 -- PASS
+

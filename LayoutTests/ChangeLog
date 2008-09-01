@@ -1,3 +1,37 @@
+2008-08-29  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20571
+        Add a bunch of tests for WebKitTransitionEndEvents.
+
+        * transitions/end-event-helpers.js: Added.
+        * transitions/interrupted-all-transition-expected.txt:
+        * transitions/interrupted-all-transition.html:
+        * transitions/opacity-transition-zindex-expected.txt:
+        * transitions/transition-end-event-all-properties-expected.txt: Added.
+        * transitions/transition-end-event-all-properties.html: Added.
+        * transitions/transition-end-event-attributes-expected.txt: Added.
+        * transitions/transition-end-event-attributes.html: Added.
+        * transitions/transition-end-event-container-expected.txt: Added.
+        * transitions/transition-end-event-container.html: Added.
+        * transitions/transition-end-event-left-expected.txt: Added.
+        * transitions/transition-end-event-left.html: Added.
+        * transitions/transition-end-event-multiple-01-expected.txt: Added.
+        * transitions/transition-end-event-multiple-01.html: Added.
+        * transitions/transition-end-event-multiple-02-expected.txt: Added.
+        * transitions/transition-end-event-multiple-02.html: Added.
+        * transitions/transition-end-event-multiple-03-expected.txt: Added.
+        * transitions/transition-end-event-multiple-03.html: Added.
+        * transitions/transition-end-event-multiple-04-expected.txt: Added.
+        * transitions/transition-end-event-multiple-04.html: Added.
+        * transitions/transition-end-event-nested-expected.txt: Added.
+        * transitions/transition-end-event-nested.html: Added.
+        * transitions/transition-end-event-transform-expected.txt: Added.
+        * transitions/transition-end-event-transform.html: Added.
+        * transitions/transition-end-event-window-expected.txt: Added.
+        * transitions/transition-end-event-window.html: Added.
+
 2008-09-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

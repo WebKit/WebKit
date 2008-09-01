@@ -1,0 +1,53 @@
+<html>
+<head>
+  <title>Transition End Events</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 0.5s;
+      -webkit-transform: translate(100px);
+    }
+  </style>
+  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var expected = [
+      ["-webkit-transform", "box1", "webkitTransitionEnd", 0.5]
+    ];
+    
+    function startTransition()
+    {
+      var boxes = document.body.getElementsByClassName('box');
+      for (var i = 0; i < boxes.length; ++i) {
+        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
+        boxes[i].style.webkitTransform = 'translate(200px)';
+      }
+      
+      window.setTimeout(cleanup, 700);
+    }
+    
+    window.addEventListener('load', startTransition, false);
+  </script>
+</head>
+<body>
+
+<p>Initiating a 500ms transition on the transform property of box1.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

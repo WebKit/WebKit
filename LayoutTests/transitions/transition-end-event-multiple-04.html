@@ -1,0 +1,93 @@
+<html>
+<head>
+  <title>Transition End Events</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transform: translate(0);
+      -webkit-transition-property: -webkit-transform;
+      -webkit-transition-duration: 0.5s;
+    }
+    
+    .box1 {
+      -webkit-transform: translate(50px);
+    }
+    
+    .box2 {
+      -webkit-transform: translate(50px) scale(1.05);
+      -webkit-transition-duration: 0.55s;
+    }
+    
+    .box3 {
+      -webkit-transform: translate(0); /* same as default */
+      -webkit-transition-duration: 0.3s;
+    }
+
+    .box4 {
+      -webkit-transform: translate(100px);
+      -webkit-transition-duration: 0.4s;
+    }
+
+    .box5 {
+      /* nothing */
+    }
+
+  </style>
+  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+  
+    var expected = [
+      ["-webkit-transform", "box1", "webkitTransitionEnd", 0.5],
+      ["-webkit-transform", "box2", "webkitTransitionEnd", 0.55],
+      ["-webkit-transform", "box4", "webkitTransitionEnd", 0.4]
+    ];
+  
+    function transitionElement(index) {
+      var boxes = document.body.getElementsByClassName('box');
+      boxes[index-1].className = "box box" + index;
+    }
+
+    function startTransitions()
+    {
+      var boxes = document.body.getElementsByClassName('box');
+      for (var i = 0; i < boxes.length; ++i) {
+        boxes[i].addEventListener("webkitTransitionEnd", recordEvent, false);
+      }
+
+      window.setTimeout(function() { transitionElement(1); }, 100);
+      window.setTimeout(function() { transitionElement(2); }, 150);
+      window.setTimeout(function() { transitionElement(3); }, 200);
+      window.setTimeout(function() { transitionElement(4); }, 50);
+      window.setTimeout(function() { transitionElement(5); }, 150);
+      
+      window.setTimeout(cleanup, 1000);
+    }
+    
+    window.addEventListener('load', startTransitions, false);
+  </script>
+</head>
+<body>
+
+<p>Initiating transitions on transform properties of all boxes, starting at different times and with different durations and values.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box"></div>
+  <div id="box3" class="box"></div>
+  <div id="box4" class="box"></div>
+  <div id="box5" class="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

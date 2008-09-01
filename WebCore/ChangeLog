@@ -1,5 +1,30 @@
 2008-09-01  Dean Jackson  <dino@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20571
+        Make sure Window object can assign Animation/Transition event
+        listeners via attributes.
+
+        Also added a bunch of transition event tests, although
+        only transition-end-event-window is directly relevant to this patch.
+
+        (WebCore::JSDOMWindowBase::put):
+
+        Tests: transitions/transition-end-event-all-properties.html
+               transitions/transition-end-event-attributes.html
+               transitions/transition-end-event-container.html
+               transitions/transition-end-event-left.html
+               transitions/transition-end-event-multiple-01.html
+               transitions/transition-end-event-multiple-02.html
+               transitions/transition-end-event-multiple-03.html
+               transitions/transition-end-event-multiple-04.html
+               transitions/transition-end-event-nested.html
+               transitions/transition-end-event-transform.html
+               transitions/transition-end-event-window.html
+
+2008-09-01  Dean Jackson  <dino@apple.com>
+
         Reviewed by Sam Weinig
 
         Code styling cleanup.

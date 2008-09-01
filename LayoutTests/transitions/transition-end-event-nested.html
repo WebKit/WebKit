@@ -1,0 +1,95 @@
+<html>
+<head>
+  <title>Transition End Events</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-property: width, left, background-color, height, top;
+      -webkit-transition-duration: 0.2s;
+    }
+    
+    .box1 {
+      left: 50px;
+    }
+    
+    .box2 {
+      background-color: red;
+    }
+    
+    .box3 {
+      width: 150px;
+      -webkit-transition-duration: 0.3s;
+    }
+    
+  </style>
+  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var expected = [
+      ["background-color", "box2", "webkitTransitionEnd", 0.2],
+      ["left", "box1", "webkitTransitionEnd", 0.2],
+      ["width", "box3", "webkitTransitionEnd", 0.3],
+    ];
+    
+    function startTransition1()
+    {
+      var box = document.getElementById("box1");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent1, false);
+      box.className = "box box1";
+    }
+
+    function handleEndEvent1(event) {
+      recordEvent(event);
+      setTimeout(startTransition2, 100);
+    }
+
+    function startTransition2()
+    {
+      var box = document.getElementById("box2");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent2, false);
+      box.className = "box box2";
+    }
+
+    function handleEndEvent2(event) {
+      recordEvent(event);
+      setTimeout(startTransition3, 100);
+    }
+
+    function startTransition3()
+    {
+      var box = document.getElementById("box3");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent3, false);
+      box.className = "box box3";
+    }
+
+    function handleEndEvent3(event) {
+      recordEvent(event);
+      window.setTimeout(cleanup, 100);
+    }
+
+    window.addEventListener('load', startTransition1, false);
+  </script>
+</head>
+<body>
+
+<p>Initiating transitions on various properties of all boxes.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+  <div id="box2" class="box"></div>
+  <div id="box3" class="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>
