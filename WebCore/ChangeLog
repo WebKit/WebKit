@@ -2,6 +2,15 @@
 
         Reviewed by Eric Seidel.
 
+        Fixed border-radius for Cairo.
+
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::GraphicsContext::strokeArc):
+
+2008-09-01  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Eric Seidel.
+
         Added canvas's globalAlpha to cairo.
 
         * platform/graphics/GraphicsContext.h:
