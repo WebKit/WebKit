@@ -27,7 +27,7 @@
 #include "config.h"
 #include "StructureID.h"
 
-#include "Identifier.h"
+#include "identifier.h"
 #include "JSCell.h"
 #include <wtf/RefPtr.h>
 

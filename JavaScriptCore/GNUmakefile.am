@@ -182,6 +182,8 @@ javascriptcore_sources += \
 	JavaScriptCore/kjs/StringObject.h \
 	JavaScriptCore/kjs/StringObjectThatMasqueradesAsUndefined.h \
 	JavaScriptCore/kjs/StringPrototype.h \
+	JavaScriptCore/kjs/StructureID.cpp \
+	JavaScriptCore/kjs/StructureID.h \
 	JavaScriptCore/kjs/SymbolTable.h \
 	JavaScriptCore/kjs/Tracing.h \
 	JavaScriptCore/kjs/collector.h \
