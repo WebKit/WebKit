@@ -30,12 +30,9 @@ namespace KJS {
         MathObject(ExecState*, ObjectPrototype*);
 
         bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        JSValue* getValueProperty(ExecState*, int token) const;
 
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
-
-        enum { Euler, Ln2, Ln10, Log2E, Log10E, Pi, Sqrt1_2, Sqrt2 };
     };
 
 } // namespace KJS

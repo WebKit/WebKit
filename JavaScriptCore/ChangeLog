@@ -1,3 +1,19 @@
+2008-09-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Eagerly allocate the Math object's numeric constants. This avoids
+        constantly reallocating them in loops, and also ensures that the Math
+        object will not use the single property optimization, which makes
+        properties ineligible for caching.
+
+        SunSpider reports a small speedup, in combination with inline caching.
+
+        * kjs/MathObject.cpp:
+        (KJS::MathObject::MathObject):
+        (KJS::MathObject::getOwnPropertySlot):
+        * kjs/MathObject.h:
+
 2008-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Gtk build fix, not reviewed.

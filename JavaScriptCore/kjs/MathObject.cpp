@@ -62,14 +62,6 @@ const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 
 /* Source for MathObject.lut.h
 @begin mathTable
-  E             MathObject::Euler           DontEnum|DontDelete|ReadOnly
-  LN2           MathObject::Ln2             DontEnum|DontDelete|ReadOnly
-  LN10          MathObject::Ln10            DontEnum|DontDelete|ReadOnly
-  LOG2E         MathObject::Log2E           DontEnum|DontDelete|ReadOnly
-  LOG10E        MathObject::Log10E          DontEnum|DontDelete|ReadOnly
-  PI            MathObject::Pi              DontEnum|DontDelete|ReadOnly
-  SQRT1_2       MathObject::Sqrt1_2         DontEnum|DontDelete|ReadOnly
-  SQRT2         MathObject::Sqrt2           DontEnum|DontDelete|ReadOnly
   abs           mathProtoFuncAbs               DontEnum|Function 1
   acos          mathProtoFuncACos              DontEnum|Function 1
   asin          mathProtoFuncASin              DontEnum|Function 1
@@ -91,41 +83,31 @@ const ClassInfo MathObject::info = { "Math", 0, 0, ExecState::mathTable };
 @end
 */
 
-MathObject::MathObject(ExecState*, ObjectPrototype* objectPrototype)
+MathObject::MathObject(ExecState* exec, ObjectPrototype* objectPrototype)
     : JSObject(objectPrototype)
 {
+    putDirect(Identifier(exec, "E"), jsNumber(exec, exp(1.0)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "LN2"), jsNumber(exec, log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "LN10"), jsNumber(exec, log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "LOG2E"), jsNumber(exec, 1.0 / log(2.0)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "LOG10E"), jsNumber(exec, 1.0 / log(10.0)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "PI"), jsNumber(exec, piDouble), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "SQRT1_2"), jsNumber(exec, sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
+    putDirect(Identifier(exec, "SQRT2"), jsNumber(exec, sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 }
 
 // ECMA 15.8
 
 bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {
-    return getStaticPropertySlot<MathObject, JSObject>(exec, ExecState::mathTable(exec), this, propertyName, slot);
-}
+    const HashEntry* entry = ExecState::mathTable(exec)->entry(exec, propertyName);
 
-JSValue* MathObject::getValueProperty(ExecState* exec, int token) const
-{
-    switch (token) {
-        case Euler:
-            return jsNumber(exec, exp(1.0));
-        case Ln2:
-            return jsNumber(exec, log(2.0));
-        case Ln10:
-            return jsNumber(exec, log(10.0));
-        case Log2E:
-            return jsNumber(exec, 1.0 / log(2.0));
-        case Log10E:
-            return jsNumber(exec, 1.0 / log(10.0));
-        case Pi:
-            return jsNumber(exec, piDouble);
-        case Sqrt1_2:
-            return jsNumber(exec, sqrt(0.5));
-        case Sqrt2:
-            return jsNumber(exec, sqrt(2.0));
-    }
+    if (!entry)
+        return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 
-    ASSERT_NOT_REACHED();
-    return 0;
+    ASSERT(entry->attributes & Function);
+    slot.setStaticEntry(this, entry, staticFunctionGetter);
+    return true;
 }
 
 // ------------------------------ Functions --------------------------------
