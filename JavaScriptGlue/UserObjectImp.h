@@ -37,7 +37,7 @@
 class UserObjectImp : public JSObject
 {
 public:
-    UserObjectImp(JSUserObject* userObject);
+    UserObjectImp(ExecState* exec, JSUserObject* userObject);
     virtual ~UserObjectImp();
 
     virtual const ClassInfo *classInfo() const;

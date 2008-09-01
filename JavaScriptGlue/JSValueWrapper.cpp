@@ -133,7 +133,8 @@ void JSValueWrapper::JSObjectSetProperty(void *data, CFStringRef propertyName, J
         ExecState* exec = getThreadGlobalExecState();
         JSValue *value = JSObjectKJSValue((JSUserObject*)jsValue);
         JSObject *objValue = ptr->GetValue()->toObject(exec);
-        objValue->put(exec, CFStringToIdentifier(propertyName, exec), value);
+        PutPropertySlot slot;
+        objValue->put(exec, CFStringToIdentifier(propertyName, exec), value, slot);
     }
 }
 

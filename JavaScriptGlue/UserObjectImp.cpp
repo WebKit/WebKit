@@ -34,8 +34,9 @@
 
 const ClassInfo UserObjectImp::info = { "UserObject", 0, 0, 0 };
 
-UserObjectImp::UserObjectImp(JSUserObject* userObject)
-    : fJSUserObject((JSUserObject*)userObject->Retain())
+UserObjectImp::UserObjectImp(ExecState* exec, JSUserObject* userObject)
+    : JSObject(exec->globalData().nullProtoStructureID)
+    , fJSUserObject((JSUserObject*)userObject->Retain())
 {
 }
 
