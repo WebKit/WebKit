@@ -33,6 +33,7 @@ ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 const ClassInfo InternalFunction::info = { "Function", 0, 0, 0 };
 
 InternalFunction::InternalFunction(ExecState* exec)
+    : JSObject(exec->globalData().nullProtoStructureID)
 {
     putDirect(exec->propertyNames().name, jsString(exec, exec->propertyNames().nullIdentifier.ustring()), DontDelete | ReadOnly | DontEnum);
 }

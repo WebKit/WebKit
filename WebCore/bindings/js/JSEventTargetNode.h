@@ -46,7 +46,7 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);
+        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, KJS::PutPropertySlot&);
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
 
     private:
@@ -63,9 +63,9 @@ namespace WebCore {
         return m_base.getValueProperty(this, exec, token);
     }
 
-    ALWAYS_INLINE void JSEventTargetNode::put(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value)
+    ALWAYS_INLINE void JSEventTargetNode::put(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, KJS::PutPropertySlot& slot)
     {
-        m_base.put<JSNode>(this, exec, propertyName, value);
+        m_base.put<JSNode>(this, exec, propertyName, value, slot);
     }
 
     ALWAYS_INLINE void JSEventTargetNode::putValueProperty(KJS::ExecState* exec, int token, KJS::JSValue* value)

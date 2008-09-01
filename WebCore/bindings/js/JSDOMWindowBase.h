@@ -66,7 +66,7 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);
+        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, KJS::PutPropertySlot&);
 
         int installTimeout(const KJS::UString& handler, int t, bool singleShot);
         int installTimeout(KJS::ExecState*, KJS::JSValue* function, const KJS::ArgList& args, int t, bool singleShot);

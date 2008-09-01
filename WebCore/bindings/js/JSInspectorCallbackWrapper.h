@@ -40,7 +40,8 @@ namespace WebCore {
         static const KJS::ClassInfo s_info;
 
     protected:
-        JSInspectorCallbackWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSValue* wrappedPrototype);
+        JSInspectorCallbackWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSObject* wrappedPrototype);
+        JSInspectorCallbackWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, PassRefPtr<KJS::StructureID>);
 
         virtual bool allowsCallAsFunction() const { return true; }
 

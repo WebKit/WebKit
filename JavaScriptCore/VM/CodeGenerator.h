@@ -232,12 +232,11 @@ namespace KJS {
         RegisterID* emitUnexpectedLoad(RegisterID* dst, bool);
         RegisterID* emitUnexpectedLoad(RegisterID* dst, double);
 
-        RegisterID* emitNullaryOp(OpcodeID, RegisterID* dst);
         RegisterID* emitUnaryOp(OpcodeID, RegisterID* dst, RegisterID* src);
         RegisterID* emitBinaryOp(OpcodeID, RegisterID* dst, RegisterID* src1, RegisterID* src2);
         RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
 
-        RegisterID* emitNewObject(RegisterID* dst) { return emitNullaryOp(op_new_object, dst); }
+        RegisterID* emitNewObject(RegisterID* dst);
         RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FuncDeclNode* func);
@@ -346,7 +345,7 @@ namespace KJS {
             static const bool needsRef = false;
         };
 
-        typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
+        typedef HashMap<RefPtr<UString::Rep>, int, WTF::IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
 
         RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
@@ -381,6 +380,7 @@ namespace KJS {
         RegisterID* addConstant(JSValue*);
         unsigned addUnexpectedConstant(JSValue*);
         unsigned addRegExp(RegExp* r);
+        StructureID* addStructureID();
 
         Vector<Instruction>& instructions() { return m_codeBlock->instructions; }
         SymbolTable& symbolTable() { return *m_symbolTable; }
@@ -397,7 +397,7 @@ namespace KJS {
         ScopeNode* m_scopeNode;
         CodeBlock* m_codeBlock;
 
-        HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
+        HashSet<RefPtr<UString::Rep>, WTF::IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
         SegmentedVector<RegisterID, 512> m_locals;
         SegmentedVector<RegisterID, 512> m_constants;

@@ -21,6 +21,7 @@
 #ifndef PropertyMap_h
 #define PropertyMap_h
 
+#include "PropertySlot.h"
 #include "identifier.h"
 
 namespace KJS {
@@ -31,28 +32,85 @@ namespace KJS {
     struct PropertyMapEntry;
     struct PropertyMapHashTable;
 
+    struct PropertyMapEntry {
+        UString::Rep* key;
+        JSValue* value;
+        unsigned attributes;
+        unsigned index;
+
+        PropertyMapEntry(UString::Rep* k, JSValue* v, int a)
+            : key(k)
+            , value(v)
+            , attributes(a)
+            , index(0)
+        {
+        }
+    };
+
+    // lastIndexUsed is an ever-increasing index used to identify the order items
+    // were inserted into the property map. It's required that getEnumerablePropertyNames
+    // return the properties in the order they were added for compatibility with other
+    // browsers' JavaScript implementations.
+    struct PropertyMapHashTable {
+        unsigned sizeMask;
+        unsigned size;
+        unsigned keyCount;
+        unsigned deletedSentinelCount;
+        unsigned lastIndexUsed;
+        unsigned entryIndicies[1];
+
+        PropertyMapEntry* entries()
+        {
+            // The entries vector comes after the indices vector.
+            // The 0th item in the entries vector is not really used; it has to
+            // have a 0 in its key to allow the hash table lookup to handle deleted
+            // sentinels without any special-case code, but the other fields are unused.
+            return reinterpret_cast<PropertyMapEntry*>(&entryIndicies[size]);
+        }
+
+        static size_t allocationSize(unsigned size)
+        {
+            // We never let a hash table get more than half full,
+            // So the number of indices we need is the size of the hash table.
+            // But the number of entries is half that (plus one for the deleted sentinel).
+            return sizeof(PropertyMapHashTable)
+                + (size - 1) * sizeof(unsigned)
+                + (1 + size / 2) * sizeof(PropertyMapEntry);
+        }
+    };
+
     class PropertyMap : Noncopyable {
     public:
         PropertyMap();
         ~PropertyMap();
 
-        void clear();
         bool isEmpty() { return !m_usingTable & !m_singleEntryKey; }
 
-        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly = false);
+        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&);
         void remove(const Identifier& propertyName);
         JSValue* get(const Identifier& propertyName) const;
         JSValue* get(const Identifier& propertyName, unsigned& attributes) const;
         JSValue** getLocation(const Identifier& propertyName);
         JSValue** getLocation(const Identifier& propertyName, bool& isWriteable);
+        
+        JSValue* getOffset(size_t offset)
+        {
+            ASSERT(m_usingTable);
+            return reinterpret_cast<JSValue**>(m_u.table->entryIndicies)[offset];
+        }
+        void putOffset(size_t offset, JSValue* v)
+        {
+            ASSERT(m_usingTable);
+            reinterpret_cast<JSValue**>(m_u.table->entryIndicies)[offset] = v;
+        }
+
+        size_t offsetForLocation(JSValue** location) { return m_usingTable ? offsetForTableLocation(location) : KJS_INVALID_OFFSET; }
 
         void mark() const;
         void getEnumerablePropertyNames(PropertyNameArray&) const;
 
         bool hasGetterSetterProperties() const { return m_getterSetterFlag; }
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }
-
-        bool containsGettersOrSetters() const;
 
     private:
         typedef PropertyMapEntry Entry;
@@ -66,6 +124,12 @@ namespace KJS {
         
         void insert(const Entry&);
         
+        size_t offsetForTableLocation(JSValue** location)
+        {
+            ASSERT(m_usingTable);
+            return location - reinterpret_cast<JSValue**>(m_u.table->entryIndicies);
+        }
+
         void checkConsistency();
         
         UString::Rep* m_singleEntryKey;

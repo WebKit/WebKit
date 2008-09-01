@@ -40,7 +40,7 @@ namespace KJS {
     class JSActivation : public JSVariableObject {
         typedef JSVariableObject Base;
     public:
-        JSActivation(PassRefPtr<FunctionBodyNode>, Register*);
+        JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode>, Register*);
         virtual ~JSActivation();
         
         virtual bool isActivationObject() const;
@@ -48,7 +48,7 @@ namespace KJS {
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
 
-        virtual void put(ExecState*, const Identifier&, JSValue*);
+        virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue*, unsigned attributes);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 

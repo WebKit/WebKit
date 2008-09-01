@@ -43,7 +43,7 @@ namespace KJS {
         JSFunction(ExecState*, const Identifier&, FunctionBodyNode*, ScopeChainNode*);
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         JSObject* construct(ExecState*, const ArgList&);

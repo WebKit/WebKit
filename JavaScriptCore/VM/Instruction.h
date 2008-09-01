@@ -33,13 +33,23 @@
 
 namespace KJS {
 
+    class JSCell;
+    class StructureID;
+    class StructureIDChain;
+
     struct Instruction {
         Instruction(Opcode opcode) { u.opcode = opcode; }
         Instruction(int operand) { u.operand = operand; }
+        Instruction(StructureID* structureID) { u.structureID = structureID; }
+        Instruction(StructureIDChain* structureIDChain) { u.structureIDChain = structureIDChain; }
+        Instruction(JSCell* jsCell) { u.jsCell = jsCell; }
 
         union {
             Opcode opcode;
             int operand;
+            StructureID* structureID;
+            StructureIDChain* structureIDChain;
+            JSCell* jsCell;
         } u;
     };
 

@@ -60,7 +60,7 @@ DateConstructor::DateConstructor(ExecState* exec, FunctionPrototype* functionPro
       putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
       putDirectFunction(exec, new (exec) PrototypeFunction(exec, functionPrototype, 0, exec->propertyNames().now, dateNow), DontEnum);
 
-      putDirect(exec, exec->propertyNames().length, 7, ReadOnly | DontEnum | DontDelete);
+      putDirect(exec->propertyNames().length, jsNumber(exec, 7), ReadOnly | DontEnum | DontDelete);
 }
 
 // ECMA 15.9.3

@@ -33,7 +33,7 @@ namespace WebCore {
     KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
     KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
     bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*);
-    bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, HTMLElement*);
+    bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, HTMLElement*, KJS::PutPropertySlot&);
     KJS::CallType runtimeObjectGetCallData(HTMLElement*, KJS::CallData&);
 
 } // namespace WebCore

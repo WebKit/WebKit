@@ -42,7 +42,7 @@ JSObject* JSImmediate::toObject(const JSValue* v, ExecState* exec)
     
     JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
     exec->setException(exception);
-    return new (exec) JSNotAnObject(exception);
+    return new (exec) JSNotAnObject(exec, exception);
 }
 
 JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
@@ -55,7 +55,7 @@ JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
 
     JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
     exec->setException(exception);
-    return new (exec) JSNotAnObject(exception);
+    return new (exec) JSNotAnObject(exec, exception);
 }
 
 UString JSImmediate::toString(const JSValue* v)

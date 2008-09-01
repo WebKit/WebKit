@@ -276,6 +276,8 @@
 		BCD2034A0E17135E002C7E82 /* DateConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203460E17135E002C7E82 /* DateConstructor.h */; };
 		BCD2034C0E17135E002C7E82 /* DatePrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203480E17135E002C7E82 /* DatePrototype.h */; };
 		BCD203E80E1718F4002C7E82 /* DatePrototype.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */; };
+		BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */ = {isa = PBXBuildFile; fileRef = BCDE3AB10E6C82CF001453A7 /* StructureID.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */; };
 		BCF605140E203EF800B9A64D /* ArgList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCF605120E203EF800B9A64D /* ArgList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C0A272630E50A06300E96E15 /* NotFound.h in Headers */ = {isa = PBXBuildFile; fileRef = C0A2723F0E509F1E00E96E15 /* NotFound.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */ = {isa = PBXBuildFile; fileRef = E124A8F50E555775003091F1 /* OpaqueJSString.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -708,6 +710,8 @@
 		BCD203470E17135E002C7E82 /* DatePrototype.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatePrototype.cpp; sourceTree = "<group>"; };
 		BCD203480E17135E002C7E82 /* DatePrototype.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.h; sourceTree = "<group>"; };
 		BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatePrototype.lut.h; sourceTree = "<group>"; };
+		BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StructureID.cpp; sourceTree = "<group>"; };
+		BCDE3AB10E6C82CF001453A7 /* StructureID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StructureID.h; sourceTree = "<group>"; };
 		BCF605110E203EF800B9A64D /* ArgList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgList.cpp; sourceTree = "<group>"; };
 		BCF605120E203EF800B9A64D /* ArgList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgList.h; sourceTree = "<group>"; };
 		BCF6553B0A2048DE0038A194 /* MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MathExtras.h; sourceTree = "<group>"; };
@@ -1133,10 +1137,10 @@
 				BCD203460E17135E002C7E82 /* DateConstructor.h */,
 				BC1166000E1997B1008066DD /* DateInstance.cpp */,
 				BC1166010E1997B1008066DD /* DateInstance.h */,
-				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
-				BCD203480E17135E002C7E82 /* DatePrototype.h */,
 				D21202280AD4310C00ED79B6 /* DateMath.cpp */,
 				D21202290AD4310C00ED79B6 /* DateMath.h */,
+				BCD203470E17135E002C7E82 /* DatePrototype.cpp */,
+				BCD203480E17135E002C7E82 /* DatePrototype.h */,
 				651F6412039D5B5F0078395C /* dtoa.cpp */,
 				651F6413039D5B5F0078395C /* dtoa.h */,
 				BC337BEA0E1B00CB0076918A /* Error.cpp */,
@@ -1153,11 +1157,11 @@
 				BC2680C10E16D4E900A06E92 /* FunctionConstructor.h */,
 				F692A85C0255597D01FF60F7 /* FunctionPrototype.cpp */,
 				F692A85D0255597D01FF60F7 /* FunctionPrototype.h */,
-				933A3499038AE7C6008635CE /* grammar.y */,
 				BC02E9B80E184545000F9297 /* GetterSetter.cpp */,
 				BC337BDE0E1AF0B80076918A /* GetterSetter.h */,
 				BC257DED0E1F52ED0016B6C9 /* GlobalEvalFunction.cpp */,
 				BC257DEE0E1F52ED0016B6C9 /* GlobalEvalFunction.h */,
+				933A3499038AE7C6008635CE /* grammar.y */,
 				933A349D038AE80F008635CE /* identifier.cpp */,
 				933A349A038AE7C6008635CE /* identifier.h */,
 				BC257DE90E1F52BA0016B6C9 /* IndexToNameMap.cpp */,
@@ -1192,8 +1196,8 @@
 				BC7F8FB80E19D1C3008632C0 /* JSNumberCell.h */,
 				BC22A3980E16E14800AF21C8 /* JSObject.cpp */,
 				BC22A3990E16E14800AF21C8 /* JSObject.h */,
-				A7E42C180E3938830065A544 /* JSStaticScopeObject.h */,
 				A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */,
+				A7E42C180E3938830065A544 /* JSStaticScopeObject.h */,
 				BC02E9B60E1842FA000F9297 /* JSString.cpp */,
 				F692A8620255597D01FF60F7 /* JSString.h */,
 				14ABB454099C2A0F00E2A24F /* JSType.h */,
@@ -1232,9 +1236,9 @@
 				65400C100A69BAF200509887 /* PropertyNameArray.h */,
 				65621E6B089E859700760F35 /* PropertySlot.cpp */,
 				65621E6C089E859700760F35 /* PropertySlot.h */,
+				65C02FBB0637462A003E7EE6 /* protect.h */,
 				BC257DF10E1F53740016B6C9 /* PrototypeFunction.cpp */,
 				BC257DF20E1F53740016B6C9 /* PrototypeFunction.h */,
-				65C02FBB0637462A003E7EE6 /* protect.h */,
 				F692A87D0255597D01FF60F7 /* regexp.cpp */,
 				F692A87E0255597D01FF60F7 /* regexp.h */,
 				BCD202BD0E1706A7002C7E82 /* RegExpConstructor.cpp */,
@@ -1257,6 +1261,8 @@
 				BC18C3C40E16EE3300B34460 /* StringObjectThatMasqueradesAsUndefined.h */,
 				BC18C3C50E16EE3300B34460 /* StringPrototype.cpp */,
 				BC18C3C60E16EE3300B34460 /* StringPrototype.h */,
+				BCDE3AB00E6C82CF001453A7 /* StructureID.cpp */,
+				BCDE3AB10E6C82CF001453A7 /* StructureID.h */,
 				14A396A60CD2933100B5B4FF /* SymbolTable.h */,
 				5D53726D0E1C546B0021E549 /* Tracing.d */,
 				5D53726E0E1C54880021E549 /* Tracing.h */,
@@ -1538,6 +1544,7 @@
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
+				BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1845,6 +1852,7 @@
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
+				BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

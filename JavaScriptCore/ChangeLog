@@ -1,5 +1,44 @@
 2008-09-01  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Darin Adler.
+
+        First cut at inline caching for access to vanilla JavaScript properties.
+        
+        SunSpider says 4% faster. Tests heavy on dictionary-like access have
+        regressed a bit -- we have a lot of room to improve in this area,
+        but this patch is over-ripe as-is.
+        
+        JSCells now have a StructureID that uniquely identifies their layout,
+        and holds their prototype.
+        
+        JSValue::put takes a PropertySlot& argument, so it can fill in details
+        about where it put a value, for the sake of caching.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator): Avoid calling removeDirect if we
+        can, since it disables inline caching in the global object. This can
+        probably improve in the future.
+
+        * kjs/JSGlobalObject.cpp: Nixed reset(), since it complicates caching, and
+        wasn't really necessary.
+
+        * kjs/JSObject.cpp: Tweaked getter / setter behavior not to rely on the
+        IsGetterSetter flag, since the flag was buggy. This is necessary in order
+        to avoid accidentally accessing a getter / setter as a normal property.
+        
+        Also changed getter / setter creation to honor ReadOnly, matching Mozilla.
+        
+        * kjs/PropertyMap.cpp: Nixed clear(), since it complicates caching and
+        isn't necessary.
+
+        * kjs/Shell.cpp: Moved SamplingTool dumping outside the loop. This allows
+        you to aggregate sampling of multiple files (or the same file repeatedly),
+        which helped me track down regressions.
+
+        * kjs/ustring.h: Moved IdentifierRepHash here to share it.
+
+2008-09-01  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Eagerly allocate the Math object's numeric constants. This avoids

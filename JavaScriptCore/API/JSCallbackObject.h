@@ -36,8 +36,8 @@ namespace KJS {
 template <class Base>
 class JSCallbackObject : public Base {
 public:
-    JSCallbackObject(ExecState*, JSClassRef, JSValue* prototype, void* data);
-    JSCallbackObject(JSClassRef);
+    JSCallbackObject(ExecState*, JSClassRef, JSObject* prototype, void* data);
+    JSCallbackObject(JSGlobalData*, JSClassRef);
     virtual ~JSCallbackObject();
 
     void setPrivate(void* data);
@@ -54,8 +54,7 @@ private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertySlot(ExecState*, unsigned, PropertySlot&);
     
-    virtual void put(ExecState*, const Identifier&, JSValue*);
-    virtual void put(ExecState*, unsigned, JSValue*);
+    virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
 
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual bool deleteProperty(ExecState*, unsigned);

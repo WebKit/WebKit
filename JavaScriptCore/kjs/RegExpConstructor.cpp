@@ -122,7 +122,7 @@ public:
 private:
     virtual bool getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::getOwnPropertySlot(exec, propertyName, slot); }
     virtual bool getOwnPropertySlot(ExecState* exec, unsigned propertyName, PropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::getOwnPropertySlot(exec, propertyName, slot); }
-    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::put(exec, propertyName, v); }
+    virtual void put(ExecState* exec, const Identifier& propertyName, JSValue* v, PutPropertySlot& slot) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::put(exec, propertyName, v, slot); }
     virtual void put(ExecState* exec, unsigned propertyName, JSValue* v) { if (lazyCreationData()) fillArrayInstance(exec); JSArray::put(exec, propertyName, v); }
     virtual bool deleteProperty(ExecState* exec, const Identifier& propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::deleteProperty(exec, propertyName); }
     virtual bool deleteProperty(ExecState* exec, unsigned propertyName) { if (lazyCreationData()) fillArrayInstance(exec); return JSArray::deleteProperty(exec, propertyName); }
@@ -163,8 +163,10 @@ void RegExpMatchesArray::fillArrayInstance(ExecState* exec)
         if (start >= 0)
             JSArray::put(exec, i, jsSubstring(exec, d->lastInput, start, d->lastOvector[2 * i + 1] - start));
     }
-    JSArray::put(exec, exec->propertyNames().index, jsNumber(exec, d->lastOvector[0]));
-    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input));
+
+    PutPropertySlot slot;
+    JSArray::put(exec, exec->propertyNames().index, jsNumber(exec, d->lastOvector[0]), slot);
+    JSArray::put(exec, exec->propertyNames().input, jsString(exec, d->input), slot);
 
     delete d;
     setLazyCreationData(0);
@@ -256,9 +258,9 @@ JSValue* RegExpConstructor::getValueProperty(ExecState* exec, int token) const
     return jsEmptyString(exec);
 }
 
-void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void RegExpConstructor::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
-    lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), this);
+    lookupPut<RegExpConstructor, InternalFunction>(exec, propertyName, value, ExecState::regExpConstructorTable(exec), this, slot);
 }
 
 void RegExpConstructor::putValueProperty(ExecState* exec, int token, JSValue* value)

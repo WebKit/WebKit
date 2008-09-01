@@ -29,14 +29,17 @@
 #include "runtime_method.h"
 #include "runtime_root.h"
 #include <kjs/Error.h>
+#include <kjs/JSGlobalObject.h>
+#include <kjs/ObjectPrototype.h>
 
 using namespace KJS;
 using namespace Bindings;
 
 const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0, 0 };
 
-RuntimeObjectImp::RuntimeObjectImp(PassRefPtr<Bindings::Instance> i)
-    : instance(i)
+RuntimeObjectImp::RuntimeObjectImp(ExecState* exec, PassRefPtr<Bindings::Instance> i)
+    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+    , instance(i)
 {
     instance->rootObject()->addRuntimeObject(this);
 }
@@ -153,7 +156,7 @@ bool RuntimeObjectImp::getOwnPropertySlot(ExecState *exec, const Identifier& pro
     return false;
 }
 
-void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void RuntimeObjectImp::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot&)
 {
     if (!instance) {
         throwInvalidAccessError(exec);

@@ -74,7 +74,7 @@ JSObjectRef JSObjectMake(JSContextRef ctx, JSClassRef jsClass, void* data)
     if (!jsClass)
         return toRef(new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype())); // slightly more efficient
 
-    JSValue* jsPrototype = jsClass->prototype(exec);
+    JSObject* jsPrototype = jsClass->prototype(exec);
     if (!jsPrototype)
         jsPrototype = exec->lexicalGlobalObject()->objectPrototype();
 
@@ -141,7 +141,7 @@ void JSObjectSetPrototype(JSContextRef, JSObjectRef object, JSValueRef value)
     JSObject* jsObject = toJS(object);
     JSValue* jsValue = toJS(value);
 
-    jsObject->setPrototype(jsValue);
+    jsObject->setPrototype(jsValue->isObject() ? jsValue : jsNull());
 }
 
 bool JSObjectHasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
@@ -184,8 +184,10 @@ void JSObjectSetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef prope
 
     if (attributes && !jsObject->hasProperty(exec, name))
         jsObject->putWithAttributes(exec, name, jsValue, attributes);
-    else
-        jsObject->put(exec, name, jsValue);
+    else {
+        PutPropertySlot slot;
+        jsObject->put(exec, name, jsValue, slot);
+    }
 
     if (exec->hadException()) {
         if (exception)

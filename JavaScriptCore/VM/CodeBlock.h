@@ -80,6 +80,7 @@ namespace KJS {
     struct CodeBlock {
         CodeBlock(ScopeNode* ownerNode_, CodeType codeType_, PassRefPtr<SourceProvider> source_, unsigned sourceOffset_)
             : ownerNode(ownerNode_)
+            , globalData(0)
             , numTemporaries(0)
             , numVars(0)
             , numParameters(0)
@@ -91,16 +92,24 @@ namespace KJS {
             , sourceOffset(sourceOffset_)
         {
         }
+        
+        ~CodeBlock();
 
-#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
+#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
         void dump(ExecState*) const;
+        void printStructureIDs(const Instruction*) const;
+        void printStructureID(const char* name, const Instruction*, int operand) const;
 #endif
         int expressionRangeForVPC(const Instruction*, int& divot, int& startOffset, int& endOffset);
         int lineNumberForVPC(const Instruction* vPC);
         bool getHandlerForVPC(const Instruction* vPC, Instruction*& target, int& scopeDepth);
+
         void mark();
+        void refStructureIDs(Instruction* vPC) const;
+        void derefStructureIDs(Instruction* vPC) const;
 
         ScopeNode* ownerNode;
+        JSGlobalData* globalData;
 
         int numConstants;
         int numTemporaries;
@@ -115,6 +124,7 @@ namespace KJS {
         unsigned sourceOffset;
 
         Vector<Instruction> instructions;
+        Vector<size_t> structureIDInstructions;
 
         // Constant pool
         Vector<Identifier> identifiers;
@@ -132,7 +142,7 @@ namespace KJS {
         Vector<StringJumpTable> stringSwitchJumpTables;
 
     private:
-#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
+#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 #endif
     };

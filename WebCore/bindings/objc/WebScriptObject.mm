@@ -362,7 +362,9 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
     ASSERT(!exec->hadException());
 
     JSLock lock(false);
-    [self _imp]->put(exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]));
+
+    PutPropertySlot slot;
+    [self _imp]->put(exec, Identifier(exec, String(key)), convertObjcValueToValue(exec, &value, ObjcObjectType, [self _rootObject]), slot);
 
     if (exec->hadException()) {
         addExceptionToConsole(exec);

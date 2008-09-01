@@ -38,7 +38,8 @@ namespace WebCore {
         static const KJS::ClassInfo s_info;
 
     private:
-        JSInspectedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSValue* wrappedPrototype);
+        JSInspectedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSObject* wrappedPrototype);
+        JSInspectedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, PassRefPtr<KJS::StructureID>);
 
         virtual bool allowsGetProperty() const { return true; }
         virtual bool allowsSetProperty() const { return true; }

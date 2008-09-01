@@ -50,6 +50,7 @@ namespace KJS {
     class Machine;
     class Parser;
     class ParserRefCounted;
+    class StructureID;
     class UString;
     struct HashTable;
 
@@ -71,6 +72,10 @@ namespace KJS {
         const HashTable* regExpTable;
         const HashTable* regExpConstructorTable;
         const HashTable* stringTable;
+        
+        RefPtr<StructureID> stringStructureID;
+        RefPtr<StructureID> numberStructureID;
+        RefPtr<StructureID> nullProtoStructureID;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

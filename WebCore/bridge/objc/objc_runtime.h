@@ -94,7 +94,7 @@ private:
 
 class ObjcFallbackObjectImp : public JSObject {
 public:
-    ObjcFallbackObjectImp(ObjcInstance*, const Identifier& propertyName);
+    ObjcFallbackObjectImp(ExecState* exec, ObjcInstance*, const Identifier& propertyName);
 
     static const ClassInfo info;
 
@@ -102,7 +102,7 @@ public:
 
 private:
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-    virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+    virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
     virtual CallType getCallData(CallData&);
     virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
     virtual JSValue* defaultValue(ExecState*, PreferredPrimitiveType) const;

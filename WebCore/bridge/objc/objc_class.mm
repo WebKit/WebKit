@@ -251,7 +251,7 @@ JSValue* ObjcClass::fallbackObject(ExecState* exec, Instance* instance, const Id
     
     if (![targetObject respondsToSelector:@selector(invokeUndefinedMethodFromWebScript:withArguments:)])
         return jsUndefined();
-    return new (exec) ObjcFallbackObjectImp(objcInstance, propertyName);
+    return new (exec) ObjcFallbackObjectImp(exec, objcInstance, propertyName);
 }
 
 }

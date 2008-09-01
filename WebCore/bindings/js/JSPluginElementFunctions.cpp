@@ -122,14 +122,14 @@ bool runtimeObjectCustomGetOwnPropertySlot(ExecState* exec, const Identifier& pr
     return true;
 }
 
-bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue* value, HTMLElement* element)
+bool runtimeObjectCustomPut(ExecState* exec, const Identifier& propertyName, JSValue* value, HTMLElement* element, PutPropertySlot& slot)
 {
     RuntimeObjectImp* runtimeObject = getRuntimeObject(exec, element);
     if (!runtimeObject)
         return 0;
     if (!runtimeObject->hasProperty(exec, propertyName))
         return false;
-    runtimeObject->put(exec, propertyName, value);
+    runtimeObject->put(exec, propertyName, value, slot);
     return true;
 }
 

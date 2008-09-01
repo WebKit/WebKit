@@ -96,7 +96,7 @@ RuntimeObjectImp* Instance::createRuntimeObject(ExecState* exec, PassRefPtr<Inst
 #endif
     JSLock lock(false);
 
-    return new (exec) RuntimeObjectImp(instance);
+    return new (exec) RuntimeObjectImp(exec, instance);
 }
 
 Instance* Instance::getInstance(JSObject* object, BindingLanguage language)

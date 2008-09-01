@@ -135,13 +135,13 @@ void JSGlobalObject::init(JSObject* thisValue)
     reset(prototype());
 }
 
-void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void JSGlobalObject::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
     if (symbolTablePut(propertyName, value))
         return;
-    return JSVariableObject::put(exec, propertyName, value);
+    JSVariableObject::put(exec, propertyName, value, slot);
 }
 
 void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& propertyName, JSValue* value, unsigned attributes)
@@ -152,7 +152,8 @@ void JSGlobalObject::putWithAttributes(ExecState* exec, const Identifier& proper
         return;
 
     JSValue* valueBefore = getDirect(propertyName);
-    JSVariableObject::put(exec, propertyName, value);
+    PutPropertySlot slot;
+    JSVariableObject::put(exec, propertyName, value, slot);
     if (!valueBefore) {
         if (JSValue* valueAfter = getDirect(propertyName))
             putDirect(propertyName, valueAfter, attributes);
@@ -187,7 +188,7 @@ void JSGlobalObject::reset(JSValue* prototype)
     // which would be wasteful -- or uninitialized pointers -- which would be
     // dangerous. (The allocations below may cause a GC.)
 
-    m_propertyMap.clear();
+    ASSERT(!hasCustomProperties());
     symbolTable().clear();
     setRegisterArray(0, 0);
 
@@ -333,8 +334,12 @@ void JSGlobalObject::reset(JSValue* prototype)
     putDirectFunction(exec, new (exec) PrototypeFunction(exec, d()->functionPrototype, 1, Identifier(exec, "kjsprint"), globalFuncKJSPrint), DontEnum);
 #endif
 
-    // Set prototype, and also insert the object prototype at the end of the chain.
+    resetPrototype(prototype);
+}
 
+// Set prototype, and also insert the object prototype at the end of the chain.
+void JSGlobalObject::resetPrototype(JSValue* prototype)
+{
     setPrototype(prototype);
     lastInPrototypeChain(this)->setPrototype(d()->objectPrototype);
 }

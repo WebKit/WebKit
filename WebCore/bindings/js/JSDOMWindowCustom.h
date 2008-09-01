@@ -105,20 +105,22 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, c
     return false;
 }
 
-inline bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value)
+inline bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, KJS::PutPropertySlot& slot)
 {
     if (!impl()->frame())
         return true;
 
     // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
-    KJS::PropertySlot slot;
+    KJS::PropertySlot getSlot;
     bool slotIsWriteable;
-    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, slot, slotIsWriteable)) {
+    if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, getSlot, slotIsWriteable)) {
         if (allowsAccessFrom(exec)) {
-            if (slotIsWriteable)
-                slot.putValue(value);
-            else
-                JSGlobalObject::put(exec, propertyName, value);
+            if (slotIsWriteable) {
+                getSlot.putValue(value);
+                if (getSlot.isCacheable())
+                    slot.setExistingProperty(this, getSlot.cachedOffset());
+            } else
+                JSGlobalObject::put(exec, propertyName, value, slot);
         }
         return true;
     }

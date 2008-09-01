@@ -151,6 +151,11 @@ namespace KJS {
         bool isJSArray(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsArrayVptr; }
         bool isJSString(JSValue* v) { return !JSImmediate::isImmediate(v) && v->asCell()->vptr() == m_jsStringVptr; }
         
+        void tryCacheGetByID(CodeBlock*, Instruction* vPC, JSValue* baseValue, const PropertySlot&);
+        void uncacheGetByID(CodeBlock*, Instruction* vPC);
+        void tryCachePutByID(CodeBlock*, Instruction* vPC, JSValue* baseValue, const PutPropertySlot&);
+        void uncachePutByID(CodeBlock*, Instruction* vPC);
+        
         int m_reentryDepth;
         unsigned m_timeoutTime;
         unsigned m_timeAtLastCheckTimeout;

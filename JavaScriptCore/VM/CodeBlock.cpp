@@ -37,7 +37,7 @@
 
 namespace KJS {
 
-#if !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
+#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
 
 static UString escapeQuotes(const UString& str)
 {
@@ -65,6 +65,9 @@ static CString registerName(int r)
 {
     if (r < 0)
         return (UString("lr") + UString::from(-r)).UTF8String(); 
+        
+    if (r == missingThisObjectMarker())
+        return "<null>";
 
     return (UString("tr") + UString::from(r)).UTF8String();
 }
@@ -95,6 +98,13 @@ static UString regexpToSourceString(RegExp* regExp)
 static CString regexpName(int re, RegExp* regexp)
 {
     return (regexpToSourceString(regexp) + "(@re" + UString::from(re) + ")").UTF8String();
+}
+
+static UString pointerToSourceString(void* p)
+{
+    char buffer[2 + 2 * sizeof(void*) + 1]; // 0x [two characters per byte] \0
+    snprintf(buffer, sizeof(buffer), "%p", p);
+    return buffer;
 }
 
 NEVER_INLINE static const char* debugHookName(int debugHookID)
@@ -144,6 +154,62 @@ static void printConditionalJump(const Vector<Instruction>::const_iterator& begi
     int r0 = (++it)->u.operand;
     int offset = (++it)->u.operand;
     printf("[%4d] %s\t\t %s, %d(->%d)\n", location, op, registerName(r0).c_str(), offset, jumpTarget(begin, it, offset));
+}
+
+static void printGetByIdOp(int location, Vector<Instruction>::const_iterator& it, const Vector<Identifier>& identifiers, const char* op)
+{
+    int r0 = (++it)->u.operand;
+    int r1 = (++it)->u.operand;
+    int id0 = (++it)->u.operand;
+    printf("[%4d] %s\t %s, %s, %s\n", location, op, registerName(r0).c_str(), registerName(r1).c_str(), idName(id0, identifiers[id0]).c_str());
+    it += 4;
+}
+
+static void printPutByIdOp(int location, Vector<Instruction>::const_iterator& it, const Vector<Identifier>& identifiers, const char* op)
+{
+    int r0 = (++it)->u.operand;
+    int id0 = (++it)->u.operand;
+    int r1 = (++it)->u.operand;
+    printf("[%4d] %s\t %s, %s, %s\n", location, op, registerName(r0).c_str(), idName(id0, identifiers[id0]).c_str(), registerName(r1).c_str());
+    it += 2;
+}
+
+void CodeBlock::printStructureID(const char* name, const Instruction* vPC, int operand) const
+{
+    printf("  [%4d] %s: %s\n", vPC - instructions.begin(), name, pointerToSourceString(vPC[operand].u.structureID).UTF8String().c_str());
+}
+
+void CodeBlock::printStructureIDs(const Instruction* vPC) const
+{
+    Machine* machine = globalData->machine;
+
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id)) {
+        printStructureID("get_by_id", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_self)) {
+        printStructureID("get_by_id_self", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_proto)) {
+        printf("  [%4d] %s: %s, %s\n", vPC - instructions.begin(), "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
+        printf("  [%4d] %s: %s, %s\n", vPC - instructions.begin(), "get_by_id_chain", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureIDChain).UTF8String().c_str());
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id)) {
+        printStructureID("put_by_id", vPC, 4);
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {
+        printStructureID("put_by_id_replace", vPC, 4);
+        return;
+    }
+
+    // These instructions doesn't ref StructureIDs.
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
 }
 
 void CodeBlock::dump(ExecState* exec) const
@@ -200,56 +266,69 @@ void CodeBlock::dump(ExecState* exec) const
         } while (i < regexps.size());
     }
 
+    if (structureIDInstructions.size()) {
+        printf("\nStructureIDs:\n");
+        size_t i = 0;
+        do {
+            printStructureIDs(&instructions[structureIDInstructions[i]]);
+            ++i;
+        } while (i < structureIDInstructions.size());
+    }
+
     if (exceptionHandlers.size()) {
         printf("\nException Handlers:\n");
         unsigned i = 0;
         do {
-            printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] }\n", i+1, exceptionHandlers[i].start, exceptionHandlers[i].end, exceptionHandlers[i].target);
+            printf("\t %d: { start: [%4d] end: [%4d] target: [%4d] }\n", i + 1, exceptionHandlers[i].start, exceptionHandlers[i].end, exceptionHandlers[i].target);
             ++i;
         } while (i < exceptionHandlers.size());
     }
     
     if (immediateSwitchJumpTables.size()) {
-        printf("immediate switch jump tables:\n");
+        printf("Immediate Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            printf("\t{\n");
+            printf("  %1d = {\n", i);
             int entry = 0;
             Vector<int32_t>::const_iterator end = immediateSwitchJumpTables[i].branchOffsets.end();
-            for (Vector<int32_t>::const_iterator iter = immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry)
-                if (*iter)
-                    printf("\t\t%4d => %04d\n", entry + immediateSwitchJumpTables[i].min, *iter);
-            printf("\t}\n");
+            for (Vector<int32_t>::const_iterator iter = immediateSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+                if (!*iter)
+                    continue;
+                printf("\t\t%4d => %04d\n", entry + immediateSwitchJumpTables[i].min, *iter);
+            }
+            printf("      }\n");
             ++i;
         } while (i < immediateSwitchJumpTables.size());
     }
     
     if (characterSwitchJumpTables.size()) {
-        printf("\ncharacter switch jump tables:\n");
+        printf("\nCharacter Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            printf("\t{\n");
+            printf("  %1d = {\n", i);
             int entry = 0;
             Vector<int32_t>::const_iterator end = characterSwitchJumpTables[i].branchOffsets.end();
             for (Vector<int32_t>::const_iterator iter = characterSwitchJumpTables[i].branchOffsets.begin(); iter != end; ++iter, ++entry) {
+                if (!*iter)
+                    continue;
                 ASSERT(!((i + characterSwitchJumpTables[i].min) & ~0xFFFF));
-                UChar ch = static_cast<UChar>(i + characterSwitchJumpTables[i].min);
+                UChar ch = static_cast<UChar>(entry + characterSwitchJumpTables[i].min);
                 printf("\t\t\"%s\" => %04d\n", UString(&ch, 1).ascii(), *iter);
             }
-            printf("\t}\n");
+            printf("      }\n");
             ++i;
         } while (i < characterSwitchJumpTables.size());
     }
     
     if (stringSwitchJumpTables.size()) {
-        printf("\nstring switch jump tables:\n");
+        printf("\nString Switch Jump Tables:\n");
         unsigned i = 0;
         do {
-            printf("\t{\n");
+            printf("  %1d = {\n", i);
             StringJumpTable::const_iterator end = stringSwitchJumpTables[i].end();
             for (StringJumpTable::const_iterator iter = stringSwitchJumpTables[i].begin(); iter != end; ++iter)
                 printf("\t\t\"%s\" => %04d\n", UString(iter->first).ascii(), iter->second);
-            printf("\t}\n");
+            printf("      }\n");
             ++i;
         } while (i < stringSwitchJumpTables.size());
     }
@@ -422,14 +501,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int index = (++it)->u.operand;
             int skipLevels = (++it)->u.operand;
-            printf("[%4d] get_scoped_var\t\t %s, %d, %d\n", location, registerName(r0).c_str(), index, skipLevels);
+            printf("[%4d] get_scoped_var\t %s, %d, %d\n", location, registerName(r0).c_str(), index, skipLevels);
             break;
         }
         case op_put_scoped_var: {
             int index = (++it)->u.operand;
             int skipLevels = (++it)->u.operand;
             int r0 = (++it)->u.operand;
-            printf("[%4d] put_scoped_var\t\t %d, %d, %s\n", location, index, skipLevels, registerName(r0).c_str());
+            printf("[%4d] put_scoped_var\t %d, %d, %s\n", location, index, skipLevels, registerName(r0).c_str());
             break;
         }
         case op_resolve_base: {
@@ -453,17 +532,35 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             break;
         }
         case op_get_by_id: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
-            printf("[%4d] get_by_id\t %s, %s, %s\n", location, registerName(r0).c_str(), registerName(r1).c_str(), idName(id0, identifiers[id0]).c_str());
+            printGetByIdOp(location, it, identifiers, "get_by_id");
+            break;
+        }
+        case op_get_by_id_self: {
+            printGetByIdOp(location, it, identifiers, "get_by_id_self");
+            break;
+        }
+        case op_get_by_id_proto: {
+            printGetByIdOp(location, it, identifiers, "get_by_id_proto");
+            break;
+        }
+        case op_get_by_id_chain: {
+            printGetByIdOp(location, it, identifiers, "get_by_id_chain");
+            break;
+        }
+        case op_get_by_id_generic: {
+            printGetByIdOp(location, it, identifiers, "get_by_id_generic");
             break;
         }
         case op_put_by_id: {
-            int r0 = (++it)->u.operand;
-            int id0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            printf("[%4d] put_by_id\t %s, %s, %s\n", location, registerName(r0).c_str(), idName(id0, identifiers[id0]).c_str(), registerName(r1).c_str());
+            printPutByIdOp(location, it, identifiers, "put_by_id");
+            break;
+        }
+        case op_put_by_id_replace: {
+            printPutByIdOp(location, it, identifiers, "put_by_id_replace");
+            break;
+        }
+        case op_put_by_id_generic: {
+            printPutByIdOp(location, it, identifiers, "put_by_id_generic");
             break;
         }
         case op_put_getter: {
@@ -548,7 +645,7 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
-            printf("[%4d] loop_if_less %s, %s, %d(->%d)\n", location, registerName(r0).c_str(), registerName(r1).c_str(), offset, jumpTarget(begin, it, offset));
+            printf("[%4d] loop_if_less\t %s, %s, %d(->%d)\n", location, registerName(r0).c_str(), registerName(r1).c_str(), offset, jumpTarget(begin, it, offset));
             break;
         }
         case op_switch_imm: {
@@ -697,7 +794,68 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
     }
 }
 
-#endif // !defined(NDEBUG) || ENABLE_SAMPLING_TOOL
+#endif // !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
+
+CodeBlock::~CodeBlock()
+{
+    Vector<size_t>::const_iterator end = structureIDInstructions.end();
+    for (Vector<size_t>::const_iterator it = structureIDInstructions.begin(); it != end; ++it)
+        derefStructureIDs(&instructions[*it]);
+}
+
+void CodeBlock::derefStructureIDs(Instruction* vPC) const
+{
+    Machine* machine = globalData->machine;
+
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_self)) {
+        vPC[4].u.structureID->deref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_proto)) {
+        vPC[4].u.structureID->deref();
+        vPC[5].u.structureID->deref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
+        vPC[4].u.structureID->deref();
+        vPC[5].u.structureIDChain->deref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {
+        vPC[4].u.structureID->deref();
+        return;
+    }
+    
+    // These instructions don't ref their StructureIDs.
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
+}
+
+void CodeBlock::refStructureIDs(Instruction* vPC) const
+{
+    Machine* machine = globalData->machine;
+
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_self)) {
+        vPC[4].u.structureID->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_proto)) {
+        vPC[4].u.structureID->ref();
+        vPC[5].u.structureID->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
+        vPC[4].u.structureID->ref();
+        vPC[5].u.structureIDChain->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {
+        vPC[4].u.structureID->ref();
+        return;
+    }
+    
+    // These instructions don't ref their StructureIDs.
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
+}
 
 void CodeBlock::mark()
 {

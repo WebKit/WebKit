@@ -100,9 +100,9 @@ JSValue* JSHTMLInputElementBase::getValueProperty(ExecState* exec, int token) co
     return jsUndefined();
 }
 
-void JSHTMLInputElementBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void JSHTMLInputElementBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
-    lookupPut<JSHTMLInputElementBase, JSHTMLElement>(exec, propertyName, value, &JSHTMLInputElementBaseTable, this);
+    lookupPut<JSHTMLInputElementBase, JSHTMLElement>(exec, propertyName, value, &JSHTMLInputElementBaseTable, this, slot);
 }
 
 void JSHTMLInputElementBase::putValueProperty(ExecState* exec, int token, JSValue* value)

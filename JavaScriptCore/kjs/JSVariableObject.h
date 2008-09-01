@@ -80,12 +80,13 @@ namespace KJS {
             JSVariableObjectData& operator=(const JSVariableObjectData&);
         };
 
-        JSVariableObject(JSVariableObjectData* data)
-            : d(data) // Subclass owns this pointer.
+        JSVariableObject(PassRefPtr<StructureID> structureID, JSVariableObjectData* data)
+            : JSObject(structureID)
+            , d(data) // Subclass owns this pointer.
         {
         }
 
-        JSVariableObject(JSValue* prototype, JSVariableObjectData* data)
+        JSVariableObject(JSObject* prototype, JSVariableObjectData* data)
             : JSObject(prototype)
             , d(data) // Subclass owns this pointer.
         {

@@ -35,7 +35,7 @@ namespace WebCore {
 
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*);
+        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*, KJS::PutPropertySlot& slot);
         void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
         virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
         static const KJS::ClassInfo s_info;

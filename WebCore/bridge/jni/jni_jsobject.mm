@@ -360,8 +360,10 @@ void JavaJSObject::setMember(jstring memberName, jobject value) const
         return;
 
     ExecState* exec = rootObject->globalObject()->globalExec();
+
     JSLock lock(false);
-    _imp->put(exec, Identifier(exec, JavaString(memberName).ustring()), convertJObjectToValue(exec, value));
+    PutPropertySlot slot;
+    _imp->put(exec, Identifier(exec, JavaString(memberName).ustring()), convertJObjectToValue(exec, value), slot);
 }
 
 

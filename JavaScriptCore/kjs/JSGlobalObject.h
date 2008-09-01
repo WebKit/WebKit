@@ -130,14 +130,16 @@ namespace KJS {
         };
 
     public:
-        JSGlobalObject()
-            : JSVariableObject(new JSGlobalObjectData(this, this))
+        void* operator new(size_t, JSGlobalData*);
+
+        JSGlobalObject(JSGlobalData* globalData)
+            : JSVariableObject(globalData->nullProtoStructureID, new JSGlobalObjectData(this, this))
         {
             init(this);
         }
 
     protected:
-        JSGlobalObject(JSValue* prototype, JSGlobalObjectData* d, JSObject* globalThisValue)
+        JSGlobalObject(JSObject* prototype, JSGlobalObjectData* d, JSObject* globalThisValue)
             : JSVariableObject(prototype, d)
         {
             init(globalThisValue);
@@ -148,7 +150,7 @@ namespace KJS {
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
-        virtual void put(ExecState*, const Identifier&, JSValue*);
+        virtual void put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&);
         virtual void putWithAttributes(ExecState*, const Identifier& propertyName, JSValue* value, unsigned attributes);
 
         virtual void defineGetter(ExecState*, const Identifier& propertyName, JSObject* getterFunc);
@@ -157,12 +159,6 @@ namespace KJS {
         // Linked list of all global objects that use the same JSGlobalData.
         JSGlobalObject*& head() { return d()->globalData->head; }
         JSGlobalObject* next() { return d()->next; }
-
-        // Resets the global object to contain only built-in properties, sets
-        // the global object's prototype to "prototype," then adds the 
-        // default object prototype to the tail of the global object's 
-        // prototype chain.
-        void reset(JSValue* prototype);
 
         // The following accessors return pristine values, even if a script 
         // replaces the global object's associated property.
@@ -230,14 +226,10 @@ namespace KJS {
 
         void copyGlobalsFrom(RegisterFile&);
         void copyGlobalsTo(RegisterFile&);
-
-        // Per-JSGlobalData hash tables, cached on the global object for faster access.
-        JSGlobalData* globalData() { return d()->globalData.get(); }
-
-        void* operator new(size_t, JSGlobalData*);
-
-        void init(JSObject* thisValue);
         
+        void resetPrototype(JSValue* prototype);
+
+        JSGlobalData* globalData() { return d()->globalData.get(); }
         JSGlobalObjectData* d() const { return static_cast<JSGlobalObjectData*>(JSVariableObject::d); }
 
     protected:
@@ -256,6 +248,10 @@ namespace KJS {
         void addStaticGlobals(GlobalPropertyInfo*, int count);
 
     private:
+        // FIXME: Fold these functions into the constructor.
+        void init(JSObject* thisValue);
+        void reset(JSValue* prototype);
+
         void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 

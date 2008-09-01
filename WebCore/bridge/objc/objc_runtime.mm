@@ -31,7 +31,9 @@
 #include "runtime_array.h"
 #include "runtime_object.h"
 #include <kjs/Error.h>
+#include <kjs/JSGlobalObject.h>
 #include <kjs/JSLock.h>
+#include <kjs/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 
 using namespace KJS;
@@ -201,9 +203,10 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::info = { "ObjcFallbackObject", 0, 0, 0 };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ObjcInstance* i, const Identifier& propertyName)
-: _instance(i)
-, _item(propertyName)
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(ExecState* exec, ObjcInstance* i, const Identifier& propertyName)
+    : JSObject(exec->lexicalGlobalObject()->objectPrototype())
+    , _instance(i)
+    , _item(propertyName)
 {
 }
 
@@ -214,7 +217,7 @@ bool ObjcFallbackObjectImp::getOwnPropertySlot(ExecState*, const Identifier&, Pr
     return true;
 }
 
-void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*)
+void ObjcFallbackObjectImp::put(ExecState*, const Identifier&, JSValue*, PutPropertySlot&)
 {
 }
 

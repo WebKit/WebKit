@@ -6,8 +6,9 @@ window.x is: 2
 typeof window.__lookupSetter__("x") is: undefined
 window.y is: window.y __getter__
 typeof window.__lookupGetter__("y") is: function
-window.y is: 2
-typeof window.__lookupSetter__("y") is: undefined
+window.y __setter__ called
+window.y is: window.y __getter__
+typeof window.__lookupSetter__("y") is: function
 window.z __setter__ called
 typeof window.__lookupSetter__("z") is: undefined
 

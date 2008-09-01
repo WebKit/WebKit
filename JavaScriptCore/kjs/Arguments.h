@@ -38,7 +38,7 @@ namespace KJS {
         virtual void mark();
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual void put(ExecState*, const Identifier& propertyName, JSValue*);
+        virtual void put(ExecState*, const Identifier& propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
 
         virtual const ClassInfo* classInfo() const { return &info; }

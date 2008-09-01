@@ -45,7 +45,8 @@ namespace WebCore {
         static const KJS::ClassInfo s_info;
 
     protected:
-        JSQuarantinedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSValue* wrappedPrototype);
+        JSQuarantinedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSObject* wrappedPrototype);
+        JSQuarantinedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, PassRefPtr<KJS::StructureID>);
 
         virtual void mark();
 
@@ -53,7 +54,7 @@ namespace WebCore {
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
         virtual bool getOwnPropertySlot(KJS::ExecState*, unsigned, KJS::PropertySlot&);
 
-        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);
+        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, KJS::PutPropertySlot&);
         virtual void put(KJS::ExecState*, unsigned, KJS::JSValue*);
 
         virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);

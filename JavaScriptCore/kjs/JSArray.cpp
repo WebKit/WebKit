@@ -125,7 +125,20 @@ inline void JSArray::checkConsistency(ConsistencyCheckType)
 
 #endif
 
-JSArray::JSArray(JSValue* prototype, unsigned initialLength)
+JSArray::JSArray(DummyConstructTag)
+    : JSObject(StructureID::create(jsNull()))
+{
+    unsigned initialCapacity = 0;
+
+    m_storage = static_cast<ArrayStorage*>(fastZeroedMalloc(storageSize(initialCapacity)));
+    m_fastAccessCutoff = 0;
+    m_storage->m_vectorLength = initialCapacity;
+    m_storage->m_length = 0;
+
+    checkConsistency();
+}
+
+JSArray::JSArray(JSObject* prototype, unsigned initialLength)
     : JSObject(prototype)
 {
     unsigned initialCapacity = min(initialLength, MIN_SPARSE_ARRAY_INDEX);
@@ -220,7 +233,7 @@ bool JSArray::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName
 }
 
 // ECMA 15.4.5.1
-void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue* value)
+void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     bool isArrayIndex;
     unsigned i = propertyName.toArrayIndex(&isArrayIndex);
@@ -239,7 +252,7 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue* valu
         return;
     }
 
-    JSObject::put(exec, propertyName, value);
+    JSObject::put(exec, propertyName, value, slot);
 }
 
 void JSArray::put(ExecState* exec, unsigned i, JSValue* value)
@@ -276,7 +289,8 @@ NEVER_INLINE void JSArray::putSlowCase(ExecState* exec, unsigned i, JSValue* val
 
     if (i >= MIN_SPARSE_ARRAY_INDEX) {
         if (i > MAX_ARRAY_INDEX) {
-            put(exec, Identifier::from(exec, i), value);
+            PutPropertySlot slot;
+            put(exec, Identifier::from(exec, i), value, slot);
             return;
         }
 

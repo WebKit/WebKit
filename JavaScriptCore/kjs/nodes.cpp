@@ -1842,7 +1842,7 @@ JSFunction* FuncExprNode::makeFunction(ExecState* exec, ScopeChainNode* scopeCha
      */
 
     if (!m_ident.isNull()) {
-        JSStaticScopeObject* functionScopeObject = new (exec) JSStaticScopeObject(m_ident, func, ReadOnly | DontDelete);
+        JSStaticScopeObject* functionScopeObject = new (exec) JSStaticScopeObject(exec, m_ident, func, ReadOnly | DontDelete);
         func->scope().push(functionScopeObject);
     }
 

@@ -102,7 +102,7 @@ bool JSNotAnObject::getOwnPropertySlot(ExecState* exec, unsigned, PropertySlot&)
     return false;
 }
 
-void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue*)
+void JSNotAnObject::put(ExecState* exec, const Identifier& , JSValue*, PutPropertySlot&)
 {
     UNUSED_PARAM(exec);
     ASSERT(exec->hadException() && exec->exception() == m_exception);

@@ -217,10 +217,10 @@ namespace KJS {
      * then it calls put() on the ParentImp class.
      */
     template <class ThisImp, class ParentImp>
-    inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValue* value, const HashTable* table, ThisImp* thisObj)
+    inline void lookupPut(ExecState* exec, const Identifier& propertyName, JSValue* value, const HashTable* table, ThisImp* thisObj, PutPropertySlot& slot)
     {
         if (!lookupPut<ThisImp>(exec, propertyName, value, table, thisObj))
-            thisObj->ParentImp::put(exec, propertyName, value); // not found: forward to parent
+            thisObj->ParentImp::put(exec, propertyName, value, slot); // not found: forward to parent
     }
 
     /**

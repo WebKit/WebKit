@@ -35,11 +35,6 @@
 
 namespace KJS {
 
-    struct IdentifierRepHash : PtrHash<RefPtr<UString::Rep> > {
-        static unsigned hash(const RefPtr<UString::Rep>& key) { return key->computedHash(); }
-        static unsigned hash(UString::Rep* key) { return key->computedHash(); }
-    };
-
     static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
     // The bit twiddling in this class assumes that every register index is a
@@ -123,7 +118,7 @@ namespace KJS {
         static const bool needsDestruction = false;
     };
 
-    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
+    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, WTF::IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 

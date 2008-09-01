@@ -443,10 +443,10 @@ sub GenerateHeader
 
     # Getters
     if ($hasSetter) {
-        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);\n");
+        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, KJS::PutPropertySlot&);\n");
         push(@headerContent, "    virtual void put(KJS::ExecState*, unsigned propertyName, KJS::JSValue*);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
         push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*);\n") if $hasReadWriteProperties;
-        push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
+        push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, KJS::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
     }
 
     # Class info
@@ -654,7 +654,7 @@ sub GenerateHeader
         push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
     }
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@headerContent, "    ${className}Prototype() { }\n");
+        push(@headerContent, "    ${className}Prototype() : KJS::JSObject(JSDOMWindowBase::commonJSGlobalData()->nullProtoStructureID) { }\n");
     } else {
         push(@headerContent, "    ${className}Prototype(KJS::ExecState* exec)\n");
         if ($hasParent && $parentClassName ne "KJS::DOMNodeFilter") {
@@ -1093,7 +1093,7 @@ sub GenerateImplementation
                      || $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
 
         if ($hasSetter) {
-            push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value)\n");
+            push(@implContent, "void ${className}::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)\n");
             push(@implContent, "{\n");
             if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
                 push(@implContent, "    bool ok;\n");
@@ -1104,14 +1104,14 @@ sub GenerateImplementation
                 push(@implContent, "    }\n");
             }
             if ($dataNode->extendedAttributes->{"CustomPutFunction"}) {
-                push(@implContent, "    if (customPut(exec, propertyName, value))\n");
+                push(@implContent, "    if (customPut(exec, propertyName, value, slot))\n");
                 push(@implContent, "        return;\n");
             }
 
             if ($hasReadWriteProperties) {
-                push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, &${className}Table, this);\n");
+                push(@implContent, "    lookupPut<$className, Base>(exec, propertyName, value, &${className}Table, this, slot);\n");
             } else {
-                push(@implContent, "    Base::put(exec, propertyName, value);\n");
+                push(@implContent, "    Base::put(exec, propertyName, value, slot);\n");
             }
             push(@implContent, "}\n\n");
 

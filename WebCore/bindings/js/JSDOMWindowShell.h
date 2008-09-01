@@ -63,7 +63,7 @@ namespace WebCore {
         virtual void mark();
         virtual KJS::UString className() const;
         virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::PropertySlot&);
-        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*);
+        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, KJS::PutPropertySlot&);
         virtual void putWithAttributes(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, unsigned attributes);
         virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier& propertyName);
         virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);

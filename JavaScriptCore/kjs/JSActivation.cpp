@@ -41,8 +41,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
 const ClassInfo JSActivation::info = { "JSActivation", 0, 0, 0 };
 
-JSActivation::JSActivation(PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
-    : Base(new JSActivationData(functionBody, registers))
+JSActivation::JSActivation(ExecState* exec, PassRefPtr<FunctionBodyNode> functionBody, Register* registers)
+    : Base(exec->globalData().nullProtoStructureID, new JSActivationData(functionBody, registers))
 {
 }
 
@@ -78,12 +78,12 @@ bool JSActivation::getOwnPropertySlot(ExecState* exec, const Identifier& propert
 
     // We don't call through to JSObject because there's no way to give an 
     // activation object getter properties or a prototype.
-    ASSERT(!m_propertyMap.hasGetterSetterProperties());
+    ASSERT(!hasGetterSetterProperties());
     ASSERT(prototype() == jsNull());
     return false;
 }
 
-void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue* value)
+void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
     ASSERT(!Heap::heap(value) || Heap::heap(value) == Heap::heap(this));
 
@@ -93,8 +93,8 @@ void JSActivation::put(ExecState*, const Identifier& propertyName, JSValue* valu
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
-    ASSERT(!m_propertyMap.hasGetterSetterProperties());
-    m_propertyMap.put(propertyName, value, 0, true);
+    ASSERT(!hasGetterSetterProperties());
+    putDirect(propertyName, value, 0, true, slot);
 }
 
 // FIXME: Make this function honor ReadOnly (const) and DontEnum
@@ -108,8 +108,9 @@ void JSActivation::putWithAttributes(ExecState*, const Identifier& propertyName,
     // We don't call through to JSObject because __proto__ and getter/setter 
     // properties are non-standard extensions that other implementations do not
     // expose in the activation object.
-    ASSERT(!m_propertyMap.hasGetterSetterProperties());
-    m_propertyMap.put(propertyName, value, attributes, true);
+    ASSERT(!hasGetterSetterProperties());
+    PutPropertySlot slot;
+    putDirect(propertyName, value, attributes, true, slot);
 }
 
 bool JSActivation::deleteProperty(ExecState* exec, const Identifier& propertyName)

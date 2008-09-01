@@ -1,3 +1,84 @@
+2008-09-01  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        First cut at inline caching for access to vanilla JavaScript properties.
+
+        Updated for JavaScriptCore changes. Mostly mechanical addition of StructureIDs
+        to WebCore classes, and PutPropertySlot& arguments to put functions.
+
+        (WebCore::JSCSSStyleDeclaration::customPut): Be sure to play nice with
+        inline caching for global properties, so global assignment can be optimized.
+
+        * ForwardingHeaders/kjs/StructureID.h: Added.
+        * bindings/js/JSDOMBinding.h:
+        (WebCore::DOMObject::DOMObject):
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::put):
+        * bindings/js/JSDOMWindowBase.h:
+        * bindings/js/JSDOMWindowCustom.h:
+        (WebCore::JSDOMWindow::customPut):
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        (WebCore::JSDOMWindowShell::put):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/JSEventTargetBase.h:
+        (WebCore::JSEventTargetBase::put):
+        * bindings/js/JSEventTargetNode.h:
+        (WebCore::JSEventTargetNode::put):
+        * bindings/js/JSHTMLAppletElementCustom.cpp:
+        (WebCore::JSHTMLAppletElement::customPut):
+        * bindings/js/JSHTMLEmbedElementCustom.cpp:
+        (WebCore::JSHTMLEmbedElement::customPut):
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        (WebCore::JSHTMLInputElementBase::put):
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/js/JSHTMLObjectElementCustom.cpp:
+        (WebCore::JSHTMLObjectElement::customPut):
+        * bindings/js/JSHistoryCustom.cpp:
+        (WebCore::JSHistory::customPut):
+        * bindings/js/JSInspectedObjectWrapper.cpp:
+        (WebCore::JSInspectedObjectWrapper::wrap):
+        (WebCore::JSInspectedObjectWrapper::JSInspectedObjectWrapper):
+        * bindings/js/JSInspectedObjectWrapper.h:
+        * bindings/js/JSInspectorCallbackWrapper.cpp:
+        (WebCore::JSInspectorCallbackWrapper::wrap):
+        (WebCore::JSInspectorCallbackWrapper::JSInspectorCallbackWrapper):
+        * bindings/js/JSInspectorCallbackWrapper.h:
+        * bindings/js/JSLocationCustom.cpp:
+        (WebCore::JSLocation::customPut):
+        * bindings/js/JSPluginElementFunctions.cpp:
+        (WebCore::runtimeObjectCustomPut):
+        * bindings/js/JSPluginElementFunctions.h:
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::JSQuarantinedObjectWrapper):
+        (WebCore::JSQuarantinedObjectWrapper::put):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+        * bindings/js/JSStorageCustom.cpp:
+        (WebCore::JSStorage::customPut):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject setValue:forKey:]):
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bridge/NP_jsobject.cpp:
+        (_NPN_SetProperty):
+        * bridge/jni/jni_jsobject.mm:
+        (JavaJSObject::setMember):
+        * bridge/objc/objc_class.mm:
+        (KJS::Bindings::ObjcClass::fallbackObject):
+        * bridge/objc/objc_runtime.h:
+        * bridge/objc/objc_runtime.mm:
+        (ObjcFallbackObjectImp::ObjcFallbackObjectImp):
+        (ObjcFallbackObjectImp::put):
+        * bridge/runtime.cpp:
+        (KJS::Bindings::Instance::createRuntimeObject):
+        * bridge/runtime_array.cpp:
+        (RuntimeArray::put):
+        * bridge/runtime_array.h:
+        * bridge/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::put):
+        * bridge/runtime_object.h:
+
 2008-09-01  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Eric Seidel.

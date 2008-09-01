@@ -36,7 +36,7 @@ namespace KJS {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
 
-        virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*);
+        virtual void put(ExecState* exec, const Identifier& propertyName, JSValue*, PutPropertySlot&);
         virtual bool deleteProperty(ExecState*, const Identifier& propertyName);
         virtual void getPropertyNames(ExecState*, PropertyNameArray&);
 
