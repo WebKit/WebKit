@@ -1,3 +1,34 @@
+2008-09-01  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19939
+        [GTK] webkit_web_history_item_get_title() fails with assertion
+
+        Make sure newly constructed WebHistoryItem objects wrap a WebCore
+        history item when necessary. Avoid G_PARAM_CONSTRUCT since it destroys
+        history data -- use WEBKIT_PARAM flags instead as they do the right
+        thing. This restores history functionality.
+
+        Also use CString to simplify UTF-8 string management.
+
+        * webkit/webkitwebbackforwardlist.cpp:
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_forward_list_with_limit):
+        (_WebKitWebBackForwardListPrivate::webkit_web_back_forward_list_get_back_list_with_limit):
+        No need to initialize the vector with a size since it's cleared by the
+        callee.
+        * webkit/webkitwebhistoryitem.cpp:
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_finalize):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_class_init):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_core_item):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_new_with_data):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_set_alternate_title):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_uri):
+        (_WebKitWebHistoryItemPrivate::webkit_web_history_item_get_original_uri):
+
 2008-08-27  Adrien Nader  <camaradetux@gmail.com>
 
         Reviewed by Eric Seidel.
