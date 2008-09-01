@@ -1,3 +1,13 @@
+2008-09-01  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Sam Weinig
+
+        Code styling cleanup.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::getValueProperty):
+        (WebCore::JSDOMWindowBase::put):
+
 2008-09-01  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

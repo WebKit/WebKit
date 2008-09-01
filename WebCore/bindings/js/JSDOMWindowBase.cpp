@@ -432,116 +432,116 @@ static JSValue* showModalDialog(ExecState* exec, Frame* frame, const String& url
 
 JSValue *JSDOMWindowBase::getValueProperty(ExecState *exec, int token) const
 {
-   ASSERT(impl()->frame());
+    ASSERT(impl()->frame());
 
-   switch (token) {
-   case Crypto:
-      return jsUndefined(); // FIXME: implement this
+    switch (token) {
+    case Crypto:
+        return jsUndefined(); // FIXME: implement this
     case Event_:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      if (!d()->evt)
-        return jsUndefined();
-      return toJS(exec, d()->evt);
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        if (!d()->evt)
+            return jsUndefined();
+        return toJS(exec, d()->evt);
     case Image:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      // FIXME: this property (and the few below) probably shouldn't create a new object every
-      // time
-      return new (exec) JSImageConstructor(exec, impl()->frame()->document());
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        // FIXME: this property (and the few below) probably shouldn't create a new object every
+        // time
+        return new (exec) JSImageConstructor(exec, impl()->frame()->document());
     case Option:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      return new (exec) JSHTMLOptionElementConstructor(exec, impl()->frame()->document());
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        return new (exec) JSHTMLOptionElementConstructor(exec, impl()->frame()->document());
     case XMLHttpRequest:
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      return new (exec) JSXMLHttpRequestConstructor(exec, impl()->frame()->document());
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        return new (exec) JSXMLHttpRequestConstructor(exec, impl()->frame()->document());
     case Audio:
 #if ENABLE(VIDEO)
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      if (!MediaPlayer::isAvailable())
-        return jsUndefined();
-      return new (exec) JSAudioConstructor(exec, impl()->frame()->document());
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        if (!MediaPlayer::isAvailable())
+            return jsUndefined();
+        return new (exec) JSAudioConstructor(exec, impl()->frame()->document());
 #else
-      return jsUndefined();
+        return jsUndefined();
 #endif
     case XSLTProcessor:
 #if ENABLE(XSLT)
-      if (!allowsAccessFrom(exec))
-        return jsUndefined();
-      return new (exec) JSXSLTProcessorConstructor(exec);
+        if (!allowsAccessFrom(exec))
+            return jsUndefined();
+        return new (exec) JSXSLTProcessorConstructor(exec);
 #else
-      return jsUndefined();
+        return jsUndefined();
 #endif
-   }
+    }
 
-   if (!allowsAccessFrom(exec))
-     return jsUndefined();
+    if (!allowsAccessFrom(exec))
+        return jsUndefined();
 
-   switch (token) {
-   case Onabort:
-     return getListener(exec, abortEvent);
-   case Onblur:
-     return getListener(exec, blurEvent);
-   case Onchange:
-     return getListener(exec, changeEvent);
-   case Onclick:
-     return getListener(exec, clickEvent);
-   case Ondblclick:
-     return getListener(exec, dblclickEvent);
-   case Onerror:
-     return getListener(exec, errorEvent);
-   case Onfocus:
-     return getListener(exec, focusEvent);
-   case Onkeydown:
-     return getListener(exec, keydownEvent);
-   case Onkeypress:
-     return getListener(exec, keypressEvent);
-   case Onkeyup:
-     return getListener(exec, keyupEvent);
-   case Onload:
-     return getListener(exec, loadEvent);
-   case Onmousedown:
-     return getListener(exec, mousedownEvent);
-   case Onmousemove:
-     return getListener(exec, mousemoveEvent);
-   case Onmouseout:
-     return getListener(exec, mouseoutEvent);
-   case Onmouseover:
-     return getListener(exec, mouseoverEvent);
-   case Onmouseup:
-     return getListener(exec, mouseupEvent);
-   case OnWindowMouseWheel:
-     return getListener(exec, mousewheelEvent);
-   case Onreset:
-     return getListener(exec, resetEvent);
-   case Onresize:
-     return getListener(exec,resizeEvent);
-   case Onscroll:
-     return getListener(exec,scrollEvent);
-   case Onsearch:
-     return getListener(exec,searchEvent);
-   case Onselect:
-     return getListener(exec,selectEvent);
-   case Onsubmit:
-     return getListener(exec,submitEvent);
-   case Onbeforeunload:
-     return getListener(exec, beforeunloadEvent);
-   case Onunload:
-     return getListener(exec, unloadEvent);
-   case OnWebKitAnimationStart:
-     return getListener(exec, webkitAnimationStartEvent);
-   case OnWebKitAnimationIteration:
-     return getListener(exec, webkitAnimationIterationEvent);
-   case OnWebKitAnimationEnd:
-     return getListener(exec, webkitAnimationEndEvent);
-   case OnWebKitTransitionEnd:
-     return getListener(exec, webkitTransitionEndEvent);
-   }
-   ASSERT_NOT_REACHED();
-   return jsUndefined();
+    switch (token) {
+    case Onabort:
+        return getListener(exec, abortEvent);
+    case Onblur:
+        return getListener(exec, blurEvent);
+    case Onchange:
+        return getListener(exec, changeEvent);
+    case Onclick:
+        return getListener(exec, clickEvent);
+    case Ondblclick:
+        return getListener(exec, dblclickEvent);
+    case Onerror:
+        return getListener(exec, errorEvent);
+    case Onfocus:
+        return getListener(exec, focusEvent);
+    case Onkeydown:
+        return getListener(exec, keydownEvent);
+    case Onkeypress:
+        return getListener(exec, keypressEvent);
+    case Onkeyup:
+        return getListener(exec, keyupEvent);
+    case Onload:
+        return getListener(exec, loadEvent);
+    case Onmousedown:
+        return getListener(exec, mousedownEvent);
+    case Onmousemove:
+        return getListener(exec, mousemoveEvent);
+    case Onmouseout:
+        return getListener(exec, mouseoutEvent);
+    case Onmouseover:
+        return getListener(exec, mouseoverEvent);
+    case Onmouseup:
+        return getListener(exec, mouseupEvent);
+    case OnWindowMouseWheel:
+        return getListener(exec, mousewheelEvent);
+    case Onreset:
+        return getListener(exec, resetEvent);
+    case Onresize:
+        return getListener(exec,resizeEvent);
+    case Onscroll:
+        return getListener(exec,scrollEvent);
+    case Onsearch:
+        return getListener(exec,searchEvent);
+    case Onselect:
+        return getListener(exec,selectEvent);
+    case Onsubmit:
+        return getListener(exec,submitEvent);
+    case Onbeforeunload:
+        return getListener(exec, beforeunloadEvent);
+    case Onunload:
+        return getListener(exec, unloadEvent);
+    case OnWebKitAnimationStart:
+        return getListener(exec, webkitAnimationStartEvent);
+    case OnWebKitAnimationIteration:
+        return getListener(exec, webkitAnimationIterationEvent);
+    case OnWebKitAnimationEnd:
+        return getListener(exec, webkitAnimationEndEvent);
+    case OnWebKitTransitionEnd:
+        return getListener(exec, webkitTransitionEndEvent);
+    }
+    ASSERT_NOT_REACHED();
+    return jsUndefined();
 }
 
 JSValue* JSDOMWindowBase::childFrameGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)
@@ -638,123 +638,124 @@ bool JSDOMWindowBase::getOwnPropertySlot(ExecState* exec, const Identifier& prop
 
 void JSDOMWindowBase::put(ExecState* exec, const Identifier& propertyName, JSValue* value, PutPropertySlot& slot)
 {
-  const HashEntry* entry = JSDOMWindowBaseTable.entry(exec, propertyName);
-  if (entry) {
-     if (entry->attributes & Function) {
-       if (allowsAccessFrom(exec))
-         Base::put(exec, propertyName, value, slot);
-       return;
-    }
-    if (entry->attributes & ReadOnly)
-      return;
+    const HashEntry* entry = JSDOMWindowBaseTable.entry(exec, propertyName);
+    if (entry) {
+        if (entry->attributes & Function) {
+            if (allowsAccessFrom(exec))
+                Base::put(exec, propertyName, value, slot);
+            return;
+        }
+        if (entry->attributes & ReadOnly)
+            return;
 
-    switch (entry->integerValue) {
-    case Onabort:
-      if (allowsAccessFrom(exec))
-        setListener(exec, abortEvent,value);
-      return;
-    case Onblur:
-      if (allowsAccessFrom(exec))
-        setListener(exec, blurEvent,value);
-      return;
-    case Onchange:
-      if (allowsAccessFrom(exec))
-        setListener(exec, changeEvent,value);
-      return;
-    case Onclick:
-      if (allowsAccessFrom(exec))
-        setListener(exec,clickEvent,value);
-      return;
-    case Ondblclick:
-      if (allowsAccessFrom(exec))
-        setListener(exec, dblclickEvent,value);
-      return;
-    case Onerror:
-      if (allowsAccessFrom(exec))
-        setListener(exec, errorEvent, value);
-      return;
-    case Onfocus:
-      if (allowsAccessFrom(exec))
-        setListener(exec,focusEvent,value);
-      return;
-    case Onkeydown:
-      if (allowsAccessFrom(exec))
-        setListener(exec,keydownEvent,value);
-      return;
-    case Onkeypress:
-      if (allowsAccessFrom(exec))
-        setListener(exec,keypressEvent,value);
-      return;
-    case Onkeyup:
-      if (allowsAccessFrom(exec))
-        setListener(exec,keyupEvent,value);
-      return;
-    case Onload:
-      if (allowsAccessFrom(exec))
-        setListener(exec,loadEvent,value);
-      return;
-    case Onmousedown:
-      if (allowsAccessFrom(exec))
-        setListener(exec,mousedownEvent,value);
-      return;
-    case Onmousemove:
-      if (allowsAccessFrom(exec))
-        setListener(exec,mousemoveEvent,value);
-      return;
-    case Onmouseout:
-      if (allowsAccessFrom(exec))
-        setListener(exec,mouseoutEvent,value);
-      return;
-    case Onmouseover:
-      if (allowsAccessFrom(exec))
-        setListener(exec,mouseoverEvent,value);
-      return;
-    case Onmouseup:
-      if (allowsAccessFrom(exec))
-        setListener(exec,mouseupEvent,value);
-      return;
-    case OnWindowMouseWheel:
-      if (allowsAccessFrom(exec))
-        setListener(exec, mousewheelEvent,value);
-      return;
-    case Onreset:
-      if (allowsAccessFrom(exec))
-        setListener(exec,resetEvent,value);
-      return;
-    case Onresize:
-      if (allowsAccessFrom(exec))
-        setListener(exec,resizeEvent,value);
-      return;
-    case Onscroll:
-      if (allowsAccessFrom(exec))
-        setListener(exec,scrollEvent,value);
-      return;
-    case Onsearch:
-        if (allowsAccessFrom(exec))
-            setListener(exec,searchEvent,value);
-        return;
-    case Onselect:
-      if (allowsAccessFrom(exec))
-        setListener(exec,selectEvent,value);
-      return;
-    case Onsubmit:
-      if (allowsAccessFrom(exec))
-        setListener(exec,submitEvent,value);
-      return;
-    case Onbeforeunload:
-      if (allowsAccessFrom(exec))
-        setListener(exec, beforeunloadEvent, value);
-      return;
-    case Onunload:
-      if (allowsAccessFrom(exec))
-        setListener(exec, unloadEvent, value);
-      return;
-    default:
-      break;
+        switch (entry->integerValue) {
+        case Onabort:
+            if (allowsAccessFrom(exec))
+                setListener(exec, abortEvent, value);
+            return;
+        case Onblur:
+            if (allowsAccessFrom(exec))
+                setListener(exec, blurEvent, value);
+            return;
+        case Onchange:
+            if (allowsAccessFrom(exec))
+                setListener(exec, changeEvent, value);
+            return;
+        case Onclick:
+            if (allowsAccessFrom(exec))
+                setListener(exec, clickEvent, value);
+            return;
+        case Ondblclick:
+            if (allowsAccessFrom(exec))
+                setListener(exec, dblclickEvent, value);
+            return;
+        case Onerror:
+            if (allowsAccessFrom(exec))
+                setListener(exec, errorEvent, value);
+            return;
+        case Onfocus:
+            if (allowsAccessFrom(exec))
+                setListener(exec, focusEvent, value);
+            return;
+        case Onkeydown:
+            if (allowsAccessFrom(exec))
+                setListener(exec, keydownEvent, value);
+            return;
+        case Onkeypress:
+            if (allowsAccessFrom(exec))
+                setListener(exec, keypressEvent, value);
+            return;
+        case Onkeyup:
+            if (allowsAccessFrom(exec))
+                setListener(exec, keyupEvent, value);
+            return;
+        case Onload:
+            if (allowsAccessFrom(exec))
+                setListener(exec, loadEvent, value);
+            return;
+        case Onmousedown:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mousedownEvent, value);
+            return;
+        case Onmousemove:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mousemoveEvent, value);
+            return;
+        case Onmouseout:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mouseoutEvent, value);
+            return;
+        case Onmouseover:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mouseoverEvent, value);
+            return;
+        case Onmouseup:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mouseupEvent, value);
+            return;
+        case OnWindowMouseWheel:
+            if (allowsAccessFrom(exec))
+                setListener(exec, mousewheelEvent, value);
+            return;
+        case Onreset:
+            if (allowsAccessFrom(exec))
+                setListener(exec, resetEvent, value);
+            return;
+        case Onresize:
+            if (allowsAccessFrom(exec))
+                setListener(exec, resizeEvent, value);
+            return;
+        case Onscroll:
+            if (allowsAccessFrom(exec))
+                setListener(exec, scrollEvent, value);
+            return;
+        case Onsearch:
+            if (allowsAccessFrom(exec))
+                setListener(exec, searchEvent, value);
+            return;
+        case Onselect:
+            if (allowsAccessFrom(exec))
+                setListener(exec, selectEvent, value);
+            return;
+        case Onsubmit:
+            if (allowsAccessFrom(exec))
+                setListener(exec, submitEvent, value);
+            return;
+        case Onbeforeunload:
+            if (allowsAccessFrom(exec))
+                setListener(exec, beforeunloadEvent, value);
+            return;
+        case Onunload:
+            if (allowsAccessFrom(exec))
+                setListener(exec, unloadEvent, value);
+            return;
+        default:
+            break;
+        }
     }
-  }
-  if (allowsAccessFrom(exec))
-    Base::put(exec, propertyName, value, slot);
+
+    if (allowsAccessFrom(exec))
+        Base::put(exec, propertyName, value, slot);
 }
 
 String JSDOMWindowBase::crossDomainAccessErrorMessage(const JSGlobalObject* other) const
