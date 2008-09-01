@@ -1,3 +1,9 @@
+2008-09-01  Jan Michael Alonzo  <jmalonzo@webkit.org>
+
+        Gtk build fix, not reviewed.
+
+        * GNUmakefile.am: Add SmallStrings.cpp in both release and debug builds
+
 2008-08-31  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.
