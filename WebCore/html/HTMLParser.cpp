@@ -1228,10 +1228,11 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
     HTMLStackElem* curr = blockStack;
     HTMLStackElem* residualStyleStack = 0;
     unsigned stackDepth = 1;
+    unsigned redundantStyleCount = 0;
     while (curr && curr != maxElem) {
         // We will actually schedule this tag for reopening
         // after we complete the close of this entire block.
-        if (isResidualStyleTag(curr->tagName) && stackDepth++ < cResidualStyleMaxDepth)
+        if (isResidualStyleTag(curr->tagName) && stackDepth++ < cResidualStyleMaxDepth) {
             // We've overloaded the use of stack elements and are just reusing the
             // struct with a slightly different meaning to the variables.  Instead of chaining
             // from innermost to outermost, we build up a list of all the tags we need to reopen
@@ -1240,8 +1241,16 @@ void HTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             // We also set curr->node to be the actual element that corresponds to the ID stored in
             // curr->id rather than the node that you should pop to when the element gets pulled off
             // the stack.
-            moveOneBlockToStack(residualStyleStack);
-        else
+            if (residualStyleStack && curr->tagName == residualStyleStack->tagName && curr->node->attributes()->mapsEquivalent(residualStyleStack->node->attributes()))
+                redundantStyleCount++;
+            else
+                redundantStyleCount = 0;
+
+            if (redundantStyleCount < cMaxRedundantTagDepth)
+                moveOneBlockToStack(residualStyleStack);
+            else
+                popOneBlock();
+        } else
             popOneBlock();
 
         curr = blockStack;
@@ -1335,6 +1344,7 @@ void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
     
     elem = blockStack;
     unsigned stackDepth = 1;
+    unsigned redundantStyleCount = 0;
     while (elem) {
         if (elem->tagName == tagName) {
             int strayTable = inStrayTableContent;
@@ -1361,7 +1371,7 @@ void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
 
             // Schedule this tag for reopening
             // after we complete the close of this entire block.
-            if (isAffectedByStyle && isResidualStyleTag(elem->tagName) && stackDepth++ < cResidualStyleMaxDepth)
+            if (isAffectedByStyle && isResidualStyleTag(elem->tagName) && stackDepth++ < cResidualStyleMaxDepth) {
                 // We've overloaded the use of stack elements and are just reusing the
                 // struct with a slightly different meaning to the variables.  Instead of chaining
                 // from innermost to outermost, we build up a list of all the tags we need to reopen
@@ -1370,8 +1380,16 @@ void HTMLParser::popBlock(const AtomicString& tagName, bool reportErrors)
                 // We also set elem->node to be the actual element that corresponds to the ID stored in
                 // elem->id rather than the node that you should pop to when the element gets pulled off
                 // the stack.
-                moveOneBlockToStack(residualStyleStack);
-            else
+                if (residualStyleStack && elem->tagName == residualStyleStack->tagName && elem->node->attributes()->mapsEquivalent(residualStyleStack->node->attributes()))
+                    redundantStyleCount++;
+                else
+                    redundantStyleCount = 0;
+
+                if (redundantStyleCount < cMaxRedundantTagDepth)
+                    moveOneBlockToStack(residualStyleStack);
+                else
+                    popOneBlock();
+            } else
                 popOneBlock();
             elem = blockStack;
         }
