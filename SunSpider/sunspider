@@ -144,7 +144,7 @@ sub writePrefixFile()
 sub runTestsOnce($)
 {
     my ($useShark) = @_;
-    my $shellArgs = "-f $prefixFile -f resources/sunspider-standalone-driver.js 2> /dev/null";
+    my $shellArgs = "$prefixFile resources/sunspider-standalone-driver.js 2> /dev/null";
     my $output;
     if ($useShark) {
         my $intervalArg = $useShark == 20 ? "-I 20u" : "";
@@ -209,7 +209,7 @@ my $output = "var output = [\n" . join(",\n", @results) . "\n];\n";
 dumpToFile($output, $resultsFile);
 dumpToFile(File::Spec->rel2abs($resultsFile), "tmp/baseline-filename.txt") if $setBaseline;
 
-system("$jsShellPath", "-f", $prefixFile, "-f", $resultsFile, "-f", "resources/sunspider-analyze-results.js");
+system("$jsShellPath", $prefixFile, $resultsFile, "resources/sunspider-analyze-results.js");
 
 if ($runShark) {
     my $newestMShark = newestFile(".", qr/\.mshark$/);

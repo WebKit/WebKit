@@ -1,3 +1,12 @@
+2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Make SunSpider work with JavaScript shells that don't take filenames
+        after a '-f' argument.
+
+        * sunspider:
+
 2008-06-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Timothy.
