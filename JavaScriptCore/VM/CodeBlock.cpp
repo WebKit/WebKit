@@ -34,6 +34,7 @@
 #include "Machine.h"
 #include "debugger.h"
 #include <stdio.h>
+#include <wtf/StringExtras.h>
 
 namespace KJS {
 

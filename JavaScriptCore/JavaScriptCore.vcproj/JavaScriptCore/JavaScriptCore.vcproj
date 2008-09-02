@@ -837,11 +837,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SmallStrings.h"
+				RelativePath="..\..\kjs\SmallStrings.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\..\kjs\SmallStrings.cpp"
+				RelativePath="..\..\kjs\SmallStrings.h"
 				>
 			</File>
 			<File
@@ -878,6 +878,14 @@
 			</File>
 			<File
 				RelativePath="..\..\kjs\StringPrototype.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StructureID.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\kjs\StructureID.h"
 				>
 			</File>
 			<File
@@ -1286,14 +1294,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\VM\SamplingTool.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\VM\SamplingTool.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\VM\Register.h"
 				>
 			</File>
@@ -1303,6 +1303,14 @@
 			</File>
 			<File
 				RelativePath="..\..\VM\RegisterFile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\VM\SamplingTool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\VM\SamplingTool.h"
 				>
 			</File>
 		</Filter>
