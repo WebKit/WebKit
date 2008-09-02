@@ -1,3 +1,38 @@
+2008-09-02  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        A little database quota management cleanup.
+
+        * storage/OriginQuotaManager.cpp:
+        (WebCore::OriginQuotaManager::OriginQuotaManager):
+        (WebCore::OriginQuotaManager::lock):
+        (WebCore::OriginQuotaManager::unlock):
+        (WebCore::OriginQuotaManager::trackOrigin):
+        (WebCore::OriginQuotaManager::tracksOrigin):
+        (WebCore::OriginQuotaManager::addDatabase):
+        (WebCore::OriginQuotaManager::removeDatabase):
+        (WebCore::OriginQuotaManager::removeOrigin):
+        (WebCore::OriginQuotaManager::markDatabase):
+        (WebCore::OriginQuotaManager::diskUsage):
+        * storage/OriginQuotaManager.h:
+        Changed to assert that a lock is taken more directly and reliably. Removed comments about
+        main/background threads, as this is likely to stop being true with synchronous Database calls
+        being made on worker threads.
+
+        * storage/OriginUsageRecord.cpp:
+        (WebCore::OriginUsageRecord::OriginUsageRecord):
+        (WebCore::OriginUsageRecord::addDatabase):
+        (WebCore::OriginUsageRecord::removeDatabase):
+        (WebCore::OriginUsageRecord::markDatabase):
+        (WebCore::OriginUsageRecord::diskUsage):
+        * storage/OriginUsageRecord.h:
+        (WebCore::OriginUsageRecord::DatabaseEntry::DatabaseEntry):
+        Don't use a magic value for unknown. It is totally unnecessary for DatabaseEntry, and
+        can be replaced with a single boolean for OriginUsageRecord.
+        Added assertions for string parameters being unshared.
+
+
 2008-09-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

@@ -34,22 +34,31 @@
 namespace WebCore {
 
 OriginQuotaManager::OriginQuotaManager()
+#ifndef NDEBUG
+    : m_usageRecordGuardLocked(false)
+#endif
 {
 }
 
 void OriginQuotaManager::lock()
 {
     m_usageRecordGuard.lock();
+#ifndef NDEBUG
+    m_usageRecordGuardLocked = true;
+#endif
 }
 
 void OriginQuotaManager::unlock()
 {
+#ifndef NDEBUG
+    m_usageRecordGuardLocked = false;
+#endif
     m_usageRecordGuard.unlock();
 }
 
 void OriginQuotaManager::trackOrigin(PassRefPtr<SecurityOrigin> origin)
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     ASSERT(!m_usageMap.contains(origin.get()));
 
     m_usageMap.set(origin, new OriginUsageRecord);
@@ -57,13 +66,13 @@ void OriginQuotaManager::trackOrigin(PassRefPtr<SecurityOrigin> origin)
 
 bool OriginQuotaManager::tracksOrigin(SecurityOrigin* origin) const
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     return m_usageMap.contains(origin);
 }
 
 void OriginQuotaManager::addDatabase(SecurityOrigin* origin, const String& databaseIdentifier, const String& fullPath)
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     
     OriginUsageRecord* usageRecord = m_usageMap.get(origin);
     ASSERT(usageRecord);
@@ -73,7 +82,7 @@ void OriginQuotaManager::addDatabase(SecurityOrigin* origin, const String& datab
 
 void OriginQuotaManager::removeDatabase(SecurityOrigin* origin, const String& databaseIdentifier)
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     
     if (OriginUsageRecord* usageRecord = m_usageMap.get(origin))    
         usageRecord->removeDatabase(databaseIdentifier);
@@ -81,7 +90,7 @@ void OriginQuotaManager::removeDatabase(SecurityOrigin* origin, const String& da
 
 void OriginQuotaManager::removeOrigin(SecurityOrigin* origin)
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     
     if (OriginUsageRecord* usageRecord = m_usageMap.get(origin)) {
         m_usageMap.remove(origin);
@@ -92,7 +101,7 @@ void OriginQuotaManager::removeOrigin(SecurityOrigin* origin)
 void OriginQuotaManager::markDatabase(Database* database)
 {
     ASSERT(database);
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     RefPtr<SecurityOrigin> origin = database->securityOriginCopy();
     OriginUsageRecord* usageRecord = m_usageMap.get(origin);
     ASSERT(usageRecord);
@@ -102,7 +111,7 @@ void OriginQuotaManager::markDatabase(Database* database)
 
 unsigned long long OriginQuotaManager::diskUsage(SecurityOrigin* origin) const
 {
-    ASSERT(!m_usageRecordGuard.tryLock());
+    ASSERT(m_usageRecordGuardLocked);
     
     OriginUsageRecord* usageRecord = m_usageMap.get(origin);
     ASSERT(usageRecord);

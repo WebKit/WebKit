@@ -29,78 +29,76 @@
 #include "OriginUsageRecord.h"
 
 #include "FileSystem.h"
-#include <limits>
 
 namespace WebCore {
 
-unsigned long long OriginUsageRecord::unknownDiskUsage()
-{
-    return std::numeric_limits<unsigned long long>::max();
-}
-
 OriginUsageRecord::OriginUsageRecord()
-    : m_diskUsage(unknownDiskUsage())
+    : m_cachedDiskUsageIsValid(false)
 {
 }
 
 void OriginUsageRecord::addDatabase(const String& identifier, const String& fullPath)
 {
     ASSERT(!m_databaseMap.contains(identifier));
+    ASSERT_ARG(identifier, identifier.impl()->refCount() == 1);
+    ASSERT_ARG(fullPath, fullPath.impl()->refCount() == 1);
     
-    m_databaseMap.set(identifier, DatabaseEntry(fullPath, unknownDiskUsage()));
+    m_databaseMap.set(identifier, DatabaseEntry(fullPath));
     m_unknownSet.add(identifier);
      
-    m_diskUsage = unknownDiskUsage();
+    m_cachedDiskUsageIsValid = false;
 }
 
 void OriginUsageRecord::removeDatabase(const String& identifier)
 {
     ASSERT(m_databaseMap.contains(identifier));
 
-    m_diskUsage = unknownDiskUsage();
     m_databaseMap.remove(identifier);
     m_unknownSet.remove(identifier);
+    m_cachedDiskUsageIsValid = false;
 }
 
 void OriginUsageRecord::markDatabase(const String& identifier)
 {
+    ASSERT(m_databaseMap.contains(identifier));
+    ASSERT_ARG(identifier, identifier.impl()->refCount() == 1);
+
     m_unknownSet.add(identifier);
-    m_diskUsage = unknownDiskUsage();
+    m_cachedDiskUsageIsValid = false;
 }
 
 unsigned long long OriginUsageRecord::diskUsage()
 {
-    // Use the last cached usage value if we have it
-    if (m_diskUsage != unknownDiskUsage())
-        return m_diskUsage;
-    
-    // stat() for the sizes known to be dirty
+    // Use the last cached usage value if we have it.
+    if (m_cachedDiskUsageIsValid)
+        return m_cachedDiskUsage;
+
+    // stat() for the sizes known to be dirty.
     HashSet<String>::iterator iUnknown = m_unknownSet.begin();
     HashSet<String>::iterator endUnknown = m_unknownSet.end();
     for (; iUnknown != endUnknown; ++iUnknown) {
-        String path = m_databaseMap.get(*iUnknown).filename;
+        const String& path = m_databaseMap.get(*iUnknown).filename;
         ASSERT(!path.isEmpty());
                 
         long long size;
         if (getFileSize(path, size))
             m_databaseMap.set(*iUnknown, DatabaseEntry(path, size));
         else {
-            // When we can't determine the file size, we'll just have to assume the file is missing/inaccessible
+            // When we can't determine the file size, we'll just have to assume the file is missing/inaccessible.
             m_databaseMap.set(*iUnknown, DatabaseEntry(path, 0));
         }
     }
     m_unknownSet.clear();
     
-    // Recalculate the cached usage value
+    // Recalculate the cached usage value.
+    m_cachedDiskUsage = 0;
     HashMap<String, DatabaseEntry>::iterator iDatabase = m_databaseMap.begin();
     HashMap<String, DatabaseEntry>::iterator endDatabase = m_databaseMap.end();
-    
-    m_diskUsage = 0;
-    for (; iDatabase != endDatabase; ++iDatabase) {
-        m_diskUsage += iDatabase->second.size;
-    }
+    for (; iDatabase != endDatabase; ++iDatabase)
+        m_cachedDiskUsage += iDatabase->second.size;
 
-    return m_diskUsage;
+    m_cachedDiskUsageIsValid = true;
+    return m_cachedDiskUsage;
 }
     
 }
