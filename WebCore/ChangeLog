@@ -1,3 +1,9 @@
+2008-09-02  Timothy Hatcher  <timothy@apple.com>
+
+        Removed IDL files from WebCore's framework resources.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2008-09-02  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.
