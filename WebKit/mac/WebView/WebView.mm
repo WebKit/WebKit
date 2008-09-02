@@ -1959,9 +1959,14 @@ static void WebKitInitializeApplicationCachePathIfNecessary()
     // Post a notification so the WebCore settings update.
     [[self preferences] _postPreferencesChangesNotification];
 
-
-    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION))
-        FrameLoader::setRestrictAccessToLocal(false);
+    if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
+        // Originally, we allowed all local loads.
+        FrameLoader::setLocalLoadPolicy(FrameLoader::AllowLocalLoadsForAll);
+    } else if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_MORE_STRICT_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
+        // Later, we allowed local loads for local URLs and documents loaded
+        // with substitute data.
+        FrameLoader::setLocalLoadPolicy(FrameLoader::AllowLocalLoadsForLocalAndSubstituteData);
+    }
 }
 
 - (id)initWithFrame:(NSRect)f

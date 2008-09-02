@@ -169,6 +169,17 @@ bool SecurityOrigin::canRequest(const KURL& url) const
     return isSameSchemeHostPort(targetOrigin.get());
 }
 
+void SecurityOrigin::grantLoadLocalResources()
+{
+    // This method exists only to support backwards compatibility with older
+    // versions of WebKit.  Granting privileges to some, but not all, documents
+    // in a SecurityOrigin is a security hazard because the documents without
+    // the privilege can obtain the privilege by injecting script into the
+    // documents that have been granted the privilege.
+    ASSERT(FrameLoader::allowSubstituteDataAccessToLocal());
+    m_canLoadLocalResources = true;
+}
+
 bool SecurityOrigin::isLocal() const
 {
     return FrameLoader::shouldTreatSchemeAsLocal(m_protocol);

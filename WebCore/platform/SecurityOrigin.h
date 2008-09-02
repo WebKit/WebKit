@@ -84,7 +84,10 @@ namespace WebCore {
 
         // Explicitly grant the ability to load local resources to this
         // SecurityOrigin.
-        void grantLoadLocalResources() { m_canLoadLocalResources = true; }
+        //
+        // Note: This method exists only to support backwards compatibility
+        //       with older versions of WebKit.
+        void grantLoadLocalResources();
 
         bool isSecureTransitionTo(const KURL&) const;
 

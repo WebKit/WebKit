@@ -424,9 +424,16 @@ namespace WebCore {
 
         void continueLoadWithData(SharedBuffer*, const String& mimeType, const String& textEncoding, const KURL&); 
 
-        static void registerURLSchemeAsLocal(const String& scheme);
+        enum LocalLoadPolicy {
+          AllowLocalLoadsForAll,  // No restriction on local loads.
+          AllowLocalLoadsForLocalAndSubstituteData,
+          AllowLocalLoadsForLocalOnly,
+        };
+        static void setLocalLoadPolicy(LocalLoadPolicy);
         static bool restrictAccessToLocal();
-        static void setRestrictAccessToLocal(bool);
+        static bool allowSubstituteDataAccessToLocal();
+
+        static void registerURLSchemeAsLocal(const String& scheme);
         static bool shouldTreatURLAsLocal(const String&);
         static bool shouldTreatSchemeAsLocal(const String&);
 

@@ -1,3 +1,23 @@
+2008-09-01  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19760
+
+        Make granting LoadLocalResources conditional on a policy.
+
+        * WebCore.base.exp:
+        * dom/Document.cpp:
+        (WebCore::Document::initSecurityContext):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setLocalLoadPolicy):
+        (WebCore::FrameLoader::restrictAccessToLocal):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::):
+        * platform/SecurityOrigin.cpp:
+        (WebCore::SecurityOrigin::grantLoadLocalResources):
+        * platform/SecurityOrigin.h:
+
 2008-09-01  Dean Jackson  <dino@apple.com>
 
         Reviewed by Sam Weinig.

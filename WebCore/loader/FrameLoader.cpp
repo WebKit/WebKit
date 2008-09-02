@@ -186,7 +186,7 @@ struct ScheduledRedirection {
 };
 
 static double storedTimeOfLastCompletedLoad;
-static bool m_restrictAccessToLocal = true;
+static FrameLoader::LocalLoadPolicy localLoadPolicy = FrameLoader::AllowLocalLoadsForLocalOnly;
 
 static bool getString(JSValue* result, String& string)
 {
@@ -1147,14 +1147,19 @@ void FrameLoader::startIconLoader()
     m_iconLoader->startLoading();
 }
 
-bool FrameLoader::restrictAccessToLocal()
+void FrameLoader::setLocalLoadPolicy(LocalLoadPolicy policy)
 {
-    return m_restrictAccessToLocal;
+    localLoadPolicy = policy;
 }
 
-void FrameLoader::setRestrictAccessToLocal(bool access)
+bool FrameLoader::restrictAccessToLocal()
 {
-    m_restrictAccessToLocal = access;
+    return localLoadPolicy != FrameLoader::AllowLocalLoadsForAll;
+}
+
+bool FrameLoader::allowSubstituteDataAccessToLocal()
+{
+    return localLoadPolicy != FrameLoader::AllowLocalLoadsForLocalOnly;
 }
 
 static HashSet<String, CaseFoldingHash>& localSchemes()
