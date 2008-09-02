@@ -36,12 +36,12 @@ module window {
         [Custom] void warn();
         [Custom] void dir();
         [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
-        void count(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [Custom] void count();
 
         [Custom] void profile(in DOMString title);
         [Custom] void profileEnd();
         void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
-        void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        [Custom] void timeEnd();
         [Custom] void group();
         void groupEnd();
     };

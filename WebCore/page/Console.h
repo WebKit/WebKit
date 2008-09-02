@@ -73,19 +73,19 @@ namespace WebCore {
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
-        void debug(KJS::ExecState*, const KJS::ArgList& arguments);
-        void error(KJS::ExecState*, const KJS::ArgList& arguments);
-        void info(KJS::ExecState*, const KJS::ArgList& arguments);
-        void log(KJS::ExecState*, const KJS::ArgList& arguments);
-        void warn(KJS::ExecState*, const KJS::ArgList& arguments);
-        void dir(KJS::ExecState*, const KJS::ArgList& arguments);
-        void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList& arguments);
-        void count(const KJS::UString& title);
-        void profile(KJS::ExecState*, const KJS::ArgList& arguments);
-        void profileEnd(KJS::ExecState*, const KJS::ArgList& arguments);
+        void debug(KJS::ExecState*, const KJS::ArgList&);
+        void error(KJS::ExecState*, const KJS::ArgList&);
+        void info(KJS::ExecState*, const KJS::ArgList&);
+        void log(KJS::ExecState*, const KJS::ArgList&);
+        void warn(KJS::ExecState*, const KJS::ArgList&);
+        void dir(KJS::ExecState*, const KJS::ArgList&);
+        void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList&);
+        void count(KJS::ExecState*, const KJS::ArgList&);
+        void profile(KJS::ExecState*, const KJS::ArgList&);
+        void profileEnd(KJS::ExecState*, const KJS::ArgList&);
         void time(const KJS::UString& title);
-        void timeEnd(const KJS::UString& title);
-        void group(KJS::ExecState*, const KJS::ArgList& arguments);
+        void timeEnd(KJS::ExecState*, const KJS::ArgList&);
+        void group(KJS::ExecState*, const KJS::ArgList&);
         void groupEnd();
 
         void finishedProfiling(PassRefPtr<KJS::Profile>);

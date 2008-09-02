@@ -1,5 +1,35 @@
 2008-09-02  Timothy Hatcher  <timothy@apple.com>
 
+        Make console functions log the correct resource URL and
+        line number for where the call originated.
+
+        https://bugs.webkit.org/show_bug.cgi?id=17234
+        <rdar://problem/5732837>
+
+        Reviewed by Kevin McCullough.
+
+        Test: manual-tests/inspector/console-call-line-numbers.html
+
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::count): Call the impl.
+        (WebCore::JSConsole::timeEnd): Ditto.
+        * manual-tests/inspector/console-call-line-numbers.html: Added.
+        * manual-tests/inspector/resources/script-console-calls.js: Added.
+        * page/Console.cpp:
+        (WebCore::retrieveLastCaller): Helper to get the URL and line.
+        (WebCore::Console::error): Call retrieveLastCaller to get the URL and
+        line number to pass to addMessageToConsole.
+        (WebCore::Console::info): Ditto.
+        (WebCore::Console::log): Ditto.
+        (WebCore::Console::assertCondition): Ditto.
+        (WebCore::Console::count): Ditto.
+        (WebCore::Console::timeEnd): Ditto.
+        (WebCore::Console::warn): Ditto.
+        * page/Console.h:
+        * page/Console.idl: Make count and timeEnd custom.
+
+2008-09-02  Timothy Hatcher  <timothy@apple.com>
+
         Removed IDL files from WebCore's framework resources.
 
         * WebCore.xcodeproj/project.pbxproj:

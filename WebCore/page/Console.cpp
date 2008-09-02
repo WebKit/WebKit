@@ -35,6 +35,7 @@
 #include "FrameLoader.h"
 #include "FrameTree.h"
 #include "InspectorController.h"
+#include "JSDOMBinding.h"
 #include "Page.h"
 #include "PageGroup.h"
 #include "PlatformString.h"
@@ -144,6 +145,18 @@ static void printToStandardOut(MessageLevel level, ExecState* exec, const ArgLis
     printf("\n");
 }
 
+static inline void retrieveLastCaller(ExecState* exec, KURL& url, unsigned& lineNumber)
+{
+    int signedLineNumber;
+    int sourceIdentifer;
+    UString urlString;
+
+    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceIdentifer, urlString);
+
+    url = KURL(urlString);
+    lineNumber = (signedLineNumber >= 0 ? signedLineNumber : 0);
+}
+
 void Console::addMessage(MessageSource source, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceURL)
 {
     Page* page = this->page();
@@ -177,11 +190,13 @@ void Console::error(ExecState* exec, const ArgList& args)
         return;
 
     String message = args.at(exec, 0)->toString(exec);
-    const KURL& url = m_frame->loader()->url();
-    String prettyURL = url.prettyURL();
 
-    page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, 0, url.string());
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    page->chrome()->client()->addMessageToConsole(message, lineNumber, url.prettyURL());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, lineNumber, url.string());
 
     printToStandardOut(ErrorMessageLevel, exec, args, url);
 }
@@ -199,11 +214,13 @@ void Console::info(ExecState* exec, const ArgList& args)
         return;
 
     String message = args.at(exec, 0)->toString(exec);
-    const KURL& url = m_frame->loader()->url();
-    String prettyURL = url.prettyURL();
 
-    page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, 0, url.string());
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    page->chrome()->client()->addMessageToConsole(message, lineNumber, url.prettyURL());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, lineNumber, url.string());
 
     printToStandardOut(LogMessageLevel, exec, args, url);
 }
@@ -221,11 +238,13 @@ void Console::log(ExecState* exec, const ArgList& args)
         return;
 
     String message = args.at(exec, 0)->toString(exec);
-    const KURL& url = m_frame->loader()->url();
-    String prettyURL = url.prettyURL();
 
-    page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, 0, url.string());
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    page->chrome()->client()->addMessageToConsole(message, lineNumber, url.prettyURL());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, exec, args, lineNumber, url.string());
 
     printToStandardOut(LogMessageLevel, exec, args, url);
 }
@@ -254,17 +273,19 @@ void Console::assertCondition(bool condition, ExecState* exec, const ArgList& ar
     if (!page)
         return;
 
-    const KURL& url = m_frame->loader()->url();
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
 
     // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19135> It would be nice to prefix assertion failures with a message like "Assertion failed: ".
     // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19136> We should print a message even when args.isEmpty() is true.
 
-    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, 0, url.string());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, ErrorMessageLevel, exec, args, lineNumber, url.string());
 
     printToStandardOut(ErrorMessageLevel, exec, args, url);
 }
 
-void Console::count(const UString& title)
+void Console::count(ExecState* exec, const ArgList& args)
 {
     if (!m_frame)
         return;
@@ -273,9 +294,15 @@ void Console::count(const UString& title)
     if (!page)
         return;
 
-    // FIXME: pass the file and line number to the InspectorController
-    // when we have this information.
-    page->inspectorController()->count(title, 0, String());
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    UString title;
+    if (args.size() >= 1)
+        title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
+
+    page->inspectorController()->count(title, lineNumber, url.string());
 }
 
 void Console::profile(ExecState* exec, const ArgList& args)
@@ -288,7 +315,7 @@ void Console::profileEnd(ExecState* exec, const ArgList& args)
 {
     UString title;
     if (args.size() >= 1)
-        title = args.at(exec, 0)->toString(exec);
+        title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
 
     int sourceId;
     // FIXME: We won't need to save these to statics once we remove the profiler "zombie" mode
@@ -308,8 +335,11 @@ void Console::time(const UString& title)
     page->inspectorController()->startTiming(title);
 }
 
-void Console::timeEnd(const UString& title)
+void Console::timeEnd(ExecState* exec, const ArgList& args)
 {
+    UString title;
+    if (args.size() >= 1)
+        title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
     if (title.isNull())
         return;
 
@@ -322,8 +352,12 @@ void Console::timeEnd(const UString& title)
         return;
 
     String message = String(title) + String::format(": %.0fms", elapsed);
-    // FIXME: <https://bugs.webkit.org/show_bug.cgi?id=19791> We should pass in the real sourceURL here so that the Inspector can show it.
-    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, 0, String());
+
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    page->inspectorController()->addMessageToConsole(JSMessageSource, LogMessageLevel, message, lineNumber, url.string());
 }
 
 void Console::group(ExecState* exec, const ArgList& arguments)
@@ -363,11 +397,13 @@ void Console::warn(ExecState* exec, const ArgList& args)
         return;
 
     String message = args.at(exec, 0)->toString(exec);
-    const KURL& url = m_frame->loader()->url();
-    String prettyURL = url.prettyURL();
 
-    page->chrome()->client()->addMessageToConsole(message, 0, prettyURL);
-    page->inspectorController()->addMessageToConsole(JSMessageSource, WarningMessageLevel, exec, args, 0, url.string());
+    KURL url;
+    unsigned lineNumber;
+    retrieveLastCaller(exec, url, lineNumber);
+
+    page->chrome()->client()->addMessageToConsole(message, lineNumber, url.prettyURL());
+    page->inspectorController()->addMessageToConsole(JSMessageSource, WarningMessageLevel, exec, args, lineNumber, url.string());
 
     printToStandardOut(WarningMessageLevel, exec, args, url);
 }

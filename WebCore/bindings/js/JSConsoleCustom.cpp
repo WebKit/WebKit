@@ -77,6 +77,18 @@ JSValue* JSConsole::assertCondition(ExecState* exec, const ArgList& arguments)
     return jsUndefined();
 }
 
+JSValue* JSConsole::count(ExecState* exec, const ArgList& arguments)
+{
+    impl()->count(exec, arguments);
+    return jsUndefined();
+}
+
+JSValue* JSConsole::timeEnd(ExecState* exec, const ArgList& arguments)
+{
+    impl()->timeEnd(exec, arguments);
+    return jsUndefined();
+}
+
 JSValue* JSConsole::profile(ExecState* exec, const ArgList& arguments)
 {
     impl()->profile(exec, arguments);
