@@ -116,4 +116,74 @@ String lineJoinName(LineJoin join)
     return names[join];
 }
 
+String textAlignName(TextAlign align)
+{
+    ASSERT(align >= 0);
+    ASSERT(align < 5);
+    const char* const names[5] = { "start", "end", "left", "center", "right" };
+    return names[align];
+}
+
+bool parseTextAlign(const String& s, TextAlign& align)
+{
+    if (s == "start") {
+        align = StartTextAlign;
+        return true;
+    }
+    if (s == "end") {
+        align = EndTextAlign;
+        return true;
+    }
+    if (s == "left") {
+        align = LeftTextAlign;
+        return true;
+    }
+    if (s == "center") {
+        align = CenterTextAlign;
+        return true;
+    }
+    if (s == "right") {
+        align = RightTextAlign;
+        return true;
+    }
+    return false;
+}
+
+String textBaselineName(TextBaseline baseline)
+{
+    ASSERT(baseline >= 0);
+    ASSERT(baseline < 6);
+    const char* const names[6] = { "alphabetic", "top", "middle", "bottom", "ideographic", "hanging" };
+    return names[baseline];
+}
+
+bool parseTextBaseline(const String& s, TextBaseline& baseline)
+{
+    if (s == "alphabetic") {
+        baseline = AlphabeticTextBaseline;
+        return true;
+    }
+    if (s == "top") {
+        baseline = TopTextBaseline;
+        return true;
+    }
+    if (s == "middle") {
+        baseline = MiddleTextBaseline;
+        return true;
+    }
+    if (s == "bottom") {
+        baseline = BottomTextBaseline;
+        return true;
+    }
+    if (s == "ideographic") {
+        baseline = IdeographicTextBaseline;
+        return true;
+    }
+    if (s == "hanging") {
+        baseline = HangingTextBaseline;
+        return true;
+    }
+    return false;
+}
+
 }

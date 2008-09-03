@@ -112,6 +112,8 @@ public:
         void setStyle(RenderStyle* s) { m_style = s; } // Used by the document when setting up its root style.
         void setFontSize(FontDescription&, float size);
 
+        void applyPropertyToStyle(int id, CSSValue*, RenderStyle*);
+
     private:
         float getComputedSizeFromSpecifiedSize(bool isAbsoluteSize, float specifiedSize);
 

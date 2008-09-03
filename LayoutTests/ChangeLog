@@ -1,3 +1,18 @@
+2008-09-02  David Hyatt  <hyatt@apple.com>
+
+        Add support for the canvas text APIs.
+
+        Reviewed by olliej
+
+        * fast/canvas/canvas-text-alignment.html: Added.
+        * fast/canvas/canvas-text-baseline.html: Added.
+        * platform/mac/fast/canvas/canvas-text-alignment-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-text-alignment-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-text-alignment-expected.txt: Added.
+        * platform/mac/fast/canvas/canvas-text-baseline-expected.checksum: Added.
+        * platform/mac/fast/canvas/canvas-text-baseline-expected.png: Added.
+        * platform/mac/fast/canvas/canvas-text-baseline-expected.txt: Added.
+
 2008-09-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

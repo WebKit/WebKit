@@ -337,6 +337,7 @@ DOM_CLASSES = \
     StyleSheetList \
     Text \
     TextEvent \
+    TextMetrics \
     TimeRanges \
     TreeWalker \
     UIEvent \

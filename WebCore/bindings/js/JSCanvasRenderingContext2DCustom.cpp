@@ -351,4 +351,40 @@ JSValue* JSCanvasRenderingContext2D::putImageData(ExecState* exec, const ArgList
     return jsUndefined();
 }
 
+JSValue* JSCanvasRenderingContext2D::fillText(ExecState* exec, const ArgList& args)
+{ 
+    CanvasRenderingContext2D* context = impl();
+
+    // string arg = text to draw
+    // number arg = x
+    // number arg = y
+    // optional number arg = maxWidth
+    if (args.size() < 3 || args.size() > 4)
+        return throwError(exec, SyntaxError);
+    
+    if (args.size() == 4)
+        context->fillText(args.at(exec, 0)->toString(exec), args.at(exec, 1)->toFloat(exec), args.at(exec, 2)->toFloat(exec), args.at(exec, 3)->toFloat(exec));
+    else
+        context->fillText(args.at(exec, 0)->toString(exec), args.at(exec, 1)->toFloat(exec), args.at(exec, 2)->toFloat(exec));
+    return jsUndefined();
+}
+
+JSValue* JSCanvasRenderingContext2D::strokeText(ExecState* exec, const ArgList& args)
+{ 
+    CanvasRenderingContext2D* context = impl();
+
+    // string arg = text to draw
+    // number arg = x
+    // number arg = y
+    // optional number arg = maxWidth
+    if (args.size() < 3 || args.size() > 4)
+        return throwError(exec, SyntaxError);
+    
+    if (args.size() == 4)
+        context->strokeText(args.at(exec, 0)->toString(exec), args.at(exec, 1)->toFloat(exec), args.at(exec, 2)->toFloat(exec), args.at(exec, 3)->toFloat(exec));
+    else
+        context->strokeText(args.at(exec, 0)->toString(exec), args.at(exec, 1)->toFloat(exec), args.at(exec, 2)->toFloat(exec));
+    return jsUndefined();
+}
+
 } // namespace WebCore

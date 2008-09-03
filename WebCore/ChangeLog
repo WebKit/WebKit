@@ -1,3 +1,55 @@
+2008-09-02  David Hyatt  <hyatt@apple.com>
+
+        Add support for canvas text drawing APIs.
+
+        Reviewed by olliej
+
+        Tests added as fast/canvas/canvas-text-*.html
+
+        * DerivedSources.make:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        (WebCore::JSCanvasRenderingContext2D::fillText):
+        (WebCore::JSCanvasRenderingContext2D::strokeText):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::applyPropertyToStyle):
+        * css/CSSStyleSelector.h:
+        * html/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::State::State):
+        (WebCore::CanvasRenderingContext2D::font):
+        (WebCore::CanvasRenderingContext2D::setFont):
+        (WebCore::CanvasRenderingContext2D::textAlign):
+        (WebCore::CanvasRenderingContext2D::setTextAlign):
+        (WebCore::CanvasRenderingContext2D::textBaseline):
+        (WebCore::CanvasRenderingContext2D::setTextBaseline):
+        (WebCore::CanvasRenderingContext2D::fillText):
+        (WebCore::CanvasRenderingContext2D::strokeText):
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        (WebCore::CanvasRenderingContext2D::accessFont):
+        * html/CanvasRenderingContext2D.h:
+        * html/CanvasRenderingContext2D.idl:
+        * html/TextMetrics.h: Added.
+        (WebCore::TextMetrics::create):
+        (WebCore::TextMetrics::width):
+        (WebCore::TextMetrics::setWidth):
+        (WebCore::TextMetrics::TextMetrics):
+        * html/TextMetrics.idl: Added.
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::lineGap):
+        * platform/graphics/Font.h:
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::drawBidiText):
+        * platform/graphics/GraphicsContext.h:
+        * platform/graphics/GraphicsTypes.cpp:
+        (WebCore::textAlignName):
+        (WebCore::parseTextAlign):
+        (WebCore::textBaselineName):
+        (WebCore::parseTextBaseline):
+        * platform/graphics/GraphicsTypes.h:
+        (WebCore::):
+
 2008-09-03  John Sullivan  <sullivan@apple.com>
 
         Fixed <rdar://problem/6193022> <rdar://problem/6193022> Crash occurs at WebCore::AnimationBase::propertiesEqual () after certain steps

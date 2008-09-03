@@ -78,6 +78,14 @@ module html {
         void clip();
         boolean isPointInPath(in float x, in float y);
 
+        // text
+        attribute DOMString font;
+        attribute DOMString textAlign;
+        attribute DOMString textBaseline;
+        [Custom] void fillText(/* 4 */);
+        [Custom] void strokeText(/* 4 */);
+        TextMetrics measureText(in DOMString text);
+
         // other
 
         void setAlpha(in float alpha);

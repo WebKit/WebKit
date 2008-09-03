@@ -275,6 +275,7 @@ module window {
         attribute HTMLCollectionConstructor HTMLCollection;
 
         attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;
+        attribute TextMetricsConstructor TextMetrics;
 
         attribute EventConstructor Event;
         attribute KeyboardEventConstructor KeyboardEvent;

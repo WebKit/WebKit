@@ -751,10 +751,10 @@ void CSSStyleSelector::initForStyleResolve(Element* e, RenderStyle* parentStyle,
 {
     m_checker.m_pseudoStyle = pseudoID;
 
-    m_parentNode = e->parentNode();
+    m_parentNode = e ? e->parentNode() : 0;
 
 #if ENABLE(SVG)
-    if (!m_parentNode && e->isSVGElement() && e->isShadowNode())
+    if (!m_parentNode && e && e->isSVGElement() && e->isShadowNode())
         m_parentNode = e->shadowParentNode();
 #endif
 
@@ -2528,6 +2528,14 @@ static void applyCounterList(RenderStyle* style, CSSValueList* list, bool isRese
             }
         }
     }
+}
+
+void CSSStyleSelector::applyPropertyToStyle(int id, CSSValue *value, RenderStyle* style)
+{
+    initElementAndPseudoState(0);
+    initForStyleResolve(0, style);
+    m_style = style;
+    applyProperty(id, value);
 }
 
 void CSSStyleSelector::applyProperty(int id, CSSValue *value)
