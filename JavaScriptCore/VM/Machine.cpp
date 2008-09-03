@@ -1436,13 +1436,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         JSValue* src = r[(++vPC)->u.operand].jsValue(exec);
 
-        if (src->isNull()) {
-            r[dst] = jsBoolean(true);
-            ++vPC;
-            NEXT_OPCODE;
-        }
-        
-        if (src->isUndefined()) {
+        if (src->isUndefinedOrNull()) {
             r[dst] = jsBoolean(true);
             ++vPC;
             NEXT_OPCODE;
@@ -1482,13 +1476,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         JSValue* src = r[(++vPC)->u.operand].jsValue(exec);
 
-        if (src->isNull()) {
-            r[dst] = jsBoolean(false);
-            ++vPC;
-            NEXT_OPCODE;
-        }
-        
-        if (src->isUndefined()) {
+        if (src->isUndefinedOrNull()) {
             r[dst] = jsBoolean(false);
             ++vPC;
             NEXT_OPCODE;
