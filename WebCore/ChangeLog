@@ -1,3 +1,22 @@
+2008-09-02  Glenn Wilson  <wilsong@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20397
+        Bug 20397: Invalid webkit-border-bottom-left-radius property causes crash
+
+        The function checkForOrphanedUnits() would change the length of a list whose size was
+        was already determined before the call to checkForOrphanedUnits was made.  Later in
+        the caller, the old size was being used for boundary management.
+
+        This has been fixed by moving the call to checkForOrphanedUnits() earlier in the
+        calling function, before the size of the list is determined.
+
+        Test: fast/css/orphaned_units_crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):  Moved call to checkForOrphanedUnits() earlier in the function.
+
 2008-09-02  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Darin Adler.

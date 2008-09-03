@@ -1,3 +1,16 @@
+2008-09-02  Glenn Wilson  <wilsong@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=20397
+        Bug 20397: Invalid webkit-border-bottom-left-radius property causes crash
+
+        Added new tests to check whether an orphaned unit identifier in particular
+        CSS attributes will crash the browser.
+
+        * fast/css/orphaned_units_crash-expected.txt: Added.
+        * fast/css/orphaned_units_crash.html: Added.
+
 2008-09-02  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Darin Adler.

@@ -530,6 +530,10 @@ bool CSSParser::parseValue(int propId, bool important)
 
     int id = value->id;
 
+    // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
+    // by a space.  We go ahead and associate the unit with the number even though it is invalid CSS.
+    checkForOrphanedUnits();
+    
     int num = inShorthand() ? 1 : m_valueList->size();
 
     if (id == CSSValueInherit) {
@@ -555,10 +559,6 @@ bool CSSParser::parseValue(int propId, bool important)
 
     bool valid_primitive = false;
     RefPtr<CSSValue> parsedValue;
-
-    // In quirks mode, we will look for units that have been incorrectly separated from the number they belong to
-    // by a space.  We go ahead and associate the unit with the number even though it is invalid CSS.
-    checkForOrphanedUnits();
 
     switch (static_cast<CSSPropertyID>(propId)) {
         /* The comment to the left defines all valid value of this properties as defined
