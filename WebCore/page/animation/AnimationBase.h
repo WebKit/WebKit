@@ -268,7 +268,7 @@ protected:
     // Return true if we need to start software animation timers
     static bool blendProperties(int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog);
     
-    static void AnimationBase::setChanged(Node* node);
+    static void setChanged(Node* node);
     
 protected:
     AnimState m_animState;
