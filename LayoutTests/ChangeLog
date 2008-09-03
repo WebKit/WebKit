@@ -1,3 +1,19 @@
+2008-09-02  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Geoff Garen.
+
+        Test for <https://bugs.webkit.org/show_bug.cgi?id=16913>
+        Misplaced elements should not close DL lists.
+
+        * fast/invalid/test-case-tr-th-td-should-not-close-dl-list-expected.txt: Added.
+        * fast/invalid/test-case-tr-th-td-should-not-close-dl-list.html: Added.
+        * platform/mac/fast/invalid/missing-dl-end-tag-expected.checksum:
+        * platform/mac/fast/invalid/missing-dl-end-tag-expected.png:
+        * platform/mac/fast/invalid/missing-dl-end-tag-expected.txt:
+        * platform/mac/fast/invalid/missing-dt-end-tag-expected.checksum:
+        * platform/mac/fast/invalid/missing-dt-end-tag-expected.png:
+        * platform/mac/fast/invalid/missing-dt-end-tag-expected.txt:
+
 2008-09-02  Glenn Wilson  <wilsong@gmail.com>
 
         Reviewed by Darin Adler.

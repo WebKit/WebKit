@@ -1,3 +1,15 @@
+2008-09-02  Robert Blaut  <webkit@blaut.biz>
+
+        Reviewed by Geoff Garen.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=16913>
+        Misplaced elements should not close DL lists.
+
+        Test: fast/invalid/test-case-tr-th-td-should-not-close-dl-list.html
+
+        * html/HTMLParser.cpp:
+        (WebCore::HTMLParser::handleError):
+
 2008-09-02  Glenn Wilson  <wilsong@gmail.com>
 
         Reviewed by Darin Adler.

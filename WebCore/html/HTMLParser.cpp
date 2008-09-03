@@ -520,8 +520,8 @@ bool HTMLParser::handleError(Node* n, bool flat, const AtomicString& localName, 
                 } else
                     reportError(MisplacedFramesetContentError, &localName);
             }
-        } else if (h->hasLocalName(addressTag) || h->hasLocalName(dlTag) || h->hasLocalName(dtTag)
-                   || h->hasLocalName(fontTag) || h->hasLocalName(styleTag) || h->hasLocalName(titleTag)) {
+        } else if (h->hasLocalName(addressTag) || h->hasLocalName(fontTag)
+                   || h->hasLocalName(styleTag) || h->hasLocalName(titleTag)) {
             reportError(MisplacedContentRetryError, &localName, &currentTagName);
             popBlock(currentTagName);
             handled = true;
