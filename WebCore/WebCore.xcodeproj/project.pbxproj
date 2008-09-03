@@ -417,6 +417,16 @@
 		31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */; };
 		31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */; };
 		31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */; };
+		316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */; };
+		316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1080E6E1DA700BF6088 /* AnimationBase.h */; };
+		316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1090E6E1DA700BF6088 /* AnimationController.cpp */; };
+		316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10A0E6E1DA700BF6088 /* AnimationController.h */; };
+		316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */; };
+		316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */; };
+		316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */; };
+		316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */; };
+		316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */; };
+		316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */; };
 		31C0FF210E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */; };
 		31C0FF220E4CEB6E007D6FE5 /* WebKitAnimationEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */; };
 		31C0FF240E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 31C0FF1E0E4CEB6E007D6FE5 /* WebKitTransitionEvent.cpp */; };
@@ -3776,8 +3786,6 @@
 		BC7FA6820D1F167900DB22A9 /* SelectorNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */; };
 		BC80C9870CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */; };
 		BC80C9880CD294EE00A0B7B3 /* CSSTimingFunctionValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */; };
-		BC80C98B0CD2950500A0B7B3 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */; };
-		BC80C98C0CD2950500A0B7B3 /* AnimationController.h in Headers */ = {isa = PBXBuildFile; fileRef = BC80C98A0CD2950500A0B7B3 /* AnimationController.h */; };
 		BC8243290D0CE8A200460C8F /* JSSQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243250D0CE8A200460C8F /* JSSQLError.h */; };
 		BC82432A0D0CE8A200460C8F /* JSSQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */; };
 		BC82432B0D0CE8A200460C8F /* JSVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */; };
@@ -4980,6 +4988,16 @@
 		31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSTransformValue.mm; sourceTree = "<group>"; };
 		31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValueInternal.h; sourceTree = "<group>"; };
+		316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationBase.cpp; path = animation/AnimationBase.cpp; sourceTree = "<group>"; };
+		316FE1080E6E1DA700BF6088 /* AnimationBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationBase.h; path = animation/AnimationBase.h; sourceTree = "<group>"; };
+		316FE1090E6E1DA700BF6088 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationController.cpp; path = animation/AnimationController.cpp; sourceTree = "<group>"; };
+		316FE10A0E6E1DA700BF6088 /* AnimationController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationController.h; path = animation/AnimationController.h; sourceTree = "<group>"; };
+		316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CompositeAnimation.cpp; path = animation/CompositeAnimation.cpp; sourceTree = "<group>"; };
+		316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CompositeAnimation.h; path = animation/CompositeAnimation.h; sourceTree = "<group>"; };
+		316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ImplicitAnimation.cpp; path = animation/ImplicitAnimation.cpp; sourceTree = "<group>"; };
+		316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ImplicitAnimation.h; path = animation/ImplicitAnimation.h; sourceTree = "<group>"; };
+		316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyframeAnimation.cpp; path = animation/KeyframeAnimation.cpp; sourceTree = "<group>"; };
+		316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyframeAnimation.h; path = animation/KeyframeAnimation.h; sourceTree = "<group>"; };
 		31C0FF1B0E4CEB6E007D6FE5 /* WebKitAnimationEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitAnimationEvent.cpp; sourceTree = "<group>"; };
 		31C0FF1C0E4CEB6E007D6FE5 /* WebKitAnimationEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAnimationEvent.h; sourceTree = "<group>"; };
 		31C0FF1D0E4CEB6E007D6FE5 /* WebKitAnimationEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitAnimationEvent.idl; sourceTree = "<group>"; };
@@ -8192,8 +8210,6 @@
 		BC7FA6800D1F167900DB22A9 /* SelectorNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorNodeList.cpp; sourceTree = "<group>"; };
 		BC80C9850CD294EE00A0B7B3 /* CSSTimingFunctionValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CSSTimingFunctionValue.cpp; sourceTree = "<group>"; };
 		BC80C9860CD294EE00A0B7B3 /* CSSTimingFunctionValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CSSTimingFunctionValue.h; sourceTree = "<group>"; };
-		BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = AnimationController.cpp; sourceTree = "<group>"; };
-		BC80C98A0CD2950500A0B7B3 /* AnimationController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = AnimationController.h; sourceTree = "<group>"; };
 		BC8243250D0CE8A200460C8F /* JSSQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLError.h; sourceTree = "<group>"; };
 		BC8243260D0CE8A200460C8F /* JSSQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSQLTransaction.h; sourceTree = "<group>"; };
 		BC8243270D0CE8A200460C8F /* JSVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSVoidCallback.cpp; sourceTree = "<group>"; };
@@ -8937,6 +8953,23 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		316FE1060E6E1D8400BF6088 /* animation */ = {
+			isa = PBXGroup;
+			children = (
+				316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */,
+				316FE1080E6E1DA700BF6088 /* AnimationBase.h */,
+				316FE1090E6E1DA700BF6088 /* AnimationController.cpp */,
+				316FE10A0E6E1DA700BF6088 /* AnimationController.h */,
+				316FE10B0E6E1DA700BF6088 /* CompositeAnimation.cpp */,
+				316FE10C0E6E1DA700BF6088 /* CompositeAnimation.h */,
+				316FE10D0E6E1DA700BF6088 /* ImplicitAnimation.cpp */,
+				316FE10E0E6E1DA700BF6088 /* ImplicitAnimation.h */,
+				316FE10F0E6E1DA700BF6088 /* KeyframeAnimation.cpp */,
+				316FE1100E6E1DA700BF6088 /* KeyframeAnimation.h */,
+			);
+			name = animation;
+			sourceTree = "<group>";
+		};
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
 			children = (
@@ -9202,6 +9235,7 @@
 		65BF02180974806300C43196 /* page */ = {
 			isa = PBXGroup;
 			children = (
+				316FE1060E6E1D8400BF6088 /* animation */,
 				93C09A820B064F05005ABD4D /* mac */,
 				06693F450BFBC91600216072 /* inspector */,
 				8538F0000AD71770006A81D1 /* AbstractView.idl */,
@@ -9225,8 +9259,6 @@
 				29AAC51D0E53963B008F9B3B /* AccessibilityTableHeaderContainer.h */,
 				29800C940E524C8B00025536 /* AccessibilityTableRow.cpp */,
 				29800C930E524C8B00025536 /* AccessibilityTableRow.h */,
-				BC80C9890CD2950500A0B7B3 /* AnimationController.cpp */,
-				BC80C98A0CD2950500A0B7B3 /* AnimationController.h */,
 				4B24F9A70DA7050B00269E58 /* AXObjectCache.cpp */,
 				1AF326760D78B9440068F0C4 /* AXObjectCache.h */,
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
@@ -13440,7 +13472,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B27535570B053814002CE64F /* AffineTransform.h in Headers */,
-				BC80C98C0CD2950500A0B7B3 /* AnimationController.h in Headers */,
 				93309DD7099E64920056E581 /* AppendNodeCommand.h in Headers */,
 				93309DD9099E64920056E581 /* ApplyStyleCommand.h in Headers */,
 				BCFB2F77097A2E1A00BA703D /* Arena.h in Headers */,
@@ -15463,6 +15494,11 @@
 				BCEF444D0E674628001C1287 /* StyleCachedImage.h in Headers */,
 				A88FE3340E5EEE87008D8C0F /* GraphicsContextPrivate.h in Headers */,
 				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
+				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
+				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
+				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
+				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
+				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -15699,7 +15735,6 @@
 			files = (
 				B27535560B053814002CE64F /* AffineTransform.cpp in Sources */,
 				B27535580B053814002CE64F /* AffineTransformCG.cpp in Sources */,
-				BC80C98B0CD2950500A0B7B3 /* AnimationController.cpp in Sources */,
 				93309DD6099E64920056E581 /* AppendNodeCommand.cpp in Sources */,
 				93309DD8099E64920056E581 /* ApplyStyleCommand.cpp in Sources */,
 				BCFB2F76097A2E1A00BA703D /* Arena.cpp in Sources */,
@@ -17252,6 +17287,11 @@
 				BCEF447A0E6747D0001C1287 /* StyleCachedImage.cpp in Sources */,
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
+				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
+				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
+				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,
+				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
+				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

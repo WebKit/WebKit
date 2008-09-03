@@ -1904,7 +1904,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\AnimationController.cpp"
+				RelativePath="..\page\animation\AnimationBase.cpp"
 				>
 				<FileConfiguration
 					Name="Release_PGO|Win32"
@@ -1916,7 +1916,71 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\page\AnimationController.h"
+				RelativePath="..\page\animation\AnimationBase.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\animation\AnimationController.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\animation\AnimationController.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\animation\CompositeAnimation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\animation\CompositeAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\animation\ImplicitAnimation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\animation\ImplicitAnimation.h"
+				>
+			</File>
+			<File
+				RelativePath="..\page\animation\KeyframeAnimation.cpp"
+				>
+				<FileConfiguration
+					Name="Release_PGO|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="true"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\page\animation\KeyframeAnimation.h"
 				>
 			</File>
 			<File

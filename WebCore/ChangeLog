@@ -1,3 +1,34 @@
+2008-09-02  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        AnimationController.cpp should be split into separate files
+        https://bugs.webkit.org/show_bug.cgi?id=20604
+        
+        Note: All makefiles, except WebCore.xcodeproj have been changed without testing, upon
+        recommendation of Dave Hyatt.
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            Build files.
+        
+        * page/AnimationController.cpp: Removed.
+        * page/AnimationController.h: Removed.
+        * page/animation: Added.
+        * page/animation/AnimationBase.cpp: Added.
+        * page/animation/AnimationBase.h: Added.
+        * page/animation/AnimationController.cpp: Copied from WebCore/page/AnimationController.cpp.
+        * page/animation/AnimationController.h: Copied from WebCore/page/AnimationController.h.
+        * page/animation/CompositeAnimation.cpp: Added.
+        * page/animation/CompositeAnimation.h: Added.
+        * page/animation/ImplicitAnimation.cpp: Added.
+        * page/animation/ImplicitAnimation.h: Added.
+        * page/animation/KeyframeAnimation.cpp: Added.
+        * page/animation/KeyframeAnimation.h: Added.
+
 2008-09-02  Dan Bernstein  <mitz@apple.com>
 
         - release build fix

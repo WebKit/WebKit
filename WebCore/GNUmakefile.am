@@ -1403,8 +1403,16 @@ webcore_sources += \
 	WebCore/page/AccessibilityTableHeaderContainer.h \
 	WebCore/page/AccessibilityTableRow.cpp \
 	WebCore/page/AccessibilityTableRow.h \
-	WebCore/page/AnimationController.cpp \
-	WebCore/page/AnimationController.h \
+	WebCore/page/animation/AnimationBase.cpp \
+	WebCore/page/animation/AnimationBase.h \
+	WebCore/page/animation/AnimationController.cpp \
+	WebCore/page/animation/AnimationController.h \
+	WebCore/page/animation/CompositeAnimation.cpp \
+	WebCore/page/animation/CompositeAnimation.h \
+	WebCore/page/animation/ImplicitAnimation.cpp \
+	WebCore/page/animation/ImplicitAnimation.h \
+	WebCore/page/animation/KeyframeAnimation.cpp \
+	WebCore/page/animation/KeyframeAnimation.h \
 	WebCore/page/BarInfo.cpp \
 	WebCore/page/BarInfo.h \
 	WebCore/page/Chrome.cpp \

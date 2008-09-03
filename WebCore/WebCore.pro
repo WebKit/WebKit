@@ -729,7 +729,11 @@ SOURCES += \
     page/AccessibilityTableColumn.cpp \    
     page/AccessibilityTableHeaderContainer.cpp \    
     page/AccessibilityTableRow.cpp \    
-    page/AnimationController.cpp \    
+    page/animation/AnimationBase.cpp \
+    page/animation/AnimationController.cpp \
+    page/animation/CompositeAnimation.cpp \
+    page/animation/ImplicitAnimation.cpp \
+    page/animation/KeyframeAnimation.cpp \
     page/AXObjectCache.cpp \
     page/BarInfo.cpp \
     page/Chrome.cpp \
