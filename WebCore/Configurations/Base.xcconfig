@@ -47,9 +47,13 @@ DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
+WEBCORE_SQLITE3_HEADER_SEARCH_PATHS = $(NEXT_ROOT)/usr/local/include/WebCoreSQLite3;
+SQLITE3_HEADER_SEARCH_PATHS = $(SQLITE3_HEADER_SEARCH_PATHS_$(MAC_OS_X_VERSION_MAJOR));
+SQLITE3_HEADER_SEARCH_PATHS_ = $(SQLITE3_HEADER_SEARCH_PATHS_1040);
+SQLITE3_HEADER_SEARCH_PATHS_1040 = $(WEBCORE_SQLITE3_HEADER_SEARCH_PATHS);
+SQLITE3_HEADER_SEARCH_PATHS_1050 = $(WEBCORE_SQLITE3_HEADER_SEARCH_PATHS);
+SQLITE3_HEADER_SEARCH_PATHS_1060 = ;
 
-// This will be overriden in Debug and Release configurations by DebugRelease.xcconfig.
-SQLITE3_HEADER_SEARCH_PATHS = $(NEXT_ROOT)/usr/local/include/WebCoreSQLite3;
 
 // <rdar://problem/5488678>: Production builds on 10.4 PowerPC need to have debugging symbols disabled to prevent a huge STABS section being generated.
 //                           Xcode on 10.4 does not define MAC_OS_X_VERSION_MAJOR, so the default Mac OS X version is treated as 10.4.

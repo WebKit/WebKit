@@ -12,7 +12,13 @@ HEADER_SEARCH_PATHS = ForwardingHeaders icu /usr/include/libxslt /usr/include/li
 INFOPLIST_FILE = Info.plist;
 INSTALL_PATH = $(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Versions/A/Frameworks;
 PRODUCT_NAME = WebCore;
-OTHER_LDFLAGS = -lWebCoreSQLite3 -lobjc -sub_library libobjc -umbrella WebKit;
+OTHER_LDFLAGS = -l$(SQLITE3_LIBRARY) -lobjc -sub_library libobjc -umbrella WebKit;
 
 // This needs to be kept sorted, and in sync with FEATURE_DEFINES in JavaScriptCore.xcconfig, WebKit.xcconfig and the default settings of build-webkit.
 FEATURE_DEFINES = ENABLE_DATABASE ENABLE_DOM_STORAGE ENABLE_ICONDATABASE ENABLE_OFFLINE_WEB_APPLICATIONS ENABLE_SVG ENABLE_SVG_ANIMATION ENABLE_SVG_AS_IMAGE ENABLE_SVG_FONTS ENABLE_SVG_FOREIGN_OBJECT ENABLE_SVG_USE ENABLE_VIDEO ENABLE_XPATH ENABLE_XSLT;
+
+SQLITE3_LIBRARY = $(SQLITE3_LIBRARY_$(MAC_OS_X_VERSION_MAJOR));
+SQLITE3_LIBRARY_ = WebCoreSQLite3;
+SQLITE3_LIBRARY_1040 = WebCoreSQLite3;
+SQLITE3_LIBRARY_1050 = WebCoreSQLite3;
+SQLITE3_LIBRARY_1060 = sqlite3;
