@@ -1,5 +1,13 @@
 2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Not reviewed.
+
+        Remove a local change that was accidentally committed in r36034.
+
+        * resources/sunspider-standalone-driver.js:
+
+2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Rubber-stamped by Oliver Hunt.
 
         Make SunSpider work with JavaScript shells that don't take filenames
