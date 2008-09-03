@@ -36,7 +36,6 @@ namespace KJS {
 
     class CodeBlock;
     class ExecState;
-    class JSFunction;
     class JSPropertyNameIterator;
     class JSValue;
     class ScopeChainNode;

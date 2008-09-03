@@ -1,3 +1,65 @@
+2008-09-02  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin and Tim.
+
+        Remove most of the "zombie" mode from the profiler.  Next we will need
+        to remove the client callback mechanism in profiles.
+
+        - This simplifies the code, leverages the recent changes I've made in
+        getting line numbers from SquirrelFish, and is a slight speed
+        improvement on SunSpider.
+        - Also the "zombie" mode was a constant source of odd edge cases and
+        obscure bugs so it's good to remove since all of its issues may not have
+        been found.
+
+        * API/JSProfilerPrivate.cpp: No need to call didFinishAllExecution() any
+        more.
+        (JSEndProfiling):
+        * JavaScriptCore.exp: Export the new signature of retrieveLastCaller()
+        * VM/Machine.cpp:
+        (KJS::Machine::execute): No need to call didFinishAllExecution() any
+        more.
+        (KJS::Machine::retrieveCaller): Now operates on InternalFunctions now
+        since the RegisterFile is no longer guaranteeded to store only
+        JSFunctions
+        (KJS::Machine::retrieveLastCaller): Now also retrieve the function's
+        name
+        (KJS::Machine::callFrame): A result of changing retrieveCaller()
+        * VM/Machine.h:
+        * VM/Register.h: 
+        * kjs/JSGlobalObject.cpp:
+        (KJS::JSGlobalObject::~JSGlobalObject):
+        * kjs/nodes.h:
+        * profiler/ProfileGenerator.cpp:
+        (KJS::ProfileGenerator::create): Now pass the original exec and get the
+        global exec and client when necessary.  We need the original exec so we
+        can have the stack frame where profiling started.
+        (KJS::ProfileGenerator::ProfileGenerator): ditto.
+        (KJS::ProfileGenerator::addParentForConsoleStart): This is where the 
+        parent to star of the profile is added, if there is one.
+        (KJS::ProfileGenerator::willExecute): Remove uglyness!
+        (KJS::ProfileGenerator::didExecute): Ditto!
+        (KJS::ProfileGenerator::stopProfiling):
+        (KJS::ProfileGenerator::removeProfileStart): Use a better way to find
+        and remove the function we are looking for.
+        (KJS::ProfileGenerator::removeProfileEnd): Ditto.
+        * profiler/ProfileGenerator.h:
+        (KJS::ProfileGenerator::client):
+        * profiler/ProfileNode.cpp:
+        (KJS::ProfileNode::removeChild): Add a better way to remove a child from
+        a ProfileNode.
+        (KJS::ProfileNode::stopProfiling):
+        (KJS::ProfileNode::debugPrintData): Modified a debug-only diagnostic
+        function to be sane.
+        * profiler/ProfileNode.h:
+        * profiler/Profiler.cpp: Change to pass the original exec state.
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling):
+        (KJS::Profiler::willExecute):
+        (KJS::Profiler::didExecute):
+        (KJS::Profiler::createCallIdentifier):
+        * profiler/Profiler.h:
+
 2008-09-01  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

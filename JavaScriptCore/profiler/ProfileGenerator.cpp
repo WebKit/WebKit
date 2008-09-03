@@ -26,6 +26,11 @@
 #include "config.h"
 #include "ProfileGenerator.h"
 
+#include "ExecState.h"
+#include "JSGlobalObject.h"
+#include "JSStringRef.h"
+#include "JSFunction.h"
+#include "Machine.h"
 #include "Profile.h"
 #include "Profiler.h"
 #include "Tracing.h"
@@ -34,20 +39,32 @@ namespace KJS {
 
 static const char* NonJSExecution = "(idle)";
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client, unsigned uid)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingExec, ProfilerClient* client, unsigned uid)
 {
-    return adoptRef(new ProfileGenerator(title, originatingGlobalExec, profileGroup, client, uid));
+    return adoptRef(new ProfileGenerator(title, originatingExec, client, uid));
 }
 
-ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingGlobalExec, unsigned profileGroup, ProfilerClient* client, unsigned uid)
-    : m_originatingGlobalExec(originatingGlobalExec)
-    , m_profileGroup(profileGroup)
+ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingExec, ProfilerClient* client, unsigned uid)
+    : m_originatingGlobalExec(originatingExec->lexicalGlobalObject()->globalExec())
+    , m_profileGroup(originatingExec->lexicalGlobalObject()->profileGroup())
     , m_client(client)
-    , m_stoppedProfiling(false)
-    , m_stoppedCallDepth(0)
 {
     m_profile = Profile::create(title, uid);
     m_currentNode = m_head = m_profile->head();
+
+    addParentForConsoleStart(originatingExec);
+}
+
+void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
+{
+    int lineNumber;
+    int sourceID;
+    UString sourceURL;
+    JSValue* function;
+
+    exec->machine()->retrieveLastCaller(exec, lineNumber, sourceID, sourceURL, function);
+    m_currentNode = ProfileNode::create(Profiler::createCallIdentifier(exec, function ? function->toThisObject(exec) : 0, sourceURL, lineNumber), m_head.get(), m_head.get());
+    m_head->insertNode(m_currentNode.get());
 }
 
 const UString& ProfileGenerator::title() const
@@ -63,12 +80,7 @@ void ProfileGenerator::willExecute(const CallIdentifier& callIdentifier)
         JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.c_str()), const_cast<char*>(url.c_str()), callIdentifier.m_lineNumber);
     }
 
-    if (m_stoppedProfiling) {
-        ++m_stoppedCallDepth;
-        return;
-    }
-
-    ASSERT(m_currentNode);
+    ASSERT_ARG(m_currentNode, m_currentNode);
     m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
 
@@ -80,34 +92,16 @@ void ProfileGenerator::didExecute(const CallIdentifier& callIdentifier)
         JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.c_str()), const_cast<char*>(url.c_str()), callIdentifier.m_lineNumber);
     }
 
-    if (!m_currentNode)
-        return;
-
-    if (m_stoppedProfiling && m_stoppedCallDepth > 0) {
-        --m_stoppedCallDepth;
-        return;
-    }
-
-    if (m_currentNode == m_head) {
-        m_currentNode = ProfileNode::create(callIdentifier, m_head.get(), m_head.get());
-        m_currentNode->setStartTime(m_head->startTime());
-        m_currentNode->didExecute();
-
-        if (m_stoppedProfiling) {
-            m_currentNode->setTotalTime(m_head->totalTime());
-            m_currentNode->setSelfTime(m_head->selfTime());
-            m_head->setSelfTime(0.0);
-        }
-
-        m_head->insertNode(m_currentNode.release());            
-        m_currentNode = m_stoppedProfiling ? 0 : m_head;
-
+    ASSERT_ARG(m_currentNode, m_currentNode);
+    if (m_currentNode->callIdentifier() != callIdentifier) {
+        RefPtr<ProfileNode> returningNode = ProfileNode::create(callIdentifier, m_head.get(), m_currentNode.get());
+        returningNode->setStartTime(m_currentNode->startTime());
+        returningNode->didExecute();
+        m_currentNode->insertNode(returningNode.release());
         return;
     }
 
-    // Set m_currentNode to the parent (which didExecute returns). If stopped, just set the
-    // m_currentNode to the parent and don't call didExecute.
-    m_currentNode = m_stoppedProfiling ? m_currentNode->parent() : m_currentNode->didExecute();
+    m_currentNode = m_currentNode->didExecute();
 }
 
 void ProfileGenerator::stopProfiling()
@@ -117,21 +111,13 @@ void ProfileGenerator::stopProfiling()
     removeProfileStart();
     removeProfileEnd();
 
-    ASSERT(m_currentNode);
+    ASSERT_ARG(m_currentNode, m_currentNode);
 
     // Set the current node to the parent, because we are in a call that
     // will not get didExecute call.
     m_currentNode = m_currentNode->parent();
 
-    m_stoppedProfiling = true;
-}
-
-bool ProfileGenerator::didFinishAllExecution()
-{
-    if (!m_stoppedProfiling)
-        return false;
-
-    if (double headSelfTime = m_head->selfTime()) {
+   if (double headSelfTime = m_head->selfTime()) {
         RefPtr<ProfileNode> idleNode = ProfileNode::create(CallIdentifier(NonJSExecution, 0, 0), m_head.get(), m_head.get());
 
         idleNode->setTotalTime(headSelfTime);
@@ -141,12 +127,6 @@ bool ProfileGenerator::didFinishAllExecution()
         m_head->setSelfTime(0.0);
         m_head->addChild(idleNode.release());
     }
-
-    m_currentNode = 0;
-    m_originatingGlobalExec = 0;
-
-    m_profile->setHead(m_head.release());
-    return true;
 }
 
 // The console.ProfileGenerator that started this ProfileGenerator will be the first child.
@@ -159,14 +139,9 @@ void ProfileGenerator::removeProfileStart()
     if (currentNode->callIdentifier().m_name != "profile")
         return;
 
-    // Increment m_stoppedCallDepth to account for didExecute not being called for console.ProfileGenerator.
-    ++m_stoppedCallDepth;
-
     // Attribute the time of the node aobut to be removed to the self time of its parent
     currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
-
-    ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[0])->callIdentifier());
-    currentNode->parent()->removeChild(0);
+    currentNode->parent()->removeChild(currentNode);
 }
 
 // The console.ProfileGeneratorEnd that stopped this ProfileGenerator will be the last child.
@@ -183,7 +158,7 @@ void ProfileGenerator::removeProfileEnd()
     currentNode->parent()->setSelfTime(currentNode->parent()->selfTime() + currentNode->totalTime());
 
     ASSERT(currentNode->callIdentifier() == (currentNode->parent()->children()[currentNode->parent()->children().size() - 1])->callIdentifier());
-    currentNode->parent()->removeChild(currentNode->parent()->children().size() - 1);
+    currentNode->parent()->removeChild(currentNode);
 }
 
 } // namespace KJS

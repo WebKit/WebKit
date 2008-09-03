@@ -150,8 +150,9 @@ static inline void retrieveLastCaller(ExecState* exec, KURL& url, unsigned& line
     int signedLineNumber;
     int sourceIdentifer;
     UString urlString;
+    JSValue* function;
 
-    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceIdentifer, urlString);
+    exec->machine()->retrieveLastCaller(exec, signedLineNumber, sourceIdentifer, urlString, function);
 
     url = KURL(urlString);
     lineNumber = (signedLineNumber >= 0 ? signedLineNumber : 0);
@@ -318,8 +319,9 @@ void Console::profileEnd(ExecState* exec, const ArgList& args)
         title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
 
     int sourceId;
+    JSValue* function;
     // FIXME: We won't need to save these to statics once we remove the profiler "zombie" mode
-    exec->machine()->retrieveLastCaller(exec, m_profileLineNumber, sourceId, m_profileSourceURL);
+    exec->machine()->retrieveLastCaller(exec, m_profileLineNumber, sourceId, m_profileSourceURL, function);
     Profiler::profiler()->stopProfiling(exec, title);
 }
 

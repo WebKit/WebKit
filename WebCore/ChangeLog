@@ -1,3 +1,18 @@
+2008-09-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Darin and Tim.
+
+        Remove most of the "zombie" mode from the profiler.  Next we will need
+        to remove the client callback mechanism in profiles.
+        - These changes are a result of changes to JSCore.
+
+        * manual-tests/inspector/profiler-test-nested-start-and-stop-profiler.html:
+        * page/Console.cpp:
+        (WebCore::retrieveLastCaller):
+        (WebCore::Console::profileEnd):
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+
 2008-09-03  Adele Peterson  <adele@apple.com>
 
         Reviewed by Darin Adler.

@@ -128,6 +128,21 @@ ProfileNode* ProfileNode::findChild(ProfileNode* node) const
     return 0;
 }
 
+void ProfileNode::removeChild(ProfileNode* node)
+{
+    if (!node)
+        return;
+
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        if (*node == m_children[i].get()) {
+            m_children.remove(i);
+            break;
+        }
+    }
+    
+    resetChildrensSiblings();
+}
+
 void ProfileNode::insertNode(PassRefPtr<ProfileNode> prpNode)
 {
     RefPtr<ProfileNode> node = prpNode;
@@ -281,10 +296,11 @@ void ProfileNode::debugPrintData(int indentLevel) const
     for (int i = 0; i < indentLevel; ++i)
         printf("  ");
 
-    printf("%d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Function Name %s Visible %s Next Sibling %s\n",
+    printf("Function Name %s %d SelfTime %.3fms/%.3f%% TotalTime %.3fms/%.3f%% VSelf %.3fms VTotal %.3fms Visible %s Next Sibling %s\n",
+        functionName().UTF8String().c_str(), 
         m_numberOfCalls, m_actualSelfTime, selfPercent(), m_actualTotalTime, totalPercent(),
         m_visibleSelfTime, m_visibleTotalTime, 
-        functionName().UTF8String().c_str(), (m_visible ? "True" : "False"),
+        (m_visible ? "True" : "False"),
         m_nextSibling ? m_nextSibling->functionName().UTF8String().c_str() : "");
 
     ++indentLevel;

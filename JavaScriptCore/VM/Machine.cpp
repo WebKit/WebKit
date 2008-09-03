@@ -797,11 +797,8 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
 
     MACHINE_SAMPLING_privateExecuteReturned();
 
-    if (*profiler) {
+    if (*profiler)
         (*profiler)->didExecute(exec, programNode->sourceURL(), programNode->lineNo());
-        if (!m_reentryDepth)
-            (*profiler)->didFinishAllExecution(exec);
-    }
 
     if (m_reentryDepth && lastGlobalObject && globalObject != lastGlobalObject)
         lastGlobalObject->copyGlobalsTo(m_registerFile);
@@ -859,9 +856,6 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
     m_reentryDepth--;
 
     MACHINE_SAMPLING_privateExecuteReturned();
-
-    if (*profiler && !m_reentryDepth)
-        (*profiler)->didFinishAllExecution(exec);
 
     m_registerFile.shrink(oldSize);
     return result;
@@ -941,11 +935,8 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
 
     MACHINE_SAMPLING_privateExecuteReturned();
 
-    if (*profiler) {
+    if (*profiler)
         (*profiler)->didExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
-        if (!m_reentryDepth)
-            (*profiler)->didFinishAllExecution(exec);
-    }
 
     m_registerFile.shrink(oldSize);
     return result;
@@ -3411,7 +3402,7 @@ JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
     return activation->get(exec, exec->propertyNames().arguments);
 }
 
-JSValue* Machine::retrieveCaller(ExecState* exec, JSFunction* function) const
+JSValue* Machine::retrieveCaller(ExecState* exec, InternalFunction* function) const
 {
     Register* callFrame = this->callFrame(exec, function);
     if (!callFrame)
@@ -3428,8 +3419,9 @@ JSValue* Machine::retrieveCaller(ExecState* exec, JSFunction* function) const
     return jsNull();
 }
 
-void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId, UString& sourceURL) const
+void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId, UString& sourceURL, JSValue*& function) const
 {
+    function = 0;
     lineNumber = -1;
     sourceURL = UString();
 
@@ -3445,9 +3437,13 @@ void Machine::retrieveLastCaller(ExecState* exec, int& lineNumber, int& sourceId
     lineNumber = callerCodeBlock->lineNumberForVPC(vPC - 1);
     sourceId = callerCodeBlock->ownerNode->sourceId();
     sourceURL = callerCodeBlock->ownerNode->sourceURL();
+
+    JSValue* callee = callFrame[RegisterFile::Callee].getJSValue();
+    if (callee->toThisObject(exec)->inherits(&InternalFunction::info))
+        function = retrieveCaller(exec, static_cast<InternalFunction*>(callee));
 }
 
-Register* Machine::callFrame(ExecState* exec, JSFunction* function) const
+Register* Machine::callFrame(ExecState* exec, InternalFunction* function) const
 {
     Register* callFrame = exec->m_callFrame;
 

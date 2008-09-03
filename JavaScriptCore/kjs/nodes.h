@@ -54,6 +54,7 @@ namespace KJS {
     class FuncDeclNode;
     class Node;
     class EvalCodeBlock;
+    class JSFunction;
     class ProgramCodeBlock;
     class PropertyListNode;
     class SourceStream;

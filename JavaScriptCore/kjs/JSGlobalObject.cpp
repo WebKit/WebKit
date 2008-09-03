@@ -87,7 +87,6 @@ JSGlobalObject::~JSGlobalObject()
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (UNLIKELY(*profiler != 0)) {
         (*profiler)->stopProfiling(globalExec(), UString());
-        (*profiler)->didFinishAllExecution(globalExec());
     }
 
     d()->next->d()->prev = d()->prev;
