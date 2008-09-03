@@ -2,6 +2,20 @@
 
         Reviewed by Darin Adler.
 
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=20474
+        Tests behaviour on invalid fillStyle() or strokeStyle() in canvas.
+
+        * fast/canvas/canvas-invalid-fillstyle-expected.txt: Added.
+        * fast/canvas/canvas-invalid-fillstyle.html: Added.
+        * fast/canvas/canvas-invalid-fillstyle.js: Added.
+        * fast/canvas/canvas-invalid-strokestyle-expected.txt: Added.
+        * fast/canvas/canvas-invalid-strokestyle.html: Added.
+        * fast/canvas/canvas-invalid-strokestyle.js: Added.
+
+2008-09-02  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Darin Adler.
+
         Tests for https://bugs.webkit.org/show_bug.cgi?id=20468
         Test negative source and destination rect in drawImage()
 

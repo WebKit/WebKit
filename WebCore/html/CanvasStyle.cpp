@@ -106,14 +106,14 @@ void CanvasStyle::applyStrokeColor(GraphicsContext* context)
     switch (m_type) {
         case ColorString: {
             RGBA32 color = 0; // default is transparant black
-            CSSParser::parseColor(color, m_color);
-            context->setStrokeColor(color);
+            if (CSSParser::parseColor(color, m_color))
+                context->setStrokeColor(color);
             break;
         }
         case ColorStringWithAlpha: {
             RGBA32 color = 0; // default is transparant black
-            CSSParser::parseColor(color, m_color);
-            context->setStrokeColor(colorWithOverrideAlpha(color, m_alpha));
+            if (CSSParser::parseColor(color, m_color))
+                context->setStrokeColor(colorWithOverrideAlpha(color, m_alpha));
             break;
         }
         case GrayLevel:
@@ -157,14 +157,14 @@ void CanvasStyle::applyFillColor(GraphicsContext* context)
     switch (m_type) {
         case ColorString: {
             RGBA32 rgba = 0; // default is transparant black
-            CSSParser::parseColor(rgba, m_color);
-            context->setFillColor(rgba);
+            if (CSSParser::parseColor(rgba, m_color))
+                context->setFillColor(rgba);
             break;
         }
         case ColorStringWithAlpha: {
             RGBA32 color = 0; // default is transparant black
-            CSSParser::parseColor(color, m_color);
-            context->setFillColor(colorWithOverrideAlpha(color, m_alpha));
+            if (CSSParser::parseColor(color, m_color))
+                context->setFillColor(colorWithOverrideAlpha(color, m_alpha));
             break;
         }
         case GrayLevel:
