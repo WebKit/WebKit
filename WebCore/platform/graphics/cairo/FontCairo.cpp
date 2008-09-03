@@ -77,11 +77,13 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
         cairo_restore(cr);
     }
 
-    float red, green, blue, alpha;
-    fillColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(cr, red, green, blue, alpha);
+    if (context->textDrawingMode() & cTextFill) {
+        float red, green, blue, alpha;
+        fillColor.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(cr, red, green, blue, alpha);
 
-    cairo_show_glyphs(cr, glyphs, numGlyphs);
+        cairo_show_glyphs(cr, glyphs, numGlyphs);
+    }
 
     if (context->textDrawingMode() & cTextStroke) {
         Color strokeColor = context->strokeColor();
