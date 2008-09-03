@@ -32,18 +32,22 @@
 
 namespace WTF {
 
+class Mutex;
+
 typedef void MainThreadFunction(void*);
 
 void callOnMainThread(MainThreadFunction*, void* context);
+void callOnMainThreadAndWait(MainThreadFunction*, void* context);
+
 void setMainThreadCallbacksPaused(bool paused);
 
-#if PLATFORM(WIN)
+// Must be called from the main thread (Darwin is an exception to this rule).
 void initializeMainThread();
-#endif
 
 // These functions are internal to the callOnMainThread implementation.
 void dispatchFunctionsFromMainThread();
 void scheduleDispatchFunctionsOnMainThread();
+Mutex& mainThreadFunctionQueueMutex();
 
 } // namespace WTF
 

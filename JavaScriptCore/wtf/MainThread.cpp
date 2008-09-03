@@ -37,17 +37,24 @@ namespace WTF {
 struct FunctionWithContext {
     MainThreadFunction* function;
     void* context;
-    FunctionWithContext(MainThreadFunction* f = 0, void* c = 0) : function(f), context(c) { }
+    ThreadCondition* syncFlag;
+
+    FunctionWithContext(MainThreadFunction* function = 0, void* context = 0, ThreadCondition* syncFlag = 0)
+        : function(function)
+        , context(context)
+        , syncFlag(syncFlag)
+    { 
+    }
 };
 
 typedef Vector<FunctionWithContext> FunctionQueue;
 
-static bool callbacksPaused;
+static bool callbacksPaused; // This global varialble is only accessed from main thread.
 
-static Mutex& functionQueueMutex()
+Mutex& mainThreadFunctionQueueMutex()
 {
-    AtomicallyInitializedStatic(Mutex, staticFunctionQueueMutex);
-    return staticFunctionQueueMutex;
+    static Mutex staticMutex;
+    return staticMutex;
 }
 
 static FunctionQueue& functionQueue()
@@ -55,6 +62,13 @@ static FunctionQueue& functionQueue()
     static FunctionQueue staticFunctionQueue;
     return staticFunctionQueue;
 }
+
+#if !PLATFORM(WIN)
+void initializeMainThread()
+{
+    mainThreadFunctionQueueMutex();
+}
+#endif
 
 void dispatchFunctionsFromMainThread()
 {
@@ -65,12 +79,16 @@ void dispatchFunctionsFromMainThread()
 
     FunctionQueue queueCopy;
     {
-        MutexLocker locker(functionQueueMutex());
+        MutexLocker locker(mainThreadFunctionQueueMutex());
         queueCopy.swap(functionQueue());
     }
 
-    for (unsigned i = 0; i < queueCopy.size(); ++i)
-        queueCopy[i].function(queueCopy[i].context);
+    for (unsigned i = 0; i < queueCopy.size(); ++i) {
+        FunctionWithContext& invocation = queueCopy[i];
+        invocation.function(invocation.context);
+        if (invocation.syncFlag)
+            invocation.syncFlag->signal();
+    }
 }
 
 void callOnMainThread(MainThreadFunction* function, void* context)
@@ -78,11 +96,33 @@ void callOnMainThread(MainThreadFunction* function, void* context)
     ASSERT(function);
 
     {
-        MutexLocker locker(functionQueueMutex());
+        MutexLocker locker(mainThreadFunctionQueueMutex());
         functionQueue().append(FunctionWithContext(function, context));
     }
 
     scheduleDispatchFunctionsOnMainThread();
+}
+
+void callOnMainThreadAndWait(MainThreadFunction* function, void* context)
+{
+    ASSERT(function);
+
+    if (isMainThread()) {
+        function(context);
+        return;
+    }
+
+    ThreadCondition syncFlag;
+    Mutex conditionMutex;
+
+    {
+        MutexLocker locker(mainThreadFunctionQueueMutex());
+        functionQueue().append(FunctionWithContext(function, context, &syncFlag));
+        conditionMutex.lock();
+    }
+
+    scheduleDispatchFunctionsOnMainThread();
+    syncFlag.wait(conditionMutex);
 }
 
 void setMainThreadCallbacksPaused(bool paused)

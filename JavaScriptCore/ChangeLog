@@ -1,3 +1,34 @@
+2008-09-01  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Implement callOnMainThreadAndWait().
+
+        This will be useful when a background thread needs to perform UI calls synchronously
+        (e.g. an openDatabase() call cannot return until the user answers to a confirmation dialog).
+
+        * wtf/MainThread.cpp:
+        (WTF::FunctionWithContext::FunctionWithContext): Added a ThreadCondition member. When
+        non-zero, the condition is signalled after the function is called.
+        (WTF::mainThreadFunctionQueueMutex): Renamed from functionQueueMutex, sinc this is no longer
+        static. Changed to be initialized from initializeThreading() to avoid lock contention.
+        (WTF::initializeMainThread): On non-Windows platforms, just call mainThreadFunctionQueueMutex.
+        (WTF::dispatchFunctionsFromMainThread): Signal synchronous calls when done.
+        (WTF::callOnMainThread): Updated for functionQueueMutex rename.
+        (WTF::callOnMainThreadAndWait):  Added.
+
+        * wtf/MainThread.h: Added callOnMainThreadAndWait(); initializeMainThread() now exists on
+        all platforms.
+
+        * wtf/win/MainThreadWin.cpp: (WTF::initializeMainThread): Added a callOnMainThreadAndWait()
+        call to initialize function queue mutex.
+
+        * wtf/ThreadingGtk.cpp: (WTF::initializeThreading):
+        * wtf/ThreadingPthreads.cpp: (WTF::initializeThreading):
+        * wtf/ThreadingQt.cpp: (WTF::initializeThreading):
+        Only initialize mainThreadIdentifier on non-Darwin platforms. It was not guaranteed to be
+        accurate on Darwin.
+
 2008-09-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Darin Adler.

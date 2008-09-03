@@ -52,6 +52,8 @@ void initializeMainThread()
     if (threadingWindowHandle)
         return;
 
+    mainThreadFunctionQueueMutex();
+
     WNDCLASSEX wcex;
     memset(&wcex, 0, sizeof(WNDCLASSEX));
     wcex.cbSize = sizeof(WNDCLASSEX);
