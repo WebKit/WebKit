@@ -1,3 +1,16 @@
+2008-09-02  Glenn Wilson  <wilsong@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Test for <https://bugs.webkit.org/show_bug.cgi?id=15360>
+        Bug 15360: color:#{predefined colorName} is treated as colorName in Safari
+
+        Added new test to verify that CSS "color" attributes with '#'-preceeded predefined color names
+        are not rendered in those colors.
+
+        * css1/color_and_background/invalid_color.html: Added.
+        * css1/color_and_background/invalid_color-expected.txt: Added.
+
 2008-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Darin Adler.

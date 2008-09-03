@@ -1,3 +1,27 @@
+2008-09-02  Glenn Wilson  <wilsong@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for <https://bugs.webkit.org/show_bug.cgi?id=15360>
+        Bug 15360: color:#{predefined colorName} is treated as colorName in Safari
+
+        We would inappropriately interpret and apply an invalid CSS "color" property
+        when the value is a predefined color preceded by a '#' symbol.  For example,
+        style="color:#gray;" would apply the color gray when it should not.
+
+        In the bison template, "hexcolor" was defined as both "HEX maybe_space" OR "IDENT maybe_space".
+        This caused identifiers not fitting the appropriate hex format but preceded by a '#' to be 
+        interpreted as a valid color (CSSPrimitiveValue::CSS_PARSER_HEXCOLOR), when it was really just
+        an ignorable token.
+
+        To correct this, "IDENT maybe_space" was removed from "hexcolor" and added under "term" as
+        '#' IDENT maybe_space, which is then processed as a CSSPrimitiveValue::CSS_STRING instead of
+        CSSPrimitiveValue::CSS_PARSER_HEXCOLOR.
+
+        Test: css1/color_and_background/invalid_color.html
+
+        * css/CSSGrammar.y:
+
 2008-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Darin Adler.
