@@ -743,9 +743,17 @@ RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
+    OpcodeID opcode = this->opcode();
+    if (opcode == op_eq || opcode == op_neq) {
+        if (m_expr1->isNull() || m_expr2->isNull()) {
+            RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
+            return generator.emitUnaryOp(opcode == op_eq ? op_eq_null : op_neq_null, generator.finalDestination(dst, src.get()), src.get());
+        }
+    }
+
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
-    return generator.emitBinaryOp(opcode(), generator.finalDestination(dst, src1.get()), src1.get(), src2);
+    return generator.emitBinaryOp(opcode, generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }
 
 RegisterID* ReverseBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
@@ -1810,7 +1818,6 @@ JSFunction* FuncDeclNode::makeFunction(ExecState* exec, ScopeChainNode* scopeCha
     JSObject* proto = constructEmptyObject(exec);
     proto->putDirect(exec->propertyNames().constructor, func, DontEnum);
     func->putDirect(exec->propertyNames().prototype, proto, DontDelete);
-    func->putDirect(exec->propertyNames().length, jsNumber(exec, m_body->parameters().size()), ReadOnly | DontDelete | DontEnum);
     return func;
 }
 

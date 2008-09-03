@@ -379,8 +379,16 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printBinaryOp(location, it, "eq");
             break;
         }
+        case op_eq_null: {
+            printUnaryOp(location, it, "eq_null");
+            break;
+        }
         case op_neq: {
             printBinaryOp(location, it, "neq");
+            break;
+        }
+        case op_neq_null: {
+            printUnaryOp(location, it, "neq_null");
             break;
         }
         case op_stricteq: {

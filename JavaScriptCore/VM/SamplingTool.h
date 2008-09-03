@@ -86,7 +86,7 @@ namespace KJS {
             deleteAllValues(*m_scopeSampleMap);
         }
 
-        void start(unsigned hertz=1000);
+        void start(unsigned hertz=10000);
         void stop();
         void dump(ExecState*);
 

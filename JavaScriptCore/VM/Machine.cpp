@@ -1417,6 +1417,31 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_eq_null) {
+        /* neq dst(r) src(r)
+
+           Checks whether register src is null, as with the ECMAScript '!='
+           operator, and puts the result as a boolean in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        JSValue* src = r[(++vPC)->u.operand].jsValue(exec);
+
+        if (src->isNull()) {
+            r[dst] = jsBoolean(true);
+            ++vPC;
+            NEXT_OPCODE;
+        }
+        
+        if (src->isUndefined()) {
+            r[dst] = jsBoolean(true);
+            ++vPC;
+            NEXT_OPCODE;
+        }
+        
+        r[dst] = jsBoolean(!JSImmediate::isImmediate(src) && static_cast<JSCell*>(src)->masqueradeAsUndefined());
+        ++vPC;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_neq) {
         /* neq dst(r) src1(r) src2(r)
 
@@ -1435,6 +1460,31 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             r[dst] = result;
         }
 
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_neq_null) {
+        /* neq dst(r) src(r)
+
+           Checks whether register src is not null, as with the ECMAScript '!='
+           operator, and puts the result as a boolean in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        JSValue* src = r[(++vPC)->u.operand].jsValue(exec);
+
+        if (src->isNull()) {
+            r[dst] = jsBoolean(false);
+            ++vPC;
+            NEXT_OPCODE;
+        }
+        
+        if (src->isUndefined()) {
+            r[dst] = jsBoolean(false);
+            ++vPC;
+            NEXT_OPCODE;
+        }
+        
+        r[dst] = jsBoolean(JSImmediate::isImmediate(src) || !static_cast<JSCell*>(src)->masqueradeAsUndefined());
         ++vPC;
         NEXT_OPCODE;
     }

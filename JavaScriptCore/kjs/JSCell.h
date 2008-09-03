@@ -77,6 +77,9 @@ namespace KJS {
         virtual UString toString(ExecState*) const = 0;
         virtual JSObject* toObject(ExecState*) const = 0;
 
+        // WebCore uses this to make document.all and style.filter undetectable
+        virtual bool masqueradeAsUndefined() const { return false; }
+
         // Garbage collection.
         void* operator new(size_t, ExecState*);
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }

@@ -48,7 +48,9 @@ namespace KJS {
         \
         macro(op_not) \
         macro(op_eq) \
+        macro(op_eq_null) \
         macro(op_neq) \
+        macro(op_neq_null) \
         macro(op_stricteq) \
         macro(op_nstricteq) \
         macro(op_less) \

@@ -1,5 +1,13 @@
 2008-09-02  Geoffrey Garen  <ggaren@apple.com>
 
+        Reviewed by Anders Carlsson.
+        
+        Added optimized paths for comparing to null.
+        
+        SunSpider says 0.5% faster.
+
+2008-09-02  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Sam Weinig.
 
         Changed jsDriver.pl to dump the exact text you would need in order to

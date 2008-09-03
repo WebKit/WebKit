@@ -114,9 +114,6 @@ namespace KJS {
 
         virtual bool getPropertyAttributes(ExecState*, const Identifier& propertyName, unsigned& attributes) const;
 
-        // WebCore uses this to make document.all and style.filter undetectable
-        virtual bool masqueradeAsUndefined() const { return false; }
-
         // This get function only looks at the property map.
         JSValue* getDirect(const Identifier& propertyName) const { return m_propertyMap.get(propertyName); }
         JSValue** getDirectLocation(const Identifier& propertyName) { return m_propertyMap.getLocation(propertyName); }
