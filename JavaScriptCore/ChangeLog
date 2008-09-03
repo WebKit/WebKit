@@ -1,3 +1,9 @@
+2008-09-03  Adele Peterson  <adele@apple.com>
+
+        Build fix.
+
+        * wtf/win/MainThreadWin.cpp:
+
 2008-09-02  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin and Tim.

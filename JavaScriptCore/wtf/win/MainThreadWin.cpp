@@ -30,6 +30,7 @@
 #include "MainThread.h"
 
 #include "Assertions.h"
+#include "Threading.h"
 #include <windows.h>
 
 namespace WTF {
