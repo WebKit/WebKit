@@ -23,6 +23,7 @@
 
 #include "PropertySlot.h"
 #include "identifier.h"
+#include <wtf/NotFound.h>
 
 namespace KJS {
 
@@ -104,7 +105,7 @@ namespace KJS {
             reinterpret_cast<JSValue**>(m_u.table->entryIndicies)[offset] = v;
         }
 
-        size_t offsetForLocation(JSValue** location) { return m_usingTable ? offsetForTableLocation(location) : KJS_INVALID_OFFSET; }
+        size_t offsetForLocation(JSValue** location) { return m_usingTable ? offsetForTableLocation(location) : WTF::notFound; }
 
         void mark() const;
         void getEnumerablePropertyNames(PropertyNameArray&) const;

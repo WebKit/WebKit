@@ -30,6 +30,7 @@
 #include "JSNumberCell.h"
 #include "PropertyMap.h"
 #include "PropertySlot.h"
+#include "PutPropertySlot.h"
 #include "ScopeChain.h"
 #include "StructureID.h"
 
@@ -52,6 +53,8 @@ namespace KJS {
     };
 
     class JSObject : public JSCell {
+        friend class BatchedTransitionOptimizer;
+
     public:
         JSObject(PassRefPtr<StructureID>);
         JSObject(JSObject* prototype);
@@ -64,7 +67,7 @@ namespace KJS {
         JSValue* prototype() const;
         void setPrototype(JSValue* prototype);
         
-        PassRefPtr<StructureID> inheritorID();
+        StructureID* inheritorID();
 
         virtual UString className() const;
 
@@ -152,7 +155,7 @@ namespace KJS {
 
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         void setStructureID(PassRefPtr<StructureID>);
-        PassRefPtr<StructureID> createInheritorID();
+        StructureID* createInheritorID();
 
         PropertyMap m_propertyMap;
         RefPtr<StructureID> m_inheritorID;
@@ -161,11 +164,12 @@ namespace KJS {
   JSObject* constructEmptyObject(ExecState*);
 
 inline JSObject::JSObject(JSObject* prototype)
-    : JSCell(prototype->inheritorID().releaseRef()) // ~JSObject balances this ref()
+    : JSCell(prototype->inheritorID())
 {
     ASSERT(m_structureID);
     ASSERT(this->prototype());
-    ASSERT(this->prototype() == jsNull() || Heap::heap(this) == Heap::heap(this->prototype()));
+    ASSERT(this->prototype()->isNull() || Heap::heap(this) == Heap::heap(this->prototype()));
+    m_structureID->ref(); // ~JSObject balances this ref()
 }
 
 inline JSObject::JSObject(PassRefPtr<StructureID> structureID)
@@ -198,7 +202,7 @@ inline void JSObject::setStructureID(PassRefPtr<StructureID> structureID)
     m_structureID = structureID.releaseRef(); // ~JSObject balances this ref()
 }
 
-inline PassRefPtr<StructureID> JSObject::inheritorID()
+inline StructureID* JSObject::inheritorID()
 {
     if (m_inheritorID)
         return m_inheritorID.get();

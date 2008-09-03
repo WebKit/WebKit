@@ -38,8 +38,7 @@ namespace KJS {
 
     class JSArray : public JSObject {
     public:
-        enum DummyConstructTag { DummyConstruct };
-        JSArray(DummyConstructTag);
+        JSArray(PassRefPtr<StructureID>);
         JSArray(JSObject* prototype, unsigned initialLength);
         JSArray(ExecState* exec, JSObject* prototype, const ArgList& initialValues);
         virtual ~JSArray();

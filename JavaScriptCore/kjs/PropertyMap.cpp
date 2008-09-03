@@ -331,7 +331,7 @@ void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned a
             m_u.singleEntryValue = value;
             m_singleEntryAttributes = static_cast<short>(attributes);
             checkConsistency();
-            slot.setNewProperty(slotBase, KJS_INVALID_OFFSET);
+            slot.setNewProperty(slotBase, WTF::notFound);
             return;
         }
         if (rep == m_singleEntryKey && !(checkReadOnly && (m_singleEntryAttributes & ReadOnly))) {

@@ -28,7 +28,7 @@
 #include "StructureID.h"
 
 #include "identifier.h"
-#include "JSCell.h"
+#include "JSObject.h"
 #include <wtf/RefPtr.h>
 
 namespace KJS {
@@ -53,7 +53,7 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
         return existingTransition;
 
     if (structureID->m_transitionCount > s_maxTransitionLength)
-        return dictionaryTransition(structureID);
+        return toDictionaryTransition(structureID);
 
     RefPtr<StructureID> transition = create(structureID->m_prototype);
     transition->m_cachedPrototypeChain = structureID->m_cachedPrototypeChain;
@@ -65,14 +65,24 @@ PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structur
     return transition.release();
 }
 
-PassRefPtr<StructureID> StructureID::dictionaryTransition(StructureID* structureID)
+PassRefPtr<StructureID> StructureID::toDictionaryTransition(StructureID* structureID)
 {
     ASSERT(!structureID->m_isDictionary);
 
     RefPtr<StructureID> transition = create(structureID->m_prototype);
     transition->m_isDictionary = true;
-    transition->m_transitionCount = structureID->m_transitionCount + 1;
     return transition.release();
+}
+
+PassRefPtr<StructureID> StructureID::fromDictionaryTransition(StructureID* structureID)
+{
+    ASSERT(structureID->m_isDictionary);
+
+    // Since dictionary StructureIDs are not shared, and no opcodes specialize
+    // for them, we don't need to allocate a new StructureID when transitioning
+    // to non-dictionary status.
+    structureID->m_isDictionary = false;
+    return structureID;
 }
 
 PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* structureID, JSValue* prototype)
@@ -98,19 +108,20 @@ StructureID::~StructureID()
 }
 
 StructureIDChain::StructureIDChain(StructureID* structureID)
-    : m_size(0)
 {
+    size_t size = 0;
+
     StructureID* tmp = structureID;
-    while (tmp->prototype() != jsNull()) {
-        ++m_size;
+    while (!tmp->prototype()->isNull()) {
+        ++size;
         tmp = static_cast<JSCell*>(tmp->prototype())->structureID();
     }
 
-    m_vector.set(new RefPtr<StructureID>[m_size]);
+    m_vector.set(new RefPtr<StructureID>[size]);
 
-    for (size_t i = 0; i < m_size; ++i) {
+    for (size_t i = 0; i < size; ++i) {
         m_vector[i] = structureID;
-        structureID = static_cast<JSCell*>(structureID->prototype())->structureID();
+        structureID = static_cast<JSObject*>(structureID->prototype())->structureID();
     }
 }
 

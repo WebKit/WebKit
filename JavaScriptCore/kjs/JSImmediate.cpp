@@ -40,7 +40,7 @@ JSObject* JSImmediate::toObject(const JSValue* v, ExecState* exec)
     if (isBoolean(v))
         return constructBooleanFromImmediateBoolean(exec, const_cast<JSValue*>(v));
     
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
@@ -53,7 +53,7 @@ JSObject* JSImmediate::prototype(const JSValue* v, ExecState* exec)
     if (isBoolean(v))
         return exec->lexicalGlobalObject()->booleanPrototype();
 
-    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v == jsNull());
+    JSNotAnObjectErrorStub* exception = createNotAnObjectErrorStub(exec, v->isNull());
     exec->setException(exception);
     return new (exec) JSNotAnObject(exec, exception);
 }
@@ -67,7 +67,7 @@ UString JSImmediate::toString(const JSValue* v)
         return "false";
     if (v == jsBoolean(true))
         return "true";
-    if (v == jsNull())
+    if (v->isNull())
         return "null";
     ASSERT(v == jsUndefined());
     return "undefined";

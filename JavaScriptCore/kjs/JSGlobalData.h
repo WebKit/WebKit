@@ -73,8 +73,6 @@ namespace KJS {
         const HashTable* regExpConstructorTable;
         const HashTable* stringTable;
         
-        RefPtr<StructureID> stringStructureID;
-        RefPtr<StructureID> numberStructureID;
         RefPtr<StructureID> nullProtoStructureID;
 
         IdentifierTable* identifierTable;

@@ -30,6 +30,7 @@
 #include "config.h"
 #include "CodeGenerator.h"
 
+#include "BatchedTransitionOptimizer.h"
 #include "JSFunction.h"
 #include "Machine.h"
 #include "ustring.h"
@@ -219,6 +220,8 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
     SymbolTable::iterator end = symbolTable->end();
     for (SymbolTable::iterator it = symbolTable->begin(); it != end; ++it)
         m_locals[localsIndex(it->second.getIndex())].setIndex(it->second.getIndex() + m_globalVarStorageOffset);
+        
+    BatchedTransitionOptimizer optimizer(globalObject);
 
     bool canOptimizeNewGlobals = symbolTable->size() + functionStack.size() + varStack.size() < registerFile->maxGlobals();
     if (canOptimizeNewGlobals) {
@@ -227,8 +230,7 @@ CodeGenerator::CodeGenerator(ProgramNode* programNode, const Debugger* debugger,
 
         for (size_t i = 0; i < functionStack.size(); ++i) {
             FuncDeclNode* funcDecl = functionStack[i].get();
-            if (globalObject->getDirect(funcDecl->m_ident))
-                globalObject->removeDirect(funcDecl->m_ident); // Make sure our new function is not shadowed by an old property.
+            globalObject->removeDirect(funcDecl->m_ident); // Make sure our new function is not shadowed by an old property.
             emitNewFunction(addGlobalVar(funcDecl->m_ident, false), funcDecl);
         }
 

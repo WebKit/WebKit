@@ -48,7 +48,8 @@ namespace KJS {
         static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
         static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& name);
         static PassRefPtr<StructureID> getterSetterTransition(StructureID*);
-        static PassRefPtr<StructureID> dictionaryTransition(StructureID*);
+        static PassRefPtr<StructureID> toDictionaryTransition(StructureID*);
+        static PassRefPtr<StructureID> fromDictionaryTransition(StructureID*);
 
         ~StructureID();
 
@@ -66,7 +67,7 @@ namespace KJS {
         StructureIDChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
 
     private:
-        typedef HashMap<RefPtr<UString::Rep>, StructureID*, WTF::IdentifierRepHash, HashTraits<RefPtr<UString::Rep> > > TransitionTable;
+        typedef HashMap<RefPtr<UString::Rep>, StructureID*, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> > > TransitionTable;
         
         StructureID(JSValue* prototype);
         
@@ -93,7 +94,6 @@ namespace KJS {
     private:
         StructureIDChain(StructureID* structureID);
 
-        size_t m_size;
         OwnArrayPtr<RefPtr<StructureID> > m_vector;
     };
 

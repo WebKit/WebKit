@@ -1,3 +1,90 @@
+2008-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Implemented the rest of Darin's review comments for the 09-01 inline
+        caching patch.
+        
+        SunSpider says 0.5% faster, but that seems like noise.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Put PutPropertySlot into
+        its own file, and added BatchedTransitionOptimizer.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::~CodeBlock): Use array indexing instead of a pointer
+        iterator.
+
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::CodeGenerator): Used BatchedTransitionOptimizer to
+        make batched put and remove for declared variables fast, without forever
+        pessimizing the global object. Removed the old getDirect/removeDirect hack
+        that tried to do the same in a more limited way.
+
+        * VM/CodeGenerator.h: Moved IdentifierRepHash to the KJS namespace since
+        it doesn't specialize anything in WTF.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine): Nixed the DummyConstruct tag because it was
+        confusingly named.
+
+        (KJS::Machine::execute):  Used BatchedTransitionOptimizer, as above. Fixed
+        up some comments.
+
+        (KJS::cachePrototypeChain): Cast to JSObject*, since it's more specific.
+
+        (KJS::Machine::tryCachePutByID): Use isNull() instead of comparing to
+        jsNull(), since isNull() leaves more options open for the future.
+        (KJS::Machine::tryCacheGetByID): ditto
+        (KJS::Machine::privateExecute): ditto
+
+        * VM/SamplingTool.cpp:
+        (KJS::SamplingTool::dump): Use C++-style cast, to match our style
+        guidelines.
+
+        * kjs/BatchedTransitionOptimizer.h: Added. New class that allows host
+        code to add a batch of properties to an object in an efficient way.
+
+        * kjs/JSActivation.cpp: Use isNull(), as above.
+
+        * kjs/JSArray.cpp: Get rid of DummyConstruct tag, as above.
+        * kjs/JSArray.h:
+
+        * kjs/JSGlobalData.cpp: Nixed two unused StructureIDs.
+        * kjs/JSGlobalData.h:
+
+        * kjs/JSImmediate.cpp: Use isNull(), as above.
+
+        * kjs/JSObject.cpp:
+        (KJS::JSObject::mark): Moved mark tracing code elsewhere, to make this
+        function more readable.
+
+        (KJS::JSObject::put): Use isNull(), as above.
+
+        (KJS::JSObject::createInheritorID): Return a raw pointer, since the
+        object is owned by a data member, not necessarily the caller.
+        * kjs/JSObject.h:
+
+        * kjs/JSString.cpp: Use isNull(), as above.
+
+        * kjs/PropertyMap.h: Updated to use PropertySlot::invalidOffset.
+
+        * kjs/PropertySlot.h: Changed KJS_INVALID_OFFSET to WTF::notFound
+        because C macros are so 80's.
+
+        * kjs/PutPropertySlot.h: Added. Split out of PropertySlot.h. Also renamed
+        PutPropertySlot::SlotType to PutPropertySlot::Type, and slotBase to base,
+        since "slot" was redundant.
+
+        * kjs/StructureID.cpp: Added a new transition *away* from dictionary
+        status, to support BatchedTransitionOptimizer.
+
+        (KJS::StructureIDChain::StructureIDChain): No need to store m_size as
+        a data member, so keep it in a local, which might be faster.
+        * kjs/StructureID.h:
+
+        * kjs/SymbolTable.h: Moved IdentifierRepHash to KJS namespace, as above.
+        * kjs/ustring.h:
+
 2008-09-02  Adam Roben  <aroben@apple.com>
 
         Windows build fixes

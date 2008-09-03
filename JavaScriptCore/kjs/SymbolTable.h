@@ -118,7 +118,7 @@ namespace KJS {
         static const bool needsDestruction = false;
     };
 
-    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, WTF::IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
+    typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
 } // namespace KJS
 

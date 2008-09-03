@@ -345,7 +345,7 @@ namespace KJS {
             static const bool needsRef = false;
         };
 
-        typedef HashMap<RefPtr<UString::Rep>, int, WTF::IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
+        typedef HashMap<RefPtr<UString::Rep>, int, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, IdentifierMapIndexHashTraits> IdentifierMap;
 
         RegisterID* emitCall(OpcodeID, RegisterID*, RegisterID*, RegisterID*, ArgumentsNode*, unsigned divot, unsigned startOffset, unsigned endOffset);
 
@@ -397,7 +397,7 @@ namespace KJS {
         ScopeNode* m_scopeNode;
         CodeBlock* m_codeBlock;
 
-        HashSet<RefPtr<UString::Rep>, WTF::IdentifierRepHash> m_functions;
+        HashSet<RefPtr<UString::Rep>, IdentifierRepHash> m_functions;
         RegisterID m_thisRegister;
         SegmentedVector<RegisterID, 512> m_locals;
         SegmentedVector<RegisterID, 512> m_constants;

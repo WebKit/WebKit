@@ -38,7 +38,26 @@
 #include <profiler/Profiler.h>
 #include <wtf/Assertions.h>
 
-#define JAVASCRIPT_MARK_TRACING 0
+#define JSOBJECT_MARK_TRACING 0
+
+#if JSOBJECT_MARK_TRACING
+
+#define JSOBJECT_MARK_BEGIN() \
+    static int markStackDepth = 0; \
+    for (int i = 0; i < markStackDepth; i++) \
+        putchar('-'); \
+    printf("%s (%p)\n", className().UTF8String().c_str(), this); \
+    markStackDepth++; \
+
+#define JSOBJECT_MARK_END() \
+    markStackDepth--;
+
+#else // JSOBJECT_MARK_TRACING
+
+#define JSOBJECT_MARK_BEGIN()
+#define JSOBJECT_MARK_END()
+
+#endif // JSOBJECT_MARK_TRACING
 
 namespace KJS {
 
@@ -46,22 +65,13 @@ ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
 void JSObject::mark()
 {
+    JSOBJECT_MARK_BEGIN();
+
     JSCell::mark();
-
-#if JAVASCRIPT_MARK_TRACING
-    static int markStackDepth = 0;
-    markStackDepth++;
-    for (int i = 0; i < markStackDepth; i++)
-        putchar('-');
-    printf("%s (%p)\n", className().UTF8String().c_str(), this);
-#endif
-
     m_structureID->mark();
     m_propertyMap.mark();
 
-#if JAVASCRIPT_MARK_TRACING
-    markStackDepth--;
-#endif
+    JSOBJECT_MARK_END();
 }
 
 UString JSObject::className() const
@@ -92,7 +102,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
         JSObject* proto = value->getObject();
 
         // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
-        if (!proto && value != jsNull())
+        if (!proto && !value->isNull())
             return;
         
         while (proto) {
@@ -111,7 +121,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     JSValue* prototype;
     for (JSObject* obj = this; !obj->m_propertyMap.hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
         prototype = obj->prototype();
-        if (prototype == jsNull()) {
+        if (prototype->isNull()) {
             putDirect(propertyName, value, 0, true, slot);
             return;
         }
@@ -144,7 +154,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
         }
 
         prototype = obj->prototype();
-        if (prototype == jsNull())
+        if (prototype->isNull())
             break;
     }
 
@@ -477,7 +487,7 @@ void JSObject::removeDirect(const Identifier& propertyName)
 {
     m_propertyMap.remove(propertyName);
     if (!m_structureID->isDictionary()) {
-        RefPtr<StructureID> structureID = StructureID::dictionaryTransition(m_structureID);
+        RefPtr<StructureID> structureID = StructureID::toDictionaryTransition(m_structureID);
         setStructureID(structureID.release());
     }
 }
@@ -495,10 +505,10 @@ NEVER_INLINE void JSObject::fillGetterPropertySlot(PropertySlot& slot, JSValue**
         slot.setUndefined();
 }
 
-PassRefPtr<StructureID> JSObject::createInheritorID()
+StructureID* JSObject::createInheritorID()
 {
     m_inheritorID = StructureID::create(this);
-    return m_inheritorID;
+    return m_inheritorID.get();
 }
 
 bool JSObject::isObject() const

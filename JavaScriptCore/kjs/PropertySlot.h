@@ -25,6 +25,7 @@
 #include "JSValue.h"
 #include "identifier.h"
 #include <wtf/Assertions.h>
+#include <wtf/NotFound.h>
 
 namespace KJS {
 
@@ -34,12 +35,11 @@ namespace KJS {
 
 #define KJS_VALUE_SLOT_MARKER 0
 #define KJS_REGISTER_SLOT_MARKER reinterpret_cast<GetValueFunc>(1)
-#define KJS_INVALID_OFFSET static_cast<size_t>(-1)
 
     class PropertySlot {
     public:
         PropertySlot()
-            : m_offset(KJS_INVALID_OFFSET)
+            : m_offset(WTF::notFound)
         {
             clearBase();
             clearValue();
@@ -47,7 +47,7 @@ namespace KJS {
 
         explicit PropertySlot(JSValue* base)
             : m_slotBase(base)
-            , m_offset(KJS_INVALID_OFFSET)
+            , m_offset(WTF::notFound)
         {
             clearValue();
         }
@@ -72,7 +72,7 @@ namespace KJS {
             return m_getValue(exec, Identifier::from(exec, propertyName), *this);
         }
 
-        bool isCacheable() const { return m_offset != KJS_INVALID_OFFSET; }
+        bool isCacheable() const { return m_offset != WTF::notFound; }
         size_t cachedOffset() const
         {
             ASSERT(isCacheable());
@@ -217,49 +217,6 @@ namespace KJS {
 
         JSValue* m_value;
 
-        size_t m_offset;
-    };
-    
-    class PutPropertySlot {
-    public:
-        enum SlotType {
-            Invalid,
-            ExistingProperty,
-            NewProperty,
-        };
-
-        PutPropertySlot()
-            : m_type(Invalid)
-            , m_base(0)
-        {
-        }
-
-        void setExistingProperty(JSObject* base, size_t offset)
-        {
-            m_type = ExistingProperty;
-            m_base = base;
-            m_offset = offset;
-        }
-
-        void setNewProperty(JSObject* base, size_t offset)
-        {
-            m_type = NewProperty;
-            m_base = base;
-            m_offset = offset;
-        }
-
-        SlotType type() const { return m_type; }
-        JSObject* slotBase() const { return m_base; }
-
-        bool isCacheable() const { return m_type != Invalid; }
-        size_t cachedOffset() const {
-            ASSERT(isCacheable());
-            return m_offset;
-        }
-
-    private:
-        SlotType m_type;
-        JSObject* m_base;
         size_t m_offset;
     };
 
