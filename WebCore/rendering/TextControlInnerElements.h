@@ -41,6 +41,7 @@ public:
     virtual bool isShadowNode() const { return m_shadowParent; }
     virtual Node* shadowParentNode() { return m_shadowParent; }
     void setShadowParentNode(Node* node) { m_shadowParent = node; }
+    void attachInnerElement(Node*, RenderStyle*, RenderArena*);
     
 private:
     Node* m_shadowParent;
@@ -48,7 +49,8 @@ private:
 
 class TextControlInnerTextElement : public TextControlInnerElement {
 public:
-    TextControlInnerTextElement(Document*, Node* shadowParent);        
+    TextControlInnerTextElement(Document*, Node* shadowParent);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);  
     virtual void defaultEventHandler(Event*);
 };
 

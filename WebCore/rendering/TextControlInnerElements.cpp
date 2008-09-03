@@ -40,9 +40,48 @@ namespace WebCore {
 
 using namespace EventNames;
 
+class RenderTextControlInnerBlock : public RenderBlock {
+public:
+    RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
+
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+};
+
+bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+{
+    RenderTextControl* renderer = static_cast<RenderTextControl*>(node()->shadowAncestorNode()->renderer());
+    
+    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, renderer->placeholderIsVisible() ? HitTestBlockBackground : hitTestAction);
+}
+
 TextControlInnerElement::TextControlInnerElement(Document* doc, Node* shadowParent)
     : HTMLDivElement(doc), m_shadowParent(shadowParent)
 {
+}
+
+void TextControlInnerElement::attachInnerElement(Node* parent, RenderStyle* style, RenderArena* arena)
+{
+    // When adding these elements, create the renderer & style first before adding to the DOM.
+    // Otherwise, the render tree will create some anonymous blocks that will mess up our layout.
+
+    // Create the renderer with the specified style
+    RenderObject* renderer = createRenderer(arena, style);
+    if (renderer) {
+        setRenderer(renderer);
+        renderer->setStyle(style);
+    }
+    
+    // Set these explicitly since this normally happens during an attach()
+    setAttached();
+    setInDocument(true);
+    
+    // For elements without a shadow parent, add the node to the DOM normally.
+    if (!m_shadowParent)
+        parent->addChild(this);
+    
+    // Add the renderer to the render tree
+    if (renderer)
+        parent->renderer()->addChild(renderer);
 }
 
 TextControlInnerTextElement::TextControlInnerTextElement(Document* doc, Node* shadowParent)
@@ -66,6 +105,11 @@ void TextControlInnerTextElement::defaultEventHandler(Event* evt)
     }
     if (!evt->defaultHandled())
         HTMLDivElement::defaultEventHandler(evt);
+}
+
+RenderObject* TextControlInnerTextElement::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderTextControlInnerBlock(this);
 }
 
 SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document* doc)

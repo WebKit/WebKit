@@ -57,20 +57,6 @@ namespace WebCore {
 using namespace EventNames;
 using namespace HTMLNames;
 
-class RenderTextControlInnerBlock : public RenderBlock {
-public:
-    RenderTextControlInnerBlock(Node* node) : RenderBlock(node) { }
-
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-};
-
-bool RenderTextControlInnerBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
-{
-    RenderTextControl* renderer = static_cast<RenderTextControl*>(node()->shadowAncestorNode()->renderer());
-    
-    return RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, renderer->placeholderIsVisible() ? HitTestBlockBackground : hitTestAction);
-}
-
 RenderTextControl::RenderTextControl(Node* node, bool multiLine)
     : RenderBlock(node)
     , m_dirty(false)
@@ -123,10 +109,10 @@ void RenderTextControl::setStyle(RenderStyle* style)
                 n->renderer()->setStyle(textBlockStyle);
         }
     }
-    if (m_resultsButton)
+    if (m_resultsButton && m_resultsButton->renderer())
         m_resultsButton->renderer()->setStyle(createResultsButtonStyle(style));
 
-    if (m_cancelButton)
+    if (m_cancelButton && m_cancelButton->renderer())
         m_cancelButton->renderer()->setStyle(createCancelButtonStyle(style));
 
     setHasOverflowClip(false);
@@ -228,8 +214,6 @@ RenderStyle* RenderTextControl::createResultsButtonStyle(RenderStyle* startStyle
     if (startStyle)
         resultsBlockStyle->inheritFrom(startStyle);
 
-    resultsBlockStyle->setDisplay(INLINE_BLOCK);
-
     return resultsBlockStyle;
 }
 
@@ -245,8 +229,6 @@ RenderStyle* RenderTextControl::createCancelButtonStyle(RenderStyle* startStyle)
 
     if (startStyle)
         cancelBlockStyle->inheritFrom(startStyle);
-
-    cancelBlockStyle->setDisplay(INLINE_BLOCK);
 
     updateCancelButtonVisibility(cancelBlockStyle);
 
@@ -299,77 +281,34 @@ void RenderTextControl::updatePlaceholder()
 
 void RenderTextControl::createSubtreeIfNeeded()
 {
-    // When adding these elements, create the renderer & style first before adding to the DOM.
-    // Otherwise, the render tree will create some anonymous blocks that will mess up our layout.
     bool isSearchField = !m_multiLine && static_cast<HTMLInputElement*>(node())->isSearchField();
     if (isSearchField && !m_innerBlock) {
-        // Create the inner block element and give it a parent, renderer, and style
+        // Create the inner block element
         m_innerBlock = new TextControlInnerElement(document(), node());
-        RenderBlock* innerBlockRenderer = new (renderArena()) RenderBlock(m_innerBlock.get());
-        m_innerBlock->setRenderer(innerBlockRenderer);
-        m_innerBlock->setAttached();
-        m_innerBlock->setInDocument(true);
-        innerBlockRenderer->setStyle(createInnerBlockStyle(style()));
-
-        // Add inner block renderer to Render tree
-        RenderBlock::addChild(innerBlockRenderer);
+        m_innerBlock->attachInnerElement(node(), createInnerBlockStyle(style()), renderArena());
     }
     if (isSearchField && !m_resultsButton) {
-        // Create the results block element and give it a parent, renderer, and style
+        // Create the search results button element
         m_resultsButton = new SearchFieldResultsButtonElement(document());
-        RenderBlock* resultsBlockRenderer = new (renderArena()) RenderBlock(m_resultsButton.get());
-        m_resultsButton->setRenderer(resultsBlockRenderer);
-        m_resultsButton->setAttached();
-        m_resultsButton->setInDocument(true);
-
-        RenderStyle* resultsBlockStyle = createResultsButtonStyle(m_innerBlock->renderer()->style());
-        resultsBlockRenderer->setStyle(resultsBlockStyle);
-
-        // Add results renderer to DOM & Render tree
-        m_innerBlock->renderer()->addChild(resultsBlockRenderer);
-        ExceptionCode ec = 0;
-        m_innerBlock->appendChild(m_resultsButton, ec);
+        m_resultsButton->attachInnerElement(m_innerBlock.get(), createResultsButtonStyle(m_innerBlock->renderer()->style()), renderArena());
     }
     if (!m_innerText) {
-        // Create the text block element and give it a parent, renderer, and style
+        // Create the text block element
         // For non-search fields, there is no intermediate m_innerBlock as the shadow node.
         // m_innerText will be the shadow node in that case.
-        m_innerText = new TextControlInnerTextElement(document(), m_innerBlock ? 0 : node());
-        RenderTextControlInnerBlock* textBlockRenderer = new (renderArena()) RenderTextControlInnerBlock(m_innerText.get());
-        m_innerText->setRenderer(textBlockRenderer);
-        m_innerText->setAttached();
-        m_innerText->setInDocument(true);
-
+        
         RenderStyle* parentStyle = style();
         if (m_innerBlock)
             parentStyle = m_innerBlock->renderer()->style();
         RenderStyle* textBlockStyle = createInnerTextStyle(parentStyle);
-        textBlockRenderer->setStyle(textBlockStyle);
 
-        // Add text block renderer to Render tree
-        if (m_innerBlock) {
-            m_innerBlock->renderer()->addChild(textBlockRenderer);
-            ExceptionCode ec = 0;
-            // Add text block to the DOM
-            m_innerBlock->appendChild(m_innerText, ec);
-        } else
-            RenderBlock::addChild(textBlockRenderer);
+        m_innerText = new TextControlInnerTextElement(document(), m_innerBlock ? 0 : node());
+        m_innerText->attachInnerElement(m_innerBlock ? m_innerBlock.get() : node(), textBlockStyle, renderArena());
     }
     if (isSearchField && !m_cancelButton) {
-        // Create the close block element and give it a parent, renderer, and style
+        // Create the cancel button element
         m_cancelButton = new SearchFieldCancelButtonElement(document());
-        RenderBlock* closeBlockRenderer = new (renderArena()) RenderBlock(m_cancelButton.get());
-        m_cancelButton->setRenderer(closeBlockRenderer);
-        m_cancelButton->setAttached();
-        m_cancelButton->setInDocument(true);
-
-        RenderStyle* closeBlockStyle = createCancelButtonStyle(m_innerBlock->renderer()->style());
-        closeBlockRenderer->setStyle(closeBlockStyle);
-
-        // Add close block renderer to DOM & Render tree
-        m_innerBlock->renderer()->addChild(closeBlockRenderer);
-        ExceptionCode ec = 0;
-        m_innerBlock->appendChild(m_cancelButton, ec);
+        m_cancelButton->attachInnerElement(m_innerBlock.get(), createCancelButtonStyle(m_innerBlock->renderer()->style()), renderArena());
     }
 }
 
@@ -379,7 +318,7 @@ void RenderTextControl::updateFromElement()
 
     createSubtreeIfNeeded();
 
-    if (m_cancelButton)
+    if (m_cancelButton && m_cancelButton->renderer())
         updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 
     updatePlaceholder();
@@ -541,7 +480,7 @@ void RenderTextControl::subtreeHasChanged()
     } else {
         HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
         input->setValueFromRenderer(input->constrainValue(text()));
-        if (m_cancelButton)
+        if (m_cancelButton && m_cancelButton->renderer())
             updateCancelButtonVisibility(m_cancelButton->renderer()->style());
 
         // If the incremental attribute is set, then dispatch the search event
@@ -705,8 +644,8 @@ void RenderTextControl::calcHeight()
     int innerToAdd = m_innerText->renderer()->borderTop() + m_innerText->renderer()->borderBottom() +
                      m_innerText->renderer()->paddingTop() + m_innerText->renderer()->paddingBottom() +
                      m_innerText->renderer()->marginTop() + m_innerText->renderer()->marginBottom();
-
-    if (m_resultsButton) {
+    
+    if (m_resultsButton && m_resultsButton->renderer()) {
         static_cast<RenderBlock*>(m_resultsButton->renderer())->calcHeight();
         innerToAdd = max(innerToAdd,
                          m_resultsButton->renderer()->borderTop() + m_resultsButton->renderer()->borderBottom() +
@@ -714,7 +653,7 @@ void RenderTextControl::calcHeight()
                          m_resultsButton->renderer()->marginTop() + m_resultsButton->renderer()->marginBottom());
         line = max(line, m_resultsButton->renderer()->height());
     }
-    if (m_cancelButton) {
+    if (m_cancelButton && m_cancelButton->renderer()) {
         static_cast<RenderBlock*>(m_cancelButton->renderer())->calcHeight();
         innerToAdd = max(innerToAdd,
                          m_cancelButton->renderer()->borderTop() + m_cancelButton->renderer()->borderBottom() +
@@ -756,13 +695,13 @@ bool RenderTextControl::nodeAtPoint(const HitTestRequest& request, HitTestResult
         if (m_innerBlock) {
             int textLeft = tx + m_x + m_innerBlock->renderer()->xPos() + m_innerText->renderer()->xPos();
             int textRight = textLeft + m_innerText->renderer()->width();
-            if (m_resultsButton && x < textLeft) {
+            if (m_resultsButton && m_resultsButton->renderer() && x < textLeft) {
                 result.setInnerNode(m_resultsButton.get());
                 result.setLocalPoint(IntPoint(localPoint.x() - m_innerText->renderer()->xPos() - m_innerBlock->renderer()->xPos() - m_resultsButton->renderer()->xPos(),
                                               localPoint.y() - m_innerText->renderer()->yPos() - m_innerBlock->renderer()->yPos() - m_resultsButton->renderer()->yPos()));
                 return true;
             } 
-            if (m_cancelButton && x > textRight) {
+            if (m_cancelButton && m_cancelButton->renderer() && x > textRight) {
                 result.setInnerNode(m_cancelButton.get());
                 result.setLocalPoint(IntPoint(localPoint.x() - m_innerText->renderer()->xPos() - m_innerBlock->renderer()->xPos() - m_cancelButton->renderer()->xPos(),
                                               localPoint.y() - m_innerText->renderer()->yPos() - m_innerBlock->renderer()->yPos() - m_cancelButton->renderer()->yPos()));
@@ -814,11 +753,11 @@ void RenderTextControl::layout()
         relayoutChildren = true;
 
     int searchExtrasWidth = 0;
-    if (m_resultsButton) {
+    if (m_resultsButton && m_resultsButton->renderer()) {
         m_resultsButton->renderer()->calcWidth();
         searchExtrasWidth += m_resultsButton->renderer()->width();
     }
-    if (m_cancelButton) {
+    if (m_cancelButton && m_cancelButton->renderer()) {
         m_cancelButton->renderer()->calcWidth();
         searchExtrasWidth += m_cancelButton->renderer()->width();
     }
@@ -883,10 +822,10 @@ void RenderTextControl::calcPrefWidths()
         m_maxPrefWidth = static_cast<int>(ceilf(charWidth * factor)) + scrollbarSize +
                          m_innerText->renderer()->paddingLeft() + m_innerText->renderer()->paddingRight();
                 
-        if (m_resultsButton)
+        if (m_resultsButton && m_resultsButton->renderer())
             m_maxPrefWidth += m_resultsButton->renderer()->borderLeft() + m_resultsButton->renderer()->borderRight() +
                               m_resultsButton->renderer()->paddingLeft() + m_resultsButton->renderer()->paddingRight();
-        if (m_cancelButton)
+        if (m_cancelButton && m_cancelButton->renderer())
             m_maxPrefWidth += m_cancelButton->renderer()->borderLeft() + m_cancelButton->renderer()->borderRight() +
                               m_cancelButton->renderer()->paddingLeft() + m_cancelButton->renderer()->paddingRight();
     }
@@ -1148,12 +1087,18 @@ int RenderTextControl::clientInsetRight() const
 
 int RenderTextControl::clientPaddingLeft() const
 {
-    return paddingLeft() + m_resultsButton->renderer()->width();
+    int padding = paddingLeft();
+    if (m_resultsButton->renderer())
+        padding += m_resultsButton->renderer()->width(); 
+    return padding;
 }
 
 int RenderTextControl::clientPaddingRight() const
 {
-    return paddingRight() + m_cancelButton->renderer()->width();
+    int padding = paddingRight();
+    if (m_cancelButton->renderer())
+        padding += m_cancelButton->renderer()->width(); 
+    return padding;
 }
 
 int RenderTextControl::listSize() const

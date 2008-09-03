@@ -1,3 +1,14 @@
+2008-09-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test that display:none works on a search field's cancel button.
+
+        * fast/forms/search-display-none-cancel-button.html: Added.
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.checksum: Added.
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.png: Added.
+        * platform/mac/fast/forms/search-display-none-cancel-button-expected.txt: Added.
+
 2008-09-02  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Geoff Garen.

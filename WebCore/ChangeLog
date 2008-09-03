@@ -1,3 +1,36 @@
+2008-09-03  Adele Peterson  <adele@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Test: fast/forms/search-display-none-cancel-button.html
+
+        Allow display:none to work on a search field's cancel button.  Prepare for adding more style-ability for the results button too.
+
+        * css/html4.css: Set display:inline-block for these buttons.  Now they can be overridden by a web author.
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setStyle): Add nil checks for the button renderers.
+        (WebCore::RenderTextControl::createResultsButtonStyle): Don't set the display explicitly.  This is now done in html4.css.
+        (WebCore::RenderTextControl::createCancelButtonStyle): ditto.
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        Reorganize this code so our complicated way of adding shadow nodes is abstracted out into the TextControlInnerElement class.
+        (WebCore::RenderTextControl::updateFromElement): Added nil checks for the button renderers.
+        (WebCore::RenderTextControl::subtreeHasChanged): ditto.
+        (WebCore::RenderTextControl::calcHeight): ditto.
+        (WebCore::RenderTextControl::nodeAtPoint): ditto.
+        (WebCore::RenderTextControl::layout): ditto.
+        (WebCore::RenderTextControl::calcPrefWidths): ditto.
+        (WebCore::RenderTextControl::clientPaddingLeft): ditto.
+        (WebCore::RenderTextControl::clientPaddingRight): ditto.
+
+        * rendering/TextControlInnerElements.cpp:
+        (WebCore::RenderTextControlInnerBlock::RenderTextControlInnerBlock): Moved from RenderTextControl.cpp.
+        (WebCore::RenderTextControlInnerBlock::nodeAtPoint): ditto.
+        (WebCore::TextControlInnerElement::attachInnerElement): Added.
+         This does all the separate steps of attaching a shadow node that used to be repeated in RenderTextControl::createSubtreeIfNeeded for each element.
+        (WebCore::TextControlInnerTextElement::createRenderer): Added.  Creates a RenderTextControlInnerBlock.
+        * rendering/TextControlInnerElements.h:
+
 2008-08-28  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej.
