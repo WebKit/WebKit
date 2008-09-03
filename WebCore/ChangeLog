@@ -1,3 +1,9 @@
+2008-09-03  Ada Chan  <adachan@apple.com>
+
+        Windows build fix.
+
+        * WebCore.vcproj/WebCore.vcproj: Added JSWebKitCSSKeyframeRule.cpp and JSWebKitCSSKeyframesRule.cpp to the project.
+
 2008-09-01  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dave Hyatt.

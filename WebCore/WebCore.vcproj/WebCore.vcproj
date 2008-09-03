@@ -1676,7 +1676,15 @@
 				>
 			</File>
 			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.cpp"
+				>
+			</File>
+			<File
 				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframeRule.h"
+				>
+			</File>
+			<File
+				RelativePath="$(WebKitOutputDir)\obj\$(ProjectName)\DerivedSources\JSWebKitCSSKeyframesRule.cpp"
 				>
 			</File>
 			<File
