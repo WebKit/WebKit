@@ -594,6 +594,15 @@
         (runWithScripts):
         (runInteractive):
 
+2008-08-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver.
+
+        Remove an unnecessary RefPtr to a RegisterID.
+
+        * kjs/nodes.cpp:
+        (KJS::DeleteBracketNode::emitCode):
+
 2008-08-24  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Oliver Hunt.

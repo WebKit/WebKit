@@ -11,15 +11,6 @@
         * GNUmakefile.am:
         * symbols.filter: Added.
 
-2008-08-24  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
-
-        Reviewed by Oliver.
-
-        Remove an unnecessary RefPtr to a RegisterID.
-
-        * kjs/nodes.cpp:
-        (KJS::DeleteBracketNode::emitCode):
-
 2008-08-10  Jan Michael Alonzo  <jmalonzo@webkit.org>
 
         Reviewed (and updated) by Alp Toker.
