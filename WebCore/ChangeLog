@@ -1,3 +1,14 @@
+2008-09-03  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18203, right floats should be allowed to overflow past the left border edge.
+
+        Reviewed by Darin (ages ago)
+
+        Added fast/block/float/clamped-right-float.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionNewFloats):
+
 2008-09-02  David Hyatt  <hyatt@apple.com>
 
         Add support for canvas text drawing APIs.

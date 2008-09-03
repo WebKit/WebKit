@@ -1,3 +1,14 @@
+2008-09-03  David Hyatt  <hyatt@apple.com>
+
+        Fix for bug 18203.
+
+        Reviewed by Darin (ages ago).
+
+        * fast/block/float/clamped-right-float.html: Added.
+        * platform/mac/fast/block/float/clamped-right-float-expected.checksum: Added.
+        * platform/mac/fast/block/float/clamped-right-float-expected.png: Added.
+        * platform/mac/fast/block/float/clamped-right-float-expected.txt: Added.
+
 2008-09-02  David Hyatt  <hyatt@apple.com>
 
         Add support for the canvas text APIs.
