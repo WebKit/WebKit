@@ -1,3 +1,17 @@
+2008-09-03  John Sullivan  <sullivan@apple.com>
+
+        Fixed <rdar://problem/6193022> <rdar://problem/6193022> Crash occurs at WebCore::AnimationBase::propertiesEqual () after certain steps
+
+        Fixed by Darin, reviewed by me
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::propertiesEqual):
+        added ensurePropertyMap() to this static function
+        (WebCore::AnimationBase::getPropertyAtIndex):
+        ditto
+        (WebCore::AnimationBase::getNumProperties):
+        ditto
+
 2008-09-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Darin and Tim.
