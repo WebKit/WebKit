@@ -65,6 +65,9 @@
 #include <cairo.h>
 #endif
 
+using std::max;
+using std::min;
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -836,6 +839,14 @@ static IntSize size(HTMLImageElement* image)
     return IntSize();
 }
 
+static inline FloatRect normalizeRect(const FloatRect& rect)
+{
+    return FloatRect(min(rect.x(), rect.right()),
+        min(rect.y(), rect.bottom()),
+        max(rect.width(), -rect.width()),
+        max(rect.height(), -rect.height()));
+}
+
 void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float y)
 {
     ASSERT(image);
@@ -867,13 +878,12 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     ec = 0;
 
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    if (!(imageRect.contains(srcRect) && srcRect.width() >= 0 && srcRect.height() >= 0 
-            && dstRect.width() >= 0 && dstRect.height() >= 0)) {
+    if (!imageRect.contains(normalizeRect(srcRect)) || srcRect.width() == 0 || srcRect.height() == 0) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    if (srcRect.isEmpty() || dstRect.isEmpty())
+    if (!dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
@@ -918,13 +928,12 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* canvas, const FloatR
     ec = 0;
 
     FloatRect srcCanvasRect = FloatRect(FloatPoint(), canvas->size());
-    if (!(srcCanvasRect.contains(srcRect) && srcRect.width() >= 0 && srcRect.height() >= 0 
-            && dstRect.width() >= 0 && dstRect.height() >= 0)) {
+    if (!srcCanvasRect.contains(normalizeRect(srcRect)) || srcRect.width() == 0 || srcRect.height() == 0) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    if (srcRect.isEmpty() || dstRect.isEmpty())
+    if (!dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();

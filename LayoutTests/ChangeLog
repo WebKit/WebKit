@@ -1,3 +1,16 @@
+2008-09-02  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Darin Adler.
+
+        Tests for https://bugs.webkit.org/show_bug.cgi?id=20468
+        Test negative source and destination rect in drawImage()
+
+        * fast/canvas/drawImage-with-invalid-args-expected.txt:
+        * fast/canvas/drawImage-with-invalid-args.html:
+        * fast/canvas/drawImage-with-negative-source-destination-expected.txt: Added.
+        * fast/canvas/drawImage-with-negative-source-destination.html: Added.
+        * fast/canvas/drawImage-with-negative-source-destination.js: Added.
+
 2008-09-02  Dan Bernstein  <mitz@apple.com>
 
         - update expected results now that log() et al. report line numbers
