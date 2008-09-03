@@ -191,7 +191,8 @@ sub execute_tests {
         }
         
         $path = &xp_path($opt_suite_path . $test);
-        &status ("executing: " . $shell_command . $file_param . $path);
+        
+        print ($shell_command . $file_param . $path . "\n");
         &dd ("executing: " . $shell_command . $file_param . $path);
         
         open (OUTPUT, $shell_command . $file_param . $path .

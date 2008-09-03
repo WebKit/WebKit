@@ -1,6 +1,16 @@
 2008-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
+
+        Changed jsDriver.pl to dump the exact text you would need in order to
+        reproduce a test result. This enables a fast workflow where you copy
+        and paste a test failure in the terminal.
+
+        * tests/mozilla/jsDriver.pl:
+
+2008-09-02  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
         
         Implemented the rest of Darin's review comments for the 09-01 inline
         caching patch.
