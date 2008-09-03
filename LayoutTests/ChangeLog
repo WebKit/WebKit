@@ -1,3 +1,18 @@
+2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Tests for bug 17936: "ASSERTION FAILED: false" (GetterSetterImp::toObject is called)
+        <https://bugs.webkit.org/show_bug.cgi?id=17936>
+
+        This bug was fixed by the rewrite of much of the code handling getters
+        and setters in r36016, the revision that introduced the polymorphic
+        inline cache.
+
+        * fast/js/delete-getters-setters-expected.txt: Added.
+        * fast/js/delete-getters-setters.html: Added.
+        * fast/js/resources/delete-getters-setters.js: Added.
+
 2008-08-29  Dean Jackson  <dino@apple.com>
 
         Reviewed by Sam Weinig.

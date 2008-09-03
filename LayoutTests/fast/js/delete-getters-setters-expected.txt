@@ -1,0 +1,25 @@
+This test checks that deletion of properties works properly with getters and setters.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS b1.property threw exception TypeError: Result of expression 'b1' [undefined] is not an object..
+PASS a2.property threw exception TypeError: Result of expression 'a2' [undefined] is not an object..
+PASS b3.property threw exception TypeError: Result of expression 'b3' [undefined] is not an object..
+PASS a4.property threw exception TypeError: Result of expression 'a4' [undefined] is not an object..
+PASS b5.property threw exception TypeError: Result of expression 'b5' [undefined] is not an object..
+PASS a6.property threw exception TypeError: Result of expression 'a6' [undefined] is not an object..
+PASS b7.property threw exception TypeError: Result of expression 'b7' [undefined] is not an object..
+PASS a8.property threw exception TypeError: Result of expression 'a8' [undefined] is not an object..
+PASS o1.b.property threw exception TypeError: Result of expression 'o1.b' [undefined] is not an object..
+PASS o1.a.property threw exception TypeError: Result of expression 'o1.a' [undefined] is not an object..
+PASS o3.b.property threw exception TypeError: Result of expression 'o3.b' [undefined] is not an object..
+PASS o4.a.property threw exception TypeError: Result of expression 'o4.a' [undefined] is not an object..
+PASS o5.b.property threw exception TypeError: Result of expression 'o5.b' [undefined] is not an object..
+PASS o6.a.property threw exception TypeError: Result of expression 'o6.a' [undefined] is not an object..
+PASS o7.b.property threw exception TypeError: Result of expression 'o7.b' [undefined] is not an object..
+PASS o8.a.property threw exception TypeError: Result of expression 'o8.a' [undefined] is not an object..
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
