@@ -1,3 +1,29 @@
+2008-09-03  Peter Kasting  <zerodpx@gmail.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19663
+        Account for paint and timer lag when animating images.  Also pretend
+        that images whose animations were paused (by becoming invisible)
+        continued to animate, by "catching up" to the correct frame when they're
+        shown again.
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::BitmapImage):
+        (WebCore::BitmapImage::startAnimation):
+        (WebCore::BitmapImage::advanceAnimation):
+        (WebCore::BitmapImage::internalAdvanceAnimation):
+        (WebCore::BitmapImage::notifyObserverAndTrimDecodedData):
+        * platform/graphics/BitmapImage.h:
+        * platform/graphics/cairo/ImageCairo.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/qt/ImageQt.cpp:
+        (WebCore::BitmapImage::draw):
+        * platform/graphics/wx/ImageWx.cpp:
+        (WebCore::BitmapImage::draw):
+
 2008-09-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

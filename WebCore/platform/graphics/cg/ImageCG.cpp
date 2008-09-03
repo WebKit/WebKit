@@ -129,6 +129,8 @@ CGImageRef BitmapImage::getCGImageRef()
 
 void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator compositeOp)
 {
+    startAnimation();
+
     CGImageRef image = frameAtIndex(m_currentFrame);
     if (!image) // If it's too early we won't have an image yet.
         return;
@@ -192,8 +194,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         CGImageRelease(image);
 
     ctxt->restore();
-
-    startAnimation();
 
     if (imageObserver())
         imageObserver()->didDraw(this);
