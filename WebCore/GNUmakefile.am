@@ -10,25 +10,23 @@ WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
 	-I$(srcdir)/WebCore \
-	-I$(srcdir)/WebCore/platform \
-	-I$(srcdir)/WebCore/platform/network \
-	-I$(srcdir)/WebCore/platform/graphics \
-	-I$(srcdir)/WebCore/platform/graphics/filters \
-	-I$(srcdir)/WebCore/platform/text \
+	-I$(srcdir)/WebCore/bindings/js \
+	-I$(srcdir)/WebCore/bridge \
+	-I$(srcdir)/WebCore/bridge/c \
+	-I$(srcdir)/WebCore/css \
+	-I$(srcdir)/WebCore/dom \
+	-I$(srcdir)/WebCore/editing \
+	-I$(srcdir)/WebCore/history \
+	-I$(srcdir)/WebCore/html \
 	-I$(srcdir)/WebCore/loader \
 	-I$(srcdir)/WebCore/loader/appcache \
 	-I$(srcdir)/WebCore/loader/archive \
 	-I$(srcdir)/WebCore/loader/icon \
-	-I$(srcdir)/WebCore/css \
-	-I$(srcdir)/WebCore/dom \
 	-I$(srcdir)/WebCore/page \
-	-I$(srcdir)/WebCore/bridge \
-	-I$(srcdir)/WebCore/bridge/c \
-	-I$(srcdir)/WebCore/editing \
-	-I$(srcdir)/WebCore/history \
-	-I$(srcdir)/WebCore/xml \
-	-I$(srcdir)/WebCore/html \
-	-I$(srcdir)/WebCore/bindings/js \
+	-I$(srcdir)/WebCore/page/animation \
+	-I$(srcdir)/WebCore/platform \
+	-I$(srcdir)/WebCore/platform/graphics \
+	-I$(srcdir)/WebCore/platform/graphics/filters \
 	-I$(srcdir)/WebCore/platform/image-decoders \
 	-I$(srcdir)/WebCore/platform/image-decoders/bmp \
 	-I$(srcdir)/WebCore/platform/image-decoders/gif \
@@ -36,17 +34,20 @@ webcore_cppflags += \
 	-I$(srcdir)/WebCore/platform/image-decoders/jpeg \
 	-I$(srcdir)/WebCore/platform/image-decoders/png \
 	-I$(srcdir)/WebCore/platform/image-decoders/xbm \
+	-I$(srcdir)/WebCore/platform/network \
+	-I$(srcdir)/WebCore/platform/text \
 	-I$(srcdir)/WebCore/plugins \
 	-I$(srcdir)/WebCore/rendering \
 	-I$(srcdir)/WebCore/rendering/style \
+	-I$(srcdir)/WebCore/xml \
 	-I$(top_builddir)/WebCore/bindings/js
 
 webcoregtk_cppflags += \
-	-I$(srcdir)/WebCore/platform/gtk \
-	-I$(srcdir)/WebCore/platform/graphics/gtk \
-	-I$(srcdir)/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/WebCore/loader/gtk \
 	-I$(srcdir)/WebCore/page/gtk
+	-I$(srcdir)/WebCore/platform/graphics/cairo \
+	-I$(srcdir)/WebCore/platform/graphics/gtk \
+	-I$(srcdir)/WebCore/platform/gtk \
 
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \

@@ -1,3 +1,12 @@
+2008-09-03  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Mark Rowe.
+
+        WebKitGtk build fix.
+
+        * GNUmakefile.am:
+        * page/animation/AnimationController.h:
+
 2008-09-02  Robert Blaut  <webkit@blaut.biz>
 
         Reviewed by Geoff Garen.

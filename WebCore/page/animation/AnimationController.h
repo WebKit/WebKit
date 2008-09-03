@@ -29,6 +29,8 @@
 #ifndef AnimationController_h
 #define AnimationController_h
 
+#include <stdint.h>
+
 namespace WebCore {
 
 class AnimationControllerPrivate;

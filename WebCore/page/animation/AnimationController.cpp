@@ -28,8 +28,8 @@
 
 #include "config.h"
 #include "AnimationController.h"
-#include "CompositeAnimation.h"
 
+#include "CompositeAnimation.h"
 #include "Frame.h"
 #include "Timer.h"
 
