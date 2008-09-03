@@ -333,6 +333,8 @@ webcore_built_sources += \
 	DerivedSources/JSText.h \
 	DerivedSources/JSTextEvent.cpp \
 	DerivedSources/JSTextEvent.h \
+	DerivedSources/JSTextMetrics.cpp \
+	DerivedSources/JSTextMetrics.h \
 	DerivedSources/JSTreeWalker.cpp \
 	DerivedSources/JSTreeWalker.h \
 	DerivedSources/JSUIEvent.cpp \
@@ -484,6 +486,7 @@ IDL_BINDINGS +=  \
 	WebCore/html/HTMLTextAreaElement.idl \
 	WebCore/html/HTMLTitleElement.idl \
 	WebCore/html/HTMLUListElement.idl \
+	WebCore/html/TextMetrics.idl \
 	WebCore/page/BarInfo.idl \
 	WebCore/page/Console.idl \
 	WebCore/page/DOMSelection.idl \
