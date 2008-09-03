@@ -147,6 +147,8 @@
 #import "DOMTextInternal.h"
 #import "DOMTreeWalkerInternal.h"
 #import "DOMUIEventInternal.h"
+#import "DOMWebKitCSSKeyframeRuleInternal.h"
+#import "DOMWebKitCSSKeyframesRuleInternal.h"
 #import "DOMWebKitCSSTransformValueInternal.h"
 #import "DOMWheelEventInternal.h"
 

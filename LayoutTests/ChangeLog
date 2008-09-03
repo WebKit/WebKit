@@ -1,3 +1,13 @@
+2008-09-03  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        http://bugs.webkit.org/show_bug.cgi?id=20594
+        Tests the WebKitCSSKeyframeRule and WebKitCSSKeyframesRule
+        interfaces.
+
+        * css3/keyframes-rule.html: Added.
+
 2008-09-03  David Hyatt  <hyatt@apple.com>
 
         Fix for bug 18203.

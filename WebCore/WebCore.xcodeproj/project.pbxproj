@@ -416,6 +416,16 @@
 		31611E610E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */; };
 		31611E620E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */; };
 		31611E630E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */; };
+		316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */; };
+		316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE06E0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h */; };
+		316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE06F0E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp */; };
+		316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE0700E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h */; };
+		316FE07D0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE0770E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h */; };
+		316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316FE0780E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm */; };
+		316FE07F0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE0790E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h */; };
+		316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE07A0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h */; };
+		316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = 316FE07B0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm */; };
+		316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE07C0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h */; };
 		316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */; };
 		316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 316FE1080E6E1DA700BF6088 /* AnimationBase.h */; };
 		316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 316FE1090E6E1DA700BF6088 /* AnimationController.cpp */; };
@@ -4990,6 +5000,18 @@
 		31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSTransformValue.mm; sourceTree = "<group>"; };
 		31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSTransformValueInternal.h; sourceTree = "<group>"; };
+		316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSKeyframeRule.cpp; sourceTree = "<group>"; };
+		316FE06E0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
+		316FE06F0E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSKeyframesRule.cpp; sourceTree = "<group>"; };
+		316FE0700E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSKeyframesRule.h; sourceTree = "<group>"; };
+		316FE0770E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSKeyframeRule.h; sourceTree = "<group>"; };
+		316FE0780E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSKeyframeRule.mm; sourceTree = "<group>"; };
+		316FE0790E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSKeyframeRuleInternal.h; sourceTree = "<group>"; };
+		316FE07A0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSKeyframesRule.h; sourceTree = "<group>"; };
+		316FE07B0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMWebKitCSSKeyframesRule.mm; sourceTree = "<group>"; };
+		316FE07C0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSKeyframesRuleInternal.h; sourceTree = "<group>"; };
+		316FE0910E6CCD7F00BF6088 /* WebKitCSSKeyframeRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSKeyframeRule.idl; sourceTree = "<group>"; };
+		316FE0920E6CCD7F00BF6088 /* WebKitCSSKeyframesRule.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebKitCSSKeyframesRule.idl; sourceTree = "<group>"; };
 		316FE1070E6E1DA700BF6088 /* AnimationBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationBase.cpp; path = animation/AnimationBase.cpp; sourceTree = "<group>"; };
 		316FE1080E6E1DA700BF6088 /* AnimationBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationBase.h; path = animation/AnimationBase.h; sourceTree = "<group>"; };
 		316FE1090E6E1DA700BF6088 /* AnimationController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationController.cpp; path = animation/AnimationController.cpp; sourceTree = "<group>"; };
@@ -9513,6 +9535,12 @@
 				858C38A30AA8F20400B187A4 /* DOMRect.h */,
 				858C38A40AA8F20400B187A4 /* DOMRect.mm */,
 				855D35890AD707310019AAC7 /* DOMRGBColor.h */,
+				316FE0770E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h */,
+				316FE0780E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm */,
+				316FE0790E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h */,
+				316FE07A0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h */,
+				316FE07B0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm */,
+				316FE07C0E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h */,
 				31611E5E0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.h */,
 				31611E5F0E1C4E1400F6A579 /* DOMWebKitCSSTransformValue.mm */,
 				31611E600E1C4E1400F6A579 /* DOMWebKitCSSTransformValueInternal.h */,
@@ -11445,6 +11473,10 @@
 				BCE013990C0BEF180043860A /* JSStyleSheet.h */,
 				A84EBD820CB8C97700079609 /* JSStyleSheetList.cpp */,
 				A84EBD810CB8C97700079609 /* JSStyleSheetList.h */,
+				316FE06D0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp */,
+				316FE06E0E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h */,
+				316FE06F0E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp */,
+				316FE0700E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h */,
 				31611E580E1C4DE000F6A579 /* JSWebKitCSSTransformValue.cpp */,
 				31611E590E1C4DE000F6A579 /* JSWebKitCSSTransformValue.h */,
 			);
@@ -13077,8 +13109,10 @@
 				BC5EC1760A507E3E006007F5 /* view-source.css */,
 				31288E6E0E3005D6003619AE /* WebKitCSSKeyframeRule.cpp */,
 				31288E6F0E3005D6003619AE /* WebKitCSSKeyframeRule.h */,
+				316FE0910E6CCD7F00BF6088 /* WebKitCSSKeyframeRule.idl */,
 				31288E700E3005D6003619AE /* WebKitCSSKeyframesRule.cpp */,
 				31288E710E3005D6003619AE /* WebKitCSSKeyframesRule.h */,
+				316FE0920E6CCD7F00BF6088 /* WebKitCSSKeyframesRule.idl */,
 				BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */,
 				BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */,
 				31611E540E1C4D4A00F6A579 /* WebKitCSSTransformValue.idl */,
@@ -15509,6 +15543,12 @@
 				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
 				316FE1180E6E1DA700BF6088 /* ImplicitAnimation.h in Headers */,
 				316FE11A0E6E1DA700BF6088 /* KeyframeAnimation.h in Headers */,
+				316FE0720E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.h in Headers */,
+				316FE0740E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.h in Headers */,
+				316FE07D0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.h in Headers */,
+				316FE07F0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h in Headers */,
+				316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */,
+				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17304,6 +17344,10 @@
 				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,
 				316FE1170E6E1DA700BF6088 /* ImplicitAnimation.cpp in Sources */,
 				316FE1190E6E1DA700BF6088 /* KeyframeAnimation.cpp in Sources */,
+				316FE0710E6CCBEE00BF6088 /* JSWebKitCSSKeyframeRule.cpp in Sources */,
+				316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */,
+				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
+				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

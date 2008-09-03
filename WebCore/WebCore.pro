@@ -222,6 +222,8 @@ IDL_BINDINGS += \
     css/Rect.idl \
     css/StyleSheet.idl \
     css/StyleSheetList.idl \
+    css/WebKitCSSKeyframeRule.idl \
+    css/WebKitCSSKeyframesRule.idl \
     css/WebKitCSSTransformValue.idl \
     dom/Attr.idl \
     dom/CharacterData.idl \

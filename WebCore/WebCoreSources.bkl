@@ -334,6 +334,8 @@ This file contains the list of files needed to build WebCore.
         DerivedSources/WebCore/JSTreeWalker.cpp
         DerivedSources/WebCore/JSUIEvent.cpp
         DerivedSources/WebCore/JSWebKitAnimationEvent.cpp
+        DerivedSources/WebCore/JSWebKitCSSKeyframeRule.cpp
+        DerivedSources/WebCore/JSWebKitCSSKeyframesRule.cpp
         DerivedSources/WebCore/JSWebKitCSSTransformValue.cpp
         DerivedSources/WebCore/JSWebKitTransitionEvent.cpp
         DerivedSources/WebCore/JSWheelEvent.cpp

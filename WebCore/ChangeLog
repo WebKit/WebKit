@@ -1,3 +1,30 @@
+2008-09-01  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20594
+        Add DOM interfaces for WebKitCSSKeyframeRule
+        and WebKitCSSKeyframesRule.
+
+        TEST: LayoutTests/css3/keyframes-rule.html
+
+        * css/WebKitCSSKeyframeRule.idl: Added
+        * css/WebKitCSSKeyframesRule.idl: Added
+
+        * bindings/js/JSCSSRuleCustom.cpp:
+        (WebCore::toJS):
+            Add return of new JS Keyframe rules
+        * bindings/objc/DOMInternal.h:
+            Include new internal header
+
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCoreSources.bkl:
+            Build configs for new files
+
 2008-09-03  Adam Roben  <aroben@apple.com>
 
         Windows build fix

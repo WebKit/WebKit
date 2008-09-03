@@ -40,6 +40,10 @@
 #include "JSCSSPageRule.h"
 #include "JSCSSStyleRule.h"
 #include "JSCSSVariablesRule.h"
+#include "JSWebKitCSSKeyframeRule.h"
+#include "JSWebKitCSSKeyframesRule.h"
+#include "WebKitCSSKeyframeRule.h"
+#include "WebKitCSSKeyframesRule.h"
 
 using namespace KJS;
 
@@ -76,6 +80,12 @@ JSValue* toJS(ExecState* exec, CSSRule* rule)
             break;
         case CSSRule::VARIABLES_RULE:
             ret = new (exec) JSCSSVariablesRule(JSCSSVariablesRulePrototype::self(exec), static_cast<CSSVariablesRule*>(rule));
+            break;
+        case CSSRule::WEBKIT_KEYFRAME_RULE:
+            ret = new (exec) JSWebKitCSSKeyframeRule(JSWebKitCSSKeyframeRulePrototype::self(exec), static_cast<WebKitCSSKeyframeRule*>(rule));
+            break;
+        case CSSRule::WEBKIT_KEYFRAMES_RULE:
+            ret = new (exec) JSWebKitCSSKeyframesRule(JSWebKitCSSKeyframesRulePrototype::self(exec), static_cast<WebKitCSSKeyframesRule*>(rule));
             break;
         default:
             ret = new (exec) JSCSSRule(JSCSSRulePrototype::self(exec), rule);

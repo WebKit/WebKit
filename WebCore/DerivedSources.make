@@ -343,6 +343,8 @@ DOM_CLASSES = \
     UIEvent \
     VoidCallback \
     WebKitAnimationEvent \
+    WebKitCSSKeyframeRule \
+    WebKitCSSKeyframesRule \
     WebKitCSSTransformValue \
     WebKitTransitionEvent \
     WheelEvent \
