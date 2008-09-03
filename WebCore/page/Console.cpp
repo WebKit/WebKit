@@ -44,6 +44,7 @@
 #include <kjs/JSObject.h>
 #include <VM/Machine.h>
 #include <profiler/Profile.h>
+#include <profiler/Profiler.h>
 #include <stdio.h>
 
 using namespace KJS;
@@ -52,8 +53,6 @@ namespace WebCore {
 
 Console::Console(Frame* frame)
     : m_frame(frame)
-    , m_profileLineNumber(0)
-    , m_profileSourceURL(UString())
 {
 }
 
@@ -309,7 +308,7 @@ void Console::count(ExecState* exec, const ArgList& args)
 void Console::profile(ExecState* exec, const ArgList& args)
 {
     UString title = args.at(exec, 0)->toString(exec);
-    Profiler::profiler()->startProfiling(exec, title, this);
+    Profiler::profiler()->startProfiling(exec, title);
 }
 
 void Console::profileEnd(ExecState* exec, const ArgList& args)
@@ -318,11 +317,15 @@ void Console::profileEnd(ExecState* exec, const ArgList& args)
     if (args.size() >= 1)
         title = valueToStringWithUndefinedOrNullCheck(exec, args.at(exec, 0));
 
-    int sourceId;
-    JSValue* function;
-    // FIXME: We won't need to save these to statics once we remove the profiler "zombie" mode
-    exec->machine()->retrieveLastCaller(exec, m_profileLineNumber, sourceId, m_profileSourceURL, function);
-    Profiler::profiler()->stopProfiling(exec, title);
+    RefPtr<Profile> profile = Profiler::profiler()->stopProfiling(exec, title);
+
+    if (Page* page = this->page()) {
+        KURL url;
+        unsigned lineNumber;
+        retrieveLastCaller(exec, url, lineNumber);
+
+        page->inspectorController()->addProfile(profile, lineNumber, url);
+    }
 }
 
 void Console::time(const UString& title)
@@ -378,12 +381,6 @@ void Console::groupEnd()
         return;
 
     page->inspectorController()->endGroup(JSMessageSource, 0, String());
-}
-
-void Console::finishedProfiling(PassRefPtr<Profile> prpProfile)
-{
-    if (Page* page = this->page())
-        page->inspectorController()->addProfile(prpProfile, m_profileLineNumber, m_profileSourceURL);
 }
 
 void Console::warn(ExecState* exec, const ArgList& args)

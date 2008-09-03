@@ -1,3 +1,26 @@
+2008-09-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        Remove the rest of the "zombie" code from the profiler.
+        - There is no longer a need for the ProfilerClient callback mechanism.
+
+        * API/JSProfilerPrivate.cpp:
+        (JSStartProfiling):
+        * JavaScriptCore.exp:
+        * profiler/HeavyProfile.h:
+        * profiler/ProfileGenerator.cpp:
+        (KJS::ProfileGenerator::create):
+        (KJS::ProfileGenerator::ProfileGenerator):
+        * profiler/ProfileGenerator.h:
+        (KJS::ProfileGenerator::profileGroup):
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling): Immediately return the profile when
+        stopped instead of using a callback.
+        * profiler/Profiler.h:
+        * profiler/TreeProfile.h:
+
 2008-09-03  Adele Peterson  <adele@apple.com>
 
         Build fix.

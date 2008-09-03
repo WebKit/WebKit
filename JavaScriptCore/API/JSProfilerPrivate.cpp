@@ -34,7 +34,7 @@ using namespace KJS;
 
 void JSStartProfiling(JSContextRef ctx, JSStringRef title)
 {
-    Profiler::profiler()->startProfiling(toJS(ctx), title->ustring(), 0);
+    Profiler::profiler()->startProfiling(toJS(ctx), title->ustring());
 }
 
 void JSEndProfiling(JSContextRef ctx, JSStringRef title)

@@ -1,3 +1,21 @@
+2008-09-03  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Tim.
+
+        Remove the rest of the "zombie" code from the profiler.
+        - There is no longer a need for the ProfilerClient callback mechanism.
+
+        * page/Console.cpp: 
+        (WebCore::Console::Console):
+        (WebCore::Console::profile):
+        (WebCore::Console::profileEnd): Move the variables from the header to
+        here since we don't have to wait for a callback to use them.
+        * page/Console.h:
+        * page/InspectorController.cpp:
+        (WebCore::InspectorController::startUserInitiatedProfiling):
+        (WebCore::InspectorController::stopUserInitiatedProfiling):
+        * page/InspectorController.h:
+
 2008-09-03  Ada Chan  <adachan@apple.com>
 
         Windows build fix.

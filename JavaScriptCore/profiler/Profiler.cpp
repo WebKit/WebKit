@@ -56,7 +56,7 @@ Profiler* Profiler::profiler()
     return s_sharedProfiler;
 }   
 
-void Profiler::startProfiling(ExecState* exec, const UString& title, ProfilerClient* client)
+void Profiler::startProfiling(ExecState* exec, const UString& title)
 {
     ASSERT_ARG(exec, exec);
 
@@ -70,28 +70,28 @@ void Profiler::startProfiling(ExecState* exec, const UString& title, ProfilerCli
     }
 
     s_sharedEnabledProfilerReference = this;
-    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(title, exec, client, ++ProfilesUID);
+    RefPtr<ProfileGenerator> profileGenerator = ProfileGenerator::create(title, exec, ++ProfilesUID);
     m_currentProfiles.append(profileGenerator);
 }
 
-void Profiler::stopProfiling(ExecState* exec, const UString& title)
+PassRefPtr<Profile> Profiler::stopProfiling(ExecState* exec, const UString& title)
 {
     ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
     for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
         if (profileGenerator->originatingGlobalExec() == globalExec && (title.isNull() || profileGenerator->title() == title)) {
-            PassRefPtr<ProfileGenerator> prpProfileGenerator = m_currentProfiles[i].release();
-            m_currentProfiles.remove(i);
+            profileGenerator->stopProfiling();
+            RefPtr<Profile> returnProfile = profileGenerator->profile();
 
+            m_currentProfiles.remove(i);
             if (!m_currentProfiles.size())
                 s_sharedEnabledProfilerReference = 0;
-
-
-            prpProfileGenerator->stopProfiling();
-            if (ProfilerClient* client = prpProfileGenerator->client())
-                client->finishedProfiling(prpProfileGenerator->profile());
+            
+            return returnProfile;
         }
     }
+
+    return 0;
 }
 
 static inline void dispatchFunctionToProfiles(const Vector<RefPtr<ProfileGenerator> >& profiles, ProfileGenerator::ProfileFunction function, const CallIdentifier& callIdentifier, unsigned currentProfileTargetGroup)

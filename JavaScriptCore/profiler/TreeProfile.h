@@ -32,7 +32,6 @@ namespace KJS {
 
     class ExecState;
     class HeavyProfile;
-    class ProfilerClient;
     class UString;
 
     class TreeProfile : public Profile {

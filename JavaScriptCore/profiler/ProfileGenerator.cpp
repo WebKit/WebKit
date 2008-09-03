@@ -39,15 +39,15 @@ namespace KJS {
 
 static const char* NonJSExecution = "(idle)";
 
-PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingExec, ProfilerClient* client, unsigned uid)
+PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, ExecState* originatingExec, unsigned uid)
 {
-    return adoptRef(new ProfileGenerator(title, originatingExec, client, uid));
+    return adoptRef(new ProfileGenerator(title, originatingExec, uid));
 }
 
-ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingExec, ProfilerClient* client, unsigned uid)
+ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingExec, unsigned uid)
     : m_originatingGlobalExec(originatingExec->lexicalGlobalObject()->globalExec())
     , m_profileGroup(originatingExec->lexicalGlobalObject()->profileGroup())
-    , m_client(client)
+
 {
     m_profile = Profile::create(title, uid);
     m_currentNode = m_head = m_profile->head();
