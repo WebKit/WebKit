@@ -2119,7 +2119,6 @@ webcore_sources += \
 	WebCore/platform/sql/SQLValue.cpp \
 	WebCore/platform/sql/SQLValue.h \
 	WebCore/platform/sql/SQLiteAuthorizer.cpp \
-	WebCore/platform/sql/SQLiteAuthorizer.h \
 	WebCore/platform/sql/SQLiteDatabase.cpp \
 	WebCore/platform/sql/SQLiteDatabase.h \
 	WebCore/platform/sql/SQLiteStatement.cpp \

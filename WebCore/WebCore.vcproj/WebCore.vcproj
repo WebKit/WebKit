@@ -6089,10 +6089,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\sql\SQLiteAuthorizer.h"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\sql\SQLiteDatabase.cpp"
 					>
 				</File>

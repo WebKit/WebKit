@@ -38,7 +38,7 @@ struct sqlite3;
 
 namespace WebCore {
 
-class SQLiteAuthorizer;
+class DatabaseAuthorizer;
 class SQLiteStatement;
 class SQLiteTransaction;
 
@@ -98,7 +98,7 @@ public:
         return m_db;
     }
     
-    void setAuthorizer(PassRefPtr<SQLiteAuthorizer>);
+    void setAuthorizer(PassRefPtr<DatabaseAuthorizer>);
 
     // (un)locks the database like a mutex
     void lock();
@@ -118,7 +118,7 @@ private:
     bool m_transactionInProgress;
     
     Mutex m_authorizerLock;
-    RefPtr<SQLiteAuthorizer> m_authorizer;
+    RefPtr<DatabaseAuthorizer> m_authorizer;
 
     Mutex m_lockingMutex;
     ThreadIdentifier m_openingThread;

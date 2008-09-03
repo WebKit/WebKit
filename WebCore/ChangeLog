@@ -1,3 +1,30 @@
+2008-08-28  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Maciej.
+
+        Elminate SQLiteAuthorizer class.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * WebCore.vcproj/WebCore.vcproj:
+        * GNUmakefile.am
+        Removed SQLiteAuthorizer.h.
+
+        * platform/sql/SQLiteAuthorizer.cpp:
+        * platform/sql/SQLiteAuthorizer.h: Removed.
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::authorizerFunction):
+        (WebCore::SQLiteDatabase::setAuthorizer):
+        * platform/sql/SQLiteDatabase.h:
+        * storage/DatabaseAuthorizer.h:
+        (WebCore::DatabaseAuthorizer::create):
+        (WebCore::DatabaseAuthorizer::createView):
+        (WebCore::DatabaseAuthorizer::createTempView):
+        (WebCore::DatabaseAuthorizer::dropView):
+        (WebCore::DatabaseAuthorizer::dropTempView):
+        (WebCore::DatabaseAuthorizer::allowSelect):
+        (WebCore::DatabaseAuthorizer::allowReindex):
+        Merge SQLiteAuthorizer and DatabaseAuthorizer, as keeping them separate serves no purpose.
+
 2008-09-03  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Mark Rowe.

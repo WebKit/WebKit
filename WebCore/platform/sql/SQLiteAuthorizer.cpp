@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
-#include "SQLiteAuthorizer.h"
+#include "DatabaseAuthorizer.h"
 
 #include <sqlite3.h>
 

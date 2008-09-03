@@ -103,7 +103,6 @@
 		1A2E6E590CC55213004A2062 /* SQLValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E570CC55213004A2062 /* SQLValue.cpp */; };
 		1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E580CC55213004A2062 /* SQLValue.h */; };
 		1A2E6E7A0CC556D5004A2062 /* SQLiteAuthorizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */; };
-		1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */; };
 		1A3178930B20A81600316987 /* SubresourceLoaderClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3178920B20A81600316987 /* SubresourceLoaderClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A3417C90CECFF250049CBDE /* JSCustomVoidCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */; };
 		1A3417CA0CECFF250049CBDE /* JSCustomVoidCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */; };
@@ -4642,7 +4641,6 @@
 		1A2E6E570CC55213004A2062 /* SQLValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLValue.cpp; path = sql/SQLValue.cpp; sourceTree = "<group>"; };
 		1A2E6E580CC55213004A2062 /* SQLValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLValue.h; path = sql/SQLValue.h; sourceTree = "<group>"; };
 		1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLiteAuthorizer.cpp; path = sql/SQLiteAuthorizer.cpp; sourceTree = "<group>"; };
-		1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLiteAuthorizer.h; path = sql/SQLiteAuthorizer.h; sourceTree = "<group>"; };
 		1A3178920B20A81600316987 /* SubresourceLoaderClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SubresourceLoaderClient.h; sourceTree = "<group>"; };
 		1A3417C70CECFF250049CBDE /* JSCustomVoidCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCustomVoidCallback.h; sourceTree = "<group>"; };
 		1A3417C80CECFF250049CBDE /* JSCustomVoidCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCustomVoidCallback.cpp; sourceTree = "<group>"; };
@@ -8724,7 +8722,6 @@
 			isa = PBXGroup;
 			children = (
 				1A2E6E780CC556D5004A2062 /* SQLiteAuthorizer.cpp */,
-				1A2E6E790CC556D5004A2062 /* SQLiteAuthorizer.h */,
 				1A2246430CC98DDB00C05240 /* SQLiteDatabase.cpp */,
 				1A2246440CC98DDB00C05240 /* SQLiteDatabase.h */,
 				1A2246450CC98DDB00C05240 /* SQLiteStatement.cpp */,
@@ -14928,7 +14925,6 @@
 				1A7CCB1B0CD9469A00B7B64E /* SQLTransactionCallback.h in Headers */,
 				1A7CCB1C0CD9469A00B7B64E /* SQLTransactionErrorCallback.h in Headers */,
 				1A2E6E5A0CC55213004A2062 /* SQLValue.h in Headers */,
-				1A2E6E7B0CC556D5004A2062 /* SQLiteAuthorizer.h in Headers */,
 				1A22464A0CC98DDB00C05240 /* SQLiteDatabase.h in Headers */,
 				1A22464C0CC98DDB00C05240 /* SQLiteStatement.h in Headers */,
 				1A22464E0CC98DDB00C05240 /* SQLiteTransaction.h in Headers */,
