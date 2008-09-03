@@ -1,3 +1,11 @@
+2008-09-02  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Build fix.  Remove the now unnecessary check for "4" in the user agent string.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2008-08-17  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.
