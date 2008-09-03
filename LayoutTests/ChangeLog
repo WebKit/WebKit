@@ -1,3 +1,14 @@
+2008-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=19964
+        Bug 19964: Divide by zero crash in RenderBox::calculateBackgroundSize with 0,0 bmp background image
+
+        * css3/khtml-background-size-0x0-bmp-expected.txt: Added.
+        * css3/khtml-background-size-0x0-bmp.html: Added.
+        * css3/support/0x0.bmp: Added.
+
 2008-09-02  Glenn Wilson  <wilsong@gmail.com>
 
         Reviewed by Eric Seidel.

@@ -1,3 +1,17 @@
+2008-09-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Darin Adler.
+
+        Fix for https://bugs.webkit.org/show_bug.cgi?id=19964
+        Bug 19964: Divide by zero crash in RenderBox::calculateBackgroundSize with 0,0 bmp background image
+
+        Add a check to RenderBox::repaintLayerRectsForImage to make sure the current layer image can be rendered.
+
+        Test: css3/khtml-background-size-0x0-bmp.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+
 2008-09-02  Glenn Wilson  <wilsong@gmail.com>
 
         Reviewed by Eric Seidel.
