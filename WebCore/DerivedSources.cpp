@@ -305,6 +305,7 @@
 #include "JSSVGZoomEvent.cpp"
 #include "JSText.cpp"
 #include "JSTextEvent.cpp"
+#include "JSTextMetrics.cpp"
 #include "JSTimeRanges.cpp"
 #include "JSTreeWalker.cpp"
 #include "JSUIEvent.cpp"
