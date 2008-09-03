@@ -44,10 +44,10 @@ webcore_cppflags += \
 
 webcoregtk_cppflags += \
 	-I$(srcdir)/WebCore/loader/gtk \
-	-I$(srcdir)/WebCore/page/gtk
+	-I$(srcdir)/WebCore/page/gtk \
 	-I$(srcdir)/WebCore/platform/graphics/cairo \
 	-I$(srcdir)/WebCore/platform/graphics/gtk \
-	-I$(srcdir)/WebCore/platform/gtk \
+	-I$(srcdir)/WebCore/platform/gtk
 
 webcore_built_nosources += \
 	DerivedSources/DocTypeStrings.cpp \
