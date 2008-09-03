@@ -337,7 +337,7 @@ sub printNamesCppFile
 
 print F "#include \"config.h\"\n";
 
-print F "#ifdef AVOID_STATIC_CONSTRUCTORS\n";
+print F "#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC\n";
 print F "#define DOM_$parameters{'namespace'}NAMES_HIDE_GLOBALS 1\n";
 print F "#else\n";
 print F "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";

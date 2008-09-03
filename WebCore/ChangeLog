@@ -1,3 +1,21 @@
+2008-09-03  Dean McNamee  <deanm@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20511
+        Bug 20511: Remove static initializers on Windows
+
+        Avoid static initializers on Windows by forcing Visual C++ to put
+        all static initializers in a code segment that is never executed.
+
+        * config.h:
+        * css/MediaFeatureNames.cpp:
+        * dom/EventNames.cpp:
+        * dom/QualifiedName.cpp:
+        * dom/make_names.pl:
+        * platform/StaticConstructors.h:
+        * platform/text/AtomicString.cpp:
+
 2008-09-03  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Dave Hyatt.
