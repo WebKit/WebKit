@@ -104,14 +104,14 @@ OpcodeStats::~OpcodeStats()
     int sortedIndices[numOpcodeIDs];    
     for (int i = 0; i < numOpcodeIDs; ++i)
         sortedIndices[i] = i;
-    mergesort(sortedIndices, numOpcodeIDs, sizeof(int), compareOpcodeIndices);
+    qsort(sortedIndices, numOpcodeIDs, sizeof(int), compareOpcodeIndices);
     
     pair<int, int> sortedPairIndices[numOpcodeIDs * numOpcodeIDs];
     pair<int, int>* currentPairIndex = sortedPairIndices;
     for (int i = 0; i < numOpcodeIDs; ++i)
         for (int j = 0; j < numOpcodeIDs; ++j)
             *(currentPairIndex++) = make_pair(i, j);
-    mergesort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
+    qsort(sortedPairIndices, numOpcodeIDs * numOpcodeIDs, sizeof(pair<int, int>), compareOpcodePairIndices);
     
     printf("\nExecuted opcode statistics\n"); 
     

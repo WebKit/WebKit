@@ -1,3 +1,13 @@
+2008-09-02  Csaba Osztrogonac  <oszi@inf.u-szeged.hu>
+
+        Reviewed by Darin Adler.
+
+        Bug 20296: OpcodeStats doesn't build on platforms which don't have mergesort().
+        <https://bugs.webkit.org/show_bug.cgi?id=20296>
+
+        * VM/Opcode.cpp:
+        (KJS::OpcodeStats::~OpcodeStats): mergesort() replaced with qsort()
+
 2008-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
