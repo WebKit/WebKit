@@ -560,6 +560,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(location, it, identifiers, "get_by_id_generic");
             break;
         }
+        case op_get_array_length: {
+            printGetByIdOp(location, it, identifiers, "get_array_length");
+            break;
+        }
+        case op_get_string_length: {
+            printGetByIdOp(location, it, identifiers, "get_string_length");
+            break;
+        }
         case op_put_by_id: {
             printPutByIdOp(location, it, identifiers, "put_by_id");
             break;
@@ -836,7 +844,7 @@ void CodeBlock::derefStructureIDs(Instruction* vPC) const
     }
     
     // These instructions don't ref their StructureIDs.
-    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic));
+    ASSERT(vPC[0].u.opcode == machine->getOpcode(op_get_by_id) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id) || vPC[0].u.opcode == machine->getOpcode(op_get_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_put_by_id_generic) || vPC[0].u.opcode == machine->getOpcode(op_get_array_length) || vPC[0].u.opcode == machine->getOpcode(op_get_string_length));
 }
 
 void CodeBlock::refStructureIDs(Instruction* vPC) const

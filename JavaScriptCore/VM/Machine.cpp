@@ -1176,11 +1176,21 @@ NEVER_INLINE void Machine::uncachePutByID(CodeBlock* codeBlock, Instruction* vPC
     vPC[4] = 0;
 }
 
-NEVER_INLINE void Machine::tryCacheGetByID(CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const PropertySlot& slot)
+NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const Identifier& propertyName, const PropertySlot& slot)
 {
     // Recursive invocation may already have specialized this instruction.
     if (vPC[0].u.opcode != getOpcode(op_get_by_id))
         return;
+        
+    if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
+        vPC[0] = getOpcode(op_get_array_length);
+        return;
+    }
+
+    if (isJSString(baseValue) && propertyName == exec->propertyNames().length) {
+        vPC[0] = getOpcode(op_get_string_length);
+        return;
+    }
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
@@ -2184,7 +2194,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         JSValue* result = baseValue->get(exec, ident, slot);
         VM_CHECK_EXCEPTION();
 
-        tryCacheGetByID(codeBlock, vPC, baseValue, slot);
+        tryCacheGetByID(exec, codeBlock, vPC, baseValue, ident, slot);
 
         r[dst] = result;
         vPC += 8;
@@ -2316,6 +2326,46 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         r[dst] = result;
         vPC += 8;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_get_array_length) {
+        /* op_get_array_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
+
+           Cached property access: Gets the length of the array in register base,
+           and puts the result in register dst. If register base does not hold
+           an array, op_get_array_length reverts to op_get_by_id.
+        */
+
+        int base = vPC[2].u.operand;
+        JSValue* baseValue = r[base].jsValue(exec);
+        if (LIKELY(isJSArray(baseValue))) {
+            int dst = vPC[1].u.operand;
+            r[dst] = jsNumber(exec, static_cast<JSArray*>(baseValue)->length());
+            vPC += 8;
+            NEXT_OPCODE;
+        }
+
+        uncacheGetByID(codeBlock, vPC);
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_get_string_length) {
+        /* op_get_string_length dst(r) base(r) property(id) nop(sID) nop(n) nop(n) nop(n)
+
+           Cached property access: Gets the length of the string in register base,
+           and puts the result in register dst. If register base does not hold
+           a string, op_get_string_length reverts to op_get_by_id.
+        */
+
+        int base = vPC[2].u.operand;
+        JSValue* baseValue = r[base].jsValue(exec);
+        if (LIKELY(isJSString(baseValue))) {
+            int dst = vPC[1].u.operand;
+            r[dst] = jsNumber(exec, static_cast<JSString*>(baseValue)->value().size());
+            vPC += 8;
+            NEXT_OPCODE;
+        }
+
+        uncacheGetByID(codeBlock, vPC);
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_put_by_id) {
