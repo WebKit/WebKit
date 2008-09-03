@@ -1,3 +1,9 @@
+2008-09-02  Dan Bernstein  <mitz@apple.com>
+
+        - update expected results now that log() et al. report line numbers
+
+        * fast/dom/Window/console-functions-expected.txt:
+
 2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
