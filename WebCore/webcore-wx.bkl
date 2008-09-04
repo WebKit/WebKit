@@ -44,8 +44,11 @@ wxWebCore port Bakefile project file.
         <include>$(SRCDIR)/page/wx</include>
         
         <sources>
+            bindings/js/ScriptControllerWx.cpp
+
             editing/wx/EditorWx.cpp
 
+            page/wx/AccessibilityObjectWx.cpp
             page/wx/DragControllerWx.cpp
             page/wx/EventHandlerWx.cpp
            

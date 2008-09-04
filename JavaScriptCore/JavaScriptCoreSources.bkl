@@ -121,6 +121,7 @@ Source files for JSCore.
         kjs/StringConstructor.cpp
         kjs/StringObject.cpp
         kjs/StringPrototype.cpp
+        kjs/StructureID.cpp
         kjs/ustring.cpp
 
     </set>

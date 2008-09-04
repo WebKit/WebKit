@@ -1,3 +1,16 @@
+2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes.
+
+        * WebCoreSources.bkl:
+        * bindings/js/ScriptControllerWx.cpp: Added.
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * page/wx/AccessibilityObjectWx.cpp: Added.
+        (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
+        * platform/graphics/wx/GraphicsContextWx.cpp:
+        * webcore-base.bkl:
+        * webcore-wx.bkl:
+
 2008-09-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.

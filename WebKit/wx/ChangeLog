@@ -1,3 +1,11 @@
+2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes.
+        
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::pluginWillHandleLoadError):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2008-08-18  Kevin Ollivier  <kevino@theolliviers.com>
 
         Build fix for Win. Don't include the libxml/libxslt directories in the

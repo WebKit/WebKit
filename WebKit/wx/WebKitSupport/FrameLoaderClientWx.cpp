@@ -820,6 +820,12 @@ void FrameLoaderClientWx::redirectDataToPlugin(Widget* pluginWidget)
     return;
 }
 
+ResourceError FrameLoaderClientWx::pluginWillHandleLoadError(const ResourceResponse&)
+{
+    notImplemented();
+    return ResourceError();
+}
+
 Widget* FrameLoaderClientWx::createJavaAppletWidget(const IntSize&, Element*, const KURL& baseURL,
                                                     const Vector<String>& paramNames, const Vector<String>& paramValues)
 {
