@@ -27,6 +27,8 @@
 
 #include "StringImpl.h"
 
+#include <wtf/PassRefPtr.h>
+
 #if USE(JSC)
 #include <kjs/identifier.h>
 #endif
