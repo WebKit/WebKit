@@ -1490,7 +1490,7 @@
 
         * WebCore.vcproj/WebCore.vcproj: Fix file extension.
 
-2008-08-26  chris fleizach  <cfleizach@apple.com>
+2008-08-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
 
@@ -1516,7 +1516,7 @@
         * page/win/AccessibilityObjectWin.cpp: Added.
         (WebCore::AccessibilityObject::accessibilityIgnoreAttachment):
 
-2008-08-26  chris fleizach  <cfleizach@apple.com>
+2008-08-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
 
@@ -1526,7 +1526,7 @@
         (-[AccessibilityObjectWrapper accessibilityPerformShowMenuAction]):
         (-[AccessibilityObjectWrapper accessibilityShowContextMenu]):
 
-2008-08-26  chris fleizach  <cfleizach@apple.com>
+2008-08-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
 
@@ -2365,7 +2365,7 @@
         Instead use the figure dash when a position is auto.
         * page/inspector/inspector.css: Added a new rule for position.
 
-2008-08-20  chris fleizach  <cfleizach@apple.com>
+2008-08-20  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -2643,7 +2643,7 @@
         * page/AccessibilityRenderObject.cpp:
         (WebCore::AccessibilityRenderObject::canSetFocusAttribute):
 
-2008-08-19  chris fleizach  <cfleizach@apple.com>
+2008-08-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
 

@@ -328,7 +328,7 @@
         * fast/js/stack-unwinding-expected.txt: Added.
         * fast/js/stack-unwinding.html: Added.
 
-2008-08-26  chris fleizach  <cfleizach@apple.com>
+2008-08-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -338,7 +338,7 @@
         * accessibility/plugin.html: Added.
         * accessibility/resources/test.swf: Added.
 
-2008-08-26  chris fleizach  <cfleizach@apple.com>
+2008-08-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
 
@@ -505,7 +505,7 @@
         * fast/css/getComputedStyle-transform-expected.txt: Added.
         * fast/css/getComputedStyle-transform.html: Added.
 
-2008-08-19  chris fleizach  <cfleizach@apple.com>
+2008-08-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 

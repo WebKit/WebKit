@@ -99,7 +99,7 @@
         * DumpRenderTree/win/UIDelegate.h:
         (UIDelegate::webViewSendResizeMessage): Add the new interface method, not implemented.
 
-2008-08-19  chris fleizach  <cfleizach@apple.com>
+2008-08-19  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin.
 
@@ -239,7 +239,7 @@
         * DumpRenderTree/gtk/DumpRenderTree.pro: Removed.
         * GtkLauncher/GtkLauncher.pro: Removed.
 
-2008-08-06  chris fleizach  <cfleizach@apple.com>
+2008-08-06  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -370,7 +370,7 @@
         * DumpRenderTree/mac/DumpRenderTreeMac.h: Added BUILDING_ON_LEOPARD
         macro.
 
-2008-07-31  chris fleizach  <cfleizach@apple.com>
+2008-07-31  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Alice Liu
 
@@ -445,7 +445,7 @@
         * DumpRenderTree/win/LayoutTestControllerWin.cpp:
         (LayoutTestController::elementDoesAutoCompleteForElementWithId): Stub for now until I can get on Windows
 
-2008-07-25  chris fleizach  <cfleizach@apple.com>
+2008-07-25  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -559,7 +559,7 @@
         (AccessibilityUIElement::minValue):
         (AccessibilityUIElement::maxValue):
 
-2008-07-14  chris fleizach  <cfleizach@apple.com>
+2008-07-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -759,7 +759,7 @@
         (LayoutTestController::stopProvisionalFrameLoads):
         (LayoutTestController::setStopProvisionalFrameLoads):
 
-2008-07-01  chris fleizach  <cfleizach@apple.com>
+2008-07-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
@@ -774,7 +774,7 @@
         (AccessibilityController::widthOfFocusedElement):
         (AccessibilityController::heightOfFocusedElement):
 
-2008-06-30  chris fleizach  <cfleizach@apple.com>
+2008-06-30  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
 
