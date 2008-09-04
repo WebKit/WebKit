@@ -1,3 +1,12 @@
+2008-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix https://bugs.webkit.org/show_bug.cgi?id=20639.
+        Bug 20639: ENABLE_DASHBOARD_SUPPORT does not need to be a FEATURE_DEFINE
+
+        * Scripts/build-webkit: Remove ENABLE_DASHBOARD_SUPPORT-related code.
+
 2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
