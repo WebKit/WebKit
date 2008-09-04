@@ -1,3 +1,15 @@
+2008-09-04  Adam Roben  <aroben@apple.com>
+
+        Ignore warning LNK4221 on Windows
+
+        This warning is emitted when an object file with no public symbols is
+        passed to the linker/librarian. This often occurs in WebCore for files
+        that have been disabled via ENABLE()/USE() macros.
+
+        Rubberstamped by Anders Carlsson.
+
+        * win/tools/vsprops/common.vsprops: Ignore warning LNK4221.
+
 2008-08-27  Timothy Hatcher  <timothy@apple.com>
 
         Adds the WKAdvanceDefaultButtonPulseAnimation function.
