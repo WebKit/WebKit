@@ -1,3 +1,22 @@
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Correct the spelling of 'entryIndices'.
+
+        * kjs/PropertyMap.cpp:
+        (KJS::PropertyMap::get):
+        (KJS::PropertyMap::getLocation):
+        (KJS::PropertyMap::put):
+        (KJS::PropertyMap::insert):
+        (KJS::PropertyMap::remove):
+        (KJS::PropertyMap::checkConsistency):
+        * kjs/PropertyMap.h:
+        (KJS::PropertyMapHashTable::entries):
+        (KJS::PropertyMap::getOffset):
+        (KJS::PropertyMap::putOffset):
+        (KJS::PropertyMap::offsetForTableLocation):
+
 2008-09-03  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Cameron Zwarich.

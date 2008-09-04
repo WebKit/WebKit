@@ -58,7 +58,7 @@ namespace KJS {
         unsigned keyCount;
         unsigned deletedSentinelCount;
         unsigned lastIndexUsed;
-        unsigned entryIndicies[1];
+        unsigned entryIndices[1];
 
         PropertyMapEntry* entries()
         {
@@ -66,7 +66,7 @@ namespace KJS {
             // The 0th item in the entries vector is not really used; it has to
             // have a 0 in its key to allow the hash table lookup to handle deleted
             // sentinels without any special-case code, but the other fields are unused.
-            return reinterpret_cast<PropertyMapEntry*>(&entryIndicies[size]);
+            return reinterpret_cast<PropertyMapEntry*>(&entryIndices[size]);
         }
 
         static size_t allocationSize(unsigned size)
@@ -97,12 +97,12 @@ namespace KJS {
         JSValue* getOffset(size_t offset)
         {
             ASSERT(m_usingTable);
-            return reinterpret_cast<JSValue**>(m_u.table->entryIndicies)[offset];
+            return reinterpret_cast<JSValue**>(m_u.table->entryIndices)[offset];
         }
         void putOffset(size_t offset, JSValue* v)
         {
             ASSERT(m_usingTable);
-            reinterpret_cast<JSValue**>(m_u.table->entryIndicies)[offset] = v;
+            reinterpret_cast<JSValue**>(m_u.table->entryIndices)[offset] = v;
         }
 
         size_t offsetForLocation(JSValue** location) { return m_usingTable ? offsetForTableLocation(location) : WTF::notFound; }
@@ -128,7 +128,7 @@ namespace KJS {
         size_t offsetForTableLocation(JSValue** location)
         {
             ASSERT(m_usingTable);
-            return location - reinterpret_cast<JSValue**>(m_u.table->entryIndicies);
+            return location - reinterpret_cast<JSValue**>(m_u.table->entryIndices);
         }
 
         void checkConsistency();
