@@ -37,6 +37,7 @@ my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
 my $ubench = 0;
+my $v8 = 0;
 my $jsShellPath;
 my $setBaseline = 0;
 my $testsPattern;
@@ -54,6 +55,7 @@ Usage: $programName --shell=[path] [options]
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
   --ubench          Use microbenchmark suite instead of regular tests (to check for core execution regressions)
+  --v8              Use the V8 benchmark suite.
 EOF
 
 GetOptions('runs=i' => \$testRuns,
@@ -63,6 +65,7 @@ GetOptions('runs=i' => \$testRuns,
            'shark20' => \$runShark20,
            'shark-cache' => \$runSharkCache,
            'ubench' => \$ubench,
+           'v8' => \$v8,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
@@ -111,6 +114,7 @@ sub loadTestsList()
 {
     my $testlist = "LIST";
     $testlist = "LIST-UBENCH" if ($ubench);
+    $testlist = "LIST-V8" if ($v8);
 
     open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/LIST";
     while (<TESTLIST>) {

@@ -1,3 +1,23 @@
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20616: Incorporate V8 benchmarks in testing
+        <https://bugs.webkit.org/show_bug.cgi?id=20616>
+
+        This is a first attempt at running the V8 benchmarks within SunSpider,
+        with the --v8 option. The number of iterations is fixed for each
+        benchmark, and was chosen to make each of the benchmarks run between
+        500 ms and 600 ms in V8 on my machine, a 2.16 GHz MacBook Pro.
+
+        * sunspider:
+        * tests/LIST-V8: Added.
+        * tests/v8-crypto.js: Added.
+        * tests/v8-deltablue.js: Added.
+        * tests/v8-earley-boyer.js: Added.
+        * tests/v8-raytrace.js: Added.
+        * tests/v8-richards.js: Added.
+
 2008-09-02  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Not reviewed.

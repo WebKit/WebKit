@@ -1,3 +1,14 @@
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 20616: Incorporate V8 benchmarks in testing
+        <https://bugs.webkit.org/show_bug.cgi?id=20616>
+
+        Add support for the --v8 option to run-sunspider.
+
+        * Scripts/run-sunspider:
+
 2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx buildbot fix. More robust handling of clean when makefiles are not built or 
