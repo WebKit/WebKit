@@ -743,6 +743,8 @@
 		65DF323E09D1DE65000BE325 /* JSCanvasRenderingContext2D.h in Headers */ = {isa = PBXBuildFile; fileRef = 65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */; };
 		65DF326109D1E199000BE325 /* UserAgentStyleSheetsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 656581AF09D14EE6000E61D7 /* UserAgentStyleSheetsData.cpp */; };
 		65FEA86909833ADE00BED4AB /* Page.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65FEA86809833ADE00BED4AB /* Page.cpp */; };
+		7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */; };
+		7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */; };
 		75793E830D0CE0B3007FC0AC /* MessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */; };
 		75793E840D0CE0B3007FC0AC /* MessageEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793E810D0CE0B3007FC0AC /* MessageEvent.h */; };
 		75793EC80D0CE72D007FC0AC /* JSMessageEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75793EC60D0CE72D007FC0AC /* JSMessageEvent.cpp */; };
@@ -3993,8 +3995,6 @@
 		BCFE2F110C1B58370020235F /* JSRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCFE2F0F0C1B58370020235F /* JSRect.cpp */; };
 		BCFE2F120C1B58380020235F /* JSRect.h in Headers */ = {isa = PBXBuildFile; fileRef = BCFE2F100C1B58370020235F /* JSRect.h */; };
 		BCFE8E320A02A1D30009E61D /* WebCoreTextRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCFE8E310A02A1D30009E61D /* WebCoreTextRenderer.mm */; };
-		C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0294DF10D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp */; };
-		C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = C0294DF20D5A6FD800CC7D6B /* UserStyleSheetLoader.h */; };
 		C02B14C20D81E02A00D8A970 /* JavaScriptDebugListener.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C02B14C30D81E02A00D8A970 /* JavaScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */; };
 		C02B14C40D81E02A00D8A970 /* JavaScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */; };
@@ -5357,6 +5357,8 @@
 		65DF323809D1DE65000BE325 /* JSCanvasRenderingContext2D.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSCanvasRenderingContext2D.h; sourceTree = "<group>"; };
 		65F80697054D9F86008BF776 /* BlockExceptions.mm */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = BlockExceptions.mm; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		65FEA86809833ADE00BED4AB /* Page.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Page.cpp; sourceTree = "<group>"; };
+		7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserStyleSheetLoader.cpp; sourceTree = "<group>"; };
+		7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStyleSheetLoader.h; sourceTree = "<group>"; };
 		75793E800D0CE0B3007FC0AC /* MessageEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = MessageEvent.cpp; path = dom/MessageEvent.cpp; sourceTree = SOURCE_ROOT; };
 		75793E810D0CE0B3007FC0AC /* MessageEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = MessageEvent.h; path = dom/MessageEvent.h; sourceTree = SOURCE_ROOT; };
 		75793E820D0CE0B3007FC0AC /* MessageEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = MessageEvent.idl; path = dom/MessageEvent.idl; sourceTree = SOURCE_ROOT; };
@@ -8447,8 +8449,6 @@
 		BE91FC8B06133666005E3790 /* Position.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = Position.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE91FC8C06133666005E3790 /* Position.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Position.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		BE983D95052A2E0A00892D85 /* WebCoreKeyboardUIMode.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreKeyboardUIMode.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
-		C0294DF10D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserStyleSheetLoader.cpp; sourceTree = "<group>"; };
-		C0294DF20D5A6FD800CC7D6B /* UserStyleSheetLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserStyleSheetLoader.h; sourceTree = "<group>"; };
 		C02B14BF0D81E02A00D8A970 /* JavaScriptDebugListener.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugListener.h; sourceTree = "<group>"; };
 		C02B14C00D81E02A00D8A970 /* JavaScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptDebugServer.cpp; sourceTree = "<group>"; };
 		C02B14C10D81E02A00D8A970 /* JavaScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptDebugServer.h; sourceTree = "<group>"; };
@@ -10669,8 +10669,6 @@
 				656D371A0ADBA5DE00A4554D /* LoaderNSURLExtras.h */,
 				656D371B0ADBA5DE00A4554D /* LoaderNSURLExtras.mm */,
 				51AA3F6E0BD5AA9E00892971 /* ResourceLoaderMac.mm */,
-				C0294DF10D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp */,
-				C0294DF20D5A6FD800CC7D6B /* UserStyleSheetLoader.h */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -12760,6 +12758,8 @@
 				1A6938000A11100A00C127FE /* TextDocument.h */,
 				F523D27802DE43D7018635CA /* TextResourceDecoder.cpp */,
 				F523D27902DE43D7018635CA /* TextResourceDecoder.h */,
+				7284ADDB0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp */,
+				7284ADDC0E6FEB31002EEFBD /* UserStyleSheetLoader.h */,
 			);
 			path = loader;
 			sourceTree = "<group>";
@@ -15337,7 +15337,6 @@
 				934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */,
 				934F71420D5A6F4400018D69 /* ResourceError.h in Headers */,
 				934F71440D5A6F5300018D69 /* AuthenticationChallenge.h in Headers */,
-				C0294DF40D5A6FD800CC7D6B /* UserStyleSheetLoader.h in Headers */,
 				37F818FD0D657606005E1F05 /* WebCoreURLResponse.h in Headers */,
 				BCC573350D695BBE006EF517 /* DOMProgressEvent.h in Headers */,
 				BCC573380D695BD7006EF517 /* DOMProgressEventInternal.h in Headers */,
@@ -15549,6 +15548,7 @@
 				316FE07F0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRuleInternal.h in Headers */,
 				316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */,
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
+				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17145,7 +17145,6 @@
 				51A9267E0D53F0570063ECC2 /* OriginUsageRecord.cpp in Sources */,
 				934F71380D5A6EFF00018D69 /* AuthenticationChallengeBase.cpp in Sources */,
 				934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */,
-				C0294DF30D5A6FD800CC7D6B /* UserStyleSheetLoader.cpp in Sources */,
 				37F818FE0D657606005E1F05 /* WebCoreURLResponse.mm in Sources */,
 				BCC573360D695BBE006EF517 /* DOMProgressEvent.mm in Sources */,
 				A77979160D6B9D0C003851B9 /* CanvasPixelArray.cpp in Sources */,
@@ -17348,6 +17347,7 @@
 				316FE0730E6CCBEE00BF6088 /* JSWebKitCSSKeyframesRule.cpp in Sources */,
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
+				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

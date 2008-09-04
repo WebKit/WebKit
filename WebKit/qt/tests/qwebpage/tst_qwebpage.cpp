@@ -262,7 +262,7 @@ void tst_QWebPage::userStyleSheet()
     m_view->setHtml("<p>hello world</p>");
     QVERIFY(::waitForSignal(m_view, SIGNAL(loadFinished(bool))));
 
-    QCOMPARE(networkManager->requestedUrls.count(), 2);
+    QVERIFY(networkManager->requestedUrls.count() >= 2);
     QCOMPARE(networkManager->requestedUrls.at(0), QUrl::fromEncoded("data:text/css,p { background-image: url(qrc:/does/not/exist.png);}"));
     QCOMPARE(networkManager->requestedUrls.at(1), QUrl::fromEncoded("qrc:/does/not/exist.png"));
 }

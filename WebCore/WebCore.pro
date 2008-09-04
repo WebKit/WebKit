@@ -115,7 +115,7 @@ INCLUDEPATH += \
     $$PWD/platform/graphics/filters \
     $$PWD/platform/graphics/qt \
     $$PWD/svg/graphics/qt \
-    $$PWD/loader/qt \
+    $$PWD/loader \
     $$PWD/page/qt \
     $$PWD/../WebKit/qt/WebCoreSupport \
     $$PWD/../WebKit/qt/Api \
@@ -694,6 +694,7 @@ SOURCES += \
     loader/archive/ArchiveFactory.cpp \
     loader/archive/ArchiveResource.cpp \
     loader/archive/ArchiveResourceCollection.cpp \
+    loader/UserStyleSheetLoader.cpp \
     loader/Cache.cpp \
     loader/CachedCSSStyleSheet.cpp \
     loader/CachedFont.cpp \

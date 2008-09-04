@@ -1,3 +1,27 @@
+2008-09-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Re-enable support for user stylesheets in QtWebKit
+        
+        QtWebKit now follows the FRAME_LOADS_USER_STYLESHEET
+        code path, which allows us to keep API support for
+        loading user style sheets from remote URLs.
+        
+        As part of the change UserStyleSheetLoader.cpp/h was
+        moved from WebCore/loader/mac to WebCore/loader.
+
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.h:
+        * loader/UserStyleSheetLoader.cpp: Renamed from WebCore/loader/mac/UserStyleSheetLoader.cpp.
+        (UserStyleSheetLoader::UserStyleSheetLoader):
+        (UserStyleSheetLoader::~UserStyleSheetLoader):
+        * loader/UserStyleSheetLoader.h: Renamed from WebCore/loader/mac/UserStyleSheetLoader.h.
+        * page/qt/FrameQt.cpp:
+        (WebCore::Frame::setUserStyleSheetLocation):
+        (WebCore::Frame::setUserStyleSheet):
+
 2008-09-04  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Eric.
