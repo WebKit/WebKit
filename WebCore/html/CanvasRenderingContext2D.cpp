@@ -59,15 +59,6 @@
 #include <stdio.h>
 #include <wtf/MathExtras.h>
 
-#if PLATFORM(QT)
-#include <QPainter>
-#include <QPixmap>
-#include <QPainterPath>
-#elif PLATFORM(CAIRO)
-#include "CairoPath.h"
-#include <cairo.h>
-#endif
-
 using namespace std;
 
 namespace WebCore {
