@@ -1,5 +1,32 @@
 2008-09-04  Adam Roben  <aroben@apple.com>
 
+        Windows build fix after r36071
+
+        We were getting these errors:
+
+        error C2356: initialization segment must not change during translation
+        unit
+
+        This was happening because multiple files #included by
+        DerivedSources.cpp were themselves #including StaticConstructors.h. I
+        fixed the error by adding header guards to StaticConstructors.h so its
+        contents will only be included once.
+
+        But it's also not a good idea for StaticConstructors.h to end up in
+        DerivedSources.cpp, since it ends up "polluting" all the source files
+        we have in there. So I removed all the files that include
+        StaticConstructors.h and added some preprocessor directives to
+        DerivedSources.cpp to catch this error in the future.
+
+        * DerivedSources.cpp: Removed the *Names.cpp files, which include
+        StaticConstructors.h, and added some preprocessor directives to make
+        sure we don't end up accidentally including StaticConstructors.h in
+        the future.
+        * WebCore.vcproj/WebCore.vcproj: Added the *Names.cpp files.
+        * platform/StaticConstructors.h: Added header guards.
+
+2008-09-04  Adam Roben  <aroben@apple.com>
+
         Windows build fix
 
         * platform/graphics/win/FontPlatformData.h: Added a missing #include
