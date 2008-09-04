@@ -169,12 +169,19 @@ function do_make {
     olddir=$PWD
     shift
     shift
+    # NOTE: If we try to do make clean after the Bakefiles were cleaned out, or before they were
+    # first generated, we will get errors about missing files, so we need to check that the
+    # makefile exists before running it. 
     if [ $OSTYPE == cygwin ]; then
         cd $dir
-        nmake -f makefile.vc CXXFLAGS="$cxxflags" $@
+        if [ -f makefile.vc ]; then
+            nmake -f makefile.vc CXXFLAGS="$cxxflags" $@
+        fi
         cd $olddir
     else
-        make -C $dir -f GNUmakefile $MAKE_ARGS CXXFLAGS="$cxxflags" $@
+        if [ -f $dir/GNUmakefile ]; then
+            make -C $dir -f GNUmakefile $MAKE_ARGS CXXFLAGS="$cxxflags" $@
+        fi
     fi
     if [ $? != 0 ]; then
         exit $? 
@@ -276,15 +283,10 @@ if [ $do_build == 1 -o $do_clean == 1 ]; then
 
     WINDEPS="$WINDEPS $WXWIN/lib/vc_dll/wxmsw28u${WX_EXT}_core_vc.dll $WXWIN/lib/vc_dll/wxbase28u${WX_EXT}_vc.dll"
     
-    # NOTE: If we try to do make clean after the Bakefiles were cleaned out, or before they were
-    # first generated, we will get errors about missing files. 
-    # FIXME: Make the check more robust.
-    if [ -f $WK_ROOT/JavaScriptCore/GNUmakefile ]; then
-        do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-        do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
-        do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-        do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
-    fi
+    do_make $WK_ROOT/JavaScriptCore      "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/WebCore "-DBUILDING_WX__=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug WEBKIT_ROOT=$WK_ROOTDIR DEBUG=$debug PLATFORM_OS=$PLATFORM_OS $other_args
+    do_make $WK_ROOT/WebKit/wx "-DBUILDING_WX__=1 -DWXMAKINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
+    do_make $WK_ROOT/WebKitTools/wx/browser  "-DBUILDING_WX__=1 -DWXUSINGDLL_WEBKIT=1 $WXGC_DEFINE" WX_DEBUG=$wxdebug DEBUG=$debug WEBKIT_ROOT=$WK_ROOTDIR PLATFORM_OS=$PLATFORM_OS $other_args 
 
     if [ $do_clean == 1 ]; then
         rm -rf $WK_ROOT/JavaScriptCore/DerivedSources

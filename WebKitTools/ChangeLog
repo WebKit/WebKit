@@ -1,3 +1,10 @@
+2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx buildbot fix. More robust handling of clean when makefiles are not built or 
+        are not completely made.
+
+        * wx/build-wxwebkit:
+
 2008-09-03  Mark Rowe  <mrowe@apple.com>
 
         More Mac build fixes.
