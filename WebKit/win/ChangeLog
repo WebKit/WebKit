@@ -1,3 +1,13 @@
+2008-09-04  Adam Roben  <aroben@apple.com>
+
+        Make JavaScriptCoreGenerated build first instead of WTF
+
+        JavaScriptCoreGenerated does some setup work that we want to happen
+        before WTF builds.
+
+        * WebKit.vcproj/WebKit.sln: Reversed the dependencies of WTF and
+        JavaScriptCoreGenerated.
+
 2008-08-30  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.
