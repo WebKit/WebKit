@@ -1195,8 +1195,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
         return;
     }
 
-    JSCell* baseCell = static_cast<JSCell*>(baseValue);
-    StructureID* structureID = baseCell->structureID();
+    StructureID* structureID = static_cast<JSCell*>(baseValue)->structureID();
 
     // FIXME: Remove this !structureID check once all JSCells have StructureIDs.
     if (!structureID) {
@@ -1225,8 +1224,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
 
     // Cache hit: Specialize instruction and ref StructureIDs.
 
-    JSValue* slotBase = slot.slotBase();
-    if (slotBase == baseCell) {
+    if (slot.slotBase() == baseValue) {
         vPC[0] = getOpcode(op_get_by_id_self);
         vPC[5] = slot.cachedOffset();
 
@@ -1234,11 +1232,21 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
         return;
     }
 
-    if (slotBase == structureID->prototype()) {
-        ASSERT(!JSImmediate::isImmediate(slotBase));
+    if (slot.slotBase() == structureID->prototype()) {
+        ASSERT(slot.slotBase()->isObject());
+
+        JSObject* slotBaseObject = static_cast<JSObject*>(slot.slotBase());
+
+        // Heavy access to a prototype is a good indication that it's not being
+        // used as a dictionary.
+        if (slotBaseObject->structureID()->isDictionary()) {
+            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(slotBaseObject->structureID());
+            slotBaseObject->setStructureID(transition.release());
+            static_cast<JSObject*>(baseValue)->structureID()->setCachedPrototypeChain(0);
+        }
 
         vPC[0] = getOpcode(op_get_by_id_proto);
-        vPC[5] = static_cast<JSCell*>(slotBase)->structureID();
+        vPC[5] = slotBaseObject->structureID();
         vPC[6] = slot.cachedOffset();
 
         codeBlock->refStructureIDs(vPC);
@@ -1246,14 +1254,27 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     }
 
     size_t count = 0;
-    while (baseCell != slotBase) {
-        baseCell = static_cast<JSCell*>(baseCell->structureID()->prototype());
-        // If we didn't find slotBase in baseCell's prototype chain, then baseCell
+    JSObject* o = static_cast<JSObject*>(baseValue);
+    while (slot.slotBase() != o) {
+        JSValue* v = o->structureID()->prototype();
+
+        // If we didn't find slotBase in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
-        if (baseCell->isNull()) {
+        if (v->isNull()) {
             vPC[0] = getOpcode(op_get_by_id_generic);
             return;
         }
+
+        o = static_cast<JSObject*>(v);
+
+        // Heavy access to a prototype is a good indication that it's not being
+        // used as a dictionary.
+        if (o->structureID()->isDictionary()) {
+            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(o->structureID());
+            o->setStructureID(transition.release());
+            static_cast<JSObject*>(baseValue)->structureID()->setCachedPrototypeChain(0);
+        }
+
         ++count;
     }
 

@@ -1,3 +1,28 @@
+2008-09-03  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        Fixed <rdar://problem/6193925> REGRESSION: Crash occurs at
+        KJS::Machine::privateExecute() when attempting to load my Mobile Gallery
+        (http://www.me.com/gallery/#home)
+        
+        also
+        
+        https://bugs.webkit.org/show_bug.cgi?id=20633 Crash in privateExecute
+        @ cs.byu.edu
+        
+        The underlying problem was that we would cache prototype properties
+        even if the prototype was a dictionary.
+        
+        The fix is to transition a prototype back from dictionary to normal
+        status when an opcode caches access to it. (This is better than just
+        refusing to cache, since a heavily accessed prototype is almost
+        certainly not a true dictionary.)
+
+        * VM/Machine.cpp:
+        (KJS::Machine::tryCacheGetByID):
+        * kjs/JSObject.h:
+
 2008-09-03  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Sam.
