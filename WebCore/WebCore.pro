@@ -144,6 +144,7 @@ INCLUDEPATH +=  $$PWD \
                 $$PWD/css \
                 $$PWD/dom \
                 $$PWD/page \
+                $$PWD/page/animation \
                 $$PWD/bridge \
                 $$PWD/editing \
                 $$PWD/rendering \
