@@ -392,23 +392,6 @@ all : \
 #
 
 # --------
-
-ifeq ($(OS),MACOS)
-
-FRAMEWORK_FLAGS = $(shell echo $(FRAMEWORK_SEARCH_PATHS) | perl -e 'print "-F " . join(" -F ", split(" ", <>));')
-
-ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/ForwardingHeaders/wtf/Platform.h | grep ENABLE_DASHBOARD_SUPPORT | cut -d' ' -f3), 1)
-    ENABLE_DASHBOARD_SUPPORT = 1
-else
-    ENABLE_DASHBOARD_SUPPORT = 0
-endif
-
-else
-
-ENABLE_DASHBOARD_SUPPORT = 1
-
-endif
-
 # CSS property names and value keywords
 
 WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
@@ -419,7 +402,7 @@ ifeq ($(findstring ENABLE_SVG,$(FEATURE_DEFINES)), ENABLE_SVG)
     WEBCORE_CSS_VALUE_KEYWORDS := $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/SVGCSSValueKeywords.in
 endif
 
-ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)
+ifeq ($(findstring ENABLE_DASHBOARD_SUPPORT,$(FEATURE_DEFINES)), ENABLE_DASHBOARD_SUPPORT)
     WEBCORE_CSS_PROPERTY_NAMES := $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/DashboardSupportCSSPropertyNames.in
 endif
 
@@ -648,7 +631,7 @@ ifeq ($(shell gcc -E -P -dM -F $(BUILT_PRODUCTS_DIR) $(FRAMEWORK_FLAGS) WebCore/
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.NPAPI.exp
 endif
 
-ifeq ($(ENABLE_DASHBOARD_SUPPORT), 1)
+ifeq ($(findstring ENABLE_DASHBOARD_SUPPORT,$(FEATURE_DEFINES)), ENABLE_DASHBOARD_SUPPORT)
     WEBCORE_EXPORT_DEPENDENCIES := $(WEBCORE_EXPORT_DEPENDENCIES) WebCore.DashboardSupport.exp
 endif
 
