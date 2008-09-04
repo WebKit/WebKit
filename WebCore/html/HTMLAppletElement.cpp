@@ -135,7 +135,6 @@ RenderObject* HTMLAppletElement::createRenderer(RenderArena* arena, RenderStyle*
     return RenderObject::createObject(this, style);
 }
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
 RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
 {
     Settings* settings = document()->settings();
@@ -148,7 +147,6 @@ RenderWidget* HTMLAppletElement::renderWidgetForJSBindings() const
 
     return applet;
 }
-#endif
 
 void HTMLAppletElement::finishParsingChildren()
 {

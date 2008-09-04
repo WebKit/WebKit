@@ -39,9 +39,6 @@
 #include "ScriptController.h"
 #include "Text.h"
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
-#include "runtime.h"
-#endif
 
 namespace WebCore {
 
@@ -60,7 +57,6 @@ HTMLObjectElement::~HTMLObjectElement()
 {
 }
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
 RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
 {
     RenderWidget* renderWidget = (renderer() && renderer()->isWidget()) ? static_cast<RenderWidget*>(renderer()) : 0;
@@ -70,7 +66,6 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings() const
     }
     return renderWidget;
 }
-#endif
 
 void HTMLObjectElement::parseMappedAttribute(MappedAttribute *attr)
 {

@@ -26,7 +26,6 @@
 #include "StringBuffer.h"
 #include "TextEncoding.h"
 #include <kjs/dtoa.h>
-#include <kjs/identifier.h>
 #include <limits>
 #include <stdarg.h>
 #include <wtf/ASCIICType.h>
@@ -35,8 +34,10 @@
 #include <wtf/unicode/Unicode.h>
 #include <wtf/unicode/UTF8.h>
 
+#if USE(JSC)
 using KJS::Identifier;
 using KJS::UString;
+#endif
 
 using namespace WTF;
 using namespace WTF::Unicode;
@@ -608,6 +609,7 @@ String String::fromUTF8(const char* string)
     return UTF8Encoding().decode(string, strlen(string));
 }
 
+#if USE(JSC)
 String::String(const Identifier& str)
 {
     if (str.isNull())
@@ -621,6 +623,7 @@ String::String(const UString& str)
         return;
     m_impl = StringImpl::create(str.data(), str.size());
 }
+#endif
 
 String::operator UString() const
 {

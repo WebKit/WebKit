@@ -22,7 +22,6 @@
 #ifndef StringImpl_h
 #define StringImpl_h
 
-#include <kjs/identifier.h>
 #include <limits.h>
 #include <wtf/ASCIICType.h>
 #include <wtf/Forward.h>

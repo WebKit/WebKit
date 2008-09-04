@@ -52,9 +52,7 @@ public:
     virtual void updateWidget();
     void setNeedWidgetUpdate(bool needWidgetUpdate) { m_needWidgetUpdate = needWidgetUpdate; }
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
     virtual RenderWidget* renderWidgetForJSBindings() const;
-#endif
 
     String src() const;
     void setSrc(const String&);

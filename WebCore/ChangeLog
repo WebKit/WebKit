@@ -1,3 +1,32 @@
+2008-09-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20620
+
+        Add #if USE(JSC) around KJS dependencies
+        Remove !USE(JAVASCRIPTCORE_BINDINGS) support for 3 reasons:
+        1. Most platforms have it on anyway
+        2. V8 is going to want to share some of that code
+        3. Those platforms which want it off, should have a separate file instead of an #ifdef in our .cpp
+
+        * bindings/js/JSPluginElementFunctions.cpp: remove !USE(JAVASCRIPTCORE_BINDINGS) support
+        * config.h: change JAVASCRIPTCORE_BINDINGS to JSC and add USE(V8)
+        * html/HTMLAppletElement.cpp: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLAppletElement.h: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLEmbedElement.cpp: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLEmbedElement.h: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLObjectElement.cpp: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLObjectElement.h: remove USE(JAVASCRIPTCORE_BINDINGS) wrappers
+        * html/HTMLPlugInElement.cpp: replace USE(JAVASCRIPTCORE_BINDINGS) with USE(JSC) where needed
+        * html/HTMLPlugInElement.h: replace USE(JAVASCRIPTCORE_BINDINGS) with USE(JSC) where needed
+        * platform/text/AtomicString.cpp: add USE(JSC)
+        * platform/text/AtomicString.h: add USE(JSC)
+        * platform/text/PlatformString.h: add USE(JSC)
+        * platform/text/String.cpp: add USE(JSC)
+        * platform/text/StringImpl.cpp: add USE(JSC)
+        * platform/text/StringImpl.h: add USE(JSC)
+
 2008-09-03  Dean McNamee  <deanm@chromium.org>
 
         Reviewed by Darin Adler.

@@ -35,15 +35,11 @@
 #include "TextBreakIterator.h"
 #include "TextEncoding.h"
 #include <kjs/dtoa.h>
-#include <kjs/identifier.h>
 #include <wtf/Assertions.h>
 #include <wtf/unicode/Unicode.h>
 
 using namespace WTF;
 using namespace Unicode;
-
-using KJS::Identifier;
-using KJS::UString;
 
 namespace WebCore {
 

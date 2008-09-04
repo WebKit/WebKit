@@ -20,8 +20,6 @@
 #include "config.h"
 #include "JSPluginElementFunctions.h"
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
-
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTMLDocument.h"
@@ -32,40 +30,9 @@
 #include "runtime.h"
 #include "runtime_object.h"
 
-#endif
-
 using namespace KJS;
 
 namespace WebCore {
-
-#if !USE(JAVASCRIPTCORE_BINDINGS)
-
-JSValue* runtimeObjectGetter(ExecState*, const Identifier&, const PropertySlot&)
-{
-    return jsUndefined();
-}
-
-JSValue* runtimeObjectPropertyGetter(ExecState*, const Identifier&, const PropertySlot&)
-{
-    return jsUndefined();
-}
-
-bool runtimeObjectCustomGetOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&, JSHTMLElement*)
-{
-    return false;
-}
-
-bool runtimeObjectCustomPut(ExecState*, const Identifier&, JSValue*, HTMLElement*)
-{
-    return false;
-}
-
-CallType runtimeObjectGetCallData(HTMLElement*, CallData&)
-{
-    return CallTypeNone;
-}
-
-#else
 
 using namespace Bindings;
 using namespace HTMLNames;
@@ -150,7 +117,5 @@ CallType runtimeObjectGetCallData(HTMLElement* element, CallData& callData)
     callData.native.function = callPlugin;
     return CallTypeHost;
 }
-
-#endif
 
 } // namespace WebCore

@@ -58,9 +58,7 @@ public:
 
     void renderFallbackContent();
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
     virtual RenderWidget* renderWidgetForJSBindings() const;
-#endif
 
     String archive() const;
     void setArchive(const String&);
