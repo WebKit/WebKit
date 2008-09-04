@@ -1,3 +1,9 @@
+2008-09-04  Eric Seidel  <eric@webkit.org>
+
+        Build fix only, no review.
+
+        * dom/XMLTokenizer.cpp: Fix the Chromium merge build by adding a missing header (the Mac files must include it somewhere).
+
 2008-09-04  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.

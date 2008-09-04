@@ -43,6 +43,7 @@
 #include "HTMLTokenizer.h"
 #include "ScriptController.h"
 #include "ScriptElement.h"
+#include "SecurityOrigin.h"
 #include "ProcessingInstruction.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
