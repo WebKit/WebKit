@@ -43,7 +43,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../wtf/unicode/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
+				PreprocessorDefinitions="__STD_C"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -106,7 +106,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../wtf/unicode/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
+				PreprocessorDefinitions="__STD_C"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -168,7 +168,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="&quot;$(WebKitOutputDir)\obj\JavaScriptCore\$(ConfigurationName)\DerivedSources\&quot;;../../;&quot;../../os-win32/&quot;;../../pcre/;../../kjs/;../../wtf/;../../wtf/unicode/;&quot;$(WebKitLibrariesDir)\include&quot;;&quot;$(WebKitLibrariesDir)\include\icu&quot;;../../../icu/include;../../bindings;../../bindings/c;../../bindings/jni;&quot;$(WebKitOutputDir)\include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;"
-				PreprocessorDefinitions="HAVE_CONFIG_H;__STD_C"
+				PreprocessorDefinitions="__STD_C"
 				ForcedIncludeFiles=""
 			/>
 			<Tool
@@ -323,11 +323,11 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\NotFound.h"
+			RelativePath="..\..\wtf\Noncopyable.h"
 			>
 		</File>
 		<File
-			RelativePath="..\..\wtf\Noncopyable.h"
+			RelativePath="..\..\wtf\NotFound.h"
 			>
 		</File>
 		<File
