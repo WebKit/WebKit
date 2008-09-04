@@ -6,7 +6,7 @@ m4_define([webkit_micro_version], [2])
 
 AC_INIT([WebKit],[webkit_major_version.webkit_minor_version.webkit_micro_version],[http://bugs.webkit.org/])
 
-AC_CONFIG_HEADERS([aconfig.h])
+AC_CONFIG_HEADERS([autotoolsconfig.h])
 
 WEBKIT_MAJOR_VERSION=webkit_major_version
 WEBKIT_MINOR_VERSION=webkit_minor_version
