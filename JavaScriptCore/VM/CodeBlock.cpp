@@ -177,12 +177,14 @@ static void printPutByIdOp(int location, Vector<Instruction>::const_iterator& it
 
 void CodeBlock::printStructureID(const char* name, const Instruction* vPC, int operand) const
 {
-    printf("  [%4d] %s: %s\n", vPC - instructions.begin(), name, pointerToSourceString(vPC[operand].u.structureID).UTF8String().c_str());
+    unsigned instructionOffset = vPC - instructions.begin();
+    printf("  [%4d] %s: %s\n", instructionOffset, name, pointerToSourceString(vPC[operand].u.structureID).UTF8String().c_str());
 }
 
 void CodeBlock::printStructureIDs(const Instruction* vPC) const
 {
     Machine* machine = globalData->machine;
+    unsigned instructionOffset = vPC - instructions.begin();
 
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id)) {
         printStructureID("get_by_id", vPC, 4);
@@ -193,11 +195,11 @@ void CodeBlock::printStructureIDs(const Instruction* vPC) const
         return;
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_proto)) {
-        printf("  [%4d] %s: %s, %s\n", vPC - instructions.begin(), "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
-        printf("  [%4d] %s: %s, %s\n", vPC - instructions.begin(), "get_by_id_chain", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureIDChain).UTF8String().c_str());
+        printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_chain", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureIDChain).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id)) {

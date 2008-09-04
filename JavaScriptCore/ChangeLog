@@ -1,3 +1,12 @@
+2008-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Fix the 64-bit build.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::printStructureID): Store the instruction offset into an unsigned local
+        to avoid a warning related to format specifiers.
+        (KJS::CodeBlock::printStructureIDs): Ditto.
+
 2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Oliver Hunt.
