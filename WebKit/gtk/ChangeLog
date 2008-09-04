@@ -1,3 +1,10 @@
+2008-09-03  Alp Toker  <alp@nuanti.com>
+
+        Build fix following r36073. Include config.h where necessary.
+
+        * WebCoreSupport/PasteboardHelperGtk.cpp:
+        * webkit/webkitversion.cpp:
+
 2008-09-01  Alp Toker  <alp@nuanti.com>
 
         Reviewed by Eric Seidel.

@@ -16,9 +16,10 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "Frame.h"
+#include "config.h"
 #include "PasteboardHelperGtk.h"
 
+#include "Frame.h"
 #include "webkitwebframe.h"
 #include "webkitwebview.h"
 #include "webkitprivate.h"
