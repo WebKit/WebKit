@@ -507,9 +507,9 @@ public:
     /* This function performs a layout only if one is needed. */
     void layoutIfNeeded() { if (needsLayout()) layout(); }
 
-    // Called when a positioned object moves but doesn't change size.  A simplified layout is done
-    // that just updates the object's position.
-    virtual void layoutDoingPositionedMovementOnly() {};
+    // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted
+    // that just updates the object's position. If the size does change, the object remains dirty.
+    virtual void tryLayoutDoingPositionedMovementOnly() { }
     
     // used for element state updates that cannot be fixed with a
     // repaint and do not need a relayout

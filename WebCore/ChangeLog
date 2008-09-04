@@ -1,3 +1,28 @@
+2008-09-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=19717
+          <rdar://problem/6026832> REGRESSION (r31876): menu items render horizontally at the Economist
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutOnlyPositionedObjects): In the
+        positioned movement only case, call
+        tryLayoutDoingPositionedMovementOnly() and fall back on doing a full
+        layout if that fails.
+        (WebCore::RenderBlock::layoutPositionedObjects): Ditto.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::tryLayoutDoingPositionedMovementOnly): Renamed
+        layoutDoingPositionedMovementOnly to this, and made this function
+        check if the width changed. If it did, return, leaving the object
+        dirty. The caller can then call layout(). The width can change even
+        in the "positioned movement only" case if the object is shrink-to-fit
+        and the available width constraint is met. (This was the case in the
+        bug).
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::tryLayoutDoingPositionedMovementOnly):
+        Renamed layoutDoingPositionedMovementOnly() to this.
+
 2008-09-03  Eric Seidel  <eric@webkit.org>
 
         No review, build fix only.

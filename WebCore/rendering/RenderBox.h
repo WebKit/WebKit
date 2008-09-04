@@ -159,8 +159,13 @@ public:
 
     // Called when a positioned object moves but doesn't change size.  A simplified layout is done
     // that just updates the object's position.
-    virtual void layoutDoingPositionedMovementOnly() {
+    virtual void tryLayoutDoingPositionedMovementOnly()
+    {
+        int oldWidth = m_width;
         calcWidth();
+        // If we shrink to fit our width may have changed, so we still need full layout.
+        if (oldWidth != m_width)
+            return;
         calcHeight();
         setNeedsLayout(false);
     }
