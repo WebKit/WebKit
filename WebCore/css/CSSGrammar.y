@@ -1328,7 +1328,6 @@ term:
   | URI maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_URI; }
   | UNICODERANGE maybe_space { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_UNICODE_RANGE }
   | hexcolor { $$.id = 0; $$.string = $1; $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; }
-  | '#' IDENT maybe_space { $$.id = 0; $$.string = $2; $$.unit = CSSPrimitiveValue::CSS_STRING; } /* Handle error case: "color:#{predefined color name};" */
   | '#' maybe_space { $$.id = 0; $$.string = CSSParserString(); $$.unit = CSSPrimitiveValue::CSS_PARSER_HEXCOLOR; } /* Handle error case: "color: #;" */
   /* FIXME: according to the specs a function can have a unary_operator in front. I know no case where this makes sense */
   | function {
@@ -1407,7 +1406,9 @@ function:
  */
 hexcolor:
   HEX maybe_space { $$ = $1; }
+  | IDSEL maybe_space { $$ = $1; }
   ;
+
 
 /* error handling rules */
 

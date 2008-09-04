@@ -1,2 +1,0 @@
-This test verifies that "color" style attributes with a preceeding '#' are not interpreted as predefined colors. This text should not be red.
-rgb(0, 0, 0)
