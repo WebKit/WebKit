@@ -1,3 +1,9 @@
+2008-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Mac build fix.
+
+        * kjs/config.h: Only check the value of HAVE_CONFIG_H if it is defined.
+
 2008-09-04  Marco Barisione  <marco.barisione@collabora.co.uk>
 
         Reviewed by Eric Seidel.

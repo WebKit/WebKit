@@ -18,7 +18,7 @@
  *
  */
 
-#if HAVE_CONFIG_H
+#if defined(HAVE_CONFIG_H) && HAVE_CONFIG_H
 #include "autotoolsconfig.h"
 #endif
 
