@@ -2,7 +2,7 @@
 
         Reviewed by Mark Rowe.
 
-        Fix leak of TextMetrix due to over-ref as see on buildbot.
+        Fix leak of TextMetrics due to over-ref as see on buildbot.
 
         * html/TextMetrics.h: use adoptRef since RefCounted starts @ refcount 1 instead of 0 now.
 
