@@ -93,7 +93,7 @@ public:
     PreloadResult preloadResult() const { return m_preloadResult; }
     void setRequestedFromNetworkingLayer() { m_requestedFromNetworkingLayer = true; }
         
-    virtual void allReferencesRemoved() {};
+    virtual void allClientsRemoved() { };
 
     unsigned count() const { return m_clients.size(); }
 

@@ -1,3 +1,20 @@
+2008-09-04  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Dave Hyatt.
+
+        - rename CachedResource::allReferencesRemoved() to allClientsRemoved()
+
+        * loader/CachedFont.cpp:
+        (WebCore::CachedFont::allClientsRemoved):
+        * loader/CachedFont.h:
+        * loader/CachedImage.cpp:
+        (WebCore::CachedImage::allClientsRemoved):
+        * loader/CachedImage.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::removeClient):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::allClientsRemoved):
+
 2008-09-04  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r36071

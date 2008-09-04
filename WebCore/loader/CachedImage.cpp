@@ -84,7 +84,7 @@ void CachedImage::addClient(CachedResourceClient* c)
         c->notifyFinished(this);
 }
 
-void CachedImage::allReferencesRemoved()
+void CachedImage::allClientsRemoved()
 {
     if (m_image && !m_errorOccurred)
         m_image->resetAnimation();

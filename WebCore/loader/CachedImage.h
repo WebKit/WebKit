@@ -61,7 +61,7 @@ public:
 
     virtual void addClient(CachedResourceClient*);
     
-    virtual void allReferencesRemoved();
+    virtual void allClientsRemoved();
     virtual void destroyDecodedData();
 
     virtual void data(PassRefPtr<SharedBuffer> data, bool allDataReceived);
