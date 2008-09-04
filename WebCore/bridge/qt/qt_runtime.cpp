@@ -807,9 +807,11 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         while (i != map.constEnd()) {
             QString s = i.key();
             JSValue* val = convertQVariantToValue(exec, root, i.value());
-            if (val)
-                ret->put(exec, Identifier(exec, (const UChar *)s.constData(), s.length()), val);
-            // ### error case?
+            if (val) {
+                PutPropertySlot slot;
+                ret->put(exec, Identifier(exec, (const UChar *)s.constData(), s.length()), val, slot);
+                // ### error case?
+            }
             ++i;
         }
 
@@ -1647,8 +1649,9 @@ void QtConnectionObject::execute(void **argv)
                         JSFunction* fimp = static_cast<JSFunction*>(m_funcObject.get());
 
                         JSObject* qt_sender = Instance::createRuntimeObject(exec, QtInstance::create(sender(), ro));
-                        JSObject* wrapper = new (exec) JSObject();
-                        wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender);
+                        JSObject* wrapper = new (exec) JSObject(exec->globalData().nullProtoStructureID);
+                        PutPropertySlot slot;
+                        wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);
                         ScopeChain oldsc = fimp->scope();
                         ScopeChain sc = oldsc;
                         sc.push(wrapper);

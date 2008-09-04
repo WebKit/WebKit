@@ -331,6 +331,7 @@ IDL_BINDINGS += \
     html/HTMLTitleElement.idl \
     html/HTMLUListElement.idl \
     html/ImageData.idl \
+    html/TextMetrics.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/DOMSelection.idl \

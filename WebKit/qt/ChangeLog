@@ -1,5 +1,14 @@
 2008-09-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Reviewed by Simon
+
+        Fix the QtWebKit build to match changes in r36016
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::addToJavaScriptWindowObject):
+
+2008-09-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon.
 
         Re-enable support for user stylesheets in QtWebKit

@@ -32,6 +32,7 @@
 #include "FrameView.h"
 #include "IconDatabase.h"
 #include "Page.h"
+#include "PutPropertySlot.h"
 #include "ResourceRequest.h"
 #include "RenderView.h"
 #include "SelectionController.h"
@@ -224,7 +225,8 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
       KJS::JSObject *runtimeObject =
         KJS::Bindings::Instance::createRuntimeObject(exec, KJS::Bindings::QtInstance::create(object, root));
 
-      window->put(exec, KJS::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject);
+      KJS::PutPropertySlot slot;
+      window->put(exec, KJS::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
 }
 
 /*!

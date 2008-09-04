@@ -1,3 +1,11 @@
+2008-09-04  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix the QtWebKit build to match changes in r36016
+
+        * JavaScriptCore.pri:
+
 2008-09-04  Mark Rowe  <mrowe@apple.com>
 
         Fix the 64-bit build.
