@@ -32,7 +32,7 @@ namespace WebCore {
 
 class TextMetrics : public RefCounted<TextMetrics> {
 public:
-    static PassRefPtr<TextMetrics> create() { return new TextMetrics(); }
+    static PassRefPtr<TextMetrics> create() { return adoptRef(new TextMetrics); }
 
     unsigned width() const { return m_width; }
     void setWidth(float w) { m_width = w; }
