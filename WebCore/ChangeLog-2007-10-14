@@ -8822,7 +8822,7 @@
         wrong answer when the start is table/0 and the current is the first position
         inside the content of the table.
 
-2007-09-04  Marvin Decker  <marv.decker@gmail.com>
+2007-09-04  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Maciej Stachowiak.
 
@@ -14086,7 +14086,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * loader/PluginDocument.cpp:
         (WebCore::PluginTokenizer::writeRawData):
 
-2007-07-25  Marvin Decker  <marv.decker@gmail.com>
+2007-07-25  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Maciej, Darin.
 
@@ -20972,7 +20972,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
 
         * rendering/RenderObject.h:
 
-2007-06-26  MorganL  <morganl.webkit@yahoo.com>
+2007-06-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej.
 
@@ -33881,7 +33881,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * bindings/objc/DOM.mm:
         (-[DOMElement _windowClipRect]):
 
-2007-06-05  MorganL  <morganl.webkit@yahoo.com>
+2007-06-05  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Dave Hyatt.
 
@@ -40131,7 +40131,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
 
 2007-05-07  David Hyatt  <hyatt@apple.com>
 
-        Add some comments to the glyph/font code (patch from MarvinD, tweaked by
+        Add some comments to the glyph/font code (patch from Brett Wilson, tweaked by
         me to correct a few bits and to make it forward-compatible with the work
         going on in 3315.
 
@@ -43516,7 +43516,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::CSSStyleSelector::~CSSStyleSelector):
         * css/cssstyleselector.h: Made m_userSheet a RefPtr.
 
-2007-04-21  MorganL  <morganl.webkit@yahoo.com>
+2007-04-21  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Adam.
 
@@ -43567,7 +43567,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::RenderObject::verticalPositionHint):
         (WebCore::RenderObject::firstLineStyle):
 
-2007-04-20  Peter Kasting  <pkasting@google.com>
+2007-04-20  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Oliver.
 
@@ -44338,7 +44338,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * css/html4.css: Added white-space declaration for select[size="0"] and
         select[size="1"]. Added border-radius declaration for select.
 
-2007-04-11  MorganL  <morganl.webkit@yahoo.com>
+2007-04-11  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej.
 
@@ -51182,7 +51182,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::RenderText::absoluteClippedOverflowRect):
         * rendering/RenderText.h:
 
-2007-03-06  Ian Eng <ian.eng.webkit@gmail.com>
+2007-03-06  Feng Qian  <feng@chromium.org>
 
         Reviewed by Maciej.
 
@@ -52242,7 +52242,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * rendering/RenderView.cpp:
         (WebCore::RenderView::RenderView):
 
-2007-02-27  Dex Deacon  <occupant4@gmail.com>
+2007-02-27  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin.
 
@@ -53458,7 +53458,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::ResourceHandleManager::setupPUT):
         (WebCore::ResourceHandleManager::setupPOST):
 
-2007-02-22  Ian Eng  <ian.eng.webkit@gmail.com>
+2007-02-22  Feng Qian  <feng@chromium.org>
 
         Reviewed by Maciej.
 
@@ -56115,7 +56115,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::ResourceHandle::releaseDelegate):
         If there's a proxy, nil out its delegate too.
 
-2007-02-13  Dex Deacon  <occupant4@gmail.com>
+2007-02-13  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin.
 
@@ -56785,7 +56785,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
 
 2007-02-10  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by me, patch from Ian Eng (cleaned up by me some).
+        Reviewed by me, patch from Feng Qian (cleaned up by me some).
 
         - fixed <rdar://problem/4988091> objects attached to Window not cleared (memory leak)
         
@@ -60245,7 +60245,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         non-obvious side-effect of setting the focused frame.
         * WebCore.xcodeproj/project.pbxproj: Version wars.
 
-2007-01-27  Don Gibson  <dgibson77@gmail.com>
+2007-01-27  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Maciej.
 
@@ -60537,7 +60537,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
 
         * page/qt/EventHandlerQt.cpp:
 
-2007-01-26  Dex Deacon  <occupant4@gmail.com>
+2007-01-26  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Hyatt.
 
@@ -60761,7 +60761,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * platform/KURL.cpp:
         (WebCore::KURL::init): Make the URL invalid if it's relative, but has an opaque or empty base.
 
-2007-01-26  Dex Deacon  <occupant4@gmail.com>
+2007-01-26  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin.
 
@@ -66200,7 +66200,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * loader/qt/DocumentLoaderQt.cpp:
         (WebCore::DocumentLoader::getResponseModifiedHeader):
 
-2007-01-10  Kirby White  <KWhiteRight@gmail.com>
+2007-01-10  Pam Greene  <pam@chromium.org>
 
         Reviewed by Darin.
 
@@ -66990,7 +66990,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         * xml/XPathParser.cpp:
         (WebCore::XPath::charCat):
 
-2007-01-09  Dex Deacon  <occupant4@gmail.com>
+2007-01-09  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin.
 
@@ -69463,7 +69463,7 @@ a2007-08-31  Darin Adler  <darin@apple.com>
         (WebCore::contextMenuItemTagRightToLeft):
             Added missing stubs.
 
-2007-01-04  Don Gibson  <dgibson77@gmail.com>
+2007-01-04  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Alexey.
 

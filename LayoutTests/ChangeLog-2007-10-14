@@ -26971,7 +26971,7 @@ t: 2007-03-15  Mitz Pettel  <mitz@webkit.org>
         * fast/repaint/overflow-into-content-expected.txt: Added.
         * fast/repaint/overflow-into-content.html: Added.
 
-2007-03-06  Ian Eng <ian.eng.webkit@gmail.com>
+2007-03-06  Feng Qian  <feng@chromium.org>
 
         Reviewed by Maciej.
 
@@ -27769,7 +27769,7 @@ t: 2007-03-15  Mitz Pettel  <mitz@webkit.org>
         * fast/events/selectstart-during-autoscroll-expected.txt: Added.
         * fast/events/selectstart-during-autoscroll.html: Added.
 
-2007-02-22  Ian Eng  <ian.eng.webkit@gmail.com>
+2007-02-22  Feng Qian  <feng@chromium.org>
 
         Reviewed by Maciej.
 
@@ -28947,7 +28947,7 @@ t: 2007-03-15  Mitz Pettel  <mitz@webkit.org>
 
 2007-02-10  Maciej Stachowiak  <mjs@apple.com>
 
-        Regression not reviewed, based loosely on test case from Ian Eng.
+        Regression not reviewed, based loosely on test case from Feng Qian.
 
         - test case for <rdar://problem/4988091> objects attached to Window not cleared (memory leak)
         
@@ -31919,7 +31919,7 @@ tract()
         * svg/custom/feComponentTransfer-Linear-expected.txt:
         * svg/custom/feComponentTransfer-Table-expected.txt:
 
-2007-01-10  Kirby White  <KWhiteRight@gmail.com>
+2007-01-10  Pam Greene  <pam@chromium.org>
 
         Reviewed by Darin.
 
@@ -35367,7 +35367,7 @@ tract()
         * fast/images/animated-gif-with-offsets.html: Added.
         * fast/images/resources/animated-gif-with-offsets.gif: Added.
 
-2006-12-18  Kirby White  <KWhiteRight@gmail.com>
+2006-12-18  Pam Greene  <pam@chromium.org>
 
         Reviewed by Darin.
 
@@ -36335,7 +36335,7 @@ tract()
         * http/tests/xmlhttprequest/abort-crash.html: Added.
         * http/tests/xmlhttprequest/hello-world.cgi: Added.
 
-2006-12-07  Kirby White  <KWhiteRight@gmail.com>
+2006-12-07  Pam Greene  <pam@chromium.org>
 
         Reviewed by Adele.
 
@@ -36393,7 +36393,7 @@ tract()
         * svg/custom/getBBox-js-expected.txt: Added.
         * svg/custom/getBBox-js.svg: Added.
 
-2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+2006-12-05  Pam Greene  <pam@chromium.org>
 
         Reviewed and landed by Alexey.
 

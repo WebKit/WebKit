@@ -9492,7 +9492,7 @@
         * loader/DocLoader.cpp:
         (WebCore::DocLoader::requestResource):
 
-2008-06-21  Marvin Decker  <marv.decker@gmail.com>
+2008-06-21  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Dave Hyatt.
 
@@ -26636,7 +26636,7 @@ element is when the element reports itself to the screen reader. So all of these
         * xml/XMLHttpRequest.cpp:
         (WebCore::isSafeRequestHeader):
 
-2008-04-22  Feng Qian  <ian.eng.webkit@gmail.com>
+2008-04-22  Feng Qian  <feng@chromium.org>
 
         Reviewed by Geoff Garen.
 
@@ -28487,7 +28487,7 @@ element is when the element reports itself to the screen reader. So all of these
         * loader/appcache/ApplicationCacheGroup.h:
         (WebCore::ApplicationCacheGroup::finishedLoadingMainResource):
 
-2008-04-21  MorganL  <morganl.webkit@yahoo.com>
+2008-04-21  Darin Fisher  <darin@chromium.org>
 
         Reviewed by eseidel.  Landed by eseidel.
 
@@ -40362,7 +40362,7 @@ element is when the element reports itself to the screen reader. So all of these
         will fail later with a different exception because it is not
         allowed to surround a partially selected non-text node.
 
-2008-03-16  Marvin Decker  <marv.decker@gmail.com>
+2008-03-16  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin.
 
@@ -46091,7 +46091,7 @@ element is when the element reports itself to the screen reader. So all of these
         * rendering/break_lines.cpp: (WebCore::shouldBreakAfter): Added a workaround for an issue in
         Unicode 5.0 that is causing this.
 
-2008-02-26  MorganL  <morganl.webkit@yahoo.com>
+2008-02-26  Darin Fisher  <darin@chromium.org>
 
         Reviewed by eseidel.  Landed by eseidel
 
@@ -46164,7 +46164,7 @@ element is when the element reports itself to the screen reader. So all of these
         * WebCoreSources.bkl: Ditto.
         * platform/network/AuthenticationChallengeBase.h: Fix up argument types.
 
-2008-02-25  MorganL  <morganl.webkit@yahoo.com>
+2008-02-25  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin Adler.
 
@@ -49475,7 +49475,7 @@ element is when the element reports itself to the screen reader. So all of these
 
         Reviewed by Eric Seidel.
 
-        Based on work by Marvin Decker <marv.decker@gmail.com>
+        Based on work by Brett Wilson <brettw@chromium.org>
 
         - fix http://bugs.webkit.org/show_bug.cgi?id=16538
           KURL should use String instead of DeprecatedString
@@ -65694,7 +65694,7 @@ element is when the element reports itself to the screen reader. So all of these
         (WebCore::MediaPlayerPrivate::endPointTimerFired):
         * platform/graphics/gtk/MediaPlayerPrivateGStreamer.h:
 
-2007-12-12  MorganL  <morganl.webkit@yahoo.com>
+2007-12-12  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej.
 
@@ -66792,7 +66792,7 @@ element is when the element reports itself to the screen reader. So all of these
 
         * page/WindowFeatures.cpp: #include <wtf/MathExtras.h> for isnan.
 
-2007-12-10  Marvin Decker  <marv.decker@gmail.com>
+2007-12-10  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin.
 
@@ -71408,7 +71408,7 @@ element is when the element reports itself to the screen reader. So all of these
 
         * xml/XSLTUnicodeSort.cpp: Add another WTF_ATTRIBUTE_PRINTF.
 
-2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
+2007-11-26  Feng Qian <feng@chromium.org>
 
         Reviewed and touched up by Sam Weinig.
 

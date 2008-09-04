@@ -2881,7 +2881,7 @@
         * rendering/RenderListMarker.cpp:
         (WebCore::RenderListMarker::paint):
 
-2006-12-18  Dex Deacon  <occupant4@gmail.com>
+2006-12-18  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Maciej.
 
@@ -2894,7 +2894,7 @@
         (WebCore::GIFImageDecoder::initFrameBuffer):
         (WebCore::GIFImageDecoder::haveDecodedRow):
 
-2006-12-18  Kirby White  <KWhiteRight@gmail.com>
+2006-12-18  Pam Greene  <pam@chromium.org>
 
         Reviewed by Darin.
 
@@ -3914,7 +3914,7 @@
         (WebCore::ContextMenu::appendItem): Call releasePlatformDescription
         (WebCore::ContextMenu::insertItem): Same.
 
-2006-12-15  MorganL  <morganl.webkit@yahoo.com>
+2006-12-15  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Oliver.
 
@@ -4082,7 +4082,7 @@
         * loader/mac/ResourceLoaderMac.mm:
         (WebCore::ResourceLoader::load):
 
-2006-12-15  Marvin Decker  <marv.decker@gmail.com>
+2006-12-15  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin and Alexey.
 
@@ -5635,7 +5635,7 @@
         * html/HTMLElement.cpp:
         * html/HTMLElement.h:
 
-2006-12-10  MorganL  <morganl.webkit@yahoo.com>
+2006-12-10  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej.
 
@@ -6304,7 +6304,7 @@
 
         * config.h:
 
-2006-12-08  Don Gibson  <dgibson77@gmail.com>
+2006-12-08  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed and landed by Alexey.
 
@@ -6404,7 +6404,7 @@
         (WebCore::ContextMenuItem::platformSubMenu): Same.
         (WebCore::ContextMenuItem::setSubMenu): Same.
 
-2006-12-08  MorganL  <morganl.webkit@yahoo.com>
+2006-12-08  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin.
 
@@ -6577,7 +6577,7 @@
         * platform/PlatformKeyboardEvent.h:
         (WebCore::PlatformKeyboardEvent::setIsAutoRepeat):
 
-2006-12-07  Don Gibson  <dgibson77@gmail.com>
+2006-12-07  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Darin.
 
@@ -7066,7 +7066,7 @@
         * platform/ContextMenuItem.h:
         added ContextMenuItemTagIgnoreGrammar
         
-2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+2006-12-05  Pam Greene  <pam@chromium.org>
 
         Reviewed, tweaked and landed by Alexey.
 
@@ -7080,7 +7080,7 @@
         * platform/gdk/RenderThemeGdk.cpp: 
         (WebCore::RenderThemeGdk::determineState): Same fix.
 
-2006-12-05  Kirby White  <KWhiteRight@gmail.com>
+2006-12-05  Pam Greene  <pam@chromium.org>
 
         Reviewed and landed by Alexey.
 
@@ -7421,7 +7421,7 @@
         Fix obvious-in-retrospect copy and paste error -- call
         passMouseDownEventToWidget instead of passWheelEventToWidget.
 
-2006-12-04  Don Gibson  <dgibson77@gmail.com>
+2006-12-04  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed and landed by Alexey.
 
@@ -7468,7 +7468,7 @@
         (WebCore::FrameLoader::createFrame):
         (WebCore::FrameLoaderClientWin::setTitle):
 
-2006-12-04  Don Gibson  <dgibson77@gmail.com>
+2006-12-04  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Mitz.
 
@@ -7681,7 +7681,7 @@
         to find absolutely positioned descendant's current containing block to
         match the changes made to containingBlock() in the fix for bug 9347.
 
-2006-12-02  MorganL  <morganl.webkit@yahoo.com>
+2006-12-02  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin.
 
@@ -7970,7 +7970,7 @@
         now calls out to both findFirstMisspellingInRange and findFirstBadGrammarInRange separately
         instead of trying to interweave the spelling and grammar logic
 
-2006-12-01  Don Gibson  <dgibson77@gmail.com>
+2006-12-01  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Mitz.
 
@@ -9946,7 +9946,7 @@
         * loader/FrameLoader.cpp:
         (WebCore::FrameLoader::gotoAnchor):
 
-2006-11-18  Don Gibson  <dgibson77@gmail.com>
+2006-11-18  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Sam Weinig.
 
@@ -10415,7 +10415,7 @@
         (WebCore::createMarkup):
         Add null-checks for the frame, it might not exist for all documents.
         
-2006-11-16  Don Gibson  <dgibson77@gmail.com>
+2006-11-16  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed and landed by ap.
 
@@ -14054,7 +14054,7 @@
         * platform/graphics/svg/qt/SVGResourceMaskerQt.cpp:
         Added #ifdef SVG_SUPPORT to these files.
 
-2006-11-05  MorganL  <morganl.webkit@yahoo.com>
+2006-11-05  Darin Fisher  <darin@chromium.org>
 
         Reviewed & landed by Maciej.
 
@@ -14464,7 +14464,7 @@
 
 2006-11-04  Bertrand Guiheneuf <guiheneuf@gmail.com>
 
-        Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Don Gibson).
+        Reviewed by Maciej, tweaked and landed by Alexey (using a patch by Peter Kasting).
 
         http://bugs.webkit.org/show_bug.cgi?id=11433
         Fixes to get WebKit to run on Windows; implemented AffineTransformCairo.
@@ -15733,7 +15733,7 @@
         * rendering/SVGRenderTreeAsText.h: Added.
         (WebCore::operator<<):
 
-2006-10-31  MorganL  <morganl.webkit@yahoo.com>
+2006-10-31  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej.
 
@@ -24148,7 +24148,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * ksvg2/svg/SVGPathSegMovetoAbs.idl:
         * ksvg2/svg/SVGPathSegMovetoRel.idl:
 
-2006-10-09  Don Gibson  <dgibson77@gmail.com>
+2006-10-09  Peter Kasting  <pkasting@chromium.org>
 
         Unreviewed build fix.
 
@@ -25062,7 +25062,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::Frame::stopAutoscrollTimer):
         * page/Frame.h:
 
-2006-10-05  Don Gibson  <dgibson77@gmail.com>
+2006-10-05  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Eric.
 
@@ -25284,7 +25284,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::RenderLayer):
 
-2006-10-05  Don Gibson  <dgibson77@gmail.com>
+2006-10-05  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Darin, landed by Adam.
 
@@ -25294,7 +25294,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/win/ResourceLoaderWin.cpp:
         (WebCore::ResourceLoader::start):
 
-2006-10-05  Marvin Decker  <marv.decker@gmail.com>
+2006-10-05  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin.
 
@@ -25416,7 +25416,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderObject::NodeInfo::scrollbar):
         (WebCore::RenderObject::NodeInfo::setScrollbar):
 
-2006-10-05  Don Gibson  <dgibson77@gmail.com>
+2006-10-05  Peter Kasting  <pkasting@chromium.org>
 
         Reviewed by Adam.
 
@@ -25752,7 +25752,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         new StringImpl.
         * platform/StringImpl.h:
 
-2006-10-03  MorganL  <morganl.webkit@yahoo.com>
+2006-10-03  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin.
 
@@ -26622,7 +26622,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderView.cpp:
         (WebCore::RenderView::paintBoxDecorations):
 
-2006-09-29  MorganL  <morganl.webkit@yahoo.com>
+2006-09-29  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Adele.
 
@@ -26677,7 +26677,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderObject::NodeInfo::scrollbar):
         (WebCore::RenderObject::NodeInfo::setScrollbar):
 
-2006-09-29  MorganL  <morganl.webkit@yahoo.com>
+2006-09-29  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Adele.
 
@@ -27230,7 +27230,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/ScrollBar.h:
         (WebCore::ScrollBar::mouseMoved):
 
-2006-09-27  MorganL  <morganl.webkit@yahoo.com>
+2006-09-27  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Maciej and Adam, landed by Adam
 
@@ -28966,7 +28966,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::CSSStyleSelector::adjustRenderStyle): We stopped using
         userModify to implement document wide editability.
 
-2006-09-19  MorganL  <morlmor@yahoo.com>
+2006-09-19  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin and landed by Brady
 
@@ -29088,7 +29088,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::RenderBlock::clearFloatsIfNeeded):
         (WebCore::RenderBlock::handleBottomOfBlock):
 
-2006-09-18  MorganL  <morlmor@yahoo.com>
+2006-09-18  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady, landed by Brady
 
@@ -30264,7 +30264,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Prevent a crash by
         makeing sure that the 'beyondEnd' node is after the start node.
 
-2006-09-14  MorganL  <morlmor@yahoo.com>
+2006-09-14  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Brady.
 
@@ -30495,7 +30495,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (SVGNumberList::SVGNumberList):
         * ksvg2/svg/SVGNumberList.h: Ditto.
 
-2006-09-13  MorganL  <morlmor@yahoo.com>
+2006-09-13  Darin Fisher  <darin@chromium.org>
 
         Reviewed/landed by aroben.
 
@@ -30518,7 +30518,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (Icon::newIconForFile):
         (Icon::paint):
 
-2006-09-13  MorganL  <morlmor@yahoo.com>
+2006-09-13  Darin Fisher  <darin@chromium.org>
 
         Reviewed/landed by aroben.
 
@@ -31118,7 +31118,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         (WebCore::Frame::clear):
         * page/Frame.h:
 
-2006-09-12  MorganL  <morlmor@yahoo.com>
+2006-09-12  Darin Fisher  <darin@chromium.org>
 
         Reviewed/landed by aroben.
 
@@ -32112,7 +32112,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * dom/Range.idl:
         * dom/TreeWalker.idl:
 
-2006-09-07  MorganL  <morlmor@yahoo.com>
+2006-09-07  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin, landed by Adam.
 
@@ -32421,7 +32421,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * platform/mac/WebCoreSystemInterface.h: Fixes so this header stands alone and is
         compatible with all 4 of C, ObjC, C++, ObjC++.
 
-2006-09-05  MorganL  <morlmor@yahoocom>
+2006-09-05  Darin Fisher  <darin@chromium.org>
 
         Reviewed/landed by aroben.
 
@@ -34053,7 +34053,7 @@ t2006-10-29  Darin Adler  <darin@apple.com>
         * rendering/RenderLayer.cpp:
         (WebCore::RenderLayer::paintLayer):
 
-2006-09-01  MorganL  <morlmor@yahoo.com>
+2006-09-01  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin. Updated/landed by Adam.
 

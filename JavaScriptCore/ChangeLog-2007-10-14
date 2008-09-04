@@ -4220,7 +4220,7 @@
 
         * wtf/Assertions.h: Blind attempt at helping the Windows build.
 
-2007-03-08  MorganL  <morganl.webkit@yahoo.com>
+2007-03-08  Darin Fisher  <darin@chromium.org>
 
         Reviewed by Darin.
 
@@ -4229,7 +4229,7 @@
 
         * wtf/Assertions.h: make it possible to override CRASH.
 
-2007-03-07  Anrong Hu  <huanr@yahoo.com>
+2007-03-07  Huan Ren  <huanr@chromium.org>
 
         Reviewed by Maciej.
 
@@ -4650,7 +4650,7 @@
         * wtf/Vector.h:
         (WTF::operator==):
 
-2007-02-13  Dex Deacon  <occupant4@gmail.com>
+2007-02-13  Matt Perry  <mpcomplete@chromium.org>
 
         Reviewed by Darin.
 
@@ -6978,7 +6978,7 @@
 
         * wtf/Platform.h:
 
-2006-10-13  Marvin Decker  <marv.decker@gmail.com>
+2006-10-13  Brett Wilson  <brettw@google.com>
 
         Reviewed by Kevin McCullough.
 

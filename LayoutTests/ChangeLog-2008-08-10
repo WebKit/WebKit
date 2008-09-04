@@ -7385,7 +7385,7 @@ o2008-05-07  Geoffrey Garen  <ggaren@apple.com>
         * http/tests/xmlhttprequest/set-dangerous-headers-expected.txt:
         * http/tests/xmlhttprequest/set-dangerous-headers.html:
 
-2008-04-22  Feng Qian  <ian.eng.webkit@gmail.com>
+2008-04-22  Feng Qian  <feng@chromium.org>
 
         Reviewed by Geoff Garen.
 
@@ -9179,7 +9179,7 @@ o2008-03-26  Eric Seidel  <eric@webkit.org>
         * fast/dom/Range/acid3-surround-contents-expected.txt: Added.
         * fast/dom/Range/acid3-surround-contents.html: Added.
 
-2008-03-16  Marvin Decker  <marv.decker@gmail.com>
+2008-03-16  Brett Wilson  <brettw@chromium.org>
 
         Reviewed by Darin.
 
@@ -24393,7 +24393,7 @@ to skip list since it is still failing on tiger.
         * fast/css/disabled-author-styles.html: Added.
         * platform/mac/fast/css/disabled-author-styles-expected.txt: Added.
 
-2007-11-26  Feng Qian <ian.eng.webkit@gmail.com>
+2007-11-26  Feng Qian  <feng@chromium.org>
 
         Reviewed by Sam Weinig.
 
@@ -28914,7 +28914,7 @@ to skip list since it is still failing on tiger.
         * fast/js/number-toprecision.html: Added.
         * fast/js/resources/number-toprecision.js: Added.
 
-2007-10-14  Feng Qian  <ian.eng.webkit@gmail.com>
+2007-10-14  Feng Qian  <feng@chromium.org>
 
         Reviewed by Maciej.
 
