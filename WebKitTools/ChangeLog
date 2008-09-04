@@ -1,5 +1,15 @@
 2008-09-03  Mark Rowe  <mrowe@apple.com>
 
+        More Mac build fixes.
+
+        Set ENABLE_DASHBOARD_SUPPORT when building for Mac via build-webkit.
+        Also set ENABLE_CROSS_DOCUMENT_MESSAGING in order to match the
+        default configuration specified in the .xcconfig files.
+
+        * Scripts/build-webkit:
+
+2008-09-03  Mark Rowe  <mrowe@apple.com>
+
         Mac build fix.  Ensure that dashboard support is enabled.
 
         * DumpRenderTree/mac/Configurations/Base.xcconfig:
