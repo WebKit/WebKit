@@ -70,6 +70,11 @@
 
 #include <wtf/Platform.h>
 
+/* WebKit has no way to pull settings from WebCore/config.h for now */
+/* so we assume WebKit is always being compiled on top of JavaScriptCore */
+#define WTF_USE_JSC 1
+#define WTF_USE_V8 0
+
 #ifdef __cplusplus
 #include <wtf/FastMalloc.h>
 #endif

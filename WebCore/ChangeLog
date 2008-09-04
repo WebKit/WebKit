@@ -2,6 +2,15 @@
 
         Reviewed by Sam.
 
+        Clean up Platform.h and add PLATFORM(CHROMIUM), PLATFORM(SKIA) and USE(V8_BINDINGS)
+
+        * Configurations/WebCore.xcconfig: add missing ENABLE_*
+        * config.h: add rules for V8_BINDINGS
+
+2008-09-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
         https://bugs.webkit.org/show_bug.cgi?id=20620
 
         Add #if USE(JSC) around KJS dependencies

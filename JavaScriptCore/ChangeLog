@@ -1,3 +1,13 @@
+2008-09-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Clean up Platform.h and add PLATFORM(CHROMIUM), PLATFORM(SKIA) and USE(V8_BINDINGS)
+
+        * Configurations/JavaScriptCore.xcconfig: add missing ENABLE_*
+        * wtf/ASCIICType.h: include <wtf/Assertions.h> since it depends on it.
+        * wtf/Platform.h:
+
 2008-09-03  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Tim.

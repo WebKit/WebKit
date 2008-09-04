@@ -1,3 +1,12 @@
+2008-09-03  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Sam.
+
+        Clean up Platform.h and add PLATFORM(CHROMIUM), PLATFORM(SKIA) and USE(V8_BINDINGS)
+
+        * Configurations/WebKit.xcconfig:
+        * WebKitPrefix.h: add rules for V8_BINDINGS
+
 2008-09-01  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
