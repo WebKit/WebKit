@@ -1332,6 +1332,8 @@ webcore_sources += \
 	WebCore/loader/CachedResourceClient.h \
 	WebCore/loader/CachedResourceClientWalker.cpp \
 	WebCore/loader/CachedResourceClientWalker.h \
+	WebCore/loader/CachedResourceHandle.cpp \
+	WebCore/loader/CachedResourceHandle.h \
 	WebCore/loader/CachedScript.cpp \
 	WebCore/loader/CachedScript.h \
 	WebCore/loader/CachedXBLDocument.h \

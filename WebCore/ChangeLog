@@ -1,3 +1,9 @@
+2008-09-05  Dirk Schulze  <vbs85@gmx.de>
+
+        Gtk build fix
+
+        * GNUmakefile.am:
+
 2008-09-05  Antti Koivisto  <antti@apple.com>
 
         Another build fix.
