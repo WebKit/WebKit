@@ -45,14 +45,13 @@ PassRefPtr<ProfileGenerator> ProfileGenerator::create(const UString& title, Exec
 }
 
 ProfileGenerator::ProfileGenerator(const UString& title, ExecState* originatingExec, unsigned uid)
-    : m_originatingGlobalExec(originatingExec->lexicalGlobalObject()->globalExec())
-    , m_profileGroup(originatingExec->lexicalGlobalObject()->profileGroup())
-
+    : m_originatingGlobalExec(originatingExec ? originatingExec->lexicalGlobalObject()->globalExec() : 0)
+    , m_profileGroup(originatingExec ? originatingExec->lexicalGlobalObject()->profileGroup() : 0)
 {
     m_profile = Profile::create(title, uid);
     m_currentNode = m_head = m_profile->head();
-
-    addParentForConsoleStart(originatingExec);
+    if (originatingExec)
+        addParentForConsoleStart(originatingExec);
 }
 
 void ProfileGenerator::addParentForConsoleStart(ExecState* exec)
@@ -80,6 +79,9 @@ void ProfileGenerator::willExecute(const CallIdentifier& callIdentifier)
         JAVASCRIPTCORE_PROFILE_WILL_EXECUTE(m_profileGroup, const_cast<char*>(name.c_str()), const_cast<char*>(url.c_str()), callIdentifier.m_lineNumber);
     }
 
+    if (!m_originatingGlobalExec)
+        return;
+
     ASSERT_ARG(m_currentNode, m_currentNode);
     m_currentNode = m_currentNode->willExecute(callIdentifier);
 }
@@ -91,6 +93,9 @@ void ProfileGenerator::didExecute(const CallIdentifier& callIdentifier)
         CString url = callIdentifier.m_url.UTF8String();
         JAVASCRIPTCORE_PROFILE_DID_EXECUTE(m_profileGroup, const_cast<char*>(name.c_str()), const_cast<char*>(url.c_str()), callIdentifier.m_lineNumber);
     }
+
+    if (!m_originatingGlobalExec)
+        return;
 
     ASSERT_ARG(m_currentNode, m_currentNode);
     if (m_currentNode->callIdentifier() != callIdentifier) {

@@ -1,3 +1,21 @@
+2008-09-05  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Sam and Alexey.
+
+        Make the profiler work with a null exec state.  This will allow other
+        applications start the profiler to get DTrace probes going without
+        needing a WebView.
+
+        * ChangeLog:
+        * profiler/ProfileGenerator.cpp:
+        (KJS::ProfileGenerator::ProfileGenerator):
+        (KJS::ProfileGenerator::willExecute):
+        (KJS::ProfileGenerator::didExecute):
+        * profiler/Profiler.cpp:
+        (KJS::Profiler::startProfiling):
+        (KJS::Profiler::stopProfiling):
+        (KJS::dispatchFunctionToProfiles):
+
 2008-09-04  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Geoffrey Garen.
