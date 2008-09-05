@@ -51,13 +51,18 @@ using namespace WTF;
 using namespace WTF::Unicode;
 using namespace std;
 
-namespace KJS {
+// This can be tuned differently per platform by putting platform #ifs right here.
+// If you don't define this macro at all, then copyChars will just call directly
+// to memcpy.
+#define USTRING_COPY_CHARS_INLINE_CUTOFF 20
 
+namespace KJS {
+ 
 extern const double NaN;
 extern const double Inf;
 
-static inline const size_t overflowIndicator() { return std::numeric_limits<size_t>::max(); }
-static inline const size_t maxUChars() { return std::numeric_limits<size_t>::max() / sizeof(UChar); }
+static inline size_t overflowIndicator() { return std::numeric_limits<size_t>::max(); }
+static inline size_t maxUChars() { return std::numeric_limits<size_t>::max() / sizeof(UChar); }
 
 static inline UChar* allocChars(size_t length)
 {
@@ -73,6 +78,18 @@ static inline UChar* reallocChars(UChar* buffer, size_t length)
     if (length > maxUChars())
         return 0;
     return static_cast<UChar*>(tryFastRealloc(buffer, sizeof(UChar) * length));
+}
+
+static inline void copyChars(UChar* destination, const UChar* source, unsigned numCharacters)
+{
+#ifdef USTRING_COPY_CHARS_INLINE_CUTOFF
+    if (numCharacters <= USTRING_COPY_CHARS_INLINE_CUTOFF) {
+        for (unsigned i = 0; i < numCharacters; ++i)
+            destination[i] = source[i];
+        return;
+    }
+#endif
+    memcpy(destination, source, numCharacters * sizeof(UChar));
 }
 
 COMPILE_ASSERT(sizeof(UChar) == 2, uchar_is_2_bytes)
@@ -176,10 +193,8 @@ static char* statBuffer = 0; // Only used for debugging via UString::ascii().
 
 PassRefPtr<UString::Rep> UString::Rep::createCopying(const UChar* d, int l)
 {
-    int sizeInBytes = l * sizeof(UChar);
-    UChar* copyD = static_cast<UChar*>(fastMalloc(sizeInBytes));
-    memcpy(copyD, d, sizeInBytes);
-
+    UChar* copyD = static_cast<UChar*>(fastMalloc(l * sizeof(UChar)));
+    copyChars(copyD, d, l);
     return create(copyD, l);
 }
 
@@ -457,7 +472,7 @@ void UString::expandPreCapacity(int requiredPreCap)
             makeNull();
             return;
         }
-        memcpy(newBuf + delta, r->buf, (r->capacity + r->preCapacity) * sizeof(UChar));
+        copyChars(newBuf + delta, r->buf, r->capacity + r->preCapacity);
         fastFree(r->buf);
         r->buf = newBuf;
 
@@ -555,7 +570,7 @@ PassRefPtr<UString::Rep> concatenate(UString::Rep* a, UString::Rep* b)
         x.expandCapacity(aOffset + length);
         if (!a->data() || !x.data())
             return 0;
-        memcpy(a->data() + aSize, b->data(), bSize * sizeof(UChar));
+        copyChars(a->data() + aSize, b->data(), bSize);
         PassRefPtr<UString::Rep> result = UString::Rep::create(a, 0, length);
 
         a->checkConsistency();
@@ -565,7 +580,7 @@ PassRefPtr<UString::Rep> concatenate(UString::Rep* a, UString::Rep* b)
         return result;
     }
 
-    if (-bOffset == b->baseString->usedPreCapacity && bSize >= minShareSize  && 4 * bSize >= aSize) {
+    if (-bOffset == b->baseString->usedPreCapacity && bSize >= minShareSize && 4 * bSize >= aSize) {
         // - b reaches the beginning of its buffer so it qualifies for shared prepend
         // - also, it's at least a quarter the length of a - prepending to a much shorter
         //   string does more harm than good
@@ -573,7 +588,7 @@ PassRefPtr<UString::Rep> concatenate(UString::Rep* a, UString::Rep* b)
         y.expandPreCapacity(-bOffset + aSize);
         if (!b->data() || !y.data())
             return 0;
-        memcpy(b->data() - aSize, a->data(), aSize * sizeof(UChar));
+        copyChars(b->data() - aSize, a->data(), aSize);
         PassRefPtr<UString::Rep> result = UString::Rep::create(b, -aSize, length);
 
         a->checkConsistency();
@@ -588,8 +603,8 @@ PassRefPtr<UString::Rep> concatenate(UString::Rep* a, UString::Rep* b)
     UChar* d = allocChars(newCapacity);
     if (!d)
         return 0;
-    memcpy(d, a->data(), aSize * sizeof(UChar));
-    memcpy(d + aSize, b->data(), bSize * sizeof(UChar));
+    copyChars(d, a->data(), aSize);
+    copyChars(d + aSize, b->data(), bSize);
     PassRefPtr<UString::Rep> result = UString::Rep::create(d, length);
     result->capacity = newCapacity;
 
@@ -778,11 +793,11 @@ UString UString::spliceSubstringsWithSeparators(const Range* substringRanges, in
     int bufferPos = 0;
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
-            memcpy(buffer + bufferPos, data() + substringRanges[i].position, substringRanges[i].length * sizeof(UChar));
+            copyChars(buffer + bufferPos, data() + substringRanges[i].position, substringRanges[i].length);
             bufferPos += substringRanges[i].length;
         }
         if (i < separatorCount) {
-            memcpy(buffer + bufferPos, separators[i].data(), separators[i].size() * sizeof(UChar));
+            copyChars(buffer + bufferPos, separators[i].data(), separators[i].size());
             bufferPos += separators[i].size();
         }
     }
@@ -810,7 +825,7 @@ UString& UString::append(const UString &t)
         // this is direct and has refcount of 1 (so we can just alter it directly)
         expandCapacity(thisOffset + length);
         if (data()) {
-            memcpy(const_cast<UChar*>(data() + thisSize), t.data(), tSize * sizeof(UChar));
+            copyChars(m_rep->data() + thisSize, t.data(), tSize);
             m_rep->len = length;
             m_rep->_hash = 0;
         }
@@ -818,7 +833,7 @@ UString& UString::append(const UString &t)
         // this reaches the end of the buffer - extend it if it's long enough to append to
         expandCapacity(thisOffset + length);
         if (data()) {
-            memcpy(const_cast<UChar*>(data() + thisSize), t.data(), tSize * sizeof(UChar));
+            copyChars(m_rep->data() + thisSize, t.data(), tSize);
             m_rep = Rep::create(m_rep, 0, length);
         }
     } else {
@@ -828,8 +843,8 @@ UString& UString::append(const UString &t)
         if (!d)
             makeNull();
         else {
-            memcpy(d, data(), thisSize * sizeof(UChar));
-            memcpy(const_cast<UChar*>(d + thisSize), t.data(), tSize * sizeof(UChar));
+            copyChars(d, data(), thisSize);
+            copyChars(d + thisSize, t.data(), tSize);
             m_rep = Rep::create(d, length);
             m_rep->capacity = newCapacity;
         }
@@ -859,7 +874,7 @@ UString& UString::append(const UChar* tData, int tSize)
         // this is direct and has refcount of 1 (so we can just alter it directly)
         expandCapacity(thisOffset + length);
         if (data()) {
-            memcpy(const_cast<UChar*>(data() + thisSize), tData, tSize * sizeof(UChar));
+            copyChars(m_rep->data() + thisSize, tData, tSize);
             m_rep->len = length;
             m_rep->_hash = 0;
         }
@@ -867,7 +882,7 @@ UString& UString::append(const UChar* tData, int tSize)
         // this reaches the end of the buffer - extend it if it's long enough to append to
         expandCapacity(thisOffset + length);
         if (data()) {
-            memcpy(const_cast<UChar*>(data() + thisSize), tData, tSize * sizeof(UChar));
+            copyChars(m_rep->data() + thisSize, tData, tSize);
             m_rep = Rep::create(m_rep, 0, length);
         }
     } else {
@@ -877,8 +892,8 @@ UString& UString::append(const UChar* tData, int tSize)
         if (!d)
             makeNull();
         else {
-            memcpy(d, data(), thisSize * sizeof(UChar));
-            memcpy(const_cast<UChar*>(d + thisSize), tData, tSize * sizeof(UChar));
+            copyChars(d, data(), thisSize);
+            copyChars(d + thisSize, tData, tSize);
             m_rep = Rep::create(d, length);
             m_rep->capacity = newCapacity;
         }
@@ -907,7 +922,7 @@ UString& UString::append(const char* t)
     } else if (m_rep->baseIsSelf() && m_rep->rc == 1) {
         // this is direct and has refcount of 1 (so we can just alter it directly)
         expandCapacity(thisOffset + length);
-        UChar* d = const_cast<UChar*>(data());
+        UChar* d = m_rep->data();
         if (d) {
             for (int i = 0; i < tSize; ++i)
                 d[thisSize + i] = static_cast<unsigned char>(t[i]); // use unsigned char to zero-extend instead of sign-extend
@@ -917,7 +932,7 @@ UString& UString::append(const char* t)
     } else if (thisOffset + thisSize == usedCapacity() && thisSize >= minShareSize) {
         // this string reaches the end of the buffer - extend it
         expandCapacity(thisOffset + length);
-        UChar* d = const_cast<UChar*>(data());
+        UChar* d = m_rep->data();
         if (d) {
             for (int i = 0; i < tSize; ++i)
                 d[thisSize + i] = static_cast<unsigned char>(t[i]); // use unsigned char to zero-extend instead of sign-extend
@@ -930,7 +945,7 @@ UString& UString::append(const char* t)
         if (!d)
             makeNull();
         else {
-            memcpy(d, data(), thisSize * sizeof(UChar));
+            copyChars(d, data(), thisSize);
             for (int i = 0; i < tSize; ++i)
                 d[thisSize + i] = static_cast<unsigned char>(t[i]); // use unsigned char to zero-extend instead of sign-extend
             m_rep = Rep::create(d, length);
@@ -965,7 +980,7 @@ UString& UString::append(UChar c)
     } else if (m_rep->baseIsSelf() && m_rep->rc == 1) {
         // this is direct and has refcount of 1 (so we can just alter it directly)
         expandCapacity(thisOffset + length + 1);
-        UChar* d = const_cast<UChar*>(data());
+        UChar* d = m_rep->data();
         if (d) {
             d[length] = c;
             m_rep->len = length + 1;
@@ -974,7 +989,7 @@ UString& UString::append(UChar c)
     } else if (thisOffset + length == usedCapacity() && length >= minShareSize) {
         // this reaches the end of the string - extend it and share
         expandCapacity(thisOffset + length + 1);
-        UChar* d = const_cast<UChar*>(data());
+        UChar* d = m_rep->data();
         if (d) {
             d[length] = c;
             m_rep = Rep::create(m_rep, 0, length + 1);
@@ -986,7 +1001,7 @@ UString& UString::append(UChar c)
         if (!d)
             makeNull();
         else {
-            memcpy(d, data(), length * sizeof(UChar));
+            copyChars(d, data(), length);
             d[length] = c;
             m_rep = Rep::create(d, length + 1);
             m_rep->capacity = newCapacity;

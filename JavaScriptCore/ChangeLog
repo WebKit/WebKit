@@ -1,3 +1,32 @@
+2008-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20671
+          JavaScriptCore string manipulation spends too much time in memcpy
+
+        1.011x as fast on SunSpider overall
+        1.028x as fast on SunSpider string tests
+
+        For small strings, use a loop rather than calling memcpy. The loop can
+        be faster because there's no function call overhead, and because it can
+        assume the pointers are aligned instead of checking that. Currently the
+        threshold is set at 20 characters, based on some testing on one particular
+        computer. Later we can tune this for various platforms by setting
+        USTRING_COPY_CHARS_INLINE_CUTOFF appropriately, but it does no great harm
+        if not perfectly tuned.
+
+        * kjs/ustring.cpp:
+        (KJS::overflowIndicator): Removed bogus const.
+        (KJS::maxUChars): Ditto.
+        (KJS::copyChars): Added.
+        (KJS::UString::Rep::createCopying): Call copyChars instead of memcpy.
+        Also eliminated need for const_cast.
+        (KJS::UString::expandPreCapacity): Ditto.
+        (KJS::concatenate): Ditto.
+        (KJS::UString::spliceSubstringsWithSeparators): Ditto.
+        (KJS::UString::append): Ditto.
+
 2008-09-05  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Sam and Alexey.
