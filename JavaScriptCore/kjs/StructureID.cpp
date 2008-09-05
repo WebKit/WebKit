@@ -109,20 +109,22 @@ StructureID::~StructureID()
 
 StructureIDChain::StructureIDChain(StructureID* structureID)
 {
-    size_t size = 0;
+    size_t size = 1;
 
     StructureID* tmp = structureID;
     while (!tmp->prototype()->isNull()) {
         ++size;
         tmp = static_cast<JSCell*>(tmp->prototype())->structureID();
     }
-
+    
     m_vector.set(new RefPtr<StructureID>[size]);
 
-    for (size_t i = 0; i < size; ++i) {
+    size_t i;
+    for (i = 0; i < size - 1; ++i) {
         m_vector[i] = structureID;
         structureID = static_cast<JSObject*>(structureID->prototype())->structureID();
     }
+    m_vector[i] = structureID;
 }
 
 } // namespace KJS

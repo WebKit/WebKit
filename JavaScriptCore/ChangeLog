@@ -1,3 +1,16 @@
+2008-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoffrey Garen.
+        
+        Fixed an off-by-one error that would cause the StructureIDChain to
+        be one object too short.
+        
+        Can't construct a test case because other factors make this not crash
+        (yet!).
+
+        * kjs/StructureID.cpp:
+        (KJS::StructureIDChain::StructureIDChain):
+
 2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.
