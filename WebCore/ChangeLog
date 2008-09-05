@@ -1,3 +1,10 @@
+2008-09-05  Antti Koivisto  <antti@apple.com>
+
+        Qt build fix.
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::build):
+
 2008-09-05  Dirk Schulze  <vbs85@gmx.de>
 
         Gtk build fix

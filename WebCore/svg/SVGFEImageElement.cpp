@@ -98,7 +98,7 @@ bool SVGFEImageElement::build(FilterBuilder* builder)
     if(!m_cachedImage)
         return false;
 
-    builder->add(result(), FEImage::create(m_cachedImage));
+    builder->add(result(), FEImage::create(m_cachedImage.get()));
 
     return true;
 }
