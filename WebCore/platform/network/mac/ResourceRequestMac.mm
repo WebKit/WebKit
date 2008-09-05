@@ -83,7 +83,8 @@ void ResourceRequest::doUpdatePlatformRequest()
 #endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
-    [nsRequest setTimeoutInterval:timeoutInterval()];
+    if (timeoutInterval() != unspecifiedTimeoutInterval)
+        [nsRequest setTimeoutInterval:timeoutInterval()];
     [nsRequest setMainDocumentURL:mainDocumentURL()];
     if (!httpMethod().isEmpty())
         [nsRequest setHTTPMethod:httpMethod()];

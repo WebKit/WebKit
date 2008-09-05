@@ -1,3 +1,32 @@
+2008-09-04  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz
+
+        <rdar://problem/6180236> - Safari times out connections after 1 or 2 minutes
+
+        A 60-second default timeout was added in http://trac.webkit.org/changeset/17144 in an attempt 
+        to model default NSURLRequest behavior in a cross-platform manner.  
+
+        Sadly by always enforcing this 60 second timeout, WebCore was stomping over the wishes of any Webkit 
+        client that wished to enforce a much larger default timeout using NSURLRequest API.
+
+        Additionally, upon reviewing what all other browsers do, it seems apparent that "no limit" is desirable
+        behavior on the web and this restores previous Safari/WebKit behavior.
+
+        It would be easy to write a layout test for this, but to be effective it would have
+        to run for at least 61 seconds, which seems insane until will can parallelize run-webkit-tests
+
+        * manual-tests/timeout-test.html: Added.
+        * manual-tests/timeout-test.php: Added.
+
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):  Rename the constant to "unspecifiedTimeoutInterval"
+          and make it UINT_MAX so platforms that do set it have an effective "no timeout."  (Windows, for example)
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::ResourceRequest::doUpdatePlatformRequest):  If the timeout for this request is 
+          "unspecifiedTimeoutInterval", then don't bother setting the timeout using NSURLRequest API, allowing
+          WebKit applications to enforce their own default timeout.
+
 2008-09-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.
