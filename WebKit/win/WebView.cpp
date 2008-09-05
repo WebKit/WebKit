@@ -4103,6 +4103,11 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setOfflineWebApplicationCacheEnabled(enabled);
 
+    hr = prefsPrivate->shouldPaintNativeControls(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldPaintNativeControls(!!enabled);
+
     if (!m_closeWindowTimer.isActive())
         m_mainFrame->invalidate(); // FIXME
 

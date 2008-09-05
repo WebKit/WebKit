@@ -1,3 +1,19 @@
+2008-09-05  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for runtime switchability of the Aqua look and the native look on Windows.
+        Make RenderThemeWin compile by default even when USE(SAFARI_THEME) is set.
+
+        Reviewed by Adam Roben
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * page/Settings.cpp:
+        (WebCore::Settings::setShouldPaintNativeControls):
+        * page/Settings.h:
+        (WebCore::Settings::shouldPaintNativeControls):
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::theme):
+        * rendering/RenderThemeWin.cpp:
+
 2008-09-05  Antti Koivisto  <antti@apple.com>
 
         Qt build fix.

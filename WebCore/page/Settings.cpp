@@ -44,6 +44,10 @@ static void setNeedsReapplyStylesInAllFrames(Page* page)
         frame->setNeedsReapplyStyles();
 }
 
+#if USE(SAFARI_THEME)
+bool Settings::gShouldPaintNativeControls = false;
+#endif
+
 Settings::Settings(Page* page)
     : m_page(page)
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
@@ -377,5 +381,12 @@ void Settings::setEnforceCSSMIMETypeInStrictMode(bool enforceCSSMIMETypeInStrict
 {
     m_enforceCSSMIMETypeInStrictMode = enforceCSSMIMETypeInStrictMode;
 }
+
+#if USE(SAFARI_THEME)
+void Settings::setShouldPaintNativeControls(bool shouldPaintNativeControls)
+{
+    gShouldPaintNativeControls = shouldPaintNativeControls;
+}
+#endif
 
 } // namespace WebCore

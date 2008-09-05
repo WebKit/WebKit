@@ -1,3 +1,20 @@
+2008-09-05  Dave Hyatt  <hyatt@apple.com>
+
+        Add support for runtime switchability of the Aqua look and the native look on Windows.
+        Make RenderThemeWin compile by default even when USE(SAFARI_THEME) is set.
+
+        Reviewed by Adam Roben
+
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        (WebPreferences::shouldPaintNativeControls):
+        (WebPreferences::setShouldPaintNativeControls):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2008-09-04  Adam Roben  <aroben@apple.com>
 
         Make JavaScriptCoreGenerated build first instead of WTF

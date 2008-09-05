@@ -174,7 +174,13 @@ namespace WebCore {
         
         void setEnforceCSSMIMETypeInStrictMode(bool);
         bool enforceCSSMIMETypeInStrictMode() { return m_enforceCSSMIMETypeInStrictMode; }
-        
+ 
+#if USE(SAFARI_THEME)
+        // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
+        static void setShouldPaintNativeControls(bool);
+        static bool shouldPaintNativeControls() { return gShouldPaintNativeControls; }
+#endif
+
     private:
         Page* m_page;
         
@@ -222,6 +228,10 @@ namespace WebCore {
         bool m_shouldPaintCustomScrollbars : 1;
         bool m_zoomsTextOnly : 1;
         bool m_enforceCSSMIMETypeInStrictMode : 1;
+
+#if USE(SAFARI_THEME)
+        static bool gShouldPaintNativeControls;
+#endif
     };
 
 } // namespace WebCore

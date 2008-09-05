@@ -313,6 +313,12 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE setLocalStorageDatabasePath(
         /* [in] */ BSTR location);
+    
+    virtual HRESULT STDMETHODCALLTYPE setShouldPaintNativeControls( 
+    /* [in] */ BOOL shouldPaint);
+
+    virtual HRESULT STDMETHODCALLTYPE shouldPaintNativeControls( 
+    /* [retval][out] */ BOOL *shouldPaint);
 
     // WebPreferences
 
