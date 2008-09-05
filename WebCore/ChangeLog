@@ -1,5 +1,13 @@
 2008-09-05  Antti Koivisto  <antti@apple.com>
 
+        Build fixes.
+        
+        * WebCore.xcodeproj/project.pbxproj:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::cachedImage):
+
+2008-09-05  Antti Koivisto  <antti@apple.com>
+
         Reviewed by Darin.
 
         Most of the implementation for https://bugs.webkit.org/show_bug.cgi?id=17998
