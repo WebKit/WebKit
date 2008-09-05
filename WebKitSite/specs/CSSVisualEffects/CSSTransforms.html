@@ -462,8 +462,60 @@
         Chris Marrin (<a href="mailto:cmarrin@apple.com">cmarrin@apple.com</a>), <a href="http://www.apple.com/">Apple</a>
       </dd>
     </dl>
-    
+
     <h2>
+      Contents
+    </h2>
+    
+    <ul class="toc">
+      <li>
+        <a href="#introduction">1 Introduction</a>
+      </li>
+      <li>
+        <a href="#transform-property">2 The <span class="prop-name">'transform'</span> Property</a>
+      </li>
+      <li>
+        <a href="#transform-origin-property">3 The <span class="prop-name">'transform-origin'</span> Property</a>
+      </li>
+      <li>
+        <a href="#transform-style-property">4 The <span class="prop-name">'transform-style'</span> Property</a>
+      </li>
+      <li>
+        <a href="#perspective-property">5 The <span class="prop-name">'perspective'</span> Property</a>
+      </li>
+      <li>
+        <a href="#perspective-origin-property">6 The <span class="prop-name">'perspective-origin'</span> Property</a>
+      </li>
+      <li>
+        <a href="#backface-visibility-property">7 The <span class="prop-name">'backface-visibility'</span> Property</a>
+      </li>
+      <li>
+        <a href="#transform-functions">8 The Transformation Functions</a>
+      </li>
+      <li>
+        <a href="#transform-values">9 Transform Values and Lists</a>
+      </li>
+      <li>
+        <a href="#dom-interfaces">10 DOM Interfaces</a>
+        <ul class="toc">
+          <li>
+            <a href="#point-interface">10.1 Point</a>
+          </li>
+          <li>
+            <a href="#window-interface">10.2 Window</a>
+          </li>
+          <li>
+            <a href="#cssmatrix-interface">10.3 CSSMatrix</a>
+          </li>
+          <li>
+            <a href="#csstransformvalue-interface">10.4 CSSTransformValue</a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+    
+    
+    <h2 id="introduction">
       1 Introduction
     </h2>
     
@@ -553,7 +605,7 @@
       have to examine the current SVG transform and combine with it to set the
       correct transform.
     </div><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="transform-property">
       2 The <span class="prop-name">'transform'</span> Property
     </h2>
     <p>
@@ -633,7 +685,7 @@
         </tr>
       </tbody>
     </table><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="transform-origin-property">
       3 The <span class="prop-name">'transform-origin'</span> Property
     </h2>
     <p>
@@ -710,7 +762,7 @@
         </tr>
       </tbody>
     </table><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="transform-style-property">
       4 The <span class="prop-name">'transform-style'</span> Property
     </h2>
     <p>
@@ -807,7 +859,7 @@
     <div class="issue">
       Does transform-style: preserve-3d need to establish a stacking context and containing block like transform does?
     </div><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="perspective-property">
       5 The <span class="prop-name">'perspective'</span> Property
     </h2>
     <p>
@@ -891,7 +943,7 @@
         </tr>
       </tbody>
     </table><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="perspective-origin-property">
       6 The <span class="prop-name">'perspective-origin'</span> Property
     </h2>
     <p>
@@ -965,7 +1017,7 @@
         </tr>
       </tbody>
     </table><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="backface-visibility-property">
       7 The <span class="prop-name">'backface-visibility'</span> Property
     </h2>
     <p>
@@ -1046,19 +1098,14 @@
       8 The Transformation Functions
     </h2>
     <p>
-      The value of the <span class="prop-name">transform</span> property is a list of &lt;transform-functions&gt;, applied in the order provided. The individual transform functions are separated by whitespace. The following is a list of allowed transform functions. In this list the type &lt;translation-value&gt; is defined as a &lt;length&gt; or &lt;percentage&gt; value, and the &lt;angle&gt; type is defined as a &lt;number&gt; followed by a required angle unit identifier. Angle unit identifiers are:
+      The value of the <span class="prop-name">transform</span> property is a
+      list of &lt;transform-functions&gt;, applied in the order provided. The
+      individual transform functions are separated by whitespace. The
+      following is a list of allowed transform functions. In this list the
+      type &lt;translation-value&gt; is defined as a &lt;length&gt; or
+      &lt;percentage&gt; value, and the &lt;angle&gt; type is defined by <a
+      href="http://www.w3.org/TR/css3-values/">CSS Values and Units.</a>
     </p>
-    <ul>
-      <li>
-        <span class="prop-name">deg</span>: degrees
-      </li>
-      <li>
-        <span class="prop-name">grad</span>: grads
-      </li>
-      <li>
-        <span class="prop-name">rad</span>: radians
-      </li>
-    </ul>
     <dl>
       <dt>
         <span class="prop-value">matrix(&lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;, &lt;number&gt;)</span>
@@ -1178,10 +1225,15 @@
         specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewYDefined">skew transformation along the Y axis</a> by the given angle.
       </dd>
       <dt>
-        <span class="prop-value">skewZ(&lt;angle&gt;)</span>
+        <span class="prop-value">skew(&lt;angle&gt; [, &lt;angle&gt;])</span>
       </dt>
       <dd>
-        specifies a <a href="http://www.w3.org/TR/SVG/coords.html#SkewYDefined">skew transformation along the Z axis</a> by the given angle.
+        specifies a <a
+        href="http://www.w3.org/TR/SVG/coords.html#SkewXDefined">skew
+        transformation along the X and Y axes</a>. The first angle parameter
+        specifies the skew on the X axis. The second angle parameter specifies
+        the skew on the Y axis. If the second parameter is not given then a
+        value of 0 is used for the Y angle (ie. no skew on the Y axis).
       </dd>
       <dt>
         <span class="prop-value">perspective(&lt;number&gt;)</span>
@@ -1200,9 +1252,9 @@
       </dd>
     </dl>
     <div class="issue">
-      The 3d versions could be folded into the 2d primitives using extra optional arguments. It's really just a question of how user agents that can't do 3d should be handled.
+      The 3D versions could be folded into the 2d primitives using extra optional arguments. It's really just a question of how user agents that can't do 3D should be handled.
     </div><!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="transform-values">
       9 Transform Values and Lists
     </h2>
     <p>
@@ -1246,14 +1298,18 @@ div {
       </div>
     </div>
 <!-- ======================================================================================================= -->
-    <h2>
+    <h2 id="dom-interfaces">
       10 DOM Interfaces
     </h2>
     <p>
       This section describes the interfaces and functionality added to the DOM to support runtime access to the functionality described above.
     </p>
+
+    <h3 id="point-interface">
+      10.1 Point
+    </h3>
+
     <dl>
-      
       <dt>
         <b>Interface <i><a id="DOM-Point" name='DOM-Point'>Point</a></i></b>
       </dt>
@@ -1298,9 +1354,14 @@ interface Point {
 
         </dl>
       </dd> <!-- interface Point -->
+    </dl>
 
       <!-- ====================================================================== -->
-      
+    <h3 id="window-interface">
+      10.2 Window
+    </h3>
+
+    <dl>
       <dt>
         <b>Interface <i><a id = "DOM-Window" name='DOM-Window'>Window</a></i></b>
       </dt>
@@ -1429,9 +1490,15 @@ interface Window {
 
         </dl>
       </dd> <!-- Interface Window -->
+    </dl>
 
       <!-- ============================================================ -->
       
+    <h3 id="cssmatrix-interface">
+      10.3 CSSMatrix
+    </h3>
+    
+    <dl>
       <dt>
         <b>Interface <i><a id="DOM-CSSMatrix" name='DOM-CSSMatrix'>CSSMatrix</a></i></b>
       </dt>
@@ -1465,9 +1532,9 @@ interface CSSMatrix {
     attribute float m43;
     attribute float m44;
  
-    void        setMatrixValue(in DOMString string);
+    void        setMatrixValue(in DOMString string) raises(DOMException);
     CSSMatrix   multiply(in CSSMatrix secondMatrix);
-    CSSMatrix   inverse();
+    CSSMatrix   inverse() raises(DOMException);
     CSSMatrix   translate(in float x, in float y, in float z);
     CSSMatrix   scale(in float scaleX, in float scaleY, in float scaleZ);
     CSSMatrix   rotate(in float rotX, in float rotY, in float rotZ);
@@ -1522,7 +1589,18 @@ interface CSSMatrix {
                     <b>No Return Value</b>
                   </div>
                   <div>
-                    <b>No Exceptions</b>
+                    <b>Exceptions</b>
+                    <div class='returnvalue'>
+                      <dl>
+                        <dt>
+                          <code>NOT_SUPPORTED_ERROR</code>
+                        </dt>
+                        <dd>
+                          Thrown when the provided string can not be
+                          parsed into a CSSMatrix.
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div>
               </dd> <!-- setMatrixValue -->
@@ -1590,7 +1668,18 @@ interface CSSMatrix {
                     </div>
                   </div>
                   <div>
-                    <b>No Exceptions</b>
+                    <b>Exceptions</b>
+                    <div class='returnvalue'>
+                      <dl>
+                        <dt>
+                          <code>NOT_SUPPORTED_ERROR</code>
+                        </dt>
+                        <dd>
+                          Thrown when the CSSMatrix can not be
+                          inverted.
+                        </dd>
+                      </dl>
+                    </div>
                   </div>
                 </div><!-- ======================================================================================================= -->
               </dd> <!-- inverse() -->
@@ -1745,7 +1834,8 @@ interface CSSMatrix {
                   <div>
                     <b>No Exceptions</b>
                   </div>
-                </div><!-- ======================================================================================================= -->
+                </div>
+                <!-- ======================================================================================================= -->
               </dd> <!-- rotate() -->
               
               <!-- ===================================================== -->
@@ -1810,9 +1900,14 @@ interface CSSMatrix {
 
         </dl>
       </dd> <!-- Interface CSSMatrix -->
-
+    </dl>
       <!-- ============================================================ -->
 
+    <h3 id="csstransformvalue-interface">
+      10.4 CSSTransformValue
+    </h3>
+
+    <dl>
       <dt>
         <b>Interface <i><a id="DOM-CSSTransformValue" name='DOM-CSSTransformValue'>CSSTransformValue</a></i></b>
       </dt>
@@ -1830,30 +1925,35 @@ interface CSSMatrix {
             <div class='idl-code'>
               <pre>
 interface CSSTransformValue : CSSValueList {
-    // OperationTypes
-    const unsigned short CSS_UNKNOWN     = 0;
-    const unsigned short CSS_MATRIX      = 1;
-    const unsigned short CSS_MATRIX3D    = 2;
-    const unsigned short CSS_ROTATE      = 3;
-    const unsigned short CSS_ROTATE3D    = 4;
-    const unsigned short CSS_TRANSLATE   = 5;
-    const unsigned short CSS_TRANSLATE3D = 6;
-    const unsigned short CSS_SCALE       = 7;
-    const unsigned short CSS_SCALE3D     = 8;
+
+    // 2D OperationTypes
+    const unsigned short CSS_TRANSLATE   = 1;
+    const unsigned short CSS_TRANSLATEX  = 2;
+    const unsigned short CSS_TRANSLATEY  = 3;
+    const unsigned short CSS_ROTATE      = 4;
+    const unsigned short CSS_SCALE       = 5;
+    const unsigned short CSS_SCALEX      = 6;
+    const unsigned short CSS_SCALEY      = 7;
+    const unsigned short CSS_SKEW        = 8;
     const unsigned short CSS_SKEWX       = 9;
     const unsigned short CSS_SKEWY       = 10;
-    const unsigned short CSS_PERSPECTIVE = 11;
-    const unsigned short CSS_ROTATEX     = 12;
-    const unsigned short CSS_ROTATEY     = 13;
-    const unsigned short CSS_ROTATEZ     = 14;
-    const unsigned short CSS_TRANSLATEX  = 15;
-    const unsigned short CSS_TRANSLATEY  = 16;
-    const unsigned short CSS_TRANSLATEZ  = 17;
-    const unsigned short CSS_SCALEX      = 18;
-    const unsigned short CSS_SCALEY      = 29;
-    const unsigned short CSS_SCALEZ      = 20;
+    const unsigned short CSS_MATRIX      = 11;
+
+    // 3D OperationTypes
+    const unsigned short CSS_TRANSLATEZ  = 12;
+    const unsigned short CSS_TRANSLATE3D = 13;
+    const unsigned short CSS_ROTATEX     = 14;
+    const unsigned short CSS_ROTATEY     = 15;
+    const unsigned short CSS_ROTATEZ     = 16;
+    const unsigned short CSS_ROTATE3D    = 17;
+    const unsigned short CSS_SCALEZ      = 18;
+    const unsigned short CSS_SCALE3D     = 19;
+    const unsigned short CSS_PERSPECTIVE = 20;
+    const unsigned short CSS_MATRIX3D    = 21;
 
     attribute unsigned short operationType;
+    
+    CSSMatrix getCSSMatrix() raises(DOMException);
 };    
 </pre>
             </div>
@@ -1872,6 +1972,54 @@ interface CSSTransformValue : CSSValueList {
               </dd>
             </dl>
           </dd> <!-- Attributes -->
+          
+          <dt>
+            <b>Methods</b>
+          </dt>
+          <dd>
+            <dl>
+
+              <!-- ===================================================== -->
+              <dt>
+                <code class='method-name'><a id="DOM-CSSTransformValue-getCSSMatrix" name='DOM-CSSTransformValue-getCSSMatrix'>getCSSMatrix</a></code>
+              </dt>
+              <dd>
+                <div class='method'>
+                  The <code>getCSSMatrix</code> method returns
+                  a CSSMatrix object representing this transform.
+                  <div class='parameters'>
+                    <b>No Parameters</b>
+                  </div><!-- parameters -->
+                  <div class='return-value'>
+                    <b>Return Value</b>
+                    <div class='returnvalue'>
+                      <dl>
+                        <dt>
+                          <code>CSSMatrix</code>
+                        </dt>
+                        <dd>
+                          The result matrix.
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                  <div>
+                    <b>Exceptions</b>
+                    <div class='returnvalue'>
+                      <dl>
+                        <dt>
+                          <code>NOT_SUPPORTED_ERROR</code>
+                        </dt>
+                        <dd>
+                          Thrown when the CSSTranformValue can not be converted into a CSSMatrix, such as when the CSSTransformValue contains percentage units and is being called on an object with unknown dimensions.
+                        </dd>
+                      </dl>
+                    </div>
+                  </div>
+                </div>
+              </dd> <!-- setMatrixValue -->
+            </dl>
+          </dd> <!-- methods -->
 
         </dl>
       </dd> <!-- Interface CSSTransformValue -->

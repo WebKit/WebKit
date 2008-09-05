@@ -487,20 +487,49 @@
       2 Keyframes
     </h2>
     <p>
-      In a simple transition, since both the starting value and ending value are known, a single timing function and duration determine the intermediate values of the animating property. If finer control of the intermediate values
-      is required, keyframes can be used.
+      In a simple transition, since both the starting value and ending value
+      are known, a single timing function and duration determine the
+      intermediate values of the animating property. If finer control of the
+      intermediate values is required, keyframes can be used.
     </p>
     <p>
-      Keyframes are specified using a specialized CSS at-rule. A <span class="prop-name">@keyframes</span> rule consists of the keyword "@keyframes", followed by the name of the target transition (using a <span class="prop-name">'transition-name'</span>) or animation (using <span class="prop-name">'animation-name'</span>), followed by a set of style rules (delimited by curly braces).
+      Keyframes are specified using a specialized CSS at-rule. A <span
+      class="prop-name">@keyframes</span> rule consists of the keyword
+      "@keyframes", followed by an identifier giving a name for the animation
+      (which will be referenced using <span
+      class="prop-name">'animation-name'</span>), followed by a set of style
+      rules (delimited by curly braces).
     </p>
     <p>
-      The <i>keyframe selector</i> for a keyframe style rule consists of a comma-separated list of percentage values or the keywords 'from' or 'to'. The selector is used to specify the percentage along the duration of the animation or transition that the keyframe represents. The keyframe itself is specified by the block of property values declared on the selector. The keyword 'from' is equivalent to the value 0. The keyword 'to' is equivalent to the value 100%.
+      The <i>keyframe selector</i> for a keyframe style rule consists of a
+      comma-separated list of percentage values or the keywords 'from' or
+      'to'. The selector is used to specify the percentage along the duration
+      of the animation that the keyframe represents. The
+      keyframe itself is specified by the block of property values declared on
+      the selector. The keyword 'from' is equivalent to the value 0. The
+      keyword 'to' is equivalent to the value 100%. Note that the percentage
+      unit specifier must be used on percentage values. Therefore, "0" is an
+      invalid keyframe selector.
     </p>
     <p>
-      The <i>keyframe declaration</i> for a keyframe rule consists of properties and values. Properties that are not transitioning or animating are ignored in these rules, with the exception of <span class="prop-name">'transition-timing-function'</span> and <span class="prop-name">animation-timing-function'</span>.
+      Keyframes can be specified in any order. The selector determines 
+      the placement of the keyframe in the animation.
     </p>
     <p>
-      The @keyframes rule that is used by a transition or animation will be the last one encountered in sorted rules order that matches the name of the transition. <span class="prop-name">@keyframes</span> rules do not cascade; therefore a transition or animation will never derive keyframes from more than one <span class="prop-name">@keyframes</span> rule.
+      Every keyframe declaration must have a keyframe rule for 
+      0% or 100%, possibly defined using "from" or "to". A keyframe
+      declaration without these keyframe selectors is invalid and will not
+      be available for animation.
+    </p>
+    <p>
+      The <i>keyframe declaration</i> for a keyframe rule consists of
+      properties and values. Properties that are unable to be
+      animated are ignored in these rules, with the exception of <span
+      class="prop-name">animation-timing-function'</span>, the behavior 
+      of which is described below.
+    </p>
+    <p>
+      The @keyframes rule that is used by an animation will be the last one encountered in sorted rules order that matches the name of the animation. <span class="prop-name">@keyframes</span> rules do not cascade; therefore an animation will never derive keyframes from more than one <span class="prop-name">@keyframes</span> rule.
     </p>
     <p>
       To determine the set of keyframes, all of the values in selectors are sorted in increasing order by time. If there are any duplicates, then the last keyframe specified inside the <span class="prop-name">@keyframes</span> rule will be used to provide the keyframe information for that time. There is no cascading within a <span class="prop-name">@keyframes</span> rule if multiple keyframes specify the same keyframe selector values.
@@ -530,7 +559,7 @@
   
 }
   
-</pre>Four keyframes are specified for the transition or animation named "wobble". In the first keyframe, shown at the beginning of the animation cycle, the 'left' value of the animation is 100px. By 40% of the animation duration, 'left' value has animated to 150px. At 60% of the animation duration, the 'left' value has animated back to 75px. At the end of the animation cycle, the 'left' value has returned to 100px. The diagram below shows the state of the animation if it were given a duration of 10s.
+</pre>Four keyframes are specified for the animation named "wobble". In the first keyframe, shown at the beginning of the animation cycle, the 'left' value of the animation is 100px. By 40% of the animation duration, 'left' value has animated to 150px. At 60% of the animation duration, the 'left' value has animated back to 75px. At the end of the animation cycle, the 'left' value has returned to 100px. The diagram below shows the state of the animation if it were given a duration of 10s.
       <div class="figure">
         <img src="animation1.png" alt="">
       </div>
@@ -544,7 +573,7 @@
     </p>
     
     <pre>
-      keyframes-rule: '@keyframes' [ IDENT | STRING ] '{' keyframes-blocks '}';
+      keyframes-rule: '@keyframes' IDENT '{' keyframes-blocks '}';
 
       keyframes-blocks: [ keyframe-selectors block ]* ;
 
@@ -555,7 +584,7 @@
       2.1 Timing functions for keyframes
     </h3>
     <p>
-      A keyframe style rule may also declare the timing function that is to be used as the transition or animation moves to the next keyframe.
+      A keyframe style rule may also declare the timing function that is to be used as the animation moves to the next keyframe.
     </p>
     <div class="example">
       <p style="display:none">
@@ -590,10 +619,10 @@
 
 }
   
-</pre>Five keyframes are specified for the transition or animation named "bounce". Between the first and second keyframe (ie. between 0 and 25%) an "ease-out" timing function is used. Between the second and third keyframe (ie. between 25% and 50%) an "ease-in" timing function is used. And so on. The effect will appear as an element that moves up the page 50px, slowing down as it reaches its highest point then speeding up as it falls back to 100px. The second half of the animation behaves in a similar manner, but only moves the element 25px units up the page.
+</pre>Five keyframes are specified for the animation named "bounce". Between the first and second keyframe (ie. between 0 and 25%) an "ease-out" timing function is used. Between the second and third keyframe (ie. between 25% and 50%) an "ease-in" timing function is used. And so on. The effect will appear as an element that moves up the page 50px, slowing down as it reaches its highest point then speeding up as it falls back to 100px. The second half of the animation behaves in a similar manner, but only moves the element 25px units up the page.
     </div>
     <p>
-      See <a href="CSSTransitions.html#transition-timing-function_tag">the <span class="prop-name">'transition-timing-function'</span> property</a> and <a href="#animation-timing-function_tag">the <span class="prop-name">'animation-timing-function'</span> property</a> for more information.
+      See <a href="#animation-timing-function_tag">the <span class="prop-name">'animation-timing-function'</span> property</a> for more information.
     </p><!-- ======================================================================================================= -->
     <h2>
       3 Animations

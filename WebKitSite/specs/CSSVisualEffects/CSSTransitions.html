@@ -610,6 +610,18 @@ div {
         </tr>
       </tbody>
     </table>
+    
+    <p>
+      A value of 'none' means that no property will transition. A value of
+      'all' means that every property that is able to undergo a transition
+      will do so. Otherwise, a list
+      of properties to be transitioned is given.
+    </p>
+
+    <div class="issue">
+      We need to generate a list of properties that can be transitioned.
+    </div>
+    
     <div class="issue">
       Is "none" even a useful value if the initial value is "all"? The syntax is more elegant if transition-duration defaults to 0 and this property defaults to "all", but another option is to default this property to "none" and duration to something reasonable, e.g., 250ms. This would force an author to specify transition-property in the shorthand all the time though.
     </div><!-- ======================================================================================================= -->

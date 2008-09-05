@@ -1,0 +1,45 @@
+2008-09-04  Dean Jackson  <dino@apple.com>
+
+        Change transform operation values in CSSTransformValue -
+        splitting 2d and 3d.
+
+        * CSSTransforms.html:
+
+2008-08-26  Dean Jackson <dino@apple.com>
+    
+    Animations
+    
+        * Keyframes must provide 0% and 100% to be valid
+          <rdar://problem/6165732> [animations] Spec should say what happens if you omit the 0% or 100% keyframe
+    
+        * Mention that keyframes can be specified in any order
+          <rdar://problem/6165728> [animations] Spec should say that keyframes can be in any order
+          (It actually already said this, but I made it more clear)
+    
+        * Keyframe names must be IDENT not STRING
+          <rdar://problem/6164640> [animations] should we allow quoted animation names
+    
+    Transforms
+    
+        * Removed definition of <angle> - now reference CSS Values and Units
+          consequence is that rotations now support "turn" units
+          (feel free to turn it up to 11)
+          <rdar://problem/6177272> [transforms] Should support "turns" as a rotation unit
+    
+        * Added exception to CSSMatrix setMatrixValue() and inverse() methods
+          <rdar://problem/6160283> [transforms] Specify error reporting for WebKitCSSMatrix
+    
+        * Added getCSSMatrix() method to CSSTransformValue
+    
+        * Added Table of Contents to Transforms
+    
+        * skewZ() transform function removed. It makes no sense.
+    
+        * Definition for skew() transform function was missing
+        * Also added a new CSSTransformValue CSS_SKEW
+          <rdar://problem/6137414> [transforms] skew() function definition is missing
+    
+        * Removed mention of transitions when discussion keyframes rule
+          <rdar://problem/6103072> [animations] CSS Animation spec mentions transition keyframes
+    
+    
