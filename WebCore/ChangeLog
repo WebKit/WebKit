@@ -1,3 +1,20 @@
+2008-09-05  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Try to make Chromium compile with ToT:
+        - Wrap a few places which depend on KJS:: in #if USE(JSC)
+        - Include some windows forward declarations
+
+        * dom/Node.h:
+        * page/Console.h:
+        * page/animation/CompositeAnimation.h:
+        * platform/FileSystem.h:
+        * platform/graphics/Image.h:
+        * platform/text/AtomicString.h:
+        * platform/text/String.cpp:
+        * rendering/style/RenderStyle.h:
+
 2008-09-05  Dave Hyatt  <hyatt@apple.com>
 
         Add support for runtime switchability of the Aqua look and the native look on Windows.

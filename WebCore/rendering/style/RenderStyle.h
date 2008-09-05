@@ -53,6 +53,7 @@
 #include "Pair.h"
 #include "TextDirection.h"
 #include <wtf/HashMap.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 

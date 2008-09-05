@@ -72,6 +72,7 @@ namespace WebCore {
 
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
+#if USE(JSC)
         void debug(KJS::ExecState*, const KJS::ArgList&);
         void error(KJS::ExecState*, const KJS::ArgList&);
         void info(KJS::ExecState*, const KJS::ArgList&);
@@ -89,6 +90,7 @@ namespace WebCore {
 
         void reportException(KJS::ExecState*, KJS::JSValue*);
         void reportCurrentException(KJS::ExecState*);
+#endif
     private:
         inline Page* page() const;
     

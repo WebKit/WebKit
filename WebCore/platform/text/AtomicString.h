@@ -42,7 +42,9 @@ public:
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     AtomicString(const String& s) : m_string(add(s.impl())) { }
 
+#if USE(JSC)
     static AtomicStringImpl* find(const KJS::Identifier&);
+#endif
 
     operator const String&() const { return m_string; }
     const String& string() const { return m_string; };

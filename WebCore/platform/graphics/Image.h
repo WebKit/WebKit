@@ -47,6 +47,8 @@ struct CGContext;
 #endif
 
 #if PLATFORM(WIN)
+typedef struct tagSIZE SIZE;
+typedef SIZE* LPSIZE;
 typedef struct HBITMAP__ *HBITMAP;
 #endif
 

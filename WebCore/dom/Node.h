@@ -480,8 +480,10 @@ public:
     PassRefPtr<NodeList> getElementsByName(const String& elementName);
     PassRefPtr<NodeList> getElementsByClassName(const String& classNames);
 
+#if USE(JSC)
     PassRefPtr<Element> querySelector(const String& selectors, NSResolver*, ExceptionCode&, KJS::ExecState*);
     PassRefPtr<NodeList> querySelectorAll(const String& selectors, NSResolver*, ExceptionCode&, KJS::ExecState*);
+#endif
 
     // For non-JS bindings. Silently ignores the JavaScript exception if any.
     // FIXME: We should support the NSResolver interface for non-JS bindings.

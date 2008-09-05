@@ -55,6 +55,11 @@ namespace WebCore {
 class CString;
 
 #if PLATFORM(WIN)
+typedef void *HANDLE;
+// Assuming STRICT
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE HMODULE;
+
 typedef HANDLE PlatformFileHandle;
 typedef HMODULE PlatformModule;
 const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
