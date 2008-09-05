@@ -1541,7 +1541,7 @@ void XMLTokenizer::notifyFinished(CachedResource* finishedObj)
 
 bool XMLTokenizer::isWaitingForScripts() const
 {
-    return m_pendingScript != 0;
+    return m_pendingScript;
 }
 
 #if ENABLE(XSLT)

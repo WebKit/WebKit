@@ -25,6 +25,7 @@
 
 #include "CSSStyleSheet.h"
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -100,7 +101,7 @@ public:
     virtual void finishParsingChildren();
 
 protected:
-    CachedCSSStyleSheet* m_cachedSheet;
+    CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
     String m_url;
     String m_type;

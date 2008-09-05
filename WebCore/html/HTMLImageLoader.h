@@ -26,6 +26,7 @@
 #define HTMLImageLoader_h
 
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 
 namespace WebCore {
 
@@ -43,7 +44,7 @@ public:
     Element* element() const { return m_element; }
     bool imageComplete() const { return m_imageComplete; }
 
-    CachedImage* image() const { return m_image; }
+    CachedImage* image() const { return m_image.get(); }
     void setImage(CachedImage*);
 
     void setLoadManually(bool loadManually) { m_loadManually = loadManually; }
@@ -59,7 +60,7 @@ protected:
 
 private:
     Element* m_element;
-    CachedImage* m_image;
+    CachedResourceHandle<CachedImage> m_image;
     bool m_firedLoad : 1;
     bool m_imageComplete : 1;
     bool m_loadManually : 1;

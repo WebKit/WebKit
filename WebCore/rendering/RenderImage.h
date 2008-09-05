@@ -26,6 +26,7 @@
 #define RenderImage_h
 
 #include "CachedImage.h"
+#include "CachedResourceHandle.h"
 #include "RenderReplaced.h"
 
 namespace WebCore {
@@ -53,7 +54,7 @@ public:
     void updateAltText();
 
     void setCachedImage(CachedImage*);
-    CachedImage* cachedImage() const { return m_cachedImage; }
+    CachedImage* cachedImage() const { return m_cachedImage.get(); }
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
 
@@ -78,7 +79,7 @@ protected:
     virtual bool imageHasRelativeWidth() const { return m_cachedImage ? m_cachedImage->imageHasRelativeWidth() : false; }
     virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
     virtual IntSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSize(multiplier) : IntSize(); }
-    virtual WrappedImagePtr imagePtr() const { return m_cachedImage; }
+    virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 
     virtual void intrinsicSizeChanged() { imageChanged(imagePtr()); }
 
@@ -91,7 +92,7 @@ private:
 
 protected:
     // The image we are rendering.
-    CachedImage* m_cachedImage;
+    CachedResourceHandle<CachedImage> m_cachedImage;
 
     // Text to display as long as the image isn't available.
     String m_altText;

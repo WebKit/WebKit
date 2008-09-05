@@ -3,7 +3,7 @@
 
     Copyright (C) 1998 Lars Knoll (knoll@mpi-hd.mpg.de)
     Copyright (C) 2001 Dirk Mueller <mueller@kde.org>
-    Copyright (C) 2004, 2005, 2006, 2007 Apple Inc. All rights reserved.
+    Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -98,6 +98,10 @@ public:
     CachedResource* requestResource(DocLoader*, CachedResource::Type, const KURL& url, const String& charset, bool isPreload = false);
 
     CachedCSSStyleSheet* requestUserCSSStyleSheet(DocLoader*, const String& url, const String& charset);
+    
+    void revalidateResource(CachedResource*, DocLoader*);
+    void revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse&);
+    void revalidationFailed(CachedResource* revalidatingResource);
     
     // Sets the cache's memory capacities, in bytes. These will hold only approximately, 
     // since the decoded cost of resources like scripts and stylesheets is not known.

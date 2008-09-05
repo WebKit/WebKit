@@ -25,6 +25,7 @@
 #include "CachedResource.h"
 
 #include "Cache.h"
+#include "CachedResourceHandle.h"
 #include "DocLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -45,6 +46,10 @@ CachedResource::CachedResource(const String& url, Type type)
     , m_inCache(false)
     , m_loading(false)
     , m_docLoader(0)
+    , m_handleCount(0)
+    , m_resourceToRevalidate(0)
+    , m_isBeingRevalidated(false)
+    , m_expirationDate(0)
 {
     m_type = type;
     m_status = Pending;
@@ -76,7 +81,12 @@ CachedResource::~CachedResource()
 #ifndef NDEBUG
     m_deleted = true;
 #endif
+
+    ASSERT(cache()->resourceForURL(url()) != this);
     
+    if (m_resourceToRevalidate)
+        m_resourceToRevalidate->m_isBeingRevalidated = false;    
+   
     if (m_docLoader)
         m_docLoader->removeCachedResource(this);
 }
@@ -95,12 +105,18 @@ void CachedResource::finish()
 
 bool CachedResource::isExpired() const
 {
-    if (!m_response.expirationDate())
+    if (!m_expirationDate)
         return false;
     time_t now = time(0);
-    return (difftime(now, m_response.expirationDate()) >= 0);
+    return difftime(now, m_expirationDate) >= 0;
 }
-
+  
+void CachedResource::setResponse(const ResourceResponse& response)
+{
+    m_response = response;
+    m_expirationDate = response.expirationDate();
+}
+    
 void CachedResource::setRequest(Request* request)
 {
     if (request && !m_request)
@@ -139,6 +155,12 @@ void CachedResource::removeClient(CachedResourceClient *c)
     }
 }
 
+void CachedResource::deleteIfPossible()
+{
+    if (canDelete() && !inCache())
+        delete this;
+}
+    
 void CachedResource::setDecodedSize(unsigned size)
 {
     if (size == m_decodedSize)
@@ -207,6 +229,78 @@ void CachedResource::didAccessDecodedData(double timeStamp)
         }
         cache()->prune();
     }
+}
+    
+void CachedResource::setResourceToRevalidate(CachedResource* resource) 
+{ 
+    ASSERT(resource);
+    ASSERT(!m_resourceToRevalidate);
+    ASSERT(resource != this);
+    ASSERT(!resource->m_isBeingRevalidated);
+    ASSERT(m_handlesToRevalidate.isEmpty());
+    ASSERT(resource->type() == type());
+    resource->m_isBeingRevalidated = true;
+    m_resourceToRevalidate = resource;
+}
+
+void CachedResource::clearResourceToRevalidate() 
+{ 
+    ASSERT(m_resourceToRevalidate);
+    ASSERT(m_resourceToRevalidate->m_isBeingRevalidated);
+    m_resourceToRevalidate->m_isBeingRevalidated = false;
+    m_resourceToRevalidate->deleteIfPossible();
+    m_handlesToRevalidate.clear();
+    m_resourceToRevalidate = 0;
+    deleteIfPossible();
+}
+    
+void CachedResource::switchClientsToRevalidatedResource()
+{
+    ASSERT(m_resourceToRevalidate);
+    ASSERT(!inCache());
+
+    HashSet<CachedResourceHandleBase*>::iterator end = m_handlesToRevalidate.end();
+    for (HashSet<CachedResourceHandleBase*>::iterator it = m_handlesToRevalidate.begin(); it != end; ++it) {
+        CachedResourceHandleBase* handle = *it;
+        handle->m_resource = m_resourceToRevalidate;
+        m_resourceToRevalidate->registerHandle(handle);
+        --m_handleCount;
+    }
+    ASSERT(!m_handleCount);
+    m_handlesToRevalidate.clear();
+
+    Vector<CachedResourceClient*> clientsToMove;
+    HashCountedSet<CachedResourceClient*>::iterator end2 = m_clients.end();
+    for (HashCountedSet<CachedResourceClient*>::iterator it = m_clients.begin(); it != end2; ++it) {
+        CachedResourceClient* client = it->first;
+        unsigned count = it->second;
+        while (count) {
+            clientsToMove.append(client);
+            --count;
+        }
+    }
+    // Equivalent of calling removeClient() for all clients
+    m_clients.clear();
+    
+    unsigned moveCount = clientsToMove.size();
+    for (unsigned n = 0; n < moveCount; ++n)
+        m_resourceToRevalidate->addClient(clientsToMove[n]);
+}
+    
+bool CachedResource::canUseCacheValidator() const
+{
+    return !m_loading && (!m_response.httpHeaderField("Last-Modified").isEmpty() || !m_response.httpHeaderField("ETag").isEmpty());
+}
+    
+bool CachedResource::mustRevalidate(CachePolicy cachePolicy) const
+{
+    if (m_loading)
+        return false;    
+    String cacheControl = m_response.httpHeaderField("Cache-Control");
+    // FIXME: It would be better to tokenize the field.
+    if (cachePolicy == CachePolicyCache)
+        return !cacheControl.isEmpty() && (cacheControl.contains("no-cache", false) || (isExpired() && cacheControl.contains("must-revalidate", false)));
+    return isExpired() || cacheControl.contains("no-cache", false);
 }
 
 }

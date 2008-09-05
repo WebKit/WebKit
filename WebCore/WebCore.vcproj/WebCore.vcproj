@@ -2788,6 +2788,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\CachedResourceHandle.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\CachedResourceHandle.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\CachedScript.cpp"
 				>
 			</File>

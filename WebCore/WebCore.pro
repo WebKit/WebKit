@@ -701,6 +701,7 @@ SOURCES += \
     loader/CachedFont.cpp \
     loader/CachedImage.cpp \
     loader/CachedResourceClientWalker.cpp \
+    loader/CachedResourceHandle.cpp \
     loader/CachedResource.cpp \
     loader/CachedScript.cpp \
     loader/CachedXSLStyleSheet.cpp \

@@ -25,6 +25,7 @@
 #define ProcessingInstruction_h
 
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "ContainerNode.h"
 
 namespace WebCore {
@@ -84,7 +85,7 @@ private:
     String m_localHref;
     String m_title;
     String m_media;
-    CachedResource* m_cachedSheet;
+    CachedResourceHandle<CachedResource> m_cachedSheet;
     RefPtr<StyleSheet> m_sheet;
     bool m_loading;
     bool m_alternate;

@@ -187,6 +187,57 @@ CachedCSSStyleSheet* Cache::requestUserCSSStyleSheet(DocLoader* docLoader, const
 
     return userSheet;
 }
+    
+void Cache::revalidateResource(CachedResource* resource, DocLoader* docLoader)
+{
+    ASSERT(resource);
+    ASSERT(!disabled());
+    if (resource->resourceToRevalidate())
+        return;
+    if (!resource->canUseCacheValidator()) {
+        remove(resource);
+        return;
+    }
+    const String& url = resource->url();
+    CachedResource* newResource = createResource(resource->type(), KURL(url), resource->encoding());
+    newResource->setResourceToRevalidate(resource);
+    remove(resource);
+    m_resources.set(url, newResource);
+    newResource->setInCache(true);
+    resourceAccessed(newResource);
+    newResource->load(docLoader);
+}
+    
+void Cache::revalidationSucceeded(CachedResource* revalidatingResource, const ResourceResponse& response)
+{
+    CachedResource* resource = revalidatingResource->resourceToRevalidate();
+    ASSERT(resource);
+    ASSERT(!resource->inCache());
+    ASSERT(resource->isLoaded());
+    
+    remove(revalidatingResource);
+
+    ASSERT(!m_resources.get(resource->url()));
+    m_resources.set(resource->url(), resource);
+    resource->setInCache(true);
+    resource->setExpirationDate(response.expirationDate());
+    insertInLRUList(resource);
+    int delta = resource->size();
+    if (resource->decodedSize() && resource->hasClients())
+        insertInLiveDecodedResourcesList(resource);
+    if (delta)
+        adjustSize(resource->hasClients(), delta);
+    
+    revalidatingResource->switchClientsToRevalidatedResource();
+    // this deletes the revalidating resource
+    revalidatingResource->clearResourceToRevalidate();
+}
+
+void Cache::revalidationFailed(CachedResource* revalidatingResource)
+{
+    ASSERT(revalidatingResource->resourceToRevalidate());
+    revalidatingResource->clearResourceToRevalidate();
+}
 
 CachedResource* Cache::resourceForURL(const String& url)
 {

@@ -1,3 +1,117 @@
+2008-09-05  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Darin.
+
+        Most of the implementation for https://bugs.webkit.org/show_bug.cgi?id=17998
+        When a resource is cached locally, WebKit should follow RFC 2616 "Specific end-to-end revalidation" instead of "Unspecified end-to-end revalidation"
+
+        Implement HTTP 1.1 "Specific end-to-end revalidation" for WebCore memory cache. This patch does
+        not yet enable it for the biggest use case, reloading. However it is good for general browsing as
+        well. Doing this in WebCore level as opposed to relying on disk cache has big benefit that
+        we avoid re-decoding resources, especially images. 
+        
+        To be exact the enabled case is not actually the "Specific end-to-end revalidation" since it does not include
+        CacheControl: max-age=0 header. That would be added in reload case.
+        
+        The approach for revalidation is to kick the original resource out from the memory cache
+        and create a new CachedResource that represents the revalidation request. In case
+        we get 304 back for the request we put the original resource back to the cache, update 
+        its expiration date and switch the clients registered to revalidation resource to be
+        clients of the original resource.
+        
+        All heap allocated CachedImage pointers now use CachedResourceHandle<CachedImage> (and so on) instead.
+        This allows updating the handles to point to the original resource when the revalidation succeeds. It
+        also acts as refcounting smart pointer.
+
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.h:
+        * css/CSSImportRule.h:
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::dragImage):
+        * dom/ProcessingInstruction.h:
+        * dom/ScriptElement.h:
+        * dom/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::isWaitingForScripts):
+        * dom/XMLTokenizer.h:
+        * html/HTMLImageLoader.cpp:
+        (WebCore::HTMLImageLoader::setImage):
+        (WebCore::HTMLImageLoader::updateFromElement):
+        (WebCore::HTMLImageLoader::notifyFinished):
+        * html/HTMLImageLoader.h:
+        (WebCore::HTMLImageLoader::image):
+        * html/HTMLLinkElement.h:
+        * html/HTMLTokenizer.cpp:
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::scriptHandler):
+        (WebCore::HTMLTokenizer::notifyFinished):
+        * html/HTMLTokenizer.h:
+        * loader/Cache.cpp:
+        (WebCore::Cache::revalidateResource):
+        (WebCore::Cache::revalidationSucceeded):
+        (WebCore::Cache::revalidationFailed):
+        * loader/Cache.h:
+        * loader/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::~CachedResource):
+        (WebCore::CachedResource::isExpired):
+        (WebCore::CachedResource::setResponse):
+        (WebCore::CachedResource::deleteIfPossible):
+        (WebCore::CachedResource::setResourceToRevalidate):
+        (WebCore::CachedResource::clearResourceToRevalidate):
+        (WebCore::CachedResource::switchClientsToRevalidatedResource):
+        (WebCore::CachedResource::canUseCacheValidator):
+        (WebCore::CachedResource::mustRevalidate):
+        * loader/CachedResource.h:
+        (WebCore::CachedResource::canDelete):
+        (WebCore::CachedResource::registerHandle):
+        (WebCore::CachedResource::unregisterHandle):
+        (WebCore::CachedResource::isCacheValidator):
+        (WebCore::CachedResource::resourceToRevalidate):
+        (WebCore::CachedResource::setExpirationDate):
+        * loader/CachedResourceHandle.cpp: Added.
+        (WebCore::CachedResourceHandleBase::setResource):
+        * loader/CachedResourceHandle.h: Added.
+        (WebCore::CachedResourceHandleBase::~CachedResourceHandleBase):
+        (WebCore::CachedResourceHandleBase::get):
+        (WebCore::CachedResourceHandleBase::operator!):
+        (WebCore::CachedResourceHandleBase::operator UnspecifiedBoolType):
+        (WebCore::CachedResourceHandleBase::CachedResourceHandleBase):
+        (WebCore::CachedResourceHandleBase::operator=):
+        (WebCore::CachedResourceHandle::CachedResourceHandle):
+        (WebCore::CachedResourceHandle::get):
+        (WebCore::CachedResourceHandle::operator->):
+        (WebCore::CachedResourceHandle::operator=):
+        (WebCore::CachedResourceHandle::operator==):
+        (WebCore::CachedResourceHandle::operator!=):
+        (WebCore::operator==):
+        (WebCore::operator!=):
+        * loader/DocLoader.cpp:
+        (WebCore::DocLoader::checkForReload):
+        * loader/UserStyleSheetLoader.h:
+        * loader/loader.cpp:
+        (WebCore::Loader::Host::servePendingRequests):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveResponse):
+        (WebCore::Loader::Host::didReceiveData):
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setCachedImage):
+        (WebCore::RenderImage::imageChanged):
+        * rendering/RenderImage.h:
+        (WebCore::RenderImage::cachedImage):
+        (WebCore::RenderImage::imagePtr):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/StyleCachedImage.h:
+        (WebCore::StyleCachedImage::data):
+        (WebCore::StyleCachedImage::cachedImage):
+        * svg/SVGFEImageElement.h:
+        * svg/graphics/filters/SVGFEImage.h:
+        * xml/XSLImportRule.h:
+
 2008-09-04  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz

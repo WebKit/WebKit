@@ -25,6 +25,7 @@
 #define XMLTokenizer_h
 
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 #include "SegmentedString.h"
 #include "StringHash.h"
 #include "Tokenizer.h"
@@ -154,7 +155,7 @@ namespace WebCore {
         int m_lastErrorColumn;
         String m_errorMessages;
 
-        CachedScript* m_pendingScript;
+        CachedResourceHandle<CachedScript> m_pendingScript;
         RefPtr<Element> m_scriptElement;
         int m_scriptStartLine;
 

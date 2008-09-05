@@ -4085,6 +4085,8 @@
 		E446143C0CD689CC00FADA75 /* JSHTMLSourceElement.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B423720CBFB6E000AF2ECE /* JSHTMLSourceElement.h */; };
 		E44614510CD68A3500FADA75 /* RenderVideo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4B41E330CBFB60900AF2ECE /* RenderVideo.cpp */; };
 		E44614520CD68A3500FADA75 /* RenderVideo.h in Headers */ = {isa = PBXBuildFile; fileRef = E4B41E340CBFB60900AF2ECE /* RenderVideo.h */; };
+		E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = E47B4BE60E71241600038854 /* CachedResourceHandle.h */; };
+		E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */; };
 		E49626C20D80D94800E3405C /* PreloadScanner.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4D4ABE00D7542F000F96869 /* PreloadScanner.cpp */; };
 		E49626C30D80D94900E3405C /* PreloadScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = E4D4ABE10D7542F100F96869 /* PreloadScanner.h */; };
 		E4AFCFA50DAF29A300F5F55C /* UnitBezier.h in Headers */ = {isa = PBXBuildFile; fileRef = E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */; };
@@ -8528,6 +8530,9 @@
 		E44614110CD6826900FADA75 /* JSMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaError.h; sourceTree = "<group>"; };
 		E44614120CD6826900FADA75 /* JSTimeRanges.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTimeRanges.cpp; sourceTree = "<group>"; };
 		E44614130CD6826900FADA75 /* JSTimeRanges.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTimeRanges.h; sourceTree = "<group>"; };
+		E472053A0E5A053A0006BB4D /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
+		E47B4BE60E71241600038854 /* CachedResourceHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedResourceHandle.h; sourceTree = "<group>"; };
+		E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedResourceHandle.cpp; sourceTree = "<group>"; };
 		E4AFCFA40DAF29A300F5F55C /* UnitBezier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UnitBezier.h; sourceTree = "<group>"; };
 		E4AFD0050DAF335400F5F55C /* SMILTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SMILTime.cpp; sourceTree = "<group>"; };
 		E4AFD0060DAF335400F5F55C /* SMILTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SMILTime.h; sourceTree = "<group>"; };
@@ -12707,12 +12712,15 @@
 				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
 				BCB16C080979C3BD00467741 /* CachedResourceClientWalker.cpp */,
 				BCB16C090979C3BD00467741 /* CachedResourceClientWalker.h */,
+				E47B4BE60E71241600038854 /* CachedResourceHandle.h */,
+				E47B4BE70E71241600038854 /* CachedResourceHandle.cpp */,
 				BCB16C0A0979C3BD00467741 /* CachedScript.cpp */,
 				BCB16C0B0979C3BD00467741 /* CachedScript.h */,
 				BCB16C0C0979C3BD00467741 /* CachedXBLDocument.cpp */,
 				BCB16C0D0979C3BD00467741 /* CachedXBLDocument.h */,
 				BCB16C0E0979C3BD00467741 /* CachedXSLStyleSheet.cpp */,
 				BCB16C0F0979C3BD00467741 /* CachedXSLStyleSheet.h */,
+				E472053A0E5A053A0006BB4D /* CachedResourceHandle.h */,
 				F587864902DE3A9A01EA4122 /* CachePolicy.h */,
 				BCB16C100979C3BD00467741 /* DocLoader.cpp */,
 				BCB16C110979C3BD00467741 /* DocLoader.h */,
@@ -15549,6 +15557,7 @@
 				316FE0800E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.h in Headers */,
 				316FE0820E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRuleInternal.h in Headers */,
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
+				E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -17348,6 +17357,7 @@
 				316FE07E0E6CCC2800BF6088 /* DOMWebKitCSSKeyframeRule.mm in Sources */,
 				316FE0810E6CCC2800BF6088 /* DOMWebKitCSSKeyframesRule.mm in Sources */,
 				7284ADDD0E6FEB31002EEFBD /* UserStyleSheetLoader.cpp in Sources */,
+				E47B4BE90E71241600038854 /* CachedResourceHandle.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

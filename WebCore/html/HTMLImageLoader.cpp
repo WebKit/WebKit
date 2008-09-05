@@ -57,7 +57,7 @@ HTMLImageLoader::~HTMLImageLoader()
 
 void HTMLImageLoader::setImage(CachedImage *newImage)
 {
-    CachedImage *oldImage = m_image;
+    CachedImage *oldImage = m_image.get();
     if (newImage != oldImage) {
         setLoadingImage(newImage);
         m_firedLoad = true;
@@ -107,7 +107,7 @@ void HTMLImageLoader::updateFromElement()
             newImage = doc->docLoader()->requestImage(parseURL(attr));
     }
     
-    CachedImage *oldImage = m_image;
+    CachedImage *oldImage = m_image.get();
     if (newImage != oldImage) {
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
         if (!doc->ownerElement() && newImage)
@@ -145,7 +145,7 @@ void HTMLImageLoader::notifyFinished(CachedResource *image)
 #endif
     if (RenderObject* renderer = elem->renderer())
         if (renderer->isImage())
-            static_cast<RenderImage*>(renderer)->setCachedImage(m_image);
+            static_cast<RenderImage*>(renderer)->setCachedImage(m_image.get());
             
     if (image->errorOccurred() && elem->hasTagName(objectTag))
         static_cast<HTMLObjectElement*>(elem)->renderFallbackContent();

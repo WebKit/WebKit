@@ -80,18 +80,19 @@ void DocLoader::checkForReload(const KURL& fullURL)
     if (fullURL.isEmpty())
         return;
 
-    if (m_cachePolicy == CachePolicyVerify) {
+    if (m_cachePolicy == CachePolicyVerify || m_cachePolicy == CachePolicyCache) {
        if (!m_reloadedURLs.contains(fullURL.string())) {
           CachedResource* existing = cache()->resourceForURL(fullURL.string());
-          if (existing && existing->isExpired() && !existing->isPreloaded()) {
-             cache()->remove(existing);
-             m_reloadedURLs.add(fullURL.string());
+          if (existing && !existing->isPreloaded() && existing->mustRevalidate(m_cachePolicy)) {
+              cache()->revalidateResource(existing, this);
+              m_reloadedURLs.add(fullURL.string());
           }
        }
     } else if ((m_cachePolicy == CachePolicyReload) || (m_cachePolicy == CachePolicyRefresh)) {
        if (!m_reloadedURLs.contains(fullURL.string())) {
            CachedResource* existing = cache()->resourceForURL(fullURL.string());
            if (existing && !existing->isPreloaded()) {
+               // FIXME: Use revalidateResource() to implement HTTP 1.1 "Specific end-to-end revalidation" for regular reloading
                cache()->remove(existing);
                m_reloadedURLs.add(fullURL.string());
            }

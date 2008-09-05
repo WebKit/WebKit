@@ -24,6 +24,7 @@
 #define SVGFEImageElement_h
 
 #if ENABLE(SVG) && ENABLE(SVG_FILTERS)
+#include "CachedResourceHandle.h"
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGURIReference.h"
 #include "SVGLangSpace.h"
@@ -55,7 +56,7 @@ namespace WebCore {
     private:
         ANIMATED_PROPERTY_DECLARATIONS(SVGFEImageElement, SVGNames::feImageTagString, SVGNames::preserveAspectRatioAttrString, SVGPreserveAspectRatio, PreserveAspectRatio, preserveAspectRatio)
 
-        CachedImage* m_cachedImage;
+        CachedResourceHandle<CachedImage> m_cachedImage;
         mutable RefPtr<FEImage> m_filterEffect;
     };
 

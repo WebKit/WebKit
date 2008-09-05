@@ -218,11 +218,12 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
     while (!requestsPending.isEmpty()) {        
         Request* request = requestsPending.first();
         DocLoader* docLoader = request->docLoader();
+        bool resourceIsCacheValidator = request->cachedResource()->isCacheValidator();
         // If the document is fully parsed and there are no pending stylesheets there won't be any more 
         // resources that we would want to push to the front of the queue. Just hand off the remaining resources
         // to the networking layer.
         bool parsedAndStylesheetsKnown = !docLoader->doc()->parsing() && docLoader->doc()->haveStylesheetsLoaded();
-        if (!parsedAndStylesheetsKnown && m_requestsLoading.size() >= m_maxRequestsInFlight) {
+        if (!parsedAndStylesheetsKnown && !resourceIsCacheValidator && m_requestsLoading.size() >= m_maxRequestsInFlight) {
             serveLowerPriority = false;
             return;
         }
@@ -237,6 +238,22 @@ void Loader::Host::servePendingRequests(RequestQueue& requestsPending, bool& ser
         if ((referrer.protocolIs("http") || referrer.protocolIs("https")) && referrer.path().isEmpty())
             referrer.setPath("/");
         resourceRequest.setHTTPReferrer(referrer.string());
+        
+        if (resourceIsCacheValidator) {
+            CachedResource* resourceToRevalidate = request->cachedResource()->resourceToRevalidate();
+            ASSERT(resourceToRevalidate->canUseCacheValidator());
+            ASSERT(resourceToRevalidate->isLoaded());
+            const String& lastModified = resourceToRevalidate->response().httpHeaderField("Last-Modified");
+            const String& eTag = resourceToRevalidate->response().httpHeaderField("ETag");
+            if (!lastModified.isEmpty() || !eTag.isEmpty()) {
+                if (docLoader->cachePolicy() == CachePolicyReload || docLoader->cachePolicy() == CachePolicyRefresh)
+                    resourceRequest.setHTTPHeaderField("Cache-Control", "max-age=0");
+                if (!lastModified.isEmpty())
+                    resourceRequest.setHTTPHeaderField("If-Modified-Since", lastModified);
+                if (!eTag.isEmpty())
+                    resourceRequest.setHTTPHeaderField("If-None-Match", eTag);
+            }
+        }
 
         RefPtr<SubresourceLoader> loader = SubresourceLoader::create(docLoader->doc()->frame(),
                                                                      this, resourceRequest, request->shouldSkipCanLoadCheck(), request->sendResourceLoadCallbacks());
@@ -269,6 +286,7 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
         docLoader->decrementRequestCount();
 
     CachedResource* resource = request->cachedResource();
+    ASSERT(!resource->resourceToRevalidate());
 
     // If we got a 4xx response, we're pretending to have received a network
     // error, so we can't send the successful data() and finish() callbacks.
@@ -311,6 +329,9 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
         docLoader->decrementRequestCount();
 
     CachedResource* resource = request->cachedResource();
+    
+    if (resource->resourceToRevalidate())
+        cache()->revalidationFailed(resource);
 
     if (!cancelled) {
         docLoader->setLoadInProgress(true);
@@ -340,7 +361,27 @@ void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceR
     // ASSERT(request);
     if (!request)
         return;
-    request->cachedResource()->setResponse(response);
+    
+    CachedResource* resource = request->cachedResource();
+    
+    if (resource->isCacheValidator()) {
+        if (response.httpStatusCode() == 304) {
+            // 304 Not modified / Use local copy
+            m_requestsLoading.remove(loader);
+            request->docLoader()->decrementRequestCount();
+
+            // Existing resource is ok, just use it updating the expiration time.
+            cache()->revalidationSucceeded(resource, response);
+            delete request;
+
+            servePendingRequests();
+            return;
+        } 
+        // Did not get 304 response, continue as a regular resource load.
+        cache()->revalidationFailed(resource);
+    }
+    
+    resource->setResponse(response);
     
     String encoding = response.textEncodingName();
     if (!encoding.isNull())
@@ -371,6 +412,8 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
         return;
 
     CachedResource* resource = request->cachedResource();    
+    ASSERT(!resource->isCacheValidator());
+    
     if (resource->errorOccurred())
         return;
     

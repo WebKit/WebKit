@@ -23,10 +23,12 @@
 #ifndef CachedResource_h
 #define CachedResource_h
 
+#include "CachePolicy.h"
 #include "PlatformString.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 #include <time.h>
 
@@ -34,7 +36,7 @@ namespace WebCore {
 
 class Cache;
 class CachedResourceClient;
-class CacheHandleBase;
+class CachedResourceHandleBase;
 class DocLoader;
 class Request;
 
@@ -83,6 +85,7 @@ public:
     virtual void addClient(CachedResourceClient*);
     void removeClient(CachedResourceClient*);
     bool hasClients() const { return !m_clients.isEmpty(); }
+    void deleteIfPossible();
 
     enum PreloadResult {
         PreloadNotReferenced,
@@ -128,10 +131,10 @@ public:
 
     SharedBuffer* data() const { return m_data.get(); }
 
-    void setResponse(const ResourceResponse& response) { m_response = response; }
+    void setResponse(const ResourceResponse&);
     const ResourceResponse& response() const { return m_response; }
-    
-    bool canDelete() const { return !hasClients() && !m_request && !m_preloadCount; }
+
+    bool canDelete() const { return !hasClients() && !m_request && !m_preloadCount && !m_handleCount && !m_resourceToRevalidate && !m_isBeingRevalidated; }
 
     bool isExpired() const;
 
@@ -153,6 +156,14 @@ public:
     void increasePreloadCount() { ++m_preloadCount; }
     void decreasePreloadCount() { ASSERT(m_preloadCount); --m_preloadCount; }
     
+    void registerHandle(CachedResourceHandleBase* h) { ++m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.add(h); }
+    void unregisterHandle(CachedResourceHandleBase* h) { --m_handleCount; if (m_resourceToRevalidate) m_handlesToRevalidate.remove(h); if (!m_handleCount) deleteIfPossible(); }
+    
+    bool canUseCacheValidator() const;
+    bool mustRevalidate(CachePolicy) const;
+    bool isCacheValidator() const { return m_resourceToRevalidate; }
+    CachedResource* resourceToRevalidate() const { return m_resourceToRevalidate; }
+    
 protected:
     void setEncodedSize(unsigned);
     void setDecodedSize(unsigned);
@@ -173,6 +184,12 @@ protected:
     bool m_errorOccurred;
 
 private:
+    // These are called by the friendly Cache only
+    void setResourceToRevalidate(CachedResource*);
+    void switchClientsToRevalidatedResource();
+    void clearResourceToRevalidate();
+    void setExpirationDate(time_t expirationDate) { m_expirationDate = expirationDate; }
+
     unsigned m_encodedSize;
     unsigned m_decodedSize;
     unsigned m_accessCount;
@@ -202,6 +219,18 @@ private:
     CachedResource* m_prevInLiveResourcesList;
 
     DocLoader* m_docLoader; // only non-0 for resources that are not in the cache
+    
+    unsigned m_handleCount;
+    // If this field is non-null we are using the resource as a proxy for checking whether an existing resource is still up to date
+    // using HTTP If-Modified-Since/If-None-Match headers. If the response is 304 all clients of this resource are moved
+    // to to be clients of m_resourceToRevalidate and the resource is deleted. If not, the field is zeroed and this
+    // resources becomes normal resource load.
+    CachedResource* m_resourceToRevalidate;
+    bool m_isBeingRevalidated;
+    // These handles will need to be updated to point to the m_resourceToRevalidate in case we get 304 response.
+    HashSet<CachedResourceHandleBase*> m_handlesToRevalidate;
+    
+    time_t m_expirationDate;
 };
 
 }

@@ -30,6 +30,7 @@
 #define UserStyleSheetLoader_h
 
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 
 #include "Document.h"
 
@@ -48,7 +49,7 @@ namespace WebCore {
         virtual void setCSSStyleSheet(const String& URL, const String& charset, const CachedCSSStyleSheet* sheet);
 
         RefPtr<Document> m_document;
-        CachedCSSStyleSheet* m_cachedSheet;
+        CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     };
 
 } // namespace WebCore

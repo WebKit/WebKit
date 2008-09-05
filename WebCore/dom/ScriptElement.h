@@ -22,6 +22,7 @@
 #define ScriptElement_h
 
 #include "CachedResourceClient.h"
+#include "CachedResourceHandle.h"
 
 namespace WebCore {
 
@@ -80,7 +81,7 @@ private:
 private:
     ScriptElement* m_scriptElement;
     Element* m_element;
-    CachedScript* m_cachedScript;
+    CachedResourceHandle<CachedScript> m_cachedScript;
     bool m_createdByParser;
     bool m_evaluated;
 };
