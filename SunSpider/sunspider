@@ -37,8 +37,9 @@ my $runShark = 0;
 my $runShark20 = 0;
 my $runSharkCache = 0;
 my $ubench = 0;
-my $v8 = 0;
+my $v8suite = 0;
 my $jsShellPath;
+my $jsShellArgs = "";
 my $setBaseline = 0;
 my $testsPattern;
 my $testRuns = 10;
@@ -49,23 +50,25 @@ Usage: $programName --shell=[path] [options]
   --help            Show this help message
   --set-baseline    Set baseline for future comparisons
   --shell           Path to JavaScript shell
+  --args            Arguments to pass to JavaScript shell
   --runs            Number of times to run tests (default: $testRuns)
   --tests           Only run tests matching provided pattern
   --shark           Sample execution time with the Mac OS X "Shark" performance testing tool (implies --runs=1)
   --shark20         Like --shark, but with a 20 microsecond sampling interval
   --shark-cache     Like --shark, but performs a L2 cache-miss sample instead of time sample
   --ubench          Use microbenchmark suite instead of regular tests (to check for core execution regressions)
-  --v8              Use the V8 benchmark suite.
+  --v8-suite        Use the V8 benchmark suite
 EOF
 
 GetOptions('runs=i' => \$testRuns,
            'set-baseline' => \$setBaseline,
            'shell=s' => \$jsShellPath,
+           'args=s' => \$jsShellArgs,
            'shark' => \$runShark,
            'shark20' => \$runShark20,
            'shark-cache' => \$runSharkCache,
            'ubench' => \$ubench,
-           'v8' => \$v8,
+           'v8-suite' => \$v8suite,
            'tests=s' => \$testsPattern,
            'help' => \$showHelp);
 
@@ -114,7 +117,7 @@ sub loadTestsList()
 {
     my $testlist = "LIST";
     $testlist = "LIST-UBENCH" if ($ubench);
-    $testlist = "LIST-V8" if ($v8);
+    $testlist = "LIST-V8" if ($v8suite);
 
     open TESTLIST, "<", "tests/${testlist}" or die "Can't find ./tests/LIST";
     while (<TESTLIST>) {
@@ -148,7 +151,7 @@ sub writePrefixFile()
 sub runTestsOnce($)
 {
     my ($useShark) = @_;
-    my $shellArgs = "$prefixFile resources/sunspider-standalone-driver.js 2> /dev/null";
+    my $shellArgs = $jsShellArgs . " $prefixFile resources/sunspider-standalone-driver.js 2> /dev/null";
     my $output;
     if ($useShark) {
         my $intervalArg = $useShark == 20 ? "-I 20u" : "";

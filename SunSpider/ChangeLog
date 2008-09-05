@@ -1,5 +1,15 @@
 2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Maciej Stachowiak.
+
+        Add a '--args' option to SunSpider, so that we can pass '-j' to TraceMonkey
+        and '--expose-gc' to V8. Also, rename the '--v8' option to '--v8-suite' and
+        correct the punctuation in its documentation.
+
+        * sunspider:
+
+2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Oliver Hunt.
 
         Bug 20616: Incorporate V8 benchmarks in testing
