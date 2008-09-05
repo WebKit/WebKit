@@ -705,7 +705,7 @@
 
 2008-08-29  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/6174667> 
         When a machine is under heavy load, the Slow Script dialog often comes up many times and just gets in the way
@@ -849,7 +849,7 @@
 
 2008-08-25  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Ensure that JSGlobalContextRelease() performs garbage collection, even if there are other
         contexts in the current context's group.

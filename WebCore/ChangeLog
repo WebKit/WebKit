@@ -21,7 +21,7 @@
 
 2008-09-05  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Most of the implementation for https://bugs.webkit.org/show_bug.cgi?id=17998
         When a resource is cached locally, WebKit should follow RFC 2616 "Specific end-to-end revalidation" instead of "Unspecified end-to-end revalidation"
@@ -2018,7 +2018,7 @@
 
 2008-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Bug 20247: setAttributeNode() does not work when attribute name has a capital letter in it
         https://bugs.webkit.org/show_bug.cgi?id=20247
@@ -2714,7 +2714,7 @@
 
 2008-08-20  Beth Dakin  <bdakin@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix for <rdar://problem/6145626> 
         This patch fixes a number of remaining problems getting 

@@ -24,7 +24,7 @@
 
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Remove MainThreadObjectDeallocator.{h|mm}.
         
@@ -43,7 +43,7 @@
 
         Fix layout test results for webarchive/test-xml-stylesheet.xml
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.xcodeproj/project.pbxproj: Added WebHTMLRepresentationInternal.h.
         Changed WebHTMLRepresentationInternal.h and WebHTMLRepresentationPrivate.h
@@ -74,7 +74,7 @@
 
 2008-06-26  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add MainThreadObjectDeallocator to sources.
         
@@ -311,7 +311,7 @@
 
         Move WebCoreScriptDebugger to WebKit
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.xcodeproj/project.pbxproj: Added WebCoreScriptDebugger.{h,mm}
         to the project.
@@ -320,7 +320,7 @@
 
         <rdar://problem/5708388> WebDashboardRegion.h duplicated between WebCore / WebKit
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.xcodeproj/project.pbxproj: Removed WebDashboardRegion.h.
 
@@ -328,7 +328,7 @@
 
         Update localization exceptions.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * English.lproj/Localizable.strings:
         * StringsNotToBeLocalized.txt:
@@ -351,7 +351,7 @@
 
 2008-01-02  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Removed "BackwardDelete", which is no longer present in source code.
 

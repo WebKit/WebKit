@@ -172,7 +172,7 @@
 
 2008-08-20  Beth Dakin  <bdakin@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix for <rdar://problem/6145626>
         Allows a WebKit client to mark a frame as not-text-searchable 
@@ -527,7 +527,7 @@
 
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/6037398>
         ER: Deallocate WebKit objects on the main thread, even if released on secondary thread
@@ -558,7 +558,7 @@
 
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Remove MainThreadObjectDeallocator.{h|mm}.
 
@@ -571,7 +571,7 @@
 
 2008-08-05  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Make the main thread object deallocator work with subclasses.
         
@@ -665,7 +665,7 @@
 
 2008-07-31  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5949410>
         Add the ability to transfer a given application cache to a new database.
@@ -712,7 +712,7 @@
 
         Fix layout test results for webarchive/test-xml-stylesheet.xml
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Needed to expose -[WebHTMLRepresentation supportedNonImageMIMETypes]
         for DumpRenderTree.
@@ -1052,7 +1052,7 @@
 
 2008-07-09  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Make some WebPlugin and WebPluginFactory SPI public.
         
@@ -1103,7 +1103,7 @@
 
 2008-07-07  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Speculative fix for     
         <rdar://problem/5839800>
@@ -1181,7 +1181,7 @@
 
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Disable JSLock for per-thread contexts.
 
@@ -1230,7 +1230,7 @@
 
 2008-07-01  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Use the PluginMainThreadScheduler, and implement NPN_PluginThreadAsyncCall.
         
@@ -1290,7 +1290,7 @@
 
 2008-06-26  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add a new MainThreadObjectDeallocator which can schedule dealloc calls on the main thread
         if necessary. Use this for the WebView class. 
@@ -1331,7 +1331,7 @@
 
 2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Prepare JavaScript heap for being per-thread.
 
@@ -1574,7 +1574,7 @@
 
 2008-06-03  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5980961>
         
@@ -1599,7 +1599,7 @@
 
 2008-05-29  Justin Garcia  <justin.garcia@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         <rdar://problem/5949462> REGRESSION: Can't paste screen captures into Mail
         
@@ -1908,7 +1908,7 @@
 
 2008-05-19  Stephanie Lewis  <slewis@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
     
         more fast teardown performance work
 
@@ -2340,7 +2340,7 @@
 
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Initialize numArchs to 0.
         
@@ -2349,7 +2349,7 @@
 
 2008-05-06  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add implementation of NPN_PopUpContextMenu.
         
@@ -2370,7 +2370,7 @@
 
 2008-05-05  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Change the isNativeLibraryData: method to handle universal binaries.
         
@@ -2402,7 +2402,7 @@
 
 2008-05-05  Justin Garcia  <justin.garcia@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         <rdar://problem/5865171> REGRESSION: Creating a new quote places caret at beginning of quote instead of the end
 
@@ -2809,7 +2809,7 @@
 
 2008-04-29  Greg Bolsinga  <bolsinga@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Wrapped Dashboard code with ENABLE(DASHBOARD_SUPPORT)
 
@@ -2866,7 +2866,7 @@
 
 2008-04-28  Alice Liu  <alice.liu@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix <rdar://problem/4911289> Add tabindex property to all children 
         of HTMLElement (7138)
@@ -2879,7 +2879,7 @@
 
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix run-webkit-tests --threading
         and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
@@ -3040,7 +3040,7 @@
 
 2008-04-22  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add NPN_Construct and NPN_PluginThreadAsyncCall declarations.
         
@@ -3248,7 +3248,7 @@
 
 2008-03-31  Alice Liu  <alice.liu@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebFrame.mm:
         (-[WebFrame _accessibilityTree]):
@@ -3822,7 +3822,7 @@
 
 2008-03-13  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * ForwardingHeaders/wtf/Deque.h: Added.
 
@@ -4486,7 +4486,7 @@
 
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Done with Lars.
 
@@ -4536,7 +4536,7 @@
 
         Unify concept of enabling Netscape Plug-in API (NPAPI).
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.exp: Removed unused class export for WebBaseNetscapePluginView.
 
@@ -4582,7 +4582,7 @@
 
 2008-03-07  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5579292> REGRESSION: (safari 2-3): "Default default" encoding for Korean
         changed from Korean (Windows, DOS) to Korean (ISO 2022-KR), which breaks some sites
@@ -4959,7 +4959,7 @@
 
         Move -_convertValueToObjcValue to WebScriptCallFrame
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebCoreScriptDebugger.h: Removed declaration of
         -_convertValueToObjcValue.
@@ -4976,7 +4976,7 @@
 
         Move -exception and -evaluateWebScript: to WebScriptCallFrame
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebCoreScriptDebugger.h: Removed declarations of -exception
         and -evaluateWebScript:.
@@ -4992,7 +4992,7 @@
 
         Move -scopeChain to WebScriptCallFrame
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebCoreScriptDebugger.h:
           - Added declarations of -globalObject and -_convertValueToObjcValue:
@@ -5009,7 +5009,7 @@
 
         Move -functionName from WebCoreScriptCallFrame to WebScriptCallFrame
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebCoreScriptDebugger.h:
           - Removed #else case of #ifdef __cplusplus since this file is only
@@ -5033,7 +5033,7 @@
 
         Move WebCoreScriptDebugger to WebKit
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebCoreScriptDebugger.h: Renamed from WebCore/page/mac/WebCoreScriptDebugger.h.
         * WebView/WebCoreScriptDebugger.mm: Renamed from WebCore/page/mac/WebCoreScriptDebugger.mm.
@@ -5095,7 +5095,7 @@
 
 2008-03-04  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix crash that happens when trying to load a page with a Java applet.
         
@@ -5418,7 +5418,7 @@
 
 2008-02-23  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Move basic threading support from WebCore to WTF.
 
@@ -5430,7 +5430,7 @@
         Please clarify licensing for some files
         <http://bugs.webkit.org/show_bug.cgi?id=14970>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Plugins/WebNetscapeDeprecatedFunctions.c: Updated copyright statement
         and added Apple BSD-style license.
@@ -5500,7 +5500,7 @@
 
 2008-02-19  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Move back WebKit methods that were unused in WebCore.
         
@@ -5764,7 +5764,7 @@
 
         <rdar://problem/5708388> WebDashboardRegion.h duplicated between WebCore / WebKit
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebCoreSupport/WebDashboardRegion.h: Removed.
         * WebView/WebView.mm: Updated #import to use copy of WebDashboardRegion.h from WebCore.
@@ -5871,7 +5871,7 @@
 
         Updated for renames/removal of WebCore methods.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Plugins/WebPluginController.mm:
         (-[WebPluginController webPlugInContainerSelectionColor]): Changed to
@@ -6025,7 +6025,7 @@
 
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5463489> A number of layout tests should be using execCommand instead of textInputController
 
@@ -6036,7 +6036,7 @@
 
 2008-01-03  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fixed: <rdar://problem/4106190> Include "Where from" metadata in drag-and-dropped images
         
@@ -6049,7 +6049,7 @@
         
 2008-01-03  Alice Liu  <alice.liu@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         This fixes pageup/down in iframes.  test for this is fast/frames/iframe-scroll-page-up-down.html
 
@@ -6060,7 +6060,7 @@
 
 2008-01-02  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Fixed: <rdar://problem/5660603> QuickDraw plug-ins can cause a 100% reproducible assertion failure in AppKit (breaks Safari UI)
 
@@ -6154,7 +6154,7 @@
 
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=14140
         <rdar://problem/5270958> REGRESSION: Complex system KeyBindings don't work properly
@@ -6170,7 +6170,7 @@
 
         <rdar://problem/5647272> Remove user agent string hack for flickr.com
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebView.mm:
         (-[WebView _userAgentForURL:]): Removed hack.
@@ -6179,7 +6179,7 @@
 
         <rdar://problem/5647261> Remove user agent string hack for yahoo.com
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView/WebView.mm:
         (-[WebView _userAgentForURL:]): Removed hack.
@@ -6239,7 +6239,7 @@
 
 2007-12-13  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Turn on keyboard event processing quirks for feed views and old applications on Mac OS X.
 
@@ -6321,7 +6321,7 @@
 
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5535636>
         Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
@@ -6375,7 +6375,7 @@
 
 2007-12-10  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fixed: <rdar://problem/4290098> Right-mouse click on element doesn't call onmousedown handler
         
@@ -6481,7 +6481,7 @@
 
 2007-12-04  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - <rdar://5621435>
         - Security Fix. Instead of having it off by default, WebKit now must
@@ -6564,7 +6564,7 @@
 
 2007-12-04  Kevin Decker  <kdecker@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Revised fix for: <rdar://problem/5586978> REGRESSION (Safari 2-3): WebKit sometimes doesn't invoke Flash's NPP_SetWindow function and causes a hang
 
@@ -6605,7 +6605,7 @@
 
 2007-12-03  Timothy Hatcher  <timothy@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Change WebViewGetResourceLoadDelegateImplementations and WebViewGetFrameLoadDelegateImplementations
         to return a pointer to the implementation struct instead of a copy of the struct. This changes
@@ -6780,7 +6780,7 @@
 
 2007-11-28  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix for <rdar://problem/5524216> CrashTracer: [USER] 496 crashes in Safari at com.apple.WebCore: WebCore::Frame::eventHandler const + 6
 
@@ -7063,7 +7063,7 @@
 
 2007-11-17  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=15969
         Eliminate Editor::deleteRange()
@@ -7203,7 +7203,7 @@
 
 2007-11-13  John Sullivan  <sullivan@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         removed recently-added PreferredType concept; we found a better way to do what
         ths was accomplishing
@@ -7226,7 +7226,7 @@
 
 2007-11-12  Josh Aas  <joshmoz@gmail.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - http://bugs.webkit.org/show_bug.cgi?id=15946
           add NPPValue NPPVpluginDrawingModel (Mozilla bug 403418 compat)
@@ -7236,7 +7236,7 @@
 
 2007-11-12  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=15954
         Move DOM Selection operations out of SelectionController
@@ -7363,7 +7363,7 @@
 
 2007-11-06  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=15847
         Some editing cleanup
@@ -7430,13 +7430,13 @@
 
         Sort files(...); sections of Xcode project files.
 
-        Rubber-stamped by Darin.
+        Rubber-stamped by Darin Adler.
 
         * WebKit.xcodeproj/project.pbxproj:
 
 2007-11-02  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Add method to enable video composition.
 
@@ -7532,7 +7532,7 @@
         Generated files missing from WebCore's Xcode project file
         <http://bugs.webkit.org/show_bug.cgi?id=15406>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Added the following private header files to MigrateHeaders.make:
 
@@ -7607,7 +7607,7 @@
 
 2007-10-30  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKit part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
         <rdar://problem/5103625> REGRESSION: Caps lock icon should show in password fields
@@ -7619,7 +7619,7 @@
 
 2007-10-27  Mark Ambachtsheer  <mark.a@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix for bug 15710, When QD plugins draw to an offscreen bitmap and the plugin is not at 
         (0, 0) the clipping rectangle is not correct.

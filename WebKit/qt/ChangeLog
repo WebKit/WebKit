@@ -590,7 +590,7 @@
 
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Disable JSLock for per-thread contexts.
 
@@ -668,7 +668,7 @@
 
 2008-06-18  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Prepare JavaScript heap for being per-thread.
 
@@ -834,7 +834,7 @@
 
 2008-06-03  Jonathon Jongsma  <jonathon.jongsma@collabora.co.uk>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Api/qwebhistoryinterface.cpp: Remove WebCore::historyContains().  This
         function is not used anywhere internally and is only a convenience
@@ -2883,7 +2883,7 @@
 
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Done with Lars.
 
@@ -4260,7 +4260,7 @@
 
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5535636>
         Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
@@ -6835,7 +6835,7 @@
 
         Updated ChromeClientQt for ChromeClient changes.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebCoreSupport/ChromeClientQt.cpp:
         (WebCore::ChromeClientQt::print): Added a Frame* parameter.
@@ -8170,7 +8170,7 @@
 
 2007-03-07  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKitQT part of fix for:
         http://bugs.webkit.org/show_bug.cgi?id=10871
@@ -9445,7 +9445,7 @@
 
 2006-10-26  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix Qt/Linux build.
 
@@ -9468,7 +9468,7 @@
 
 2006-10-24  Simon Hausmann  <hausmann@kde.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * QtLauncher/CMakeLists.txt, WebKitPart/CMakeLists.txt: Added project name to
           kde4_automoc macro, as required by the latest KDE4 cmake module.
@@ -9527,7 +9527,7 @@
 
 2006-09-04  Nikolas Zimmermann  <zimmermann@kde.org>
 
-        Reviewed by Darin. Final polish by Sam.
+        Reviewed by Darin Adler. Final polish by Sam.
 
         Fixes parts of: http://bugs.webkit.org/show_bug.cgi?id=10644
         Add WebKitPart, an embeddable KPart for the KDE platform.

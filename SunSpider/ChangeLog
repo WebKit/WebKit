@@ -274,7 +274,7 @@
 
 2007-11-09  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=15925
         SunSpider should check for Shark being installed
@@ -287,7 +287,7 @@
 
 2007-11-03  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - Add compare mode and a description of the benchmark to the hosted version.
 
@@ -333,7 +333,7 @@
 
 2007-10-29  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         - fix Date tests to work in command-line SpiderMonkey
 
@@ -391,7 +391,7 @@
 
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - Don't hardcode my path to testkjs
         
@@ -399,7 +399,7 @@
 
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         - Add a compare script to compare results, and improve formatting of standard results a bit.
 
@@ -409,7 +409,7 @@
 
 2007-10-23  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * resources/sunspider-analyze-results.js: Do the error range
         properly, using the t-distribution instead of 1.96 (which was
@@ -499,7 +499,7 @@
 
 2007-10-20  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * TODO: Updated to note areas that are now well-covered.
         
@@ -600,7 +600,7 @@
 
 2007-10-14  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - New JavaScript benchmark
         http://bugs.webkit.org/show_bug.cgi?id=15515

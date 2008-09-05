@@ -513,7 +513,7 @@
 
 2008-03-07  Simon Hausmann  <hausmann@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Done with Lars.
 
@@ -589,7 +589,7 @@
 
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
-        Rubber stamped by Darin.
+        Rubber stamped by Darin Adler.
 
         Add separator '\' after libJavaScriptCore_la_LIBADD and cleanup
         whitespaces introduced in the previous commit.
@@ -598,7 +598,7 @@
 
 2008-02-23  Jan Michael Alonzo  <jmalonzo@unpluggable.com>
 
-        Rubber-stamped by Darin.
+        Rubber-stamped by Darin Adler.
 
         * GNUmakefile.am: Add both GLOBALDEPS and WEBKITDEPS instead of DEPENDENCIES.
         * configure.ac: Break dependent modules into GLOBALDEPS and WEBKITDEPS.
@@ -656,7 +656,7 @@
 
         Turn on cross-document messaging support by default
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * configure.ac:
 
@@ -670,7 +670,7 @@
         Note that the support is turned off by default right now. A subsequent
         commit will turn it on by default.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * configure.ac:
 
@@ -2390,7 +2390,7 @@
 
 2007-07-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         As of http://bugs.webkit.org/show_bug.cgi?id=14527 move the
         WebCore/ForwardingHeader/JavaScriptCore to JavaScriptCore
@@ -2622,7 +2622,7 @@
 
 2006-10-30  Stephanie Lewis  <slewis@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Change Makefiles to return non-zero when module make fails.
 

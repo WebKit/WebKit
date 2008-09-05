@@ -679,7 +679,7 @@
 
 2008-03-31  Jasper Bryant-Greene  <jasper@unix.geek.nz>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Resolves http://bugs.webkit.org/show_bug.cgi?id=18010
         "WebKitNetworkRequestPrivate is defined in two places unnecessarily"
@@ -1352,7 +1352,7 @@
 
 2008-01-02  Holger Hans Peter Freyther  <zecke@selfish.org>
 
-        Rubber stamped by Darin.
+        Rubber stamped by Darin Adler.
 
         Coding Style fix. Do not use an else because we use a return in the
         if branch.
@@ -1750,7 +1750,7 @@
 
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5535636>
         Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.

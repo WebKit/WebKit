@@ -207,7 +207,7 @@
 
 2008-07-08  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/6058368> REGRESSION: Crash occurs in KJS::Machine after launching
         Apple Installer
@@ -228,7 +228,7 @@
 
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Disable JSLock for per-thread contexts.
 
@@ -278,7 +278,7 @@
 
 2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Prepare JavaScript heap for being per-thread.
 
@@ -426,7 +426,7 @@
 
 2008-05-02  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Make JavaScriptGlue and JavaScriptCore API functions implicitly call initializeThreading
         for the sake of non-WebKit clients.
@@ -465,7 +465,7 @@
 
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix run-webkit-tests --threading
         and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
@@ -688,7 +688,7 @@
 
         Sort files(...); sections of Xcode project files.
 
-        Rubber-stamped by Darin.
+        Rubber-stamped by Darin Adler.
 
         * JavaScriptGlue.xcodeproj/project.pbxproj:
 
@@ -769,7 +769,7 @@
 
 2007-03-24  Mark Rowe  <mrowe@apple.com>
 
-        Rubber-stamped by Darin.
+        Rubber-stamped by Darin Adler.
 
         * Configurations/JavaScriptGlue.xcconfig: Remove unnecessary INFOPLIST_PREPROCESS.
 
@@ -924,7 +924,7 @@
 
 2006-12-19  Timothy Hatcher  <timothy@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/4891774> Local WebCore/WebBrowser builds fail in 9A328 due to warning about ObjC-2.0 language features
 
@@ -960,7 +960,7 @@
 
 2006-08-04  Sam Weinig  <sam.weinig@gmail.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - patch for http://bugs.webkit.org/show_bug.cgi?id=10192
           Make WebCore (and friends) compile with -Wshorten-64-to-32
@@ -971,7 +971,7 @@
 
 2006-08-03  Sam Weinig  <sam.weinig@gmail.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - patch for http://bugs.webkit.org/show_bug.cgi?id=10176
           Make WebCore compile with -Wundef
@@ -982,7 +982,7 @@
 
 2006-07-29  Sam Weinig  <sam.weinig@gmail.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - patch for http://bugs.webkit.org/show_bug.cgi?id=10080
           Adopt pedantic changes from the Unity project to improve 
@@ -1013,7 +1013,7 @@
 
 2006-07-15  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - switch property lists to be vector+set of Identifiers instead of list of References
         
@@ -1182,7 +1182,7 @@
 
 2006-04-04  Timothy Hatcher  <timothy@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         The Debug and Release frameworks are now built with install paths relative to the build products directory.
         This removes the need for other projects to build with -framework WebCore and -framework JavaScriptCore. 
@@ -1199,7 +1199,7 @@
 
 2006-03-31  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - Fixed <rdar://problem/4430836> JavaScript patch crashing Quartz
         Composer
@@ -1470,7 +1470,7 @@
 
 2005-11-04  Timothy Hatcher  <timothy@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * JavaScriptGlue.xcodeproj/project.pbxproj:
           Fixed the FRAMEWORK_SEARCH_PATHS to look in the WebKit

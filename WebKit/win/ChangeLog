@@ -685,7 +685,7 @@
 
 2008-07-01  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Disable JSLock for per-thread contexts.
 
@@ -726,7 +726,7 @@
 
 2008-06-17  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Prepare JavaScript heap for being per-thread.
 
@@ -1388,7 +1388,7 @@
 
 2008-04-25  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix run-webkit-tests --threading
         and provisionally fix <https://bugs.webkit.org/show_bug.cgi?id=18661>
@@ -1561,7 +1561,7 @@
 
 2008-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement get_accHelp().
 
@@ -1571,7 +1571,7 @@
 
 2008-04-19  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement get_accState().
 
@@ -1580,7 +1580,7 @@
 
 2008-04-21  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Move collector main thread initialization from WebKit/win to KJS::initializeThreading.
 
@@ -1589,7 +1589,7 @@
 
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement get_accRole().
 
@@ -1601,7 +1601,7 @@
 
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement get_accName(), get_accValue(), get_accDescription(). Added
         virtual methods that accessible objects can override to customize the
@@ -1642,7 +1642,7 @@
 
 2008-04-18  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement IAccessible::get_accChild().
 
@@ -1667,7 +1667,7 @@
 
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Implement IAccessible::get_accParent(). 
 
@@ -1682,7 +1682,7 @@
 
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Return an AccessibleDocument when our root accessible object is queried
         for.
@@ -1701,7 +1701,7 @@
 
 2008-04-17  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Respond to WM_GETOBJECT messages. Currently returns NULL.
 
@@ -1741,7 +1741,7 @@
 
 2008-04-16  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add a base AccessibilityObject wrapper class. Currently just stubs all
         of the IAccessible methods.
@@ -2300,7 +2300,7 @@
         Added a method to paint WebView content specified by 
         the document rect into a device context.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Interfaces/IWebViewPrivate.idl:
         * WebView.cpp:
@@ -2490,7 +2490,7 @@
 
 2008-03-11  Holger Hans Peter Freyther  <zecke@selfish.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         r25512 inlined the urlIcon to improve the startup time of Safari on Mac. Inlining is
         not suitable for platforms where this icon is themable. E.g. the Qt platform is allowing
@@ -2534,7 +2534,7 @@
 
         Stop Windows build if an error occurs in a prior project.
 
-        Rubber stamped by Darin.
+        Rubber stamped by Darin Adler.
 
         * WebKit.vcproj/Interfaces.vcproj:
         * WebKit.vcproj/InterfacesGenerated.vcproj:
@@ -2545,7 +2545,7 @@
 
         Make WebInspectorClient use WindowMessageBroadcaster instead of manual subclassing
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebCoreSupport/WebInspectorClient.cpp:
         (WebInspectorClient::WebInspectorClient): Removed
@@ -2563,7 +2563,7 @@
 
         Make the node highlight not obscure the tab bar when it first appears
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebNodeHighlight.cpp:
         (WebNodeHighlight::onWebViewWindowPosChanged): Added. Listens for
@@ -2636,7 +2636,7 @@
 
         WebScriptDebugServer is now a JavaScriptDebugListener.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebScriptDebugServer.cpp:
         (WebScriptDebugServer::WebScriptDebugServer): Removed initialization
@@ -3506,7 +3506,7 @@
 
 2008-02-16  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=17397
         <rdar://problem/5748245> REGRESSION (r30236-30336): Cannot backspace/enter in forms on Windows
@@ -3571,7 +3571,7 @@
 
         <rdar://problem/5740656> Leak in postDidAddIconNotification in WebIconDatabase
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebIconDatabase.cpp:
         (postDidAddIconNotification): Need to adopt the newly created instance of CFDictionaryPropertyBag, 
@@ -3796,7 +3796,7 @@
 
 2008-02-05  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=15248
         <rdar://problem/5497032> Can not enter accented characters using alt-numeric keypad (take two)
@@ -3844,7 +3844,7 @@
 
         Let WebCore take care of the highlight drawing entirely
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebInspectorClient.cpp:
         (WebInspectorClient::highlight): We now just show our highlight
@@ -3865,7 +3865,7 @@
 
         Move node highlight drawing code to WebCore
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebNodeHighlight.cpp:
         (WebNodeHighlight::updateWindow): Call into WebCore to do the node
@@ -3911,7 +3911,7 @@
 
 2008-01-29  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5710692> All storage tests fail/crash
 
@@ -3990,7 +3990,7 @@
 
         <rdar://problem/5699509> Allow file upload dialog to be localized.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * English.lproj/Localizable.strings: Updated.
         * WebCoreLocalizedStrings.cpp:
@@ -4112,7 +4112,7 @@
         When the top-level parent receives a WM_NCACTIVATE message, WebView
         recalculates whether it is contained within the current active window.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Interfaces/IWebViewPrivate.idl:
         (IWebViewPrivate::windowAncestryDidChange): Added. WebKit clients
@@ -4149,7 +4149,7 @@
 
         Updated for ScrollBarClient changes
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebScrollBar.h:
         (WebScrollBar::isActive): Added.
@@ -4161,7 +4161,7 @@
         Focus and active state are now handled (somewhat) separately. Future
         patches will further separate these concepts.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView.cpp:
         (WebViewWndProc): Updated for method renames.
@@ -4183,7 +4183,7 @@
         
         Allow nested timers from javascript prompts to allow for WebView-based edit fields.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebChromeClient.cpp:
         (WebChromeClient::runJavaScriptPrompt):
@@ -4192,7 +4192,7 @@
 
         Use shared vsprops for most vcproj properties.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.vcproj/Interfaces.vcproj:
         * WebKit.vcproj/WebKit.vcproj:
@@ -4316,7 +4316,7 @@
         <http://bugs.webkit.org/show_bug.cgi?id=16818>
         <rdar://problem/5681463>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.vcproj/WebKit.sln: Removed reference to dftables project.
 
@@ -4367,7 +4367,7 @@
 
         Fix crash that could happen if the key we are passing to the HashMap is 0 in WebView::interpretKeyEvent().
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView.cpp:
         (WebView::interpretKeyEvent):
@@ -4432,7 +4432,7 @@
 
 2008-01-04  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5611712> xsl:sort does not use a case folding sort, and the 'case-order' attribute is ignored (16077)
 
@@ -4451,7 +4451,7 @@
 
 2008-01-03  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5463489> A number of layout tests should be using execCommand instead of textInputController
 
@@ -4501,7 +4501,7 @@
 
 2007-12-30  Matt Lilek  <webkit@mattlilek.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Bug 16578: Windows Web Inspector window needs minimum size
         http://bugs.webkit.org/show_bug.cgi?id=16578
@@ -4524,7 +4524,7 @@
 
         Implemented DOMDocument::getElementById().
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * DOMCoreClasses.cpp:
         (DOMDocument::getElementById):
@@ -4617,7 +4617,7 @@
 
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=16462
         REGRESSION: access keys broken on Windows
@@ -4805,7 +4805,7 @@
 
 2007-12-10  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
     
         <rdar://problem/5636865>
         WebKit needs API to allow registering a protocol as local (RSS feeds appear unstyled)
@@ -4840,7 +4840,7 @@
 
 2007-12-11  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5535636>
         Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
@@ -5001,7 +5001,7 @@
 
         <rdar://problem/5556378> Implemented database related UI delegate methods (prompts for new/enlarged databases)
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Interfaces/IWebUIDelegatePrivate.idl:
         * WebChromeClient.cpp:
@@ -5012,7 +5012,7 @@
 
         Fixed <rdar://5540000> onbeforeunload doesn't fire when closing window/tab
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Interfaces/IWebViewPrivate.idl:
         * WebView.cpp:
@@ -5514,7 +5514,7 @@
 
 2007-11-27  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
    
         Add COMEnumVariant, a templatized class with implements IEnumVARIANT and lets
         you enumerate over a C++ container, be it WTF or STL.
@@ -5538,7 +5538,7 @@
 
         This lets us handle grayscale colors (which only have 2 components).
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKitGraphics.cpp:
         (DrawTextAtPoint):
@@ -5848,7 +5848,7 @@
         Add IDOMElementPrivate::font() to get an element's font
         as a WebFontDescription.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * DOMCoreClasses.cpp:
         (DOMElement::font):
@@ -6328,7 +6328,7 @@
 
 2007-10-30  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKitWin part of fix for http://bugs.webkit.org/show_bug.cgi?id=10577
         <rdar://problem/5110427> REGRESSION: Caps lock icon should show in password fields
@@ -6535,7 +6535,7 @@
 
 2007-10-24  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - Renamed WebDebugProgram to WebScriptDebugServer to match the naming
         scheme on the mac.
@@ -6804,7 +6804,7 @@
 
         Add FindSafari
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.vcproj/WebKit.sln:
 
@@ -6938,7 +6938,7 @@
 
 2007-10-04  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKit/win part of fix for <rdar://problem/5369017> REGRESSION: Can't tab to webview that doesn't have editable content
 
@@ -7025,7 +7025,7 @@
 
 2007-09-27  Kevin McCullough  <kmccullough@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         - <rdar://5261371> Nothing downloaded when exporting bookmarks from iGoogle web history
         - Implemented IWebHTTPURLResponse::allHeaderFields so that if the content disposition is "attachment" we will download the file instead of display it.  Also implemented some missing functionality.
@@ -7154,7 +7154,7 @@
 
         Fix <rdar://5499507> FrameView will always have size (0,0) if its parent WebView is never resized
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView.cpp:
         (WebView::initWithFrame): Set the main FrameView's size to the size of
@@ -7458,7 +7458,7 @@
 
         Prevent WebKit version numbers from containing "4" in Windows.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKit.vcproj/VERSION: Bump version since our current version ends in 4.
         * WebKit.vcproj/auto-version.sh: Add version checking code.
@@ -7532,7 +7532,7 @@
         until it's detached from the WebFrame.  When the WebDataSource is destroyed, it'll notify
         its WebDocumentLoader so the loader will clear any references to it.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebDataSource.cpp:
         (WebDataSource::~WebDataSource): call WebDocumentLoader::detachDataSource() so the loader
@@ -7701,7 +7701,7 @@
 
 2007-08-24  Jon Honeycutt  <jhoneycutt@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Part of <rdar://problem/5433236> Print preview of empty txt file crashes
         Safari
@@ -8979,7 +8979,7 @@
 
         Switch Windows to using FrameView::layoutIfNeededRecursive
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebFrame.cpp: Removed layoutIfNeededRecursive.
         * WebFrame.h: Ditto.
@@ -9074,7 +9074,7 @@
 
 2007-08-15  Peter Kasting  <zerodpx@gmail.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         http://bugs.webkit.org/show_bug.cgi?id=14967 part 1 - Eliminate most implicit
         conversions of wtf::Vector<T> to T* by explicitly calling .data()
@@ -9143,7 +9143,7 @@
 
         Use RetainPtr to store WebPreferences::m_privatePrefs
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebPreferences.cpp:
         (WebPreferences::setStringValue):
@@ -9344,7 +9344,7 @@
 
 2007-07-20  Justin Garcia  <justin.garcia@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         <rdar://problem/5109817> Ctrl-click on word in non-editable text doesn't select it
 
@@ -9552,7 +9552,7 @@
 
         WebKit/win part of <rdar://problem/5336005> Calling window.print() on a subframe prints whole page, should only print that subframe
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * Interfaces/IWebUIDelegate.idl: Rename print to printFrame to closer
         match the Mac method, and copy more of the Mac API comments.
@@ -9563,7 +9563,7 @@
 
         Updated WebChromeClient for ChromeClient changes.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebChromeClient.cpp:
         (WebChromeClient::print): Added a Frame* parameter.
@@ -9795,7 +9795,7 @@
 
         Remove SEH block from around history plist read, since the underlying bug has been fixed.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebHistory.cpp:
         (createHistoryListFromStream):
@@ -9804,7 +9804,7 @@
 
         Prefast: Fix misplaced parenthesis.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView.cpp:
         (core):
@@ -9813,7 +9813,7 @@
 
         Prefast: Add null check prior to writing into allocated BSTR.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * MarshallingHelpers.cpp:
         (MarshallingHelpers::CFStringRefToBSTR):
@@ -10137,7 +10137,7 @@
 
 2007-05-29  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Removed setPageCacheSize/pageCacheSize from IWebBackForwardList.
 
@@ -10419,7 +10419,7 @@
 
 2007-05-15  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         <rdar://problem/4956541> Need to implement preference for how much History is maintained
 
@@ -10428,7 +10428,7 @@
 
 2007-05-14  Anders Carlsson  <andersca@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Pass an empty property bag when constructing the WebError, the code in Safari relies on having a user info bag.
         
@@ -10739,7 +10739,7 @@
 
 2007-05-07  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix typo in prefs code.       
 
@@ -10748,7 +10748,7 @@
 
 2007-05-04  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Fix crash when using "check spelling while typing".
 
@@ -11391,7 +11391,7 @@
 
 2007-04-02  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Expose COM class counter
 
@@ -11614,7 +11614,7 @@
 
 2007-03-23  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKit part of <rdar://problem/5084881> Add a "turn of site-specific
         hacks" menu item to the Debug menu
@@ -12111,7 +12111,7 @@
 
 2007-03-14  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKit part of fix for <rdar://problem/5057371> REGRESSION: Shift-selection stopped working in text fields
 
@@ -12262,7 +12262,7 @@
 
 2007-03-07  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         WebKitWin part of fix for:
         http://bugs.webkit.org/show_bug.cgi?id=10871
@@ -12687,7 +12687,7 @@
 
 2007-02-19  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fix <rdar://problem/5007566> Crash in WebFrame::dataSource on dni.ru
 
@@ -13467,7 +13467,7 @@
 
 2007-01-29  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin. 
+        Reviewed by Darin Adler. 
 
         * WebEditorClient.cpp:
         (WebEditorClient::handleKeyPress): Removed EventTargetNode paramenter. 
@@ -13941,7 +13941,7 @@
 
 2007-01-23  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/4919754>
         Boomer freezes after attempt to play video.
@@ -13968,7 +13968,7 @@
 
 2007-01-23  Adele Peterson  <adele@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
    
         Reorganized some event handling code for keyPress events to
         prepare for another fix.
@@ -14588,7 +14588,7 @@
 
 2007-01-12  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Move WebKitWin over to the new WebCore loader. There are still some leftover functions 
         from FrameWinClient that aren't used and should be removed.
@@ -14792,7 +14792,7 @@
 
 2007-01-10  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add WebDocumentLoader. Implement some of the FrameLoaderClient methods.
         Add a resourceRequest() getter to WebMutableURLRequest.
@@ -14916,7 +14916,7 @@
 
 2007-01-09  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add COMPtr. Make MemoryStream backed by a SharedBuffer. Use SharedBuffer in
         WebFrame.
@@ -15437,7 +15437,7 @@
 
 2006-12-09  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Build fix.
 
@@ -15514,7 +15514,7 @@
 
 2006-12-04  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Checkpoint of <rdar://4601521>
         Use CoreFoundation bundles w/ Localizable.strings for localization.
@@ -16001,7 +16001,7 @@
 
 2006-11-15  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Add an undo manager to the editor client. Make it possible for applications to invoke undo/redo.        
 
@@ -16685,7 +16685,7 @@
 
 2006-11-06  Geoffrey Garen  <ggaren@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Stubbed out the Chrome and Screen clients.
 
@@ -16956,7 +16956,7 @@
 
 2006-10-29  Maciej Stachowiak  <mjs@apple.com>
 
-        Rubber stamped by Darin.
+        Rubber stamped by Darin Adler.
 
         - renamed ResourceLoader to ResourceHandle (and same for related classes)
 
@@ -16984,7 +16984,7 @@
 
 2006-10-25  Steve Falkenburg  <sfalken@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Checked in Luke's CG printing code
 
@@ -17199,7 +17199,7 @@
 
 2006-10-20  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Build fix.
         Stubbing out DOMWindow.idl, which was forgotten in the last checkin.
@@ -17709,7 +17709,7 @@
 
 2006-10-03  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Part of fix for <rdar://problem/4603342>
         Keyboard navigability
@@ -18314,7 +18314,7 @@
 
 2006-09-06  Adam Roben  <aroben@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Fixed various Windows build problems caused by previous checkins.
 

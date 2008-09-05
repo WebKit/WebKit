@@ -417,7 +417,7 @@
 
 2008-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         Test case for Bug 20247: setAttributeNode() does not work when attribute name
         has a capital letter in it

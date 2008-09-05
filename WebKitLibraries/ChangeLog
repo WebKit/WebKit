@@ -361,7 +361,7 @@
 
         Use shared vsprops for most vcproj properties.
         
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * win/tools/vsprops/common.vsprops:
         * win/tools/vsprops/debug.vsprops:
@@ -515,7 +515,7 @@
 
 2007-11-02  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Update to add WKQTMovieViewSetDrawSynchronously
 
@@ -608,7 +608,7 @@
         <rdar://problem/5534421>
         Added wkGetDefaultHTTPCookieStorage().  Updated libraries.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * win/include/WebKitSystemInterface/WebKitSystemInterface.h:
         * win/lib/WebKitSystemInterface.lib:
@@ -716,7 +716,7 @@
 
 2007-03-27  Antti Koivisto  <antti@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
         
         Added wkGetWheelEventDeltas
 
@@ -783,7 +783,7 @@
 
 2006-07-09  Anders Carlsson  <acarlsson@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebKitSystemInterface.h:
         * libWebKitSystemInterface.a:

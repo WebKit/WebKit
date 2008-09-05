@@ -416,7 +416,7 @@
 
 2008-03-16  Kevin Ollivier  <kevino@theolliviers.com>
 
-        Rubber stamped by Darin.
+        Rubber stamped by Darin Adler.
 
         Add set-webkit-configuration support for wx port, and centralize
         build dir location setting.
@@ -559,7 +559,7 @@
 
         Updated for WebCore method renames.
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         * WebView.cpp:
         (wxWebView::OnSetFocus):
@@ -630,7 +630,7 @@
 
 2007-12-16  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         http://bugs.webkit.org/show_bug.cgi?id=16462
         REGRESSION: access keys broken on Windows
@@ -673,7 +673,7 @@
 
 2007-12-07  Alexey Proskuryakov  <ap@webkit.org>
 
-        Reviewed by Darin.
+        Reviewed by Darin Adler.
 
         <rdar://problem/5535636>
         Have to press 4 times instead of 2 times to get the expected result of ^^ with german keyboard.
