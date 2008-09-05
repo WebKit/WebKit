@@ -1,5 +1,12 @@
 2008-09-05  Antti Koivisto  <antti@apple.com>
 
+        Another build fix.
+
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::notifyFinished):
+
+2008-09-05  Antti Koivisto  <antti@apple.com>
+
         Build fixes.
         
         * WebCore.xcodeproj/project.pbxproj:

@@ -84,7 +84,7 @@ void SVGFEImageElement::parseMappedAttribute(MappedAttribute* attr)
 void SVGFEImageElement::notifyFinished(CachedResource* finishedObj)
 {
     if (finishedObj == m_cachedImage && m_filterEffect)
-        m_filterEffect->setCachedImage(m_cachedImage);
+        m_filterEffect->setCachedImage(m_cachedImage.get());
 }
 
 SVGFilterEffect* SVGFEImageElement::filterEffect(SVGResourceFilter* filter) const
