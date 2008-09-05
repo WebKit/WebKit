@@ -1,3 +1,15 @@
+2008-09-04  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        - fix <rdar://problem/6198514> Changing a button's opacity triggers relayout
+
+        Test: fast/repaint/button-spurious-layout-hint.html
+
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setStyle): Reset the inner block's style box
+        flex to 0 to avoid getting a spurious layout hint. 
+
 2008-09-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes.

@@ -1,5 +1,16 @@
 2008-09-04  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Beth Dakin.
+
+        - pixel test for <rdar://problem/6198514> Changing a button's opacity triggers relayout
+
+        * fast/repaint/button-spurious-layout-hint.html: Added.
+        * platform/mac/fast/repaint/button-spurious-layout-hint-expected.checksum: Added.
+        * platform/mac/fast/repaint/button-spurious-layout-hint-expected.png: Added.
+        * platform/mac/fast/repaint/button-spurious-layout-hint-expected.txt: Added.
+
+2008-09-04  Dan Bernstein  <mitz@apple.com>
+
         - roll out r36050 because it made svg/custom/invalid-fill-hex.svg fail,
           and fixing https://bugs.webkit.org/show_bug.cgi?id=15360 appears to
           require a different approach
