@@ -101,4 +101,11 @@ void SmallStrings::createSingleCharacterString(ExecState* exec, unsigned char ch
     m_singleCharacterStrings[character] = new (exec) JSString(m_storage->rep(character), JSString::HasOtherOwner);
 }
 
+UString::Rep* SmallStrings::singleCharacterStringRep(unsigned char character)
+{
+    if (!m_storage)
+        m_storage.set(new SmallStringsStorage);
+    return m_storage->rep(character);
+}
+
 }

@@ -26,6 +26,7 @@
 #ifndef SmallStrings_h
 #define SmallStrings_h
 
+#include "ustring.h"
 #include <wtf/OwnPtr.h>
 
 namespace KJS {
@@ -52,6 +53,8 @@ namespace KJS {
                 createSingleCharacterString(exec, character);
             return m_singleCharacterStrings[character];
         }
+
+        UString::Rep* singleCharacterStringRep(unsigned char character);
         
         void mark();
         

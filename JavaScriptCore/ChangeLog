@@ -1,3 +1,33 @@
+2008-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20673
+          single-character strings are churning in the Identifier table
+
+        1.007x as fast on SunSpider overall
+        1.167x as fast on SunSpider string/fasta
+
+        * JavaScriptCore.exp: Updated.
+        * kjs/SmallStrings.cpp:
+        (KJS::SmallStrings::singleCharacterStringRep): Added.
+        * kjs/SmallStrings.h: Added singleCharacterStringRep for clients that
+        need just a UString, not a JSString.
+        * kjs/identifier.cpp:
+        (KJS::Identifier::add): Added special cases for single character strings
+        so that the UString::Rep that ends up in the identifier table is the one
+        from the single-character string optimization; otherwise we end up having
+        to look it up in the identifier table over and over again.
+        (KJS::Identifier::addSlowCase): Ditto.
+        (KJS::Identifier::checkSameIdentifierTable): Made this function an empty
+        inline in release builds so that callers don't have to put #ifndef NDEBUG
+        at each call site.
+        * kjs/identifier.h:
+        (KJS::Identifier::add): Removed #ifndef NDEBUG around the calls to
+        checkSameIdentifierTable.
+        (KJS::Identifier::checkSameIdentifierTable): Added. Empty inline version
+        for NDEBUG builds.
+
 2008-09-05  Mark Rowe  <mrowe@apple.com>
 
         Build fix.
