@@ -30,7 +30,9 @@
 #include <wtf/OwnPtr.h>
 
 #if PLATFORM(MAC)
+#if USE(ATSUI)
 typedef struct OpaqueATSUStyle* ATSUStyle;
+#endif
 #endif
 
 #if PLATFORM(WIN)
@@ -92,6 +94,11 @@ public:
 
 #if PLATFORM(MAC)
     NSFont* getNSFont() const { return m_font.font(); }
+#if USE(CORE_TEXT)
+    CTFontRef getCTFont() const;
+    CFDictionaryRef getCFStringAttributes(bool ltr) const;
+#endif
+#if USE(ATSUI)
     void checkShapesArabic() const;
     bool shapesArabic() const
     {
@@ -99,6 +106,7 @@ public:
             checkShapesArabic();
         return m_shapesArabic;
     }
+#endif
 #endif
 
 #if PLATFORM(WIN)
@@ -165,11 +173,17 @@ public:
 
 #if PLATFORM(MAC)
     void* m_styleGroup;
+#if USE(ATSUI)
     mutable ATSUStyle m_ATSUStyle;
     mutable bool m_ATSUStyleInitialized;
     mutable bool m_ATSUMirrors;
     mutable bool m_checkedShapesArabic;
     mutable bool m_shapesArabic;
+#endif
+#if USE(CORE_TEXT)
+    mutable RetainPtr<CTFontRef> m_CTFont;
+    mutable RetainPtr<CFDictionaryRef> m_CFStringAttributes[2];
+#endif
 #endif
 
 #if PLATFORM(WIN)

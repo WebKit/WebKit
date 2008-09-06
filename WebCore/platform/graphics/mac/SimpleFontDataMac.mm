@@ -142,10 +142,12 @@ static NSString* pathFromFont(NSFont *font)
 void SimpleFontData::platformInit()
 {
     m_styleGroup = 0;
+#if USE(ATSUI)
     m_ATSUStyleInitialized = false;
     m_ATSUMirrors = false;
     m_checkedShapesArabic = false;
     m_shapesArabic = false;
+#endif
 
     m_syntheticBoldOffset = m_font.m_syntheticBold ? 1.0f : 0.f;
 
@@ -272,9 +274,10 @@ void SimpleFontData::platformDestroy()
 {
     if (m_styleGroup)
         wkReleaseStyleGroup(m_styleGroup);
-
+#if USE(ATSUI)
     if (m_ATSUStyleInitialized)
         ATSUDisposeStyle(m_ATSUStyle);
+#endif
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
@@ -358,6 +361,7 @@ float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
     return advance.width + m_syntheticBoldOffset;
 }
 
+#if USE(ATSUI)
 void SimpleFontData::checkShapesArabic() const
 {
     ASSERT(!m_checkedShapesArabic);
@@ -386,5 +390,48 @@ void SimpleFontData::checkShapesArabic() const
             LOG_ERROR("ATSFontGetTable failed (%d)", status);
     }
 }
+#endif
 
+#if USE(CORE_TEXT)
+CTFontRef SimpleFontData::getCTFont() const
+{
+    if (getNSFont())
+        return toCTFontRef(getNSFont());
+    if (!m_CTFont)
+        m_CTFont.adoptCF(CTFontCreateWithGraphicsFont(m_font.cgFont(), m_font.size(), &CGAffineTransformIdentity, NULL));
+    return m_CTFont.get();
 }
+
+CFDictionaryRef SimpleFontData::getCFStringAttributes(bool ltr) const
+{
+    int index = ltr ? 0 : 1;
+
+    if (!m_CFStringAttributes[index]) {
+        static const float kerningAdjustmentValue = 0;
+        static CFNumberRef kerningAdjustment = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &kerningAdjustmentValue);
+
+        static const int ligaturesNotAllowedValue = 0;
+        static CFNumberRef ligaturesNotAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesNotAllowedValue);
+
+        static const int ligaturesAllowedValue = 1;
+        static CFNumberRef ligaturesAllowed = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &ligaturesAllowedValue);
+
+        static CTWritingDirection writingDirections[] = { kCTWritingDirectionLeftToRight, kCTWritingDirectionRightToLeft };
+        static CTParagraphStyleSetting ltrParagraphStyleSettings[] = { { kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(CTWritingDirection), &writingDirections[0] } };
+        static CTParagraphStyleSetting rtlParagraphStyleSettings[] = { { kCTParagraphStyleSpecifierBaseWritingDirection, sizeof(CTWritingDirection), &writingDirections[1] } };
+
+        static CTParagraphStyleRef ltrParagraphStyle = CTParagraphStyleCreate(ltrParagraphStyleSettings, sizeof(ltrParagraphStyleSettings) / sizeof(*ltrParagraphStyleSettings));
+        static CTParagraphStyleRef rtlParagraphStyle = CTParagraphStyleCreate(rtlParagraphStyleSettings, sizeof(rtlParagraphStyleSettings) / sizeof(*rtlParagraphStyleSettings));
+
+        static const void* attributeKeys[] = { kCTFontAttributeName, kCTKernAttributeName, kCTLigatureAttributeName, kCTParagraphStyleAttributeName };
+        const void* attributeValues[] = { getCTFont(), kerningAdjustment, platformData().allowsLigatures() ? ligaturesAllowed : ligaturesNotAllowed, ltr ? ltrParagraphStyle : rtlParagraphStyle };
+
+        m_CFStringAttributes[index].adoptCF(CFDictionaryCreate(NULL, attributeKeys, attributeValues, sizeof(attributeKeys) / sizeof(*attributeKeys), &kCFCopyStringDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
+    }
+
+    return m_CFStringAttributes[index].get();
+}
+
+#endif
+
+} // namespace WebCore

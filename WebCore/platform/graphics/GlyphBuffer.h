@@ -155,6 +155,20 @@ public:
 #endif
     }
     
+    void add(Glyph glyph, const SimpleFontData* font, GlyphBufferAdvance advance)
+    {
+        m_fontData.append(font);
+#if PLATFORM(CAIRO)
+        cairo_glyph_t cairoGlyph;
+        cairoGlyph.index = glyph;
+        m_glyphs.append(cairoGlyph);
+#else
+        m_glyphs.append(glyph);
+#endif
+
+        m_advances.append(advance);
+    }
+    
 private:
     Vector<const SimpleFontData*, 2048> m_fontData;
     Vector<GlyphBufferGlyph, 2048> m_glyphs;

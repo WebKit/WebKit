@@ -458,6 +458,10 @@
 		371F51A20D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */; };
 		371F53E90D2704F900ECE0D5 /* CSSUnicodeRangeValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */; };
 		371F53EA0D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */; };
+		3724CA570E68A7E400DB4384 /* CoreTextController.h in Headers */ = {isa = PBXBuildFile; fileRef = 3724CA540E68A7E400DB4384 /* CoreTextController.h */; };
+		3724CA580E68A7E400DB4384 /* CoreTextController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA550E68A7E400DB4384 /* CoreTextController.cpp */; };
+		3724CA590E68A7E400DB4384 /* FontMacATSUI.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */; };
+		3724CA7E0E68B20500DB4384 /* FontMacCoreText.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3724CA7D0E68B20500DB4384 /* FontMacCoreText.cpp */; };
 		3744570F0DB05FA500AE0992 /* SVGGlyphMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */; };
 		3784C34B0E11AA34007D8D48 /* FontTraitsMask.h in Headers */ = {isa = PBXBuildFile; fileRef = 3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		37919C230B7D188600A56998 /* PositionIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 37919C210B7D188600A56998 /* PositionIterator.cpp */; };
@@ -5048,6 +5052,10 @@
 		371F51A00D262FA000ECE0D5 /* CSSSegmentedFontFace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSSegmentedFontFace.cpp; sourceTree = "<group>"; };
 		371F53E70D2704F900ECE0D5 /* CSSUnicodeRangeValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSUnicodeRangeValue.h; sourceTree = "<group>"; };
 		371F53E80D2704F900ECE0D5 /* CSSUnicodeRangeValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSUnicodeRangeValue.cpp; sourceTree = "<group>"; };
+		3724CA540E68A7E400DB4384 /* CoreTextController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreTextController.h; sourceTree = "<group>"; };
+		3724CA550E68A7E400DB4384 /* CoreTextController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CoreTextController.cpp; sourceTree = "<group>"; };
+		3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FontMacATSUI.mm; sourceTree = "<group>"; };
+		3724CA7D0E68B20500DB4384 /* FontMacCoreText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontMacCoreText.cpp; sourceTree = "<group>"; };
 		3744570E0DB05FA500AE0992 /* SVGGlyphMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGGlyphMap.h; sourceTree = "<group>"; };
 		3784C34A0E11AA34007D8D48 /* FontTraitsMask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontTraitsMask.h; sourceTree = "<group>"; };
 		37919C210B7D188600A56998 /* PositionIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = PositionIterator.cpp; sourceTree = "<group>"; };
@@ -12237,18 +12245,22 @@
 		B27535490B053814002CE64F /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
+				B275354A0B053814002CE64F /* ColorMac.mm */,
+				3724CA550E68A7E400DB4384 /* CoreTextController.cpp */,
+				3724CA540E68A7E400DB4384 /* CoreTextController.h */,
+				B275354B0B053814002CE64F /* FloatPointMac.mm */,
+				B275354C0B053814002CE64F /* FloatRectMac.mm */,
+				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
 				B2AFFC740D00A5C10030074D /* FontCacheMac.mm */,
 				B2AFFC750D00A5C10030074D /* FontCustomPlatformData.cpp */,
 				B2AFFC760D00A5C10030074D /* FontCustomPlatformData.h */,
 				B2AFFC780D00A5C10030074D /* FontMac.mm */,
+				3724CA560E68A7E400DB4384 /* FontMacATSUI.mm */,
+				3724CA7D0E68B20500DB4384 /* FontMacCoreText.cpp */,
 				B2AFFC790D00A5C10030074D /* FontPlatformData.h */,
 				B2AFFC7A0D00A5C10030074D /* FontPlatformDataMac.mm */,
 				B2AFFC7B0D00A5C10030074D /* GlyphPageTreeNodeMac.cpp */,
-				EDE3A4FF0C7A430600956A37 /* ColorMac.h */,
-				B275354A0B053814002CE64F /* ColorMac.mm */,
-				B275354B0B053814002CE64F /* FloatPointMac.mm */,
-				B275354C0B053814002CE64F /* FloatRectMac.mm */,
-				B275354D0B053814002CE64F /* FloatSizeMac.mm */,
 				B277B4030B22F37C0004BEC6 /* GraphicsContextMac.mm */,
 				B275358D0B053A66002CE64F /* IconMac.mm */,
 				B275354E0B053814002CE64F /* ImageMac.mm */,
@@ -15545,6 +15557,7 @@
 				BCEF45E90E687767001C1287 /* TextMetrics.h in Headers */,
 				BCEF45F60E687B5C001C1287 /* JSTextMetrics.h in Headers */,
 				AB014DE40E689A4300E10445 /* TextControlInnerElements.h in Headers */,
+				3724CA570E68A7E400DB4384 /* CoreTextController.h in Headers */,
 				316FE1120E6E1DA700BF6088 /* AnimationBase.h in Headers */,
 				316FE1140E6E1DA700BF6088 /* AnimationController.h in Headers */,
 				316FE1160E6E1DA700BF6088 /* CompositeAnimation.h in Headers */,
@@ -17347,6 +17360,9 @@
 				BCEF447D0E674806001C1287 /* StyleGeneratedImage.cpp in Sources */,
 				BCEF45F50E687B5C001C1287 /* JSTextMetrics.cpp in Sources */,
 				AB014DE30E689A4300E10445 /* TextControlInnerElements.cpp in Sources */,
+				3724CA580E68A7E400DB4384 /* CoreTextController.cpp in Sources */,
+				3724CA590E68A7E400DB4384 /* FontMacATSUI.mm in Sources */,
+				3724CA7E0E68B20500DB4384 /* FontMacCoreText.cpp in Sources */,
 				316FE1110E6E1DA700BF6088 /* AnimationBase.cpp in Sources */,
 				316FE1130E6E1DA700BF6088 /* AnimationController.cpp in Sources */,
 				316FE1150E6E1DA700BF6088 /* CompositeAnimation.cpp in Sources */,

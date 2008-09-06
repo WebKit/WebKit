@@ -101,6 +101,9 @@ struct FontPlatformData {
     NSFont *font() const { return m_font; }
     void setFont(NSFont *font);
 
+    bool roundsGlyphAdvances() const;
+    bool allowsLigatures() const;
+
 #ifndef BUILDING_ON_TIGER
     CGFontRef cgFont() const { return m_cgFont.get(); }
 #else

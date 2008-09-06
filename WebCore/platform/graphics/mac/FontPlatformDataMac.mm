@@ -75,7 +75,8 @@ const FontPlatformData& FontPlatformData::operator=(const FontPlatformData& f)
     return *this;
 }
 
-void FontPlatformData::setFont(NSFont *font) {
+void FontPlatformData::setFont(NSFont *font)
+{
     if (m_font == font)
         return;
     if (font)
@@ -93,5 +94,14 @@ void FontPlatformData::setFont(NSFont *font) {
 #endif
 }
 
+bool FontPlatformData::roundsGlyphAdvances() const
+{
+    return [m_font renderingMode] == NSFontAntialiasedIntegerAdvancementsRenderingMode;
 }
 
+bool FontPlatformData::allowsLigatures() const
+{
+    return ![[m_font coveredCharacterSet] characterIsMember:'a'];
+}
+
+} // namespace WebCore

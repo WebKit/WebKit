@@ -2,6 +2,84 @@
 
         Reviewed by Dave Hyatt.
 
+        The initial Core Text adoption prototype was made by Daniel Fenwick.
+
+        - <rdar://problem/5158514> Add a Core Text-based complex text code path
+
+        Currently the Core Text code path is not used in any configuration.
+
+        * WebCore.xcodeproj/project.pbxproj: Added files.
+        * config.h: Defined WTF_USE_ATSUI and WTF_USE_CORE_TEXT.
+        * platform/graphics/Font.cpp:
+        (WebCore::WidthIterator::advance): Moved the spacingDisabled() test out
+        of the loop.
+        * platform/graphics/GlyphBuffer.h:
+        (WebCore::GlyphBuffer::add): Added this version that takes an advance.
+        * platform/graphics/SimpleFontData.h: Added ATSUI and CORE_TEXT #ifdefs.
+        Added getCTFont() and getCFStringAttributes() and corresponding data
+        members for Core Text.
+        * platform/graphics/mac/CoreTextController.cpp: Added.
+        (WebCore::roundCGFloat): Helper function.
+        (WebCore::ceilCGFloat): Helper function.
+        (WebCore::CoreTextController::CoreTextRun::CoreTextRun):
+        (WebCore::CoreTextController::CoreTextController):
+        (WebCore::CoreTextController::offsetForPosition):
+        (WebCore::CoreTextController::collectCoreTextRuns): Added. Segments the
+        run into subruns as necessary such that each subrun can be rendered with
+        a single font. Also separates out soft hyphens and replaces them with
+        real hyphens, because Core Text does not emit a glyph for soft hyphens.
+        Then calls collectCoreTextRunsForCharacters() on each subrun.
+        (WebCore::CoreTextController::advance):
+        (WebCore::CoreTextController::collectCoreTextRunsForCharacters): Creates
+        a CTLine from the given subrun and collects its CoreTextRuns.
+        (WebCore::CoreTextController::adjustGlyphsAndAdvances): Applies the
+        rounding hacks, letter- and word-spacing and glyph substitutions and
+        stores the resulting adjusted glyphs and advances.
+        * platform/graphics/mac/CoreTextController.h: Copied from WebCore/platform/graphics/win/UniscribeController.h.
+        (WebCore::CoreTextController::totalWidth):
+        (WebCore::CoreTextController::finalRoundingWidth):
+        (WebCore::CoreTextController::CoreTextRun::ctRun):
+        (WebCore::CoreTextController::CoreTextRun::glyphCount):
+        (WebCore::CoreTextController::CoreTextRun::fontData):
+        (WebCore::CoreTextController::CoreTextRun::characters):
+        (WebCore::CoreTextController::CoreTextRun::stringLocation):
+        (WebCore::CoreTextController::CoreTextRun::stringLength):
+        (WebCore::CoreTextController::CoreTextRun::indexAt):
+        * platform/graphics/mac/FontMac.mm: Moved the ATSUI-specific parts to
+        FontMacATSUI.mm.
+        * platform/graphics/mac/FontMacATSUI.mm: Copied from WebCore/platform/graphics/mac/FontMac.mm.
+        (WebCore::disableLigatures): Changed to call
+        FontPlatformData::allowsLigatures().
+        (WebCore::overrideLayoutOperation): Changed to call
+        FontPlatformData::roundsGlyphAdvances().
+        * platform/graphics/mac/FontMacCoreText.cpp: Copied from WebCore/platform/graphics/win/FontWin.cpp.
+        (WebCore::Font::selectionRectForComplexText): Changed to use
+        totalWidth() instead of advancing to the end and using runWidthSoFar().
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::floatWidthForComplexText): Ditto.
+        (WebCore::Font::offsetForPositionForComplexText):
+        * platform/graphics/mac/FontPlatformData.h:
+        * platform/graphics/mac/FontPlatformDataMac.mm:
+        (WebCore::FontPlatformData::setFont):
+        (WebCore::FontPlatformData::roundsGlyphAdvances): Added. Checks the
+        AppKit rendering mode.
+        (WebCore::FontPlatformData::allowsLigatures): Added. Implements the
+        heuristic that allows ligatures in fonts that do not have a glyph for
+        'a', based on the assumption that such fonts are only used in complex
+        text.
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit):
+        (WebCore::SimpleFontData::platformDestroy):
+        (WebCore::SimpleFontData::getCTFont): Added.
+        (WebCore::SimpleFontData::getCFStringAttributes): Added. Caches and
+        returns an attributes dictionary.
+        * platform/text/mac/ShapeArabic.c: Added ATSUI #ifdefs.
+        * platform/text/mac/ShapeArabic.h: Ditto.
+
+2008-09-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - make combining mark offsets work in CG text on Windows
 
         * platform/graphics/win/FontCGWin.cpp:
