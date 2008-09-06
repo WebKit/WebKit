@@ -1,3 +1,17 @@
+2008-09-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Fix the Mac Debug build by adding symbols that are exported only in a
+        Debug configuration.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.Debug.exp: Added.
+        * JavaScriptCore.base.exp: Copied from JavaScriptCore.exp.
+        * JavaScriptCore.exp: Removed.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2008-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Cameron Zwarich.
