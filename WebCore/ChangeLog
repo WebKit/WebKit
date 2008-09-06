@@ -1,3 +1,16 @@
+2008-09-06  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - make combining mark offsets work in CG text on Windows
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs): The old code tried to translate the text
+        matrix, but failed for two reasons: it did not actually change the
+        matrix, and even if it did, CGContextSetTextPosition overwrites the
+        translation values in the text matrix. Instead, just added the
+        translation to the anchor point.
+
 2008-09-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alp Toker.
