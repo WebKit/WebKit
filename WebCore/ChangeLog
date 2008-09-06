@@ -1,3 +1,20 @@
+2008-09-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Reviewed by Alp Toker.
+
+        https://bugs.webkit.org/show_bug.cgi?id=18346
+        [GTK] Remove build warnings
+
+        Applied some casts, and removed an unused typedef to make the
+        compiler happy, printing less warnings when building.
+
+        * page/gtk/AccessibilityObjectWrapperAtk.cpp:
+        * platform/graphics/gtk/SimpleFontDataPango.cpp:
+        (WebCore::SimpleFontData::containsCharacters):
+        * platform/graphics/gtk/VideoSinkGStreamer.cpp:
+        (webkit_video_sink_set_caps):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+
 2008-09-05  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Roben.

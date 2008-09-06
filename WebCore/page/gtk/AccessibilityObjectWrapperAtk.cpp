@@ -143,7 +143,7 @@ static AtkObject* webkit_accessible_ref_child(AtkObject* object, gint index)
     AccessibilityObject* coreObject = core(object);
 
     g_return_val_if_fail(index >= 0, NULL);
-    g_return_val_if_fail(index < coreObject->children().size(), NULL);
+    g_return_val_if_fail(static_cast<size_t>(index) < coreObject->children().size(), NULL);
 
     AccessibilityObject* coreChild = coreObject->children().at(index).get();
 

@@ -58,9 +58,9 @@ namespace WebKit {
 
 FrameLoaderClient::FrameLoaderClient(WebKitWebFrame* frame)
     : m_frame(frame)
+    , m_userAgent("")
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
-    , m_userAgent("")
 {
     ASSERT(m_frame);
 }
@@ -164,8 +164,6 @@ void FrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction policyFunctio
 
 void FrameLoaderClient::committedLoad(DocumentLoader* loader, const char* data, int length)
 {
-    const String& textEncoding = loader->response().textEncodingName();
-
     if (!m_pluginView) {
         ASSERT(loader->frame());
         // Setting the encoding on the frame loader is our way to get work done that is normally done

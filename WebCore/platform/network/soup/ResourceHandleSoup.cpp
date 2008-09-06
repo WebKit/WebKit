@@ -42,7 +42,7 @@ namespace WebCore {
 
 static SoupSession* session = 0;
 
-typedef enum
+enum
 {
     ERROR_TRANSPORT,
     ERROR_UNKNOWN_PROTOCOL,

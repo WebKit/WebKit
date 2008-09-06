@@ -40,10 +40,10 @@ GST_DEBUG_CATEGORY_STATIC(webkit_video_sink_debug);
 #define GST_CAT_DEFAULT webkit_video_sink_debug
 
 static GstElementDetails webkit_video_sink_details =
-    GST_ELEMENT_DETAILS("WebKit video sink",
-                        "Sink/Video",
-                        "Sends video data from a GStreamer pipeline to a Cairo surface",
-                        "Alp Toker <alp@atoker.com>");
+  GST_ELEMENT_DETAILS((gchar*) "WebKit video sink",
+                      (gchar*) "Sink/Video",
+                      (gchar*) "Sends video data from a GStreamer pipeline to a Cairo surface",
+                      (gchar*) "Alp Toker <alp@atoker.com>");
 
 enum {
     PROP_0,
@@ -181,7 +181,7 @@ webkit_video_sink_set_caps(GstBaseSink* bsink, GstCaps* caps)
         priv->par_n = priv->par_d = 1;
 
     gst_structure_get_int(structure, "red_mask", &red_mask);
-    priv->rgb_ordering = (red_mask == 0xff000000);
+    priv->rgb_ordering = (red_mask == static_cast<int>(0xff000000));
 
     return TRUE;
 }
@@ -208,8 +208,6 @@ webkit_video_sink_dispose(GObject* object)
 static void
 webkit_video_sink_finalize(GObject* object)
 {
-    WebKitVideoSink* sink = WEBKIT_VIDEO_SINK(object);
-
     G_OBJECT_CLASS(parent_class)->finalize(object);
 }
 

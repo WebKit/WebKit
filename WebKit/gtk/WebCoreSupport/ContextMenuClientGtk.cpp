@@ -86,7 +86,7 @@ static const GtkUnicodeMenuEntry bidi_menu_entries[] = {
 
 static void insertControlCharacter(GtkWidget* widget)
 {
-    GtkUnicodeMenuEntry* entry = (GtkUnicodeMenuEntry*)g_object_get_data(G_OBJECT(widget), "gtk-unicode-menu-entry");
+    // GtkUnicodeMenuEntry* entry = (GtkUnicodeMenuEntry*)g_object_get_data(G_OBJECT(widget), "gtk-unicode-menu-entry");
     notImplemented();
 }
 

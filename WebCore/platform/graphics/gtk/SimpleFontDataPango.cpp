@@ -103,7 +103,7 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     PangoCoverage* available = pango_font_get_coverage(m_font.m_font, pango_language_get_default());
     pango_coverage_max(requested, available);
 
-    for (unsigned i = 0; i < length; i++) {
+    for (int i = 0; i < length; i++) {
         if (PANGO_COVERAGE_NONE == pango_coverage_get(requested, i)) {
             result = false;
             break;
