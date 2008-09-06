@@ -1,5 +1,13 @@
 2008-09-05  Eric Seidel  <eric@webkit.org>
 
+        Reviewed by Adam Roben.
+
+        Build fix for WebKitWin and Chromium
+
+        * platform/FileSystem.h:
+
+2008-09-05  Eric Seidel  <eric@webkit.org>
+
         Reviewed by Darin Adler.
 
         Try to make Chromium compile with ToT:

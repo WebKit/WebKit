@@ -50,19 +50,24 @@
 
 typedef const struct __CFData* CFDataRef;
 
+#if PLATFORM(WIN)
+// These are to avoid including <winbase.h> in a header for Chromium
+typedef void *HANDLE;
+// Assuming STRICT
+typedef struct HINSTANCE__* HINSTANCE;
+typedef HINSTANCE HMODULE;
+#endif
+
 namespace WebCore {
 
 class CString;
 
 #if PLATFORM(WIN)
-typedef void *HANDLE;
-// Assuming STRICT
-typedef struct HINSTANCE__* HINSTANCE;
-typedef HINSTANCE HMODULE;
-
 typedef HANDLE PlatformFileHandle;
 typedef HMODULE PlatformModule;
-const PlatformFileHandle invalidPlatformFileHandle = INVALID_HANDLE_VALUE;
+// FIXME: -1 is INVALID_HANDLE_VALUE, defined in <winbase.h>. Chromium tries to
+// avoid using Windows headers in headers.  We'd rather move this into the .cpp.
+const PlatformFileHandle invalidPlatformFileHandle = reinterpret_cast<HANDLE>(-1);
 
 struct PlatformModuleVersion {
     unsigned leastSig;
