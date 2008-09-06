@@ -1,12 +1,29 @@
 2008-09-05  Darin Adler  <darin@apple.com>
 
-        Reviewed by Geoff Garen.
+        Reviewed by Cameron Zwarich.
+
+        - https://bugs.webkit.org/show_bug.cgi?id=20681
+          JSPropertyNameIterator functions need to be inlined
+
+        1.007x as fast on SunSpider overall
+        1.081x as fast on SunSpider math-cordic
+
+        * VM/JSPropertyNameIterator.cpp: Moved functions out of here.
+        * VM/JSPropertyNameIterator.h:
+        (KJS::JSPropertyNameIterator::JSPropertyNameIterator): Moved
+        this into the header and marked it inline.
+        (KJS::JSPropertyNameIterator::create): Ditto.
+        (KJS::JSPropertyNameIterator::next): Ditto.
+
+2008-09-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Geoffrey Garen.
 
         - fix https://bugs.webkit.org/show_bug.cgi?id=20673
           single-character strings are churning in the Identifier table
 
         1.007x as fast on SunSpider overall
-        1.167x as fast on SunSpider string/fasta
+        1.167x as fast on SunSpider string-fasta
 
         * JavaScriptCore.exp: Updated.
         * kjs/SmallStrings.cpp:
