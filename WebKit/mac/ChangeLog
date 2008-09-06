@@ -1,3 +1,11 @@
+2008-09-05  Timothy Hatcher  <timothy@apple.com>
+
+        Correct a typo in the setApplicationChromeModeEnabledEnabled:
+        method name, remove the extra "Enabled".
+
+        * WebView/WebPreferences.mm:
+        * WebView/WebPreferencesPrivate.h:
+
 2008-09-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric Seidel.

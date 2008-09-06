@@ -770,7 +770,7 @@ static WebCacheModel cacheModelForMainBundle(void)
     return [self _boolValueForKey:WebKitApplicationChromeModeEnabledPreferenceKey];
 }
 
-- (void)setApplicationChromeModeEnabledEnabled:(BOOL)flag
+- (void)setApplicationChromeModeEnabled:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitApplicationChromeModeEnabledPreferenceKey];
 }
