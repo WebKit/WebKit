@@ -58,9 +58,12 @@ namespace KJS {
     public:
         JSObject(PassRefPtr<StructureID>);
         JSObject(JSObject* prototype);
-        virtual ~JSObject();
 
         virtual void mark();
+
+        // The inline virtual destructor cannot be the first virtual function declared
+        // in the class as it results in the vtable being generated as a weak symbol
+        virtual ~JSObject();
 
         bool inherits(const ClassInfo* classInfo) const { return JSCell::isObject(classInfo); }
 

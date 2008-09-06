@@ -1,3 +1,11 @@
+2008-09-05  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * kjs/JSObject.h: Move the inline virtual destructor after a non-inline
+        virtual function so that the symbol for the vtable is not marked as a
+        weakly exported symbol.
+
 2008-09-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Sam Weinig.
