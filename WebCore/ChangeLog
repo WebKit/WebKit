@@ -1,3 +1,22 @@
+2008-09-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix <rdar://problem/6201644>
+        https://bugs.webkit.org/show_bug.cgi?id=20493
+        Crash after OK in dialog box and reloading page in secure mode
+        
+        Limited loader only fix since the general timer fix is causing problems on Windows.
+
+        * loader/loader.cpp:
+        (WebCore::Loader::servePendingRequests):
+        (WebCore::Loader::Host::Host):
+        (WebCore::Loader::Host::didFinishLoading):
+        (WebCore::Loader::Host::didFail):
+        (WebCore::Loader::Host::didReceiveData):
+        * loader/loader.h:
+        (WebCore::Loader::Host::processingResource):
+
 2008-09-06  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

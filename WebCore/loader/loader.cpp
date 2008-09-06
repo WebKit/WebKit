@@ -148,7 +148,7 @@ void Loader::servePendingRequests(Priority minimumPriority)
         Host* host = hostsToServe[n];
         if (host->hasRequests())
             host->servePendingRequests(minimumPriority);
-        else {
+        else if (!host->processingResource()){
             AtomicString name = host->name();
             delete host;
             m_hosts.remove(name.impl());
@@ -180,6 +180,7 @@ void Loader::cancelRequests(DocLoader* docLoader)
 Loader::Host::Host(const AtomicString& name, unsigned maxRequestsInFlight)
     : m_name(name)
     , m_maxRequestsInFlight(maxRequestsInFlight)
+    , m_processingResource(false)
 {
 }
 
@@ -278,6 +279,8 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     RequestMap::iterator i = m_requestsLoading.find(loader);
     if (i == m_requestsLoading.end())
         return;
+    
+    m_processingResource = true;
 
     Request* request = i->second;
     m_requestsLoading.remove(i);
@@ -307,6 +310,8 @@ void Loader::Host::didFinishLoading(SubresourceLoader* loader)
     printf("HOST %s COUNT %d RECEIVED %s\n", u.host().latin1().data(), m_requestsLoading.size(), resource->url().latin1().data());
 #endif
     servePendingRequests();
+    
+    m_processingResource = false;
 }
 
 void Loader::Host::didFail(SubresourceLoader* loader, const ResourceError&)
@@ -322,6 +327,8 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     if (i == m_requestsLoading.end())
         return;
 
+    m_processingResource = true;
+    
     Request* request = i->second;
     m_requestsLoading.remove(i);
     DocLoader* docLoader = request->docLoader();
@@ -347,6 +354,8 @@ void Loader::Host::didFail(SubresourceLoader* loader, bool cancelled)
     docLoader->checkForPendingPreloads();
 
     servePendingRequests();
+
+    m_processingResource = false;
 }
 
 void Loader::Host::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
@@ -417,9 +426,12 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
     if (resource->errorOccurred())
         return;
     
+    m_processingResource = true;
+    
     if (resource->response().httpStatusCode() / 100 == 4) {
         // Treat a 4xx response like a network error.
         resource->error();
+        m_processingResource = false;
         return;
     }
 
@@ -431,6 +443,8 @@ void Loader::Host::didReceiveData(SubresourceLoader* loader, const char* data, i
         resource->data(copiedData.release(), true);
     } else if (request->isIncremental())
         resource->data(loader->resourceData(), false);
+    
+    m_processingResource = false;
 }
     
 void Loader::Host::cancelPendingRequests(RequestQueue& requestsPending, DocLoader* docLoader)
