@@ -1,3 +1,31 @@
+2008-09-06  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/6187043> 
+        Don't parse full HTML user agent style sheet unless it is actually needed
+        <rdar://problem/6131889> 
+        WebView is significantly more expensive to create recently
+        
+        Parsing the html4.css takes significant amount of time and memory (~50kb) on application
+        startup. Some clients may never use most of the rules.
+        
+        With this patch we use simplified UA stylesheet until we hit something it can't handle. 
+        This avoids full stylesheet parsing on application startup (due to empty document construction)
+        and also makes it possible for clients with very simple demands (divs and spans only) never to load 
+        the full style.
+        
+        It also delays view source style parsing until it is used.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle):
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::loadFullDefaultStyle):
+        (WebCore::loadSimpleDefaultStyle):
+        (WebCore::loadViewSourceStyle):
+        (WebCore::CSSStyleSelector::matchUARules):
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2008-09-06  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fix.
