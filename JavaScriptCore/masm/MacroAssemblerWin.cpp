@@ -40,7 +40,7 @@ void MacroAssembler::emitConvertToFastCall()
 
 void MacroAssembler::emitRestoreArgumentReference()
 {
-    emitMovl_rm(IA32MacroAssembler::esp, 0, IA32MacroAssembler::esp);
+    emitMovl_rm(esp, 0, esp);
 }
 
 }

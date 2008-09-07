@@ -1346,7 +1346,7 @@
 			Name="masm"
 			>
 			<File
-				RelativePath="..\..\masm\IA32MacroAsm.h"
+				RelativePath="..\..\masm\X86Assembler.h"
 				>
 			</File>
 			<File

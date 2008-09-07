@@ -1,3 +1,28 @@
+2008-09-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dan Bernstein.
+        
+        - rename IA32MacroAssembler class to X86Assembler
+        
+        We otherwise call the platform X86, and also, I don't see any macros.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * masm/IA32MacroAsm.h: Removed.
+        * masm/MacroAssembler.h:
+        (KJS::MacroAssembler::MacroAssembler):
+        * masm/MacroAssemblerWin.cpp:
+        (KJS::MacroAssembler::emitRestoreArgumentReference):
+        * masm/X86Assembler.h: Copied from masm/IA32MacroAsm.h.
+        (KJS::X86Assembler::X86Assembler):
+        * wrec/WREC.cpp:
+        (KJS::WRECGenerator::generateNonGreedyQuantifier):
+        (KJS::WRECGenerator::generateGreedyQuantifier):
+        (KJS::WRECGenerator::generateParentheses):
+        (KJS::WRECGenerator::generateBackreference):
+        (KJS::WRECGenerator::gernerateDisjunction):
+        * wrec/WREC.h:
+
 2008-09-07  Cameron Zwarich  <cwzwarich@webkit.org>
 
         Not reviewed.

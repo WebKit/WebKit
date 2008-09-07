@@ -87,13 +87,13 @@ namespace KJS {
         typedef MacroAssembler::JmpDst JmpDst;
 
         // these regs setup by the params
-        static const IA32MacroAssembler::RegisterID INPUT_REG = IA32MacroAssembler::eax;
-        static const IA32MacroAssembler::RegisterID CURR_POS_REG = IA32MacroAssembler::edx;
-        static const IA32MacroAssembler::RegisterID LENGTH_REG = IA32MacroAssembler::ecx;
+        static const X86Assembler::RegisterID INPUT_REG = X86Assembler::eax;
+        static const X86Assembler::RegisterID CURR_POS_REG = X86Assembler::edx;
+        static const X86Assembler::RegisterID LENGTH_REG = X86Assembler::ecx;
         // CURR_VAL_REG used as a temporary, DISJUNCTION_BEGIN_POS_REG holds the start of the current disjunction - which is the start of the whole match, for the top--level dijunction.
-        static const IA32MacroAssembler::RegisterID CURR_VAL_REG = IA32MacroAssembler::esi;
-        static const IA32MacroAssembler::RegisterID OUTPUT_REG = IA32MacroAssembler::edi;
-        static const IA32MacroAssembler::RegisterID QUANTIFIER_COUNT_REG = IA32MacroAssembler::ebx;
+        static const X86Assembler::RegisterID CURR_VAL_REG = X86Assembler::esi;
+        static const X86Assembler::RegisterID OUTPUT_REG = X86Assembler::edi;
+        static const X86Assembler::RegisterID QUANTIFIER_COUNT_REG = X86Assembler::ebx;
 
         friend class GenerateAtomFunctor;
         friend class GeneratePatternCharacterFunctor;

@@ -29,7 +29,7 @@
 
 #if ENABLE(MASM) && PLATFORM(X86)
 
-#include "IA32MacroAsm.h"
+#include "X86Assembler.h"
 
 #if COMPILER(GCC)
 #define WREC_CALL __attribute__ ((regparm (3)))
@@ -39,10 +39,10 @@
 
 namespace KJS {
 
-    class MacroAssembler : public IA32MacroAssembler {
+    class MacroAssembler : public X86Assembler {
     public:
         MacroAssembler(JITCodeBuffer* buffer)
-            : IA32MacroAssembler(buffer)
+            : X86Assembler(buffer)
         {
         }
 

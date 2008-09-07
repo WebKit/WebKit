@@ -79,7 +79,7 @@
 		8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8613F4590E3A433E00C948FD /* SamplingTool.h */; };
 		8683B02E0E636482004C19EE /* CTI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8683B02B0E636482004C19EE /* CTI.cpp */; };
 		8683B02F0E636482004C19EE /* CTI.h in Headers */ = {isa = PBXBuildFile; fileRef = 8683B02C0E636482004C19EE /* CTI.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		869081410E640C89000D36ED /* IA32MacroAsm.h in Headers */ = {isa = PBXBuildFile; fileRef = 869081400E640C89000D36ED /* IA32MacroAsm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		869081410E640C89000D36ED /* X86Assembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 869081400E640C89000D36ED /* X86Assembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		869083150E6518D7000D36ED /* WREC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 869083130E6518D7000D36ED /* WREC.cpp */; };
 		869083160E6518D7000D36ED /* WREC.h in Headers */ = {isa = PBXBuildFile; fileRef = 869083140E6518D7000D36ED /* WREC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */; };
@@ -580,7 +580,7 @@
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
 		8683B02B0E636482004C19EE /* CTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTI.cpp; path = VM/CTI.cpp; sourceTree = "<group>"; };
 		8683B02C0E636482004C19EE /* CTI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTI.h; path = VM/CTI.h; sourceTree = "<group>"; };
-		869081400E640C89000D36ED /* IA32MacroAsm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IA32MacroAsm.h; sourceTree = "<group>"; };
+		869081400E640C89000D36ED /* X86Assembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = X86Assembler.h; sourceTree = "<group>"; };
 		869083130E6518D7000D36ED /* WREC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WREC.cpp; sourceTree = "<group>"; };
 		869083140E6518D7000D36ED /* WREC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WREC.h; sourceTree = "<group>"; };
 		905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedLeakCounter.cpp; sourceTree = "<group>"; };
@@ -1319,7 +1319,7 @@
 			isa = PBXGroup;
 			children = (
 				A763F79C0E70E0FE00BC151E /* MacroAssembler.h */,
-				869081400E640C89000D36ED /* IA32MacroAsm.h */,
+				869081400E640C89000D36ED /* X86Assembler.h */,
 			);
 			path = masm;
 			sourceTree = "<group>";
@@ -1586,7 +1586,7 @@
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
 				8683B02F0E636482004C19EE /* CTI.h in Headers */,
-				869081410E640C89000D36ED /* IA32MacroAsm.h in Headers */,
+				869081410E640C89000D36ED /* X86Assembler.h in Headers */,
 				869083160E6518D7000D36ED /* WREC.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */,
