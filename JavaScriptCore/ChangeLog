@@ -1,3 +1,17 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Sam Weinig.
+
+        Remove C-style casts from kjs/collector.cpp.
+
+        * kjs/collector.cpp:
+        (KJS::Heap::heapAllocate):
+        (KJS::currentThreadStackBase):
+        (KJS::Heap::markConservatively):
+        (KJS::otherThreadStackPointer):
+        (KJS::Heap::markOtherThreadConservatively):
+        (KJS::Heap::sweep):
+
 2008-09-07  Mark Rowe  <mrowe@apple.com>
 
         Build fix for the debug variant.
