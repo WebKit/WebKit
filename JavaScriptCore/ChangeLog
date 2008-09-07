@@ -1,3 +1,22 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Timothy Hatcher.
+
+        Remove C-style casts from the CTI code.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitGetArg):
+        (KJS::CTI::emitGetPutArg):
+        (KJS::ctiRepatchCallByReturnAddress):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompileMainPass):
+        (KJS::CTI::privateCompileGetByIdSelf):
+        (KJS::CTI::privateCompileGetByIdProto):
+        (KJS::CTI::privateCompileGetByIdChain):
+        (KJS::CTI::privateCompilePutByIdReplace):
+        (KJS::CTI::privateArrayLengthTrampoline):
+        (KJS::CTI::privateStringLengthTrampoline):
+
 === End merge of squirrelfish-extreme ===
 
 2008-09-06  Gavin Barraclough  <barraclough@apple.com>
