@@ -35,6 +35,7 @@ module window {
         [Custom] void log();
         [Custom] void warn();
         [Custom] void dir();
+        [Custom] void dirxml();
         [Custom, ImplementationFunction=assertCondition] void assert(in boolean condition);
         [Custom] void count();
 

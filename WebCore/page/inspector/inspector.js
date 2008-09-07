@@ -45,6 +45,9 @@ var WebInspector = {
     resourceURLMap: {},
     searchResultsHeight: 100,
     missingLocalizedStrings: {},
+    _altKeyDown: false,
+    _forceHoverHighlight: false,
+    _hoveredDOMNode: null,
 
     get previousFocusElement()
     {
@@ -255,6 +258,80 @@ var WebInspector = {
             errorWarningElement.title = WebInspector.UIString("%d warnings", this.warnings);
         else
             errorWarningElement.title = null;
+    },
+
+    get altKeyDown()
+    {
+        return this._altKeyDown;
+    },
+
+    set altKeyDown(x)
+    {
+        if (this._altKeyDown === x)
+            return;
+
+        this._altKeyDown = x;
+
+        if (this._altKeyDown)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    get forceHoverHighlight()
+    {
+        return this._forceHoverHighlight;
+    },
+
+    set forceHoverHighlight(x)
+    {
+        if (this._forceHoverHighlight === x)
+            return;
+
+        this._forceHoverHighlight = x;
+
+        if (this._forceHoverHighlight)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    get hoveredDOMNode()
+    {
+        return this._hoveredDOMNode;
+    },
+
+    set hoveredDOMNode(x)
+    {
+        if (objectsAreSame(this._hoveredDOMNode, x))
+            return;
+
+        this._hoveredDOMNode = x;
+
+        if (this._hoveredDOMNode)
+            this._updateHoverHighlightSoon();
+        else
+            this._updateHoverHighlight();
+    },
+
+    _updateHoverHighlightSoon: function()
+    {
+        if ("_updateHoverHighlightTimeout" in this)
+            return;
+        this._updateHoverHighlightTimeout = setTimeout(this._updateHoverHighlight.bind(this), 0);
+    },
+
+    _updateHoverHighlight: function()
+    {
+        if ("_updateHoverHighlightTimeout" in this) {
+            clearTimeout(this._updateHoverHighlightTimeout);
+            delete this._updateHoverHighlightTimeout;
+        }
+
+        if (this._hoveredDOMNode && (this._altKeyDown || this.forceHoverHighlight))
+            InspectorController.highlightDOMNode(this._hoveredDOMNode);
+        else
+            InspectorController.hideDOMNodeHighlight();
     }
 }
 
@@ -478,12 +555,18 @@ WebInspector.documentKeyDown = function(event)
                     event.preventDefault();
                 }
                 break;
+            case "Alt":
+                this.altKeyDown = true;
+                break
         }
     }
 }
 
 WebInspector.documentKeyUp = function(event)
 {
+    if (!event.handled && event.keyIdentifier === "Alt")
+        this.altKeyDown = false;
+
     if (!this.currentFocusElement || !this.currentFocusElement.handleKeyUpEvent)
         return;
     this.currentFocusElement.handleKeyUpEvent(event);

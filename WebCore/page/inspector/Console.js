@@ -348,6 +348,7 @@ WebInspector.Console.prototype = {
                     return nodes; \
                 }, \
                 dir: function() { return console.dir.apply(console, arguments) }, \
+                dirxml: function() { return console.dirxml.apply(console, arguments) }, \
                 keys: function(o) { var a = []; for (k in o) a.push(k); return a; }, \
                 values: function(o) { var a = []; for (k in o) a.push(o[k]); return a; }, \
                 profile: function() { return console.profile.apply(console, arguments) }, \
@@ -523,6 +524,12 @@ WebInspector.ConsoleMessage = function(source, level, line, url, groupLevel)
         var propertiesSection = new WebInspector.ObjectPropertiesSection(arguments[5], null, null, null, true);
         propertiesSection.element.addStyleClass("console-message");
         this.propertiesSection = propertiesSection;
+    } else if (this.level === WebInspector.ConsoleMessage.MessageLevel.Node) {
+        var node = arguments[5];
+        if (!(node instanceof InspectorController.inspectedWindow().Node))
+            return;
+        this.elementsTreeOutline = new WebInspector.ElementsTreeOutline();
+        this.elementsTreeOutline.rootDOMNode = node;
     }
 
     if (url && line > 0 && this.isErrorOrWarning()) {
@@ -595,7 +602,7 @@ WebInspector.ConsoleMessage.prototype = {
 
     toMessageElement: function()
     {
-        if (this.level === WebInspector.ConsoleMessage.MessageLevel.Object)
+        if (this.propertiesSection)
             return this.propertiesSection.element;
 
         var element = document.createElement("div");
@@ -635,6 +642,12 @@ WebInspector.ConsoleMessage.prototype = {
                 break;
             case WebInspector.ConsoleMessage.MessageLevel.StartGroup:
                 element.addStyleClass("console-group-title-level");
+        }
+
+        if (this.elementsTreeOutline) {
+            element.addStyleClass("outline-disclosure");
+            element.appendChild(this.elementsTreeOutline.element);
+            return element;
         }
 
         var messageTextElement = document.createElement("span");
@@ -726,8 +739,9 @@ WebInspector.ConsoleMessage.MessageLevel = {
     Warning: 2,
     Error: 3,
     Object: 4,
-    StartGroup: 5,
-    EndGroup: 6
+    Node: 5,
+    StartGroup: 6,
+    EndGroup: 7
 }
 
 WebInspector.ConsoleCommand = function(command, result, formattedResultElement, level)

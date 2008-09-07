@@ -936,7 +936,7 @@ body.console-visible #console {
     text-indent: -12px
 }
 
-.elements.panel .outline-disclosure li .webkit-html-tag.close {
+.outline-disclosure li .webkit-html-tag.close {
     margin-left: -12px;
 }
 

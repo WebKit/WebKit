@@ -60,6 +60,7 @@ namespace WebCore {
         WarningMessageLevel,
         ErrorMessageLevel,
         ObjectMessageLevel,
+        NodeMessageLevel,
         StartGroupMessageLevel,
         EndGroupMessageLevel
     };
@@ -79,6 +80,7 @@ namespace WebCore {
         void log(KJS::ExecState*, const KJS::ArgList&);
         void warn(KJS::ExecState*, const KJS::ArgList&);
         void dir(KJS::ExecState*, const KJS::ArgList&);
+        void dirxml(KJS::ExecState*, const KJS::ArgList& arguments);
         void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList&);
         void count(KJS::ExecState*, const KJS::ArgList&);
         void profile(KJS::ExecState*, const KJS::ArgList&);

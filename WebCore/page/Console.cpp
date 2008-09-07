@@ -261,6 +261,21 @@ void Console::dir(ExecState* exec, const ArgList& args)
     page->inspectorController()->addMessageToConsole(JSMessageSource, ObjectMessageLevel, exec, args, 0, String());
 }
 
+void Console::dirxml(ExecState* exec, const ArgList& args)
+{
+    if (args.isEmpty())
+        return;
+
+    if (!m_frame)
+        return;
+
+    Page* page = m_frame->page();
+    if (!page)
+        return;
+
+    page->inspectorController()->addMessageToConsole(JSMessageSource, NodeMessageLevel, exec, args, 0, String());
+}
+
 void Console::assertCondition(bool condition, ExecState* exec, const ArgList& args)
 {
     if (condition)

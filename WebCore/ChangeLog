@@ -1,3 +1,39 @@
+2008-09-07  Keishi Hattori  <casey.hattori@gmail.com>
+
+        Adds console.dirxml support to the Web Inspector.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19156
+
+        Reviewed by Timothy Hatcher.
+
+        * WebCore.vcproj/WebCore.vcproj: Added ElementsTreeOutline.js.
+        * bindings/js/JSConsoleCustom.cpp:
+        (WebCore::JSConsole::dirxml):
+        * page/Console.cpp:
+        (WebCore::Console::dirxml): Adds a ConsoleMessage with NodeMessageLevel.
+        * page/Console.h:
+        (WebCore::): Added NodeMessageLevel.
+        * page/Console.idl: Added console.dirxml.
+        * page/inspector/Console.js: A NodeMessage creates a ElementsTreeOutline.
+        * page/inspector/ElementsPanel.js: Modified to use ElementsTreeOutline. The ElementsTreeOutline 
+        in the ElementsPanel has includeRootDOMNode and selectEnabled set to true.
+        * page/inspector/ElementsTreeOutline.js: Added.
+        (WebInspector.ElementsTreeOutline): A subclass of TreeOutline for displaying a DOM node tree.
+        (WebInspector.ElementsTreeElement): A subclass of TreeElement for ElementsTreeOutline.
+        * page/inspector/WebKit.qrc: Added ElementsTreeOutline.js.
+        * page/inspector/inspector.css:
+        * page/inspector/inspector.html: Added ElementsTreeOutline.js.
+        * page/inspector/inspector.js: Moved hover related methods to WebInspector.
+        (WebInspector.altKeyDown):
+        (WebInspector.forceHoverHighlight):
+        (WebInspector.hoveredDOMNode):
+        (WebInspector._updateHoverHighlightSoon):
+        (WebInspector._updateHoverHighlight):
+        (WebInspector.documentKeyDown): Updates WebInspector.altKeyDown
+        (WebInspector.documentKeyUp): Updates WebInspector.altKeyDown
+        * page/inspector/utilities.js: Added getDocumentForNode, parentNodeOrFrameElement,
+        isAncestorIncludingParentFrames.
+
 2008-09-06  Mark Rowe  <mrowe@apple.com>
 
         Qt build fix.

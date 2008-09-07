@@ -10,6 +10,7 @@
     <file>DatabaseTableView.js</file>
     <file>DataGrid.js</file>
     <file>ElementsPanel.js</file>
+    <file>ElementsTreeOutline.js</file>
     <file>FontView.js</file>
     <file>ImageView.js</file>
     <file>inspector.css</file>

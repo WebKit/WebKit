@@ -841,6 +841,27 @@ function nodeTitleInfo(hasChildren, linkify)
     return info;
 }
 
+function getDocumentForNode(node) {
+    return node.nodeType == Node.DOCUMENT_NODE ? node : node.ownerDocument;
+}
+
+function parentNodeOrFrameElement(node) {
+    var parent = node.parentNode;
+    if (parent)
+        return parent;
+
+    return getDocumentForNode(node).defaultView.frameElement;
+}
+
+function isAncestorIncludingParentFrames(a, b) {
+    if (objectsAreSame(a, b))
+        return false;
+    for (var node = b; node; node = getDocumentForNode(node).defaultView.frameElement)
+        if (objectsAreSame(a, node) || isAncestorNode.call(a, node))
+            return true;
+    return false;
+}
+
 Number.secondsToString = function(seconds, formatterFunction, higherResolution)
 {
     if (!formatterFunction)
