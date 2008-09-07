@@ -42,6 +42,7 @@
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_CONSOLE"
 				DisableSpecificWarnings="4146"
+				ForcedIncludeFiles="DumpRenderTreePrefix.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -116,6 +117,7 @@
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_CONSOLE"
 				DisableSpecificWarnings="4146"
+				ForcedIncludeFiles="DumpRenderTreePrefix.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -189,6 +191,7 @@
 				AdditionalIncludeDirectories="&quot;$(ProjectDir)\.&quot;;&quot;$(ProjectDir)\..&quot;;&quot;$(ProjectDir)\..\cg&quot;;&quot;$(WebKitOutputDir)\Include&quot;;&quot;$(WebKitOutputDir)\Include\DumpRenderTree\ForwardingHeaders&quot;;&quot;$(WebKitOutputDir)\Include\JavaScriptCore&quot;;&quot;$(WebKitLibrariesDir)\Include&quot;;&quot;$(WebKitLibrariesDir)\include\pthreads&quot;;&quot;$(WebKitOutputDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\WebCore&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders&quot;;&quot;$(WebKitLibrariesDir)\Include\CoreFoundation\OSXCompatibilityHeaders\GNUCompatibility&quot;"
 				PreprocessorDefinitions="_CONSOLE;DEBUG_WEBKIT_HAS_SUFFIX"
 				DisableSpecificWarnings="4146"
+				ForcedIncludeFiles="DumpRenderTreePrefix.h"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -352,6 +355,10 @@
 		</File>
 		<File
 			RelativePath="..\DumpRenderTree.h"
+			>
+		</File>
+		<File
+			RelativePath="..\DumpRenderTreePrefix.h"
 			>
 		</File>
 		<File

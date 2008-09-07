@@ -1,3 +1,12 @@
+2008-09-07  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix DRT build 
+
+        * DumpRenderTree/DumpRenderTreePrefix.h:
+        * DumpRenderTree/win/DumpRenderTree.vcproj:
+
 2008-09-06  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Windows nightlies.
