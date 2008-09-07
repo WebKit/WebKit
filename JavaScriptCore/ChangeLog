@@ -1,3 +1,13 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@webkit.org>
+
+        Not reviewed.
+
+        Visual C++ seems to have some odd casting rules, so just convert the
+        offending cast back to a C-style cast for now.
+
+        * kjs/collector.cpp:
+        (KJS::otherThreadStackPointer):
+
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Mark Rowe.
