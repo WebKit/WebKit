@@ -38,6 +38,7 @@ namespace KJS {
         friend class JSNumberCell;
         friend class JSString;
         friend class Machine;
+        friend class CTI;
     private:
         JSCell();
         JSCell(StructureID*);

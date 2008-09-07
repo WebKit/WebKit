@@ -77,6 +77,11 @@
 		65FDE49C0BDD1D4A00E80111 /* Assertions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 65E217B808E7EECC0023E5F6 /* Assertions.cpp */; };
 		8613F45A0E3A433E00C948FD /* SamplingTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8613F4580E3A433E00C948FD /* SamplingTool.cpp */; };
 		8613F45B0E3A433E00C948FD /* SamplingTool.h in Headers */ = {isa = PBXBuildFile; fileRef = 8613F4590E3A433E00C948FD /* SamplingTool.h */; };
+		8683B02E0E636482004C19EE /* CTI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8683B02B0E636482004C19EE /* CTI.cpp */; };
+		8683B02F0E636482004C19EE /* CTI.h in Headers */ = {isa = PBXBuildFile; fileRef = 8683B02C0E636482004C19EE /* CTI.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		869081410E640C89000D36ED /* IA32MacroAsm.h in Headers */ = {isa = PBXBuildFile; fileRef = 869081400E640C89000D36ED /* IA32MacroAsm.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		869083150E6518D7000D36ED /* WREC.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 869083130E6518D7000D36ED /* WREC.cpp */; };
+		869083160E6518D7000D36ED /* WREC.h in Headers */ = {isa = PBXBuildFile; fileRef = 869083140E6518D7000D36ED /* WREC.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		905B02AE0E28640F006DF882 /* RefCountedLeakCounter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */; };
 		90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D3469B0E285280009492EE /* RefCountedLeakCounter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		930754C108B0F68000AB3056 /* pcre_compile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 930754BF08B0F68000AB3056 /* pcre_compile.cpp */; };
@@ -109,6 +114,7 @@
 		A72701B60DADE94900E548D7 /* ExceptionHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */; };
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
+		A763F79D0E70E0FE00BC151E /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = A763F79C0E70E0FE00BC151E /* MacroAssembler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A7C31DAA0DBEBA4300FDF8EB /* SegmentedVector.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
@@ -572,6 +578,11 @@
 		7E6D517E0E729AF400778C37 /* JavaScriptCore.Debug.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.Debug.exp; sourceTree = "<group>"; };
 		8613F4580E3A433E00C948FD /* SamplingTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SamplingTool.cpp; path = VM/SamplingTool.cpp; sourceTree = "<group>"; };
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
+		8683B02B0E636482004C19EE /* CTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTI.cpp; path = VM/CTI.cpp; sourceTree = "<group>"; };
+		8683B02C0E636482004C19EE /* CTI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CTI.h; path = VM/CTI.h; sourceTree = "<group>"; };
+		869081400E640C89000D36ED /* IA32MacroAsm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IA32MacroAsm.h; sourceTree = "<group>"; };
+		869083130E6518D7000D36ED /* WREC.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WREC.cpp; sourceTree = "<group>"; };
+		869083140E6518D7000D36ED /* WREC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WREC.h; sourceTree = "<group>"; };
 		905B02AD0E28640F006DF882 /* RefCountedLeakCounter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RefCountedLeakCounter.cpp; sourceTree = "<group>"; };
 		90D3469B0E285280009492EE /* RefCountedLeakCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefCountedLeakCounter.h; sourceTree = "<group>"; };
 		9303F567099118FA00AD71B8 /* OwnPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnPtr.h; sourceTree = "<group>"; };
@@ -629,6 +640,7 @@
 		A72701B40DADE94900E548D7 /* ExceptionHelpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExceptionHelpers.cpp; path = VM/ExceptionHelpers.cpp; sourceTree = "<group>"; };
 		A727FF650DA3053B00E548D7 /* JSPropertyNameIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSPropertyNameIterator.h; path = VM/JSPropertyNameIterator.h; sourceTree = "<group>"; };
 		A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSPropertyNameIterator.cpp; path = VM/JSPropertyNameIterator.cpp; sourceTree = "<group>"; };
+		A763F79C0E70E0FE00BC151E /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
 		A7C31DA80DBEBA4300FDF8EB /* SegmentedVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentedVector.h; path = VM/SegmentedVector.h; sourceTree = "<group>"; };
 		A7E42C180E3938830065A544 /* JSStaticScopeObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStaticScopeObject.h; sourceTree = "<group>"; };
 		A7E42C190E3938830065A544 /* JSStaticScopeObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStaticScopeObject.cpp; sourceTree = "<group>"; };
@@ -857,19 +869,21 @@
 				7E6D517E0E729AF400778C37 /* JavaScriptCore.Debug.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				1432EBD70A34CAD400717B9F /* API */,
-				65162EF108E6A21C007556CD /* wtf */,
-				65417203039E01F90058BFEB /* pcre */,
-				65417200039E01BA0058BFEB /* kjs */,
 				149B15DF0D81F887009CB8C7 /* compiler */,
-				149B15E00D81F88D009CB8C7 /* vm */,
 				1480DB9A0DDC2231003CFDF2 /* debugger */,
+				65417200039E01BA0058BFEB /* kjs */,
+				8690813F0E640C89000D36ED /* masm */,
+				65417203039E01F90058BFEB /* pcre */,
 				95AB831A0DA42C6900BC83F3 /* profiler */,
+				141211000A48772600480255 /* tests */,
+				149B15E00D81F88D009CB8C7 /* vm */,
+				869083120E6518D7000D36ED /* wrec */,
+				65162EF108E6A21C007556CD /* wtf */,
+				1C90513E0BA9E8830081E9D0 /* Configurations */,
 				650FDF8D09D0FCA700769E54 /* Derived Sources */,
+				0867D69AFE84028FC02AAC07 /* Frameworks */,
 				034768DFFF38A50411DB9C8B /* Products */,
 				932FC3C20824BB70005B3C75 /* Resources */,
-				0867D69AFE84028FC02AAC07 /* Frameworks */,
-				1C90513E0BA9E8830081E9D0 /* Configurations */,
-				141211000A48772600480255 /* tests */,
 			);
 			name = JavaScriptCore;
 			sourceTree = "<group>";
@@ -992,6 +1006,8 @@
 		149B15E00D81F88D009CB8C7 /* vm */ = {
 			isa = PBXGroup;
 			children = (
+				8683B02B0E636482004C19EE /* CTI.cpp */,
+				8683B02C0E636482004C19EE /* CTI.h */,
 				8613F4580E3A433E00C948FD /* SamplingTool.cpp */,
 				8613F4590E3A433E00C948FD /* SamplingTool.h */,
 				149B1A9E0D86ED73009CB8C7 /* CodeBlock.cpp */,
@@ -1299,6 +1315,24 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		8690813F0E640C89000D36ED /* masm */ = {
+			isa = PBXGroup;
+			children = (
+				A763F79C0E70E0FE00BC151E /* MacroAssembler.h */,
+				869081400E640C89000D36ED /* IA32MacroAsm.h */,
+			);
+			path = masm;
+			sourceTree = "<group>";
+		};
+		869083120E6518D7000D36ED /* wrec */ = {
+			isa = PBXGroup;
+			children = (
+				869083130E6518D7000D36ED /* WREC.cpp */,
+				869083140E6518D7000D36ED /* WREC.h */,
+			);
+			path = wrec;
+			sourceTree = "<group>";
+		};
 		932FC3C20824BB70005B3C75 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -1551,8 +1585,12 @@
 				C0A272630E50A06300E96E15 /* NotFound.h in Headers */,
 				E124A8F70E555775003091F1 /* OpaqueJSString.h in Headers */,
 				9534AAFB0E5B7A9600B8A45B /* JSProfilerPrivate.h in Headers */,
+				8683B02F0E636482004C19EE /* CTI.h in Headers */,
+				869081410E640C89000D36ED /* IA32MacroAsm.h in Headers */,
+				869083160E6518D7000D36ED /* WREC.h in Headers */,
 				933040040E6A749400786E6A /* SmallStrings.h in Headers */,
 				BCDE3AB80E6C82F5001453A7 /* StructureID.h in Headers */,
+				A763F79D0E70E0FE00BC151E /* MacroAssembler.h in Headers */,
 				147B83AC0E6DB8C9004775A4 /* BatchedTransitionOptimizer.h in Headers */,
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 			);
@@ -1861,6 +1899,8 @@
 				8613F45A0E3A433E00C948FD /* SamplingTool.cpp in Sources */,
 				E124A8F80E555775003091F1 /* OpaqueJSString.cpp in Sources */,
 				95F6E6950E5B5F970091E860 /* JSProfilerPrivate.cpp in Sources */,
+				8683B02E0E636482004C19EE /* CTI.cpp in Sources */,
+				869083150E6518D7000D36ED /* WREC.cpp in Sources */,
 				9330402C0E6A764000786E6A /* SmallStrings.cpp in Sources */,
 				BCDE3B430E6C832D001453A7 /* StructureID.cpp in Sources */,
 			);
@@ -2084,6 +2124,57 @@
 			};
 			name = Production;
 		};
+		A761483D0E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051440BA9E8A70081E9D0 /* DebugRelease.xcconfig */;
+			buildSettings = {
+				STRIP_INSTALLED_PRODUCT = NO;
+			};
+			name = Profiling;
+		};
+		A761483E0E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = All;
+			};
+			name = Profiling;
+		};
+		A761483F0E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1C9051430BA9E8A70081E9D0 /* JavaScriptCore.xcconfig */;
+			buildSettings = {
+				INSTALL_PATH = "$(BUILT_PRODUCTS_DIR)";
+			};
+			name = Profiling;
+		};
+		A76148400E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "Generate Derived Sources";
+			};
+			name = Profiling;
+		};
+		A76148410E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = minidom;
+			};
+			name = Profiling;
+		};
+		A76148420E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = testapi;
+			};
+			name = Profiling;
+		};
+		A76148430E6402F700E357FA /* Profiling */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = jsc;
+			};
+			name = Profiling;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -2092,6 +2183,7 @@
 			buildConfigurations = (
 				1412113A0A48798400480255 /* Debug */,
 				1412113B0A48798400480255 /* Release */,
+				A76148410E6402F700E357FA /* Profiling */,
 				1412113C0A48798400480255 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2102,6 +2194,7 @@
 			buildConfigurations = (
 				149C275E08902AFE008A9EFC /* Debug */,
 				149C275F08902AFE008A9EFC /* Release */,
+				A761483F0E6402F700E357FA /* Profiling */,
 				149C276108902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2112,6 +2205,7 @@
 			buildConfigurations = (
 				149C276808902AFE008A9EFC /* Debug */,
 				149C276908902AFE008A9EFC /* Release */,
+				A76148430E6402F700E357FA /* Profiling */,
 				149C276B08902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2122,6 +2216,7 @@
 			buildConfigurations = (
 				149C276D08902AFE008A9EFC /* Debug */,
 				149C276E08902AFE008A9EFC /* Release */,
+				A761483E0E6402F700E357FA /* Profiling */,
 				149C277008902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2132,6 +2227,7 @@
 			buildConfigurations = (
 				149C277208902AFE008A9EFC /* Debug */,
 				149C277308902AFE008A9EFC /* Release */,
+				A761483D0E6402F700E357FA /* Profiling */,
 				149C277508902AFE008A9EFC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2142,6 +2238,7 @@
 			buildConfigurations = (
 				14BD59D70A3E8FC900BAF59C /* Debug */,
 				14BD59D80A3E8FC900BAF59C /* Release */,
+				A76148420E6402F700E357FA /* Profiling */,
 				14BD59D90A3E8FC900BAF59C /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2152,6 +2249,7 @@
 			buildConfigurations = (
 				65FB3F7809D11EBD00F49DEB /* Debug */,
 				65FB3F7909D11EBD00F49DEB /* Release */,
+				A76148400E6402F700E357FA /* Profiling */,
 				65FB3F7A09D11EBD00F49DEB /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;

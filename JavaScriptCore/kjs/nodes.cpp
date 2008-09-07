@@ -262,11 +262,12 @@ RegisterID* StringNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 
 RegisterID* RegExpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
-    if (!m_regExp->isValid())
-        return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(m_regExp->errorMessage())).UTF8String().c_str());
+    RefPtr<RegExp> regExp = RegExp::create(generator.globalExec(), m_pattern, m_flags);
+    if (!regExp->isValid())
+        return emitThrowError(generator, SyntaxError, ("Invalid regular expression: " + UString(regExp->errorMessage())).UTF8String().c_str());
     if (dst == ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst), m_regExp.get());
+    return generator.emitNewRegExp(generator.finalDestination(dst), regExp.get());
 }
 
 // ------------------------------ ThisNode -------------------------------------
@@ -1629,11 +1630,17 @@ RegisterID* TryNode::emitCode(CodeGenerator& generator, RegisterID* dst)
         RefPtr<RegisterID> highestUsedRegister = generator.highestUsedRegister();
         RefPtr<LabelID> finallyEndLabel = generator.newLabel();
         generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
+        // Use a label to record the subtle fact that sret will return to the
+        // next instruction. sret is the only way to jump without an explicit label.
+        generator.emitLabel(generator.newLabel().get());
         generator.emitJump(finallyEndLabel.get());
 
         // Finally block for exception path
         RefPtr<RegisterID> tempExceptionRegister = generator.emitCatch(generator.newTemporary(), tryStartLabel.get(), generator.emitLabel(generator.newLabel().get()).get());
         generator.emitJumpSubroutine(finallyReturnAddr.get(), finallyStart.get());
+        // Use a label to record the subtle fact that sret will return to the
+        // next instruction. sret is the only way to jump without an explicit label.
+        generator.emitLabel(generator.newLabel().get());
         generator.emitThrow(tempExceptionRegister.get());
 
         // emit the finally block itself

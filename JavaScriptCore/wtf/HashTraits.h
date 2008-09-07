@@ -81,7 +81,7 @@ namespace WTF {
         static const bool needsDestruction = true;
     };
 
-    // default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned)
+    // Default integer traits disallow both 0 and -1 as keys (max value instead of -1 for unsigned).
     template<typename T> struct GenericHashTraitsBase<true, T> {
         static const bool emptyValueIsZero = true;
         static const bool needsDestruction = false;
@@ -105,6 +105,15 @@ namespace WTF {
 
     template<> struct HashTraits<float> : FloatHashTraits<float> { };
     template<> struct HashTraits<double> : FloatHashTraits<double> { };
+
+    // Default unsigned traits disallow both 0 and max as keys -- use these traits to allow zero and disallow max - 1.
+    template<typename T> struct UnsignedWithZeroKeyHashTraits : GenericHashTraits<T> {
+        static const bool emptyValueIsZero = false;
+        static const bool needsDestruction = false;
+        static T emptyValue() { return std::numeric_limits<T>::max(); }
+        static void constructDeletedValue(T& slot) { slot = std::numeric_limits<T>::max() - 1; }
+        static bool isDeletedValue(T value) { return value == std::numeric_limits<T>::max() - 1; }
+    };
 
     template<typename P> struct HashTraits<P*> : GenericHashTraits<P*> {
         static const bool emptyValueIsZero = true;

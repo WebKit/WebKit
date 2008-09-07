@@ -1,3 +1,34 @@
+=== End merge of squirrelfish-extreme ===
+
+2008-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Start bringing up SFX on windows.
+
+        Reviewed by Mark Rowe and Sam Weinig
+
+        Start doing the work to bring up SFX on windows.  Initially
+        just working on WREC, as it does not make any calls so reduces
+        the amount of code that needs to be corrected.
+
+        Add forwarding headers
+
+        * ChangeLog:
+        * ForwardingHeaders/masm/MacroAssembler.h: Added.
+        * WebCore.vcproj/WebCore.vcproj:
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix the build of the full WebKit stack.
+
+        Add forwarding headers.
+
+        * ForwardingHeaders/masm/IA32MacroAsm.h: Added.
+        * ForwardingHeaders/wrec/WREC.h: Added.
+
+=== Start merge of squirrelfish-extreme ===
+
 2008-09-06  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

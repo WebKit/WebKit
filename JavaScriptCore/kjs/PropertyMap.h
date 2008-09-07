@@ -81,6 +81,8 @@ namespace KJS {
     };
 
     class PropertyMap : Noncopyable {
+        friend class CTI;
+
     public:
         PropertyMap();
         ~PropertyMap();

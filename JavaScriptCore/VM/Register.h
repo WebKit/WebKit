@@ -65,6 +65,7 @@ namespace KJS {
         Register(Register*);
         Register(Instruction*);
         Register(JSPropertyNameIterator*);
+        explicit Register(void*);
 
         CodeBlock* codeBlock() const;
         ScopeChainNode* scopeChain() const;
@@ -99,6 +100,12 @@ namespace KJS {
             IntType
         } m_type;
 #endif
+
+// FIXME: The commented out ASSERTs below are valid; NDEBUG CTI should set these when up to date.
+//        static inline ptrdiff_t offsetOf_type()
+//        {
+//            return OBJECT_OFFSET(Register, m_type);
+//        }
     };
 
     ALWAYS_INLINE Register::Register()
@@ -121,13 +128,13 @@ namespace KJS {
     {
         // Once registers hold doubles, this function will allocate a JSValue*
         // if the register doesn't hold one already. 
-        ASSERT(m_type == JSValueType);
+//        ASSERT(m_type == JSValueType);
         return u.jsValue;
     }
     
     ALWAYS_INLINE JSValue* Register::getJSValue() const
     {
-        ASSERT(m_type == JSValueType);
+//        ASSERT(m_type == JSValueType);
         return u.jsValue;
     }
     
@@ -191,39 +198,44 @@ namespace KJS {
         u.i = i;
     }
 
+    ALWAYS_INLINE Register::Register(void* v)
+    {
+        u.v = v;
+    }
+
     ALWAYS_INLINE CodeBlock* Register::codeBlock() const
     {
-        ASSERT(m_type == CodeBlockType);
+//        ASSERT(m_type == CodeBlockType);
         return u.codeBlock;
     }
     
     ALWAYS_INLINE ScopeChainNode* Register::scopeChain() const
     {
-        ASSERT(m_type == ScopeChainNodeType);
+//        ASSERT(m_type == ScopeChainNodeType);
         return u.scopeChain;
     }
     
     ALWAYS_INLINE intptr_t Register::i() const
     {
-        ASSERT(m_type == IntType);
+//        ASSERT(m_type == IntType);
         return u.i;
     }
     
     ALWAYS_INLINE Register* Register::r() const
     {
-        ASSERT(m_type == RegisterType);
+//        ASSERT(m_type == RegisterType);
         return u.r;
     }
     
     ALWAYS_INLINE Instruction* Register::vPC() const
     {
-        ASSERT(m_type == InstructionType);
+//        ASSERT(m_type == InstructionType);
         return u.vPC;
     }
     
     ALWAYS_INLINE JSPropertyNameIterator* Register::jsPropertyNameIterator() const
     {
-        ASSERT(m_type == JSPropertyNameIteratorType);
+//        ASSERT(m_type == JSPropertyNameIteratorType);
         return u.jsPropertyNameIterator;
     }
     

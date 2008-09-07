@@ -21,6 +21,7 @@
 #include "config.h"
 #include "regexp.h"
 
+#include "CTI.h"
 #include "lexer.h"
 #include <pcre/pcre.h>
 #include <stdio.h>
@@ -31,25 +32,36 @@
 
 namespace KJS {
 
-inline RegExp::RegExp(const UString& pattern)
+
+
+inline RegExp::RegExp(ExecState* exec, const UString& pattern)
     : m_pattern(pattern)
     , m_flagBits(0)
+    , m_regExp(0)
     , m_constructionError(0)
     , m_numSubpatterns(0)
 {
-    m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
-        JSRegExpDoNotIgnoreCase, JSRegExpSingleLine, &m_numSubpatterns, &m_constructionError);
+#if ENABLE(WREC)
+    if (!(m_wrecFunction = (WRECFunction)CTI::compileRegExp(exec, pattern, &m_numSubpatterns, &m_constructionError)))
+#else
+    UNUSED_PARAM(exec);
+#endif
+    {
+        m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
+            JSRegExpDoNotIgnoreCase, JSRegExpSingleLine, &m_numSubpatterns, &m_constructionError);
+    }
 }
 
-PassRefPtr<RegExp> RegExp::create(const UString& pattern)
+PassRefPtr<RegExp> RegExp::create(ExecState* exec, const UString& pattern)
 {
-    return adoptRef(new RegExp(pattern));
+    return adoptRef(new RegExp(exec, pattern));
 }
 
-inline RegExp::RegExp(const UString& pattern, const UString& flags)
+inline RegExp::RegExp(ExecState* exec, const UString& pattern, const UString& flags)
     : m_pattern(pattern)
     , m_flags(flags)
     , m_flagBits(0)
+    , m_regExp(0)
     , m_constructionError(0)
     , m_numSubpatterns(0)
 {
@@ -71,18 +83,29 @@ inline RegExp::RegExp(const UString& pattern, const UString& flags)
         multilineOption = JSRegExpMultiline;
     }
 
-    m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
-        ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
+#if ENABLE(WREC)
+    if (!(m_wrecFunction = (WRECFunction)CTI::compileRegExp(exec, pattern, &m_numSubpatterns, &m_constructionError, (m_flagBits & IgnoreCase), (m_flagBits & Multiline))))
+#else
+    UNUSED_PARAM(exec);
+#endif
+    {
+        m_regExp = jsRegExpCompile(reinterpret_cast<const UChar*>(pattern.data()), pattern.size(),
+            ignoreCaseOption, multilineOption, &m_numSubpatterns, &m_constructionError);
+    }
 }
 
-PassRefPtr<RegExp> RegExp::create(const UString& pattern, const UString& flags)
+PassRefPtr<RegExp> RegExp::create(ExecState* exec, const UString& pattern, const UString& flags)
 {
-    return adoptRef(new RegExp(pattern, flags));
+    return adoptRef(new RegExp(exec, pattern, flags));
 }
 
 RegExp::~RegExp()
 {
     jsRegExpFree(m_regExp);
+#if ENABLE(WREC)
+    if (m_wrecFunction)
+        fastFree(reinterpret_cast<void*>(m_wrecFunction));
+#endif
 }
 
 int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
@@ -95,36 +118,64 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
     if (i > s.size() || s.isNull())
         return -1;
 
-    if (!m_regExp)
-        return -1;
+#if ENABLE(WREC)
+    if (m_wrecFunction) {
+        int offsetVectorSize = (m_numSubpatterns + 1) * 2;
+        int* offsetVector = new int [offsetVectorSize];
+        for (int j = 0; j < offsetVectorSize; ++j)
+            offsetVector[j] = -1;
 
-    // Set up the offset vector for the result.
-    // First 2/3 used for result, the last third used by PCRE.
-    int* offsetVector;
-    int offsetVectorSize;
-    int fixedSizeOffsetVector[3];
-    if (!ovector) {
-        offsetVectorSize = 3;
-        offsetVector = fixedSizeOffsetVector;
-    } else {
-        offsetVectorSize = (m_numSubpatterns + 1) * 3;
-        offsetVector = new int [offsetVectorSize];
-        ovector->set(offsetVector);
-    }
+        OwnArrayPtr<int> nonReturnedOvector;
+        if (!ovector)
+            nonReturnedOvector.set(offsetVector);
+        else
+            ovector->set(offsetVector);
 
-    int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const UChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
+        int result = m_wrecFunction(s.data(), i, s.size(), offsetVector);
 
-    if (numMatches < 0) {
+        if (result < 0) {
 #ifndef NDEBUG
-        if (numMatches != JSRegExpErrorNoMatch)
-            fprintf(stderr, "jsRegExpExecute failed with result %d\n", numMatches);
+            // TODO: define up a symbol, rather than magic -1
+            if (result != -1)
+                fprintf(stderr, "jsRegExpExecute failed with result %d\n", result);
 #endif
-        if (ovector)
-            ovector->clear();
-        return -1;
+            if (ovector)
+                ovector->clear();
+        }
+        return result;
+    } else
+#endif
+    if (m_regExp) {
+        // Set up the offset vector for the result.
+        // First 2/3 used for result, the last third used by PCRE.
+        int* offsetVector;
+        int offsetVectorSize;
+        int fixedSizeOffsetVector[3];
+        if (!ovector) {
+            offsetVectorSize = 3;
+            offsetVector = fixedSizeOffsetVector;
+        } else {
+            offsetVectorSize = (m_numSubpatterns + 1) * 3;
+            offsetVector = new int [offsetVectorSize];
+            ovector->set(offsetVector);
+        }
+
+        int numMatches = jsRegExpExecute(m_regExp, reinterpret_cast<const UChar*>(s.data()), s.size(), i, offsetVector, offsetVectorSize);
+    
+        if (numMatches < 0) {
+#ifndef NDEBUG
+            if (numMatches != JSRegExpErrorNoMatch)
+                fprintf(stderr, "jsRegExpExecute failed with result %d\n", numMatches);
+#endif
+            if (ovector)
+                ovector->clear();
+            return -1;
+        }
+
+        return offsetVector[0];
     }
 
-    return offsetVector[0];
+    return -1;
 }
 
 } // namespace KJS

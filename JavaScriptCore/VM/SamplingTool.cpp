@@ -79,13 +79,29 @@ static inline unsigned hertz2us(unsigned hertz)
     return 1000000 / hertz;
 }
 
+#if ENABLE(SAMPLING_TOOL)
+extern OpcodeID what;
+extern unsigned incall;
+unsigned cowdogs = 0;
+unsigned sampleCows[numOpcodeIDs] = {0};
+unsigned sampleDogs[numOpcodeIDs] = {0};
+#endif
+
 void SamplingTool::run()
 {
     while (m_running) {
         sleepForMicroseconds(hertz2us(m_hertz));
 
         m_totalSamples++;
-
+#if ENABLE(SAMPLING_TOOL)
+        if (what != (OpcodeID)-1) {
+            ++cowdogs;
+            if (incall)
+                sampleDogs[what]++;
+            else
+                sampleCows[what]++;
+        }
+#endif        
         CodeBlock* codeBlock = m_recordedCodeBlock;
         Instruction* vPC = m_recordedVPC;
 
@@ -129,6 +145,7 @@ struct OpcodeSampleInfo
 {
     OpcodeID opcode;
     long long count;
+    long long countincall;
 };
 
 struct LineCountInfo
@@ -250,7 +267,8 @@ void SamplingTool::dump(ExecState* exec)
     OpcodeSampleInfo opcodeSampleInfo[numOpcodeIDs];
     for (int i = 0; i < numOpcodeIDs; ++i) {
         opcodeSampleInfo[i].opcode = (OpcodeID)i;
-        opcodeSampleInfo[i].count = opcodeSampleCounts[i];
+        opcodeSampleInfo[i].count = sampleCows[i]+sampleDogs[i];
+        opcodeSampleInfo[i].countincall = sampleDogs[i];
     }
 #if HAVE(MERGESORT)
     mergesort(opcodeSampleInfo, numOpcodeIDs, sizeof(OpcodeSampleInfo), compareOpcodeIndicesSampling);
@@ -259,21 +277,25 @@ void SamplingTool::dump(ExecState* exec)
 #endif
 
     // (4) Print Opcode sampling results.
-    
+
+
     printf("\nOpcode sampling results\n\n"); 
     
-    printf("Total opcodes sampled (total samples): %lld (%lld)\n\n", totalOpcodeSamples, m_totalSamples);
-    printf("Opcodes in order:\n\n");
-    for (int i = 0; i < numOpcodeIDs; ++i) {
-        long long count = opcodeSampleCounts[i];
-        printf("%s:%s%6lld\t%.3f%%\t(%.3f%%)\n", opcodeNames[i], padOpcodeName(static_cast<OpcodeID>(i), 20), count, (static_cast<double>(count) * 100) / totalOpcodeSamples, (static_cast<double>(count) * 100) / m_totalSamples);    
-    }
-    printf("\n");
-    printf("Opcodes by sample count:\n\n");
+//    printf("Total opcodes sampled (total samples): %lld (%lld)\n\n", totalOpcodeSamples, m_totalSamples);
+//    printf("Opcodes in order:\n\n");
+//    for (int i = 0; i < numOpcodeIDs; ++i) {
+//        long long count = opcodeSampleCounts[i];
+//        printf("%s:%s%6lld\t%.3f%%\t(%.3f%%)\n", opcodeNames[i], padOpcodeName(static_cast<OpcodeID>(i), 20), count, (static_cast<double>(count) * 100) / totalOpcodeSamples, (static_cast<double>(count) * 100) / m_totalSamples);    
+//    }
+//    printf("\n");
+//    printf("Opcodes by sample count:\n\n");
+
     for (int i = 0; i < numOpcodeIDs; ++i) {
         OpcodeID opcode = opcodeSampleInfo[i].opcode;
         long long count = opcodeSampleInfo[i].count;
-        printf("%s:%s%6lld\t%.3f%%\t(%.3f%%)\n", opcodeNames[opcode], padOpcodeName(opcode, 20), count, (static_cast<double>(count) * 100) / totalOpcodeSamples, (static_cast<double>(count) * 100) / m_totalSamples);    
+//        printf("%s:%s%6lld\t%.3f%%\t(%.3f%%)\n", opcodeNames[opcode], padOpcodeName(opcode, 20), count, (static_cast<double>(count) * 100) / totalOpcodeSamples, (static_cast<double>(count) * 100) / m_totalSamples);    
+        long long countincall = opcodeSampleInfo[i].countincall;
+        fprintf(stdout, "%s:%s%6lld\t%6lld\t%.3f%%\t%.3f%%\t(%.3f%%)\n", opcodeNames[opcode], padOpcodeName(opcode, 20), count, countincall, ((double)count * 100)/cowdogs, ((double)count * 100)/m_totalSamples, ((double)countincall * 100)/m_totalSamples);    
     }
     printf("\n");
 }

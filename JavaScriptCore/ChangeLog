@@ -1,3 +1,1850 @@
+=== End merge of squirrelfish-extreme ===
+
+2008-09-06  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig. Adapted somewhat by Maciej Stachowiak.
+        
+        - refactor WREC to share more of the JIT infrastructure with CTI
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitGetArg):
+        (KJS::CTI::emitGetPutArg):
+        (KJS::CTI::emitPutArg):
+        (KJS::CTI::emitPutArgConstant):
+        (KJS::CTI::emitPutCTIParam):
+        (KJS::CTI::emitGetCTIParam):
+        (KJS::CTI::emitPutToCallFrameHeader):
+        (KJS::CTI::emitGetFromCallFrameHeader):
+        (KJS::CTI::emitPutResult):
+        (KJS::CTI::emitDebugExceptionCheck):
+        (KJS::CTI::emitJumpSlowCaseIfNotImm):
+        (KJS::CTI::emitJumpSlowCaseIfNotImms):
+        (KJS::CTI::emitFastArithDeTagImmediate):
+        (KJS::CTI::emitFastArithReTagImmediate):
+        (KJS::CTI::emitFastArithPotentiallyReTagImmediate):
+        (KJS::CTI::emitFastArithImmToInt):
+        (KJS::CTI::emitFastArithIntToImmOrSlowCase):
+        (KJS::CTI::emitFastArithIntToImmNoCheck):
+        (KJS::CTI::CTI):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompileMainPass):
+        (KJS::CTI::privateCompileSlowCases):
+        (KJS::CTI::privateCompile):
+        (KJS::CTI::privateCompileGetByIdSelf):
+        (KJS::CTI::privateCompileGetByIdProto):
+        (KJS::CTI::privateCompileGetByIdChain):
+        (KJS::CTI::privateCompilePutByIdReplace):
+        (KJS::CTI::privateArrayLengthTrampoline):
+        (KJS::CTI::privateStringLengthTrampoline):
+        (KJS::CTI::compileRegExp):
+        * VM/CTI.h:
+        (KJS::CallRecord::CallRecord):
+        (KJS::JmpTable::JmpTable):
+        (KJS::SlowCaseEntry::SlowCaseEntry):
+        (KJS::CTI::JSRInfo::JSRInfo):
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        * wrec/WREC.cpp:
+        (KJS::GenerateParenthesesNonGreedyFunctor::GenerateParenthesesNonGreedyFunctor):
+        (KJS::GeneratePatternCharacterFunctor::generateAtom):
+        (KJS::GeneratePatternCharacterFunctor::backtrack):
+        (KJS::GenerateCharacterClassFunctor::generateAtom):
+        (KJS::GenerateCharacterClassFunctor::backtrack):
+        (KJS::GenerateBackreferenceFunctor::generateAtom):
+        (KJS::GenerateBackreferenceFunctor::backtrack):
+        (KJS::GenerateParenthesesNonGreedyFunctor::generateAtom):
+        (KJS::GenerateParenthesesNonGreedyFunctor::backtrack):
+        (KJS::WRECGenerate::generateBacktrack1):
+        (KJS::WRECGenerate::generateBacktrackBackreference):
+        (KJS::WRECGenerate::generateBackreferenceQuantifier):
+        (KJS::WRECGenerate::generateNonGreedyQuantifier):
+        (KJS::WRECGenerate::generateGreedyQuantifier):
+        (KJS::WRECGenerate::generatePatternCharacter):
+        (KJS::WRECGenerate::generateCharacterClassInvertedRange):
+        (KJS::WRECGenerate::generateCharacterClassInverted):
+        (KJS::WRECGenerate::generateCharacterClass):
+        (KJS::WRECGenerate::generateParentheses):
+        (KJS::WRECGenerate::generateParenthesesNonGreedy):
+        (KJS::WRECGenerate::gererateParenthesesResetTrampoline):
+        (KJS::WRECGenerate::generateAssertionBOL):
+        (KJS::WRECGenerate::generateAssertionEOL):
+        (KJS::WRECGenerate::generateAssertionWordBoundary):
+        (KJS::WRECGenerate::generateBackreference):
+        (KJS::WRECGenerate::gernerateDisjunction):
+        (KJS::WRECGenerate::terminateDisjunction):
+        (KJS::WRECParser::parseGreedyQuantifier):
+        (KJS::WRECParser::parseQuantifier):
+        (KJS::WRECParser::parsePatternCharacterQualifier):
+        (KJS::WRECParser::parseCharacterClassQuantifier):
+        (KJS::WRECParser::parseBackreferenceQuantifier):
+        (KJS::WRECParser::parseParentheses):
+        (KJS::WRECParser::parseCharacterClass):
+        (KJS::WRECParser::parseOctalEscape):
+        (KJS::WRECParser::parseEscape):
+        (KJS::WRECParser::parseTerm):
+        (KJS::WRECParser::parseDisjunction):
+        * wrec/WREC.h:
+        (KJS::WRECGenerate::WRECGenerate):
+        (KJS::WRECParser::):
+        (KJS::WRECParser::WRECParser):
+        (KJS::WRECParser::parseAlternative):
+        (KJS::WRECParser::isEndOfPattern):
+
+2008-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by NOBODY (Build fix).
+
+        Fix the sampler build.
+
+        * VM/SamplingTool.h:
+
+2008-09-06  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Jump through the necessary hoops required to make MSVC cooperate with SFX
+
+        We now explicitly declare the calling convention on all cti_op_* cfunctions,
+        and return int instead of bool where appropriate (despite the cdecl calling
+        convention seems to state MSVC generates code that returns the result value
+        through ecx).  SFX behaves slightly differently under MSVC, specifically it
+        stores the base argument address for the cti_op_* functions in the first
+        argument, and then does the required stack manipulation through that pointer.
+        This is necessary as MSVC's optimisations assume they have complete control
+        of the stack, and periodically elide our stack manipulations, or move
+        values in unexpected ways.  MSVC also frequently produces tail calls which may
+        clobber the first argument, so the MSVC path is slightly less efficient due
+        to the need to restore it.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        (KJS::):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompileMainPass):
+        (KJS::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+        * masm/MacroAssembler.h:
+        (KJS::MacroAssembler::emitConvertToFastCall):
+        * masm/MacroAssemblerIA32GCC.cpp: Removed.
+           For performance reasons we need these no-op functions to be inlined.
+
+        * masm/MacroAssemblerWin.cpp:
+        (KJS::MacroAssembler::emitRestoreArgumentReference):
+        * wtf/Platform.h:
+
+2008-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Maciej Stachowiak, or maybe the other way around.
+        
+        Added the ability to coalesce JITCode buffer grow operations by first
+        growing the buffer and then executing unchecked puts to it.
+        
+        About a 2% speedup on date-format-tofte.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::compileOpCall):
+        * masm/IA32MacroAsm.h:
+        (KJS::JITCodeBuffer::ensureSpace):
+        (KJS::JITCodeBuffer::putByteUnchecked):
+        (KJS::JITCodeBuffer::putByte):
+        (KJS::JITCodeBuffer::putShortUnchecked):
+        (KJS::JITCodeBuffer::putShort):
+        (KJS::JITCodeBuffer::putIntUnchecked):
+        (KJS::JITCodeBuffer::putInt):
+        (KJS::IA32MacroAssembler::emitTestl_i32r):
+        (KJS::IA32MacroAssembler::emitMovl_mr):
+        (KJS::IA32MacroAssembler::emitMovl_rm):
+        (KJS::IA32MacroAssembler::emitMovl_i32m):
+        (KJS::IA32MacroAssembler::emitUnlinkedJe):
+        (KJS::IA32MacroAssembler::emitModRm_rr):
+        (KJS::IA32MacroAssembler::emitModRm_rr_Unchecked):
+        (KJS::IA32MacroAssembler::emitModRm_rm_Unchecked):
+        (KJS::IA32MacroAssembler::emitModRm_rm):
+        (KJS::IA32MacroAssembler::emitModRm_opr):
+        (KJS::IA32MacroAssembler::emitModRm_opr_Unchecked):
+        (KJS::IA32MacroAssembler::emitModRm_opm_Unchecked):
+
+2008-09-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Disable WREC and CTI on platforms that we have not yet had a chance to test with.
+
+        * wtf/Platform.h:
+
+2008-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+        
+        Use jo instead of a mask compare when fetching array.length and
+        string.length. 4% speedup on array.length / string.length torture
+        test.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateArrayLengthTrampoline):
+        (KJS::CTI::privateStringLengthTrampoline):
+
+2008-09-05  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Removed a CTI compilation pass by recording labels during bytecode
+        generation. This is more to reduce complexity than it is to improve
+        performance.
+
+        SunSpider reports no change.
+
+        CodeBlock now keeps a "labels" set, which holds the offsets of all the
+        instructions that can be jumped to.
+
+        * VM/CTI.cpp: Nixed a pass.
+
+        * VM/CodeBlock.h: Added a "labels" set.
+
+        * VM/LabelID.h: No need for a special LableID for holding jump
+        destinations, since the CodeBlock now knows all jump destinations.
+
+        * wtf/HashTraits.h: New hash traits to accomodate putting offset 0 in
+        the set.
+
+        * kjs/nodes.cpp:
+        (KJS::TryNode::emitCode): Emit a dummy label to record sret targets.
+
+2008-09-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        Move the JITCodeBuffer onto Machine and remove the static variables.
+
+        * VM/CTI.cpp: Initialize m_jit with the Machine's code buffer.
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine): Allocate a JITCodeBuffer.
+        * VM/Machine.h:
+        * kjs/RegExpConstructor.cpp:
+        (KJS::constructRegExp): Pass the ExecState through.
+        * kjs/RegExpPrototype.cpp:
+        (KJS::regExpProtoFuncCompile): Ditto.
+        * kjs/StringPrototype.cpp:
+        (KJS::stringProtoFuncMatch): Ditto.
+        (KJS::stringProtoFuncSearch): Ditto.
+        * kjs/nodes.cpp:
+        (KJS::RegExpNode::emitCode): Compile the pattern at code generation time
+        so that we have access to an ExecState.
+        * kjs/nodes.h:
+        (KJS::RegExpNode::):
+        * kjs/nodes2string.cpp:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp): Pass the ExecState through.
+        (KJS::RegExp::create): Ditto.
+        * kjs/regexp.h:
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::IA32MacroAssembler): Reset the JITCodeBuffer when we are
+        constructed.
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::compile): Retrieve the JITCodeBuffer from the Machine.
+        * wrec/WREC.h:
+
+2008-09-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt and Gavin Barraclough.
+
+        Fix the build when CTI is disabled.
+
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::~CodeBlock):
+        * VM/CodeGenerator.cpp:
+        (KJS::prepareJumpTableForStringSwitch):
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine):
+        (KJS::Machine::~Machine):
+
+2008-09-05  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Fix some windows abi issues.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompileMainPass):
+        (KJS::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        (KJS::CallRecord::CallRecord):
+        (KJS::):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_post_inc):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_post_dec):
+        * VM/Machine.h:
+
+2008-09-05  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix ecma/FunctionObjects/15.3.5.3.js after I broke it in r93.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_call_NotJSFunction): Restore m_callFrame to the correct value after making the native call.
+        (KJS::Machine::cti_op_construct_NotJSConstruct): Ditto.
+
+2008-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Fix fast/dom/Window/console-functions.html.
+
+        The call frame on the ExecState was not being updated on calls into native functions.  This meant that functions
+        such as console.log would use the line number of the last JS function on the call stack.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_call_NotJSFunction): Update the ExecState's call frame before making a native function call,
+        and restore it when the function is done.
+        (KJS::Machine::cti_op_construct_NotJSConstruct): Ditto.
+
+2008-09-05  Oliver Hunt  <oliver@apple.com>
+
+        Start bringing up SFX on windows.
+
+        Reviewed by Mark Rowe and Sam Weinig
+
+        Start doing the work to bring up SFX on windows.  Initially
+        just working on WREC, as it does not make any calls so reduces
+        the amount of code that needs to be corrected.
+        
+        Start abstracting the CTI JIT codegen engine.
+
+        * ChangeLog:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        * masm/IA32MacroAsm.h:
+        * masm/MacroAssembler.h: Added.
+        (KJS::MacroAssembler::MacroAssembler):
+        * masm/MacroAssemblerIA32GCC.cpp: Added.
+        (KJS::MacroAssembler::emitConvertToFastCall):
+        * masm/MacroAssemblerWin.cpp: Added.
+        (KJS::MacroAssembler::emitConvertToFastCall):
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseGreedyQuantifier):
+        (KJS::WRECompiler::parseCharacterClass):
+        (KJS::WRECompiler::parseEscape):
+        (KJS::WRECompiler::compilePattern):
+        * wrec/WREC.h:
+
+2008-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Support for slow scripts (timeout checking).
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompileMainPass):
+        (KJS::CTI::privateCompile):
+        * VM/Machine.cpp:
+        (KJS::slideRegisterWindowForCall):
+        (KJS::Machine::cti_timeout_check):
+        (KJS::Machine::cti_vm_throw):
+
+2008-09-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Third round of style cleanup.
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/CodeBlock.h:
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+        * kjs/ExecState.h:
+
+2008-09-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Second round of style cleanup.
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * wrec/WREC.h:
+
+2008-09-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        First round of style cleanup.
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * masm/IA32MacroAsm.h:
+        * wrec/WREC.cpp:
+        * wrec/WREC.h:
+
+2008-09-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Mark Rowe.
+        
+        Merged http://trac.webkit.org/changeset/36081 to work with CTI.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::tryCtiCacheGetByID):
+
+2008-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Enable profiling in CTI.
+
+        * VM/CTI.h:
+        (KJS::):
+        (KJS::CTI::execute):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_call_JSFunction):
+        (KJS::Machine::cti_op_call_NotJSFunction):
+        (KJS::Machine::cti_op_ret):
+        (KJS::Machine::cti_op_construct_JSConstruct):
+        (KJS::Machine::cti_op_construct_NotJSConstruct):
+
+2008-09-04  Victor Hernandez  <vhernandez@apple.com>
+
+        Reviewed by Geoffrey Garen.
+        
+        Fixed an #if to support using WREC without CTI.
+
+        * kjs/regexp.cpp:
+        (KJS::RegExp::match):
+
+2008-09-04  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        The array/string length trampolines are owned by the Machine, not the codeblock that compiled them.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateArrayLengthTrampoline):
+        (KJS::CTI::privateStringLengthTrampoline):
+        * VM/Machine.cpp:
+        (KJS::Machine::~Machine):
+        * VM/Machine.h:
+
+2008-09-04  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough and Sam Weinig.
+
+        Fix a crash on launch of jsc when GuardMalloc is enabled.
+
+        * kjs/ScopeChain.h:
+        (KJS::ScopeChain::ScopeChain): Initialize m_node to 0 when we have no valid scope chain.
+        (KJS::ScopeChain::~ScopeChain): Null-check m_node before calling deref.
+
+2008-09-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Fix inspector and fast array access so that it bounds
+        checks correctly.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main):
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::):
+        (KJS::IA32MacroAssembler::emitUnlinkedJb):
+        (KJS::IA32MacroAssembler::emitUnlinkedJbe):
+
+2008-09-03  Mark Rowe  <mrowe@apple.com>
+
+        Move the assertion after the InitializeAndReturn block, as
+        that is used even when CTI is enabled.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+
+2008-09-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Replace calls to exit with ASSERT_WITH_MESSAGE or ASSERT_NOT_REACHED.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        (KJS::Machine::cti_vm_throw):
+
+2008-09-03  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Tweak JavaScriptCore to compile on non-x86 platforms.  This is achieved
+        by wrapping more code with ENABLE(CTI), ENABLE(WREC), and PLATFORM(X86)
+        #if's.
+
+        * VM/CTI.cpp:
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::printStructureIDs): Use %td as the format specifier for
+        printing a ptrdiff_t.
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+        * kjs/regexp.cpp:
+        (KJS::RegExp::RegExp):
+        (KJS::RegExp::~RegExp):
+        (KJS::RegExp::match):
+        * kjs/regexp.h:
+        * masm/IA32MacroAsm.h:
+        * wrec/WREC.cpp:
+        * wrec/WREC.h:
+        * wtf/Platform.h: Only enable CTI and WREC on x86.  Add an extra define to
+        track whether any MASM-using features are enabled.
+
+2008-09-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Copy Geoff's array/string length optimization for CTI.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateArrayLengthTrampoline):
+        (KJS::CTI::privateStringLengthTrampoline):
+        * VM/CTI.h:
+        (KJS::CTI::compileArrayLengthTrampoline):
+        (KJS::CTI::compileStringLengthTrampoline):
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine):
+        (KJS::Machine::getCtiArrayLengthTrampoline):
+        (KJS::Machine::getCtiStringLengthTrampoline):
+        (KJS::Machine::tryCtiCacheGetByID):
+        (KJS::Machine::cti_op_get_by_id_second):
+        * VM/Machine.h:
+        * kjs/JSString.h:
+        * kjs/ustring.h:
+
+2008-09-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Implement fast array accesses in CTI - 2-3% progression on sunspider.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitFastArithIntToImmNoCheck):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        * VM/CTI.h:
+        * kjs/JSArray.h:
+
+2008-09-02  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Enable fast property access support in CTI.
+
+        * VM/CTI.cpp:
+        (KJS::ctiSetReturnAddress):
+        (KJS::ctiRepatchCallByReturnAddress):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        (KJS::CTI::privateCompileGetByIdSelf):
+        (KJS::CTI::privateCompileGetByIdProto):
+        (KJS::CTI::privateCompileGetByIdChain):
+        (KJS::CTI::privateCompilePutByIdReplace):
+        * VM/CTI.h:
+        (KJS::CTI::compileGetByIdSelf):
+        (KJS::CTI::compileGetByIdProto):
+        (KJS::CTI::compileGetByIdChain):
+        (KJS::CTI::compilePutByIdReplace):
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::~CodeBlock):
+        * VM/CodeBlock.h:
+        * VM/Machine.cpp:
+        (KJS::doSetReturnAddressVmThrowTrampoline):
+        (KJS::Machine::tryCtiCachePutByID):
+        (KJS::Machine::tryCtiCacheGetByID):
+        (KJS::Machine::cti_op_put_by_id):
+        (KJS::Machine::cti_op_put_by_id_second):
+        (KJS::Machine::cti_op_put_by_id_generic):
+        (KJS::Machine::cti_op_put_by_id_fail):
+        (KJS::Machine::cti_op_get_by_id):
+        (KJS::Machine::cti_op_get_by_id_second):
+        (KJS::Machine::cti_op_get_by_id_generic):
+        (KJS::Machine::cti_op_get_by_id_fail):
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_vm_throw):
+        * VM/Machine.h:
+        * kjs/JSCell.h:
+        * kjs/JSObject.h:
+        * kjs/PropertyMap.h:
+        * kjs/StructureID.cpp:
+        (KJS::StructureIDChain::StructureIDChain):
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::emitCmpl_i32m):
+        (KJS::IA32MacroAssembler::emitMovl_mr):
+        (KJS::IA32MacroAssembler::emitMovl_rm):
+
+2008-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        A backslash (\) at the of a RegEx should produce an error.
+        Fixes fast/regex/test1.html.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseEscape):
+
+2008-09-02  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Link jumps for the slow case of op_loop_if_less.  Fixes acid3.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        Switch WREC on by default.
+
+        * wtf/Platform.h:
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix two failures in fast/regex/test1.html
+          - \- in a character class should be treated as a literal -
+          - A missing max quantifier needs to be treated differently than
+            a null max quantifier.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::generateNonGreedyQuantifier):
+        (KJS::WRECompiler::generateGreedyQuantifier):
+        (KJS::WRECompiler::parseCharacterClass):
+        * wrec/WREC.h:
+        (KJS::Quantifier::Quantifier):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Fix crash in fast/js/kde/evil-n.html
+
+        * kjs/regexp.cpp: Always pass a non-null offset vector to the wrec function.
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        Add pattern length limit fixing one test in fast/js.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::compile):
+        * wrec/WREC.h:
+        (KJS::WRECompiler::):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        Make octal escape parsing/back-reference parsing more closely match 
+        prior behavior fixing one test in fast/js.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseCharacterClass): 8 and 9 should be IdentityEscaped
+        (KJS::WRECompiler::parseEscape):
+        * wrec/WREC.h:
+        (KJS::WRECompiler::peekDigit):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        Fix one mozilla test.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::generateCharacterClassInverted): Fix incorrect not
+        ascii upper check.
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        Parse octal escapes in character classes fixing one mozilla test.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseCharacterClass):
+        (KJS::WRECompiler::parseOctalEscape):
+        * wrec/WREC.h:
+        (KJS::WRECompiler::consumeOctal):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fixes two mozilla tests with WREC enabled.
+
+        * wrec/WREC.cpp:
+        (KJS::CharacterClassConstructor::append): Keep the character class sorted
+        when appending another character class.
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Mark Rowe.
+
+        Fixes two mozilla tests with WREC enabled.
+
+        * wrec/WREC.cpp:
+        (KJS::CharacterClassConstructor::addSortedRange): Insert the range at the correct position
+        instead of appending it to the end.
+
+2008-09-01  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Move cross-compilation unit call into NEVER_INLINE function.
+
+        * VM/Machine.cpp:
+        (KJS::doSetReturnAddressVmThrowTrampoline):
+
+2008-09-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Fix one test in fast/js.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_construct_NotJSConstruct): Throw a createNotAConstructorError,
+        instead of a createNotAFunctionError.
+
+2008-08-31  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Zero-cost exception handling.  This patch takes the exception checking
+        back of the hot path.  When an exception occurs in a Machine::cti*
+        method, the return address to JIT code is recorded, and is then
+        overwritten with a pointer to a trampoline routine.  When the method
+        returns the trampoline will cause the cti_vm_throw method to be invoked.
+
+        cti_vm_throw uses the return address preserved above, to discover the
+        vPC of the bytecode that raised the exception (using a map build during
+        translation).  From the VPC of the faulting bytecode the vPC of a catch
+        routine may be discovered (unwinding the stack where necesary), and then
+        a bytecode address for the catch routine is looked up.  Final cti_vm_throw
+        overwrites its return address to JIT code again, to trampoline directly
+        to the catch routine.
+        
+        cti_op_throw is handled in a similar fashion.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitPutCTIParam):
+        (KJS::CTI::emitPutToCallFrameHeader):
+        (KJS::CTI::emitGetFromCallFrameHeader):
+        (KJS::ctiSetReturnAddressForArgs):
+        (KJS::CTI::emitDebugExceptionCheck):
+        (KJS::CTI::printOpcodeOperandTypes):
+        (KJS::CTI::emitCall):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::CallRecord::CallRecord):
+        (KJS::):
+        (KJS::CTI::execute):
+        * VM/CodeBlock.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        (KJS::Machine::cti_op_instanceof):
+        (KJS::Machine::cti_op_call_NotJSFunction):
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_op_in):
+        (KJS::Machine::cti_vm_throw):
+        * VM/RegisterFile.h:
+        (KJS::RegisterFile::):
+        * kjs/ExecState.h:
+        (KJS::ExecState::setCtiReturnAddress):
+        (KJS::ExecState::ctiReturnAddress):
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::):
+        (KJS::IA32MacroAssembler::emitPushl_m):
+        (KJS::IA32MacroAssembler::emitPopl_m):
+        (KJS::IA32MacroAssembler::getRelocatedAddress):
+
+2008-08-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fall back to PCRE for any regexp containing parentheses until we correctly backtrack within them.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseParentheses):
+        * wrec/WREC.h:
+        (KJS::WRECompiler::):
+
+2008-08-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix several issues within ecma_3/RegExp/perlstress-001.js with WREC enabled.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::generateNonGreedyQuantifier): Compare with the maximum quantifier count rather than the minimum.
+        (KJS::WRECompiler::generateAssertionEOL): Do a register-to-register comparison rather than immediate-to-register.
+        (KJS::WRECompiler::parseCharacterClass): Pass through the correct inversion flag.
+
+2008-08-30  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Re-fix the six remaining failures in the Mozilla JavaScript tests in a manner that does not kill performance.
+        This shows up as a 0.6% progression on SunSpider on my machine.
+
+        Grow the JITCodeBuffer's underlying buffer when we run out of space rather than just bailing out.
+
+        * VM/CodeBlock.h:
+        (KJS::CodeBlock::~CodeBlock): Switch to using fastFree now that JITCodeBuffer::copy uses fastMalloc.
+        * kjs/regexp.cpp: Ditto.
+        * masm/IA32MacroAsm.h:
+        (KJS::JITCodeBuffer::growBuffer):
+        (KJS::JITCodeBuffer::JITCodeBuffer):
+        (KJS::JITCodeBuffer::~JITCodeBuffer):
+        (KJS::JITCodeBuffer::putByte):
+        (KJS::JITCodeBuffer::putShort):
+        (KJS::JITCodeBuffer::putInt):
+        (KJS::JITCodeBuffer::reset):
+        (KJS::JITCodeBuffer::copy):
+
+2008-08-29  Oliver Hunt  <oliver@apple.com>
+
+        RS=Maciej
+
+        Roll out previous patch as it causes a 5% performance regression
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        (KJS::getJCB):
+        (KJS::CTI::privateCompile):
+        * VM/CodeBlock.h:
+        (KJS::CodeBlock::~CodeBlock):
+        * masm/IA32MacroAsm.h:
+        (KJS::JITCodeBuffer::JITCodeBuffer):
+        (KJS::JITCodeBuffer::putByte):
+        (KJS::JITCodeBuffer::putShort):
+        (KJS::JITCodeBuffer::putInt):
+        (KJS::JITCodeBuffer::getEIP):
+        (KJS::JITCodeBuffer::start):
+        (KJS::JITCodeBuffer::getOffset):
+        (KJS::JITCodeBuffer::reset):
+        (KJS::JITCodeBuffer::copy):
+        (KJS::IA32MacroAssembler::emitModRm_rr):
+        (KJS::IA32MacroAssembler::emitModRm_rm):
+        (KJS::IA32MacroAssembler::emitModRm_rmsib):
+        (KJS::IA32MacroAssembler::IA32MacroAssembler):
+        (KJS::IA32MacroAssembler::emitInt3):
+        (KJS::IA32MacroAssembler::emitPushl_r):
+        (KJS::IA32MacroAssembler::emitPopl_r):
+        (KJS::IA32MacroAssembler::emitMovl_rr):
+        (KJS::IA32MacroAssembler::emitAddl_rr):
+        (KJS::IA32MacroAssembler::emitAddl_i8r):
+        (KJS::IA32MacroAssembler::emitAddl_i32r):
+        (KJS::IA32MacroAssembler::emitAddl_mr):
+        (KJS::IA32MacroAssembler::emitAndl_rr):
+        (KJS::IA32MacroAssembler::emitAndl_i32r):
+        (KJS::IA32MacroAssembler::emitCmpl_i8r):
+        (KJS::IA32MacroAssembler::emitCmpl_rr):
+        (KJS::IA32MacroAssembler::emitCmpl_rm):
+        (KJS::IA32MacroAssembler::emitCmpl_i32r):
+        (KJS::IA32MacroAssembler::emitCmpl_i32m):
+        (KJS::IA32MacroAssembler::emitCmpw_rm):
+        (KJS::IA32MacroAssembler::emitOrl_rr):
+        (KJS::IA32MacroAssembler::emitOrl_i8r):
+        (KJS::IA32MacroAssembler::emitSubl_rr):
+        (KJS::IA32MacroAssembler::emitSubl_i8r):
+        (KJS::IA32MacroAssembler::emitSubl_i32r):
+        (KJS::IA32MacroAssembler::emitSubl_mr):
+        (KJS::IA32MacroAssembler::emitTestl_i32r):
+        (KJS::IA32MacroAssembler::emitTestl_rr):
+        (KJS::IA32MacroAssembler::emitXorl_i8r):
+        (KJS::IA32MacroAssembler::emitXorl_rr):
+        (KJS::IA32MacroAssembler::emitSarl_i8r):
+        (KJS::IA32MacroAssembler::emitSarl_CLr):
+        (KJS::IA32MacroAssembler::emitShl_i8r):
+        (KJS::IA32MacroAssembler::emitShll_CLr):
+        (KJS::IA32MacroAssembler::emitMull_rr):
+        (KJS::IA32MacroAssembler::emitIdivl_r):
+        (KJS::IA32MacroAssembler::emitCdq):
+        (KJS::IA32MacroAssembler::emitMovl_mr):
+        (KJS::IA32MacroAssembler::emitMovzwl_mr):
+        (KJS::IA32MacroAssembler::emitMovl_rm):
+        (KJS::IA32MacroAssembler::emitMovl_i32r):
+        (KJS::IA32MacroAssembler::emitMovl_i32m):
+        (KJS::IA32MacroAssembler::emitLeal_mr):
+        (KJS::IA32MacroAssembler::emitRet):
+        (KJS::IA32MacroAssembler::emitJmpN_r):
+        (KJS::IA32MacroAssembler::emitJmpN_m):
+        (KJS::IA32MacroAssembler::emitCall):
+        (KJS::IA32MacroAssembler::label):
+        (KJS::IA32MacroAssembler::emitUnlinkedJmp):
+        (KJS::IA32MacroAssembler::emitUnlinkedJne):
+        (KJS::IA32MacroAssembler::emitUnlinkedJe):
+        (KJS::IA32MacroAssembler::emitUnlinkedJl):
+        (KJS::IA32MacroAssembler::emitUnlinkedJle):
+        (KJS::IA32MacroAssembler::emitUnlinkedJge):
+        (KJS::IA32MacroAssembler::emitUnlinkedJae):
+        (KJS::IA32MacroAssembler::emitUnlinkedJo):
+        (KJS::IA32MacroAssembler::link):
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::compilePattern):
+        (KJS::WRECompiler::compile):
+        * wrec/WREC.h:
+
+2008-08-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Have JITCodeBuffer manage a Vector containing the generated code so that it can grow
+        as needed when generating code for a large function.  This fixes all six remaining failures
+        in Mozilla tests in both debug and release builds.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile):
+        * VM/CodeBlock.h:
+        (KJS::CodeBlock::~CodeBlock):
+        * masm/IA32MacroAsm.h:
+        (KJS::JITCodeBuffer::putByte):
+        (KJS::JITCodeBuffer::putShort):
+        (KJS::JITCodeBuffer::putInt):
+        (KJS::JITCodeBuffer::getEIP):
+        (KJS::JITCodeBuffer::start):
+        (KJS::JITCodeBuffer::getOffset):
+        (KJS::JITCodeBuffer::getCode):
+        (KJS::IA32MacroAssembler::emitModRm_rr):
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::compilePattern):
+        * wrec/WREC.h:
+
+2008-08-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Implement parsing of octal escapes in regular expressions.  This fixes three Mozilla tests.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::parseOctalEscape):
+        (KJS::WRECompiler::parseEscape): Parse the escape sequence as an octal escape if it has a leading zero.
+        Add a FIXME about treating invalid backreferences as octal escapes in the future.
+        * wrec/WREC.h:
+        (KJS::WRECompiler::consumeNumber): Multiply by 10 rather than 0 so that we handle numbers with more than
+        one digit.
+        * wtf/ASCIICType.h:
+        (WTF::isASCIIOctalDigit):
+
+2008-08-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Pass vPC to instanceof method.  Fixes 2 mozilla tests in debug.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_instanceof):
+
+2008-08-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Pass vPCs to resolve methods for correct exception creation.  Fixes
+        17 mozilla tests in debug.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_resolve_with_base):
+
+2008-08-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Remembering to actually throw the exception passed to op throw helps.
+        Regressions 19 -> 6.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_vm_throw):
+
+2008-08-29  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Support for exception unwinding the stack.
+        
+        Once upon a time, Sam asked me for a bettr ChangeLog entry.  The return address
+        is now preserved on entry to a JIT code function (if we preserve lazily we need
+        restore the native return address during exception stack unwind).  This takes
+        the number of regressions down from ~150 to 19.
+
+        * VM/CTI.cpp:
+        (KJS::getJCB):
+        (KJS::CTI::emitExceptionCheck):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::):
+        * VM/Machine.cpp:
+        (KJS::Machine::throwException):
+        (KJS::Machine::cti_op_call_JSFunction):
+        (KJS::Machine::cti_op_call_NotJSFunction):
+        (KJS::Machine::cti_op_construct_JSConstruct):
+        (KJS::Machine::cti_op_construct_NotJSConstruct):
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_vm_throw):
+
+2008-08-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix js1_2/regexp/word_boundary.js and four other Mozilla tests with WREC enabled.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::generateCharacterClassInvertedRange): If none of the exact matches
+        succeeded, jump to failure.
+        (KJS::WRECompiler::compilePattern): Restore and increment the current position stored
+        on the stack to ensure that it will be reset to the correct position after a failed
+        match has consumed input.
+
+2008-08-29  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix a hang in ecma_3/RegExp/15.10.2-1.js with WREC enabled.
+        A backreference with a quantifier would get stuck in an infinite
+        loop if the captured range was empty.
+
+        * wrec/WREC.cpp:
+        (KJS::WRECompiler::generateBackreferenceQuantifier): If the captured range
+        was empty, do not attempt to match the backreference.
+        (KJS::WRECompiler::parseBackreferenceQuantifier):
+        * wrec/WREC.h:
+        (KJS::Quantifier::):
+
+2008-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Implement op_debug.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::debug):
+        (KJS::Machine::privateExecute):
+        (KJS::Machine::cti_op_debug):
+        * VM/Machine.h:
+
+2008-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Implement op_switch_string fixing 1 mozilla test and one test in fast/js.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::SwitchRecord::):
+        (KJS::SwitchRecord::SwitchRecord):
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::dump):
+        * VM/CodeBlock.h:
+        (KJS::ExpressionRangeInfo::):
+        (KJS::StringJumpTable::offsetForValue):
+        (KJS::StringJumpTable::ctiForValue):
+        (KJS::SimpleJumpTable::add):
+        (KJS::SimpleJumpTable::ctiForValue):
+        * VM/CodeGenerator.cpp:
+        (KJS::prepareJumpTableForStringSwitch):
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        (KJS::Machine::cti_op_switch_string):
+        * VM/Machine.h:
+
+2008-08-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Do not recurse on the machine stack when executing op_call.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitGetPutArg):
+        (KJS::CTI::emitPutArg):
+        (KJS::CTI::emitPutArgConstant):
+        (KJS::CTI::compileOpCall):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::):
+        (KJS::CTI::compile):
+        (KJS::CTI::execute):
+        (KJS::CTI::):
+        * VM/Machine.cpp:
+        (KJS::Machine::Machine):
+        (KJS::Machine::execute):
+        (KJS::Machine::cti_op_call_JSFunction):
+        (KJS::Machine::cti_op_call_NotJSFunction):
+        (KJS::Machine::cti_op_ret):
+        (KJS::Machine::cti_op_construct_JSConstruct):
+        (KJS::Machine::cti_op_construct_NotJSConstruct):
+        (KJS::Machine::cti_op_call_eval):
+        * VM/Machine.h:
+        * VM/Register.h:
+        (KJS::Register::Register):
+        * VM/RegisterFile.h:
+        (KJS::RegisterFile::):
+        * kjs/InternalFunction.h:
+        (KJS::InternalFunction::InternalFunction):
+        * kjs/JSFunction.h:
+        (KJS::JSFunction::JSFunction):
+        * kjs/ScopeChain.h:
+        (KJS::ScopeChain::ScopeChain):
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::):
+        (KJS::IA32MacroAssembler::emitModRm_opm):
+        (KJS::IA32MacroAssembler::emitCmpl_i32m):
+        (KJS::IA32MacroAssembler::emitCallN_r):
+
+2008-08-28  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Exit instead of crashing in ctiUnsupported and ctiTimedOut.
+
+        * VM/Machine.cpp:
+        (KJS::ctiUnsupported):
+        (KJS::ctiTimedOut):
+
+2008-08-28  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Implement codegen for op_jsr and op_sret.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::CTI::JSRInfo::JSRInfo):
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::emitJmpN_m):
+        (KJS::IA32MacroAssembler::linkAbsoluteAddress):
+
+2008-08-28  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Initial support for exceptions (throw / catch must occur in same CodeBlock).
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitExceptionCheck):
+        (KJS::CTI::emitCall):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (KJS::CodeBlock::nativeExceptionCodeForHandlerVPC):
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        (KJS::CodeGenerator::emitCatch):
+        * VM/Machine.cpp:
+        (KJS::Machine::throwException):
+        (KJS::Machine::privateExecute):
+        (KJS::ctiUnsupported):
+        (KJS::ctiTimedOut):
+        (KJS::Machine::cti_op_add):
+        (KJS::Machine::cti_op_pre_inc):
+        (KJS::Machine::cti_timeout_check):
+        (KJS::Machine::cti_op_loop_if_less):
+        (KJS::Machine::cti_op_put_by_id):
+        (KJS::Machine::cti_op_get_by_id):
+        (KJS::Machine::cti_op_instanceof):
+        (KJS::Machine::cti_op_del_by_id):
+        (KJS::Machine::cti_op_mul):
+        (KJS::Machine::cti_op_call):
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_construct):
+        (KJS::Machine::cti_op_get_by_val):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_sub):
+        (KJS::Machine::cti_op_put_by_val):
+        (KJS::Machine::cti_op_lesseq):
+        (KJS::Machine::cti_op_loop_if_true):
+        (KJS::Machine::cti_op_negate):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_div):
+        (KJS::Machine::cti_op_pre_dec):
+        (KJS::Machine::cti_op_jless):
+        (KJS::Machine::cti_op_not):
+        (KJS::Machine::cti_op_jtrue):
+        (KJS::Machine::cti_op_post_inc):
+        (KJS::Machine::cti_op_eq):
+        (KJS::Machine::cti_op_lshift):
+        (KJS::Machine::cti_op_bitand):
+        (KJS::Machine::cti_op_rshift):
+        (KJS::Machine::cti_op_bitnot):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_mod):
+        (KJS::Machine::cti_op_less):
+        (KJS::Machine::cti_op_neq):
+        (KJS::Machine::cti_op_post_dec):
+        (KJS::Machine::cti_op_urshift):
+        (KJS::Machine::cti_op_bitxor):
+        (KJS::Machine::cti_op_bitor):
+        (KJS::Machine::cti_op_call_eval):
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_op_push_scope):
+        (KJS::Machine::cti_op_stricteq):
+        (KJS::Machine::cti_op_nstricteq):
+        (KJS::Machine::cti_op_to_jsnumber):
+        (KJS::Machine::cti_op_in):
+        (KJS::Machine::cti_op_del_by_val):
+        (KJS::Machine::cti_vm_throw):
+        * VM/Machine.h:
+        * kjs/ExecState.h:
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::emitCmpl_i32m):
+
+2008-08-28  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Print debugging info to stderr so that run-webkit-tests can capture it.
+        This makes it easy to check whether test failures are due to unimplemented
+        op codes, missing support for exceptions, etc.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::printOpcodeOperandTypes):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        (KJS::CTI::privateCompile):
+        * VM/Machine.cpp:
+        (KJS::Machine::privateExecute):
+        (KJS::ctiException):
+        (KJS::ctiUnsupported):
+        (KJS::Machine::cti_op_call):
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_construct):
+        (KJS::Machine::cti_op_get_by_val):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_call_eval):
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough and Maciej Stachowiak.
+
+        Fix fast/js/bitwise-and-on-undefined.html.
+
+        A temporary value in the slow path of op_bitand was being stored in edx, but was
+        being clobbered by emitGetPutArg before we used it.  To fix this, emitGetPutArg
+        now takes a third argument that specifies the scratch register to use when loading
+        from memory.  This allows us to avoid clobbering the temporary in op_bitand.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitGetPutArg):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        * VM/CTI.h:
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Switch CTI on by default.
+
+        * wtf/Platform.h:
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix the build of the full WebKit stack.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Mark two new headers as private so they can be pulled in from WebCore.
+        * VM/CTI.h: Fix build issues that show up when compiled with GCC 4.2 as part of WebCore.
+        * wrec/WREC.h: Ditto.
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement op_new_error.  Does not fix any tests as it is always followed by the unimplemented op_throw.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_new_error):
+        * VM/Machine.h:
+
+2008-08-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Implement op_put_getter and op_put_setter.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_put_getter):
+        (KJS::Machine::cti_op_put_setter):
+        * VM/Machine.h:
+
+2008-08-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Implement op_del_by_val fixing 3 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_del_by_val):
+        * VM/Machine.h:
+
+2008-08-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Quick & dirty fix to get SamplingTool sampling op_call.
+
+        * VM/SamplingTool.h:
+        (KJS::SamplingTool::callingHostFunction):
+
+2008-08-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Fix op_put_by_index.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main): Use emitPutArgConstant instead of emitGetPutArg
+        for the property value.
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_put_by_index): Get the property value from the correct argument.
+
+2008-08-27  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Implement op_switch_imm in the CTI fixing 13 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_switch_imm):
+        * VM/Machine.h:
+
+2008-08-27  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Implement op_switch_char in CTI.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitCall):
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        (KJS::CallRecord::CallRecord):
+        (KJS::SwitchRecord::SwitchRecord):
+        * VM/CodeBlock.h:
+        (KJS::SimpleJumpTable::SimpleJumpTable::ctiForValue):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_switch_char):
+        * VM/Machine.h:
+        * masm/IA32MacroAsm.h:
+        (KJS::IA32MacroAssembler::):
+        (KJS::IA32MacroAssembler::emitJmpN_r):
+        (KJS::IA32MacroAssembler::getRelocatedAddress):
+        * wtf/Platform.h:
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Implement op_put_by_index to fix 1 mozilla test.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_put_by_index):
+        * VM/Machine.h:
+
+2008-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        More fixes from Geoff's review.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::emitGetArg):
+        (KJS::CTI::emitGetPutArg):
+        (KJS::CTI::emitPutArg):
+        (KJS::CTI::emitPutArgConstant):
+        (KJS::CTI::getConstantImmediateNumericArg):
+        (KJS::CTI::emitGetCTIParam):
+        (KJS::CTI::emitPutResult):
+        (KJS::CTI::emitCall):
+        (KJS::CTI::emitJumpSlowCaseIfNotImm):
+        (KJS::CTI::emitJumpSlowCaseIfNotImms):
+        (KJS::CTI::getDeTaggedConstantImmediate):
+        (KJS::CTI::emitFastArithDeTagImmediate):
+        (KJS::CTI::emitFastArithReTagImmediate):
+        (KJS::CTI::emitFastArithPotentiallyReTagImmediate):
+        (KJS::CTI::emitFastArithImmToInt):
+        (KJS::CTI::emitFastArithIntToImmOrSlowCase):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Implement op_jmp_scopes to fix 2 Mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_push_new_scope): Update ExecState::m_scopeChain after calling ARG_setScopeChain.
+        (KJS::Machine::cti_op_jmp_scopes):
+        * VM/Machine.h:
+
+2008-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        WebKit Regular Expression Compiler. (set ENABLE_WREC = 1 in Platform.h).
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/regexp.cpp:
+        * kjs/regexp.h:
+        * wrec: Added.
+        * wrec/WREC.cpp: Added.
+        * wrec/WREC.h: Added.
+        * wtf/Platform.h:
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Remove bogus assertion.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_del_by_id):
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement op_push_new_scope and stub out op_catch.  This fixes 11 Mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_push_new_scope):
+        (KJS::Machine::cti_op_catch):
+        * VM/Machine.h:
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Clean up op_resolve_base so that it shares its implementation with the bytecode interpreter.
+
+        * VM/Machine.cpp:
+        (KJS::inlineResolveBase):
+        (KJS::resolveBase):
+
+2008-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Add codegen support for op_instanceof, fixing 15 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_instanceof):
+        (KJS::Machine::cti_op_del_by_id):
+        * VM/Machine.h:
+        * wtf/Platform.h:
+
+2008-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Fixes for initial review comments.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::ctiCompileGetArg):
+        (KJS::CTI::ctiCompileGetPutArg):
+        (KJS::CTI::ctiCompilePutResult):
+        (KJS::CTI::ctiCompileCall):
+        (KJS::CTI::CTI):
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::printOpcodeOperandTypes):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h:
+        * VM/Register.h:
+        * kjs/JSValue.h:
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Fix up exception checking code.
+
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_call):
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_construct):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_call_eval):
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        Fix slowcase for op_post_inc and op_post_dec fixing 2 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Implement op_in, fixing 8 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_in):
+        * VM/Machine.h:
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Don't hardcode the size of a Register for op_new_array.  Fixes a crash
+        seen during the Mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main):
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Add support for op_push_scope and op_pop_scope, fixing 20 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_push_scope):
+        (KJS::Machine::cti_op_pop_scope):
+        * VM/Machine.h:
+
+2008-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add codegen support for op_del_by_id, fixing 49 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+        * VM/Machine.cpp:
+        (KJS::Machine::cti_op_del_by_id):
+        * VM/Machine.h:
+
+2008-08-26  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Gavin Barraclough and Geoff Garen.
+
+        Don't hardcode the size of a Register for op_get_scoped_var and op_put_scoped_var 
+        fixing 513 mozilla tests in debug build.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass2_Main):
+
+2008-08-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+        
+        Added code generator support for op_loop, fixing around 60 mozilla tests.
+
+        * VM/CTI.cpp:
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::privateCompile_pass2_Main):
+
+2008-08-26  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Set -fomit-frame-pointer in the correct location.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-08-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+        
+        Inital cut of CTI, Geoff's review fixes to follow.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp: Added.
+        (KJS::getJCB):
+        (KJS::CTI::ctiCompileGetArg):
+        (KJS::CTI::ctiCompileGetPutArg):
+        (KJS::CTI::ctiCompilePutArg):
+        (KJS::CTI::ctiCompilePutArgImm):
+        (KJS::CTI::ctiImmediateNumericArg):
+        (KJS::CTI::ctiCompileGetCTIParam):
+        (KJS::CTI::ctiCompilePutResult):
+        (KJS::CTI::ctiCompileCall):
+        (KJS::CTI::slowCaseIfNotImm):
+        (KJS::CTI::slowCaseIfNotImms):
+        (KJS::CTI::ctiFastArithDeTagConstImmediate):
+        (KJS::CTI::ctiFastArithDeTagImmediate):
+        (KJS::CTI::ctiFastArithReTagImmediate):
+        (KJS::CTI::ctiFastArithPotentiallyReTagImmediate):
+        (KJS::CTI::ctiFastArithImmToInt):
+        (KJS::CTI::ctiFastArithIntToImmOrSlowCase):
+        (KJS::CTI::CTI):
+        (KJS::CTI::privateCompile_pass1_Scan):
+        (KJS::CTI::ctiCompileAdd):
+        (KJS::CTI::ctiCompileAddImm):
+        (KJS::CTI::ctiCompileAddImmNotInt):
+        (KJS::CTI::TEMP_HACK_PRINT_TYPES):
+        (KJS::CTI::privateCompile_pass2_Main):
+        (KJS::CTI::privateCompile_pass3_Link):
+        (KJS::CTI::privateCompile_pass4_SlowCases):
+        (KJS::CTI::privateCompile):
+        * VM/CTI.h: Added.
+        (KJS::CTI2Result::CTI2Result):
+        (KJS::CallRecord::CallRecord):
+        (KJS::JmpTable::JmpTable):
+        (KJS::SlowCaseEntry::SlowCaseEntry):
+        (KJS::CTI::compile):
+        (KJS::CTI::LabelInfo::LabelInfo):
+        * VM/CodeBlock.h:
+        (KJS::CodeBlock::CodeBlock):
+        (KJS::CodeBlock::~CodeBlock):
+        * VM/Machine.cpp:
+        (KJS::Machine::execute):
+        (KJS::Machine::privateExecute):
+        (KJS::ctiException):
+        (KJS::ctiUnsupported):
+        (KJS::ctiTimedOut):
+        (KJS::Machine::cti_op_end):
+        (KJS::Machine::cti_op_add):
+        (KJS::Machine::cti_op_pre_inc):
+        (KJS::Machine::cti_timeout_check):
+        (KJS::Machine::cti_op_loop_if_less):
+        (KJS::Machine::cti_op_new_object):
+        (KJS::Machine::cti_op_put_by_id):
+        (KJS::Machine::cti_op_get_by_id):
+        (KJS::Machine::cti_op_mul):
+        (KJS::Machine::cti_op_new_func):
+        (KJS::Machine::cti_op_call):
+        (KJS::Machine::cti_op_ret):
+        (KJS::Machine::cti_op_new_array):
+        (KJS::Machine::cti_op_resolve):
+        (KJS::Machine::cti_op_construct):
+        (KJS::Machine::cti_op_get_by_val):
+        (KJS::Machine::cti_op_resolve_func):
+        (KJS::Machine::cti_op_sub):
+        (KJS::Machine::cti_op_put_by_val):
+        (KJS::Machine::cti_op_lesseq):
+        (KJS::Machine::cti_op_loop_if_true):
+        (KJS::Machine::cti_op_negate):
+        (KJS::Machine::cti_op_resolve_base):
+        (KJS::Machine::cti_op_resolve_skip):
+        (KJS::Machine::cti_op_div):
+        (KJS::Machine::cti_op_pre_dec):
+        (KJS::Machine::cti_op_jless):
+        (KJS::Machine::cti_op_not):
+        (KJS::Machine::cti_op_jtrue):
+        (KJS::Machine::cti_op_post_inc):
+        (KJS::Machine::cti_op_eq):
+        (KJS::Machine::cti_op_lshift):
+        (KJS::Machine::cti_op_bitand):
+        (KJS::Machine::cti_op_rshift):
+        (KJS::Machine::cti_op_bitnot):
+        (KJS::Machine::cti_op_resolve_with_base):
+        (KJS::Machine::cti_op_new_func_exp):
+        (KJS::Machine::cti_op_mod):
+        (KJS::Machine::cti_op_less):
+        (KJS::Machine::cti_op_neq):
+        (KJS::Machine::cti_op_post_dec):
+        (KJS::Machine::cti_op_urshift):
+        (KJS::Machine::cti_op_bitxor):
+        (KJS::Machine::cti_op_new_regexp):
+        (KJS::Machine::cti_op_bitor):
+        (KJS::Machine::cti_op_call_eval):
+        (KJS::Machine::cti_op_throw):
+        (KJS::Machine::cti_op_get_pnames):
+        (KJS::Machine::cti_op_next_pname):
+        (KJS::Machine::cti_op_typeof):
+        (KJS::Machine::cti_op_stricteq):
+        (KJS::Machine::cti_op_nstricteq):
+        (KJS::Machine::cti_op_to_jsnumber):
+        * VM/Machine.h:
+        * VM/Register.h:
+        (KJS::Register::jsValue):
+        (KJS::Register::getJSValue):
+        (KJS::Register::codeBlock):
+        (KJS::Register::scopeChain):
+        (KJS::Register::i):
+        (KJS::Register::r):
+        (KJS::Register::vPC):
+        (KJS::Register::jsPropertyNameIterator):
+        * VM/SamplingTool.cpp:
+        (KJS::):
+        (KJS::SamplingTool::run):
+        (KJS::SamplingTool::dump):
+        * VM/SamplingTool.h:
+        * kjs/JSImmediate.h:
+        (KJS::JSImmediate::zeroImmediate):
+        (KJS::JSImmediate::oneImmediate):
+        * kjs/JSValue.h:
+        * kjs/JSVariableObject.h:
+        (KJS::JSVariableObject::JSVariableObjectData::offsetOf_registers):
+        (KJS::JSVariableObject::offsetOf_d):
+        (KJS::JSVariableObject::offsetOf_Data_registers):
+        * masm: Added.
+        * masm/IA32MacroAsm.h: Added.
+        (KJS::JITCodeBuffer::JITCodeBuffer):
+        (KJS::JITCodeBuffer::putByte):
+        (KJS::JITCodeBuffer::putShort):
+        (KJS::JITCodeBuffer::putInt):
+        (KJS::JITCodeBuffer::getEIP):
+        (KJS::JITCodeBuffer::start):
+        (KJS::JITCodeBuffer::getOffset):
+        (KJS::JITCodeBuffer::reset):
+        (KJS::JITCodeBuffer::copy):
+        (KJS::IA32MacroAssembler::):
+        (KJS::IA32MacroAssembler::emitModRm_rr):
+        (KJS::IA32MacroAssembler::emitModRm_rm):
+        (KJS::IA32MacroAssembler::emitModRm_rmsib):
+        (KJS::IA32MacroAssembler::emitModRm_opr):
+        (KJS::IA32MacroAssembler::emitModRm_opm):
+        (KJS::IA32MacroAssembler::IA32MacroAssembler):
+        (KJS::IA32MacroAssembler::emitInt3):
+        (KJS::IA32MacroAssembler::emitPushl_r):
+        (KJS::IA32MacroAssembler::emitPopl_r):
+        (KJS::IA32MacroAssembler::emitMovl_rr):
+        (KJS::IA32MacroAssembler::emitAddl_rr):
+        (KJS::IA32MacroAssembler::emitAddl_i8r):
+        (KJS::IA32MacroAssembler::emitAddl_i32r):
+        (KJS::IA32MacroAssembler::emitAddl_mr):
+        (KJS::IA32MacroAssembler::emitAndl_rr):
+        (KJS::IA32MacroAssembler::emitAndl_i32r):
+        (KJS::IA32MacroAssembler::emitCmpl_i8r):
+        (KJS::IA32MacroAssembler::emitCmpl_rr):
+        (KJS::IA32MacroAssembler::emitCmpl_rm):
+        (KJS::IA32MacroAssembler::emitCmpl_i32r):
+        (KJS::IA32MacroAssembler::emitCmpw_rm):
+        (KJS::IA32MacroAssembler::emitOrl_rr):
+        (KJS::IA32MacroAssembler::emitOrl_i8r):
+        (KJS::IA32MacroAssembler::emitSubl_rr):
+        (KJS::IA32MacroAssembler::emitSubl_i8r):
+        (KJS::IA32MacroAssembler::emitSubl_i32r):
+        (KJS::IA32MacroAssembler::emitSubl_mr):
+        (KJS::IA32MacroAssembler::emitTestl_i32r):
+        (KJS::IA32MacroAssembler::emitTestl_rr):
+        (KJS::IA32MacroAssembler::emitXorl_i8r):
+        (KJS::IA32MacroAssembler::emitXorl_rr):
+        (KJS::IA32MacroAssembler::emitSarl_i8r):
+        (KJS::IA32MacroAssembler::emitSarl_CLr):
+        (KJS::IA32MacroAssembler::emitShl_i8r):
+        (KJS::IA32MacroAssembler::emitShll_CLr):
+        (KJS::IA32MacroAssembler::emitMull_rr):
+        (KJS::IA32MacroAssembler::emitIdivl_r):
+        (KJS::IA32MacroAssembler::emitCdq):
+        (KJS::IA32MacroAssembler::emitMovl_mr):
+        (KJS::IA32MacroAssembler::emitMovzwl_mr):
+        (KJS::IA32MacroAssembler::emitMovl_rm):
+        (KJS::IA32MacroAssembler::emitMovl_i32r):
+        (KJS::IA32MacroAssembler::emitMovl_i32m):
+        (KJS::IA32MacroAssembler::emitLeal_mr):
+        (KJS::IA32MacroAssembler::emitRet):
+        (KJS::IA32MacroAssembler::JmpSrc::JmpSrc):
+        (KJS::IA32MacroAssembler::JmpDst::JmpDst):
+        (KJS::IA32MacroAssembler::emitCall):
+        (KJS::IA32MacroAssembler::label):
+        (KJS::IA32MacroAssembler::emitUnlinkedJmp):
+        (KJS::IA32MacroAssembler::emitUnlinkedJne):
+        (KJS::IA32MacroAssembler::emitUnlinkedJe):
+        (KJS::IA32MacroAssembler::emitUnlinkedJl):
+        (KJS::IA32MacroAssembler::emitUnlinkedJle):
+        (KJS::IA32MacroAssembler::emitUnlinkedJge):
+        (KJS::IA32MacroAssembler::emitUnlinkedJae):
+        (KJS::IA32MacroAssembler::emitUnlinkedJo):
+        (KJS::IA32MacroAssembler::emitPredictionNotTaken):
+        (KJS::IA32MacroAssembler::link):
+        (KJS::IA32MacroAssembler::copy):
+        * wtf/Platform.h:
+
+2008-08-26  Oliver Hunt  <oliver@apple.com>
+
+        RS=Maciej.
+
+        Enabled -fomit-frame-pointer on Release and Production builds, add additional Profiling build config for shark, etc.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+=== Start merge of squirrelfish-extreme ===
+
 2008-09-06  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

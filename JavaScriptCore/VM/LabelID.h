@@ -70,6 +70,8 @@ namespace KJS {
                 unsigned j = m_unresolvedJumps[i];
                 m_codeBlock->instructions[j].u.operand = m_location - j;
             }
+
+            m_codeBlock->labels.add(location);
         }
 
         int offsetFrom(int location) const

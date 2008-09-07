@@ -37,6 +37,8 @@ namespace KJS {
     };
 
     class JSArray : public JSObject {
+        friend class CTI;
+
     public:
         JSArray(PassRefPtr<StructureID>);
         JSArray(JSObject* prototype, unsigned initialLength);

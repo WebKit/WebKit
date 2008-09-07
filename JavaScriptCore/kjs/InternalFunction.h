@@ -39,6 +39,7 @@ namespace KJS {
         const UString& name(ExecState*);
 
     protected:
+        InternalFunction(PassRefPtr<KJS::StructureID> st) : JSObject(st){}
         InternalFunction(ExecState*);
         InternalFunction(ExecState*, FunctionPrototype*, const Identifier&);
 

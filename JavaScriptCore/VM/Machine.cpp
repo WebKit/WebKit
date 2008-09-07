@@ -75,9 +75,6 @@ using namespace std;
 
 namespace KJS {
 
-// Default number of ticks before a timeout check should be done.
-static const int initialTickCountThreshold = 255;
-
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
 
@@ -306,11 +303,8 @@ static bool NEVER_INLINE resolve_skip(ExecState* exec, Instruction* vPC, Registe
     return false;
 }
 
-static void NEVER_INLINE resolveBase(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock)
+ALWAYS_INLINE static JSValue* inlineResolveBase(ExecState* exec, Identifier& property, ScopeChainNode* scopeChain)
 {
-    int dst = (vPC + 1)->u.operand;
-    int property = (vPC + 2)->u.operand;
-
     ScopeChainIterator iter = scopeChain->begin();
     ScopeChainIterator next = iter;
     ++next;
@@ -318,17 +312,25 @@ static void NEVER_INLINE resolveBase(ExecState* exec, Instruction* vPC, Register
     ASSERT(iter != end);
 
     PropertySlot slot;
-    Identifier& ident = codeBlock->identifiers[property];
     JSObject* base;
     while (true) {
         base = *iter;
-        if (next == end || base->getPropertySlot(exec, ident, slot)) {
-            r[dst] = base;
-            return;
-        }
+        if (next == end || base->getPropertySlot(exec, property, slot))
+            return base;
+
         iter = next;
         ++next;
     }
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+NEVER_INLINE static void resolveBase(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock)
+{
+    int dst = (vPC + 1)->u.operand;
+    int property = (vPC + 2)->u.operand;
+    r[dst] = inlineResolveBase(exec, codeBlock->identifiers[property], scopeChain);
 }
 
 static bool NEVER_INLINE resolveBaseAndProperty(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue*& exceptionValue)
@@ -465,7 +467,6 @@ ALWAYS_INLINE Register* slideRegisterWindowForCall(ExecState* exec, CodeBlock* n
     for (Register* it = r - newCodeBlock->numVars; it != r; ++it)
         (*it) = jsUndefined();
 
-
     for (size_t i = 0; i < newCodeBlock->constantRegisters.size(); ++i)
         r[i] = newCodeBlock->constantRegisters[i];
 
@@ -528,6 +529,11 @@ NEVER_INLINE JSValue* Machine::callEval(ExecState* exec, JSObject* thisObj, Scop
 
 Machine::Machine()
     : m_sampler(0)
+#if ENABLE(CTI)
+    , m_ctiArrayLengthTrampoline(0)
+    , m_ctiStringLengthTrampoline(0)
+    , m_jitCodeBuffer(new JITCodeBuffer(1024 * 1024))
+#endif
     , m_reentryDepth(0)
     , m_timeoutTime(0)
     , m_timeAtLastCheckTimeout(0)
@@ -547,8 +553,22 @@ Machine::Machine()
     JSString* jsString = new (storage) JSString("");
     m_jsStringVptr = jsString->vptr();
     static_cast<JSCell*>(jsString)->~JSCell();
+
+    JSFunction* jsFunction = new (storage) JSFunction(StructureID::create(jsNull()));
+    m_jsFunctionVptr = jsFunction->vptr();
+    static_cast<JSCell*>(jsFunction)->~JSCell();
     
     fastFree(storage);
+}
+
+Machine::~Machine()
+{
+#if ENABLE(CTI)
+    if (m_ctiArrayLengthTrampoline)
+        fastFree(m_ctiArrayLengthTrampoline);
+    if (m_ctiStringLengthTrampoline)
+        fastFree(m_ctiStringLengthTrampoline);
+#endif
 }
 
 #ifndef NDEBUG
@@ -626,7 +646,7 @@ void Machine::dumpRegisters(const CodeBlock* codeBlock, RegisterFile* registerFi
 
 #endif
 
-#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
+//#if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
 
 bool Machine::isOpcode(Opcode opcode)
 {
@@ -639,7 +659,7 @@ bool Machine::isOpcode(Opcode opcode)
 #endif
 }
 
-#endif
+//#endif
 
 NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionValue, const Instruction*& vPC, CodeBlock*& codeBlock, ScopeChainNode*& scopeChain, Register*& r)
 {
@@ -685,7 +705,7 @@ NEVER_INLINE bool Machine::unwindCallFrame(ExecState* exec, JSValue* exceptionVa
 NEVER_INLINE Instruction* Machine::throwException(ExecState* exec, JSValue*& exceptionValue, const Instruction* vPC, CodeBlock*& codeBlock, ScopeChainNode*& scopeChain, Register*& r, bool explicitThrow)
 {
     // Set up the exception object
-
+    
     if (exceptionValue->isObject()) {
         JSObject* exception = static_cast<JSObject*>(exceptionValue);
         if (exception->isNotAnObjectErrorStub()) {
@@ -792,7 +812,13 @@ JSValue* Machine::execute(ProgramNode* programNode, ExecState* exec, ScopeChainN
         (*profiler)->willExecute(exec, programNode->sourceURL(), programNode->lineNo());
 
     m_reentryDepth++;
+#if ENABLE(CTI)
+    if (!codeBlock->ctiCode)
+        CTI::compile(this, exec, codeBlock);
+    JSValue* result = CTI::execute(codeBlock->ctiCode, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
+#else
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
+#endif
     m_reentryDepth--;
 
     MACHINE_SAMPLING_privateExecuteReturned();
@@ -852,7 +878,13 @@ JSValue* Machine::execute(FunctionBodyNode* functionBodyNode, ExecState* exec, J
         (*profiler)->willExecute(exec, function);
 
     m_reentryDepth++;
+#if ENABLE(CTI)
+    if (!newCodeBlock->ctiCode)
+        CTI::compile(this, exec, newCodeBlock);
+    JSValue* result = CTI::execute(newCodeBlock->ctiCode, &newExec, &m_registerFile, r, scopeChain, newCodeBlock, exception);
+#else
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, newCodeBlock, exception);
+#endif
     m_reentryDepth--;
 
     MACHINE_SAMPLING_privateExecuteReturned();
@@ -930,7 +962,13 @@ JSValue* Machine::execute(EvalNode* evalNode, ExecState* exec, JSObject* thisObj
         (*profiler)->willExecute(exec, evalNode->sourceURL(), evalNode->lineNo());
 
     m_reentryDepth++;
+#if ENABLE(CTI)
+    if (!codeBlock->ctiCode)
+        CTI::compile(this, exec, codeBlock);
+    JSValue* result = CTI::execute(codeBlock->ctiCode, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
+#else
     JSValue* result = privateExecute(Normal, &newExec, &m_registerFile, r, scopeChain, codeBlock, exception);
+#endif
     m_reentryDepth--;
 
     MACHINE_SAMPLING_privateExecuteReturned();
@@ -948,43 +986,33 @@ ALWAYS_INLINE void Machine::setScopeChain(ExecState* exec, ScopeChainNode*& scop
     exec->m_scopeChain = newScopeChain;
 }
 
-NEVER_INLINE void Machine::debug(ExecState* exec, const Instruction* vPC, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r)
+NEVER_INLINE void Machine::debug(ExecState* exec, const CodeBlock* codeBlock, ScopeChainNode* scopeChain, Register* r, DebugHookID debugHookID, int firstLine, int lastLine)
 {
-    int debugHookID = (++vPC)->u.operand;
-    int firstLine = (++vPC)->u.operand;
-    int lastLine = (++vPC)->u.operand;
-
     Debugger* debugger = exec->dynamicGlobalObject()->debugger();
     if (!debugger)
         return;
 
     DebuggerCallFrame debuggerCallFrame(exec, exec->dynamicGlobalObject(), codeBlock, scopeChain, r, 0);
 
-    switch((DebugHookID)debugHookID) {
-    case DidEnterCallFrame: {
-        debugger->callEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
-        return;
-    }
-    case WillLeaveCallFrame: {
-        debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
-        return;
-    }
-    case WillExecuteStatement: {
-        debugger->atStatement(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
-        return;
-    }
-    case WillExecuteProgram: {
-        debugger->willExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
-        return;
-    }
-    case DidExecuteProgram: {
-        debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
-        return;
-    }
-    case DidReachBreakpoint: {
-        debugger->didReachBreakpoint(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
-        return;
-    }
+    switch (debugHookID) {
+        case DidEnterCallFrame:
+            debugger->callEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            return;
+        case WillLeaveCallFrame:
+            debugger->returnEvent(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            return;
+        case WillExecuteStatement:
+            debugger->atStatement(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            return;
+        case WillExecuteProgram:
+            debugger->willExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), firstLine);
+            return;
+        case DidExecuteProgram:
+            debugger->didExecuteProgram(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            return;
+        case DidReachBreakpoint:
+            debugger->didReachBreakpoint(debuggerCallFrame, codeBlock->ownerNode->sourceId(), lastLine);
+            return;
     }
 }
 
@@ -1071,15 +1099,6 @@ ALWAYS_INLINE JSValue* Machine::checkTimeout(JSGlobalObject* globalObject)
     }
     
     return 0;
-}
-
-static int32_t offsetForStringSwitch(StringJumpTable& jumpTable, JSValue* scrutinee, int32_t defaultOffset) {
-    StringJumpTable::const_iterator end = jumpTable.end();
-    UString::Rep* value = static_cast<JSString*>(scrutinee)->value().rep();
-    StringJumpTable::const_iterator loc = jumpTable.find(value);
-    if (loc == end)
-        return defaultOffset;
-    return loc->second;
 }
 
 static NEVER_INLINE ScopeChainNode* createExceptionScope(ExecState* exec, CodeBlock* codeBlock, const Instruction* vPC, Register* r, ScopeChainNode* scopeChain)
@@ -1235,18 +1254,18 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     if (slot.slotBase() == structureID->prototype()) {
         ASSERT(slot.slotBase()->isObject());
 
-        JSObject* slotBaseObject = static_cast<JSObject*>(slot.slotBase());
+        JSObject* baseObject = static_cast<JSObject*>(slot.slotBase());
 
         // Heavy access to a prototype is a good indication that it's not being
         // used as a dictionary.
-        if (slotBaseObject->structureID()->isDictionary()) {
-            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(slotBaseObject->structureID());
-            slotBaseObject->setStructureID(transition.release());
+        if (baseObject->structureID()->isDictionary()) {
+            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(baseObject->structureID());
+            baseObject->setStructureID(transition.release());
             static_cast<JSObject*>(baseValue)->structureID()->setCachedPrototypeChain(0);
         }
 
         vPC[0] = getOpcode(op_get_by_id_proto);
-        vPC[5] = slotBaseObject->structureID();
+        vPC[5] = baseObject->structureID();
         vPC[6] = slot.cachedOffset();
 
         codeBlock->refStructureIDs(vPC);
@@ -1258,7 +1277,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     while (slot.slotBase() != o) {
         JSValue* v = o->structureID()->prototype();
 
-        // If we didn't find slotBase in baseValue's prototype chain, then baseValue
+        // If we didn't find base in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
         if (v->isNull()) {
             vPC[0] = getOpcode(op_get_by_id_generic);
@@ -1317,6 +1336,11 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         return 0;
     }
 
+#if ENABLE(CTI)
+    // Currently with CTI enabled we never interpret functions
+    ASSERT_NOT_REACHED();
+#endif
+
     JSValue* exceptionValue = 0;
     Instruction* handlerVPC = 0;
 
@@ -1326,7 +1350,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     unsigned tickCount = m_ticksUntilNextTimeoutCheck + 1;
 
 #define VM_CHECK_EXCEPTION() \
-     do { \
+    do { \
         if (UNLIKELY(exec->hadException())) { \
             exceptionValue = exec->exception(); \
             goto vm_throw; \
@@ -1343,7 +1367,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             goto vm_throw; \
         tickCount = m_ticksUntilNextTimeoutCheck; \
     }
-    
+
 #if HAVE(COMPUTED_GOTO)
     #define NEXT_OPCODE MACHINE_SAMPLING_sample(codeBlock, vPC); goto *vPC->u.opcode
 #if DUMP_OPCODE_STATS
@@ -2484,7 +2508,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int base = (++vPC)->u.operand;
         int property = (++vPC)->u.operand;
-
+        
         JSValue* baseValue = r[base].jsValue(exec);
         JSValue* subscript = r[property].jsValue(exec);
 
@@ -2798,7 +2822,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         if (!scrutinee->isString())
             vPC += defaultOffset;
         else 
-            vPC += offsetForStringSwitch(codeBlock->stringSwitchJumpTables[tableIndex], scrutinee, defaultOffset);
+            vPC += codeBlock->stringSwitchJumpTables[tableIndex].offsetForValue(static_cast<JSString*>(scrutinee)->value().rep(), defaultOffset);
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_new_func) {
@@ -3380,10 +3404,13 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
          Notifies the debugger of the current state of execution. This opcode
          is only generated while the debugger is attached.
         */
+        int debugHookID = (++vPC)->u.operand;
+        int firstLine = (++vPC)->u.operand;
+        int lastLine = (++vPC)->u.operand;
 
-        debug(exec, vPC, codeBlock, scopeChain, r);
+        debug(exec, codeBlock, scopeChain, r, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
 
-        vPC += 4;
+        ++vPC;
         NEXT_OPCODE;
     }
     vm_throw: {
@@ -3405,6 +3432,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
     #undef NEXT_OPCODE
     #undef BEGIN_OPCODE
     #undef VM_CHECK_EXCEPTION
+    #undef CHECK_FOR_TIMEOUT
 }
 
 JSValue* Machine::retrieveArguments(ExecState* exec, JSFunction* function) const
@@ -3497,5 +3525,1614 @@ void Machine::getArgumentsData(Register* callFrame, JSFunction*& function, Regis
     argv = callFrame[RegisterFile::CallerRegisters].r() + callFrame[RegisterFile::ArgumentStartRegister].i() + 1; //  + 1 to skip "this"
     argc = callFrame[RegisterFile::ArgumentCount].i() - 1; // - 1 to skip "this"
 }
+
+#if ENABLE(CTI)
+
+NEVER_INLINE static void doSetReturnAddressVMThrowTrampoline(void** returnAddress)
+{
+    ctiSetReturnAddress(returnAddress, (void*)ctiVMThrowTrampoline);
+}
+
+NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const PutPropertySlot& slot)
+{
+    // The interpreter checks for recursion here; I do not believe this can occur in CTI.
+
+    if (JSImmediate::isImmediate(baseValue))
+        return;
+
+    // Uncacheable: give up.
+    if (!slot.isCacheable()) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        return;
+    }
+
+    // FIXME: Cache new property transitions, too.
+    if (slot.type() == PutPropertySlot::NewProperty) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        return;
+    }
+    
+    JSCell* baseCell = static_cast<JSCell*>(baseValue);
+    StructureID* structureID = baseCell->structureID();
+
+    // FIXME: Remove this !structureID check once all objects have StructureIDs.
+    if (!structureID) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        return;
+    }
+
+    if (structureID->isDictionary()) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        return;
+    }
+
+    // In the interpreter the last structure is trapped here; in CTI we use the
+    // *_second method to achieve a similar (but not quite the same) effect.
+
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(returnAddress);
+    Instruction* vPC = codeBlock->instructions.begin() + vPCIndex;
+
+    // Cache hit: Specialize instruction and ref StructureIDs.
+
+    // If baseCell != base, then baseCell must be a proxy for another object.
+    if (baseCell != slot.base()) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
+        return;
+    }
+    vPC[0] = getOpcode(op_put_by_id_replace);
+    vPC[4] = structureID;
+    vPC[5] = slot.cachedOffset();
+    codeBlock->refStructureIDs(vPC);
+
+    ctiRepatchCallByReturnAddress(returnAddress, CTI::compilePutByIdReplace(this, exec, codeBlock, structureID, slot.cachedOffset()));
+}
+
+void* Machine::getCTIArrayLengthTrampoline(ExecState* exec, CodeBlock* codeBlock)
+{
+    if (!m_ctiArrayLengthTrampoline)
+        m_ctiArrayLengthTrampoline = CTI::compileArrayLengthTrampoline(this, exec, codeBlock);
+        
+    return m_ctiArrayLengthTrampoline;
+}
+
+void* Machine::getCTIStringLengthTrampoline(ExecState* exec, CodeBlock* codeBlock)
+{
+    if (!m_ctiStringLengthTrampoline)
+        m_ctiStringLengthTrampoline = CTI::compileStringLengthTrampoline(this, exec, codeBlock);
+        
+    return m_ctiStringLengthTrampoline;
+}
+
+NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBlock, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot& slot)
+{
+    // The interpreter checks for recursion here; I do not believe this can occur in CTI.
+
+    if (isJSArray(baseValue) && propertyName == exec->propertyNames().length) {
+        ctiRepatchCallByReturnAddress(returnAddress, getCTIArrayLengthTrampoline(exec, codeBlock));
+        return;
+    }
+    if (isJSString(baseValue) && propertyName == exec->propertyNames().length) {
+        ctiRepatchCallByReturnAddress(returnAddress, getCTIStringLengthTrampoline(exec, codeBlock));
+        return;
+    }
+
+    // Uncacheable: give up.
+    if (!slot.isCacheable()) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        return;
+    }
+
+    // FIXME: Cache property access for immediates.
+    if (JSImmediate::isImmediate(baseValue)) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        return;
+    }
+
+    JSCell* baseCell = static_cast<JSCell*>(baseValue);
+    StructureID* structureID = baseCell->structureID();
+
+    // FIXME: Remove this !structureID check once all JSCells have StructureIDs.
+    if (!structureID) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        return;
+    }
+
+    if (structureID->isDictionary()) {
+        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
+        return;
+    }
+
+    // In the interpreter the last structure is trapped here; in CTI we use the
+    // *_second method to achieve a similar (but not quite the same) effect.
+
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(returnAddress);
+    Instruction* vPC = codeBlock->instructions.begin() + vPCIndex;
+
+    // Cache hit: Specialize instruction and ref StructureIDs.
+
+    if (slot.slotBase() == baseValue) {
+        // set this up, so derefStructureIDs can do it's job.
+        vPC[0] = getOpcode(op_get_by_id_self);
+        vPC[4] = structureID;
+        vPC[5] = slot.cachedOffset();
+        codeBlock->refStructureIDs(vPC);
+        
+        ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdSelf(this, exec, codeBlock, structureID, slot.cachedOffset()));
+        return;
+    }
+
+    if (slot.slotBase() == structureID->prototype()) {
+        ASSERT(slot.slotBase()->isObject());
+
+        JSObject* slotBaseObject = static_cast<JSObject*>(slot.slotBase());
+
+        // Heavy access to a prototype is a good indication that it's not being
+        // used as a dictionary.
+        if (slotBaseObject->structureID()->isDictionary()) {
+            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(slotBaseObject->structureID());
+            slotBaseObject->setStructureID(transition.release());
+            static_cast<JSObject*>(baseValue)->structureID()->setCachedPrototypeChain(0);
+        }
+
+        vPC[0] = getOpcode(op_get_by_id_proto);
+        vPC[4] = structureID;
+        vPC[5] = slotBaseObject->structureID();
+        vPC[6] = slot.cachedOffset();
+        codeBlock->refStructureIDs(vPC);
+
+        ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdProto(this, exec, codeBlock, structureID, slotBaseObject->structureID(), slot.cachedOffset()));
+        return;
+    }
+
+    size_t count = 0;
+    JSObject* o = static_cast<JSObject*>(baseValue);
+    while (slot.slotBase() != o) {
+        JSValue* v = o->structureID()->prototype();
+
+        // If we didn't find slotBase in baseValue's prototype chain, then baseValue
+        // must be a proxy for another object.
+
+        if (v->isNull()) {
+            vPC[0] = getOpcode(op_get_by_id_generic);
+            return;
+        }
+
+        o = static_cast<JSObject*>(v);
+
+        // Heavy access to a prototype is a good indication that it's not being
+        // used as a dictionary.
+        if (o->structureID()->isDictionary()) {
+            RefPtr<StructureID> transition = StructureID::fromDictionaryTransition(o->structureID());
+            o->setStructureID(transition.release());
+            static_cast<JSObject*>(baseValue)->structureID()->setCachedPrototypeChain(0);
+        }
+
+        ++count;
+    }
+
+    StructureIDChain* chain = structureID->cachedPrototypeChain();
+    if (!chain)
+        chain = cachePrototypeChain(structureID);
+
+    vPC[0] = getOpcode(op_get_by_id_chain);
+    vPC[4] = structureID;
+    vPC[5] = chain;
+    vPC[6] = count;
+    vPC[7] = slot.cachedOffset();
+    codeBlock->refStructureIDs(vPC);
+
+    ctiRepatchCallByReturnAddress(returnAddress, CTI::compileGetByIdChain(this, exec, codeBlock, structureID, chain, count, slot.cachedOffset()));
+}
+
+
+#define JSVALUE_VM_CHECK_EXCEPTION_ARG(exception) \
+    do { \
+        if (UNLIKELY(exception != 0)) { \
+            exec->setException(exception); \
+            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
+            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+            return 0; \
+        } \
+    } while (0)
+#define VM_CHECK_EXCEPTION_v() \
+    do { \
+        if (UNLIKELY(exec->hadException())) { \
+            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
+            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+            return; \
+        } \
+    } while (0)
+#define VM_CHECK_EXCEPTION(type) \
+    do { \
+        if (UNLIKELY(exec->hadException())) { \
+            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
+            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+            return (type)0; \
+        } \
+    } while (0)
+#define VM_CHECK_EXCEPTION_AT_END() \
+    do { \
+        if (UNLIKELY(exec->hadException())) { \
+            /*printf("VM_CHECK_EXCEPTION_AT_END()\n");*/ \
+            exec->setCTIReturnAddress(CTI_RETURN_ADDRESS); \
+            doSetReturnAddressVMThrowTrampoline(&CTI_RETURN_ADDRESS); \
+        } \
+    } while (0)
+
+void Machine::cti_op_end(CTI_ARGS)
+{
+    ASSERT(ARG_scopeChain->refCount > 1);
+    ARG_scopeChain->deref();
+}
+
+JSValue* Machine::cti_op_add(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsAdd(exec, src1, src2);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_pre_inc(CTI_ARGS)
+{
+    JSValue* v = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsNumber(exec, v->toNumber(exec) + 1);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+void Machine::cti_timeout_check(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    if (exec->machine()->checkTimeout(exec->dynamicGlobalObject()))
+        exec->setException(createInterruptedExecutionException(exec));
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+
+int Machine::cti_op_loop_if_less(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+    ExecState* exec = ARG_exec;
+
+    bool result = jsLess(exec, src1, src2);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_new_object(CTI_ARGS)
+{
+    return constructEmptyObject(ARG_exec);;
+}
+
+void Machine::cti_op_put_by_id(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    PutPropertySlot slot;
+    ARG_src1->put(exec, ident, ARG_src3, slot);
+
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_put_by_id_second);
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+void Machine::cti_op_put_by_id_second(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PutPropertySlot slot;
+    baseValue->put(exec, ident, ARG_src3, slot);
+
+    exec->machine()->tryCTICachePutByID(exec, ARG_codeBlock, CTI_RETURN_ADDRESS, baseValue, slot);
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+void Machine::cti_op_put_by_id_generic(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    PutPropertySlot slot;
+    ARG_src1->put(exec, ident, ARG_src3, slot);
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+void Machine::cti_op_put_by_id_fail(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    PutPropertySlot slot;
+    ARG_src1->put(exec, ident, ARG_src3, slot);
+
+    // should probably uncachePutByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_put_by_id_generic);
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+JSValue* Machine::cti_op_get_by_id(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(exec, ident, slot);
+
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_get_by_id_second);
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_get_by_id_second(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(exec, ident, slot);
+
+    exec->machine()->tryCTICacheGetByID(exec, ARG_codeBlock, CTI_RETURN_ADDRESS, baseValue, ident, slot);
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_get_by_id_generic(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(exec, ident, slot);
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_get_by_id_fail(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+
+    JSValue* baseValue = ARG_src1;
+    PropertySlot slot(baseValue);
+    JSValue* result = baseValue->get(exec, ident, slot);
+
+    // should probably uncacheGetByID() ... this would mean doing a vPC lookup - might be worth just bleeding this until the end.
+    ctiRepatchCallByReturnAddress(CTI_RETURN_ADDRESS, (void*)cti_op_get_by_id_generic);
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_instanceof(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* baseVal = ARG_src2;
+
+    if (!baseVal->isObject()) {
+        CodeBlock* codeBlock = ARG_codeBlock;
+        ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+        unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+        exec->setException(createInvalidParamError(exec, "instanceof", baseVal, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+        VM_CHECK_EXCEPTION(JSValue*);
+    }
+
+    JSObject* baseObj = static_cast<JSObject*>(baseVal);
+    JSValue* result = jsBoolean(baseObj->implementsHasInstance() ? baseObj->hasInstance(exec,  ARG_src1) : false);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_del_by_id(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Identifier& ident = *ARG_id2;
+    
+    JSObject* baseObj = ARG_src1->toObject(exec);
+
+    JSValue* result = jsBoolean(baseObj->deleteProperty(exec, ident));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_mul(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    double left;
+    double right;
+    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        return jsNumber(exec, left * right);
+    else {
+        JSValue* result = jsNumber(exec, src1->toNumber(exec) * src2->toNumber(exec));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_new_func(CTI_ARGS)
+{
+    return ARG_func1->makeFunction(ARG_exec, ARG_scopeChain);
+}
+
+void* Machine::cti_op_call_JSFunction(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    RegisterFile* registerFile = ARG_registerFile;
+    Register* r = ARG_r;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    Machine* machine = exec->machine();
+    JSValue* exceptionValue = 0;
+    Register* registerBase = registerFile->base();
+    
+    JSValue* funcVal = ARG_src1;
+    JSValue* thisValue = ARG_src2;
+    int firstArg = ARG_int3;
+    int argCount = ARG_int4;
+
+    CallData callData;
+#ifndef NDEBUG
+    CallType callType =
+#endif
+        funcVal->getCallData(callData);
+
+    ASSERT(callType == CallTypeJS);
+
+    if (*ARG_profilerReference)
+        (*ARG_profilerReference)->willExecute(exec, static_cast<JSObject*>(funcVal));
+
+    ScopeChainNode* callDataScopeChain = callData.js.scopeChain;
+    FunctionBodyNode* functionBodyNode = callData.js.functionBody;
+    CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
+
+    r[firstArg] = thisValue;
+
+    Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
+    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, 0, funcVal);
+    exec->m_callFrame = callFrame;
+
+    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
+    JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+    
+    codeBlock = newCodeBlock;
+    machine->setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
+
+    if (!codeBlock->ctiCode)
+        CTI::compile(machine, exec, codeBlock);
+
+    ARG_setScopeChain(scopeChain);
+    ARG_setCodeBlock(codeBlock);
+    ARG_setR(r);
+    return codeBlock->ctiCode;
+}
+
+JSValue* Machine::cti_op_call_NotJSFunction(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Register* r = ARG_r;
+
+    JSValue* funcVal = ARG_src1;
+    JSValue* thisValue = ARG_src2;
+    int firstArg = ARG_int3;
+    int argCount = ARG_int4;
+
+    CallData callData;
+    CallType callType = funcVal->getCallData(callData);
+
+    ASSERT(callType != CallTypeJS);
+
+    if (callType == CallTypeHost) {
+        CodeBlock* codeBlock = ARG_codeBlock;
+        ScopeChainNode* scopeChain = ARG_scopeChain;
+        Machine* machine = exec->machine();
+
+        Register* oldCallFrame = exec->m_callFrame;
+        Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
+        machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, 0, funcVal);
+        exec->m_callFrame = callFrame;
+
+        if (*ARG_profilerReference)
+            (*ARG_profilerReference)->willExecute(exec, static_cast<JSObject*>(funcVal));
+
+        ArgList argList(r + firstArg + 1, argCount - 1);
+
+        CTI_MACHINE_SAMPLING_callingHostFunction();
+
+        JSValue* returnValue = callData.native.function(exec, static_cast<JSObject*>(funcVal), thisValue, argList);
+        exec->m_callFrame = oldCallFrame;
+        VM_CHECK_EXCEPTION(JSValue*);
+
+        if (*ARG_profilerReference)
+            (*ARG_profilerReference)->didExecute(exec, static_cast<JSObject*>(funcVal));
+
+        return returnValue;
+
+    }
+
+    ASSERT(callType == CallTypeNone);
+
+    exec->setException(createNotAFunctionError(exec, funcVal, ARG_instr5, ARG_codeBlock));
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_ret(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Register* r = ARG_r;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    Machine* machine = exec->machine();
+
+    Register* callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+    if (JSActivation* activation = static_cast<JSActivation*>(callFrame[RegisterFile::OptionalCalleeActivation].jsValue(exec))) {
+        ASSERT(!codeBlock->needsFullScopeChain || scopeChain->object == activation);
+        ASSERT(activation->isActivationObject());
+        activation->copyRegisters();
+    }
+
+    if (*ARG_profilerReference)
+        (*ARG_profilerReference)->didExecute(exec, static_cast<JSObject*>(callFrame[RegisterFile::Callee].jsValue(exec)));
+
+    if (codeBlock->needsFullScopeChain)
+        scopeChain->deref();
+
+    JSValue* returnValue = ARG_src1;
+    if (callFrame[RegisterFile::CalledAsConstructor].i() && !returnValue->isObject()) {
+        JSValue* thisObject = callFrame[RegisterFile::CallFrameHeaderSize].jsValue(exec);
+        returnValue = thisObject;
+    }
+
+    codeBlock = callFrame[RegisterFile::CallerCodeBlock].codeBlock();
+    if (codeBlock) {
+        machine->setScopeChain(exec, scopeChain, callFrame[RegisterFile::CallerScopeChain].scopeChain());
+        r = callFrame[RegisterFile::CallerRegisters].r();
+        exec->m_callFrame = r - codeBlock->numLocals - RegisterFile::CallFrameHeaderSize;
+    }
+
+    ARG_setScopeChain(scopeChain);
+    ARG_setCodeBlock(codeBlock);
+    ARG_setR(r);
+
+    return returnValue;
+}
+
+JSValue* Machine::cti_op_new_array(CTI_ARGS)
+{
+    ArgList argsList(ARG_registers1, ARG_int2);
+    return constructArray(ARG_exec, argsList);
+}
+
+JSValue* Machine::cti_op_resolve(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+    ASSERT(iter != end);
+
+    Identifier& ident = *ARG_id1;
+    do {
+        JSObject* o = *iter;
+        PropertySlot slot(o);
+        if (o->getPropertySlot(exec, ident, slot)) {
+            JSValue* result = slot.getValue(exec, ident);
+            VM_CHECK_EXCEPTION_AT_END();
+            return result;
+        }
+    } while (++iter != end);
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+    exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+void* Machine::cti_op_construct_JSConstruct(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    RegisterFile* registerFile = ARG_registerFile;
+    Register* r = ARG_r;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    Machine* machine = exec->machine();
+    JSValue* exceptionValue = 0;
+    Register* registerBase = registerFile->base();
+    
+    JSValue* constrVal = ARG_src1;
+    int firstArg = ARG_int2;
+    int argCount = ARG_int3;
+
+    ConstructData constructData;
+#ifndef NDEBUG
+    ConstructType constructType =
+#endif
+        constrVal->getConstructData(constructData);
+
+    // Removing this line of code causes a measurable regression on squirrelfish.
+    JSObject* constructor = static_cast<JSObject*>(constrVal);
+
+    ASSERT(constructType == ConstructTypeJS);
+
+    if (*ARG_profilerReference)
+        (*ARG_profilerReference)->willExecute(exec, constructor);
+
+    JSObject* prototype;
+    JSValue* p = constructor->get(exec, exec->propertyNames().prototype);
+    if (p->isObject())
+        prototype = static_cast<JSObject*>(p);
+    else
+        prototype = scopeChain->globalObject()->objectPrototype();
+    JSObject* newObject = new (exec) JSObject(prototype);
+
+    ScopeChainNode* callDataScopeChain = constructData.js.scopeChain;
+    FunctionBodyNode* functionBodyNode = constructData.js.functionBody;
+    CodeBlock* newCodeBlock = &functionBodyNode->byteCode(callDataScopeChain);
+
+    r[firstArg] = newObject; // "this" value
+
+    Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
+    machine->initializeCallFrame(callFrame, codeBlock, ARG_instr4, scopeChain, r, 0/*dst*/, firstArg, argCount, 1, constructor);
+    exec->m_callFrame = callFrame;
+
+    r = slideRegisterWindowForCall(exec, newCodeBlock, registerFile, registerBase, r, firstArg, argCount, exceptionValue);
+    JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+
+    codeBlock = newCodeBlock;
+    machine->setScopeChain(exec, scopeChain, scopeChainForCall(exec, functionBodyNode, codeBlock, callDataScopeChain, r));
+
+    if (!codeBlock->ctiCode)
+        CTI::compile(machine, exec, codeBlock);
+
+    ARG_setScopeChain(scopeChain);
+    ARG_setCodeBlock(codeBlock);
+    ARG_setR(r);
+    return codeBlock->ctiCode;
+}
+
+JSValue* Machine::cti_op_construct_NotJSConstruct(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Register* r = ARG_r;
+
+    JSValue* constrVal = ARG_src1;
+    int firstArg = ARG_int2;
+    int argCount = ARG_int3;
+
+    ConstructData constructData;
+    ConstructType constructType = constrVal->getConstructData(constructData);
+
+    // Removing this line of code causes a measurable regression on squirrelfish.
+    JSObject* constructor = static_cast<JSObject*>(constrVal);
+
+    ASSERT(constructType != ConstructTypeJS);
+
+    if (constructType == ConstructTypeHost) {
+        CodeBlock* codeBlock = ARG_codeBlock;
+        ScopeChainNode* scopeChain = ARG_scopeChain;
+        Machine* machine = exec->machine();
+
+        Register* oldCallFrame = exec->m_callFrame;
+        Register* callFrame = r + firstArg - RegisterFile::CallFrameHeaderSize;
+        machine->initializeCallFrame(callFrame, codeBlock, ARG_instr5, scopeChain, r, 0/*dst*/, firstArg, argCount, 1, constrVal);
+        exec->m_callFrame = callFrame;
+
+        if (*ARG_profilerReference)
+            (*ARG_profilerReference)->willExecute(exec, constructor);
+
+        ArgList argList(r + firstArg + 1, argCount - 1);
+
+        CTI_MACHINE_SAMPLING_callingHostFunction();
+
+        JSValue* returnValue = constructData.native.function(exec, constructor, argList);
+        exec->m_callFrame = oldCallFrame;
+        VM_CHECK_EXCEPTION(JSValue*);
+
+        if (*ARG_profilerReference)
+            (*ARG_profilerReference)->didExecute(exec, constructor);
+
+        return returnValue;
+    }
+
+    ASSERT(constructType == ConstructTypeNone);
+
+    exec->setException(createNotAConstructorError(exec, constrVal, ARG_instr4, ARG_codeBlock));
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_get_by_val(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Machine* machine = exec->machine();
+
+    JSValue* baseValue = ARG_src1;
+    JSValue* subscript = ARG_src2;
+
+    JSValue* result;
+    unsigned i;
+
+    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
+    if (LIKELY(isUInt32)) {
+        if (machine->isJSArray(baseValue)) {
+            JSArray* jsArray = static_cast<JSArray*>(baseValue);
+            if (jsArray->canGetIndex(i))
+                result = jsArray->getIndex(i);
+            else
+                result = jsArray->JSArray::get(exec, i);
+        } else if (machine->isJSString(baseValue) && static_cast<JSString*>(baseValue)->canGetIndex(i))
+            result = static_cast<JSString*>(baseValue)->getIndex(exec, i);
+        else
+            result = baseValue->get(exec, i);
+    } else {
+        Identifier property(exec, subscript->toString(exec));
+        result = baseValue->get(exec, property);
+    }
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_resolve_func(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+
+    // FIXME: add scopeDepthIsZero optimization
+
+    ASSERT(iter != end);
+
+    Identifier& ident = *ARG_id1;
+    JSObject* base;
+    do {
+        base = *iter;
+        PropertySlot slot(base);
+        if (base->getPropertySlot(exec, ident, slot)) {            
+            // ECMA 11.2.3 says that if we hit an activation the this value should be null.
+            // However, section 10.2.3 says that in the case where the value provided
+            // by the caller is null, the global object should be used. It also says
+            // that the section does not apply to internal functions, but for simplicity
+            // of implementation we use the global object anyway here. This guarantees
+            // that in host objects you always get a valid object for this.
+            // We also handle wrapper substitution for the global object at the same time.
+            JSObject* thisObj = base->toThisObject(exec);
+            JSValue* result = slot.getValue(exec, ident);
+            VM_CHECK_EXCEPTION_AT_END();
+
+            ARG_set2ndResult(result);
+            return thisObj;
+        }
+        ++iter;
+    } while (iter != end);
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+    exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_sub(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    double left;
+    double right;
+    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        return jsNumber(ARG_exec, left - right);
+    else {
+        ExecState* exec = ARG_exec;
+        JSValue* result = jsNumber(exec, src1->toNumber(exec) - src2->toNumber(exec));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+void Machine::cti_op_put_by_val(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    Machine* machine = exec->machine();
+
+    JSValue* baseValue = ARG_src1;
+    JSValue* subscript = ARG_src2;
+    JSValue* value = ARG_src3;
+
+    unsigned i;
+
+    bool isUInt32 = JSImmediate::getUInt32(subscript, i);
+    if (LIKELY(isUInt32)) {
+        if (machine->isJSArray(baseValue)) {
+            JSArray* jsArray = static_cast<JSArray*>(baseValue);
+            if (jsArray->canSetIndex(i))
+                jsArray->setIndex(i, value);
+            else
+                jsArray->JSArray::put(exec, i, value);
+        } else
+            baseValue->put(exec, i, value);
+    } else {
+        Identifier property(exec, subscript->toString(exec));
+        if (!exec->hadException()) { // Don't put to an object if toString threw an exception.
+            PutPropertySlot slot;
+            baseValue->put(exec, property, value, slot);
+        }
+    }
+
+    VM_CHECK_EXCEPTION_AT_END();
+}
+
+JSValue* Machine::cti_op_lesseq(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsBoolean(jsLessEq(exec, ARG_src1, ARG_src2));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+int Machine::cti_op_loop_if_true(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    bool result = src1->toBoolean(exec);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_negate(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    double v;
+    if (fastIsNumber(src, v))
+        return jsNumber(exec, -v);
+    else {
+        JSValue* result = jsNumber(exec, -src->toNumber(exec));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_resolve_base(CTI_ARGS)
+{
+    return inlineResolveBase(ARG_exec, *ARG_id1, ARG_scopeChain);
+}
+
+JSValue* Machine::cti_op_resolve_skip(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    int skip = ARG_int2;
+
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+    ASSERT(iter != end);
+    while (skip--) {
+        ++iter;
+        ASSERT(iter != end);
+    }
+    Identifier& ident = *ARG_id1;
+    do {
+        JSObject* o = *iter;
+        PropertySlot slot(o);
+        if (o->getPropertySlot(exec, ident, slot)) {
+            JSValue* result = slot.getValue(exec, ident);
+            VM_CHECK_EXCEPTION_AT_END();
+            return result;
+        }
+    } while (++iter != end);
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+    exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_div(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    double left;
+    double right;
+    if (fastIsNumber(src1, left) && fastIsNumber(src2, right))
+        return jsNumber(exec, left / right);
+    else {
+        JSValue* result = jsNumber(exec, src1->toNumber(exec) / src2->toNumber(exec));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_pre_dec(CTI_ARGS)
+{
+    JSValue* v = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsNumber(exec, v->toNumber(exec) - 1);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+int Machine::cti_op_jless(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+    ExecState* exec = ARG_exec;
+
+    bool result = jsLess(exec, src1, src2);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_not(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    JSValue* result = jsBoolean(!src->toBoolean(exec));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+int SFX_CALL Machine::cti_op_jtrue(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    bool result = src1->toBoolean(exec);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_post_inc(CTI_ARGS)
+{
+    JSValue* v = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    JSValue* number = v->toJSNumber(exec);
+    VM_CHECK_EXCEPTION(JSValue*);
+    ARG_set2ndResult(jsNumber(exec, number->uncheckedGetNumber() + 1));
+    return number;
+}
+
+JSValue* Machine::cti_op_eq(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+        return jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
+    else {
+        ExecState* exec = ARG_exec;
+        JSValue* result = jsBoolean(equal(exec, src1, src2));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_lshift(CTI_ARGS)
+{
+    JSValue* val = ARG_src1;
+    JSValue* shift = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    int32_t left;
+    uint32_t right;
+    if (JSImmediate::areBothImmediateNumbers(val, shift))
+        return jsNumber(exec, JSImmediate::getTruncatedInt32(val) << (JSImmediate::getTruncatedUInt32(shift) & 0x1f));
+    else if (fastToInt32(val, left) && fastToUInt32(shift, right))
+        return jsNumber(exec, left << (right & 0x1f));
+    else {
+        JSValue* result = jsNumber(exec, (val->toInt32(exec)) << (shift->toUInt32(exec) & 0x1f));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_bitand(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    int32_t left;
+    int32_t right;
+    if (fastToInt32(src1, left) && fastToInt32(src2, right))
+        return jsNumber(exec, left & right);
+    else {
+        JSValue* result = jsNumber(exec, src1->toInt32(exec) & src2->toInt32(exec));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_rshift(CTI_ARGS)
+{
+    JSValue* val = ARG_src1;
+    JSValue* shift = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    int32_t left;
+    uint32_t right;
+    if (JSImmediate::areBothImmediateNumbers(val, shift))
+        return JSImmediate::rightShiftImmediateNumbers(val, shift);
+    else if (fastToInt32(val, left) && fastToUInt32(shift, right))
+        return jsNumber(exec, left >> (right & 0x1f));
+    else {
+        JSValue* result = jsNumber(exec, (val->toInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_bitnot(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    int value;
+    if (fastToInt32(src, value))
+        return jsNumber(exec, ~value);
+            
+    JSValue* result = jsNumber(exec, ~src->toInt32(exec));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_resolve_with_base(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+
+    // FIXME: add scopeDepthIsZero optimization
+
+    ASSERT(iter != end);
+
+    Identifier& ident = *ARG_id1;
+    JSObject* base;
+    do {
+        base = *iter;
+        PropertySlot slot(base);
+        if (base->getPropertySlot(exec, ident, slot)) {
+            JSValue* result = slot.getValue(exec, ident);
+            VM_CHECK_EXCEPTION_AT_END();
+            ARG_set2ndResult(result);
+            return base;
+        }
+        ++iter;
+    } while (iter != end);
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+    exec->setException(createUndefinedVariableError(exec, ident, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return 0;
+}
+
+JSValue* Machine::cti_op_new_func_exp(CTI_ARGS)
+{
+    return ARG_funcexp1->makeFunction(ARG_exec, ARG_scopeChain);
+}
+
+JSValue* Machine::cti_op_mod(CTI_ARGS)
+{
+    JSValue* dividendValue = ARG_src1;
+    JSValue* divisorValue = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+    double d = dividendValue->toNumber(exec);
+    JSValue* result = jsNumber(exec, fmod(d, divisorValue->toNumber(exec)));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_less(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* result = jsBoolean(jsLess(exec, ARG_src1, ARG_src2));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_neq(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+        return jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
+    else {
+        ExecState* exec = ARG_exec;
+        JSValue* result = jsBoolean(!equal(exec, src1, src2));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_post_dec(CTI_ARGS)
+{
+    JSValue* v = ARG_src1;
+
+    ExecState* exec = ARG_exec;
+
+    JSValue* number = v->toJSNumber(exec);
+    VM_CHECK_EXCEPTION(JSValue*);
+
+    ARG_set2ndResult(jsNumber(exec, number->uncheckedGetNumber() - 1));
+    return number;
+}
+
+JSValue* Machine::cti_op_urshift(CTI_ARGS)
+{
+    JSValue* val = ARG_src1;
+    JSValue* shift = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    if (JSImmediate::areBothImmediateNumbers(val, shift) && !JSImmediate::isNegative(val))
+        return JSImmediate::rightShiftImmediateNumbers(val, shift);
+    else {
+        JSValue* result = jsNumber(exec, (val->toUInt32(exec)) >> (shift->toUInt32(exec) & 0x1f));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_bitxor(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    JSValue* result = jsNumber(exec, src1->toInt32(exec) ^ src2->toInt32(exec));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_new_regexp(CTI_ARGS)
+{
+    return new (ARG_exec) RegExpObject(ARG_scopeChain->globalObject()->regExpPrototype(), ARG_regexp1);
+}
+
+JSValue* Machine::cti_op_bitor(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    ExecState* exec = ARG_exec;
+
+    JSValue* result = jsNumber(exec, src1->toInt32(exec) | src2->toInt32(exec));
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_call_eval(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    RegisterFile* registerFile = ARG_registerFile;
+    Register* r = ARG_r;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+
+    Machine* machine = exec->machine();
+    JSValue* exceptionValue = 0;
+    
+    JSValue* funcVal = ARG_src1;
+    JSValue* baseVal = ARG_src2;
+    int firstArg = ARG_int3;
+    int argCount = ARG_int4;
+
+    if (baseVal == scopeChain->globalObject() && funcVal == scopeChain->globalObject()->evalFunction()) {
+        JSObject* thisObject = static_cast<JSObject*>(r[codeBlock->thisRegister].jsValue(exec));
+        JSValue* result = machine->callEval(exec, thisObject, scopeChain, registerFile,  r, firstArg, argCount, exceptionValue);
+        JSVALUE_VM_CHECK_EXCEPTION_ARG(exceptionValue);
+        return result;
+    }
+
+    return JSImmediate::impossibleValue();
+}
+
+void* Machine::cti_op_throw(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+    Register* r = ARG_r;
+
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+
+    JSValue* exceptionValue = ARG_src1;
+    Instruction* handlerVPC = ARG_exec->machine()->throwException(exec, exceptionValue, codeBlock->instructions.begin() + vPCIndex, codeBlock, scopeChain, r, true);
+
+    if (handlerVPC) {
+        exec->setException(exceptionValue);
+        ARG_setScopeChain(scopeChain);
+        ARG_setCodeBlock(codeBlock);
+        ARG_setR(r);
+
+        void* catchRoutine = codeBlock->nativeExceptionCodeForHandlerVPC(handlerVPC);
+        ASSERT(catchRoutine);
+        ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
+        return catchRoutine;
+    } else {
+        exec->clearException();
+        *ARG_exception = exceptionValue;
+        return JSImmediate::nullImmediate();
+    }
+}
+
+JSPropertyNameIterator* Machine::cti_op_get_pnames(CTI_ARGS)
+{
+    return JSPropertyNameIterator::create(ARG_exec, ARG_src1);
+}
+
+JSValue* Machine::cti_op_next_pname(CTI_ARGS)
+{
+    JSPropertyNameIterator* it = ARG_pni1;
+    JSValue* temp = it->next(ARG_exec);
+    if (!temp)
+        it->invalidate();
+    return temp;
+}
+
+void Machine::cti_op_push_scope(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    JSValue* v = ARG_src1;
+    JSObject* o = v->toObject(exec);
+    VM_CHECK_EXCEPTION_v();
+
+    ScopeChainNode* newScopeChain = ARG_scopeChain->push(o);
+    ARG_setScopeChain(newScopeChain);
+    exec->m_scopeChain = newScopeChain;
+}
+
+void Machine::cti_op_pop_scope(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    ScopeChainNode* newScopeChain = ARG_scopeChain->pop();
+    ARG_setScopeChain(newScopeChain);
+    exec->m_scopeChain = newScopeChain;
+}
+
+JSValue* Machine::cti_op_typeof(CTI_ARGS)
+{
+    return jsTypeStringForValue(ARG_exec, ARG_src1);
+}
+
+JSValue* Machine::cti_op_stricteq(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+        return jsBoolean(reinterpret_cast<intptr_t>(src1) == reinterpret_cast<intptr_t>(src2));
+    else {
+        ExecState* exec = ARG_exec;
+        JSValue* result = jsBoolean(strictEqual(src1, src2));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_nstricteq(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+
+    if (JSImmediate::areBothImmediateNumbers(src1, src2))
+        return jsBoolean(reinterpret_cast<intptr_t>(src1) != reinterpret_cast<intptr_t>(src2));
+    else {
+        ExecState* exec = ARG_exec;
+        JSValue* result = jsBoolean(!strictEqual(src1, src2));
+        VM_CHECK_EXCEPTION_AT_END();
+        return result;
+    }
+}
+
+JSValue* Machine::cti_op_to_jsnumber(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+    ExecState* exec = ARG_exec;
+
+    JSValue* result = src->toJSNumber(exec);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+JSValue* Machine::cti_op_in(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSValue* baseVal = ARG_src2;
+
+    if (!baseVal->isObject()) {
+        CodeBlock* codeBlock = ARG_codeBlock;
+        ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(CTI_RETURN_ADDRESS));
+        unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(CTI_RETURN_ADDRESS);
+        exec->setException(createInvalidParamError(exec, "in", baseVal, codeBlock->instructions.begin() + vPCIndex, codeBlock));
+        VM_CHECK_EXCEPTION(JSValue*);
+    }
+
+    JSValue* propName = ARG_src1;
+    JSObject* baseObj = static_cast<JSObject*>(baseVal);
+
+    uint32_t i;
+    if (propName->getUInt32(i))
+        return jsBoolean(baseObj->hasProperty(exec, i));
+
+    Identifier property(exec, propName->toString(exec));
+    VM_CHECK_EXCEPTION(JSValue*);
+    return jsBoolean(baseObj->hasProperty(exec, property));
+}
+
+JSValue* Machine::cti_op_push_new_scope(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    JSObject* scope = new (exec) JSStaticScopeObject(exec, *ARG_id1, ARG_src2, DontDelete);
+
+    ScopeChainNode* newScopeChain = ARG_scopeChain->push(scope);
+    ARG_setScopeChain(newScopeChain);
+    exec->m_scopeChain = newScopeChain;
+
+    return scope;
+}
+
+void Machine::cti_op_jmp_scopes(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    unsigned count = ARG_int1;
+
+    ScopeChainNode* tmp = ARG_scopeChain;
+    while (count--)
+        tmp = tmp->pop();
+
+    ARG_setScopeChain(tmp);
+    exec->m_scopeChain = tmp;
+}
+
+void Machine::cti_op_put_by_index(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    unsigned property = ARG_int2;
+
+    ARG_src1->put(exec, property, ARG_src3);
+}
+
+void* Machine::cti_op_switch_imm(CTI_ARGS)
+{
+    JSValue* scrutinee = ARG_src1;
+    unsigned tableIndex = ARG_int2;
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+
+    if (JSImmediate::isNumber(scrutinee)) {
+        int32_t value = JSImmediate::getTruncatedInt32(scrutinee);
+        return codeBlock->immediateSwitchJumpTables[tableIndex].ctiForValue(value);
+    }
+
+    return codeBlock->immediateSwitchJumpTables[tableIndex].ctiDefault;
+}
+
+void* Machine::cti_op_switch_char(CTI_ARGS)
+{
+    JSValue* scrutinee = ARG_src1;
+    unsigned tableIndex = ARG_int2;
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+
+    void* result = codeBlock->characterSwitchJumpTables[tableIndex].ctiDefault;
+
+    if (scrutinee->isString()) {
+        UString::Rep* value = static_cast<JSString*>(scrutinee)->value().rep();
+        if (value->size() == 1)
+            result = codeBlock->characterSwitchJumpTables[tableIndex].ctiForValue(value->data()[0]);
+    }
+
+    return result;
+}
+
+void* Machine::cti_op_switch_string(CTI_ARGS)
+{
+    JSValue* scrutinee = ARG_src1;
+    unsigned tableIndex = ARG_int2;
+
+    CodeBlock* codeBlock = ARG_codeBlock;
+
+    void* result = codeBlock->stringSwitchJumpTables[tableIndex].ctiDefault;
+
+    if (scrutinee->isString()) {
+        UString::Rep* value = static_cast<JSString*>(scrutinee)->value().rep();
+        result = codeBlock->stringSwitchJumpTables[tableIndex].ctiForValue(value);
+    }
+
+    return result;
+}
+
+JSValue* Machine::cti_op_del_by_val(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    JSValue* baseValue = ARG_src1;
+    JSObject* baseObj = baseValue->toObject(exec); // may throw
+
+    JSValue* subscript = ARG_src2;
+    JSValue* result;
+    uint32_t i;
+    if (subscript->getUInt32(i))
+        result = jsBoolean(baseObj->deleteProperty(exec, i));
+    else {
+        VM_CHECK_EXCEPTION(JSValue*);
+        Identifier property(exec, subscript->toString(exec));
+        VM_CHECK_EXCEPTION(JSValue*);
+        result = jsBoolean(baseObj->deleteProperty(exec, property));
+    }
+
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+void Machine::cti_op_put_getter(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    ASSERT(ARG_src1->isObject());
+    JSObject* baseObj = static_cast<JSObject*>(ARG_src1);
+    Identifier& ident = *ARG_id2;
+    ASSERT(ARG_src3->isObject());
+    baseObj->defineGetter(exec, ident, static_cast<JSObject*>(ARG_src3));
+}
+
+void Machine::cti_op_put_setter(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+
+    ASSERT(ARG_src1->isObject());
+    JSObject* baseObj = static_cast<JSObject*>(ARG_src1);
+    Identifier& ident = *ARG_id2;
+    ASSERT(ARG_src3->isObject());
+    baseObj->defineSetter(exec, ident, static_cast<JSObject*>(ARG_src3));
+}
+
+JSValue* Machine::cti_op_new_error(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    unsigned type = ARG_int1;
+    JSValue* message = ARG_src2;
+    unsigned lineNumber = ARG_int3;
+
+    return Error::create(exec, static_cast<ErrorType>(type), message->toString(exec), lineNumber, codeBlock->ownerNode->sourceId(), codeBlock->ownerNode->sourceURL());
+}
+
+void Machine::cti_op_debug(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+    Register* r = ARG_r;
+
+    int debugHookID = ARG_int1;
+    int firstLine = ARG_int2;
+    int lastLine = ARG_int3;
+
+    exec->machine()->debug(exec, codeBlock, scopeChain, r, static_cast<DebugHookID>(debugHookID), firstLine, lastLine);
+}
+
+JSValue* Machine::cti_op_eq_null(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+    if (src->isUndefinedOrNull())
+        return jsBoolean(true);
+
+    return jsBoolean(!JSImmediate::isImmediate(src) && static_cast<JSCell*>(src)->masqueradeAsUndefined());
+}
+
+JSValue* Machine::cti_op_neq_null(CTI_ARGS)
+{
+    JSValue* src = ARG_src1;
+    if (src->isUndefinedOrNull())
+        return jsBoolean(false);
+
+    return jsBoolean(JSImmediate::isImmediate(src) || !static_cast<JSCell*>(src)->masqueradeAsUndefined());
+}
+
+void* Machine::cti_vm_throw(CTI_ARGS)
+{
+    ExecState* exec = ARG_exec;
+    CodeBlock* codeBlock = ARG_codeBlock;
+    ScopeChainNode* scopeChain = ARG_scopeChain;
+    Register* r = ARG_r;
+
+    ASSERT(codeBlock->ctiReturnAddressVPCMap.contains(exec->ctiReturnAddress()));
+    unsigned vPCIndex = codeBlock->ctiReturnAddressVPCMap.get(exec->ctiReturnAddress());
+
+    ASSERT(exec->hadException());
+
+    JSValue* exceptionValue = exec->exception();
+
+    Instruction* handlerVPC = ARG_exec->machine()->throwException(exec, exceptionValue, codeBlock->instructions.begin() + vPCIndex, codeBlock, scopeChain, r, false);
+
+    if (handlerVPC) {
+        exec->setException(exceptionValue);
+        ARG_setScopeChain(scopeChain);
+        ARG_setCodeBlock(codeBlock);
+        ARG_setR(r);
+
+        void* catchRoutine = codeBlock->nativeExceptionCodeForHandlerVPC(handlerVPC);
+        ASSERT(catchRoutine);
+        ctiSetReturnAddress(&CTI_RETURN_ADDRESS, catchRoutine);
+        return catchRoutine;
+    } else {
+        exec->clearException();
+        *ARG_exception = exceptionValue;
+        return JSImmediate::nullImmediate();
+    }
+}
+
+#undef VM_CHECK_EXCEPTION
+#undef VM_CHECK_EXCEPTION_v
+#undef VM_CHECK_EXCEPTION_AT_END
+
+#endif // ENABLE(CTI)
 
 } // namespace KJS

@@ -1,3 +1,26 @@
+=== End merge of squirrelfish-extreme ===
+
+2008-08-31  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add a --profile flag to run-sunspider.
+
+        * Scripts/webkitdirs.pm: Detect --profile or --profiling passed as a command-line argument
+        to build scripts as indicating that we should use the "Profiling" configuration.  At present
+        this is only supported by JavaScriptCore, so using this argument to build any other project
+        will likely result in unexpected behaviour.
+
+2008-08-27  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Fix run-webkit-tests to handle DRT exiting early.
+
+        * Scripts/run-webkit-tests: Initialize $expectedResultPaths{$base} before it will be used.
+
+=== Start merge of squirrelfish-extreme ===
+
 2008-09-04  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Eric Seidel.

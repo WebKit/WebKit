@@ -575,6 +575,11 @@ for my $test (@tests) {
     $expectedExtension = $actualRead->{extension};
     my $expectedFileName = "$base-$expectedTag.$expectedExtension";
 
+    my $isText = isTextOnlyTest($actual);
+
+    my $expectedDir = expectedDirectoryForTest($base, $isText, $expectedExtension);
+    $expectedResultPaths{$base} = "$expectedDir/$expectedFileName";
+
     unless ($actualRead->{status} eq "success" && $errorRead->{status} eq "success") {
         my $crashed = $actualRead->{status} eq "crashed" || $errorRead->{status} eq "crashed";
         testCrashedOrTimedOut($test, $base, $crashed, $actual, $error);
@@ -582,13 +587,9 @@ for my $test (@tests) {
         next;
      }
 
-    my $isText = isTextOnlyTest($actual);
-
     $durations{$test} = time - $startTime if $report10Slowest;
 
     my $expected;
-    my $expectedDir = expectedDirectoryForTest($base, $isText, $expectedExtension);
-    $expectedResultPaths{$base} = "$expectedDir/$expectedFileName";
 
     if (!$resetResults && open EXPECTED, "<", "$expectedDir/$expectedFileName") {
         $expected = "";

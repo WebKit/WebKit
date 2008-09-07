@@ -51,6 +51,8 @@ namespace KJS {
     JSString* jsOwnedString(ExecState*, const UString&); 
 
     class JSString : public JSCell {
+        friend class CTI;
+
     public:
         JSString(const UString& value)
             : m_value(value)

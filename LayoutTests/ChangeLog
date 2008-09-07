@@ -1,3 +1,46 @@
+=== End merge of squirrelfish-extreme ===
+
+2008-09-04  Geoffrey Garen  <ggaren@apple.com>
+
+        Checking in some tests that got forgotten in a previous merge.
+
+        * fast/js/pic/cached-deleted-properties-expected.txt: Added.
+        * fast/js/pic/cached-deleted-properties.html: Added.
+        * fast/js/pic/cached-getter-dictionary-and-proto-expected.txt: Added.
+        * fast/js/pic/cached-getter-dictionary-and-proto.html: Added.
+        * fast/js/pic/cached-getter-setter-expected.txt: Added.
+        * fast/js/pic/cached-getter-setter.html: Added.
+        * fast/js/pic/cached-prototype-setter-expected.txt: Added.
+        * fast/js/pic/cached-prototype-setter.html: Added.
+        * fast/js/pic/cached-single-entry-transition-expected.txt: Added.
+        * fast/js/pic/cached-single-entry-transition.html: Added.
+        * fast/js/pic/get-empty-string-expected.txt: Added.
+        * fast/js/pic/get-empty-string.html: Added.
+        * fast/js/pic/get-set-proxy-object-expected.txt: Added.
+        * fast/js/pic/get-set-proxy-object.html: Added.
+        * fast/js/pic/rehash-poisons-structure-expected.txt: Added.
+        * fast/js/pic/rehash-poisons-structure.html: Added.
+
+2008-09-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        A few array indexing tests.
+
+        * fast/js/array-indexing-expected.txt: Added.
+        * fast/js/array-indexing.html: Added.
+        * fast/js/resources/array-indexing.js: Added.
+
+2008-09-02  Sam Weinig  <sam@webkit.org>
+
+        Rubber-stamped by Geoff Garen.
+
+        Change recursion limit to account for a fatter stack frame.
+
+        * fast/js/deep-recursion-test.html:
+
+=== Start merge of squirrelfish-extreme ===
+
 2008-09-04  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Beth Dakin.

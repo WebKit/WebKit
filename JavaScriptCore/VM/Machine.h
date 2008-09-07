@@ -36,6 +36,10 @@
 #include "RegisterFile.h"
 #include <wtf/HashMap.h>
 
+#if ENABLE(CTI)
+#include "CTI.h"
+#endif
+
 namespace KJS {
 
     class CodeBlock;
@@ -63,8 +67,11 @@ namespace KJS {
     enum { MaxReentryDepth = 128 };
 
     class Machine {
+        friend class CTI;
+        friend class WRECompiler;
     public:
         Machine();
+        ~Machine();
         
         RegisterFile& registerFile() { return m_registerFile; }
         
@@ -125,6 +132,100 @@ namespace KJS {
 
         SamplingTool* m_sampler;
 
+#if ENABLE(CTI)
+#if COMPILER(MSVC)
+#define SFX_CALL __cdecl
+#else
+#define SFX_CALL
+#endif
+
+        static void SFX_CALL cti_timeout_check(CTI_ARGS);
+
+        static void SFX_CALL cti_op_end(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_add(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_pre_inc(CTI_ARGS);
+        static int SFX_CALL cti_op_loop_if_less(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_object(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_id(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_id_second(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_id_generic(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_id_fail(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_get_by_id(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_get_by_id_second(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_get_by_id_generic(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_get_by_id_fail(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_del_by_id(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_instanceof(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_mul(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_func(CTI_ARGS);
+        static void* SFX_CALL cti_op_call_JSFunction(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_call_NotJSFunction(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_ret(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_array(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_resolve(CTI_ARGS);
+        static void* SFX_CALL cti_op_construct_JSConstruct(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_construct_NotJSConstruct(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_get_by_val(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_resolve_func(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_sub(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_val(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_lesseq(CTI_ARGS);
+        static int SFX_CALL cti_op_loop_if_true(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_resolve_base(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_negate(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_resolve_skip(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_div(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_pre_dec(CTI_ARGS);
+        static int SFX_CALL cti_op_jless(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_not(CTI_ARGS);
+        static int SFX_CALL cti_op_jtrue(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_post_inc(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_eq(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_lshift(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_bitand(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_rshift(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_bitnot(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_resolve_with_base(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_func_exp(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_mod(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_less(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_neq(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_post_dec(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_urshift(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_bitxor(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_regexp(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_bitor(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_call_eval(CTI_ARGS);
+        static void* SFX_CALL cti_op_throw(CTI_ARGS);
+        static JSPropertyNameIterator* SFX_CALL cti_op_get_pnames(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_next_pname(CTI_ARGS);
+        static void SFX_CALL cti_op_push_scope(CTI_ARGS);
+        static void SFX_CALL cti_op_pop_scope(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_typeof(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_stricteq(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_nstricteq(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_to_jsnumber(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_in(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_push_new_scope(CTI_ARGS);
+        static void SFX_CALL cti_op_jmp_scopes(CTI_ARGS);
+        static void SFX_CALL cti_op_put_by_index(CTI_ARGS);
+        static void* SFX_CALL cti_op_switch_imm(CTI_ARGS);
+        static void* SFX_CALL cti_op_switch_char(CTI_ARGS);
+        static void* SFX_CALL cti_op_switch_string(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_del_by_val(CTI_ARGS);
+        static void SFX_CALL cti_op_put_getter(CTI_ARGS);
+        static void SFX_CALL cti_op_put_setter(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_new_error(CTI_ARGS);
+        static void SFX_CALL cti_op_debug(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_eq_null(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_neq_null(CTI_ARGS);
+
+        static void* SFX_CALL cti_vm_throw(CTI_ARGS);
+#endif // ENABLE(CTI)
+
+        // Default number of ticks before a timeout check should be done.
+        static const int initialTickCountThreshold = 1024;
+
     private:
         enum ExecutionFlag { Normal, InitializeAndReturn };
 
@@ -134,7 +235,7 @@ namespace KJS {
         ALWAYS_INLINE void initializeCallFrame(Register* callFrame, CodeBlock*, Instruction*, ScopeChainNode*, Register* r, int returnValueRegister, int argv, int argc, int calledAsConstructor, JSValue* function);
 
         ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
-        NEVER_INLINE void debug(ExecState*, const Instruction*, const CodeBlock*, ScopeChainNode*, Register*);
+        NEVER_INLINE void debug(ExecState*, const CodeBlock*, ScopeChainNode*, Register*, DebugHookID, int firstLine, int lastLine);
 
         NEVER_INLINE bool unwindCallFrame(ExecState*, JSValue*, const Instruction*&, CodeBlock*&, ScopeChainNode*&, Register*&);
         NEVER_INLINE Instruction* throwException(ExecState*, JSValue*&, const Instruction*, CodeBlock*&, ScopeChainNode*&, Register*&, bool);
@@ -156,7 +257,21 @@ namespace KJS {
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
         void tryCachePutByID(CodeBlock*, Instruction* vPC, JSValue* baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);
-        
+
+#if ENABLE(CTI)
+        void tryCTICacheGetByID(ExecState*, CodeBlock*, void* returnAddress, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
+        void tryCTICachePutByID(ExecState*, CodeBlock*, void* returnAddress, JSValue* baseValue, const PutPropertySlot&);
+
+        void* getCTIArrayLengthTrampoline(ExecState*, CodeBlock*);
+        void* getCTIStringLengthTrampoline(ExecState*, CodeBlock*);
+
+        void* m_ctiArrayLengthTrampoline;
+        void* m_ctiStringLengthTrampoline;
+
+        OwnPtr<JITCodeBuffer> m_jitCodeBuffer;
+        JITCodeBuffer* jitCodeBuffer() const { return m_jitCodeBuffer.get(); }
+#endif
+
         int m_reentryDepth;
         unsigned m_timeoutTime;
         unsigned m_timeAtLastCheckTimeout;
@@ -168,6 +283,7 @@ namespace KJS {
         
         void* m_jsArrayVptr;
         void* m_jsStringVptr;
+        void* m_jsFunctionVptr;
 
 #if HAVE(COMPUTED_GOTO)
         Opcode m_opcodeTable[numOpcodeIDs]; // Maps OpcodeID => Opcode for compiling

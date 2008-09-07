@@ -286,6 +286,12 @@ sub determinePassedConfiguration
             $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
             return;
         }
+        if ($opt =~ /^--profil(e|ing)$/i) {
+            splice(@ARGV, $i, 1);
+            $passedConfiguration = "Profiling";
+            $passedConfiguration .= "_Cairo" if ($isWinCairo && isCygwin());
+            return;
+        }
     }
     $passedConfiguration = undef;
 }

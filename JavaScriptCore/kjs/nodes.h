@@ -427,7 +427,8 @@ namespace KJS {
     public:
         RegExpNode(JSGlobalData* globalData, const UString& pattern, const UString& flags) KJS_FAST_CALL
             : ExpressionNode(globalData)
-            , m_regExp(RegExp::create(pattern, flags))
+            , m_pattern(pattern)
+            , m_flags(flags)
         {
         }
 
@@ -437,7 +438,8 @@ namespace KJS {
         virtual Precedence precedence() const { return PrecPrimary; }
 
     private:
-        RefPtr<RegExp> m_regExp;
+        UString m_pattern;
+        UString m_flags;
     };
 
     class ThisNode : public ExpressionNode {

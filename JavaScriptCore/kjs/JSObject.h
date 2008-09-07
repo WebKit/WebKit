@@ -54,6 +54,7 @@ namespace KJS {
 
     class JSObject : public JSCell {
         friend class BatchedTransitionOptimizer;
+        friend class CTI;
 
     public:
         JSObject(PassRefPtr<StructureID>);

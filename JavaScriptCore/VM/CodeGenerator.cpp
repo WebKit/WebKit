@@ -1192,7 +1192,7 @@ RegisterID* CodeGenerator::emitNextPropertyName(RegisterID* dst, RegisterID* ite
 
 RegisterID* CodeGenerator::emitCatch(RegisterID* targetRegister, LabelID* start, LabelID* end)
 {
-    HandlerInfo info = { start->offsetFrom(0), end->offsetFrom(0), instructions().size(), m_dynamicScopeDepth };
+    HandlerInfo info = { start->offsetFrom(0), end->offsetFrom(0), instructions().size(), m_dynamicScopeDepth, 0 };
     exceptionHandlers().append(info);
     emitOpcode(op_catch);
     instructions().append(targetRegister->index());
@@ -1320,7 +1320,12 @@ static void prepareJumpTableForStringSwitch(StringJumpTable& jumpTable, int32_t 
         
         ASSERT(nodes[i]->isString());
         UString::Rep* clause = static_cast<StringNode*>(nodes[i])->value().rep();
-        jumpTable.add(clause, labels[i]->offsetFrom(switchAddress)); 
+        OffsetLocation location;
+        location.branchOffset = labels[i]->offsetFrom(switchAddress);
+#if ENABLE(CTI)
+        location.ctiOffset = 0;
+#endif
+        jumpTable.offsetTable.add(clause, location);
     }
 }
 

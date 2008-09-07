@@ -46,9 +46,11 @@ namespace KJS  {
     // Represents the current state of script execution.
     // Passed as the first argument to most functions.
     class ExecState : Noncopyable {
+#if ENABLE(CTI)
+        friend class CTI;
+#endif
         friend class Machine;
         friend class DebuggerCallFrame;
-
     public:
         ExecState(JSGlobalObject*, JSObject* globalThisValue, ScopeChainNode* globalScopeChain);
 
@@ -70,6 +72,10 @@ namespace KJS  {
         JSValue* exception() const { return m_exception; }
         JSValue** exceptionSlot() { return &m_exception; }
         bool hadException() const { return !!m_exception; }
+#if ENABLE(CTI)
+        void setCTIReturnAddress(void* ctiRA) { m_ctiReturnAddress = ctiRA; }
+        void* ctiReturnAddress() const { return m_ctiReturnAddress; }
+#endif
 
         JSGlobalData& globalData() { return *m_globalData; }
 
@@ -101,7 +107,9 @@ namespace KJS  {
         JSObject* m_globalThisValue;
 
         JSValue* m_exception;
-
+#if ENABLE(CTI)
+        void* m_ctiReturnAddress;
+#endif
         JSGlobalData* m_globalData;
 
         // These values are controlled by the machine.
