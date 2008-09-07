@@ -1,5 +1,14 @@
 2008-09-07  Dan Bernstein  <mitz@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        - use the correct sign for vertical offsets of combining marks
+
+        * platform/graphics/win/UniscribeController.cpp:
+        (WebCore::UniscribeController::shapeAndPlaceItem):
+
+2008-09-07  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Dave Hyatt.
 
         - add the combining mark offsets in two places where I forgot them
