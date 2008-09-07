@@ -1,5 +1,15 @@
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Mark Rowe.
+
+        Attempt to fix the Windows build by using a const_cast to cast regs.Esp
+        to a uintptr_t instead of a reinterpret_cast.
+
+        * kjs/collector.cpp:
+        (KJS::otherThreadStackPointer):
+
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Sam Weinig.
 
         Remove C-style casts from kjs/collector.cpp.

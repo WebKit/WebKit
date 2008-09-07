@@ -726,7 +726,7 @@ static inline void* otherThreadStackPointer(const PlatformThreadRegisters& regs)
 
 // end PLATFORM(DARWIN)
 #elif PLATFORM(X86) && PLATFORM(WIN_OS)
-    return reinterpret_cast<void*>(reinterpret_cast<uintptr_t>(regs.Esp));
+    return reinterpret_cast<void*>(const_cast<uintptr_t>(regs.Esp));
 #else
 #error Need a way to get the stack pointer for another thread on this platform
 #endif
