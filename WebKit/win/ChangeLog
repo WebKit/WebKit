@@ -1,3 +1,16 @@
+2008-09-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows nightlies.
+        
+        Include both nightly and production CLSIDs in our interfaces, type library.
+        Remove COM registration code.
+
+        Reviewed by Dave Hyatt.
+
+        * ForEachCoClass.cpp:
+        (setUseOpenSourceWebKit):
+        * Interfaces/WebKit.idl:
+
 2008-09-05  Dave Hyatt  <hyatt@apple.com>
 
         Add support for runtime switchability of the Aqua look and the native look on Windows.
