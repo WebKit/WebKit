@@ -747,7 +747,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
 
-            RefPtr<KJS::RegExp> regExp = KJS::RegExp::create(pattern, uflags);
+            RefPtr<KJS::RegExp> regExp = KJS::RegExp::create(exec, pattern, uflags);
             if (regExp->isValid())
                 return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpPrototype(), regExp.release());
             else
