@@ -1,3 +1,21 @@
+2008-09-06  Steve Falkenburg  <sfalken@apple.com>
+
+        Fix Windows nightlies.
+        
+        Copy WebKit.dll alongside application so registry-free COM can find it.
+        Update embedded manifest to force use registry-free COM.
+
+        Reviewed by Dave Hyatt.
+
+        * FindSafari/FindSafari.cpp:
+        (copyManifest):
+        (replaceManifest):
+        (_tmain):
+        * FindSafari/FindSafari.rc: Added.
+        * FindSafari/FindSafari.vcproj:
+        * FindSafari/Safari.exe.manifest: Added.
+        * FindSafari/resource.h: Added.
+
 === End merge of squirrelfish-extreme ===
 
 2008-08-31  Mark Rowe  <mrowe@apple.com>

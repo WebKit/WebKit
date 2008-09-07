@@ -26,6 +26,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "resource.h"
+
 #include <shlwapi.h>
 #include <stdio.h>
 #include <tchar.h>
@@ -120,6 +122,62 @@ static TCHAR* getInstalledWebKitDirectory()
     return webKitPath;
 }
 
+static char* copyManifest(HMODULE module, LPCTSTR id)
+{
+    HRSRC resHandle = FindResource(module, id, MAKEINTRESOURCE(RT_MANIFEST));
+    if (!resHandle)
+        return 0;
+    DWORD manifestSize = SizeofResource(module, resHandle);
+    if (!manifestSize)
+        return 0;
+    HGLOBAL resData = LoadResource(module, resHandle);
+    if (!resData)
+        return 0;
+    void* data = LockResource(resData);
+    if (!data)
+        return 0;
+
+    char* dataCopy = static_cast<char*>(malloc(manifestSize + 1));
+    if (!dataCopy)
+        return 0;
+    memcpy(dataCopy, data, manifestSize);
+    dataCopy[manifestSize] = 0;
+    return dataCopy;
+}
+
+static void replaceManifest()
+{
+    TCHAR safariPath[MAX_PATH];
+    ::ExpandEnvironmentStrings(TEXT("%TMP%\\WebKitNightly\\Safari.exe"), safariPath, ARRAYSIZE(safariPath));
+    
+    // get the existing manifest out of Safari.exe
+    HMODULE safariModule = LoadLibraryEx(safariPath, 0, LOAD_LIBRARY_AS_DATAFILE);
+    if (!safariModule)
+        return;
+    char* safariManifest = copyManifest(safariModule, MAKEINTRESOURCE(1));
+    FreeLibrary(safariModule);
+    if (!safariManifest)
+        return;
+
+    // see if the existing Safari manifest contains registry free COM info
+    // (we only need to update if it is not registry free COM-aware)
+    bool needsUpdate = !strstr(safariManifest, "<comClass");
+    free(safariManifest);
+    if (!needsUpdate)
+        return;
+
+    // replace the manifest with the extra manifest stashed in FindSafar.exe (ID 100)
+    char* replacementManifest = copyManifest(0, MAKEINTRESOURCE(IDR_SAFARI_MANIFEST));
+    if (!replacementManifest)
+        return;
+    if (HANDLE h = BeginUpdateResource(safariPath, FALSE)) {
+        UpdateResource(h, MAKEINTRESOURCE(RT_MANIFEST), MAKEINTRESOURCE(1), MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), replacementManifest, strlen(replacementManifest));
+        EndUpdateResource(h, FALSE);
+    }
+
+    free(replacementManifest);
+}
+
 int _tmain(int argc, TCHAR* argv[])
 {
     TCHAR* path = getInstalledWebKitDirectory();
@@ -131,6 +189,7 @@ int _tmain(int argc, TCHAR* argv[])
     bool printLauncher = false;
     bool printEnvironment = false;
     bool debugger = false;
+    bool updateManifest = false;
 
     for (int i = 1; i < argc; ++i) {
         if (!_tcscmp(argv[i], TEXT("/printSafariLauncher"))) {
@@ -145,6 +204,16 @@ int _tmain(int argc, TCHAR* argv[])
             debugger = true;
             continue;
         }
+
+        if (!_tcscmp(argv[i], TEXT("/updateManifest"))) {
+            updateManifest = true;
+            continue;
+        }
+    }
+
+    if (updateManifest) {
+        replaceManifest();
+        return 0;
     }
 
     // printLauncher is inclusive of printEnvironment, so do not
@@ -161,13 +230,18 @@ int _tmain(int argc, TCHAR* argv[])
     LPCTSTR lines[] = {
         TEXT("@echo off"),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
+        TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\WebKit.resources\""),
         TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
         TEXT("xcopy /y /i /d /e \"%sSafari.resources\" \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("xcopy /y /i /d /e \"%splugins\" \"%%TMP%%\\WebKitNightly\\plugins\""),
+        TEXT("xcopy /y /i /d WebKit.dll \"%%TMP%%\\WebKitNightly\""),
+        TEXT("xcopy /y /i /d WebKit.pdb \"%%TMP%%\\WebKitNightly\""),
+        TEXT("xcopy /y /i /d /e WebKit.resources \"%%TMP%%\\WebKitNightly\\WebKit.resources\""),
+        TEXT("FindSafari.exe /updateManifest"),
         TEXT("set PATH=%%CD%%;%s;%%PATH%%"),
     };
 
-    LPCTSTR command = TEXT("\"%TMP%\\WebKitNightly\\Safari.exe\" /customWebKit");
+    LPCTSTR command = TEXT("\"%TMP%\\WebKitNightly\\Safari.exe\"");
 
     LPCTSTR launchLines[] = {
         TEXT("%s"),
@@ -195,7 +269,7 @@ int _tmain(int argc, TCHAR* argv[])
            _tprintf(TEXT("\n"));
        }
     }
-
+    
     free(path);
     return 0;
 }
