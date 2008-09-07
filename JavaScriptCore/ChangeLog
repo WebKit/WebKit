@@ -1,3 +1,9 @@
+2008-09-07  Mark Rowe  <mrowe@apple.com>
+
+        Build fix for the debug variant.
+
+        * DerivedSources.make: Also use the .Debug.exp exports file when building the debug variant.
+
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Timothy Hatcher.

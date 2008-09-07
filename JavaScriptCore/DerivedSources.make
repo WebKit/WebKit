@@ -80,6 +80,10 @@ all : JavaScriptCore.exp
 
 ifeq ($(CONFIGURATION), Debug)
     JSC_EXPORT_DEPENDENCIES := $(JSC_EXPORT_DEPENDENCIES) JavaScriptCore.Debug.exp
+else
+    ifeq ($(CURRENT_VARIANT), debug)
+        JSC_EXPORT_DEPENDENCIES := $(JSC_EXPORT_DEPENDENCIES) JavaScriptCore.Debug.exp
+    endif
 endif
 
 JavaScriptCore.exp : JavaScriptCore.base.exp $(JSC_EXPORT_DEPENDENCIES)
