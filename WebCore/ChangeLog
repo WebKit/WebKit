@@ -1,3 +1,13 @@
+2008-09-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        - correct glyph advances in complex text using web fonts rendered with
+          Core Graphics
+
+        * platform/graphics/win/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::fontPlatformData):
+
 2008-09-07  Keishi Hattori  <casey.hattori@gmail.com>
 
         Adds console.dirxml support to the Web Inspector.
