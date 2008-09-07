@@ -2,6 +2,15 @@
 
         Reviewed by Dave Hyatt.
 
+        - add the combining mark offsets in two places where I forgot them
+
+        * platform/graphics/win/FontCGWin.cpp:
+        (WebCore::Font::drawGlyphs):
+
+2008-09-07  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
         - correct glyph advances in complex text using web fonts rendered with
           Core Graphics
 

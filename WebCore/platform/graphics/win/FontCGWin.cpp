@@ -334,7 +334,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
         CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width(), point.y() + translation.height() + shadowSize.height());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         if (font->m_syntheticBoldOffset) {
-            CGContextSetTextPosition(cgContext, point.x() + shadowSize.width() + font->m_syntheticBoldOffset, point.y() + shadowSize.height());
+            CGContextSetTextPosition(cgContext, point.x() + translation.width() + shadowSize.width() + font->m_syntheticBoldOffset, point.y() + translation.height() + shadowSize.height());
             CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
         }
         graphicsContext->setFillColor(fillColor);
@@ -343,7 +343,7 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     CGContextSetTextPosition(cgContext, point.x() + translation.width(), point.y() + translation.height());
     CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     if (font->m_syntheticBoldOffset) {
-        CGContextSetTextPosition(cgContext, point.x() + font->m_syntheticBoldOffset, point.y());
+        CGContextSetTextPosition(cgContext, point.x() + translation.width() + font->m_syntheticBoldOffset, point.y() + translation.height());
         CGContextShowGlyphsWithAdvances(cgContext, glyphBuffer.glyphs(from), glyphBuffer.advances(from), numGlyphs);
     }
 
