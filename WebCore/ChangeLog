@@ -1,3 +1,9 @@
+2008-09-06  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fix.
+
+        * WebCoreSources.bkl:
+
 2008-09-06  Antti Koivisto  <antti@apple.com>
 
         Reverting r35953 which was causing problems on Windows which relies on

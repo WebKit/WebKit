@@ -587,6 +587,7 @@ This file contains the list of files needed to build WebCore.
         loader/CachedFont.cpp
         loader/CachedImage.cpp
         loader/CachedResource.cpp
+        loader/CachedResourceHandle.cpp
         loader/CachedResourceClientWalker.cpp
         loader/CachedScript.cpp
         loader/CachedXSLStyleSheet.cpp
