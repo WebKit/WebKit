@@ -343,7 +343,7 @@ static CSSRuleSet* defaultStyle;
 static CSSRuleSet* defaultQuirksStyle;
 static CSSRuleSet* defaultPrintStyle;
 static CSSRuleSet* defaultViewSourceStyle;
-static bool hasSimpleDefaultStyle;
+static CSSStyleSheet* simpleDefaultStyleSheet;
 
 RenderStyle* CSSStyleSelector::s_styleNotYetAvailable;
 
@@ -494,11 +494,12 @@ static CSSStyleSheet* parseUASheet(const char* characters, unsigned size)
 
 static void loadFullDefaultStyle()
 {
-    if (hasSimpleDefaultStyle) {
+    if (simpleDefaultStyleSheet) {
         ASSERT(defaultStyle);
         delete defaultStyle;
+        delete simpleDefaultStyleSheet;
         defaultStyle = new CSSRuleSet;
-        hasSimpleDefaultStyle = false;
+        simpleDefaultStyleSheet = 0;
     } else {
         ASSERT(!defaultStyle);
         defaultStyle = new CSSRuleSet;
@@ -519,19 +520,17 @@ static void loadFullDefaultStyle()
 static void loadSimpleDefaultStyle()
 {
     ASSERT(!defaultStyle);
-    ASSERT(!hasSimpleDefaultStyle);
+    ASSERT(!simpleDefaultStyleSheet);
     
     defaultStyle = new CSSRuleSet;
     defaultPrintStyle = new CSSRuleSet;
     defaultQuirksStyle = new CSSRuleSet;
-    
-    CSSStyleSheet* defaultSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
-    defaultStyle->addRulesFromSheet(defaultSheet, screenEval());
-    RenderTheme::adjustDefaultStyleSheet(defaultSheet);
+
+    simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));
+    RenderTheme::adjustDefaultStyleSheet(simpleDefaultStyleSheet);
+    defaultStyle->addRulesFromSheet(simpleDefaultStyleSheet, screenEval());
     
     // No need to initialize quirks sheet yet as there are no quirk rules for elements allowed in simple default style.
-    
-    hasSimpleDefaultStyle = true;
 }
     
 static void loadViewSourceStyle()
@@ -1118,7 +1117,7 @@ RenderStyle* CSSStyleSelector::styleForElement(Element* e, RenderStyle* defaultP
     else
         m_parentStyle = m_style;
 
-    if (hasSimpleDefaultStyle && !elementCanUseSimpleDefaultStyle(e))
+    if (simpleDefaultStyleSheet && !elementCanUseSimpleDefaultStyle(e))
         loadFullDefaultStyle();
 
 #if ENABLE(SVG)

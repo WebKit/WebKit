@@ -1,3 +1,15 @@
+2008-09-07  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Don't leak the simple stylesheet.
+        Also call RenderTheme::adjustDefaultStyleSheet() in right place.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullDefaultStyle):
+        (WebCore::loadSimpleDefaultStyle):
+        (WebCore::CSSStyleSelector::styleForElement):
+
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.
