@@ -39,7 +39,7 @@
 #import <WebCore/KURL.h>
 #import <WebCore/ScriptController.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)

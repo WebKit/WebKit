@@ -28,7 +28,7 @@
 
 #include <wtf/RefCounted.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
 }
 
@@ -39,7 +39,7 @@ namespace WebCore {
     class NSResolver : public RefCounted<NSResolver> {
     public:
         virtual ~NSResolver() { }
-        virtual String lookupNamespaceURI(KJS::ExecState*, const String& prefix) = 0;
+        virtual String lookupNamespaceURI(JSC::ExecState*, const String& prefix) = 0;
         virtual void mark() { }
     };
 

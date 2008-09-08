@@ -33,7 +33,7 @@
 #include "ustring.h"
 #include <wtf/AlwaysInline.h>
 
-namespace KJS {
+namespace JSC {
 
     static ALWAYS_INLINE int missingSymbolMarker() { return std::numeric_limits<int>::max(); }
 
@@ -120,6 +120,6 @@ namespace KJS {
 
     typedef HashMap<RefPtr<UString::Rep>, SymbolTableEntry, IdentifierRepHash, HashTraits<RefPtr<UString::Rep> >, SymbolTableIndexHashTraits> SymbolTable;
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // SymbolTable_h

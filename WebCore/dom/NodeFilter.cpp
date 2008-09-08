@@ -28,7 +28,7 @@
 #include "Node.h"
 #include <kjs/ExecState.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

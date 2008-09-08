@@ -27,7 +27,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(MathObject);
 
@@ -54,7 +54,7 @@ static JSValue* mathProtoFuncTan(ExecState*, JSObject*, JSValue*, const ArgList&
 
 #include "MathObject.lut.h"
 
-namespace KJS {
+namespace JSC {
 
 // ------------------------------ MathObject --------------------------------
 
@@ -251,4 +251,4 @@ JSValue* mathProtoFuncTan(ExecState* exec, JSObject*, JSValue*, const ArgList& a
     return jsNumber(exec, tan(args.at(exec, 0)->toNumber(exec)));
 }
 
-} // namespace KJS
+} // namespace JSC

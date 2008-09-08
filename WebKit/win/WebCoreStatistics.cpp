@@ -34,7 +34,7 @@
 #include <WebCore/IconDatabase.h>
 #include <WebCore/JSDOMWindow.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 // WebCoreStatistics ---------------------------------------------------------------------------

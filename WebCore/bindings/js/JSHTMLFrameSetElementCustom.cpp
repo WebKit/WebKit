@@ -34,7 +34,7 @@
 #include "JSDOMWindowShell.h"
 #include "JSDOMBinding.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

@@ -30,7 +30,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
 
-namespace KJS {
+namespace JSC {
 
 
 
@@ -178,4 +178,4 @@ int RegExp::match(const UString& s, int i, OwnArrayPtr<int>* ovector)
     return -1;
 }
 
-} // namespace KJS
+} // namespace JSC

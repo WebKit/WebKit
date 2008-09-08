@@ -24,7 +24,7 @@
 #include "JSArray.h"
 #include "lookup.h"
 
-namespace KJS {
+namespace JSC {
 
     class ArrayPrototype : public JSArray {
     public:
@@ -36,6 +36,6 @@ namespace KJS {
         static const ClassInfo info;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ArrayPrototype_h

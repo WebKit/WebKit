@@ -34,7 +34,7 @@
 #include <kjs/JSLock.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSCallbackFunction);
 
@@ -74,4 +74,4 @@ CallType JSCallbackFunction::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-} // namespace KJS
+} // namespace JSC

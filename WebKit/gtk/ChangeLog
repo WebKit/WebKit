@@ -1,3 +1,15 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20704: Replace the KJS namespace
+        <https://bugs.webkit.org/show_bug.cgi?id=20704>
+
+        Rename the KJS namespace to JSC.
+
+        * webkit/webkitprivate.cpp:
+        (webkit_init):
+
 2008-09-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Reviewed by Alp Toker.

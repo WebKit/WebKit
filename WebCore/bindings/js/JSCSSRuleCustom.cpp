@@ -45,7 +45,7 @@
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

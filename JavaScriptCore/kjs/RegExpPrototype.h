@@ -23,7 +23,7 @@
 
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class FunctionPrototype;
     class ObjectPrototype;
@@ -36,6 +36,6 @@ namespace KJS {
         static const ClassInfo info;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // RegExpPrototype_h

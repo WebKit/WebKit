@@ -34,7 +34,7 @@
 #include "JSHTMLAudioElement.h"
 #include "Text.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

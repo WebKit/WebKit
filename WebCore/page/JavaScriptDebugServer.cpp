@@ -48,7 +48,7 @@
 #include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -243,7 +243,7 @@ JavaScriptCallFrame* JavaScriptDebugServer::currentCallFrame()
     return m_currentCallFrame.get();
 }
 
-static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const KJS::SourceProvider& source, int startingLineNumber, const String& sourceURL, int sourceID)
+static void dispatchDidParseSource(const ListenerSet& listeners, ExecState* exec, const JSC::SourceProvider& source, int startingLineNumber, const String& sourceURL, int sourceID)
 {
     Vector<JavaScriptDebugListener*> copy;
     copyToVector(listeners, copy);

@@ -71,7 +71,7 @@ namespace WebCore {
             return adoptRef(new NodeFilter(condition));
         }
 
-        short acceptNode(KJS::ExecState*, Node*) const;
+        short acceptNode(JSC::ExecState*, Node*) const;
         void mark() { m_condition->mark(); };
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.

@@ -80,7 +80,7 @@ void HTMLPlugInElement::detach()
     HTMLFrameOwnerElement::detach();
 }
 
-KJS::Bindings::Instance* HTMLPlugInElement::getInstance() const
+JSC::Bindings::Instance* HTMLPlugInElement::getInstance() const
 {
     Frame* frame = document()->frame();
     if (!frame)

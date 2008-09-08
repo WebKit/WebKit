@@ -41,7 +41,7 @@
 #import <WebCore/RenderTreeAsText.h>
 #import <WebCore/RenderView.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 @implementation WebCoreStatistics

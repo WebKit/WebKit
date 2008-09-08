@@ -43,7 +43,7 @@ using WTF::doubleHash;
 
 #define USE_SINGLE_ENTRY 1
 
-namespace KJS {
+namespace JSC {
 
 // Choose a number for the following so that most property maps are smaller,
 // but it's not going to blow out the stack to allocate this number of pointers.
@@ -68,7 +68,7 @@ static PropertyMapStatisticsExitLogger logger;
 
 PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
 {
-    printf("\nKJS::PropertyMap statistics\n\n");
+    printf("\nJSC::PropertyMap statistics\n\n");
     printf("%d probes\n", numProbes);
     printf("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
     printf("%d rehashes\n", numRehashes);
@@ -751,4 +751,4 @@ void PropertyMap::checkConsistency()
 
 #endif // DO_PROPERTYMAP_CONSTENCY_CHECK
 
-} // namespace KJS
+} // namespace JSC

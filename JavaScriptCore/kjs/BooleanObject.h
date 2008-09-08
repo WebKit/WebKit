@@ -23,7 +23,7 @@
 
 #include "JSWrapperObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class BooleanObject : public JSWrapperObject {
     public:
@@ -33,6 +33,6 @@ namespace KJS {
         static const ClassInfo info;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // BooleanObject_h

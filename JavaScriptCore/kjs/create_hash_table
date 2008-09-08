@@ -189,9 +189,9 @@ sub output() {
     print "\n#include \"lookup.h\"\n" if ($includelookup);
     if ($useNameSpace) {
         print "\nnamespace ${useNameSpace}\n{\n";
-        print "\nusing namespace KJS;";
+        print "\nusing namespace JSC;";
     } else {
-        print "\nnamespace KJS {\n";
+        print "\nnamespace JSC {\n";
     }
     my $count = scalar @keys + 1;
     print "\nstatic const struct HashTableValue ${nameEntries}[$count] = {\n";

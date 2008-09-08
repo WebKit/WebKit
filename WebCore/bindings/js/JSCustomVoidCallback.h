@@ -41,7 +41,7 @@ namespace WebCore {
     
     class JSCustomVoidCallback : public VoidCallback {
     public: 
-        static PassRefPtr<JSCustomVoidCallback> create(KJS::JSObject* callback, Frame* frame)
+        static PassRefPtr<JSCustomVoidCallback> create(JSC::JSObject* callback, Frame* frame)
         {
             return adoptRef(new JSCustomVoidCallback(callback, frame));
         }
@@ -49,13 +49,13 @@ namespace WebCore {
         virtual void handleEvent();
         
     private:
-        JSCustomVoidCallback(KJS::JSObject* callback, Frame*);
+        JSCustomVoidCallback(JSC::JSObject* callback, Frame*);
 
-        KJS::ProtectedPtr<KJS::JSObject> m_callback;
+        JSC::ProtectedPtr<JSC::JSObject> m_callback;
         RefPtr<Frame> m_frame;
     };
 
-    PassRefPtr<VoidCallback> toVoidCallback(KJS::ExecState*, KJS::JSValue*);
+    PassRefPtr<VoidCallback> toVoidCallback(JSC::ExecState*, JSC::JSValue*);
 
 } // namespace WebCore
 

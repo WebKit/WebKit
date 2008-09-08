@@ -36,7 +36,7 @@ namespace WebCore {
     private:
         JSSVGLazyEventListener(const String& functionName, const String& code, JSDOMWindow*, Node*, int lineNumber);
 
-        virtual KJS::JSValue* eventParameterName() const;
+        virtual JSC::JSValue* eventParameterName() const;
     };
 
 } // namespace WebCore

@@ -35,7 +35,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/RefCounted.h>
 
-namespace KJS {
+namespace JSC {
 
 class Interpreter;
 class JSGlobalObject;
@@ -84,6 +84,6 @@ private:
 
 } // namespace Bindings
 
-} // namespace KJS
+} // namespace JSC
 
 #endif

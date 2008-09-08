@@ -39,7 +39,7 @@
 #include "SVGDocument.h"
 #endif
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

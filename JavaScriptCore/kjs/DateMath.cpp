@@ -69,7 +69,7 @@
 
 using namespace WTF;
 
-namespace KJS {
+namespace JSC {
 
 /* Constants */
 
@@ -943,4 +943,4 @@ UString formatTime(const GregorianDateTime &t, bool utc)
     return UString(buffer);
 }
 
-} // namespace KJS
+} // namespace JSC

@@ -30,7 +30,7 @@
 #include "lexer.h"
 #include "nodes.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionConstructor);
 
@@ -144,4 +144,4 @@ JSObject* constructFunction(ExecState* exec, const ArgList& args)
     return constructFunction(exec, args, Identifier(exec, "anonymous"), UString(), 1);
 }
 
-} // namespace KJS
+} // namespace JSC

@@ -22,7 +22,7 @@
 
 #include "HTMLInputElement.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -61,7 +61,7 @@ JSValue* jsHTMLInputElementBaseFunctionSetSelectionRange(ExecState* exec, JSObje
 
 const ClassInfo JSHTMLInputElementBase::s_info = { "HTMLInputElementBase", &JSHTMLElement::s_info, &JSHTMLInputElementBaseTable, 0 };
 
-JSHTMLInputElementBase::JSHTMLInputElementBase(KJS::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
+JSHTMLInputElementBase::JSHTMLInputElementBase(JSC::JSObject* prototype, PassRefPtr<HTMLInputElement> e)
     : JSHTMLElement(prototype, e.get())
 {
 }
@@ -76,7 +76,7 @@ bool JSHTMLInputElementBase::getOwnPropertySlot(ExecState* exec, const Identifie
     
     // otherwise, do our own function lookup on our function table
     const HashEntry* entry = JSHTMLInputElementBaseFunctionTable.entry(exec, propertyName);
-    if (entry && (entry->attributes & KJS::Function) && entry->functionValue == jsHTMLInputElementBaseFunctionSetSelectionRange) {
+    if (entry && (entry->attributes & JSC::Function) && entry->functionValue == jsHTMLInputElementBaseFunctionSetSelectionRange) {
         slot.setStaticEntry(this, entry, staticFunctionGetter);
         return true;
     }

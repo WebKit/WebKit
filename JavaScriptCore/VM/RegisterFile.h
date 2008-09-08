@@ -36,7 +36,7 @@
 #endif
 #include <wtf/Noncopyable.h>
 
-namespace KJS {
+namespace JSC {
 
 /*
     A register file is a stack of register frames. We represent a register
@@ -178,6 +178,6 @@ namespace KJS {
         JSGlobalObject* m_globalObject; // The global object whose vars are currently stored in the register file.
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // RegisterFile_h

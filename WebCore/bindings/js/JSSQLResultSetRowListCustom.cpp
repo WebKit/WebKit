@@ -33,7 +33,7 @@
 #include "SQLValue.h"
 #include "SQLResultSetRowList.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

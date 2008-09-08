@@ -26,7 +26,7 @@
 #include "PrototypeFunction.h"
 #include "StringPrototype.h"
 
-namespace KJS {
+namespace JSC {
 
 static NEVER_INLINE JSValue* stringFromCharCodeSlowCase(ExecState* exec, const ArgList& args)
 {
@@ -89,4 +89,4 @@ CallType StringConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-} // namespace KJS
+} // namespace JSC

@@ -33,7 +33,7 @@
 #include <float.h>
 #endif
 
-namespace KJS {
+namespace JSC {
 
 // ECMA 11.9.3
 bool equal(ExecState* exec, JSValue* v1, JSValue* v2)
@@ -135,4 +135,4 @@ JSValue* throwOutOfMemoryError(ExecState* exec)
     return error;
 }
 
-} // namespace KJS
+} // namespace JSC

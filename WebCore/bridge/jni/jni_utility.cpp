@@ -35,7 +35,7 @@
 #include <kjs/JSLock.h>
 #include <dlfcn.h>
 
-namespace KJS {
+namespace JSC {
 
 namespace Bindings {
 
@@ -581,6 +581,6 @@ jvalue convertValueToJValue (ExecState *exec, JSValue *value, JNIType _JNIType, 
 
 }  // end of namespace Bindings
 
-} // end of namespace KJS
+} // end of namespace JSC
 
 #endif // ENABLE(MAC_JAVA_BRIDGE)

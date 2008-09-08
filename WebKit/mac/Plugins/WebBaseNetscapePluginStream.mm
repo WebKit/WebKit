@@ -371,7 +371,7 @@ static StreamMap& streams()
     WebBaseNetscapePluginView *pv = pluginView;
     [pv willCallPlugInFunction];
     {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
         error = NPP_GetValue(plugin, NPPVpluginWantsAllNetworkStreams, &value);
     }
     [pv didCallPlugInFunction];

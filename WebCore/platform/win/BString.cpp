@@ -36,7 +36,7 @@
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

@@ -29,7 +29,7 @@
 #include "JSArray.h"
 #include "lookup.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
 
@@ -82,4 +82,4 @@ CallType ArrayConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-} // namespace KJS
+} // namespace JSC

@@ -32,21 +32,21 @@ namespace WebCore {
 
     class JSInspectorCallbackWrapper : public JSQuarantinedObjectWrapper {
     public:
-        static KJS::JSValue* wrap(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue);
+        static JSC::JSValue* wrap(JSC::ExecState* unwrappedExec, JSC::JSValue* unwrappedValue);
 
         virtual ~JSInspectorCallbackWrapper();
 
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
-        static const KJS::ClassInfo s_info;
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        static const JSC::ClassInfo s_info;
 
     protected:
-        JSInspectorCallbackWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSObject* wrappedPrototype);
-        JSInspectorCallbackWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, PassRefPtr<KJS::StructureID>);
+        JSInspectorCallbackWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, JSC::JSObject* wrappedPrototype);
+        JSInspectorCallbackWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
 
         virtual bool allowsCallAsFunction() const { return true; }
 
-        virtual KJS::JSValue* prepareIncomingValue(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue) const;
-        virtual KJS::JSValue* wrapOutgoingValue(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue) const { return wrap(unwrappedExec, unwrappedValue); }
+        virtual JSC::JSValue* prepareIncomingValue(JSC::ExecState* unwrappedExec, JSC::JSValue* unwrappedValue) const;
+        virtual JSC::JSValue* wrapOutgoingValue(JSC::ExecState* unwrappedExec, JSC::JSValue* unwrappedValue) const { return wrap(unwrappedExec, unwrappedValue); }
     };
 
 } // namespace WebCore

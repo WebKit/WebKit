@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-using namespace KJS;
+using namespace JSC;
 
 ASSERT_CLASS_FITS_IN_CELL(JSEventTargetNode)
 

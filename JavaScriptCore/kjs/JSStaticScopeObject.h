@@ -28,7 +28,7 @@
 
 #include "JSVariableObject.h"
 
-namespace KJS{
+namespace JSC{
     
     class JSStaticScopeObject : public JSVariableObject {
     protected:

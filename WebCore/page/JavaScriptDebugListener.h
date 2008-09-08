@@ -29,7 +29,7 @@
 #ifndef JavaScriptDebugListener_h
 #define JavaScriptDebugListener_h
 
-namespace KJS {
+namespace JSC {
     class DebuggerCallFrame;
     class ExecState;
     class SourceProvider;
@@ -45,8 +45,8 @@ namespace WebCore {
     public:
         virtual ~JavaScriptDebugListener() { }
 
-        virtual void didParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID) = 0;
-        virtual void failedToParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage) = 0;
+        virtual void didParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int sourceID) = 0;
+        virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int errorLine, const JSC::UString& errorMessage) = 0;
         virtual void didPause() = 0;
     };
 

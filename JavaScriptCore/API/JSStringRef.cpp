@@ -29,7 +29,7 @@
 #include "OpaqueJSString.h"
 #include <wtf/unicode/UTF8.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WTF::Unicode;
 
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)

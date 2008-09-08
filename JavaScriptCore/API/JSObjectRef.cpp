@@ -43,7 +43,7 @@
 #include "identifier.h"
 #include <wtf/Platform.h>
 
-using namespace KJS;
+using namespace JSC;
 
 JSClassRef JSClassCreate(const JSClassDefinition* definition)
 {

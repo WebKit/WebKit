@@ -25,7 +25,7 @@
 #include "JSValue.h"
 #include "collector.h"
 
-namespace KJS {
+namespace JSC {
 
     inline void gcProtect(JSValue* val) 
     {
@@ -129,6 +129,6 @@ namespace KJS {
     template <class T> inline bool operator!=(const ProtectedPtr<T>& a, const T* b) { return a.get() != b; }
     template <class T> inline bool operator!=(const T* a, const ProtectedPtr<T>& b) { return a != b.get(); }
  
-} // namespace KJS
+} // namespace JSC
 
 #endif // protect_h

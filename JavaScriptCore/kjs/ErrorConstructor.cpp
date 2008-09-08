@@ -27,7 +27,7 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorConstructor);
 
@@ -72,4 +72,4 @@ CallType ErrorConstructor::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-} // namespace KJS
+} // namespace JSC

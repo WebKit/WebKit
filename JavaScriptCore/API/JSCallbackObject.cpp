@@ -29,7 +29,7 @@
 
 #include "collector.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSObject>);
 ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSGlobalObject>);
@@ -38,4 +38,4 @@ ASSERT_CLASS_FITS_IN_CELL(JSCallbackObject<JSGlobalObject>);
 template <> const ClassInfo JSCallbackObject<JSObject>::info = { "CallbackObject", 0, 0, 0 };
 template <> const ClassInfo JSCallbackObject<JSGlobalObject>::info = { "CallbackGlobalObject", 0, 0, 0 };
 
-} // namespace KJS
+} // namespace JSC

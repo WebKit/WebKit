@@ -36,7 +36,7 @@
 #include "JSDOMWindowCustom.h"
 #include "SQLTransaction.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
     

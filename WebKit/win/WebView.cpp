@@ -112,7 +112,7 @@
 
 using namespace WebCore;
 using namespace WebCore::EventNames;
-using KJS::JSLock;
+using JSC::JSLock;
 using std::min;
 using std::max;
 
@@ -279,7 +279,7 @@ WebView::WebView()
 , m_deleteBackingStoreTimerActive(false)
 , m_transparent(false)
 {
-    KJS::initializeThreading();
+    JSC::initializeThreading();
 
     m_backingStoreSize.cx = m_backingStoreSize.cy = 0;
 
@@ -2622,7 +2622,7 @@ HRESULT STDMETHODCALLTYPE WebView::stringByEvaluatingJavaScriptFromString(
     if (!coreFrame)
         return E_FAIL;
 
-    KJS::JSValue* scriptExecutionResult = coreFrame->loader()->executeScript(WebCore::String(script), true);
+    JSC::JSValue* scriptExecutionResult = coreFrame->loader()->executeScript(WebCore::String(script), true);
     if(!scriptExecutionResult)
         return E_FAIL;
     else if (scriptExecutionResult->isString()) {

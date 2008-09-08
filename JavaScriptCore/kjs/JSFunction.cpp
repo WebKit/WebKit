@@ -38,7 +38,7 @@
 using namespace WTF;
 using namespace Unicode;
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSFunction);
 
@@ -173,4 +173,4 @@ JSObject* JSFunction::construct(ExecState* exec, const ArgList& args)
     return static_cast<JSObject*>(result);
 }
 
-} // namespace KJS
+} // namespace JSC

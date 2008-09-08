@@ -32,7 +32,7 @@
 
 using namespace WTF;
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(StringPrototype);
 
@@ -73,7 +73,7 @@ static JSValue* stringProtoFuncLink(ExecState*, JSObject*, JSValue*, const ArgLi
 
 #include "StringPrototype.lut.h"
 
-namespace KJS {
+namespace JSC {
 
 const ClassInfo StringPrototype::info = { "String", &StringObject::info, 0, ExecState::stringTable };
 
@@ -790,4 +790,4 @@ JSValue* stringProtoFuncLink(ExecState* exec, JSObject*, JSValue* thisValue, con
     return jsString(exec, "<a href=\"" + a0->toString(exec) + "\">" + s + "</a>");
 }
 
-} // namespace KJS
+} // namespace JSC

@@ -23,7 +23,7 @@
 
 #include <wtf/Assertions.h>
 
-namespace KJS {
+namespace JSC {
 
     class JSGlobalObject;
     class JSObject;
@@ -219,6 +219,6 @@ namespace KJS {
         return *this;
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ScopeChain_h

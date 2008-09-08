@@ -286,7 +286,7 @@
 #import "DOMSVGZoomEventInternal.h"
 #endif // ENABLE(SVG)
 
-namespace KJS {
+namespace JSC {
     class JSObject;
     
     namespace Bindings {
@@ -335,7 +335,7 @@ namespace WebCore {
 
 namespace WebCore {
 
-    id createDOMWrapper(KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current);
+    id createDOMWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current);
 
     NSObject* getDOMWrapper(DOMObjectInternal*);
     void addDOMWrapper(NSObject* wrapper, DOMObjectInternal*);

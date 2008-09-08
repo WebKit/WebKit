@@ -35,7 +35,7 @@
 #include "Profiler.h"
 #include "Tracing.h"
 
-namespace KJS {
+namespace JSC {
 
 static const char* NonJSExecution = "(idle)";
 
@@ -166,4 +166,4 @@ void ProfileGenerator::removeProfileEnd()
     currentNode->parent()->removeChild(currentNode);
 }
 
-} // namespace KJS
+} // namespace JSC

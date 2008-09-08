@@ -23,7 +23,7 @@
 
 #include "PropertyNameArray.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(StringObject);
 
@@ -98,4 +98,4 @@ JSString* StringObject::toThisJSString(ExecState*)
     return internalValue();
 }
 
-} // namespace KJS
+} // namespace JSC

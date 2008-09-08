@@ -24,7 +24,7 @@
 
 #include "JSGlobalObject.h"
 
-namespace KJS {
+namespace JSC {
 
 Debugger::Debugger()
 {
@@ -51,4 +51,4 @@ void Debugger::detach(JSGlobalObject* globalObject)
     globalObject->setDebugger(0);
 }
 
-} // namespace KJS
+} // namespace JSC

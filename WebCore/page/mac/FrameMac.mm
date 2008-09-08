@@ -71,7 +71,7 @@
  
 using namespace std;
 
-using KJS::JSLock;
+using JSC::JSLock;
 
 namespace WebCore {
 

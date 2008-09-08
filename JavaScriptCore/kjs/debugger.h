@@ -25,7 +25,7 @@
 #include "protect.h"
 #include <wtf/HashSet.h>
 
-namespace KJS {
+namespace JSC {
 
     class ArgList;
     class DebuggerCallFrame;
@@ -59,6 +59,6 @@ namespace KJS {
         HashSet<JSGlobalObject*> m_globalObjects;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // Debugger_h

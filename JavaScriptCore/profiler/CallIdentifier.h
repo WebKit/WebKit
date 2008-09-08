@@ -29,7 +29,7 @@
 
 #include <kjs/ustring.h>
 
-namespace KJS {
+namespace JSC {
 
     struct CallIdentifier {
         UString m_name;
@@ -59,31 +59,31 @@ namespace KJS {
 #endif
     };
 
-} // namespace KJS
+} // namespace JSC
 
 namespace WTF {
-    template<> struct IntHash<KJS::CallIdentifier> {
-        static unsigned hash(const KJS::CallIdentifier& key)
+    template<> struct IntHash<JSC::CallIdentifier> {
+        static unsigned hash(const JSC::CallIdentifier& key)
         {
             unsigned hashCodes[3] = {
                 key.m_name.rep()->hash(),
                 key.m_url.rep()->hash(),
                 key.m_lineNumber
             };
-            return KJS::UString::Rep::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
+            return JSC::UString::Rep::computeHash(reinterpret_cast<char*>(hashCodes), sizeof(hashCodes));
         }
 
-        static bool equal(const KJS::CallIdentifier& a, const KJS::CallIdentifier& b) { return a == b; }
+        static bool equal(const JSC::CallIdentifier& a, const JSC::CallIdentifier& b) { return a == b; }
         static const bool safeToCompareToEmptyOrDeleted = true;
     };
-    template<> struct DefaultHash<KJS::CallIdentifier> { typedef IntHash<KJS::CallIdentifier> Hash; };
+    template<> struct DefaultHash<JSC::CallIdentifier> { typedef IntHash<JSC::CallIdentifier> Hash; };
 
-    template<> struct HashTraits<KJS::CallIdentifier> : GenericHashTraits<KJS::CallIdentifier> {
+    template<> struct HashTraits<JSC::CallIdentifier> : GenericHashTraits<JSC::CallIdentifier> {
         static const bool emptyValueIsZero = false;
-        static KJS::CallIdentifier emptyValue() { return KJS::CallIdentifier("", "", 0); }
+        static JSC::CallIdentifier emptyValue() { return JSC::CallIdentifier("", "", 0); }
         static const bool needsDestruction = false;
-        static void constructDeletedValue(KJS::CallIdentifier& slot) { new (&slot) KJS::CallIdentifier(KJS::UString(), KJS::UString(), 0); }
-        static bool isDeletedValue(const KJS::CallIdentifier& value) { return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == 0; }
+        static void constructDeletedValue(JSC::CallIdentifier& slot) { new (&slot) JSC::CallIdentifier(JSC::UString(), JSC::UString(), 0); }
+        static bool isDeletedValue(const JSC::CallIdentifier& value) { return value.m_name.isNull() && value.m_url.isNull() && value.m_lineNumber == 0; }
     };
 } // namespace WTF
 

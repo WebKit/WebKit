@@ -35,7 +35,7 @@
 #include <kjs/StringPrototype.h>
 #include <wtf/ASCIICType.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WTF;
 
 namespace WebCore {

@@ -151,7 +151,7 @@ public:
     friend bool protocolHostAndPortAreEqual(const KURL&, const KURL&);
     
     operator const String&() const { return m_string; }
-    operator KJS::UString() const { return m_string; }
+    operator JSC::UString() const { return m_string; }
 
     unsigned hostStart() const { return (m_passwordEnd == m_userStart) ? m_passwordEnd : m_passwordEnd + 1; }
     unsigned hostEnd() const { return m_hostEnd; }

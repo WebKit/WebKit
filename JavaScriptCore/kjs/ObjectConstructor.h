@@ -23,7 +23,7 @@
 
 #include "InternalFunction.h"
 
-namespace KJS {
+namespace JSC {
 
     class FunctionPrototype;
     class ObjectPrototype;
@@ -37,6 +37,6 @@ namespace KJS {
         virtual CallType getCallData(CallData&);
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ObjectConstructor_h

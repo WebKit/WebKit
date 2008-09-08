@@ -1,3 +1,22 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20704: Replace the KJS namespace
+        <https://bugs.webkit.org/show_bug.cgi?id=20704>
+
+        Rename the KJS namespace to JSC.
+
+        * WebCoreStatistics.cpp:
+        * WebJavaScriptCollector.cpp:
+        * WebScriptCallFrame.cpp:
+        (WebScriptCallFrame::jsValueToString):
+        * WebScriptCallFrame.h:
+        (WebScriptCallFrame::state):
+        * WebView.cpp:
+        (WebView::WebView):
+        (WebView::stringByEvaluatingJavaScriptFromString):
+
 2008-09-05  Dave Hyatt  <hyatt@apple.com>
 
         Add support for runtime switchability of the Aqua look and the native look on Windows.

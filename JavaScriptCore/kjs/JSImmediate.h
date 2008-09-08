@@ -31,7 +31,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-namespace KJS {
+namespace JSC {
 
     class ExecState;
     class JSObject;
@@ -441,6 +441,6 @@ namespace KJS {
         return b ? JSImmediate::trueImmediate() : JSImmediate::falseImmediate();
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif

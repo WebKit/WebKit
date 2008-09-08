@@ -33,11 +33,11 @@
 
 namespace WebCore {
 
-    class StringSourceProvider : public KJS::SourceProvider {
+    class StringSourceProvider : public JSC::SourceProvider {
     public:
         static PassRefPtr<StringSourceProvider> create(const String& source) { return adoptRef(new StringSourceProvider(source)); }
 
-        KJS::UString getRange(int start, int end) const { return KJS::UString(m_source.characters() + start, end - start); }
+        JSC::UString getRange(int start, int end) const { return JSC::UString(m_source.characters() + start, end - start); }
         const UChar* data() const { return m_source.characters(); }
         int length() const { return m_source.length(); }
 

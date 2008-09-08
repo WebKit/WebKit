@@ -37,7 +37,7 @@
 #include "PropertyNameArray.h"
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
 
 template <class Base>
 JSCallbackObject<Base>::JSCallbackObject(ExecState* exec, JSClassRef jsClass, JSObject* prototype, void* data)
@@ -511,4 +511,4 @@ JSValue* JSCallbackObject<Base>::callbackGetter(ExecState* exec, const Identifie
     return throwError(exec, ReferenceError, "hasProperty callback returned true for a property that doesn't exist.");
 }
 
-} // namespace KJS
+} // namespace JSC

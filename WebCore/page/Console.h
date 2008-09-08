@@ -33,7 +33,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/PassRefPtr.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class ArgList;
     class Profile;
@@ -74,24 +74,24 @@ namespace WebCore {
         void addMessage(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceURL);
 
 #if USE(JSC)
-        void debug(KJS::ExecState*, const KJS::ArgList&);
-        void error(KJS::ExecState*, const KJS::ArgList&);
-        void info(KJS::ExecState*, const KJS::ArgList&);
-        void log(KJS::ExecState*, const KJS::ArgList&);
-        void warn(KJS::ExecState*, const KJS::ArgList&);
-        void dir(KJS::ExecState*, const KJS::ArgList&);
-        void dirxml(KJS::ExecState*, const KJS::ArgList& arguments);
-        void assertCondition(bool condition, KJS::ExecState*, const KJS::ArgList&);
-        void count(KJS::ExecState*, const KJS::ArgList&);
-        void profile(KJS::ExecState*, const KJS::ArgList&);
-        void profileEnd(KJS::ExecState*, const KJS::ArgList&);
-        void time(const KJS::UString& title);
-        void timeEnd(KJS::ExecState*, const KJS::ArgList&);
-        void group(KJS::ExecState*, const KJS::ArgList&);
+        void debug(JSC::ExecState*, const JSC::ArgList&);
+        void error(JSC::ExecState*, const JSC::ArgList&);
+        void info(JSC::ExecState*, const JSC::ArgList&);
+        void log(JSC::ExecState*, const JSC::ArgList&);
+        void warn(JSC::ExecState*, const JSC::ArgList&);
+        void dir(JSC::ExecState*, const JSC::ArgList&);
+        void dirxml(JSC::ExecState*, const JSC::ArgList& arguments);
+        void assertCondition(bool condition, JSC::ExecState*, const JSC::ArgList&);
+        void count(JSC::ExecState*, const JSC::ArgList&);
+        void profile(JSC::ExecState*, const JSC::ArgList&);
+        void profileEnd(JSC::ExecState*, const JSC::ArgList&);
+        void time(const JSC::UString& title);
+        void timeEnd(JSC::ExecState*, const JSC::ArgList&);
+        void group(JSC::ExecState*, const JSC::ArgList&);
         void groupEnd();
 
-        void reportException(KJS::ExecState*, KJS::JSValue*);
-        void reportCurrentException(KJS::ExecState*);
+        void reportException(JSC::ExecState*, JSC::JSValue*);
+        void reportCurrentException(JSC::ExecState*);
 #endif
     private:
         inline Page* page() const;

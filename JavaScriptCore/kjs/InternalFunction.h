@@ -27,7 +27,7 @@
 #include "JSObject.h"
 #include "identifier.h"
 
-namespace KJS {
+namespace JSC {
 
     class FunctionPrototype;
 
@@ -39,7 +39,7 @@ namespace KJS {
         const UString& name(ExecState*);
 
     protected:
-        InternalFunction(PassRefPtr<KJS::StructureID> st) : JSObject(st){}
+        InternalFunction(PassRefPtr<JSC::StructureID> st) : JSObject(st){}
         InternalFunction(ExecState*);
         InternalFunction(ExecState*, FunctionPrototype*, const Identifier&);
 
@@ -48,6 +48,6 @@ namespace KJS {
         virtual bool implementsHasInstance() const;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // InternalFunction_h

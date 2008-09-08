@@ -24,7 +24,7 @@
 #include "JSObject.h"
 #include "regexp.h"
 
-namespace KJS {
+namespace JSC {
 
     class RegExpPrototype;
 
@@ -70,6 +70,6 @@ namespace KJS {
         OwnPtr<RegExpObjectData> d;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // RegExpObject_h

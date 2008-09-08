@@ -24,7 +24,7 @@
 #include <wtf/RefPtr.h>
 #include <wtf/RefCounted.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class JSValue;
 };
@@ -36,7 +36,7 @@ namespace WebCore {
     class String;
 
     // FIXME: Generated JSPlugin.cpp doesn't include JSMimeType.h for toJS
-    KJS::JSValue* toJS(KJS::ExecState*, MimeType*);
+    JSC::JSValue* toJS(JSC::ExecState*, MimeType*);
 
     class PluginData;
 

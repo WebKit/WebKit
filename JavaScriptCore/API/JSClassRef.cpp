@@ -34,7 +34,7 @@
 #include <kjs/ObjectPrototype.h>
 #include <kjs/identifier.h>
 
-using namespace KJS;
+using namespace JSC;
 
 const JSClassDefinition kJSClassDefinitionEmpty = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
@@ -198,13 +198,13 @@ UString OpaqueJSClass::className()
     return UString(m_className.data(), m_className.size());
 }
 
-OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(KJS::ExecState* exec)
+OpaqueJSClassStaticValuesTable* OpaqueJSClass::staticValues(JSC::ExecState* exec)
 {
     OpaqueJSClassContextData& jsClassData = contextData(exec);
     return jsClassData.staticValues;
 }
 
-OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(KJS::ExecState* exec)
+OpaqueJSClassStaticFunctionsTable* OpaqueJSClass::staticFunctions(JSC::ExecState* exec)
 {
     OpaqueJSClassContextData& jsClassData = contextData(exec);
     return jsClassData.staticFunctions;

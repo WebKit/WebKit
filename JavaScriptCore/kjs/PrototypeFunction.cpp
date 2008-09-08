@@ -29,7 +29,7 @@
 #include "JSGlobalObject.h"
 #include <wtf/Assertions.h>
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(PrototypeFunction);
 
@@ -55,4 +55,4 @@ CallType PrototypeFunction::getCallData(CallData& callData)
     return CallTypeHost;
 }
 
-} // namespace KJS
+} // namespace JSC

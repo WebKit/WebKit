@@ -30,7 +30,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace KJS {
+namespace JSC {
 
     class FunctionBodyNode;
     class ProgramNode;
@@ -102,6 +102,6 @@ namespace KJS {
         return node.release();
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // Parser_h

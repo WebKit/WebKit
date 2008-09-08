@@ -47,7 +47,7 @@
 #include <profiler/Profiler.h>
 #include <stdio.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

@@ -27,7 +27,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
-namespace KJS {
+namespace JSC {
 
     class ArrayPrototype;
     class BooleanPrototype;
@@ -293,6 +293,6 @@ namespace KJS {
         return globalObject;
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSGlobalObject_h

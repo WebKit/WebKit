@@ -34,12 +34,12 @@ namespace WebCore {
 
     class JSXSLTProcessorConstructor : public DOMObject {
     public:
-        JSXSLTProcessorConstructor(KJS::ExecState*);
-        static const KJS::ClassInfo s_info;
+        JSXSLTProcessorConstructor(JSC::ExecState*);
+        static const JSC::ClassInfo s_info;
 
     private:
-        virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
     };
 
 } // namespace WebCore

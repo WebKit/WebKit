@@ -31,7 +31,7 @@
 
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class Node;
     class CodeBlock;
@@ -47,6 +47,6 @@ namespace KJS {
     JSValue* createNotAFunctionError(ExecState*, JSValue*, const Instruction*, CodeBlock*);
     JSObject* createNotAnObjectError(ExecState*, JSNotAnObjectErrorStub*, const Instruction*, CodeBlock*);
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ExceptionHelpers_h

@@ -27,7 +27,7 @@
 #include <qmetaobject.h>
 #include <qdebug.h>
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 QtClass::QtClass(const QMetaObject* mo)

@@ -23,7 +23,7 @@
 
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class ErrorPrototype;
     class UString;
@@ -33,6 +33,6 @@ namespace KJS {
         NativeErrorPrototype(ExecState*, ErrorPrototype*, const UString& name, const UString& message);
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // NativeErrorPrototype_h

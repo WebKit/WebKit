@@ -408,7 +408,7 @@ Document::~Document()
 
     XMLHttpRequest::detachRequests(this);
     {
-        KJS::JSLock lock(false);
+        JSC::JSLock lock(false);
         ScriptInterpreter::forgetAllDOMNodesForDocument(this);
     }
 

@@ -114,12 +114,12 @@ void removeDOMWrapper(DOMObjectInternal* impl)
     if (!frame)
         return;
         
-    KJS::ExecState *exec = frame->script()->globalObject()->globalExec();
+    JSC::ExecState *exec = frame->script()->globalObject()->globalExec();
     
     // Get (or create) a cached JS object for the DOM node.
-    KJS::JSObject *scriptImp = static_cast<KJS::JSObject*>(WebCore::toJS(exec, nodeImpl));
+    JSC::JSObject *scriptImp = static_cast<JSC::JSObject*>(WebCore::toJS(exec, nodeImpl));
 
-    KJS::Bindings::RootObject* rootObject = frame->script()->bindingRootObject();
+    JSC::Bindings::RootObject* rootObject = frame->script()->bindingRootObject();
 
     [self _setImp:scriptImp originRootObject:rootObject rootObject:rootObject];
 }

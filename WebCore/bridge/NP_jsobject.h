@@ -31,7 +31,7 @@
 #include "npruntime_internal.h"
 #include <wtf/Forward.h>
 
-namespace KJS {
+namespace JSC {
     class JSObject;
     namespace Bindings {
         class RootObject;
@@ -43,11 +43,11 @@ extern NPClass* NPScriptObjectClass;
 struct JavaScriptObject
 {
     NPObject object;
-    KJS::JSObject* imp;
-    KJS::Bindings::RootObject* rootObject;
+    JSC::JSObject* imp;
+    JSC::Bindings::RootObject* rootObject;
 };
 
-NPObject* _NPN_CreateScriptObject(NPP npp, KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> rootObject);
+NPObject* _NPN_CreateScriptObject(NPP npp, JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> rootObject);
 NPObject* _NPN_CreateNoScriptObject(void);
 
 #endif // ENABLE(NETSCAPE_PLUGIN_API)

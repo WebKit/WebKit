@@ -29,7 +29,7 @@
 #include <kjs/ExecState.h>
 #include <kjs/identifier.h>
 
-using namespace KJS;
+using namespace JSC;
 
 PassRefPtr<OpaqueJSString> OpaqueJSString::create(const UString& ustring)
 {

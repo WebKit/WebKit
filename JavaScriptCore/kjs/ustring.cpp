@@ -56,7 +56,7 @@ using namespace std;
 // to memcpy.
 #define USTRING_COPY_CHARS_INLINE_CUTOFF 20
 
-namespace KJS {
+namespace JSC {
  
 extern const double NaN;
 extern const double Inf;
@@ -1509,4 +1509,4 @@ NEVER_INLINE UString::Rep* UString::nullRep()
     return &Rep::null;
 }
 
-} // namespace KJS
+} // namespace JSC

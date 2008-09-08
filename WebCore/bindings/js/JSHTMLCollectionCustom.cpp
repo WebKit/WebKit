@@ -31,7 +31,7 @@
 #include "JSDOMBinding.h"
 #include <wtf/Vector.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

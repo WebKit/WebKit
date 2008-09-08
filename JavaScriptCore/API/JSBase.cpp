@@ -36,7 +36,7 @@
 #include <kjs/JSLock.h>
 #include <kjs/JSObject.h>
 
-using namespace KJS;
+using namespace JSC;
 
 JSValueRef JSEvaluateScript(JSContextRef ctx, JSStringRef script, JSObjectRef thisObject, JSStringRef sourceURL, int startingLineNumber, JSValueRef* exception)
 {

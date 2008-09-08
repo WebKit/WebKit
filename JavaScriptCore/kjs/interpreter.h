@@ -26,7 +26,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/unicode/Unicode.h>
 
-namespace KJS {
+namespace JSC {
 
   class Completion;
   class ExecState;
@@ -69,6 +69,6 @@ namespace KJS {
     static void setShouldPrintExceptions(bool);
   };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // KJS_Interpreter_h

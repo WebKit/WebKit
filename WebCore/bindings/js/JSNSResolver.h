@@ -29,7 +29,7 @@
 #include "NSResolver.h"
 #include <wtf/PassRefPtr.h>
 
-namespace KJS {
+namespace JSC {
     class JSValue;
 }
 
@@ -37,21 +37,21 @@ namespace WebCore {
 
     class JSNSResolver : public NSResolver {
     public:
-        static PassRefPtr<JSNSResolver> create(KJS::JSValue* resolver)
+        static PassRefPtr<JSNSResolver> create(JSC::JSValue* resolver)
         {
             return adoptRef(new JSNSResolver(resolver));
         }
 
     private:
-        JSNSResolver(KJS::JSValue* resolver);
+        JSNSResolver(JSC::JSValue* resolver);
 
-        virtual String lookupNamespaceURI(KJS::ExecState*, const String& prefix);
+        virtual String lookupNamespaceURI(JSC::ExecState*, const String& prefix);
         virtual void mark();
 
-        KJS::JSValue* m_resolver;
+        JSC::JSValue* m_resolver;
     };
 
-    PassRefPtr<NSResolver> toNSResolver(KJS::JSValue*);
+    PassRefPtr<NSResolver> toNSResolver(JSC::JSValue*);
 
 } // namespace WebCore
 

@@ -44,7 +44,7 @@
 
 using WebCore::String;
 
-namespace KJS { namespace Bindings {
+namespace JSC { namespace Bindings {
 
 static String convertUTF8ToUTF16WithLatin1Fallback(const NPUTF8* UTF8Chars, int UTF8Length)
 {

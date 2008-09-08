@@ -73,7 +73,7 @@
 
 using namespace std;
 
-namespace KJS {
+namespace JSC {
 
 // Preferred number of milliseconds between each timeout check
 static const int preferredScriptCheckTimeInterval = 1000;
@@ -5135,4 +5135,4 @@ void* Machine::cti_vm_throw(CTI_ARGS)
 
 #endif // ENABLE(CTI)
 
-} // namespace KJS
+} // namespace JSC

@@ -32,7 +32,7 @@
 #include <kjs/JSValue.h>
 #include <kjs/JSString.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

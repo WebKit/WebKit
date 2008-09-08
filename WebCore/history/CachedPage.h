@@ -72,7 +72,7 @@ private:
     RefPtr<FrameView> m_view;
     RefPtr<Node> m_mousePressNode;
     KURL m_URL;
-    KJS::ProtectedPtr<JSDOMWindow> m_window;
+    JSC::ProtectedPtr<JSDOMWindow> m_window;
     OwnPtr<PausedTimeouts> m_pausedTimeouts;
     OwnPtr<CachedPagePlatformData> m_cachedPagePlatformData;
 };

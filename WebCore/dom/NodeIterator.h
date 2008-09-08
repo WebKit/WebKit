@@ -43,8 +43,8 @@ namespace WebCore {
         }
         ~NodeIterator();
 
-        PassRefPtr<Node> nextNode(KJS::ExecState*, ExceptionCode&);
-        PassRefPtr<Node> previousNode(KJS::ExecState*, ExceptionCode&);
+        PassRefPtr<Node> nextNode(JSC::ExecState*, ExceptionCode&);
+        PassRefPtr<Node> previousNode(JSC::ExecState*, ExceptionCode&);
         void detach();
 
         Node* referenceNode() const { return m_referenceNode.node.get(); }

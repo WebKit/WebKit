@@ -24,7 +24,7 @@
 #include "JSGlobalData.h"
 #include "ustring.h"
 
-namespace KJS {
+namespace JSC {
 
     class ExecState;
 
@@ -73,7 +73,7 @@ namespace KJS {
 
         static bool equal(const UString::Rep*, const char*);
         static bool equal(const UString::Rep*, const UChar*, int length);
-        static bool equal(const UString::Rep* a, const UString::Rep* b) { return KJS::equal(a, b); }
+        static bool equal(const UString::Rep* a, const UString::Rep* b) { return JSC::equal(a, b); }
 
         static PassRefPtr<UString::Rep> add(ExecState*, const char*); // Only to be used with string literals.
         static PassRefPtr<UString::Rep> add(JSGlobalData*, const char*); // Only to be used with string literals.
@@ -136,6 +136,6 @@ namespace KJS {
     inline void Identifier::checkSameIdentifierTable(JSGlobalData*, UString::Rep*) { }
 #endif
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // KJS_IDENTIFIER_H

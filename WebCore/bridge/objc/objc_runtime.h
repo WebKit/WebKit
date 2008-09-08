@@ -32,7 +32,7 @@
 #include <kjs/JSObject.h>
 #include <wtf/RetainPtr.h>
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 ClassStructPtr webScriptObjectClass();
@@ -116,6 +116,6 @@ private:
 };
 
 } // namespace Bindings
-} // namespace KJS
+} // namespace JSC
 
 #endif

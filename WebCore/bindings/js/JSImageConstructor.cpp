@@ -24,7 +24,7 @@
 #include "HTMLImageElement.h"
 #include "JSNode.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

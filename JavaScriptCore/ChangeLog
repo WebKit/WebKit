@@ -1,3 +1,273 @@
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20704: Replace the KJS namespace
+        <https://bugs.webkit.org/show_bug.cgi?id=20704>
+
+        Rename the KJS namespace to JSC. There are still some uses of KJS in
+        preprocessor macros and comments, but these will also be changed some
+        time in the near future.
+
+        * API/APICast.h:
+        (toJS):
+        (toRef):
+        (toGlobalRef):
+        * API/JSBase.cpp:
+        * API/JSCallbackConstructor.cpp:
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.cpp:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.cpp:
+        * API/JSCallbackObject.h:
+        * API/JSCallbackObjectFunctions.h:
+        * API/JSClassRef.cpp:
+        (OpaqueJSClass::staticValues):
+        (OpaqueJSClass::staticFunctions):
+        * API/JSClassRef.h:
+        * API/JSContextRef.cpp:
+        * API/JSObjectRef.cpp:
+        * API/JSProfilerPrivate.cpp:
+        * API/JSStringRef.cpp:
+        * API/JSValueRef.cpp:
+        (JSValueGetType):
+        * API/OpaqueJSString.cpp:
+        * API/OpaqueJSString.h:
+        * JavaScriptCore.Debug.exp:
+        * JavaScriptCore.base.exp:
+        * VM/CTI.cpp:
+        (JSC::):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        * VM/CodeBlock.h:
+        * VM/CodeGenerator.cpp:
+        * VM/CodeGenerator.h:
+        * VM/ExceptionHelpers.cpp:
+        * VM/ExceptionHelpers.h:
+        * VM/Instruction.h:
+        * VM/JSPropertyNameIterator.cpp:
+        * VM/JSPropertyNameIterator.h:
+        * VM/LabelID.h:
+        * VM/Machine.cpp:
+        * VM/Machine.h:
+        * VM/Opcode.cpp:
+        * VM/Opcode.h:
+        * VM/Register.h:
+        (WTF::):
+        * VM/RegisterFile.cpp:
+        * VM/RegisterFile.h:
+        * VM/RegisterID.h:
+        (WTF::):
+        * VM/SamplingTool.cpp:
+        * VM/SamplingTool.h:
+        * VM/SegmentedVector.h:
+        * kjs/ArgList.cpp:
+        * kjs/ArgList.h:
+        * kjs/Arguments.cpp:
+        * kjs/Arguments.h:
+        * kjs/ArrayConstructor.cpp:
+        * kjs/ArrayConstructor.h:
+        * kjs/ArrayPrototype.cpp:
+        * kjs/ArrayPrototype.h:
+        * kjs/BatchedTransitionOptimizer.h:
+        * kjs/BooleanConstructor.cpp:
+        * kjs/BooleanConstructor.h:
+        * kjs/BooleanObject.cpp:
+        * kjs/BooleanObject.h:
+        * kjs/BooleanPrototype.cpp:
+        * kjs/BooleanPrototype.h:
+        * kjs/CallData.cpp:
+        * kjs/CallData.h:
+        * kjs/ClassInfo.h:
+        * kjs/CommonIdentifiers.cpp:
+        * kjs/CommonIdentifiers.h:
+        * kjs/ConstructData.cpp:
+        * kjs/ConstructData.h:
+        * kjs/DateConstructor.cpp:
+        * kjs/DateConstructor.h:
+        * kjs/DateInstance.cpp:
+        (JSC::DateInstance::msToGregorianDateTime):
+        * kjs/DateInstance.h:
+        * kjs/DateMath.cpp:
+        * kjs/DateMath.h:
+        * kjs/DatePrototype.cpp:
+        * kjs/DatePrototype.h:
+        * kjs/DebuggerCallFrame.cpp:
+        * kjs/DebuggerCallFrame.h:
+        * kjs/Error.cpp:
+        * kjs/Error.h:
+        * kjs/ErrorConstructor.cpp:
+        * kjs/ErrorConstructor.h:
+        * kjs/ErrorInstance.cpp:
+        * kjs/ErrorInstance.h:
+        * kjs/ErrorPrototype.cpp:
+        * kjs/ErrorPrototype.h:
+        * kjs/ExecState.cpp:
+        * kjs/ExecState.h:
+        * kjs/FunctionConstructor.cpp:
+        * kjs/FunctionConstructor.h:
+        * kjs/FunctionPrototype.cpp:
+        * kjs/FunctionPrototype.h:
+        * kjs/GetterSetter.cpp:
+        * kjs/GetterSetter.h:
+        * kjs/GlobalEvalFunction.cpp:
+        * kjs/GlobalEvalFunction.h:
+        * kjs/IndexToNameMap.cpp:
+        * kjs/IndexToNameMap.h:
+        * kjs/InitializeThreading.cpp:
+        * kjs/InitializeThreading.h:
+        * kjs/InternalFunction.cpp:
+        * kjs/InternalFunction.h:
+        (JSC::InternalFunction::InternalFunction):
+        * kjs/JSActivation.cpp:
+        * kjs/JSActivation.h:
+        * kjs/JSArray.cpp:
+        * kjs/JSArray.h:
+        * kjs/JSCell.cpp:
+        * kjs/JSCell.h:
+        * kjs/JSFunction.cpp:
+        * kjs/JSFunction.h:
+        (JSC::JSFunction::JSFunction):
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalObject.cpp:
+        * kjs/JSGlobalObject.h:
+        * kjs/JSGlobalObjectFunctions.cpp:
+        * kjs/JSGlobalObjectFunctions.h:
+        * kjs/JSImmediate.cpp:
+        * kjs/JSImmediate.h:
+        * kjs/JSLock.cpp:
+        * kjs/JSLock.h:
+        * kjs/JSNotAnObject.cpp:
+        * kjs/JSNotAnObject.h:
+        * kjs/JSNumberCell.cpp:
+        * kjs/JSNumberCell.h:
+        * kjs/JSObject.cpp:
+        * kjs/JSObject.h:
+        * kjs/JSStaticScopeObject.cpp:
+        * kjs/JSStaticScopeObject.h:
+        * kjs/JSString.cpp:
+        * kjs/JSString.h:
+        * kjs/JSType.h:
+        * kjs/JSValue.cpp:
+        * kjs/JSValue.h:
+        * kjs/JSVariableObject.cpp:
+        * kjs/JSVariableObject.h:
+        * kjs/JSWrapperObject.cpp:
+        * kjs/JSWrapperObject.h:
+        * kjs/LabelStack.cpp:
+        * kjs/LabelStack.h:
+        * kjs/MathObject.cpp:
+        * kjs/MathObject.h:
+        * kjs/NativeErrorConstructor.cpp:
+        * kjs/NativeErrorConstructor.h:
+        * kjs/NativeErrorPrototype.cpp:
+        * kjs/NativeErrorPrototype.h:
+        * kjs/NodeInfo.h:
+        * kjs/NumberConstructor.cpp:
+        * kjs/NumberConstructor.h:
+        * kjs/NumberObject.cpp:
+        * kjs/NumberObject.h:
+        * kjs/NumberPrototype.cpp:
+        * kjs/NumberPrototype.h:
+        * kjs/ObjectConstructor.cpp:
+        * kjs/ObjectConstructor.h:
+        * kjs/ObjectPrototype.cpp:
+        * kjs/ObjectPrototype.h:
+        * kjs/Parser.cpp:
+        * kjs/Parser.h:
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger):
+        * kjs/PropertyMap.h:
+        * kjs/PropertyNameArray.cpp:
+        * kjs/PropertyNameArray.h:
+        * kjs/PropertySlot.cpp:
+        * kjs/PropertySlot.h:
+        * kjs/PrototypeFunction.cpp:
+        * kjs/PrototypeFunction.h:
+        * kjs/PutPropertySlot.h:
+        * kjs/RegExpConstructor.cpp:
+        * kjs/RegExpConstructor.h:
+        * kjs/RegExpObject.cpp:
+        * kjs/RegExpObject.h:
+        * kjs/RegExpPrototype.cpp:
+        * kjs/RegExpPrototype.h:
+        * kjs/ScopeChain.cpp:
+        * kjs/ScopeChain.h:
+        * kjs/ScopeChainMark.h:
+        * kjs/Shell.cpp:
+        (jscmain):
+        * kjs/SmallStrings.cpp:
+        * kjs/SmallStrings.h:
+        * kjs/SourceProvider.h:
+        * kjs/SourceRange.h:
+        * kjs/StringConstructor.cpp:
+        * kjs/StringConstructor.h:
+        * kjs/StringObject.cpp:
+        * kjs/StringObject.h:
+        * kjs/StringObjectThatMasqueradesAsUndefined.h:
+        * kjs/StringPrototype.cpp:
+        * kjs/StringPrototype.h:
+        * kjs/StructureID.cpp:
+        * kjs/StructureID.h:
+        * kjs/SymbolTable.h:
+        * kjs/collector.cpp:
+        * kjs/collector.h:
+        * kjs/completion.h:
+        * kjs/create_hash_table:
+        * kjs/debugger.cpp:
+        * kjs/debugger.h:
+        * kjs/dtoa.cpp:
+        * kjs/dtoa.h:
+        * kjs/grammar.y:
+        * kjs/identifier.cpp:
+        * kjs/identifier.h:
+        (JSC::Identifier::equal):
+        * kjs/interpreter.cpp:
+        * kjs/interpreter.h:
+        * kjs/lexer.cpp:
+        (JSC::Lexer::Lexer):
+        (JSC::Lexer::clear):
+        (JSC::Lexer::makeIdentifier):
+        * kjs/lexer.h:
+        * kjs/lookup.cpp:
+        * kjs/lookup.h:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        * kjs/nodes2string.cpp:
+        * kjs/operations.cpp:
+        * kjs/operations.h:
+        * kjs/protect.h:
+        * kjs/regexp.cpp:
+        * kjs/regexp.h:
+        * kjs/ustring.cpp:
+        * kjs/ustring.h:
+        (JSC::operator!=):
+        (JSC::IdentifierRepHash::hash):
+        (WTF::):
+        * masm/MacroAssembler.h:
+        * masm/MacroAssemblerWin.cpp:
+        * masm/X86Assembler.h:
+        * pcre/pcre_exec.cpp:
+        * profiler/CallIdentifier.h:
+        (WTF::):
+        * profiler/HeavyProfile.cpp:
+        * profiler/HeavyProfile.h:
+        * profiler/Profile.cpp:
+        * profiler/Profile.h:
+        * profiler/ProfileGenerator.cpp:
+        * profiler/ProfileGenerator.h:
+        * profiler/ProfileNode.cpp:
+        * profiler/ProfileNode.h:
+        * profiler/Profiler.cpp:
+        * profiler/Profiler.h:
+        * profiler/TreeProfile.cpp:
+        * profiler/TreeProfile.h:
+        * wrec/WREC.cpp:
+        * wrec/WREC.h:
+        * wtf/AVLTree.h:
+
 2008-09-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dan Bernstein.

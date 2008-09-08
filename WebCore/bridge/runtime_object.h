@@ -29,7 +29,7 @@
 #include "runtime.h"
 #include <kjs/JSObject.h>
 
-namespace KJS {
+namespace JSC {
 
 class RuntimeObjectImp : public JSObject {
 public:

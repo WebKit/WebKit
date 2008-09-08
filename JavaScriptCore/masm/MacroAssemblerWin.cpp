@@ -29,7 +29,7 @@
 
 #if ENABLE(MASM) && PLATFORM(X86)
 
-namespace KJS {
+namespace JSC {
 
 void MacroAssembler::emitConvertToFastCall()
 {

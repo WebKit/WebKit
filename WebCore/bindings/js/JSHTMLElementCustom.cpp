@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-using namespace KJS;
+using namespace JSC;
 
 void JSHTMLElement::pushEventHandlerScope(ExecState* exec, ScopeChain& scope) const
 {

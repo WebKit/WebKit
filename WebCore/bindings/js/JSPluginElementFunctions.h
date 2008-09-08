@@ -30,11 +30,11 @@ namespace WebCore {
 
     // Runtime object support code for JSHTMLAppletElement, JSHTMLEmbedElement and JSHTMLObjectElement.
 
-    KJS::JSValue* runtimeObjectGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
-    KJS::JSValue* runtimeObjectPropertyGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
-    bool runtimeObjectCustomGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&, JSHTMLElement*);
-    bool runtimeObjectCustomPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, HTMLElement*, KJS::PutPropertySlot&);
-    KJS::CallType runtimeObjectGetCallData(HTMLElement*, KJS::CallData&);
+    JSC::JSValue* runtimeObjectGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+    JSC::JSValue* runtimeObjectPropertyGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+    bool runtimeObjectCustomGetOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&, JSHTMLElement*);
+    bool runtimeObjectCustomPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, HTMLElement*, JSC::PutPropertySlot&);
+    JSC::CallType runtimeObjectGetCallData(HTMLElement*, JSC::CallData&);
 
 } // namespace WebCore
 

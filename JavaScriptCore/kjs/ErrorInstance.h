@@ -23,7 +23,7 @@
 
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class ErrorInstance : public JSObject {
     public:
@@ -33,6 +33,6 @@ namespace KJS {
         static const ClassInfo info;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ErrorInstance_h

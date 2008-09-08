@@ -32,7 +32,7 @@
 #include "SourceProvider.h"
 #include <wtf/RefPtr.h>
 
-namespace KJS {
+namespace JSC {
 
     class SourceRange {
     public:
@@ -62,6 +62,6 @@ namespace KJS {
         int m_endChar;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // SourceRange_h

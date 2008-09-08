@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-using namespace KJS;
+using namespace JSC;
 
 bool JSHTMLAppletElement::customGetOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {

@@ -28,7 +28,7 @@
 
 #include "JSFunction.h"
 
-namespace KJS {
+namespace JSC {
 
 JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructType, const ConstructData& constructData, const ArgList& args)
 {
@@ -39,4 +39,4 @@ JSObject* construct(ExecState* exec, JSValue* object, ConstructType constructTyp
     return static_cast<JSFunction*>(object)->construct(exec, args);
 }
 
-} // namespace KJS
+} // namespace JSC

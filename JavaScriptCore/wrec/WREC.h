@@ -33,7 +33,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
 
 
     typedef int (*WRECFunction)(const UChar* input, unsigned start, unsigned length, int* output) WREC_CALL;
@@ -248,7 +248,7 @@ namespace KJS {
         unsigned m_index;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ENABLE(WREC)
 

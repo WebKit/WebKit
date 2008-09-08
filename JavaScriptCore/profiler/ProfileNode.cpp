@@ -37,7 +37,7 @@
 #include <windows.h>
 #endif
 
-namespace KJS {
+namespace JSC {
 
 static double getCount()
 {
@@ -349,4 +349,4 @@ double ProfileNode::debugPrintDataSampleStyle(int indentLevel, FunctionCallHashC
 }
 #endif
 
-} // namespace KJS
+} // namespace JSC

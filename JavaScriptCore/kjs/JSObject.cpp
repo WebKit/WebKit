@@ -59,7 +59,7 @@
 
 #endif // JSOBJECT_MARK_TRACING
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSObject);
 
@@ -521,4 +521,4 @@ JSObject* constructEmptyObject(ExecState* exec)
     return new (exec) JSObject(exec->lexicalGlobalObject()->objectPrototype());
 }
 
-} // namespace KJS
+} // namespace JSC

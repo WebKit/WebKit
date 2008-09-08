@@ -30,7 +30,7 @@
 
 #import <wtf/PassRefPtr.h>
 
-namespace KJS {
+namespace JSC {
     
     class JSObject;
     class JSValue;
@@ -40,32 +40,32 @@ namespace KJS {
     }
 }
 namespace WebCore {
-    NSObject* getJSWrapper(KJS::JSObject*);
-    void addJSWrapper(NSObject* wrapper, KJS::JSObject*);
-    void removeJSWrapper(KJS::JSObject*);
-    id createJSWrapper(KJS::JSObject*, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> root);
+    NSObject* getJSWrapper(JSC::JSObject*);
+    void addJSWrapper(NSObject* wrapper, JSC::JSObject*);
+    void removeJSWrapper(JSC::JSObject*);
+    id createJSWrapper(JSC::JSObject*, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> root);
 }
 
 @interface WebScriptObject (Private)
-+ (id)_convertValueToObjcValue:(KJS::JSValue*)value originRootObject:(KJS::Bindings::RootObject*)originRootObject rootObject:(KJS::Bindings::RootObject*)rootObject;
-+ (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(KJS::Bindings::RootObject*)originRootObject rootObject:(KJS::Bindings::RootObject*)rootObject;
++ (id)_convertValueToObjcValue:(JSC::JSValue*)value originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
++ (id)scriptObjectForJSObject:(JSObjectRef)jsObject originRootObject:(JSC::Bindings::RootObject*)originRootObject rootObject:(JSC::Bindings::RootObject*)rootObject;
 - (id)_init;
-- (id)_initWithJSObject:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
-- (void)_setImp:(KJS::JSObject*)imp originRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
-- (void)_setOriginRootObject:(PassRefPtr<KJS::Bindings::RootObject>)originRootObject andRootObject:(PassRefPtr<KJS::Bindings::RootObject>)rootObject;
+- (id)_initWithJSObject:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
+- (void)_setImp:(JSC::JSObject*)imp originRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject rootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
+- (void)_setOriginRootObject:(PassRefPtr<JSC::Bindings::RootObject>)originRootObject andRootObject:(PassRefPtr<JSC::Bindings::RootObject>)rootObject;
 - (void)_initializeScriptDOMNodeImp;
-- (KJS::JSObject *)_imp;
+- (JSC::JSObject *)_imp;
 - (BOOL)_hasImp;
-- (KJS::Bindings::RootObject*)_rootObject;
-- (KJS::Bindings::RootObject*)_originRootObject;
+- (JSC::Bindings::RootObject*)_rootObject;
+- (JSC::Bindings::RootObject*)_originRootObject;
 @end
 
 @interface WebScriptObjectPrivate : NSObject
 {
 @public
-    KJS::JSObject *imp;
-    KJS::Bindings::RootObject* rootObject;
-    KJS::Bindings::RootObject* originRootObject;
+    JSC::JSObject *imp;
+    JSC::Bindings::RootObject* rootObject;
+    JSC::Bindings::RootObject* originRootObject;
     BOOL isCreatedByDOMWrapper;
 }
 @end

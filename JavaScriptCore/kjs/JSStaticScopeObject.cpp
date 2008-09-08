@@ -27,7 +27,7 @@
 
 #include "JSStaticScopeObject.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSStaticScopeObject);
 

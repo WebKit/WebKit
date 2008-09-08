@@ -27,7 +27,7 @@
 #include "InternalFunction.h"
 #include "CallData.h"
 
-namespace KJS {
+namespace JSC {
 
     class PrototypeFunction : public InternalFunction {
     public:
@@ -40,6 +40,6 @@ namespace KJS {
         const NativeFunction m_function;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // PrototypeFunction_h

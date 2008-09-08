@@ -35,7 +35,7 @@
 #include <kjs/JSObject.h>
 #include <kjs/JSValue.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

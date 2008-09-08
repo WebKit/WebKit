@@ -37,7 +37,7 @@
 #define WREC_CALL
 #endif
 
-namespace KJS {
+namespace JSC {
 
     class MacroAssembler : public X86Assembler {
     public:

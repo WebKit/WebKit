@@ -30,7 +30,7 @@
 #include <kjs/InternalFunction.h>
 #include <wtf/OwnPtr.h>
 
-namespace KJS {
+namespace JSC {
 
 class RuntimeMethod : public InternalFunction {
 public:
@@ -45,6 +45,6 @@ private:
     OwnPtr<Bindings::MethodList> _methodList;
 };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif

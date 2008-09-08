@@ -34,7 +34,7 @@
 #include "qt_instance.h"
 #endif
 
-namespace KJS { namespace Bindings {
+namespace JSC { namespace Bindings {
 
 Array::Array(PassRefPtr<RootObject> rootObject)
     : _rootObject(rootObject)
@@ -118,4 +118,4 @@ RootObject* Instance::rootObject() const
     return _rootObject && _rootObject->isValid() ? _rootObject.get() : 0;
 }
 
-} } // namespace KJS::Bindings
+} } // namespace JSC::Bindings

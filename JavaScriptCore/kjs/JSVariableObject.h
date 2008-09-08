@@ -36,7 +36,7 @@
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/UnusedParam.h>
 
-namespace KJS {
+namespace JSC {
 
     class Register;
 
@@ -167,6 +167,6 @@ namespace KJS {
         return true;
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSVariableObject_h

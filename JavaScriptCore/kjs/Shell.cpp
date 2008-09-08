@@ -72,7 +72,7 @@
 #include <QDateTime>
 #endif
 
-using namespace KJS;
+using namespace JSC;
 using namespace WTF;
 
 static bool fillBufferWithContentsOfFile(const UString& fileName, Vector<char>& buffer);
@@ -466,7 +466,7 @@ static void parseArguments(int argc, char** argv, Options& options)
 
 int jscmain(int argc, char** argv, JSGlobalData* globalData)
 {
-    KJS::initializeThreading();
+    JSC::initializeThreading();
 
     JSLock lock(false);
 

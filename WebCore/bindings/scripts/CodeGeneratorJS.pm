@@ -252,7 +252,7 @@ sub GenerateGetOwnPropertySlotBody
 {
     my ($dataNode, $interfaceName, $className, $implClassName, $hasAttributes, $inlined) = @_;
 
-    my $namespaceMaybe = ($inlined ? "KJS::" : "");
+    my $namespaceMaybe = ($inlined ? "JSC::" : "");
 
     my @getOwnPropertySlotImpl = ();
 
@@ -402,7 +402,7 @@ sub GenerateHeader
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    $className($passType, JSDOMWindowShell*);\n");
     } else {
-        push(@headerContent, "    $className(KJS::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
+        push(@headerContent, "    $className(JSC::JSObject* prototype, $passType" . (IsSVGTypeNeedingContextParameter($implClassName) ? ", SVGElement* context" : "") .");\n");
     }
 
     # Destructor
@@ -423,10 +423,10 @@ sub GenerateHeader
 
     # Getters
     if ($hasGetter) {
-        push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::PropertySlot&);\n");
-        push(@headerContent, "    virtual bool getOwnPropertySlot(KJS::ExecState*, unsigned propertyName, KJS::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"};
-        push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n") if $numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"};
-        push(@headerContent, "    bool customGetOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
+        push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);\n");
+        push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned propertyName, JSC::PropertySlot&);\n") if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) && !$dataNode->extendedAttributes->{"HasOverridingNameGetter"};
+        push(@headerContent, "    JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;\n") if $numAttributes > 0 || $dataNode->extendedAttributes->{"GenerateConstructor"};
+        push(@headerContent, "    bool customGetOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomGetOwnPropertySlot"};
     }
 
     # Check if we have any writable properties
@@ -443,49 +443,49 @@ sub GenerateHeader
 
     # Getters
     if ($hasSetter) {
-        push(@headerContent, "    virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSValue*, KJS::PutPropertySlot&);\n");
-        push(@headerContent, "    virtual void put(KJS::ExecState*, unsigned propertyName, KJS::JSValue*);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
-        push(@headerContent, "    void putValueProperty(KJS::ExecState*, int, KJS::JSValue*);\n") if $hasReadWriteProperties;
-        push(@headerContent, "    bool customPut(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, KJS::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
+        push(@headerContent, "    virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSValue*, JSC::PutPropertySlot&);\n");
+        push(@headerContent, "    virtual void put(JSC::ExecState*, unsigned propertyName, JSC::JSValue*);\n") if $dataNode->extendedAttributes->{"HasCustomIndexSetter"};
+        push(@headerContent, "    void putValueProperty(JSC::ExecState*, int, JSC::JSValue*);\n") if $hasReadWriteProperties;
+        push(@headerContent, "    bool customPut(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, JSC::PutPropertySlot&);\n") if $dataNode->extendedAttributes->{"CustomPutFunction"};
     }
 
     # Class info
-    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }\n");
-    push(@headerContent, "    static const KJS::ClassInfo s_info;\n\n");
+    push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
+    push(@headerContent, "    static const JSC::ClassInfo s_info;\n\n");
 
     # Custom mark function
     push(@headerContent, "    virtual void mark();\n\n") if $dataNode->extendedAttributes->{"CustomMarkFunction"};
 
     # Custom pushEventHandlerScope function
-    push(@headerContent, "    virtual void pushEventHandlerScope(KJS::ExecState*, KJS::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
+    push(@headerContent, "    virtual void pushEventHandlerScope(JSC::ExecState*, JSC::ScopeChain&) const;\n\n") if $dataNode->extendedAttributes->{"CustomPushEventHandlerScope"};
 
     # Custom call functions
-    push(@headerContent, "    virtual KJS::CallType getCallData(KJS::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};
+    push(@headerContent, "    virtual JSC::CallType getCallData(JSC::CallData&);\n\n") if $dataNode->extendedAttributes->{"CustomCall"};
 
     # Custom deleteProperty function
-    push(@headerContent, "    virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
+    push(@headerContent, "    virtual bool deleteProperty(JSC::ExecState*, const JSC::Identifier&);\n") if $dataNode->extendedAttributes->{"CustomDeleteProperty"};
 
     # Custom getPropertyNames function
-    push(@headerContent, "    virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"});
-    push(@headerContent, "    bool customGetPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
+    push(@headerContent, "    virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if ($dataNode->extendedAttributes->{"CustomGetPropertyNames"} || $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"});
+    push(@headerContent, "    bool customGetPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);\n") if $dataNode->extendedAttributes->{"CustomGetPropertyNames"};
 
     # Custom getPropertyAttributes function
-    push(@headerContent, "    virtual bool getPropertyAttributes(KJS::ExecState*, const KJS::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
+    push(@headerContent, "    virtual bool getPropertyAttributes(JSC::ExecState*, const JSC::Identifier&, unsigned& attributes) const;\n") if $dataNode->extendedAttributes->{"CustomGetPropertyAttributes"};
 
     # Custom defineGetter function
-    push(@headerContent, "    virtual void defineGetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* getterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
+    push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineGetter"};
 
     # Custom defineSetter function
-    push(@headerContent, "    virtual void defineSetter(KJS::ExecState*, const KJS::Identifier& propertyName, KJS::JSObject* setterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineSetter"};
+    push(@headerContent, "    virtual void defineSetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* setterFunction);\n") if $dataNode->extendedAttributes->{"CustomDefineSetter"};
 
     # Custom lookupGetter function
-    push(@headerContent, "    virtual KJS::JSValue* lookupGetter(KJS::ExecState*, const KJS::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupGetter"};
+    push(@headerContent, "    virtual JSC::JSValue* lookupGetter(JSC::ExecState*, const JSC::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupGetter"};
 
     # Custom lookupSetter function
-    push(@headerContent, "    virtual KJS::JSValue* lookupSetter(KJS::ExecState*, const KJS::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupSetter"};
+    push(@headerContent, "    virtual JSC::JSValue* lookupSetter(JSC::ExecState*, const JSC::Identifier& propertyName);\n") if $dataNode->extendedAttributes->{"CustomLookupSetter"};
 
     # Constructor object getter
-    push(@headerContent, "    static KJS::JSValue* getConstructor(KJS::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
+    push(@headerContent, "    static JSC::JSValue* getConstructor(JSC::ExecState*);\n") if $dataNode->extendedAttributes->{"GenerateConstructor"};
 
     my $numCustomFunctions = 0;
     my $numCustomAttributes = 0;
@@ -531,15 +531,15 @@ sub GenerateHeader
 
         foreach my $attribute (@{$dataNode->attributes}) {
             if ($attribute->signature->extendedAttributes->{"Custom"}) {
-                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(KJS::ExecState*) const;\n");
+                push(@headerContent, "    JSC::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(JSC::ExecState*) const;\n");
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue*);\n");
                 }
             } elsif ($attribute->signature->extendedAttributes->{"CustomGetter"}) {
-                push(@headerContent, "    KJS::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(KJS::ExecState*) const;\n");
+                push(@headerContent, "    JSC::JSValue* " . $codeGenerator->WK_lcfirst($attribute->signature->name) . "(JSC::ExecState*) const;\n");
             } elsif ($attribute->signature->extendedAttributes->{"CustomSetter"}) {
                 if ($attribute->type !~ /^readonly/) {
-                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(KJS::ExecState*, KJS::JSValue*);\n");
+                    push(@headerContent, "    void set" . $codeGenerator->WK_ucfirst($attribute->signature->name) . "(JSC::ExecState*, JSC::JSValue*);\n");
                 }
             }
         }
@@ -554,7 +554,7 @@ sub GenerateHeader
         foreach my $function (@{$dataNode->functions}) {
             if ($function->signature->extendedAttributes->{"Custom"}) {
                 my $functionImplementationName = $function->signature->extendedAttributes->{"ImplementationFunction"} || $codeGenerator->WK_lcfirst($function->signature->name);
-                push(@headerContent, "    KJS::JSValue* " . $functionImplementationName . "(KJS::ExecState*, const KJS::ArgList&);\n");
+                push(@headerContent, "    JSC::JSValue* " . $functionImplementationName . "(JSC::ExecState*, const JSC::ArgList&);\n");
             }
         }
     }
@@ -586,24 +586,24 @@ sub GenerateHeader
 
     # Index getter
     if ($dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"}) {
-        push(@headerContent, "    static KJS::JSValue* indexGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
+        push(@headerContent, "    static JSC::JSValue* indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
     }
 
     # Index setter
     if ($dataNode->extendedAttributes->{"HasCustomIndexSetter"}) {
-        push(@headerContent, "    void indexSetter(KJS::ExecState*, unsigned index, KJS::JSValue*);\n");
+        push(@headerContent, "    void indexSetter(JSC::ExecState*, unsigned index, JSC::JSValue*);\n");
     }
     # Name getter
     if ($dataNode->extendedAttributes->{"HasNameGetter"} || $dataNode->extendedAttributes->{"HasOverridingNameGetter"}) {
         push(@headerContent, "private:\n");
-        push(@headerContent, "    static bool canGetItemsForName(KJS::ExecState*, $implClassName*, const KJS::Identifier&);\n");
-        push(@headerContent, "    static KJS::JSValue* nameGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);\n");
+        push(@headerContent, "    static bool canGetItemsForName(JSC::ExecState*, $implClassName*, const JSC::Identifier&);\n");
+        push(@headerContent, "    static JSC::JSValue* nameGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);\n");
     }
 
     push(@headerContent, "};\n\n");
 
     if ($dataNode->extendedAttributes->{"InlineGetOwnPropertySlot"}) {
-        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)\n");
+        push(@headerContent, "ALWAYS_INLINE bool ${className}::getOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)\n");
         push(@headerContent, "{\n");
         push(@headerContent, GenerateGetOwnPropertySlotBody($dataNode, $interfaceName, $className, $implClassName, $numAttributes > 0, 1));
         push(@headerContent, "}\n\n");
@@ -611,56 +611,56 @@ sub GenerateHeader
 
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateToJS"}) {
         if ($podType) {
-            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, JSSVGPODTypeWrapper<$podType>*, SVGElement* context);\n");
+            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, JSSVGPODTypeWrapper<$podType>*, SVGElement* context);\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType, SVGElement* context);\n");
+            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $passType, SVGElement* context);\n");
         } else {
-            push(@headerContent, "KJS::JSValue* toJS(KJS::ExecState*, $passType);\n");
+            push(@headerContent, "JSC::JSValue* toJS(JSC::ExecState*, $passType);\n");
         }
         if ($interfaceName eq "Node") {
             # Resolve ambiguity with EventTarget that otherwise exists.
-            push(@headerContent, "inline KJS::JSValue* toJS(KJS::ExecState* exec, EventTargetNode* node) { return toJS(exec, static_cast<Node*>(node)); }\n");
+            push(@headerContent, "inline JSC::JSValue* toJS(JSC::ExecState* exec, EventTargetNode* node) { return toJS(exec, static_cast<Node*>(node)); }\n");
         }
     }
     if (!$hasParent || $dataNode->extendedAttributes->{"GenerateNativeConverter"}) {
         if ($podType) {
-            push(@headerContent, "$podType to${interfaceName}(KJS::JSValue*);\n");
+            push(@headerContent, "$podType to${interfaceName}(JSC::JSValue*);\n");
         } elsif ($interfaceName eq "NodeFilter") {
-            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(KJS::JSValue*);\n");
+            push(@headerContent, "PassRefPtr<NodeFilter> toNodeFilter(JSC::JSValue*);\n");
         } else {
-            push(@headerContent, "$implClassName* to${interfaceName}(KJS::JSValue*);\n");
+            push(@headerContent, "$implClassName* to${interfaceName}(JSC::JSValue*);\n");
         }
         if ($interfaceName eq "Node" or $interfaceName eq "Element" or $interfaceName eq "Text") {
-            push(@headerContent, "KJS::JSValue* toJSNewlyCreated(KJS::ExecState*, $interfaceName*);\n");
+            push(@headerContent, "JSC::JSValue* toJSNewlyCreated(JSC::ExecState*, $interfaceName*);\n");
         }
     }
     push(@headerContent, "\n");
 
     # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
-    push(@headerContent, "class ${className}Prototype : public KJS::JSObject {\n");
+    push(@headerContent, "class ${className}Prototype : public JSC::JSObject {\n");
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    static KJS::JSObject* self();\n");
+        push(@headerContent, "    static JSC::JSObject* self();\n");
         push(@headerContent, "    void* operator new(size_t);\n");
     } else {
-        push(@headerContent, "    static KJS::JSObject* self(KJS::ExecState*);\n");
+        push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*);\n");
     }
-    push(@headerContent, "    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }\n");
-    push(@headerContent, "    static const KJS::ClassInfo s_info;\n");
+    push(@headerContent, "    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }\n");
+    push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0) {
-        push(@headerContent, "    bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);\n");
+        push(@headerContent, "    bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
     }
     if ($numConstants ne 0) {
-        push(@headerContent, "    KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;\n");
+        push(@headerContent, "    JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;\n");
     }
     if ($dataNode->extendedAttributes->{"DoNotCache"}) {
-        push(@headerContent, "    ${className}Prototype() : KJS::JSObject(JSDOMWindowBase::commonJSGlobalData()->nullProtoStructureID) { }\n");
+        push(@headerContent, "    ${className}Prototype() : JSC::JSObject(JSDOMWindowBase::commonJSGlobalData()->nullProtoStructureID) { }\n");
     } else {
-        push(@headerContent, "    ${className}Prototype(KJS::ExecState* exec)\n");
-        if ($hasParent && $parentClassName ne "KJS::DOMNodeFilter") {
-            push(@headerContent, "        : KJS::JSObject(${parentClassName}Prototype::self(exec)) { }\n");
+        push(@headerContent, "    ${className}Prototype(JSC::ExecState* exec)\n");
+        if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
+            push(@headerContent, "        : JSC::JSObject(${parentClassName}Prototype::self(exec)) { }\n");
         } else {
-            push(@headerContent, "        : KJS::JSObject(exec->lexicalGlobalObject()->objectPrototype()) { }\n");
+            push(@headerContent, "        : JSC::JSObject(exec->lexicalGlobalObject()->objectPrototype()) { }\n");
         }
     }
 
@@ -670,7 +670,7 @@ sub GenerateHeader
         push(@headerContent,"// Functions\n\n");
         foreach my $function (@{$dataNode->functions}) {
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
-            push(@headerContent, "KJS::JSValue* ${functionName}(KJS::ExecState*, KJS::JSObject*, KJS::JSValue*, const KJS::ArgList&);\n");
+            push(@headerContent, "JSC::JSValue* ${functionName}(JSC::ExecState*, JSC::JSObject*, JSC::JSValue*, const JSC::ArgList&);\n");
         }
     }
 
@@ -724,7 +724,7 @@ sub GenerateImplementation
 
     @implContent = ();
 
-    push(@implContent, "\nusing namespace KJS;\n\n");
+    push(@implContent, "\nusing namespace JSC;\n\n");
     push(@implContent, "namespace WebCore {\n\n");
 
     push(@implContent, "ASSERT_CLASS_FITS_IN_CELL($className)\n\n");
@@ -867,7 +867,7 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec)\n");
         push(@implContent, "{\n");
         push(@implContent, "    static const Identifier* prototypeIdentifier = new Identifier(exec, \"[[${className}.prototype]]\");\n");
-        push(@implContent, "    return KJS::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
+        push(@implContent, "    return JSC::cacheGlobalObject<${className}Prototype>(exec, *prototypeIdentifier);\n");
         push(@implContent, "}\n\n");
     }
     if ($interfaceName eq "DOMWindow") {
@@ -1060,10 +1060,10 @@ sub GenerateImplementation
 
                     if ($podType) {
                         push(@implContent, "        $podType imp(*impl());\n");
-                        push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$getterFunctionName(ec)") . ";\n");
+                        push(@implContent, "        JSC::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, "", "imp.$getterFunctionName(ec)") . ";\n");
                     } else {
                         push(@implContent, "        $implClassName* imp = static_cast<$implClassName*>(impl());\n");
-                        push(@implContent, "        KJS::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName(ec)") . ";\n");
+                        push(@implContent, "        JSC::JSValue* result = " . NativeToJSValue($attribute->signature, 0, $implClassName, $implClassNameForValueConversion, "imp->$getterFunctionName(ec)") . ";\n");
                     }
 
                     push(@implContent, "        setDOMException(exec, ec);\n");
@@ -1208,7 +1208,7 @@ sub GenerateImplementation
     if ($dataNode->extendedAttributes->{"GenerateConstructor"}) {
         push(@implContent, "JSValue* ${className}::getConstructor(ExecState* exec)\n{\n");
         push(@implContent, "    static const Identifier* constructorIdentifier = new Identifier(exec, \"[[${interfaceName}.constructor]]\");\n");
-        push(@implContent, "    return KJS::cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
+        push(@implContent, "    return JSC::cacheGlobalObject<${className}Constructor>(exec, *constructorIdentifier);\n");
         push(@implContent, "}\n\n");
     }
 
@@ -1348,11 +1348,11 @@ sub GenerateImplementation
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateToJS"}) and !UsesManualToJSImplementation($implClassName)) {
         if ($podType) {
-            push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj, SVGElement* context)\n");
+            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, JSSVGPODTypeWrapper<$podType>* obj, SVGElement* context)\n");
         } elsif (IsSVGTypeNeedingContextParameter($implClassName)) {
-             push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $passType obj, SVGElement* context)\n");
+             push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $passType obj, SVGElement* context)\n");
         } else {
-            push(@implContent, "KJS::JSValue* toJS(KJS::ExecState* exec, $passType obj)\n");
+            push(@implContent, "JSC::JSValue* toJS(JSC::ExecState* exec, $passType obj)\n");
         }
 
         push(@implContent, "{\n");
@@ -1368,9 +1368,9 @@ sub GenerateImplementation
 
     if ((!$hasParent or $dataNode->extendedAttributes->{"GenerateNativeConverter"}) and !$dataNode->extendedAttributes->{"CustomNativeConverter"}) {
         if ($podType) {
-            push(@implContent, "$podType to${interfaceName}(KJS::JSValue* val)\n");
+            push(@implContent, "$podType to${interfaceName}(JSC::JSValue* val)\n");
         } else {
-            push(@implContent, "$implClassName* to${interfaceName}(KJS::JSValue* val)\n");
+            push(@implContent, "$implClassName* to${interfaceName}(JSC::JSValue* val)\n");
         }
 
         push(@implContent, "{\n");
@@ -1413,7 +1413,7 @@ sub GenerateImplementationFunctionCall()
 
         push(@implContent, $indent . "return jsUndefined();\n");
     } else {
-        push(@implContent, "\n" . $indent . "KJS::JSValue* result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString) . ";\n");
+        push(@implContent, "\n" . $indent . "JSC::JSValue* result = " . NativeToJSValue($function->signature, 1, $implClassName, "", $functionString) . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
         if ($podType) {

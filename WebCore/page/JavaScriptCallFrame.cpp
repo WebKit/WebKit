@@ -34,7 +34,7 @@
 #include <kjs/JSObject.h>
 #include <kjs/JSValue.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -52,7 +52,7 @@ JavaScriptCallFrame* JavaScriptCallFrame::caller()
     return m_caller.get();
 }
 
-const KJS::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
+const JSC::ScopeChainNode* JavaScriptCallFrame::scopeChain() const
 {
     ASSERT(m_isValid);
     if (!m_isValid)

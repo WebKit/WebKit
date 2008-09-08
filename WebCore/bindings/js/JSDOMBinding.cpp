@@ -55,7 +55,7 @@
 #include "XPathException.h"
 #endif
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -223,7 +223,7 @@ JSValue* jsStringOrNull(ExecState* exec, const String& s)
     return jsString(exec, s);
 }
 
-JSValue* jsOwnedStringOrNull(ExecState* exec, const KJS::UString& s)
+JSValue* jsOwnedStringOrNull(ExecState* exec, const JSC::UString& s)
 {
     if (s.isNull())
         return jsNull();

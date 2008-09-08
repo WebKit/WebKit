@@ -35,7 +35,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/RefPtr.h>
 
-namespace KJS {
+namespace JSC {
     class DebuggerCallFrame;
 }
 
@@ -49,7 +49,7 @@ namespace WebCore {
     class JavaScriptCallFrame;
     class JavaScriptDebugListener;
 
-    class JavaScriptDebugServer : KJS::Debugger {
+    class JavaScriptDebugServer : JSC::Debugger {
     public:
         static JavaScriptDebugServer& shared();
 
@@ -95,14 +95,14 @@ namespace WebCore {
         void dispatchFunctionToListeners(JavaScriptExecutionCallback, Page*);
         void pauseIfNeeded(Page*);
 
-        virtual void sourceParsed(KJS::ExecState*, int sourceID, const KJS::UString& sourceURL, const KJS::SourceProvider& source, int startingLineNumber, int errorLine, const KJS::UString& errorMsg);
-        virtual void callEvent(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
-        virtual void atStatement(const KJS::DebuggerCallFrame&, int sourceID, int firstLine);
-        virtual void returnEvent(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
-        virtual void exception(const KJS::DebuggerCallFrame&, int sourceID, int lineNumber);
-        virtual void willExecuteProgram(const KJS::DebuggerCallFrame&, int sourceId, int lineno);
-        virtual void didExecuteProgram(const KJS::DebuggerCallFrame&, int sourceId, int lineno);
-        virtual void didReachBreakpoint(const KJS::DebuggerCallFrame&, int sourceId, int lineno);
+        virtual void sourceParsed(JSC::ExecState*, int sourceID, const JSC::UString& sourceURL, const JSC::SourceProvider& source, int startingLineNumber, int errorLine, const JSC::UString& errorMsg);
+        virtual void callEvent(const JSC::DebuggerCallFrame&, int sourceID, int lineNumber);
+        virtual void atStatement(const JSC::DebuggerCallFrame&, int sourceID, int firstLine);
+        virtual void returnEvent(const JSC::DebuggerCallFrame&, int sourceID, int lineNumber);
+        virtual void exception(const JSC::DebuggerCallFrame&, int sourceID, int lineNumber);
+        virtual void willExecuteProgram(const JSC::DebuggerCallFrame&, int sourceId, int lineno);
+        virtual void didExecuteProgram(const JSC::DebuggerCallFrame&, int sourceId, int lineno);
+        virtual void didReachBreakpoint(const JSC::DebuggerCallFrame&, int sourceId, int lineno);
 
         typedef HashMap<Page*, ListenerSet*> PageListenersMap;
         PageListenersMap m_pageListenersMap;

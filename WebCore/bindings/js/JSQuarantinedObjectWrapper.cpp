@@ -28,7 +28,7 @@
 
 #include <kjs/JSGlobalObject.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -208,7 +208,7 @@ JSObject* JSQuarantinedObjectWrapper::construct(ExecState* exec, JSObject* const
     ConstructType unwrappedConstructType = wrapper->m_unwrappedObject->getConstructData(unwrappedConstructData);
     ASSERT(unwrappedConstructType != ConstructTypeNone);
 
-    JSValue* unwrappedResult = KJS::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
+    JSValue* unwrappedResult = JSC::construct(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedConstructType, unwrappedConstructData, preparedArgs);
 
     JSValue* resultValue = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
     ASSERT(resultValue->isObject());
@@ -263,7 +263,7 @@ JSValue* JSQuarantinedObjectWrapper::call(ExecState* exec, JSObject* function, J
     CallType unwrappedCallType = wrapper->m_unwrappedObject->getCallData(unwrappedCallData);
     ASSERT(unwrappedCallType != CallTypeNone);
 
-    JSValue* unwrappedResult = KJS::call(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
+    JSValue* unwrappedResult = JSC::call(wrapper->unwrappedExecState(), wrapper->m_unwrappedObject, unwrappedCallType, unwrappedCallData, preparedThisValue, preparedArgs);
 
     JSValue* result = wrapper->wrapOutgoingValue(wrapper->unwrappedExecState(), unwrappedResult);
 

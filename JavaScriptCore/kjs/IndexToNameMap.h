@@ -24,7 +24,7 @@
 #ifndef IndexToNameMap_h
 #define IndexToNameMap_h
 
-namespace KJS {
+namespace JSC {
 
     class ArgList;
     class ExecState;
@@ -45,6 +45,6 @@ namespace KJS {
         Identifier* m_map; // FIMXE: this should be an OwnArrayPtr
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // IndexToNameMap_h

@@ -25,7 +25,7 @@
 #include "JSString.h"
 #include "ustring.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NativeErrorPrototype);
 
@@ -36,4 +36,4 @@ NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, ErrorPrototype* erro
     putDirect(exec->propertyNames().message, jsString(exec, message), 0);
 }
 
-} // namespace KJS
+} // namespace JSC

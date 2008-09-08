@@ -31,7 +31,7 @@
 
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class JSNotAnObjectErrorStub : public JSObject {
     public:
@@ -84,6 +84,6 @@ namespace KJS {
         JSNotAnObjectErrorStub* m_exception;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSNotAnObject_h

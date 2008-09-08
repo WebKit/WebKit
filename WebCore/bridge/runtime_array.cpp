@@ -29,7 +29,7 @@
 #include <kjs/ArrayPrototype.h>
 #include <kjs/Error.h>
 
-using namespace KJS;
+using namespace JSC;
 
 const ClassInfo RuntimeArray::s_info = { "RuntimeArray", &JSArray::info, 0, 0 };
 

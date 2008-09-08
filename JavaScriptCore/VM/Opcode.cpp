@@ -32,7 +32,7 @@
 
 using namespace std;
 
-namespace KJS {
+namespace JSC {
 
 #if ENABLE(SAMPLING_TOOL) || DUMP_OPCODE_STATS
 
@@ -183,4 +183,4 @@ void OpcodeStats::resetLastInstruction()
 
 #endif
 
-} // namespace KJS
+} // namespace JSC

@@ -32,7 +32,7 @@
 #include "Frame.h"
 #include "History.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

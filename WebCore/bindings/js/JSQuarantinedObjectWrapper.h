@@ -30,45 +30,45 @@
 
 namespace WebCore {
 
-    class JSQuarantinedObjectWrapper : public KJS::JSObject {
+    class JSQuarantinedObjectWrapper : public JSC::JSObject {
     public:
-        static JSQuarantinedObjectWrapper* asWrapper(KJS::JSValue*);
+        static JSQuarantinedObjectWrapper* asWrapper(JSC::JSValue*);
 
         virtual ~JSQuarantinedObjectWrapper();
 
-        KJS::JSObject* unwrappedObject() const { return m_unwrappedObject; }
-        KJS::JSGlobalObject* unwrappedGlobalObject() const { return m_unwrappedGlobalObject; };
-        KJS::ExecState* unwrappedExecState() const;
+        JSC::JSObject* unwrappedObject() const { return m_unwrappedObject; }
+        JSC::JSGlobalObject* unwrappedGlobalObject() const { return m_unwrappedGlobalObject; };
+        JSC::ExecState* unwrappedExecState() const;
 
-        bool allowsUnwrappedAccessFrom(const KJS::ExecState*) const;
+        bool allowsUnwrappedAccessFrom(const JSC::ExecState*) const;
 
-        static const KJS::ClassInfo s_info;
+        static const JSC::ClassInfo s_info;
 
     protected:
-        JSQuarantinedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, KJS::JSObject* wrappedPrototype);
-        JSQuarantinedObjectWrapper(KJS::ExecState* unwrappedExec, KJS::JSObject* unwrappedObject, PassRefPtr<KJS::StructureID>);
+        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, JSC::JSObject* wrappedPrototype);
+        JSQuarantinedObjectWrapper(JSC::ExecState* unwrappedExec, JSC::JSObject* unwrappedObject, PassRefPtr<JSC::StructureID>);
 
         virtual void mark();
 
     private:
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-        virtual bool getOwnPropertySlot(KJS::ExecState*, unsigned, KJS::PropertySlot&);
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+        virtual bool getOwnPropertySlot(JSC::ExecState*, unsigned, JSC::PropertySlot&);
 
-        virtual void put(KJS::ExecState*, const KJS::Identifier&, KJS::JSValue*, KJS::PutPropertySlot&);
-        virtual void put(KJS::ExecState*, unsigned, KJS::JSValue*);
+        virtual void put(JSC::ExecState*, const JSC::Identifier&, JSC::JSValue*, JSC::PutPropertySlot&);
+        virtual void put(JSC::ExecState*, unsigned, JSC::JSValue*);
 
-        virtual bool deleteProperty(KJS::ExecState*, const KJS::Identifier&);
-        virtual bool deleteProperty(KJS::ExecState*, unsigned);
+        virtual bool deleteProperty(JSC::ExecState*, const JSC::Identifier&);
+        virtual bool deleteProperty(JSC::ExecState*, unsigned);
 
-        virtual KJS::CallType getCallData(KJS::CallData&);
-        virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
+        virtual JSC::CallType getCallData(JSC::CallData&);
+        virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
         virtual bool implementsHasInstance() const;
-        virtual bool hasInstance(KJS::ExecState*, KJS::JSValue*);
+        virtual bool hasInstance(JSC::ExecState*, JSC::JSValue*);
 
-        virtual void getPropertyNames(KJS::ExecState*, KJS::PropertyNameArray&);
+        virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
 
-        virtual KJS::UString className() const { return m_unwrappedObject->className(); }
+        virtual JSC::UString className() const { return m_unwrappedObject->className(); }
 
         virtual bool allowsGetProperty() const { return false; }
         virtual bool allowsSetProperty() const { return false; }
@@ -78,18 +78,18 @@ namespace WebCore {
         virtual bool allowsCallAsFunction() const { return false; }
         virtual bool allowsGetPropertyNames() const { return false; }
 
-        virtual KJS::JSValue* prepareIncomingValue(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue) const = 0;
-        virtual KJS::JSValue* wrapOutgoingValue(KJS::ExecState* unwrappedExec, KJS::JSValue* unwrappedValue) const = 0;
+        virtual JSC::JSValue* prepareIncomingValue(JSC::ExecState* unwrappedExec, JSC::JSValue* unwrappedValue) const = 0;
+        virtual JSC::JSValue* wrapOutgoingValue(JSC::ExecState* unwrappedExec, JSC::JSValue* unwrappedValue) const = 0;
 
-        static KJS::JSValue* cachedValueGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static JSC::JSValue* cachedValueGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
-        void transferExceptionToExecState(KJS::ExecState*) const;
+        void transferExceptionToExecState(JSC::ExecState*) const;
 
-        static KJS::JSValue* call(KJS::ExecState*, KJS::JSObject* function, KJS::JSValue* thisValue, const KJS::ArgList&);
-        static KJS::JSObject* construct(KJS::ExecState*, KJS::JSObject*, const KJS::ArgList&);
+        static JSC::JSValue* call(JSC::ExecState*, JSC::JSObject* function, JSC::JSValue* thisValue, const JSC::ArgList&);
+        static JSC::JSObject* construct(JSC::ExecState*, JSC::JSObject*, const JSC::ArgList&);
 
-        KJS::JSGlobalObject* m_unwrappedGlobalObject;
-        KJS::JSObject* m_unwrappedObject;
+        JSC::JSGlobalObject* m_unwrappedGlobalObject;
+        JSC::JSObject* m_unwrappedObject;
     };
 
 } // namespace WebCore

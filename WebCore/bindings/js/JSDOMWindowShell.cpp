@@ -35,7 +35,7 @@
 #include "ScriptController.h"
 #include <kjs/JSObject.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -96,7 +96,7 @@ void JSDOMWindowShell::getPropertyNames(ExecState* exec, PropertyNameArray& prop
     m_window->getPropertyNames(exec, propertyNames);
 }
 
-bool JSDOMWindowShell::getPropertyAttributes(KJS::ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
+bool JSDOMWindowShell::getPropertyAttributes(JSC::ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
     return m_window->getPropertyAttributes(exec, propertyName, attributes);
 }

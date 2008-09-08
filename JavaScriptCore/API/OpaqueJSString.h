@@ -28,7 +28,7 @@
 
 #include <kjs/ustring.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class Identifier;
     class JSGlobalData;
@@ -46,15 +46,15 @@ struct OpaqueJSString : public ThreadSafeShared<OpaqueJSString> {
         return adoptRef(new OpaqueJSString(characters, length));
     }
 
-    static PassRefPtr<OpaqueJSString> create(const KJS::UString&);
+    static PassRefPtr<OpaqueJSString> create(const JSC::UString&);
 
     UChar* characters() { return this ? m_characters : 0; }
     unsigned length() { return this ? m_length : 0; }
 
-    KJS::UString ustring() const;
+    JSC::UString ustring() const;
 
-    KJS::Identifier identifier(KJS::ExecState*) const;
-    KJS::Identifier identifier(KJS::JSGlobalData*) const;
+    JSC::Identifier identifier(JSC::ExecState*) const;
+    JSC::Identifier identifier(JSC::JSGlobalData*) const;
 
 private:
     friend class WTF::ThreadSafeShared<OpaqueJSString>;

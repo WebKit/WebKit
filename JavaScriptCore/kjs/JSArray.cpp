@@ -33,7 +33,7 @@
 
 using namespace std;
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSArray);
 
@@ -907,4 +907,4 @@ JSArray* constructArray(ExecState* exec, const ArgList& values)
     return new (exec) JSArray(exec, exec->lexicalGlobalObject()->arrayPrototype(), values);
 }
 
-} // namespace KJS
+} // namespace JSC

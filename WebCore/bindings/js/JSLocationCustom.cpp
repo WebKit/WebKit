@@ -32,7 +32,7 @@
 #include "JSDOMBinding.h"
 #include "ScriptController.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

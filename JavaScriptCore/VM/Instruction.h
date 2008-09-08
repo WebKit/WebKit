@@ -31,7 +31,7 @@
 
 #include "Opcode.h"
 
-namespace KJS {
+namespace JSC {
 
     class JSCell;
     class StructureID;
@@ -53,6 +53,6 @@ namespace KJS {
         } u;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // Instruction_h

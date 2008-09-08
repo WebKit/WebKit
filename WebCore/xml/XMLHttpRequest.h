@@ -67,7 +67,7 @@ public:
     void overrideMimeType(const String& override);
     String getAllResponseHeaders(ExceptionCode&) const;
     String getResponseHeader(const String& name, ExceptionCode&) const;
-    const KJS::UString& responseText() const;
+    const JSC::UString& responseText() const;
     Document* responseXML() const;
 
     XMLHttpRequestUpload* upload();
@@ -198,13 +198,13 @@ private:
     RefPtr<TextResourceDecoder> m_decoder;
     unsigned long m_identifier;
 
-    // Unlike most strings in the DOM, we keep this as a KJS::UString, not a WebCore::String.
+    // Unlike most strings in the DOM, we keep this as a JSC::UString, not a WebCore::String.
     // That's because these strings can easily get huge (they are filled from the network with
     // no parsing) and because JS can easily observe many intermediate states, so it's very useful
     // to be able to share the buffer with JavaScript versions of the whole or partial string.
     // In contrast, this string doesn't interact much with the rest of the engine so it's not that
     // big a cost that it isn't a String.
-    KJS::UString m_responseText;
+    JSC::UString m_responseText;
     mutable bool m_createdDocument;
     mutable RefPtr<Document> m_responseXML;
 

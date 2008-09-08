@@ -43,7 +43,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
 
     class Identifier;
     class ScopeChain;

@@ -35,7 +35,7 @@
 #include "JSObject.h"
 #include "JSNotAnObject.h"
 
-namespace KJS {
+namespace JSC {
 
 static void substitute(UString& string, const UString& substring)
 {
@@ -219,4 +219,4 @@ JSObject* createNotAnObjectError(ExecState* exec, JSNotAnObjectErrorStub* error,
     return exception;
 }
 
-} // namespace KJS
+} // namespace JSC

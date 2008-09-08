@@ -43,7 +43,7 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/runtime_root.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 // FIXME: these error strings should be public for future use by WebScriptObject and in WebScriptObject.h

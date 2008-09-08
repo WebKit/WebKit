@@ -21,7 +21,7 @@
 #include "config.h"
 #include "BooleanObject.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(BooleanObject);
 
@@ -32,4 +32,4 @@ BooleanObject::BooleanObject(JSObject* prototype)
 {
 }
 
-} // namespace KJS
+} // namespace JSC

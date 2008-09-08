@@ -74,7 +74,7 @@
 #import "DOMSVG.h"
 #endif
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 namespace WebCore {
@@ -414,7 +414,7 @@ static NSArray *kit(const Vector<IntRect>& rects)
     return reinterpret_cast<WebCore::Node*>(_internal);
 }
 
-- (KJS::Bindings::RootObject*)_rootObject
+- (JSC::Bindings::RootObject*)_rootObject
 {
     if (WebCore::Node *n = [self _node]) {
         if (WebCore::Frame* frame = n->document()->frame())

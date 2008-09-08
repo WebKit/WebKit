@@ -35,7 +35,7 @@
 #include <kjs/JSLock.h>
 #pragma warning(pop)
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore;
 
 // WebJavaScriptCollector ---------------------------------------------------------------------------

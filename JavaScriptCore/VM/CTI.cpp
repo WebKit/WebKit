@@ -35,7 +35,7 @@
 
 using namespace std;
 
-namespace KJS {
+namespace JSC {
 
 #if COMPILER(GCC) && PLATFORM(X86)
 asm(
@@ -62,7 +62,7 @@ asm(
     "int3" "\n"
     "1:" "\n"
 #endif
-    "call __ZN3KJS7Machine12cti_vm_throwEPv" "\n"
+    "call __ZN3JSC7Machine12cti_vm_throwEPv" "\n"
     "addl $0x24, %esp" "\n"
     "popl %edi" "\n"
     "popl %esi" "\n"
@@ -93,7 +93,7 @@ extern "C"
     {
         __asm {
            mov [esp], esp;
-            call KJS::Machine::cti_vm_throw;
+            call JSC::Machine::cti_vm_throw;
             add esp, 0x24;
             pop edi;
             pop esi;
@@ -1926,6 +1926,6 @@ void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numS
     return code;
 }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // ENABLE(CTI)

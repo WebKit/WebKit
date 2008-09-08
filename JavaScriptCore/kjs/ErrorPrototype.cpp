@@ -27,7 +27,7 @@
 #include "PrototypeFunction.h"
 #include "ustring.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
@@ -65,4 +65,4 @@ JSValue* errorProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue, 
     return jsNontrivialString(exec, s);
 }
 
-} // namespace KJS
+} // namespace JSC

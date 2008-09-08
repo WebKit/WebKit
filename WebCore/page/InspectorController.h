@@ -39,7 +39,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
     class Profile;
     class UString;
 }
@@ -105,15 +105,15 @@ public:
     bool windowVisible();
     void setWindowVisible(bool visible = true, bool attached = false);
 
-    void addMessageToConsole(MessageSource, MessageLevel, KJS::ExecState*, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceID);
+    void addMessageToConsole(MessageSource, MessageLevel, JSC::ExecState*, const JSC::ArgList& arguments, unsigned lineNumber, const String& sourceID);
     void addMessageToConsole(MessageSource, MessageLevel, const String& message, unsigned lineNumber, const String& sourceID);
     void clearConsoleMessages();
     void toggleRecordButton(bool);
 
-    void addProfile(PassRefPtr<KJS::Profile>, unsigned lineNumber, const KJS::UString& sourceURL);
-    void addProfileMessageToConsole(PassRefPtr<KJS::Profile> prpProfile, unsigned lineNumber, const KJS::UString& sourceURL);
-    void addScriptProfile(KJS::Profile* profile);
-    const Vector<RefPtr<KJS::Profile> >& profiles() const { return m_profiles; }
+    void addProfile(PassRefPtr<JSC::Profile>, unsigned lineNumber, const JSC::UString& sourceURL);
+    void addProfileMessageToConsole(PassRefPtr<JSC::Profile> prpProfile, unsigned lineNumber, const JSC::UString& sourceURL);
+    void addScriptProfile(JSC::Profile* profile);
+    const Vector<RefPtr<JSC::Profile> >& profiles() const { return m_profiles; }
 
     void attachWindow();
     void detachWindow();
@@ -143,7 +143,7 @@ public:
     void didReceiveContentLength(DocumentLoader*, unsigned long identifier, int lengthReceived);
     void didFinishLoading(DocumentLoader*, unsigned long identifier);
     void didFailLoading(DocumentLoader*, unsigned long identifier, const ResourceError&);
-    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, KJS::UString& sourceString);
+    void resourceRetrievedByXMLHttpRequest(unsigned long identifier, JSC::UString& sourceString);
 
 #if ENABLE(DATABASE)
     void didOpenDatabase(Database*, const String& domain, const String& name, const String& version);
@@ -175,12 +175,12 @@ public:
 
     void drawNodeHighlight(GraphicsContext&) const;
     
-    void count(const KJS::UString& title, unsigned lineNumber, const String& sourceID);
+    void count(const JSC::UString& title, unsigned lineNumber, const String& sourceID);
 
-    void startTiming(const KJS::UString& title);
-    bool stopTiming(const KJS::UString& title, double& elapsed);
+    void startTiming(const JSC::UString& title);
+    bool stopTiming(const JSC::UString& title, double& elapsed);
 
-    void startGroup(MessageSource source, KJS::ExecState* exec, const KJS::ArgList& arguments, unsigned lineNumber, const String& sourceURL);
+    void startGroup(MessageSource source, JSC::ExecState* exec, const JSC::ArgList& arguments, unsigned lineNumber, const String& sourceURL);
     void endGroup(MessageSource source, unsigned lineNumber, const String& sourceURL);
 
 private:
@@ -218,8 +218,8 @@ private:
 
     void showWindow();
 
-    virtual void didParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int sourceID);
-    virtual void failedToParseSource(KJS::ExecState*, const KJS::SourceProvider& source, int startingLineNumber, const KJS::UString& sourceURL, int errorLine, const KJS::UString& errorMessage);
+    virtual void didParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int sourceID);
+    virtual void failedToParseSource(JSC::ExecState*, const JSC::SourceProvider& source, int startingLineNumber, const JSC::UString& sourceURL, int errorLine, const JSC::UString& errorMessage);
     virtual void didPause();
 
     Page* m_inspectedPage;
@@ -231,7 +231,7 @@ private:
     HashSet<String> m_knownResources;
     FrameResourcesMap m_frameResources;
     Vector<ConsoleMessage*> m_consoleMessages;
-    Vector<RefPtr<KJS::Profile> > m_profiles;
+    Vector<RefPtr<JSC::Profile> > m_profiles;
     HashMap<String, double> m_times;
     HashMap<String, unsigned> m_counts;
 #if ENABLE(DATABASE)

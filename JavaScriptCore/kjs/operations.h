@@ -22,7 +22,7 @@
 #ifndef _KJS_OPERATIONS_H_
 #define _KJS_OPERATIONS_H_
 
-namespace KJS {
+namespace JSC {
 
   class ExecState;
   class JSValue;

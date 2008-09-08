@@ -104,9 +104,9 @@
 #include "SVGViewSpec.h"
 #endif
 
-using KJS::UString;
-using KJS::JSLock;
-using KJS::JSValue;
+using JSC::UString;
+using JSC::JSLock;
+using JSC::JSValue;
 
 namespace WebCore {
 

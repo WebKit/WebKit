@@ -754,7 +754,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     BOOL acceptedEvent;
     [self willCallPlugInFunction];
     {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
         acceptedEvent = NPP_HandleEvent(plugin, event);
     }
     [self didCallPlugInFunction];
@@ -1104,7 +1104,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
         [self willCallPlugInFunction];
         {
-            KJS::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(false);
             npErr = NPP_SetWindow(plugin, &window);
         }
         [self didCallPlugInFunction];
@@ -1304,7 +1304,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     if (eventModel == NPEventModelCocoa) {
         [self willCallPlugInFunction];
         {
-            KJS::JSLock::DropAllLocks dropAllLocks(false);
+            JSC::JSLock::DropAllLocks dropAllLocks(false);
             NPPluginTextInputFuncs *value;
             if (NPP_GetValue(plugin, NPPVpluginTextInputFuncs, &value) == NPERR_NO_ERROR && value)
                 textInputFuncs = value;
@@ -1850,7 +1850,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     NPError error;
     [self willCallPlugInFunction];
     {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
         error = NPP_GetValue(plugin, NPPVpluginScriptableNPObject, &value);
     }
     [self didCallPlugInFunction];
@@ -2139,7 +2139,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if ([JSPluginRequest sendNotification]) {
             [self willCallPlugInFunction];
             {
-                KJS::JSLock::DropAllLocks dropAllLocks(false);
+                JSC::JSLock::DropAllLocks dropAllLocks(false);
                 NPP_URLNotify(plugin, [URL _web_URLCString], NPRES_DONE, [JSPluginRequest notifyData]);
             }
             [self didCallPlugInFunction];
@@ -2172,7 +2172,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         
     [self willCallPlugInFunction];
     {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
         NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], reason, [pluginRequest notifyData]);
     }
     [self didCallPlugInFunction];
@@ -2217,7 +2217,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
                 if ([pluginRequest sendNotification]) {
                     [self willCallPlugInFunction];
                     {
-                        KJS::JSLock::DropAllLocks dropAllLocks(false);
+                        JSC::JSLock::DropAllLocks dropAllLocks(false);
                         NPP_URLNotify(plugin, [[[pluginRequest request] URL] _web_URLCString], NPERR_GENERIC_ERROR, [pluginRequest notifyData]);
                     }
                     [self didCallPlugInFunction];
@@ -2962,7 +2962,7 @@ static NPBrowserTextInputFuncs *browserTextInputFuncs()
     // Tell the plugin to print into the GWorld
     [self willCallPlugInFunction];
     {
-        KJS::JSLock::DropAllLocks dropAllLocks(false);
+        JSC::JSLock::DropAllLocks dropAllLocks(false);
         NPP_Print(plugin, &npPrint);
     }
     [self didCallPlugInFunction];

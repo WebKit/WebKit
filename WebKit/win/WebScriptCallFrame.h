@@ -31,7 +31,7 @@
 
 #include "WebKit.h"
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class JSValue;
     class UString;
@@ -39,10 +39,10 @@ namespace KJS {
 
 class WebScriptCallFrame : public IWebScriptCallFrame {
 public:
-    static WebScriptCallFrame* createInstance(KJS::ExecState*);
+    static WebScriptCallFrame* createInstance(JSC::ExecState*);
 
 private:
-    WebScriptCallFrame(KJS::ExecState*);
+    WebScriptCallFrame(JSC::ExecState*);
     virtual ~WebScriptCallFrame();
 
 public:
@@ -74,15 +74,15 @@ public:
         /* [out, retval] */ BSTR* value);
 
     // Helper and accessors
-    virtual KJS::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
-    virtual KJS::ExecState* state() const { return m_state; }
+    virtual JSC::JSValue* valueByEvaluatingJavaScriptFromString(BSTR script);
+    virtual JSC::ExecState* state() const { return m_state; }
 
-    static KJS::UString jsValueToString(KJS::ExecState*, KJS::JSValue*);
+    static JSC::UString jsValueToString(JSC::ExecState*, JSC::JSValue*);
 
 private:
     ULONG m_refCount;
 
-    KJS::ExecState* m_state;
+    JSC::ExecState* m_state;
 };
 
 #endif

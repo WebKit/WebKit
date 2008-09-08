@@ -33,7 +33,7 @@
 #include "XSLTProcessor.h"
 #include <wtf/RefPtr.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

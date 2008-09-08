@@ -26,7 +26,7 @@
 #include "NumberObject.h"
 #include "ustring.h"
 
-namespace KJS {
+namespace JSC {
 
 JSValue* JSNumberCell::toPrimitive(ExecState*, PreferredPrimitiveType) const
 {
@@ -101,4 +101,4 @@ JSValue* JSNumberCell::getJSNumber()
     return this;
 }
 
-} // namespace KJS
+} // namespace JSC

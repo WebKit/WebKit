@@ -36,8 +36,8 @@
 #include <kjs/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 
-using namespace KJS;
-using namespace KJS::Bindings;
+using namespace JSC;
+using namespace JSC::Bindings;
 
 extern ClassStructPtr Bindings::webScriptObjectClass()
 {

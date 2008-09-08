@@ -26,7 +26,7 @@
 
 using std::min;
 
-namespace KJS {
+namespace JSC {
 
 void ArgList::getSlice(int startIndex, ArgList& result) const
 {
@@ -81,4 +81,4 @@ void ArgList::slowAppend(JSValue* v)
     m_buffer = m_vector.data();
 }
 
-} // namespace KJS
+} // namespace JSC

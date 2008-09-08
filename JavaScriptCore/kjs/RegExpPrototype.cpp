@@ -32,7 +32,7 @@
 #include "RegExpObject.h"
 #include "regexp.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
@@ -116,4 +116,4 @@ JSValue* regExpProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
     return jsNontrivialString(exec, result);
 }
 
-} // namespace KJS
+} // namespace JSC

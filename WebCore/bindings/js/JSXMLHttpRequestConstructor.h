@@ -28,13 +28,13 @@ class Document;
 
 class JSXMLHttpRequestConstructor : public DOMObject {
 public:
-    JSXMLHttpRequestConstructor(KJS::ExecState*, Document*);
+    JSXMLHttpRequestConstructor(JSC::ExecState*, Document*);
     Document* document() const { return m_document.get(); }
-    static const KJS::ClassInfo s_info;
+    static const JSC::ClassInfo s_info;
 
 private:
-    virtual KJS::ConstructType getConstructData(KJS::ConstructData&);
-    virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
+    virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
+    virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
 
     RefPtr<Document> m_document;
 };

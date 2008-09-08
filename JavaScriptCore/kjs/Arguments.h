@@ -27,7 +27,7 @@
 #include "IndexToNameMap.h"
 #include "JSObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class JSActivation;
 
@@ -61,6 +61,6 @@ namespace KJS {
         OwnPtr<ArgumentsData> d;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // Arguments_h

@@ -35,7 +35,7 @@
 #include "Register.h"
 #include "JSFunction.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSActivation);
 
@@ -174,4 +174,4 @@ JSObject* JSActivation::createArgumentsObject(ExecState* exec)
     return new (exec) Arguments(exec, function, args, this);
 }
 
-} // namespace KJS
+} // namespace JSC

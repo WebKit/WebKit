@@ -55,7 +55,7 @@
 #include "SVGPathSegLinetoVertical.h"
 #include "SVGPathSegMoveto.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

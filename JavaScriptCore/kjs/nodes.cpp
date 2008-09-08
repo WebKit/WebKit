@@ -47,12 +47,12 @@
 
 using namespace WTF;
 
-namespace KJS {
+namespace JSC {
 
 // ------------------------------ Node -----------------------------------------
 
 #ifndef NDEBUG
-static RefCountedLeakCounter parserRefCountedCounter("KJS::Node");
+static RefCountedLeakCounter parserRefCountedCounter("JSC::Node");
 #endif
 
 ParserRefCounted::ParserRefCounted(JSGlobalData* globalData)
@@ -1870,4 +1870,4 @@ void FuncExprNode::addParams()
         m_body->parameters().append(p->ident());
 }
 
-} // namespace KJS
+} // namespace JSC

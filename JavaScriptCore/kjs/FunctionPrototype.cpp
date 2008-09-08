@@ -27,7 +27,7 @@
 #include "JSString.h"
 #include "PrototypeFunction.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(FunctionPrototype);
 
@@ -127,4 +127,4 @@ JSValue* functionProtoFuncCall(ExecState* exec, JSObject*, JSValue* thisValue, c
     return call(exec, thisValue, callType, callData, callThis, argsTail);
 }
 
-} // namespace KJS
+} // namespace JSC

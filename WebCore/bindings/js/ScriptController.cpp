@@ -53,7 +53,7 @@
 #include "JSSVGLazyEventListener.h"
 #endif
 
-using namespace KJS;
+using namespace JSC;
 using namespace WebCore::EventNames;
 
 namespace WebCore {
@@ -223,14 +223,14 @@ bool ScriptController::isEnabled()
     return (settings && settings->isJavaScriptEnabled());
 }
 
-void ScriptController::attachDebugger(KJS::Debugger* debugger)
+void ScriptController::attachDebugger(JSC::Debugger* debugger)
 {
     if (!m_windowShell)
         return;
 
     if (debugger)
         debugger->attach(m_windowShell->window());
-    else if (KJS::Debugger* currentDebugger = m_windowShell->window()->debugger())
+    else if (JSC::Debugger* currentDebugger = m_windowShell->window()->debugger())
         currentDebugger->detach(m_windowShell->window());
 }
 
@@ -279,7 +279,7 @@ NPObject* ScriptController::windowScriptNPObject()
         if (isEnabled()) {
             // JavaScript is enabled, so there is a JavaScript window object.
             // Return an NPObject bound to the window object.
-            KJS::JSLock lock(false);
+            JSC::JSLock lock(false);
             JSObject* win = windowShell()->window();
             ASSERT(win);
             Bindings::RootObject* root = bindingRootObject();

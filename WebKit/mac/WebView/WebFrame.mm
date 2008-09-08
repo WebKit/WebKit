@@ -83,9 +83,9 @@ using namespace std;
 using namespace WebCore;
 using namespace HTMLNames;
 
-using KJS::JSGlobalObject;
-using KJS::JSLock;
-using KJS::JSValue;
+using JSC::JSGlobalObject;
+using JSC::JSLock;
+using JSC::JSValue;
 
 /*
 Here is the current behavior matrix for four types of navigations:

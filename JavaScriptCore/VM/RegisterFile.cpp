@@ -29,7 +29,7 @@
 #include "config.h"
 #include "RegisterFile.h"
 
-namespace KJS {
+namespace JSC {
 
 RegisterFile::~RegisterFile()
 {
@@ -43,4 +43,4 @@ RegisterFile::~RegisterFile()
 #endif
 }
 
-} // namespace KJS
+} // namespace JSC

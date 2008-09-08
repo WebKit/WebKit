@@ -39,7 +39,7 @@
 struct OpaqueJSClass;
 struct OpaqueJSClassContextData;
 
-namespace KJS {
+namespace JSC {
 
     class ArgList;
     class CommonIdentifiers;

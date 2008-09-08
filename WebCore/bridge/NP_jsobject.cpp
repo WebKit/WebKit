@@ -42,8 +42,8 @@
 #include <kjs/interpreter.h>
 
 using WebCore::String;
-using namespace KJS;
-using namespace KJS::Bindings;
+using namespace JSC;
+using namespace JSC::Bindings;
 
 static void getListFromVariantArgs(ExecState* exec, const NPVariant* args, unsigned argCount, RootObject* rootObject, ArgList& aList)
 {

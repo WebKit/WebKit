@@ -59,11 +59,11 @@
 - (NPObject *)createPluginScriptableObject;
 @end
 
-using namespace KJS::Bindings;
+using namespace JSC::Bindings;
 
 namespace WebCore {
 
-PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
+PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     NSView* widgetView = widget->getView();
     if (!widgetView)
@@ -75,7 +75,7 @@ PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWid
         id objectForWebScript = [widgetView objectForWebScript];
         if (!objectForWebScript)
             return 0;
-        return KJS::Bindings::ObjcInstance::create(objectForWebScript, rootObject.release());
+        return JSC::Bindings::ObjcInstance::create(objectForWebScript, rootObject.release());
     }
 
     if ([widgetView respondsToSelector:@selector(createPluginScriptableObject)]) {
@@ -85,7 +85,7 @@ PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWid
         NPObject* npObject = [widgetView createPluginScriptableObject];
         if (!npObject)
             return 0;
-        RefPtr<Instance> instance = KJS::Bindings::CInstance::create(npObject, rootObject.release());
+        RefPtr<Instance> instance = JSC::Bindings::CInstance::create(npObject, rootObject.release());
         // -createPluginScriptableObject returns a retained NPObject.  The caller is expected to release it.
         _NPN_ReleaseObject(npObject);
         return instance.release();
@@ -96,7 +96,7 @@ PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWid
     jobject applet = m_frame->loader()->client()->javaApplet(widgetView);
     if (!applet)
         return 0;
-    return KJS::Bindings::JavaInstance::create(applet, rootObject.release());
+    return JSC::Bindings::JavaInstance::create(applet, rootObject.release());
 #else
     return 0;
 #endif
@@ -108,8 +108,8 @@ WebScriptObject* ScriptController::windowScriptObject()
         return 0;
 
     if (!m_windowScriptObject) {
-        KJS::JSLock lock(false);
-        KJS::Bindings::RootObject* root = bindingRootObject();
+        JSC::JSLock lock(false);
+        JSC::Bindings::RootObject* root = bindingRootObject();
         m_windowScriptObject = [WebScriptObject scriptObjectForJSObject:toRef(windowShell()) originRootObject:root rootObject:root];
     }
 
@@ -120,7 +120,7 @@ WebScriptObject* ScriptController::windowScriptObject()
 void ScriptController::clearPlatformScriptObjects()
 {
     if (m_windowScriptObject) {
-        KJS::Bindings::RootObject* root = bindingRootObject();
+        JSC::Bindings::RootObject* root = bindingRootObject();
         [m_windowScriptObject.get() _setOriginRootObject:root andRootObject:root];
     }
 }
@@ -136,7 +136,7 @@ void ScriptController::disconnectPlatformScriptObjects()
 #if ENABLE(MAC_JAVA_BRIDGE)
 static pthread_t mainThread;
 
-static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* rootObject)
+static void updateRenderingForBindings(JSC::ExecState* exec, JSC::JSObject* rootObject)
 {
     if (pthread_self() != mainThread)
         return;
@@ -162,8 +162,8 @@ static void updateRenderingForBindings(KJS::ExecState* exec, KJS::JSObject* root
 void ScriptController::initJavaJSBindings()
 {
     mainThread = pthread_self();
-    KJS::Bindings::JavaJSObject::initializeJNIThreading();
-    KJS::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
+    JSC::Bindings::JavaJSObject::initializeJNIThreading();
+    JSC::Bindings::Instance::setDidExecuteFunction(updateRenderingForBindings);
 }
 #endif
 

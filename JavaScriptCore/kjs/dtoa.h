@@ -25,7 +25,7 @@ namespace WTF {
     class Mutex;
 }
 
-namespace KJS {
+namespace JSC {
 
     extern WTF::Mutex* s_dtoaP5Mutex;
 
@@ -33,6 +33,6 @@ namespace KJS {
     char* dtoa(double d, int ndigits, int* decpt, int* sign, char** rve);
     void freedtoa(char* s);
 
-} // namespace KJS
+} // namespace JSC
 
 #endif /* KJS_dtoa_h */

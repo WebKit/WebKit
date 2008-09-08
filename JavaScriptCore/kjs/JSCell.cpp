@@ -28,7 +28,7 @@
 #include "JSObject.h"
 #include <wtf/MathExtras.h>
 
-namespace KJS {
+namespace JSC {
 
 #if defined NAN && defined INFINITY
 
@@ -230,4 +230,4 @@ bool JSCell::isObject() const
     return false;
 }
 
-} // namespace KJS
+} // namespace JSC

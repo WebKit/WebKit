@@ -25,7 +25,7 @@
 #include "NodeFilter.h"
 #include "TreeWalker.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
     

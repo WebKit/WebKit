@@ -32,7 +32,7 @@
 #include "JSValue.h"
 #include <wtf/VectorTraits.h>
 
-namespace KJS {
+namespace JSC {
 
     class CodeBlock;
     class ExecState;
@@ -244,11 +244,11 @@ namespace KJS {
         return u.v;
     }
 
-} // namespace KJS
+} // namespace JSC
 
 namespace WTF {
 
-    template<> struct VectorTraits<KJS::Register> : VectorTraitsBase<true, KJS::Register> { };
+    template<> struct VectorTraits<JSC::Register> : VectorTraitsBase<true, JSC::Register> { };
 
 } // namespace WTF
 

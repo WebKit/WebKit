@@ -29,7 +29,7 @@
 #include "config.h"
 #include "JSPropertyNameIterator.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSPropertyNameIterator);
 
@@ -92,4 +92,4 @@ void JSPropertyNameIterator::invalidate()
     m_propertyNames = 0;
 }
 
-} // namespace KJS
+} // namespace JSC

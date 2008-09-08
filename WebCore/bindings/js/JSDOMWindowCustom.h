@@ -25,35 +25,35 @@
 
 namespace WebCore {
 
-inline JSDOMWindow* asJSDOMWindow(KJS::JSGlobalObject* globalObject)
+inline JSDOMWindow* asJSDOMWindow(JSC::JSGlobalObject* globalObject)
 {
     return static_cast<JSDOMWindow*>(globalObject);
 }
  
-inline const JSDOMWindow* asJSDOMWindow(const KJS::JSGlobalObject* globalObject)
+inline const JSDOMWindow* asJSDOMWindow(const JSC::JSGlobalObject* globalObject)
 {
     return static_cast<const JSDOMWindow*>(globalObject);
 }
 
-ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::PropertySlot& slot)
+ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::PropertySlot& slot)
 {
     // When accessing a Window cross-domain, functions are always the native built-in ones, and they
     // are not affected by properties changed on the Window or anything in its prototype chain.
     // This is consistent with the behavior of Firefox.
 
-    const KJS::HashEntry* entry;
+    const JSC::HashEntry* entry;
 
     // We don't want any properties other than "close" and "closed" on a closed window.
     if (!impl()->frame()) {
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
         entry = s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && !(entry->attributes & KJS::Function) && entry->integerValue == ClosedAttrNum) {
-            slot.setStaticEntry(this, entry, KJS::staticValueGetter<JSDOMWindow>);
+        if (entry && !(entry->attributes & JSC::Function) && entry->integerValue == ClosedAttrNum) {
+            slot.setStaticEntry(this, entry, JSC::staticValueGetter<JSDOMWindow>);
             return true;
         }
         entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
-        if (entry && (entry->attributes & KJS::Function) && entry->functionValue == jsDOMWindowPrototypeFunctionClose) {
+        if (entry && (entry->attributes & JSC::Function) && entry->functionValue == jsDOMWindowPrototypeFunctionClose) {
             slot.setStaticEntry(this, entry, nonCachingStaticFunctionGetter);
             return true;
         }
@@ -76,13 +76,13 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, c
             return true;
     }
 
-    // We need this code here because otherwise KJS::Window will stop the search before we even get to the
+    // We need this code here because otherwise JSC::Window will stop the search before we even get to the
     // prototype due to the blanket same origin (allowsAccessFrom) check at the end of getOwnPropertySlot.
     // Also, it's important to get the implementation straight out of the DOMWindow prototype regardless of
     // what prototype is actually set on this object.
     entry = JSDOMWindowPrototype::s_info.propHashTable(exec)->entry(exec, propertyName);
     if (entry) {
-        if ((entry->attributes & KJS::Function)
+        if ((entry->attributes & JSC::Function)
                 && (entry->functionValue == jsDOMWindowPrototypeFunctionBlur
                     || entry->functionValue == jsDOMWindowPrototypeFunctionClose
                     || entry->functionValue == jsDOMWindowPrototypeFunctionFocus
@@ -105,13 +105,13 @@ ALWAYS_INLINE bool JSDOMWindow::customGetOwnPropertySlot(KJS::ExecState* exec, c
     return false;
 }
 
-inline bool JSDOMWindow::customPut(KJS::ExecState* exec, const KJS::Identifier& propertyName, KJS::JSValue* value, KJS::PutPropertySlot& slot)
+inline bool JSDOMWindow::customPut(JSC::ExecState* exec, const JSC::Identifier& propertyName, JSC::JSValue* value, JSC::PutPropertySlot& slot)
 {
     if (!impl()->frame())
         return true;
 
     // We have a local override (e.g. "var location"), save time and jump directly to JSGlobalObject.
-    KJS::PropertySlot getSlot;
+    JSC::PropertySlot getSlot;
     bool slotIsWriteable;
     if (JSGlobalObject::getOwnPropertySlot(exec, propertyName, getSlot, slotIsWriteable)) {
         if (allowsAccessFrom(exec)) {
@@ -138,7 +138,7 @@ inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
     return false;
 }
 
-    inline bool JSDOMWindowBase::allowsAccessFrom(KJS::ExecState* exec) const
+    inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec) const
 {
     if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
         return true;
@@ -146,12 +146,12 @@ inline bool JSDOMWindowBase::allowsAccessFrom(const JSGlobalObject* other) const
     return false;
 }
     
-inline bool JSDOMWindowBase::allowsAccessFromNoErrorMessage(KJS::ExecState* exec) const
+inline bool JSDOMWindowBase::allowsAccessFromNoErrorMessage(JSC::ExecState* exec) const
 {
     return allowsAccessFromPrivate(exec->lexicalGlobalObject());
 }
     
-inline bool JSDOMWindowBase::allowsAccessFrom(KJS::ExecState* exec, String& message) const
+inline bool JSDOMWindowBase::allowsAccessFrom(JSC::ExecState* exec, String& message) const
 {
     if (allowsAccessFromPrivate(exec->lexicalGlobalObject()))
         return true;

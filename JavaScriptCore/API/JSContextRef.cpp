@@ -34,7 +34,7 @@
 #include "JSObject.h"
 #include <wtf/Platform.h>
 
-using namespace KJS;
+using namespace JSC;
 
 JSContextGroupRef JSContextGroupCreate()
 {

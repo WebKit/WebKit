@@ -34,7 +34,7 @@ namespace WebCore {
     class String;
 }
 
-namespace KJS {
+namespace JSC {
 
 class ExecState;
 class Identifier;

@@ -32,7 +32,7 @@
 #include <kjs/PropertyNameArray.h>
 #include "Storage.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

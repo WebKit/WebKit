@@ -67,9 +67,9 @@
 // Some day if the compiler is fixed, or if all the JS wrappers are named with a "JS" prefix,
 // we could move the function into the WebCore namespace where it belongs.
 
-namespace KJS {
+namespace JSC {
 
-static inline id createDOMWrapper(KJS::JSObject* object)
+static inline id createDOMWrapper(JSC::JSObject* object)
 {
     #define WRAP(className) \
         if (object->inherits(&WebCore::JS##className::s_info)) \
@@ -117,9 +117,9 @@ static inline id createDOMWrapper(KJS::JSObject* object)
 
 namespace WebCore {
 
-id createDOMWrapper(KJS::JSObject* object, PassRefPtr<KJS::Bindings::RootObject> origin, PassRefPtr<KJS::Bindings::RootObject> current)
+id createDOMWrapper(JSC::JSObject* object, PassRefPtr<JSC::Bindings::RootObject> origin, PassRefPtr<JSC::Bindings::RootObject> current)
 {
-    id wrapper = KJS::createDOMWrapper(object);
+    id wrapper = JSC::createDOMWrapper(object);
     if (![wrapper _hasImp]) // new wrapper, not from cache
         [wrapper _setImp:object originRootObject:origin rootObject:current];
     return wrapper;

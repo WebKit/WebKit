@@ -62,7 +62,7 @@
 #define _C_GCINVISIBLE '!'
 #endif
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 /*

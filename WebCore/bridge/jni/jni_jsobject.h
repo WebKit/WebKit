@@ -34,10 +34,10 @@
 #include <wtf/RefPtr.h>
 
 #define jlong_to_ptr(a) ((void*)(uintptr_t)(a))
-#define jlong_to_impptr(a) (static_cast<KJS::JSObject*>(((void*)(uintptr_t)(a))))
+#define jlong_to_impptr(a) (static_cast<JSC::JSObject*>(((void*)(uintptr_t)(a))))
 #define ptr_to_jlong(a) ((jlong)(uintptr_t)(a))
 
-namespace KJS {
+namespace JSC {
 
 class ArgList;
 class ExecState;
@@ -107,7 +107,7 @@ private:
 
 } // namespace Bindings
 
-} // namespace KJS
+} // namespace JSC
 
 extern "C" {
 

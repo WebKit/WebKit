@@ -69,7 +69,7 @@
 #include "JSXSLTProcessorConstructor.h"
 #endif
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

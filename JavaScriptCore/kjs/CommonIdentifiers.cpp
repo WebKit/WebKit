@@ -21,7 +21,7 @@
 #include "config.h"
 #include "CommonIdentifiers.h"
 
-namespace KJS {
+namespace JSC {
 
 const char* const nullCString = 0;
 
@@ -35,4 +35,4 @@ CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
 {
 }
 
-} // namespace KJS
+} // namespace JSC

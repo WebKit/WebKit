@@ -55,8 +55,8 @@ struct StaticFunctionEntry {
     JSPropertyAttributes attributes;
 };
 
-typedef HashMap<RefPtr<KJS::UString::Rep>, StaticValueEntry*> OpaqueJSClassStaticValuesTable;
-typedef HashMap<RefPtr<KJS::UString::Rep>, StaticFunctionEntry*> OpaqueJSClassStaticFunctionsTable;
+typedef HashMap<RefPtr<JSC::UString::Rep>, StaticValueEntry*> OpaqueJSClassStaticValuesTable;
+typedef HashMap<RefPtr<JSC::UString::Rep>, StaticFunctionEntry*> OpaqueJSClassStaticFunctionsTable;
 
 class OpaqueJSClass;
 
@@ -76,7 +76,7 @@ struct OpaqueJSClassContextData : Noncopyable {
 
     OpaqueJSClassStaticValuesTable* staticValues;
     OpaqueJSClassStaticFunctionsTable* staticFunctions;
-    KJS::JSObject* cachedPrototype;
+    JSC::JSObject* cachedPrototype;
 };
 
 struct OpaqueJSClass : public ThreadSafeShared<OpaqueJSClass> {
@@ -84,10 +84,10 @@ struct OpaqueJSClass : public ThreadSafeShared<OpaqueJSClass> {
     static PassRefPtr<OpaqueJSClass> createNoAutomaticPrototype(const JSClassDefinition*);
     ~OpaqueJSClass();
     
-    KJS::UString className();
-    OpaqueJSClassStaticValuesTable* staticValues(KJS::ExecState*);
-    OpaqueJSClassStaticFunctionsTable* staticFunctions(KJS::ExecState*);
-    KJS::JSObject* prototype(KJS::ExecState*);
+    JSC::UString className();
+    OpaqueJSClassStaticValuesTable* staticValues(JSC::ExecState*);
+    OpaqueJSClassStaticFunctionsTable* staticFunctions(JSC::ExecState*);
+    JSC::JSObject* prototype(JSC::ExecState*);
 
     OpaqueJSClass* parentClass;
     OpaqueJSClass* prototypeClass;
@@ -111,10 +111,10 @@ private:
     OpaqueJSClass(const OpaqueJSClass&);
     OpaqueJSClass(const JSClassDefinition*, OpaqueJSClass* protoClass);
 
-    OpaqueJSClassContextData& contextData(KJS::ExecState*);
+    OpaqueJSClassContextData& contextData(JSC::ExecState*);
 
     // UStrings in these data members should not be put into any IdentifierTable.
-    KJS::UString m_className;
+    JSC::UString m_className;
     OpaqueJSClassStaticValuesTable* m_staticValues;
     OpaqueJSClassStaticFunctionsTable* m_staticFunctions;
 };

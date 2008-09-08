@@ -35,7 +35,7 @@
 #include <qmetatype.h>
 #include <qhash.h>
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 // Cache QtInstances

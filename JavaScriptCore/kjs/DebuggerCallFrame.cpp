@@ -34,7 +34,7 @@
 #include "Machine.h"
 #include "Parser.h"
 
-namespace KJS {
+namespace JSC {
 
 Register* DebuggerCallFrame::callFrame() const
 {
@@ -88,4 +88,4 @@ JSValue* DebuggerCallFrame::evaluate(const UString& script, JSValue*& exception)
     return newExec.machine()->execute(evalNode.get(), &newExec, thisObject, m_scopeChain, &exception);
 }
 
-} // namespace KJS
+} // namespace JSC

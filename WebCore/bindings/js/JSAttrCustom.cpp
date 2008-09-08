@@ -33,7 +33,7 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

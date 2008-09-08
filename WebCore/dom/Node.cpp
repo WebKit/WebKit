@@ -194,7 +194,7 @@ void Node::setDocument(Document* doc)
     willMoveToNewOwnerDocument();
 
     {
-        KJS::JSLock lock(false);
+        JSC::JSLock lock(false);
         ScriptInterpreter::updateDOMNodeDocument(this, m_document.get(), doc);
     }    
     m_document = doc;
@@ -1268,7 +1268,7 @@ public:
 
 class ResolveNamespaceFunctor {
 public:
-    ResolveNamespaceFunctor(NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+    ResolveNamespaceFunctor(NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
         : m_resolver(resolver)
         , m_exceptionCode(ec)
         , m_exec(exec)
@@ -1306,7 +1306,7 @@ public:
 private:
     NSResolver* m_resolver;
     ExceptionCode& m_exceptionCode;
-    KJS::ExecState* m_exec;
+    JSC::ExecState* m_exec;
 };
 
 static bool selectorNeedsNamespaceResolution(CSSSelector* currentSelector)
@@ -1315,7 +1315,7 @@ static bool selectorNeedsNamespaceResolution(CSSSelector* currentSelector)
     return forEachSelector(functor, currentSelector);
 }
 
-static bool resolveNamespacesForSelector(CSSSelector* currentSelector, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+static bool resolveNamespacesForSelector(CSSSelector* currentSelector, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
 {
     ResolveNamespaceFunctor functor(resolver, ec, exec);
     return forEachSelector(functor, currentSelector);
@@ -1331,7 +1331,7 @@ PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, ExceptionCo
     return querySelectorAll(selectors, 0, ec, execStateFromNode(this));
 }
 
-PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;
@@ -1391,7 +1391,7 @@ PassRefPtr<Element> Node::querySelector(const String& selectors, NSResolver* res
     return 0;
 }
 
-PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver* resolver, ExceptionCode& ec, KJS::ExecState* exec)
+PassRefPtr<NodeList> Node::querySelectorAll(const String& selectors, NSResolver* resolver, ExceptionCode& ec, JSC::ExecState* exec)
 {
     if (selectors.isEmpty()) {
         ec = SYNTAX_ERR;

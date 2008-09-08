@@ -36,7 +36,7 @@
 #include "JSImageData.h"
 #include <kjs/Error.h>
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

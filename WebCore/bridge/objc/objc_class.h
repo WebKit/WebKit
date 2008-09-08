@@ -28,7 +28,7 @@
 
 #include "objc_runtime.h"
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 class ObjcClass : public Class
@@ -56,6 +56,6 @@ private:
 };
 
 } // namespace Bindings
-} // namespace KJS
+} // namespace JSC
 
 #endif

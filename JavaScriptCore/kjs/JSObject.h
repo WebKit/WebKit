@@ -34,7 +34,7 @@
 #include "ScopeChain.h"
 #include "StructureID.h"
 
-namespace KJS {
+namespace JSC {
 
     class InternalFunction;
     class PropertyNameArray;
@@ -417,6 +417,6 @@ inline void JSValue::put(ExecState* exec, unsigned propertyName, JSValue* value)
     asCell()->put(exec, propertyName, value);
 }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSObject_h

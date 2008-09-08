@@ -26,7 +26,7 @@
 #include "JSString.h"
 #include "PrototypeFunction.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
 
@@ -133,4 +133,4 @@ JSValue* objectProtoFuncToString(ExecState* exec, JSObject*, JSValue* thisValue,
     return jsNontrivialString(exec, "[object " + thisValue->toThisObject(exec)->className() + "]");
 }
 
-} // namespace KJS
+} // namespace JSC

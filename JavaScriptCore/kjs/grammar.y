@@ -51,7 +51,7 @@
 
 int kjsyylex(void* lvalp, void* llocp, void* globalPtr);
 int kjsyyerror(const char*);
-static inline bool allowAutomaticSemicolon(KJS::Lexer&, int);
+static inline bool allowAutomaticSemicolon(JSC::Lexer&, int);
 
 #define GLOBAL_DATA static_cast<JSGlobalData*>(globalPtr)
 #define LEXER (GLOBAL_DATA->lexer)
@@ -60,7 +60,7 @@ static inline bool allowAutomaticSemicolon(KJS::Lexer&, int);
 #define SET_EXCEPTION_LOCATION(node, start, divot, end) node->setExceptionSourceRange((divot), (divot) - (start), (end) - (divot))
 #define DBG(l, s, e) (l)->setLoc((s).first_line, (e).last_line)
 
-using namespace KJS;
+using namespace JSC;
 using namespace std;
 
 static ExpressionNode* makeAssignNode(void*, ExpressionNode* loc, Operator, ExpressionNode* expr, bool locHasAssignments, bool exprHasAssignments, int start, int divot, int end);

@@ -26,7 +26,7 @@
 
 #include "PrototypeFunction.h"
 
-namespace KJS {
+namespace JSC {
 
     class ExecState;
     class FunctionPrototype;
@@ -43,6 +43,6 @@ namespace KJS {
         JSGlobalObject* m_cachedGlobalObject;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // GlobalEvalFunction_h

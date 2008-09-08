@@ -34,7 +34,7 @@
 
 #include "Assertions.h"
 
-namespace KJS {
+namespace JSC {
 
 // Here is the reference class for BSet.
 //

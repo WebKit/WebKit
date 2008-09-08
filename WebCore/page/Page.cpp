@@ -479,7 +479,7 @@ void Page::visitedStateChanged(PageGroup* group, unsigned visitedLinkHash)
     }
 }
 
-void Page::setDebuggerForAllPages(KJS::Debugger* debugger)
+void Page::setDebuggerForAllPages(JSC::Debugger* debugger)
 {
     ASSERT(allPages);
 
@@ -488,7 +488,7 @@ void Page::setDebuggerForAllPages(KJS::Debugger* debugger)
         (*it)->setDebugger(debugger);
 }
 
-void Page::setDebugger(KJS::Debugger* debugger)
+void Page::setDebugger(JSC::Debugger* debugger)
 {
     if (m_debugger == debugger)
         return;

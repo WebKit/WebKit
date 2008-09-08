@@ -44,8 +44,8 @@
 
 using WebCore::Frame;
 
-using namespace KJS::Bindings;
-using namespace KJS;
+using namespace JSC::Bindings;
+using namespace JSC;
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -302,7 +302,7 @@ jobject JavaJSObject::call(jstring methodName, jobjectArray args) const
     ArgList argList;
     getListFromJArray(exec, args, argList);
     rootObject->globalObject()->startTimeoutCheck();
-    JSValue* result = KJS::call(exec, function, callType, callData, _imp, argList);
+    JSValue* result = JSC::call(exec, function, callType, callData, _imp, argList);
     rootObject->globalObject()->stopTimeoutCheck();
 
     return convertValueToJObject(result);
@@ -601,7 +601,7 @@ JSValue* JavaJSObject::convertJObjectToValue(ExecState* exec, jobject theObject)
 
     JSLock lock(false);
 
-    return KJS::Bindings::Instance::createRuntimeObject(exec, JavaInstance::create(theObject, _rootObject));
+    return JSC::Bindings::Instance::createRuntimeObject(exec, JavaInstance::create(theObject, _rootObject));
 }
 
 void JavaJSObject::getListFromJArray(ExecState* exec, jobjectArray jArray, ArgList& list) const

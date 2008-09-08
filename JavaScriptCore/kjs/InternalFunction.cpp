@@ -26,7 +26,7 @@
 #include "FunctionPrototype.h"
 #include "JSString.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(InternalFunction);
 
@@ -56,4 +56,4 @@ bool InternalFunction::implementsHasInstance() const
     return true;
 }
 
-} // namespace KJS
+} // namespace JSC

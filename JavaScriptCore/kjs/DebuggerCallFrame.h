@@ -29,7 +29,7 @@
 #ifndef DebuggerCallFrame_h
 #define DebuggerCallFrame_h
 
-namespace KJS {
+namespace JSC {
     
     class CodeBlock;
     class ExecState;
@@ -77,6 +77,6 @@ namespace KJS {
         JSValue* m_exception;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // DebuggerCallFrame_h

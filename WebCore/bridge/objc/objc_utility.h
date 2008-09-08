@@ -38,7 +38,7 @@
 class NSString;
 #endif
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 typedef union {
@@ -83,6 +83,6 @@ bool convertJSMethodNameToObjc(const char *JSName, char *buffer, size_t bufferSi
 JSObject *throwError(ExecState *, ErrorType, NSString *message);
 
 } // namespace Bindings
-} // namespace KJS
+} // namespace JSC
 
 #endif

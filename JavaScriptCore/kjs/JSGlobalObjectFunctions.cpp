@@ -46,7 +46,7 @@
 using namespace WTF;
 using namespace Unicode;
 
-namespace KJS {
+namespace JSC {
 
 static JSValue* encode(ExecState* exec, const ArgList& args, const char* doNotEscape)
 {
@@ -416,4 +416,4 @@ JSValue* globalFuncKJSPrint(ExecState* exec, JSObject*, JSValue*, const ArgList&
 }
 #endif
 
-} // namespace KJS
+} // namespace JSC

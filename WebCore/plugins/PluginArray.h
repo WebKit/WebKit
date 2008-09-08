@@ -25,7 +25,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
     class JSValue;
     class ExecState;
 };
@@ -37,7 +37,7 @@ namespace WebCore {
     class PluginData;
 
     // FIXME: Generated JSPluginArray.cpp doesn't include JSPlugin.h for toJS
-    KJS::JSValue* toJS(KJS::ExecState*, Plugin*);
+    JSC::JSValue* toJS(JSC::ExecState*, Plugin*);
 
     class PluginArray : public RefCounted<PluginArray> {
     public:

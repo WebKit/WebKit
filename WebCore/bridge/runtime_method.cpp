@@ -30,7 +30,7 @@
 #include <kjs/Error.h>
 #include <kjs/JSGlobalObject.h>
 
-namespace KJS {
+namespace JSC {
 
 using namespace Bindings;
 

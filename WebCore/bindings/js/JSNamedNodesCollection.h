@@ -37,16 +37,16 @@ namespace WebCore {
     // when multiple nodes have the same name.
     class JSNamedNodesCollection : public DOMObject {
     public:
-        JSNamedNodesCollection(KJS::JSObject* prototype, const Vector<RefPtr<Node> >&);
+        JSNamedNodesCollection(JSC::JSObject* prototype, const Vector<RefPtr<Node> >&);
 
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
 
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
-        static const KJS::ClassInfo s_info;
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        static const JSC::ClassInfo s_info;
 
     private:
-        static KJS::JSValue* lengthGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
-        static KJS::JSValue* indexGetter(KJS::ExecState*, const KJS::Identifier&, const KJS::PropertySlot&);
+        static JSC::JSValue* lengthGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
+        static JSC::JSValue* indexGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         OwnPtr<Vector<RefPtr<Node> > > m_nodes;
     };

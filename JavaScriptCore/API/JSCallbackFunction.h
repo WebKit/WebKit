@@ -29,7 +29,7 @@
 #include "InternalFunction.h"
 #include "JSObjectRef.h"
 
-namespace KJS {
+namespace JSC {
 
 class JSCallbackFunction : public InternalFunction {
 public:
@@ -47,6 +47,6 @@ private:
     JSObjectCallAsFunctionCallback m_callback;
 };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSCallbackFunction_h

@@ -23,7 +23,7 @@
 #include "JSObject.h"
 #include "lookup.h"
 
-namespace KJS {
+namespace JSC {
 
     class MathObject : public JSObject {
     public:
@@ -35,6 +35,6 @@ namespace KJS {
         static const ClassInfo info;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // MathObject_h

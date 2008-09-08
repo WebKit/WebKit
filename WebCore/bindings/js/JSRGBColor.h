@@ -29,14 +29,14 @@ namespace WebCore {
     // FIXME: JSRGBColor should have a proper Prototype and Constructor
     class JSRGBColor : public DOMObject {
     public:
-        JSRGBColor(KJS::JSObject* prototype, unsigned color);
+        JSRGBColor(JSC::JSObject* prototype, unsigned color);
         ~JSRGBColor();
 
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+        JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
 
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
-        static const KJS::ClassInfo s_info;
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        static const JSC::ClassInfo s_info;
 
         enum { Red, Green, Blue };
 
@@ -46,7 +46,7 @@ namespace WebCore {
         unsigned m_color;
     };
 
-    KJS::JSValue* getJSRGBColor(KJS::ExecState*, unsigned color);
+    JSC::JSValue* getJSRGBColor(JSC::ExecState*, unsigned color);
 
 } // namespace WebCore
 

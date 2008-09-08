@@ -31,14 +31,14 @@ namespace WebCore {
 
     class JSHTMLInputElementBase : public JSHTMLElement {
     public:
-        JSHTMLInputElementBase(KJS::JSObject* prototype, PassRefPtr<HTMLInputElement>);
+        JSHTMLInputElementBase(JSC::JSObject* prototype, PassRefPtr<HTMLInputElement>);
 
-        virtual bool getOwnPropertySlot(KJS::ExecState*, const KJS::Identifier&, KJS::PropertySlot&);
-        KJS::JSValue* getValueProperty(KJS::ExecState*, int token) const;
-        virtual void put(KJS::ExecState*, const KJS::Identifier& propertyName, JSValue*, KJS::PutPropertySlot& slot);
-        void putValueProperty(KJS::ExecState*, int token, KJS::JSValue*);
-        virtual const KJS::ClassInfo* classInfo() const { return &s_info; }
-        static const KJS::ClassInfo s_info;
+        virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
+        JSC::JSValue* getValueProperty(JSC::ExecState*, int token) const;
+        virtual void put(JSC::ExecState*, const JSC::Identifier& propertyName, JSValue*, JSC::PutPropertySlot& slot);
+        void putValueProperty(JSC::ExecState*, int token, JSC::JSValue*);
+        virtual const JSC::ClassInfo* classInfo() const { return &s_info; }
+        static const JSC::ClassInfo s_info;
         enum { SelectionStart, SelectionEnd };
     };
 

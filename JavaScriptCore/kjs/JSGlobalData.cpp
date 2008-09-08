@@ -46,7 +46,7 @@
 
 using namespace WTF;
 
-namespace KJS {
+namespace JSC {
 
 extern const HashTable arrayTable;
 extern const HashTable dateTable;
@@ -60,21 +60,21 @@ JSGlobalData::JSGlobalData(bool isShared)
     : machine(new Machine)
     , heap(new Heap(this))
 #if ENABLE(JSC_MULTIPLE_THREADS)
-    , arrayTable(new HashTable(KJS::arrayTable))
-    , dateTable(new HashTable(KJS::dateTable))
-    , mathTable(new HashTable(KJS::mathTable))
-    , numberTable(new HashTable(KJS::numberTable))
-    , regExpTable(new HashTable(KJS::regExpTable))
-    , regExpConstructorTable(new HashTable(KJS::regExpConstructorTable))
-    , stringTable(new HashTable(KJS::stringTable))
+    , arrayTable(new HashTable(JSC::arrayTable))
+    , dateTable(new HashTable(JSC::dateTable))
+    , mathTable(new HashTable(JSC::mathTable))
+    , numberTable(new HashTable(JSC::numberTable))
+    , regExpTable(new HashTable(JSC::regExpTable))
+    , regExpConstructorTable(new HashTable(JSC::regExpConstructorTable))
+    , stringTable(new HashTable(JSC::stringTable))
 #else
-    , arrayTable(&KJS::arrayTable)
-    , dateTable(&KJS::dateTable)
-    , mathTable(&KJS::mathTable)
-    , numberTable(&KJS::numberTable)
-    , regExpTable(&KJS::regExpTable)
-    , regExpConstructorTable(&KJS::regExpConstructorTable)
-    , stringTable(&KJS::stringTable)
+    , arrayTable(&JSC::arrayTable)
+    , dateTable(&JSC::dateTable)
+    , mathTable(&JSC::mathTable)
+    , numberTable(&JSC::numberTable)
+    , regExpTable(&JSC::regExpTable)
+    , regExpConstructorTable(&JSC::regExpConstructorTable)
+    , stringTable(&JSC::stringTable)
 #endif
     , nullProtoStructureID(StructureID::create(jsNull()))
     , identifierTable(createIdentifierTable())

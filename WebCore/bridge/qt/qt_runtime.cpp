@@ -50,7 +50,7 @@ Q_DECLARE_METATYPE(QList<int>);
 Q_DECLARE_METATYPE(QVariant);
 
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 // Debugging
@@ -747,7 +747,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
 
-            RefPtr<KJS::RegExp> regExp = KJS::RegExp::create(exec, pattern, uflags);
+            RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(exec, pattern, uflags);
             if (regExp->isValid())
                 return new (exec) RegExpObject(exec->lexicalGlobalObject()->regExpPrototype(), regExp.release());
             else
@@ -781,7 +781,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
         dt.minute = time.minute();
         dt.second = time.second();
         dt.isDST = -1;
-        double ms = KJS::gregorianDateTimeToMS(dt, time.msec(), /*inputIsUTC*/ false);
+        double ms = JSC::gregorianDateTimeToMS(dt, time.msec(), /*inputIsUTC*/ false);
 
         DateInstance* instance = new (exec) DateInstance(exec->lexicalGlobalObject()->datePrototype());
         instance->setInternalValue(jsNumber(exec, trunc(ms)));
@@ -1574,7 +1574,7 @@ static const uint qt_meta_data_QtConnectionObject[] = {
 };
 
 static const char qt_meta_stringdata_QtConnectionObject[] = {
-    "KJS::Bindings::QtConnectionObject\0\0execute()\0"
+    "JSC::Bindings::QtConnectionObject\0\0execute()\0"
 };
 
 const QMetaObject QtConnectionObject::staticMetaObject = {

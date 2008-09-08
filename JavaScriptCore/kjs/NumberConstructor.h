@@ -23,7 +23,7 @@
 
 #include "InternalFunction.h"
 
-namespace KJS {
+namespace JSC {
 
     class FunctionPrototype;
     class NumberPrototype;
@@ -46,6 +46,6 @@ namespace KJS {
         virtual const ClassInfo* classInfo() const { return &info; }
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // NumberConstructor_h

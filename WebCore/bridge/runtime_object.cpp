@@ -32,7 +32,7 @@
 #include <kjs/JSGlobalObject.h>
 #include <kjs/ObjectPrototype.h>
 
-using namespace KJS;
+using namespace JSC;
 using namespace Bindings;
 
 const ClassInfo RuntimeObjectImp::s_info = { "RuntimeObject", 0, 0, 0 };

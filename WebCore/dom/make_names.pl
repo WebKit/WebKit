@@ -764,7 +764,7 @@ sub printWrapperFactoryCppFile
     printElementIncludes($F, \%tags, 1);
 
     print F <<END
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -837,7 +837,7 @@ sub printWrapperFactoryHeaderFile
     print F <<END
 #include <wtf/Forward.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
 }                                            
                                              
@@ -846,7 +846,7 @@ namespace WebCore {
     class JSNode;
     class $parameters{'namespace'}Element;
 
-    JSNode* createJS$parameters{'namespace'}Wrapper(KJS::ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
+    JSNode* createJS$parameters{'namespace'}Wrapper(JSC::ExecState*, PassRefPtr<$parameters{'namespace'}Element>);
 
 }
  

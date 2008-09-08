@@ -137,7 +137,7 @@
 #endif
 
 using namespace WebCore;
-using namespace KJS;
+using namespace JSC;
 
 #if defined(__ppc__) || defined(__ppc64__)
 #define PROCESSOR "PPC"
@@ -469,7 +469,7 @@ static BOOL grammarCheckingEnabled;
     self = [super init];
     if (!self)
         return nil;
-    KJS::initializeThreading();
+    JSC::initializeThreading();
     allowsUndo = YES;
     zoomMultiplier = 1;
     zoomMultiplierIsTextOnly = YES;

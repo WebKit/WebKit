@@ -35,7 +35,7 @@
 #include <kjs/protect.h>
 #include <wtf/Forward.h>
 
-namespace KJS {
+namespace JSC {
     class JSObject;
 }
 
@@ -46,14 +46,14 @@ class SQLError;
     
 class JSCustomSQLStatementErrorCallback : public SQLStatementErrorCallback {
 public:
-    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(KJS::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLStatementErrorCallback(callback, frame)); }
+    static PassRefPtr<JSCustomSQLStatementErrorCallback> create(JSC::JSObject* callback, Frame* frame) { return adoptRef(new JSCustomSQLStatementErrorCallback(callback, frame)); }
         
     virtual bool handleEvent(SQLTransaction*, SQLError*);
 
 private:
-    JSCustomSQLStatementErrorCallback(KJS::JSObject* callback, Frame*);
+    JSCustomSQLStatementErrorCallback(JSC::JSObject* callback, Frame*);
 
-    KJS::ProtectedPtr<KJS::JSObject> m_callback;
+    JSC::ProtectedPtr<JSC::JSObject> m_callback;
     RefPtr<Frame> m_frame;
 };
     

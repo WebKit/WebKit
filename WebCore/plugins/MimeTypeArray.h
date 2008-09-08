@@ -25,7 +25,7 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class JSValue;
 };
@@ -37,7 +37,7 @@ namespace WebCore {
     class PluginData;
 
     // FIXME: Generated JSMimeTypeArray.cpp doesn't include JSMimeType.h for toJS
-    KJS::JSValue* toJS(KJS::ExecState*, MimeType*);
+    JSC::JSValue* toJS(JSC::ExecState*, MimeType*);
 
     class MimeTypeArray : public RefCounted<MimeTypeArray> {
     public:

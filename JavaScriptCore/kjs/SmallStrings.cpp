@@ -28,7 +28,7 @@
 
 #include "JSString.h"
 
-namespace KJS {
+namespace JSC {
 
 class SmallStringsStorage {
 public:

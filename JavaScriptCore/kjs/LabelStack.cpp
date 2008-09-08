@@ -23,7 +23,7 @@
 #include "config.h"
 #include "LabelStack.h"
 
-namespace KJS {
+namespace JSC {
 
 bool LabelStack::push(const Identifier& id)
 {
@@ -50,4 +50,4 @@ bool LabelStack::contains(const Identifier &id) const
     return false;
 }
 
-} // namespace KJS
+} // namespace JSC

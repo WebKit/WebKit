@@ -27,7 +27,7 @@
 
 namespace WebCore {
 
-using namespace KJS;
+using namespace JSC;
 
 ASSERT_CLASS_FITS_IN_CELL(JSNodeFilterCondition)
 
@@ -42,7 +42,7 @@ void JSNodeFilterCondition::mark()
         m_filter->mark();
 }
 
-short JSNodeFilterCondition::acceptNode(KJS::ExecState* exec, Node* filterNode) const
+short JSNodeFilterCondition::acceptNode(JSC::ExecState* exec, Node* filterNode) const
 {
     JSLock lock(false);
 

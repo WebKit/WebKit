@@ -31,7 +31,7 @@
 #include "RegExpPrototype.h"
 #include "regexp.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpConstructor);
 
@@ -328,4 +328,4 @@ const UString& RegExpConstructor::input() const
     return d->input;
 }
 
-} // namespace KJS
+} // namespace JSC

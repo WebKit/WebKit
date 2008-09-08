@@ -212,21 +212,21 @@ QWebFrame::~QWebFrame()
 */
 void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object)
 {
-      KJS::JSLock lock(false);
+      JSC::JSLock lock(false);
       JSDOMWindow *window = toJSDOMWindow(d->frame);
-      KJS::Bindings::RootObject *root = d->frame->script()->bindingRootObject();
+      JSC::Bindings::RootObject *root = d->frame->script()->bindingRootObject();
       if (!window) {
           qDebug() << "Warning: couldn't get window object";
           return;
       }
 
-      KJS::ExecState* exec = window->globalExec();
+      JSC::ExecState* exec = window->globalExec();
 
-      KJS::JSObject *runtimeObject =
-        KJS::Bindings::Instance::createRuntimeObject(exec, KJS::Bindings::QtInstance::create(object, root));
+      JSC::JSObject *runtimeObject =
+        JSC::Bindings::Instance::createRuntimeObject(exec, JSC::Bindings::QtInstance::create(object, root));
 
-      KJS::PutPropertySlot slot;
-      window->put(exec, KJS::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
+      JSC::PutPropertySlot slot;
+      window->put(exec, JSC::Identifier(exec, (const UChar *) name.constData(), name.length()), runtimeObject, slot);
 }
 
 /*!
@@ -877,10 +877,10 @@ QVariant QWebFrame::evaluateJavaScript(const QString& scriptSource)
     ScriptController *proxy = d->frame->script();
     QVariant rc;
     if (proxy) {
-        KJS::JSValue *v = proxy->evaluate(String(), 1, scriptSource);
+        JSC::JSValue *v = proxy->evaluate(String(), 1, scriptSource);
         if (v) {
             int distance = 0;
-            rc = KJS::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
+            rc = JSC::Bindings::convertValueToQVariant(proxy->globalObject()->globalExec(), v, QMetaType::Void, &distance);
         }
     }
     return rc;

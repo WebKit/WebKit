@@ -31,7 +31,7 @@
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 
-namespace KJS { namespace Bindings {
+namespace JSC { namespace Bindings {
 
 // This code attempts to solve two problems: (1) plug-ins leaking references to 
 // JS and the DOM; (2) plug-ins holding stale references to JS and the DOM. Previous 
@@ -109,7 +109,7 @@ void RootObject::invalidate()
 
     ProtectCountSet::iterator end = m_protectCountSet.end();
     for (ProtectCountSet::iterator it = m_protectCountSet.begin(); it != end; ++it)
-        KJS::gcUnprotect(it->first);
+        JSC::gcUnprotect(it->first);
     m_protectCountSet.clear();
 
     rootObjectSet()->remove(this);
@@ -120,7 +120,7 @@ void RootObject::gcProtect(JSObject* jsObject)
     ASSERT(m_isValid);
     
     if (!m_protectCountSet.contains(jsObject))
-        KJS::gcProtect(jsObject);
+        JSC::gcProtect(jsObject);
     m_protectCountSet.add(jsObject);
 }
 
@@ -132,7 +132,7 @@ void RootObject::gcUnprotect(JSObject* jsObject)
         return;
 
     if (m_protectCountSet.count(jsObject) == 1)
-        KJS::gcUnprotect(jsObject);
+        JSC::gcUnprotect(jsObject);
     m_protectCountSet.remove(jsObject);
 }
 
@@ -170,4 +170,4 @@ void RootObject::removeRuntimeObject(RuntimeObjectImp* object)
     m_runtimeObjects.remove(object);
 }
 
-} } // namespace KJS::Bindings
+} } // namespace JSC::Bindings

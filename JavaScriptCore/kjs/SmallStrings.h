@@ -29,7 +29,7 @@
 #include "ustring.h"
 #include <wtf/OwnPtr.h>
 
-namespace KJS {
+namespace JSC {
 
     class ExecState;
     class JSString;

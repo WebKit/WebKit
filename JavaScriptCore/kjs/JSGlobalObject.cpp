@@ -61,7 +61,7 @@
 #include "StringPrototype.h"
 #include "debugger.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSGlobalObject);
 
@@ -454,4 +454,4 @@ void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
 #endif
 }
 
-} // namespace KJS
+} // namespace JSC

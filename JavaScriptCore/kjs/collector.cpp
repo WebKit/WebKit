@@ -73,7 +73,7 @@
 
 using std::max;
 
-namespace KJS {
+namespace JSC {
 
 // tunable parameters
 
@@ -1071,4 +1071,4 @@ bool Heap::isBusy()
     return (primaryHeap.operationInProgress != NoOperation) | (numberHeap.operationInProgress != NoOperation);
 }
 
-} // namespace KJS
+} // namespace JSC

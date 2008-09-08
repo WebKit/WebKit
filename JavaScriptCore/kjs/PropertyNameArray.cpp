@@ -21,7 +21,7 @@
 #include "config.h"
 #include "PropertyNameArray.h"
 
-namespace KJS {
+namespace JSC {
 
 static const size_t setThreshold = 20;
 
@@ -47,4 +47,4 @@ void PropertyNameArray::add(UString::Rep* identifier)
     m_vector.append(Identifier(m_globalData, identifier));
 }
 
-} // namespace KJS
+} // namespace JSC

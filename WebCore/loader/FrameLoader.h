@@ -47,7 +47,7 @@
 #include "CachedResourceClient.h"
 #endif
 
-namespace KJS {
+namespace JSC {
     class JSValue;
 }
 
@@ -332,8 +332,8 @@ namespace WebCore {
         // Returns true if url is a JavaScript URL.
         bool executeIfJavaScriptURL(const KURL& url, bool userGesture = false, bool replaceDocument = true);
 
-        KJS::JSValue* executeScript(const String& url, int baseLine, const String& script);
-        KJS::JSValue* executeScript(const String& script, bool forceUserGesture = false);
+        JSC::JSValue* executeScript(const String& url, int baseLine, const String& script);
+        JSC::JSValue* executeScript(const String& script, bool forceUserGesture = false);
 
         void gotoAnchor();
         bool gotoAnchor(const String& name); // returns true if the anchor was found

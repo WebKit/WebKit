@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-PassRefPtr<KJS::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
+PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWidget(Widget* widget)
 {
     if (!widget->isPluginView())
         return 0;

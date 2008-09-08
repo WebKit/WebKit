@@ -45,8 +45,8 @@
 }
 #endif
 
-using namespace KJS;
-using namespace KJS::Bindings;
+using namespace JSC;
+using namespace JSC::Bindings;
 
 
 JavaParameter::JavaParameter (JNIEnv *env, jstring type)

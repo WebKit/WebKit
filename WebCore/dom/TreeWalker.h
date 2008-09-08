@@ -45,13 +45,13 @@ namespace WebCore {
         Node* currentNode() const { return m_current.get(); }
         void setCurrentNode(PassRefPtr<Node>, ExceptionCode&);
 
-        Node* parentNode(KJS::ExecState*);
-        Node* firstChild(KJS::ExecState*);
-        Node* lastChild(KJS::ExecState*);
-        Node* previousSibling(KJS::ExecState*);
-        Node* nextSibling(KJS::ExecState*);
-        Node* previousNode(KJS::ExecState*);
-        Node* nextNode(KJS::ExecState*);
+        Node* parentNode(JSC::ExecState*);
+        Node* firstChild(JSC::ExecState*);
+        Node* lastChild(JSC::ExecState*);
+        Node* previousSibling(JSC::ExecState*);
+        Node* nextSibling(JSC::ExecState*);
+        Node* previousNode(JSC::ExecState*);
+        Node* nextNode(JSC::ExecState*);
 
         // For non-JS bindings. Silently ignores the JavaScript exception if any.
         Node* parentNode() { return parentNode(execStateFromNode(m_current.get())); }

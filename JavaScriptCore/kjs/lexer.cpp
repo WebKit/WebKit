@@ -38,7 +38,7 @@ using namespace WTF;
 using namespace Unicode;
 
 // we can't specify the namespace in yacc's C output, so do it here
-using namespace KJS;
+using namespace JSC;
 
 #ifndef KDE_USE_FINAL
 #include "grammar.h"
@@ -53,7 +53,7 @@ int kjsyylex(void* lvalp, void* llocp, void* globalData)
     return static_cast<JSGlobalData*>(globalData)->lexer->lex(lvalp, llocp);
 }
 
-namespace KJS {
+namespace JSC {
 
 static bool isDecimalDigit(int);
 
@@ -79,7 +79,7 @@ Lexer::Lexer(JSGlobalData* globalData)
     , m_nextOffset2(0)
     , m_nextOffset3(0)
     , m_globalData(globalData)
-    , m_mainTable(KJS::mainTable)
+    , m_mainTable(JSC::mainTable)
 {
     m_buffer8.reserveCapacity(initialReadBufferCapacity);
     m_buffer16.reserveCapacity(initialReadBufferCapacity);
@@ -893,7 +893,7 @@ void Lexer::clear()
     m_strings.swap(newStrings);
 
     deleteAllValues(m_identifiers);
-    Vector<KJS::Identifier*> newIdentifiers;
+    Vector<JSC::Identifier*> newIdentifiers;
     newIdentifiers.reserveCapacity(initialStringTableCapacity);
     m_identifiers.swap(newIdentifiers);
 
@@ -911,7 +911,7 @@ void Lexer::clear()
 
 Identifier* Lexer::makeIdentifier(const Vector<UChar>& buffer)
 {
-    KJS::Identifier* identifier = new KJS::Identifier(m_globalData, buffer.data(), buffer.size());
+    JSC::Identifier* identifier = new JSC::Identifier(m_globalData, buffer.data(), buffer.size());
     m_identifiers.append(identifier);
     return identifier;
 }
@@ -923,4 +923,4 @@ UString* Lexer::makeUString(const Vector<UChar>& buffer)
     return string;
 }
 
-} // namespace KJS
+} // namespace JSC

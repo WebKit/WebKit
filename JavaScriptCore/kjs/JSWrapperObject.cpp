@@ -22,7 +22,7 @@
 #include "config.h"
 #include "JSWrapperObject.h"
 
-namespace KJS {
+namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(JSWrapperObject);
 
@@ -33,4 +33,4 @@ void JSWrapperObject::mark()
         m_internalValue->mark();
 }
 
-} // namespace KJS
+} // namespace JSC

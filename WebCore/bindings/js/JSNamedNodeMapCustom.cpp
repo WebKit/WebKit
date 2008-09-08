@@ -32,7 +32,7 @@
 #include "PlatformString.h"
 #include "JSDOMBinding.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 

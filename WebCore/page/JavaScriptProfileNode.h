@@ -28,7 +28,7 @@
 
 #include <JavaScriptCore/JSBase.h>
 
-namespace KJS {
+namespace JSC {
     class ExecState;
     class ProfileNode;
     class JSValue;
@@ -37,7 +37,7 @@ namespace KJS {
 namespace WebCore {
 
     JSClassRef ProfileNodeClass();
-    KJS::JSValue* toJS(KJS::ExecState*, KJS::ProfileNode*);
+    JSC::JSValue* toJS(JSC::ExecState*, JSC::ProfileNode*);
 
 } // namespace WebCore
 

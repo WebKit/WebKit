@@ -29,7 +29,7 @@
 
 #include <wtf/Assertions.h>
 
-namespace KJS {
+namespace JSC {
     
     class JSObject;
     
@@ -72,6 +72,6 @@ namespace KJS {
         size_t m_offset;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // PutPropertySlot_h

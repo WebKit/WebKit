@@ -30,7 +30,7 @@
 #include "runtime.h"
 #include "runtime_object.h"
 
-using namespace KJS;
+using namespace JSC;
 
 namespace WebCore {
 
@@ -57,7 +57,7 @@ static RuntimeObjectImp* getRuntimeObject(ExecState* exec, Node* node)
     Instance* instance = pluginInstance(node);
     if (!instance)
         return 0;
-    return KJS::Bindings::Instance::createRuntimeObject(exec, instance);
+    return JSC::Bindings::Instance::createRuntimeObject(exec, instance);
 }
 
 JSValue* runtimeObjectGetter(ExecState* exec, const Identifier& propertyName, const PropertySlot& slot)

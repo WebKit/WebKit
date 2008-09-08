@@ -23,7 +23,7 @@
 
 #include "JSWrapperObject.h"
 
-namespace KJS {
+namespace JSC {
 
     class FunctionPrototype;
     class ObjectPrototype;
@@ -54,6 +54,6 @@ namespace KJS {
         mutable Cache* m_cache;
     };
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // DateInstance_h

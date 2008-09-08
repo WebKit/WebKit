@@ -51,7 +51,7 @@ typedef HWND PlatformPluginWidget;
 typedef PlatformWidget PlatformPluginWidget;
 #endif
 
-namespace KJS {
+namespace JSC {
     namespace Bindings {
         class Instance;
     }
@@ -108,7 +108,7 @@ namespace WebCore {
         void setNPWindowRect(const IntRect&);
         static PluginView* currentPluginView();
 
-        PassRefPtr<KJS::Bindings::Instance> bindingInstance();
+        PassRefPtr<JSC::Bindings::Instance> bindingInstance();
 
         PluginStatus status() const { return m_status; }
 

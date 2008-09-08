@@ -29,7 +29,7 @@ class QObject;
 class QMetaObject;
 QT_END_NAMESPACE
 
-namespace KJS {
+namespace JSC {
 namespace Bindings {
 
 
@@ -55,6 +55,6 @@ private:
 };
 
 } // namespace Bindings
-} // namespace KJS
+} // namespace JSC
 
 #endif

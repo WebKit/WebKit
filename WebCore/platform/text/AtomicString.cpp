@@ -32,8 +32,8 @@
 #include <wtf/HashSet.h>
 
 #if USE(JSC)
-using KJS::Identifier;
-using KJS::UString;
+using JSC::Identifier;
+using JSC::UString;
 #endif
 
 namespace WebCore {
@@ -217,7 +217,7 @@ void AtomicString::remove(StringImpl* r)
 }
 
 #if USE(JSC)
-PassRefPtr<StringImpl> AtomicString::add(const KJS::Identifier& identifier)
+PassRefPtr<StringImpl> AtomicString::add(const JSC::Identifier& identifier)
 {
     if (identifier.isNull())
         return 0;
@@ -234,7 +234,7 @@ PassRefPtr<StringImpl> AtomicString::add(const KJS::Identifier& identifier)
     return adoptRef(*addResult.first);
 }
 
-PassRefPtr<StringImpl> AtomicString::add(const KJS::UString& ustring)
+PassRefPtr<StringImpl> AtomicString::add(const JSC::UString& ustring)
 {
     if (ustring.isNull())
         return 0;
@@ -252,7 +252,7 @@ PassRefPtr<StringImpl> AtomicString::add(const KJS::UString& ustring)
 }
 #endif
 
-AtomicStringImpl* AtomicString::find(const KJS::Identifier& identifier)
+AtomicStringImpl* AtomicString::find(const JSC::Identifier& identifier)
 {
     if (identifier.isNull())
         return 0;

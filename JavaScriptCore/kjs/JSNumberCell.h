@@ -30,7 +30,7 @@
 #include "ustring.h"
 #include <stddef.h> // for size_t
 
-namespace KJS {
+namespace JSC {
 
     class Identifier;
     class JSCell;
@@ -168,6 +168,6 @@ namespace KJS {
         return JSImmediate::isNumber(this) ? const_cast<JSValue*>(this) : jsNumber(exec, this->toNumber(exec));
     }
 
-} // namespace KJS
+} // namespace JSC
 
 #endif // JSNumberCell_h

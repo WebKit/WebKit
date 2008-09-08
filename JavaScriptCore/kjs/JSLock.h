@@ -24,7 +24,7 @@
 #include <wtf/Assertions.h>
 #include <wtf/Noncopyable.h>
 
-namespace KJS {
+namespace JSC {
 
     // To make it safe to use JavaScript on multiple threads, it is
     // important to lock before doing anything that allocates a
