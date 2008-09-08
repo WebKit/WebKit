@@ -1,3 +1,20 @@
+2008-09-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Adopt opener restriction on frame navigation.
+          https://bugs.webkit.org/show_bug.cgi?id=20642
+
+        This restriction helps prevent an attacker from navigating top-level
+        windows that were created by another web site.
+
+        Tests: http/tests/security/frameNavigation/not-opener.html
+               http/tests/security/frameNavigation/opener.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::canAccessAncestor):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+
 2008-09-07  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Maciej Stachowiak.

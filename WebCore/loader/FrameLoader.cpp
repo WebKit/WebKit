@@ -2447,25 +2447,13 @@ void FrameLoader::reload()
     loadWithDocumentLoader(loader.get(), FrameLoadTypeReload, 0);
 }
 
-bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
+static bool canAccessAncestor(const SecurityOrigin* activeSecurityOrigin, Frame* targetFrame)
 {
-    // The navigation change is safe if the active frame is:
-    //   - in the same security origin as the target or one of the target's ancestors
-    // Or the target frame is:
-    //   - a top-level frame in the frame hierarchy
-
+    // targetFrame can be NULL when we're trying to navigate a top-level frame
+    // that has a NULL opener.
     if (!targetFrame)
-        return true;
+        return false;
 
-    if (m_frame == targetFrame)
-        return true;
-
-    if (!targetFrame->tree()->parent())
-        return true;
-
-    Document* activeDocument = m_frame->document();
-    ASSERT(activeDocument);
-    const SecurityOrigin* activeSecurityOrigin = activeDocument->securityOrigin();
     for (Frame* ancestorFrame = targetFrame; ancestorFrame; ancestorFrame = ancestorFrame->tree()->parent()) {
         Document* ancestorDocument = ancestorFrame->document();
         if (!ancestorDocument)
@@ -2475,6 +2463,44 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
         if (activeSecurityOrigin->canAccess(ancestorSecurityOrigin))
             return true;
     }
+
+    return false;
+}
+
+bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
+{
+    // The navigation change is safe if the active frame is:
+    //   - in the same security origin as the target or one of the target's
+    //     ancestors.
+    //
+    // Or the target frame is:
+    //   - a top-level frame in the frame hierarchy and the active frame can
+    //     navigate the target frame's opener per above.
+
+    if (!targetFrame)
+        return true;
+
+    // Performance optimization.
+    if (m_frame == targetFrame)
+        return true;
+
+    // Let a frame navigate the top-level window that contains it.  This is
+    // important to allow because it lets a site "frame-bust" (escape from a
+    // frame created by another web site).
+    if (targetFrame == m_frame->tree()->top())
+        return true;
+
+    Document* activeDocument = m_frame->document();
+    ASSERT(activeDocument);
+    const SecurityOrigin* activeSecurityOrigin = activeDocument->securityOrigin();
+
+    // For top-level windows, check the opener.
+    if (!targetFrame->tree()->parent() && canAccessAncestor(activeSecurityOrigin, targetFrame->loader()->opener()))
+        return true;
+
+    // In general, check the frame's ancestors.
+    if (canAccessAncestor(activeSecurityOrigin, targetFrame))
+        return true;
 
     Settings* settings = targetFrame->settings();
     if (settings && !settings->privateBrowsingEnabled()) {
