@@ -100,8 +100,8 @@ namespace WebCore {
         }
     };
 
-    // This class is a modified version of the code the KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE
-    // and KJS_IMPLEMENT_PROTOTYPE macros produce - the idea is that classes like JSEventTargetNode
+    // This class is a modified version of the code the JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE
+    // and JSC_IMPLEMENT_PROTOTYPE macros produce - the idea is that classes like JSEventTargetNode
     // and JSEventTargetSVGElementInstance can share a single prototype just differing in the
     // naming "EventTargetNodePrototype" vs "EventTargetSVGElementInstancePrototype". Above mentioned
     // macros force the existance of several prototype tables for each of the classes - avoid that.

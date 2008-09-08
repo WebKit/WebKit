@@ -636,7 +636,7 @@ sub GenerateHeader
     }
     push(@headerContent, "\n");
 
-    # Add prototype declaration -- code adopted from the KJS_DEFINE_PROTOTYPE and KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
+    # Add prototype declaration -- code adopted from the JSC_DEFINE_PROTOTYPE and JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE macros
     push(@headerContent, "class ${className}Prototype : public JSC::JSObject {\n");
     push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {

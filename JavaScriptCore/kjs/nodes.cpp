@@ -153,7 +153,7 @@ Node::Node(JSGlobalData* globalData, JSType expectedReturn)
     m_line = globalData->lexer->lineNo();
 }
 
-static void substitute(UString& string, const UString& substring) KJS_FAST_CALL;
+static void substitute(UString& string, const UString& substring) JSC_FAST_CALL;
 static void substitute(UString& string, const UString& substring)
 {
     int position = string.find("%s");

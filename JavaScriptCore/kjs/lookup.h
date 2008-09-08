@@ -255,15 +255,15 @@ namespace JSC {
  * not one in each derived class. So we link the (unique) prototypes between them.
  *
  * Using those macros is very simple: define the hashtable (e.g. "DOMNodePrototypeTable"), then
- * KJS_DEFINE_PROTOTYPE(DOMNodePrototype)
- * KJS_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodePrototype, DOMNodePrototypeFunction)
+ * JSC_DEFINE_PROTOTYPE(DOMNodePrototype)
+ * JSC_IMPLEMENT_PROTOTYPE("DOMNode", DOMNodePrototype, DOMNodePrototypeFunction)
  * and use DOMNodePrototype::self(exec) as prototype in the DOMNode constructor.
  * If the prototype has a "parent prototype", e.g. DOMElementPrototype falls back on DOMNodePrototype,
- * then the first line will use KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE, with DOMNodePrototype as the second argument.
+ * then the first line will use JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE, with DOMNodePrototype as the second argument.
  */
 
 // These macros assume that a prototype's only properties are functions
-#define KJS_DEFINE_PROTOTYPE(ClassPrototype) \
+#define JSC_DEFINE_PROTOTYPE(ClassPrototype) \
   class ClassPrototype : public JSC::JSObject { \
   public: \
     static JSC::JSObject* self(JSC::ExecState* exec); \
@@ -275,7 +275,7 @@ namespace JSC {
     \
   };
 
-#define KJS_DEFINE_PROTOTYPE_WITH_PROTOTYPE(ClassPrototype, ClassPrototypePrototype) \
+#define JSC_DEFINE_PROTOTYPE_WITH_PROTOTYPE(ClassPrototype, ClassPrototypePrototype) \
     class ClassPrototype : public JSC::JSObject { \
     public: \
         static JSC::JSObject* self(JSC::ExecState* exec); \
@@ -287,7 +287,7 @@ namespace JSC {
     \
     };
 
-#define KJS_IMPLEMENT_PROTOTYPE(ClassName, ClassPrototype) \
+#define JSC_IMPLEMENT_PROTOTYPE(ClassName, ClassPrototype) \
     const ClassInfo ClassPrototype::info = { ClassName"Prototype", 0, &ClassPrototype##Table, 0  }; \
     JSObject* ClassPrototype::self(ExecState* exec) \
     { \

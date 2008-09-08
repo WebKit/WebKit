@@ -31,7 +31,7 @@ CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
     : nullIdentifier(globalData, nullCString)
     , underscoreProto(globalData, "__proto__")
     , thisIdentifier(globalData, "this")
-    KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
+    JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
 {
 }
 

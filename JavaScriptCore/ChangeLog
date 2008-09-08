@@ -1,5 +1,133 @@
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 20711: Change KJS prefix on preprocessor macros to JSC
+        <https://bugs.webkit.org/show_bug.cgi?id=20711>
+
+        * kjs/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * kjs/CommonIdentifiers.h:
+        * kjs/PropertySlot.h:
+        (JSC::PropertySlot::getValue):
+        (JSC::PropertySlot::putValue):
+        (JSC::PropertySlot::setValueSlot):
+        (JSC::PropertySlot::setValue):
+        (JSC::PropertySlot::setRegisterSlot):
+        * kjs/lookup.h:
+        * kjs/nodes.cpp:
+        * kjs/nodes.h:
+        (JSC::Node::):
+        (JSC::ExpressionNode::):
+        (JSC::StatementNode::):
+        (JSC::NullNode::):
+        (JSC::BooleanNode::):
+        (JSC::NumberNode::):
+        (JSC::ImmediateNumberNode::):
+        (JSC::StringNode::):
+        (JSC::RegExpNode::):
+        (JSC::ThisNode::):
+        (JSC::ResolveNode::):
+        (JSC::ElementNode::):
+        (JSC::ArrayNode::):
+        (JSC::PropertyNode::):
+        (JSC::PropertyListNode::):
+        (JSC::ObjectLiteralNode::):
+        (JSC::BracketAccessorNode::):
+        (JSC::DotAccessorNode::):
+        (JSC::ArgumentListNode::):
+        (JSC::ArgumentsNode::):
+        (JSC::NewExprNode::):
+        (JSC::EvalFunctionCallNode::):
+        (JSC::FunctionCallValueNode::):
+        (JSC::FunctionCallResolveNode::):
+        (JSC::FunctionCallBracketNode::):
+        (JSC::FunctionCallDotNode::):
+        (JSC::PrePostResolveNode::):
+        (JSC::PostfixResolveNode::):
+        (JSC::PostfixBracketNode::):
+        (JSC::PostfixDotNode::):
+        (JSC::PostfixErrorNode::):
+        (JSC::DeleteResolveNode::):
+        (JSC::DeleteBracketNode::):
+        (JSC::DeleteDotNode::):
+        (JSC::DeleteValueNode::):
+        (JSC::VoidNode::):
+        (JSC::TypeOfResolveNode::):
+        (JSC::TypeOfValueNode::):
+        (JSC::PrefixResolveNode::):
+        (JSC::PrefixBracketNode::):
+        (JSC::PrefixDotNode::):
+        (JSC::PrefixErrorNode::):
+        (JSC::UnaryPlusNode::):
+        (JSC::NegateNode::):
+        (JSC::BitwiseNotNode::):
+        (JSC::LogicalNotNode::):
+        (JSC::MultNode::):
+        (JSC::DivNode::):
+        (JSC::ModNode::):
+        (JSC::AddNode::):
+        (JSC::SubNode::):
+        (JSC::LeftShiftNode::):
+        (JSC::RightShiftNode::):
+        (JSC::UnsignedRightShiftNode::):
+        (JSC::LessNode::):
+        (JSC::GreaterNode::):
+        (JSC::LessEqNode::):
+        (JSC::GreaterEqNode::):
+        (JSC::ThrowableBinaryOpNode::):
+        (JSC::InstanceOfNode::):
+        (JSC::InNode::):
+        (JSC::EqualNode::):
+        (JSC::NotEqualNode::):
+        (JSC::StrictEqualNode::):
+        (JSC::NotStrictEqualNode::):
+        (JSC::BitAndNode::):
+        (JSC::BitOrNode::):
+        (JSC::BitXOrNode::):
+        (JSC::LogicalOpNode::):
+        (JSC::ConditionalNode::):
+        (JSC::ReadModifyResolveNode::):
+        (JSC::AssignResolveNode::):
+        (JSC::ReadModifyBracketNode::):
+        (JSC::AssignBracketNode::):
+        (JSC::AssignDotNode::):
+        (JSC::ReadModifyDotNode::):
+        (JSC::AssignErrorNode::):
+        (JSC::CommaNode::):
+        (JSC::VarDeclCommaNode::):
+        (JSC::ConstDeclNode::):
+        (JSC::ConstStatementNode::):
+        (JSC::EmptyStatementNode::):
+        (JSC::DebuggerStatementNode::):
+        (JSC::ExprStatementNode::):
+        (JSC::VarStatementNode::):
+        (JSC::IfNode::):
+        (JSC::IfElseNode::):
+        (JSC::DoWhileNode::):
+        (JSC::WhileNode::):
+        (JSC::ForNode::):
+        (JSC::ContinueNode::):
+        (JSC::BreakNode::):
+        (JSC::ReturnNode::):
+        (JSC::WithNode::):
+        (JSC::LabelNode::):
+        (JSC::ThrowNode::):
+        (JSC::TryNode::):
+        (JSC::ParameterNode::):
+        (JSC::ScopeNode::):
+        (JSC::ProgramNode::):
+        (JSC::EvalNode::):
+        (JSC::FunctionBodyNode::):
+        (JSC::FuncExprNode::):
+        (JSC::FuncDeclNode::):
+        (JSC::CaseClauseNode::):
+        (JSC::ClauseListNode::):
+        (JSC::CaseBlockNode::):
+        (JSC::SwitchNode::):
+
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 20704: Replace the KJS namespace

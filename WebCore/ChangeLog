@@ -1,5 +1,17 @@
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Oliver Hunt.
+
+        Bug 20711: Change KJS prefix on preprocessor macros to JSC
+        <https://bugs.webkit.org/show_bug.cgi?id=20711>
+
+        * bindings/js/JSEventTargetBase.h:
+        * bindings/js/JSHTMLInputElementBase.cpp:
+        * bindings/js/JSHTMLInputElementBase.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
+2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 20704: Replace the KJS namespace

@@ -26,7 +26,7 @@
 
 // ArgList of property names, passed to a macro so we can do set them up various
 // ways without repeating the list.
-#define KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
+#define JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(macro) \
     macro(__defineGetter__) \
     macro(__defineSetter__) \
     macro(__lookupGetter__) \
@@ -77,9 +77,9 @@ namespace JSC {
         const Identifier underscoreProto;
         const Identifier thisIdentifier;
 
-#define KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
-        KJS_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
-#undef KJS_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
+#define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
+        JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
+#undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL
     };
 
 } // namespace JSC
