@@ -170,7 +170,7 @@ void AffineTransform::blend(const AffineTransform& from, double progress)
     srA[2] = fmod(srA[2], 2.0 * piDouble);
     srB[2] = fmod(srB[2], 2.0 * piDouble);
 
-    if (fabs (srA[2] - srB[2]) > piDouble) {
+    if (fabs(srA[2] - srB[2]) > piDouble) {
         if (srA[2] > srB[2])
             srA[2] -= piDouble * 2.0;
         else

@@ -1,3 +1,12 @@
+2008-09-08  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Code style issue I forgot to fix from previous commit.
+
+        * platform/graphics/AffineTransform.cpp:
+        (WebCore::AffineTransform::blend):
+
 2008-09-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig
