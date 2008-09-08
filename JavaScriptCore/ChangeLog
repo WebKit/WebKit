@@ -1,3 +1,23 @@
+2008-09-08  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Geoff.
+
+       <rdar://problem/6134407> Breakpoints in for loops, while loops or
+       conditions without curly braces don't break. (19306)
+       -Statement Lists already emit debug hooks but conditionals without
+       brackets are not lists.
+
+        * kjs/nodes.cpp:
+        (KJS::IfNode::emitCode):
+        (KJS::IfElseNode::emitCode):
+        (KJS::DoWhileNode::emitCode):
+        (KJS::WhileNode::emitCode):
+        (KJS::ForNode::emitCode):
+        (KJS::ForInNode::emitCode):
+        * kjs/nodes.h:
+        (KJS::StatementNode::):
+        (KJS::BlockNode::):
+
 2008-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Anders Carlsson.

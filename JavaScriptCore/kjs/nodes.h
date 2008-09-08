@@ -233,6 +233,7 @@ namespace JSC {
         virtual Precedence precedence() const { ASSERT_NOT_REACHED(); return PrecExpression; }
         virtual bool isEmptyStatement() const JSC_FAST_CALL { return false; }
 
+        virtual bool isBlock() const KJS_FAST_CALL { return false; }
     protected:
         LabelStack m_labelStack;
 
@@ -1826,6 +1827,7 @@ namespace JSC {
 
         StatementVector& children() { return m_children; }
 
+        virtual bool isBlock() const KJS_FAST_CALL { return true; }
     protected:
         StatementVector m_children;
     };
