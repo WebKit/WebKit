@@ -1,3 +1,13 @@
+2008-09-08  Steve Falkenburg  <sfalken@apple.com>
+
+        Another Windows nightly build fix.
+
+        Reviewed by Sam Weinig.
+
+        * FindSafari/FindSafari.cpp:
+        (_tmain): Delete existing WebKitNightly directory in temp.
+        * FindSafari/Safari.exe.manifest: Add PROGIDs for each COM class. Remove non-production classes.
+
 2008-09-07  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Mark Rowe.

@@ -229,6 +229,7 @@ int _tmain(int argc, TCHAR* argv[])
 
     LPCTSTR lines[] = {
         TEXT("@echo off"),
+        TEXT("del /s /q \"%%TMP%%\\WebKitNightly\""),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\Safari.resources\""),
         TEXT("mkdir 2>NUL \"%%TMP%%\\WebKitNightly\\WebKit.resources\""),
         TEXT("xcopy /y /i /d \"%sSafari.exe\" \"%%TMP%%\\WebKitNightly\""),
