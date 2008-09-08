@@ -1,3 +1,17 @@
+2008-09-08  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20668
+        multipart/form-data does not always include Content-type for submitted files
+
+        Cannot be tested with DRT or manual tests.
+
+        * platform/MIMETypeRegistry.cpp:
+        (WebCore::initializeSupportedNonImageMimeTypes): Fix spacing.
+        (WebCore::MIMETypeRegistry::getMIMETypeForPath): Default to application/octet-stream for
+        unknown extensions, not just missing ones.
+
 2008-09-08  Simon Hausmann  <hausmann@webkit.org>
 
         Build fix for the Qt/Windows build, define USE_JSC to
