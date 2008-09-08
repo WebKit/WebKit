@@ -33,6 +33,7 @@
 #include "Instruction.h"
 #include "JSGlobalObject.h"
 #include "nodes.h"
+#include "Parser.h"
 #include "SourceRange.h"
 #include "ustring.h"
 #include <wtf/RefPtr.h>
@@ -129,6 +130,40 @@ namespace JSC {
 #endif
     };
 
+    class EvalCodeCache {
+    public:
+        PassRefPtr<EvalNode> get(ExecState* exec, const UString& evalSource, ScopeChainNode* scopeChain, JSValue*& exceptionValue)
+        {
+            RefPtr<EvalNode> evalNode;
+
+            if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
+                evalNode = cacheMap.get(evalSource.rep());
+
+            if (!evalNode) {
+                int sourceId;
+                int errLine;
+                UString errMsg;
+                
+                evalNode = exec->parser()->parse<EvalNode>(exec, UString(), 1, UStringSourceProvider::create(evalSource), &sourceId, &errLine, &errMsg);
+                if (evalNode) {
+                    if (evalSource.size() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && cacheMap.size() < maxCacheEntries)
+                        cacheMap.set(evalSource.rep(), evalNode);
+                } else {
+                    exceptionValue = Error::create(exec, SyntaxError, errMsg, errLine, sourceId, NULL);
+                    return 0;
+                }
+            }
+
+            return evalNode.release();
+        }
+
+    private:
+        static const int maxCacheableSourceLength = 256;
+        static const int maxCacheEntries = 64;
+
+        HashMap<RefPtr<UString::Rep>, RefPtr<EvalNode> > cacheMap;
+    };
+
     struct CodeBlock {
         CodeBlock(ScopeNode* ownerNode_, CodeType codeType_, PassRefPtr<SourceProvider> source_, unsigned sourceOffset_)
             : ownerNode(ownerNode_)
@@ -207,10 +242,13 @@ namespace JSC {
         HashMap<void*, unsigned> ctiReturnAddressVPCMap;
 #endif
 
+        EvalCodeCache evalCodeCache;
+
     private:
 #if !defined(NDEBUG) || ENABLE(SAMPLING_TOOL)
         void dump(ExecState*, const Vector<Instruction>::const_iterator& begin, Vector<Instruction>::const_iterator&) const;
 #endif
+
     };
 
     // Program code is not marked by any function, so we make the global object

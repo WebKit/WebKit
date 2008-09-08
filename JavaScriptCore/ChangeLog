@@ -1,3 +1,25 @@
+2008-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+        
+        - Cache the code generated for eval to speed up SunSpider and web sites
+        https://bugs.webkit.org/show_bug.cgi?id=20718
+        
+        1.052x on SunSpider
+        2.29x on date-format-tofte
+        
+        Lots of real sites seem to get many hits on this cache as well,
+        including GMail, Google Spreadsheets, Slate and Digg (the last of
+        these gets over 100 hits on initial page load).
+
+        * VM/CodeBlock.h:
+        (JSC::EvalCodeCache::get):
+        * VM/Machine.cpp:
+        (JSC::Machine::callEval):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_call_eval):
+        * VM/Machine.h:
+
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Oliver Hunt.

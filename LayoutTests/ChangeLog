@@ -1,3 +1,14 @@
+2008-09-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        - Test for potential bug found while fixing "Cache the code generated for eval to speed up SunSpider and web sites"
+        https://bugs.webkit.org/show_bug.cgi?id=20718
+
+        * fast/js/eval-cache-crash-expected.txt: Added.
+        * fast/js/eval-cache-crash.html: Added.
+        * fast/js/resources/eval-cache-crash.js: Added.
+
 2008-09-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.
