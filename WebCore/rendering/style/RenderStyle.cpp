@@ -543,29 +543,21 @@ PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOp
 {
     if (from && !from->isMatrixOperation())
         return this;
+
+    // convert the TransformOperations into matrices
+    IntSize size;
+    AffineTransform fromT;
+    AffineTransform toT(m_a, m_b, m_c, m_d, m_e, m_f);
+    if (from) {
+        const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(from);
+        fromT.setMatrix(m->m_a, m->m_b, m->m_c, m->m_d, m->m_e, m->m_f);
+    }
     
     if (blendToIdentity)
-        return MatrixTransformOperation::create(m_a * (1. - progress) + progress,
-                                            m_b * (1. - progress),
-                                            m_c * (1. - progress),
-                                            m_d * (1. - progress) + progress,
-                                            m_e * (1. - progress),
-                                            m_f * (1. - progress));
+        std::swap(fromT, toT);
 
-    const MatrixTransformOperation* fromOp = static_cast<const MatrixTransformOperation*>(from);
-    double fromA = fromOp ? fromOp->m_a : 1.;
-    double fromB = fromOp ? fromOp->m_b : 0;
-    double fromC = fromOp ? fromOp->m_c : 0;
-    double fromD = fromOp ? fromOp->m_d : 1.;
-    double fromE = fromOp ? fromOp->m_e : 0;
-    double fromF = fromOp ? fromOp->m_f : 0;
-    
-    return MatrixTransformOperation::create(fromA + (m_a - fromA) * progress,
-                                        fromB + (m_b - fromB) * progress,
-                                        fromC + (m_c - fromC) * progress,
-                                        fromD + (m_d - fromD) * progress,
-                                        fromE + (m_e - fromE) * progress,
-                                        fromF + (m_f - fromF) * progress);
+    toT.blend(fromT, progress);
+    return MatrixTransformOperation::create(toT.a(), toT.b(), toT.c(), toT.d(), toT.e(), toT.f());
 }
 
 bool KeyframeList::operator==(const KeyframeList& o) const

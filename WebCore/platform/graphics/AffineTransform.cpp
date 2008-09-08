@@ -33,6 +33,58 @@
 
 namespace WebCore {
 
+static void affineTransformDecompose(const AffineTransform& matrix, double sr[9])
+{
+    AffineTransform m(matrix);
+
+    // Compute scaling factors
+    double sx = sqrt(m.a() * m.a() + m.b() * m.b());
+    double sy = sqrt(m.c() * m.c() + m.d() * m.d());
+
+    /* Compute cross product of transformed unit vectors. If negative,
+        one axis was flipped. */
+
+    if (m.a() * m.d() - m.c() * m.b() < 0.0) {
+        // Flip axis with minimum unit vector dot product
+
+        if (m.a() < m.d())
+            sx = -sx;
+        else
+            sy = -sy;
+    }
+
+    // Remove scale from matrix
+
+    m.scale(1.0 / sx, 1.0 / sy);
+
+    // Compute rotation
+
+    double angle = atan2(m.b(), m.a());
+
+    // Remove rotation from matrix
+
+    m.rotate(rad2deg(-angle));
+
+    // Return results
+
+    sr[0] = sx; sr[1] = sy; sr[2] = angle;
+    sr[3] = m.a(); sr[4] = m.b();
+    sr[5] = m.c(); sr[6] = m.d();
+    sr[7] = m.e(); sr[8] = m.f();
+}
+
+static void affineTransformCompose(AffineTransform& m, const double sr[9])
+{
+    m.setA(sr[3]);
+    m.setB(sr[4]);
+    m.setC(sr[5]);
+    m.setD(sr[6]);
+    m.setE(sr[7]);
+    m.setF(sr[8]);
+    m.rotate(rad2deg(sr[2]));
+    m.scale(sr[0], sr[1]);
+}
+
 bool AffineTransform::isInvertible() const
 {
     return det() != 0.0;
@@ -98,6 +150,37 @@ FloatPoint AffineTransform::mapPoint(const FloatPoint& point) const
     map(point.x(), point.y(), &x2, &y2);
 
     return FloatPoint(static_cast<float>(x2), static_cast<float>(y2));
+}
+
+void AffineTransform::blend(const AffineTransform& from, double progress)
+{
+    double srA[9], srB[9];
+
+    affineTransformDecompose(from, srA);
+    affineTransformDecompose(*this, srB);
+
+    // If x-axis of one is flipped, and y-axis of the other, convert to an unflipped rotation.
+    if ((srA[0] < 0.0 && srB[1] < 0.0) || (srA[1] < 0.0 &&  srB[0] < 0.0)) {
+        srA[0] = -srA[0];
+        srA[1] = -srA[1];
+        srA[2] += srA[2] < 0 ? piDouble : -piDouble;
+    }
+
+    // Don't rotate the long way around.
+    srA[2] = fmod(srA[2], 2.0 * piDouble);
+    srB[2] = fmod(srB[2], 2.0 * piDouble);
+
+    if (fabs (srA[2] - srB[2]) > piDouble) {
+        if (srA[2] > srB[2])
+            srA[2] -= piDouble * 2.0;
+        else
+            srB[2] -= piDouble * 2.0;
+    }
+
+    for (int i = 0; i < 9; i++)
+        srA[i] = srA[i] + progress * (srB[i] - srA[i]);
+
+    affineTransformCompose(*this, srA);
 }
 
 }

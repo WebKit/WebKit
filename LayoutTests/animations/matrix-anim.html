@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Animation using matrix()</title>
+  <style type="text/css" media="screen">
+    #box {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 1s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "anim";
+    }
+    @-webkit-keyframes "anim" {
+        from { -webkit-transform: matrix(0.707, -0.707, 0.707, 0.707, 0, 0); }
+        to   { -webkit-transform: matrix(0.707, 0.707, -0.707, 0.707, 0, 0); }
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+      layoutTestController.dumpAsText();
+      layoutTestController.waitUntilDone();
+    }
+    
+    result = "PASS";
+    const defaultTolerance = 0.1;
+    
+    const expected =  [ 1, 0, 0, 1, 0, 0 ];
+    
+    function isEqual(actual, desired, tolerance)
+    {
+        if (tolerance == undefined || tolerance == 0)
+            tolerance = defaultTolerance;
+        var diff = Math.abs(actual - desired);
+        return diff < tolerance;
+    }
+    
+    function snapshot(which)
+    {
+        if (result != "PASS")
+            return;
+            
+        var t = window.getComputedStyle(document.getElementById('box')).getPropertyCSSValue('-webkit-transform');
+
+        for (i = 0; i < 6; ++i) {
+            var val = t[0][i].getFloatValue(CSSPrimitiveValue.CSS_NUMBER);
+            if (!isEqual(val, expected[i])) {
+                result = "FAIL(matrix["+i+"] was:"+val+", expected:"+expected[i]+")";
+                return;
+            }
+        }
+    }
+
+    function start()
+    {
+        setTimeout("snapshot(0)", 500);
+        
+        window.setTimeout(function() {
+            document.getElementById('result').innerHTML = result;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 600);
+    }
+    
+    document.addEventListener('webkitAnimationStart', start, false);
+    
+  </script>
+</head>
+<body>
+This test performs an animation of the matrix operator. It animates over 2 seconds.
+At 1 second it takes a snapshot and expects the result to be within range.
+<div id="box">
+</div>
+<div id="result">
+</div>
+</body>
+</html>
