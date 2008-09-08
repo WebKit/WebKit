@@ -1,3 +1,18 @@
+2008-09-08  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/5850387> Showing bookmarks reloads Google Reader instead.
+        
+        In some cases, timeouts scheduled by a page in the onunload handler could fire even when the
+        page had been unloaded and replaced by a non-HTML representation based view (such as the bookmarks view).
+        
+        Fix this by clearing timeouts for pages that aren't cached when the provisional load is committed.
+        
+        * bindings/js/JSDOMWindowBase.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::commitProvisionalLoad):
+
 2008-09-07  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Hyatt.

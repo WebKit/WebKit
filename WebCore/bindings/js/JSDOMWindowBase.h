@@ -126,6 +126,8 @@ namespace WebCore {
 
         static JSC::JSGlobalData* commonJSGlobalData();
 
+        void clearAllTimeouts();
+
         enum {
             // Attributes
             Crypto, Event_,
@@ -172,7 +174,6 @@ namespace WebCore {
         static JSC::JSValue* namedItemGetter(JSC::ExecState*, const JSC::Identifier&, const JSC::PropertySlot&);
 
         void clearHelperObjectProperties();
-        void clearAllTimeouts();
         int installTimeout(ScheduledAction*, int interval, bool singleShot);
 
         bool allowsAccessFromPrivate(const JSC::JSGlobalObject*) const;
