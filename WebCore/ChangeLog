@@ -1,3 +1,14 @@
+2008-09-09  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon.
+
+        Fix compilation of the Qt port with disabled plugins on Windows
+
+        * WebCore.pro:
+        * plugins/PluginView.cpp:
+        (WebCore::PluginView::PluginView):
+        * plugins/PluginView.h:
+
 2008-09-09  Jungshik Shin  <jungshik.shin@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
