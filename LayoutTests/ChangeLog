@@ -1,3 +1,11 @@
+2008-09-09  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        - update results for the addition of console.dirxml
+
+        * fast/dom/Window/window-properties-expected.txt:
+
 2008-09-05  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.
