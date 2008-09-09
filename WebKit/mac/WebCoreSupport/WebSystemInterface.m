@@ -60,7 +60,6 @@ void InitWebCoreSystemInterface(void)
     INIT(GetExtensionsForMIMEType);
     INIT(GetFontInLanguageForCharacter);
     INIT(GetFontInLanguageForRange);
-    INIT(GetGlyphsForCharacters);
     INIT(GetGlyphTransformedAdvances);
     INIT(GetMIMETypeForExtension);
     INIT(GetNSURLResponseLastModifiedDate);
@@ -81,7 +80,9 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieMaxTimeLoaded);
     INIT(QTMovieViewSetDrawSynchronously);
 
-#ifdef BUILDING_ON_TIGER
+#ifndef BUILDING_ON_TIGER
+    INIT(GetGlyphsForCharacters);
+#else
     INIT(ClearGlyphVector);
     INIT(ConvertCharToGlyphs);
     INIT(CopyFullFontName);
