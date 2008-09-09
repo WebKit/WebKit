@@ -102,6 +102,7 @@ sub writeToFile($$);
 
 # Argument handling
 my $addPlatformExceptions = 0;
+my $complexText = 0;
 my $configuration = configuration();
 my $guardMalloc = '';
 my $httpdPort = 8000;
@@ -173,6 +174,7 @@ my $httpDefault = $testHTTP ? "run" : "do not run";
 my $usage = <<EOF;
 Usage: $programName [options] [testdir|testpath ...]
   --add-platform-exceptions       Put new results for non-platform-specific failing tests into the platform-specific results directory
+  --complex-text                  Use the complex text code path for all text (Mac OS X only)
   -c|--configuration config       Set DumpRenderTree build configuration
   -g|--guard-malloc               Enable malloc guard
   --help                          Show this help message
@@ -212,6 +214,7 @@ EOF
 $configuration = passedConfiguration() || configuration();
 
 my $getOptionsResult = GetOptions(
+    'complex-text' => \$complexText,
     'c|configuration=s' => \$configuration,
     'guard-malloc|g' => \$guardMalloc,
     'help' => \$showHelp,
@@ -452,6 +455,7 @@ push @toolArgs, "--pixel-tests" if $pixelTests;
 push @toolArgs, "--repaint" if $repaintTests;
 push @toolArgs, "--horizontal-sweep" if $repaintSweepHorizontally;
 push @toolArgs, "--threaded" if $threaded;
+push @toolArgs, "--complex-text" if $complexText;
 push @toolArgs, "-";
 
 my @diffToolArgs = ();

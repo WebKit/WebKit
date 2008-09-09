@@ -116,6 +116,7 @@ static int threaded;
 static int testRepaintDefault;
 static int repaintSweepHorizontallyDefault;
 static int dumpTree = YES;
+static int forceComplexText;
 static BOOL printSeparators;
 static NSString *currentTest = nil;
 static RetainPtr<CFStringRef> persistentUserStyleSheetLocation;
@@ -405,6 +406,7 @@ static void initializeGlobalsFromCommandLineOptions(int argc, const char *argv[]
         {"repaint", no_argument, &testRepaintDefault, YES},
         {"tree", no_argument, &dumpTree, YES},
         {"threaded", no_argument, &threaded, YES},
+        {"complex-text", no_argument, &forceComplexText, YES},
         {NULL, 0, NULL, 0}
     };
     
@@ -471,7 +473,10 @@ void dumpRenderTree(int argc, const char *argv[])
     addTestPluginsToPluginSearchPath(argv[0]);
     if (dumpPixels)
         installSignalHandlers();
-    
+
+    if (forceComplexText)
+        [WebView _setAlwaysUseATSU:YES];
+
     WebView *webView = createWebViewAndOffscreenWindow();
     mainFrame = [webView mainFrame];
 

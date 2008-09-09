@@ -1,3 +1,14 @@
+2008-09-08  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        - add an option to run-webkit-tests to always use the complex text code path
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (initializeGlobalsFromCommandLineOptions):
+        (dumpRenderTree):
+        * Scripts/run-webkit-tests:
+
 2008-09-08  Steve Falkenburg  <sfalken@apple.com>
 
         Another Windows nightly build fix.
