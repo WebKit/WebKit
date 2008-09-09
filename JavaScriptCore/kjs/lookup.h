@@ -145,7 +145,7 @@ namespace JSC {
             return thisObj->ParentImp::getOwnPropertySlot(exec, propertyName, slot);
 
         if (entry->attributes & Function)
-            slot.setStaticEntry(thisObj, entry, staticFunctionGetter);
+            setUpStaticFunctionSlot(exec, entry, thisObj, propertyName, slot);
         else
             slot.setStaticEntry(thisObj, entry, staticValueGetter<ThisImp>);
 

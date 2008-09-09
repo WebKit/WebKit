@@ -72,10 +72,14 @@ JSValue* staticFunctionGetter(ExecState* exec, const Identifier& propertyName, c
 void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot)
 {
     ASSERT(entry->attributes & Function);
-    PrototypeFunction* function = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
-    thisObj->putDirect(propertyName, function, entry->attributes);
-    
     JSValue** location = thisObj->getDirectLocation(propertyName);
+ 
+    if (!location) {
+        PrototypeFunction* function = new (exec) PrototypeFunction(exec, entry->length, propertyName, entry->functionValue);
+        thisObj->putDirect(propertyName, function, entry->attributes);
+        location = thisObj->getDirectLocation(propertyName);
+    }
+    
     slot.setValueSlot(thisObj, location, thisObj->offsetForLocation(location));
 }
 
