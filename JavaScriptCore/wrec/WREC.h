@@ -86,13 +86,12 @@ namespace JSC {
         typedef MacroAssembler::JmpDst JmpDst;
 
         // these regs setup by the params
-        static const X86Assembler::RegisterID INPUT_REG = X86Assembler::eax;
-        static const X86Assembler::RegisterID CURR_POS_REG = X86Assembler::edx;
-        static const X86Assembler::RegisterID LENGTH_REG = X86Assembler::ecx;
-        // CURR_VAL_REG used as a temporary, DISJUNCTION_BEGIN_POS_REG holds the start of the current disjunction - which is the start of the whole match, for the top--level dijunction.
-        static const X86Assembler::RegisterID CURR_VAL_REG = X86Assembler::esi;
-        static const X86Assembler::RegisterID OUTPUT_REG = X86Assembler::edi;
-        static const X86Assembler::RegisterID QUANTIFIER_COUNT_REG = X86Assembler::ebx;
+        static const X86Assembler::RegisterID inputRegister = X86Assembler::eax;
+        static const X86Assembler::RegisterID currentPositionRegister = X86Assembler::edx;
+        static const X86Assembler::RegisterID lengthRegister = X86Assembler::ecx;
+        static const X86Assembler::RegisterID currentValueRegister = X86Assembler::esi;
+        static const X86Assembler::RegisterID outputRegister = X86Assembler::edi;
+        static const X86Assembler::RegisterID quantifierCountRegister = X86Assembler::ebx;
 
         friend class GenerateAtomFunctor;
         friend class GeneratePatternCharacterFunctor;

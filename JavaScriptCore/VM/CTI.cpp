@@ -1845,17 +1845,17 @@ void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numS
     
     jit.emitConvertToFastCall();
     // (0) Setup:
-    //     Preserve regs & initialize OUTPUT_REG.
-    jit.emitPushl_r(WRECGenerator::OUTPUT_REG);
-    jit.emitPushl_r(WRECGenerator::CURR_VAL_REG);
+    //     Preserve regs & initialize outputRegister.
+    jit.emitPushl_r(WRECGenerator::outputRegister);
+    jit.emitPushl_r(WRECGenerator::currentValueRegister);
     // push pos onto the stack, both to preserve and as a parameter available to parseDisjunction
-    jit.emitPushl_r(WRECGenerator::CURR_POS_REG);
+    jit.emitPushl_r(WRECGenerator::currentPositionRegister);
     // load output pointer
     jit.emitMovl_mr(16
 #if COMPILER(MSVC)
                     + 3 * sizeof(void*)
 #endif
-                    , MacroAssembler::esp, WRECGenerator::OUTPUT_REG);
+                    , MacroAssembler::esp, WRECGenerator::outputRegister);
     
     // restart point on match fail.
     WRECGenerator::JmpDst nextLabel = jit.label();
@@ -1877,22 +1877,22 @@ void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numS
     // (2) Success:
     //     Set return value & pop registers from the stack.
 
-    jit.emitTestl_rr(WRECGenerator::OUTPUT_REG, WRECGenerator::OUTPUT_REG);
+    jit.emitTestl_rr(WRECGenerator::outputRegister, WRECGenerator::outputRegister);
     WRECGenerator::JmpSrc noOutput = jit.emitUnlinkedJe();
 
-    jit.emitMovl_rm(WRECGenerator::CURR_POS_REG, 4, WRECGenerator::OUTPUT_REG);
+    jit.emitMovl_rm(WRECGenerator::currentPositionRegister, 4, WRECGenerator::outputRegister);
     jit.emitPopl_r(MacroAssembler::eax);
-    jit.emitMovl_rm(MacroAssembler::eax, WRECGenerator::OUTPUT_REG);
-    jit.emitPopl_r(WRECGenerator::CURR_VAL_REG);
-    jit.emitPopl_r(WRECGenerator::OUTPUT_REG);
+    jit.emitMovl_rm(MacroAssembler::eax, WRECGenerator::outputRegister);
+    jit.emitPopl_r(WRECGenerator::currentValueRegister);
+    jit.emitPopl_r(WRECGenerator::outputRegister);
     jit.emitRet();
     
     jit.link(noOutput, jit.label());
     
     jit.emitPopl_r(MacroAssembler::eax);
-    jit.emitMovl_rm(MacroAssembler::eax, WRECGenerator::OUTPUT_REG);
-    jit.emitPopl_r(WRECGenerator::CURR_VAL_REG);
-    jit.emitPopl_r(WRECGenerator::OUTPUT_REG);
+    jit.emitMovl_rm(MacroAssembler::eax, WRECGenerator::outputRegister);
+    jit.emitPopl_r(WRECGenerator::currentValueRegister);
+    jit.emitPopl_r(WRECGenerator::outputRegister);
     jit.emitRet();
 
     // (3) Failure:
@@ -1903,17 +1903,17 @@ void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numS
         jit.link(failures[i], here);
     failures.clear();
 
-    jit.emitMovl_mr(MacroAssembler::esp, WRECGenerator::CURR_POS_REG);
-    jit.emitAddl_i8r(1, WRECGenerator::CURR_POS_REG);
-    jit.emitMovl_rm(WRECGenerator::CURR_POS_REG, MacroAssembler::esp);
-    jit.emitCmpl_rr(WRECGenerator::LENGTH_REG, WRECGenerator::CURR_POS_REG);
+    jit.emitMovl_mr(MacroAssembler::esp, WRECGenerator::currentPositionRegister);
+    jit.emitAddl_i8r(1, WRECGenerator::currentPositionRegister);
+    jit.emitMovl_rm(WRECGenerator::currentPositionRegister, MacroAssembler::esp);
+    jit.emitCmpl_rr(WRECGenerator::lengthRegister, WRECGenerator::currentPositionRegister);
     jit.link(jit.emitUnlinkedJle(), nextLabel);
 
     jit.emitAddl_i8r(4, MacroAssembler::esp);
 
     jit.emitMovl_i32r(-1, MacroAssembler::eax);
-    jit.emitPopl_r(WRECGenerator::CURR_VAL_REG);
-    jit.emitPopl_r(WRECGenerator::OUTPUT_REG);
+    jit.emitPopl_r(WRECGenerator::currentValueRegister);
+    jit.emitPopl_r(WRECGenerator::outputRegister);
     jit.emitRet();
 
     *numSubpatterns_ptr = parser.m_numSubpatterns;

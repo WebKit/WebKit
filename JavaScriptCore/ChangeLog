@@ -1,3 +1,40 @@
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Clean up the WREC code some more.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileRegExp):
+        * wrec/WREC.cpp:
+        (JSC::getCharacterClassNewline):
+        (JSC::getCharacterClassDigits):
+        (JSC::getCharacterClassSpaces):
+        (JSC::getCharacterClassWordchar):
+        (JSC::getCharacterClassNondigits):
+        (JSC::getCharacterClassNonspaces):
+        (JSC::getCharacterClassNonwordchar):
+        (JSC::WRECGenerator::generateBacktrack1):
+        (JSC::WRECGenerator::generateBacktrackBackreference):
+        (JSC::WRECGenerator::generateBackreferenceQuantifier):
+        (JSC::WRECGenerator::generateNonGreedyQuantifier):
+        (JSC::WRECGenerator::generateGreedyQuantifier):
+        (JSC::WRECGenerator::generatePatternCharacter):
+        (JSC::WRECGenerator::generateCharacterClassInvertedRange):
+        (JSC::WRECGenerator::generateCharacterClassInverted):
+        (JSC::WRECGenerator::generateCharacterClass):
+        (JSC::WRECGenerator::generateParentheses):
+        (JSC::WRECGenerator::gererateParenthesesResetTrampoline):
+        (JSC::WRECGenerator::generateAssertionBOL):
+        (JSC::WRECGenerator::generateAssertionEOL):
+        (JSC::WRECGenerator::generateAssertionWordBoundary):
+        (JSC::WRECGenerator::generateBackreference):
+        (JSC::WRECGenerator::gernerateDisjunction):
+        (JSC::WRECParser::parseCharacterClass):
+        (JSC::WRECParser::parseEscape):
+        (JSC::WRECParser::parseTerm):
+        * wrec/WREC.h:
+
 2008-09-09  Mark Rowe  <mrowe@apple.com>
 
         Build fix, rubber-stamped by Anders Carlsson.
