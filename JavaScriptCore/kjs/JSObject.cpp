@@ -69,7 +69,15 @@ void JSObject::mark()
 
     JSCell::mark();
     m_structureID->mark();
-    m_propertyMap.mark();
+
+    unsigned storageSize = m_structureID->propertyMap().makingCount();
+    if (storageSize) {
+        for (unsigned i = 1; i <= storageSize; ++i) {
+            JSValue* v = m_propertyStorage[i];
+            if (!v->marked())
+                v->mark();
+        }
+    }
 
     JSOBJECT_MARK_END();
 }
@@ -119,7 +127,7 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     
     // Check if there are any setters or getters in the prototype chain
     JSValue* prototype;
-    for (JSObject* obj = this; !obj->m_propertyMap.hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
+    for (JSObject* obj = this; !obj->structureID()->propertyMap().hasGetterSetterProperties(); obj = static_cast<JSObject*>(prototype)) {
         prototype = obj->prototype();
         if (prototype->isNull()) {
             putDirect(propertyName, value, 0, true, slot);
@@ -128,11 +136,11 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     }
     
     unsigned attributes;
-    if (m_propertyMap.get(propertyName, attributes) && attributes & ReadOnly)
+    if (m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage) && attributes & ReadOnly)
         return;
 
     for (JSObject* obj = this; ; obj = static_cast<JSObject*>(prototype)) {
-        if (JSValue* gs = obj->m_propertyMap.get(propertyName)) {
+        if (JSValue* gs = obj->structureID()->propertyMap().get(propertyName, obj->propertyStorage())) {
             if (gs->isGetterSetter()) {
                 JSObject* setterFunc = static_cast<GetterSetter*>(gs)->setter();        
                 if (!setterFunc) {
@@ -194,7 +202,7 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     unsigned attributes;
-    JSValue* v = m_propertyMap.get(propertyName, attributes);
+    JSValue* v = m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage);
     if (v) {
         if ((attributes & DontDelete))
             return false;
@@ -285,16 +293,17 @@ const HashEntry* JSObject::findPropertyHashEntry(ExecState* exec, const Identifi
 
 void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSObject* getterFunction)
 {
-    GetterSetter* getterSetter;
-    PutPropertySlot slot;
-
     JSValue* object = getDirect(propertyName);
-    if (object && object->isGetterSetter())
-        getterSetter = static_cast<GetterSetter*>(object);
-    else {
-        getterSetter = new (exec) GetterSetter;
-        putDirect(propertyName, getterSetter, None, true, slot);
+    if (object && object->isGetterSetter()) {
+        ASSERT(m_structureID->propertyMap().hasGetterSetterProperties());
+        GetterSetter* getterSetter = static_cast<GetterSetter*>(object);
+        getterSetter->setGetter(getterFunction);
+        return;
     }
+
+    PutPropertySlot slot;
+    GetterSetter* getterSetter = new (exec) GetterSetter;
+    putDirect(propertyName, getterSetter, None, true, slot);
 
     // putDirect will change our StructureID if we add a new property. For
     // getters and setters, though, we also need to change our StructureID
@@ -306,22 +315,23 @@ void JSObject::defineGetter(ExecState* exec, const Identifier& propertyName, JSO
         }
     }
 
-    m_propertyMap.setHasGetterSetterProperties(true);
+    m_structureID->propertyMap().setHasGetterSetterProperties(true);
     getterSetter->setGetter(getterFunction);
 }
 
 void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSObject* setterFunction)
 {
-    GetterSetter* getterSetter;
-    PutPropertySlot slot;
-
     JSValue* object = getDirect(propertyName);
-    if (object && object->isGetterSetter())
-        getterSetter = static_cast<GetterSetter*>(object);
-    else {
-        getterSetter = new (exec) GetterSetter;
-        putDirect(propertyName, getterSetter, None, true, slot);
+    if (object && object->isGetterSetter()) {
+        ASSERT(m_structureID->propertyMap().hasGetterSetterProperties());
+        GetterSetter* getterSetter = static_cast<GetterSetter*>(object);
+        getterSetter->setSetter(setterFunction);
+        return;
     }
+
+    PutPropertySlot slot;
+    GetterSetter* getterSetter = new (exec) GetterSetter;
+    putDirect(propertyName, getterSetter, None, true, slot);
 
     // putDirect will change our StructureID if we add a new property. For
     // getters and setters, though, we also need to change our StructureID
@@ -333,7 +343,7 @@ void JSObject::defineSetter(ExecState* exec, const Identifier& propertyName, JSO
         }
     }
 
-    m_propertyMap.setHasGetterSetterProperties(true);
+    m_structureID->propertyMap().setHasGetterSetterProperties(true);
     getterSetter->setSetter(setterFunction);
 }
 
@@ -411,7 +421,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
 
 bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
-    if (m_propertyMap.get(propertyName, attributes))
+    if (m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage))
         return true;
     
     // Look in the static hashtable of properties
@@ -426,7 +436,7 @@ bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& property
 
 void JSObject::getPropertyNames(ExecState* exec, PropertyNameArray& propertyNames)
 {
-    m_propertyMap.getEnumerablePropertyNames(propertyNames);
+    m_structureID->propertyMap().getEnumerablePropertyNames(propertyNames);
 
     // Add properties from the static hashtables of properties
     for (const ClassInfo* info = classInfo(); info; info = info->parentClass) {
@@ -485,11 +495,14 @@ JSGlobalObject* JSObject::toGlobalObject(ExecState*) const
 
 void JSObject::removeDirect(const Identifier& propertyName)
 {
-    m_propertyMap.remove(propertyName);
-    if (!m_structureID->isDictionary()) {
-        RefPtr<StructureID> structureID = StructureID::toDictionaryTransition(m_structureID);
-        setStructureID(structureID.release());
+    if (m_structureID->isDictionary()) {
+        m_structureID->propertyMap().remove(propertyName, m_propertyStorage);
+        return;
     }
+
+    RefPtr<StructureID> structureID = StructureID::toDictionaryTransition(m_structureID);
+    structureID->propertyMap().remove(propertyName, m_propertyStorage);
+    setStructureID(structureID.release());
 }
 
 void JSObject::putDirectFunction(ExecState* exec, InternalFunction* function, unsigned attr)

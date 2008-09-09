@@ -1,3 +1,12 @@
+2008-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak and Oliver Hunt.
+
+        Add forwarding headers.
+
+        * ForwardingHeaders/wtf/HashFunctions.h: Added.
+        * ForwardingHeaders/wtf/HashTraits.h: Added.
+
 2008-09-02  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.

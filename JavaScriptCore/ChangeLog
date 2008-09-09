@@ -1,3 +1,82 @@
+2008-09-08  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak and Oliver Hunt.
+
+        Split storage of properties out of the PropertyMap and into the JSObject
+        to allow sharing PropertyMap on the StructureID.  In order to get this
+        function correctly, the StructureID's transition mappings were changed to
+        transition based on property name and attribute pairs, instead of just
+        property name.
+
+        - Removes the single property optimization now that the PropertyMap is shared.
+          This will be replaced by in-lining some values on the JSObject.
+
+        This is a wash on Sunspider and a 6.7% win on the v8 test suite.
+
+        * JavaScriptCore.base.exp:
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileGetByIdSelf): Get the storage directly off the JSObject.
+        (JSC::CTI::privateCompileGetByIdProto): Ditto.
+        (JSC::CTI::privateCompileGetByIdChain): Ditto.
+        (JSC::CTI::privateCompilePutByIdReplace): Ditto.
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::mark): Mark the PropertyStorage.
+        (JSC::JSObject::put): Update to get the propertyMap of the StructureID.
+        (JSC::JSObject::deleteProperty): Ditto.
+        (JSC::JSObject::defineGetter): Return early if the property is already a getter/setter.
+        (JSC::JSObject::defineSetter): Ditto.
+        (JSC::JSObject::getPropertyAttributes): Update to get the propertyMap of the StructureID
+        (JSC::JSObject::getPropertyNames): Ditto.
+        (JSC::JSObject::removeDirect): Ditto.
+        * kjs/JSObject.h: Remove PropertyMap and add PropertyStorage.
+        (JSC::JSObject::propertyStorage): return the PropertyStorage.
+        (JSC::JSObject::getDirect): Update to get the propertyMap of the StructureID.
+        (JSC::JSObject::getDirectLocation): Ditto.
+        (JSC::JSObject::offsetForLocation): Compute location directly.
+        (JSC::JSObject::hasCustomProperties): Update to get the propertyMap of the StructureID.
+        (JSC::JSObject::hasGetterSetterProperties): Ditto.
+        (JSC::JSObject::getDirectOffset): Get by indexing into PropertyStorage.
+        (JSC::JSObject::putDirectOffset): Put by indexing into PropertyStorage.
+        (JSC::JSObject::getOwnPropertySlotForWrite): Update to get the propertyMap of the StructureID.
+        (JSC::JSObject::getOwnPropertySlot): Ditto.
+        (JSC::JSObject::putDirect): Move putting into the StructureID unless the property already exists.
+        * kjs/PropertyMap.cpp: Use the propertyStorage as the storage for the JSValues.
+        (JSC::PropertyMap::checkConsistency): 
+        (JSC::PropertyMap::operator=):
+        (JSC::PropertyMap::~PropertyMap):
+        (JSC::PropertyMap::get):
+        (JSC::PropertyMap::getLocation):
+        (JSC::PropertyMap::put):
+        (JSC::PropertyMap::getOffset):
+        (JSC::PropertyMap::insert):
+        (JSC::PropertyMap::expand):
+        (JSC::PropertyMap::rehash):
+        (JSC::PropertyMap::createTable):
+        (JSC::PropertyMap::resizePropertyStorage): Resize the storage to match the size of the map
+        (JSC::PropertyMap::remove):
+        (JSC::PropertyMap::getEnumerablePropertyNames):
+        * kjs/PropertyMap.h: 
+        (JSC::PropertyMapEntry::PropertyMapEntry):
+        (JSC::PropertyMap::isEmpty):
+        (JSC::PropertyMap::size):
+        (JSC::PropertyMap::makingCount):
+        (JSC::PropertyMap::PropertyMap):
+
+        * kjs/StructureID.cpp: 
+        (JSC::StructureID::addPropertyTransition): Transitions now are based off the property name
+        and attributes. 
+        (JSC::StructureID::toDictionaryTransition): Copy the map.
+        (JSC::StructureID::changePrototypeTransition): Copy the map.
+        (JSC::StructureID::getterSetterTransition): Copy the map.
+        (JSC::StructureID::~StructureID): 
+        * kjs/StructureID.h:
+        (JSC::TransitionTableHash::hash): Custom hash for transition map.
+        (JSC::TransitionTableHash::equal): Ditto.
+        (JSC::TransitionTableHashTraits::emptyValue): Custom traits for transition map
+        (JSC::TransitionTableHashTraits::constructDeletedValue): Ditto.
+        (JSC::TransitionTableHashTraits::isDeletedValue): Ditto.
+        (JSC::StructureID::propertyMap): Added.
+
 2008-09-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Mark Rowe.

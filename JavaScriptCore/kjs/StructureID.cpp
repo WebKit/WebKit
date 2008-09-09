@@ -1,4 +1,3 @@
-// -*- mode: c++; c-basic-offset: 4 -*-
 /*
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
@@ -31,6 +30,8 @@
 #include "JSObject.h"
 #include <wtf/RefPtr.h>
 
+using namespace std;
+
 namespace JSC {
 
 StructureID::StructureID(JSValue* prototype)
@@ -45,23 +46,39 @@ StructureID::StructureID(JSValue* prototype)
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 }
 
-PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& name)
+PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& propertyName, JSValue* value, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!structureID->m_isDictionary);
 
-    if (StructureID* existingTransition = structureID->m_transitionTable.get(name.ustring().rep()))
-        return existingTransition;
+    if (StructureID* existingTransition = structureID->m_transitionTable.get(make_pair(propertyName.ustring().rep(), attributes))) {
+        if (structureID->m_propertyMap.size() != existingTransition->m_propertyMap.size())
+            existingTransition->m_propertyMap.resizePropertyStorage(propertyStorage, structureID->m_propertyMap.size());
 
-    if (structureID->m_transitionCount > s_maxTransitionLength)
-        return toDictionaryTransition(structureID);
+        size_t offset = existingTransition->propertyMap().getOffset(propertyName);
+        ASSERT(offset != WTF::notFound);
+        propertyStorage[offset] = value;
+        slot.setExistingProperty(slotBase, offset);
+
+        return existingTransition;
+    }
+
+    if (structureID->m_transitionCount > s_maxTransitionLength) {
+        RefPtr<StructureID> transition = toDictionaryTransition(structureID);
+        transition->m_propertyMap.put(propertyName, value, attributes, checkReadOnly, slotBase, slot, propertyStorage);
+        return transition.release();
+    }
 
     RefPtr<StructureID> transition = create(structureID->m_prototype);
     transition->m_cachedPrototypeChain = structureID->m_cachedPrototypeChain;
     transition->m_previous = structureID;
-    transition->m_nameInPrevious = name.ustring().rep();
+    transition->m_nameInPrevious = propertyName.ustring().rep();
+    transition->m_attributesInPrevious = attributes;
     transition->m_transitionCount = structureID->m_transitionCount + 1;
+    transition->m_propertyMap = structureID->m_propertyMap;
 
-    structureID->m_transitionTable.add(name.ustring().rep(), transition.get());
+    transition->m_propertyMap.put(propertyName, value, attributes, checkReadOnly, slotBase, slot, propertyStorage);
+
+    structureID->m_transitionTable.add(make_pair(propertyName.ustring().rep(), attributes), transition.get());
     return transition.release();
 }
 
@@ -71,6 +88,7 @@ PassRefPtr<StructureID> StructureID::toDictionaryTransition(StructureID* structu
 
     RefPtr<StructureID> transition = create(structureID->m_prototype);
     transition->m_isDictionary = true;
+    transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();
 }
 
@@ -89,6 +107,7 @@ PassRefPtr<StructureID> StructureID::changePrototypeTransition(StructureID* stru
 {
     RefPtr<StructureID> transition = create(prototype);
     transition->m_transitionCount = structureID->m_transitionCount + 1;
+    transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();
 }
 
@@ -96,14 +115,15 @@ PassRefPtr<StructureID> StructureID::getterSetterTransition(StructureID* structu
 {
     RefPtr<StructureID> transition = create(structureID->prototype());
     transition->m_transitionCount = structureID->m_transitionCount + 1;
+    transition->m_propertyMap = structureID->m_propertyMap;
     return transition.release();
 }
 
 StructureID::~StructureID()
 {
     if (m_previous) {
-        ASSERT(m_previous->m_transitionTable.contains(m_nameInPrevious));
-        m_previous->m_transitionTable.remove(m_nameInPrevious);
+        ASSERT(m_previous->m_transitionTable.contains(make_pair(m_nameInPrevious, m_attributesInPrevious)));
+        m_previous->m_transitionTable.remove(make_pair(m_nameInPrevious, m_attributesInPrevious));
     }
 }
 

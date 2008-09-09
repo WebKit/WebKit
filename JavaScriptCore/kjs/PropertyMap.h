@@ -23,6 +23,7 @@
 
 #include "PropertySlot.h"
 #include "identifier.h"
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/NotFound.h>
 
 namespace JSC {
@@ -30,18 +31,16 @@ namespace JSC {
     class JSObject;
     class JSValue;
     class PropertyNameArray;
-    struct PropertyMapEntry;
-    struct PropertyMapHashTable;
+
+    typedef OwnArrayPtr<JSValue*> PropertyStorage;
 
     struct PropertyMapEntry {
         UString::Rep* key;
-        JSValue* value;
         unsigned attributes;
         unsigned index;
 
-        PropertyMapEntry(UString::Rep* k, JSValue* v, int a)
+        PropertyMapEntry(UString::Rep* k, int a)
             : key(k)
-            , value(v)
             , attributes(a)
             , index(0)
         {
@@ -80,77 +79,57 @@ namespace JSC {
         }
     };
 
-    class PropertyMap : Noncopyable {
+    class PropertyMap {
         friend class CTI;
-
     public:
         PropertyMap();
         ~PropertyMap();
 
-        bool isEmpty() { return !m_usingTable & !m_singleEntryKey; }
+        PropertyMap& operator=(const PropertyMap&);
 
-        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&);
-        void remove(const Identifier& propertyName);
-        JSValue* get(const Identifier& propertyName) const;
-        JSValue* get(const Identifier& propertyName, unsigned& attributes) const;
-        JSValue** getLocation(const Identifier& propertyName);
-        JSValue** getLocation(const Identifier& propertyName, bool& isWriteable);
-        
-        JSValue* getOffset(size_t offset)
-        {
-            ASSERT(m_usingTable);
-            return reinterpret_cast<JSValue**>(m_u.table->entryIndices)[offset];
-        }
-        void putOffset(size_t offset, JSValue* v)
-        {
-            ASSERT(m_usingTable);
-            reinterpret_cast<JSValue**>(m_u.table->entryIndices)[offset] = v;
-        }
+        bool isEmpty() { return !m_table; }
 
-        size_t offsetForLocation(JSValue** location) { return m_usingTable ? offsetForTableLocation(location) : WTF::notFound; }
+        void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
+        void remove(const Identifier& propertyName, PropertyStorage&);
+        JSValue* get(const Identifier& propertyName, const PropertyStorage&) const;
+        JSValue* get(const Identifier& propertyName, unsigned& attributes, const PropertyStorage&) const;
+        JSValue** getLocation(const Identifier& propertyName, const PropertyStorage&);
+        JSValue** getLocation(const Identifier& propertyName, bool& isWriteable, const PropertyStorage&);
 
-        void mark() const;
+        size_t getOffset(const Identifier& propertyName);
+        size_t getOffset(const Identifier& propertyName, bool& isWriteable);
+
         void getEnumerablePropertyNames(PropertyNameArray&) const;
 
         bool hasGetterSetterProperties() const { return m_getterSetterFlag; }
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }
+
+        unsigned size() const { return m_table ? m_table->size : 0; }
+        unsigned makingCount() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
+
+        void resizePropertyStorage(PropertyStorage&, unsigned oldSize);
 
     private:
         typedef PropertyMapEntry Entry;
         typedef PropertyMapHashTable Table;
 
         static bool keysMatch(const UString::Rep*, const UString::Rep*);
-        void expand();
-        void rehash();
-        void rehash(unsigned newTableSize);
-        void createTable();
-        
-        void insert(const Entry&);
-        
-        size_t offsetForTableLocation(JSValue** location)
-        {
-            ASSERT(m_usingTable);
-            return location - reinterpret_cast<JSValue**>(m_u.table->entryIndices);
-        }
+        void expand(PropertyStorage&);
+        void rehash(PropertyStorage&);
+        void rehash(unsigned newTableSize, PropertyStorage&);
+        void createTable(PropertyStorage&);
 
-        void checkConsistency();
-        
-        UString::Rep* m_singleEntryKey;
-        union {
-            JSValue* singleEntryValue;
-            Table* table;
-        } m_u;
+        void insert(const Entry&, JSValue*, PropertyStorage&);
 
-        short m_singleEntryAttributes;
+        void checkConsistency(PropertyStorage&);
+
+        Table* m_table;
         bool m_getterSetterFlag : 1;
-        bool m_usingTable : 1;
     };
 
     inline PropertyMap::PropertyMap() 
-        : m_singleEntryKey(0)
+        : m_table(0)
         , m_getterSetterFlag(false)
-        , m_usingTable(false)
-
     {
     }
 
