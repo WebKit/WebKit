@@ -1,3 +1,17 @@
+2008-09-08  Dimitri Glazkov  <dglazkov@google.com>
+
+        Reviewed by Dan Bernstein.
+
+        - fix https://bugs.webkit.org/show_bug.cgi?id=20237
+          Zero width and space characters are displayed incorrectly if not contained in a fallback font
+
+        Adds an extra check for Object Replacement Character (U+FFFC) to address
+        the issue with fast/text/zero-width-characters.html test when run
+        with Windows system default fonts.
+
+        * platform/graphics/Font.h:
+        (WebCore::Font::treatAsZeroWidthSpace):
+
 2008-09-08  Dean Jackson  <dino@apple.com>
 
         Reviewed by Sam Weinig.
