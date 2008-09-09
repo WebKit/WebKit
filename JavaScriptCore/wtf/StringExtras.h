@@ -48,6 +48,8 @@ inline int snprintf(char *str, size_t size, const char* format, ...)
 
 inline int strncasecmp(const char* s1, const char* s2, size_t len) { return strnicmp(s1, s2, len); }
 
+inline int strcasecmp(const char* s1, const char* s2) { return stricmp(s1, s2); }
+
 #endif
 
 #endif // WTF_StringExtras_h

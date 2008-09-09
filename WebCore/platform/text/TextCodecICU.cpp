@@ -33,6 +33,7 @@
 #include <unicode/ucnv.h>
 #include <unicode/ucnv_cb.h>
 #include <wtf/Assertions.h>
+#include <wtf/StringExtras.h>
 
 using std::auto_ptr;
 using std::min;
@@ -75,10 +76,18 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     for (int32_t i = 0; i < numEncodings; ++i) {
         const char* name = ucnv_getAvailableName(i);
         UErrorCode error = U_ZERO_ERROR;
-        // FIXME: Should we use the "MIME" standard instead of "IANA"?
-        const char* standardName = ucnv_getStandardName(name, "IANA", &error);
-        if (!U_SUCCESS(error) || !standardName)
-            continue;
+        // Try MIME before trying IANA to pick up commonly used names like
+        // 'EUC-JP' instead of horrendeously long names like 
+        // 'Extended_UNIX_Code_Packed_Format_for_Japanese'. 
+        const char* standardName = ucnv_getStandardName(name, "MIME", &error);
+        if (!U_SUCCESS(error) || !standardName) {
+            error = U_ZERO_ERROR;
+            // Try IANA to pick up 'windows-12xx' and other names
+            // which are not preferred MIME names but are widely used. 
+            standardName = ucnv_getStandardName(name, "IANA", &error);
+            if (!U_SUCCESS(error) || !standardName)
+                continue;
+        }
 
         // 1. Treat GB2312 encoding as GBK (its more modern superset), to match other browsers.
         // 2. On the Web, GB2312 is encoded as EUC-CN or HZ, while ICU provides a native encoding
@@ -89,7 +98,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
         else if (strcmp(standardName, "KS_C_5601-1987") == 0 || strcmp(standardName, "EUC-KR") == 0)
             standardName = "windows-949-2000";
         // And so on.
-        else if (strcmp(standardName, "ISO_8859-9:1989") == 0)
+        else if (strcasecmp(standardName, "iso-8859-9") == 0) // This name is returned in different case by ICU 3.2 and 3.6.
             standardName = "windows-1254";
         else if (strcmp(standardName, "TIS-620") == 0)
             standardName = "windows-874-2000";

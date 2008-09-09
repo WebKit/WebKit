@@ -1,3 +1,15 @@
+2008-09-09  Jungshik Shin  <jungshik.shin@gmail.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Try MIME charset names before trying IANA names
+        ( https://bugs.webkit.org/show_bug.cgi?id=17537 )
+
+        * fast/encoding/hanarei-blog32-fc2-com-expected.txt:
+        * fast/encoding/hanarei-blog32-fc2-com.html:
+        Changed expected result from Extended_UNIX_Code_Packed_Format_for_Japanese to EUC-JP
+        (which is the same in ICU, but definitely a better name which matches other browsers).
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Mark Rowe.
