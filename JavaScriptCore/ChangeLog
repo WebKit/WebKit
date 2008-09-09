@@ -1,5 +1,13 @@
 2008-09-09  Mark Rowe  <mrowe@apple.com>
 
+        Build fix, rubber-stamped by Anders Carlsson.
+
+        Silence spurious build warnings about missing format attributes on functions in Assertions.cpp.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2008-09-09  Mark Rowe  <mrowe@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Fix builds using the "debug" variant.
