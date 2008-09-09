@@ -1,5 +1,109 @@
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Sam Weinig.
+
+        Bug 20754: Remove emit prefix from assembler opcode methods
+        <https://bugs.webkit.org/show_bug.cgi?id=20754>
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::emitPutArg):
+        (JSC::CTI::emitPutArgConstant):
+        (JSC::CTI::emitPutCTIParam):
+        (JSC::CTI::emitGetCTIParam):
+        (JSC::CTI::emitPutToCallFrameHeader):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::emitPutResult):
+        (JSC::CTI::emitDebugExceptionCheck):
+        (JSC::CTI::emitCall):
+        (JSC::CTI::emitJumpSlowCaseIfNotImm):
+        (JSC::CTI::emitJumpSlowCaseIfNotImms):
+        (JSC::CTI::emitFastArithDeTagImmediate):
+        (JSC::CTI::emitFastArithReTagImmediate):
+        (JSC::CTI::emitFastArithPotentiallyReTagImmediate):
+        (JSC::CTI::emitFastArithImmToInt):
+        (JSC::CTI::emitFastArithIntToImmOrSlowCase):
+        (JSC::CTI::emitFastArithIntToImmNoCheck):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateArrayLengthTrampoline):
+        (JSC::CTI::privateStringLengthTrampoline):
+        (JSC::CTI::compileRegExp):
+        * masm/MacroAssemblerWin.cpp:
+        (JSC::MacroAssembler::emitConvertToFastCall):
+        (JSC::MacroAssembler::emitRestoreArgumentReference):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::pushl_r):
+        (JSC::X86Assembler::pushl_m):
+        (JSC::X86Assembler::popl_r):
+        (JSC::X86Assembler::popl_m):
+        (JSC::X86Assembler::movl_rr):
+        (JSC::X86Assembler::addl_rr):
+        (JSC::X86Assembler::addl_i8r):
+        (JSC::X86Assembler::addl_i32r):
+        (JSC::X86Assembler::addl_mr):
+        (JSC::X86Assembler::andl_rr):
+        (JSC::X86Assembler::andl_i32r):
+        (JSC::X86Assembler::cmpl_i8r):
+        (JSC::X86Assembler::cmpl_rr):
+        (JSC::X86Assembler::cmpl_rm):
+        (JSC::X86Assembler::cmpl_i32r):
+        (JSC::X86Assembler::cmpl_i32m):
+        (JSC::X86Assembler::cmpw_rm):
+        (JSC::X86Assembler::orl_rr):
+        (JSC::X86Assembler::subl_rr):
+        (JSC::X86Assembler::subl_i8r):
+        (JSC::X86Assembler::subl_i32r):
+        (JSC::X86Assembler::subl_mr):
+        (JSC::X86Assembler::testl_i32r):
+        (JSC::X86Assembler::testl_rr):
+        (JSC::X86Assembler::xorl_i8r):
+        (JSC::X86Assembler::xorl_rr):
+        (JSC::X86Assembler::sarl_i8r):
+        (JSC::X86Assembler::sarl_CLr):
+        (JSC::X86Assembler::shl_i8r):
+        (JSC::X86Assembler::shll_CLr):
+        (JSC::X86Assembler::mull_rr):
+        (JSC::X86Assembler::idivl_r):
+        (JSC::X86Assembler::cdq):
+        (JSC::X86Assembler::movl_mr):
+        (JSC::X86Assembler::movzwl_mr):
+        (JSC::X86Assembler::movl_rm):
+        (JSC::X86Assembler::movl_i32r):
+        (JSC::X86Assembler::movl_i32m):
+        (JSC::X86Assembler::leal_mr):
+        (JSC::X86Assembler::ret):
+        (JSC::X86Assembler::jmp_r):
+        (JSC::X86Assembler::jmp_m):
+        (JSC::X86Assembler::call_r):
+        * wrec/WREC.cpp:
+        (JSC::WRECGenerator::generateBacktrack1):
+        (JSC::WRECGenerator::generateBacktrackBackreference):
+        (JSC::WRECGenerator::generateBackreferenceQuantifier):
+        (JSC::WRECGenerator::generateNonGreedyQuantifier):
+        (JSC::WRECGenerator::generateGreedyQuantifier):
+        (JSC::WRECGenerator::generatePatternCharacter):
+        (JSC::WRECGenerator::generateCharacterClassInvertedRange):
+        (JSC::WRECGenerator::generateCharacterClassInverted):
+        (JSC::WRECGenerator::generateCharacterClass):
+        (JSC::WRECGenerator::generateParentheses):
+        (JSC::WRECGenerator::gererateParenthesesResetTrampoline):
+        (JSC::WRECGenerator::generateAssertionBOL):
+        (JSC::WRECGenerator::generateAssertionEOL):
+        (JSC::WRECGenerator::generateAssertionWordBoundary):
+        (JSC::WRECGenerator::generateBackreference):
+        (JSC::WRECGenerator::gernerateDisjunction):
+
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej Stachowiak.
 
         Clean up the WREC code some more.

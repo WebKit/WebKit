@@ -245,167 +245,167 @@ public:
         m_buffer->putByte(OP_INT3);
     }
     
-    void emitPushl_r(RegisterID reg)
+    void pushl_r(RegisterID reg)
     {
         m_buffer->putByte(OP_PUSH_EAX + reg);
     }
     
-    void emitPushl_m(int offset, RegisterID base)
+    void pushl_m(int offset, RegisterID base)
     {
         m_buffer->putByte(OP_GROUP5_Ev);
         emitModRm_opm(GROUP5_OP_PUSH, base, offset);
     }
     
-    void emitPopl_r(RegisterID reg)
+    void popl_r(RegisterID reg)
     {
         m_buffer->putByte(OP_POP_EAX + reg);
     }
 
-    void emitPopl_m(int offset, RegisterID base)
+    void popl_m(int offset, RegisterID base)
     {
         m_buffer->putByte(OP_GROUP1A_Ev);
         emitModRm_opm(GROUP1A_OP_POP, base, offset);
     }
     
-    void emitMovl_rr(RegisterID src, RegisterID dst)
+    void movl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_MOV_EvGv);
         emitModRm_rr(src, dst);
     }
     
-    void emitAddl_rr(RegisterID src, RegisterID dst)
+    void addl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_ADD_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitAddl_i8r(int imm, RegisterID dst)
+    void addl_i8r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         emitModRm_opr(GROUP1_OP_ADD, dst);
         m_buffer->putByte(imm);
     }
 
-    void emitAddl_i32r(int imm, RegisterID dst)
+    void addl_i32r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opr(GROUP1_OP_ADD, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitAddl_mr(int offset, RegisterID base, RegisterID dst)
+    void addl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_ADD_GvEv);
         emitModRm_rm(dst, base, offset);
     }
 
-    void emitAndl_rr(RegisterID src, RegisterID dst)
+    void andl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_AND_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitAndl_i32r(int imm, RegisterID dst)
+    void andl_i32r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opr(GROUP1_OP_AND, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitCmpl_i8r(int imm, RegisterID dst)
+    void cmpl_i8r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         emitModRm_opr(GROUP1_OP_CMP, dst);
         m_buffer->putByte(imm);
     }
 
-    void emitCmpl_rr(RegisterID src, RegisterID dst)
+    void cmpl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_CMP_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitCmpl_rm(RegisterID src, int offset, RegisterID base)
+    void cmpl_rm(RegisterID src, int offset, RegisterID base)
     {
         m_buffer->putByte(OP_CMP_EvGv);
         emitModRm_rm(src, base, offset);
     }
 
-    void emitCmpl_i32r(int imm, RegisterID dst)
+    void cmpl_i32r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opr(GROUP1_OP_CMP, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitCmpl_i32m(int imm, RegisterID dst)
+    void cmpl_i32m(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opm(GROUP1_OP_CMP, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitCmpl_i32m(int imm, int offset, RegisterID dst)
+    void cmpl_i32m(int imm, int offset, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opm(GROUP1_OP_CMP, dst, offset);
         m_buffer->putInt(imm);
     }
 
-    void emitCmpl_i32m(int imm, void* addr)
+    void cmpl_i32m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opm(GROUP1_OP_CMP, addr);
         m_buffer->putInt(imm);
     }
 
-    void emitCmpw_rm(RegisterID src, RegisterID base, RegisterID index, int scale)
+    void cmpw_rm(RegisterID src, RegisterID base, RegisterID index, int scale)
     {
         m_buffer->putByte(PRE_OPERAND_SIZE);
         m_buffer->putByte(OP_CMP_EvGv);
         emitModRm_rmsib(src, base, index, scale);
     }
 
-    void emitOrl_rr(RegisterID src, RegisterID dst)
+    void orl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_OR_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitOrl_i8r(int imm, RegisterID dst)
+    void orl_rr(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         emitModRm_opr(GROUP1_OP_OR, dst);
         m_buffer->putByte(imm);
     }
 
-    void emitSubl_rr(RegisterID src, RegisterID dst)
+    void subl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_SUB_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitSubl_i8r(int imm, RegisterID dst)
+    void subl_i8r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         emitModRm_opr(GROUP1_OP_SUB, dst);
         m_buffer->putByte(imm);
     }
 
-    void emitSubl_i32r(int imm, RegisterID dst)
+    void subl_i32r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIz);
         emitModRm_opr(GROUP1_OP_SUB, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitSubl_mr(int offset, RegisterID base, RegisterID dst)
+    void subl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_SUB_GvEv);
         emitModRm_rm(dst, base, offset);
     }
 
-    void emitTestl_i32r(int imm, RegisterID dst)
+    void testl_i32r(int imm, RegisterID dst)
     {
         m_buffer->ensureSpace(MAX_INSTRUCTION_SIZE);
         m_buffer->putByteUnchecked(OP_GROUP3_EvIz);
@@ -413,26 +413,26 @@ public:
         m_buffer->putIntUnchecked(imm);
     }
 
-    void emitTestl_rr(RegisterID src, RegisterID dst)
+    void testl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_TEST_EvGv);
         emitModRm_rr(src, dst);
     }
     
-    void emitXorl_i8r(int imm, RegisterID dst)
+    void xorl_i8r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP1_EvIb);
         emitModRm_opr(GROUP1_OP_XOR, dst);
         m_buffer->putByte(imm);
     }
 
-    void emitXorl_rr(RegisterID src, RegisterID dst)
+    void xorl_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_XOR_EvGv);
         emitModRm_rr(src, dst);
     }
 
-    void emitSarl_i8r(int imm, RegisterID dst)
+    void sarl_i8r(int imm, RegisterID dst)
     {
         if (imm == 1) {
             m_buffer->putByte(OP_GROUP2_Ev1);
@@ -444,13 +444,13 @@ public:
         }
     }
 
-    void emitSarl_CLr(RegisterID dst)
+    void sarl_CLr(RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP2_EvCL);
         emitModRm_opr(GROUP2_OP_SAR, dst);
     }
 
-    void emitShl_i8r(int imm, RegisterID dst)
+    void shl_i8r(int imm, RegisterID dst)
     {
         if (imm == 1) {
             m_buffer->putByte(OP_GROUP2_Ev1);
@@ -462,103 +462,103 @@ public:
         }
     }
 
-    void emitShll_CLr(RegisterID dst)
+    void shll_CLr(RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP2_EvCL);
         emitModRm_opr(GROUP2_OP_SHL, dst);
     }
 
-    void emitMull_rr(RegisterID src, RegisterID dst)
+    void mull_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_MUL_GvEv);
         emitModRm_rr(dst, src);
     }
 
-    void emitIdivl_r(RegisterID dst)
+    void idivl_r(RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP3_Ev);
         emitModRm_opr(GROUP3_OP_IDIV, dst);
     }
 
-    void emitCdq()
+    void cdq()
     {
         m_buffer->putByte(OP_CDQ);
     }
 
-    void emitMovl_mr(RegisterID base, RegisterID dst)
+    void movl_mr(RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_MOV_GvEv);
         emitModRm_rm(dst, base);
     }
 
-    void emitMovl_mr(int offset, RegisterID base, RegisterID dst)
+    void movl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->ensureSpace(MAX_INSTRUCTION_SIZE);
         m_buffer->putByteUnchecked(OP_MOV_GvEv);
         emitModRm_rm_Unchecked(dst, base, offset);
     }
 
-    void emitMovl_mr(void* addr, RegisterID dst)
+    void movl_mr(void* addr, RegisterID dst)
     {
         m_buffer->putByte(OP_MOV_GvEv);
         emitModRm_rm(dst, addr);
     }
 
-    void emitMovl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    void movl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_buffer->putByte(OP_MOV_GvEv);
         emitModRm_rmsib(dst, base, index, scale, offset);
     }
 
-    void emitMovzwl_mr(int offset, RegisterID base, RegisterID dst)
+    void movzwl_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_MOVZX_GvEw);
         emitModRm_rm(dst, base, offset);
     }
 
-    void emitMovzwl_mr(RegisterID base, RegisterID index, int scale, RegisterID dst)
+    void movzwl_mr(RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_MOVZX_GvEw);
         emitModRm_rmsib(dst, base, index, scale);
     }
 
-    void emitMovzwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    void movzwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
         m_buffer->putByte(OP2_MOVZX_GvEw);
         emitModRm_rmsib(dst, base, index, scale, offset);
     }
 
-    void emitMovl_rm(RegisterID src, RegisterID base)
+    void movl_rm(RegisterID src, RegisterID base)
     {
         m_buffer->putByte(OP_MOV_EvGv);
         emitModRm_rm(src, base);
     }
 
-    void emitMovl_rm(RegisterID src, int offset, RegisterID base)
+    void movl_rm(RegisterID src, int offset, RegisterID base)
     {
         m_buffer->ensureSpace(MAX_INSTRUCTION_SIZE);
         m_buffer->putByteUnchecked(OP_MOV_EvGv);
         emitModRm_rm_Unchecked(src, base, offset);
     }
     
-    void emitMovl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    void movl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
     {
         m_buffer->putByte(OP_MOV_EvGv);
         emitModRm_rmsib(src, base, index, scale, offset);
     }
     
-    void emitMovl_i32r(int imm, RegisterID dst)
+    void movl_i32r(int imm, RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP11_EvIz);
         emitModRm_opr(GROUP11_MOV, dst);
         m_buffer->putInt(imm);
     }
 
-    void emitMovl_i32m(int imm, int offset, RegisterID base)
+    void movl_i32m(int imm, int offset, RegisterID base)
     {
         m_buffer->ensureSpace(MAX_INSTRUCTION_SIZE);
         m_buffer->putByteUnchecked(OP_GROUP11_EvIz);
@@ -566,37 +566,37 @@ public:
         m_buffer->putIntUnchecked(imm);
     }
 
-    void emitMovl_i32m(int imm, void* addr)
+    void movl_i32m(int imm, void* addr)
     {
         m_buffer->putByte(OP_GROUP11_EvIz);
         emitModRm_opm(GROUP11_MOV, addr);
         m_buffer->putInt(imm);
     }
 
-    void emitLeal_mr(int offset, RegisterID base, RegisterID dst)
+    void leal_mr(int offset, RegisterID base, RegisterID dst)
     {
         m_buffer->putByte(OP_LEA);
         emitModRm_rm(dst, base, offset);
     }
 
-    void emitRet()
+    void ret()
     {
         m_buffer->putByte(OP_RET);
     }
     
-    void emitJmpN_r(RegisterID dst)
+    void jmp_r(RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP5_Ev);
         emitModRm_opr(GROUP5_OP_JMPN, dst);
     }
     
-    void emitJmpN_m(int offset, RegisterID base)
+    void jmp_m(int offset, RegisterID base)
     {
         m_buffer->putByte(OP_GROUP5_Ev);
         emitModRm_opm(GROUP5_OP_JMPN, base, offset);
     }
     
-    void emitCallN_r(RegisterID dst)
+    void call_r(RegisterID dst)
     {
         m_buffer->putByte(OP_GROUP5_Ev);
         emitModRm_opr(GROUP5_OP_CALLN, dst);
