@@ -1,5 +1,14 @@
 2008-09-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Reviewed by Maciej Stachowiak.
+
+        Remove references to the removed WRECompiler class.
+
+        * VM/Machine.h:
+        * wrec/WREC.h:
+
+2008-09-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Rubber-stamped by Mark Rowe.
 
         Fix the build with CTI enabled but WREC disabled.
