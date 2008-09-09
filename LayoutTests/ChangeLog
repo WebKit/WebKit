@@ -1,3 +1,13 @@
+2008-09-05  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Update test to insert more keyframes.
+        https://bugs.webkit.org/show_bug.cgi?id=20613
+
+        * css3/keyframes-rule-expected.txt:
+        * css3/keyframes-rule.html:
+
 2008-09-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.

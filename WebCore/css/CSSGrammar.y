@@ -125,6 +125,7 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %token NAMESPACE_SYM
 %token WEBKIT_RULE_SYM
 %token WEBKIT_DECLS_SYM
+%token WEBKIT_KEYFRAME_RULE_SYM
 %token WEBKIT_KEYFRAMES_SYM
 %token WEBKIT_VALUE_SYM
 %token WEBKIT_MEDIAQUERY_SYM
@@ -263,6 +264,7 @@ stylesheet:
   | webkit_mediaquery maybe_space
   | webkit_selector maybe_space
   | webkit_variables_decls maybe_space
+  | webkit_keyframe_rule maybe_space
   ;
 
 valid_rule_or_import:
@@ -273,6 +275,12 @@ valid_rule_or_import:
 webkit_rule:
     WEBKIT_RULE_SYM '{' maybe_space valid_rule_or_import maybe_space '}' {
         static_cast<CSSParser*>(parser)->m_rule = $4;
+    }
+;
+
+webkit_keyframe_rule:
+    WEBKIT_KEYFRAME_RULE_SYM '{' maybe_space keyframe_rule maybe_space '}' {
+        static_cast<CSSParser*>(parser)->m_keyframe = $4;
     }
 ;
 
@@ -416,6 +424,7 @@ block_valid_rule:
     ruleset
   | page
   | font_face
+  | keyframes
   ;
 
 block_rule:

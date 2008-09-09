@@ -66,6 +66,7 @@ nth             (-?[0-9]*n[\+-][0-9]+)|(-?[0-9]*n)
 "@-webkit-define"       {BEGIN(forkeyword); yyTok = WEBKIT_DEFINE_SYM; return yyTok; }
 "@-webkit-variables-decls" { yyTok = WEBKIT_VARIABLES_DECLS_SYM; return yyTok; }
 "@-webkit-keyframes"    {yyTok = WEBKIT_KEYFRAMES_SYM; return yyTok; }
+"@-webkit-keyframe-rule" {yyTok = WEBKIT_KEYFRAME_RULE_SYM; return yyTok; }
 
 "@"{ident}              {yyTok = ATKEYWORD; return yyTok; }
 
