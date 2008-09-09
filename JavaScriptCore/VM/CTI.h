@@ -330,6 +330,7 @@ namespace JSC {
         void emitCall(unsigned opcodeIndex, CTIHelper_v);
         void emitCall(unsigned opcodeIndex, CTIHelper_s);
 
+        void emitSlowScriptCheck(unsigned opcodeIndex);
 #ifndef NDEBUG
         void printOpcodeOperandTypes(unsigned src1, unsigned src2);
 #endif

@@ -1,3 +1,20 @@
+2008-09-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Correct error in timeout logic where execution tick count would
+        be reset to incorrect value due to incorrect offset and indirection.
+        Codegen for the slow script dialog was factored out into a separate
+        method (emitSlowScriptCheck) rather than having multiple copies of
+        the same code.  Also added calls to generate slow script checks
+        for loop_if_less and loop_if_true opcodes.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+
 2008-09-08  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.
