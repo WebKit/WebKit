@@ -1,3 +1,13 @@
+2008-09-08  Adam Roben  <aroben@apple.com>
+
+        Respect the font smoothing preference when drawing via WebKitGraphics
+
+        Reviewed by Dave Hyatt.
+
+        * WebKitGraphics.cpp:
+        (makeFont): Check the font smoothing preference and update the
+        FontDescription's rendering mode based on it.
+
 2008-09-08  Steve Falkenburg  <sfalken@apple.com>
 
         Another Windows nightly build fix.
