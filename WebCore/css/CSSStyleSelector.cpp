@@ -435,7 +435,7 @@ CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, 
     }
 }
 
-// this is a simplified style setting function for keyframe styles
+// This is a simplified style setting function for keyframe styles
 void CSSStyleSelector::addKeyframeStyle(Document* doc, const WebKitCSSKeyframesRule* rule)
 {
     AtomicString s(rule->name());
@@ -447,7 +447,11 @@ void CSSStyleSelector::addKeyframeStyle(Document* doc, const WebKitCSSKeyframesR
         m_keyframeRuleMap.add(s.impl(), list);
     }
     list->clear();
-                    
+
+    // Make sure there is a 0% and a 100% keyframe
+    if (rule->item(0)->key() || rule->item(rule->length() - 1)->key() != 1)
+        return;
+        
     for (unsigned i = 0; i < rule->length(); ++i) {
         const WebKitCSSKeyframeRule* kf = rule->item(i);
         m_style = new (doc->renderArena()) RenderStyle();

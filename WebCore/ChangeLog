@@ -1,3 +1,16 @@
+2008-09-05  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need to handle the case when 0% or 100% keyframe is omitted
+        https://bugs.webkit.org/show_bug.cgi?id=20679
+
+        Tests: animations/keyframes-from-missing.html
+               animations/keyframes-to-missing.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addKeyframeStyle):
+
 2008-09-09  Dave Hyatt  <hyatt@apple.com>
 
         Resurrect Safari's original RenderThemeWin and bring it up to date with ToT.  Having a current

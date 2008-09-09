@@ -1,0 +1,2 @@
+This test performs an animation of the left property. The 'from' keyframe is missing so it should not animate
+PASS
