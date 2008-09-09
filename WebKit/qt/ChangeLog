@@ -1,3 +1,16 @@
+2008-09-09  Joerg Bornemann  <joerg.bornemann@trolltech.com>
+
+        Reviewed by Simon.
+
+        Added missing WebCore prefix to ResourceRequest
+
+        This is needed for Windows/CE compilation where there is a conflict
+        with a global ResourceRequest type. Elsewhere in this file ResourceRequest
+        is also prefixed with WebCore::
+
+        * Api/qwebframe.cpp:
+        (QWebFrame::QWebFrame):
+
 2008-09-07  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

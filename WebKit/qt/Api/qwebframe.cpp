@@ -177,7 +177,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
     d->init(this, parent->d->page, frameData);
 
     if (!frameData->url.isEmpty()) {
-        ResourceRequest request(frameData->url, frameData->referrer);
+        WebCore::ResourceRequest request(frameData->url, frameData->referrer);
         d->frame->loader()->load(request, frameData->name);
     }
 }
