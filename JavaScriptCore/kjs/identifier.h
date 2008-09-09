@@ -92,7 +92,9 @@ namespace JSC {
         static PassRefPtr<UString::Rep> add(ExecState* exec, UString::Rep* r)
         {
             if (r->identifierTable()) {
+#ifndef NDEBUG
                 checkSameIdentifierTable(exec, r);
+#endif
                 return r;
             }
             return addSlowCase(exec, r);
@@ -100,7 +102,9 @@ namespace JSC {
         static PassRefPtr<UString::Rep> add(JSGlobalData* globalData, UString::Rep* r)
         {
             if (r->identifierTable()) {
+#ifndef NDEBUG
                 checkSameIdentifierTable(globalData, r);
+#endif
                 return r;
             }
             return addSlowCase(globalData, r);
@@ -130,11 +134,6 @@ namespace JSC {
 
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);
-
-#ifdef NDEBUG
-    inline void Identifier::checkSameIdentifierTable(ExecState*, UString::Rep*) { }
-    inline void Identifier::checkSameIdentifierTable(JSGlobalData*, UString::Rep*) { }
-#endif
 
 } // namespace JSC
 

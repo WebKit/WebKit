@@ -496,7 +496,7 @@
 		14ABB454099C2A0F00E2A24F /* JSType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSType.h; sourceTree = "<group>"; };
 		14ABDF5D0A437FEF00ECCA01 /* JSCallbackObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObject.h; sourceTree = "<group>"; };
 		14ABDF5E0A437FEF00ECCA01 /* JSCallbackObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSCallbackObject.cpp; sourceTree = "<group>"; };
-		14B8ECA60A5653980062BE54 /* JavaScriptCore.base.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.base.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
+		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		14BD53F30A3E12D800BAF59C /* ExecState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecState.h; sourceTree = "<group>"; };
 		14BD53F40A3E12D800BAF59C /* ExecState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecState.cpp; sourceTree = "<group>"; };
 		14BD59BF0A3E8F9000BAF59C /* testapi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testapi; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -575,7 +575,6 @@
 		65FB3F4809D11B2400F49DEB /* grammar.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = grammar.cpp; sourceTree = "<group>"; };
 		704FD35305697E6D003DBED9 /* BooleanObject.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = BooleanObject.h; sourceTree = "<group>"; tabWidth = 8; };
 		7E2C6C980D31C6B6002D44E2 /* ScopeChainMark.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScopeChainMark.h; sourceTree = "<group>"; };
-		7E6D517E0E729AF400778C37 /* JavaScriptCore.Debug.exp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.Debug.exp; sourceTree = "<group>"; };
 		8613F4580E3A433E00C948FD /* SamplingTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SamplingTool.cpp; path = VM/SamplingTool.cpp; sourceTree = "<group>"; };
 		8613F4590E3A433E00C948FD /* SamplingTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SamplingTool.h; path = VM/SamplingTool.h; sourceTree = "<group>"; };
 		8683B02B0E636482004C19EE /* CTI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CTI.cpp; path = VM/CTI.cpp; sourceTree = "<group>"; };
@@ -865,8 +864,7 @@
 			isa = PBXGroup;
 			children = (
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
-				14B8ECA60A5653980062BE54 /* JavaScriptCore.base.exp */,
-				7E6D517E0E729AF400778C37 /* JavaScriptCore.Debug.exp */,
+				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
 				F5C290E60284F98E018635CA /* JavaScriptCorePrefix.h */,
 				1432EBD70A34CAD400717B9F /* API */,
 				149B15DF0D81F887009CB8C7 /* compiler */,
@@ -1742,7 +1740,7 @@
 			files = (
 			);
 			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.exp",
+				"$(SRCROOT)/JavaScriptCore.exp",
 			);
 			name = "Generate 64-bit Export File";
 			outputPaths = (
@@ -1750,7 +1748,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# exclude NPN functions on 64-bit\nsed -e s/^.\\*NPN.\\*$// \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp\"\n";
+			shellScript = "# exclude NPN functions on 64-bit\nsed -e s/^.\\*NPN.\\*$// \"${SRCROOT}/JavaScriptCore.exp\" > \"${BUILT_PRODUCTS_DIR}/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp\"\n";
 		};
 		5D2F7CF90C6875BB00B5B72B /* Update Info.plist with version information */ = {
 			isa = PBXShellScriptBuildPhase;

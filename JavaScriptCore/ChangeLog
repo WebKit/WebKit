@@ -1,3 +1,26 @@
+2008-09-09  Mark Rowe  <mrowe@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Fix builds using the "debug" variant.
+
+        This reverts r36130 and tweaks Identifier to export the same symbols for Debug
+        and Release configurations.
+
+        * Configurations/JavaScriptCore.xcconfig:
+        * DerivedSources.make:
+        * JavaScriptCore.Debug.exp: Removed.
+        * JavaScriptCore.base.exp: Removed.
+        * JavaScriptCore.exp: Added.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * kjs/identifier.cpp:
+        (JSC::Identifier::addSlowCase): #ifdef the call to checkSameIdentifierTable so that
+        there is no overhead in Release builds.
+        (JSC::Identifier::checkSameIdentifierTable): Add empty functions for Release builds.
+        * kjs/identifier.h:
+        (JSC::Identifier::add): #ifdef the calls to checkSameIdentifierTable so that there is
+        no overhead in Release builds, and remove the inline definitions of checkSameIdentifierTable.
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

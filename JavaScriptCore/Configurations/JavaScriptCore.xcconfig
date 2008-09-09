@@ -1,8 +1,8 @@
 #include "Version.xcconfig"
 EXPORTED_SYMBOLS_FILE = $(EXPORTED_SYMBOLS_FILE_$(CURRENT_ARCH));
-EXPORTED_SYMBOLS_FILE_ = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.exp;
-EXPORTED_SYMBOLS_FILE_i386 = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.exp;
-EXPORTED_SYMBOLS_FILE_ppc = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.exp;
+EXPORTED_SYMBOLS_FILE_ = JavaScriptCore.exp;
+EXPORTED_SYMBOLS_FILE_i386 = JavaScriptCore.exp;
+EXPORTED_SYMBOLS_FILE_ppc = JavaScriptCore.exp;
 EXPORTED_SYMBOLS_FILE_ppc64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp;
 EXPORTED_SYMBOLS_FILE_x86_64 = $(BUILT_PRODUCTS_DIR)/DerivedSources/JavaScriptCore/JavaScriptCore.LP64.exp;
 OTHER_LDFLAGS = -lobjc -sub_library libobjc -Wl,-Y,3;

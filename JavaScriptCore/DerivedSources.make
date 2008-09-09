@@ -25,7 +25,6 @@
 # THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 VPATH = \
-    $(JavaScriptCore) \
     $(JavaScriptCore)/kjs \
     $(JavaScriptCore)/VM \
     $(JavaScriptCore)/pcre \
@@ -71,22 +70,3 @@ chartables.c : dftables
 
 $(JavaScriptCore)/docs/bytecode.html: make-bytecode-docs.pl Machine.cpp 
 	perl $^ $@
-
-# export files
-
-ifeq ($(OS),MACOS)
-
-all : JavaScriptCore.exp
-
-ifeq ($(CONFIGURATION), Debug)
-    JSC_EXPORT_DEPENDENCIES := $(JSC_EXPORT_DEPENDENCIES) JavaScriptCore.Debug.exp
-else
-    ifeq ($(CURRENT_VARIANT), debug)
-        JSC_EXPORT_DEPENDENCIES := $(JSC_EXPORT_DEPENDENCIES) JavaScriptCore.Debug.exp
-    endif
-endif
-
-JavaScriptCore.exp : JavaScriptCore.base.exp $(JSC_EXPORT_DEPENDENCIES)
-	cat $^ > $@
-
-endif
