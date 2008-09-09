@@ -59,6 +59,7 @@ bool initFontData(SimpleFontData* fontData)
     if (!fontData->m_font.cgFont())
         return false;
 
+#ifdef BUILDING_ON_TIGER
     ATSUStyle fontStyle;
     if (ATSUCreateStyle(&fontStyle) != noErr)
         return false;
@@ -84,6 +85,7 @@ bool initFontData(SimpleFontData* fontData)
     }
 
     ATSUDisposeStyle(fontStyle);
+#endif
 
     return true;
 }
@@ -141,7 +143,9 @@ static NSString* pathFromFont(NSFont *font)
 
 void SimpleFontData::platformInit()
 {
+#ifdef BUILDING_ON_TIGER
     m_styleGroup = 0;
+#endif
 #if USE(ATSUI)
     m_ATSUStyleInitialized = false;
     m_ATSUMirrors = false;
@@ -272,8 +276,10 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformDestroy()
 {
+#ifdef BUILDING_ON_TIGER
     if (m_styleGroup)
         wkReleaseStyleGroup(m_styleGroup);
+#endif
 #if USE(ATSUI)
     if (m_ATSUStyleInitialized)
         ATSUDisposeStyle(m_ATSUStyle);

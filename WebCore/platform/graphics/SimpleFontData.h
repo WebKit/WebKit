@@ -172,7 +172,9 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+#ifdef BUILDING_ON_TIGER
     void* m_styleGroup;
+#endif
 #if USE(ATSUI)
     mutable ATSUStyle m_ATSUStyle;
     mutable bool m_ATSUStyleInitialized;

@@ -1,3 +1,12 @@
+2008-09-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        - WebKitLibraries part of <rdar://problem/6206244> Use alternate character-to-glyph interface on Leopard
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+
 2008-09-04  Adam Roben  <aroben@apple.com>
 
         Ignore warning LNK4221 on Windows

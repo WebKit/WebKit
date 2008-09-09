@@ -115,7 +115,6 @@ BOOL WKGetGlyphTransformedAdvances(CGFontRef, NSFont*, CGAffineTransform *m, ATS
 NSFont *WKGetFontInLanguageForRange(NSFont *font, NSString *string, NSRange range);
 NSFont *WKGetFontInLanguageForCharacter(NSFont *font, UniChar ch);
 void WKSetCGFontRenderingMode(CGContextRef cgContext, NSFont *font);
-void WKReleaseStyleGroup(void *group);
 BOOL WKCGContextGetShouldSmoothFonts(CGContextRef cgContext);
 
 #ifdef BUILDING_ON_TIGER
@@ -132,15 +131,20 @@ CFStringRef WKCopyFullFontName(CGFontRef font);
 void WKSetPatternBaseCTM(CGContextRef, CGAffineTransform);
 void WKSetPatternPhaseInUserSpace(CGContextRef, CGPoint);
 
+#ifndef BUILDING_ON_TIGER
+void WKGetGlyphsForCharacters(CGFontRef, const UniChar[], CGGlyph[], size_t);
+#else
 typedef void *WKGlyphVectorRef;
 OSStatus WKConvertCharToGlyphs(void *styleGroup, const UniChar *characters, unsigned numCharacters, WKGlyphVectorRef glyphs);
 OSStatus WKGetATSStyleGroup(ATSUStyle fontStyle, void **styleGroup);
+void WKReleaseStyleGroup(void *group);
 OSStatus WKInitializeGlyphVector(int count, WKGlyphVectorRef glyphs);
 void WKClearGlyphVector(WKGlyphVectorRef glyphs);
 
 int WKGetGlyphVectorNumGlyphs(WKGlyphVectorRef glyphVector);
 ATSLayoutRecord *WKGetGlyphVectorFirstRecord(WKGlyphVectorRef glyphVector);
 size_t WKGetGlyphVectorRecordSize(WKGlyphVectorRef glyphVector);
+#endif
 
 #ifndef __LP64__
 NSEvent *WKCreateNSEventWithCarbonEvent(EventRef eventRef);

@@ -1,3 +1,4 @@
+
 .objc_class_name_DOMAbstractView
 .objc_class_name_DOMAttr
 .objc_class_name_DOMCDATASection
@@ -871,7 +872,6 @@ _hasCaseInsensitiveSuffix
 _suggestedFilenameWithMIMEType
 _wkAdvanceDefaultButtonPulseAnimation
 _wkCGContextGetShouldSmoothFonts
-_wkClearGlyphVector
 _wkConvertCharToGlyphs
 _wkCreateCustomCFReadStream
 _wkCreateNSURLConnectionDelegateProxy
@@ -891,26 +891,21 @@ _wkDrawMediaSliderThumb
 _wkDrawMediaSliderTrack
 _wkDrawMediaUnMuteButton
 _wkDrawTextFieldCellFocusRing
-_wkGetATSStyleGroup
 _wkGetExtensionsForMIMEType
 _wkGetFontInLanguageForCharacter
 _wkGetFontInLanguageForRange
 _wkGetGlyphTransformedAdvances
-_wkGetGlyphVectorFirstRecord
-_wkGetGlyphVectorNumGlyphs
-_wkGetGlyphVectorRecordSize
+_wkGetGlyphsForCharacters
 _wkGetMIMETypeForExtension
 _wkGetNSURLResponseCalculatedExpiration
 _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
 _wkGetWheelEventDeltas
-_wkInitializeGlyphVector
 _wkPopupMenu
 _wkQTMovieDataRate
 _wkQTMovieMaxTimeLoaded
 _wkQTMovieViewSetDrawSynchronously
-_wkReleaseStyleGroup
 _wkSetCGFontRenderingMode
 _wkSetDragImage
 _wkSetNSURLConnectionDefersCallbacks
@@ -921,4 +916,3 @@ _wkSetUpFontCache
 _wkSignalCFReadStreamEnd
 _wkSignalCFReadStreamError
 _wkSignalCFReadStreamHasBytes
-
