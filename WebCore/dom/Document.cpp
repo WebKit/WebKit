@@ -104,6 +104,8 @@
 #include "TextResourceDecoder.h"
 #include "TreeWalker.h"
 #include "UIEvent.h"
+#include "WebKitAnimationEvent.h"
+#include "WebKitTransitionEvent.h"
 #include "WheelEvent.h"
 #include "XMLHttpRequest.h"
 #include "XMLNames.h"
@@ -2637,6 +2639,10 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
 #endif
     if (eventType == "MessageEvent")
         return MessageEvent::create();
+    if (eventType == "WebKitAnimationEvent")
+        return WebKitAnimationEvent::create();
+    if (eventType == "WebKitTransitionEvent")
+        return WebKitTransitionEvent::create();
     ec = NOT_SUPPORTED_ERR;
     return 0;
 }

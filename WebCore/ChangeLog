@@ -1,3 +1,18 @@
+2008-09-09  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Document::createEvent missing cases for animation and
+        transition events.
+        https://bugs.webkit.org/show_bug.cgi?id=20734
+
+        Test: transitions/transition-end-event-create.html
+        Test: animations/animation-events-create.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::createEvent):
+            - add the two cases
+
 2008-09-09  Dan Bernstein  <mitz@apple.com>
 
         - Tiger build fix
