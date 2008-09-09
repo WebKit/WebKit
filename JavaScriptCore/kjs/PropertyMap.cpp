@@ -117,190 +117,6 @@ PropertyMap::~PropertyMap()
     fastFree(m_table);
 }
 
-JSValue* PropertyMap::get(const Identifier& propertyName, unsigned& attributes, const PropertyStorage& propertyStorage) const
-{
-    ASSERT(!propertyName.isNull());
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    if (!m_table)
-        return 0;
-
-    unsigned i = rep->computedHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return 0;
-
-    if (rep == m_table->entries()[entryIndex - 1].key) {
-        attributes = m_table->entries()[entryIndex - 1].attributes;
-        return propertyStorage[entryIndex - 1];
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->computedHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return 0;
-
-        if (rep == m_table->entries()[entryIndex - 1].key) {
-            attributes = m_table->entries()[entryIndex - 1].attributes;
-            return propertyStorage[entryIndex - 1];
-        }
-    }
-}
-
-JSValue* PropertyMap::get(const Identifier& propertyName, const PropertyStorage& propertyStorage) const
-{
-    ASSERT(!propertyName.isNull());
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    if (!m_table)
-        return 0;
-
-    unsigned i = rep->computedHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return 0;
-
-    if (rep == m_table->entries()[entryIndex - 1].key)
-        return propertyStorage[entryIndex - 1];
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->computedHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return 0;
-
-        if (rep == m_table->entries()[entryIndex - 1].key)
-            return propertyStorage[entryIndex - 1];
-    }
-}
-
-JSValue** PropertyMap::getLocation(const Identifier& propertyName, const PropertyStorage& propertyStorage)
-{
-    ASSERT(!propertyName.isNull());
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    if (!m_table)
-        return 0;
-
-    unsigned i = rep->computedHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return 0;
-
-    if (rep == m_table->entries()[entryIndex - 1].key)
-        return &propertyStorage[entryIndex - 1];
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->computedHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return 0;
-
-        if (rep == m_table->entries()[entryIndex - 1].key)
-            return &propertyStorage[entryIndex - 1];
-    }
-}
-
-JSValue** PropertyMap::getLocation(const Identifier& propertyName, bool& isWriteable, const PropertyStorage& propertyStorage)
-{
-    ASSERT(!propertyName.isNull());
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    if (!m_table)
-        return 0;
-
-    unsigned i = rep->computedHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return 0;
-
-    if (rep == m_table->entries()[entryIndex - 1].key) {
-        isWriteable = !(m_table->entries()[entryIndex - 1].attributes & ReadOnly);
-        return &propertyStorage[entryIndex - 1];
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->computedHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return 0;
-
-        if (rep == m_table->entries()[entryIndex - 1].key) {
-            isWriteable = !(m_table->entries()[entryIndex - 1].attributes & ReadOnly);
-            return &propertyStorage[entryIndex - 1];
-        }
-    }
-}
-
 void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!propertyName.isNull());
@@ -391,6 +207,69 @@ void PropertyMap::put(const Identifier& propertyName, JSValue* value, unsigned a
     slot.setNewProperty(slotBase, entryIndex - 1);
 }
 
+void PropertyMap::remove(const Identifier& propertyName, PropertyStorage& propertyStorage)
+{
+    ASSERT(!propertyName.isNull());
+
+    checkConsistency(propertyStorage);
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
+    if (!m_table)
+        return;
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numProbes;
+    ++numRemoves;
+#endif
+
+    // Find the thing to remove.
+    unsigned i = rep->computedHash();
+    unsigned k = 0;
+    unsigned entryIndex;
+    UString::Rep* key = 0;
+    while (1) {
+        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
+        if (entryIndex == emptyEntryIndex)
+            return;
+
+        key = m_table->entries()[entryIndex - 1].key;
+        if (rep == key)
+            break;
+
+        if (k == 0) {
+            k = 1 | doubleHash(rep->computedHash());
+#if DUMP_PROPERTYMAP_STATS
+            ++numCollisions;
+#endif
+        }
+
+        i += k;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numRehashes;
+#endif
+    }
+
+    // Replace this one element with the deleted sentinel. Also clear out
+    // the entry so we can iterate all the entries as needed.
+    m_table->entryIndices[i & m_table->sizeMask] = deletedSentinelIndex;
+    key->deref();
+    m_table->entries()[entryIndex - 1].key = 0;
+    m_table->entries()[entryIndex - 1].attributes = 0;
+
+    propertyStorage[entryIndex - 1] = jsUndefined();
+
+    ASSERT(m_table->keyCount >= 1);
+    --m_table->keyCount;
+    ++m_table->deletedSentinelCount;
+
+    if (m_table->deletedSentinelCount * 4 >= m_table->size)
+        rehash(propertyStorage);
+
+    checkConsistency(propertyStorage);
+}
+
 size_t PropertyMap::getOffset(const Identifier& propertyName)
 {
     ASSERT(!propertyName.isNull());
@@ -432,6 +311,54 @@ size_t PropertyMap::getOffset(const Identifier& propertyName)
 
         if (rep == m_table->entries()[entryIndex - 1].key)
             return entryIndex - 1;
+    }
+}
+
+size_t PropertyMap::getOffset(const Identifier& propertyName, unsigned& attributes)
+{
+    ASSERT(!propertyName.isNull());
+
+    if (!m_table)
+        return WTF::notFound;
+
+    UString::Rep* rep = propertyName._ustring.rep();
+
+    unsigned i = rep->computedHash();
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numProbes;
+#endif
+
+    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
+    if (entryIndex == emptyEntryIndex)
+        return WTF::notFound;
+
+    if (rep == m_table->entries()[entryIndex - 1].key) {
+        attributes = m_table->entries()[entryIndex - 1].attributes;
+        return entryIndex - 1;
+    }
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numCollisions;
+#endif
+
+    unsigned k = 1 | doubleHash(rep->computedHash());
+
+    while (1) {
+        i += k;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numRehashes;
+#endif
+
+        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
+        if (entryIndex == emptyEntryIndex)
+            return WTF::notFound;
+
+        if (rep == m_table->entries()[entryIndex - 1].key) {
+            attributes = m_table->entries()[entryIndex - 1].attributes;
+            return entryIndex - 1;
+        }
     }
 }
 
@@ -600,69 +527,6 @@ void PropertyMap::resizePropertyStorage(PropertyStorage& propertyStorage, unsign
         delete [] oldPropertStorage;
     } else
         propertyStorage.set(new JSValue*[m_table->size]);
-
-    checkConsistency(propertyStorage);
-}
-
-void PropertyMap::remove(const Identifier& propertyName, PropertyStorage& propertyStorage)
-{
-    ASSERT(!propertyName.isNull());
-
-    checkConsistency(propertyStorage);
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    if (!m_table)
-        return;
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-    ++numRemoves;
-#endif
-
-    // Find the thing to remove.
-    unsigned i = rep->computedHash();
-    unsigned k = 0;
-    unsigned entryIndex;
-    UString::Rep* key = 0;
-    while (1) {
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return;
-
-        key = m_table->entries()[entryIndex - 1].key;
-        if (rep == key)
-            break;
-
-        if (k == 0) {
-            k = 1 | doubleHash(rep->computedHash());
-#if DUMP_PROPERTYMAP_STATS
-            ++numCollisions;
-#endif
-        }
-
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-    }
-
-    // Replace this one element with the deleted sentinel. Also clear out
-    // the entry so we can iterate all the entries as needed.
-    m_table->entryIndices[i & m_table->sizeMask] = deletedSentinelIndex;
-    key->deref();
-    m_table->entries()[entryIndex - 1].key = 0;
-    m_table->entries()[entryIndex - 1].attributes = 0;
-
-    propertyStorage[entryIndex - 1] = jsUndefined();
-
-    ASSERT(m_table->keyCount >= 1);
-    --m_table->keyCount;
-    ++m_table->deletedSentinelCount;
-
-    if (m_table->deletedSentinelCount * 4 >= m_table->size)
-        rehash(propertyStorage);
 
     checkConsistency(propertyStorage);
 }

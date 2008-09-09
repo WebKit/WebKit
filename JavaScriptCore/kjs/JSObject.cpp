@@ -136,11 +136,11 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue* val
     }
     
     unsigned attributes;
-    if (m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage) && attributes & ReadOnly)
+    if ((m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound) && attributes & ReadOnly)
         return;
 
     for (JSObject* obj = this; ; obj = static_cast<JSObject*>(prototype)) {
-        if (JSValue* gs = obj->structureID()->propertyMap().get(propertyName, obj->propertyStorage())) {
+        if (JSValue* gs = obj->getDirect(propertyName)) {
             if (gs->isGetterSetter()) {
                 JSObject* setterFunc = static_cast<GetterSetter*>(gs)->setter();        
                 if (!setterFunc) {
@@ -202,8 +202,7 @@ bool JSObject::hasProperty(ExecState* exec, unsigned propertyName) const
 bool JSObject::deleteProperty(ExecState* exec, const Identifier& propertyName)
 {
     unsigned attributes;
-    JSValue* v = m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage);
-    if (v) {
+    if (m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound) {
         if ((attributes & DontDelete))
             return false;
         removeDirect(propertyName);
@@ -421,7 +420,7 @@ bool JSObject::propertyIsEnumerable(ExecState* exec, const Identifier& propertyN
 
 bool JSObject::getPropertyAttributes(ExecState* exec, const Identifier& propertyName, unsigned& attributes) const
 {
-    if (m_structureID->propertyMap().get(propertyName, attributes, m_propertyStorage))
+    if (m_structureID->propertyMap().getOffset(propertyName, attributes) != WTF::notFound)
         return true;
     
     // Look in the static hashtable of properties

@@ -1,3 +1,26 @@
+2008-09-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Replace uses of PropertyMap::get and PropertyMap::getLocation with
+        PropertyMap::getOffset.
+
+        Sunspider reports this as a .6% improvement.
+
+        * JavaScriptCore.exp:
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::put):
+        (JSC::JSObject::deleteProperty):
+        (JSC::JSObject::getPropertyAttributes):
+        * kjs/JSObject.h:
+        (JSC::JSObject::getDirect):
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::locationForOffset):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::remove):
+        (JSC::PropertyMap::getOffset):
+        * kjs/PropertyMap.h:
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Sam Weinig.

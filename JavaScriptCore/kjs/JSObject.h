@@ -124,22 +124,30 @@ namespace JSC {
         // This get function only looks at the property map.
         JSValue* getDirect(const Identifier& propertyName) const
         {
-            return m_structureID->propertyMap().get(propertyName, m_propertyStorage);
+            size_t offset = m_structureID->propertyMap().getOffset(propertyName);
+            return offset != WTF::notFound ? m_propertyStorage[offset] : 0;
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName)
         {
-            return m_structureID->propertyMap().getLocation(propertyName, m_propertyStorage);
+            size_t offset = m_structureID->propertyMap().getOffset(propertyName);
+            return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
         JSValue** getDirectLocation(const Identifier& propertyName, bool& isWriteable)
         {
-            return m_structureID->propertyMap().getLocation(propertyName, isWriteable, m_propertyStorage);
+            size_t offset = m_structureID->propertyMap().getOffset(propertyName, isWriteable);
+            return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
         size_t offsetForLocation(JSValue** location)
         {
             return location - m_propertyStorage.get();
+        }
+
+        JSValue** locationForOffset(size_t offset)
+        {
+            return &m_propertyStorage[offset];
         }
 
         void removeDirect(const Identifier& propertyName);
