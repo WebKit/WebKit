@@ -1,4 +1,5 @@
 _wkClearGlyphVector
+_wkConvertCharToGlyphs
 _wkCopyFullFontName
 _wkGetATSStyleGroup
 _wkGetCGFontFromNSFont

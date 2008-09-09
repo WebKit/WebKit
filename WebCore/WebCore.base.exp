@@ -1,4 +1,3 @@
-
 .objc_class_name_DOMAbstractView
 .objc_class_name_DOMAttr
 .objc_class_name_DOMCDATASection
@@ -872,7 +871,6 @@ _hasCaseInsensitiveSuffix
 _suggestedFilenameWithMIMEType
 _wkAdvanceDefaultButtonPulseAnimation
 _wkCGContextGetShouldSmoothFonts
-_wkConvertCharToGlyphs
 _wkCreateCustomCFReadStream
 _wkCreateNSURLConnectionDelegateProxy
 _wkCreateURLNPasteboardFlavorTypeName

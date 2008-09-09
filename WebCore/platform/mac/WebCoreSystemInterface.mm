@@ -80,7 +80,6 @@ void (*wkSetNSURLRequestShouldContentSniff)(NSMutableURLRequest *, BOOL);
 id (*wkCreateNSURLConnectionDelegateProxy)(void);
 
 #ifndef BUILDING_ON_TIGER
-void* wkConvertCharToGlyphs;
 void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
 #else
 void (*wkClearGlyphVector)(void* glyphs);
@@ -90,6 +89,7 @@ OSStatus (*wkGetATSStyleGroup)(ATSUStyle, void** styleGroup);
 CGFontRef (*wkGetCGFontFromNSFont)(NSFont*);
 void (*wkGetFontMetrics)(CGFontRef, int* ascent, int* descent, int* lineGap, unsigned* unitsPerEm);
 ATSLayoutRecord* (*wkGetGlyphVectorFirstRecord)(void* glyphVector);
+void* wkGetGlyphsForCharacters;
 int (*wkGetGlyphVectorNumGlyphs)(void* glyphVector);
 size_t (*wkGetGlyphVectorRecordSize)(void* glyphVector);
 OSStatus (*wkInitializeGlyphVector)(int count, void* glyphs);

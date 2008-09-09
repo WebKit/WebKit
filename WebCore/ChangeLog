@@ -1,5 +1,14 @@
 2008-09-09  Dan Bernstein  <mitz@apple.com>
 
+        - Tiger build fix
+
+        * WebCore.Tiger.exp:
+        * WebCore.base.exp:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
+2008-09-09  Dan Bernstein  <mitz@apple.com>
+
         Reviewed by Darin Adler.
 
         - WebCore part of <rdar://problem/6206244> Use alternate character-to-glyph interface on Leopard
