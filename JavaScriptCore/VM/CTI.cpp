@@ -1835,6 +1835,8 @@ void* CTI::privateStringLengthTrampoline()
     return code;
 }
 
+#if ENABLE(WREC)
+
 void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase, bool multiline)
 {
     // TODO: better error messages
@@ -1925,6 +1927,8 @@ void* CTI::compileRegExp(ExecState* exec, const UString& pattern, unsigned* numS
     ASSERT(code);
     return code;
 }
+
+#endif // ENABLE(WREC)
 
 } // namespace JSC
 

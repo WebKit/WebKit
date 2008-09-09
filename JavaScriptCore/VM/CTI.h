@@ -232,7 +232,9 @@ namespace JSC {
             cti.privateCompile();
         }
 
+#if ENABLE(WREC)
         static void* compileRegExp(ExecState* exec, const UString& pattern, unsigned* numSubpatterns_ptr, const char** error_ptr, bool ignoreCase = false, bool multiline = false);
+#endif
 
         static void* compileGetByIdSelf(Machine* machine, ExecState* exec, CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset)
         {
