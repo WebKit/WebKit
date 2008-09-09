@@ -2,6 +2,8 @@
 
         Reviewed by Mark Rowe.
 
+        Bug 20694: Slow Script error pops up when running Dromaeo tests
+
         Correct error in timeout logic where execution tick count would
         be reset to incorrect value due to incorrect offset and indirection.
         Codegen for the slow script dialog was factored out into a separate
