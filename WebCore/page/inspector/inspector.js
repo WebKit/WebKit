@@ -986,6 +986,8 @@ WebInspector.updateFocusedNode = function(node)
 
 WebInspector.displayNameForURL = function(url)
 {
+    if (!url)
+        return "";
     var resource = this.resourceURLMap[url];
     if (resource)
         return resource.displayName;
