@@ -464,7 +464,10 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
         } else if (themeData.m_part == TKP_TRACK || themeData.m_part == TKP_TRACKVERT) {
             ::DrawEdge(hdc, &widgetRect, EDGE_SUNKEN, BF_RECT | BF_ADJUST);
             ::FillRect(hdc, &widgetRect, (HBRUSH)GetStockObject(GRAY_BRUSH));
-        } else if (themeData.m_part == TKP_THUMBBOTTOM || themeData.m_part == TKP_THUMBTOP || themeData.m_part == TKP_THUMBLEFT || themeData.m_part == TKP_THUMBRIGHT) {
+        } else if ((o->style()->appearance() == SliderThumbHorizontalAppearance ||
+                    o->style()->appearance() == SliderThumbVerticalAppearance) && 
+                   (themeData.m_part == TKP_THUMBBOTTOM || themeData.m_part == TKP_THUMBTOP || 
+                    themeData.m_part == TKP_THUMBLEFT || themeData.m_part == TKP_THUMBRIGHT)) {
             ::DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT | BF_SOFT | BF_MIDDLE | BF_ADJUST);
             if (themeData.m_state == TUS_DISABLED) {
                 static WORD patternBits[8] = {0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55};
@@ -486,10 +489,9 @@ static void drawControl(GraphicsContext* context, RenderObject* o, HANDLE theme,
                     ::FillRect(hdc, &widgetRect, (HBRUSH)COLOR_3DHILIGHT);
                 ::DeleteObject(patternBmp);
             }
-        }else {
+        } else
             // Push buttons, buttons, checkboxes and radios, and the dropdown arrow in menulists.
             ::DrawFrameControl(hdc, &widgetRect, themeData.m_part, themeData.m_state);
-        }
     }
     context->releaseWindowsContext(hdc, r, alphaBlend);
 }

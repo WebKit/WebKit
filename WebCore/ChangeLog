@@ -1,3 +1,14 @@
+2008-09-09  Dave Hyatt  <hyatt@apple.com>
+
+        Make the Windows classic case work again.  Overlap in slider constants and other constants broke
+        the push state for buttons and checkboxes.  Make sure to check the RenderObject's appearance
+        value to make sure it's really a slider thumb to resolve this conflict.
+       
+        Reviewed by Adam Roben
+
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::drawControl):
+
 2008-09-05  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Sam Weinig.
