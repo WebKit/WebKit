@@ -44,34 +44,37 @@ struct CharacterClassRange {
 };
 
 struct CharacterClass {
-    const UChar* m_matches;
-    unsigned m_numMatches;
-    const CharacterClassRange* m_ranges;
-    unsigned m_numRanges;
-    const UChar* m_matchesUnicode;
-    unsigned m_numMatchesUnicode;
-    const CharacterClassRange* m_rangesUnicode;
-    unsigned m_numRangesUnicode;
+    const UChar* matches;
+    unsigned numMatches;
+
+    const CharacterClassRange* ranges;
+    unsigned numRanges;
+
+    const UChar* matchesUnicode;
+    unsigned numMatchesUnicode;
+
+    const CharacterClassRange* rangesUnicode;
+    unsigned numRangesUnicode;
 };
 
-static const UChar ascii_newlines[2] = { '\n', '\r' };
-static const UChar unicode_newlines[2] = { 0x2028, 0x2029 };
+static const UChar asciiNewlines[2] = { '\n', '\r' };
+static const UChar unicodeNewlines[2] = { 0x2028, 0x2029 };
 static CharacterClass& getCharacterClass_newline() {
     static CharacterClass charClass = {
-        ascii_newlines, 2,
+        asciiNewlines, 2,
         0, 0,
-        unicode_newlines, 2,
+        unicodeNewlines, 2,
         0, 0,
     };
     
     return charClass;
 }
 
-static const CharacterClassRange ascii_digits_range[1] = { { '0', '9' } };
+static const CharacterClassRange asciiDigitsRange[1] = { { '0', '9' } };
 static CharacterClass& getCharacterClass_d() {
     static CharacterClass charClass = {
         0, 0,
-        ascii_digits_range, 1,
+        asciiDigitsRange, 1,
         0, 0,
         0, 0,
     };
@@ -79,27 +82,27 @@ static CharacterClass& getCharacterClass_d() {
     return charClass;
 }
 
-static const UChar ascii_spaces[1] = { ' ' };
-static const CharacterClassRange ascii_spaces_range[1] = { { '\t', '\r' } };
-static const UChar unicode_spaces[8] = { 0x00a0, 0x1680, 0x180e, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000 };
-static const CharacterClassRange unicode_spaces_range[1] = { { 0x2000, 0x200a } };
+static const UChar asciiSpaces[1] = { ' ' };
+static const CharacterClassRange asciiSpacesRange[1] = { { '\t', '\r' } };
+static const UChar unicodeSpaces[8] = { 0x00a0, 0x1680, 0x180e, 0x2028, 0x2029, 0x202f, 0x205f, 0x3000 };
+static const CharacterClassRange unicodeSpacesRange[1] = { { 0x2000, 0x200a } };
 static CharacterClass& getCharacterClass_s() {
     static CharacterClass charClass = {
-        ascii_spaces, 1,
-        ascii_spaces_range, 1,
-        unicode_spaces, 8,
-        unicode_spaces_range, 1,
+        asciiSpaces, 1,
+        asciiSpacesRange, 1,
+        unicodeSpaces, 8,
+        unicodeSpacesRange, 1,
     };
     
     return charClass;
 }
 
-static const UChar ascii_wordchar[1] = { '_' };
-static const CharacterClassRange ascii_wordchar_range[3] = { { '0', '9' }, { 'A', 'Z' }, { 'a', 'z' } };
+static const UChar asciiWordchar[1] = { '_' };
+static const CharacterClassRange asciiWordcharRange[3] = { { '0', '9' }, { 'A', 'Z' }, { 'a', 'z' } };
 static CharacterClass& getCharacterClass_w() {
     static CharacterClass charClass = {
-        ascii_wordchar, 1,
-        ascii_wordchar_range, 3,
+        asciiWordchar, 1,
+        asciiWordcharRange, 3,
         0, 0,
         0, 0,
     };
@@ -107,21 +110,21 @@ static CharacterClass& getCharacterClass_w() {
     return charClass;
 }
 
-static const CharacterClassRange ascii_nondigits_range[2] = { { 0, '0' - 1 }, { '9' + 1, 0x7f } };
-static const CharacterClassRange unicode_nondigits_range[1] = { { 0x0080, 0xffff } };
+static const CharacterClassRange asciiNondigitsRange[2] = { { 0, '0' - 1 }, { '9' + 1, 0x7f } };
+static const CharacterClassRange unicodeNondigitsRange[1] = { { 0x0080, 0xffff } };
 static CharacterClass& getCharacterClass_D() {
     static CharacterClass charClass = {
         0, 0,
-        ascii_nondigits_range, 2,
+        asciiNondigitsRange, 2,
         0, 0,
-        unicode_nondigits_range, 1,
+        unicodeNondigitsRange, 1,
     };
     
     return charClass;
 }
 
-static const CharacterClassRange ascii_nonspaces_range[3] = { { 0, '\t' - 1 }, { '\r' + 1, ' ' - 1 }, { ' ' + 1, 0x7f } }; 
-static const CharacterClassRange unicode_nonspaces_range[9] = {
+static const CharacterClassRange asciiNonspacesRange[3] = { { 0, '\t' - 1 }, { '\r' + 1, ' ' - 1 }, { ' ' + 1, 0x7f } }; 
+static const CharacterClassRange unicodeNonspacesRange[9] = {
     { 0x0080, 0x009f },
     { 0x00a1, 0x167f },
     { 0x1681, 0x180d },
@@ -135,23 +138,23 @@ static const CharacterClassRange unicode_nonspaces_range[9] = {
 static CharacterClass& getCharacterClass_S() {
     static CharacterClass charClass = {
         0, 0,
-        ascii_nonspaces_range, 3,
+        asciiNonspacesRange, 3,
         0, 0,
-        unicode_nonspaces_range, 9,
+        unicodeNonspacesRange, 9,
     };
     
     return charClass;
 }
 
-static const UChar ascii_nonwordchar[1] = { '`' };
-static const CharacterClassRange ascii_nonwordchar_range[4] = { { 0, '0' - 1 }, { '9' + 1, 'A' - 1 }, { 'Z' + 1, '_' - 1 }, { 'z' + 1, 0x7f } };
-static const CharacterClassRange unicode_nonwordchar_range[1] = { { 0x0080, 0xffff } };
+static const UChar asciiNonwordchar[1] = { '`' };
+static const CharacterClassRange asciiNonwordcharRange[4] = { { 0, '0' - 1 }, { '9' + 1, 'A' - 1 }, { 'Z' + 1, '_' - 1 }, { 'z' + 1, 0x7f } };
+static const CharacterClassRange unicodeNonwordcharRange[1] = { { 0x0080, 0xffff } };
 static CharacterClass& getCharacterClass_W() {
     static CharacterClass charClass = {
-        ascii_nonwordchar, 1,
-        ascii_nonwordchar_range, 4,
+        asciiNonwordchar, 1,
+        asciiNonwordcharRange, 4,
         0, 0,
-        unicode_nonwordchar_range, 1,
+        unicodeNonwordcharRange, 1,
     };
     
     return charClass;
@@ -361,21 +364,21 @@ void CharacterClassConstructor::append(CharacterClass& other)
     // Need to check the spec, really, but think this matches PCRE behaviour.
     flush();
     
-    if (other.m_numMatches) {
-        for (size_t i = 0; i < other.m_numMatches; ++i)
-            addSorted(m_matches, other.m_matches[i]);
+    if (other.numMatches) {
+        for (size_t i = 0; i < other.numMatches; ++i)
+            addSorted(m_matches, other.matches[i]);
     }
-    if (other.m_numRanges) {
-        for (size_t i = 0; i < other.m_numRanges; ++i)
-            addSortedRange(m_ranges, other.m_ranges[i].begin, other.m_ranges[i].end);
+    if (other.numRanges) {
+        for (size_t i = 0; i < other.numRanges; ++i)
+            addSortedRange(m_ranges, other.ranges[i].begin, other.ranges[i].end);
     }
-    if (other.m_numMatchesUnicode) {
-        for (size_t i = 0; i < other.m_numMatchesUnicode; ++i)
-            addSorted(m_matchesUnicode, other.m_matchesUnicode[i]);
+    if (other.numMatchesUnicode) {
+        for (size_t i = 0; i < other.numMatchesUnicode; ++i)
+            addSorted(m_matchesUnicode, other.matchesUnicode[i]);
     }
-    if (other.m_numRangesUnicode) {
-        for (size_t i = 0; i < other.m_numRangesUnicode; ++i)
-            addSortedRange(m_rangesUnicode, other.m_rangesUnicode[i].begin, other.m_rangesUnicode[i].end);
+    if (other.numRangesUnicode) {
+        for (size_t i = 0; i < other.numRangesUnicode; ++i)
+            addSortedRange(m_rangesUnicode, other.rangesUnicode[i].begin, other.rangesUnicode[i].end);
     }
 }
 
@@ -539,7 +542,7 @@ void WRECGenerator::generateNonGreedyQuantifier(JmpSrcVector& failures, Generate
     // (3.1) remove the value pushed prior to testing the alternative
     m_jit.emitPopl_r(CURR_POS_REG);
     // (3.2) if there is a limit, and we have reached it, game over. 
-    if (max != Quantifier::NoMaxSpecified) {
+    if (max != Quantifier::noMaxSpecified) {
         m_jit.emitCmpl_i32r(max, QUANTIFIER_COUNT_REG);
         m_jit.link(m_jit.emitUnlinkedJe(), quantifierFailed);
     }
@@ -603,8 +606,8 @@ void WRECGenerator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAto
     functor.generateAtom(this, newFailures);
     // (1.2) If we get here, successful match!
     m_jit.emitAddl_i8r(1, QUANTIFIER_COUNT_REG);
-    // (1.3) loop, unless we've read m_max limit.
-    if (max != Quantifier::NoMaxSpecified) {
+    // (1.3) loop, unless we've read max limit.
+    if (max != Quantifier::noMaxSpecified) {
         if (max != 1) {
             // if there is a limit, only loop while less than limit, otherwise fall throught to...
             m_jit.emitCmpl_i32r(max, QUANTIFIER_COUNT_REG);
@@ -760,22 +763,22 @@ void WRECGenerator::generateCharacterClassInvertedRange(JmpSrcVector& failures, 
 void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, CharacterClass& charClass)
 {
     JmpSrc unicodeFail;
-    if (charClass.m_numMatchesUnicode || charClass.m_numRangesUnicode) {
+    if (charClass.numMatchesUnicode || charClass.numRangesUnicode) {
         m_jit.emitCmpl_i8r(0x7f, CURR_VAL_REG);
         JmpSrc isAscii = m_jit.emitUnlinkedJle();
     
-        if (charClass.m_numMatchesUnicode) {
-            for (unsigned i = 0; i < charClass.m_numMatchesUnicode; ++i) {
-                UChar ch = charClass.m_matchesUnicode[i];
+        if (charClass.numMatchesUnicode) {
+            for (unsigned i = 0; i < charClass.numMatchesUnicode; ++i) {
+                UChar ch = charClass.matchesUnicode[i];
                 m_jit.emitCmpl_i32r((unsigned short)ch, CURR_VAL_REG);
                 matchDest.append(m_jit.emitUnlinkedJe());
             }
         }
         
-        if (charClass.m_numRangesUnicode) {
-            for (unsigned i = 0; i < charClass.m_numRangesUnicode; ++i) {
-                UChar lo = charClass.m_rangesUnicode[i].begin;
-                UChar hi = charClass.m_rangesUnicode[i].end;
+        if (charClass.numRangesUnicode) {
+            for (unsigned i = 0; i < charClass.numRangesUnicode; ++i) {
+                UChar lo = charClass.rangesUnicode[i].begin;
+                UChar hi = charClass.rangesUnicode[i].end;
                 
                 m_jit.emitCmpl_i32r((unsigned short)lo, CURR_VAL_REG);
                 JmpSrc below = m_jit.emitUnlinkedJl();
@@ -789,12 +792,12 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
         m_jit.link(isAscii, m_jit.label());
     }
 
-    if (charClass.m_numRanges) {
+    if (charClass.numRanges) {
         unsigned matchIndex = 0;
         JmpSrcVector failures; 
-        generateCharacterClassInvertedRange(failures, matchDest, charClass.m_ranges, charClass.m_numRanges, &matchIndex, charClass.m_matches, charClass.m_numMatches);
-        while (matchIndex < charClass.m_numMatches) {
-            m_jit.emitCmpl_i32r((unsigned short)charClass.m_matches[matchIndex], CURR_VAL_REG);
+        generateCharacterClassInvertedRange(failures, matchDest, charClass.ranges, charClass.numRanges, &matchIndex, charClass.matches, charClass.numMatches);
+        while (matchIndex < charClass.numMatches) {
+            m_jit.emitCmpl_i32r((unsigned short)charClass.matches[matchIndex], CURR_VAL_REG);
             matchDest.append(m_jit.emitUnlinkedJe());
             ++matchIndex;
         }
@@ -802,12 +805,12 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
         for (unsigned i = 0; i < failures.size(); ++i)
             m_jit.link(failures[i], noMatch);
         failures.clear();
-    } else if (charClass.m_numMatches) {
+    } else if (charClass.numMatches) {
         // optimization: gather 'a','A' etc back together, can mask & test once.
         Vector<char> matchesAZaz;
 
-        for (unsigned i = 0; i < charClass.m_numMatches; ++i) {
-            char ch = charClass.m_matches[i];
+        for (unsigned i = 0; i < charClass.numMatches; ++i) {
+            char ch = charClass.matches[i];
             if (m_parser.m_ignoreCase) {
                 if (isASCIILower(ch)) {
                     matchesAZaz.append(ch);
@@ -831,7 +834,7 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
         }
     }
 
-    if (charClass.m_numMatchesUnicode || charClass.m_numRangesUnicode)
+    if (charClass.numMatchesUnicode || charClass.numRangesUnicode)
         m_jit.link(unicodeFail, m_jit.label());
 }
 
@@ -1187,9 +1190,9 @@ Quantifier WRECParser::parseQuantifier()
 {
     Quantifier q = parseGreedyQuantifier();
     
-    if ((q.m_type == Quantifier::Greedy) && (peek() == '?')) {
+    if ((q.type == Quantifier::Greedy) && (peek() == '?')) {
         consume();
-        q.m_type = Quantifier::NonGreedy;
+        q.type = Quantifier::NonGreedy;
     }
     
     return q;
@@ -1199,7 +1202,7 @@ bool WRECParser::parsePatternCharacterQualifier(JmpSrcVector& failures, int ch)
 {
     Quantifier q = parseQuantifier();
 
-    switch (q.m_type) {
+    switch (q.type) {
     case Quantifier::None: {
         m_generator.generatePatternCharacter(failures, ch);
         break;
@@ -1207,13 +1210,13 @@ bool WRECParser::parsePatternCharacterQualifier(JmpSrcVector& failures, int ch)
 
     case Quantifier::Greedy: {
         GeneratePatternCharacterFunctor functor(ch);
-        m_generator.generateGreedyQuantifier(failures, functor, q.m_min, q.m_max);
+        m_generator.generateGreedyQuantifier(failures, functor, q.min, q.max);
         break;
     }
 
     case Quantifier::NonGreedy: {
         GeneratePatternCharacterFunctor functor(ch);
-        m_generator.generateNonGreedyQuantifier(failures, functor, q.m_min, q.m_max);
+        m_generator.generateNonGreedyQuantifier(failures, functor, q.min, q.max);
         break;
     }
 
@@ -1228,7 +1231,7 @@ bool WRECParser::parseCharacterClassQuantifier(JmpSrcVector& failures, Character
 {
     Quantifier q = parseQuantifier();
 
-    switch (q.m_type) {
+    switch (q.type) {
     case Quantifier::None: {
         m_generator.generateCharacterClass(failures, charClass, invert);
         break;
@@ -1236,13 +1239,13 @@ bool WRECParser::parseCharacterClassQuantifier(JmpSrcVector& failures, Character
 
     case Quantifier::Greedy: {
         GenerateCharacterClassFunctor functor(&charClass, invert);
-        m_generator.generateGreedyQuantifier(failures, functor, q.m_min, q.m_max);
+        m_generator.generateGreedyQuantifier(failures, functor, q.min, q.max);
         break;
     }
 
     case Quantifier::NonGreedy: {
         GenerateCharacterClassFunctor functor(&charClass, invert);
-        m_generator.generateNonGreedyQuantifier(failures, functor, q.m_min, q.m_max);
+        m_generator.generateNonGreedyQuantifier(failures, functor, q.min, q.max);
         break;
     }
 
@@ -1257,7 +1260,7 @@ bool WRECParser::parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned s
 {
     Quantifier q = parseQuantifier();
 
-    switch (q.m_type) {
+    switch (q.type) {
     case Quantifier::None: {
         m_generator.generateBackreference(failures, subpatternId);
         break;
@@ -1265,7 +1268,7 @@ bool WRECParser::parseBackreferenceQuantifier(JmpSrcVector& failures, unsigned s
 
     case Quantifier::Greedy:
     case Quantifier::NonGreedy:
-        m_generator.generateBackreferenceQuantifier(failures, q.m_type, subpatternId, q.m_min, q.m_max);
+        m_generator.generateBackreferenceQuantifier(failures, q.type, subpatternId, q.min, q.max);
         return true;
 
     case Quantifier::Error:

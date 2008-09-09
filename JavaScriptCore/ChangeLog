@@ -1,3 +1,30 @@
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Clean up WREC a bit to bring it closer to our coding style guidelines.
+
+        * wrec/WREC.cpp:
+        (JSC::):
+        (JSC::getCharacterClass_newline):
+        (JSC::getCharacterClass_d):
+        (JSC::getCharacterClass_s):
+        (JSC::getCharacterClass_w):
+        (JSC::getCharacterClass_D):
+        (JSC::getCharacterClass_S):
+        (JSC::getCharacterClass_W):
+        (JSC::CharacterClassConstructor::append):
+        (JSC::WRECGenerator::generateNonGreedyQuantifier):
+        (JSC::WRECGenerator::generateGreedyQuantifier):
+        (JSC::WRECGenerator::generateCharacterClassInverted):
+        (JSC::WRECParser::parseQuantifier):
+        (JSC::WRECParser::parsePatternCharacterQualifier):
+        (JSC::WRECParser::parseCharacterClassQuantifier):
+        (JSC::WRECParser::parseBackreferenceQuantifier):
+        * wrec/WREC.h:
+        (JSC::Quantifier::):
+        (JSC::Quantifier::Quantifier):
+
 2008-09-09  Jungshik Shin  <jungshik.shin@gmail.com>
 
         Reviewed by Alexey Proskuryakov.
