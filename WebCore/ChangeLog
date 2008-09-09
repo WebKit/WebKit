@@ -1,3 +1,13 @@
+2008-09-08  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow <br> for simple UA stylesheet. Editing code generates them. It does not
+        actually show up in any of the default stylesheets.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::elementCanUseSimpleDefaultStyle):
+
 2008-09-08  Dimitri Glazkov  <dglazkov@google.com>
 
         Reviewed by Dan Bernstein.
