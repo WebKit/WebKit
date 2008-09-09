@@ -1,3 +1,15 @@
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Mark Rowe.
+
+        Tests for bug 20719: REGRESSION (r36135-36244): Hangs, then crashes after several seconds
+        <https://bugs.webkit.org/show_bug.cgi?id=20719>
+        <rdar://problem/6205787>
+
+        * fast/js/regexp-char-insensitive-expected.txt: Added.
+        * fast/js/regexp-char-insensitive.html: Added.
+        * fast/js/resources/regexp-char-insensitive.js: Added.
+
 2008-09-09  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Maciej Stachowiak.

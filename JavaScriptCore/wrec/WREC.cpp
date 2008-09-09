@@ -687,7 +687,7 @@ void WRECGenerator::generatePatternCharacter(JmpSrcVector& failures, int ch)
         } else if ((ch > 0x7f) && ((lower = Unicode::toLower(ch)) != (upper = Unicode::toUpper(ch)))) {
             // handle unicode case sentitive characters - branch to success on upper
             m_jit.emitCmpl_i32r(upper, CURR_VAL_REG);
-            isUpper = m_jit.emitUnlinkedJne();
+            isUpper = m_jit.emitUnlinkedJe();
             hasUpper = true;
             ch = lower;
         }
