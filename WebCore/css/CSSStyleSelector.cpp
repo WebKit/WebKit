@@ -4121,10 +4121,17 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         } else if (primitiveValue) {
             m_style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
+            
             FontDescription fontDescription;
             theme()->systemFont(primitiveValue->getIdent(), fontDescription);
+ 
             // Double-check and see if the theme did anything.  If not, don't bother updating the font.
             if (fontDescription.isAbsoluteSize()) {
+                // Make sure the rendering mode and printer font settings are updated.
+                Settings* settings = m_checker.m_document->settings();
+                fontDescription.setRenderingMode(settings->fontRenderingMode());
+                fontDescription.setUsePrinterFont(m_checker.m_document->printing());
+           
                 // Handle the zoom factor.
                 fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(fontDescription.isAbsoluteSize(), fontDescription.specifiedSize()));
                 if (m_style->setFontDescription(fontDescription))

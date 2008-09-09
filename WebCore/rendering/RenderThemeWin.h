@@ -35,6 +35,11 @@ namespace WebCore {
 
 struct ThemeData {
     ThemeData() :m_part(0), m_state(0), m_classicState(0) {}
+    ThemeData(int part, int state)
+        : m_part(part)
+        , m_state(state)
+        , m_classicState(0)
+    { }
 
     unsigned m_part;
     unsigned m_state;
@@ -47,7 +52,7 @@ public:
     ~RenderThemeWin();
        
     // A method asking if the theme's controls actually care about redrawing when hovered.
-    virtual bool supportsHover(const RenderStyle*) const { return true; }
+    virtual bool supportsHover(const RenderStyle*) const;
 
     virtual Color platformActiveSelectionBackgroundColor() const;
     virtual Color platformInactiveSelectionBackgroundColor() const;
@@ -73,10 +78,36 @@ public:
     virtual bool paintTextArea(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r)
     { return paintTextField(o, i, r); }
 
-    void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
+    virtual void adjustMenuListStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
     virtual bool paintMenuList(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+    virtual void adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const;
 
     virtual bool paintMenuListButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual bool paintSliderTrack(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual bool paintSliderThumb(RenderObject* o, const RenderObject::PaintInfo& i, const IntRect& r);
+    virtual void adjustSliderThumbSize(RenderObject*) const;
+
+    virtual void adjustSearchFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchField(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldCancelButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldCancelButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&) { return false; }
+
+    virtual void adjustSearchFieldResultsDecorationStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsDecoration(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void adjustSearchFieldResultsButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+    virtual bool paintSearchFieldResultsButton(RenderObject*, const RenderObject::PaintInfo&, const IntRect&);
+
+    virtual void themeChanged();
+
+    virtual void adjustButtonStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
+    virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
+    virtual void adjustTextAreaStyle(CSSStyleSelector*, RenderStyle* style, Element*) const {}
 
 private:
     void addIntrinsicMargins(RenderStyle*) const;
@@ -84,13 +115,22 @@ private:
 
     unsigned determineState(RenderObject*);
     unsigned determineClassicState(RenderObject*);
+    unsigned determineSliderThumbState(RenderObject* o);
+
     bool supportsFocus(EAppearance);
 
     ThemeData getThemeData(RenderObject*);
-    
+    ThemeData getClassicThemeData(RenderObject* o);
+
+    HANDLE buttonTheme() const;
+    HANDLE textFieldTheme() const;
+    HANDLE menuListTheme() const;
+    HANDLE sliderTheme() const;
+
     mutable HANDLE m_buttonTheme;
     mutable HANDLE m_textFieldTheme;
     mutable HANDLE m_menuListTheme;
+    mutable HANDLE m_sliderTheme;
 };
 
 };

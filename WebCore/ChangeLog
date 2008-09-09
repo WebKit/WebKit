@@ -1,3 +1,64 @@
+2008-09-09  Dave Hyatt  <hyatt@apple.com>
+
+        Resurrect Safari's original RenderThemeWin and bring it up to date with ToT.  Having a current
+        RenderThemeWin that does not have any Skia dependencies should provide a good basis for a potential
+        merge of Google Chrome's RenderThemeWin (to help us see where the Skia stuff can be cut and to see
+        what changes have been made as compared with the old RenderThemeWin).
+        
+        Fix CSS2 system fonts to properly set both the rendering mode (so that they properly pick up GDI vs. CG
+        text rendering modes) and the printer font setting (so that OS X system fonts properly pick up screen
+        vs. printer advancement rounding).
+    
+        Reviewed by Adam/Sam
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * platform/graphics/Icon.h:
+        (WebCore::Icon::create):
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::RenderThemeWin):
+        (WebCore::RenderThemeWin::~RenderThemeWin):
+        (WebCore::RenderThemeWin::buttonTheme):
+        (WebCore::RenderThemeWin::textFieldTheme):
+        (WebCore::RenderThemeWin::menuListTheme):
+        (WebCore::RenderThemeWin::sliderTheme):
+        (WebCore::RenderThemeWin::close):
+        (WebCore::RenderThemeWin::themeChanged):
+        (WebCore::RenderThemeWin::supportsHover):
+        (WebCore::fillFontDescription):
+        (WebCore::RenderThemeWin::systemFont):
+        (WebCore::RenderThemeWin::supportsFocus):
+        (WebCore::RenderThemeWin::determineClassicState):
+        (WebCore::RenderThemeWin::determineState):
+        (WebCore::RenderThemeWin::determineSliderThumbState):
+        (WebCore::RenderThemeWin::getClassicThemeData):
+        (WebCore::RenderThemeWin::getThemeData):
+        (WebCore::drawControl):
+        (WebCore::RenderThemeWin::paintButton):
+        (WebCore::RenderThemeWin::paintTextField):
+        (WebCore::RenderThemeWin::paintMenuList):
+        (WebCore::RenderThemeWin::adjustMenuListStyle):
+        (WebCore::RenderThemeWin::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeWin::paintMenuListButton):
+        (WebCore::RenderThemeWin::paintSliderTrack):
+        (WebCore::RenderThemeWin::paintSliderThumb):
+        (WebCore::RenderThemeWin::adjustSliderThumbSize):
+        (WebCore::RenderThemeWin::paintSearchField):
+        (WebCore::RenderThemeWin::adjustSearchFieldStyle):
+        (WebCore::RenderThemeWin::paintSearchFieldCancelButton):
+        (WebCore::RenderThemeWin::adjustSearchFieldCancelButtonStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldDecorationStyle):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsDecorationStyle):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsDecoration):
+        (WebCore::RenderThemeWin::adjustSearchFieldResultsButtonStyle):
+        (WebCore::RenderThemeWin::paintSearchFieldResultsButton):
+        * rendering/RenderThemeWin.h:
+        (WebCore::ThemeData::ThemeData):
+        (WebCore::RenderThemeWin::paintSearchFieldDecoration):
+        (WebCore::RenderThemeWin::adjustButtonStyle):
+        (WebCore::RenderThemeWin::adjustTextFieldStyle):
+        (WebCore::RenderThemeWin::adjustTextAreaStyle):
+
 2008-09-09  Dean Jackson  <dino@apple.com>
 
         Reviewed by Sam Weinig.
