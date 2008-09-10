@@ -1349,14 +1349,6 @@
 				RelativePath="..\..\masm\X86Assembler.h"
 				>
 			</File>
-			<File
-				RelativePath="..\..\masm\MacroAssembler.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\masm\MacroAssemblerWin.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="wrec"

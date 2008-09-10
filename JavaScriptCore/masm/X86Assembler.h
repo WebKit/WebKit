@@ -778,6 +778,23 @@ public:
         return m_buffer->copy();
     }
 
+#if COMPILER(MSVC)
+    void emitConvertToFastCall()
+    {
+        movl_mr(4, X86::esp, X86::eax);
+        movl_mr(8, X86::esp, X86::edx);
+        movl_mr(12, X86::esp, X86::ecx);
+    }
+
+    void emitRestoreArgumentReference()
+    {
+        movl_rm(X86::esp, 0, X86::esp);
+    }
+#else
+    void emitConvertToFastCall() {};
+    void emitRestoreArgumentReference() {};
+#endif
+
 private:
     void emitModRm_rr(RegisterID reg, RegisterID rm)
     {

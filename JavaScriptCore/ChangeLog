@@ -1,3 +1,58 @@
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20759: Remove MacroAssembler
+        <https://bugs.webkit.org/show_bug.cgi?id=20759>
+
+        Remove MacroAssembler and move its functionality to X86Assembler.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CTI.cpp:
+        (JSC::CTI::emitGetArg):
+        (JSC::CTI::emitGetPutArg):
+        (JSC::CTI::emitPutArg):
+        (JSC::CTI::emitPutCTIParam):
+        (JSC::CTI::emitGetCTIParam):
+        (JSC::CTI::emitPutToCallFrameHeader):
+        (JSC::CTI::emitGetFromCallFrameHeader):
+        (JSC::CTI::emitPutResult):
+        (JSC::CTI::emitDebugExceptionCheck):
+        (JSC::CTI::emitJumpSlowCaseIfNotImm):
+        (JSC::CTI::emitJumpSlowCaseIfNotImms):
+        (JSC::CTI::emitFastArithDeTagImmediate):
+        (JSC::CTI::emitFastArithReTagImmediate):
+        (JSC::CTI::emitFastArithPotentiallyReTagImmediate):
+        (JSC::CTI::emitFastArithImmToInt):
+        (JSC::CTI::emitFastArithIntToImmOrSlowCase):
+        (JSC::CTI::emitFastArithIntToImmNoCheck):
+        (JSC::CTI::compileOpCall):
+        (JSC::CTI::emitSlowScriptCheck):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        (JSC::CTI::privateCompile):
+        (JSC::CTI::privateCompileGetByIdSelf):
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        (JSC::CTI::privateCompilePutByIdReplace):
+        (JSC::CTI::privateArrayLengthTrampoline):
+        (JSC::CTI::privateStringLengthTrampoline):
+        (JSC::CTI::compileRegExp):
+        * VM/CTI.h:
+        (JSC::CallRecord::CallRecord):
+        (JSC::JmpTable::JmpTable):
+        (JSC::SlowCaseEntry::SlowCaseEntry):
+        (JSC::CTI::JSRInfo::JSRInfo):
+        * masm/MacroAssembler.h: Removed.
+        * masm/MacroAssemblerWin.cpp: Removed.
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::emitConvertToFastCall):
+        (JSC::X86Assembler::emitRestoreArgumentReference):
+        * wrec/WREC.h:
+        (JSC::WRECGenerator::WRECGenerator):
+        (JSC::WRECParser::WRECParser):
+
 2008-09-09  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

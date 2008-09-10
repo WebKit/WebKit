@@ -32,7 +32,7 @@
 #include "Opcode.h"
 #include "RegisterFile.h"
 #include "RegisterFile.h"
-#include <masm/MacroAssembler.h>
+#include <masm/X86Assembler.h>
 #include <profiler/Profiler.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
@@ -114,7 +114,7 @@ namespace JSC {
     extern OpcodeID what;
 
     struct CallRecord {
-        MacroAssembler::JmpSrc from;
+        X86Assembler::JmpSrc from;
         void* to;
         unsigned opcodeIndex;
 
@@ -122,35 +122,35 @@ namespace JSC {
         {
         }
 
-        CallRecord(MacroAssembler::JmpSrc f, CTIHelper_j t, unsigned i)
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_j t, unsigned i)
             : from(f)
             , to((void*)t)
             , opcodeIndex(i)
         {
         }
 
-        CallRecord(MacroAssembler::JmpSrc f, CTIHelper_p t, unsigned i)
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_p t, unsigned i)
             : from(f)
             , to((void*)t)
             , opcodeIndex(i)
         {
         }
         
-        CallRecord(MacroAssembler::JmpSrc f, CTIHelper_v t, unsigned i)
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_v t, unsigned i)
             : from(f)
             , to((void*)t)
             , opcodeIndex(i)
         {
         }
         
-        CallRecord(MacroAssembler::JmpSrc f, CTIHelper_s t, unsigned i)
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_s t, unsigned i)
             : from(f)
             , to((void*)t)
             , opcodeIndex(i)
         {
         }
         
-        CallRecord(MacroAssembler::JmpSrc f, CTIHelper_b t, unsigned i)
+        CallRecord(X86Assembler::JmpSrc f, CTIHelper_b t, unsigned i)
             : from(f)
             , to((void*)t)
             , opcodeIndex(i)
@@ -159,10 +159,10 @@ namespace JSC {
     };
 
     struct JmpTable {
-        MacroAssembler::JmpSrc from;
+        X86Assembler::JmpSrc from;
         unsigned to;
         
-        JmpTable(MacroAssembler::JmpSrc f, unsigned t)
+        JmpTable(X86Assembler::JmpSrc f, unsigned t)
             : from(f)
             , to(t)
         {
@@ -170,11 +170,11 @@ namespace JSC {
     };
 
     struct SlowCaseEntry {
-        MacroAssembler::JmpSrc from;
+        X86Assembler::JmpSrc from;
         unsigned to;
         unsigned hint;
         
-        SlowCaseEntry(MacroAssembler::JmpSrc f, unsigned t, unsigned h = 0)
+        SlowCaseEntry(X86Assembler::JmpSrc f, unsigned t, unsigned h = 0)
             : from(f)
             , to(t)
             , hint(h)
@@ -297,30 +297,30 @@ namespace JSC {
         enum CompileOpCallType { OpCallNormal, OpCallEval, OpConstruct };
         void compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type = OpCallNormal);
 
-        void emitGetArg(unsigned src, MacroAssembler::RegisterID dst);
-        void emitGetPutArg(unsigned src, unsigned offset, MacroAssembler::RegisterID scratch);
-        void emitPutArg(MacroAssembler::RegisterID src, unsigned offset);
+        void emitGetArg(unsigned src, X86Assembler::RegisterID dst);
+        void emitGetPutArg(unsigned src, unsigned offset, X86Assembler::RegisterID scratch);
+        void emitPutArg(X86Assembler::RegisterID src, unsigned offset);
         void emitPutArgConstant(unsigned value, unsigned offset);
-        void emitPutResult(unsigned dst, MacroAssembler::RegisterID from = X86::eax);
+        void emitPutResult(unsigned dst, X86Assembler::RegisterID from = X86::eax);
 
-        void emitPutCTIParam(MacroAssembler::RegisterID from, unsigned name);
-        void emitGetCTIParam(unsigned name, MacroAssembler::RegisterID to);
+        void emitPutCTIParam(X86Assembler::RegisterID from, unsigned name);
+        void emitGetCTIParam(unsigned name, X86Assembler::RegisterID to);
 
-        void emitPutToCallFrameHeader(MacroAssembler::RegisterID from, RegisterFile::CallFrameHeaderEntry entry);
-        void emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, MacroAssembler::RegisterID to);
+        void emitPutToCallFrameHeader(X86Assembler::RegisterID from, RegisterFile::CallFrameHeaderEntry entry);
+        void emitGetFromCallFrameHeader(RegisterFile::CallFrameHeaderEntry entry, X86Assembler::RegisterID to);
 
         JSValue* getConstantImmediateNumericArg(unsigned src);
         unsigned getDeTaggedConstantImmediate(JSValue* imm);
 
-        void emitJumpSlowCaseIfNotImm(MacroAssembler::RegisterID, unsigned opcodeIndex);
-        void emitJumpSlowCaseIfNotImms(MacroAssembler::RegisterID, MacroAssembler::RegisterID, unsigned opcodeIndex);
+        void emitJumpSlowCaseIfNotImm(X86Assembler::RegisterID, unsigned opcodeIndex);
+        void emitJumpSlowCaseIfNotImms(X86Assembler::RegisterID, X86Assembler::RegisterID, unsigned opcodeIndex);
 
-        void emitFastArithDeTagImmediate(MacroAssembler::RegisterID);
-        void emitFastArithReTagImmediate(MacroAssembler::RegisterID);
-        void emitFastArithPotentiallyReTagImmediate(MacroAssembler::RegisterID);
-        void emitFastArithImmToInt(MacroAssembler::RegisterID);
-        void emitFastArithIntToImmOrSlowCase(MacroAssembler::RegisterID, unsigned opcodeIndex);
-        void emitFastArithIntToImmNoCheck(MacroAssembler::RegisterID);
+        void emitFastArithDeTagImmediate(X86Assembler::RegisterID);
+        void emitFastArithReTagImmediate(X86Assembler::RegisterID);
+        void emitFastArithPotentiallyReTagImmediate(X86Assembler::RegisterID);
+        void emitFastArithImmToInt(X86Assembler::RegisterID);
+        void emitFastArithIntToImmOrSlowCase(X86Assembler::RegisterID, unsigned opcodeIndex);
+        void emitFastArithIntToImmNoCheck(X86Assembler::RegisterID);
 
         void emitDebugExceptionCheck();
 
@@ -335,20 +335,20 @@ namespace JSC {
         void printOpcodeOperandTypes(unsigned src1, unsigned src2);
 #endif
 
-        MacroAssembler m_jit;
+        X86Assembler m_jit;
         Machine* m_machine;
         ExecState* m_exec;
         CodeBlock* m_codeBlock;
 
         Vector<CallRecord> m_calls;
-        Vector<MacroAssembler::JmpDst> m_labels;
+        Vector<X86Assembler::JmpDst> m_labels;
         Vector<JmpTable> m_jmpTable;
 
         struct JSRInfo {
-            MacroAssembler::JmpDst addrPosition;
-            MacroAssembler::JmpDst target;
+            X86Assembler::JmpDst addrPosition;
+            X86Assembler::JmpDst target;
 
-            JSRInfo(const MacroAssembler::JmpDst& storeLocation, const MacroAssembler::JmpDst& targetLocation)
+            JSRInfo(const X86Assembler::JmpDst& storeLocation, const X86Assembler::JmpDst& targetLocation)
                 : addrPosition(storeLocation)
                 , target(targetLocation)
             {
