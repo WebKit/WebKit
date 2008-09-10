@@ -544,7 +544,7 @@ Machine::Machine()
     m_jsArrayVptr = jsArray->vptr();
     static_cast<JSCell*>(jsArray)->~JSCell();
 
-    JSString* jsString = new (storage) JSString("");
+    JSString* jsString = new (storage) JSString(JSString::VPtrStealingHack);
     m_jsStringVptr = jsString->vptr();
     static_cast<JSCell*>(jsString)->~JSCell();
 
@@ -1105,9 +1105,9 @@ static NEVER_INLINE ScopeChainNode* createExceptionScope(ExecState* exec, CodeBl
     return scopeChain->push(scope);
 }
 
-StructureIDChain* cachePrototypeChain(StructureID* structureID)
+static StructureIDChain* cachePrototypeChain(ExecState* exec, StructureID* structureID)
 {
-    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(structureID->prototype())->structureID());
+    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(structureID->prototypeForLookup(exec))->structureID());
     structureID->setCachedPrototypeChain(chain.release());
     return structureID->cachedPrototypeChain();
 }
@@ -1135,12 +1135,6 @@ NEVER_INLINE void Machine::tryCachePutByID(CodeBlock* codeBlock, Instruction* vP
     
     JSCell* baseCell = static_cast<JSCell*>(baseValue);
     StructureID* structureID = baseCell->structureID();
-
-    // FIXME: Remove this !structureID check once all objects have StructureIDs.
-    if (!structureID) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
-        return;
-    }
 
     if (structureID->isDictionary()) {
         vPC[0] = getOpcode(op_put_by_id_generic);
@@ -1210,12 +1204,6 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
 
     StructureID* structureID = static_cast<JSCell*>(baseValue)->structureID();
 
-    // FIXME: Remove this !structureID check once all JSCells have StructureIDs.
-    if (!structureID) {
-        vPC[0] = getOpcode(op_get_by_id_generic);
-        return;
-    }
-
     if (structureID->isDictionary()) {
         vPC[0] = getOpcode(op_get_by_id_generic);
         return;
@@ -1245,7 +1233,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
         return;
     }
 
-    if (slot.slotBase() == structureID->prototype()) {
+    if (slot.slotBase() == structureID->prototypeForLookup(exec)) {
         ASSERT(slot.slotBase()->isObject());
 
         JSObject* baseObject = static_cast<JSObject*>(slot.slotBase());
@@ -1269,7 +1257,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     size_t count = 0;
     JSObject* o = static_cast<JSObject*>(baseValue);
     while (slot.slotBase() != o) {
-        JSValue* v = o->structureID()->prototype();
+        JSValue* v = o->structureID()->prototypeForLookup(exec);
 
         // If we didn't find base in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
@@ -1293,7 +1281,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
 
     StructureIDChain* chain = structureID->cachedPrototypeChain();
     if (!chain)
-        chain = cachePrototypeChain(structureID);
+        chain = cachePrototypeChain(exec, structureID);
 
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structureID;
@@ -2264,8 +2252,8 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
             StructureID* structureID = vPC[4].u.structureID;
 
             if (LIKELY(baseCell->structureID() == structureID)) {
-                ASSERT(structureID->prototype()->isObject());
-                JSObject* protoObject = static_cast<JSObject*>(structureID->prototype());
+                ASSERT(structureID->prototypeForLookup(exec)->isObject());
+                JSObject* protoObject = static_cast<JSObject*>(structureID->prototypeForLookup(exec));
                 StructureID* protoStructureID = vPC[5].u.structureID;
 
                 if (LIKELY(protoObject->structureID() == protoStructureID)) {
@@ -2305,7 +2293,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
                 while (1) {
                     ASSERT(baseCell->isObject());
-                    JSObject* baseObject = static_cast<JSObject*>(baseCell->structureID()->prototype());
+                    JSObject* baseObject = static_cast<JSObject*>(baseCell->structureID()->prototypeForLookup(exec));
                     if (UNLIKELY(baseObject->structureID() != (*it).get()))
                         break;
 
@@ -2337,6 +2325,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int property = vPC[3].u.operand;
 
         Identifier& ident = codeBlock->identifiers[property];
+
         JSValue* baseValue = r[base].jsValue(exec);
         PropertySlot slot(baseValue);
         JSValue* result = baseValue->get(exec, ident, slot);
@@ -3549,12 +3538,6 @@ NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBl
     JSCell* baseCell = static_cast<JSCell*>(baseValue);
     StructureID* structureID = baseCell->structureID();
 
-    // FIXME: Remove this !structureID check once all objects have StructureIDs.
-    if (!structureID) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
-        return;
-    }
-
     if (structureID->isDictionary()) {
         ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
         return;
@@ -3625,12 +3608,6 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     JSCell* baseCell = static_cast<JSCell*>(baseValue);
     StructureID* structureID = baseCell->structureID();
 
-    // FIXME: Remove this !structureID check once all JSCells have StructureIDs.
-    if (!structureID) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
-        return;
-    }
-
     if (structureID->isDictionary()) {
         ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_get_by_id_generic);
         return;
@@ -3655,7 +3632,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
         return;
     }
 
-    if (slot.slotBase() == structureID->prototype()) {
+    if (slot.slotBase() == structureID->prototypeForLookup(exec)) {
         ASSERT(slot.slotBase()->isObject());
 
         JSObject* slotBaseObject = static_cast<JSObject*>(slot.slotBase());
@@ -3681,7 +3658,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     size_t count = 0;
     JSObject* o = static_cast<JSObject*>(baseValue);
     while (slot.slotBase() != o) {
-        JSValue* v = o->structureID()->prototype();
+        JSValue* v = o->structureID()->prototypeForLookup(exec);
 
         // If we didn't find slotBase in baseValue's prototype chain, then baseValue
         // must be a proxy for another object.
@@ -3706,7 +3683,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
 
     StructureIDChain* chain = structureID->cachedPrototypeChain();
     if (!chain)
-        chain = cachePrototypeChain(structureID);
+        chain = cachePrototypeChain(exec, structureID);
 
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structureID;

@@ -213,7 +213,7 @@ inline JSObject::~JSObject()
 
 inline JSValue* JSObject::prototype() const
 {
-    return m_structureID->prototype();
+    return m_structureID->storedPrototype();
 }
 
 inline void JSObject::setPrototype(JSValue* prototype)

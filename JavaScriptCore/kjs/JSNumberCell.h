@@ -70,8 +70,9 @@ namespace JSC {
         }
 
     private:
-        JSNumberCell(double value)
-            : m_value(value)
+        JSNumberCell(ExecState* exec, double value)
+            : JSCell(exec->globalData().numberStructureID.get())
+            , m_value(value)
         {
         }
 
@@ -89,7 +90,7 @@ namespace JSC {
     // inlining it may not always be a win.
     inline JSValue* jsNumberCell(ExecState* exec, double d)
     {
-        return new (exec) JSNumberCell(d);
+        return new (exec) JSNumberCell(exec, d);
     }
 
     inline JSValue* jsNaN(ExecState* exec)

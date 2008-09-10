@@ -77,6 +77,8 @@ JSGlobalData::JSGlobalData(bool isShared)
     , stringTable(&JSC::stringTable)
 #endif
     , nullProtoStructureID(StructureID::create(jsNull()))
+    , stringStructureID(StructureID::create(jsNull(), StringType))
+    , numberStructureID(StructureID::create(jsNull(), NumberType))
     , identifierTable(createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new ArgList)

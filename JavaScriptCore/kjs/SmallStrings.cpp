@@ -90,7 +90,7 @@ void SmallStrings::mark()
 void SmallStrings::createEmptyString(ExecState* exec)
 {
     ASSERT(!m_emptyString);
-    m_emptyString = new (exec) JSString("", JSString::HasOtherOwner);
+    m_emptyString = new (exec) JSString(exec, "", JSString::HasOtherOwner);
 }
 
 void SmallStrings::createSingleCharacterString(ExecState* exec, unsigned char character)
@@ -98,7 +98,7 @@ void SmallStrings::createSingleCharacterString(ExecState* exec, unsigned char ch
     if (!m_storage)
         m_storage.set(new SmallStringsStorage);
     ASSERT(!m_singleCharacterStrings[character]);
-    m_singleCharacterStrings[character] = new (exec) JSString(m_storage->rep(character), JSString::HasOtherOwner);
+    m_singleCharacterStrings[character] = new (exec) JSString(exec, m_storage->rep(character), JSString::HasOtherOwner);
 }
 
 UString::Rep* SmallStrings::singleCharacterStringRep(unsigned char character)

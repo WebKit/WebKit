@@ -245,13 +245,13 @@ namespace JSC {
         static void* compileGetByIdProto(Machine* machine, ExecState* exec, CodeBlock* codeBlock, StructureID* structureID, StructureID* prototypeStructureID, size_t cachedOffset)
         {
             CTI cti(machine, exec, codeBlock);
-            return cti.privateCompileGetByIdProto(structureID, prototypeStructureID, cachedOffset);
+            return cti.privateCompileGetByIdProto(exec, structureID, prototypeStructureID, cachedOffset);
         }
 
         static void* compileGetByIdChain(Machine* machine, ExecState* exec, CodeBlock* codeBlock, StructureID* structureID, StructureIDChain* chain, size_t count, size_t cachedOffset)
         {
             CTI cti(machine, exec, codeBlock);
-            return cti.privateCompileGetByIdChain(structureID, chain, count, cachedOffset);
+            return cti.privateCompileGetByIdChain(exec, structureID, chain, count, cachedOffset);
         }
 
         static void* compilePutByIdReplace(Machine* machine, ExecState* exec, CodeBlock* codeBlock, StructureID* structureID, size_t cachedOffset)
@@ -288,8 +288,8 @@ namespace JSC {
         void privateCompileSlowCases();
         void privateCompile();
         void* privateCompileGetByIdSelf(StructureID*, size_t cachedOffset);
-        void* privateCompileGetByIdProto(StructureID*, StructureID* prototypeStructureID, size_t cachedOffset);
-        void* privateCompileGetByIdChain(StructureID*, StructureIDChain*, size_t count, size_t cachedOffset);
+        void* privateCompileGetByIdProto(ExecState*, StructureID*, StructureID* prototypeStructureID, size_t cachedOffset);
+        void* privateCompileGetByIdChain(ExecState*, StructureID*, StructureIDChain*, size_t count, size_t cachedOffset);
         void* privateCompilePutByIdReplace(StructureID*, size_t cachedOffset);
         void* privateArrayLengthTrampoline();
         void* privateStringLengthTrampoline();

@@ -1672,11 +1672,11 @@ void* CTI::privateCompileGetByIdSelf(StructureID* structureID, size_t cachedOffs
     return code;
 }
 
-void* CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* prototypeStructureID, size_t cachedOffset)
+void* CTI::privateCompileGetByIdProto(ExecState* exec, StructureID* structureID, StructureID* prototypeStructureID, size_t cachedOffset)
 {
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
-    JSObject* protoObject = static_cast<JSObject*>(structureID->prototype());
+    JSObject* protoObject = static_cast<JSObject*>(structureID->prototypeForLookup(exec));
     OwnArrayPtr<JSValue*>* protoPropertyStorage = &protoObject->m_propertyStorage;
     m_jit.movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
@@ -1708,7 +1708,7 @@ void* CTI::privateCompileGetByIdProto(StructureID* structureID, StructureID* pro
     return code;
 }
 
-void* CTI::privateCompileGetByIdChain(StructureID* structureID, StructureIDChain* chain, size_t count, size_t cachedOffset)
+void* CTI::privateCompileGetByIdChain(ExecState* exec, StructureID* structureID, StructureIDChain* chain, size_t count, size_t cachedOffset)
 {
     ASSERT(count);
     
@@ -1724,7 +1724,7 @@ void* CTI::privateCompileGetByIdChain(StructureID* structureID, StructureIDChain
     RefPtr<StructureID>* chainEntries = chain->head();
     JSCell* protoObject = 0;
     for (unsigned i = 0; i<count; ++i) {
-        protoObject = static_cast<JSCell*>(currStructureID->prototype());
+        protoObject = static_cast<JSCell*>(currStructureID->prototypeForLookup(exec));
         currStructureID = chainEntries[i].get();
 
         // Check the prototype object's StructureID had not changed.

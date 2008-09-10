@@ -34,7 +34,8 @@ namespace JSC {
     class GetterSetter : public JSCell {
     public:
         GetterSetter()
-            : m_getter(0)
+            : JSCell(0)
+            , m_getter(0)
             , m_setter(0)
         {
         }

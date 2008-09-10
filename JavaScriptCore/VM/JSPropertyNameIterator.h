@@ -66,7 +66,8 @@ namespace JSC {
     };
 
 inline JSPropertyNameIterator::JSPropertyNameIterator(JSObject* object, Identifier* propertyNames, size_t numProperties)
-    : m_object(object)
+    : JSCell(0)
+    , m_object(object)
     , m_propertyNames(propertyNames)
     , m_position(propertyNames)
     , m_end(propertyNames + numProperties)

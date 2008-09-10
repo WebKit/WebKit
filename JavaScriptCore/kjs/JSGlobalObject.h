@@ -24,6 +24,8 @@
 
 #include "JSGlobalData.h"
 #include "JSVariableObject.h"
+#include "NumberPrototype.h"
+#include "StringPrototype.h"
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>
 
@@ -291,6 +293,17 @@ namespace JSC {
         JSGlobalObject* globalObject = static_cast<JSGlobalObject*>(bottom());
         ASSERT(globalObject->isGlobalObject());
         return globalObject;
+    }
+
+    inline JSValue* StructureID::prototypeForLookup(ExecState* exec) {
+        if (m_type == ObjectType)
+            return m_prototype;
+
+        if (m_type == StringType)
+            return exec->lexicalGlobalObject()->stringPrototype();
+
+        ASSERT(m_type == NumberType);
+        return exec->lexicalGlobalObject()->numberPrototype();
     }
 
 } // namespace JSC

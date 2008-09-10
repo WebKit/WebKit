@@ -52,21 +52,25 @@ namespace JSC {
 
     class JSString : public JSCell {
         friend class CTI;
+        friend class Machine;
 
     public:
-        JSString(const UString& value)
-            : m_value(value)
+        JSString(ExecState* exec, const UString& value)
+            : JSCell(exec->globalData().stringStructureID.get())
+            , m_value(value)
         {
             Heap::heap(this)->reportExtraMemoryCost(value.cost());
         }
 
         enum HasOtherOwnerType { HasOtherOwner };
-        JSString(const UString& value, HasOtherOwnerType)
-            : m_value(value)
+        JSString(ExecState* exec, const UString& value, HasOtherOwnerType)
+            : JSCell(exec->globalData().stringStructureID.get())
+            , m_value(value)
         {
         }
-        JSString(PassRefPtr<UString::Rep> value, HasOtherOwnerType)
-            : m_value(value)
+        JSString(ExecState* exec, PassRefPtr<UString::Rep> value, HasOtherOwnerType)
+            : JSCell(exec->globalData().stringStructureID.get())
+            , m_value(value)
         {
         }
         
@@ -79,6 +83,11 @@ namespace JSC {
         JSString* getIndex(ExecState*, unsigned);
 
     private:
+        enum VPtrStealingHackType { VPtrStealingHack };
+        JSString(VPtrStealingHackType) 
+            : JSCell(0)
+        {
+        }
         virtual bool isString() const;
 
         virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
@@ -108,7 +117,7 @@ namespace JSC {
     {
         if (c <= 0xFF)
             return exec->globalData().smallStrings.singleCharacterString(exec, c);
-        return new (exec) JSString(UString(&c, 1));
+        return new (exec) JSString(exec, UString(&c, 1));
     }
 
     inline JSString* jsSingleCharacterSubstring(ExecState* exec, const UString& s, unsigned offset)
@@ -117,7 +126,7 @@ namespace JSC {
         UChar c = s.data()[offset];
         if (c <= 0xFF)
             return exec->globalData().smallStrings.singleCharacterString(exec, c);
-        return new (exec) JSString(UString::Rep::create(s.rep(), offset, 1));
+        return new (exec) JSString(exec, UString::Rep::create(s.rep(), offset, 1));
     }
 
     inline JSString* jsNontrivialString(ExecState* exec, const char* s)
@@ -125,13 +134,13 @@ namespace JSC {
         ASSERT(s);
         ASSERT(s[0]);
         ASSERT(s[1]);
-        return new (exec) JSString(s);
+        return new (exec) JSString(exec, s);
     }
 
     inline JSString* jsNontrivialString(ExecState* exec, const UString& s)
     {
         ASSERT(s.size() > 1);
-        return new (exec) JSString(s);
+        return new (exec) JSString(exec, s);
     }
 
     inline JSString* JSString::getIndex(ExecState* exec, unsigned i)

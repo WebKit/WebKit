@@ -1,3 +1,71 @@
+2008-09-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Oliver.
+        
+        - enable polymorphic inline caching of properties of primitives
+        
+        1.012x speedup on SunSpider.
+
+        We create special structure IDs for JSString and
+        JSNumberCell. Unlike normal structure IDs, these cannot hold the
+        true prototype. Due to JS autoboxing semantics, the prototype used
+        when looking up string or number properties depends on the lexical
+        global object of the call site, not the creation site. Thus we
+        enable StructureIDs to handle this quirk for primitives.
+        
+        Everything else should be straightforward.
+        
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        * VM/CTI.h:
+        (JSC::CTI::compileGetByIdProto):
+        (JSC::CTI::compileGetByIdChain):
+        * VM/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        * VM/Machine.cpp:
+        (JSC::Machine::Machine):
+        (JSC::cachePrototypeChain):
+        (JSC::Machine::tryCachePutByID):
+        (JSC::Machine::tryCacheGetByID):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::tryCTICacheGetByID):
+        * kjs/GetterSetter.h:
+        (JSC::GetterSetter::GetterSetter):
+        * kjs/JSCell.h:
+        * kjs/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * kjs/JSGlobalData.h:
+        * kjs/JSGlobalObject.h:
+        (JSC::StructureID::prototypeForLookup):
+        * kjs/JSNumberCell.h:
+        (JSC::JSNumberCell::JSNumberCell):
+        (JSC::jsNumberCell):
+        * kjs/JSObject.h:
+        (JSC::JSObject::prototype):
+        * kjs/JSString.cpp:
+        (JSC::jsString):
+        (JSC::jsSubstring):
+        (JSC::jsOwnedString):
+        * kjs/JSString.h:
+        (JSC::JSString::JSString):
+        (JSC::JSString::):
+        (JSC::jsSingleCharacterString):
+        (JSC::jsSingleCharacterSubstring):
+        (JSC::jsNontrivialString):
+        * kjs/SmallStrings.cpp:
+        (JSC::SmallStrings::createEmptyString):
+        (JSC::SmallStrings::createSingleCharacterString):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::addPropertyTransition):
+        (JSC::StructureID::getterSetterTransition):
+        (JSC::StructureIDChain::StructureIDChain):
+        * kjs/StructureID.h:
+        (JSC::StructureID::create):
+        (JSC::StructureID::storedPrototype):
+
 2008-09-09  Joerg Bornemann  <joerg.bornemann@trolltech.com>
 
         Reviewed by Sam Weinig.
