@@ -1,3 +1,17 @@
+2008-09-10  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - clean up AnimationBase
+
+        * page/animation/AnimationBase.cpp:
+        * page/animation/AnimationBase.h:
+        * page/animation/CompositeAnimation.cpp:
+        * page/animation/ImplicitAnimation.cpp:
+        * page/animation/ImplicitAnimation.h:
+        * page/animation/KeyframeAnimation.cpp:
+        * page/animation/KeyframeAnimation.h:
+
 2008-09-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Darin Adler.

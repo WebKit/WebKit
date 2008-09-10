@@ -28,17 +28,17 @@
 
 #include "config.h"
 #include "AnimationBase.h"
-#include "AnimationController.h"
-#include "KeyframeAnimation.h"
-#include "ImplicitAnimation.h"
-#include "CompositeAnimation.h"
 
+#include "AnimationController.h"
 #include "CSSPropertyNames.h"
 #include "CString.h"
+#include "CompositeAnimation.h"
 #include "Document.h"
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "Frame.h"
+#include "ImplicitAnimation.h"
+#include "KeyframeAnimation.h"
 #include "RenderObject.h"
 #include "RenderStyle.h"
 #include "SystemTime.h"
@@ -66,10 +66,10 @@ void AnimationTimerCallback::timerFired(Timer<AnimationTimerBase>*)
 }
 
 AnimationEventDispatcher::AnimationEventDispatcher(AnimationBase* anim) 
-: AnimationTimerBase(anim)
-, m_property(CSSPropertyInvalid)
-, m_reset(false)
-, m_elapsedTime(-1)
+    : AnimationTimerBase(anim)
+    , m_property(CSSPropertyInvalid)
+    , m_reset(false)
+    , m_elapsedTime(-1)
 {
 }
 
@@ -151,14 +151,16 @@ static inline EVisibility blendFunc(EVisibility from, EVisibility to, double pro
 class PropertyWrapperBase {
 public:
     PropertyWrapperBase(int prop)
-    : m_prop(prop)
-    { }
+        : m_prop(prop)
+    {
+    }
+
     virtual ~PropertyWrapperBase() { }
-    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const=0;
-    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog) const=0;
-    
+    virtual bool equals(const RenderStyle* a, const RenderStyle* b) const = 0;
+    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const = 0;
+
     int property() const { return m_prop; }
-    
+
 private:
     int m_prop;
 };
@@ -167,15 +169,16 @@ template <typename T>
 class PropertyWrapperGetter : public PropertyWrapperBase {
 public:
     PropertyWrapperGetter(int prop, T (RenderStyle::*getter)() const)
-    : PropertyWrapperBase(prop)
-    , m_getter(getter)
-    { }
-    
+        : PropertyWrapperBase(prop)
+        , m_getter(getter)
+    {
+    }
+
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
         return (a->*m_getter)() == (b->*m_getter)();
     }
-    
+
 protected:
     T (RenderStyle::*m_getter)() const;
 };
@@ -184,15 +187,16 @@ template <typename T>
 class PropertyWrapper : public PropertyWrapperGetter<T> {
 public:
     PropertyWrapper(int prop, T (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
-    : PropertyWrapperGetter<T>(prop, getter)
-    , m_setter(setter)
-    { }
-    
-    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog) const
+        : PropertyWrapperGetter<T>(prop, getter)
+        , m_setter(setter)
     {
-        (dst->*m_setter)(blendFunc((a->*PropertyWrapperGetter<T>::m_getter)(), (b->*PropertyWrapperGetter<T>::m_getter)(), prog));
     }
     
+    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
+    {
+        (dst->*m_setter)(blendFunc((a->*PropertyWrapperGetter<T>::m_getter)(), (b->*PropertyWrapperGetter<T>::m_getter)(), progress));
+    }
+
 protected:
     void (RenderStyle::*m_setter)(T);
 };
@@ -200,36 +204,37 @@ protected:
 class PropertyWrapperShadow : public PropertyWrapperGetter<ShadowData*> {
 public:
     PropertyWrapperShadow(int prop, ShadowData* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(ShadowData*, bool))
-    : PropertyWrapperGetter<ShadowData*>(prop, getter)
-    , m_setter(setter)
-    { }
-    
+        : PropertyWrapperGetter<ShadowData*>(prop, getter)
+        , m_setter(setter)
+    {
+    }
+
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
-        ShadowData* shadowa = (a->*m_getter)();
-        ShadowData* shadowb = (b->*m_getter)();
-        
-        if (!shadowa && shadowb || shadowa && !shadowb)
+        ShadowData* shadowA = (a->*m_getter)();
+        ShadowData* shadowB = (b->*m_getter)();
+
+        if (!shadowA && shadowB || shadowA && !shadowB)
             return false;
-        if (shadowa && shadowb && (*shadowa != *shadowb))
+        if (shadowA && shadowB && (*shadowA != *shadowB))
             return false;
         return true;
     }
-    
-    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog) const
+
+    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
     {
-        ShadowData* shadowa = (a->*m_getter)();
-        ShadowData* shadowb = (b->*m_getter)();
+        ShadowData* shadowA = (a->*m_getter)();
+        ShadowData* shadowB = (b->*m_getter)();
         ShadowData defaultShadowData(0, 0, 0, Color::transparent);
-        
-        if (!shadowa)
-            shadowa = &defaultShadowData;
-        if (!shadowb)
-            shadowb = &defaultShadowData;
-        
-        (dst->*m_setter)(blendFunc(shadowa, shadowb, prog), false);
+
+        if (!shadowA)
+            shadowA = &defaultShadowData;
+        if (!shadowB)
+            shadowB = &defaultShadowData;
+
+        (dst->*m_setter)(blendFunc(shadowA, shadowB, progress), false);
     }
-    
+
 private:
     void (RenderStyle::*m_setter)(ShadowData*, bool);
 };
@@ -237,11 +242,12 @@ private:
 class PropertyWrapperMaybeInvalidColor : public PropertyWrapperBase {
 public:
     PropertyWrapperMaybeInvalidColor(int prop, const Color& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(const Color&))
-    : PropertyWrapperBase(prop)
-    , m_getter(getter)
-    , m_setter(setter)
-    { }
-    
+        : PropertyWrapperBase(prop)
+        , m_getter(getter)
+        , m_setter(setter)
+    {
+    }
+
     virtual bool equals(const RenderStyle* a, const RenderStyle* b) const
     {
         Color fromColor = (a->*m_getter)();
@@ -250,11 +256,11 @@ public:
             fromColor = a->color();
         if (!toColor.isValid())
             toColor = b->color();
-        
+
         return fromColor == toColor;
     }
-    
-    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog) const
+
+    virtual void blend(RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress) const
     {
         Color fromColor = (a->*m_getter)();
         Color toColor = (b->*m_getter)();
@@ -262,9 +268,9 @@ public:
             fromColor = a->color();
         if (!toColor.isValid())
             toColor = b->color();
-        (dst->*m_setter)(blendFunc(fromColor, toColor, prog));
+        (dst->*m_setter)(blendFunc(fromColor, toColor, progress));
     }
-    
+
 private:
     const Color& (RenderStyle::*m_getter)() const;
     void (RenderStyle::*m_setter)(const Color&);
@@ -278,7 +284,7 @@ static void ensurePropertyMap()
     // FIXME: This data is never destroyed. Maybe we should ref count it and toss it when the last AnimationController is destroyed?
     if (gPropertyWrappers == 0) {
         gPropertyWrappers = new Vector<PropertyWrapperBase*>();
-        
+
         // build the list of property wrappers to do the comparisons and blends
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyLeft, &RenderStyle::left, &RenderStyle::setLeft));
         gPropertyWrappers->append(new PropertyWrapper<Length>(CSSPropertyRight, &RenderStyle::right, &RenderStyle::setRight));
@@ -323,7 +329,7 @@ static void ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapper<const IntSize&>(CSSPropertyWebkitBorderBottomRightRadius, &RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius));
         gPropertyWrappers->append(new PropertyWrapper<EVisibility>(CSSPropertyVisibility, &RenderStyle::visibility, &RenderStyle::setVisibility));
         gPropertyWrappers->append(new PropertyWrapper<float>(CSSPropertyZoom, &RenderStyle::zoom, &RenderStyle::setZoom));
-        
+
         // FIXME: these might be invalid colors, need to check for that
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyWebkitColumnRuleColor, &RenderStyle::columnRuleColor, &RenderStyle::setColumnRuleColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyWebkitTextStrokeColor, &RenderStyle::textStrokeColor, &RenderStyle::setTextStrokeColor));
@@ -333,15 +339,15 @@ static void ensurePropertyMap()
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyBorderTopColor, &RenderStyle::borderTopColor, &RenderStyle::setBorderTopColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyBorderBottomColor, &RenderStyle::borderBottomColor, &RenderStyle::setBorderBottomColor));
         gPropertyWrappers->append(new PropertyWrapperMaybeInvalidColor(CSSPropertyOutlineColor, &RenderStyle::outlineColor, &RenderStyle::setOutlineColor));
-        
+
         // These are for shadows
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyWebkitBoxShadow, &RenderStyle::boxShadow, &RenderStyle::setBoxShadow));
         gPropertyWrappers->append(new PropertyWrapperShadow(CSSPropertyTextShadow, &RenderStyle::textShadow, &RenderStyle::setTextShadow));
-        
+
         // Make sure unused slots have a value
         for (unsigned int i = 0; i < (unsigned int) numCSSProperties; ++i)
             gPropertyWrapperMap[i] = CSSPropertyInvalid;
-        
+
         size_t n = gPropertyWrappers->size();
         for (unsigned int i = 0; i < n; ++i) {
             ASSERT((*gPropertyWrappers)[i]->property() - firstCSSProperty < numCSSProperties);
@@ -351,28 +357,27 @@ static void ensurePropertyMap()
 }
 
 AnimationBase::AnimationBase(const Animation* transition, RenderObject* renderer, CompositeAnimation* compAnim)
-: m_animState(STATE_NEW)
-, m_iteration(0)
-, m_animating(false)
-, m_waitedForResponse(false)
-, m_startTime(0)
-, m_pauseTime(-1)
-, m_object(renderer)
-, m_animationTimerCallback(const_cast<AnimationBase*>(this))
-, m_animationEventDispatcher(const_cast<AnimationBase*>(this))
-, m_animation(const_cast<Animation*>(transition))
-, m_compAnim(compAnim)
-, m_waitingForEndEvent(false)
+    : m_animState(AnimationStateNew)
+    , m_iteration(0)
+    , m_animating(false)
+    , m_waitedForResponse(false)
+    , m_startTime(0)
+    , m_pauseTime(-1)
+    , m_object(renderer)
+    , m_animationTimerCallback(const_cast<AnimationBase*>(this))
+    , m_animationEventDispatcher(const_cast<AnimationBase*>(this))
+    , m_animation(const_cast<Animation*>(transition))
+    , m_compAnim(compAnim)
+    , m_waitingForEndEvent(false)
 {
-    ensurePropertyMap();
 }
 
 AnimationBase::~AnimationBase()
 {
-    if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
+    if (m_animState == AnimationStateStartWaitStyleAvailable)
         m_compAnim->setWaitingForStyleAvailable(false);
 }
-// static
+
 bool AnimationBase::propertiesEqual(int prop, const RenderStyle* a, const RenderStyle* b)
 {
     ensurePropertyMap();
@@ -384,61 +389,59 @@ bool AnimationBase::propertiesEqual(int prop, const RenderStyle* a, const Render
         }
     } else {
         int propIndex = prop - firstCSSProperty;
-        
+
         if (propIndex >= 0 && propIndex < numCSSProperties) {
             int i = gPropertyWrapperMap[propIndex];
-            return (i >= 0) ? (*gPropertyWrappers)[i]->equals(a, b) : true;
+            return i >= 0 ? (*gPropertyWrappers)[i]->equals(a, b) : true;
         }
     }
     return true;
 }
 
-// static
 int AnimationBase::getPropertyAtIndex(int i)
 {
     ensurePropertyMap();
-    if (i < 0 || i >= (int) gPropertyWrappers->size())
+    if (i < 0 || i >= static_cast<int>(gPropertyWrappers->size()))
         return CSSPropertyInvalid;
-        
+
     return (*gPropertyWrappers)[i]->property();
 }
 
-//static
 int AnimationBase::getNumProperties()
 {
     ensurePropertyMap();
     return gPropertyWrappers->size();
 }
-
     
-// static - return true if we need to start software animation timers
-bool AnimationBase::blendProperties(int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double prog)
+// Returns true if we need to start animation timers
+bool AnimationBase::blendProperties(int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress)
 {
+    ASSERT(prop != cAnimateAll);
+    // FIXME: Why can this happen?
     if (prop == cAnimateAll) {
-        ASSERT(0);
         bool needsTimer = false;
-    
+
         size_t n = gPropertyWrappers->size();
         for (unsigned int i = 0; i < n; ++i) {
             PropertyWrapperBase* wrapper = (*gPropertyWrappers)[i];
             if (!wrapper->equals(a, b)) {
-                wrapper->blend(dst, a, b, prog);
+                wrapper->blend(dst, a, b, progress);
                 needsTimer = true;
             }
         }
         return needsTimer;
     }
-    
+
     int propIndex = prop - firstCSSProperty;
     if (propIndex >= 0 && propIndex < numCSSProperties) {
         int i = gPropertyWrapperMap[propIndex];
         if (i >= 0) {
             PropertyWrapperBase* wrapper = (*gPropertyWrappers)[i];
-            wrapper->blend(dst, a, b, prog);
+            wrapper->blend(dst, a, b, progress);
             return true;
         }
     }
-    
+
     return false;
 }
 
@@ -469,243 +472,240 @@ Element* AnimationBase::elementForEventDispatch()
         return static_cast<Element*>(m_object->node());
     return 0;
 }
-    
+
 void AnimationBase::updateStateMachine(AnimStateInput input, double param)
 {
-    // If we get a RESTART then we force a new animation, regardless of state
-    if (input == STATE_INPUT_MAKE_NEW) {
-        if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
+    // If we get AnimationStateInputRestartAnimation then we force a new animation, regardless of state.
+    if (input == AnimationStateInputMakeNew) {
+        if (m_animState == AnimationStateStartWaitStyleAvailable)
             m_compAnim->setWaitingForStyleAvailable(false);
-        m_animState = STATE_NEW;
+        m_animState = AnimationStateNew;
         m_startTime = 0;
         m_pauseTime = -1;
         m_waitedForResponse = false;
         endAnimation(false);
         return;
     }
-    else if (input == STATE_INPUT_RESTART_ANIMATION) {
+
+    if (input == AnimationStateInputRestartAnimation) {
         cancelTimers();
-        if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
+        if (m_animState == AnimationStateStartWaitStyleAvailable)
             m_compAnim->setWaitingForStyleAvailable(false);
-        m_animState = STATE_NEW;
+        m_animState = AnimationStateNew;
         m_startTime = 0;
         m_pauseTime = -1;
         endAnimation(false);
-        
+
         if (!paused())
-            updateStateMachine(STATE_INPUT_START_ANIMATION, -1);
+            updateStateMachine(AnimationStateInputStartAnimation, -1);
         return;
     }
-    else if (input == STATE_INPUT_END_ANIMATION) {
+
+    if (input == AnimationStateInputEndAnimation) {
         cancelTimers();
-        if (m_animState == STATE_START_WAIT_STYLE_AVAILABLE)
+        if (m_animState == AnimationStateStartWaitStyleAvailable)
             m_compAnim->setWaitingForStyleAvailable(false);
-        m_animState = STATE_DONE;
+        m_animState = AnimationStateDone;
         endAnimation(true);
         return;
     }
-    else if (input == STATE_INPUT_PAUSE_OVERRIDE) {
-        if (m_animState == STATE_START_WAIT_RESPONSE) {
-            // If we are in the WAIT_RESPONSE state, the animation will get canceled before 
-            // we get a response, so move to the next state
+
+    if (input == AnimationStateInputPauseOverride) {
+        if (m_animState == AnimationStateStartWaitResponse) {
+            // If we are in AnimationStateStartWaitResponse, the animation will get canceled before 
+            // we get a response, so move to the next state.
             endAnimation(false);
-            updateStateMachine(STATE_INPUT_START_TIME_SET, currentTime());
+            updateStateMachine(AnimationStateInputStartTimeSet, currentTime());
         }
         return;
     }
-    else if (input == STATE_INPUT_RESUME_OVERRIDE) {
-        if (m_animState == STATE_LOOPING || m_animState == STATE_ENDING) {
+
+    if (input == AnimationStateInputResumeOverride) {
+        if (m_animState == AnimationStateLooping || m_animState == AnimationStateEnding) {
             // Start the animation
             startAnimation(m_startTime);
         }
         return;
     }
-    
+
     // Execute state machine
     switch(m_animState) {
-        case STATE_NEW:
-            ASSERT(input == STATE_INPUT_START_ANIMATION || input == STATE_INPUT_PLAY_STATE_RUNNING || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            if (input == STATE_INPUT_START_ANIMATION || input == STATE_INPUT_PLAY_STATE_RUNNING) {
+        case AnimationStateNew:
+            ASSERT(input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning || input == AnimationStateInputPlayStatePaused);
+            if (input == AnimationStateInputStartAnimation || input == AnimationStateInputPlayStateRunnning) {
                 // Set the start timer to the initial delay (0 if no delay)
                 m_waitedForResponse = false;
-                m_animState = STATE_START_WAIT_TIMER;
+                m_animState = AnimationStateStartWaitTimer;
                 m_animationTimerCallback.startTimer(m_animation->delay(), EventNames::webkitAnimationStartEvent, m_animation->delay());
             }
             break;
-        case STATE_START_WAIT_TIMER:
-            ASSERT(input == STATE_INPUT_START_TIMER_FIRED || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            
-            if (input == STATE_INPUT_START_TIMER_FIRED) {
+        case AnimationStateStartWaitTimer:
+            ASSERT(input == AnimationStateInputStartTimerFired || input == AnimationStateInputPlayStatePaused);
+
+            if (input == AnimationStateInputStartTimerFired) {
                 ASSERT(param >= 0);
                 // Start timer has fired, tell the animation to start and wait for it to respond with start time
-                m_animState = STATE_START_WAIT_STYLE_AVAILABLE;
+                m_animState = AnimationStateStartWaitStyleAvailable;
                 m_compAnim->setWaitingForStyleAvailable(true);
-                
+
                 // Trigger a render so we can start the animation
                 setChanged(m_object->element());
                 m_object->animation()->startUpdateRenderingDispatcher();
-            }
-            else {
+            } else {
                 ASSERT(running());
                 // We're waiting for the start timer to fire and we got a pause. Cancel the timer, pause and wait
                 m_pauseTime = currentTime();
                 cancelTimers();
-                m_animState = STATE_PAUSED_WAIT_TIMER;
+                m_animState = AnimationStatePausedWaitTimer;
             }
             break;
-        case STATE_START_WAIT_STYLE_AVAILABLE:
-            ASSERT(input == STATE_INPUT_STYLE_AVAILABLE || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            
+        case AnimationStateStartWaitStyleAvailable:
+            ASSERT(input == AnimationStateInputStyleAvailable || input == AnimationStateInputPlayStatePaused);
+
             m_compAnim->setWaitingForStyleAvailable(false);
-            
-            if (input == STATE_INPUT_STYLE_AVAILABLE) {
+
+            if (input == AnimationStateInputStyleAvailable) {
                 // Start timer has fired, tell the animation to start and wait for it to respond with start time
-                m_animState = STATE_START_WAIT_RESPONSE;
-                
+                m_animState = AnimationStateStartWaitResponse;
+
                 overrideAnimations();
-                
+
                 // Send start event, if needed
-                onAnimationStart(0.0f); // The elapsedTime is always 0 here
-                
+                onAnimationStart(0); // The elapsedTime is always 0 here
+
                 // Start the animation
                 if (overridden() || !startAnimation(0)) {
                     // We're not going to get a startTime callback, so fire the start time here
-                    m_animState = STATE_START_WAIT_RESPONSE;
-                    updateStateMachine(STATE_INPUT_START_TIME_SET, currentTime());
-                }
-                else
+                    m_animState = AnimationStateStartWaitResponse;
+                    updateStateMachine(AnimationStateInputStartTimeSet, currentTime());
+                } else
                     m_waitedForResponse = true;
-            }
-            else {
+            } else {
                 ASSERT(running());
                 // We're waiting for the a notification that the style has been setup. If we're asked to wait
                 // at this point, the style must have been processed, so we can deal with this like we would
                 // for WAIT_RESPONSE, except that we don't need to do an endAnimation().
                 m_pauseTime = 0;
-                m_animState = STATE_START_WAIT_RESPONSE;
+                m_animState = AnimationStateStartWaitResponse;
             }
             break;
-        case STATE_START_WAIT_RESPONSE:
-            ASSERT(input == STATE_INPUT_START_TIME_SET || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            
-            if (input == STATE_INPUT_START_TIME_SET) {
+        case AnimationStateStartWaitResponse:
+            ASSERT(input == AnimationStateInputStartTimeSet || input == AnimationStateInputPlayStatePaused);
+
+            if (input == AnimationStateInputStartTimeSet) {
                 ASSERT(param >= 0);
                 // We have a start time, set it, unless the startTime is already set
                 if (m_startTime <= 0)
                     m_startTime = param;
-                
+
                 // Decide when the end or loop event needs to fire
                 primeEventTimers();
-                
+
                 // Trigger a render so we can start the animation
                 setChanged(m_object->element());
                 m_object->animation()->startUpdateRenderingDispatcher();
-            }
-            else {
+            } else {
                 // We are pausing while waiting for a start response. Cancel the animation and wait. When 
                 // we unpause, we will act as though the start timer just fired
                 m_pauseTime = 0;
                 endAnimation(false);
-                m_animState = STATE_PAUSED_WAIT_RESPONSE;
+                m_animState = AnimationStatePausedWaitResponse;
             }
             break;
-        case STATE_LOOPING:
-            ASSERT(input == STATE_INPUT_LOOP_TIMER_FIRED || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            
-            if (input == STATE_INPUT_LOOP_TIMER_FIRED) {
+        case AnimationStateLooping:
+            ASSERT(input == AnimationStateInputLoopTimerFired || input == AnimationStateInputPlayStatePaused);
+
+            if (input == AnimationStateInputLoopTimerFired) {
                 ASSERT(param >= 0);
                 // Loop timer fired, loop again or end.
                 onAnimationIteration(param);
                 primeEventTimers();
-            }
-            else {
+            } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = currentTime();
                 cancelTimers();
                 endAnimation(false);
-                m_animState = STATE_PAUSED_RUN;
+                m_animState = AnimationStatePausedRun;
             }
             break;
-        case STATE_ENDING:
-            ASSERT(input == STATE_INPUT_END_TIMER_FIRED || input == STATE_INPUT_PLAY_STATE_PAUSED);
-            
-            if (input == STATE_INPUT_END_TIMER_FIRED) {
+        case AnimationStateEnding:
+            ASSERT(input == AnimationStateInputEndTimerFired || input == AnimationStateInputPlayStatePaused);
+
+            if (input == AnimationStateInputEndTimerFired) {
                 ASSERT(param >= 0);
                 // End timer fired, finish up
                 onAnimationEnd(param);
-                
+
                 resumeOverriddenAnimations();
-                
+
                 // Fire off another style change so we can set the final value
                 setChanged(m_object->element());
-                m_animState = STATE_DONE;
+                m_animState = AnimationStateDone;
                 m_object->animation()->startUpdateRenderingDispatcher();
                 // |this| may be deleted here when we've been called from timerFired()
-            }
-            else {
+            } else {
                 // We are pausing while running. Cancel the animation and wait
                 m_pauseTime = currentTime();
                 cancelTimers();
                 endAnimation(false);
-                m_animState = STATE_PAUSED_RUN;
+                m_animState = AnimationStatePausedRun;
             }
             // |this| may be deleted here
             break;
-        case STATE_PAUSED_WAIT_TIMER:
-            ASSERT(input == STATE_INPUT_PLAY_STATE_RUNNING);
+        case AnimationStatePausedWaitTimer:
+            ASSERT(input == AnimationStateInputPlayStateRunnning);
             ASSERT(!running());
             // Update the times
             m_startTime += currentTime() - m_pauseTime;
             m_pauseTime = -1;
-            
+
             // we were waiting for the start timer to fire, go back and wait again
-            m_animState = STATE_NEW;
-            updateStateMachine(STATE_INPUT_START_ANIMATION, 0);
+            m_animState = AnimationStateNew;
+            updateStateMachine(AnimationStateInputStartAnimation, 0);
             break;
-        case STATE_PAUSED_WAIT_RESPONSE:
-        case STATE_PAUSED_RUN:
-            // We treat these two cases the same. The only difference is that, when we are in the WAIT_RESPONSE
-            // state, we don't yet have a valid startTime, so we send 0 to startAnimation. When the START_TIME
-            // event comes in qnd we were in the RUN state, we will notice that we have already set the 
-            // startTime and will ignore it.
-            ASSERT(input == STATE_INPUT_PLAY_STATE_RUNNING);
+        case AnimationStatePausedWaitResponse:
+        case AnimationStatePausedRun:
+            // We treat these two cases the same. The only difference is that, when we are in
+            // AnimationStatePausedWaitResponse, we don't yet have a valid startTime, so we send 0 to startAnimation.
+            // When the AnimationStateInputStartTimeSet comes in and we were in AnimationStatePausedRun, we will notice
+            // that we have already set the startTime and will ignore it.
+            ASSERT(input == AnimationStateInputPlayStateRunnning);
             ASSERT(!running());
             // Update the times
-            if (m_animState == STATE_PAUSED_RUN)
+            if (m_animState == AnimationStatePausedRun)
                 m_startTime += currentTime() - m_pauseTime;
             else
                 m_startTime = 0;
             m_pauseTime = -1;
-            
+
             // We were waiting for a begin time response from the animation, go back and wait again
-            m_animState = STATE_START_WAIT_RESPONSE;
-            
+            m_animState = AnimationStateStartWaitResponse;
+
             // Start the animation
             if (overridden() || !startAnimation(m_startTime)) {
                 // We're not going to get a startTime callback, so fire the start time here
-                updateStateMachine(STATE_INPUT_START_TIME_SET, currentTime());
-            }
-            else
+                updateStateMachine(AnimationStateInputStartTimeSet, currentTime());
+            } else
                 m_waitedForResponse = true;
             break;
-        case STATE_DONE:
+        case AnimationStateDone:
             // We're done. Stay in this state until we are deleted
             break;
     }
-    // |this| may be deleted here if we came out of STATE_ENDING when we've been called from timerFired()
+    // |this| may be deleted here if we came out of AnimationStateEnding when we've been called from timerFired()
 }
     
 void AnimationBase::animationTimerCallbackFired(const AtomicString& eventType, double elapsedTime)
 {
     ASSERT(m_object->document() && !m_object->document()->inPageCache());
-    
+
     // FIXME: use an enum
     if (eventType == EventNames::webkitAnimationStartEvent)
-        updateStateMachine(STATE_INPUT_START_TIMER_FIRED, elapsedTime);
+        updateStateMachine(AnimationStateInputStartTimerFired, elapsedTime);
     else if (eventType == EventNames::webkitAnimationIterationEvent)
-        updateStateMachine(STATE_INPUT_LOOP_TIMER_FIRED, elapsedTime);
+        updateStateMachine(AnimationStateInputLoopTimerFired, elapsedTime);
     else if (eventType == EventNames::webkitAnimationEndEvent) {
-        updateStateMachine(STATE_INPUT_END_TIMER_FIRED, elapsedTime);
+        updateStateMachine(AnimationStateInputEndTimerFired, elapsedTime);
         // |this| may be deleted here
     }
 }
@@ -714,7 +714,7 @@ void AnimationBase::animationEventDispatcherFired(Element* element, const Atomic
                                                   bool reset, const AtomicString& eventType, double elapsedTime)
 {
     m_waitingForEndEvent = false;
-    
+
     // Keep an atomic string on the stack to keep it alive until we exit this method
     // (since dispatching the event may cause |this| to be deleted, therefore removing
     // the last ref to the atomic string).
@@ -722,7 +722,7 @@ void AnimationBase::animationEventDispatcherFired(Element* element, const Atomic
     AtomicString animEventType(eventType);
     // Make sure the element sticks around too
     RefPtr<Element> elementRetainer(element);
-    
+
     ASSERT(!element || (element->document() && !element->document()->inPageCache()));
     if (!element)
         return;
@@ -733,49 +733,48 @@ void AnimationBase::animationEventDispatcherFired(Element* element, const Atomic
         element->dispatchWebKitAnimationEvent(eventType, name, elapsedTime);
 
     // Restore the original (unanimated) style
-    if (animEventType == EventNames::webkitAnimationEndEvent)
-        if (element->renderer())
-            setChanged(element->renderer()->element());
+    if (animEventType == EventNames::webkitAnimationEndEvent && element->renderer())
+        setChanged(element->renderer()->element());
 }
 
 void AnimationBase::updatePlayState(bool run)
 {
     if (paused() == run || isNew())
-        updateStateMachine(run ? STATE_INPUT_PLAY_STATE_RUNNING : STATE_INPUT_PLAY_STATE_PAUSED, -1);
+        updateStateMachine(run ? AnimationStateInputPlayStateRunnning : AnimationStateInputPlayStatePaused, -1);
 }
 
 double AnimationBase::progress(double scale, double offset) const
 {
     if (preActive())
         return 0;
-    
+
     double elapsedTime = running() ? (currentTime() - m_startTime) : (m_pauseTime - m_startTime);
     if (running() && elapsedTime < 0)
         return 0;
-    
+
     double dur = m_animation->duration();
     if (m_animation->iterationCount() > 0)
         dur *= m_animation->iterationCount();
-    
+
     if (postActive() || !m_animation->duration() || (m_animation->iterationCount() > 0 && elapsedTime >= dur))
         return 1.0;
-    
+
     // Compute the fractional time, taking into account direction.
     // There is no need to worry about iterations, we assume that we would have
-    // short circuited above if we were done
+    // short circuited above if we were done.
     double fractionalTime = elapsedTime / m_animation->duration();
-    int integralTime = (int) fractionalTime;
+    int integralTime = static_cast<int>(fractionalTime);
     fractionalTime -= integralTime;
-    
+
     if (m_animation->direction() && (integralTime & 1))
         fractionalTime = 1 - fractionalTime;
-    
-    if (scale != 1 || offset != 0)
+
+    if (scale != 1 || offset)
         fractionalTime = (fractionalTime - offset) * scale;
-    
+
     if (m_animation->timingFunction().type() == LinearTimingFunction)
         return fractionalTime;
-    
+
     // Cubic bezier.
     double result = solveCubicBezierFunction(m_animation->timingFunction().x1(),
                                             m_animation->timingFunction().y1(),
@@ -791,7 +790,7 @@ void AnimationBase::primeEventTimers()
     double ct = currentTime();
     const double elapsedDuration = ct - m_startTime;
     ASSERT(elapsedDuration >= 0);
-    
+
     double totalDuration = -1;
     if (m_animation->iterationCount() > 0)
         totalDuration = m_animation->duration() * m_animation->iterationCount();
@@ -802,7 +801,7 @@ void AnimationBase::primeEventTimers()
         durationLeft = m_animation->duration() - fmod(elapsedDuration, m_animation->duration());
         nextIterationTime = elapsedDuration + durationLeft;
     }
-    
+
     // At this point, we may have 0 durationLeft, if we've gotten the event late and we are already
     // past totalDuration. In this case we still fire an end timer before processing the end. 
     // This defers the call to sendAnimationEvents to avoid re-entrant calls that destroy
@@ -810,14 +809,13 @@ void AnimationBase::primeEventTimers()
     if (totalDuration < 0 || nextIterationTime < totalDuration) {
         // We are not at the end yet, send a loop event
         ASSERT(nextIterationTime > 0);
-        m_animState = STATE_LOOPING;
+        m_animState = AnimationStateLooping;
         m_animationTimerCallback.startTimer(durationLeft, EventNames::webkitAnimationIterationEvent, nextIterationTime);
-    }
-    else {
+    } else {
         // We are at the end, send an end event
-        m_animState = STATE_ENDING;
+        m_animState = AnimationStateEnding;
         m_animationTimerCallback.startTimer(durationLeft, EventNames::webkitAnimationEndEvent, nextIterationTime);
     }
 }
   
-}
+} // namespace WebCore
