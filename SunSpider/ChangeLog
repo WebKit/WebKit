@@ -1,3 +1,14 @@
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        The bleeding edge branch of V8 now supports passing fileanmes after
+        '-f', so the SunSpider script should be changed to do this again.
+        This allows all 3 major JavaScript engines to be used with the
+        unmodified SunSpider script.
+
+        * sunspider:
+
 2008-09-04  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.
