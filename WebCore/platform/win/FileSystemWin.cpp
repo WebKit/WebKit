@@ -122,8 +122,11 @@ bool makeAllDirectories(const String& path)
 
 String homeDirectoryPath()
 {
-    notImplemented();
-    return "";
+    TCHAR pathChars[MAX_PATH];
+    if (FAILED(SHGetFolderPath(0, CSIDL_LOCAL_APPDATA | CSIDL_FLAG_CREATE, 0, 0, pathChars)))
+        return "";
+
+    return pathChars;
 }
 
 String pathGetFileName(const String& path)

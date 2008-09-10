@@ -40,7 +40,7 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
 {
     // if we have not yet started, we will not have a valid start time, so just start the animation if needed
     if (isNew() && m_animation->playState() == AnimPlayStatePlaying)
-        updateStateMachine(STATE_INPUT_START_ANIMATION, -1);
+        updateStateMachine(AnimationStateInputStartAnimation, -1);
     
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
     // If so, we need to send back the targetStyle
@@ -93,7 +93,7 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     
     // if either style is 0 we have an invalid case, just stop the animation
     if (!fromStyle || !toStyle) {
-        updateStateMachine(STATE_INPUT_END_ANIMATION, -1);
+        updateStateMachine(AnimationStateInputEndAnimation, -1);
         return;
     }
     

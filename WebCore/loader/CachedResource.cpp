@@ -69,6 +69,7 @@ CachedResource::CachedResource(const String& url, Type type)
 #ifndef NDEBUG
     m_deleted = false;
     m_lruIndex = 0;
+    m_identifier = 0;
 #endif
     m_errorOccurred = false;
 }
@@ -138,6 +139,10 @@ void CachedResource::addClient(CachedResourceClient *c)
     }
     if (!hasClients() && inCache())
         cache()->addToLiveResourcesSize(this);
+#ifndef NDEBUG
+    if (m_identifier && !hasClients())
+        cache()->log(WebCore::currentTime(), Cache::FirstRefEvent, this);
+#endif
     m_clients.add(c);
 }
 
@@ -145,6 +150,10 @@ void CachedResource::removeClient(CachedResourceClient *c)
 {
     ASSERT(m_clients.contains(c));
     m_clients.remove(c);
+#ifndef NDEBUG
+    if (m_identifier && !hasClients())
+        cache()->log(WebCore::currentTime(), Cache::LastDerefEvent, this);
+#endif
     if (canDelete() && !inCache())
         delete this;
     else if (!hasClients() && inCache()) {
@@ -175,7 +184,11 @@ void CachedResource::setDecodedSize(unsigned size)
         cache()->removeFromLRUList(this);
     
     m_decodedSize = size;
-   
+ #ifndef NDEBUG
+    if (m_identifier)
+        cache()->updatePeakDecodedSizeForResource(this);
+#endif
+  
     if (inCache()) { 
         // Now insert into the new LRU list.
         cache()->insertInLRUList(this);
@@ -196,6 +209,10 @@ void CachedResource::setEncodedSize(unsigned size)
     if (size == m_encodedSize)
         return;
 
+#ifndef NDEBUG
+    if (m_identifier)
+        cache()->log(WebCore::currentTime(), Cache::EncodedSizeEvent, this, size);
+#endif
     // The size cannot ever shrink (unless it is being nulled out because of an error).  If it ever does, assert.
     ASSERT(size == 0 || size >= m_encodedSize);
     
@@ -220,6 +237,10 @@ void CachedResource::setEncodedSize(unsigned size)
 
 void CachedResource::didAccessDecodedData(double timeStamp)
 {
+#ifndef NDEBUG
+    if (m_identifier)
+        cache()->log(timeStamp, Cache::DecodedDataAccessEvent, this);
+#endif
     m_lastDecodedAccessTime = timeStamp;
     
     if (inCache()) {
