@@ -210,7 +210,7 @@
 		BC18C4410E16F5CD00B34460 /* NumberConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C30E16D4E900A06E92 /* NumberConstructor.h */; };
 		BC18C4420E16F5CD00B34460 /* NumberConstructor.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */; };
 		BC18C4430E16F5CD00B34460 /* NumberObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F692A8710255597D01FF60F7 /* NumberObject.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC18C4440E16F5CD00B34460 /* NumberPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C50E16D4E900A06E92 /* NumberPrototype.h */; };
+		BC18C4440E16F5CD00B34460 /* NumberPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C50E16D4E900A06E92 /* NumberPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4450E16F5CD00B34460 /* ObjectConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C70E16D4E900A06E92 /* ObjectConstructor.h */; };
 		BC18C4460E16F5CD00B34460 /* ObjectPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC2680C90E16D4E900A06E92 /* ObjectPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC18C4470E16F5CD00B34460 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 149B15E40D81F986009CB8C7 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
