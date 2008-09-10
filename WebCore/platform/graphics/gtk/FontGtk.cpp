@@ -5,6 +5,7 @@
  * Copyright (c) 2007 Kouhei Sutou
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
  * Copyright (C) 2008 Xan Lopez <xan@gnome.org>
+ * Copyright (C) 2008 Nuanti Ltd.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,8 +38,12 @@
 #include "SimpleFontData.h"
 
 #include <cairo.h>
+#include <gdk/gdk.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
+#if defined(USE_FREETYPE)
+#include <pango/pangofc-fontmap.h>
+#endif
 
 namespace WebCore {
 
@@ -133,10 +138,29 @@ static gchar* convertUniCharToUTF8(const UChar* characters, gint length, int fro
 
 static void setPangoAttributes(const Font* font, const TextRun& run, PangoLayout* layout)
 {
+#if defined(USE_FREETYPE)
+    if (font->primaryFont()->m_font.m_pattern) {
+        PangoFontDescription* desc = pango_fc_font_description_from_pattern(font->primaryFont()->m_font.m_pattern, FALSE);
+        pango_layout_set_font_description(layout, desc);
+        pango_font_description_free(desc);
+    }
+#elif defined(USE_PANGO)
+    if (font->primaryFont()->m_font.m_font) {
+        PangoFontDescription* desc = pango_font_describe(font->primaryFont()->m_font.m_font);
+        pango_layout_set_font_description(layout, desc);
+        pango_font_description_free(desc);
+    }
+#endif
+
+    pango_layout_set_auto_dir(layout, FALSE);
+
+    PangoContext* pangoContext = pango_layout_get_context(layout);
+    PangoDirection direction = run.rtl() ? PANGO_DIRECTION_RTL : PANGO_DIRECTION_LTR;
+    pango_context_set_base_dir(pangoContext, direction);
     PangoAttrList* list = pango_attr_list_new();
     PangoAttribute* attr;
 
-    attr = pango_attr_size_new_absolute((int)(font->size() * PANGO_SCALE));
+    attr = pango_attr_size_new_absolute(font->pixelSize() * PANGO_SCALE);
     attr->end_index = G_MAXUINT;
     pango_attr_list_insert_before(list, attr);
 
@@ -151,50 +175,106 @@ static void setPangoAttributes(const Font* font, const TextRun& run, PangoLayout
 
     pango_layout_set_attributes(layout, list);
     pango_attr_list_unref(list);
-
-    pango_layout_set_auto_dir(layout, FALSE);
-
-    PangoContext* pangoContext = pango_layout_get_context(layout);
-    PangoDirection direction = run.rtl() ? PANGO_DIRECTION_RTL : PANGO_DIRECTION_LTR;
-    pango_context_set_base_dir(pangoContext, direction);
 }
 
 void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     cairo_t* cr = context->platformContext();
     cairo_save(cr);
+    cairo_translate(cr, point.x(), point.y());
 
     PangoLayout* layout = pango_cairo_create_layout(cr);
-
-    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), from, to);
-    pango_layout_set_text(layout, utf8, -1);
-    g_free(utf8);
-
     setPangoAttributes(this, run, layout);
 
-    // Set the text color to use for drawing.
-    float red, green, blue, alpha;
-    Color penColor = context->fillColor();
-    penColor.getRGBA(red, green, blue, alpha);
-    cairo_set_source_rgba(cr, red, green, blue, alpha);
+    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    pango_layout_set_text(layout, utf8, -1);
 
     // Our layouts are single line
-    cairo_move_to(cr, point.x(), point.y());
     PangoLayoutLine* layoutLine = pango_layout_get_line_readonly(layout, 0);
+
+    GdkRegion* partialRegion = NULL;
+    if (to - from != run.length()) {
+        // Clip the region of the run to be rendered
+        char* start = g_utf8_offset_to_pointer(utf8, from);
+        char* end = g_utf8_offset_to_pointer(start, to - from);
+        int ranges[] = {start - utf8, end - utf8};
+        partialRegion = gdk_pango_layout_line_get_clip_region(layoutLine, 0, 0, ranges, 1);
+        gdk_region_shrink(partialRegion, 0, -pixelSize());
+    }
+
+    Color fillColor = context->fillColor();
+    float red, green, blue, alpha;
+
+    // Text shadow, inspired by FontMac
+    IntSize shadowSize;
+    int shadowBlur = 0;
+    Color shadowColor;
+    bool hasShadow = context->textDrawingMode() == cTextFill &&
+        context->getShadow(shadowSize, shadowBlur, shadowColor);
+
+    // TODO: Blur support
+    if (hasShadow) {
+        // Disable graphics context shadows (not yet implemented) and paint them manually
+        context->clearShadow();
+        Color shadowFillColor(shadowColor.red(), shadowColor.green(), shadowColor.blue(), shadowColor.alpha() * fillColor.alpha() / 255);
+        cairo_save(cr);
+
+        shadowFillColor.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(cr, red, green, blue, alpha);
+
+        cairo_translate(cr, shadowSize.width(), shadowSize.height());
+
+        if (partialRegion) {
+            gdk_cairo_region(cr, partialRegion);
+            cairo_clip(cr);
+        }
+
+        pango_cairo_show_layout_line(cr, layoutLine);
+
+        cairo_restore(cr);
+    }
+
+    fillColor.getRGBA(red, green, blue, alpha);
+    cairo_set_source_rgba(cr, red, green, blue, alpha);
+
+    if (partialRegion) {
+        gdk_cairo_region(cr, partialRegion);
+        cairo_clip(cr);
+    }
+
     pango_cairo_show_layout_line(cr, layoutLine);
 
+    if (context->textDrawingMode() & cTextStroke) {
+        Color strokeColor = context->strokeColor();
+        strokeColor.getRGBA(red, green, blue, alpha);
+        cairo_set_source_rgba(cr, red, green, blue, alpha);
+        pango_cairo_layout_line_path(cr, layoutLine);
+        cairo_set_line_width(cr, context->strokeThickness());
+        cairo_stroke(cr);
+    }
+
+    // Re-enable the platform shadow we disabled earlier
+    if (hasShadow)
+        context->setShadow(shadowSize, shadowBlur, shadowColor);
+
+    // Pango sometimes leaves behind paths we don't want
+    cairo_new_path(cr);
+
+    if (partialRegion)
+        gdk_region_destroy(partialRegion);
+
+    g_free(utf8);
     g_object_unref(layout);
+
     cairo_restore(cr);
 }
 
-// FIXME: we should create the layout with our actual context, but it seems
-// we can't access it from here
+// We should create the layout with our actual context but we can't access it from here.
 static PangoLayout* getDefaultPangoLayout(const TextRun& run)
 {
-    PangoFontMap* map = pango_cairo_font_map_get_default();
-    PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(map));
+    static PangoFontMap* map = pango_cairo_font_map_get_default();
+    static PangoContext* pangoContext = pango_cairo_font_map_create_context(PANGO_CAIRO_FONT_MAP(map));
     PangoLayout* layout = pango_layout_new(pangoContext);
-    g_object_unref(pangoContext);
 
     return layout;
 }
@@ -209,11 +289,11 @@ float Font::floatWidthForComplexText(const TextRun& run) const
 
     gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
     pango_layout_set_text(layout, utf8, -1);
-    g_free(utf8);
 
-    int layoutWidth;
-    pango_layout_get_size(layout, &layoutWidth, 0);
-    float width = (float)layoutWidth / (double)PANGO_SCALE;
+    int width;
+    pango_layout_get_pixel_size(layout, &width, 0);
+
+    g_free(utf8);
     g_object_unref(layout);
 
     return width;
@@ -230,6 +310,9 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
     int index, trailing;
     pango_layout_xy_to_index(layout, x * PANGO_SCALE, 1, &index, &trailing);
     glong offset = g_utf8_pointer_to_offset(utf8, utf8 + index);
+    if (includePartialGlyphs)
+        offset += trailing;
+
     g_free(utf8);
     g_object_unref(layout);
 
@@ -238,8 +321,40 @@ int Font::offsetForPositionForComplexText(const TextRun& run, int x, bool includ
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const IntPoint& point, int h, int from, int to) const
 {
-    notImplemented();
-    return FloatRect();
+    PangoLayout* layout = getDefaultPangoLayout(run);
+    setPangoAttributes(this, run, layout);
+
+    gchar* utf8 = convertUniCharToUTF8(run.characters(), run.length(), 0, run.length());
+    pango_layout_set_text(layout, utf8, -1);
+
+    char* start = g_utf8_offset_to_pointer(utf8, from);
+    char* end = g_utf8_offset_to_pointer(start, to - from);
+
+    if (run.ltr()) {
+        from = start - utf8;
+        to = end - utf8;
+    } else {
+        from = end - utf8;
+        to = start - utf8;
+    }
+
+    PangoLayoutLine* layoutLine = pango_layout_get_line_readonly(layout, 0);
+    int x_pos;
+
+    x_pos = 0;
+    if (from < layoutLine->length)
+        pango_layout_line_index_to_x(layoutLine, from, FALSE, &x_pos);
+    float beforeWidth = PANGO_PIXELS_FLOOR(x_pos);
+
+    x_pos = 0;
+    if (run.ltr() || to < layoutLine->length)
+        pango_layout_line_index_to_x(layoutLine, to, FALSE, &x_pos);
+    float afterWidth = PANGO_PIXELS(x_pos);
+
+    g_free(utf8);
+    g_object_unref(layout);
+
+    return FloatRect(point.x() + beforeWidth, point.y(), afterWidth - beforeWidth, h);
 }
 
 }

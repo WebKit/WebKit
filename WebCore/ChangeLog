@@ -1,3 +1,42 @@
+2008-09-09  Alp Toker  <alp@nuanti.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16792
+        [GTK] Fails to render Japanese/Chinese text with simple path
+
+        https://bugs.webkit.org/show_bug.cgi?id=16942
+        [GTK] Oddities in font selection and fall back
+
+        https://bugs.webkit.org/show_bug.cgi?id=16862
+        [GTK] Custom fonts hard-coded to use grayscale antialiasing and no hinting
+
+        GTK+ font fixes and enhancements.
+
+        Implement font fallback for the simple FontConfig-based text path and
+        improve the Pango-based complex text path to make use of requested
+        font properties and available font selection.
+
+        Add text shadow support to the complex path.
+
+        * platform/graphics/gtk/FontCacheGtk.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        (WebCore::FontCache::getSimilarFontPlatformData):
+        * platform/graphics/gtk/FontGtk.cpp:
+        (WebCore::setPangoAttributes):
+        (WebCore::Font::drawComplexText):
+        (WebCore::getDefaultPangoLayout):
+        (WebCore::Font::floatWidthForComplexText):
+        (WebCore::Font::offsetForPositionForComplexText):
+        (WebCore::Font::selectionRectForComplexText):
+        * platform/graphics/gtk/FontPlatformData.h:
+        (WebCore::FontPlatformData::FontPlatformData):
+        (WebCore::FontPlatformData::hash):
+        * platform/graphics/gtk/FontPlatformDataGtk.cpp:
+        (WebCore::FontPlatformData::FontPlatformData):
+        * platform/graphics/gtk/SimpleFontDataGtk.cpp:
+        (WebCore::SimpleFontData::platformDestroy):
+
 2008-09-09  Dave Hyatt  <hyatt@apple.com>
 
         Make the Windows classic case work again.  Overlap in slider constants and other constants broke

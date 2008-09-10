@@ -62,19 +62,25 @@ void SimpleFontData::platformInit()
 
 void SimpleFontData::platformDestroy()
 {
-    if (!isCustomFont()) {
-        if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern)) {
-            FcPatternDestroy(m_font.m_pattern);
-            m_font.m_pattern = 0;
-        }
+    delete m_smallCapsFontData;
 
-        if (m_font.m_scaledFont) {
-            cairo_scaled_font_destroy(m_font.m_scaledFont);
-            m_font.m_scaledFont = 0;
-        }
+    if (isCustomFont())
+        return;
+
+    if (m_font.m_pattern && ((FcPattern*)-1 != m_font.m_pattern)) {
+        FcPatternDestroy(m_font.m_pattern);
+        m_font.m_pattern = 0;
     }
 
-    delete m_smallCapsFontData;
+    if (m_font.m_fallbacks) {
+        FcFontSetDestroy(m_font.m_fallbacks);
+        m_font.m_fallbacks = 0;
+    }
+
+    if (m_font.m_scaledFont) {
+        cairo_scaled_font_destroy(m_font.m_scaledFont);
+        m_font.m_scaledFont = 0;
+    }
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const

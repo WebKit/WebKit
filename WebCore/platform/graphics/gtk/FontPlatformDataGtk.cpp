@@ -37,7 +37,8 @@ namespace WebCore {
 
 FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const AtomicString& familyName)
     : m_pattern(0)
-    , m_size(fontDescription.computedSize())
+    , m_fallbacks(0)
+    , m_size(fontDescription.computedPixelSize())
     , m_syntheticBold(false)
     , m_syntheticOblique(false)
     , m_scaledFont(0)
@@ -49,7 +50,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
     int fcslant = FC_SLANT_ROMAN;
     // FIXME: Map all FontWeight values to fontconfig weights.
     int fcweight = FC_WEIGHT_NORMAL;
-    float fcsize = fontDescription.computedSize();
+    double fcsize = fontDescription.computedPixelSize();
     if (fontDescription.italic())
         fcslant = FC_SLANT_ITALIC;
     if (fontDescription.weight() >= FontWeight600)
@@ -67,26 +68,29 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
         goto freePattern;
 
     switch (type) {
-        case FontDescription::SerifFamily:
-            fcfamily = "serif";
-            break;
-        case FontDescription::SansSerifFamily:
-            fcfamily = "sans-serif";
-            break;
-        case FontDescription::MonospaceFamily:
-            fcfamily = "monospace";
-            break;
-        case FontDescription::NoFamily:
-        case FontDescription::StandardFamily:
-        default:
-            fcfamily = "sans-serif";
+    case FontDescription::SerifFamily:
+        fcfamily = "serif";
+        break;
+    case FontDescription::SansSerifFamily:
+        fcfamily = "sans-serif";
+        break;
+    case FontDescription::MonospaceFamily:
+        fcfamily = "monospace";
+        break;
+    case FontDescription::StandardFamily:
+        fcfamily = "sans-serif";
+        break;
+    case FontDescription::NoFamily:
+    default:
+        fcfamily = NULL;
+        break;
     }
 
-    if (!FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
-        goto freePattern;
-    if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
+    if (fcfamily && !FcPatternAddString(pattern, FC_FAMILY, reinterpret_cast<const FcChar8*>(fcfamily)))
         goto freePattern;
     if (!FcPatternAddInteger(pattern, FC_WEIGHT, fcweight))
+        goto freePattern;
+    if (!FcPatternAddInteger(pattern, FC_SLANT, fcslant))
         goto freePattern;
     if (!FcPatternAddDouble(pattern, FC_PIXEL_SIZE, fcsize))
         goto freePattern;
@@ -101,7 +105,7 @@ FontPlatformData::FontPlatformData(const FontDescription& fontDescription, const
         goto freePattern;
     fontFace = cairo_ft_font_face_create_for_pattern(m_pattern);
     cairo_matrix_t ctm;
-    cairo_matrix_init_scale(&fontMatrix, fontDescription.computedSize(), fontDescription.computedSize());
+    cairo_matrix_init_scale(&fontMatrix, fontDescription.computedPixelSize(), fontDescription.computedPixelSize());
     cairo_matrix_init_identity(&ctm);
 
 #if GTK_CHECK_VERSION(2,10,0)
@@ -122,6 +126,7 @@ freePattern:
 
 FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
     : m_pattern(0)
+    , m_fallbacks(0)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
@@ -131,6 +136,7 @@ FontPlatformData::FontPlatformData(float size, bool bold, bool italic)
 
 FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool bold, bool italic)
     : m_pattern(0)
+    , m_fallbacks(0)
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
@@ -140,15 +146,19 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, int size, bool b
     cairo_matrix_init_scale(&fontMatrix, size, size);
     cairo_matrix_t ctm;
     cairo_matrix_init_identity(&ctm);
-    cairo_font_options_t* options = cairo_font_options_create();
+    static const cairo_font_options_t* defaultOptions = cairo_font_options_create();
+    const cairo_font_options_t* options = NULL;
 
-    // We force antialiasing and disable hinting to provide consistent
-    // typographic qualities for custom fonts on all platforms.
-    cairo_font_options_set_hint_style(options, CAIRO_HINT_STYLE_NONE);
-    cairo_font_options_set_antialias(options, CAIRO_ANTIALIAS_GRAY);
+#if GTK_CHECK_VERSION(2,10,0)
+    if (GdkScreen* screen = gdk_screen_get_default())
+        options = gdk_screen_get_font_options(screen);
+#endif
+    // gdk_screen_get_font_options() returns NULL if no default options are
+    // set, so we always have to check.
+    if (!options)
+        options = defaultOptions;
 
     m_scaledFont = cairo_scaled_font_create(fontFace, &fontMatrix, &ctm, options);
-    cairo_font_options_destroy(options);
 }
 
 bool FontPlatformData::init()
