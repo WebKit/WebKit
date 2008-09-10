@@ -134,9 +134,9 @@ namespace JSC {
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
-        JSValue** getDirectLocation(const Identifier& propertyName, bool& isWriteable)
+        JSValue** getDirectLocation(const Identifier& propertyName, unsigned& attributes)
         {
-            size_t offset = m_structureID->propertyMap().getOffset(propertyName, isWriteable);
+            size_t offset = m_structureID->propertyMap().getOffset(propertyName, attributes);
             return offset != WTF::notFound ? locationForOffset(offset) : 0;
         }
 
@@ -309,12 +309,15 @@ inline bool JSObject::getPropertySlot(ExecState* exec, unsigned propertyName, Pr
 // base class call to this.
 ALWAYS_INLINE bool JSObject::getOwnPropertySlotForWrite(ExecState* exec, const Identifier& propertyName, PropertySlot& slot, bool& slotIsWriteable)
 {
-    if (JSValue** location = getDirectLocation(propertyName, slotIsWriteable)) {
+    unsigned attributes;
+    if (JSValue** location = getDirectLocation(propertyName, attributes)) {
         if (m_structureID->propertyMap().hasGetterSetterProperties() && location[0]->isGetterSetter()) {
             slotIsWriteable = false;
             fillGetterPropertySlot(slot, location);
-        } else
+        } else {
+            slotIsWriteable = !(attributes & ReadOnly);
             slot.setValueSlot(this, location, offsetForLocation(location));
+        }
         return true;
     }
 
@@ -364,17 +367,17 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
          m_structureID->propertyMap().put(propertyName, value, attributes, checkReadOnly, this, slot, m_propertyStorage);
          return;
      }
- 
-     bool isWriteable;
-     size_t offset = m_structureID->propertyMap().getOffset(propertyName, isWriteable);
+
+     unsigned currentAttributes;
+     size_t offset = m_structureID->propertyMap().getOffset(propertyName, currentAttributes);
      if (offset != WTF::notFound) {
-         if (checkReadOnly && !isWriteable)
+         if (checkReadOnly && currentAttributes & ReadOnly)
              return;
          m_propertyStorage[offset] = value;
          slot.setExistingProperty(this, offset);
          return;
      }
- 
+
      RefPtr<StructureID> structureID = StructureID::addPropertyTransition(m_structureID, propertyName, value, attributes, checkReadOnly, this, slot, m_propertyStorage);
      setStructureID(structureID.release());
 }

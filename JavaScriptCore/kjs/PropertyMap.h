@@ -93,7 +93,6 @@ namespace JSC {
 
         size_t getOffset(const Identifier& propertyName);
         size_t getOffset(const Identifier& propertyName, unsigned& attributes);
-        size_t getOffset(const Identifier& propertyName, bool& isWriteable);
 
         void getEnumerablePropertyNames(PropertyNameArray&) const;
 

@@ -1,3 +1,19 @@
+2008-09-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Mark Rowe.
+
+        Remove unnecessary override of getOffset.
+
+        Sunspider reports this as a .6% progression.
+
+        * JavaScriptCore.exp:
+        * kjs/JSObject.h:
+        (JSC::JSObject::getDirectLocation):
+        (JSC::JSObject::getOwnPropertySlotForWrite):
+        (JSC::JSObject::putDirect):
+        * kjs/PropertyMap.cpp:
+        * kjs/PropertyMap.h:
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

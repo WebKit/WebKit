@@ -362,54 +362,6 @@ size_t PropertyMap::getOffset(const Identifier& propertyName, unsigned& attribut
     }
 }
 
-size_t PropertyMap::getOffset(const Identifier& propertyName, bool& isWriteable)
-{
-    ASSERT(!propertyName.isNull());
-
-    if (!m_table)
-        return WTF::notFound;
-
-    UString::Rep* rep = propertyName._ustring.rep();
-
-    unsigned i = rep->computedHash();
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numProbes;
-#endif
-
-    unsigned entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-    if (entryIndex == emptyEntryIndex)
-        return WTF::notFound;
-
-    if (rep == m_table->entries()[entryIndex - 1].key) {
-        isWriteable = !(m_table->entries()[entryIndex - 1].attributes & ReadOnly);
-        return entryIndex - 2;
-    }
-
-#if DUMP_PROPERTYMAP_STATS
-    ++numCollisions;
-#endif
-
-    unsigned k = 1 | doubleHash(rep->computedHash());
-
-    while (1) {
-        i += k;
-
-#if DUMP_PROPERTYMAP_STATS
-        ++numRehashes;
-#endif
-
-        entryIndex = m_table->entryIndices[i & m_table->sizeMask];
-        if (entryIndex == emptyEntryIndex)
-            return WTF::notFound;
-
-        if (rep == m_table->entries()[entryIndex - 1].key) {
-            isWriteable = !(m_table->entries()[entryIndex - 1].attributes & ReadOnly);
-            return entryIndex - 2;
-        }
-    }
-}
-
 void PropertyMap::insert(const Entry& entry, JSValue* value, PropertyStorage& propertyStorage)
 {
     ASSERT(m_table);
