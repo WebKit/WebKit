@@ -1,3 +1,36 @@
+2008-09-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20741
+        REGRESSION: ISO-8859-8-I encoding is registered incorrectly
+
+        Turns out that there were no real behavior changes for 8859-8, as it was only a debug-only
+        check to ignore this specific registration that was failing. Yet, I decided to add a bunch of
+        tests for ISO-8859-8 encoding aliases, as we handle them in a quite complicated manner.
+
+        I also found and fixed a potential crasher for non-Mac ports.
+
+        Tests: fast/encoding/hebrew/8859-8-e.html
+               fast/encoding/hebrew/8859-8-i.html
+               fast/encoding/hebrew/8859-8.html
+               fast/encoding/hebrew/csISO88598I.html
+               fast/encoding/hebrew/hebrew.html
+               fast/encoding/hebrew/iso-ir-138.html
+               fast/encoding/hebrew/logical.html
+
+        * platform/text/TextEncodingRegistry.cpp: (WebCore::checkExistingName): Check for iso-8859-8
+        (case-insensitively, because different versions of ICU report this MIME name in different
+        case).
+
+        * platform/text/TextCodecICU.cpp:
+        (WebCore::TextCodecICU::registerExtendedEncodingNames): Updated some comments.
+        (WebCore::TextCodecICU::registerExtendedCodecs): Try both MIME and IANA names here, too.
+        There are four names in ICU that only have MIME names (x-mac-* ones), so we could end up
+        with an encoding map entry, but no codec for these. This was not an issue on the Mac, as
+        we also support these via TEC (which we should stop doing), but on Windows, this would
+        likely crash.
+
 2008-09-09  Dave Hyatt  <hyatt@apple.com
 
         Resurrect PlatformScrollbarWin.

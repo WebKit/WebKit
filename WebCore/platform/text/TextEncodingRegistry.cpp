@@ -33,6 +33,7 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/StringExtras.h>
 
 #if USE(ICU_UNICODE)
 #include "TextCodecICU.h"
@@ -132,7 +133,7 @@ static void checkExistingName(const char* alias, const char* atomicName)
     // Keep the warning silent about one case where we know this will happen.
     if (strcmp(alias, "ISO-8859-8-I") == 0
             && strcmp(oldAtomicName, "ISO-8859-8-I") == 0
-            && strcmp(atomicName, "ISO_8859-8:1988") == 0)
+            && strcasecmp(atomicName, "iso-8859-8") == 0)
         return;
     LOG_ERROR("alias %s maps to %s already, but someone is trying to make it map to %s",
         alias, oldAtomicName, atomicName);

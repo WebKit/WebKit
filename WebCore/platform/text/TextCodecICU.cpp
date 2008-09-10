@@ -60,8 +60,7 @@ void TextCodecICU::registerBaseCodecs(TextCodecRegistrar registrar)
 }
 
 // FIXME: Registering all the encodings we get from ucnv_getAvailableName
-// includes encodings we don't want or need. For example: UTF16_PlatformEndian,
-// UTF16_OppositeEndian, UTF32_PlatformEndian, UTF32_OppositeEndian, and all
+// includes encodings we don't want or need. For example, all
 // the encodings with commas and version numbers.
 
 void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar)
@@ -69,7 +68,7 @@ void TextCodecICU::registerExtendedEncodingNames(EncodingNameRegistrar registrar
     // We register Hebrew with logical ordering using a separate name.
     // Otherwise, this would share the same canonical name as the
     // visual ordering case, and then TextEncoding could not tell them
-    // apart; ICU works with either name.
+    // apart; ICU treats these names as synonyms.
     registrar("ISO-8859-8-I", "ISO-8859-8-I");
 
     int32_t numEncodings = ucnv_countAvailable();
@@ -167,10 +166,13 @@ void TextCodecICU::registerExtendedCodecs(TextCodecRegistrar registrar)
     for (int32_t i = 0; i < numEncodings; ++i) {
         const char* name = ucnv_getAvailableName(i);
         UErrorCode error = U_ZERO_ERROR;
-        // FIXME: Should we use the "MIME" standard instead of "IANA"?
-        const char* standardName = ucnv_getStandardName(name, "IANA", &error);
-        if (!U_SUCCESS(error) || !standardName)
-            continue;
+        const char* standardName = ucnv_getStandardName(name, "MIME", &error);
+        if (!U_SUCCESS(error) || !standardName) {
+            error = U_ZERO_ERROR;
+            standardName = ucnv_getStandardName(name, "IANA", &error);
+            if (!U_SUCCESS(error) || !standardName)
+                continue;
+        }
         registrar(standardName, newTextCodecICU, 0);
     }
 }
