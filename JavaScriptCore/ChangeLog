@@ -1,5 +1,15 @@
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Not reviewed.
+
+        Speculative Windows build fix.
+
+        * masm/MacroAssemblerWin.cpp:
+        (JSC::MacroAssembler::emitConvertToFastCall):
+        (JSC::MacroAssembler::emitRestoreArgumentReference):
+
+2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 20755: Create an X86 namespace for register names and other things

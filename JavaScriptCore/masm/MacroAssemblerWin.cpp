@@ -33,14 +33,14 @@ namespace JSC {
 
 void MacroAssembler::emitConvertToFastCall()
 {
-    movl_mr(4, esp, eax);
-    movl_mr(8, esp, edx);
-    movl_mr(12, esp, ecx);
+    movl_mr(4, X86::esp, X86::eax);
+    movl_mr(8, X86::esp, X86::edx);
+    movl_mr(12, X86::esp, X86::ecx);
 }
 
 void MacroAssembler::emitRestoreArgumentReference()
 {
-    movl_rm(esp, 0, esp);
+    movl_rm(X86::esp, 0, X86::esp);
 }
 
 }
