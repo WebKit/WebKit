@@ -235,48 +235,47 @@ void RenderListItem::layout()
 
 void RenderListItem::positionListMarker()
 {
-    if (!m_marker || m_marker->isInside() || !m_marker->inlineBoxWrapper())
-        return;
-
-    int markerOldX = m_marker->xPos();
-    int yOffset = 0;
-    int xOffset = 0;
-    for (RenderObject* o = m_marker->parent(); o != this; o = o->parent()) {
-        yOffset += o->yPos();
-        xOffset += o->xPos();
-    }
-
-    bool adjustOverflow = false;
-    int markerXPos;
-    RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
-
-    if (style()->direction() == LTR) {
-        int leftLineOffset = leftRelOffset(yOffset, leftOffset(yOffset));
-        markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
-        m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
-        if (markerXPos < root->leftOverflow()) {
-            root->setHorizontalOverflowPositions(markerXPos, root->rightOverflow());
-            adjustOverflow = true;
+    if (m_marker && !m_marker->isInside() && m_marker->inlineBoxWrapper()) {
+        int markerOldX = m_marker->xPos();
+        int yOffset = 0;
+        int xOffset = 0;
+        for (RenderObject* o = m_marker->parent(); o != this; o = o->parent()) {
+            yOffset += o->yPos();
+            xOffset += o->xPos();
         }
-    } else {
-        int rightLineOffset = rightRelOffset(yOffset, rightOffset(yOffset));
-        markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
-        m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
-        if (markerXPos + m_marker->width() > root->rightOverflow()) {
-            root->setHorizontalOverflowPositions(root->leftOverflow(), markerXPos + m_marker->width());
-            adjustOverflow = true;
-        }
-    }
 
-    if (adjustOverflow) {
-        IntRect markerRect(markerXPos + xOffset, yOffset, m_marker->width(), m_marker->height());
-        RenderObject* o = m_marker;
-        do {
-            o = o->parent();
-            if (o->isRenderBlock())
-                static_cast<RenderBlock*>(o)->addVisualOverflow(markerRect);
-            markerRect.move(-o->xPos(), -o->yPos());
-        } while (o != this);
+        bool adjustOverflow = false;
+        int markerXPos;
+        RootInlineBox* root = m_marker->inlineBoxWrapper()->root();
+
+        if (style()->direction() == LTR) {
+            int leftLineOffset = leftRelOffset(yOffset, leftOffset(yOffset));
+            markerXPos = leftLineOffset - xOffset - paddingLeft() - borderLeft() + m_marker->marginLeft();
+            m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
+            if (markerXPos < root->leftOverflow()) {
+                root->setHorizontalOverflowPositions(markerXPos, root->rightOverflow());
+                adjustOverflow = true;
+            }
+        } else {
+            int rightLineOffset = rightRelOffset(yOffset, rightOffset(yOffset));
+            markerXPos = rightLineOffset - xOffset + paddingRight() + borderRight() + m_marker->marginLeft();
+            m_marker->inlineBoxWrapper()->adjustPosition(markerXPos - markerOldX, 0);
+            if (markerXPos + m_marker->width() > root->rightOverflow()) {
+                root->setHorizontalOverflowPositions(root->leftOverflow(), markerXPos + m_marker->width());
+                adjustOverflow = true;
+            }
+        }
+
+        if (adjustOverflow) {
+            IntRect markerRect(markerXPos + xOffset, yOffset, m_marker->width(), m_marker->height());
+            RenderObject* o = m_marker;
+            do {
+                o = o->parent();
+                if (o->isRenderBlock())
+                    static_cast<RenderBlock*>(o)->addVisualOverflow(markerRect);
+                markerRect.move(-o->xPos(), -o->yPos());
+            } while (o != this);
+        }
     }
 }
 

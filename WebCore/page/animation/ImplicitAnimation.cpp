@@ -124,14 +124,14 @@ void ImplicitAnimation::reset(RenderObject* renderer, const RenderStyle* from /*
     
     // restart the transition
     if (from && to)
-        updateStateMachine(AnimationStateInputRestartAnimation, -1);
+        updateStateMachine(STATE_INPUT_RESTART_ANIMATION, -1);
 }
 
 void ImplicitAnimation::setOverridden(bool b)
 {
     if (b != m_overridden) {
         m_overridden = b;
-        updateStateMachine(m_overridden ? AnimationStateInputPauseOverride : AnimationStateInputResumeOverride, -1);
+        updateStateMachine(m_overridden ? STATE_INPUT_PAUSE_OVERRIDE : STATE_INPUT_RESUME_OVERRIDE, -1);
     }
 }
 

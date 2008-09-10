@@ -41,9 +41,6 @@ namespace WebCore  {
 
 class CachedCSSStyleSheet;
 class CachedResource;
-#ifndef NDEBUG
-class CacheEventLogger;
-#endif
 class DocLoader;
 class KURL;
 
@@ -152,22 +149,6 @@ public:
 
     // Function to collect cache statistics for the caches window in the Safari Debug menu.
     Statistics getStatistics();
-    String runSimulation(const String&);
-
-#ifndef NDEBUG
-    enum EventType {
-        RequestResourceCreatedEvent,
-        RequestResourceExistedEvent,
-        RemoveEvent,
-        FirstRefEvent,
-        LastDerefEvent,
-        EncodedSizeEvent,
-        DecodedDataAccessEvent
-    };
-
-    void log(double time, EventType, CachedResource*, unsigned size = 0);
-    void updatePeakDecodedSizeForResource(CachedResource*);
-#endif
 
 private:
     Cache();
@@ -184,8 +165,6 @@ private:
     
     void pruneDeadResources(); // Flush decoded and encoded data from resources not referenced by Web pages.
     void pruneLiveResources(); // Flush decoded data from resources still referenced by Web pages.
-
-    void evict(CachedResource*);
 
     // Member variables.
     HashSet<DocLoader*> m_docLoaders;
@@ -212,11 +191,6 @@ private:
     // A URL-based map of all resources that are in the cache (including the freshest version of objects that are currently being 
     // referenced by a Web page).
     HashMap<String, CachedResource*> m_resources;
-#ifndef NDEBUG
-    CacheEventLogger* m_eventLogger;
-    bool m_inSimulation;
-    double m_simulatedTime;
-#endif
 };
 
 // Function to obtain the global cache.

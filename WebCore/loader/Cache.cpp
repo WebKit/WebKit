@@ -37,142 +37,9 @@
 #include "SystemTime.h"
 #include <stdio.h>
 
-#ifndef NDEBUG
-#include "CString.h"
-#include "FileSystem.h"
-#include "PlatformString.h"
-#include "SQLiteDatabase.h"
-#include "SQLiteStatement.h"
-#endif
-
 using namespace std;
 
 namespace WebCore {
-
-#ifndef NDEBUG
-class SimulatedCachedResource : public CachedResource {
-public:
-    SimulatedCachedResource(const String& url, Type type)
-        : CachedResource(url, type)
-        , m_peakEncodedSize(0)
-        , m_peakDecodedSize(0)
-        , m_suppressSizeChanges(false)
-    {
-    }
-
-    virtual void load(DocLoader*) { }
-    virtual void data(PassRefPtr<SharedBuffer>, bool) { }
-    virtual void error() { }
-
-    virtual void destroyDecodedData() { setDecodedSize(0); }
-
-    unsigned peakEncodedSize() const { return m_peakEncodedSize; }
-    void setPeakEncodedSize(unsigned size) { m_peakEncodedSize = size; }
-
-    unsigned peakDecodedSize() const { return m_peakDecodedSize; }
-    void setPeakDecodedSize(unsigned size) { m_peakDecodedSize = size; }
-
-    double finalDecodedDataAccessTime() const { return m_finalDecodedAccessTime; }
-    void setFinalDecodedDataAccessTime(double time) { m_finalDecodedAccessTime = time; }
-
-    bool suppressSizeChanges() const { return m_suppressSizeChanges; }
-    void setSuppressSizeChanges(bool suppress = true) { m_suppressSizeChanges = suppress; }
-
-private:
-    unsigned m_peakEncodedSize;
-    unsigned m_peakDecodedSize;
-    bool m_suppressSizeChanges;
-    double m_finalDecodedAccessTime;
-};
-
-class CacheEventLogger : public Noncopyable {
-public:
-    CacheEventLogger();
-
-    void log(double time, Cache::EventType, CachedResource*, unsigned size);
-
-    unsigned getIdentifierForURL(const String&);
-    void removeIdentifierForURL(const String&);
-
-    void setTypeForResourceIdentifier(unsigned, CachedResource::Type);
-    void updatePeakDecodedSizeForResourceIdentifier(unsigned identifier, unsigned decodedSize);
-
-private:
-    SQLiteDatabase m_database;
-    unsigned m_lastIdentifier;
-};
-
-CacheEventLogger::CacheEventLogger()
-    : m_lastIdentifier(0)
-{
-    String logDirectory = pathByAppendingComponent(homeDirectoryPath(), "WebCore Cache Logs");
-    makeAllDirectories(logDirectory);
-    m_database.open(pathByAppendingComponent(logDirectory, String::number(static_cast<unsigned>(WebCore::currentTime())) + ".db"));
-    m_database.setSynchronous(SQLiteDatabase::SyncOff);
-    m_database.executeCommand("CREATE TABLE IF NOT EXISTS log (time REAL, eventType INTEGER, identifier INTEGER, encodedSize INTEGER)");
-    m_database.executeCommand("CREATE TEMPORARY TABLE resources (url UNIQUE PRIMARY KEY, identifier INTEGER)");
-    m_database.executeCommand("CREATE TABLE IF NOT EXISTS typesAndSizes (identifier UNIQUE PRIMARY KEY, resourceType INTEGER, peakDecodedSize INTEGER DEFAULT 0)");
-}
-
-void CacheEventLogger::log(double time, Cache::EventType type, CachedResource* resource, unsigned size)
-{
-    SQLiteStatement statement(m_database, "INSERT INTO log (time, eventType, identifier, encodedSize) VALUES (?, ?, ?, ?)");
-    statement.prepare();
-    statement.bindDouble(1, time);
-    statement.bindInt64(2, type);
-    ASSERT(resource->m_identifier);
-    statement.bindInt64(3, resource->m_identifier);
-    statement.bindInt64(4, size);
-    statement.step();
-}
-
-unsigned CacheEventLogger::getIdentifierForURL(const String& url)
-{
-    SQLiteStatement selectStatement(m_database, "SELECT identifier FROM resources WHERE url = ?");
-    selectStatement.prepare();
-    selectStatement.bindText(1, url);
-    selectStatement.step();
-    unsigned identifier = selectStatement.getColumnInt(0);
-    if (identifier)
-        return identifier;
-
-    identifier = ++m_lastIdentifier;
-    SQLiteStatement insertStatement(m_database, "INSERT INTO resources (url, identifier) VALUES (?, ?)");
-    insertStatement.prepare();
-    insertStatement.bindText(1, url);
-    insertStatement.bindInt64(2, identifier);
-    insertStatement.step();
-    return identifier;
-}
-
-void CacheEventLogger::removeIdentifierForURL(const String& url)
-{
-    SQLiteStatement statement(m_database, "DELETE FROM resources WHERE url = ?");
-    statement.prepare();
-    statement.bindText(1, url);
-    statement.step();
-}
-
-void CacheEventLogger::setTypeForResourceIdentifier(unsigned identifier, CachedResource::Type resourceType)
-{
-    SQLiteStatement statement(m_database, "INSERT OR REPLACE INTO typesAndSizes (identifier, resourceType) VALUES (?, ?)");
-    statement.prepare();
-    statement.bindInt64(1, identifier);
-    statement.bindInt64(2, resourceType);
-    statement.step();
-}
-
-void CacheEventLogger::updatePeakDecodedSizeForResourceIdentifier(unsigned identifier, unsigned decodedSize)
-{
-    SQLiteStatement statement(m_database, "UPDATE typesAndSizes SET peakDecodedSize = ? WHERE identifier = ? AND peakDecodedSize < ?");
-    statement.prepare();
-    statement.bindInt64(1, decodedSize);
-    statement.bindInt64(2, identifier);
-    statement.bindInt64(3, decodedSize);
-    statement.step();
-}
-
-#endif
 
 static const int cDefaultCacheCapacity = 8192 * 1024;
 static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
@@ -193,11 +60,6 @@ Cache::Cache()
 , m_liveSize(0)
 , m_deadSize(0)
 {
-#ifndef NDEBUG
-    m_eventLogger = new CacheEventLogger();
-    m_inSimulation = false;
-    m_simulatedTime = 0;
-#endif
 }
 
 static CachedResource* createResource(CachedResource::Type type, const KURL& url, const String& charset)
@@ -236,28 +98,17 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
     // Look up the resource in our map.
     CachedResource* resource = m_resources.get(url.string());
 
-#ifndef NDEBUG
-    bool created = false;
-#endif
     if (resource) {
         if (isPreload && !resource->isPreloaded())
             return 0;
-        if (
-#ifndef NDEBUG
-            !m_inSimulation &&
-#endif
-                FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
+        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
             Document* doc = docLoader->doc();
             if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->frame(), resource->url());
             return 0;
         }
     } else {
-        if (
-#ifndef NDEBUG
-            !m_inSimulation &&
-#endif
-                FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
+        if (FrameLoader::restrictAccessToLocal() && !FrameLoader::canLoad(url, String(), docLoader->doc())) {
             Document* doc = docLoader->doc();
             if(doc && !isPreload)
                 FrameLoader::reportLocalLoadFailed(doc->frame(), url.string());
@@ -265,21 +116,8 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         }
 
         // The resource does not exist. Create it.
-#ifndef NDEBUG
-        created = true;
-        if (m_inSimulation)
-            resource = new SimulatedCachedResource(url.string(), type);
-        else
-#endif
-            resource = createResource(type, url, charset);
+        resource = createResource(type, url, charset);
         ASSERT(resource);
-
-#ifndef NDEBUG
-        if (!m_inSimulation) {
-            resource->m_identifier = m_eventLogger->getIdentifierForURL(url);
-            m_eventLogger->setTypeForResourceIdentifier(resource->m_identifier, type);
-        }
-#endif
 
         // Pretend the resource is in the cache, to prevent it from being deleted during the load() call.
         // FIXME: CachedResource should just use normal refcounting instead.
@@ -313,9 +151,6 @@ CachedResource* Cache::requestResource(DocLoader* docLoader, CachedResource::Typ
         return 0;
 #endif
 
-#ifndef NDEBUG
-    log(WebCore::currentTime(), created ? RequestResourceCreatedEvent : RequestResourceExistedEvent, resource);
-#endif
     if (!disabled()) {
         // This will move the resource to the front of its LRU list and increase its access count.
         resourceAccessed(resource);
@@ -434,11 +269,7 @@ void Cache::pruneLiveResources()
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
-    double currentTime = 
-#ifndef NDEBUG
-        m_inSimulation ? m_simulatedTime : 
-#endif
-        Frame::currentPaintTimeStamp();
+    double currentTime = Frame::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = WebCore::currentTime();
     
@@ -502,7 +333,7 @@ void Cache::pruneDeadResources()
         while (current) {
             CachedResource* prev = current->m_prevInAllResourcesList;
             if (!current->hasClients() && !current->isPreloaded()) {
-                evict(current);
+                remove(current);
 
                 if (m_deadSize <= targetSize)
                     return;
@@ -530,16 +361,6 @@ void Cache::setCapacities(unsigned minDeadBytes, unsigned maxDeadBytes, unsigned
 }
 
 void Cache::remove(CachedResource* resource)
-{
-#ifndef NDEBUG
-    log(WebCore::currentTime(), RemoveEvent, resource);
-    if (m_eventLogger->getIdentifierForURL(resource->url()) == resource->m_identifier)
-        m_eventLogger->removeIdentifierForURL(resource->url());
-#endif
-    evict(resource);
-}
-
-void Cache::evict(CachedResource* resource)
 {
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
@@ -881,207 +702,6 @@ void Cache::dumpLRULists(bool includeLive) const
         }
     }
 }
-
-void Cache::log(double time, EventType type, CachedResource* resource, unsigned size)
-{
-    if (m_inSimulation)
-        return;
-    m_eventLogger->log(time, type, resource, size);
-}
-
-void Cache::updatePeakDecodedSizeForResource(CachedResource* resource)
-{
-    if (m_inSimulation)
-        return;
-    m_eventLogger->updatePeakDecodedSizeForResourceIdentifier(resource->m_identifier, resource->decodedSize());
-}
-
 #endif
-
-String Cache::runSimulation(const String& databasePath)
-{
-    String result;
-#ifndef NDEBUG
-    m_inSimulation = true;
-
-    String utf8Charset("UTF-8");
-    String prefix("sim:");
-    HashMap<unsigned, SimulatedCachedResource*> resourceMap;
-    Vector<double> accessIntervals;
-    Vector<double> decodedDataAges;
-    Vector<std::pair<double, unsigned> > uselessDecodedDataSizeLog;
-    CachedResourceClient client;
-
-    SQLiteDatabase database;
-    database.open(databasePath);
-    SQLiteStatement readLogStatement(database, "SELECT * FROM log ORDER BY time ASC");
-    readLogStatement.prepare();
-
-    unsigned totalEncodedSizeReloaded = 0;
-    unsigned totalDecodingDone = 0;
-
-    while (readLogStatement.step() == SQLResultRow) {
-        double time = readLogStatement.getColumnDouble(0);
-        Cache::EventType type = static_cast<Cache::EventType>(readLogStatement.getColumnInt(1));
-        unsigned identifier = readLogStatement.getColumnInt(2);
-        unsigned size = readLogStatement.getColumnInt(3);
-
-        m_simulatedTime = time;
-        SimulatedCachedResource* existingResource = resourceMap.get(identifier);
-
-        if (!existingResource && type != RequestResourceCreatedEvent && type != RequestResourceExistedEvent) {
-            LOG_ERROR("No existing resource for %d event for resource identifier %d at time %f", type, identifier, time);
-            continue;
-        }
-
-        switch (type) {
-            case RequestResourceCreatedEvent:
-            case RequestResourceExistedEvent:
-                {
-                    SQLiteStatement getTypeStatement(database, "SELECT resourceType, peakDecodedSize FROM typesAndSizes WHERE identifier = ?");
-                    getTypeStatement.prepare();
-                    getTypeStatement.bindInt64(1, identifier);
-                    getTypeStatement.step();
-                    SimulatedCachedResource* resource = static_cast<SimulatedCachedResource*>(cache()->requestResource(0, static_cast<CachedResource::Type>(getTypeStatement.getColumnInt(0)), KURL(prefix + String::number(identifier)), utf8Charset));
-                    if (resource == existingResource) {
-                        if (type == RequestResourceCreatedEvent)
-                            resource->setSuppressSizeChanges();
-                        break;
-                    }
-
-                    if (existingResource) {
-                        ASSERT(!existingResource->hasClients());
-                        ASSERT(!existingResource->inCache());
-                        unsigned existingPeakEncodedSize = existingResource->peakEncodedSize();
-                        totalEncodedSizeReloaded += existingPeakEncodedSize;
-                        // Should cause the resource to be deleted.
-                        existingResource->setRequest(0);
-                        if (type == RequestResourceExistedEvent)
-                            resource->setPeakEncodedSize(existingPeakEncodedSize);
-                    }
-                    resource->setPeakDecodedSize(getTypeStatement.getColumnInt(1));
-
-                    SQLiteStatement getFinalDecodedDataAccessTimeStatement(database, "SELECT MAX(time) FROM log WHERE identifier = ? AND eventType = ?");
-                    getFinalDecodedDataAccessTimeStatement.prepare();
-                    getFinalDecodedDataAccessTimeStatement.bindInt64(1, identifier);
-                    getFinalDecodedDataAccessTimeStatement.bindInt64(2, DecodedDataAccessEvent);
-                    getFinalDecodedDataAccessTimeStatement.step();
-                    resource->setFinalDecodedDataAccessTime(getFinalDecodedDataAccessTimeStatement.getColumnDouble(0));
-
-                    // Ensures that canDelete() is always false, so we control deletion.
-                    resource->m_request = reinterpret_cast<Request*>(-1);
-                    resourceMap.set(identifier, resource);
-                }
-                break;
-            case RemoveEvent:
-                cache()->remove(existingResource);
-                break;
-            case FirstRefEvent:
-                existingResource->addClient(&client);
-                if (!existingResource->encodedSize()) {
-                    if (unsigned peakEncodedSize = existingResource->peakEncodedSize())
-                        existingResource->setEncodedSize(peakEncodedSize);  // Simulate instantaneous loading
-                }
-                break;
-            case LastDerefEvent:
-                if (!existingResource->hasClients()) {
-                    LOG_ERROR("Extra last deref event for resource identifier %d at time %f", identifier, time);
-                    continue;
-                }
-                existingResource->removeClient(&client);
-                break;
-            case EncodedSizeEvent:
-                if (size > existingResource->peakEncodedSize())
-                    existingResource->setPeakEncodedSize(size);
-                if (!existingResource->suppressSizeChanges()) {
-                    existingResource->destroyDecodedData();
-                    existingResource->setEncodedSize(size);
-                }
-                break;
-            case DecodedDataAccessEvent:
-                if (existingResource->m_lastDecodedAccessTime)
-                    accessIntervals.append(time - existingResource->m_lastDecodedAccessTime);
-                existingResource->didAccessDecodedData(time);
-                if (!existingResource->decodedSize()) {
-                    if (unsigned peakDecodedSize = existingResource->peakDecodedSize()) {
-                        existingResource->setDecodedSize(peakDecodedSize);
-                        totalDecodingDone += peakDecodedSize;
-                    }
-                }
-                break;
-            default:
-                break;
-        }
-
-        CachedResourceMap::iterator e = m_resources.end();
-        unsigned totalUselessDecodedDataSize = 0;
-        for (CachedResourceMap::iterator i = m_resources.begin(); i != e; ++i) {
-            SimulatedCachedResource* o = static_cast<SimulatedCachedResource*>(i->second);
-            if (o->type() != CachedResource::ImageResource)
-                continue;
-            if (m_simulatedTime > o->finalDecodedDataAccessTime())
-                totalUselessDecodedDataSize += o->decodedSize();
-        }
-        if (uselessDecodedDataSizeLog.isEmpty() || totalUselessDecodedDataSize != uselessDecodedDataSizeLog.last().second)
-            uselessDecodedDataSizeLog.append(std::pair<double, unsigned>(m_simulatedTime, totalUselessDecodedDataSize));
-    }
-
-    FILE* logFile = fopen("/Volumes/Data/Users/dan/Desktop/uselessDecodedDataSizeLog.txt", "w");
-    for (size_t i = 0; i < uselessDecodedDataSizeLog.size(); ++i)
-        fprintf(logFile, "%lf\t%d\n", uselessDecodedDataSizeLog[i].first, uselessDecodedDataSizeLog[i].second);
-    fclose(logFile);
-
-    unsigned totalEncodedSize = 0;
-    unsigned totalEncodedSizeInCache = 0;
-    unsigned totalDecodedSize = 0;
-    unsigned totalDecodedSizeInCache = 0;
-    HashMap<unsigned, SimulatedCachedResource*>::iterator end = resourceMap.end();
-    for (HashMap<unsigned, SimulatedCachedResource*>::iterator it = resourceMap.begin(); it != end; ++it) {
-        totalEncodedSize += it->second->peakEncodedSize();
-        totalDecodedSize += it->second->peakDecodedSize();
-        if (it->second->inCache()) {
-            totalEncodedSizeInCache += it->second->peakEncodedSize();
-            totalDecodedSizeInCache += it->second->peakDecodedSize();
-            if (it->second->decodedSize())
-                decodedDataAges.append(m_simulatedTime - it->second->m_lastDecodedAccessTime);
-        }
-    }
-
-    std::sort(accessIntervals.begin(), accessIntervals.end());
-    std::sort(decodedDataAges.begin(), decodedDataAges.end());
-
-    result = String::format("Total encoded data size: %d\nCached encoded data size: %d\nTotal cache miss encoded data size: %d\nTotal decoded data size: %d\nCached decoded data size: %d\nTotal decoded bytes produced: %d\n",
-                            totalEncodedSize, totalEncodedSizeInCache, totalEncodedSizeReloaded, totalDecodedSize, totalDecodedSizeInCache, totalDecodingDone);
-
-    result += "Decoded data repeated access interval histogram:\n";
-    int binTop = 0;
-    size_t samplesInBin = 0;
-    for (size_t i = 0; i < accessIntervals.size(); ++i) {
-        if (accessIntervals[i] > binTop) {
-            result += String::number(binTop) + " : " + String::number(samplesInBin) + ", ";
-            samplesInBin = 0;
-            binTop = static_cast<int>(ceil(accessIntervals[i] / 10) * 10);
-        }
-        samplesInBin++;
-    }
-    result += String::number(binTop) + " : " + String::number(samplesInBin) + ".\n";
-
-    result += "Cached decoded data age histogram:\n";
-    binTop = 0;
-    samplesInBin = 0;
-    for (size_t i = 0; i < decodedDataAges.size(); ++i) {
-        if (decodedDataAges[i] > binTop) {
-            result += String::number(binTop) + " : " + String::number(samplesInBin) + ", ";
-            samplesInBin = 0;
-            binTop = static_cast<int>(ceil(decodedDataAges[i] / 10) * 10);
-        }
-        samplesInBin++;
-    }
-    result += String::number(binTop) + " : " + String::number(samplesInBin) + ".\n";
-
-    m_inSimulation = false;
-#endif // NDEBUG
-    return result;
-}
 
 } // namespace WebCore

@@ -51,7 +51,7 @@ public:
     {
         // Do the cleanup here instead of in the base class so the specialized methods get called
         if (!postActive())
-            updateStateMachine(AnimationStateInputEndAnimation, -1);
+            updateStateMachine(STATE_INPUT_END_ANIMATION, -1);
     }
 
     virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle,

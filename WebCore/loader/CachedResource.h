@@ -45,9 +45,6 @@ class Request;
 // This class also does the actual communication with the loader to obtain the resource from the network.
 class CachedResource {
     friend class Cache;
-#ifndef NDEBUG
-    friend class CacheEventLogger;
-#endif
     
 public:
     enum Type {
@@ -212,7 +209,6 @@ protected:
 #ifndef NDEBUG
     bool m_deleted;
     unsigned m_lruIndex;
-    unsigned m_identifier;
 #endif
 
 private:
