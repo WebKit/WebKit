@@ -70,9 +70,9 @@ void JSObject::mark()
     JSCell::mark();
     m_structureID->mark();
 
-    unsigned storageSize = m_structureID->propertyMap().makingCount();
+    unsigned storageSize = m_structureID->propertyMap().markingCount();
     if (storageSize) {
-        for (unsigned i = 1; i <= storageSize; ++i) {
+        for (unsigned i = 0; i < storageSize; ++i) {
             JSValue* v = m_propertyStorage[i];
             if (!v->marked())
                 v->mark();

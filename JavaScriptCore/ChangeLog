@@ -1,3 +1,27 @@
+2008-09-09  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Don't waste the first item in the PropertyStorage.
+
+        - Fix typo (makingCount -> markingCount)
+        - Remove undefined method declaration.
+
+        No change on Sunspider.
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::mark):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::put):
+        (JSC::PropertyMap::remove):
+        (JSC::PropertyMap::getOffset):
+        (JSC::PropertyMap::insert):
+        (JSC::PropertyMap::rehash):
+        (JSC::PropertyMap::resizePropertyStorage):
+        (JSC::PropertyMap::checkConsistency):
+        * kjs/PropertyMap.h:
+        (JSC::PropertyMap::markingCount): Fix typo.
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Not reviewed.

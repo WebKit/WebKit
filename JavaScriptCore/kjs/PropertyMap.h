@@ -101,7 +101,7 @@ namespace JSC {
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }
 
         unsigned size() const { return m_table ? m_table->size : 0; }
-        unsigned makingCount() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
+        unsigned markingCount() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
 
         void resizePropertyStorage(PropertyStorage&, unsigned oldSize);
 
@@ -109,7 +109,6 @@ namespace JSC {
         typedef PropertyMapEntry Entry;
         typedef PropertyMapHashTable Table;
 
-        static bool keysMatch(const UString::Rep*, const UString::Rep*);
         void expand(PropertyStorage&);
         void rehash(PropertyStorage&);
         void rehash(unsigned newTableSize, PropertyStorage&);
