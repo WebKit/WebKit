@@ -577,7 +577,7 @@ void WRECGenerator::generateNonGreedyQuantifier(JmpSrcVector& failures, Generate
     // (2.1) recursively call to parseAlternative, if it falls through, success!
     m_jit.pushl_r(currentPositionRegister);
     m_parser.parseAlternative(newFailures);
-    m_jit.addl_i8r(4, X86Assembler::esp);
+    m_jit.addl_i8r(4, X86::esp);
     m_jit.popl_r(quantifierCountRegister);
     // (2.2) link failure cases to jump back up to alternativeFailed.
     for (unsigned i = 0; i < newFailures.size(); ++i)
@@ -660,7 +660,7 @@ void WRECGenerator::generateGreedyQuantifier(JmpSrcVector& failures, GenerateAto
     // (2.2) recursively call to parseAlternative, if it falls through, success!
     m_jit.pushl_r(currentPositionRegister);
     m_parser.parseAlternative(newFailures);
-    m_jit.addl_i8r(4, X86Assembler::esp);
+    m_jit.addl_i8r(4, X86::esp);
     m_jit.popl_r(quantifierCountRegister);
     // (2.3) link failure cases to here.
     for (unsigned i = 0; i < newFailures.size(); ++i)
@@ -874,7 +874,7 @@ WRECGenerator::JmpSrc WRECGenerator::generateParentheses(ParenthesesType type)
         m_jit.movl_rm(currentValueRegister, (2 * subpatternId) * sizeof(int), outputRegister);
         m_jit.movl_rm(currentPositionRegister, (2 * subpatternId + 1) * sizeof(int), outputRegister);
     } else if (type == non_capturing)
-        m_jit.addl_i8r(4, X86Assembler::esp);
+        m_jit.addl_i8r(4, X86::esp);
     else
         m_jit.popl_r(currentPositionRegister);
 
@@ -1085,7 +1085,7 @@ void WRECGenerator::generateBackreference(JmpSrcVector& failures, unsigned subpa
     // Success
     m_jit.link(endOfBackRef, m_jit.label());
     m_jit.popl_r(quantifierCountRegister);
-    m_jit.addl_i8r(4, X86Assembler::esp);
+    m_jit.addl_i8r(4, X86::esp);
 }
 
 void WRECGenerator::gernerateDisjunction(JmpSrcVector& successes, JmpSrcVector& failures)
@@ -1098,7 +1098,7 @@ void WRECGenerator::gernerateDisjunction(JmpSrcVector& successes, JmpSrcVector& 
         m_jit.link(failures[i], here);
     failures.clear();
     
-    m_jit.movl_mr(X86Assembler::esp, currentPositionRegister);
+    m_jit.movl_mr(X86::esp, currentPositionRegister);
 }
 
 void WRECGenerator::terminateDisjunction(JmpSrcVector& successes)

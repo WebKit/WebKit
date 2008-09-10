@@ -147,8 +147,7 @@ private:
 #define SIB(type, reg, rm) MODRM(type, reg, rm)
 #define CAN_SIGN_EXTEND_8_32(value) (value == ((int)(signed char)value))
 
-class X86Assembler {
-public:
+namespace X86 {
     typedef enum {
         eax,
         ecx,
@@ -159,10 +158,15 @@ public:
         esi,
         edi,
 
-        NO_BASE  = ebp,
-        HAS_SIB  = esp,
-        NO_SCALE = esp,
+        noBase = ebp,
+        hasSib = esp,
+        noScale = esp,
     } RegisterID;
+}
+
+class X86Assembler {
+public:
+    typedef X86::RegisterID RegisterID;
 
     typedef enum {
         OP_ADD_EvGv                     = 0x01,
@@ -788,29 +792,29 @@ private:
 
     void emitModRm_rm(RegisterID reg, void* addr)
     {
-        m_buffer->putByte(MODRM(0, reg, NO_BASE));
+        m_buffer->putByte(MODRM(0, reg, X86::noBase));
         m_buffer->putInt((int)addr);
     }
 
     void emitModRm_rm(RegisterID reg, RegisterID base)
     {
-        if (base == esp) {
-            m_buffer->putByte(MODRM(0, reg, HAS_SIB));
-            m_buffer->putByte(SIB(0, NO_SCALE, esp));
+        if (base == X86::esp) {
+            m_buffer->putByte(MODRM(0, reg, X86::hasSib));
+            m_buffer->putByte(SIB(0, X86::noScale, X86::esp));
         } else
             m_buffer->putByte(MODRM(0, reg, base));
     }
 
     void emitModRm_rm_Unchecked(RegisterID reg, RegisterID base, int offset)
     {
-        if (base == esp) {
+        if (base == X86::esp) {
             if (CAN_SIGN_EXTEND_8_32(offset)) {
-                m_buffer->putByteUnchecked(MODRM(1, reg, HAS_SIB));
-                m_buffer->putByteUnchecked(SIB(0, NO_SCALE, esp));
+                m_buffer->putByteUnchecked(MODRM(1, reg, X86::hasSib));
+                m_buffer->putByteUnchecked(SIB(0, X86::noScale, X86::esp));
                 m_buffer->putByteUnchecked(offset);
             } else {
-                m_buffer->putByteUnchecked(MODRM(2, reg, HAS_SIB));
-                m_buffer->putByteUnchecked(SIB(0, NO_SCALE, esp));
+                m_buffer->putByteUnchecked(MODRM(2, reg, X86::hasSib));
+                m_buffer->putByteUnchecked(SIB(0, X86::noScale, X86::esp));
                 m_buffer->putIntUnchecked(offset);
             }
         } else {
@@ -836,7 +840,7 @@ private:
         while (scale >>= 1)
             shift++;
     
-        m_buffer->putByte(MODRM(0, reg, HAS_SIB));
+        m_buffer->putByte(MODRM(0, reg, X86::hasSib));
         m_buffer->putByte(SIB(shift, index, base));
     }
 
@@ -847,11 +851,11 @@ private:
             shift++;
     
         if (CAN_SIGN_EXTEND_8_32(offset)) {
-            m_buffer->putByte(MODRM(1, reg, HAS_SIB));
+            m_buffer->putByte(MODRM(1, reg, X86::hasSib));
             m_buffer->putByte(SIB(shift, index, base));
             m_buffer->putByte(offset);
         } else {
-            m_buffer->putByte(MODRM(2, reg, HAS_SIB));
+            m_buffer->putByte(MODRM(2, reg, X86::hasSib));
             m_buffer->putByte(SIB(shift, index, base));
             m_buffer->putInt(offset);
         }

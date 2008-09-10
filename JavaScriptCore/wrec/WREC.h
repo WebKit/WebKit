@@ -86,12 +86,12 @@ namespace JSC {
         typedef MacroAssembler::JmpDst JmpDst;
 
         // these regs setup by the params
-        static const X86Assembler::RegisterID inputRegister = X86Assembler::eax;
-        static const X86Assembler::RegisterID currentPositionRegister = X86Assembler::edx;
-        static const X86Assembler::RegisterID lengthRegister = X86Assembler::ecx;
-        static const X86Assembler::RegisterID currentValueRegister = X86Assembler::esi;
-        static const X86Assembler::RegisterID outputRegister = X86Assembler::edi;
-        static const X86Assembler::RegisterID quantifierCountRegister = X86Assembler::ebx;
+        static const X86Assembler::RegisterID inputRegister = X86::eax;
+        static const X86Assembler::RegisterID currentPositionRegister = X86::edx;
+        static const X86Assembler::RegisterID lengthRegister = X86::ecx;
+        static const X86Assembler::RegisterID currentValueRegister = X86::esi;
+        static const X86Assembler::RegisterID outputRegister = X86::edi;
+        static const X86Assembler::RegisterID quantifierCountRegister = X86::ebx;
 
         friend class GenerateAtomFunctor;
         friend class GeneratePatternCharacterFunctor;
