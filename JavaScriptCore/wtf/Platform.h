@@ -49,6 +49,14 @@
 #define WTF_PLATFORM_WIN_OS 1
 #endif
 
+/* PLATFORM(WINCE) */
+/* Operating system level dependencies for Windows CE that should be used */
+/* regardless of operating environment */
+/* Note that for this platform PLATFORM(WIN_OS) is also defined. */
+#if defined(_WIN32_WCE)
+#define WTF_PLATFORM_WINCE 1
+#endif
+
 /* PLATFORM(FREEBSD) */
 /* Operating system level dependencies for FreeBSD-like systems that */
 /* should be used regardless of operating environment */
