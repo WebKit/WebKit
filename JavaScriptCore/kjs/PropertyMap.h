@@ -80,7 +80,6 @@ namespace JSC {
     };
 
     class PropertyMap {
-        friend class CTI;
     public:
         PropertyMap();
         ~PropertyMap();
@@ -91,6 +90,7 @@ namespace JSC {
 
         void put(const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
         void remove(const Identifier& propertyName, PropertyStorage&);
+
         size_t getOffset(const Identifier& propertyName);
         size_t getOffset(const Identifier& propertyName, unsigned& attributes);
         size_t getOffset(const Identifier& propertyName, bool& isWriteable);
