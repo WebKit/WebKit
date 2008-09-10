@@ -1,3 +1,33 @@
+2008-09-09  Dave Hyatt  <hyatt@apple.com
+
+        Resurrect PlatformScrollbarWin.
+        
+        Reviewed by Adam Roben
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/PlatformScrollBarWin.cpp:
+        (WebCore::isRunningOnVistaOrLater):
+        (WebCore::checkAndInitScrollbarTheme):
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::invalidateTrack):
+        (WebCore::PlatformScrollbar::invalidatePart):
+        (WebCore::PlatformScrollbar::paint):
+        (WebCore::PlatformScrollbar::hasButtons):
+        (WebCore::PlatformScrollbar::hasThumb):
+        (WebCore::PlatformScrollbar::backButtonRect):
+        (WebCore::PlatformScrollbar::forwardButtonRect):
+        (WebCore::PlatformScrollbar::trackRect):
+        (WebCore::PlatformScrollbar::gripperRect):
+        (WebCore::PlatformScrollbar::thumbLength):
+        (WebCore::PlatformScrollbar::paintButton):
+        (WebCore::PlatformScrollbar::paintTrack):
+        (WebCore::PlatformScrollbar::paintThumb):
+        (WebCore::PlatformScrollbar::paintGripper):
+        (WebCore::PlatformScrollbar::hitTest):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseOutEvent):
+        (WebCore::PlatformScrollbar::themeChanged):
+
 2008-09-09  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

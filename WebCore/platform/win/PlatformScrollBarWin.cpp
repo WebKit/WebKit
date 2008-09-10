@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc.  All rights reserved.
  * Copyright (C) 2008 Brent Fulgham
  *
  * Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,8 @@
 
 #include "config.h"
 
+#if !USE(SAFARI_THEME)
+
 #include "PlatformScrollBar.h"
 
 #include "EventHandler.h"
@@ -35,8 +37,6 @@
 #include "IntRect.h"
 #include "PlatformMouseEvent.h"
 #include "SoftLinking.h"
-
-#include <windows.h>
 #include "RenderThemeWin.h"
 
 // Generic state constants
@@ -44,77 +44,73 @@
 #define TS_HOVER     2
 #define TS_ACTIVE    3
 #define TS_DISABLED  4
-#define TS_FOCUSED   5
 
-#define ABS_UPNORMAL 1
-#define ABS_DOWNNORMAL 5
-#define ABS_LEFTNORMAL 9
-#define ABS_RIGHTNORMAL 13
+#define SP_BUTTON          1
+#define SP_THUMBHOR        2
+#define SP_THUMBVERT       3
+#define SP_TRACKSTARTHOR   4
+#define SP_TRACKENDHOR     5
+#define SP_TRACKSTARTVERT  6
+#define SP_TRACKENDVERT    7
+#define SP_GRIPPERHOR      8
+#define SP_GRIPPERVERT     9
 
-static const unsigned SP_ABS_HOT_MODIFIER = 1;
-static const unsigned SP_ABS_PRESSED_MODIFIER = 2;
-static const unsigned SP_ABS_DISABLE_MODIFIER = 3;
-
-// Scrollbar constants
-#define SP_BUTTON 1
-#define SP_THUMBHOR 2
-#define SP_THUMBVERT 3
-#define SP_TRACKSTARTHOR 4
-#define SP_TRACKENDHOR 5
-#define SP_TRACKSTARTVERT 6
-#define SP_TRACKENDVERT 7
-#define SP_GRIPPERHOR 8
-#define SP_GRIPPERVERT 9
+#define TS_UP_BUTTON       0
+#define TS_DOWN_BUTTON     4
+#define TS_LEFT_BUTTON     8
+#define TS_RIGHT_BUTTON    12
+#define TS_UP_BUTTON_HOVER   17
+#define TS_DOWN_BUTTON_HOVER  18
+#define TS_LEFT_BUTTON_HOVER  19
+#define TS_RIGHT_BUTTON_HOVER   20
 
 using namespace std;
 
 namespace WebCore {
 
-// FIXME: We should get these numbers from SafariTheme
-static int cHorizontalWidth;
-static int cHorizontalHeight;
-static int cVerticalWidth;
-static int cVerticalHeight;
-static int cHorizontalButtonWidth;
-static int cVerticalButtonHeight;
-static int cRealButtonLength = 28;
-static int cButtonInset = 14;
-static int cButtonHitInset = 3;
-// cRealButtonLength - cButtonInset
-static int cThumbWidth;
-static int cThumbHeight;
-static int cThumbMinLength = 26;
+static unsigned cHorizontalWidth;
+static unsigned cHorizontalHeight;
+static unsigned cVerticalWidth;
+static unsigned cVerticalHeight;
+static unsigned cThumbWidth;
+static unsigned cThumbHeight;
+static unsigned cGripperWidth;
+static unsigned cGripperHeight;
 
-static HANDLE cScrollBarTheme = 0;
+static HANDLE scrollbarTheme;
+static bool haveTheme;
+static bool runningVista;
 
 // FIXME:  Refactor the soft-linking code so that it can be shared with RenderThemeWin
 SOFT_LINK_LIBRARY(uxtheme)
 SOFT_LINK(uxtheme, OpenThemeData, HANDLE, WINAPI, (HWND hwnd, LPCWSTR pszClassList), (hwnd, pszClassList))
 SOFT_LINK(uxtheme, CloseThemeData, HRESULT, WINAPI, (HANDLE hTheme), (hTheme))
 SOFT_LINK(uxtheme, DrawThemeBackground, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, const RECT* pRect, const RECT* pClipRect), (hTheme, hdc, iPartId, iStateId, pRect, pClipRect))
-SOFT_LINK(uxtheme, DrawThemeEdge, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, const RECT* pRect, unsigned uEdge, unsigned uFlags, const RECT* pClipRect), (hTheme, hdc, iPartId, iStateId, pRect, uEdge, uFlags, pClipRect))
-SOFT_LINK(uxtheme, GetThemeContentRect, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, const RECT* pRect, const RECT* pContentRect), (hTheme, hdc, iPartId, iStateId, pRect, pContentRect))
-SOFT_LINK(uxtheme, GetThemePartSize, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, RECT* pRect, int ts, SIZE* psz), (hTheme, hdc, iPartId, iStateId, pRect, ts, psz))
-SOFT_LINK(uxtheme, GetThemeSysFont, HRESULT, WINAPI, (HANDLE hTheme, int iFontId, OUT LOGFONT* pFont), (hTheme, iFontId, pFont))
-SOFT_LINK(uxtheme, GetThemeColor, HRESULT, WINAPI, (HANDLE hTheme, HDC hdc, int iPartId, int iStateId, int iPropId, OUT COLORREF* pColor), (hTheme, hdc, iPartId, iStateId, iPropId, pColor))
+SOFT_LINK(uxtheme, IsThemeActive, BOOL, WINAPI, (), ())
+SOFT_LINK(uxtheme, IsThemeBackgroundPartiallyTransparent, BOOL, WINAPI, (HANDLE hTheme, int iPartId, int iStateId), (hTheme, iPartId, iStateId))
+
+static bool isRunningOnVistaOrLater()
+{
+    static bool os = false;
+    static bool initialized = false;
+    if (!initialized) {
+        OSVERSIONINFOEX vi = {sizeof(vi), 0};
+        GetVersionEx((OSVERSIONINFO*)&vi);
+
+        // NOTE: This does not work under a debugger - Vista shims Visual Studio, 
+        // making it believe it is xpsp2, which is inherited by debugged applications
+        os = vi.dwMajorVersion >= 6;
+        initialized = true;
+    }
+    return os;
+}
 
 static void checkAndInitScrollbarTheme()
 {
-    if (uxthemeLibrary() && !cScrollBarTheme)
-        cScrollBarTheme = OpenThemeData(0, L"Scrollbar");
+    if (uxthemeLibrary() && !scrollbarTheme)
+        scrollbarTheme = OpenThemeData(0, L"Scrollbar");
+    haveTheme = scrollbarTheme && IsThemeActive();
 }
-
-// May need to add stuff to these later, so keep the graphics context retrieval/release in some helpers.
-static HDC prepareForDrawing(GraphicsContext* g, const IntRect& r)
-{
-    return g->getWindowsContext(r);
-}
- 
-static void doneDrawing(GraphicsContext* g, HDC hdc, const IntRect& r)
-{
-    g->releaseWindowsContext(hdc, r);
-}
-// End Copied from RenderThemeWin
 
 const double cInitialTimerDelay = 0.25;
 const double cNormalTimerDelay = 0.05;
@@ -128,7 +124,7 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
     , m_overlapsResizer(false)
 {
     // Obtain the correct scrollbar sizes from the system.
-    // FIXME:  We should update these on a WM_SETTINGSCHANGE, too.
+    // FIXME:  We should update these on a WM_SETTINGSCHANGE also.
     if (!cHorizontalHeight) {
        cHorizontalHeight = ::GetSystemMetrics(SM_CYHSCROLL);
        cHorizontalWidth = ::GetSystemMetrics(SM_CXHSCROLL);
@@ -136,8 +132,10 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
        cVerticalWidth = ::GetSystemMetrics(SM_CXVSCROLL);
        cThumbWidth = ::GetSystemMetrics(SM_CXHTHUMB);
        cThumbHeight = ::GetSystemMetrics(SM_CYVTHUMB);
-       cHorizontalButtonWidth = ::GetSystemMetrics(SM_CYVSCROLL);
-       cVerticalButtonHeight = ::GetSystemMetrics(SM_CXHSCROLL);
+       cGripperWidth = cThumbWidth / 2;
+       cGripperHeight = cThumbHeight / 2;
+       checkAndInitScrollbarTheme();
+       runningVista = isRunningOnVistaOrLater();
     }
 
     if (orientation == VerticalScrollbar)
@@ -161,38 +159,9 @@ void PlatformScrollbar::updateThumbProportion()
     invalidateTrack();
 }
 
-static IntRect trackRepaintRect(const IntRect& trackRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
-{
-    const int cButtonLength = (orientation == VerticalScrollbar) ? cVerticalButtonHeight : cHorizontalButtonWidth;
-
-    IntRect paintRect(trackRect);
-    if (orientation == HorizontalScrollbar)
-        paintRect.inflateX(cButtonLength);
-    else
-        paintRect.inflateY(cButtonLength);
-
-    return paintRect;
-}
-
-static IntRect buttonRepaintRect(const IntRect& buttonRect, ScrollbarOrientation orientation, ScrollbarControlSize controlSize, bool start)
-{
-    IntRect paintRect(buttonRect);
-    if (orientation == HorizontalScrollbar) {
-        paintRect.setWidth(cRealButtonLength);
-        if (!start)
-            paintRect.setX(buttonRect.x() - (cRealButtonLength - buttonRect.width()));
-    } else {
-        paintRect.setHeight(cRealButtonLength);
-        if (!start)
-            paintRect.setY(buttonRect.y() - (cRealButtonLength - buttonRect.height()));
-    }
-
-    return paintRect;
-}
-
 void PlatformScrollbar::invalidateTrack()
 {
-    IntRect rect = trackRepaintRect(trackRect(), m_orientation, controlSize());
+    IntRect rect = trackRect();
     rect.move(-x(), -y());
     invalidateRect(rect);
 }
@@ -205,10 +174,10 @@ void PlatformScrollbar::invalidatePart(ScrollbarPart part)
     IntRect result;    
     switch (part) {
         case BackButtonPart:
-            result = buttonRepaintRect(backButtonRect(), m_orientation, controlSize(), true);
+            result = backButtonRect();
             break;
         case ForwardButtonPart:
-            result = buttonRepaintRect(forwardButtonRect(), m_orientation, controlSize(), false);
+            result = forwardButtonRect();
             break;
         default: {
             IntRect beforeThumbRect, thumbRect, afterThumbRect;
@@ -287,11 +256,6 @@ void PlatformScrollbar::setEnabled(bool enabled)
 
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
-    if (graphicsContext->updatingControlTints()) {
-        invalidate();
-        return;
-    }
-
     if (graphicsContext->paintingDisabled())
         return;
 
@@ -299,39 +263,58 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     if (!frameGeometry().intersects(damageRect))
         return;
 
-    IntRect track = trackRect();
-    paintTrack(graphicsContext, track, true, damageRect);
+    checkAndInitScrollbarTheme();
 
-    if (hasButtons()) {
-        paintButton(graphicsContext, backButtonRect(), true, damageRect);
-        paintButton(graphicsContext, forwardButtonRect(), false, damageRect);
+    // A Windows scrollbar consists of six components:
+    // An arrow button, a track piece, a thumb, a gripper inside the thumb, another track piece, and another arrow button.
+    // Paint each piece if it intersects the damage rect.
+    
+    // (1) The first arrow button
+    paintButton(graphicsContext, backButtonRect(), true, damageRect);
+
+    IntRect rect;
+    if (damageRect.intersects(rect = trackRect())) {
+        if (isEnabled()) {
+            IntRect startTrackRect, thumbRect, endTrackRect;
+            splitTrack(rect, startTrackRect, thumbRect, endTrackRect);
+
+            // (2) The first track piece
+            paintTrack(graphicsContext, startTrackRect, true, damageRect);
+        
+            // (3) The thumb
+            paintThumb(graphicsContext, thumbRect, damageRect);
+
+            // (4) The second track piece
+            paintTrack(graphicsContext, endTrackRect, false, damageRect);
+        } else
+            // Just paint a disabled track throughout the track rect.
+            paintTrack(graphicsContext, rect, true, damageRect);
     }
 
-    if (hasThumb() && damageRect.intersects(track)) {
-        IntRect startTrackRect, thumbRect, endTrackRect;
-        splitTrack(track, startTrackRect, thumbRect, endTrackRect);
-        paintThumb(graphicsContext, thumbRect, damageRect);
-    }
+    // (5) The second arrow button
+    paintButton(graphicsContext, forwardButtonRect(), false, damageRect);
 }
 
 bool PlatformScrollbar::hasButtons() const
 {
-    return isEnabled() && (m_orientation == HorizontalScrollbar ? width() : height()) >= 2 * (cRealButtonLength - cButtonHitInset);
+    return isEnabled();
 }
 
 bool PlatformScrollbar::hasThumb() const
 {
-    return isEnabled() && (m_orientation == HorizontalScrollbar ? width() : height()) >= 2 * cButtonInset + cThumbMinLength + 1;
+    return isEnabled();
 }
 
 IntRect PlatformScrollbar::backButtonRect() const
 {
+    // Our desired rect is essentially 17x17.
+    
     // Our actual rect will shrink to half the available space when
     // we have < 34 pixels left.  This allows the scrollbar
     // to scale down and function even at tiny sizes.
     if (m_orientation == HorizontalScrollbar)
-        return IntRect(x(), y(), cHorizontalButtonWidth, cHorizontalHeight);
-    return IntRect(x(), y(), cVerticalWidth, cVerticalButtonHeight);
+        return IntRect(x(), y(), width() < 2 * cHorizontalWidth ? width() / 2 : cHorizontalWidth, cHorizontalHeight);
+    return IntRect(x(), y(), cVerticalWidth, height() < 2 * cVerticalHeight ? height() / 2 : cVerticalHeight);
 }
 
 IntRect PlatformScrollbar::forwardButtonRect() const
@@ -341,22 +324,27 @@ IntRect PlatformScrollbar::forwardButtonRect() const
     // Our actual rect will shrink to half the available space when
     // we have < 34 pixels left.  This allows the scrollbar
     // to scale down and function even at tiny sizes.
-    if (m_orientation == HorizontalScrollbar)
-        return IntRect(x() + width() - cHorizontalButtonWidth, y(), cHorizontalButtonWidth, cHorizontalHeight);
-    return IntRect(x(), y() + height() - cVerticalButtonHeight, cVerticalWidth, cVerticalButtonHeight);
+
+    if (m_orientation == HorizontalScrollbar) {
+        int w = width() < 2 * cHorizontalWidth ? width() / 2 : cHorizontalWidth;
+        return IntRect(x() + width() - w, y(), w, cHorizontalHeight);
+    }
+    
+    int h = height() < 2 * cVerticalHeight ? height() / 2 : cVerticalHeight;
+    return IntRect(x(), y() + height() - h, cVerticalWidth, h);
 }
 
 IntRect PlatformScrollbar::trackRect() const
 {
     if (m_orientation == HorizontalScrollbar) {
-        if (!hasButtons())
-            return IntRect(x(), y(), width(), cHorizontalHeight);
-        return IntRect(x() + cHorizontalButtonWidth, y(), width() - 2 * cHorizontalButtonWidth, cHorizontalHeight);
+        if (width() < 2 * cHorizontalWidth)
+            return IntRect();
+        return IntRect(x() + cHorizontalWidth, y(), width() - 2 * cHorizontalWidth, cHorizontalHeight);
     }
 
-    if (!hasButtons())
-        return IntRect(x(), y(), cVerticalWidth, height());
-    return IntRect(x(), y() + cVerticalButtonHeight, cVerticalWidth, height() - 2 * cVerticalButtonHeight);
+    if (height() < 2 * cVerticalHeight)
+        return IntRect();
+    return IntRect(x(), y() + cVerticalHeight, cVerticalWidth, height() - 2 * cVerticalHeight);
 }
 
 IntRect PlatformScrollbar::thumbRect() const
@@ -368,7 +356,10 @@ IntRect PlatformScrollbar::thumbRect() const
 
 IntRect PlatformScrollbar::gripperRect(const IntRect& thumbRect) const
 {
-    return IntRect();
+    // Center in the thumb.
+    return IntRect(thumbRect.x() + (thumbRect.width() - cGripperWidth) / 2,
+                   thumbRect.y() + (thumbRect.height() - cGripperHeight) / 2,
+                   cGripperWidth, cGripperHeight);
 }
 
 void PlatformScrollbar::splitTrack(const IntRect& trackRect, IntRect& beforeThumbRect, IntRect& thumbRect, IntRect& afterThumbRect) const
@@ -402,7 +393,7 @@ int PlatformScrollbar::thumbLength() const
     float proportion = (float)(m_visibleSize) / m_totalSize;
     int trackLen = trackLength();
     int length = proportion * trackLen;
-    int minLength = cThumbMinLength;
+    int minLength = (m_orientation == HorizontalScrollbar) ? cThumbWidth : cThumbHeight;
     length = max(length, minLength);
     if (length > trackLen)
         length = 0; // Once the thumb is below the track length, it just goes away (to make more room for the track).
@@ -416,82 +407,100 @@ int PlatformScrollbar::trackLength() const
 
 void PlatformScrollbar::paintButton(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
-    IntRect paintRect = buttonRepaintRect(rect, m_orientation, controlSize(), start);
-    
-    if (!damageRect.intersects(paintRect))
+    if (!damageRect.intersects(rect))
         return;
 
-    unsigned part = 0;
-    unsigned state = 0;
-    unsigned classicPart = 0;
-    unsigned classicState = 0;
-
-    if (m_orientation == HorizontalScrollbar) {
-       state = start ? ABS_LEFTNORMAL : ABS_RIGHTNORMAL;
-       classicPart = start ? DFCS_SCROLLLEFT : DFCS_SCROLLRIGHT;
-    } else {
-       state = start ? ABS_UPNORMAL : ABS_DOWNNORMAL;
-       classicPart = start ? DFCS_SCROLLUP : DFCS_SCROLLDOWN;
-    }
+    int xpState = 0;
+    int classicState = 0;
+    if (m_orientation == HorizontalScrollbar)
+        xpState = start ? TS_LEFT_BUTTON : TS_RIGHT_BUTTON;
+    else
+        xpState = start ? TS_UP_BUTTON : TS_DOWN_BUTTON;
+    classicState = xpState / 4;
 
     if (!isEnabled()) {
-        state += SP_ABS_DISABLE_MODIFIER;
+        xpState += TS_DISABLED;
         classicState |= DFCS_INACTIVE;
-    } else if ((m_pressedPart == BackButtonPart && start)
-            || (m_pressedPart == ForwardButtonPart && !start)) {
-        state += SP_ABS_PRESSED_MODIFIER;
-        classicState |= DFCS_PUSHED | DFCS_FLAT;
-    } else if (m_client->isActive()) {
-       state += SP_ABS_HOT_MODIFIER;
-       classicState |= DFCS_HOT;
+    } else if ((m_hoveredPart == BackButtonPart && start) ||
+               (m_hoveredPart == ForwardButtonPart && !start)) {
+        if (m_pressedPart == m_hoveredPart) {
+            xpState += TS_ACTIVE;
+            classicState |= DFCS_PUSHED | DFCS_FLAT;
+        } else
+            xpState += TS_HOVER;
+    } else {
+        if (m_hoveredPart == NoPart || !runningVista)
+            xpState += TS_NORMAL;
+        else {
+            if (m_orientation == HorizontalScrollbar)
+                xpState = start ? TS_LEFT_BUTTON_HOVER : TS_RIGHT_BUTTON_HOVER;
+            else
+                xpState = start ? TS_UP_BUTTON_HOVER : TS_DOWN_BUTTON_HOVER;
+        }
     }
 
-    HDC hdc = prepareForDrawing(context, rect);
-    RECT widgetRect = rect;
-    checkAndInitScrollbarTheme();
+    bool alphaBlend = false;
+    if (scrollbarTheme)
+        alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, SP_BUTTON, xpState);
+    HDC hdc = context->getWindowsContext(rect, alphaBlend);
 
-    if (cScrollBarTheme)
-        DrawThemeBackground(cScrollBarTheme, hdc, SP_BUTTON, state, &widgetRect, NULL);
+    RECT themeRect(rect);
+    if (scrollbarTheme)
+        DrawThemeBackground(scrollbarTheme, hdc, SP_BUTTON, xpState, &themeRect, 0);
     else
-        DrawFrameControl(hdc, &widgetRect, classicPart, classicState);
-
-    doneDrawing(context, hdc, rect);
+        ::DrawFrameControl(hdc, &themeRect, DFC_SCROLL, classicState);
+    context->releaseWindowsContext(hdc, rect, alphaBlend);
 }
 
 void PlatformScrollbar::paintTrack(GraphicsContext* context, const IntRect& rect, bool start, const IntRect& damageRect) const
 {
-    IntRect paintRect = hasButtons() ? trackRepaintRect(rect, m_orientation, controlSize()) : rect;
-    
-    if (!damageRect.intersects(paintRect))
+    if (!damageRect.intersects(rect))
         return;
 
-    unsigned part = 0;
-    unsigned classicPart = DFC_SCROLL;
+    int part;
     if (m_orientation == HorizontalScrollbar)
-       part = start ? SP_TRACKSTARTHOR : SP_TRACKENDHOR;
+        part = start ? SP_TRACKSTARTHOR : SP_TRACKENDHOR;
     else
-       part = start ? SP_TRACKSTARTVERT : SP_TRACKENDVERT;
+        part = start ? SP_TRACKSTARTVERT : SP_TRACKENDVERT;
 
-    unsigned state = TS_DISABLED;
-    unsigned classicState = DFCS_MONO;
-    if (m_client->isActive())
-        state |= TS_ACTIVE;
+    int state;
+    if (!isEnabled())
+        state = TS_DISABLED;
+    else if ((m_hoveredPart == BackTrackPart && start) ||
+             (m_hoveredPart == ForwardTrackPart && !start))
+        state = (m_pressedPart == m_hoveredPart ? TS_ACTIVE : TS_HOVER);
     else
-       classicState |= DFCS_INACTIVE;
+        state = TS_NORMAL;
 
-    if (hasButtons())
-        state |= TS_NORMAL;
-
-    HDC hdc = prepareForDrawing(context, rect);
-    RECT widgetRect = rect;
-    checkAndInitScrollbarTheme();
-
-    if (cScrollBarTheme)
-        DrawThemeBackground(cScrollBarTheme, hdc, part, state, &widgetRect, NULL);
-    else
-        DrawFrameControl(hdc, &widgetRect, DFC_SCROLL, classicState);
-
-    doneDrawing(context, hdc, rect);
+    bool alphaBlend = false;
+    if (scrollbarTheme)
+        alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, part, state);
+    HDC hdc = context->getWindowsContext(rect, alphaBlend);
+    RECT themeRect(rect);
+    if (scrollbarTheme)
+        DrawThemeBackground(scrollbarTheme, hdc, part, state, &themeRect, 0);
+    else {
+        DWORD color3DFace = ::GetSysColor(COLOR_3DFACE);
+        DWORD colorScrollbar = ::GetSysColor(COLOR_SCROLLBAR);
+        DWORD colorWindow = ::GetSysColor(COLOR_WINDOW);
+        if ((color3DFace != colorScrollbar) && (colorWindow != colorScrollbar))
+            ::FillRect(hdc, &themeRect, HBRUSH(COLOR_SCROLLBAR+1));
+        else {
+            static WORD patternBits[8] = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 };
+            HBITMAP patternBitmap = ::CreateBitmap(8, 8, 1, 1, patternBits);
+            HBRUSH brush = ::CreatePatternBrush(patternBitmap);
+            SaveDC(hdc);
+            ::SetTextColor(hdc, ::GetSysColor(COLOR_3DHILIGHT));
+            ::SetBkColor(hdc, ::GetSysColor(COLOR_3DFACE));
+            ::SetBrushOrgEx(hdc, rect.x(), rect.y(), NULL);
+            ::SelectObject(hdc, brush);
+            ::FillRect(hdc, &themeRect, brush);
+            ::RestoreDC(hdc, -1);
+            ::DeleteObject(brush);  
+            ::DeleteObject(patternBitmap);
+        }
+    }
+    context->releaseWindowsContext(hdc, rect, alphaBlend);
 }
 
 void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect, const IntRect& damageRect) const
@@ -499,76 +508,76 @@ void PlatformScrollbar::paintThumb(GraphicsContext* context, const IntRect& rect
     if (!damageRect.intersects(rect))
         return;
 
-    unsigned part = (m_orientation == HorizontalScrollbar) ? SP_THUMBHOR : SP_THUMBVERT;
-    unsigned state = 0;
-
+    int state;
     if (!isEnabled())
-        state += SP_ABS_DISABLE_MODIFIER;
-    else if (m_client->isActive())
-       state += SP_ABS_HOT_MODIFIER;
+        state = TS_DISABLED;
+    else if (m_pressedPart == ThumbPart)
+        state = TS_ACTIVE; // Thumb always stays active once pressed.
+    else if (m_hoveredPart == ThumbPart)
+        state = TS_HOVER;
+    else
+        state = TS_NORMAL;
 
-    HDC hdc = prepareForDrawing(context, rect);
-    RECT widgetRect = rect;
-    checkAndInitScrollbarTheme();
-
-    if (cScrollBarTheme) {
-        DrawThemeBackground(cScrollBarTheme, hdc, part, state, &widgetRect, NULL);
-        paintGripper(hdc, widgetRect);
-    } else {
-        HGDIOBJ hSaveBrush = SelectObject(hdc, GetSysColorBrush(COLOR_BTNFACE));
-        DrawEdge(hdc, &widgetRect, EDGE_RAISED, BF_RECT);
-        SelectObject(hdc,hSaveBrush);
-    }
-
-    doneDrawing(context, hdc, rect);
+    bool alphaBlend = false;
+    if (scrollbarTheme)
+        alphaBlend = IsThemeBackgroundPartiallyTransparent(scrollbarTheme, m_orientation == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state);
+    HDC hdc = context->getWindowsContext(rect, alphaBlend);
+    RECT themeRect(rect);
+    if (scrollbarTheme) {
+        DrawThemeBackground(scrollbarTheme, hdc, m_orientation == HorizontalScrollbar ? SP_THUMBHOR : SP_THUMBVERT, state, &themeRect, 0);
+        IntRect gripper;
+        if (damageRect.intersects(gripper = gripperRect(rect)))
+            paintGripper(hdc, gripper);
+    } else
+        ::DrawEdge(hdc, &themeRect, EDGE_RAISED, BF_RECT | BF_MIDDLE);
+    context->releaseWindowsContext(hdc, rect, alphaBlend);
 }
 
 void PlatformScrollbar::paintGripper(HDC hdc, const IntRect& rect) const
 {
-    unsigned part = (m_orientation == HorizontalScrollbar) ? SP_GRIPPERHOR : SP_GRIPPERVERT;
-    unsigned state = 0;
+    if (!scrollbarTheme)
+        return;  // Classic look has no gripper.
+   
+    int state;
+    if (!isEnabled())
+        state = TS_DISABLED;
+    else if (m_pressedPart == ThumbPart)
+        state = TS_ACTIVE; // Thumb always stays active once pressed.
+    else if (m_hoveredPart == ThumbPart)
+        state = TS_HOVER;
+    else
+        state = TS_NORMAL;
 
-    if (m_client->isActive())
-        state |= TS_ACTIVE;
-
-    RECT widgetRect = rect;
-    checkAndInitScrollbarTheme();
-
-    if (cScrollBarTheme)
-        DrawThemeBackground(cScrollBarTheme, hdc, part, state, &widgetRect, NULL);
+    RECT themeRect(rect);
+    DrawThemeBackground(scrollbarTheme, hdc, m_orientation == HorizontalScrollbar ? SP_GRIPPERHOR : SP_GRIPPERVERT, state, &themeRect, 0);
 }
 
 ScrollbarPart PlatformScrollbar::hitTest(const PlatformMouseEvent& evt)
 {
-    if (!isEnabled())
-        return NoPart;
+    ScrollbarPart result = NoPart;
+    if (!isEnabled() || !parent())
+        return result;
 
     IntPoint mousePosition = convertFromContainingWindow(evt.pos());
     mousePosition.move(x(), y());
-
-    if (hasButtons()) {
-        if (backButtonRect().contains(mousePosition))
-            return BackButtonPart;
-
-        if (forwardButtonRect().contains(mousePosition))
-            return ForwardButtonPart;
+    if (backButtonRect().contains(mousePosition))
+        result = BackButtonPart;
+    else if (forwardButtonRect().contains(mousePosition))
+        result = ForwardButtonPart;
+    else {
+        IntRect track = trackRect();
+        if (track.contains(mousePosition)) {
+            IntRect beforeThumbRect, thumbRect, afterThumbRect;
+            splitTrack(track, beforeThumbRect, thumbRect, afterThumbRect);
+            if (beforeThumbRect.contains(mousePosition))
+                result = BackTrackPart;
+            else if (thumbRect.contains(mousePosition))
+                result = ThumbPart;
+            else
+                result = ForwardTrackPart;
+        }
     }
-
-    if (!hasThumb())
-        return NoPart;
-
-    IntRect track = trackRect();
-    if (track.contains(mousePosition)) {
-        IntRect beforeThumbRect, thumbRect, afterThumbRect;
-        splitTrack(track, beforeThumbRect, thumbRect, afterThumbRect);
-        if (beforeThumbRect.contains(mousePosition))
-            return BackTrackPart;
-        if (thumbRect.contains(mousePosition))
-            return ThumbPart;
-        return ForwardTrackPart;
-    }
-
-    return NoPart;
+    return result;
 }
 
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
@@ -605,6 +614,9 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 
     ScrollbarPart part = hitTest(evt);    
     if (part != m_hoveredPart) {
+        if (m_hoveredPart == NoPart && runningVista)
+            invalidate();  // Just invalidate the whole scrollbar, since the buttons at either end change anyway.
+
         if (m_pressedPart != NoPart) {
             if (part == m_pressedPart) {
                 // The mouse is moving back over the pressed part.  We
@@ -629,9 +641,11 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 
 bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 {
-    invalidatePart(m_hoveredPart);
+    if (runningVista)
+        invalidate(); // Just invalidate the whole scrollbar, since the buttons at either end change anyway.
+    else
+        invalidatePart(m_hoveredPart);
     m_hoveredPart = NoPart;
-
     return true;
 }
 
@@ -743,6 +757,16 @@ bool PlatformScrollbar::thumbUnderMouse()
     return (begin <= m_pressedPos && m_pressedPos < end);
 }
 
+void PlatformScrollbar::themeChanged()
+{
+    if (scrollbarTheme) {
+        CloseThemeData(scrollbarTheme);
+        scrollbarTheme = 0;
+    }
+
+    haveTheme = false;
+}
+
 int PlatformScrollbar::horizontalScrollbarHeight(ScrollbarControlSize controlSize)
 {
     return cHorizontalWidth;
@@ -764,9 +788,7 @@ IntRect PlatformScrollbar::windowClipRect() const
     return clipRect;
 }
 
-void PlatformScrollbar::themeChanged()
-{
 }
 
-}
+#endif
 
