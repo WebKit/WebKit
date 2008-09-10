@@ -677,7 +677,7 @@ RegisterID* CodeGenerator::emitUnexpectedLoad(RegisterID* dst, double d)
     return dst;
 }
 
-bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting)
+bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, size_t& stackDepth, bool forWriting, JSValue*& globalObject)
 {
     // Cases where we cannot optimise the lookup
     if (property == propertyNames().arguments || !canOptimizeNonLocals()) {
@@ -702,10 +702,14 @@ bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, s
             if (entry.isReadOnly() && forWriting) {
                 stackDepth = 0;
                 index = missingSymbolMarker();
+                if (++iter == end)
+                    globalObject = currentVariableObject;
                 return false;
             }
             stackDepth = depth;
             index = entry.getIndex();
+            if (++iter == end)
+                globalObject = currentVariableObject;
             return true;
         }
         if (currentVariableObject->isDynamicScope())
@@ -715,6 +719,9 @@ bool CodeGenerator::findScopedProperty(const Identifier& property, int& index, s
     // Can't locate the property but we're able to avoid a few lookups
     stackDepth = depth;
     index = missingSymbolMarker();
+    JSObject* scope = *iter;
+    if (++iter == end)
+        globalObject = scope;
     return true;
 }
 
@@ -722,7 +729,8 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
 {
     size_t depth = 0;
     int index = 0;
-    if (!findScopedProperty(property, index, depth, false)) {
+    JSValue* globalObject = 0;
+    if (!findScopedProperty(property, index, depth, false, globalObject)) {
         // We can't optimise at all :-(
         emitOpcode(op_resolve);
         instructions().append(dst->index());
@@ -741,11 +749,19 @@ RegisterID* CodeGenerator::emitResolve(RegisterID* dst, const Identifier& proper
     }
 
     // Directly index the property lookup across multiple scopes.  Yay!
-    return emitGetScopedVar(dst, depth, index);
+    return emitGetScopedVar(dst, depth, index, globalObject);
 }
 
-RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index)
+RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int index, JSValue* globalObject)
 {
+    if (globalObject) {
+        emitOpcode(op_get_global_var);
+        instructions().append(dst->index());
+        instructions().append(static_cast<JSCell*>(globalObject));
+        instructions().append(index);
+        return dst;
+    }
+
     emitOpcode(op_get_scoped_var);
     instructions().append(dst->index());
     instructions().append(index);
@@ -753,8 +769,15 @@ RegisterID* CodeGenerator::emitGetScopedVar(RegisterID* dst, size_t depth, int i
     return dst;
 }
 
-RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value)
+RegisterID* CodeGenerator::emitPutScopedVar(size_t depth, int index, RegisterID* value, JSValue* globalObject)
 {
+    if (globalObject) {
+        emitOpcode(op_put_global_var);
+        instructions().append(static_cast<JSCell*>(globalObject));
+        instructions().append(index);
+        instructions().append(value->index());
+        return value;
+    }
     emitOpcode(op_put_scoped_var);
     instructions().append(index);
     instructions().append(depth);

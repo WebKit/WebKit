@@ -84,6 +84,8 @@ namespace JSC {
         macro(op_resolve_skip) \
         macro(op_get_scoped_var) \
         macro(op_put_scoped_var) \
+        macro(op_get_global_var) \
+        macro(op_put_global_var) \
         macro(op_resolve_base) \
         macro(op_resolve_with_base) \
         macro(op_resolve_func) \

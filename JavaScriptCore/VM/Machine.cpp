@@ -2086,6 +2086,34 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
 
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_get_global_var) {
+        /* get_global_var dst(r) index(n)
+
+           Gets the global var at global slot index and places it in register dst.
+         */
+        int dst = (++vPC)->u.operand;
+        JSGlobalObject* scope = static_cast<JSGlobalObject*>((++vPC)->u.jsCell);
+        ASSERT(scope->isGlobalObject());
+        int index = (++vPC)->u.operand;
+
+        r[dst] = scope->registerAt(index);
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_put_global_var) {
+        /* put_global_var globalObject(c) index(n) value(r)
+         
+           Puts value into global slot index.
+         */
+        JSGlobalObject* scope = static_cast<JSGlobalObject*>((++vPC)->u.jsCell);
+        ASSERT(scope->isGlobalObject());
+        int index = (++vPC)->u.operand;
+        int value = (++vPC)->u.operand;
+        
+        scope->registerAt(index) = r[value].jsValue(exec);
+        ++vPC;
+        NEXT_OPCODE;
+    }            
     BEGIN_OPCODE(op_get_scoped_var) {
         /* get_scoped_var dst(r) index(n) skip(n)
 

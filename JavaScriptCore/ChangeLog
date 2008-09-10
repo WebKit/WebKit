@@ -1,3 +1,37 @@
+2008-09-09  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add optimised access to known properties on the global object.
+
+        Improve cross scope access to the global object by emitting
+        code to access it directly rather than by walking the scope chain.
+
+        This is a 0.8% win in SunSpider and a 1.7% win in the v8 benchmarks.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::emitGetVariableObjectRegister):
+        (JSC::CTI::emitPutVariableObjectRegister):
+        * VM/CTI.h:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::findScopedProperty):
+        (JSC::CodeGenerator::emitResolve):
+        (JSC::CodeGenerator::emitGetScopedVar):
+        (JSC::CodeGenerator::emitPutScopedVar):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        * VM/Opcode.h:
+        * kjs/nodes.cpp:
+        (JSC::FunctionCallResolveNode::emitCode):
+        (JSC::PostfixResolveNode::emitCode):
+        (JSC::PrefixResolveNode::emitCode):
+        (JSC::ReadModifyResolveNode::emitCode):
+        (JSC::AssignResolveNode::emitCode):
+
 2008-09-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Oliver.

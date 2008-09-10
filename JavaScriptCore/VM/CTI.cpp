@@ -628,6 +628,22 @@ void CTI::privateCompileMainPass()
             i += 6;
             break;
         }
+        case op_get_global_var: {
+            JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 2].u.jsCell);
+            m_jit.movl_i32r(reinterpret_cast<unsigned>(globalObject), X86::eax);
+            emitGetVariableObjectRegister(X86::eax, instruction[i + 3].u.operand, X86::eax);
+            emitPutResult(instruction[i + 1].u.operand, X86::eax);
+            i += 4;
+            break;
+        }
+        case op_put_global_var: {
+            JSVariableObject* globalObject = static_cast<JSVariableObject*>(instruction[i + 1].u.jsCell);
+            m_jit.movl_i32r(reinterpret_cast<unsigned>(globalObject), X86::eax);
+            emitGetArg(instruction[i + 3].u.operand, X86::edx);
+            emitPutVariableObjectRegister(X86::edx, X86::eax, instruction[i + 2].u.operand);
+            i += 4;
+            break;
+        }
         case op_get_scoped_var: {
             int skip = instruction[i + 3].u.operand + m_codeBlock->needsFullScopeChain;
 
@@ -636,9 +652,7 @@ void CTI::privateCompileMainPass()
                 m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, next), X86::eax, X86::eax);
 
             m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, object), X86::eax, X86::eax);
-            m_jit.movl_mr(JSVariableObject::offsetOf_d(), X86::eax, X86::eax);
-            m_jit.movl_mr(JSVariableObject::offsetOf_Data_registers(), X86::eax, X86::eax);
-            m_jit.movl_mr((instruction[i + 2].u.operand) * sizeof(Register), X86::eax, X86::eax);
+            emitGetVariableObjectRegister(X86::eax, instruction[i + 2].u.operand, X86::eax);
             emitPutResult(instruction[i + 1].u.operand);
             i += 4;
             break;
@@ -652,9 +666,7 @@ void CTI::privateCompileMainPass()
                 m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, next), X86::edx, X86::edx);
 
             m_jit.movl_mr(OBJECT_OFFSET(ScopeChainNode, object), X86::edx, X86::edx);
-            m_jit.movl_mr(JSVariableObject::offsetOf_d(), X86::edx, X86::edx);
-            m_jit.movl_mr(JSVariableObject::offsetOf_Data_registers(), X86::edx, X86::edx);
-            m_jit.movl_rm(X86::eax, (instruction[i + 1].u.operand) * sizeof(Register), X86::edx);
+            emitPutVariableObjectRegister(X86::eax, X86::edx, instruction[i + 1].u.operand);
             i += 4;
             break;
         }
@@ -1828,6 +1840,20 @@ void* CTI::privateStringLengthTrampoline()
     X86Assembler::link(code, failureCases3, reinterpret_cast<void*>(Machine::cti_op_get_by_id_fail));
 
     return code;
+}
+
+void CTI::emitGetVariableObjectRegister(X86Assembler::RegisterID variableObject, int index, X86Assembler::RegisterID dst)
+{
+    m_jit.movl_mr(JSVariableObject::offsetOf_d(), variableObject, dst);
+    m_jit.movl_mr(JSVariableObject::offsetOf_Data_registers(), dst, dst);
+    m_jit.movl_mr(index * sizeof(Register), dst, dst);
+}
+
+void CTI::emitPutVariableObjectRegister(X86Assembler::RegisterID src, X86Assembler::RegisterID variableObject, int index)
+{
+    m_jit.movl_mr(JSVariableObject::offsetOf_d(), variableObject, variableObject);
+    m_jit.movl_mr(JSVariableObject::offsetOf_Data_registers(), variableObject, variableObject);
+    m_jit.movl_rm(src, index * sizeof(Register), variableObject);
 }
 
 #if ENABLE(WREC)

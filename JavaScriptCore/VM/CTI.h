@@ -329,7 +329,10 @@ namespace JSC {
         void emitCall(unsigned opcodeIndex, CTIHelper_b);
         void emitCall(unsigned opcodeIndex, CTIHelper_v);
         void emitCall(unsigned opcodeIndex, CTIHelper_s);
-
+        
+        void emitGetVariableObjectRegister(X86Assembler::RegisterID variableObject, int index, X86Assembler::RegisterID dst);
+        void emitPutVariableObjectRegister(X86Assembler::RegisterID src, X86Assembler::RegisterID variableObject, int index);
+        
         void emitSlowScriptCheck(unsigned opcodeIndex);
 #ifndef NDEBUG
         void printOpcodeOperandTypes(unsigned src1, unsigned src2);
