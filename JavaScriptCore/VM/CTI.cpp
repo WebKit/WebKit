@@ -334,7 +334,7 @@ ALWAYS_INLINE void CTI::emitFastArithReTagImmediate(X86Assembler::RegisterID reg
 
 ALWAYS_INLINE void CTI::emitFastArithPotentiallyReTagImmediate(X86Assembler::RegisterID reg)
 {
-    m_jit.orl_rr(JSImmediate::TagBitTypeInteger, reg);
+    m_jit.orl_i32r(JSImmediate::TagBitTypeInteger, reg);
 }
 
 ALWAYS_INLINE void CTI::emitFastArithImmToInt(X86Assembler::RegisterID reg)

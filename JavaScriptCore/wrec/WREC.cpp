@@ -685,7 +685,7 @@ void WRECGenerator::generatePatternCharacter(JmpSrcVector& failures, int ch)
         
         // check for ascii case sensitive characters
         if (isASCIIAlpha(ch)) {
-            m_jit.orl_rr(32, currentValueRegister);
+            m_jit.orl_i32r(32, currentValueRegister);
             ch |= 32;
         } else if ((ch > 0x7f) && ((lower = Unicode::toLower(ch)) != (upper = Unicode::toUpper(ch)))) {
             // handle unicode case sentitive characters - branch to success on upper
@@ -824,7 +824,7 @@ void WRECGenerator::generateCharacterClassInverted(JmpSrcVector& matchDest, Char
         }
 
         if (unsigned countAZaz = matchesAZaz.size()) {
-            m_jit.orl_rr(32, currentValueRegister);
+            m_jit.orl_i32r(32, currentValueRegister);
 
             for (unsigned i = 0; i < countAZaz; ++i) {
                 char ch = matchesAZaz[i];

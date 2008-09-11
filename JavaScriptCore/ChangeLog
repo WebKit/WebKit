@@ -1,3 +1,18 @@
+2008-09-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Fix a typo by renaming the overloaded orl_rr that takes an immediate to
+        orl_i32r.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitFastArithPotentiallyReTagImmediate):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::orl_i32r):
+        * wrec/WREC.cpp:
+        (JSC::WRECGenerator::generatePatternCharacter):
+        (JSC::WRECGenerator::generateCharacterClassInverted):
+
 2008-09-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoff Garen.
