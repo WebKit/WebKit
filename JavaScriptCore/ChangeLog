@@ -1,5 +1,31 @@
 2008-09-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
+        Not reviewed.
+
+        Correct an SVN problem with the last commit and actually add the new
+        files.
+
+        * wrec/CharacterClassConstructor.cpp: Added.
+        (JSC::):
+        (JSC::getCharacterClassNewline):
+        (JSC::getCharacterClassDigits):
+        (JSC::getCharacterClassSpaces):
+        (JSC::getCharacterClassWordchar):
+        (JSC::getCharacterClassNondigits):
+        (JSC::getCharacterClassNonspaces):
+        (JSC::getCharacterClassNonwordchar):
+        (JSC::CharacterClassConstructor::addSorted):
+        (JSC::CharacterClassConstructor::addSortedRange):
+        (JSC::CharacterClassConstructor::put):
+        (JSC::CharacterClassConstructor::flush):
+        (JSC::CharacterClassConstructor::append):
+        * wrec/CharacterClassConstructor.h: Added.
+        (JSC::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::CharacterClassConstructor::isUpsideDown):
+        (JSC::CharacterClassConstructor::charClass):
+
+2008-09-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
         Reviewed by Maciej Stachowiak.
 
         Bug 20788: Split CharacterClassConstructor into its own file
