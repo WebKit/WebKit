@@ -66,6 +66,7 @@
 #import <WebCore/LegacyWebArchive.h>
 #import <WebCore/Page.h>
 #import <WebCore/PluginData.h>
+#import <WebCore/RenderPart.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/ReplaceSelectionCommand.h>
@@ -604,6 +605,20 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     }
     
     return pages;
+}
+
+- (BOOL)_getVisibleRect:(NSRect*)rect;
+{
+    ASSERT_ARG(rect, rect);
+    if ([self _needsLayout])
+        return NO;
+
+    if (RenderPart* ownerRenderer = _private->coreFrame->ownerRenderer()) {
+        *rect = ownerRenderer->absoluteClippedOverflowRect();
+        return YES;
+    }
+
+    return NO;
 }
 
 - (NSString *)_stringByEvaluatingJavaScriptFromString:(NSString *)string

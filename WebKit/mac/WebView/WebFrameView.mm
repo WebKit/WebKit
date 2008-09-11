@@ -494,6 +494,33 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
     }
 }
 
+- (NSRect)visibleRect
+{
+    // FIXME: <rdar://problem/6213380> This method does not work correctly with transforms, for two reasons:
+    // 1) [super visibleRect] does not account for the transform, since it is not represented
+    //    in the NSView hierarchy.
+    // 2) -_getVisibleRect: does not correct for transforms.
+
+    NSRect rendererVisibleRect;
+    if (![[self webFrame] _getVisibleRect:&rendererVisibleRect])
+        return [super visibleRect];
+
+    if (NSIsEmptyRect(rendererVisibleRect))
+        return NSZeroRect;
+
+    NSRect viewVisibleRect = [super visibleRect];
+    if (NSIsEmptyRect(viewVisibleRect))
+        return NSZeroRect;
+
+    NSRect frame = [self frame];
+    // rendererVisibleRect is in the parent's coordinate space, and frame is in the superview's coordinate space.
+    // The return value from this method needs to be in this view's coordinate space. We get that right by subtracting
+    // the origins (and correcting for flipping), but when we support transforms, we will need to do better than this.
+    rendererVisibleRect.origin.x -= frame.origin.x;
+    rendererVisibleRect.origin.y = NSMaxY(frame) - NSMaxY(rendererVisibleRect);
+    return NSIntersectionRect(rendererVisibleRect, viewVisibleRect);
+}
+
 - (void)setFrameSize:(NSSize)size
 {
     if (!NSEqualSizes(size, [self frame].size) && [[[self webFrame] webView] drawsBackground]) {

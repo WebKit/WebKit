@@ -1,3 +1,18 @@
+2008-09-11  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - eliminate excessive repainting when a clipped iframe is moved (noticed in <rdar://problem/6204032>)
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _getVisibleRect:]): Added. If the frame is in a RenderPart
+        and has layout, gets the visible rect of the RenderPart and returns
+        YES. Returns NO otherwise.
+        * WebView/WebFrameInternal.h:
+        * WebView/WebFrameView.mm:
+        (-[WebFrameView visibleRect]): Added. Overrides this NSView method to
+        take clipping in the render tree into account.
+
 2008-09-09  Dan Bernstein  <mitz@apple.com>
 
         - Tiger build fix
