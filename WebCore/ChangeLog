@@ -1,5 +1,13 @@
 2008-09-11  David Smith  <catfish.man@gmail.com>
 
+        Rubber-stamped by mitzpettel.
+
+        Remove an accidentally added extra file.
+
+        * WebCore: Removed.
+
+2008-09-11  David Smith  <catfish.man@gmail.com>
+
         Reviewed by Darin
 
         https://bugs.webkit.org/show_bug.cgi?id=20180
