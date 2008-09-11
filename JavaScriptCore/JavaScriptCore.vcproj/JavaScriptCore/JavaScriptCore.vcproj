@@ -1354,6 +1354,13 @@
 			Name="wrec"
 			>
 			<File
+				RelativePath="..\..\wrec\CharacterClassConstructor.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\wrec\CharacterClassConstructor.h"
+				>
+			<File
 				RelativePath="..\..\wrec\WREC.cpp"
 				>
 			</File>

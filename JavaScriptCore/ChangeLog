@@ -1,3 +1,36 @@
+2008-09-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20788: Split CharacterClassConstructor into its own file
+        <https://bugs.webkit.org/show_bug.cgi?id=20788>
+
+        Split CharacterClassConstructor into its own file and clean up some
+        style issues.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wrec/CharacterClassConstructor.cpp: Added.
+        (JSC::):
+        (JSC::getCharacterClassNewline):
+        (JSC::getCharacterClassDigits):
+        (JSC::getCharacterClassSpaces):
+        (JSC::getCharacterClassWordchar):
+        (JSC::getCharacterClassNondigits):
+        (JSC::getCharacterClassNonspaces):
+        (JSC::getCharacterClassNonwordchar):
+        (JSC::CharacterClassConstructor::addSorted):
+        (JSC::CharacterClassConstructor::addSortedRange):
+        (JSC::CharacterClassConstructor::put):
+        (JSC::CharacterClassConstructor::flush):
+        (JSC::CharacterClassConstructor::append):
+        * wrec/CharacterClassConstructor.h: Added.
+        (JSC::CharacterClassConstructor::CharacterClassConstructor):
+        (JSC::CharacterClassConstructor::isUpsideDown):
+        (JSC::CharacterClassConstructor::charClass):
+        * wrec/WREC.cpp:
+        (JSC::WRECParser::parseCharacterClass):
+
 2008-09-10  Simon Hausmann  <hausmann@webkit.org>
 
         Not reviewed but trivial one-liner for yet unused macro.
