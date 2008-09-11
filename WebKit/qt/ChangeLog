@@ -1,5 +1,13 @@
 2008-09-11  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
+        Rubber-stamped by Simon.
+
+        Prevent leaking pages and frames in QWebKit autotest
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+
+2008-09-11  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
         Reviewed by Simon
 
         Fix QtWebKit autotest

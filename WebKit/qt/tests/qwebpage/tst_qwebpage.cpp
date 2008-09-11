@@ -212,7 +212,7 @@ public:
 
 void tst_QWebPage::acceptNavigationRequestWithNewWindow()
 {
-    TestPage* page = new TestPage;
+    TestPage* page = new TestPage(m_view);
     page->settings()->setAttribute(QWebSettings::LinksIncludedInFocusChain, true);
     m_page = page;
     m_view->setPage(m_page);
