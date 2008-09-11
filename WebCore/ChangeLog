@@ -1,3 +1,15 @@
+2008-09-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix assertion on transition property "none"
+        https://bugs.webkit.org/show_bug.cgi?id=20751
+
+        Test: transitions/transition-end-event-set-none.html
+
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateTransitions):
+
 2008-09-11  David Smith  <catfish.man@gmail.com>
 
         Rubber-stamped by mitzpettel.

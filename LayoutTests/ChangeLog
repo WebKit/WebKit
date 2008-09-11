@@ -1,3 +1,13 @@
+2008-09-11  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Test for assertion of transition property "none"
+        https://bugs.webkit.org/show_bug.cgi?id=20751
+
+        * transitions/transition-end-event-set-none-expected.txt: Added.
+        * transitions/transition-end-event-set-none.html: Added.
+
 2008-09-11  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele and Tim.

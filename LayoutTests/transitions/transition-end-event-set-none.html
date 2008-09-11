@@ -1,0 +1,70 @@
+<html>
+<head>
+  <title>Transition End Events</title>
+  <style type="text/css" media="screen">
+    .box {
+      position: relative;
+      left: 0;
+      height: 100px;
+      width: 100px;
+      margin: 10px;
+      background-color: blue;
+      -webkit-transition-property: width, left, background-color, height, top;
+      -webkit-transition-duration: 0.2s;
+    }
+    
+    .box1 {
+      left: 50px;
+    }
+    
+    .box2 {
+      background-color: red;
+      left: 100px;
+    }
+  </style>
+  <script src="end-event-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+
+    var expected = [
+      ["left", "box1", "webkitTransitionEnd", 0.2],
+    ];
+    
+    function startTransition1()
+    {
+      var box = document.getElementById("box1");
+      box.addEventListener("webkitTransitionEnd", handleEndEvent1, false);
+      box.className = "box box1";
+    }
+
+    function handleEndEvent1(event) {
+      recordEvent(event);
+      event.target.style.webkitTransitionProperty = "none";
+      window.setTimeout(startTransition2, 100);
+      window.setTimeout(cleanup, 200);
+    }
+
+    function startTransition2()
+    {
+      var box = document.getElementById("box1");
+      box.className = "box box2";
+    }
+
+    window.addEventListener('load', startTransition1, false);
+  </script>
+</head>
+<body>
+
+<p>Initiating transitions on various properties of all boxes.</p>
+
+<div id="container">
+  <div id="box1" class="box"></div>
+</div>
+
+<div id="result"></div>
+
+</body>
+</html>

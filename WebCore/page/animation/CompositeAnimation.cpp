@@ -59,6 +59,10 @@ void CompositeAnimation::updateTransitions(RenderObject* renderer, const RenderS
             continue;
          
         int prop = anim->property();
+
+        if (prop == cAnimateNone)
+            continue;
+        
         bool all = prop == cAnimateAll;
         
         // Handle both the 'all' and single property cases. For the single prop case, we make only one pass
