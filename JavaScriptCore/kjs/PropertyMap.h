@@ -32,7 +32,7 @@ namespace JSC {
     class JSValue;
     class PropertyNameArray;
 
-    typedef OwnArrayPtr<JSValue*> PropertyStorage;
+    typedef JSValue** PropertyStorage;
 
     struct PropertyMapEntry {
         UString::Rep* key;
@@ -100,9 +100,7 @@ namespace JSC {
         void setHasGetterSetterProperties(bool f) { m_getterSetterFlag = f; }
 
         unsigned size() const { return m_table ? m_table->size : 0; }
-        unsigned markingCount() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
-
-        void resizePropertyStorage(PropertyStorage&, unsigned oldSize);
+        unsigned storageSize() const { return m_table ? m_table->keyCount + m_table->deletedSentinelCount : 0; }
 
     private:
         typedef PropertyMapEntry Entry;

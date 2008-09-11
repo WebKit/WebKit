@@ -70,13 +70,11 @@ void JSObject::mark()
     JSCell::mark();
     m_structureID->mark();
 
-    unsigned storageSize = m_structureID->propertyMap().markingCount();
-    if (storageSize) {
-        for (unsigned i = 0; i < storageSize; ++i) {
-            JSValue* v = m_propertyStorage[i];
-            if (!v->marked())
-                v->mark();
-        }
+    unsigned storageSize = m_structureID->propertyMap().storageSize();
+    for (unsigned i = 0; i < storageSize; ++i) {
+        JSValue* v = m_propertyStorage[i];
+        if (!v->marked())
+            v->mark();
     }
 
     JSOBJECT_MARK_END();
@@ -526,6 +524,18 @@ StructureID* JSObject::createInheritorID()
 bool JSObject::isObject() const
 {
     return true;
+}
+
+void JSObject::allocatePropertyStorage(size_t oldSize, size_t newSize)
+{
+    JSValue** oldPropertStorage = m_propertyStorage;
+    m_propertyStorage = new JSValue*[newSize];
+
+    for (unsigned i = 0; i < oldSize; ++i)
+        m_propertyStorage[i] = oldPropertStorage[i];
+
+    if (oldPropertStorage != m_inlineStorage)
+        delete oldPropertStorage;
 }
 
 JSObject* constructEmptyObject(ExecState* exec)

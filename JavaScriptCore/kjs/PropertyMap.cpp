@@ -428,8 +428,6 @@ void PropertyMap::createTable(PropertyStorage& propertyStorage)
     m_table->size = newTableSize;
     m_table->sizeMask = newTableSize - 1;
 
-    propertyStorage.set(new JSValue*[m_table->size]);
-
     checkConsistency(propertyStorage);
 }
 
@@ -440,13 +438,13 @@ void PropertyMap::rehash(unsigned newTableSize, PropertyStorage& propertyStorage
     checkConsistency(propertyStorage);
 
     Table* oldTable = m_table;
-    JSValue** oldPropertStorage = propertyStorage.release();
+    JSValue** oldPropertStorage = propertyStorage;
 
     m_table = static_cast<Table*>(fastZeroedMalloc(Table::allocationSize(newTableSize)));
     m_table->size = newTableSize;
     m_table->sizeMask = newTableSize - 1;
 
-    propertyStorage.set(new JSValue*[m_table->size]);
+    propertyStorage = new JSValue*[m_table->size];
 
     unsigned lastIndexUsed = 0;
     unsigned entryCount = oldTable->keyCount + oldTable->deletedSentinelCount;
@@ -460,25 +458,6 @@ void PropertyMap::rehash(unsigned newTableSize, PropertyStorage& propertyStorage
 
     fastFree(oldTable);
     delete [] oldPropertStorage;
-
-    checkConsistency(propertyStorage);
-}
-
-void PropertyMap::resizePropertyStorage(PropertyStorage& propertyStorage, unsigned oldSize)
-{
-    ASSERT(m_table);
-
-    if (propertyStorage) {
-        JSValue** oldPropertStorage = propertyStorage.release();
-        propertyStorage.set(new JSValue*[m_table->size]);
-
-        // FIXME: this can probalby use memcpy 
-        for (unsigned i = 0; i < oldSize; ++i)
-            propertyStorage[i] = oldPropertStorage[i];
-
-        delete [] oldPropertStorage;
-    } else
-        propertyStorage.set(new JSValue*[m_table->size]);
 
     checkConsistency(propertyStorage);
 }

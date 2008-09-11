@@ -1737,7 +1737,7 @@ void* CTI::privateCompileGetByIdProto(ExecState* exec, StructureID* structureID,
     // The prototype object definitely exists (if this stub exists the CodeBlock is referencing a StructureID that is
     // referencing the prototype object - let's speculatively load it's table nice and early!)
     JSObject* protoObject = static_cast<JSObject*>(structureID->prototypeForLookup(exec));
-    OwnArrayPtr<JSValue*>* protoPropertyStorage = &protoObject->m_propertyStorage;
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     m_jit.movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
 
     // check eax is an object of the right StructureID.
@@ -1782,9 +1782,9 @@ void* CTI::privateCompileGetByIdChain(ExecState* exec, StructureID* structureID,
 
     StructureID* currStructureID = structureID;
     RefPtr<StructureID>* chainEntries = chain->head();
-    JSCell* protoObject = 0;
+    JSObject* protoObject = 0;
     for (unsigned i = 0; i<count; ++i) {
-        protoObject = static_cast<JSCell*>(currStructureID->prototypeForLookup(exec));
+        protoObject = static_cast<JSObject*>(currStructureID->prototypeForLookup(exec));
         currStructureID = chainEntries[i].get();
 
         // Check the prototype object's StructureID had not changed.
@@ -1793,8 +1793,8 @@ void* CTI::privateCompileGetByIdChain(ExecState* exec, StructureID* structureID,
         bucketsOfFail.append(m_jit.emitUnlinkedJne());
     }
     ASSERT(protoObject);
- 
-    OwnArrayPtr<JSValue*>* protoPropertyStorage = &static_cast<JSObject*>(protoObject)->m_propertyStorage;
+
+    PropertyStorage* protoPropertyStorage = &protoObject->m_propertyStorage;
     m_jit.movl_mr(static_cast<void*>(protoPropertyStorage), X86::edx);
     m_jit.movl_mr(cachedOffset * sizeof(JSValue*), X86::edx, X86::eax);
     m_jit.ret();

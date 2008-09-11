@@ -78,7 +78,7 @@ namespace JSC {
         }
 
         static PassRefPtr<StructureID> changePrototypeTransition(StructureID*, JSValue* prototype);
-        static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, JSValue*, unsigned attributes, bool checkReadOnly, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
+        static PassRefPtr<StructureID> addPropertyTransition(StructureID*, const Identifier& propertyName, JSValue*, unsigned attributes, JSObject* slotBase, PutPropertySlot&, PropertyStorage&);
         static PassRefPtr<StructureID> getterSetterTransition(StructureID*);
         static PassRefPtr<StructureID> toDictionaryTransition(StructureID*);
         static PassRefPtr<StructureID> fromDictionaryTransition(StructureID*);

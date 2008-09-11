@@ -1,3 +1,41 @@
+2008-09-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoff Garen.
+
+        Add inline property storage for JSObject.
+
+        1.2% progression on Sunspider. .5% progression on the v8 test suite.
+
+        * JavaScriptCore.exp:
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileGetByIdProto):
+        (JSC::CTI::privateCompileGetByIdChain):
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::mark): There is no reason to check storageSize now that
+        we start from 0.
+        (JSC::JSObject::allocatePropertyStorage): Allocates/reallocates heap storage.
+        * kjs/JSObject.h:
+        (JSC::JSObject::offsetForLocation): m_propertyStorage is not an OwnArrayPtr
+        now so there is no reason to .get()
+        (JSC::JSObject::usingInlineStorage):
+        (JSC::JSObject::JSObject): Start with m_propertyStorage pointing to the
+        inline storage.
+        (JSC::JSObject::~JSObject): Free the heap storage if not using the inline
+        storage.
+        (JSC::JSObject::putDirect): Switch to the heap storage only when we know
+        we know that we are about to add a property that will overflow the inline
+        storage.
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::createTable): Don't allocate the propertyStorage, that is
+        now handled by JSObject.
+        (JSC::PropertyMap::rehash): PropertyStorage is not a OwnArrayPtr anymore.
+        * kjs/PropertyMap.h:
+        (JSC::PropertyMap::storageSize): Rename from markingCount.
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::addPropertyTransition): Don't resize the property storage
+        if we are using inline storage.
+        * kjs/StructureID.h:
+
 2008-09-10  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoff Garen.
