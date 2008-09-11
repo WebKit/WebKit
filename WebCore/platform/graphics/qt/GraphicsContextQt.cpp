@@ -524,21 +524,26 @@ void GraphicsContext::strokePath()
         return;
 
     QPainter *p = m_data->p();
+    QPen pen = p->pen();
     QPainterPath path = m_data->currentPath;
 
     switch (m_common->state.strokeColorSpace) {
     case SolidColorSpace:
         if (strokeColor().alpha())
-            p->strokePath(path, p->pen());
+            p->strokePath(path, pen);
         break;
-    case PatternColorSpace:
-        p->setBrush(m_common->state.strokePattern.get()->createPlatformPattern(getCTM()));
-        p->strokePath(path, p->pen());
+    case PatternColorSpace: {
+        pen.setBrush(QBrush(m_common->state.strokePattern.get()->createPlatformPattern(getCTM())));
+        p->setPen(pen);
+        p->strokePath(path, pen);
         break;
-    case GradientColorSpace:
-        p->setBrush(*(m_common->state.strokeGradient.get()->platformGradient()));
-        p->strokePath(path, p->pen());
+    }
+    case GradientColorSpace: {
+        pen.setBrush(QBrush(*(m_common->state.strokeGradient.get()->platformGradient())));
+        p->setPen(pen);
+        p->strokePath(path, pen);
         break;
+    }
     }
 }
 
@@ -762,8 +767,8 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
 
     QPainterPath path;
     path.addRect(rect);
-    QPen nPen = m_data->p()->pen();
-    nPen.setWidthF(width);
+    setStrokeThickness(width);
+    m_data->currentPath = path;
 
     strokePath();
 }

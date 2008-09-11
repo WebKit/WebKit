@@ -2,6 +2,20 @@
 
         Reviewed by Simon.
 
+        Fixed stroke() and strokeRect() to support gradients
+        and patterns on Qt.
+
+        [Qt] Canvas stroke don't work for gradients and patterns
+        [https://bugs.webkit.org/show_bug.cgi?id=20749]
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::GraphicsContext::strokePath):
+        (WebCore::GraphicsContext::strokeRect):
+
+2008-09-11  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Simon.
+
         https://bugs.webkit.org/show_bug.cgi?id=20729
 
         Fixed canvas gradients for Qt
