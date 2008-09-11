@@ -1,3 +1,13 @@
+2008-09-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Turn off PGO Optimization on CTI.cpp -> <rdar://problem/6207709>.  Fixes
+        crash on CNN and on Dromaeo.
+        Fix Missing close tag in vcproj. 
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2008-09-11  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Not reviewed.

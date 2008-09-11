@@ -1260,6 +1260,14 @@
 			<File
 				RelativePath="..\..\VM\CTI.cpp"
 				>
+                <FileConfiguration
+                    Name="Release_PGO|Win32"
+					>
+                    <Tool
+						Name="VCCLCompilerTool"
+						WholeProgramOptimization="false"
+					/>
+                </FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\VM\CTI.h"
@@ -1357,9 +1365,10 @@
 				RelativePath="..\..\wrec\CharacterClassConstructor.cpp"
 				>
 			</File>
-			<File
+            <File
 				RelativePath="..\..\wrec\CharacterClassConstructor.h"
 				>
+            </File>
 			<File
 				RelativePath="..\..\wrec\WREC.cpp"
 				>
