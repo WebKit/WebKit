@@ -614,7 +614,43 @@ void CTI::privateCompileMainPass()
             i += 4;
             break;
         }
-        CTI_COMPILE_BINARY_OP(op_mul);
+        case op_mul: {
+            unsigned dst = instruction[i + 1].u.operand;
+            unsigned src1 = instruction[i + 2].u.operand;
+            unsigned src2 = instruction[i + 3].u.operand;
+            if (src1 < m_codeBlock->constantRegisters.size() || src2 < m_codeBlock->constantRegisters.size()) {
+                unsigned constant = src1;
+                unsigned nonconstant = src2;
+                if (!(src1 < m_codeBlock->constantRegisters.size())) {
+                    constant = src2;
+                    nonconstant = src1;
+                }
+                JSValue* value = m_codeBlock->constantRegisters[constant].jsValue(m_exec);
+                if (JSImmediate::isNumber(value)) {
+                    emitGetArg(nonconstant, X86::eax);
+                    emitJumpSlowCaseIfNotImm(X86::eax, i);
+                    emitFastArithImmToInt(X86::eax);
+                    m_jit.imull_i32r( X86::eax, getDeTaggedConstantImmediate(value), X86::eax);
+                    m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+                    emitFastArithPotentiallyReTagImmediate(X86::eax);
+                    emitPutResult(dst);
+                    i += 4;
+                    break;
+                }
+            }
+
+            emitGetArg(src1, X86::eax);
+            emitGetArg(src2, X86::edx);
+            emitJumpSlowCaseIfNotImms(X86::eax, X86::edx, i);
+            emitFastArithDeTagImmediate(X86::eax);
+            emitFastArithImmToInt(X86::edx);
+            m_jit.imull_rr(X86::edx, X86::eax);
+            m_slowCases.append(SlowCaseEntry(m_jit.emitUnlinkedJo(), i));
+            emitFastArithPotentiallyReTagImmediate(X86::eax);
+            emitPutResult(dst);
+            i += 4;
+            break;
+        }
         case op_new_func: {
             FuncDeclNode* func = (m_codeBlock->functions[instruction[i + 2].u.operand]).get();
             emitPutArgConstant(reinterpret_cast<unsigned>(func), 0);
@@ -1282,12 +1318,23 @@ void CTI::privateCompileLinkPass()
     m_jmpTable.clear();
 }
 
+#define CTI_COMPILE_BINARY_OP_SLOW_CASE(name) \
+    case name: { \
+        m_jit.link(iter->from, m_jit.label()); \
+        emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx); \
+        emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx); \
+        emitCall(i, Machine::cti_##name); \
+        emitPutResult(instruction[i + 1].u.operand); \
+        i += 4; \
+        break; \
+    }
+    
 void CTI::privateCompileSlowCases()
 {
     Instruction* instruction = m_codeBlock->instructions.begin();
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end(); ++iter) {
         int i = iter->to;
-       m_jit.emitRestoreArgumentReference();
+        m_jit.emitRestoreArgumentReference();
         switch (m_machine->getOpcodeID(instruction[i].u.opcode)) {
         case op_add: {
             unsigned dst = instruction[i + 1].u.operand;
@@ -1589,6 +1636,7 @@ void CTI::privateCompileSlowCases()
             i += 4;
             break;
         }
+        CTI_COMPILE_BINARY_OP_SLOW_CASE(op_mul);
         default:
             ASSERT_NOT_REACHED();
             break;

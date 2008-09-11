@@ -1,3 +1,23 @@
+2008-09-10  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Inline immediate number version of op_mul.
+
+        Renamed mull_rr to imull_rr as that's what it's 
+        actually doing, and added imull_i32r for the constant
+        case immediate multiply.
+
+        1.1% improvement to SunSpider.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::):
+        (JSC::X86Assembler::imull_rr):
+        (JSC::X86Assembler::imull_i32r):
+
 2008-09-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Not reviewed.

@@ -182,6 +182,7 @@ public:
         OP_PUSH_EAX                     = 0x50,
         OP_POP_EAX                      = 0x58,
         PRE_OPERAND_SIZE                = 0x66,
+        OP_IMUL_GvEvIz                  = 0x69,
         OP_GROUP1_EvIz                  = 0x81,
         OP_GROUP1_EvIb                  = 0x83,
         OP_TEST_EvGv                    = 0x85,
@@ -211,7 +212,7 @@ public:
         OP2_JL_rel32    = 0x8C,
         OP2_JGE_rel32   = 0x8D,
         OP2_JLE_rel32   = 0x8E,
-        OP2_MUL_GvEv    = 0xAF,
+        OP2_IMUL_GvEv   = 0xAF,
         OP2_MOVZX_GvEw  = 0xB7,
 
         GROUP1_OP_ADD = 0,
@@ -472,11 +473,18 @@ public:
         emitModRm_opr(GROUP2_OP_SHL, dst);
     }
 
-    void mull_rr(RegisterID src, RegisterID dst)
+    void imull_rr(RegisterID src, RegisterID dst)
     {
         m_buffer->putByte(OP_2BYTE_ESCAPE);
-        m_buffer->putByte(OP2_MUL_GvEv);
+        m_buffer->putByte(OP2_IMUL_GvEv);
         emitModRm_rr(dst, src);
+    }
+    
+    void imull_i32r(RegisterID src, int32_t value, RegisterID dst)
+    {
+        m_buffer->putByte(OP_IMUL_GvEvIz);
+        emitModRm_rr(dst, src);
+        m_buffer->putInt(value);
     }
 
     void idivl_r(RegisterID dst)
