@@ -1,3 +1,13 @@
+2008-09-10  Simon Hausmann  <hausmann@webkit.org>
+
+        Not reviewed but trivial one-liner for yet unused macro.
+
+        Changed PLATFORM(WINCE) to PLATFORM(WIN_CE) as requested by Mark.
+
+        (part of https://bugs.webkit.org/show_bug.cgi?id=20746)
+
+        * wtf/Platform.h:
+
 2008-09-10  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Oliver Hunt.
