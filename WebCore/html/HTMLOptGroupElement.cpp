@@ -30,6 +30,7 @@
 #include "HTMLNames.h"
 #include "HTMLSelectElement.h"
 #include "RenderMenuList.h"
+#include "NodeRenderStyle.h"
 
 namespace WebCore {
 
@@ -156,6 +157,11 @@ void HTMLOptGroupElement::setRenderStyle(RenderStyle* newStyle)
         newStyle->ref();
     if (oldStyle)
         oldStyle->deref(document()->renderArena());
+}
+    
+RenderStyle* HTMLOptGroupElement::nonRendererRenderStyle() const 
+{ 
+    return m_style; 
 }
 
 String HTMLOptGroupElement::groupLabelText() const

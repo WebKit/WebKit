@@ -1,3 +1,29 @@
+2008-09-11  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Darin
+
+        https://bugs.webkit.org/show_bug.cgi?id=20180
+        
+        This speeds up :nth-child matching as tested by querySelectorAll by around 10% by inlining the common case of Node::renderStyle(). Many thanks to mitzpettel and othermaciej for suggestions and help.
+
+        * WebCore.xcodeproj/project.pbxproj: Add NodeRenderStyle.h
+        * css/CSSStyleSelector.cpp: include NodeRenderStyle.h
+        * dom/Element.cpp: include NodeRenderStyle.h
+        * dom/Node.cpp: Remove the definition of renderStyle()
+        (WebCore::Node::nonRendererRenderStyle):
+        * dom/Node.h: Make renderStyle() nonvirtual and add nonRendererRenderStyle()
+        * dom/NodeRenderStyle.h: Added.
+        (WebCore::Node::renderStyle): Inline the common case of this, call nonRendererRenderStyle for the part that needed to be virtual
+        * html/HTMLOptGroupElement.cpp: include NodeRenderStyle.h
+        * html/HTMLOptGroupElement.h:
+        (WebCore::HTMLOptGroupElement::nonRendererRenderStyle): override to return m_style
+        * html/HTMLOptionElement.cpp: include NodeRenderStyle.h
+        * html/HTMLOptionElement.h:
+        (WebCore::HTMLOptionElement::nonRendererRenderStyle): override to return m_style
+        * rendering/RenderListBox.cpp: include NodeRenderStyle.h
+        * rendering/RenderMenuList.cpp: include NodeRenderStyle.h
+        * svg/SVGUseElement.cpp: include NodeRenderStyle.h
+
 2008-09-11  Kevin McCullough  <kmccullough@apple.com>
 
         Reviewed by Adele and Tim.

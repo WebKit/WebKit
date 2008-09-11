@@ -45,6 +45,7 @@
 #include "SelectionController.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
+#include "NodeRenderStyle.h"
 
 namespace WebCore {
 

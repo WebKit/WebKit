@@ -50,6 +50,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
+#include "NodeRenderStyle.h"
 #include <math.h>
 
 using namespace std;

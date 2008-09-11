@@ -1044,11 +1044,11 @@ RenderObject *Node::createRenderer(RenderArena *arena, RenderStyle *style)
     ASSERT(false);
     return 0;
 }
-
-RenderStyle* Node::renderStyle() const
+    
+RenderStyle* Node::nonRendererRenderStyle() const
 { 
-    return m_renderer ? m_renderer->style() : 0; 
-}
+    return 0; 
+}   
 
 void Node::setRenderStyle(RenderStyle* s)
 {

@@ -36,6 +36,7 @@
 #include "RenderBR.h"
 #include "RenderText.h"
 #include "RenderTheme.h"
+#include "NodeRenderStyle.h"
 #include <math.h>
 
 using namespace std;

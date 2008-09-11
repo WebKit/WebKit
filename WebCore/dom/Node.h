@@ -420,7 +420,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     // Wrapper for nodes that don't have a renderer, but still cache the style (like HTMLOptionElement).
-    virtual RenderStyle* renderStyle() const;
+    RenderStyle* renderStyle() const;
     virtual void setRenderStyle(RenderStyle*);
 
     virtual RenderStyle* computedStyle();
@@ -504,6 +504,8 @@ protected:
     }
 
 private:
+    virtual RenderStyle* nonRendererRenderStyle() const;
+
     DocPtr<Document> m_document;
     Node* m_previous;
     Node* m_next;

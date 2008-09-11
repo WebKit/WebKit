@@ -78,6 +78,7 @@
 #include "XMLNames.h"
 #include "loader.h"
 #include <wtf/Vector.h>
+#include "NodeRenderStyle.h"
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"

@@ -47,6 +47,7 @@
 #include "SVGSymbolElement.h"
 #include "XLinkNames.h"
 #include "XMLSerializer.h"
+#include "NodeRenderStyle.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
