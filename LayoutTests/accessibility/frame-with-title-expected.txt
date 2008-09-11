@@ -1,0 +1,53 @@
+AXRole: AXWebArea
+AXSubrole: (null)
+AXRoleDescription: HTML content
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXWebArea>
+AXSize: NSSize: {100, 100}
+AXTitle: 
+AXDescription: All Packages
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXWebArea>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXLinkUIElements: <array of size 0>
+AXLoaded: 1
+AXLayoutCount: 2
+AXURL: about:blank
+
+
+AXRole: AXWebArea
+AXSubrole: (null)
+AXRoleDescription: HTML content
+AXChildren: <array of size 0>
+AXHelp: 
+AXParent: <AXWebArea>
+AXSize: NSSize: {100, 100}
+AXTitle: 
+AXDescription: packageListFrame
+AXValue: 
+AXFocused: 0
+AXEnabled: 1
+AXWindow: <AXWebArea>
+AXSelectedTextMarkerRange: (null)
+AXStartTextMarker: (null)
+AXEndTextMarker: (null)
+AXVisited: 0
+AXLinkedUIElements: (null)
+AXSelected: 0
+AXBlockQuoteLevel: 0
+AXLinkUIElements: <array of size 0>
+AXLoaded: 1
+AXLayoutCount: 3
+AXURL: about:blank
+
+
+  

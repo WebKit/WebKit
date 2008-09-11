@@ -1,3 +1,13 @@
+2008-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        Add tests for
+        <rdar://problem/6210511> AX: if a frame has a title, that should be reported as the AXWebArea's title
+
+        * accessibility/frame-with-title-expected.txt: Added.
+        * accessibility/frame-with-title.html: Added.
+
 2008-09-10  Sam Weinig  <sam@webkit.org>
 
         Rubber-stamped by David Hyatt.

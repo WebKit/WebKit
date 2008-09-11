@@ -1,0 +1,30 @@
+<html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<body>
+    
+    <div id="result"></div>
+    
+    <iframe id="frame1" src="image-map2.html" width=100 height=100 name="packageListFrame" title="All Packages">
+    </iframe>
+
+    <iframe id="frame2" src="image-map2.html" width=100 height=100 name="packageListFrame" >
+    </iframe>
+
+    <script>
+        if (window.accessibilityController) {
+            var result = document.getElementById("result");
+
+            var labeledItem = document.getElementById("frame1");
+            labeledItem.focus();
+            result.innerText += accessibilityController.focusedElement.allAttributes() + "\n\n"; 
+
+            var labeledItem = document.getElementById("frame2");
+            labeledItem.focus();
+            result.innerText += accessibilityController.focusedElement.allAttributes() + "\n\n"; 
+        }
+    </script>
+</body>
+</html>

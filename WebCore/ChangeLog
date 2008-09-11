@@ -1,3 +1,14 @@
+2008-09-11  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Beth Dakin
+
+        <rdar://problem/6210511> AX: if a frame has a title, that should be reported as the AXWebArea's title
+
+        Test: accessibility/frame-with-title.html
+
+        * page/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::accessibilityDescription):
+
 2008-09-11  Dirk Schulze  <vbs85@gmx.de>
 
         Reviewed by Simon.

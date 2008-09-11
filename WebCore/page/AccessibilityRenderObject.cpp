@@ -875,8 +875,12 @@ String AccessibilityRenderObject::accessibilityDescription() const
         Document *document = m_renderer->document();
         Node* owner = document->ownerElement();
         if (owner) {
-            if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag))
+            if (owner->hasTagName(frameTag) || owner->hasTagName(iframeTag)) {
+                const AtomicString& title = static_cast<HTMLFrameElementBase*>(owner)->getAttribute(titleAttr);
+                if (!title.isEmpty())
+                    return title;
                 return static_cast<HTMLFrameElementBase*>(owner)->name();
+            }
             if (owner->isHTMLElement())
                 return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
         }
