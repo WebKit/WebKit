@@ -40,9 +40,9 @@
            var iframe = document.getElementById('NoScrolliFrame');
            var iframeDocument = iframe.contentDocument;
            if (iframeDocument.body.scrollLeft != 0)
-               log("PASSED");
-           else
                log("FAILED : " + iframeDocument.body.scrollLeft + " pixels have been scrolled");
+           else
+               log("PASSED");
            
            if (window.layoutTestController)
                layoutTestController.notifyDone();

@@ -1,3 +1,11 @@
+2008-09-11  Kevin McCullough  <kmccullough@apple.com>
+
+        RS = Tim.
+
+        Reverted because this caused a crash.
+
+        * fast/events/autoscroll-with-non-scrollable-parent.html:
+
 2008-09-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.

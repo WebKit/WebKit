@@ -1,3 +1,14 @@
+2008-09-11  Kevin McCullough  <kmccullough@apple.com>
+
+        RS by Tim.
+
+        Reverting because this caused a crash.
+
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::canBeProgramaticallyScrolled):
+        (WebCore::RenderObject::hasScrollableView):
+        * rendering/RenderObject.h:
+
 2008-09-11  Dean Jackson  <dino@apple.com>
 
         Reviewed by Dan Bernstein.
