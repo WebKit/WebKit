@@ -1,3 +1,14 @@
+2008-09-11  Dirk Schulze  <vbs85@gmx.de>
+
+        Reviewed by Simon.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20568
+
+        Add support for patterns to Qt.
+
+        * platform/graphics/qt/PatternQt.cpp:
+        (WebCore::Pattern::createPlatformPattern):
+
 2008-09-10  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.
