@@ -1,3 +1,14 @@
+2008-09-11  Kevin McCullough  <kmccullough@apple.com>
+
+        Reviewed by Adele and Tim.
+
+        <rdar://problem/6100597> REGRESSION: clicking on search results in Web
+        Inspector does not scroll to the line of the results (20167)
+        - This was put in by Max to fix some auto scroll behavior but is not
+        correct for the whole web: rdar://problem/6213098
+
+        * fast/events/autoscroll-with-non-scrollable-parent.html:
+
 2008-09-11  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Beth Dakin
