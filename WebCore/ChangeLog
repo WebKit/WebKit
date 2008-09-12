@@ -1,3 +1,15 @@
+2008-09-12  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Mitz Pettel
+
+        Fix the ASSERT and failure in webarchive/archive-empty-frame-source.html
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::mainResource): Further restoration of original WebArchive behavior.
+          Subresources can never be created from nil data, but there is always a MainResource, whether
+          or not there's any data.  So in the case where the main resource has no data, fake it for the
+          sake of creating the ArchiveResource.
+
 2008-09-12  Dave Hyatt  <hyatt@apple.com>
 
         Preparation for major scrollbar rearchitecture.  Eliminate the concept of non-widget based
