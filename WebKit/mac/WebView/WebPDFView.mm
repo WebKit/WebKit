@@ -960,6 +960,11 @@ static BOOL _PDFSelectionsAreEqual(PDFSelection *selectionA, PDFSelection *selec
     [self _openWithFinder:sender];
 }
 
+- (void)PDFViewPerformPrint:(PDFView *)sender
+{
+    CallUIDelegate([self _webView], @selector(webView:printFrameView:), [[dataSource webFrame] frameView]);
+}
+
 - (void)PDFViewSavePDFToDownloadFolder:(PDFView *)sender
 {
     // We don't want to write the file until we have a document to write (see 5267607).
