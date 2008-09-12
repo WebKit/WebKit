@@ -40,22 +40,16 @@ namespace WebCore {
 class KeyframeAnimation : public AnimationBase {
 public:
     KeyframeAnimation(const Animation* animation, RenderObject* renderer, int index, CompositeAnimation* compAnim)
-    : AnimationBase(animation, renderer, compAnim)
-    , m_keyframes(animation->keyframeList())
-    , m_name(animation->name())
-    , m_index(index)
+        : AnimationBase(animation, renderer, compAnim)
+        , m_keyframes(animation->keyframeList())
+        , m_name(animation->name())
+        , m_index(index)
     {
     }
 
-    virtual ~KeyframeAnimation()
-    {
-        // Do the cleanup here instead of in the base class so the specialized methods get called
-        if (!postActive())
-            updateStateMachine(AnimationStateInputEndAnimation, -1);
-    }
+    virtual ~KeyframeAnimation();
 
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle,
-                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
 
     void setName(const String& s) { m_name = s; }
     const AtomicString& name() const { return m_name; }
@@ -64,18 +58,18 @@ public:
     virtual bool shouldFireEvents() const { return true; }
 
 protected:
-    virtual void onAnimationStart(double inElapsedTime);
-    virtual void onAnimationIteration(double inElapsedTime);
-    virtual void onAnimationEnd(double inElapsedTime);
+    virtual void onAnimationStart(double elapsedTime);
+    virtual void onAnimationIteration(double elapsedTime);
+    virtual void onAnimationEnd(double elapsedTime);
     virtual void endAnimation(bool reset);
 
     virtual void overrideAnimations();
     virtual void resumeOverriddenAnimations();
-    
+
     bool shouldSendEventForListener(Document::ListenerType inListenerType);    
-    bool sendAnimationEvent(const AtomicString& inEventType, double inElapsedTime);
-    
-    virtual bool affectsProperty(int property) const;
+    bool sendAnimationEvent(const AtomicString&, double elapsedTime);
+
+    virtual bool affectsProperty(int) const;
 
 private:
     // The keyframes that we are blending.
@@ -85,6 +79,6 @@ private:
     int m_index;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // KeyframeAnimation_h

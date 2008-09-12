@@ -37,68 +37,69 @@
 namespace WebCore {
 
 class AnimationController;
-class RenderStyle;
-class RenderObject;
-class KeyframeAnimation;
 class ImplicitAnimation;
+class KeyframeAnimation;
+class RenderObject;
+class RenderStyle;
 
 // A CompositeAnimation represents a collection of animations that are running
 // on a single RenderObject, such as a number of properties transitioning at once.
 class CompositeAnimation : public Noncopyable {
 public:
     CompositeAnimation(AnimationController* animationController)
-    : m_suspended(false)
-    , m_animationController(animationController)
-    , m_numStyleAvailableWaiters(0)
-    { }
+        : m_suspended(false)
+        , m_animationController(animationController)
+        , m_numStyleAvailableWaiters(0)
+    {
+    }
     
     ~CompositeAnimation();
-        
+
     RenderStyle* animate(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
-    
-    void setAnimating(bool inAnimating);
+
+    void setAnimating(bool);
     bool animating();
-    
+
     bool hasAnimationForProperty(int prop) const { return m_transitions.contains(prop); }
-    
+
     void resetTransitions(RenderObject*);
     void resetAnimations(RenderObject*);
-    
+
     void cleanupFinishedAnimations(RenderObject*);
 
     void setAnimationStartTime(double t);
     void setTransitionStartTime(int property, double t);
-    
+
     void suspendAnimations();
     void resumeAnimations();
     bool suspended() const { return m_suspended; }
-    
+
     void overrideImplicitAnimations(int property);
     void resumeOverriddenImplicitAnimations(int property);
-    
+
     void styleAvailable();
-    
+
     bool isAnimatingProperty(int property, bool isRunningNow) const;
-    
-    void setWaitingForStyleAvailable(bool waiting);
+
+    void setWaitingForStyleAvailable(bool);
 
 protected:
-    void updateTransitions(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle);
-    void updateKeyframeAnimations(RenderObject* renderer, const RenderStyle* currentStyle, RenderStyle* targetStyle);
+    void updateTransitions(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
+    void updateKeyframeAnimations(RenderObject*, const RenderStyle* currentStyle, RenderStyle* targetStyle);
 
-    KeyframeAnimation* findKeyframeAnimation(const AtomicString& name);
-    
+    KeyframeAnimation* getKeyframeAnimation(const AtomicString&);
+
 private:
     typedef HashMap<int, ImplicitAnimation*> CSSPropertyTransitionsMap;
     typedef HashMap<AtomicStringImpl*, KeyframeAnimation*>  AnimationNameMap;
-    
-    CSSPropertyTransitionsMap   m_transitions;
-    AnimationNameMap            m_keyframeAnimations;
-    bool                        m_suspended;
-    AnimationController*        m_animationController;
-    uint32_t                    m_numStyleAvailableWaiters;
+
+    CSSPropertyTransitionsMap m_transitions;
+    AnimationNameMap m_keyframeAnimations;
+    bool m_suspended;
+    AnimationController* m_animationController;
+    unsigned m_numStyleAvailableWaiters;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // CompositeAnimation_h

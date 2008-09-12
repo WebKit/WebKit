@@ -28,52 +28,60 @@
 
 #include "config.h"
 #include "KeyframeAnimation.h"
+
 #include "CompositeAnimation.h"
-#include "SystemTime.h"
-#include "RenderObject.h"
 #include "EventNames.h"
+#include "RenderObject.h"
+#include "SystemTime.h"
 
 namespace WebCore {
+
+KeyframeAnimation::~KeyframeAnimation()
+{
+    // Do the cleanup here instead of in the base class so the specialized methods get called
+    if (!postActive())
+        updateStateMachine(AnimationStateInputEndAnimation, -1);
+}
 
 void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* renderer, const RenderStyle* currentStyle, 
                                     const RenderStyle* targetStyle, RenderStyle*& animatedStyle)
 {
-    // if we have not yet started, we will not have a valid start time, so just start the animation if needed
+    // If we have not yet started, we will not have a valid start time, so just start the animation if needed.
     if (isNew() && m_animation->playState() == AnimPlayStatePlaying)
         updateStateMachine(AnimationStateInputStartAnimation, -1);
-    
+
     // If we get this far and the animation is done, it means we are cleaning up a just finished animation.
-    // If so, we need to send back the targetStyle
+    // If so, we need to send back the targetStyle.
     if (postActive()) {
         if (!animatedStyle)
             animatedStyle = const_cast<RenderStyle*>(targetStyle);
         return;
     }
 
-    // if we are waiting for the start timer, we don't want to change the style yet
+    // If we are waiting for the start timer, we don't want to change the style yet.
     // Special case - if the delay time is 0, then we do want to set the first frame of the
-    // animation right away. This avoids a flash when the animation starts
+    // animation right away. This avoids a flash when the animation starts.
     if (waitingToStart() && m_animation->delay() > 0)
         return;
-    
+
     // FIXME: we need to be more efficient about determining which keyframes we are animating between.
-    // We should cache the last pair or something
-    
-    // find the first key
-    double elapsedTime = (m_startTime > 0) ? ((!paused() ? currentTime() : m_pauseTime) - m_startTime) : 0.0;
-    if (elapsedTime < 0.0)
-        elapsedTime = 0.0;
-        
-    double t = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1.0;
-    int i = (int) t;
+    // We should cache the last pair or something.
+
+    // Find the first key
+    double elapsedTime = (m_startTime > 0) ? ((!paused() ? currentTime() : m_pauseTime) - m_startTime) : 0;
+    if (elapsedTime < 0)
+        elapsedTime = 0;
+
+    double t = m_animation->duration() ? (elapsedTime / m_animation->duration()) : 1;
+    int i = static_cast<int>(t);
     t -= i;
     if (m_animation->direction() && (i & 1))
         t = 1 - t;
 
     RenderStyle* fromStyle = 0;
     RenderStyle* toStyle = 0;
-    double scale = 1.0;
-    double offset = 0.0;
+    double scale = 1;
+    double offset = 0;
     if (m_keyframes.get()) {
         Vector<KeyframeValue>::const_iterator end = m_keyframes->endKeyframes();
         for (Vector<KeyframeValue>::const_iterator it = m_keyframes->beginKeyframes(); it != end; ++it) {
@@ -85,23 +93,23 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
                 toStyle = const_cast<RenderStyle*>(&(it->style));
                 break;
             }
-            
+
             offset = it->key;
             fromStyle = const_cast<RenderStyle*>(&(it->style));
         }
     }
-    
-    // if either style is 0 we have an invalid case, just stop the animation
+
+    // If either style is 0 we have an invalid case, just stop the animation.
     if (!fromStyle || !toStyle) {
         updateStateMachine(AnimationStateInputEndAnimation, -1);
         return;
     }
-    
-    // run a cycle of animation.
-    // We know we will need a new render style, so make one if needed
+
+    // Run a cycle of animation.
+    // We know we will need a new render style, so make one if needed.
     if (!animatedStyle)
         animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
-    
+
     double prog = progress(scale, offset);
 
     HashSet<int>::const_iterator end = m_keyframes->endProperties();
@@ -111,51 +119,52 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     }
 }
 
-void KeyframeAnimation::endAnimation(bool reset)
+void KeyframeAnimation::endAnimation(bool)
 {
     // Restore the original (unanimated) style
     if (m_object)
         setChanged(m_object->element());
 }
 
-bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType inListenerType)
+bool KeyframeAnimation::shouldSendEventForListener(Document::ListenerType listenerType)
 {
-    return m_object->document()->hasListenerType(inListenerType);
-}
-    
-void KeyframeAnimation::onAnimationStart(double inElapsedTime)
-{
-    sendAnimationEvent(EventNames::webkitAnimationStartEvent, inElapsedTime);
+    return m_object->document()->hasListenerType(listenerType);
 }
 
-void KeyframeAnimation::onAnimationIteration(double inElapsedTime)
+void KeyframeAnimation::onAnimationStart(double elapsedTime)
 {
-    sendAnimationEvent(EventNames::webkitAnimationIterationEvent, inElapsedTime);
+    sendAnimationEvent(EventNames::webkitAnimationStartEvent, elapsedTime);
 }
 
-void KeyframeAnimation::onAnimationEnd(double inElapsedTime)
+void KeyframeAnimation::onAnimationIteration(double elapsedTime)
 {
-    if (!sendAnimationEvent(EventNames::webkitAnimationEndEvent, inElapsedTime)) {
+    sendAnimationEvent(EventNames::webkitAnimationIterationEvent, elapsedTime);
+}
+
+void KeyframeAnimation::onAnimationEnd(double elapsedTime)
+{
+    if (!sendAnimationEvent(EventNames::webkitAnimationEndEvent, elapsedTime)) {
         // We didn't dispatch an event, which would call endAnimation(), so we'll just call it here.
         endAnimation(true);
     }
 }
 
-bool KeyframeAnimation::sendAnimationEvent(const AtomicString& inEventType, double inElapsedTime)
+bool KeyframeAnimation::sendAnimationEvent(const AtomicString& eventType, double elapsedTime)
 {
     Document::ListenerType listenerType;
-    if (inEventType == EventNames::webkitAnimationIterationEvent)
+    if (eventType == EventNames::webkitAnimationIterationEvent)
         listenerType = Document::ANIMATIONITERATION_LISTENER;
-    else if (inEventType == EventNames::webkitAnimationEndEvent)
+    else if (eventType == EventNames::webkitAnimationEndEvent)
         listenerType = Document::ANIMATIONEND_LISTENER;
-    else
+    else {
+        ASSERT(eventType == EventNames::webkitAnimationStartEvent);
         listenerType = Document::ANIMATIONSTART_LISTENER;
-    
+    }
+
     if (shouldSendEventForListener(listenerType)) {
-        Element* element = elementForEventDispatch();
-        if (element) {
+        if (Element* element = elementForEventDispatch()) {
             m_waitingForEndEvent = true;
-            m_animationEventDispatcher.startTimer(element, m_name, -1, true, inEventType, inElapsedTime);
+            m_animationEventDispatcher.startTimer(element, m_name, -1, true, eventType, elapsedTime);
             return true; // Did dispatch an event
         }
     }
@@ -183,10 +192,10 @@ bool KeyframeAnimation::affectsProperty(int property) const
 {
     HashSet<int>::const_iterator end = m_keyframes->endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {
-        if ((*it) == property)
+        if (*it == property)
             return true;
     }
     return false;
 }
 
-}
+} // namespace WebCore

@@ -38,57 +38,44 @@ namespace WebCore {
 // for a single RenderObject.
 class ImplicitAnimation : public AnimationBase {
 public:
-    ImplicitAnimation(const Animation* transition, int animatingProperty, RenderObject* renderer, CompositeAnimation* compAnim);    
-    virtual ~ImplicitAnimation()
-    {
-        ASSERT(!m_fromStyle && !m_toStyle);
-        
-        // If we were waiting for an end event, we need to finish the animation to make sure no old
-        // animations stick around in the lower levels
-        if (waitingForEndEvent() && m_object)
-            ASSERT(0);
-        
-        // Do the cleanup here instead of in the base class so the specialized methods get called
-        if (!postActive())
-            updateStateMachine(AnimationStateInputEndAnimation, -1);     
-    }
+    ImplicitAnimation(const Animation*, int animatingProperty, RenderObject*, CompositeAnimation*);
+    virtual ~ImplicitAnimation();
     
     int transitionProperty() const { return m_transitionProperty; }
     int animatingProperty() const { return m_animatingProperty; }
-    
-    virtual void onAnimationEnd(double inElapsedTime);
-    
-    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, 
-                         const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
-    virtual void reset(RenderObject* renderer, const RenderStyle* from = 0, const RenderStyle* to = 0);
-    
-    void setOverridden(bool b);
-    virtual bool overridden() const { return m_overridden; }
-    
-    virtual bool shouldFireEvents() const { return true; }
-    
-    virtual bool affectsProperty(int property) const;
-    
-    bool hasStyle() const { return m_fromStyle && m_toStyle; }
-    
-    bool isTargetPropertyEqual(int prop, const RenderStyle* targetStyle);
 
-    void blendPropertyValueInStyle(int prop, RenderStyle* currentStyle);
-    
+    virtual void onAnimationEnd(double elapsedTime);
+
+    virtual void animate(CompositeAnimation*, RenderObject*, const RenderStyle* currentStyle, const RenderStyle* targetStyle, RenderStyle*& animatedStyle);
+    virtual void reset(RenderObject*, const RenderStyle* from = 0, const RenderStyle* to = 0);
+
+    void setOverridden(bool);
+    virtual bool overridden() const { return m_overridden; }
+
+    virtual bool shouldFireEvents() const { return true; }
+
+    virtual bool affectsProperty(int) const;
+
+    bool hasStyle() const { return m_fromStyle && m_toStyle; }
+
+    bool isTargetPropertyEqual(int, const RenderStyle* targetStyle);
+
+    void blendPropertyValueInStyle(int, RenderStyle* currentStyle);
+
 protected:
-    bool shouldSendEventForListener(Document::ListenerType inListenerType);    
-    bool sendTransitionEvent(const AtomicString& inEventType, double inElapsedTime);
-    
+    bool shouldSendEventForListener(Document::ListenerType);    
+    bool sendTransitionEvent(const AtomicString&, double elapsedTime);
+
 private:
     int m_transitionProperty;   // Transition property as specified in the RenderStyle. May be cAnimateAll
     int m_animatingProperty;    // Specific property for this ImplicitAnimation
     bool m_overridden;          // true when there is a keyframe animation that overrides the transitioning property
-    
+
     // The two styles that we are blending.
     RenderStyle* m_fromStyle;
     RenderStyle* m_toStyle;
 };
 
-}
+} // namespace WebCore
 
-#endif
+#endif // ImplicitAnimation_h
