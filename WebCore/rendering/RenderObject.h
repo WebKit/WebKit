@@ -652,7 +652,6 @@ public:
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     virtual bool canBeProgramaticallyScrolled(bool) const;
-    bool hasScrollableView() const;
     virtual void autoscroll();
     virtual void stopAutoscroll() { }
 

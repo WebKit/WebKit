@@ -1,3 +1,12 @@
+2008-09-12  Kevin McCullough  <kmccullough@apple.com>
+
+        RS by Tim.
+
+        Re-introducing the code since it was not the cause of the crash.
+        See r36343.
+
+        * fast/events/autoscroll-with-non-scrollable-parent.html:
+
 2008-09-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.
