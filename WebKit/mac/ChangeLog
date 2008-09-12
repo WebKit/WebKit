@@ -1,3 +1,13 @@
+2008-09-11  chris fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Support strings for AXLists
+
+        * WebCoreSupport/WebViewFactory.mm:
+        (-[WebViewFactory AXDefinitionListTermText]):
+        (-[WebViewFactory AXDefinitionListDefinitionText]):
+
 2008-09-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by John Sullivan.

@@ -447,6 +447,16 @@
     return UI_STRING("heading", "accessibility role description for headings");
 }
 
+- (NSString *)AXDefinitionListTermText
+{
+    return UI_STRING("term", "term word of a definition");
+}
+
+- (NSString *)AXDefinitionListDefinitionText
+{
+    return UI_STRING("definition", "definition phrase");
+}
+
 - (NSString *)AXButtonActionVerb
 {
     return UI_STRING("press", "Verb stating the action that will occur when a button is pressed, as used by accessibility");
