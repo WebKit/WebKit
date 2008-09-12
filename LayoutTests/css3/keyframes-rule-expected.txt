@@ -17,10 +17,10 @@ PASS rules1.item(1).cssText is '100% { left: 20px; }'
 Insert three new rules
 PASS rules1.length is 5
 PASS rules1.item(0).cssText is '0% { left: 10px; }'
-PASS rules1.item(1).cssText is '20% { left: 50px; }'
+PASS rules1.item(1).cssText is '100% { left: 20px; }'
 PASS rules1.item(2).cssText is '30% { left: 30px; }'
 PASS rules1.item(3).cssText is '60% { left: 60px; }'
-PASS rules1.item(4).cssText is '100% { left: 20px; }'
+PASS rules1.item(4).cssText is '20% { left: 50px; }'
 
 PASS keyframes2.type is window.CSSRule.WEBKIT_KEYFRAMES_RULE
 PASS keyframes2.name is 'test2'

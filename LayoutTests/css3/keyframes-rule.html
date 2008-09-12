@@ -53,11 +53,12 @@ keyframes1.insertRule("30% { left: 30px; }");
 keyframes1.insertRule("60% { left: 60px; }");
 keyframes1.insertRule("20% { left: 50px; }");
 shouldBe("rules1.length", "5");
+
 shouldBe("rules1.item(0).cssText", "'0% { left: 10px; }'");
-shouldBe("rules1.item(1).cssText", "'20% { left: 50px; }'");
+shouldBe("rules1.item(1).cssText", "'100% { left: 20px; }'");
 shouldBe("rules1.item(2).cssText", "'30% { left: 30px; }'");
 shouldBe("rules1.item(3).cssText", "'60% { left: 60px; }'");
-shouldBe("rules1.item(4).cssText", "'100% { left: 20px; }'");
+shouldBe("rules1.item(4).cssText", "'20% { left: 50px; }'");
 
 debug("");
 
