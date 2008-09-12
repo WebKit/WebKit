@@ -216,7 +216,8 @@ static int cssyylex(YYSTYPE* yylval, void* parser)
 %type <string> keyframe_name
 %type <keyframeRule> keyframe_rule
 %type <keyframesRule> keyframes_rule
-%type <val> key
+%type <valueList> key_list
+%type <value> key
 
 %type <integer> property
 
@@ -697,25 +698,39 @@ keyframes_rule:
     | keyframes_rule keyframe_rule maybe_space {
         $$ = $1;
         if ($2)
-            $$->insert($2);
+            $$->append($2);
     }
     ;
 
 keyframe_rule:
-    key maybe_space '{' maybe_space declaration_list '}' {
+    key_list maybe_space '{' maybe_space declaration_list '}' {
         $$ = static_cast<CSSParser*>(parser)->createKeyframeRule($1);
     }
     ;
 
+key_list:
+    key {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = p->createFloatingValueList();
+        $$->addValue(p->sinkFloatingValue($1));
+    }
+    | key_list maybe_space ',' maybe_space key {
+        CSSParser* p = static_cast<CSSParser*>(parser);
+        $$ = $1;
+        if ($$)
+            $$->addValue(p->sinkFloatingValue($5));
+    }
+    ;
+
 key:
-    PERCENTAGE { $$ = (float) $1; }
+    PERCENTAGE { $$.id = 0; $$.isInt = false; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_NUMBER; }
     | IDENT {
-        $$ = -1;
+        $$.id = 0; $$.isInt = false; $$.unit = CSSPrimitiveValue::CSS_NUMBER;
         CSSParserString& str = $1;
         if (equalIgnoringCase(static_cast<const String&>(str), "from"))
-            $$ = 0;
+            $$.fValue = 0;
         else if (equalIgnoringCase(static_cast<const String&>(str), "to"))
-            $$ = 100;
+            $$.fValue = 100;
         else
             YYERROR;
     }

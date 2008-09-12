@@ -418,6 +418,8 @@ bool AnimationBase::blendProperties(int prop, RenderStyle* dst, const RenderStyl
 {
     ASSERT(prop != cAnimateAll);
     // FIXME: Why can this happen?
+    
+    ensurePropertyMap();
     if (prop == cAnimateAll) {
         bool needsTimer = false;
 

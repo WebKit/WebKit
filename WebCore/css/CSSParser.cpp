@@ -4685,12 +4685,22 @@ void CSSParser::deleteFontFaceOnlyValues()
     m_numParsedProperties -= deletedProperties;
 }
 
-WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(float key)
+WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
 {
+    // Create a key string from the passed keys
+    String keyString;
+    for (unsigned i = 0; i < keys->size(); ++i) {
+        float key = (float) keys->valueAt(i)->fValue;
+        if (i != 0)
+            keyString += ",";
+        keyString += String::number(key);
+        keyString += "%";
+    }
+    
     RefPtr<WebKitCSSKeyframeRule> keyframe = WebKitCSSKeyframeRule::create(m_styleSheet);
-
-    keyframe->setKey(key);
+    keyframe->setKeyText(keyString);
     keyframe->setDeclaration(CSSMutableStyleDeclaration::create(0, m_parsedProperties, m_numParsedProperties));
+    
     clearProperties();
 
     WebKitCSSKeyframeRule* keyframePtr = keyframe.get();

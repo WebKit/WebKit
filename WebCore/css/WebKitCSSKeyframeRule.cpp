@@ -32,7 +32,6 @@ namespace WebCore {
 
 WebKitCSSKeyframeRule::WebKitCSSKeyframeRule(CSSStyleSheet* parent)
     : CSSRule(parent)
-    , m_key(0)
 {
 }
 
@@ -42,21 +41,11 @@ WebKitCSSKeyframeRule::~WebKitCSSKeyframeRule()
         m_style->setParent(0);
 }
 
-String WebKitCSSKeyframeRule::keyText() const
-{
-    return String::number(m_key) + "%";
-}
-
-void WebKitCSSKeyframeRule::setKeyText(const String& s)
-{
-    m_key = keyStringToFloat(s);
-}
-
 String WebKitCSSKeyframeRule::cssText() const
 {
-    String result = String::number(m_key);
+    String result = m_key;
 
-    result += "% { ";
+    result += " { ";
     result += m_style->cssText();
     result += "}";
 
@@ -76,24 +65,34 @@ void WebKitCSSKeyframeRule::setDeclaration(PassRefPtr<CSSMutableStyleDeclaration
 }
 
 /* static */
-float WebKitCSSKeyframeRule::keyStringToFloat(const String& s)
+void WebKitCSSKeyframeRule::parseKeyString(const String& s, Vector<float>& keys)
 {
-    float key = 0;
+    keys.clear();
+    Vector<String> strings;
+    s.split(',', strings);
     
-    // for now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
-    if (s == "from")
-        key = 0;
-    else if (s == "to")
-        key = 100;
-    else {
-        if (s.endsWith("%")) {
-            float k = s.substring(0, s.length() - 1).toFloat();
+    for (size_t i = 0; i < strings.size(); ++i) {
+        float key = -1;
+        String cur = strings[i].stripWhiteSpace();
+    
+        // For now the syntax MUST be 'xxx%' or 'from' or 'to', where xxx is a legal floating point number
+        if (cur == "from")
+            key = 0;
+        else if (cur == "to")
+            key = 1;
+        else if (cur.endsWith("%")) {
+            float k = cur.substring(0, cur.length() - 1).toFloat();
             if (k >= 0 && k <= 100)
-                key = k;
+                key = k/100;
         }
+        
+        if (key < 0) {
+            keys.clear();
+            return;
+        }
+        else
+            keys.append(key);
     }
-    
-    return key;
 }
 
 } // namespace WebCore

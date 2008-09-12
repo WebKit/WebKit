@@ -1,3 +1,36 @@
+2008-09-08  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt
+
+        Need to support comma separated list of key times in keyframes selectors
+        https://bugs.webkit.org/show_bug.cgi?id=20680
+
+        Test: animations/keyframes-comma-separated.html
+
+        * css/CSSGrammar.y:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::createKeyframeRule):
+        * css/CSSParser.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::addKeyframeStyle):
+        * css/WebKitCSSKeyframeRule.cpp:
+        (WebCore::WebKitCSSKeyframeRule::WebKitCSSKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::cssText):
+        (WebCore::WebKitCSSKeyframeRule::parseKeyString):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::WebKitCSSKeyframeRule::keyText):
+        (WebCore::WebKitCSSKeyframeRule::setKeyText):
+        (WebCore::WebKitCSSKeyframeRule::getKeys):
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::append):
+        (WebCore::WebKitCSSKeyframesRule::insertRule):
+        (WebCore::WebKitCSSKeyframesRule::deleteRule):
+        (WebCore::WebKitCSSKeyframesRule::findRule):
+        (WebCore::WebKitCSSKeyframesRule::findRuleIndex):
+        * css/WebKitCSSKeyframesRule.h:
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::blendProperties):
+
 2008-09-11  Kevin McCullough  <kmccullough@apple.com>
 
         RS by Tim.

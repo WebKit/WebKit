@@ -165,7 +165,7 @@ namespace WebCore {
         MediaList* createMediaList();
         CSSRule* createCharsetRule(const CSSParserString&);
         CSSRule* createImportRule(const CSSParserString&, MediaList*);
-        WebKitCSSKeyframeRule* createKeyframeRule(float key);
+        WebKitCSSKeyframeRule* createKeyframeRule(CSSParserValueList*);
         WebKitCSSKeyframesRule* createKeyframesRule();
         CSSRule* createMediaRule(MediaList*, CSSRuleList*);
         CSSRuleList* createRuleList();

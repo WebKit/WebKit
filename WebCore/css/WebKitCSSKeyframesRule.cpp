@@ -81,24 +81,8 @@ const WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::item(unsigned index) const
     return (rule && rule->isKeyframeRule()) ? static_cast<const WebKitCSSKeyframeRule*>(rule) : 0;
 }
 
-void WebKitCSSKeyframesRule::insert(WebKitCSSKeyframeRule* rule)
+void WebKitCSSKeyframesRule::append(WebKitCSSKeyframeRule* rule)
 {
-    float key = rule->keyAsPercent();
-
-    for (unsigned i = 0; i < length(); ++i) {
-        if (item(i)->keyAsPercent() == key) {
-            m_lstCSSRules.get()->deleteRule(i);
-            m_lstCSSRules.get()->insertRule(rule, i);
-            return;
-        }
-        if (item(i)->keyAsPercent() > key) {
-            // insert before
-            m_lstCSSRules.get()->insertRule(rule, i);
-            return;
-        }
-    }
-    
-    // append
     m_lstCSSRules.get()->append(rule);
     stylesheet()->styleSheetChanged();
 }
@@ -108,13 +92,12 @@ void WebKitCSSKeyframesRule::insertRule(const String& rule)
     CSSParser p(useStrictParsing());
     RefPtr<CSSRule> newRule = p.parseKeyframeRule(parentStyleSheet(), rule);
     if (newRule.get() && newRule.get()->isKeyframeRule())
-        insert(static_cast<WebKitCSSKeyframeRule*>(newRule.get()));
+        append(static_cast<WebKitCSSKeyframeRule*>(newRule.get()));
 }
 
 void WebKitCSSKeyframesRule::deleteRule(const String& s)
 {
-    float key = WebKitCSSKeyframeRule::keyStringToFloat(s);
-    int i = findRuleIndex(key);
+    int i = findRuleIndex(s);
     if (i >= 0) {
         m_lstCSSRules.get()->deleteRule(i);
         stylesheet()->styleSheetChanged();
@@ -123,15 +106,14 @@ void WebKitCSSKeyframesRule::deleteRule(const String& s)
 
 WebKitCSSKeyframeRule* WebKitCSSKeyframesRule::findRule(const String& s)
 {
-    float key = WebKitCSSKeyframeRule::keyStringToFloat(s);
-    int i = findRuleIndex(key);
+    int i = findRuleIndex(s);
     return (i >= 0) ? item(i) : 0;
 }
 
-int WebKitCSSKeyframesRule::findRuleIndex(float key) const
+int WebKitCSSKeyframesRule::findRuleIndex(const String& key) const
 {
     for (unsigned i = 0; i < length(); ++i) {
-        if (item(i)->keyAsPercent() == key)
+        if (item(i)->keyText() == key)
             return i;
     }
 
