@@ -54,6 +54,7 @@ public:
     void setName(const String& s) { m_name = s; }
     const AtomicString& name() const { return m_name; }
     int index() const { return m_index; }
+    void setIndex(int i) { m_index = i; }
 
     virtual bool shouldFireEvents() const { return true; }
 

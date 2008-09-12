@@ -1,3 +1,24 @@
+2008-09-12  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        When changing one animation in a list, don't reset other animations
+        https://bugs.webkit.org/show_bug.cgi?id=20675
+
+        Test: animations/change-one-anim.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::getNumProperties):
+        * page/animation/AnimationBase.h:
+        * page/animation/AnimationController.cpp:
+        * page/animation/CompositeAnimation.cpp:
+        (WebCore::CompositeAnimation::updateKeyframeAnimations):
+        * page/animation/CompositeAnimation.h:
+        * page/animation/ImplicitAnimation.cpp:
+        * page/animation/KeyframeAnimation.cpp:
+        * page/animation/KeyframeAnimation.h:
+        (WebCore::KeyframeAnimation::setIndex):
+
 2008-09-12  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Mitz Pettel

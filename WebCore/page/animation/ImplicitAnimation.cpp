@@ -27,10 +27,10 @@
  */
 
 #include "config.h"
+#include "CSSPropertyNames.h"
+#include "EventNames.h"
 #include "ImplicitAnimation.h"
 #include "RenderObject.h"
-#include "EventNames.h"
-#include "CSSPropertyNames.h"
 
 namespace WebCore {
 

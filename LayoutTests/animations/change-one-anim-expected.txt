@@ -1,0 +1,2 @@
+This test performs two animations, left and top. It animates over 1 second. At 0.5 second it removes the left animation and the top animation should continue from where it left off.
+PASS

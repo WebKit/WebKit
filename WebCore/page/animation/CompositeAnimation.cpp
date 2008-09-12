@@ -33,6 +33,7 @@
 #include "CSSPropertyNames.h"
 #include "ImplicitAnimation.h"
 #include "KeyframeAnimation.h"
+#include "RenderObject.h"
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -116,59 +117,55 @@ void CompositeAnimation::updateKeyframeAnimations(RenderObject* renderer, const 
     // Nothing to do if the current and target animations are the same
     if (currentStyle && currentStyle->hasAnimations() && targetStyle->hasAnimations() && *(currentStyle->animations()) == *(targetStyle->animations()))
         return;
-
-    int numAnims = 0;
-    bool animsChanged = false;
-
-    // See if the lists match
+        
+    // Mark all existing animations as no longer active
+    AnimationNameMap::const_iterator kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it)
+        it->second->setIndex(-1);
+    
+    // Now mark any still active animations as active and add any new animations
     if (targetStyle->animations()) {
-        numAnims = targetStyle->animations()->size();
+        int numAnims = targetStyle->animations()->size();
         for (int i = 0; i < numAnims; ++i) {
             const Animation* anim = (*targetStyle->animations())[i].get();
 
             if (!anim->isValidAnimation())
-                animsChanged = true;
-            else {
-                KeyframeAnimation* kfAnim = getKeyframeAnimation(anim->name());
-                if (!kfAnim || !kfAnim->animationsMatch(anim))
-                    animsChanged = true;
-                else {
-                    // Animations match, but play states may differ. Update if needed.
-                    kfAnim->updatePlayState(anim->playState() == AnimPlayStatePlaying);
+                continue;
+            
+            // See if there is a current animation for this name
+            KeyframeAnimation* kfAnim = getKeyframeAnimation(anim->name());
+                
+            if (kfAnim) {
+                // There is one so it is still active
 
-                    // Set the saved animation to this new one, just in case the play state has changed.
-                    kfAnim->setAnimation(anim);
-                }
+                // Animations match, but play states may differ. update if needed
+                kfAnim->updatePlayState(anim->playState() == AnimPlayStatePlaying);
+                            
+                // Set the saved animation to this new one, just in case the play state has changed
+                kfAnim->setAnimation(anim);
+                kfAnim->setIndex(i);
+            } else if ((anim->duration() || anim->delay()) && anim->iterationCount()
+                        && anim->keyframeList() && !anim->keyframeList()->isEmpty()) {
+                kfAnim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, i, this);
+                m_keyframeAnimations.set(kfAnim->name().impl(), kfAnim);
             }
         }
     }
 
-    if (!animsChanged && m_keyframeAnimations.size() != numAnims)
-        animsChanged = true;
-
-    if (!animsChanged)
-        return;
-
-    // Animations have changed, update the list.
-    resetAnimations(renderer);
-
-    if (!targetStyle->animations())
-        return;
-
-    // Add all the new animations
-    int index = 0;
-    for (int i = 0; i < numAnims; ++i) {
-        const Animation* anim = (*targetStyle->animations())[i].get();
-
-        if (!anim->isValidAnimation())
-            continue;
-
-        // Don't bother adding the animation if it has no keyframes or won't animate
-        if ((anim->duration() || anim->delay()) && anim->iterationCount()
-                && anim->keyframeList() && !anim->keyframeList()->isEmpty()) {
-            KeyframeAnimation* kfAnim = new KeyframeAnimation(const_cast<Animation*>(anim), renderer, index++, this);
-            m_keyframeAnimations.set(kfAnim->name().impl(), kfAnim);
-        }
+    // Make a list of animations to be removed
+    Vector<AtomicStringImpl*> animsToBeRemoved;
+    kfend = m_keyframeAnimations.end();
+    for (AnimationNameMap::const_iterator it = m_keyframeAnimations.begin(); it != kfend; ++it) {
+        KeyframeAnimation* kfAnim = it->second;
+        if (kfAnim->index() < 0)
+            animsToBeRemoved.append(kfAnim->name().impl());
+    }
+    
+    // Now remove the animations from the list
+    for (size_t j = 0; j < animsToBeRemoved.size(); ++j) {
+        KeyframeAnimation* kfAnim = m_keyframeAnimations.get(animsToBeRemoved[j]);
+        m_keyframeAnimations.remove(animsToBeRemoved[j]);
+        delete kfAnim;
     }
 }
 
@@ -215,7 +212,6 @@ RenderStyle* CompositeAnimation::animate(RenderObject* renderer, const RenderSty
 }
 
 // "animating" means that something is running that requires the timer to keep firing
-// (e.g. a transition).
 void CompositeAnimation::setAnimating(bool animating)
 {
     CSSPropertyTransitionsMap::const_iterator transitionsEnd = m_transitions.end();
