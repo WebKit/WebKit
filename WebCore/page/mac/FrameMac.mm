@@ -348,6 +348,24 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     return result;
 }
 
+NSImage* Frame::nodeImage(Node* node) const
+{
+    RenderObject* renderer = node->renderer();
+    if (!renderer)
+        return nil;
+
+    d->m_doc->updateLayout(); // forces style recalc
+
+    IntRect topLevelRect;
+    NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
+
+    d->m_elementToDraw = node; // invoke special sub-tree drawing mode
+    NSImage* result = imageFromRect(paintingRect);
+    d->m_elementToDraw = 0;
+
+    return result;
+}
+
 NSDictionary* Frame::fontAttributesForSelectionStart() const
 {
     Node* nodeToRemove;

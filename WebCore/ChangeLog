@@ -1,3 +1,20 @@
+2008-09-11  Timothy Hatcher  <timothy@apple.com>
+
+        Add a renderedImage method to DOMNode to get an image
+        of the rendering for the node and it's descendants.
+
+        <rdar://problem/5849349> Would like API to create
+        an image for a DOM node
+
+        Reviewed by Oliver Hunt.
+
+        * bindings/objc/DOM.mm:
+        (-[DOMNode renderedImage]): Call Frame::nodeImage.
+        * bindings/objc/DOMPrivate.h:
+        * page/Frame.h:
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::nodeImage):
+
 2008-09-08  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt

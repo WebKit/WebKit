@@ -454,6 +454,18 @@ static NSArray *kit(const Vector<IntRect>& rects)
 
 @end
 
+@implementation DOMNode (DOMNodeExtensionsPendingPublic)
+
+- (NSImage *)renderedImage
+{
+    if (WebCore::Node *node = [self _node])
+        if (WebCore::Frame* frame = node->document()->frame())
+            return frame->nodeImage(node);
+    return nil;
+}
+
+@end
+
 @implementation DOMRange (DOMRangeExtensions)
 
 - (NSRect)boundingBox

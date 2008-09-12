@@ -306,6 +306,7 @@ public:
 
     NSImage* selectionImage(bool forceBlackText = false) const;
     NSImage* snapshotDragImage(Node*, NSRect* imageRect, NSRect* elementRect) const;
+    NSImage* nodeImage(Node*) const;
 
 private:    
     NSImage* imageFromRect(NSRect) const;
