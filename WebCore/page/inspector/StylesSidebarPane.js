@@ -287,7 +287,7 @@ WebInspector.StylePropertiesSection = function(styleRule, subtitle, computedStyl
         if (!subtitle) {
             if (this.styleRule.parentStyleSheet && this.styleRule.parentStyleSheet.href) {
                 var url = this.styleRule.parentStyleSheet.href;
-                subtitle = WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url).escapeHTML());
+                subtitle = WebInspector.linkifyURL(url, WebInspector.displayNameForURL(url));
                 this.subtitleElement.addStyleClass("file");
             } else if (isUserAgent)
                 subtitle = WebInspector.UIString("user agent stylesheet");

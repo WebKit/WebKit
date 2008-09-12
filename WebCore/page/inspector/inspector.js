@@ -1087,12 +1087,9 @@ WebInspector.linkifyURLAsNode = function(url, linkText, classes, isExternal)
 
 WebInspector.linkifyURL = function(url, linkText, classes, isExternal)
 {
-    if (!linkText)
-        linkText = url.escapeHTML();
-    classes = (classes ? classes + " " : "");
-    classes += isExternal ? "webkit-html-external-link" : "webkit-html-resource-link";
-    var link = "<a href=\"" + url + "\" class=\"" + classes + "\" title=\"" + url + "\" target=\"_blank\">" + linkText + "</a>";
-    return link;
+    // Use the DOM version of this function so as to avoid needing to escape attributes.
+    // FIXME:  Get rid of linkifyURL entirely.
+    return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal).outerHTML;
 }
 
 WebInspector.addMainEventListeners = function(doc)

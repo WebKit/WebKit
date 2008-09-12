@@ -1,3 +1,19 @@
+2008-09-12  Ojan Vafai  <ojan@chromium.org>
+
+        Properly escape contents of links added to the inspector.
+        For now, just build the link with the DOM and get the
+        outerHTML. Eventually, we probably just want to do
+        this entirely with the DOM.
+
+        Reviewed by Timothy Hatcher.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20684
+
+        * manual-tests/inspector/escape-links.html: Added.
+        * page/inspector/StylesSidebarPane.js:
+        * page/inspector/inspector.js:
+        * page/inspector/utilities.js:
+
 2008-09-12  Adele Peterson  <adele@apple.com>
 
         Reviewed by John Sullivan and Kevin McCullough.

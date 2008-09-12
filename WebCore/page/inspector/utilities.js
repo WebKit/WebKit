@@ -784,15 +784,17 @@ function nodeTitleInfo(hasChildren, linkify)
             if (this.hasAttributes()) {
                 for (var i = 0; i < this.attributes.length; ++i) {
                     var attr = this.attributes[i];
-                    var value = attr.value.escapeHTML();
-                    value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
-
                     info.title += " <span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + attr.name.escapeHTML() + "</span>=&#8203;\"";
 
-                    if (linkify && (attr.name === "src" || attr.name === "href"))
+                    var value = attr.value;
+                    if (linkify && (attr.name === "src" || attr.name === "href")) {
+                        var value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
                         info.title += linkify(attr.value, value, "webkit-html-attribute-value", this.nodeName.toLowerCase() == "a");
-                    else
+                    } else {
+                        var value = value.escapeHTML();
+                        value = value.replace(/([\/;:\)\]\}])/g, "$1&#8203;");
                         info.title += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
+                    }
                     info.title += "\"</span>";
                 }
             }
