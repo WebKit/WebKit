@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-class PlatformScrollbar : public Widget, public Scrollbar {
+class PlatformScrollbar : public Scrollbar {
 public:
     static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
     {
@@ -44,7 +44,6 @@ public:
     }
     virtual ~PlatformScrollbar();
 
-    virtual bool isWidget() const { return true; }
     virtual int width() const;
     virtual int height() const;
     virtual void setRect(const IntRect&);

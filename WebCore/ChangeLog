@@ -1,3 +1,30 @@
+2008-09-12  Dave Hyatt  <hyatt@apple.com>
+
+        Preparation for major scrollbar rearchitecture.  Eliminate the concept of non-widget based
+        scrollbars (which we never supported anyway).  Make Scrollbar derive from Widget directly.
+        Remove all the isWidget and hasPlatformScrollbars guards.
+        
+        Reviewed by Tim Hatcher
+
+        * platform/ScrollBar.h:
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        (WebCore::ScrollView::ScrollViewPrivate::setHasVerticalScrollbar):
+        * platform/wx/PlatformScrollBar.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::horizontalScrollbarWidget):
+        (WebCore::RenderLayer::verticalScrollbarWidget):
+        (WebCore::RenderLayer::createScrollbar):
+        (WebCore::RenderLayer::destroyScrollbar):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::~RenderListBox):
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::isPointInOverflowControl):
+
 2008-09-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

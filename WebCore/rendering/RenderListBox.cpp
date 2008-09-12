@@ -84,10 +84,8 @@ RenderListBox::RenderListBox(HTMLSelectElement* element)
 RenderListBox::~RenderListBox()
 {
     if (m_vBar) {
-        if (m_vBar->isWidget()) {
-            if (FrameView* view = node()->document()->view())
-                view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
-        }
+        if (FrameView* view = node()->document()->view())
+            view->removeChild(static_cast<PlatformScrollbar*>(m_vBar.get()));
         m_vBar->setClient(0);
     }
 }
@@ -127,7 +125,7 @@ void RenderListBox::updateFromElement()
         m_optionsWidth = static_cast<int>(ceilf(width));
         m_optionsChanged = false;
         
-        if (!m_vBar && Scrollbar::hasPlatformScrollbars())
+        if (!m_vBar)
             if (FrameView* view = node()->document()->view()) {
                 RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, VerticalScrollbar, SmallScrollbar);
                 view->addChild(widget.get());
@@ -385,7 +383,7 @@ bool RenderListBox::isPointInOverflowControl(HitTestResult& result, int _x, int 
                    height() + borderTopExtra() + borderBottomExtra() - borderTop() - borderBottom());
 
     if (vertRect.contains(_x, _y)) {
-        result.setScrollbar(m_vBar->isWidget() ? static_cast<PlatformScrollbar*>(m_vBar.get()) : 0);
+        result.setScrollbar(static_cast<PlatformScrollbar*>(m_vBar.get()));
         return true;
     }
     return false;

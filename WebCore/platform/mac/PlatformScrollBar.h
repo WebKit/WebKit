@@ -27,7 +27,6 @@
 #define PlatformScrollBar_h
 
 #include "ScrollBar.h"
-#include "Widget.h"
 #include <wtf/PassRefPtr.h>
 
 #ifdef __OBJC__
@@ -39,7 +38,7 @@ typedef int NSScrollerPart;
 
 namespace WebCore {
 
-class PlatformScrollbar : public Widget, public Scrollbar {
+class PlatformScrollbar : public Scrollbar {
 public:
     static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
     {
@@ -54,8 +53,6 @@ public:
     
 private:    
     PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
-
-    virtual bool isWidget() const { return true; }
 
     virtual int width() const;
     virtual int height() const;

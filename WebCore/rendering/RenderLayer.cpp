@@ -1061,14 +1061,14 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
 
 PlatformScrollbar* RenderLayer::horizontalScrollbarWidget() const
 {
-    if (m_hBar && m_hBar->isWidget())
+    if (m_hBar)
         return static_cast<PlatformScrollbar*>(m_hBar.get());
     return 0;
 }
 
 PlatformScrollbar* RenderLayer::verticalScrollbarWidget() const
 {
-    if (m_vBar && m_vBar->isWidget())
+    if (m_vBar)
         return static_cast<PlatformScrollbar*>(m_vBar.get());
     return 0;
 }
@@ -1115,25 +1115,17 @@ bool RenderLayer::isActive() const
 
 PassRefPtr<Scrollbar> RenderLayer::createScrollbar(ScrollbarOrientation orientation)
 {
-    if (Scrollbar::hasPlatformScrollbars()) {
-        RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, orientation, RegularScrollbar);
-        m_object->document()->view()->addChild(widget.get());
-        return widget.release();
-    }
-    
-    // FIXME: Create scrollbars using the engine.
-    return 0;
+    RefPtr<PlatformScrollbar> widget = PlatformScrollbar::create(this, orientation, RegularScrollbar);
+    m_object->document()->view()->addChild(widget.get());        
+    return widget.release();
 }
 
 void RenderLayer::destroyScrollbar(ScrollbarOrientation orientation)
 {
     RefPtr<Scrollbar>& scrollbar = orientation == HorizontalScrollbar ? m_hBar : m_vBar;
     if (scrollbar) {
-        if (scrollbar->isWidget())
-            static_cast<PlatformScrollbar*>(scrollbar.get())->removeFromParent();
+        static_cast<PlatformScrollbar*>(scrollbar.get())->removeFromParent();
         scrollbar->setClient(0);
-
-        // FIXME: Destroy the engine scrollbar.
         scrollbar = 0;
     }
 }
