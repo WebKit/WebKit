@@ -145,30 +145,25 @@ void ScrollViewScrollbar::geometryChanged() const
 
 void ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar(bool hasBar)
 {
-    if (Scrollbar::hasPlatformScrollbars()) {
-        if (hasBar && !hBar && !horizontalAdjustment) {
-            hBar = ScrollViewScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
-            view->addChild(hBar.get());
-        } else if (!hasBar && hBar) {
-            view->removeChild(hBar.get());
-            hBar = 0;
-        }
+    if (hasBar && !hBar && !horizontalAdjustment) {
+        hBar = ScrollViewScrollbar::create(this, HorizontalScrollbar, RegularScrollbar);
+        view->addChild(hBar.get());
+    } else if (!hasBar && hBar) {
+        view->removeChild(hBar.get());
+        hBar = 0;
     }
 }
 
 void ScrollView::ScrollViewPrivate::setHasVerticalScrollbar(bool hasBar)
 {
-    if (Scrollbar::hasPlatformScrollbars()) {
-        if (hasBar && !vBar && !verticalAdjustment) {
-            vBar = ScrollViewScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
-            view->addChild(vBar.get());
-        } else if (!hasBar && vBar) {
-            view->removeChild(vBar.get());
-            vBar = 0;
-        }
+    if (hasBar && !vBar && !verticalAdjustment) {
+        vBar = ScrollViewScrollbar::create(this, VerticalScrollbar, RegularScrollbar);
+        view->addChild(vBar.get());
+    } else if (!hasBar && vBar) {
+        view->removeChild(vBar.get());
+        vBar = 0;
     }
 }
-
 
 void ScrollView::ScrollViewPrivate::scrollBackingStore(const IntSize& scrollDelta)
 {
