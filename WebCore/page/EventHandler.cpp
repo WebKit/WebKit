@@ -706,7 +706,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
     // Another hit test at the main frame level should get us the correct visible result.
     Frame* resultFrame = result.innerNonSharedNode() ? result.innerNonSharedNode()->document()->frame() : 0;
     Frame* mainFrame = m_frame->page()->mainFrame();
-    if (resultFrame && resultFrame != mainFrame && !resultFrame->editor()->insideVisibleArea(result.point())) {
+    if (m_frame != mainFrame && resultFrame && resultFrame != mainFrame && !resultFrame->editor()->insideVisibleArea(result.point())) {
         IntPoint windowPoint = resultFrame->view()->contentsToWindow(result.point());
         IntPoint mainFramePoint = mainFrame->view()->windowToContents(windowPoint);
         result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent);

@@ -1,3 +1,13 @@
+2008-09-12  Adele Peterson  <adele@apple.com>
+
+        Reviewed by John Sullivan and Kevin McCullough.
+
+        Fix for <rdar://problem/6216951> REGRESSION (r36000?): Crash due to infinite recursion into EventHandler::hitTestResultAtPoint() with disconnected frames
+
+        * page/EventHandler.cpp: (WebCore::EventHandler::hitTestResultAtPoint):
+        Hit testing again on the main frame will only work if we aren't already on the main frame.  If we are already on the main frame, that will
+        cause infinite recursion.  This change checks that we're not already on the main frame before hit testing again. 
+
 2008-09-12  Kevin McCullough  <kmccullough@apple.com>
 
         RS by Tim .
