@@ -496,6 +496,10 @@ static inline void addTypesFromClass(NSMutableDictionary *allTypes, Class objCCl
 
 - (NSRect)visibleRect
 {
+    // This method can be called beneath -[NSView dealloc] after we have cleared _private.
+    if (!_private)
+        return [super visibleRect];
+
     // FIXME: <rdar://problem/6213380> This method does not work correctly with transforms, for two reasons:
     // 1) [super visibleRect] does not account for the transform, since it is not represented
     //    in the NSView hierarchy.
