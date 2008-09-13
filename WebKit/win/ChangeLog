@@ -1,5 +1,15 @@
 2008-09-13  Dave Hyatt  <hyatt@apple.com>
 
+        Add ScrollbarTheme to the build.
+        
+        Reviewed by Sam Weinig
+
+        * WebScrollBar.cpp:
+        (WebScrollBar::requestedWidth):
+        (WebScrollBar::requestedHeight):
+
+2008-09-13  Dave Hyatt  <hyatt@apple.com>
+
         More scrollbar refactoring.
         
         Reviewed by Sam Weinig
