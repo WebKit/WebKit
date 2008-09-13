@@ -103,14 +103,14 @@ void QWebFramePrivate::init(QWebFrame *qframe, WebCore::Page *webcorePage, QWebF
     frame->init();
 }
 
-WebCore::PlatformScrollbar *QWebFramePrivate::horizontalScrollBar() const
+WebCore::Scrollbar* QWebFramePrivate::horizontalScrollBar() const
 {
     if (!frame->view())
         return 0;
     return frame->view()->horizontalScrollBar();
 }
 
-WebCore::PlatformScrollbar *QWebFramePrivate::verticalScrollBar() const
+WebCore::Scrollbar* QWebFramePrivate::verticalScrollBar() const
 {
     if (!frame->view())
         return 0;
