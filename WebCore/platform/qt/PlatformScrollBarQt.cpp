@@ -133,6 +133,46 @@ void PlatformScrollbar::setEnabled(bool enabled)
     }
 }
 
+static QStyle::SubControl scPart(const ScrollbarPart& part)
+{
+    switch (part) {
+        case NoPart:
+            return QStyle::SC_None;
+        case BackButtonPart:
+            return QStyle::SC_ScrollBarSubLine;
+        case BackTrackPart:
+            return QStyle::SC_ScrollBarSubPage;
+        case ThumbPart:
+            return QStyle::SC_ScrollBarSlider;
+        case ForwardTrackPart:
+            return QStyle::SC_ScrollBarAddPage;
+        case ForwardButtonPart:
+            return QStyle::SC_ScrollBarAddLine;
+    }
+    
+    return QStyle::SC_None;
+}
+
+static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
+{
+    switch (sc) {
+        case QStyle::SC_None:
+            return NoPart;
+        case QStyle::SC_ScrollBarSubLine:
+            return BackButtonPart;
+        case QStyle::SC_ScrollBarSubPage:
+            return BackTrackPart;
+        case QStyle::SC_ScrollBarSlider:
+            return ThumbPart;
+        case QStyle::SC_ScrollBarAddPage:
+            return ForwardTrackPart;
+        case QStyle::SC_ScrollBarAddLine:
+            return ForwardButtonPart;
+    }
+    
+    return NoPart;
+}
+
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     if (controlSize() != RegularScrollbar) {
@@ -167,11 +207,10 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     m_opt.singleStep = m_lineStep;
     m_opt.minimum = 0;
     m_opt.maximum = qMax(0, m_totalSize - m_visibleSize);
-    if (m_pressedPart != QStyle::SC_None) {
-        m_opt.activeSubControls = m_pressedPart;
-    } else {
-        m_opt.activeSubControls = m_hoveredPart;
-    }
+    if (m_pressedPart != NoPart)
+        m_opt.activeSubControls = scPart(m_pressedPart);
+    else
+        m_opt.activeSubControls = scPart(m_hoveredPart);
 
     const QPoint topLeft = m_opt.rect.topLeft();
 #ifdef Q_WS_MAC
@@ -225,26 +264,6 @@ int PlatformScrollbar::pixelPosToRangeValue(int pos) const
 
     return  QStyle::sliderValueFromPosition(0, m_totalSize - m_visibleSize, pos - thumbMin,
                                             thumbMax - thumbMin, m_opt.upsideDown);
-}
-
-ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
-{
-    switch (sc) {
-        case QStyle::SC_None:
-            return NoPart;
-        case QStyle::SC_ScrollBarSubLine:
-            return BackButtonPart;
-        case QStyle::SC_ScrollBarSubPage:
-            return BackTrackPart;
-        case QStyle::SC_ScrollBarSlider:
-            return ThumbPart;
-        case QStyle::SC_ScrollBarAddPage:
-            return ForwardTrackPart;
-        case QStyle::SC_ScrollBarAddLine:
-            return ForwardButtonPart;
-        default:
-            return NoPart;
-    }
 }
 
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
@@ -305,7 +324,7 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
         } else {
             invalidate();
         }
-        m_hoveredPart = sc;
+        m_hoveredPart = part;
     }
 
     return true;
