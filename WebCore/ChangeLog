@@ -1,3 +1,15 @@
+2008-09-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        - fix <rdar://problem/6171280> REGRESSION (r35667): Assertion failure in WebCore::FrameView::scheduleRelayout() when releasing a page with counters from the b/f cache
+
+        No regression test because the back/forward cache is disabled in DumpRenderTree
+
+        * rendering/RenderContainer.cpp:
+        (WebCore::RenderContainer::invalidateCounters): Bail out if the document
+        is being destroyed.
+
 2008-09-13  Kevin Ollivier  <kevino@theolliviers.com>
 
         wx build fixes for new methods recently introduced.

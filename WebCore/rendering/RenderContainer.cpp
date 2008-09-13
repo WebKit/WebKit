@@ -407,6 +407,9 @@ static void invalidateCountersInContainer(RenderObject* container)
 
 void RenderContainer::invalidateCounters()
 {
+    if (documentBeingDestroyed())
+        return;
+
     invalidateCountersInContainer(beforeAfterContainer(RenderStyle::BEFORE));
     invalidateCountersInContainer(beforeAfterContainer(RenderStyle::AFTER));
 }
