@@ -88,7 +88,6 @@ namespace JSC {
             : JSCell(0)
         {
         }
-        virtual bool isString() const;
 
         virtual JSValue* toPrimitive(ExecState*, PreferredPrimitiveType) const;
         virtual bool getPrimitiveNumber(ExecState*, double& number, JSValue*& value);

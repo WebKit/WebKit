@@ -93,6 +93,8 @@ namespace JSC {
 
         bool isDictionary() const { return m_isDictionary; }
 
+        JSType type() const { return m_type; }
+
         JSValue* storedPrototype() const { return m_prototype; }
         JSValue* prototypeForLookup(ExecState*); 
         

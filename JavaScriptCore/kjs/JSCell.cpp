@@ -215,17 +215,7 @@ JSValue* JSCell::getJSNumber()
     return 0;
 }
 
-bool JSCell::isString() const
-{
-    return false;
-}
-
 bool JSCell::isGetterSetter() const
-{
-    return false;
-}
-
-bool JSCell::isObject() const
 {
     return false;
 }

@@ -1,3 +1,29 @@
+2008-09-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20819: JSValue::isObject() is slow
+        <https://bugs.webkit.org/show_bug.cgi?id=20819>
+
+        Optimize JSCell::isObject() and JSCell::isString() by making them
+        non-virtual calls that rely on the StructureID type information.
+
+        This is a 0.7% speedup on SunSpider and a 1.0% speedup on the V8
+        benchmark suite.
+
+        * JavaScriptCore.exp:
+        * kjs/JSCell.cpp:
+        * kjs/JSCell.h:
+        (JSC::JSCell::isObject):
+        (JSC::JSCell::isString):
+        * kjs/JSObject.cpp:
+        * kjs/JSObject.h:
+        * kjs/JSString.cpp:
+        * kjs/JSString.h:
+        (JSC::JSString::JSString):
+        * kjs/StructureID.h:
+        (JSC::StructureID::type):
+
 2008-09-11  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Oliver Hunt.

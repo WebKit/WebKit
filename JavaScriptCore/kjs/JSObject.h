@@ -182,8 +182,6 @@ namespace JSC {
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 
     private:
-        virtual bool isObject() const;
-
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         StructureID* createInheritorID();
 
