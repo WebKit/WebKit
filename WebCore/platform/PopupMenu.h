@@ -35,6 +35,7 @@ class NSPopUpButtonCell;
 #endif
 #elif PLATFORM(WIN)
 #include "ScrollBar.h"
+#include "ScrollbarClient.h"
 #include <wtf/RefPtr.h>
 typedef struct HWND__* HWND;
 typedef struct HDC__* HDC;

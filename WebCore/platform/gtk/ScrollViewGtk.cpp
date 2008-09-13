@@ -681,7 +681,7 @@ IntPoint ScrollView::contentsToWindow(const IntPoint& contentsPoint) const
     return convertToContainingWindow(viewPoint);
 }
 
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());
     if (m_data->hBar && m_data->hBar->frameGeometry().contains(viewPoint))

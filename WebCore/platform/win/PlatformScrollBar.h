@@ -62,8 +62,6 @@ public:
     static int horizontalScrollbarHeight(ScrollbarControlSize size = RegularScrollbar);
     static int verticalScrollbarWidth(ScrollbarControlSize size = RegularScrollbar);
 
-    void autoscrollTimerFired(Timer<PlatformScrollbar>*);
-
 protected:    
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
@@ -90,23 +88,11 @@ private:
     void paintGripper(HDC, const IntRect& gripperRect) const;
     
     ScrollbarPart hitTest(const PlatformMouseEvent&);
-    
-    void startTimerIfNeeded(double delay);
-    void stopTimerIfNeeded();
-    void autoscrollPressedPart(double delay);
-    ScrollDirection pressedPartScrollDirection();
-    ScrollGranularity pressedPartScrollGranularity();
 
     bool thumbUnderMouse();
 
     void invalidatePart(ScrollbarPart);
     void invalidateTrack();
-
-    ScrollbarPart m_hoveredPart;
-    ScrollbarPart m_pressedPart;
-    int m_pressedPos;
-    Timer<PlatformScrollbar> m_scrollTimer;
-    bool m_overlapsResizer;
 };
 
 }

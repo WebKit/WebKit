@@ -42,6 +42,7 @@
 #include "InsertListCommand.h"
 #include "Page.h"
 #include "ReplaceSelectionCommand.h"
+#include "ScrollBar.h"
 #include "Settings.h"
 #include "Sound.h"
 #include "TypingCommand.h"

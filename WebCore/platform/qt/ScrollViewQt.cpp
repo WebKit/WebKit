@@ -611,7 +611,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_data->m_inUpdateScrollbars = false;
 }
 
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());
     if (m_data->m_hBar && m_data->m_hBar->frameGeometry().contains(viewPoint))
@@ -722,7 +722,7 @@ void ScrollView::wheelEvent(PlatformWheelEvent& e)
 
     PlatformMouseEvent mouseEvent(e.pos(), e.globalPos(), NoButton, MouseEventScroll,
             0, e.shiftKey(), e.ctrlKey(), e.altKey(), e.metaKey(), 0);
-    PlatformScrollbar* scrollBar = scrollbarUnderMouse(mouseEvent);
+    Scrollbar* scrollBar = scrollbarUnderMouse(mouseEvent);
 
     if (scrollBar && scrollBar == verticalScrollBar()) {
         deltaY = (deltaY == 0 ? deltaX : deltaY);

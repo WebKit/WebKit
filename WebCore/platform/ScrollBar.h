@@ -28,6 +28,7 @@
 
 #include <wtf/RefCounted.h>
 #include "ScrollTypes.h"
+#include "Timer.h"
 #include "Widget.h"
 #include <wtf/MathExtras.h>
 
@@ -35,25 +36,12 @@ namespace WebCore {
 
 class GraphicsContext;
 class IntRect;
-class Scrollbar;
+class ScrollbarClient;
 class PlatformMouseEvent;
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
 #define LINE_STEP   40
 #define PAGE_KEEP   40
-
-class ScrollbarClient {
-public:
-    virtual ~ScrollbarClient() {}
-    virtual void valueChanged(Scrollbar*) = 0;
-
-    // Used to obtain a window clip rect.
-    virtual IntRect windowClipRect() const = 0;
-
-    // FIXME: It would be nice to set this state on the scroll bar instead of
-    // having to ask for it from the client at paint time.
-    virtual bool isActive() const = 0;
-};
 
 class Scrollbar : public Widget, public RefCounted<Scrollbar> {
 protected:
@@ -90,11 +78,24 @@ public:
 
     // Used by some platform scrollbars to know when they've been released from capture.
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) { return false; }
-   
+
+    virtual bool handleMousePressEvent(const PlatformMouseEvent&) { return false; }
+
 protected:
     virtual void updateThumbPosition() = 0;
     virtual void updateThumbProportion() = 0;
+    
+    // FIXME: This two methods will not need to be virtual eventually.
+    virtual void invalidatePart(ScrollbarPart part) {}
+    virtual bool thumbUnderMouse() { return false; }
 
+    void autoscrollTimerFired(Timer<Scrollbar>*);
+    void startTimerIfNeeded(double delay);
+    void stopTimerIfNeeded();
+    void autoscrollPressedPart(double delay);
+    ScrollDirection pressedPartScrollDirection();
+    ScrollGranularity pressedPartScrollGranularity();
+    
     ScrollbarClient* client() const { return m_client; }
 
     ScrollbarClient* m_client;
@@ -106,6 +107,12 @@ protected:
     int m_lineStep;
     int m_pageStep;
     float m_pixelStep;
+
+    ScrollbarPart m_hoveredPart;
+    ScrollbarPart m_pressedPart;
+    int m_pressedPos;
+    Timer<Scrollbar> m_scrollTimer;
+    bool m_overlapsResizer;
 };
 
 }

@@ -56,10 +56,6 @@ const double cNormalTimerDelay = 0.05;
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
     : Scrollbar(client, orientation, size)
-    , m_pressedPos(0)
-    , m_pressedPart(QStyle::SC_None)
-    , m_hoveredPart(QStyle::SC_None)
-    , m_scrollTimer(this, &PlatformScrollbar::autoscrollTimerFired)
 {
     QStyle *s = QApplication::style();
 
@@ -231,6 +227,26 @@ int PlatformScrollbar::pixelPosToRangeValue(int pos) const
                                             thumbMax - thumbMin, m_opt.upsideDown);
 }
 
+ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
+{
+    switch (sc) {
+        case QStyle::SC_None:
+            return NoPart;
+        case QStyle::SC_ScrollBarSubLine:
+            return BackButtonPart;
+        case QStyle::SC_ScrollBarSubPage:
+            return BackTrackPart;
+        case QStyle::SC_ScrollBarSlider:
+            return ThumbPart;
+        case QStyle::SC_ScrollBarAddPage:
+            return ForwardTrackPart;
+        case QStyle::SC_ScrollBarAddLine:
+            return ForwardButtonPart;
+        default:
+            return NoPart;
+    }
+}
+
 bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
 {
     const QPoint pos = convertFromContainingWindow(evt.pos());
@@ -242,7 +258,7 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
     QStyle::SubControl sc = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
     m_opt.rect.moveTo(topLeft);
 
-    if (m_pressedPart == QStyle::SC_ScrollBarSlider) {
+    if (m_pressedPart == ThumbPart) {
         // Drag the thumb.
         int thumbPos = thumbPosition();
         int thumbLen = thumbLength();
@@ -269,12 +285,13 @@ bool PlatformScrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
         return true;
     }
 
-    if (m_pressedPart != QStyle::SC_None)
+    if (m_pressedPart != NoPart)
         m_pressedPos = m_orientation == HorizontalScrollbar ? pos.x() : pos.y();
 
-    if (sc != m_hoveredPart) {
-        if (m_pressedPart != QStyle::SC_None) {
-            if (sc == m_pressedPart) {
+    ScrollbarPart part = scrollbarPart(sc);
+    if (part != m_hoveredPart) {
+        if (m_pressedPart != NoPart) {
+            if (part == m_pressedPart) {
                 // The mouse is moving back over the pressed part.  We
                 // need to start up the timer action again.
                 startTimerIfNeeded(cNormalTimerDelay);
@@ -298,7 +315,7 @@ bool PlatformScrollbar::handleMouseOutEvent(const PlatformMouseEvent& evt)
 {
     m_opt.state &= ~QStyle::State_MouseOver;
     m_opt.state &= ~QStyle::State_Sunken;
-    m_hoveredPart = QStyle::SC_None;
+    m_hoveredPart = NoPart;
     invalidate();
     return true;
 }
@@ -330,10 +347,10 @@ bool PlatformScrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
             case QStyle::SC_ScrollBarAddPage:
             case QStyle::SC_ScrollBarSubPage:
             case QStyle::SC_ScrollBarGroove:
-                m_pressedPart = sc;
+                m_pressedPart = scrollbarPart(sc);
                 break;
             default:
-                m_pressedPart = QStyle::SC_None;
+                m_pressedPart = NoPart;
                 return false;
         }
         m_pressedPos = m_orientation == HorizontalScrollbar ? pos.x() : pos.y();
@@ -352,12 +369,12 @@ bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
     QStyle::SubControl scAtMousePoint = QApplication::style()->hitTestComplexControl(QStyle::CC_ScrollBar, &m_opt, pos, 0);
     m_opt.rect.moveTo(topLeft);
 
-    m_hoveredPart = scAtMousePoint;
-    if (m_hoveredPart == QStyle::SC_None)
+    m_hoveredPart = scrollbarPart(scAtMousePoint);
+    if (m_hoveredPart == NoPart)
         m_opt.state &= ~QStyle::State_MouseOver;
 
     m_opt.state &= ~QStyle::State_Sunken;
-    m_pressedPart = QStyle::SC_None;
+    m_pressedPart = NoPart;
     m_pressedPos = 0;
     stopTimerIfNeeded();
     invalidate();
@@ -406,82 +423,6 @@ bool PlatformScrollbar::handleContextMenuEvent(const PlatformMouseEvent& event)
         scroll(horizontal ? ScrollRight : ScrollDown, ScrollByLine, 1);
 #endif // QT_NO_CONTEXTMENU
     return true;
-}
-
-void PlatformScrollbar::startTimerIfNeeded(double delay)
-{
-    // Don't do anything for the thumb.
-    if (m_pressedPart == QStyle::SC_ScrollBarSlider)
-        return;
-
-    // Handle the track.  We halt track scrolling once the thumb is level
-    // with us.
-    if (m_pressedPart == QStyle::SC_ScrollBarGroove && thumbUnderMouse()) {
-        invalidate();
-        m_hoveredPart = QStyle::SC_ScrollBarSlider;
-        return;
-    }
-
-    // We can't scroll if we've hit the beginning or end.
-    ScrollDirection dir = pressedPartScrollDirection();
-    if (dir == ScrollUp || dir == ScrollLeft) {
-        if (m_currentPos == 0)
-            return;
-    } else {
-        if (m_currentPos == m_totalSize - m_visibleSize)
-            return;
-    }
-
-    m_scrollTimer.startOneShot(delay);
-}
-
-void PlatformScrollbar::stopTimerIfNeeded()
-{
-    if (m_scrollTimer.isActive())
-        m_scrollTimer.stop();
-}
-
-void PlatformScrollbar::autoscrollPressedPart(double delay)
-{
-    // Don't do anything for the thumb or if nothing was pressed.
-    if (m_pressedPart == QStyle::SC_ScrollBarSlider || m_pressedPart == QStyle::SC_None)
-        return;
-
-    // Handle the track.
-    if (m_pressedPart == QStyle::SC_ScrollBarGroove && thumbUnderMouse()) {
-        invalidate();
-        m_hoveredPart = QStyle::SC_ScrollBarSlider;
-        return;
-    }
-
-    // Handle the arrows and track.
-    if (scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
-        startTimerIfNeeded(delay);
-}
-
-void PlatformScrollbar::autoscrollTimerFired(Timer<PlatformScrollbar>*)
-{
-    autoscrollPressedPart(cNormalTimerDelay);
-}
-
-ScrollDirection PlatformScrollbar::pressedPartScrollDirection()
-{
-    if (m_orientation == HorizontalScrollbar) {
-        if (m_pressedPart == QStyle::SC_ScrollBarSubLine || m_pressedPart == QStyle::SC_ScrollBarSubPage)
-            return ScrollLeft;
-        return ScrollRight;
-    } else {
-        if (m_pressedPart == QStyle::SC_ScrollBarSubLine || m_pressedPart == QStyle::SC_ScrollBarSubPage)
-            return ScrollUp;
-        return ScrollDown;
-    }
-}
-
-ScrollGranularity PlatformScrollbar::pressedPartScrollGranularity()
-{
-    if (m_pressedPart == QStyle::SC_ScrollBarSubLine || m_pressedPart == QStyle::SC_ScrollBarAddLine)
-        return ScrollByLine;
-    return ScrollByPage;
 }
 
 bool PlatformScrollbar::thumbUnderMouse()

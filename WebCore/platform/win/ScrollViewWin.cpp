@@ -36,12 +36,13 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PlatformScrollBar.h"
+#include "ScrollBar.h"
 #include "PlatformMouseEvent.h"
+#include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderTheme.h"
 #include "Settings.h"
-#include "ScrollBar.h"
+#include "ScrollbarClient.h"
 #include <algorithm>
 #include <winsock2.h>
 #include <windows.h>
@@ -606,7 +607,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     m_data->m_inUpdateScrollbars = false;
 }
 
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     IntPoint viewPoint = convertFromContainingWindow(mouseEvent.pos());
     if (m_data->m_hBar && m_data->m_hBar->frameGeometry().contains(viewPoint))

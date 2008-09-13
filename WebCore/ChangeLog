@@ -1,3 +1,76 @@
+2008-09-12  Dave Hyatt  <hyatt@apple.com>
+
+        Move the member variables of PlatformScrollbar up into Scrollbar.  Move autoscroll timer handling
+        up into scrollbar.  Make sure a bunch of cross-platform code now just uses "Scrollbar" instead of
+        "PlatformScrollbar."
+        
+        Reviewed by Sam Weinig
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * editing/EditorCommand.cpp:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::selectCursor):
+        (WebCore::EventHandler::handleMousePressEvent):
+        (WebCore::EventHandler::handleMouseMoveEvent):
+        * page/EventHandler.h:
+        * page/MouseEventWithHitTestResults.cpp:
+        (WebCore::MouseEventWithHitTestResults::scrollbar):
+        * page/MouseEventWithHitTestResults.h:
+        * page/gtk/EventHandlerGtk.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/mac/EventHandlerMac.mm:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/qt/EventHandlerQt.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/win/EventHandlerWin.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * page/wx/EventHandlerWx.cpp:
+        (WebCore::EventHandler::passMousePressEventToScrollbar):
+        * platform/PopupMenu.h:
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        (WebCore::Scrollbar::autoscrollTimerFired):
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::startTimerIfNeeded):
+        (WebCore::Scrollbar::stopTimerIfNeeded):
+        (WebCore::Scrollbar::pressedPartScrollDirection):
+        (WebCore::Scrollbar::pressedPartScrollGranularity):
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::handleMousePressEvent):
+        (WebCore::Scrollbar::invalidatePart):
+        (WebCore::Scrollbar::thumbUnderMouse):
+        * platform/ScrollView.h:
+        * platform/ScrollbarClient.h: Added.
+        (WebCore::ScrollbarClient::~ScrollbarClient):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::scrollbarPart):
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseOutEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        (WebCore::ScrollView::wheelEvent):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/win/PlatformScrollBarWin.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::scrollbarUnderMouse):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::setScrollbar):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::scrollbar):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestOverflowControls):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.h:
+
 2008-09-12  Steve Falkenburg  <sfalken@apple.com>
 
         Fix Mac build.

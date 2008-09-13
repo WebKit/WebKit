@@ -97,7 +97,7 @@ void HitTestResult::setURLElement(Element* n)
     m_innerURLElement = n; 
 }
 
-void HitTestResult::setScrollbar(PlatformScrollbar* s)
+void HitTestResult::setScrollbar(Scrollbar* s)
 {
     m_scrollbar = s;
 }

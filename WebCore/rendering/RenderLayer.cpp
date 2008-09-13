@@ -1059,20 +1059,6 @@ void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset
     // FIXME (Radar 4118564): We should also autoscroll the window as necessary to keep the point under the cursor in view.
 }
 
-PlatformScrollbar* RenderLayer::horizontalScrollbarWidget() const
-{
-    if (m_hBar)
-        return static_cast<PlatformScrollbar*>(m_hBar.get());
-    return 0;
-}
-
-PlatformScrollbar* RenderLayer::verticalScrollbarWidget() const
-{
-    if (m_vBar)
-        return static_cast<PlatformScrollbar*>(m_vBar.get());
-    return 0;
-}
-
 void RenderLayer::valueChanged(Scrollbar*)
 {
     // Update scroll position from scrollbars.
@@ -1492,7 +1478,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result)
     if (m_vBar) {
         IntRect vBarRect(absBounds.right() - renderer()->borderRight() - m_vBar->width(), absBounds.y() + renderer()->borderTop(), m_vBar->width(), absBounds.height() - (renderer()->borderTop() + renderer()->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize));
         if (vBarRect.contains(result.point())) {
-            result.setScrollbar(verticalScrollbarWidget());
+            result.setScrollbar(m_vBar.get());
             return true;
         }
     }
@@ -1501,7 +1487,7 @@ bool RenderLayer::hitTestOverflowControls(HitTestResult& result)
     if (m_hBar) {
         IntRect hBarRect(absBounds.x() + renderer()->borderLeft(), absBounds.bottom() - renderer()->borderBottom() - m_hBar->height(), absBounds.width() - (renderer()->borderLeft() + renderer()->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize), m_hBar->height());
         if (hBarRect.contains(result.point())) {
-            result.setScrollbar(horizontalScrollbarWidget());
+            result.setScrollbar(m_hBar.get());
             return true;
         }
     }

@@ -50,8 +50,8 @@ class wxScrollWinEvent;
 namespace WebCore {
 
     class FloatRect;
-    class PlatformScrollbar;
     class PlatformWheelEvent;
+    class Scrollbar;
 
     class ScrollView : public Widget {
     public:
@@ -108,7 +108,7 @@ namespace WebCore {
         virtual bool shouldUpdateWhileOffscreen() const = 0;
 
         // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
-        PlatformScrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
+        Scrollbar* scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent);
 
         // This method exists for scrollviews that need to handle wheel events manually.
         // On Mac the underlying NSScrollView just does the scrolling, but on other platforms

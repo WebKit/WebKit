@@ -110,9 +110,7 @@ static Page* pageForScrollView(ScrollView* view)
 }
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
-    : Scrollbar(client, orientation, size), m_hoveredPart(NoPart), m_pressedPart(NoPart), m_pressedPos(0),
-      m_scrollTimer(this, &PlatformScrollbar::autoscrollTimerFired),
-      m_overlapsResizer(false)
+    : Scrollbar(client, orientation, size)
 {
     // Obtain the correct scrollbar sizes from the system.
     if (!cHorizontalWidth) {
@@ -563,82 +561,6 @@ bool PlatformScrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& evt)
         static_cast<FrameView*>(parent())->frame()->eventHandler()->setMousePressed(false);
 
     return true;
-}
-
-void PlatformScrollbar::startTimerIfNeeded(double delay)
-{
-    // Don't do anything for the thumb.
-    if (m_pressedPart == ThumbPart)
-        return;
-
-    // Handle the track.  We halt track scrolling once the thumb is level
-    // with us.
-    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse()) {
-        invalidatePart(m_pressedPart);
-        m_hoveredPart = ThumbPart;
-        return;
-    }
-
-    // We can't scroll if we've hit the beginning or end.
-    ScrollDirection dir = pressedPartScrollDirection();
-    if (dir == ScrollUp || dir == ScrollLeft) {
-        if (m_currentPos == 0)
-            return;
-    } else {
-        if (m_currentPos == m_totalSize - m_visibleSize)
-            return;
-    }
-
-    m_scrollTimer.startOneShot(delay);
-}
-
-void PlatformScrollbar::stopTimerIfNeeded()
-{
-    if (m_scrollTimer.isActive())
-        m_scrollTimer.stop();
-}
-
-void PlatformScrollbar::autoscrollPressedPart(double delay)
-{
-    // Don't do anything for the thumb or if nothing was pressed.
-    if (m_pressedPart == ThumbPart || m_pressedPart == NoPart)
-        return;
-
-    // Handle the track.
-    if ((m_pressedPart == BackTrackPart || m_pressedPart == ForwardTrackPart) && thumbUnderMouse()) {
-        invalidatePart(m_pressedPart);
-        m_hoveredPart = ThumbPart;
-        return;
-    }
-
-    // Handle the arrows and track.
-    if (scroll(pressedPartScrollDirection(), pressedPartScrollGranularity()))
-        startTimerIfNeeded(delay);
-}
-
-void PlatformScrollbar::autoscrollTimerFired(Timer<PlatformScrollbar>*)
-{
-    autoscrollPressedPart(cNormalTimerDelay);
-}
-
-ScrollDirection PlatformScrollbar::pressedPartScrollDirection()
-{
-    if (m_orientation == HorizontalScrollbar) {
-        if (m_pressedPart == BackButtonPart || m_pressedPart == BackTrackPart)
-            return ScrollLeft;
-        return ScrollRight;
-    } else {
-        if (m_pressedPart == BackButtonPart || m_pressedPart == BackTrackPart)
-            return ScrollUp;
-        return ScrollDown;
-    }
-}
-
-ScrollGranularity PlatformScrollbar::pressedPartScrollGranularity()
-{
-    if (m_pressedPart == BackButtonPart || m_pressedPart == ForwardButtonPart)
-        return ScrollByLine;
-    return ScrollByPage;
 }
 
 bool PlatformScrollbar::thumbUnderMouse()

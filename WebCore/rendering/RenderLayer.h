@@ -44,8 +44,8 @@
 #ifndef RenderLayer_h
 #define RenderLayer_h
 
+#include "ScrollbarClient.h"
 #include "RenderObject.h"
-#include "ScrollBar.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
 
@@ -225,9 +225,6 @@ public:
 
     Scrollbar* horizontalScrollbar() { return m_hBar.get(); }
     Scrollbar* verticalScrollbar() { return m_vBar.get(); }
-
-    PlatformScrollbar* horizontalScrollbarWidget() const;
-    PlatformScrollbar* verticalScrollbarWidget() const;
 
     int verticalScrollbarWidth() const;
     int horizontalScrollbarHeight() const;
