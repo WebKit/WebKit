@@ -496,22 +496,6 @@ String AXHeadingText()
     END_BLOCK_OBJC_EXCEPTIONS;
     return String();
 }
-
-String AXDefinitionListTermText()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXDefinitionListTermText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
-}
-    
-String AXDefinitionListDefinitionText()
-{
-    BEGIN_BLOCK_OBJC_EXCEPTIONS;
-    return [[WebCoreViewFactory sharedFactory] AXDefinitionListDefinitionText];
-    END_BLOCK_OBJC_EXCEPTIONS;
-    return String();
-}
     
 String AXButtonActionVerb()
 {

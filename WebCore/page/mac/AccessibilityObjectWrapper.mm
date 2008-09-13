@@ -31,7 +31,6 @@
 
 #import "AXObjectCache.h"
 #import "AccessibilityListBox.h"
-#import "AccessibilityList.h"
 #import "AccessibilityRenderObject.h"
 #import "AccessibilityTable.h"
 #import "AccessibilityTableCell.h"
@@ -60,9 +59,7 @@
 using namespace WebCore;
 using namespace HTMLNames;
 
-// The following is SnowLeopard API
-
-// Cell Tables
+// this is SnowLeopard API
 #ifndef NSAccessibilitySelectedCellsAttribute
 #define NSAccessibilitySelectedCellsAttribute @"AXSelectedCells"
 #endif
@@ -89,15 +86,6 @@ using namespace HTMLNames;
 
 #ifndef NSAccessibilityCellRole
 #define NSAccessibilityCellRole @"AXCell"
-#endif
-
-// Lists
-#ifndef NSAccessibilityContentListSubrole
-#define NSAccessibilityContentListSubrole @"AXContentList"
-#endif
-
-#ifndef NSAccessibilityDefinitionListSubrole
-#define NSAccessibilityDefinitionListSubrole @"AXDefinitionList"
 #endif
 
 @implementation AccessibilityObjectWrapper
@@ -776,7 +764,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
     if (m_object->isTableCell())
         return tableCellAttrs;
     
-    if (m_object->isListBox() || m_object->isList())
+    if (m_object->isListBox())
         return listBoxAttrs;
 
     if (m_object->isProgressIndicator() || m_object->isSlider())
@@ -923,15 +911,13 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { HeadingRole, @"AXHeading" },
         { ListBoxRole, NSAccessibilityListRole },
         { ListBoxOptionRole, NSAccessibilityStaticTextRole },
-        // cells don't exist on tiger or leopard
+        // cells exist only in SnowLeopard
 #if defined(BUILDING_ON_TIGER) || defined(BUILDING_ON_LEOPARD)
         { CellRole, NSAccessibilityGroupRole },
 #else
         { CellRole, NSAccessibilityCellRole },
 #endif
-        { TableHeaderContainerRole, NSAccessibilityGroupRole },
-        { DefinitionListDefinitionRole, NSAccessibilityGroupRole },
-        { DefinitionListTermRole, NSAccessibilityGroupRole }
+        { TableHeaderContainerRole, NSAccessibilityGroupRole }
         
     };
     AccessibilityRoleMap& roleMap = *new AccessibilityRoleMap;
@@ -970,15 +956,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [attachView accessibilityAttributeValue:NSAccessibilitySubroleAttribute];
         }
     }
-    
-    if (m_object->isList()) {
-        AccessibilityList* listObject = static_cast<AccessibilityList*>(m_object);
-        if (listObject->isUnorderedList() || listObject->isOrderedList())
-            return NSAccessibilityContentListSubrole;
-        if (listObject->isDefinitionList())
-            return NSAccessibilityDefinitionListSubrole;
-    }
-    
+
     return nil;
 }
 
@@ -1098,25 +1076,16 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return convertToNSArray(m_object->children());
     }
     
-    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute]) {
-        if (m_object->isListBox()) {
-            AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
-            m_object->selectedChildren(selectedChildrenCopy);
-            return convertToNSArray(selectedChildrenCopy);
-        }
-        return nil;
+    if ([attributeName isEqualToString: NSAccessibilitySelectedChildrenAttribute] && m_object->isListBox()) {
+        AccessibilityObject::AccessibilityChildrenVector selectedChildrenCopy;
+        m_object->selectedChildren(selectedChildrenCopy);
+        return convertToNSArray(selectedChildrenCopy);
     }
     
-    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute]) {
-        if (m_object->isListBox()) {
-            AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
-            m_object->visibleChildren(visibleChildrenCopy);
-            return convertToNSArray(visibleChildrenCopy);
-        }
-        else if (m_object->isList())
-            return [self accessibilityAttributeValue:NSAccessibilityChildrenAttribute];
-
-        return nil;
+    if ([attributeName isEqualToString: NSAccessibilityVisibleChildrenAttribute] && m_object->isListBox()) {
+        AccessibilityObject::AccessibilityChildrenVector visibleChildrenCopy;
+        m_object->visibleChildren(visibleChildrenCopy);
+        return convertToNSArray(visibleChildrenCopy);
     }
     
     
@@ -1313,7 +1282,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         }  
     }
     
-    if ((m_object->isListBox() ||m_object->isList()) && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
+    if (m_object->isListBox() && [attributeName isEqualToString:NSAccessibilityOrientationAttribute])
         return NSAccessibilityVerticalOrientationValue;
 
     if ([attributeName isEqualToString: @"AXSelectedTextMarkerRange"])

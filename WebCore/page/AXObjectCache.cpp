@@ -29,7 +29,6 @@
 #include "config.h"
 #include "AXObjectCache.h"
 
-#include "AccessibilityList.h"
 #include "AccessibilityListBox.h"
 #include "AccessibilityListBoxOption.h"
 #include "AccessibilityImageMapLink.h"
@@ -39,15 +38,12 @@
 #include "AccessibilityTableColumn.h"
 #include "AccessibilityTableHeaderContainer.h"
 #include "AccessibilityTableRow.h"
-#include "HTMLNames.h"
 #include "RenderObject.h"
 
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-using namespace HTMLNames;
-    
 bool AXObjectCache::gAccessibilityEnabled = false;
 bool AXObjectCache::gAccessibilityEnhancedUserInterfaceEnabled = false;
 
@@ -73,12 +69,9 @@ AccessibilityObject* AXObjectCache::get(RenderObject* renderer)
     if (axID)
         obj = m_objects.get(axID).get();
 
-    Node* element = renderer->element();
     if (!obj) {
         if (renderer->isListBox())
             obj = AccessibilityListBox::create(renderer);
-        else if (element && (element->hasTagName(ulTag) || element->hasTagName(olTag) || element->hasTagName(dlTag)))
-            obj = AccessibilityList::create(renderer);
         else if (renderer->isTable())
             obj = AccessibilityTable::create(renderer);
         else if (renderer->isTableRow())

@@ -889,11 +889,6 @@ String AccessibilityRenderObject::accessibilityDescription() const
             return static_cast<HTMLElement*>(owner)->getAttribute(nameAttr);
     }
     
-    if (roleValue() == DefinitionListTermRole)
-        return AXDefinitionListTermText();
-    if (roleValue() == DefinitionListDefinitionRole)
-        return AXDefinitionListDefinitionText();
-    
     return String();
 }
 
@@ -2061,12 +2056,6 @@ AccessibilityRole AccessibilityRenderObject::roleValue() const
     if (headingLevel(m_renderer->element()) != 0)
         return HeadingRole;
     
-    if (node && node->hasTagName(ddTag))
-        return DefinitionListDefinitionRole;
-    
-    if (node && node->hasTagName(dtTag))
-        return DefinitionListTermRole;
-
     if (m_renderer->isBlockFlow() || (node && node->hasTagName(labelTag)))
         return GroupRole;
     
