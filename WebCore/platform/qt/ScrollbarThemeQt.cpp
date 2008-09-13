@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QStyle>
+#include <QStyleOptionSlider>
 #include <QMenu>
 
 namespace WebCore {
