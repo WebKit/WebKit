@@ -20,6 +20,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXHeading: '[edit] Tourette syndrome'>
 
 ------------
 
@@ -44,6 +45,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXStaticText>
 
 ------------
 
@@ -68,6 +70,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
 
 ------------
 

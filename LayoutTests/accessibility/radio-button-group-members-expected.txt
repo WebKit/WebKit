@@ -20,6 +20,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 3>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------
@@ -43,6 +44,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 3>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------
@@ -66,6 +68,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 3>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------
@@ -93,6 +96,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 2>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------
@@ -116,6 +120,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 2>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------
@@ -143,6 +148,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 2>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton: 'Yes'>
 AXTitleUIElement: (null)
 
 ------------
@@ -166,6 +172,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 2>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton: 'No'>
 AXTitleUIElement: (null)
 
 ------------
@@ -193,6 +200,7 @@ AXVisited: 0
 AXLinkedUIElements: <array of size 1>
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXRadioButton>
 AXTitleUIElement: (null)
 
 ------------

@@ -1,3 +1,27 @@
+2008-09-13  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Changes to accomodate <rdar://problem/5060439> Web elements should have an AXTopLevelUIElement
+
+        * accessibility/bounds-for-range-expected.txt:
+        * accessibility/document-attributes-expected.txt:
+        * accessibility/frame-with-title-expected.txt:
+        * accessibility/image-map1-expected.txt:
+        * accessibility/image-map2-expected.txt:
+        * accessibility/internal-link-anchors-expected.txt:
+        * accessibility/internal-link-anchors2-expected.txt:
+        * accessibility/plugin-expected.txt:
+        * accessibility/radio-button-group-members-expected.txt:
+        * accessibility/table-detection-expected.txt:
+        * accessibility/table-with-rules-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-attributes-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-cell-spans-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-cells-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-detection-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-sections-expected.txt:
+        * platform/mac-snowleopard/accessibility/table-with-rules-expected.txt:
+
 2008-09-12  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Dave Hyatt.

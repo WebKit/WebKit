@@ -25,6 +25,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -55,6 +56,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -85,6 +87,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXTable>
 AXRows: <array of size 1>
 AXVisibleRows: <array of size 1>
 AXColumns: <array of size 2>
@@ -115,6 +118,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXStaticText>
 
 
 AXRole: AXStaticText
@@ -137,6 +141,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXStaticText>
 
 
 

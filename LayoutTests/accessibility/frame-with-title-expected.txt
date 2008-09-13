@@ -18,6 +18,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXWebArea>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
 AXLayoutCount: 2
@@ -44,6 +45,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXWebArea>
 AXLinkUIElements: <array of size 0>
 AXLoaded: 1
 AXLayoutCount: 3

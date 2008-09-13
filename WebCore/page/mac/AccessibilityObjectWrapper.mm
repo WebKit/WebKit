@@ -601,6 +601,7 @@ static WebCoreTextMarkerRange* textMarkerRangeFromVisiblePositions(VisiblePositi
                       NSAccessibilityLinkedUIElementsAttribute,
                       NSAccessibilitySelectedAttribute,
                       @"AXBlockQuoteLevel",
+                      NSAccessibilityTopLevelUIElementAttribute,
                       nil];
     }
     if (commonMenuAttrs == nil) {

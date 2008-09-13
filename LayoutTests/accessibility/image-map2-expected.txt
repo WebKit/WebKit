@@ -20,6 +20,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: 0
+AXTopLevelUIElement: <AXGroup>
 
 ------------
 AXRole: AXLink
@@ -42,6 +43,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: (null)
+AXTopLevelUIElement: <AXLink>
 
 ------------
 AXRole: AXLink
@@ -64,6 +66,7 @@ AXVisited: 0
 AXLinkedUIElements: (null)
 AXSelected: 0
 AXBlockQuoteLevel: (null)
+AXTopLevelUIElement: <AXLink>
 
 ------------
 
