@@ -1,3 +1,16 @@
+2008-09-13  David Hyatt  <hyatt@apple.com>
+
+        Move maximum() from Qt's PlatformScrollbar to be a cross-platform
+        function on Scrollbar.  Fixes Qt build bustage.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::orientation):
+        (WebCore::Scrollbar::value):
+        (WebCore::Scrollbar::maximum):
+        * platform/qt/PlatformScrollBar.h:
+
 2008-09-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

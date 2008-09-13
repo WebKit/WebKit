@@ -54,8 +54,10 @@ public:
     void setClient(ScrollbarClient* client) { m_client = client; }
 
     ScrollbarOrientation orientation() const { return m_orientation; }
-    int value() const { return lroundf(m_currentPos); } 
     
+    int value() const { return lroundf(m_currentPos); }     
+    int maximum() const { return m_totalSize - m_visibleSize; }
+
     ScrollbarControlSize controlSize() const { return m_controlSize; }
 
     void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
