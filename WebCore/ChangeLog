@@ -1,3 +1,20 @@
+2008-09-13  Kevin Ollivier  <kevino@theolliviers.com>
+
+        wx build fixes for new methods recently introduced.
+
+        * platform/graphics/wx/AffineTransformWx.cpp:
+        (WebCore::AffineTransform::AffineTransform):
+        (WebCore::AffineTransform::setMatrix):
+        (WebCore::AffineTransform::setA):
+        (WebCore::AffineTransform::setB):
+        (WebCore::AffineTransform::setC):
+        (WebCore::AffineTransform::setD):
+        (WebCore::AffineTransform::setE):
+        (WebCore::AffineTransform::setF):
+        * platform/wx/LocalizedStringsWx.cpp:
+        (WebCore::AXDefinitionListTermText):
+        (WebCore::AXDefinitionListDefinitionText):
+
 2008-09-12  Dave Hyatt  <hyatt@apple.com>
 
         Move the member variables of PlatformScrollbar up into Scrollbar.  Move autoscroll timer handling
