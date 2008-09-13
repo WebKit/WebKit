@@ -45,6 +45,8 @@ public:
         , m_name(animation->name())
         , m_index(index)
     {
+        // Set the transform animation list
+        validateTransformFunctionList();
     }
 
     virtual ~KeyframeAnimation();
@@ -71,6 +73,8 @@ protected:
     bool sendAnimationEvent(const AtomicString&, double elapsedTime);
 
     virtual bool affectsProperty(int) const;
+
+    void validateTransformFunctionList();
 
 private:
     // The keyframes that we are blending.

@@ -22,6 +22,8 @@
 #include "config.h"
 #include "RenderStyle.h"
 
+#include <algorithm>
+
 #include "CachedImage.h"
 #include "CSSStyleSelector.h"
 #include "FontSelector.h"
@@ -472,12 +474,12 @@ bool StyleTransformData::operator==(const StyleTransformData& o) const
 
 bool TransformOperations::operator==(const TransformOperations& o) const
 {
-    if (m_operations.size() != o.m_operations.size())
+    if (size() != o.size())
         return false;
         
-    unsigned s = m_operations.size();
+    unsigned s = size();
     for (unsigned i = 0; i < s; i++) {
-        if (*m_operations[i] != *o.m_operations[i])
+        if (*at(i) != *o.at(i))
             return false;
     }
     
@@ -486,62 +488,62 @@ bool TransformOperations::operator==(const TransformOperations& o) const
 
 PassRefPtr<TransformOperation> ScaleTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
-    if (from && !from->isScaleOperation())
+    if (from && !from->isSameType(*this))
         return this;
     
     if (blendToIdentity)
-        return ScaleTransformOperation::create(m_x + (1. - m_x) * progress, m_y + (1. - m_y) * progress);
+        return ScaleTransformOperation::create(m_x + (1. - m_x) * progress, m_y + (1. - m_y) * progress, m_type);
     
     const ScaleTransformOperation* fromOp = static_cast<const ScaleTransformOperation*>(from);
     double fromX = fromOp ? fromOp->m_x : 1.;
     double fromY = fromOp ? fromOp->m_y : 1.;
-    return ScaleTransformOperation::create(fromX + (m_x - fromX) * progress, fromY + (m_y - fromY) * progress);
+    return ScaleTransformOperation::create(fromX + (m_x - fromX) * progress, fromY + (m_y - fromY) * progress, m_type);
 }
 
 PassRefPtr<TransformOperation> RotateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
-    if (from && !from->isRotateOperation())
+    if (from && !from->isSameType(*this))
         return this;
     
     if (blendToIdentity)
-        return RotateTransformOperation::create(m_angle - m_angle * progress);
+        return RotateTransformOperation::create(m_angle - m_angle * progress, m_type);
     
     const RotateTransformOperation* fromOp = static_cast<const RotateTransformOperation*>(from);
     double fromAngle = fromOp ? fromOp->m_angle : 0;
-    return RotateTransformOperation::create(fromAngle + (m_angle - fromAngle) * progress);
+    return RotateTransformOperation::create(fromAngle + (m_angle - fromAngle) * progress, m_type);
 }
 
 PassRefPtr<TransformOperation> SkewTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
-    if (from && !from->isSkewOperation())
+    if (from && !from->isSameType(*this))
         return this;
     
     if (blendToIdentity)
-        return SkewTransformOperation::create(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress);
+        return SkewTransformOperation::create(m_angleX - m_angleX * progress, m_angleY - m_angleY * progress, m_type);
     
     const SkewTransformOperation* fromOp = static_cast<const SkewTransformOperation*>(from);
     double fromAngleX = fromOp ? fromOp->m_angleX : 0;
     double fromAngleY = fromOp ? fromOp->m_angleY : 0;
-    return SkewTransformOperation::create(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress);
+    return SkewTransformOperation::create(fromAngleX + (m_angleX - fromAngleX) * progress, fromAngleY + (m_angleY - fromAngleY) * progress, m_type);
 }
 
 PassRefPtr<TransformOperation> TranslateTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
-    if (from && !from->isTranslateOperation())
+    if (from && !from->isSameType(*this))
         return this;
     
     if (blendToIdentity)
-        return TranslateTransformOperation::create(Length(m_x.type()).blend(m_x, progress), Length(m_y.type()).blend(m_y, progress));
+        return TranslateTransformOperation::create(Length(m_x.type()).blend(m_x, progress), Length(m_y.type()).blend(m_y, progress), m_type);
 
     const TranslateTransformOperation* fromOp = static_cast<const TranslateTransformOperation*>(from);
     Length fromX = fromOp ? fromOp->m_x : Length(m_x.type());
     Length fromY = fromOp ? fromOp->m_y : Length(m_y.type());
-    return TranslateTransformOperation::create(m_x.blend(fromX, progress), m_y.blend(fromY, progress));
+    return TranslateTransformOperation::create(m_x.blend(fromX, progress), m_y.blend(fromY, progress), m_type);
 }
 
 PassRefPtr<TransformOperation> MatrixTransformOperation::blend(const TransformOperation* from, double progress, bool blendToIdentity)
 {
-    if (from && !from->isMatrixOperation())
+    if (from && !from->isSameType(*this))
         return this;
 
     // convert the TransformOperations into matrices
@@ -1692,7 +1694,10 @@ void RenderStyle::applyTransform(AffineTransform& transform, const IntSize& bord
     unsigned i;
     if (includeTransformOrigin) {
         for (i = 0; i < s; i++) {
-            if (!rareNonInheritedData->m_transform->m_operations[i]->isTranslateOperation()) {
+            TransformOperation::OperationType type = rareNonInheritedData->m_transform->m_operations[i]->getOperationType();
+            if (type != TransformOperation::TRANSLATE_X && 
+                    type != TransformOperation::TRANSLATE_Y && 
+                    type != TransformOperation::TRANSLATE) {
                 applyTransformOrigin = true;
                 break;
             }

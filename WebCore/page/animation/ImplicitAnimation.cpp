@@ -83,7 +83,7 @@ void ImplicitAnimation::animate(CompositeAnimation* animation, RenderObject* ren
     if (!animatedStyle)
         animatedStyle = new (renderer->renderArena()) RenderStyle(*targetStyle);
 
-    if (blendProperties(m_animatingProperty, animatedStyle, m_fromStyle, m_toStyle, progress(1, 0)))
+    if (blendProperties(this, m_animatingProperty, animatedStyle, m_fromStyle, m_toStyle, progress(1, 0)))
         setAnimating();
 }
 
@@ -135,6 +135,9 @@ void ImplicitAnimation::reset(RenderObject* renderer, const RenderStyle* from /*
     // Restart the transition
     if (from && to)
         updateStateMachine(AnimationStateInputRestartAnimation, -1);
+        
+    // set the transform animation list
+    validateTransformFunctionList();
 }
 
 void ImplicitAnimation::setOverridden(bool b)
@@ -158,7 +161,43 @@ bool ImplicitAnimation::isTargetPropertyEqual(int prop, const RenderStyle* targe
 
 void ImplicitAnimation::blendPropertyValueInStyle(int prop, RenderStyle* currentStyle)
 {
-    blendProperties(prop, currentStyle, m_fromStyle, m_toStyle, progress(1, 0));
+    blendProperties(this, prop, currentStyle, m_fromStyle, m_toStyle, progress(1, 0));
+}
+
+void ImplicitAnimation::validateTransformFunctionList()
+{
+    m_transformFunctionListValid = false;
+    
+    if (!m_fromStyle || !m_toStyle)
+        return;
+        
+    const TransformOperations* val = &m_fromStyle->transform();
+    const TransformOperations* toVal = &m_toStyle->transform();
+
+    if (val->isEmpty())
+        val = toVal;
+
+    if (val->isEmpty())
+        return;
+        
+    // See if the keyframes are valid
+    if (val != toVal) {
+        // A list of length 0 matches anything
+        if (!toVal->isEmpty()) {
+            // If the sizes of the function lists don't match, the lists don't match
+            if (val->size() != toVal->size())
+                return;
+        
+            // If the types of each function are not the same, the lists don't match
+            for (size_t j = 0; j < val->size(); ++j) {
+                if (!val->at(j)->isSameType(*toVal->at(j)))
+                    return;
+            }
+        }
+    }
+
+    // Keyframes are valid
+    m_transformFunctionListValid = true;
 }
 
 } // namespace WebCore

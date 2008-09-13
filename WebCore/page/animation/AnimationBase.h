@@ -241,6 +241,8 @@ public:
         return !postActive() && affectsProperty(property);
     }
 
+    bool isTransformFunctionListValid() const { return m_transformFunctionListValid; }
+    
 protected:
     Element* elementForEventDispatch();
 
@@ -263,7 +265,7 @@ protected:
     static int getNumProperties();
 
     // Return true if we need to start software animation timers
-    static bool blendProperties(int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
+    static bool blendProperties(const AnimationBase* anim, int prop, RenderStyle* dst, const RenderStyle* a, const RenderStyle* b, double progress);
     
     static void setChanged(Node*);
 
@@ -282,6 +284,7 @@ protected:
     RefPtr<Animation> m_animation;
     CompositeAnimation* m_compAnim;
     bool m_waitingForEndEvent;
+    bool m_transformFunctionListValid;
 };
 
 } // namespace WebCore

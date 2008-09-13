@@ -66,6 +66,8 @@ protected:
     bool shouldSendEventForListener(Document::ListenerType);    
     bool sendTransitionEvent(const AtomicString&, double elapsedTime);
 
+    void validateTransformFunctionList();
+
 private:
     int m_transitionProperty;   // Transition property as specified in the RenderStyle. May be cAnimateAll
     int m_animatingProperty;    // Specific property for this ImplicitAnimation

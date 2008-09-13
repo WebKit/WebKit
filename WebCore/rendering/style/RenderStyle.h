@@ -615,157 +615,214 @@ private:
 
 class TransformOperation : public RefCounted<TransformOperation> {
 public:
+    enum OperationType { SCALE_X, SCALE_Y, SCALE, 
+                         TRANSLATE_X, TRANSLATE_Y, TRANSLATE, 
+                         ROTATE, 
+                         SKEW_X, SKEW_Y, SKEW, 
+                         MATRIX, IDENTITY, NONE
+                       };
+    
     virtual ~TransformOperation() { }
     
     virtual bool operator==(const TransformOperation&) const = 0;
     bool operator!=(const TransformOperation& o) const { return !(*this == o); }
+    
+    virtual bool isIdentity() const = 0;
 
-    virtual void apply(AffineTransform&, const IntSize& borderBoxSize) = 0;
+    virtual bool apply(AffineTransform&, const IntSize& borderBoxSize) const = 0;
     
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) = 0;
     
-    virtual bool isScaleOperation() const { return false; }
-    virtual bool isRotateOperation() const { return false; }
-    virtual bool isSkewOperation() const { return false; }
-    virtual bool isTranslateOperation() const { return false; }
-    virtual bool isMatrixOperation() const { return false; }
+    virtual OperationType getOperationType() const = 0;
+    virtual bool isSameType(const TransformOperation& o) const { return false; }
+};
+
+class IdentityTransformOperation : public TransformOperation
+{
+public:
+    static PassRefPtr<IdentityTransformOperation> create()
+    {
+        return adoptRef(new IdentityTransformOperation());
+    }
+        
+    virtual bool isIdentity() const { return true; }
+    virtual OperationType getOperationType() const { return IDENTITY; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == IDENTITY; }
+
+    virtual bool operator==(const TransformOperation& o) const
+    {
+        return isSameType(o);
+    }
+
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
+    {
+        return false;
+    }
+
+    virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false)
+    {
+        return this;
+    }
+
+private:
+    IdentityTransformOperation()
+    {
+    }
+
 };
 
 class ScaleTransformOperation : public TransformOperation {
 public:
-    static PassRefPtr<ScaleTransformOperation> create(double sx, double sy)
+    
+    static PassRefPtr<ScaleTransformOperation> create(double sx, double sy, OperationType type)
     {
-        return adoptRef(new ScaleTransformOperation(sx, sy));
+        return adoptRef(new ScaleTransformOperation(sx, sy, type));
     }
 
-    virtual bool isScaleOperation() const { return true; }
+    virtual bool isIdentity() const { return m_x == 1 &&  m_y == 1; }
+    virtual OperationType getOperationType() const { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (o.isScaleOperation()) {
-            const ScaleTransformOperation* s = static_cast<const ScaleTransformOperation*>(&o);
-            return m_x == s->m_x && m_y == s->m_y;
-        }
-        return false;
+        if (!isSameType(o))
+            return false;
+        const ScaleTransformOperation* s = static_cast<const ScaleTransformOperation*>(&o);
+        return m_x == s->m_x && m_y == s->m_y;
     }
 
-    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
     {
         transform.scale(m_x, m_y);
+        return false;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
 private:
-    ScaleTransformOperation(double sx, double sy)
-        : m_x(sx), m_y(sy)
+    ScaleTransformOperation(double sx, double sy, OperationType type)
+        : m_x(sx), m_y(sy), m_type(type)
     {
     }
         
     double m_x;
     double m_y;
+    OperationType m_type;
 };
 
 class RotateTransformOperation : public TransformOperation {
 public:
-    static PassRefPtr<RotateTransformOperation> create(double angle)
+    static PassRefPtr<RotateTransformOperation> create(double angle, OperationType type)
     {
-        return adoptRef(new RotateTransformOperation(angle));
+        return adoptRef(new RotateTransformOperation(angle, type));
     }
 
-    virtual bool isRotateOperation() const { return true; }
+    virtual bool isIdentity() const { return m_angle == 0; }
+    virtual OperationType getOperationType() const { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (o.isRotateOperation()) {
-            const RotateTransformOperation* r = static_cast<const RotateTransformOperation*>(&o);
-            return m_angle == r->m_angle;
-        }
-        return false;
+        if (!isSameType(o))
+            return false;
+        const RotateTransformOperation* r = static_cast<const RotateTransformOperation*>(&o);
+        return m_angle == r->m_angle;
     }
     
-    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
     {
         transform.rotate(m_angle);
+        return false;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
+    double angle() const { return m_angle; }
+
 private:
-    RotateTransformOperation(double angle)
-        : m_angle(angle)
+    RotateTransformOperation(double angle, OperationType type)
+        : m_angle(angle), m_type(type)
     {
     }
 
     double m_angle;
+    OperationType m_type;
 };
 
 class SkewTransformOperation : public TransformOperation {
 public:
-    static PassRefPtr<SkewTransformOperation> create(double angleX, double angleY)
+    static PassRefPtr<SkewTransformOperation> create(double angleX, double angleY, OperationType type)
     {
-        return adoptRef(new SkewTransformOperation(angleX, angleY));
+        return adoptRef(new SkewTransformOperation(angleX, angleY, type));
     }
 
-    virtual bool isSkewOperation() const { return true; }
+    virtual bool isIdentity() const { return m_angleX == 0 && m_angleY == 0; }
+    virtual OperationType getOperationType() const { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (!o.isSkewOperation())
+        if (!isSameType(o))
             return false;
         const SkewTransformOperation* s = static_cast<const SkewTransformOperation*>(&o);
         return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
     }
 
-    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
     {
         transform.skew(m_angleX, m_angleY);
+        return false;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
     
 private:
-    SkewTransformOperation(double angleX, double angleY)
-        : m_angleX(angleX), m_angleY(angleY)
+    SkewTransformOperation(double angleX, double angleY, OperationType type)
+        : m_angleX(angleX), m_angleY(angleY), m_type(type)
     {
     }
     
     double m_angleX;
     double m_angleY;
+    OperationType m_type;
 };
 
 class TranslateTransformOperation : public TransformOperation {
 public:
-    static PassRefPtr<TranslateTransformOperation> create(const Length& tx, const Length& ty)
+    static PassRefPtr<TranslateTransformOperation> create(const Length& tx, const Length& ty, OperationType type)
     {
-        return adoptRef(new TranslateTransformOperation(tx, ty));
+        return adoptRef(new TranslateTransformOperation(tx, ty, type));
     }
 
-    virtual bool isTranslateOperation() const { return true; }
+    virtual bool isIdentity() const { return m_x.calcFloatValue(1) == 0 && m_y.calcFloatValue(1) == 0; }
+    virtual OperationType getOperationType() const { return m_type; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == m_type; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (!o.isTranslateOperation())
+        if (!isSameType(o))
             return false;
         const TranslateTransformOperation* t = static_cast<const TranslateTransformOperation*>(&o);
         return m_x == t->m_x && m_y == t->m_y;
     }
 
-    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
     {
         transform.translate(m_x.calcFloatValue(borderBoxSize.width()), m_y.calcFloatValue(borderBoxSize.height()));
+        return m_x.type() == Percent || m_y.type() == Percent;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
 
 private:
-    TranslateTransformOperation(const Length& tx, const Length& ty)
-        : m_x(tx), m_y(ty)
+    TranslateTransformOperation(const Length& tx, const Length& ty, OperationType type)
+        : m_x(tx), m_y(ty), m_type(type)
     {
     }
 
     Length m_x;
     Length m_y;
+    OperationType m_type;
 };
 
 class MatrixTransformOperation : public TransformOperation {
@@ -775,21 +832,24 @@ public:
         return adoptRef(new MatrixTransformOperation(a, b, c, d, e, f));
     }
 
-    virtual bool isMatrixOperation() const { return true; }
+    virtual bool isIdentity() const { return m_a == 1 && m_b == 0 && m_c == 0 && m_d == 1 && m_e == 0 && m_f == 0; }
+    virtual OperationType getOperationType() const { return MATRIX; }
+    virtual bool isSameType(const TransformOperation& o) const { return o.getOperationType() == MATRIX; }
 
     virtual bool operator==(const TransformOperation& o) const
     {
-        if (o.isMatrixOperation()) {
-            const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(&o);
-            return m_a == m->m_a && m_b == m->m_b && m_c == m->m_c && m_d == m->m_d && m_e == m->m_e && m_f == m->m_f;
-        }
-        return false;
+        if (!isSameType(o))
+            return false;
+
+        const MatrixTransformOperation* m = static_cast<const MatrixTransformOperation*>(&o);
+        return m_a == m->m_a && m_b == m->m_b && m_c == m->m_c && m_d == m->m_d && m_e == m->m_e && m_f == m->m_f;
     }
 
-    virtual void apply(AffineTransform& transform, const IntSize& borderBoxSize)
+    virtual bool apply(AffineTransform& transform, const IntSize& borderBoxSize) const
     {
         AffineTransform matrix(m_a, m_b, m_c, m_d, m_e, m_f);
         transform = matrix * transform;
+        return false;
     }
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false);
@@ -808,18 +868,24 @@ private:
     double m_f;
 };
 
-class TransformOperations {
+class TransformOperations : public Vector<RefPtr<TransformOperation> > {
 public:
+    TransformOperations(bool makeIdentity = false)
+    {
+        if (makeIdentity)
+            append(IdentityTransformOperation::create());
+    }
+    
     bool operator==(const TransformOperations&) const;
     bool operator!=(const TransformOperations& o) const {
         return !(*this == o);
     }
     
-    bool isEmpty() const { return m_operations.isEmpty(); }
-    size_t size() const { return m_operations.size(); }
-    const RefPtr<TransformOperation>& operator[](size_t i) const { return m_operations.at(i); }
-
-    void append(const RefPtr<TransformOperation>& op) { return m_operations.append(op); }
+    void apply(const IntSize& sz, AffineTransform& t) const
+    {
+        for (unsigned i = 0; i < size(); ++i)
+            at(i)->apply(t, sz);
+    }
 
 private:
     Vector<RefPtr<TransformOperation> > m_operations;
@@ -2467,6 +2533,7 @@ public:
     
     void clear() { m_keyframes.clear(); m_properties.clear(); }
     bool isEmpty() const { return m_keyframes.isEmpty(); }
+    size_t size() const { return m_keyframes.size(); }
     Vector<KeyframeValue>::const_iterator beginKeyframes() const { return m_keyframes.begin(); }
     Vector<KeyframeValue>::const_iterator endKeyframes() const { return m_keyframes.end(); }
 

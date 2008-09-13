@@ -27,10 +27,10 @@
  */
 
 #include "config.h"
-#include "KeyframeAnimation.h"
-
+#include "CSSPropertyNames.h"
 #include "CompositeAnimation.h"
 #include "EventNames.h"
+#include "KeyframeAnimation.h"
 #include "RenderObject.h"
 #include "SystemTime.h"
 
@@ -114,7 +114,7 @@ void KeyframeAnimation::animate(CompositeAnimation* animation, RenderObject* ren
 
     HashSet<int>::const_iterator end = m_keyframes->endProperties();
     for (HashSet<int>::const_iterator it = m_keyframes->beginProperties(); it != end; ++it) {
-        if (blendProperties(*it, animatedStyle, fromStyle, toStyle, prog))
+        if (blendProperties(this, *it, animatedStyle, fromStyle, toStyle, prog))
             setAnimating();
     }
 }
@@ -196,6 +196,54 @@ bool KeyframeAnimation::affectsProperty(int property) const
             return true;
     }
     return false;
+}
+
+void KeyframeAnimation::validateTransformFunctionList()
+{
+    m_transformFunctionListValid = false;
+    
+    if (!m_keyframes.get() || m_keyframes->size() < 2 || !m_keyframes->containsProperty(CSSPropertyWebkitTransform))
+        return;
+
+    Vector<KeyframeValue>::const_iterator end = m_keyframes->endKeyframes();
+
+    // Empty transforms match anything, so find the first non-empty entry as the reference
+    size_t firstIndex = 0;
+    Vector<KeyframeValue>::const_iterator firstIt = end;
+    
+    for (Vector<KeyframeValue>::const_iterator it = m_keyframes->beginKeyframes(); it != end; ++it, ++firstIndex) {
+        if (it->style.transform().size() > 0) {
+            firstIt = it;
+            break;
+        }
+    }
+    
+    if (firstIt == end)
+        return;
+        
+    const TransformOperations* firstVal = &firstIt->style.transform();
+    
+    // See if the keyframes are valid
+    for (Vector<KeyframeValue>::const_iterator it = firstIt+1; it != end; ++it) {
+        const TransformOperations* val = &it->style.transform();
+        
+        // A null transform matches anything
+        if (val->isEmpty())
+            continue;
+        
+        // If the sizes of the function lists don't match, the lists don't match
+        if (firstVal->size() != val->size())
+            return;
+        
+        // If the types of each function are not the same, the lists don't match
+        for (size_t j = 0; j < firstVal->size(); ++j) {
+            if (!firstVal->at(j)->isSameType(*val->at(j)))
+                return;
+        }
+    }
+
+    // Keyframes are valid
+    m_transformFunctionListValid = true;
 }
 
 } // namespace WebCore
