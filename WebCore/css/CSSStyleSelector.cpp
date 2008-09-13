@@ -5605,7 +5605,6 @@ TransformOperation::OperationType getTransformOperationType(WebKitCSSTransformVa
         case WebKitCSSTransformValue::SkewXTransformOperation:          return TransformOperation::SKEW_X;
         case WebKitCSSTransformValue::SkewYTransformOperation:          return TransformOperation::SKEW_Y;
         case WebKitCSSTransformValue::MatrixTransformOperation:         return TransformOperation::MATRIX;
-        default: return TransformOperation::NONE;
     }
     return TransformOperation::NONE;
 }
