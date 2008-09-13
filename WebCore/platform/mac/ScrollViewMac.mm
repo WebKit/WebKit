@@ -352,7 +352,7 @@ NSView *ScrollView::documentView() const
     return nil;
 }
 
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent&)
+Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent&)
 {
     return 0;
 }

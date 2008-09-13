@@ -3825,6 +3825,7 @@
 		BC99812E0DBE807A008CE9EF /* DOMAbstractViewFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */; };
 		BC9ADD230CC4032600098C4C /* WebKitCSSTransformValue.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC9ADD800CC4092200098C4C /* WebKitCSSTransformValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */; };
+		BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCA169A20BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */; };
 		BCA169A30BFD55B40019CA76 /* JSHTMLTableCaptionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */; };
 		BCA378160D15C64600B793D6 /* PausedTimeouts.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */; };
@@ -8272,6 +8273,7 @@
 		BC99812D0DBE807A008CE9EF /* DOMAbstractViewFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMAbstractViewFrame.h; sourceTree = "<group>"; };
 		BC9ADD220CC4032600098C4C /* WebKitCSSTransformValue.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebKitCSSTransformValue.h; sourceTree = "<group>"; };
 		BC9ADD7F0CC4092200098C4C /* WebKitCSSTransformValue.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSTransformValue.cpp; sourceTree = "<group>"; };
+		BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScrollbarClient.h; sourceTree = "<group>"; };
 		BCA169A00BFD55B40019CA76 /* JSHTMLTableCaptionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLTableCaptionElement.cpp; sourceTree = "<group>"; };
 		BCA169A10BFD55B40019CA76 /* JSHTMLTableCaptionElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSHTMLTableCaptionElement.h; sourceTree = "<group>"; };
 		BCA378140D15C64600B793D6 /* PausedTimeouts.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PausedTimeouts.cpp; sourceTree = "<group>"; };
@@ -12850,6 +12852,7 @@
 				0668E1890ADD9624004128E0 /* PopupMenu.h */,
 				ABC128760B33AA6D00C693D5 /* PopupMenuClient.h */,
 				BC7B2AF80450824100A8000F /* ScrollBar.h */,
+				BC9BC64D0E7C4889008B9849 /* ScrollbarClient.h */,
 				93C09C850B0657AA005ABD4D /* ScrollTypes.h */,
 				BC6D6E2509AF943500F59759 /* ScrollView.h */,
 				AB7170880B3118080017123E /* SearchPopupMenu.h */,
@@ -15575,6 +15578,7 @@
 				7284ADDE0E6FEB31002EEFBD /* UserStyleSheetLoader.h in Headers */,
 				E47B4BE80E71241600038854 /* CachedResourceHandle.h in Headers */,
 				63D7B32D0E78CD3F00F7617C /* NodeRenderStyle.h in Headers */,
+				BC9BC64E0E7C4889008B9849 /* ScrollbarClient.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

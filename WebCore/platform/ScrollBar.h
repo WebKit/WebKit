@@ -62,7 +62,7 @@ public:
     bool setValue(int);
     void setProportion(int visibleSize, int totalSize);
 
-    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0);
+    bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     
     virtual int width() const = 0;
     virtual int height() const = 0;
