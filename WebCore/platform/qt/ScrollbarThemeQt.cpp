@@ -57,4 +57,3 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 
 }
 
-#endif

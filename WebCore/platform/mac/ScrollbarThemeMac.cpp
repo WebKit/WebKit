@@ -48,4 +48,3 @@ int ScrollbarThemeMac::scrollbarThickness(ScrollbarControlSize controlSize)
 
 }
 
-#endif
