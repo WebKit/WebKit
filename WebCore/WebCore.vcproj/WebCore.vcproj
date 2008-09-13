@@ -3144,10 +3144,6 @@
 			Name="platform"
 			>
 			<File
-				RelativePath="..\platform\Arena.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\platform\Arena.h"
 				>
 			</File>
@@ -3328,6 +3324,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollbarTheme.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ScrollTypes.h"
 				>
 			</File>
@@ -3406,6 +3406,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\platform\Arena.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\platform\win\BString.cpp"
 					>
@@ -3588,6 +3592,22 @@
 				</File>
 				<File
 					RelativePath="..\platform\win\PopupMenuWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ScrollbarThemeSafari.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ScrollbarThemeSafari.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ScrollbarThemeWin.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\win\ScrollbarThemeWin.h"
 					>
 				</File>
 				<File

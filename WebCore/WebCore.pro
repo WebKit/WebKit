@@ -995,6 +995,7 @@ SOURCES += \
     platform/graphics/qt/FontQt.cpp \
     platform/graphics/qt/GlyphPageTreeNodeQt.cpp \
     platform/graphics/qt/SimpleFontDataQt.cpp \
+    platform/graphics/qt/ScrollbarThemeQt.cpp \
     platform/qt/KURLQt.cpp \
     platform/qt/Localizations.cpp \
     platform/qt/MIMETypeRegistryQt.cpp \

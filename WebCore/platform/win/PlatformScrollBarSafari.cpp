@@ -573,16 +573,6 @@ bool PlatformScrollbar::thumbUnderMouse()
     return (begin <= m_pressedPos && m_pressedPos < end);
 }
 
-int PlatformScrollbar::horizontalScrollbarHeight(ScrollbarControlSize controlSize)
-{
-    return cHorizontalWidth[controlSize];
-}
-
-int PlatformScrollbar::verticalScrollbarWidth(ScrollbarControlSize controlSize)
-{
-    return cVerticalHeight[controlSize];
-}
-
 IntRect PlatformScrollbar::windowClipRect() const
 {
     IntRect clipRect(0, 0, width(), height());
@@ -599,10 +589,6 @@ void PlatformScrollbar::paintGripper(HDC hdc, const IntRect& rect) const
 IntRect PlatformScrollbar::gripperRect(const IntRect& thumbRect) const
 {
     return IntRect();
-}
-
-void PlatformScrollbar::themeChanged()
-{
 }
 
 }

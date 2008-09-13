@@ -454,28 +454,6 @@ bool PlatformScrollbar::thumbUnderMouse()
     return (begin <= m_pressedPos && m_pressedPos < end);
 }
 
-int PlatformScrollbar::horizontalScrollbarHeight(ScrollbarControlSize controlSize)
-{
-    QStyle *s = QApplication::style();
-    QStyleOptionSlider o;
-    o.orientation = Qt::Horizontal;
-    o.state |= QStyle::State_Horizontal;
-    if (controlSize != RegularScrollbar)
-        o.state |= QStyle::State_Mini;
-    return s->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
-}
-
-int PlatformScrollbar::verticalScrollbarWidth(ScrollbarControlSize controlSize)
-{
-    QStyle *s = QApplication::style();
-    QStyleOptionSlider o;
-    o.orientation = Qt::Vertical;
-    o.state &= ~QStyle::State_Horizontal;
-    if (controlSize != RegularScrollbar)
-        o.state |= QStyle::State_Mini;
-    return s->pixelMetric(QStyle::PM_ScrollBarExtent, &o, 0);
-}
-
 void PlatformScrollbar::invalidate()
 {
     // Get the root widget.

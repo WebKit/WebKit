@@ -676,26 +676,6 @@ bool PlatformScrollbar::thumbUnderMouse()
     return (begin <= m_pressedPos && m_pressedPos < end);
 }
 
-void PlatformScrollbar::themeChanged()
-{
-    if (scrollbarTheme) {
-        CloseThemeData(scrollbarTheme);
-        scrollbarTheme = 0;
-    }
-
-    haveTheme = false;
-}
-
-int PlatformScrollbar::horizontalScrollbarHeight(ScrollbarControlSize controlSize)
-{
-    return cHorizontalWidth;
-}
-
-int PlatformScrollbar::verticalScrollbarWidth(ScrollbarControlSize controlSize)
-{
-    return cVerticalHeight;
-}
-
 IntRect PlatformScrollbar::windowClipRect() const
 {
     IntRect clipRect(0, 0, width(), height());

@@ -34,6 +34,7 @@
 #include "PlatformScrollBar.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScrollbarTheme.h"
 #include "SimpleFontData.h"
 #include <tchar.h>
 #include <windows.h>
@@ -200,7 +201,7 @@ void PopupMenu::calculatePositionAndSize(const IntRect& r, FrameView* v)
 
     if (naturalHeight > maxPopupHeight)
         // We need room for a scrollbar
-        popupWidth += PlatformScrollbar::verticalScrollbarWidth(SmallScrollbar);
+        popupWidth += ScrollbarTheme::nativeTheme()->scrollbarThickness(SmallScrollbar);
 
     // Add padding to align the popup text with the <select> text
     // Note: We can't add paddingRight() because that value includes the width

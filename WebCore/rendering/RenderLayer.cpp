@@ -69,6 +69,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "SelectionController.h"
+#include "ScrollbarTheme.h"
 
 #if ENABLE(SVG)
 #include "SVGNames.h"
@@ -1175,10 +1176,10 @@ IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& p) const
 
 static IntRect scrollCornerRect(RenderObject* renderer, const IntRect& absBounds)
 {
-    int resizerWidth = PlatformScrollbar::verticalScrollbarWidth();
-    int resizerHeight = PlatformScrollbar::horizontalScrollbarHeight();
-    return IntRect(absBounds.right() - resizerWidth - renderer->style()->borderRightWidth(), 
-                   absBounds.bottom() - resizerHeight - renderer->style()->borderBottomWidth(), resizerWidth, resizerHeight);
+    int resizerThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+    return IntRect(absBounds.right() - resizerThickness - renderer->style()->borderRightWidth(), 
+                   absBounds.bottom() - resizerThickness - renderer->style()->borderBottomWidth(),
+                   resizerThickness, resizerThickness);
 }
 
 void RenderLayer::positionOverflowControls()

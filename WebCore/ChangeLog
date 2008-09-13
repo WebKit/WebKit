@@ -1,3 +1,70 @@
+2008-09-13  Dave Hyatt  <hyatt@apple.com>
+
+        This patch adds ScrollbarTheme to the build.  ScrollbarTheme is similar to RenderTheme (but for
+        scrollbars only).  For now ScrollbarTheme just handles returning the size of scrollbars.  Subsequent
+        patches will move rendering and hit testing functionality into this class.
+        
+        Implemented ScrollbarTheme subclasses for four ports (Mac, Win, Gtk, Qt).  The wxWidgets port does not
+        implement scrollbars yet, so I added a temporary link stub to keep things compiling on wx.
+       
+        Reviewed by Sam Weinig
+
+        * GNUmakefile.am:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::Scrollbar):
+        * platform/ScrollBar.h:
+        * platform/ScrollbarTheme.h: Added.
+        (WebCore::ScrollbarTheme::~ScrollbarTheme):
+        (WebCore::ScrollbarTheme::scrollbarThickness):
+        (WebCore::ScrollbarTheme::themeChanged):
+        * platform/gtk/ScrollbarThemeGtk.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeGtk::~ScrollbarThemeGtk):
+        (WebCore::ScrollbarThemeGtk::scrollbarThickness):
+        * platform/gtk/ScrollbarThemeGtk.h: Added.
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/ScrollbarThemeMac.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::):
+        (WebCore::ScrollbarThemeMac::~ScrollbarThemeMac):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        * platform/mac/ScrollbarThemeMac.h: Added.
+        * platform/qt/PlatformScrollBarQt.cpp:
+        * platform/qt/ScrollbarThemeQt.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeQt::~ScrollbarThemeQt):
+        (WebCore::ScrollbarThemeQt::scrollbarThickness):
+        * platform/qt/ScrollbarThemeQt.h: Added.
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        * platform/win/PlatformScrollBarWin.cpp:
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupMenu::calculatePositionAndSize):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        (WebCore::ScrollView::themeChanged):
+        * platform/win/ScrollbarThemeSafari.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::):
+        (WebCore::ScrollbarThemeSafari::~ScrollbarThemeSafari):
+        (WebCore::ScrollbarThemeSafari::scrollbarThickness):
+        * platform/win/ScrollbarThemeSafari.h: Added.
+        * platform/win/ScrollbarThemeWin.cpp: Added.
+        (WebCore::ScrollbarTheme::nativeTheme):
+        (WebCore::ScrollbarThemeWin::~ScrollbarThemeWin):
+        (WebCore::ScrollbarThemeWin::scrollbarThickness):
+        (WebCore::ScrollbarThemeWin::themeChanged):
+        * platform/win/ScrollbarThemeWin.h: Added.
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (ScrollbarTheme::nativeTheme):
+        * rendering/RenderLayer.cpp:
+        (WebCore::scrollCornerRect):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::calcHeight):
+        (WebCore::RenderTextControl::calcPrefWidths):
+
 2008-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Timothy Hatcher.

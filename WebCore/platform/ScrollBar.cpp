@@ -27,6 +27,7 @@
 #include "ScrollBar.h"
 
 #include "ScrollbarClient.h"
+#include "ScrollbarTheme.h"
 
 #include <algorithm>
 
@@ -39,10 +40,12 @@ const double cNormalTimerDelay = 0.05;
 
 namespace WebCore {
 
-Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize)
+Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize,
+                     ScrollbarTheme* theme)
     : m_client(client)
     , m_orientation(orientation)
     , m_controlSize(controlSize)
+    , m_theme(theme)
     , m_visibleSize(0)
     , m_totalSize(0)
     , m_currentPos(0)
@@ -55,6 +58,8 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
     , m_scrollTimer(this, &Scrollbar::autoscrollTimerFired)
     , m_overlapsResizer(false)
 {
+    if (!m_theme)
+        m_theme = ScrollbarTheme::nativeTheme();
 }
 
 bool Scrollbar::setValue(int v)

@@ -1938,6 +1938,7 @@ webcoregtk_sources += \
 	WebCore/platform/gtk/PopupMenuGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.cpp \
 	WebCore/platform/gtk/RenderThemeGtk.h \
+	WebCore/platform/gtk/ScrollbarThemeGtk.cpp \
 	WebCore/platform/gtk/ScrollViewGtk.cpp \
 	WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	WebCore/platform/gtk/SharedTimerGtk.cpp \

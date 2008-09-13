@@ -41,8 +41,9 @@
 #include "PlatformScrollBar.h"
 #include "PlatformWheelEvent.h"
 #include "RenderTheme.h"
-#include "Settings.h"
 #include "ScrollbarClient.h"
+#include "ScrollbarTheme.h"
+#include "Settings.h"
 #include <algorithm>
 #include <winsock2.h>
 #include <windows.h>
@@ -503,9 +504,8 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     ScrollbarMode hScroll = m_data->m_hScrollbarMode;
     ScrollbarMode vScroll = m_data->m_vScrollbarMode;
     
-    const int cVerticalWidth = PlatformScrollbar::verticalScrollbarWidth();
-    const int cHorizontalHeight = PlatformScrollbar::horizontalScrollbarHeight();
-
+    const int scrollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();;
+    
     for (int pass = 0; pass < 2; pass++) {
         bool scrollsVertically;
         bool scrollsHorizontally;
@@ -517,11 +517,11 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
             scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() > height());
             if (scrollsVertically)
-                scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + cVerticalWidth > width());
+                scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + scrollbarThickness > width());
             else {
                 scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() > width());
                 if (scrollsHorizontally)
-                    scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() + cHorizontalHeight > height());
+                    scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() + scrollbarThickness > height());
             }
         }
         else {
@@ -728,7 +728,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
 void ScrollView::themeChanged()
 {
-    PlatformScrollbar::themeChanged();
+    ScrollbarTheme::nativeTheme()->themeChanged();
     theme()->themeChanged();
     invalidate();
 }

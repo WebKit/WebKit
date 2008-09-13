@@ -37,6 +37,7 @@ namespace WebCore {
 class GraphicsContext;
 class IntRect;
 class ScrollbarClient;
+class ScrollbarTheme;
 class PlatformMouseEvent;
 
 // These match the numbers we use over in WebKit (WebFrameView.m).
@@ -45,7 +46,7 @@ class PlatformMouseEvent;
 
 class Scrollbar : public Widget, public RefCounted<Scrollbar> {
 protected:
-    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+    Scrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize, ScrollbarTheme* = 0);
 
 public:
     virtual ~Scrollbar() {}
@@ -101,6 +102,8 @@ protected:
     ScrollbarClient* m_client;
     ScrollbarOrientation m_orientation;
     ScrollbarControlSize m_controlSize;
+    ScrollbarTheme* m_theme;
+    
     int m_visibleSize;
     int m_totalSize;
     float m_currentPos;

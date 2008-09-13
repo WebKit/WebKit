@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,10 +10,10 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. ``AS IS'' AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE INC. OR
  * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
  * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
  * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
@@ -23,44 +23,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef PlatformScrollBar_h
-#define PlatformScrollBar_h
+#include "config.h"
+#include "ScrollbarThemeSafari.h"
 
-#include "ScrollBar.h"
-#include <wtf/PassRefPtr.h>
+#include "ScrollbarThemeWin.h"
+#include "Settings.h"
 
-#ifdef __OBJC__
-@class NSScroller;
-#else
-class NSScroller;
-typedef int NSScrollerPart;
-#endif
+#if USE(SAFARI_THEME)
 
 namespace WebCore {
 
-class PlatformScrollbar : public Scrollbar {
-public:
-    static PassRefPtr<PlatformScrollbar> create(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize size)
-    {
-        return adoptRef(new PlatformScrollbar(client, orientation, size));
-    }
-    virtual ~PlatformScrollbar();
+ScrollbarTheme* ScrollbarTheme::nativeTheme()
+{
+    static ScrollbarThemeSafari safariTheme;
+    static ScrollbarThemeWin windowsTheme;
+    if (Settings::shouldPaintNativeControls())
+        return &windowsTheme;
+    return &safariTheme;
+}
 
-    bool scrollbarHit(NSScrollerPart);
-    
-private:    
-    PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
+// FIXME: Get these numbers from CoreUI.
+static int cScrollbarThickness[] = { 15, 11, 11 };
 
-    virtual int width() const;
-    virtual int height() const;
-    virtual void setRect(const IntRect&);
-    virtual void setEnabled(bool);
-    virtual void paint(GraphicsContext*, const IntRect& damageRect);
+ScrollbarThemeSafari::~ScrollbarThemeSafari()
+{
+}
 
-    virtual void updateThumbPosition();
-    virtual void updateThumbProportion();
-};
+int ScrollbarThemeSafari::scrollbarThickness(ScrollbarControlSize controlSize)
+{
+    return cScrollbarThickness[controlSize];
+}
 
 }
 
-#endif // PlatformScrollBar_h
+#endif
