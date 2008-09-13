@@ -563,7 +563,7 @@ void QWebFrame::setScrollBarPolicy(Qt::Orientation orientation, Qt::ScrollBarPol
 */
 void QWebFrame::setScrollBarValue(Qt::Orientation orientation, int value)
 {
-    PlatformScrollbar *sb;
+    Scrollbar *sb;
     sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
     if (sb) {
         if (value < 0)
@@ -582,7 +582,7 @@ void QWebFrame::setScrollBarValue(Qt::Orientation orientation, int value)
 */
 int QWebFrame::scrollBarValue(Qt::Orientation orientation) const
 {
-    PlatformScrollbar *sb;
+    Scrollbar *sb;
     sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
     if (sb) {
         return sb->value();
@@ -598,7 +598,7 @@ int QWebFrame::scrollBarValue(Qt::Orientation orientation) const
 */
 int QWebFrame::scrollBarMaximum(Qt::Orientation orientation) const
 {
-    PlatformScrollbar *sb;
+    Scrollbar *sb;
     sb = (orientation == Qt::Horizontal) ? d->horizontalScrollBar() : d->verticalScrollBar();
     if (sb)
         return sb->maximum();
