@@ -188,8 +188,8 @@ namespace WebCore {
 
 #if PLATFORM(QT)
     public:
-        PlatformScrollbar* horizontalScrollBar() const;
-        PlatformScrollbar* verticalScrollBar() const;
+        Scrollbar* horizontalScrollBar() const;
+        Scrollbar* verticalScrollBar() const;
     private:
         void incrementNativeWidgetCount();
         void decrementNativeWidgetCount();

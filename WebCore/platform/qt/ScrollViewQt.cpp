@@ -192,12 +192,12 @@ ScrollView::~ScrollView()
     delete m_data;
 }
 
-PlatformScrollbar *ScrollView::horizontalScrollBar() const
+Scrollbar* ScrollView::horizontalScrollBar() const
 {
     return m_data->m_hBar.get();
 }
 
-PlatformScrollbar *ScrollView::verticalScrollBar() const
+Scrollbar* ScrollView::verticalScrollBar() const
 {
     return m_data->m_vBar.get();
 }
