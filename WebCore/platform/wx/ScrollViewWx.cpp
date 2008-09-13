@@ -465,7 +465,7 @@ void ScrollView::scrollRectIntoViewRecursively(const IntRect& rect)
     setContentsPos(rect.x(), rect.y());
 }
 
-PlatformScrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
+Scrollbar* ScrollView::scrollbarUnderMouse(const PlatformMouseEvent& mouseEvent)
 {
     // AFAICT this is only used for platforms that provide
     // feedback when mouse is hovered over.
