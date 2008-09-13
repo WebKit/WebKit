@@ -1,3 +1,11 @@
+2008-09-13  Dave Hyatt  <hyatt@apple.com>
+
+        More scrollbar refactoring.
+        
+        Reviewed by Sam Weinig
+
+        * WebScrollBar.h:
+
 2008-09-08  Adam Roben  <aroben@apple.com>
 
         Respect the font smoothing preference when drawing via WebKitGraphics
