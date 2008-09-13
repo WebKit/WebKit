@@ -1,3 +1,20 @@
+2008-09-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - use the LastResort font for missing glyphs instead of showing the
+          primary font's missing glyph
+
+        Test: platform/mac/fast/text/last-resort-font.html
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters): Changed to return the
+        last resort font if a substitute font cannot be found.
+        (WebCore::FontCache::getLastResortFallbackFont): Removed an outdated
+        comment (the user's preferred standard font is included in the search
+        thanks to code in FontCache::getFontData()) and changed to return the
+        LastResort font.  
+
 2008-09-13  Dave Hyatt  <hyatt@apple.com>
 
         This patch adds ScrollbarTheme to the build.  ScrollbarTheme is similar to RenderTheme (but for

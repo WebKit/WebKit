@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 768x36
+          text run at (0,0) width 482: "This tests that on Mac OS X, the LastResort font is used when no other font "
+          text run at (482,0) width 286: "contains a glyph for a given character. This is"
+          text run at (0,18) width 23: "the "
+          text run at (23,18) width 298: "LastResort glyph for Galgolithic (2C00-2C5F):"
+      RenderBlock {DIV} at (0,52) size 784x131
+        RenderText {#text} at (0,0) size 138x130
+          text run at (0,0) width 138: "\x{2C00}"
+      RenderBlock {P} at (0,199) size 784x18
+        RenderText {#text} at (0,0) size 196x18
+          text run at (0,0) width 196: "This should be the same glyph:"
+      RenderBlock {DIV} at (0,233) size 784x138
+        RenderText {#text} at (0,0) size 138x138
+          text run at (0,0) width 138: "\x{2C00}"

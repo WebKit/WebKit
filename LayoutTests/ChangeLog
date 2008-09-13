@@ -1,3 +1,15 @@
+2008-09-13  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - test that the LastResort font is used for missing glyphs rather than
+          the primary font's missing glyph
+
+        * platform/mac/fast/text/last-resort-font-expected.checksum: Added.
+        * platform/mac/fast/text/last-resort-font-expected.png: Added.
+        * platform/mac/fast/text/last-resort-font-expected.txt: Added.
+        * platform/mac/fast/text/last-resort-font.html: Added.
+
 2008-09-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Timothy Hatcher.

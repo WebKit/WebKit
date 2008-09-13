@@ -87,7 +87,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     if (!substituteFont && length == 1)
         substituteFont = wkGetFontInLanguageForCharacter(nsFont, characters[0]);
     if (!substituteFont)
-        return 0;
+        return getCachedFontData(getLastResortFallbackFont(font.fontDescription()));
 
     // Use the family name from the AppKit-supplied substitute font, requesting the
     // traits, weight, and size we want. One way this does better than the original
@@ -153,20 +153,9 @@ FontPlatformData* FontCache::getSimilarFontPlatformData(const Font& font)
 
 FontPlatformData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
 {
-    static AtomicString timesStr("Times");
-    static AtomicString lucidaGrandeStr("Lucida Grande");
+    static AtomicString lastResort("LastResort");
 
-    // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
-    // the default that the user would get without changing any prefs.
-    FontPlatformData* platformFont = getCachedFontPlatformData(fontDescription, timesStr);
-    if (!platformFont)
-        // The Times fallback will almost always work, but in the highly unusual case where
-        // the user doesn't have it, we fall back on Lucida Grande because that's
-        // guaranteed to be there, according to Nathan Taylor. This is good enough
-        // to avoid a crash at least.
-        platformFont = getCachedFontPlatformData(fontDescription, lucidaGrandeStr);
-
-    return platformFont;
+    return getCachedFontPlatformData(fontDescription, lastResort);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)
