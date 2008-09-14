@@ -67,7 +67,6 @@ public:
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     
-    virtual void setRect(const IntRect&) = 0;
     virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
 
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called

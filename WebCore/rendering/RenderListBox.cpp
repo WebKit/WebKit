@@ -295,7 +295,7 @@ void RenderListBox::paintScrollbar(PaintInfo& paintInfo)
                            absBounds.y() + borderTop(),
                            m_vBar->width(),
                            absBounds.height() - (borderTop() + borderBottom()));
-        m_vBar->setRect(scrollRect);
+        m_vBar->setFrameGeometry(scrollRect);
         m_vBar->paint(paintInfo.context, scrollRect);
     }
 }

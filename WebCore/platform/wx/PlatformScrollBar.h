@@ -39,11 +39,7 @@ public:
     }
     virtual ~PlatformScrollbar();
 
-    virtual void setRect(const IntRect&);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
-
-    static int horizontalScrollbarHeight() { return 17; }
-    static int verticalScrollbarWidth() { return 17; }
 
 protected:    
     virtual void updateThumbPosition();

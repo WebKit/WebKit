@@ -41,16 +41,16 @@ public:
     }
     virtual ~PlatformScrollbar();
 
-    virtual void setRect(const IntRect&);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
-
+    virtual void setFrameGeometry(const IntRect&);
+    
 protected:
     PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
     virtual void updateThumbPosition();
     virtual void updateThumbProportion();
     virtual void geometryChanged();
-
+    
 private:
     static void gtkValueChanged(GtkAdjustment*, PlatformScrollbar*);
     GtkAdjustment* m_adjustment;

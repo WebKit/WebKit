@@ -628,7 +628,7 @@ static LRESULT CALLBACK PopupWndProc(HWND hWnd, UINT message, WPARAM wParam, LPA
         case WM_SIZE:
             if (popup && popup->scrollBar()) {
                 IntSize size(LOWORD(lParam), HIWORD(lParam));
-                popup->scrollBar()->setRect(IntRect(size.width() - popup->scrollBar()->width(), 0, popup->scrollBar()->width(), size.height()));
+                popup->scrollBar()->setFrameGeometry(IntRect(size.width() - popup->scrollBar()->width(), 0, popup->scrollBar()->width(), size.height()));
 
                 int visibleItems = popup->visibleItems();
                 popup->scrollBar()->setEnabled(visibleItems < popup->client()->listSize());

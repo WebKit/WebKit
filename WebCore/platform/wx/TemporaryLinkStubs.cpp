@@ -136,7 +136,6 @@ PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
 void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
 void PlatformScrollbar::updateThumbPosition() { notImplemented(); }
 void PlatformScrollbar::updateThumbProportion() { notImplemented(); }
-void PlatformScrollbar::setRect(const IntRect&) { notImplemented(); }
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme() { notImplemented(); static ScrollbarTheme theme; return &theme; }
 

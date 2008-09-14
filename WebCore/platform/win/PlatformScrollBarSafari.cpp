@@ -118,9 +118,9 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
     }
 
     if (orientation == VerticalScrollbar)
-        setFrameGeometry(IntRect(0, 0, cVerticalWidth[controlSize()], cVerticalHeight[controlSize()]));
+        Widget::setFrameGeometry(IntRect(0, 0, cVerticalWidth[controlSize()], cVerticalHeight[controlSize()]));
     else
-        setFrameGeometry(IntRect(0, 0, cHorizontalWidth[controlSize()], cHorizontalHeight[controlSize()]));
+        Widget::setFrameGeometry(IntRect(0, 0, cHorizontalWidth[controlSize()], cHorizontalHeight[controlSize()]));
 }
 
 PlatformScrollbar::~PlatformScrollbar()
@@ -199,7 +199,7 @@ void PlatformScrollbar::invalidatePart(ScrollbarPart part)
     invalidateRect(result);
 }
 
-void PlatformScrollbar::setRect(const IntRect& rect)
+void PlatformScrollbar::setFrameGeometry(const IntRect& rect)
 {
     // Get our window resizer rect and see if we overlap.  Adjust to avoid the overlap
     // if necessary.
@@ -231,7 +231,7 @@ void PlatformScrollbar::setRect(const IntRect& rect)
         }
     }
 
-    setFrameGeometry(adjustedRect);
+    Widget::setFrameGeometry(adjustedRect);
 }
 
 void PlatformScrollbar::setParent(ScrollView* parentView)

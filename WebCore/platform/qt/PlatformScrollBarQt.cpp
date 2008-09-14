@@ -100,11 +100,6 @@ int PlatformScrollbar::height() const
     return m_opt.rect.height();
 }
 
-void PlatformScrollbar::setRect(const IntRect& rect)
-{
-    setFrameGeometry(rect);
-}
-
 IntRect PlatformScrollbar::frameGeometry() const
 {
     return m_opt.rect;

@@ -1,5 +1,41 @@
 2008-09-13  Dave Hyatt  <hyatt@apple.com>
 
+        Remove scrollbar's setRect method.  Clients can now just call setFrameGeometry (the corresponding Widget) method
+        to set the dimensions of a scrollbar.
+        
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.h:
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        (PlatformScrollbar::setFrameGeometry):
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/mac/PlatformScrollBarMac.mm:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::setFrameGeometry):
+        * platform/win/PlatformScrollBarWin.cpp:
+        (WebCore::PlatformScrollbar::PlatformScrollbar):
+        (WebCore::PlatformScrollbar::setFrameGeometry):
+        * platform/win/PopupMenuWin.cpp:
+        (WebCore::PopupWndProc):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * platform/wx/PlatformScrollBar.h:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PlatformScrollbar::updateThumbProportion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::positionOverflowControls):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintScrollbar):
+
+2008-09-13  Dave Hyatt  <hyatt@apple.com>
+
         Remove setEnabled() from all Scrollbar classes that were just using their Widget base class methods.
        
         Reviewed by Sam Weinig

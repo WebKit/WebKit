@@ -1198,17 +1198,17 @@ void RenderLayer::positionOverflowControls()
     
     int resizeControlSize = max(resizeControlRect.height(), 0);
     if (m_vBar)
-        m_vBar->setRect(IntRect(absBounds.right() - m_object->borderRight() - m_vBar->width(),
-                                absBounds.y() + m_object->borderTop(),
-                                m_vBar->width(),
-                                absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize)));
+        m_vBar->setFrameGeometry(IntRect(absBounds.right() - m_object->borderRight() - m_vBar->width(),
+                                         absBounds.y() + m_object->borderTop(),
+                                         m_vBar->width(),
+                                         absBounds.height() - (m_object->borderTop() + m_object->borderBottom()) - (m_hBar ? m_hBar->height() : resizeControlSize)));
 
     resizeControlSize = max(resizeControlRect.width(), 0);
     if (m_hBar)
-        m_hBar->setRect(IntRect(absBounds.x() + m_object->borderLeft(),
-                                absBounds.bottom() - m_object->borderBottom() - m_hBar->height(),
-                                absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),
-                                m_hBar->height()));
+        m_hBar->setFrameGeometry(IntRect(absBounds.x() + m_object->borderLeft(),
+                                         absBounds.bottom() - m_object->borderBottom() - m_hBar->height(),
+                                         absBounds.width() - (m_object->borderLeft() + m_object->borderRight()) - (m_vBar ? m_vBar->width() : resizeControlSize),
+                                         m_hBar->height()));
 }
 
 int RenderLayer::scrollWidth()
