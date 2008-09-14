@@ -110,7 +110,7 @@ static BOOL _allowsScriptsFullAccess = NO;
 
 - (void)log:(NSString *)message
 {
-    NSLog(message);
+    NSLog(@"%@", message);
 }
 
 - (id)retainObject:(id)obj

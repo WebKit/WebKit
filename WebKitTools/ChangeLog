@@ -1,3 +1,11 @@
+2008-09-14  Mark Rowe  <mrowe@apple.com>
+
+        Build fix.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (waitUntilDoneWatchdogFired):
+        * DumpRenderTree/mac/ObjCPlugin.m:
+
 2008-09-08  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Mark Rowe.
