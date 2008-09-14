@@ -46,8 +46,7 @@ public:
 
     virtual int width() const;
     virtual int height() const;
-    virtual void setRect(const IntRect&);
-
+  
     virtual IntRect frameGeometry() const;
     virtual void setFrameGeometry(const IntRect& r);
 
@@ -61,11 +60,6 @@ public:
     virtual bool handleContextMenuEvent(const PlatformMouseEvent&);
 
     bool isEnabled() const;
-
-    static int horizontalScrollbarHeight(ScrollbarControlSize size = RegularScrollbar);
-    static int verticalScrollbarWidth(ScrollbarControlSize size = RegularScrollbar);
-
-    void autoscrollTimerFired(Timer<PlatformScrollbar>*);
     void invalidate();
 
 protected:    
@@ -78,12 +72,6 @@ private:
     int thumbPosition() const;
     int thumbLength() const;
     int trackLength() const;
-
-    void startTimerIfNeeded(double delay);
-    void stopTimerIfNeeded();
-    void autoscrollPressedPart(double delay);
-    ScrollDirection pressedPartScrollDirection();
-    ScrollGranularity pressedPartScrollGranularity();
 
     bool thumbUnderMouse();
 
