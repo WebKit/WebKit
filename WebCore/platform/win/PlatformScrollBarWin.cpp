@@ -141,7 +141,6 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
 
 PlatformScrollbar::~PlatformScrollbar()
 {
-    stopTimerIfNeeded();
 }
 
 void PlatformScrollbar::updateThumbPosition()

@@ -62,6 +62,11 @@ Scrollbar::Scrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, 
         m_theme = ScrollbarTheme::nativeTheme();
 }
 
+Scrollbar::~Scrollbar()
+{
+    stopTimerIfNeeded();
+}
+
 bool Scrollbar::setValue(int v)
 {
     v = max(min(v, m_totalSize - m_visibleSize), 0);
