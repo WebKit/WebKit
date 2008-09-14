@@ -176,7 +176,7 @@ ALWAYS_INLINE void CTI::emitPutResult(unsigned dst, X86Assembler::RegisterID fro
 }
 
 #if ENABLE(SAMPLING_TOOL)
-unsigned incall = 0;
+unsigned inCalledCode = 0;
 #endif
 
 void ctiSetReturnAddress(void** where, void* what)
@@ -245,60 +245,60 @@ void CTI::printOpcodeOperandTypes(unsigned src1, unsigned src2)
 ALWAYS_INLINE void CTI::emitCall(unsigned opcodeIndex, CTIHelper_j helper)
 {
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(1, &incall);
+    m_jit.movl_i32m(1, &inCalledCode);
 #endif
     m_calls.append(CallRecord(m_jit.emitCall(), helper, opcodeIndex));
     emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(0, &incall);
+    m_jit.movl_i32m(0, &inCalledCode);
 #endif
 }
 
 ALWAYS_INLINE void CTI::emitCall(unsigned opcodeIndex, CTIHelper_p helper)
 {
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(1, &incall);
+    m_jit.movl_i32m(1, &inCalledCode);
 #endif
     m_calls.append(CallRecord(m_jit.emitCall(), helper, opcodeIndex));
     emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(0, &incall);
+    m_jit.movl_i32m(0, &inCalledCode);
 #endif
 }
 
 ALWAYS_INLINE void CTI::emitCall(unsigned opcodeIndex, CTIHelper_b helper)
 {
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(1, &incall);
+    m_jit.movl_i32m(1, &inCalledCode);
 #endif
     m_calls.append(CallRecord(m_jit.emitCall(), helper, opcodeIndex));
     emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(0, &incall);
+    m_jit.movl_i32m(0, &inCalledCode);
 #endif
 }
 
 ALWAYS_INLINE void CTI::emitCall(unsigned opcodeIndex, CTIHelper_v helper)
 {
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(1, &incall);
+    m_jit.movl_i32m(1, &inCalledCode);
 #endif
     m_calls.append(CallRecord(m_jit.emitCall(), helper, opcodeIndex));
     emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(0, &incall);
+    m_jit.movl_i32m(0, &inCalledCode);
 #endif
 }
 
 ALWAYS_INLINE void CTI::emitCall(unsigned opcodeIndex, CTIHelper_s helper)
 {
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(1, &incall);
+    m_jit.movl_i32m(1, &inCalledCode);
 #endif
     m_calls.append(CallRecord(m_jit.emitCall(), helper, opcodeIndex));
     emitDebugExceptionCheck();
 #if ENABLE(SAMPLING_TOOL)
-    m_jit.movl_i32m(0, &incall);
+    m_jit.movl_i32m(0, &inCalledCode);
 #endif
 }
 
@@ -375,7 +375,7 @@ CTI::CTI(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
     }
 
 #if ENABLE(SAMPLING_TOOL)
-OpcodeID what = (OpcodeID)-1;
+OpcodeID currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif
 
 void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type)
@@ -464,7 +464,7 @@ void CTI::privateCompileMainPass()
         m_labels[i] = m_jit.label();
 
 #if ENABLE(SAMPLING_TOOL)
-        m_jit.movl_i32m(m_machine->getOpcodeID(instruction[i].u.opcode), &what);
+        m_jit.movl_i32m(m_machine->getOpcodeID(instruction[i].u.opcode), &currentOpcodeID);
 #endif
 
         ASSERT_WITH_MESSAGE(m_machine->isOpcode(instruction[i].u.opcode), "privateCompileMainPass gone bad @ %d", i);
@@ -518,7 +518,7 @@ void CTI::privateCompileMainPass()
                 emitCall(i, Machine::cti_op_end);
             emitGetArg(instruction[i + 1].u.operand, X86::eax);
 #if ENABLE(SAMPLING_TOOL)
-            m_jit.movl_i32m(-1, &what);
+            m_jit.movl_i32m(-1, &currentOpcodeID);
 #endif
             m_jit.pushl_m(-((m_codeBlock->numLocals + RegisterFile::CallFrameHeaderSize) - RegisterFile::CTIReturnEIP) * sizeof(Register), X86::edi);
             m_jit.ret();

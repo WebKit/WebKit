@@ -1,3 +1,21 @@
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Cameron Zwarich.
+
+        Cleanup Sampling code.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitCall):
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CTI.h:
+        (JSC::CTI::execute):
+        * VM/SamplingTool.cpp:
+        (JSC::):
+        (JSC::SamplingTool::run):
+        (JSC::SamplingTool::dump):
+        * VM/SamplingTool.h:
+        (JSC::SamplingTool::callingHostFunction):
+
 2008-09-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Cameron Zwarich.

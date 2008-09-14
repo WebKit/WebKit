@@ -29,13 +29,15 @@
 #if ENABLE(CTI)
 
 #include "Opcode.h"
-#include "Opcode.h"
-#include "RegisterFile.h"
 #include "RegisterFile.h"
 #include <masm/X86Assembler.h>
 #include <profiler/Profiler.h>
 #include <wtf/AlwaysInline.h>
 #include <wtf/Vector.h>
+
+#if ENABLE(SAMPLING_TOOL)
+#include "SamplingTool.h"
+#endif
 
 #if COMPILER(MSVC)
 #define CTI_ARGS void** args
@@ -110,8 +112,6 @@ namespace JSC {
     typedef void (*CTIHelper_v)(CTI_ARGS);
     typedef void* (*CTIHelper_s)(CTI_ARGS);
     typedef int (*CTIHelper_b)(CTI_ARGS);
-
-    extern OpcodeID what;
 
     struct CallRecord {
         X86Assembler::JmpSrc from;
@@ -282,7 +282,7 @@ namespace JSC {
         {
             JSValue* value = ctiTrampoline(code, exec, registerFile, r, scopeChain, codeBlock, exception, Profiler::enabledProfilerReference());
 #if ENABLE(SAMPLING_TOOL)
-            what = static_cast<OpcodeID>(-1);
+            currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif
             return value;
         }
