@@ -72,6 +72,7 @@ namespace JSC {
 
     class StructureID : public RefCounted<StructureID> {
     public:
+        friend class CTI;
         static PassRefPtr<StructureID> create(JSValue* prototype, JSType type = ObjectType)
         {
             return adoptRef(new StructureID(prototype, type));
@@ -97,12 +98,16 @@ namespace JSC {
 
         JSValue* storedPrototype() const { return m_prototype; }
         JSValue* prototypeForLookup(ExecState*); 
-        
+
+        StructureID* previousID() const { return m_previous.get(); }
+
         void setCachedPrototypeChain(PassRefPtr<StructureIDChain> cachedPrototypeChain) { m_cachedPrototypeChain = cachedPrototypeChain; }
         StructureIDChain* cachedPrototypeChain() const { return m_cachedPrototypeChain.get(); }
 
         const PropertyMap& propertyMap() const { return m_propertyMap; }
         PropertyMap& propertyMap() { return m_propertyMap; }
+
+        static void transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase);
 
     private:
         typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;

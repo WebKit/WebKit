@@ -259,6 +259,12 @@ namespace JSC {
             CTI cti(machine, exec, codeBlock);
             return cti.privateCompilePutByIdReplace(structureID, cachedOffset);
         }
+        
+        static void* compilePutByIdTransition(Machine* machine, ExecState* exec, CodeBlock* codeBlock, StructureID* oldStructureID, StructureID* newStructureID, size_t cachedOffset, StructureIDChain* sIDC)
+        {
+            CTI cti(machine, exec, codeBlock);
+            return cti.privateCompilePutByIdTransition(oldStructureID, newStructureID, cachedOffset, sIDC);
+        }
 
         static void* compileArrayLengthTrampoline(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
         {
@@ -291,6 +297,7 @@ namespace JSC {
         void* privateCompileGetByIdProto(ExecState*, StructureID*, StructureID* prototypeStructureID, size_t cachedOffset);
         void* privateCompileGetByIdChain(ExecState*, StructureID*, StructureIDChain*, size_t count, size_t cachedOffset);
         void* privateCompilePutByIdReplace(StructureID*, size_t cachedOffset);
+        void* privateCompilePutByIdTransition(StructureID*, StructureID*, size_t cachedOffset, StructureIDChain*);
         void* privateArrayLengthTrampoline();
         void* privateStringLengthTrampoline();
 

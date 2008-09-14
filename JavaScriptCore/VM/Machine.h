@@ -254,7 +254,7 @@ namespace JSC {
         
         void tryCacheGetByID(ExecState*, CodeBlock*, Instruction* vPC, JSValue* baseValue, const Identifier& propertyName, const PropertySlot&);
         void uncacheGetByID(CodeBlock*, Instruction* vPC);
-        void tryCachePutByID(CodeBlock*, Instruction* vPC, JSValue* baseValue, const PutPropertySlot&);
+        void tryCachePutByID(ExecState* exec, CodeBlock*, Instruction* vPC, JSValue* baseValue, const PutPropertySlot&);
         void uncachePutByID(CodeBlock*, Instruction* vPC);
 
 #if ENABLE(CTI)

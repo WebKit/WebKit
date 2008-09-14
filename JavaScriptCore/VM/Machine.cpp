@@ -1107,12 +1107,15 @@ static NEVER_INLINE ScopeChainNode* createExceptionScope(ExecState* exec, CodeBl
 
 static StructureIDChain* cachePrototypeChain(ExecState* exec, StructureID* structureID)
 {
-    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(structureID->prototypeForLookup(exec))->structureID());
+    JSValue* prototype = structureID->prototypeForLookup(exec);
+    if (JSImmediate::isImmediate(prototype))
+        return 0;
+    RefPtr<StructureIDChain> chain = StructureIDChain::create(static_cast<JSObject*>(prototype)->structureID());
     structureID->setCachedPrototypeChain(chain.release());
     return structureID->cachedPrototypeChain();
 }
 
-NEVER_INLINE void Machine::tryCachePutByID(CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const PutPropertySlot& slot)
+NEVER_INLINE void Machine::tryCachePutByID(ExecState* exec, CodeBlock* codeBlock, Instruction* vPC, JSValue* baseValue, const PutPropertySlot& slot)
 {
     // Recursive invocation may already have specialized this instruction.
     if (vPC[0].u.opcode != getOpcode(op_put_by_id))
@@ -1123,12 +1126,6 @@ NEVER_INLINE void Machine::tryCachePutByID(CodeBlock* codeBlock, Instruction* vP
 
     // Uncacheable: give up.
     if (!slot.isCacheable()) {
-        vPC[0] = getOpcode(op_put_by_id_generic);
-        return;
-    }
-
-    // FIXME: Cache new property transitions, too.
-    if (slot.type() == PutPropertySlot::NewProperty) {
         vPC[0] = getOpcode(op_put_by_id_generic);
         return;
     }
@@ -1162,6 +1159,27 @@ NEVER_INLINE void Machine::tryCachePutByID(CodeBlock* codeBlock, Instruction* vP
         vPC[0] = getOpcode(op_put_by_id_generic);
         return;
     }
+
+    // StructureID transition, cache transition info
+    if (slot.type() == PutPropertySlot::NewProperty) {
+        vPC[0] = getOpcode(op_put_by_id_transition);
+        vPC[4] = structureID->previousID();
+        vPC[5] = structureID;
+        StructureIDChain* chain = structureID->cachedPrototypeChain();
+        if (!chain) {
+            chain = cachePrototypeChain(exec, structureID);
+            if (!chain) {
+                // This happens if someone has manually inserted null into the prototype chain
+                vPC[0] = getOpcode(op_put_by_id_generic);
+                return;
+            }
+        }
+        vPC[6] = chain;
+        vPC[7] = slot.cachedOffset();
+        codeBlock->refStructureIDs(vPC);
+        return;
+    }
+
     vPC[0] = getOpcode(op_put_by_id_replace);
     vPC[5] = slot.cachedOffset();
     codeBlock->refStructureIDs(vPC);
@@ -1282,6 +1300,7 @@ NEVER_INLINE void Machine::tryCacheGetByID(ExecState* exec, CodeBlock* codeBlock
     StructureIDChain* chain = structureID->cachedPrototypeChain();
     if (!chain)
         chain = cachePrototypeChain(exec, structureID);
+    ASSERT(chain);
 
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structureID;
@@ -2404,7 +2423,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_put_by_id) {
-        /* put_by_id base(r) property(id) value(r) nop(n) nop(n)
+        /* put_by_id base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
@@ -2424,13 +2443,65 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         baseValue->put(exec, ident, r[value].jsValue(exec), slot);
         VM_CHECK_EXCEPTION();
 
-        tryCachePutByID(codeBlock, vPC, baseValue, slot);
+        tryCachePutByID(exec, codeBlock, vPC, baseValue, slot);
 
-        vPC += 6;
+        vPC += 8;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_put_by_id_transition) {
+        /* op_put_by_id_transition base(r) property(id) value(r) oldStructureID(sID) newStructureID(sID) structureIDChain(sIDc) offset(n)
+         
+           Cached property access: Attempts to set a new property with a cached transition
+           property named by identifier property, belonging to register base,
+           to register value. If the cache misses, op_put_by_id_transition
+           reverts to op_put_by_id_generic.
+         
+           Unlike many opcodes, this one does not write any output to
+           the register file.
+         */
+        int base = vPC[1].u.operand;
+        JSValue* baseValue = r[base].jsValue(exec);
+        
+        if (LIKELY(!JSImmediate::isImmediate(baseValue))) {
+            JSCell* baseCell = static_cast<JSCell*>(baseValue);
+            StructureID* oldStructureID = vPC[4].u.structureID;
+            StructureID* newStructureID = vPC[5].u.structureID;
+            
+            if (LIKELY(baseCell->structureID() == oldStructureID)) {
+                ASSERT(baseCell->isObject());
+                JSObject* baseObject = static_cast<JSObject*>(baseCell);
+
+                RefPtr<StructureID>* it = vPC[6].u.structureIDChain->head();
+
+                JSObject* proto = static_cast<JSObject*>(baseObject->structureID()->prototypeForLookup(exec));
+                while (!proto->isNull()) {
+                    if (UNLIKELY(proto->structureID() != (*it).get())) {
+                        uncachePutByID(codeBlock, vPC);
+                        NEXT_OPCODE;
+                    }
+                    ++it;
+                    proto = static_cast<JSObject*>(proto->structureID()->prototypeForLookup(exec));
+                }
+
+                baseObject->transitionTo(newStructureID);
+                if (oldStructureID->propertyMap().storageSize() == JSObject::inlineStorageCapacity)
+                    baseObject->allocatePropertyStorage(oldStructureID->propertyMap().storageSize(), oldStructureID->propertyMap().size());
+
+                int value = vPC[3].u.operand;
+                unsigned offset = vPC[7].u.operand;
+                ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifiers[vPC[2].u.operand])) == offset);
+                baseObject->putDirectOffset(offset, r[value].jsValue(exec));
+
+                vPC += 8;
+                NEXT_OPCODE;
+            }
+        }
+        
+        uncachePutByID(codeBlock, vPC);
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_put_by_id_replace) {
-        /* op_put_by_id_replace base(r) property(id) value(r) structureID(sID) offset(n)
+        /* op_put_by_id_replace base(r) property(id) value(r) structureID(sID) offset(n) nop(n) nop(n)
 
            Cached property access: Attempts to set a pre-existing, cached
            property named by identifier property, belonging to register base,
@@ -2456,7 +2527,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
                 ASSERT(baseObject->offsetForLocation(baseObject->getDirectLocation(codeBlock->identifiers[vPC[2].u.operand])) == offset);
                 baseObject->putDirectOffset(offset, r[value].jsValue(exec));
 
-                vPC += 6;
+                vPC += 8;
                 NEXT_OPCODE;
             }
         }
@@ -2465,7 +2536,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_put_by_id_generic) {
-        /* op_put_by_id_generic base(r) property(id) value(r) nop(n) nop(n)
+        /* op_put_by_id_generic base(r) property(id) value(r) nop(n) nop(n) nop(n) nop(n)
 
            Generic property access: Sets the property named by identifier
            property, belonging to register base, to register value.
@@ -2484,7 +2555,7 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         baseValue->put(exec, ident, r[value].jsValue(exec), slot);
         VM_CHECK_EXCEPTION();
 
-        vPC += 6;
+        vPC += 8;
         NEXT_OPCODE;
     }
     BEGIN_OPCODE(op_del_by_id) {
@@ -3556,12 +3627,6 @@ NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBl
         ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
         return;
     }
-
-    // FIXME: Cache new property transitions, too.
-    if (slot.type() == PutPropertySlot::NewProperty) {
-        ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
-        return;
-    }
     
     JSCell* baseCell = static_cast<JSCell*>(baseValue);
     StructureID* structureID = baseCell->structureID();
@@ -3584,6 +3649,28 @@ NEVER_INLINE void Machine::tryCTICachePutByID(ExecState* exec, CodeBlock* codeBl
         ctiRepatchCallByReturnAddress(returnAddress, (void*)cti_op_put_by_id_generic);
         return;
     }
+
+    // StructureID transition, cache transition info
+    if (slot.type() == PutPropertySlot::NewProperty) {
+        vPC[0] = getOpcode(op_put_by_id_transition);
+        vPC[4] = structureID->previousID();
+        vPC[5] = structureID;
+        StructureIDChain* chain = structureID->cachedPrototypeChain();
+        if (!chain) {
+            chain = cachePrototypeChain(exec, structureID);
+            if (!chain) {
+                // This happens if someone has manually inserted null into the prototype chain
+                vPC[0] = getOpcode(op_put_by_id_generic);
+                return;
+            }
+        }
+        vPC[6] = chain;
+        vPC[7] = slot.cachedOffset();
+        codeBlock->refStructureIDs(vPC);
+        ctiRepatchCallByReturnAddress(returnAddress, CTI::compilePutByIdTransition(this, exec, codeBlock, structureID->previousID(), structureID, slot.cachedOffset(), chain));
+        return;
+    }
+    
     vPC[0] = getOpcode(op_put_by_id_replace);
     vPC[4] = structureID;
     vPC[5] = slot.cachedOffset();
@@ -3713,6 +3800,7 @@ NEVER_INLINE void Machine::tryCTICacheGetByID(ExecState* exec, CodeBlock* codeBl
     if (!chain)
         chain = cachePrototypeChain(exec, structureID);
 
+    ASSERT(chain);
     vPC[0] = getOpcode(op_get_by_id_chain);
     vPC[4] = structureID;
     vPC[5] = chain;

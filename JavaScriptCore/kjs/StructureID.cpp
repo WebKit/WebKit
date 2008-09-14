@@ -47,6 +47,12 @@ namespace JSC {
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
 }
 
+void StructureID::transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase)
+{
+    if (!slotBase->usingInlineStorage() && oldStructureID->m_propertyMap.size() != newStructureID->m_propertyMap.size())
+        slotBase->allocatePropertyStorage(oldStructureID->m_propertyMap.size(), newStructureID->m_propertyMap.size());
+}
+
 PassRefPtr<StructureID> StructureID::addPropertyTransition(StructureID* structureID, const Identifier& propertyName, JSValue* value, unsigned attributes, JSObject* slotBase, PutPropertySlot& slot, PropertyStorage& propertyStorage)
 {
     ASSERT(!structureID->m_isDictionary);
@@ -139,7 +145,7 @@ StructureIDChain::StructureIDChain(StructureID* structureID)
         tmp = static_cast<JSCell*>(tmp->storedPrototype())->structureID();
     }
     
-    m_vector.set(new RefPtr<StructureID>[size]);
+    m_vector.set(new RefPtr<StructureID>[size + 1]);
 
     size_t i;
     for (i = 0; i < size - 1; ++i) {
@@ -147,6 +153,7 @@ StructureIDChain::StructureIDChain(StructureID* structureID)
         structureID = static_cast<JSObject*>(structureID->storedPrototype())->structureID();
     }
     m_vector[i] = structureID;
+    m_vector[i + 1] = 0;
 }
 
 } // namespace JSC

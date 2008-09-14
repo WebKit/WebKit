@@ -172,7 +172,7 @@ static void printPutByIdOp(int location, Vector<Instruction>::const_iterator& it
     int id0 = (++it)->u.operand;
     int r1 = (++it)->u.operand;
     printf("[%4d] %s\t %s, %s, %s\n", location, op, registerName(r0).c_str(), idName(id0, identifiers[id0]).c_str(), registerName(r1).c_str());
-    it += 2;
+    it += 4;
 }
 
 void CodeBlock::printStructureID(const char* name, const Instruction* vPC, int operand) const
@@ -196,6 +196,10 @@ void CodeBlock::printStructureIDs(const Instruction* vPC) const
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_proto)) {
         printf("  [%4d] %s: %s, %s\n", instructionOffset, "get_by_id_proto", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str());
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_transition)) {
+        printf("  [%4d] %s: %s, %s, %s\n", instructionOffset, "put_by_id_new", pointerToSourceString(vPC[4].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[5].u.structureID).UTF8String().c_str(), pointerToSourceString(vPC[6].u.structureIDChain).UTF8String().c_str());
         return;
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
@@ -592,6 +596,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printPutByIdOp(location, it, identifiers, "put_by_id_replace");
             break;
         }
+        case op_put_by_id_transition: {
+            printPutByIdOp(location, it, identifiers, "put_by_id_transition");
+            break;
+        }
         case op_put_by_id_generic: {
             printPutByIdOp(location, it, identifiers, "put_by_id_generic");
             break;
@@ -863,6 +871,12 @@ void CodeBlock::derefStructureIDs(Instruction* vPC) const
         vPC[5].u.structureIDChain->deref();
         return;
     }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_transition)) {
+        vPC[4].u.structureID->deref();
+        vPC[5].u.structureID->deref();
+        vPC[6].u.structureIDChain->deref();
+        return;
+    }
     if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {
         vPC[4].u.structureID->deref();
         return;
@@ -888,6 +902,12 @@ void CodeBlock::refStructureIDs(Instruction* vPC) const
     if (vPC[0].u.opcode == machine->getOpcode(op_get_by_id_chain)) {
         vPC[4].u.structureID->ref();
         vPC[5].u.structureIDChain->ref();
+        return;
+    }
+    if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_transition)) {
+        vPC[4].u.structureID->ref();
+        vPC[5].u.structureID->ref();
+        vPC[6].u.structureIDChain->ref();
         return;
     }
     if (vPC[0].u.opcode == machine->getOpcode(op_put_by_id_replace)) {

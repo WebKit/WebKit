@@ -584,7 +584,7 @@ void CTI::privateCompileMainPass()
             emitPutArg(X86::eax, 0); // leave the base in eax
             emitPutArg(X86::edx, 8); // leave the base in edx
             emitCall(i, Machine::cti_op_put_by_id);
-            i += 6;
+            i += 8;
             break;
         }
         case op_get_by_id: {
@@ -1304,6 +1304,7 @@ void CTI::privateCompileMainPass()
         case op_get_string_length:
         case op_put_by_id_generic:
         case op_put_by_id_replace:
+        case op_put_by_id_transition:
             ASSERT_NOT_REACHED();
         }
     }
@@ -1829,6 +1830,113 @@ void* CTI::privateCompilePutByIdReplace(StructureID* structureID, size_t cachedO
     X86Assembler::link(code, failureCases1, reinterpret_cast<void*>(Machine::cti_op_put_by_id_fail));
     X86Assembler::link(code, failureCases2, reinterpret_cast<void*>(Machine::cti_op_put_by_id_fail));
 
+    m_codeBlock->structureIDAccessStubs.append(code);
+    
+    return code;
+}
+
+extern "C" {
+
+static JSValue* SFX_CALL transitionObject(StructureID* newStructureID, size_t cachedOffset, JSObject* baseObject, JSValue* value)
+{
+    StructureID* oldStructureID = newStructureID->previousID();
+
+    baseObject->transitionTo(newStructureID);
+
+    if (oldStructureID->propertyMap().storageSize() == JSObject::inlineStorageCapacity)
+        baseObject->allocatePropertyStorage(oldStructureID->propertyMap().storageSize(), oldStructureID->propertyMap().size());
+
+    baseObject->putDirectOffset(cachedOffset, value);
+    return baseObject;
+}
+
+}
+
+static inline bool transitionWillNeedStorageRealloc(StructureID* oldStructureID, StructureID* newStructureID)
+{
+    if (oldStructureID->propertyMap().storageSize() == JSObject::inlineStorageCapacity)
+        return true;
+
+    if (oldStructureID->propertyMap().storageSize() < JSObject::inlineStorageCapacity)
+        return false;
+
+    if (oldStructureID->propertyMap().size() != newStructureID->propertyMap().size())
+        return true;
+
+    return false;
+}
+
+void* CTI::privateCompilePutByIdTransition(StructureID* oldStructureID, StructureID* newStructureID, size_t cachedOffset, StructureIDChain* sIDC)
+{
+    Vector<X86Assembler::JmpSrc, 16> failureCases;
+    // check eax is an object of the right StructureID.
+    m_jit.testl_i32r(JSImmediate::TagMask, X86::eax);
+    failureCases.append(m_jit.emitUnlinkedJne());
+    m_jit.cmpl_i32m(reinterpret_cast<uint32_t>(oldStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+    failureCases.append(m_jit.emitUnlinkedJne());
+    Vector<X86Assembler::JmpSrc> successCases;
+
+    //  ecx = baseObject
+    m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::eax, X86::ecx);
+    // proto(ecx) = baseObject->structureID()->prototype()
+    m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+    failureCases.append(m_jit.emitUnlinkedJne());
+    m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+    
+    // ecx = baseObject->m_structureID
+    for (RefPtr<StructureID>* it = sIDC->head(); *it; ++it) {
+        // null check the prototype
+        m_jit.cmpl_i32r(reinterpret_cast<intptr_t> (jsNull()), X86::ecx);
+        successCases.append(m_jit.emitUnlinkedJe());
+
+        // Check the structure id
+        m_jit.cmpl_i32m(reinterpret_cast<uint32_t>(it->get()), OBJECT_OFFSET(JSCell, m_structureID), X86::ecx);
+        failureCases.append(m_jit.emitUnlinkedJne());
+        
+        m_jit.movl_mr(OBJECT_OFFSET(JSCell, m_structureID), X86::ecx, X86::ecx);
+        m_jit.cmpl_i32m(ObjectType, OBJECT_OFFSET(StructureID, m_type), X86::ecx);
+        failureCases.append(m_jit.emitUnlinkedJne());
+        m_jit.movl_mr(OBJECT_OFFSET(StructureID, m_prototype), X86::ecx, X86::ecx);
+    }
+
+    failureCases.append(m_jit.emitUnlinkedJne());
+    for (unsigned i = 0; i < successCases.size(); ++i)
+        m_jit.link(successCases[i], m_jit.label());
+
+    X86Assembler::JmpSrc callTarget;
+    // Fast case, don't need to do any heavy lifting, so don't bother making a call.
+    if (!transitionWillNeedStorageRealloc(oldStructureID, newStructureID)) {
+        // Assumes m_refCount can be decremented easily, refcount decrement is safe as 
+        // codeblock should ensure oldStructureID->m_refCount > 0
+        m_jit.subl_i8m(1, reinterpret_cast<void*>(oldStructureID));
+        m_jit.addl_i8m(1, reinterpret_cast<void*>(newStructureID));
+        m_jit.movl_i32m(reinterpret_cast<uint32_t>(newStructureID), OBJECT_OFFSET(JSCell, m_structureID), X86::eax);
+
+        // write the value
+        m_jit.movl_mr(OBJECT_OFFSET(JSObject, m_propertyStorage), X86::eax, X86::eax);
+        m_jit.movl_rm(X86::edx, cachedOffset * sizeof(JSValue*), X86::eax);
+    } else {
+        // Slow case transition -- we're going to need to quite a bit of work,
+        // so just make a call
+        m_jit.pushl_r(X86::edx);
+        m_jit.pushl_r(X86::eax);
+        m_jit.movl_i32r(cachedOffset, X86::eax);
+        m_jit.pushl_r(X86::eax);
+        m_jit.movl_i32r(reinterpret_cast<uint32_t>(newStructureID), X86::eax);
+        m_jit.pushl_r(X86::eax);
+        callTarget = m_jit.emitCall();
+        m_jit.addl_i32r(4 * sizeof(void*), X86::esp);
+    }
+    m_jit.ret();
+    void* code = m_jit.copy();
+    ASSERT(code);
+    
+    for (unsigned i = 0; i < failureCases.size(); ++i)
+        X86Assembler::link(code, failureCases[i], reinterpret_cast<void*>(Machine::cti_op_put_by_id_fail));
+
+    if (transitionWillNeedStorageRealloc(oldStructureID, newStructureID))
+        X86Assembler::link(code, callTarget, reinterpret_cast<void*>(transitionObject));
+    
     m_codeBlock->structureIDAccessStubs.append(code);
     
     return code;

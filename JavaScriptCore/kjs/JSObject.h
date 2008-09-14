@@ -150,6 +150,8 @@ namespace JSC {
             return &m_propertyStorage[offset];
         }
 
+        void transitionTo(StructureID*);
+
         void removeDirect(const Identifier& propertyName);
         bool hasCustomProperties() { return !m_structureID->propertyMap().isEmpty(); }
         bool hasGetterSetterProperties() { return m_structureID->propertyMap().hasGetterSetterProperties(); }
@@ -178,14 +180,14 @@ namespace JSC {
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
         bool usingInlineStorage() const { return m_propertyStorage == m_inlineStorage; }
 
+        static const size_t inlineStorageCapacity = 2;
+
     protected:
         bool getOwnPropertySlotForWrite(ExecState*, const Identifier&, PropertySlot&, bool& slotIsWriteable);
 
     private:
         const HashEntry* findPropertyHashEntry(ExecState*, const Identifier& propertyName) const;
         StructureID* createInheritorID();
-
-        static const size_t inlineStorageCapacity = 2;
 
         RefPtr<StructureID> m_inheritorID;
 
@@ -389,21 +391,28 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
          return;
      }
 
-     unsigned currentAttributes;
-     size_t offset = m_structureID->propertyMap().getOffset(propertyName, currentAttributes);
-     if (offset != WTF::notFound) {
-         if (checkReadOnly && currentAttributes & ReadOnly)
-             return;
-         m_propertyStorage[offset] = value;
-         slot.setExistingProperty(this, offset);
-         return;
-     }
+    unsigned currentAttributes;
+    size_t offset = m_structureID->propertyMap().getOffset(propertyName, currentAttributes);
+    if (offset != WTF::notFound) {
+        if (checkReadOnly && currentAttributes & ReadOnly)
+            return;
+        m_propertyStorage[offset] = value;
+        slot.setExistingProperty(this, offset);
+        return;
+    }
 
      if (m_structureID->propertyMap().storageSize() == inlineStorageCapacity)
          allocatePropertyStorage(m_structureID->propertyMap().storageSize(), m_structureID->propertyMap().size());
 
      RefPtr<StructureID> structureID = StructureID::addPropertyTransition(m_structureID, propertyName, value, attributes, this, slot, m_propertyStorage);
+     slot.setWasTransition(true);
      setStructureID(structureID.release());
+}
+
+inline void JSObject::transitionTo(StructureID* newStructureID)
+{
+    StructureID::transitionTo(m_structureID, newStructureID, this);
+    setStructureID(newStructureID);
 }
 
 inline JSValue* JSObject::toPrimitive(ExecState* exec, PreferredPrimitiveType preferredType) const

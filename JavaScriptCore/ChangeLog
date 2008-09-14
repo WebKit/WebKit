@@ -1,3 +1,58 @@
+2008-09-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Cameron Zwarich.
+
+        Bug 20821: Cache property transitions to speed up object initialization
+        https://bugs.webkit.org/show_bug.cgi?id=20821
+
+        Implement a transition cache to improve the performance of new properties
+        being added to objects.  This is extremely beneficial in constructors and
+        shows up as a 34% improvement on access-binary-trees in SunSpider (0.8%
+        overall)
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::):
+        (JSC::transitionWillNeedStorageRealloc):
+        (JSC::CTI::privateCompilePutByIdTransition):
+        * VM/CTI.h:
+        (JSC::CTI::compilePutByIdTransition):
+        * VM/CodeBlock.cpp:
+        (JSC::printPutByIdOp):
+        (JSC::CodeBlock::printStructureIDs):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::derefStructureIDs):
+        (JSC::CodeBlock::refStructureIDs):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitPutById):
+        * VM/Machine.cpp:
+        (JSC::cachePrototypeChain):
+        (JSC::Machine::tryCachePutByID):
+        (JSC::Machine::tryCacheGetByID):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::tryCTICachePutByID):
+        (JSC::Machine::tryCTICacheGetByID):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * kjs/JSObject.h:
+        (JSC::JSObject::putDirect):
+        (JSC::JSObject::transitionTo):
+        * kjs/PutPropertySlot.h:
+        (JSC::PutPropertySlot::PutPropertySlot):
+        (JSC::PutPropertySlot::wasTransition):
+        (JSC::PutPropertySlot::setWasTransition):
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::transitionTo):
+        (JSC::StructureIDChain::StructureIDChain):
+        * kjs/StructureID.h:
+        (JSC::StructureID::previousID):
+        (JSC::StructureID::setCachedPrototypeChain):
+        (JSC::StructureID::cachedPrototypeChain):
+        (JSC::StructureID::propertyMap):
+        * masm/X86Assembler.h:
+        (JSC::X86Assembler::addl_i8m):
+        (JSC::X86Assembler::subl_i8m):
+
 2008-09-12  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.

@@ -97,6 +97,7 @@ namespace JSC {
         macro(op_get_array_length) \
         macro(op_get_string_length) \
         macro(op_put_by_id) \
+        macro(op_put_by_id_transition) \
         macro(op_put_by_id_replace) \
         macro(op_put_by_id_generic) \
         macro(op_del_by_id) \
