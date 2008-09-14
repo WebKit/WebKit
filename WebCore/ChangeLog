@@ -2,6 +2,13 @@
 
         Qt build fix.
 
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
+        Qt build fix.
+
         * platform/qt/PlatformScrollBarQt.cpp:
         (WebCore::PlatformScrollbar::PlatformScrollbar):
         (WebCore::PlatformScrollbar::paint):
