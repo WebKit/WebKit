@@ -188,16 +188,6 @@ void PlatformScrollbar::invalidatePart(ScrollbarPart part)
     invalidateRect(result);
 }
 
-int PlatformScrollbar::width() const
-{
-    return Widget::width();
-}
-
-int PlatformScrollbar::height() const
-{
-    return Widget::height();
-}
-
 void PlatformScrollbar::setRect(const IntRect& rect)
 {
     // Get our window resizer rect and see if we overlap.  Adjust to avoid the overlap

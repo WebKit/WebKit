@@ -41,8 +41,6 @@ public:
     }
     virtual ~PlatformScrollbar();
 
-    virtual int width() const;
-    virtual int height() const;
     virtual void setRect(const IntRect&);
     virtual void setEnabled(bool);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);

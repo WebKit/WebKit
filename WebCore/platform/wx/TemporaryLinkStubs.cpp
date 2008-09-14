@@ -133,8 +133,6 @@ void Image::drawPattern(GraphicsContext*, const FloatRect& srcRect, const Affine
 
 PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientation orientation, ScrollbarControlSize controlSize) : Scrollbar(client, orientation, controlSize) { notImplemented(); }
 PlatformScrollbar::~PlatformScrollbar() { notImplemented(); }
-int PlatformScrollbar::width() const { notImplemented(); return 0; }
-int PlatformScrollbar::height() const { notImplemented(); return 0; }
 void PlatformScrollbar::setEnabled(bool) { notImplemented(); }
 void PlatformScrollbar::paint(GraphicsContext*, const IntRect& damageRect) { notImplemented(); }
 void PlatformScrollbar::updateThumbPosition() { notImplemented(); }

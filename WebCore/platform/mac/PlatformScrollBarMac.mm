@@ -187,16 +187,6 @@ bool PlatformScrollbar::scrollbarHit(NSScrollerPart hitPart)
     return setValue(newPos);
 }
 
-int PlatformScrollbar::width() const
-{
-    return Widget::width();
-}
-
-int PlatformScrollbar::height() const
-{
-    return Widget::height();
-}
-
 void PlatformScrollbar::setRect(const IntRect& rect)
 {
     setFrameGeometry(rect);
