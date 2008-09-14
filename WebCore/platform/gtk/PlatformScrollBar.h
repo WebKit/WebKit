@@ -47,9 +47,6 @@ public:
     virtual void setEnabled(bool);
     virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
-    static int horizontalScrollbarHeight();
-    static int verticalScrollbarWidth();
-
 protected:
     PlatformScrollbar(ScrollbarClient*, ScrollbarOrientation, ScrollbarControlSize);
 
