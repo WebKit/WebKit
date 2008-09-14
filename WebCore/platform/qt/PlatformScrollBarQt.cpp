@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc.  All rights reserved.
+ * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2007 Staikos Computing Services Inc. <info@staikos.net>
  * Copyright (C) 2007 Trolltech ASA
  *
@@ -26,7 +26,6 @@
  */
 
 #include "config.h"
-
 #include "PlatformScrollBar.h"
 
 #include "EventHandler.h"
@@ -35,6 +34,7 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PlatformMouseEvent.h"
+#include "ScrollbarTheme.h"
 
 #include <QApplication>
 #include <QDebug>

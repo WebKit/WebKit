@@ -1,5 +1,11 @@
 2008-09-14  Sam Weinig  <sam@webkit.org>
 
+        Qt build fix.
+
+        * platform/qt/PlatformScrollBarQt.cpp:
+
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Mark Rowe.
 
         Remove extraneous semicolons.
