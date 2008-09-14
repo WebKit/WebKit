@@ -43,6 +43,7 @@
 #include "PlatformScrollBar.h"
 #include "Page.h"
 #include "RenderLayer.h"
+#include "ScrollbarTheme.h"
 
 #include <gtk/gtk.h>
 
@@ -541,8 +542,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     ScrollbarMode hScroll = m_data->hScrollbarMode;
     ScrollbarMode vScroll = m_data->vScrollbarMode;
 
-    const int cVerticalWidth = PlatformScrollbar::verticalScrollbarWidth();
-    const int cHorizontalHeight = PlatformScrollbar::horizontalScrollbarHeight();
+    const int scrollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
 
     for (int pass = 0; pass < 2; pass++) {
         bool scrollsVertically;
@@ -555,11 +555,11 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
 
             scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() > height());
             if (scrollsVertically)
-                scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + cVerticalWidth > width());
+                scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() + scrollbarThickness > width());
             else {
                 scrollsHorizontally = (hScroll == ScrollbarAlwaysOn) || (hScroll == ScrollbarAuto && contentsWidth() > width());
                 if (scrollsHorizontally)
-                    scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() + cHorizontalHeight > height());
+                    scrollsVertically = (vScroll == ScrollbarAlwaysOn) || (vScroll == ScrollbarAuto && contentsHeight() + scrollbarThickness > height());
             }
         }
         else {
