@@ -135,26 +135,3 @@ void PlatformScrollbar::gtkValueChanged(GtkAdjustment*, PlatformScrollbar* that)
     that->setValue(static_cast<int>(gtk_adjustment_get_value(that->m_adjustment)));
 }
 
-static int scrollbarSize()
-{
-    static int size = 0;
-
-    if (size)
-        return size;
-
-    MozGtkScrollbarMetrics metrics;
-    moz_gtk_get_scrollbar_metrics(&metrics);
-    size = metrics.slider_width;
-
-    return size;
-}
-
-int PlatformScrollbar::horizontalScrollbarHeight()
-{
-    return scrollbarSize();
-}
-
-int PlatformScrollbar::verticalScrollbarWidth()
-{
-    return scrollbarSize();
-}
