@@ -230,14 +230,6 @@ void PlatformScrollbar::setParent(ScrollView* parentView)
     Widget::setParent(parentView);
 }
 
-void PlatformScrollbar::setEnabled(bool enabled)
-{
-    if (enabled != isEnabled()) {
-        Widget::setEnabled(enabled);
-        invalidate();
-    }
-}
-
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     if (graphicsContext->paintingDisabled())

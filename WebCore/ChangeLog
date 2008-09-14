@@ -1,5 +1,23 @@
 2008-09-13  Dave Hyatt  <hyatt@apple.com>
 
+        Remove setEnabled() from all Scrollbar classes that were just using their Widget base class methods.
+       
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.h:
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        * platform/win/PlatformScrollBar.h:
+        * platform/win/PlatformScrollBarSafari.cpp:
+        * platform/win/PlatformScrollBarWin.cpp:
+        * platform/wx/PlatformScrollBar.h:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PlatformScrollbar::~PlatformScrollbar):
+
+2008-09-13  Dave Hyatt  <hyatt@apple.com>
+
         Remove width()/height() from Scrollbar now that it derives from Widget.  Remove width()/height() from
         all PlatformScrollbar subclasses that just called the Widget base class versions of those methods.
 

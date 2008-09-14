@@ -192,11 +192,6 @@ void PlatformScrollbar::setRect(const IntRect& rect)
     setFrameGeometry(rect);
 }
 
-void PlatformScrollbar::setEnabled(bool enabled)
-{
-    Widget::setEnabled(enabled);
-}
-
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
     Widget::paint(graphicsContext, damageRect);
