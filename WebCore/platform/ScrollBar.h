@@ -55,19 +55,25 @@ public:
 
     ScrollbarOrientation orientation() const { return m_orientation; }
     
-    int value() const { return lroundf(m_currentPos); }     
-    int maximum() const { return m_totalSize - m_visibleSize; }
-
+    int value() const { return lroundf(m_currentPos); }
+    int visibleSize() const { return m_visibleSize; }
+    int maximum() const { return m_totalSize - m_visibleSize; }        
     ScrollbarControlSize controlSize() const { return m_controlSize; }
 
+    int lineStep() const { return m_lineStep; }
+    int pageStep() const { return m_pageStep; }
+    float pixelStep() const { return m_pixelStep; }
     void setSteps(int lineStep, int pageStep, int pixelsPerStep = 1);
     
+    ScrollbarPart pressedPart() const { return m_pressedPart; }
+    ScrollbarPart hoveredPart() const { return m_hoveredPart; }
+
     bool setValue(int);
     void setProportion(int visibleSize, int totalSize);
 
     bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1.0f);
     
-    virtual void paint(GraphicsContext*, const IntRect& damageRect) = 0;
+    virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
     // These methods are used for platform scrollbars to give :hover feedback.  They will not get called
     // when the mouse went down in a scrollbar, since it is assumed the scrollbar will start
@@ -86,6 +92,8 @@ public:
     // context menu.  There's no reason why the scrollbar should have to do it.
     virtual bool handleContextMenuEvent(const PlatformMouseEvent& event) { return false; }
 #endif
+
+    ScrollbarTheme* theme() const { return m_theme; }
 
 protected:
     virtual void updateThumbPosition() = 0;

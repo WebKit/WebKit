@@ -34,7 +34,11 @@ class ScrollbarThemeSafari : public ScrollbarTheme {
 public:
     virtual ~ScrollbarThemeSafari();
 
+    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
+
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
+    
+    virtual bool supportsControlTints() const { return true; }
 };
 
 }

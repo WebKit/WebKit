@@ -45,6 +45,79 @@ ScrollbarThemeQt::~ScrollbarThemeQt()
 {
 }
 
+static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
+{
+    static QStyleOptionSlider opt;
+    opt.rect = scrollbar->frameGeometry();
+    if (scrollbar->isEnabled()) {
+        opt.state |= QStyle::State_Enabled;
+    else
+        opt.state &= ~QStyle::State_Enabled;
+    if (scrollbar->controlSize() != RegularScrollbar)
+        opt.state |= QStyle::State_Mini;
+    else
+        opt.state &= ~QStyle::State_Mini;
+    opt.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
+    opt.sliderValue = scrollbar->value();
+    opt.sliderPosition = opt.sliderValue;
+    opt.pageStep = scrollbar->visibleSize();
+    opt.singleStep = scrollbar->lineStep();
+    opt.minimum = 0;
+    opt.maximum = qMax(0, scrollbar->maximum());
+    if (scrollbar->pressedPart() != NoPart)
+        opt.activeSubControls = scPart(scrollbar->pressedPart());
+    else
+        opt.activeSubControls = scPart(scrollbar->hoveredPart());
+    return &opt;
+}
+
+static QStyle::SubControl scPart(const ScrollbarPart& part)
+{
+    switch (part) {
+        case NoPart:
+            return QStyle::SC_None;
+        case BackButtonPart:
+            return QStyle::SC_ScrollBarSubLine;
+        case BackTrackPart:
+            return QStyle::SC_ScrollBarSubPage;
+        case ThumbPart:
+            return QStyle::SC_ScrollBarSlider;
+        case ForwardTrackPart:
+            return QStyle::SC_ScrollBarAddPage;
+        case ForwardButtonPart:
+            return QStyle::SC_ScrollBarAddLine;
+    }
+    
+    return QStyle::SC_None;
+}
+
+bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
+{
+    QOptionSlider* opt = styleOptionSlider(scrollbar);
+    QRect clip = opt->rect.intersected(damageRect);
+
+    QPainter* p = graphicsContext->platformContext();
+    p->save();
+    p->setClipRect(clip);
+    
+    const QPoint topLeft = opt->rect.topLeft();
+#ifdef Q_WS_MAC
+    QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, opt, p, 0);
+#else
+    p->translate(topLeft);
+    opt->rect.moveTo(QPoint(0, 0));
+
+    // The QStyle expects the background to be already filled
+    p->fillRect(opt->rect, opt->palette.background());
+
+    QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, opt, p, 0);
+    opt->rect.moveTo(topLeft);
+#endif
+    p->restore();
+    
+    return true;
+}
+
 int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 {
     QStyle* s = QApplication::style();

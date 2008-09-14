@@ -71,11 +71,6 @@ PlatformScrollbar::~PlatformScrollbar()
     g_object_unref(G_OBJECT(gtkWidget()));
 }
 
-void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
-{
-    Widget::paint(graphicsContext, damageRect);
-}
-
 void PlatformScrollbar::updateThumbPosition()
 {
     if (m_adjustment->value != m_currentPos) {

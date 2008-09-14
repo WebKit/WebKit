@@ -34,6 +34,8 @@ class ScrollbarThemeQt : public ScrollbarTheme {
 public:
     virtual ~ScrollbarThemeQt();
 
+    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect) { return true; }
+
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 };
 

@@ -167,61 +167,6 @@ static ScrollbarPart scrollbarPart(const QStyle::SubControl& sc)
     return NoPart;
 }
 
-void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
-{
-    if (controlSize() != RegularScrollbar) {
-        m_opt.state |= QStyle::State_Mini;
-    } else {
-        m_opt.state &= ~QStyle::State_Mini;
-    }
-    m_opt.orientation = (orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
-    QStyle *s = QApplication::style();
-    if (orientation() == HorizontalScrollbar) {
-        m_opt.rect.setHeight(m_theme->scrollbarThickness(controlSize()));
-        m_opt.state |= QStyle::State_Horizontal;
-    } else {
-        m_opt.rect.setWidth(m_theme->scrollbarThickness(controlSize()));
-        m_opt.state &= ~QStyle::State_Horizontal;
-    }
-
-    if (graphicsContext->paintingDisabled() || !m_opt.rect.isValid())
-        return;
-
-    QRect clip = m_opt.rect.intersected(damageRect);
-    // Don't paint anything if the scrollbar doesn't intersect the damage rect.
-    if (clip.isEmpty())
-        return;
-
-    QPainter *p = graphicsContext->platformContext();
-    p->save();
-    p->setClipRect(clip);
-    m_opt.sliderValue = value();
-    m_opt.sliderPosition = value();
-    m_opt.pageStep = m_visibleSize;
-    m_opt.singleStep = m_lineStep;
-    m_opt.minimum = 0;
-    m_opt.maximum = qMax(0, m_totalSize - m_visibleSize);
-    if (m_pressedPart != NoPart)
-        m_opt.activeSubControls = scPart(m_pressedPart);
-    else
-        m_opt.activeSubControls = scPart(m_hoveredPart);
-
-    const QPoint topLeft = m_opt.rect.topLeft();
-#ifdef Q_WS_MAC
-    QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
-#else
-    p->translate(topLeft);
-    m_opt.rect.moveTo(QPoint(0, 0));
-
-    // The QStyle expects the background to be already filled
-    p->fillRect(m_opt.rect, m_opt.palette.background());
-
-    QApplication::style()->drawComplexControl(QStyle::CC_ScrollBar, &m_opt, p, 0);
-    m_opt.rect.moveTo(topLeft);
-#endif
-    p->restore();
-}
-
 int PlatformScrollbar::thumbPosition() const
 {
     if (isEnabled())

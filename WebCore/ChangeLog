@@ -1,3 +1,47 @@
+2008-09-14  David Hyatt  <hyatt@apple.com>
+
+        Convert Mac, Gtk, wx and Qt over to the new ScrollbarTheme for
+        painting.  Mac and Gtk themes don't do anything and just let the
+        underlying widget paint.  Qt now uses the theme to paint.  wx doesn't
+        do anything yet.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::paint):
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::value):
+        (WebCore::Scrollbar::visibleSize):
+        (WebCore::Scrollbar::maximum):
+        (WebCore::Scrollbar::lineStep):
+        (WebCore::Scrollbar::pageStep):
+        (WebCore::Scrollbar::pixelStep):
+        (WebCore::Scrollbar::pressedPart):
+        (WebCore::Scrollbar::hoveredPart):
+        (WebCore::Scrollbar::theme):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::paint):
+        (WebCore::ScrollbarTheme::scrollbarThickness):
+        (WebCore::ScrollbarTheme::supportsControlTints):
+        (WebCore::ScrollbarTheme::themeChanged):
+        * platform/gtk/PlatformScrollBar.h:
+        * platform/gtk/PlatformScrollBarGtk.cpp:
+        * platform/mac/PlatformScrollBar.h:
+        * platform/mac/PlatformScrollBarMac.mm:
+        * platform/qt/PlatformScrollBar.h:
+        * platform/qt/PlatformScrollBarQt.cpp:
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::styleOptionSlider):
+        * platform/qt/ScrollbarThemeQt.h:
+        (WebCore::ScrollbarThemeQt::paint):
+        * platform/win/PlatformScrollBarSafari.cpp:
+        (WebCore::PlatformScrollbar::paint):
+        * platform/win/ScrollbarThemeSafari.h:
+        (WebCore::ScrollbarThemeSafari::supportsControlTints):
+        * platform/wx/PlatformScrollBar.h:
+        * platform/wx/TemporaryLinkStubs.cpp:
+        (PlatformScrollbar::~PlatformScrollbar):
+
 2008-09-14  Sam Weinig  <sam@webkit.org>
 
         Qt build fix.

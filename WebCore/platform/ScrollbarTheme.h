@@ -31,14 +31,21 @@
 
 namespace WebCore {
 
+class GraphicsContext;
+class Scrollbar;
+
 class ScrollbarTheme {
 public:
     virtual ~ScrollbarTheme() {};
 
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) { return 0; }
-    
-    virtual void themeChanged() {};
+    virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect) { return false; }
 
+    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar) { return 0; }
+
+    virtual bool supportsControlTints() const { return false; }
+
+    virtual void themeChanged() {}
+    
     static ScrollbarTheme* nativeTheme(); // Must be implemented by the theme subclass.
 };
 

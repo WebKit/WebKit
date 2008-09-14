@@ -243,18 +243,6 @@ void PlatformScrollbar::setParent(ScrollView* parentView)
 
 void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
 {
-    if (graphicsContext->updatingControlTints()) {
-        invalidate();
-        return;
-    }
-
-    if (graphicsContext->paintingDisabled())
-        return;
-
-    // Don't paint anything if the scrollbar doesn't intersect the damage rect.
-    if (!frameGeometry().intersects(damageRect))
-        return;
-
     // Create the ScrollbarControlPartMask based on the damageRect
     ScrollbarControlPartMask scrollMask = NoPart;
  

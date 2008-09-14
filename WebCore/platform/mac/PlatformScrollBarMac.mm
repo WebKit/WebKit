@@ -187,9 +187,4 @@ bool PlatformScrollbar::scrollbarHit(NSScrollerPart hitPart)
     return setValue(newPos);
 }
 
-void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& damageRect)
-{
-    Widget::paint(graphicsContext, damageRect);
-}
-
 }

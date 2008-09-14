@@ -51,7 +51,6 @@ public:
     virtual void setFrameGeometry(const IntRect& r);
 
     virtual void setEnabled(bool);
-    virtual void paint(GraphicsContext*, const IntRect& damageRect);
 
     virtual bool handleMouseMoveEvent(const PlatformMouseEvent&);
     virtual bool handleMouseOutEvent(const PlatformMouseEvent&);
