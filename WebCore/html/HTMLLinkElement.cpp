@@ -131,7 +131,7 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, bool& styleS
 {
     styleSheet = false;
     icon = false; 
-    alternate = false;;
+    alternate = false;
     if (equalIgnoringCase(rel, "stylesheet"))
         styleSheet = true;
     else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))

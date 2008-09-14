@@ -503,9 +503,9 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
     bool oldHasHorizontal = hasHorizontalScrollbar;
     ScrollbarMode hScroll = m_data->m_hScrollbarMode;
     ScrollbarMode vScroll = m_data->m_vScrollbarMode;
-    
-    const int scrollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();;
-    
+
+    const int scrollbarThickness = ScrollbarTheme::nativeTheme()->scrollbarThickness();
+
     for (int pass = 0; pass < 2; pass++) {
         bool scrollsVertically;
         bool scrollsHorizontally;

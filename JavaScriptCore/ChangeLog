@@ -1,5 +1,16 @@
 2008-09-14  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Remove extraneous semicolons.
+
+        * kjs/nodes.cpp:
+        (JSC::PrefixResolveNode::emitCode):
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::GrowHeap):
+
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
         Reviewed by Cameron Zwarich.
 
         Cleanup Sampling code.

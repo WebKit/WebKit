@@ -761,7 +761,7 @@ sub GenerateHeader
         if (@ivars > 0) {
             push(@headerContent, "{\n");
             foreach my $attribute (@ivars) {
-                my $type = GetObjCType($attribute->signature->type);;
+                my $type = GetObjCType($attribute->signature->type);
                 my $name = "m_" . $attribute->signature->name;
                 my $ivarDeclaration = "$type $name";
                 push(@headerContent, "    $ivarDeclaration;\n");

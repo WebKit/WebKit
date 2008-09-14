@@ -107,9 +107,8 @@ Path SVGPathSegList::toPathData()
     ExceptionCode ec = 0;
     int len = numberOfItems();
     for (int i = 0; i < len; ++i) {
-        SVGPathSeg* segment = getItem(i, ec).get();;
-        switch (segment->pathSegType())
-        {
+        SVGPathSeg* segment = getItem(i, ec).get();
+        switch (segment->pathSegType()) {
             case SVGPathSeg::PATHSEG_MOVETO_ABS:
             {
                 SVGPathSegMovetoAbs* moveTo = static_cast<SVGPathSegMovetoAbs*>(segment);

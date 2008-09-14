@@ -51,7 +51,7 @@ QGradient* Gradient::platformGradient()
         m_gradient = new QLinearGradient(m_p0.x(), m_p0.y(), m_p1.x(), m_p1.y());
 
     QColor stopColor;
-    Vector<ColorStop>::iterator stopIterator = m_stops.begin();;
+    Vector<ColorStop>::iterator stopIterator = m_stops.begin();
     qreal lastStop;
     const qreal lastStopDiff = 0.0000001;
     while (stopIterator != m_stops.end()) {

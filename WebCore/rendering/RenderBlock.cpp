@@ -1723,7 +1723,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
     if (style()->visibility() == VISIBLE && paintInfo.phase == PaintPhaseForeground) {
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
-        int yPos = ty + firstLineBox()->yPos();;
+        int yPos = ty + firstLineBox()->yPos();
         int h = lastLineBox()->yPos() + lastLineBox()->height() - firstLineBox()->yPos();
         if (yPos >= paintInfo.rect.bottom() || yPos + h <= paintInfo.rect.y())
             return;

@@ -1545,7 +1545,7 @@ bool TCMalloc_PageHeap::GrowHeap(Length n) {
     if (n < ask) {
       // Try growing just "n" pages
       ask = n;
-      ptr = TCMalloc_SystemAlloc(ask << kPageShift, &actual_size, kPageSize);;
+      ptr = TCMalloc_SystemAlloc(ask << kPageShift, &actual_size, kPageSize);
     }
     if (ptr == NULL) return false;
   }

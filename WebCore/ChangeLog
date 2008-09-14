@@ -1,5 +1,28 @@
 2008-09-14  Sam Weinig  <sam@webkit.org>
 
+        Reviewed by Mark Rowe.
+
+        Remove extraneous semicolons.
+
+        * bindings/scripts/CodeGeneratorObjC.pm:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::charsetAttributeValue):
+        (WebCore::HTMLScriptElement::typeAttributeValue):
+        * platform/graphics/qt/GradientQt.cpp:
+        (WebCore::Gradient::platformGradient):
+        * platform/qt/ScrollViewQt.cpp:
+        (WebCore::ScrollView::ScrollViewPrivate::setHasHorizontalScrollbar):
+        * platform/win/ScrollViewWin.cpp:
+        (WebCore::ScrollView::updateScrollbars):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        * svg/SVGPathSegList.cpp:
+        (WebCore::SVGPathSegList::toPathData):
+
+2008-09-14  Sam Weinig  <sam@webkit.org>
+
         Qt build fix.
 
         * platform/qt/ScrollViewQt.cpp:
