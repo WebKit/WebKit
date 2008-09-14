@@ -135,7 +135,7 @@ HRESULT STDMETHODCALLTYPE WebScrollBar::setRect(
     /* [in] */ RECT bounds)
 {
     IntRect rect(bounds.left, bounds.top, bounds.right-bounds.left, bounds.bottom-bounds.top);
-    m_scrollBar->setRect(rect);
+    m_scrollBar->setFrameGeometry(rect);
     return S_OK;
 }
 
