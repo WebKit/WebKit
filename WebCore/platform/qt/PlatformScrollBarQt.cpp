@@ -66,11 +66,11 @@ PlatformScrollbar::PlatformScrollbar(ScrollbarClient* client, ScrollbarOrientati
     if (size != RegularScrollbar)
         m_opt.state |= QStyle::State_Mini;
     if (orientation == HorizontalScrollbar) {
-        m_opt.rect.setHeight(horizontalScrollbarHeight(size));
+        m_opt.rect.setHeight(m_theme->scrollbarThickness(size));
         m_opt.orientation = Qt::Horizontal;
         m_opt.state |= QStyle::State_Horizontal;
     } else {
-        m_opt.rect.setWidth(verticalScrollbarWidth(size));
+        m_opt.rect.setWidth(m_theme->scrollbarThickness(size));
         m_opt.orientation = Qt::Vertical;
         m_opt.state &= ~QStyle::State_Horizontal;
     }
@@ -177,10 +177,10 @@ void PlatformScrollbar::paint(GraphicsContext* graphicsContext, const IntRect& d
     m_opt.orientation = (orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
     QStyle *s = QApplication::style();
     if (orientation() == HorizontalScrollbar) {
-        m_opt.rect.setHeight(horizontalScrollbarHeight(controlSize()));
+        m_opt.rect.setHeight(m_theme->scrollbarThickness(controlSize()));
         m_opt.state |= QStyle::State_Horizontal;
     } else {
-        m_opt.rect.setWidth(verticalScrollbarWidth(controlSize()));
+        m_opt.rect.setWidth(m_theme->scrollbarThickness(controlSize()));
         m_opt.state &= ~QStyle::State_Horizontal;
     }
 
