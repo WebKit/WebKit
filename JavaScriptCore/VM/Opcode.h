@@ -116,6 +116,7 @@ namespace JSC {
         macro(op_loop) \
         macro(op_loop_if_true) \
         macro(op_loop_if_less) \
+        macro(op_loop_if_lesseq) \
         macro(op_switch_imm) \
         macro(op_switch_char) \
         macro(op_switch_string) \

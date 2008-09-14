@@ -2823,6 +2823,33 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         ++vPC;
         NEXT_OPCODE;
     }
+    BEGIN_OPCODE(op_loop_if_lesseq) {
+        /* loop_if_lesseq src1(r) src2(r) target(offset)
+
+           Checks whether register src1 is less than or equal to register
+           src2, as with the ECMAScript '<=' operator, and then jumps to
+           offset target from the current instruction, if and only if the 
+           result of the comparison is true.
+
+           Additionally this loop instruction may terminate JS execution is
+           the JS timeout is reached.
+        */
+        JSValue* src1 = r[(++vPC)->u.operand].jsValue(exec);
+        JSValue* src2 = r[(++vPC)->u.operand].jsValue(exec);
+        int target = (++vPC)->u.operand;
+        
+        bool result = jsLessEq(exec, src1, src2);
+        VM_CHECK_EXCEPTION();
+        
+        if (result) {
+            vPC += target;
+            CHECK_FOR_TIMEOUT();
+            NEXT_OPCODE;
+        }
+        
+        ++vPC;
+        NEXT_OPCODE;
+    }
     BEGIN_OPCODE(op_jnless) {
         /* jnless src1(r) src2(r) target(offset)
 
@@ -3891,6 +3918,17 @@ int Machine::cti_op_loop_if_less(CTI_ARGS)
     ExecState* exec = ARG_exec;
 
     bool result = jsLess(exec, src1, src2);
+    VM_CHECK_EXCEPTION_AT_END();
+    return result;
+}
+
+int Machine::cti_op_loop_if_lesseq(CTI_ARGS)
+{
+    JSValue* src1 = ARG_src1;
+    JSValue* src2 = ARG_src2;
+    ExecState* exec = ARG_exec;
+
+    bool result = jsLessEq(exec, src1, src2);
     VM_CHECK_EXCEPTION_AT_END();
     return result;
 }

@@ -1,13 +1,26 @@
-2008-09-14  Sam Weinig  <sam@webkit.org>
+2008-09-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
-        Reviewed by Mark Rowe.
+        Reviewed by Oliver Hunt.
 
-        Remove extraneous semicolons.
+        Bug 20816: op_lesseq should be optimized
+        <https://bugs.webkit.org/show_bug.cgi?id=20816>
 
-        * kjs/nodes.cpp:
-        (JSC::PrefixResolveNode::emitCode):
-        * wtf/FastMalloc.cpp:
-        (WTF::TCMalloc_PageHeap::GrowHeap):
+        Add a loop_if_lesseq opcode that is similar to the loop_if_less opcode.
+
+        This is a 9.4% speedup on the V8 Crypto benchmark.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitJumpIfTrue):
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_loop_if_lesseq):
+        * VM/Machine.h:
+        * VM/Opcode.h:
 
 2008-09-14  Sam Weinig  <sam@webkit.org>
 

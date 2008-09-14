@@ -570,6 +570,27 @@ void CTI::privateCompileMainPass()
             i += 4;
             break;
         }
+        case op_loop_if_lesseq: {
+            emitSlowScriptCheck(i);
+
+            unsigned target = instruction[i + 3].u.operand;
+            JSValue* src2imm = getConstantImmediateNumericArg(instruction[i + 2].u.operand);
+            if (src2imm) {
+                emitGetArg(instruction[i + 1].u.operand, X86::edx);
+                emitJumpSlowCaseIfNotImm(X86::edx, i);
+                m_jit.cmpl_i32r(reinterpret_cast<unsigned>(src2imm), X86::edx);
+                m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJle(), i + 3 + target));
+            } else {
+                emitGetArg(instruction[i + 1].u.operand, X86::eax);
+                emitGetArg(instruction[i + 2].u.operand, X86::edx);
+                emitJumpSlowCaseIfNotImm(X86::eax, i);
+                emitJumpSlowCaseIfNotImm(X86::edx, i);
+                m_jit.cmpl_rr(X86::edx, X86::eax);
+                m_jmpTable.append(JmpTable(m_jit.emitUnlinkedJle(), i + 3 + target));
+            }
+            i += 4;
+            break;
+        }
         case op_new_object: {
             emitCall(i, Machine::cti_op_new_object);
             emitPutResult(instruction[i + 1].u.operand);
@@ -1439,6 +1460,30 @@ void CTI::privateCompileSlowCases()
                 emitPutArg(X86::eax, 0);
                 emitPutArg(X86::edx, 4);
                 emitCall(i, Machine::cti_op_loop_if_less);
+                m_jit.testl_rr(X86::eax, X86::eax);
+                m_jit.link(m_jit.emitUnlinkedJne(), m_labels[i + 3 + target]);
+            }
+            i += 4;
+            break;
+        }
+        case op_loop_if_lesseq: {
+            emitSlowScriptCheck(i);
+
+            unsigned target = instruction[i + 3].u.operand;
+            JSValue* src2imm = getConstantImmediateNumericArg(instruction[i + 2].u.operand);
+            if (src2imm) {
+                m_jit.link(iter->from, m_jit.label());
+                emitPutArg(X86::edx, 0);
+                emitGetPutArg(instruction[i + 2].u.operand, 4, X86::ecx);
+                emitCall(i, Machine::cti_op_loop_if_lesseq);
+                m_jit.testl_rr(X86::eax, X86::eax);
+                m_jit.link(m_jit.emitUnlinkedJne(), m_labels[i + 3 + target]);
+            } else {
+                m_jit.link(iter->from, m_jit.label());
+                m_jit.link((++iter)->from, m_jit.label());
+                emitPutArg(X86::eax, 0);
+                emitPutArg(X86::edx, 4);
+                emitCall(i, Machine::cti_op_loop_if_lesseq);
                 m_jit.testl_rr(X86::eax, X86::eax);
                 m_jit.link(m_jit.emitUnlinkedJne(), m_labels[i + 3 + target]);
             }

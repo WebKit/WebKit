@@ -486,6 +486,21 @@ PassRefPtr<LabelID> CodeGenerator::emitJumpIfTrue(RegisterID* cond, LabelID* tar
             instructions().append(target->offsetFrom(instructions().size()));
             return target;
         }
+    } else if (m_lastOpcodeID == op_lesseq && !target->isForwardLabel()) {
+        int dstIndex;
+        int src1Index;
+        int src2Index;
+
+        retrieveLastBinaryOp(dstIndex, src1Index, src2Index);
+
+        if (cond->index() == dstIndex && cond->isTemporary() && !cond->refCount()) {
+            rewindBinaryOp();
+            emitOpcode(op_loop_if_lesseq);
+            instructions().append(src1Index);
+            instructions().append(src2Index);
+            instructions().append(target->offsetFrom(instructions().size()));
+            return target;
+        }
     }
 
     emitOpcode(target->isForwardLabel() ? op_jtrue : op_loop_if_true);
