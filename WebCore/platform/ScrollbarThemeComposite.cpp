@@ -23,21 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarThemeWin_h
-#define ScrollbarThemeWin_h
-
+#include "config.h"
 #include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
 
-class ScrollbarThemeWin : public ScrollbarThemeComposite {
-public:
-    virtual ~ScrollbarThemeWin();
-
-    virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
-
-    virtual void themeChanged();
-};
+bool ScrollbarThemeComposite::paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect)
+{
+    return false;
+}
 
 }
-#endif

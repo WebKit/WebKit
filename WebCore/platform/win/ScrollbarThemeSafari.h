@@ -26,11 +26,11 @@
 #ifndef ScrollbarThemeSafari_h
 #define ScrollbarThemeSafari_h
 
-#include "ScrollbarTheme.h"
+#include "ScrollbarThemeComposite.h"
 
 namespace WebCore {
 
-class ScrollbarThemeSafari : public ScrollbarTheme {
+class ScrollbarThemeSafari : public ScrollbarThemeComposite {
 public:
     virtual ~ScrollbarThemeSafari();
 

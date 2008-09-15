@@ -1,3 +1,15 @@
+2008-09-14  Dave Hyatt  <hyatt@apple.com>
+
+        Add a new ScrollbarThemeComposite base class that is shared by ScrollbarThemeSafari and
+        ScrollbarThemeWin.  Any scrollbar that wants to render by ScrollbarPart can subclass from this
+        theme.
+        
+        Reviewed by Sam Weinig
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * platform/win/ScrollbarThemeSafari.h:
+        * platform/win/ScrollbarThemeWin.h:
+
 2008-09-14  Alp Toker  <alp@nuanti.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=20320

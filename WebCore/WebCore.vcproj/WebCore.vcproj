@@ -3328,6 +3328,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\ScrollbarThemeComposite.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\ScrollbarThemeComposite.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\ScrollTypes.h"
 				>
 			</File>
