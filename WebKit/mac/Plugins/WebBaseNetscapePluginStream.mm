@@ -30,16 +30,24 @@
 #import "WebBaseNetscapePluginStream.h"
 
 #import "WebBaseNetscapePluginView.h"
+#import "WebFrameInternal.h"
 #import "WebKitErrorsPrivate.h"
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"
 #import "WebNSURLExtras.h"
+#import "WebNSURLRequestExtras.h"
 #import "WebNetscapePluginPackage.h"
+#import "WebNetscapePlugInStreamLoaderClient.h"
 #import <Foundation/NSURLResponse.h>
 #import <kjs/JSLock.h>
+#import <WebCore/DocumentLoader.h>
+#import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/HashMap.h>
+
+using namespace WebCore;
 
 #define WEB_REASON_NONE -1
 
@@ -99,6 +107,46 @@ static StreamMap& streams()
     return [self _pluginCancelledConnectionError];
 }
 
+- (id)initWithFrameLoader:(FrameLoader *)frameLoader
+{
+    _frameLoader = frameLoader;
+    
+    return self;
+}
+
+- (id)initWithRequest:(NSURLRequest *)theRequest
+               plugin:(NPP)thePlugin
+           notifyData:(void *)theNotifyData 
+     sendNotification:(BOOL)flag
+{   
+    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)thePlugin->ndata;
+    
+    if (!core([view webFrame])->loader()->canLoad([theRequest URL], String(), core([view webFrame])->document()))
+        return nil;
+    
+    if ([self initWithRequestURL:[theRequest URL]
+                          plugin:thePlugin
+                      notifyData:theNotifyData
+                sendNotification:flag] == nil) {
+        return nil;
+    }
+    
+    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
+    isTerminated = YES;
+    
+    request = [theRequest mutableCopy];
+    if (core([view webFrame])->loader()->shouldHideReferrer([theRequest URL], core([view webFrame])->loader()->outgoingReferrer()))
+        [(NSMutableURLRequest *)request _web_setHTTPReferrer:nil];
+    
+    _client = new WebNetscapePlugInStreamLoaderClient(self);
+    _loader = NetscapePlugInStreamLoader::create(core([view webFrame]), _client).releaseRef();
+    _loader->setShouldBufferData(false);
+    
+    isTerminated = NO;
+    
+    return self;
+}
+
 - (id)initWithRequestURL:(NSURL *)theRequestURL
                   plugin:(NPP)thePlugin
               notifyData:(void *)theNotifyData
@@ -138,6 +186,11 @@ static StreamMap& streams()
     ASSERT(!path);
     ASSERT(fileDescriptor == -1);
 
+    if (_loader)
+        _loader->deref();
+    delete _client;
+    [request release];
+    
     [requestURL release];
     [responseURL release];
     [MIMEType release];
@@ -163,6 +216,10 @@ static StreamMap& streams()
     ASSERT(!path);
     ASSERT(fileDescriptor == -1);
 
+    if (_loader)
+        _loader->deref();
+    delete _client;
+    
     free((void *)stream.url);
     free(path);
     free(headers);
@@ -301,6 +358,23 @@ static StreamMap& streams()
         default:
             LOG_ERROR("unknown stream type");
     }
+}
+
+- (void)start
+{
+    ASSERT(request);
+    ASSERT(!_frameLoader);
+    
+    _loader->documentLoader()->addPlugInStreamLoader(_loader);
+    _loader->load(request);    
+}
+
+- (void)stop
+{
+    ASSERT(!_frameLoader);
+    
+    if (!_loader->isDone())
+        [self cancelLoadAndDestroyStreamWithError:_loader->cancelledError()];    
 }
 
 - (void)startStreamWithResponse:(NSURLResponse *)r
@@ -477,8 +551,19 @@ exit:
 
 - (void)cancelLoadWithError:(NSError *)error
 {
-    // Overridden by subclasses.
-    ASSERT_NOT_REACHED();
+    if (_frameLoader) {
+        ASSERT(!_loader);
+        
+        DocumentLoader* documentLoader = _frameLoader->activeDocumentLoader();
+        ASSERT(documentLoader);
+        
+        if (documentLoader->isLoadingMainResource())
+            documentLoader->cancelMainResourceLoad(error);
+        return;
+    }
+    
+    if (!_loader->isDone())
+        _loader->cancel(error);
 }
 
 - (void)destroyStreamWithError:(NSError *)error

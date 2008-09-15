@@ -45,7 +45,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebNetscapePluginPackage.h"
-#import "WebNetscapePluginStream.h"
+#import "WebBaseNetscapePluginStream.h"
 #import "WebNetscapePluginEventHandler.h"
 #import "WebNullPluginView.h"
 #import "WebPreferences.h"
@@ -1886,7 +1886,7 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     ASSERT(_loadManually);
     ASSERT(!_manualStream);
     
-    _manualStream = [[WebNetscapePluginStream alloc] initWithFrameLoader:core([self webFrame])->loader()];
+    _manualStream = [[WebBaseNetscapePluginStream alloc] initWithFrameLoader:core([self webFrame])->loader()];
 }
 
 - (void)pluginView:(NSView *)pluginView receivedData:(NSData *)data
@@ -2313,10 +2313,10 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
         if (target)
             CFRelease(target);
     } else {
-        WebNetscapePluginStream *stream = [[WebNetscapePluginStream alloc] initWithRequest:request 
-                                                                                    plugin:plugin 
-                                                                                notifyData:notifyData 
-                                                                          sendNotification:sendNotification];
+        WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] initWithRequest:request 
+                                                                                            plugin:plugin 
+                                                                                        notifyData:notifyData 
+                                                                                  sendNotification:sendNotification];
         if (!stream)
             return NPERR_INVALID_URL;
 

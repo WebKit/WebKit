@@ -1,3 +1,25 @@
+2008-09-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Mitz.
+
+        Merge WebNetscapePluginStream into WebBaseNetscapePluginStream.
+
+        * Plugins/WebBaseNetscapePluginStream.h:
+        * Plugins/WebBaseNetscapePluginStream.mm:
+        (-[WebBaseNetscapePluginStream initWithFrameLoader:]):
+        (-[WebBaseNetscapePluginStream initWithRequest:plugin:notifyData:sendNotification:]):
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream finalize]):
+        (-[WebBaseNetscapePluginStream start]):
+        (-[WebBaseNetscapePluginStream stop]):
+        (-[WebBaseNetscapePluginStream cancelLoadWithError:]):
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView pluginView:receivedResponse:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:sendNotification:]):
+        * Plugins/WebNetscapePluginEmbeddedView.mm:
+        * Plugins/WebNetscapePluginStream.h: Removed.
+        * Plugins/WebNetscapePluginStream.mm: Removed.
+
 2008-09-12  John Sullivan  <sullivan@apple.com>
 
         Fixed <rdar://problem/6110941> Clicking the print button in PDF content does nothing

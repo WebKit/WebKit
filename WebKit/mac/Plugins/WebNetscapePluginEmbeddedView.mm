@@ -38,7 +38,7 @@
 #import "WebNSURLRequestExtras.h"
 #import "WebNSViewExtras.h"
 #import "WebNetscapePluginPackage.h"
-#import "WebNetscapePluginStream.h"
+#import "WebBaseNetscapePluginStream.h"
 #import "WebView.h"
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>

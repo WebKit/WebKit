@@ -32,6 +32,13 @@
 #import <WebKit/npfunctions.h>
 #import <WebKit/WebPlugInStreamLoaderDelegate.h>
 
+namespace WebCore {
+    class FrameLoader;
+    class NetscapePlugInStreamLoader;
+}
+
+class WebNetscapePlugInStreamLoaderClient;
+
 @class WebBaseNetscapePluginView;
 @class NSURLResponse;
 
@@ -56,6 +63,11 @@
     BOOL isTerminated;
     BOOL newStreamSuccessful;
  
+    WebCore::FrameLoader* _frameLoader;
+    WebCore::NetscapePlugInStreamLoader* _loader;
+    WebNetscapePlugInStreamLoaderClient* _client;
+    NSURLRequest *request;
+
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;
     NPP_StreamAsFileProcPtr NPP_StreamAsFile;
@@ -69,6 +81,13 @@
 + (NPReason)reasonForError:(NSError *)error;
 
 - (NSError *)errorForReason:(NPReason)theReason;
+
+- (id)initWithFrameLoader:(WebCore::FrameLoader *)frameLoader;
+
+- (id)initWithRequest:(NSURLRequest *)theRequest
+               plugin:(NPP)thePlugin
+           notifyData:(void *)theNotifyData
+     sendNotification:(BOOL)sendNotification;
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL
                   plugin:(NPP)thePlugin
@@ -88,9 +107,10 @@
                       MIMEType:(NSString *)MIMEType
                        headers:(NSData *)theHeaders;
 
-// cancelLoadWithError cancels the NSURLConnection and informs WebKit of the load error.
-// This method is overriden by subclasses.
 - (void)cancelLoadWithError:(NSError *)error;
+
+- (void)start;
+- (void)stop;
 
 @end
 #endif
