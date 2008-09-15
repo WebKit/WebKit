@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test transition of shadow data</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);
+      -webkit-transition-duration: 0.1s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: -webkit-box-shadow;
+    }
+    #box2 {
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-transition-duration: 0.1s;
+      -webkit-transition-timing-function: linear;
+      -webkit-transition-property: -webkit-box-shadow;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    function start()
+    {
+        var box1 = document.getElementById('box1');
+        box1.style.webkitBoxShadow = 'none';
+        var box2 = document.getElementById('box2');
+        box2.style.webkitBoxShadow = '5px 5px 5px rgba(0, 0, 0, 0.5)';
+        window.setTimeout(function() {
+              document.getElementById('result').innerHTML = "PASS";
+              if (window.layoutTestController)
+                  layoutTestController.notifyDone();
+          }, 300);
+    }
+    
+    window.addEventListener('load', start, false);
+    
+  </script>
+</head>
+<body>
+
+<p>
+First box should transition to no shadow. Second should transition to a shadow.
+</p>
+<div id="box1">
+</div>
+<div id="box2">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

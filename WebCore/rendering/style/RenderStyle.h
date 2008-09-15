@@ -944,8 +944,10 @@ private:
 
 // This struct holds information about shadows for the text-shadow and box-shadow properties.
 struct ShadowData {
+    ShadowData()
+    : x(0), y(0), blur(0), next(0) {}
     ShadowData(int _x, int _y, int _blur, const Color& _color)
-    :x(_x), y(_y), blur(_blur), color(_color), next(0) {}
+    : x(_x), y(_y), blur(_blur), color(_color), next(0) {}
     ShadowData(const ShadowData& o);
     
     ~ShadowData() { delete next; }
