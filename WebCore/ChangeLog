@@ -1,3 +1,20 @@
+2008-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        Reviewed by Simon.
+
+        Remove bogus Q_ASSERTs from the MediaPlayer Phonon implementation
+
+        m_mediaObject, m_audioOutput, m_videoWidget get created in the
+        c'tor and will only be deleted in the c'tor. The Q_ASSERTs would
+        only check if we use the MediaPlayerPrivate after it has been deleted.
+
+        Acked-by: Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (WebCore::MediaPlayerPrivate::play):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::updateStates):
+
 2008-09-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.

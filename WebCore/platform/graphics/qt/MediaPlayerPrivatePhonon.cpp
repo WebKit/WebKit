@@ -166,16 +166,12 @@ void MediaPlayerPrivate::cancelLoad()
 
 void MediaPlayerPrivate::play()
 {
-    Q_ASSERT(m_mediaObject);
-
     LOG(Media, "MediaPlayerPrivatePhonon::play()");
     m_mediaObject->play();
 }
 
 void MediaPlayerPrivate::pause()
 {
-    Q_ASSERT(m_mediaObject);
-
     LOG(Media, "MediaPlayerPrivatePhonon::pause()");
     m_mediaObject->pause();
 }
@@ -183,8 +179,6 @@ void MediaPlayerPrivate::pause()
 
 bool MediaPlayerPrivate::paused() const
 {
-    Q_ASSERT(m_mediaObject);
-
     bool paused = m_mediaObject->state() == Phonon::PausedState;
     LOG(Media, "MediaPlayerPrivatePhonon::paused() --> %s", paused ? "true" : "false");
     return paused;
@@ -203,8 +197,6 @@ bool MediaPlayerPrivate::seeking() const
 
 float MediaPlayerPrivate::duration() const
 {
-    Q_ASSERT(m_mediaObject);
-
     if (m_networkState < MediaPlayer::LoadedMetaData)
         return 0.0f;
 
@@ -219,8 +211,6 @@ float MediaPlayerPrivate::duration() const
 
 float MediaPlayerPrivate::currentTime() const
 {
-    Q_ASSERT(m_mediaObject);
-
     float currentTime = m_mediaObject->currentTime() / 1000.0f;
 
     LOG(Media, "MediaPlayerPrivatePhonon::currentTime() --> %f", currentTime);
@@ -269,15 +259,11 @@ void MediaPlayerPrivate::setRate(float)
 
 void MediaPlayerPrivate::setVolume(float volume)
 {
-    Q_ASSERT(m_audioOutput);
-
     m_audioOutput->setVolume(volume);
 }
 
 void MediaPlayerPrivate::setMuted(bool muted)
 {
-    Q_ASSERT(m_audioOutput);
-
     m_audioOutput->setMuted(muted);
 }
 
@@ -307,12 +293,10 @@ MediaPlayer::ReadyState MediaPlayerPrivate::readyState() const
 
 void MediaPlayerPrivate::updateStates()
 {
-    Q_ASSERT(m_mediaObject);
-
     MediaPlayer::NetworkState oldNetworkState = m_networkState;
     MediaPlayer::ReadyState oldReadyState = m_readyState;
 
-    Phonon::State state = m_mediaObject ? m_mediaObject->state() : Phonon::ErrorState;
+    Phonon::State state = m_mediaObject->state();
 
     if (state == Phonon::StoppedState) {
         if (oldNetworkState < MediaPlayer::LoadedMetaData) {
@@ -416,8 +400,6 @@ void MediaPlayerPrivate::loadingFailed()
 
 IntSize MediaPlayerPrivate::naturalSize() const
 {
-    Q_ASSERT(m_videoWidget);
-
     if (!hasVideo())
          return IntSize();
 
@@ -446,8 +428,6 @@ void MediaPlayerPrivate::repaint()
 
 void MediaPlayerPrivate::paint(GraphicsContext* graphicsContect, const IntRect& rect)
 {
-    Q_ASSERT(m_videoWidget);
-
     if (graphicsContect->paintingDisabled())
         return;
 
