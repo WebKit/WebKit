@@ -412,9 +412,10 @@ OpcodeID currentOpcodeID = static_cast<OpcodeID>(-1);
 void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType type)
 {
     if (type == OpConstruct) {
-        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 12);
+        emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
+        emitPutArgConstant(instruction[i + 5].u.operand, 12);
         emitPutArgConstant(instruction[i + 4].u.operand, 8);
-        emitPutArgConstant(instruction[i + 3].u.operand, 4);
+        emitGetPutArg(instruction[i + 3].u.operand, 4, X86::ecx);
     } else {
         emitPutArgConstant(reinterpret_cast<unsigned>(instruction + i), 16);
         emitPutArgConstant(instruction[i + 5].u.operand, 12);
@@ -433,7 +434,7 @@ void CTI::compileOpCall(Instruction* instruction, unsigned i, CompileOpCallType 
         emitCall(i, Machine::cti_op_call_eval);
         m_jit.emitRestoreArgumentReference();
 
-       emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
+        emitGetCTIParam(CTI_ARGS_r, X86::edi); // edi := r
 
         m_jit.cmpl_i32r(reinterpret_cast<unsigned>(JSImmediate::impossibleValue()), X86::eax);
         wasEval = m_jit.emitUnlinkedJne();
@@ -824,7 +825,7 @@ void CTI::privateCompileMainPass()
         }
         case op_construct: {
             compileOpCall(instruction, i, OpConstruct);
-            i += 5;
+            i += 6;
             break;
         }
         case op_get_by_val: {

@@ -1,3 +1,22 @@
+2008-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
+        - speed up JS construction by extracting "prototype" lookup so PIC applies.
+        
+        ~0.5% speedup on SunSpider
+        Speeds up some of the V8 tests as well, most notably earley-boyer.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::compileOpCall): Account for extra arg for prototype.
+        (JSC::CTI::privateCompileMainPass): Account for increased size of op_construct.
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitConstruct): Emit separate lookup to get prototype property.
+        * VM/Machine.cpp:
+        (JSC::Machine::privateExecute): Expect prototype arg in op_construct.
+        (JSC::Machine::cti_op_construct_JSConstruct): ditto
+        (JSC::Machine::cti_op_construct_NotJSConstruct): ditto
+
 2008-09-10  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Eric Seidel.
