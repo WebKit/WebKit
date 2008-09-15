@@ -297,8 +297,14 @@ JSValue* globalFuncParseInt(ExecState* exec, JSObject*, JSValue*, const ArgList&
     JSValue* value = args.at(exec, 0);
     int32_t radix = args.at(exec, 1)->toInt32(exec);
 
-    if (value->isNumber() && (radix == 0 || radix == 10))
-        return jsNumber(exec, value->toInt32(exec));
+    if (value->isNumber() && (radix == 0 || radix == 10)) {
+        if (JSImmediate::isImmediate(value))
+            return value;
+        double d = value->uncheckedGetNumber();
+        if (!isfinite(d))
+            return JSImmediate::zeroImmediate();
+        return jsNumber(exec, floor(d));
+    }
 
     return jsNumber(exec, parseInt(value->toString(exec), radix));
 }

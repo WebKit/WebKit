@@ -1,3 +1,12 @@
+2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Add some tests for boundary cases of parseInt().
+
+        * fast/js/numeric-conversion-expected.txt:
+        * fast/js/resources/numeric-conversion.js:
+
 2008-09-14  Alexey Proskuryakov  <ap@webkit.org>
 
         Reviewed by Maciej Stachowiak.

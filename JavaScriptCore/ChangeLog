@@ -1,3 +1,19 @@
+2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20851: REGRESSION (r36410): fast/js/kde/GlobalObject.html fails
+        <https://bugs.webkit.org/show_bug.cgi?id=20851>
+
+        r36410 introduced an optimization for parseInt() that is incorrect when
+        its argument is larger than the range of a 32-bit integer. If the
+        argument is a number that is not an immediate integer, then the correct
+        behaviour is to return the floor of its value, unless it is an infinite
+        value, in which case the correct behaviour is to return 0.
+
+        * kjs/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+
 2008-09-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Maciej Stachowiak.
