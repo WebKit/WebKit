@@ -1,3 +1,20 @@
+2008-09-15  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Implment seek() and clean up and improve debugging output
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp:
+        (debugMediaObject):
+        (WebCore::MediaPlayerPrivate::seek):
+        (WebCore::MediaPlayerPrivate::setVolume):
+        (WebCore::MediaPlayerPrivate::setMuted):
+        (WebCore::MediaPlayerPrivate::updateStates):
+        (WebCore::MediaPlayerPrivate::naturalSize):
+        (WebCore::MediaPlayerPrivate::paint):
+        (WebCore::MediaPlayerPrivate::stateChanged):
+        (WebCore::MediaPlayerPrivate::tick):
+
 2008-09-15  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         Reviewed by Simon.
