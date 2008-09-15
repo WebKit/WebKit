@@ -323,6 +323,14 @@ void MediaPlayerPrivate::updateStates()
     } else if (state == Phonon::PausedState) {
         m_networkState = MediaPlayer::LoadedFirstFrame;
         m_readyState = MediaPlayer::CanPlayThrough;
+    } else if (state == Phonon::ErrorState) {
+         if (!m_mediaObject || m_mediaObject->errorType() == Phonon::FatalError) {
+             m_networkState = MediaPlayer::LoadFailed;
+             m_readyState = MediaPlayer::DataUnavailable;
+             cancelLoad();
+         } else {
+             m_mediaObject->pause();
+         }
     }
 
     if (seeking())
