@@ -1,3 +1,23 @@
+2008-09-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Patch for https://bugs.webkit.org/show_bug.cgi?id=20849
+        Cache property names for getEnumerablePropertyNames in the StructureID.
+
+        ~0.5% speedup on Sunspider overall (9.7% speedup on string-fasta).  ~1% speedup
+        on the v8 test suite.
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::getPropertyNames):
+        * kjs/PropertyMap.cpp:
+        (JSC::PropertyMap::getEnumerablePropertyNames):
+        * kjs/PropertyMap.h:
+        * kjs/StructureID.cpp:
+        (JSC::StructureID::StructureID):
+        (JSC::StructureID::getEnumerablePropertyNames):
+        * kjs/StructureID.h:
+
 2008-09-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Cameron Zwarich.

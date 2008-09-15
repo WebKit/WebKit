@@ -28,13 +28,14 @@
 
 #include "identifier.h"
 #include "JSObject.h"
+#include "PropertyNameArray.h";
 #include <wtf/RefPtr.h>
 
 using namespace std;
 
 namespace JSC {
 
-    StructureID::StructureID(JSValue* prototype, JSType type)
+StructureID::StructureID(JSValue* prototype, JSType type)
     : m_isDictionary(false)
     , m_type(type)
     , m_prototype(prototype)
@@ -45,6 +46,20 @@ namespace JSC {
 {
     ASSERT(m_prototype);
     ASSERT(m_prototype->isObject() || m_prototype->isNull());
+}
+
+void StructureID::getEnumerablePropertyNames(PropertyNameArray& propertyNames) const
+{
+    if (m_cachedPropertyNameArray.isEmpty())
+        m_propertyMap.getEnumerablePropertyNames(m_cachedPropertyNameArray);
+
+    if (!propertyNames.size()) {
+        for (size_t i = 0; i < m_cachedPropertyNameArray.size(); ++i)
+            propertyNames.addKnownUnique(m_cachedPropertyNameArray[i]);
+    } else {
+        for (size_t i = 0; i < m_cachedPropertyNameArray.size(); ++i)
+            propertyNames.add(m_cachedPropertyNameArray[i]);
+    }
 }
 
 void StructureID::transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase)

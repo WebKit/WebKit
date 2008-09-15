@@ -23,7 +23,6 @@
 
 #include "JSObject.h"
 #include "protect.h"
-#include "PropertyNameArray.h"
 #include <algorithm>
 #include <wtf/Assertions.h>
 #include <wtf/FastMalloc.h>
@@ -473,7 +472,7 @@ static int comparePropertyMapEntryIndices(const void* a, const void* b)
     return 0;
 }
 
-void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) const
+void PropertyMap::getEnumerablePropertyNames(Vector<UString::Rep*>& propertyNames) const
 {
     if (!m_table)
         return;
@@ -492,13 +491,9 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
                 ++i;
             }
         }
-        if (!propertyNames.size()) {
-            for (int k = 0; k < i; ++k)
-                propertyNames.addKnownUnique(a[k]->key);
-        } else {
-            for (int k = 0; k < i; ++k)
-                propertyNames.add(a[k]->key);
-        }
+        propertyNames.reserveCapacity(i);
+        for (int k = 0; k < i; ++k)
+            propertyNames.append(a[k]->key);
         return;
     }
 
@@ -517,8 +512,9 @@ void PropertyMap::getEnumerablePropertyNames(PropertyNameArray& propertyNames) c
     qsort(sortedEnumerables.data(), p - sortedEnumerables.data(), sizeof(Entry*), comparePropertyMapEntryIndices);
 
     // Put the keys of the sorted entries into the list.
-    for (Entry** q = sortedEnumerables.data(); q != p; ++q)
-        propertyNames.add(q[0]->key);
+    propertyNames.reserveCapacity(sortedEnumerables.size());
+    for (size_t i = 0; i < sortedEnumerables.size(); ++i)
+        propertyNames.append(sortedEnumerables[i]->key);
 }
 
 #if DO_PROPERTYMAP_CONSTENCY_CHECK

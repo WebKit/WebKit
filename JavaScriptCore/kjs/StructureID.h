@@ -39,6 +39,7 @@
 namespace JSC {
 
     class JSValue;
+    class PropertyNameArray;
     class StructureIDChain;
 
     struct TransitionTableHash {
@@ -107,6 +108,8 @@ namespace JSC {
         const PropertyMap& propertyMap() const { return m_propertyMap; }
         PropertyMap& propertyMap() { return m_propertyMap; }
 
+        void getEnumerablePropertyNames(PropertyNameArray&) const;
+
         static void transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase);
 
     private:
@@ -129,6 +132,8 @@ namespace JSC {
 
         size_t m_transitionCount;
         TransitionTable m_transitionTable;
+
+        mutable Vector<UString::Rep*> m_cachedPropertyNameArray;
 
         PropertyMap m_propertyMap;
     };
