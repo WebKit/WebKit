@@ -235,12 +235,12 @@ bool JSQuarantinedObjectWrapper::implementsHasInstance() const
     return m_unwrappedObject->implementsHasInstance();
 }
 
-bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value)
+bool JSQuarantinedObjectWrapper::hasInstance(ExecState* exec, JSValue* value, JSValue* proto)
 {
     if (!allowsHasInstance())
         return false;
 
-    bool result = m_unwrappedObject->hasInstance(unwrappedExecState(), prepareIncomingValue(exec, value));
+    bool result = m_unwrappedObject->hasInstance(unwrappedExecState(), prepareIncomingValue(exec, value, proto));
 
     transferExceptionToExecState(exec);
 

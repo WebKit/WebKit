@@ -1,3 +1,13 @@
+2008-09-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Unreviewed build fix.
+
+        Blind attempt to fix build. Correct parameters for hasInstance.
+
+        * bindings/js/JSQuarantinedObjectWrapper.cpp:
+        (WebCore::JSQuarantinedObjectWrapper::hasInstance):
+        * bindings/js/JSQuarantinedObjectWrapper.h:
+
 2008-09-14  Dan Bernstein  <mitz@apple.com>
 
         Rubber-stamped by Sam Weinig.

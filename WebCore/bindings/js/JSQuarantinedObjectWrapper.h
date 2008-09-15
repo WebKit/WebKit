@@ -64,7 +64,7 @@ namespace WebCore {
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
 
         virtual bool implementsHasInstance() const;
-        virtual bool hasInstance(JSC::ExecState*, JSC::JSValue*);
+        virtual bool hasInstance(JSC::ExecState*, JSC::JSValue*, JSC::JSValue* proto);
 
         virtual void getPropertyNames(JSC::ExecState*, JSC::PropertyNameArray&);
 
