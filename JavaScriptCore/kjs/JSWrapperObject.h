@@ -34,6 +34,13 @@ namespace JSC {
     */ 
     class JSWrapperObject : public JSObject {
     public:
+
+        enum VPtrStealingHackType { VPtrStealingHack };
+        JSWrapperObject(VPtrStealingHackType)
+            : JSObject(StructureID::create(jsNull()))
+        {
+        }
+
         JSWrapperObject(JSObject* prototype);
         
         JSValue* internalValue() const;

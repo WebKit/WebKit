@@ -1,3 +1,33 @@
+2008-09-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Inline code generation of eq_null/neq_null for CTI.  Uses vptr checking for
+        StringObjectsThatAreMasqueradingAsBeingUndefined.  In the long run, the
+        masquerading may be handled differently (through the StructureIDs - see bug
+        #20823).
+
+        >1% on v8-tests.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::emitJumpSlowCaseIfIsJSCell):
+        (JSC::CTI::privateCompileMainPass):
+        (JSC::CTI::privateCompileSlowCases):
+        * VM/CTI.h:
+        * VM/Machine.cpp:
+        (JSC::Machine::Machine):
+        (JSC::Machine::cti_op_eq_null):
+        (JSC::Machine::cti_op_neq_null):
+        * VM/Machine.h:
+        (JSC::Machine::doesMasqueradesAsUndefined):
+        * kjs/JSWrapperObject.h:
+        (JSC::JSWrapperObject::):
+        (JSC::JSWrapperObject::JSWrapperObject):
+        * kjs/StringObject.h:
+        (JSC::StringObject::StringObject):
+        * kjs/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+
 2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Rubber-stamped by Oliver Hunt.
