@@ -388,6 +388,7 @@ inline void JSObject::putDirect(const Identifier& propertyName, JSValue* value, 
          if (m_structureID->propertyMap().storageSize() == inlineStorageCapacity)
              allocatePropertyStorage(m_structureID->propertyMap().storageSize(), m_structureID->propertyMap().size());
          m_structureID->propertyMap().put(propertyName, value, attributes, checkReadOnly, this, slot, m_propertyStorage);
+         m_structureID->clearEnumerationCache();
          return;
      }
 

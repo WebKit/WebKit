@@ -2,6 +2,23 @@
 
         Reviewed by Cameron Zwarich.
         
+        - fix layout test failure introduced by fix for 20849
+        
+        (The failing test was fast/js/delete-then-put.html)
+
+        * kjs/JSObject.cpp:
+        (JSC::JSObject::removeDirect): Clear enumeration cache
+        in the dictionary case.
+        * kjs/JSObject.h:
+        (JSC::JSObject::putDirect): Ditto.
+        * kjs/StructureID.h:
+        (JSC::StructureID::clearEnumerationCache): Inline to handle the
+        clear.
+
+2008-09-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Cameron Zwarich.
+        
         - fix JSC test failures introduced by fix for 20849
 
         * kjs/PropertyMap.cpp:

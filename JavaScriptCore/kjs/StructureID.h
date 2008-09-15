@@ -112,6 +112,8 @@ namespace JSC {
 
         static void transitionTo(StructureID* oldStructureID, StructureID* newStructureID, JSObject* slotBase);
 
+        void clearEnumerationCache() { m_cachedPropertyNameArray.clear(); }
+
     private:
         typedef std::pair<RefPtr<UString::Rep>, unsigned> TransitionTableKey;
         typedef HashMap<TransitionTableKey, StructureID*, TransitionTableHash, TransitionTableHashTraits> TransitionTable;
