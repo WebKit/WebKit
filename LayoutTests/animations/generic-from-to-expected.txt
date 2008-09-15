@@ -1,0 +1,5 @@
+This test performs an animation of the left property. It animates over 1 second. It takes 3 snapshots and expects each result to be within a specified range.
+PASS - box at 250 saw something close to: 125
+PASS - box at 500 saw something close to: 150
+PASS - box at 750 saw something close to: 175
+

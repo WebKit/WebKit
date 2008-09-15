@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test animation with multiple concurrent animations</title>
+  <style type="text/css" media="screen">
+    #box1 {
+      position: relative;
+      left: 10px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: anim1;
+    }
+    @-webkit-keyframes anim1 {
+        from { left: 10px; }
+        40% { left: 30px; }
+        60% { left: 10px; }
+        to   { left: 20px; }
+    }
+    #box2 {
+      position: relative;
+      left: 10px;
+      top: 10px;
+      height: 100px;
+      width: 100px;
+      background-color: blue;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: anim2;
+    }
+    @-webkit-keyframes anim2 {
+        from { left: 10px; }
+        50% { left: 30px; }
+        to   { left: 20px; }
+    }
+  </style>
+  <script src="animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    const defaultTolerance = 2;
+    
+    const expected = [
+      // [time, property, element-id, expected-value]
+      [400, "left", "box1", 20],
+      [500, "left", "box2", 20],
+      [1000, "left", "box2", 30],
+      [1200, "left", "box1", 10],
+      [1500, "left", "box2", 25],
+      [1600, "left", "box1", 15],
+    ];
+
+    var started = false;
+
+    function start()
+    {
+        if (started) return;
+        started = true;
+        setup();
+        window.setTimeout(function() {
+            document.getElementById('box1').style.display = "none";
+            document.getElementById('box2').style.display = "none";
+            cleanup();
+        }, 2100);
+    }
+    
+    document.addEventListener('webkitAnimationStart', start, false);
+    
+  </script>
+</head>
+<body>
+This test performs animations of the left property on two boxes over 2 seconds.
+It takes 3 snapshots each and expects each result to be within a specified range.
+<div id="box1">
+</div>
+<div id="box2">
+</div>
+<div id="result">
+</div>
+</body>
+</html>

@@ -1,0 +1,5 @@
+This test performs a keyframed animation of the left property. It animates over 2 seconds. It takes 3 snapshots and expects each result to be within a specified range.
+PASS - box at 400 saw something close to: 20
+PASS - box at 1200 saw something close to: 10
+PASS - box at 1600 saw something close to: 15
+

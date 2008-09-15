@@ -1,3 +1,18 @@
+2008-09-15  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Tim Hatcher
+
+        Tests for animations.
+        https://bugs.webkit.org/show_bug.cgi?id=20789
+
+        * animations/animation-test-helpers.js: Added.
+        * animations/generic-from-to-expected.txt: Added.
+        * animations/generic-from-to.html: Added.
+        * animations/multiple-animations-expected.txt: Added.
+        * animations/multiple-animations.html: Added.
+        * animations/multiple-keyframes-expected.txt: Added.
+        * animations/multiple-keyframes.html: Added.
+
 2008-09-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej.
