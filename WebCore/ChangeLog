@@ -2,6 +2,16 @@
 
         Reviewed by Tim Hatcher.
 
+        RenderStyle should update keyframes.
+        http://bugs.webkit.org/show_bug.cgi?id=20756
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::StyleRareNonInheritedData::updateKeyframes):
+
+2008-09-15  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Tim Hatcher.
+
         Unnecessary ASSERT in ImplicitAnimation destructor.
         https://bugs.webkit.org/show_bug.cgi?id=20817
 
