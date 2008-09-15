@@ -39,12 +39,18 @@ RenderTheme* theme()
     return &gtkTheme;
 }
 
+static bool mozGtkInitialized = false;
+
 RenderThemeGtk::RenderThemeGtk()
     : m_gtkWindow(0)
     , m_gtkContainer(0)
     , m_gtkEntry(0)
     , m_gtkTreeView(0)
 {
+    if (!mozGtkInitialized) {
+        mozGtkInitialized = true;
+        moz_gtk_init();
+    }
 }
 
 static bool supportsFocus(EAppearance appearance)

@@ -1,3 +1,65 @@
+2008-09-14  Alp Toker  <alp@nuanti.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=20320
+        [GTK] A white rectangle is visible behind widgets with rounded corners
+
+        Sync bundled gtk2drawing.c to the latest version from Mozilla (coding
+        style exempt).
+
+        Requested by Michael Monreal.
+
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::RenderThemeGtk):
+        * platform/gtk/gtk2drawing.c:
+        (moz_gtk_set_widget_name):
+        (ensure_window_widget):
+        (setup_widget_prototype):
+        (ensure_button_arrow_widget):
+        (moz_gtk_get_combo_box_inner_button):
+        (moz_gtk_get_combo_box_button_inner_widgets):
+        (ensure_combo_box_widgets):
+        (moz_gtk_get_combo_box_entry_inner_widgets):
+        (moz_gtk_get_combo_box_entry_arrow):
+        (ensure_combo_box_entry_widgets):
+        (ensure_toolbar_widget):
+        (ensure_tooltip_widget):
+        (ensure_menu_bar_widget):
+        (ensure_menu_bar_item_widget):
+        (ensure_menu_popup_widget):
+        (ensure_menu_item_widget):
+        (ensure_image_menu_item_widget):
+        (ensure_menu_separator_widget):
+        (ensure_check_menu_item_widget):
+        (ensure_tree_header_cell_widget):
+        (ensure_scrolled_window_widget):
+        (moz_gtk_button_paint):
+        (moz_gtk_init):
+        (moz_gtk_button_get_inner_border):
+        (moz_gtk_toggle_paint):
+        (calculate_button_inner_rect):
+        (calculate_arrow_rect):
+        (moz_gtk_scrollbar_button_paint):
+        (moz_gtk_scrollbar_thumb_paint):
+        (moz_gtk_caret_paint):
+        (moz_gtk_entry_paint):
+        (moz_gtk_treeview_paint):
+        (moz_gtk_tree_header_cell_paint):
+        (moz_gtk_combo_box_paint):
+        (moz_gtk_downarrow_paint):
+        (moz_gtk_combo_box_entry_button_paint):
+        (moz_gtk_toolbar_paint):
+        (moz_gtk_tab_scroll_arrow_paint):
+        (moz_gtk_menu_bar_paint):
+        (moz_gtk_menu_item_paint):
+        (moz_gtk_get_widget_border):
+        (moz_gtk_get_combo_box_entry_button_size):
+        (moz_gtk_get_tab_scroll_arrow_size):
+        (moz_gtk_get_downarrow_size):
+        (moz_gtk_images_in_menus):
+        (moz_gtk_widget_paint):
+        (moz_gtk_shutdown):
+        * platform/gtk/gtkdrawing.h:
+
 2008-09-14  David Hyatt  <hyatt@apple.com>
 
         Convert Mac, Gtk, wx and Qt over to the new ScrollbarTheme for

@@ -144,6 +144,8 @@ typedef enum {
   MOZ_GTK_GRIPPER,
   /* Paints a GtkEntry. */
   MOZ_GTK_ENTRY,
+  /* Paints the native caret (or in GTK-speak: insertion cursor) */
+  MOZ_GTK_ENTRY_CARET,
   /* Paints a GtkOptionMenu. */
   MOZ_GTK_DROPDOWN,
   /* Paints a dropdown arrow (a GtkButton containing a down GtkArrow). */
@@ -176,6 +178,8 @@ typedef enum {
   MOZ_GTK_TAB,
   /* Paints the background and border of a GtkNotebook. */
   MOZ_GTK_TABPANELS,
+  /* Paints a GtkArrow for a GtkNotebook. flags is a GtkArrowType. */
+  MOZ_GTK_TAB_SCROLLARROW,
   /* Paints the background and border of a GtkTreeView */
   MOZ_GTK_TREEVIEW,
   /* Paints treeheader cells */
@@ -289,6 +293,16 @@ moz_gtk_checkbox_get_metrics(gint* indicator_size, gint* indicator_spacing);
 gint
 moz_gtk_radio_get_metrics(gint* indicator_size, gint* indicator_spacing);
 
+/**
+ * Get the inner-border value for a GtkButton widget (button or tree header)
+ * widget:             [IN]  the widget to get the border value for 
+ * inner_border:       [OUT] the inner border
+ *
+ * returns:   MOZ_GTK_SUCCESS if there was no error, an error code otherwise
+ */
+gint
+moz_gtk_button_get_inner_border(GtkWidget* widget, GtkBorder* inner_border);
+
 /** Get the focus metrics for a treeheadercell, button, checkbox, or radio button.
  * widget:             [IN]  the widget to get the focus metrics for    
  * interior_focus:     [OUT] whether the focus is drawn around the
@@ -329,7 +343,25 @@ moz_gtk_get_scrollbar_metrics(MozGtkScrollbarMetrics* metrics);
  *
  * returns:    MOZ_GTK_SUCCESS if there was no error, an error code otherwise
  */
-gint moz_gtk_get_dropdown_arrow_size(gint* width, gint* height);
+gint moz_gtk_get_combo_box_entry_button_size(gint* width, gint* height);
+
+/**
+ * Get the desired size of a scroll arrow widget
+ * width:   [OUT] the desired width
+ * height:  [OUT] the desired height
+ *
+ * returns:    MOZ_GTK_SUCCESS if there was no error, an error code otherwise
+ */
+gint moz_gtk_get_tab_scroll_arrow_size(gint* width, gint* height);
+
+/**
+ * Get the desired size of a toolbar button dropdown arrow
+ * width:   [OUT] the desired width
+ * height:  [OUT] the desired height
+ *
+ * returns:    MOZ_GTK_SUCCESS if there was no error, an error code otherwise
+ */
+gint moz_gtk_get_downarrow_size(gint* width, gint* height);
 
 /**
  * Get the desired size of a toolbar separator
@@ -382,6 +414,12 @@ GtkWidget* moz_gtk_get_scrollbar_widget(void);
  * Get the YTHICKNESS of a tab (notebook extension).
  */
 gint moz_gtk_get_tab_thickness(void);
+
+/**
+ * Get a boolean which indicates whether or not to use images in menus.
+ * If TRUE, use images in menus.
+ */
+gboolean moz_gtk_images_in_menus(void);
 
 #ifdef __cplusplus
 }
