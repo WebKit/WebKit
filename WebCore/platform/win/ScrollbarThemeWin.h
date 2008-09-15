@@ -38,6 +38,8 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
     virtual void themeChanged();
+    
+    virtual bool invalidateOnMouseEnterExit();
 
 protected:
     virtual bool hasButtons(Scrollbar*) { return true; }
@@ -59,7 +61,6 @@ private:
     int thumbPosition(Scrollbar*);
     int thumbLength(Scrollbar*);
     int trackLength(Scrollbar*);
-
 };
 
 }

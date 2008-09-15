@@ -1,3 +1,47 @@
+2008-09-15  David Hyatt  <hyatt@apple.com>
+
+        Move all hit testing code for scrollbars into the base class.  Refactor
+        it to accommodate all platform-specific behaviors using virtual ScrollbarTheme
+        functions.
+
+        No platform is using this code yet.  Although it has been moved and compiles
+        (even on Mac), it is not being used on any platform.
+
+        Reviewed by Sam Weinig
+
+        * platform/ScrollBar.cpp:
+        (WebCore::Scrollbar::autoscrollPressedPart):
+        (WebCore::Scrollbar::startTimerIfNeeded):
+        (WebCore::Scrollbar::handleMouseMoveEvent):
+        (WebCore::Scrollbar::handleMouseOutEvent):
+        (WebCore::Scrollbar::handleMouseReleaseEvent):
+        (WebCore::Scrollbar::handleMousePressEvent):
+        * platform/ScrollBar.h:
+        (WebCore::Scrollbar::handleContextMenuEvent):
+        * platform/ScrollbarTheme.h:
+        (WebCore::ScrollbarTheme::hitTest):
+        (WebCore::ScrollbarTheme::invalidateOnMouseEnterExit):
+        (WebCore::ScrollbarTheme::invalidatePart):
+        (WebCore::ScrollbarTheme::shouldCenterOnThumb):
+        (WebCore::ScrollbarTheme::centerOnThumb):
+        (WebCore::ScrollbarTheme::thumbPosition):
+        (WebCore::ScrollbarTheme::thumbLength):
+        (WebCore::ScrollbarTheme::trackLength):
+        (WebCore::ScrollbarTheme::initialAutoscrollTimerDelay):
+        (WebCore::ScrollbarTheme::autoscrollTimerDelay):
+        * platform/Widget.h:
+        (WebCore::Widget::parent):
+        * platform/mac/PlatformScrollBar.h:
+        (WebCore::PlatformScrollbar::handleMouseMoveEvent):
+        (WebCore::PlatformScrollbar::handleMouseOutEvent):
+        (WebCore::PlatformScrollbar::handleMousePressEvent):
+        (WebCore::PlatformScrollbar::handleMouseReleaseEvent):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::convertFromContainingWindow):
+        * platform/win/ScrollbarThemeWin.cpp:
+        (WebCore::ScrollbarThemeWin::invalidateOnMouseEnterExit):
+        * platform/win/ScrollbarThemeWin.h:
+
 2008-09-15  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

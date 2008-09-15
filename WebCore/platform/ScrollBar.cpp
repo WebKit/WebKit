@@ -26,7 +26,11 @@
 #include "config.h"
 #include "ScrollBar.h"
 
+#include "EventHandler.h"
+#include "Frame.h"
+#include "FrameView.h"
 #include "GraphicsContext.h"
+#include "PlatformMouseEvent.h"
 #include "ScrollbarClient.h"
 #include "ScrollbarTheme.h"
 
@@ -224,6 +228,106 @@ ScrollGranularity Scrollbar::pressedPartScrollGranularity()
     if (m_pressedPart == BackButtonPart || m_pressedPart == ForwardButtonPart)
         return ScrollByLine;
     return ScrollByPage;
+}
+
+bool Scrollbar::handleMouseMoveEvent(const PlatformMouseEvent& evt)
+{
+    if (m_pressedPart == ThumbPart) {
+        // Drag the thumb.
+        int thumbPos = theme()->thumbPosition(this);
+        int thumbLen = theme()->thumbLength(this);
+        int trackLen = theme()->trackLength(this);
+        int maxPos = trackLen - thumbLen;
+        int delta = 0;
+        if (m_orientation == HorizontalScrollbar)
+            delta = convertFromContainingWindow(evt.pos()).x() - m_pressedPos;
+        else
+            delta = convertFromContainingWindow(evt.pos()).y() - m_pressedPos;
+
+        if (delta > 0)
+            delta = min(maxPos - thumbPos, delta);
+        else if (delta < 0)
+            delta = max(-thumbPos, delta);
+
+        if (delta != 0) {
+            setValue((float)(thumbPos + delta) * (m_totalSize - m_visibleSize) / (trackLen - thumbLen));
+            m_pressedPos += theme()->thumbPosition(this) - thumbPos;
+        }
+
+        return true;
+    }
+
+    if (m_pressedPart != NoPart)
+        m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
+
+    ScrollbarPart part = theme()->hitTest(this, evt);    
+    if (part != m_hoveredPart) {
+        if (m_hoveredPart == NoPart && theme()->invalidateOnMouseEnterExit())
+            invalidate();  // Just invalidate the whole scrollbar, since the buttons at either end change anyway.
+
+        if (m_pressedPart != NoPart) {
+            if (part == m_pressedPart) {
+                // The mouse is moving back over the pressed part.  We
+                // need to start up the timer action again.
+                startTimerIfNeeded(cNormalTimerDelay);
+                theme()->invalidatePart(this, m_pressedPart);
+            } else if (m_hoveredPart == m_pressedPart) {
+                // The mouse is leaving the pressed part.  Kill our timer
+                // if needed.
+                stopTimerIfNeeded();
+                theme()->invalidatePart(this, m_pressedPart);
+            }
+        } else {
+            theme()->invalidatePart(this, part);
+            theme()->invalidatePart(this, m_hoveredPart);
+        }
+        m_hoveredPart = part;
+    } 
+
+    return true;
+}
+
+bool Scrollbar::handleMouseOutEvent(const PlatformMouseEvent& event)
+{
+    if (theme()->invalidateOnMouseEnterExit())
+        invalidate(); // Just invalidate the whole scrollbar, since the buttons at either end change anyway.
+    else
+        theme()->invalidatePart(this, m_hoveredPart);
+    m_hoveredPart = NoPart;
+    return true;
+}
+
+bool Scrollbar::handleMouseReleaseEvent(const PlatformMouseEvent& event)
+{
+    theme()->invalidatePart(this, m_pressedPart);
+    m_pressedPart = NoPart;
+    m_pressedPos = 0;
+    stopTimerIfNeeded();
+
+    if (parent() && parent()->isFrameView())
+        static_cast<FrameView*>(parent())->frame()->eventHandler()->setMousePressed(false);
+
+    return true;
+}
+
+bool Scrollbar::handleMousePressEvent(const PlatformMouseEvent& evt)
+{
+    // Early exit for right click
+    if (evt.button() == RightButton)
+        return true; // FIXME: Handled as context menu by Qt right now.  Should just avoid even calling this method on a right click though.
+
+    if (theme()->shouldCenterOnThumb(this, evt)) {
+        invalidate();
+        m_hoveredPart = m_pressedPart = ThumbPart;
+        theme()->centerOnThumb(this, evt);
+        return true;
+    }
+    
+    m_pressedPart = theme()->hitTest(this, evt);
+    m_pressedPos = (orientation() == HorizontalScrollbar ? convertFromContainingWindow(evt.pos()).x() : convertFromContainingWindow(evt.pos()).y());
+    theme()->invalidatePart(this, m_pressedPart);
+    autoscrollPressedPart(theme()->initialAutoscrollTimerDelay());
+    return true;
 }
 
 }
