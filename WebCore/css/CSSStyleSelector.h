@@ -189,7 +189,7 @@ public:
 
         class SelectorChecker : public Noncopyable {
         public:
-            SelectorChecker(Document*, bool strictParsing, bool collectRulesOnly = true);
+            SelectorChecker(Document*, bool strictParsing);
 
             bool checkSelector(CSSSelector*, Element*) const;
             SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, RenderStyle::PseudoId& dynamicPseudo, bool isAncestor, bool isSubSelector, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;

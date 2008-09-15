@@ -1,3 +1,18 @@
+2008-09-15  David Smith  <catfish.man@gmail.com>
+
+        Reviewed by Dave Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=20180
+        
+        >2x speedup on querySelector[All] with :nth-child by removing the collectRulesOnly argument on SelectorChecker.
+        With collectRulesOnly set to true (the default) an optimization is turned off, and no callers were intentionally leaving it true.
+        querySelector[All] assumed that the default was probably the right way to go, and so ended up being slow.
+        
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::CSSStyleSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::SelectorChecker):
+        * css/CSSStyleSelector.h:
+
 2008-09-14  Dave Hyatt  <hyatt@apple.com>
 
         Refactor PlatformScrollbarWin's painting so that it is now done by ScrollbarThemeWin.  PlatformScrollbarSafari

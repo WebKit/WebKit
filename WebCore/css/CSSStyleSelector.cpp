@@ -374,7 +374,7 @@ static const MediaQueryEvaluator& printEval()
 
 CSSStyleSelector::CSSStyleSelector(Document* doc, const String& userStyleSheet, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet, bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
-    , m_checker(doc, strictParsing, false)
+    , m_checker(doc, strictParsing)
     , m_fontSelector(CSSFontSelector::create(doc))
 {
     init();
@@ -849,10 +849,10 @@ static inline const AtomicString* linkAttribute(Node* node)
     return 0;
 }
 
-CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool strictParsing, bool collectRulesOnly)
+CSSStyleSelector::SelectorChecker::SelectorChecker(Document* document, bool strictParsing)
     : m_document(document)
     , m_strictParsing(strictParsing)
-    , m_collectRulesOnly(collectRulesOnly)
+    , m_collectRulesOnly(false)
     , m_pseudoStyle(RenderStyle::NOPSEUDO)
     , m_documentIsHTML(document->isHTMLDocument())
 {
