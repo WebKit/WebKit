@@ -81,7 +81,7 @@ unix:!mac:!embedded:!wince* {
     DEFINES += ENABLE_NETSCAPE_PLUGIN_API=0
 }
 
-DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1 WTF_USE_JSC=1
+DEFINES += WTF_USE_JAVASCRIPTCORE_BINDINGS=1 WTF_CHANGES=1
 
 INCLUDEPATH += $$PWD/../JavaScriptCore $$PWD/../JavaScriptCore/ForwardingHeaders \
                $$PWD/../JavaScriptCore/VM \
