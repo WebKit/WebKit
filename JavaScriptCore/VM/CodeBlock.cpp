@@ -783,9 +783,10 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_construct: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
+            int r2 = (++it)->u.operand;
             int tempCount = (++it)->u.operand;
             int argCount = (++it)->u.operand;
-            printf("[%4d] construct\t %s, %s, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), tempCount, argCount);
+            printf("[%4d] construct\t %s, %s, %s, %d, %d\n", location, registerName(r0).c_str(), registerName(r1).c_str(), registerName(r2).c_str(), tempCount, argCount);
             break;
         }
         case op_get_pnames: {

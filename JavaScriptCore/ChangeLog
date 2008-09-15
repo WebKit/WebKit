@@ -1,3 +1,15 @@
+2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Rubber-stamped by Oliver Hunt.
+
+        r36427 broke CodeBlock::dump() by changing the number of arguments to
+        op_construct without changing the code that prints it. This patch fixes
+        it by printing the additional argument.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+
 2008-09-15  Adam Roben  <aroben@apple.com>
 
         Build fix
