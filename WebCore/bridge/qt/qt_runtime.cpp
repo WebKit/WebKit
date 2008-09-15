@@ -796,7 +796,7 @@ JSValue* convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, co
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
         QObject* obj = variant.value<QObject*>();
-        return Instance::createRuntimeObject(exec, QtInstance::create(obj, root));
+        return Instance::createRuntimeObject(exec, QtInstance::getQtInstance(obj, root));
     }
 
     if (type == QMetaType::QVariantMap) {
@@ -1648,7 +1648,7 @@ void QtConnectionObject::execute(void **argv)
                     if (m_funcObject->inherits(&JSFunction::info)) {
                         JSFunction* fimp = static_cast<JSFunction*>(m_funcObject.get());
 
-                        JSObject* qt_sender = Instance::createRuntimeObject(exec, QtInstance::create(sender(), ro));
+                        JSObject* qt_sender = Instance::createRuntimeObject(exec, QtInstance::getQtInstance(sender(), ro));
                         JSObject* wrapper = new (exec) JSObject(exec->globalData().nullProtoStructureID);
                         PutPropertySlot slot;
                         wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);

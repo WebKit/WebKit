@@ -1,3 +1,20 @@
+2008-09-15  Tor Arne Vestbø  <tavestbo@trolltech.com>
+
+        Reviewed by Simon.
+
+        Make QtInstance::create() private and fix caching
+
+        * bindings/js/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::createScriptInstanceForWidget):
+        * bridge/qt/qt_instance.cpp:
+        (JSC::Bindings::QtInstance::getQtInstance):
+        (JSC::Bindings::QtInstance::getRuntimeObject):
+        * bridge/qt/qt_instance.h:
+        (JSC::Bindings::QtInstance::create):
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::convertQVariantToValue):
+        (JSC::Bindings::QtConnectionObject::execute):
+
 2008-09-15  David Smith  <catfish.man@gmail.com>
 
         Reviewed by Dave Hyatt.

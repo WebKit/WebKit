@@ -37,11 +37,6 @@ class QtRuntimeMetaMethod;
 class QtInstance : public Instance
 {
 public:
-    static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject) 
-    {
-        return adoptRef(new QtInstance(instance, rootObject));
-    }
-
     ~QtInstance ();
 
     virtual Class* getClass() const;
@@ -73,6 +68,11 @@ public:
     static RuntimeObjectImp* getRuntimeObject(ExecState* exec, PassRefPtr<QtInstance>);
 
 private:
+    static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject)
+    {
+        return adoptRef(new QtInstance(instance, rootObject));
+    }
+
     friend class QtClass;
     friend class QtField;
     QtInstance(QObject*, PassRefPtr<RootObject>); // Factory produced only..

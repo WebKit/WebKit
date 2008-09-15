@@ -56,7 +56,7 @@ PassRefPtr<JSC::Bindings::Instance> ScriptController::createScriptInstanceForWid
     QWidget* nativeWidget = widget->nativeWidget();
     if (!nativeWidget)
         return 0;
-    return JSC::Bindings::QtInstance::create(nativeWidget, bindingRootObject());
+    return JSC::Bindings::QtInstance::getQtInstance(nativeWidget, bindingRootObject());
 }
 
 }
