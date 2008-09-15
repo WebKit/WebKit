@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ScrollbarThemeQt.h"
 
+#include "Scrollbar.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QPainter>
@@ -43,32 +45,6 @@ ScrollbarTheme* ScrollbarTheme::nativeTheme()
 
 ScrollbarThemeQt::~ScrollbarThemeQt()
 {
-}
-
-static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
-{
-    static QStyleOptionSlider opt;
-    opt.rect = scrollbar->frameGeometry();
-    if (scrollbar->isEnabled()) {
-        opt.state |= QStyle::State_Enabled;
-    else
-        opt.state &= ~QStyle::State_Enabled;
-    if (scrollbar->controlSize() != RegularScrollbar)
-        opt.state |= QStyle::State_Mini;
-    else
-        opt.state &= ~QStyle::State_Mini;
-    opt.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
-    opt.sliderValue = scrollbar->value();
-    opt.sliderPosition = opt.sliderValue;
-    opt.pageStep = scrollbar->visibleSize();
-    opt.singleStep = scrollbar->lineStep();
-    opt.minimum = 0;
-    opt.maximum = qMax(0, scrollbar->maximum());
-    if (scrollbar->pressedPart() != NoPart)
-        opt.activeSubControls = scPart(scrollbar->pressedPart());
-    else
-        opt.activeSubControls = scPart(scrollbar->hoveredPart());
-    return &opt;
 }
 
 static QStyle::SubControl scPart(const ScrollbarPart& part)
@@ -89,6 +65,32 @@ static QStyle::SubControl scPart(const ScrollbarPart& part)
     }
     
     return QStyle::SC_None;
+}
+
+static QStyleOptionSlider* styleOptionSlider(Scrollbar* scrollbar)
+{
+    static QStyleOptionSlider opt;
+    opt.rect = scrollbar->frameGeometry();
+    if (scrollbar->isEnabled())
+        opt.state |= QStyle::State_Enabled;
+    else
+        opt.state &= ~QStyle::State_Enabled;
+    if (scrollbar->controlSize() != RegularScrollbar)
+        opt.state |= QStyle::State_Mini;
+    else
+        opt.state &= ~QStyle::State_Mini;
+    opt.orientation = (scrollbar->orientation() == VerticalScrollbar) ? Qt::Vertical : Qt::Horizontal;
+    opt.sliderValue = scrollbar->value();
+    opt.sliderPosition = opt.sliderValue;
+    opt.pageStep = scrollbar->visibleSize();
+    opt.singleStep = scrollbar->lineStep();
+    opt.minimum = 0;
+    opt.maximum = qMax(0, scrollbar->maximum());
+    if (scrollbar->pressedPart() != NoPart)
+        opt.activeSubControls = scPart(scrollbar->pressedPart());
+    else
+        opt.activeSubControls = scPart(scrollbar->hoveredPart());
+    return &opt;
 }
 
 bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsContext, const IntRect& damageRect)
