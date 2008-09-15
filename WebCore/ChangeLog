@@ -1,3 +1,13 @@
+2008-09-15  Dean Jackson  <dino@apple.com>
+
+        Reviewed by Tim Hatcher.
+
+        Unnecessary ASSERT in ImplicitAnimation destructor.
+        https://bugs.webkit.org/show_bug.cgi?id=20817
+
+        * page/animation/ImplicitAnimation.cpp:
+        (WebCore::ImplicitAnimation::~ImplicitAnimation):
+
 2008-09-15  Adam Treat  <treat@kde.org>
 
         Reviewed by Simon.
