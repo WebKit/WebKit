@@ -28,7 +28,7 @@
 
 #include "identifier.h"
 #include "JSObject.h"
-#include "PropertyNameArray.h";
+#include "PropertyNameArray.h"
 #include <wtf/RefPtr.h>
 
 using namespace std;

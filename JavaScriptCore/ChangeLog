@@ -1,3 +1,9 @@
+2008-09-15  Adam Roben  <aroben@apple.com>
+
+        Build fix
+
+        * kjs/StructureID.cpp: Removed a stray semicolon.
+
 2008-09-15  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
 
         Reviewed by Maciej Stachowiak.
