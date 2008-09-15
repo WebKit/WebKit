@@ -834,6 +834,13 @@ void CTI::privateCompileMainPass()
             i += 6;
             break;
         }
+        case op_construct_verify: {
+            emitPutArgConstant(instruction[i + 1].u.operand, 0);
+            emitPutArgConstant(instruction[i + 2].u.operand, 4);
+            emitCall(i, Machine::cti_op_construct_verify);
+            i += 3;
+            break;
+        }
         case op_get_by_val: {
             emitGetArg(instruction[i + 2].u.operand, X86::eax);
             emitGetArg(instruction[i + 3].u.operand, X86::edx);

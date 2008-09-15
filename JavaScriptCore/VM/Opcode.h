@@ -134,6 +134,7 @@ namespace JSC {
         macro(op_ret) \
         \
         macro(op_construct) \
+        macro(op_construct_verify) \
         \
         macro(op_get_pnames) \
         macro(op_next_pname) \

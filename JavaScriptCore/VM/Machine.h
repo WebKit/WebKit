@@ -165,6 +165,7 @@ namespace JSC {
         static JSValue* SFX_CALL cti_op_resolve(CTI_ARGS);
         static void* SFX_CALL cti_op_construct_JSConstruct(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_construct_NotJSConstruct(CTI_ARGS);
+        static void SFX_CALL cti_op_construct_verify(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_get_by_val(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_resolve_func(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_sub(CTI_ARGS);
@@ -239,7 +240,7 @@ namespace JSC {
         NEVER_INLINE JSValue* callEval(ExecState* exec, CodeBlock* callingCodeBlock, JSObject* thisObj, ScopeChainNode* scopeChain, RegisterFile*, Register* r, int argv, int argc, JSValue*& exceptionValue);
         JSValue* execute(EvalNode*, ExecState*, JSObject* thisObj, int registerOffset, ScopeChainNode*, JSValue** exception);
 
-        ALWAYS_INLINE void initializeCallFrame(Register* callFrame, CodeBlock*, Instruction*, ScopeChainNode*, Register* r, int returnValueRegister, int argv, int argc, int calledAsConstructor, JSValue* function);
+        ALWAYS_INLINE void initializeCallFrame(Register* callFrame, CodeBlock*, Instruction*, ScopeChainNode*, Register* r, int returnValueRegister, int argv, int argc, JSValue* function);
 
         ALWAYS_INLINE void setScopeChain(ExecState* exec, ScopeChainNode*&, ScopeChainNode*);
         NEVER_INLINE void debug(ExecState*, const CodeBlock*, ScopeChainNode*, Register*, DebugHookID, int firstLine, int lastLine);

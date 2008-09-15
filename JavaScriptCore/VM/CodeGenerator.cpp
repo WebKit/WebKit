@@ -1080,7 +1080,7 @@ RegisterID* CodeGenerator::emitCall(OpcodeID opcodeID, RegisterID* dst, Register
     instructions().append(dst->index());
     instructions().append(func->index());
     instructions().append(base ? base->index() : missingThisObjectMarker()); // We encode the "this" value in the instruction stream, to avoid an explicit instruction for copying or loading it.
-    instructions().append(argv.size() ? argv[0]->index() : m_temporaries.size()); // argv
+    instructions().append(argv[0]->index()); // argv
     instructions().append(argv.size()); // argc
     return dst;
 }
@@ -1124,8 +1124,13 @@ RegisterID* CodeGenerator::emitConstruct(RegisterID* dst, RegisterID* func, Argu
     instructions().append(dst->index());
     instructions().append(func->index());
     instructions().append(funcProto->index());
-    instructions().append(argv.size() ? argv[0]->index() : m_temporaries.size()); // argv
+    instructions().append(argv[0]->index()); // argv
     instructions().append(argv.size()); // argc
+    
+    emitOpcode(op_construct_verify);
+    instructions().append(dst->index());
+    instructions().append(argv[0]->index());
+
     return dst;
 }
 

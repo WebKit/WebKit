@@ -97,7 +97,6 @@ namespace JSC {
             ReturnValueRegister,
             ArgumentStartRegister,
             ArgumentCount,
-            CalledAsConstructor,
             Callee,
             OptionalCalleeActivation,
             CTIReturnEIP,
