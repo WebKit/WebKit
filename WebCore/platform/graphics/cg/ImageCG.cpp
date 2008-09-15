@@ -163,8 +163,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
         if (shouldUseSubimage) {
             image = CGImageCreateWithImageInRect(image, srcRect);
             if (currHeight < srcRect.bottom()) {
-                ASSERT(CGImageGetHeight(image) == currHeight - srcRect.y());
-                adjustedDestRect.setHeight(destRect.height() / srcRect.height() * (currHeight - srcRect.y()));
+                ASSERT(CGImageGetHeight(image) == currHeight - CGRectIntegral(srcRect).origin.y);
+                adjustedDestRect.setHeight(destRect.height() / srcRect.height() * CGImageGetHeight(image));
             }
         } else {
             float xScale = srcRect.width() / destRect.width();

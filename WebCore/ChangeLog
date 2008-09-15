@@ -1,3 +1,13 @@
+2008-09-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein
+
+        Fix assertion and integral pixel issue when creating subimages.
+        https://bugs.webkit.org/show_bug.cgi?id=20786
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2008-09-15  Tor Arne Vestbø  <tavestbo@trolltech.com>
 
         Reviewed by Simon.
