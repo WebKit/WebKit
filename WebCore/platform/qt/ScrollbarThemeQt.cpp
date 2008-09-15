@@ -28,6 +28,7 @@
 #include "config.h"
 #include "ScrollbarThemeQt.h"
 
+#include "GraphicsContext.h"
 #include "ScrollBar.h"
 
 #include <QApplication>
