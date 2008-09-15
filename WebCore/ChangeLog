@@ -1,3 +1,16 @@
+2008-09-15  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        - fix <rdar://problem/5842247> Single long breakable word takes O(n^2) to lay out
+
+        Cache the next breakable position for text nodes in InlineIterator.
+
+        * rendering/bidi.cpp:
+        (WebCore::InlineIterator::InlineIterator):
+        (WebCore::InlineIterator::increment):
+        (WebCore::RenderBlock::findNextLineBreak):
+
 2008-09-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein
