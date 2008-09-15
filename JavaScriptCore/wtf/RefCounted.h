@@ -66,6 +66,9 @@ public:
         return m_refCount;
     }
 
+protected:
+    ~RefCounted() {}
+
 private:
     int m_refCount;
 #ifndef NDEBUG

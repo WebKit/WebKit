@@ -1,3 +1,16 @@
+2008-09-10  Alexey Proskuryakov  <ap@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a protected destructor for RefCounted.
+
+        It is wrong to call its destructor directly, because (1) this should be taken care of by
+        deref(), and (2) many classes that use RefCounted have non-virtual destructors.
+
+        No change in behavior.
+
+        * wtf/RefCounted.h: (WTF::RefCounted::~RefCounted):
+
 2008-09-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
