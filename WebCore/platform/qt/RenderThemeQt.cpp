@@ -820,6 +820,8 @@ bool RenderThemeQt::paintMediaMuteButton(RenderObject* o, const RenderObject::Pa
     if (!p.isValid())
         return true;
 
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
+
     paintMediaBackground(p.painter, r);
 
     WorldMatrixTransformer transformer(p.painter, o, r);
@@ -846,6 +848,8 @@ bool RenderThemeQt::paintMediaPlayButton(RenderObject* o, const RenderObject::Pa
     StylePainter p(paintInfo);
     if (!p.isValid())
         return true;
+
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
 
     paintMediaBackground(p.painter, r);
 
@@ -884,6 +888,8 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const RenderObject::P
     if (!p.isValid())
         return true;
 
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
+
     paintMediaBackground(p.painter, r);
 
     if (MediaPlayer* player = mediaElement->player()) {
@@ -908,6 +914,8 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const RenderObject::P
     StylePainter p(paintInfo);
     if (!p.isValid())
         return true;
+
+    p.painter->setRenderHint(QPainter::Antialiasing, true);
 
     p.painter->setPen(Qt::NoPen);
     p.painter->setBrush(getMediaControlForegroundColor(o));
