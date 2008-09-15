@@ -202,6 +202,12 @@ namespace JSC {
         static void SFX_CALL cti_op_push_scope(CTI_ARGS);
         static void SFX_CALL cti_op_pop_scope(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_typeof(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_undefined(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_boolean(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_number(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_string(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_object(CTI_ARGS);
+        static JSValue* SFX_CALL cti_op_is_function(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_stricteq(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_nstricteq(CTI_ARGS);
         static JSValue* SFX_CALL cti_op_to_jsnumber(CTI_ARGS);

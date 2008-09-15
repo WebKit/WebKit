@@ -374,6 +374,15 @@ CTI::CTI(Machine* machine, ExecState* exec, CodeBlock* codeBlock)
         break; \
     }
 
+#define CTI_COMPILE_UNARY_OP(name) \
+    case name: { \
+        emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx); \
+        emitCall(i, Machine::cti_##name); \
+        emitPutResult(instruction[i + 1].u.operand); \
+        i += 3; \
+        break; \
+    }
+
 #if ENABLE(SAMPLING_TOOL)
 OpcodeID currentOpcodeID = static_cast<OpcodeID>(-1);
 #endif
@@ -1150,13 +1159,13 @@ void CTI::privateCompileMainPass()
             i += 1;
             break;
         }
-        case op_typeof: {
-            emitGetPutArg(instruction[i + 2].u.operand, 0, X86::ecx);
-            emitCall(i, Machine::cti_op_typeof);
-            emitPutResult(instruction[i + 1].u.operand);
-            i += 3;
-            break;
-        }
+        CTI_COMPILE_UNARY_OP(op_typeof)
+        CTI_COMPILE_UNARY_OP(op_is_undefined)
+        CTI_COMPILE_UNARY_OP(op_is_boolean)
+        CTI_COMPILE_UNARY_OP(op_is_number)
+        CTI_COMPILE_UNARY_OP(op_is_string)
+        CTI_COMPILE_UNARY_OP(op_is_object)
+        CTI_COMPILE_UNARY_OP(op_is_function)
         CTI_COMPILE_BINARY_OP(op_stricteq)
         CTI_COMPILE_BINARY_OP(op_nstricteq)
         case op_to_jsnumber: {

@@ -495,6 +495,30 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printUnaryOp(location, it, "typeof");
             break;
         }
+        case op_is_undefined: {
+            printUnaryOp(location, it, "is_undefined");
+            break;
+        }
+        case op_is_boolean: {
+            printUnaryOp(location, it, "is_boolean");
+            break;
+        }
+        case op_is_number: {
+            printUnaryOp(location, it, "is_number");
+            break;
+        }
+        case op_is_string: {
+            printUnaryOp(location, it, "is_string");
+            break;
+        }
+        case op_is_object: {
+            printUnaryOp(location, it, "is_object");
+            break;
+        }
+        case op_is_function: {
+            printUnaryOp(location, it, "is_function");
+            break;
+        }
         case op_in: {
             printBinaryOp(location, it, "in");
             break;

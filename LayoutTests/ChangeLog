@@ -1,3 +1,15 @@
+2008-09-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Test for a bug in a preliminary version of the patch for
+        Bug 20827: the 'typeof' operator is slow
+        <https://bugs.webkit.org/show_bug.cgi?id=20827>
+
+        * fast/js/resources/typeof-codegen-crash.js: Added.
+        * fast/js/typeof-codegen-crash-expected.txt: Added.
+        * fast/js/typeof-codegen-crash.html: Added.
+
 2008-09-13  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Sam Weinig.

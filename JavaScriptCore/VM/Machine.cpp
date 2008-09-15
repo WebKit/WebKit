@@ -247,6 +247,34 @@ static JSValue* jsTypeStringForValue(ExecState* exec, JSValue* v)
     return jsNontrivialString(exec, "object");
 }
 
+static bool jsIsObjectType(JSValue* v)
+{
+    if (JSImmediate::isImmediate(v))
+        return v->isNull();
+
+    JSType type = static_cast<JSCell*>(v)->structureID()->type();
+    if (type == NumberType || type == StringType)
+        return false;
+    if (type == ObjectType) {
+        if (static_cast<JSObject*>(v)->masqueradeAsUndefined())
+            return false;
+        CallData callData;
+        if (static_cast<JSObject*>(v)->getCallData(callData) != CallTypeNone)
+            return false;
+    }
+    return true;
+}
+
+static bool jsIsFunctionType(JSValue* v)
+{
+    if (v->isObject()) {
+        CallData callData;
+        if (static_cast<JSObject*>(v)->getCallData(callData) != CallTypeNone)
+            return true;
+    }
+    return false;
+}
+
 static bool NEVER_INLINE resolve(ExecState* exec, Instruction* vPC, Register* r, ScopeChainNode* scopeChain, CodeBlock* codeBlock, JSValue*& exceptionValue)
 {
     int dst = (vPC + 1)->u.operand;
@@ -2041,6 +2069,91 @@ JSValue* Machine::privateExecute(ExecutionFlag flag, ExecState* exec, RegisterFi
         int dst = (++vPC)->u.operand;
         int src = (++vPC)->u.operand;
         r[dst] = jsTypeStringForValue(exec, r[src].jsValue(exec));
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_undefined) {
+        /* is_undefined dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "undefined", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        JSValue* v = r[src].jsValue(exec);
+        r[dst] = jsBoolean(v->isUndefined() || (v->isObject() && static_cast<JSObject*>(v)->masqueradeAsUndefined()));
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_boolean) {
+        /* is_boolean dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "boolean", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        r[dst] = jsBoolean(r[src].jsValue(exec)->isBoolean());
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_number) {
+        /* is_number dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "number", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        r[dst] = jsBoolean(r[src].jsValue(exec)->isNumber());
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_string) {
+        /* is_string dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "string", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        r[dst] = jsBoolean(r[src].jsValue(exec)->isString());
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_object) {
+        /* is_object dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "object", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        r[dst] = jsBoolean(jsIsObjectType(r[src].jsValue(exec)));
+
+        ++vPC;
+        NEXT_OPCODE;
+    }
+    BEGIN_OPCODE(op_is_function) {
+        /* is_function dst(r) src(r)
+
+           Determines whether the type string for src according to
+           the ECMAScript rules is "function", and puts the result
+           in register dst.
+        */
+        int dst = (++vPC)->u.operand;
+        int src = (++vPC)->u.operand;
+        r[dst] = jsBoolean(jsIsFunctionType(r[src].jsValue(exec)));
 
         ++vPC;
         NEXT_OPCODE;
@@ -4983,6 +5096,37 @@ void Machine::cti_op_pop_scope(CTI_ARGS)
 JSValue* Machine::cti_op_typeof(CTI_ARGS)
 {
     return jsTypeStringForValue(ARG_exec, ARG_src1);
+}
+
+JSValue* Machine::cti_op_is_undefined(CTI_ARGS)
+{
+    JSValue* v = ARG_src1;
+    return jsBoolean(v->isUndefined() || (v->isObject() && static_cast<JSObject*>(v)->masqueradeAsUndefined()));
+}
+
+JSValue* Machine::cti_op_is_boolean(CTI_ARGS)
+{
+    return jsBoolean(ARG_src1->isBoolean());
+}
+
+JSValue* Machine::cti_op_is_number(CTI_ARGS)
+{
+    return jsBoolean(ARG_src1->isNumber());
+}
+
+JSValue* Machine::cti_op_is_string(CTI_ARGS)
+{
+    return jsBoolean(ARG_src1->isString());
+}
+
+JSValue* Machine::cti_op_is_object(CTI_ARGS)
+{
+    return jsBoolean(jsIsObjectType(ARG_src1));
+}
+
+JSValue* Machine::cti_op_is_function(CTI_ARGS)
+{
+    return jsBoolean(jsIsFunctionType(ARG_src1));
 }
 
 JSValue* Machine::cti_op_stricteq(CTI_ARGS)

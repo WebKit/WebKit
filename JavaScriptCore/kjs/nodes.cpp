@@ -748,16 +748,35 @@ RegisterID* UnaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 RegisterID* BinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)
 {
     OpcodeID opcode = this->opcode();
-    if (opcode == op_eq || opcode == op_neq) {
+    if (opcode == op_neq) {
         if (m_expr1->isNull() || m_expr2->isNull()) {
             RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
-            return generator.emitUnaryOp(opcode == op_eq ? op_eq_null : op_neq_null, generator.finalDestination(dst, src.get()), src.get());
+            return generator.emitUnaryOp(op_neq_null, generator.finalDestination(dst, src.get()), src.get());
         }
     }
 
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2.get());
     return generator.emitBinaryOp(opcode, generator.finalDestination(dst, src1.get()), src1.get(), src2);
+}
+
+RegisterID* EqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+{
+    if (m_expr1->isNull() || m_expr2->isNull()) {
+        RefPtr<RegisterID> src = generator.emitNode(dst, m_expr1->isNull() ? m_expr2.get() : m_expr1.get());
+        return generator.emitUnaryOp(op_eq_null, generator.finalDestination(dst, src.get()), src.get());
+    }
+
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
+    RegisterID* src2 = generator.emitNode(m_expr2.get());
+    return generator.emitEqualityOp(op_eq, generator.finalDestination(dst, src1.get()), src1.get(), src2);
+}
+
+RegisterID* StrictEqualNode::emitCode(CodeGenerator& generator, RegisterID* dst)
+{
+    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1.get(), m_rightHasAssignments, m_expr2->isPure(generator));
+    RegisterID* src2 = generator.emitNode(m_expr2.get());
+    return generator.emitEqualityOp(op_stricteq, generator.finalDestination(dst, src1.get()), src1.get(), src2);
 }
 
 RegisterID* ReverseBinaryOpNode::emitCode(CodeGenerator& generator, RegisterID* dst)

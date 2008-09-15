@@ -1,3 +1,40 @@
+2008-09-14  Cameron Zwarich  <cwzwarich@uwaterloo.ca>
+
+        Reviewed by Maciej Stachowiak.
+
+        Bug 20827: the 'typeof' operator is slow
+        <https://bugs.webkit.org/show_bug.cgi?id=20827>
+
+        Optimize the 'typeof' operator when its result is compared to a constant
+        string.
+
+        This is a 5.5% speedup on the V8 Earley-Boyer test.
+
+        * VM/CTI.cpp:
+        (JSC::CTI::privateCompileMainPass):
+        * VM/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * VM/CodeGenerator.cpp:
+        (JSC::CodeGenerator::emitEqualityOp):
+        * VM/CodeGenerator.h:
+        * VM/Machine.cpp:
+        (JSC::jsIsObjectType):
+        (JSC::jsIsFunctionType):
+        (JSC::Machine::privateExecute):
+        (JSC::Machine::cti_op_is_undefined):
+        (JSC::Machine::cti_op_is_boolean):
+        (JSC::Machine::cti_op_is_number):
+        (JSC::Machine::cti_op_is_string):
+        (JSC::Machine::cti_op_is_object):
+        (JSC::Machine::cti_op_is_function):
+        * VM/Machine.h:
+        * VM/Opcode.h:
+        * kjs/nodes.cpp:
+        (JSC::BinaryOpNode::emitCode):
+        (JSC::EqualNode::emitCode):
+        (JSC::StrictEqualNode::emitCode):
+        * kjs/nodes.h:
+
 2008-09-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Cameron Zwarich.

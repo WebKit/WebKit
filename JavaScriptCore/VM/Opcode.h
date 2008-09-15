@@ -78,6 +78,12 @@ namespace JSC {
         \
         macro(op_instanceof) \
         macro(op_typeof) \
+        macro(op_is_undefined) \
+        macro(op_is_boolean) \
+        macro(op_is_number) \
+        macro(op_is_string) \
+        macro(op_is_object) \
+        macro(op_is_function) \
         macro(op_in) \
         \
         macro(op_resolve) \
