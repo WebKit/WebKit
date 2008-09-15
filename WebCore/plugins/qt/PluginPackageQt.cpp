@@ -90,7 +90,7 @@ bool PluginPackage::fetchInfo()
         types[i].split(UChar(':'), true, mime); 
         if (mime.size() > 0) {
             Vector<String> exts;
-            mime[0].split(UChar(','), false, exts);
+            mime[1].split(UChar(','), false, exts);
             determineQuirks(mime[0]);
             m_mimeToExtensions.add(mime[0], exts);
             if (mime.size() > 1) {
